@@ -1,0 +1,152 @@
+<div class="form-holder">
+    <div class="formTitle withMargin">
+        <h1>Purchase Order <%=customer%></h1>
+    </div>
+    <form class="form notDialog" id="cretaeLeadForm" data-id="<%=_id%>">
+        <fieldset>
+            <div class="inner">
+
+                <div class="half-block left">
+                    <dl class="opp-info">
+                        <dt><span >Partner </span></dt>
+                        <dd id="partner" class="editable" title="<%=partner%>"><span class="no-long" data-maxlength="32"><%=partner%></span></dd>
+                    </dl>
+                </div>
+                <div class="half-block left">
+                    <dl class="opp-info">
+                        <dt><span for="creationDate">Creation Date </span></dt>
+                        <dd id="creationDate" class="editable" title="<%=creationDate%>"><span class="no-long" data-maxlength="32"><%=creationDate%></span></dd>
+                        <dt><span for="scheduledDate">Scheduled Date </span></dt>
+                        <dd id="scheduledDate" class="editable" title="<%=scheduledDate%>"><span class="no-long" data-maxlength="32"><%=scheduledDate%></span></dd>
+                        <dt><span for="sourceDocument">Source Document </span></dt>
+                        <dd id="sourceDocument" class="editable" title="<%=sourceDocument%>"><span class="no-long" data-maxlength="32"><%=sourceDocument%></span></dd>
+                    </dl>
+                </div>
+                <div class="clearfix"></div>
+                <ul class="dialog-tabs">
+                    <li><a class="active" href="javascript:;">Products</a></li>
+                    <li><a href="javascript:;">Bid</a></li>
+                    <li><a href="javascript:;">Deliveries & Invoices</a></li>
+                </ul>
+                <div class="clearfix"></div>
+                <div class="dialog-tabs-items">
+                    <div class="dialog-tabs-item active">
+                        <table class="list">
+                            <thead>
+                            <tr class="oe_list_header_columns">
+                                <th class="oe_sortable" data-sort="Product">Product<span class="arrow down">7</span><span class="arrow up">v</span></th>
+                                <th class="oe_sortable" data-sort="quantity">Quantity<span class="arrow down">7</span><span class="arrow up">v</span></th>
+                                <th class="oe_sortable" data-sort="unitPrice">Destination Location<span class="arrow down">7</span><span class="arrow up">v</span></th>
+                                <th class="oe_sortable" data-sort="taxes">Availability<span class="arrow down">7</span><span class="arrow up">v</span></th>
+                                <th class="oe_sortable" data-sort="subtotal">Status<span class="arrow down">7</span><span class="arrow up">v</span></th>
+                            </tr>
+                            </thead>
+                            <tfoot>
+                            <tr>
+                            </tr>
+                            </tfoot>
+                            <tbody>
+                            <tr>
+                                <td colspan="5" class="oe_form_field_one2many_list_row_add">
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="dialog-tabs-item">
+
+                        <div class="additional-container">
+                            <div>
+                                <h3>General Informations</h3>
+                                <div class="clearfix"></div>
+
+                                <div class="half-block left">
+                                    <dt><span>Delivery Method </span></dt>
+                                    <dd id="deliveryMethod" class="editable" title="<%=deliveryMethod%>"><span class="no-long" data-maxlength="32"><%=deliveryMethod%></span></dd>
+                                    </dd>
+                                    <dt><span>Invoice Control </span></dt>
+                                    <dd id="invoiceControl" class="editable" title="<%=invoiceControl%>"><span class="no-long" data-maxlength="32"><%=invoiceControl%></span></dd>
+                                    </dd>
+                                    <dt><span>Picking Type </span></dt>
+                                    <dd id="pickingType" class="editable" title="<%=pickingType%>"><span class="no-long" data-maxlength="32"><%=pickingType%></span></dd>
+                                    </dl>
+                                </div>
+                                <div class="half-block left">
+                                    <dt><span>Date of Transfer </span></dt>
+                                    <dd id="dateOfTransfer" class="editable" title="<%=dateOfTransfer%>"><span class="no-long" data-maxlength="32"><%=dateOfTransfer%></span></dd>
+                                    <dt><span>Priority </span></dt>
+                                    <dd id="priority" class="editable" title="<%=priority%>"><span class="no-long" data-maxlength="32"><%=priority%></span></dd>
+                                    </dl>
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+                            <div>
+                                <h3>Carrier Information</h3>
+                                <div class="clearfix"></div>
+
+                                <div class="half-block left">
+                                    <dt><span>Carrier </span></dt>
+                                    <dd id="carrier" class="editable" title="<%=carrier%>"><span class="no-long" data-maxlength="32"><%=carrier%></span></dd>
+                                    </dd>
+                                    <dt><span>Carrier Tracking Ref </span></dt>
+                                    <dd id="carrierTrackingRef" class="editable" title="<%=carrierTrackingRef%>"><span class="no-long" data-maxlength="32"><%=carrierTrackingRef%></span></dd>
+                                    </dd>
+                                    </dl>
+                                </div>
+                                <div class="half-block left">
+                                    <dt><span>Weight </span></dt>
+                                    <dd></dd>
+                                    <dt><span>Net Weight </span></dt>
+                                    <dd></dd>
+                                    <dt><span>Number of Packages </span></dt>
+                                    <dd id="numberOfPackages" class="editable" title="<%=numberOfPackages%>"><span class="no-long" data-maxlength="32"><%=numberOfPackages%></span></dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="bid-container">
+                            <div class="half-block left">
+                                <dl class="opp-info">
+                                    <dt><span>Bid Received On </span></dt>
+                                    <dd id="bidReceivedOn" class="editable" title="<%=bidReceivedOn%>"><span class="no-long" data-maxlength="32"><%=bidReceivedOn%></span></dd>
+                                    <dt><span>Bid Valid Until </span></dt>
+                                    <dd id="bidValidUntill" class="editable" title="<%=bidValidUntill%>"><span class="no-long" data-maxlength="32"><%=bidValidUntill%></span></dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dialog-tabs-item">
+                        <div class="delivery-invoices-container">
+                            <div class="half-block left">
+                                <dl class="opp-info">
+                                    <dt><span>Expected Date </span></dt>
+                                    <dd id="expectedDate" class="editable" title="<%=expectedDate%>"><span class="no-long" data-maxlength="32"><%=expectedDate%></span></dd>
+                                    <dt><span>Destination </span></dt>
+                                    <dd id="destination" class="editable" title="<%=destination%>"><span class="no-long" data-maxlength="32"><%=destination%></span></dd>
+                                    <dt><span>Incoterm </span></dt>
+                                    <dd id="incoterm" class="editable" title="<%=incoterm%>"><span class="no-long" data-maxlength="32"><%=incoterm%></span></dd>
+                                </dl>
+                            </div>
+                            <div class="half-block left">
+                                <dl class="opp-info">
+                                    <dt><span>Invoicing Control </span></dt>
+                                    <dd id="invoicingControl" class="editable" title="<%=invoicingControl%>"><span class="no-long" data-maxlength="32"><%=invoicingControl%></span></dd>
+                                    <dt><span>Invoice Received </span></dt>
+                                    <dd id="invoiceReceived" class="editable" title="<%=invoiceReceived%>"><input class="no-long checkbox" type="checkbox" data-maxlength="32"><%=invoiceReceived%></input></dd>
+                                    <dt><span>Payment Term </span></dt>
+                                    <dd id="paymentTerm" class="editable" title="<%=paymentTerm%>"><span class="no-long" data-maxlength="32"><%=paymentTerm%></span></dd>
+                                    <dt><span>Fiscal Position </span></dt>
+                                    <dd id="fiscalPosition" class="editable" title="<%=fiscalPosition%>"><span class="no-long" data-maxlength="32"><%=fiscalPosition%></span></dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </fieldset>
+    </form>
+</div>

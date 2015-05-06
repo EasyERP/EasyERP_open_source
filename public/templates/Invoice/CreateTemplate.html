@@ -1,0 +1,163 @@
+<div class="form-holder">
+    <form method="post" action="" class="form" id="invoiceForm">
+        <fieldset>
+            <div class="inner">
+                <div class="half-block left">
+                    <dl class="opp-info">
+                        <dt><label for="customerInvoice">Customer</label></dt>
+                        <dd>
+                            <a id="customerInvoice" class="current-selected" href="javascript:;">Select</a>
+                        </dd>
+
+                        <dt><label for="fiscal_pos">Fiscal Position</label></dt>
+                        <dd>
+                            <a id="fiscal_pos"  href="javascript:;">Select</a>
+                        </dd>
+
+                        <dt><label for="source_document">Source Document</label></dt>
+                        <dd>
+                            <input type="text"  id="source_document" name="source_document" placeholder="" maxlength="32"/>
+                        </dd>
+
+                        <dt><label for="customer_invoice_num">Customer Invoice Number</label></dt>
+                        <dd>
+                            <input type="text"  id="customer_invoice_num" name="customer_invoice_num" placeholder="" maxlength="32"/>
+                        </dd>
+
+                        <dt><label for="payment_reference">Payment Reference</label></dt>
+                        <dd>
+                            <a id="payment_reference_2" href="javascript:;">Select</a>
+                        </dd>
+
+                        <dt></dt>
+                        <dd>
+                            <input type="text" id="payment_reference" name="payment_reference" placeholder="" maxlength="32"/>
+                        </dd>
+
+                    </dl>
+                </div>
+                <div class="half-block left">
+                    <dl class="opp-info">
+
+                        <dt><label for="invoice_date">Invoice Date</label></dt>
+                        <dd>
+                            <input class="extrainfo" type="text" name="invoiceDate" id="invoice_date" value=""
+                                   readonly="" placeholder="Invoice Date">
+                        </dd>
+
+                        <dt><label for="due_date">Due Date</label></dt>
+                        <dd>
+                            <input class="extrainfo" type="text" name="dueDate" id="due_date" value=""
+                                   readonly="" placeholder="Due Date">
+                        </dd>
+
+                        <dt><label for="account">Account</label></dt>
+                        <dd>
+                            <a id="account" href="javascript:;">Select</a>
+                        </dd>
+
+                        <dt><label for="journal">Journal</label></dt>
+                        <dd>
+                            <a id="journal" href="javascript:;">Select</a>
+                        </dd>
+
+                    </dl>
+                </div>
+                <div class="clearfix"></div>
+                <ul class="dialog-tabs">
+                    <li><a class="active" href="javascript:;">Invoice</a></li>
+                    <li><a href="javascript:;">Other Info</a></li>
+                    <li><a href="javascript:;">Payments</a></li>
+                </ul>
+                <div class="clearfix"></div>
+                <div class="dialog-tabs-items">
+                    <div class="dialog-tabs-item active">
+                        <div id="invoiceItemsHolder">
+
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="dialog-tabs-item">
+                        <div class="other-info-container">
+                            <div class="half-block left">
+                                <dl class="opp-info">
+                                    <dt><label for="bank_account">Bank Account</label></dt>
+                                    <dd>
+                                        <a id="bank_account" href="javascript:;">Select</a>
+                                    </dd>
+
+                                    <dt><label for="responsible">Responsible</label></dt>
+                                    <dd>
+                                        <a id="responsible" href="javascript:;">Select</a>
+                                    </dd>
+
+                                    <dt><label for="payment_terms">Payment Terms</label></dt>
+                                    <dd>
+                                        <a id="payment_terms" href="javascript:;">Select</a>
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div class="half-block left">
+                                <dl class="opp-info">
+                                    <dt><label >Journal Entry</label></dt>
+                                    <dd></dd>
+
+                                    <dt><label for="force_period">Force Period</label></dt>
+                                    <dd>
+                                        <a id="force_period" href="javascript:;">Select</a>
+                                    </dd>
+
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dialog-tabs-item">
+                        <div class="pauments-container">
+                            <table class="list">
+                                <thead>
+                                <tr class="oe_list_header_columns">
+                                    <th class="oe_sortable" data-sort="payment_date">Payment&nbsp;Date<span class="arrow down">7</span><span class="arrow up">v</span></th>
+                                    <th class="oe_sortable" data-sort="journal_entry">Journal&nbsp;Entry<span class="arrow down">7</span><span class="arrow up">v</span></th>
+                                    <th class="oe_sortable" data-sort="reference">Reference<span class="arrow down">7</span><span class="arrow up">v</span></th>
+                                    <th class="oe_sortable" data-sort="name">Name<span class="arrow down">7</span><span class="arrow up">v</span></th>
+                                    <th class="oe_sortable" data-sort="journal">Journal<span class="arrow down">7</span><span class="arrow up">v</span></th>
+                                    <th class="oe_sortable" data-sort="debit">Debit<span class="arrow down">7</span><span class="arrow up">v</span></th>
+                                    <th class="oe_sortable" data-sort="credit">Credit<span class="arrow down">7</span><span class="arrow up">v</span></th>
+                                    <th class="oe_sortable" data-sort="amount_currency">Amount&nbsp;Currency<span class="arrow down">7</span><span class="arrow up">v</span></th>
+                                </tr>
+                                </thead>
+                                <tfoot>
+                                    <tr>
+                                    </tr>
+                                </tfoot>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="9">
+                                            &nbsp;
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="9">
+                                            &nbsp;
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="9">
+                                            &nbsp;
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="9">
+                                            &nbsp;
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </fieldset>
+    </form>
+</div>

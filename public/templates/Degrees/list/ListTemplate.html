@@ -1,0 +1,18 @@
+    <table class="list">
+        <thead>
+            <tr>
+                <th><input type="checkbox" class="checkbox" id="check_all"/></th>
+                <th>N</th>
+                <th>Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% degreesCollection.forEach(function(degree, index){ %>
+            <tr data-index="<%=index + 1%>">
+                <td><input type="checkbox" value="<%=degree._id%>" class="checkbox"/></td>
+                <td><%=index + 1%></td>
+                <td><%=degree.name%></td>
+            </tr>
+            <% }) %>
+        </tbody>
+    </table>

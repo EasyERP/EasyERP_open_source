@@ -1,0 +1,128 @@
+<div class="form-holder">
+    <form method="post" action="" class="form" id="orderForm">
+        <fieldset>
+            <div class="inner">
+                <div class="half-block left">
+                    <dl class="opp-info">
+                        <dt><label for="partner">Partner</label></dt>
+                        <dd><a id="partner" class="current-selected" href="javascript:;">Select</a></dd>
+                    </dl>
+                </div>
+                <div class="half-block left">
+                    <dl class="opp-info">
+                        <dt><label for="creationDate">Creation Date</label></dt>
+                        <dd><input id="creationDate" class="extrainfo" placeholder="" type="text" readonly /></dd>
+                        <dt><label for="scheduledDate">Scheduled Date</label></dt>
+                        <dd><input id="scheduledDate" class="" placeholder="" type="text"  readonly/></dd>
+                        <dt><label for="sourceDocument">Source Document</label></dt>
+                        <dd><input type="text" name="sourceDocument" id="sourceDocument" placeholder="e.g. PO0032" required maxlength="32"/></dd>
+                    </dl>
+                </div>
+                <div class="clearfix"></div>
+                <ul class="dialog-tabs">
+                    <li><a class="active" href="javascript:;">Products</a></li>
+                    <li><a href="javascript:;">Additional Info</a></li>
+                </ul>
+                <div class="clearfix"></div>
+                <div class="dialog-tabs-items">
+                    <div class="dialog-tabs-item active">
+                        <table class="list">
+                            <thead>
+                            <tr class="oe_list_header_columns">
+                                <th class="oe_sortable" data-sort="Product">Product<span class="arrow down">7</span><span class="arrow up">v</span></th>
+                                <th class="oe_sortable" data-sort="quantity">Quantity<span class="arrow down">7</span><span class="arrow up">v</span></th>
+                                <th class="oe_sortable" data-sort="unitPrice">Destination Location<span class="arrow down">7</span><span class="arrow up">v</span></th>
+                                <th class="oe_sortable" data-sort="taxes">Availability<span class="arrow down">7</span><span class="arrow up">v</span></th>
+                                <th class="oe_sortable" data-sort="subtotal">Status<span class="arrow down">7</span><span class="arrow up">v</span></th>
+                            </tr>
+                            </thead>
+                            <tfoot>
+                            <tr>
+                            </tr>
+                            </tfoot>
+                            <tbody>
+                                <tr>
+                                    <td colspan="5" class="oe_form_field_one2many_list_row_add">
+                                        <a id="addItem" href="javascript:;">Add an item</a>
+                                    </td>
+                                </tr>
+                                <tr class="empty-row">
+                                    <td colspan="5" class="oe_form_field_one2many_list_row_add">
+                                        &nbsp;
+                                    </td>
+                                </tr>
+                                <tr class="empty-row">
+                                    <td colspan="5" class="oe_form_field_one2many_list_row_add">
+                                        &nbsp;
+                                    </td>
+                                </tr>
+                                <tr class="empty-row">
+                                    <td colspan="5" class="oe_form_field_one2many_list_row_add">
+                                        &nbsp;
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div id="createProductItemHolder">
+
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="dialog-tabs-item">
+                        <div class="additional-container">
+                            <div>
+                                <h3>General Informations</h3>
+                                <div class="clearfix"></div>
+
+                                <div class="half-block left">
+                                    <dt><label for="deliveryMethod">Delivery Method</label></dt>
+                                    <dd><a id="deliveryMethod" class="current-selected" href="javascript:;">Select</a>
+                                    </dd>
+                                    <dt><label for="invoiceControl">Invoice Control</label></dt>
+                                    <dd><a id="invoiceControl" class="current-selected" href="javascript:;">Select</a>
+                                    </dd>
+                                    <dt><label for="pickingType">Picking Type</label></dt>
+                                    <dd><a id="pickingType" class="current-selected" href="javascript:;">Select</a></dd>
+                                    </dl>
+                                </div>
+                                <div class="half-block left">
+                                    <dt><label for="dateOfTransfer">Date of Transfer</label></dt>
+                                    <dd><input id="dateOfTransfer" class="" placeholder="" type="text"
+                                               readonly/></dd>
+                                    <dt><label for="priority">Priority</label></dt>
+                                    <dd><a id="priority" class="current-selected" href="javascript:;">Select</a></dd>
+                                    </dl>
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+                            <div>
+                                <h3>Carrier Information</h3>
+                                <div class="clearfix"></div>
+
+                                <div class="half-block left">
+                                    <dt><label for="carrier">Carrier</label></dt>
+                                    <dd><a id="carrier" class="current-selected" href="javascript:;">Select</a>
+                                    </dd>
+                                    <dt><label for="carrierTrackingRef">Carrier Tracking Ref</label></dt>
+                                    <dd><input type="text" name="carrierTrackingRef" id="carrierTrackingRef" placeholder="" required maxlength="32"/></dd>
+                                    </dd>
+                                    </dl>
+                                </div>
+                                <div class="half-block left">
+                                    <dt><label for="weight">Weight</label></dt>
+                                    <dd></dd>
+                                    <dt><label for="netWeight">Net Weight</label></dt>
+                                    <dd></dd>
+                                    <dt><label for="numberOfPackages">Number of Packages</label></dt>
+                                    <dd><input type="text" name="numberOfPackages" id="numberOfPackages" placeholder="" required maxlength="32" value="0"/></dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </fieldset>
+    </form>
+</div>

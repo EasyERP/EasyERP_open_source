@@ -1,0 +1,15 @@
+<% invoiceCollection.forEach(function(Invoice, index){ %>
+<tr data-id="<%=Invoice._id%>">
+    <td class = "notForm"><input type="checkbox" value="<%=Invoice._id%>" class="checkbox" /></td>
+    <td><%=startNumber + index + 1%></td>
+    <td><%=(Invoice.customerInvoice) ? Invoice.customerInvoice.name.first + ' ' + Invoice.customerInvoice.name.last : ''%></td>
+    <td><%=Invoice.invoiceDate%></td>
+    <td><%=Invoice.customerInvoiceNumber%></td>
+    <td><%=Invoice.fiscalPosition%></td>
+    <td><%=Invoice.dueDate%></td>
+    <!--<td><%=Invoice.sourceDocument%></td>-->
+    <!--<td><%=Invoice.paymentReference%></td>-->
+
+
+</tr>
+<% }) %>

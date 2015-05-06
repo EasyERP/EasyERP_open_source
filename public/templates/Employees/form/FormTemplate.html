@@ -1,0 +1,181 @@
+<div class="form-holder employee">
+  <form class="form employee" id="employeeForm" data-id="<%=_id%>">
+	<ul class="chart-tabs">
+	  <li><a class="active" href="javascript:;">Main</a></li>
+	  <li><a href="javascript:;" class="">Personal Information</a></li>
+	  <li class="right withEndContract">
+		<span class="arrow">7</span><span class="endContractReasonList">End Contract</span>
+		<ul class="newSelectList">
+          <li>End Contract</li>
+		  <li>Fired</li>
+		  <li>Personal Issues</li>
+		  <li>Other</li>
+		</ul>
+	  </li>
+	</ul>
+	<div class="clearfix"></div>
+	<div class="chart-tabs-items">
+	  <div class="chart-tabs-item active">
+		<div class="avatar left">
+          <img alt="" src="<%=imageSrc%>" />
+		</div>
+		<div class="avatarInfoContainer employee">
+          <div class="half-block left">
+			<dl class="person-info">
+			  <dt>First Name </dt><dd><%=name.first%></dd>
+			  <dt>Last Name </dt><dd><%=name.last%></dd>
+			  <dt>Date Of Birth </dt><dd><%=(dateBirth) ? dateBirth : "" %></dd>
+			  <dt>Personal Mobile </dt>
+			  <dd><a href="skype:<%=workPhones.mobile%>?call"><%=workPhones.mobile%></a></dd>
+			  <dt>Personal Email </dt>
+			  <dd><a href="mailto:<%=personalEmail%>" target="_blank"><%=personalEmail%></a></dd>
+
+			  <dt>Skype </dt>
+			  <dd><a href="skype:<%=skype%>?call"><%=skype%></a></dd>
+			  <dt>Related User </dt>
+              <dd><%=(relatedUser) ? relatedUser.login : ''%></dd>
+
+			  <!--			  <dt>Coach </dt><dd><%=(coach) ? coach.name.first + " " + coach.name.last : ''%></dd>-->
+			</dl>
+		  </div>
+		  <div class="half-block left withPaddingLeft">
+			<dl class="person-info">
+			  <!--			<dt>Work Address </dt>
+							<% if(workAddress.street){%>
+			  <dd><%=workAddress.street%></dd>
+			  <dt>&nbsp;</dt>
+			  <%}%>
+			  <% if(workAddress.city){%>
+			  <dd><%=workAddress.city%></dd>
+			  <dt>&nbsp;</dt>
+			  <%}%>
+			  <% if(workAddress.state){%>
+			  <dd><%=workAddress.state%></dd>
+			  <dt>&nbsp;</dt>
+			  <%}%>
+			  <% if(workAddress.zip){%>
+			  <dd><%=workAddress.zip%></dd>
+			  <dt>&nbsp;</dt>
+			  <%}%>
+			  <dd><%=workAddress.country%></dd>-->
+			  <dt>Job </dt><dd><%=(jobPosition) ? jobPosition.name : ''%></dd>
+
+			  <dt>Department </dt><dd><%=(department) ? department.departmentName : ''%></dd>
+
+			  <dt>Manager </dt><dd><%=(manager) ? manager.name.first + " " + manager.name.last : ''%></dd>
+			  <dt>Job Type</dt><dd><%=(jobType) ? jobType : ''%></dd>
+			  
+			  <dt>Work Email </dt><dd><a href="mailto:<%=workEmail%>" target="_blank"><%=workEmail%></a></dd>
+			  
+			  <dt>Work Phone </dt><dd><a href="skype:<%=workPhones.mobile%>?call"><%=workPhones.phone%></a></dd>
+
+			  <!--			<dt>Tags </dt><dd><span><%=tags%></span></dd>-->
+
+			  <!--			  <dt>Created By </dt><dd><%=createdBy.user ?  createdBy.user.login + " (" + createdBy.date +  ")" : " "%></dd>
+							  <dt>Edited By </dt><dd><%=editedBy.user ?  editedBy.user.login + " (" + editedBy.date +  ")" : " "%></dd>-->
+			  
+			  <!--			<dt>Visibility </dt><dd><%=visibility%></dd>-->
+			</dl>
+		  </div>
+
+		</div>
+        <div class="clearfix">
+        </div>
+        <div class="edited-block">
+          <p style="text-align:center;"><%if(editedBy.date){%><span style="font-style: italic;">Last Edited <%=editedBy.date%> by <%=editedBy.user ?  editedBy.user.login:""%></span>| <%}%><span style="font-style: italic;">Created On <%=createdBy.date %> by <%=createdBy.user ? createdBy.user.login:"Incognito"%></span></p>
+        </div>
+	  </div>
+	  <div class="chart-tabs-item">
+		<div class="avatar left">
+          <img alt="" src="<%=imageSrc%>" />
+		</div>
+		<div class="avatarInfoContainer employee">
+		  <div class="formTitle left">
+			<h3 class="left"><legend>Citizenship &amp; Other Info</legend></h3>
+			<div class="clearfix"></div>
+		  </div>
+		  <div class="half-block left">
+			<dl class="person-info">
+			  <dt>Natinality </dt><dd><%=nationality%></dd>
+			  <dt>Identification № </dt><dd><%=identNo%></dd>
+			  <dt>Passport № </dt><dd><%=passportNo%></dd>
+			</dl>
+		  </div>
+		  <div class="half-block left">
+
+			<dl class="person-info">
+			  <dt>Bank Account Number </dt><dd><%=bankAccountNo%></dd>
+			  <dt>Other Id </dt><dd><%=otherId%></dd>
+			</dl>
+			<div class="clearfix"></div>
+		  </div>
+		  <div class="formTitle left">
+			<h3 class="left"><legend>Contact Information</legend></h3>
+			<div class="clearfix"></div>
+		  </div>
+		  <div class="half-block left">
+			<dl class="person-info">
+			  <dt>Street </dt><dd><%=homeAddress.street%></dd>
+			  <dt>City</dt><dd><%=homeAddress.city%></dd>
+			  <dt>State</dt><dd><%=homeAddress.state%></dd>
+			</dl>
+		  </div>
+		  <div class="half-block left">
+			<dl class="person-info">
+			  <dt>Zip</dt><dd><%=homeAddress.zip%></dd>
+			  <dt>Country</dt><dd><%=homeAddress.country%></dd>
+			</dl>
+			<div class="clearfix"></div>
+		  </div>
+		  <div class="clearfix"></div>
+	      <div class="formTitle">
+			<h3 class="left"><legend>Status</legend></h3>
+			<div class="clearfix"></div>
+		  </div>
+		  <div class="half-block left withPaddingLeft">
+			<dl class="person-info">
+              <dt>Gender</dt>
+              <dd><span><%=gender%></span></dd>
+			</dl>
+		  </div>
+		  <div class="half-block left withPaddingLeft">
+			<dl class="person-info">
+              <dt>Marital Status</dt>
+              <dd><span><%=marital%></span></dd>
+			</dl>
+		  </div>
+		  <div class="half-block left withPaddingLeft">
+		  </div>
+
+		  <div class="clearfix"></div>
+	      <div class="formTitle">
+			<h3 class="left"><legend>Resume</legend></h3>
+			<div class="clearfix"></div>
+		  </div>
+          <div id="attachBody">
+            <ul class="attachContainer">
+              <% var n = attachments.length-1;
+                 attachments.reverse();
+                 _.each(attachments, function(data,key){ %>
+              <li class="attachFile_<%=data['_id'] %>"><a href="download/<%=data['shortPas']%>"><%=data['name'] %></a> (<%=data['size'] %>&nbsp;Mb) <%=data['uploaderName'] %>  <%=data['uploadDate'] %>
+                <a id="<%=data['_id'] %>" href="javascript:;" class="deleteAttach">Delete</a>
+              </li>
+              <% }); attachments.reverse(); %>
+            </ul>
+          </div>
+          <div class="clearfix"></div>
+          <div class="input-file">Attach<input type="file" value="Choose File" class="inputAttach" name="attachfile"></div>
+          <div class="progress" style="float:left;">
+            <div class="bar">
+              <span class="status"></span>
+            </div>
+          </div>
+		</div>
+	  </div>
+      <div class="clearfix">
+      </div>
+
+      <div class="clearfix"></div>
+  </form>
+  </div>
+</div>

@@ -1,0 +1,18 @@
+
+<% jobPositionsCollection.forEach(function(jobPosition, index){ %>
+<tr data-index="<%= index %>" data-id="<%=jobPosition._id%>" class="stage-<%=(jobPosition.workflow) ? jobPosition.workflow.status.toLowerCase().replace(' ','') : ''%>">
+    <td class = "notForm"><input type="checkbox" value="<%=jobPosition._id%>" class="checkbox"/></td>
+    <td><%=startNumber + index +1 %></td>
+    <td><%=jobPosition.name%></td>
+    <td><%= (jobPosition.department) ? jobPosition.department.departmentName : ''%> </td>
+    <td><%=jobPosition.totalForecastedEmployees%></td>
+    <!--<td><%=jobPosition.numberOfEmployees + jobPosition.expectedRecruitment%></td>-->
+    <td><%=jobPosition.numberOfEmployees%></td>
+    <td><%=jobPosition.expectedRecruitment%></td>
+    <td id='stages_<%=jobPosition._id%>'>
+        <a href="javascript:;" class="stageSelect"><%=(jobPosition.workflow) ? jobPosition.workflow.name : 'Undefinded'%></a>
+    </td>
+			<td><%=(jobPosition.createdBy&&jobPosition.createdBy.date)?( jobPosition.createdBy.date + ((jobPosition.createdBy.user) ?(' (' + jobPosition.createdBy.user.login + ')') : '')):''%></td>
+			<td><%=(jobPosition.editedBy&&jobPosition.editedBy.date)?( jobPosition.editedBy.date + ((jobPosition.editedBy.user) ?(' (' + jobPosition.editedBy.user.login + ')') : '')):''%></td>
+</tr>
+<% }) %>

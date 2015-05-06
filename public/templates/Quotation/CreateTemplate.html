@@ -1,0 +1,98 @@
+<div class="form-holder">
+
+    <form method="post" action="" id="createPersonsForm" class="form">
+        <fieldset>
+            <div class="inner">
+                <div class="topInputHolder">
+                    <div class="half-block left">
+                        <dl class="person-info">
+                            <dt><label for="supplierDd">Supplier</label></dt>
+                            <dd>
+                                <a id="supplierDd" class="current-selected" href="javascript:;">Select</a>
+                            </dd>
+                            <dt><label for="supplierReference">Supplier Reference</label></dt>
+                            <dd><input type="text" name="supplierReference" id="supplierReference"
+                                       maxlength="32"/></dd>
+                        </dl>
+                    </div>
+                    <div class="half-block left">
+                        <dl class="person-info">
+                            <dt><label for="orderDate">Order Date</label></dt>
+                            <dd>
+                                <input class="extrainfo" type="text" name="orderDate" id="orderDate" value=""
+                                       readonly="" placeholder="Order Date">
+                            </dd>
+                            <dt><label for="deliveryDd">Deliver To</label></dt>
+                            <dd>
+                                <a id="deliveryDd" class="current-selected" href="javascript:;">YourCompany</a>
+                            </dd>
+                        </dl>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="clearfix"></div>
+                <ul class="dialog-tabs">
+                    <li><a class="active" href="javascript:;">Products</a></li>
+                    <!--<li><a href="javascript:;">Bid</a></li>-->
+                    <li><a href="javascript:;">Deliveries & Invoices</a></li>
+                </ul>
+                <div class="clearfix"></div>
+                <div class="dialog-tabs-items">
+                    <div class="dialog-tabs-item active">
+                        <div id="productItemsHolder">
+
+                        </div>
+                    </div>
+                   <!-- <div class="dialog-tabs-item">
+                        <div class="bid-container">
+                            <div class="half-block left">
+                                <dl class="opp-info">
+                                    <dt><label for="bidReceivedOn">Bid Received On</label></dt>
+                                    <dd>
+                                        <span id="bidReceivedOn">
+
+                                        </span>
+                                    </dd>
+                                    <dt><label for="bidValidUntill">Bid Valid Until</label></dt>
+                                    <dd><input id="bidValidUntill" placeholder="" type="text"
+                                               readonly/></dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>-->
+                    <div class="dialog-tabs-item">
+                        <div class="delivery-invoices-container">
+                            <div class="half-block left">
+                                <dl class="opp-info">
+                                    <dt><label for="expectedDate">Expected Date</label></dt>
+                                    <dd><input id="expectedDate" placeholder="" type="text" readonly/>
+                                    </dd>
+                                    <dt><label for="destination">Destination</label></dt>
+                                    <dd><a id="destination" class="current-selected" href="javascript:;">Select</a></dd>
+                                    <dt><label for="incoterm">Incoterm</label></dt>
+                                    <dd><a id="incoterm" class="current-selected" href="javascript:;">Select</a></dd>
+                                </dl>
+                            </div>
+                            <div class="half-block left">
+                                <dl class="opp-info">
+                                    <dt><label for="invoicingControl">Invoicing Control</label></dt>
+                                    <dd><a id="invoicingControl" class="current-selected" href="javascript:;">Select</a>
+                                    </dd>
+                                    <dt><label for="invoiceReceived">Invoice Received</label></dt>
+                                    <dd><input id="invoiceReceived" type="checkbox" class="checkbox left"></dd>
+                                    <dt><label for="paymentTerm">Payment Term</label></dt>
+                                    <dd><a id="paymentTerm" class="current-selected" href="javascript:;">Select</a></dd>
+                                    <dt><label for="fiscalPosition">Fiscal Position</label></dt>
+                                    <dd><a id="fiscalPosition" class="current-selected" href="javascript:;">Select</a>
+                                    </dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </fieldset>
+    </form>
+    <div class="clearfix"></div>
+</div>

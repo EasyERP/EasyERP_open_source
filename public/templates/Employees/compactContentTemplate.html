@@ -1,0 +1,15 @@
+﻿<div class="formTitle">
+    <h3 class="left">Employees</h3>
+    <div class="btnHolder">
+        <button class="btn red">Create</button>
+    </div>
+    <div class="clearfix"></div>
+</div>
+<div class="inner scroll">
+    <% _.each(collection, function(model){ %>
+    <p>
+        <%=model.name.first%> <%=model.name.last%>
+    </p>
+    <% });%>
+    <div class="clearfix"></div>
+</div>

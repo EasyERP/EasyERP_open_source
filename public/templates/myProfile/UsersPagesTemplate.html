@@ -1,0 +1,94 @@
+<div class="form-holder">
+    <div class="formLeftColumn">
+        <form method="post" action="" id="createUserForm" class="form">
+            <div class="formTitle withMargin">
+                <h3 class="left">Details</h3>
+
+                <div class="clearfix"></div>
+            </div>
+            <div class="avatar right" style="margin-right:20px">
+                <div class="upload">
+                    Edit
+                    <input type="file" value="Edit" id="inputImg" accept="image/*">
+                </div>
+                <canvas id="avatar" width="140" height="140"></canvas>
+            </div>
+            <div class="half-block left">
+                <dl class="person-info">
+                    <dt><label for="login">User Name</label></dt>
+                    <dd><input type="text" name="login" id="login" value="<%=(model) ? model.login : ''%>" required
+                               maxlength="32"/></dd>
+                    <dt><label for="changePassword">Password</label></dt>
+                    <dd><input type="button" class="changePassword" value="Change Password"></dd>
+                    <dt><label for="timezone">Timezone</label></dt>
+                    <dd><%=timezone%></dd>
+                    <dt><label for="language">Language</label></dt>
+                    <dd>
+                        <a id="language" data-id="English" class="current-selected" href="javascript:;">English</a>
+                        <ul class="newSelectList hidden">
+                            <li id="English">English</li>
+                        </ul>
+                    </dd>
+                    <dt><label for="email">Email </label></dt>
+                    <dd><input type="text" name="email" id="email" value="<%=(model) ? model.email : ''%>" required
+                               maxlength="48"/></dd>
+                    <dt><label for="profilesName">Profile</label></dt>
+                    <dd><%=(model) ? model.profile.profileName : ''%></dd>
+                    <dt><label for="status">Status</label></dt>
+                    <dd><%=(model && model.profile.profileName == "baned") ? "baned" : 'active'%></dd>
+                    <dt><label for="link"> <%if (model && model.login && model.login === 'saasAdmin'){%>
+                        <a href="http://saasAdmin.live.easyerp.com/#easyErp/Clients/list">Clients List</a>
+                        <%}%></label></dt>
+                </dl>
+            </div>
+            <div class="clearfix"></div>
+            <div class="buttons" style="width: 100%;">
+                <input type="button" id="saveBtn" class="btn" value="Save"/>
+                <input type="button" id="resetBtn" class="btn" value="Reset"/>
+            </div>
+        </form>
+
+    </div>
+
+    <div class="formRightColumn">
+        <div class="form">
+            <div class="formTitle">
+                <h3 class="left">Related Employee</h3>
+
+                <div class="clearfix"></div>
+            </div>
+
+            <div id="RelatedEmployee">
+                <ul class="compactList">
+                    <% _.each(RelatedEmployee, function(reletedEmployees){ %>
+                    <li class='inner'><span title="Related Employee checked defaults"><input type="radio"
+                                                                                             class="inptReletedEmployees"
+                                                                                             name="reletedEmployees"
+                                                                                             data-id="<%=reletedEmployees._id%>"
+                                                                                             id="<%=reletedEmployees._id%>"
+                                                                                             value="<%=reletedEmployees._id%>"/></span><a
+                            class='reletedEmployees' id="<%=reletedEmployees._id %>" data-id="<%=reletedEmployees._id%>"
+                            href='javascript:;'> <%=reletedEmployees.name.first%>
+                        &nbsp;<%=reletedEmployees.name.last%></a></li>
+                    <% }); %>
+                </ul>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="cropImages form" style="display:none;">
+        <div class="formTitle">
+            <h3 class="left">Crop Images</h3>
+
+            <div class="clearfix"></div>
+        </div>
+        <br/>
+
+        <div class="image_input" style="float: left;margin-right: 20px;"></div>
+        <img class="image_output"/>
+
+        <div class="clearfix"></div>
+    </div>
+
+</div>

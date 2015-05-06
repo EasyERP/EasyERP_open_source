@@ -1,0 +1,44 @@
+﻿<ul class="compactList">
+  <% _.each(collection, function(model, index){ %>
+
+  <li class="inner">
+    <div class="half-block left">
+      <p>
+        <a id="<%=model._id%>" href="javascript:;">
+          <%=model.name%>
+        </a>
+      </p>
+      <p>
+        <%=model.expectedRevenue.currency%><%=model.expectedRevenue.value%>
+      </p>
+
+    </div>
+    <div class="half-block left">
+      <p>
+        <%=(model.nextAction)?model.nextAction.date:''%>
+      </p>
+      <p>
+        <%=model.workflow.name%>
+      </p>
+    </div>
+    <div class="clearfix"></div>
+  </li>
+  <% });%>
+</ul>
+<div class="clearfix"></div>
+<%if (options&&options.all>1){%>
+<div class="miniPagination">
+  <div class="first<%if (options&&options.first){%> not-active<%}%>">
+    &lt;&lt;
+  </div>
+  <div class="prev<%if (options&&options.first){%> not-active<%}%>">
+    &lt;
+  </div>
+  <div class="next<%if (options&&options.last){%> not-active<%}%>">
+    &gt;
+  </div>
+  <div class="last<%if (options&&options.last){%> not-active<%}%>">
+	&gt;&gt;
+  </div>
+</div>
+<%}%>

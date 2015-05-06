@@ -1,0 +1,47 @@
+<div class="form-holder">
+    <form method="post" action="" class="form" id="orderForm">
+        <fieldset>
+            <div class="inner">
+                <div>
+                    <div class="half-block left">
+                        <dl class="opp-info">
+                            <dt><label for="product">Product</label></dt>
+                            <dd><a id="product" class="current-selected" href="javascript:;">Select</a></dd>
+                            <dt><label for="quantity">Quantity</label></dt>
+                            <dd><input type="text" name="quantity" id="quantity" placeholder="0.000" required
+                                       maxlength="32"/></dd>
+                            <dt><label for="description">Description</label></dt>
+                            <dd><input type="text" name="description" id="description" placeholder="" required
+                                       maxlength="32"/></dd>
+                        </dl>
+                    </div>
+                    <div class="half-block left">
+                        <dl class="opp-info">
+                            <dt><label for="date">Date</label></dt>
+                            <dd><input id="date" class="extrainfo hasDatepicker" placeholder="" type="text" readonly/>
+                            </dd>
+                            <dt><label for="expectedDate">Expected Date</label></dt>
+                            <dd><input id="expectedDate" class="" placeholder="" type="text" readonly/></dd>
+                            <dt><label for="weight">Weight</label></dt>
+                            <dd><span>0.00</span></dd>
+                            <dt><label for="invoiceControl">Invoice Control</label></dt>
+                            <dd><a id="invoiceControl" class="current-selected" href="javascript:;">Select</a></dd>
+                        </dl>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+                <div class="half-block left">
+                    <dl class="opp-info">
+                        <h3>Locations</h3>
+                        <dt><label for="sourceLocation">Source Location</label></dt>
+                        <dd><a id="sourceLocation" class="current-selected" href="javascript:;">Select</a></dd>
+                        </dd>
+                        <dt><label for="destinationLocation">Destination Location</label></dt>
+                        <dd><a id="destinationLocation" class="current-selected" href="javascript:;">Select</a></dd>
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>

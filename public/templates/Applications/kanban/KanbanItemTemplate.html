@@ -1,0 +1,18 @@
+<div class="inner" data-id="<%=_id%>" data-sequence="<%=sequence%>">
+  <div class="application-header">
+    <p class="left width-auto bold" title="<%=name.first+' '+name.last %> "><%=name.first%><br/><%=name.last%></p>    <h3 class="right"> <%=proposedSalary?proposedSalary+"$":''%></h3>
+    <div class="clearfix">
+    </div>
+  </div>
+<br>
+  <div class="application-content">
+	  <div class="half-block left">
+		<p class="center" title="<%=jobPosition?jobPosition.name:''%>"><%=jobPosition?jobPosition.name:''%></p>
+	  </div>
+	  <div class="half-block left">
+		<p class="right text-right <%=(new Date()>new Date(nextAction))?'red':''%>"><%=nextAction%></p>
+	  </div>
+      <div class="clearfix">
+      </div>
+  </div>
+</div>

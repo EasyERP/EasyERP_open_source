@@ -1,0 +1,5 @@
+﻿<select id="workflow">
+    <% _.each(workflows, function(item){ %>
+    <option data-id="<%= item._id %>" value="<%= item.status %>"><%= item.name %></option>
+    <%}); %>
+</select>

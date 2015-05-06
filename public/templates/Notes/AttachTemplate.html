@@ -1,0 +1,30 @@
+<div class="noteWrapper attachWrapper">
+	<label>Attachments</label>
+    <form enctype="multipart/form-data" id="addAttachments" action="" method="POST">
+
+	<div id="attachBody">
+       <ul class="attachContainer">
+               <% if (attachments){ attachments.reverse();
+        		_.each(attachments, function(data,key){ %>
+       <li class="attachFile_<%=data['_id'] %>"><a href="download/<%=data['shortPas']%>"><%=data['name'] %></a> (<%=data['size'] %>) <%=data['uploaderName'] %>  <%=data['uploadDate'] %>
+              <a id="<%=data['_id'] %>" href="javascript:;" class="deleteAttach">Delete</a>
+	   </li>
+           <% }); attachments.reverse();} %>
+       </ul>
+	</div>
+
+        <div class="input-file">
+            Attach
+            <input type="file" value="Choose File" id="inputAttach" class="inputAttach" name="attachfile">
+
+        </div>
+     <div class="progress" style="float:left;">
+	   <div class="bar">
+	      <span class="status"></span>
+	   </div>
+	</div>		
+    </form>
+
+	
+</div>
+

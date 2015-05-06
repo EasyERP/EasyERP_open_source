@@ -1,0 +1,25 @@
+    <% collection.forEach(function(employee){ %>
+    <div class="thumbnailwithavatar employee" id="<%=employee._id%>">
+        <div class="inner">
+            <div class="avatar" style="line-height: 140px;">
+               <!-- <a href="#easyErp/Employees/form/<%=employee._id%>" class="title gotoForm" title="<%=employee.name.first%> <%=employee.name.last%>">-->
+                    <img src="" />
+                <!--</a>-->
+            </div>
+        </div>
+        <div class="info">
+          <div><h4>
+           <!-- <a class = "gotoForm title" href="#easyErp/Employees/form/<%=employee._id%>" title="<%=employee.name.first%> <%=employee.name.last%>">--> <%=employee.name.first%> <%=employee.name.last%> <% if(employee.relatedUser) { %>
+               <span>(<%= employee.relatedUser.login %>)</span>
+                <% } else { %>
+                <span></span></h4>
+                <% } %><!--</a>-->
+          </div>
+            <p><%=(employee.jobPosition) ? employee.jobPosition.name : ''%></p>
+            <p><label>Age: </label><%=employee.age%>
+                <span>(<%= employee.dateBirth %>)</span>
+            </p>
+            <p><label>Tel: </label><a href="skype:<%=employee.workPhones.mobile%>?call"><%=employee.workPhones.mobile%></a></p>
+        </div>
+    </div>
+    <% }) %>

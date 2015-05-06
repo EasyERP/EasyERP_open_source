@@ -1,0 +1,16 @@
+<div id="<%=id %>" class="noteContainer">
+  <div class="noteTitle"><%=title %></div>
+  <div class="noteText"><%=val %></div>
+  <div>
+	<a class="name" href="javascript:;"><%=author %></a><span class="date"><%=date %></span>
+    <div class="right">
+          <span>
+            <a href="javascript:;" id="edit_<%=id%>" data-id="<%=id%>" class="editDelNote editNote" >Edit</a>
+          </span>
+          <span  class="sep" >|</span>
+          <span>
+            <a href="javascript:;" id="del_<%=id%>" data-id="<%=id%>" class="editDelNote">Del</a>
+          </span>
+    </div>
+  </div>
+</div>

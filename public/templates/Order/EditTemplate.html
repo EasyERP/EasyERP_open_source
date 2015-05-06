@@ -1,0 +1,92 @@
+<div class="form-holder">
+    <form method="post" action="" id="editOrderForm" class="form">
+        <fieldset>
+            <div class="inner">
+                <div class="half-block left">
+                    <dl class="opp-info">
+                        <dt><label for="customerOrder">Customer</label></dt>
+                        <dd>
+                            <a id="customerOrder" data-id="<%=model.customerOrder?model.customerOrder._id:''%>" class="current-selected" href="javascript:;"><%=model.customerOrder?model.customerOrder:'Undefinded'%></a>
+                        </dd>
+                        <dt><label for="customerRef">Customer Reference</label></dt>
+                        <dd><input type="text" name="customerRef" id="customerRef" value="<%= model.customerRef %>" placeholder="Customer Reference"  required maxlength="32"/></dd>
+                    </dl>
+                </div>
+                <div class="half-block left">
+                    <dl class="opp-info">
+                        <dt><label for="orderDate">Order Date</label></dt>
+                        <dd><input id="orderDate" class="" type="text" value="<%= model.orderDate%>" placeholder="Order Date" readonly /></dd>
+                        <dt><label for="deliverTo">Deliver To</label></dt>
+                        <dd>
+                            <a id="deliverTo" data-id="<%=model.deliverTo?model.deliverTo._id:''%>" class="current-selected" href="javascript:;"><%=model.deliverTo?model.deliverTo:'Undefinded'%></a>
+                        </dd>
+                    </dl>
+                </div>
+                <div class="clearfix"></div>
+                <ul class="dialog-tabs">
+                    <li><a class="active" href="javascript:;">Products</a></li>
+                    <li><a href="javascript:;">Bid</a></li>
+                    <li><a href="javascript:;">Deliveries & Invoices</a></li>
+                </ul>
+                <div class="clearfix"></div>
+                <div class="dialog-tabs-items">
+                    <div class="dialog-tabs-item active">
+                        <table class="list">
+                            <thead>
+                            <tr class="oe_list_header_columns">
+                                <th class="oe_sortable" data-sort="Product">Product<span class="arrow down">7</span><span class="arrow up">v</span></th>
+                                <th class="oe_sortable" data-sort="description">Description<span class="arrow down">7</span><span class="arrow up">v</span></th>
+                                <th class="oe_sortable" data-sort="sheduledDate">Scheduled Date<span class="arrow down">7</span><span class="arrow up">v</span></th>
+                                <th class="oe_sortable" data-sort="quantity">Quantity<span class="arrow down">7</span><span class="arrow up">v</span></th>
+                                <th class="oe_sortable" data-sort="unitPrice">Unit Price<span class="arrow down">7</span><span class="arrow up">v</span></th>
+                                <th class="oe_sortable" data-sort="taxes">Taxes<span class="arrow down">7</span><span class="arrow up">v</span></th>
+                                <th class="oe_sortable" data-sort="subtotal">Subtotal<span class="arrow down">7</span><span class="arrow up">v</span></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="dialog-tabs-item">
+                        <div class="bid-container">
+                            <div class="half-block left">
+                                <dl class="opp-info">
+                                    <dt><label for="bidReceivedOn">Bid Received On</label></dt>
+                                    <dd></dd>
+                                    <dt><label for="bidValidUntill">Bid Valid Until</label></dt>
+                                    <dd><input type="text" name="bidValidUntill" id="bidValidUntill" value="<%= model.bidValidUntill %>" placeholder="Bid Valid Untill"  required maxlength="32"/></dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dialog-tabs-item">
+                        <div class="delivery-invoices-container">
+                            <div class="half-block left">
+                                <dl class="opp-info">
+                                    <dt><label for="expectedDate">Expected Date</label></dt>
+                                    <dd><input id="expectedDate" class="" type="text" value="<%= model.expectedDate%>" placeholder="Expected Date" readonly /></dd>
+                                    <dt><label for="destination">Destination</label></dt>
+                                    <dd></dd><a id="destination" data-id="<%=model.destination?model.destination._id:''%>" class="current-selected" href="javascript:;"><%=model.destination?model.destination:'Undefinded'%></a></dd>
+                                    <dt><label for="incoterm">Incoterm</label></dt>
+                                    <dd></dd><a id="incoterm" data-id="<%=model.incoterm?model.incoterm._id:''%>" class="current-selected" href="javascript:;"><%=model.incoterm?model.incoterm:'Undefinded'%></a></dd>
+                                </dl>
+                            </div>
+                            <div class="half-block left">
+                                <dl class="opp-info">
+                                    <dt><label for="invoicingControl">Invoicing Control</label></dt>
+                                    <dd></dd><a id="invoicingControl" data-id="<%=model.invoicingControl?model.invoicingControl._id:''%>" class="current-selected" href="javascript:;"><%=model.invoicingControl?model.invoicingControl:'Undefinded'%></a></dd>
+                                    <dt><label for="invoiceReceived">Invoice Received</label></dt>
+                                    <dd><input id="invoiceReceived" type="checkbox" class="checkbox"></dd>
+                                    <dt><label for="paymentTerm">Payment Term</label></dt>
+                                    <dd><a id="paymentTerm" class="current-selected" href="javascript:;"></a></dd>
+                                    <dt><label for="fiscalPosition">Fiscal Position</label></dt>
+                                    <dd></dd><a id="fiscalPosition" data-id="<%=model.fiscalPosition?model.fiscalPosition._id:''%>" class="current-selected" href="javascript:;"><%=model.fiscalPosition?model.fiscalPosition:'Undefinded'%></a></dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>

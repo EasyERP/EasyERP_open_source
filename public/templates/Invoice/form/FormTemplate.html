@@ -1,0 +1,142 @@
+<div class="form-holder">
+    <form method="post" action="" class="form" id="invoiceForm">
+        <fieldset>
+            <div class="inner">
+                <div class="half-block left">
+                    <dl class="opp-info">
+
+                        <dt><span>Customer </span></dt>
+                        <dd id="customerInvoice" class="editable" title="<%=(customerInvoice) ? customerInvoice.name.first + ' ' + customerInvoice.name.last : ''%>">
+                            <span class="no-long" data-maxlength="32"><%=(customerInvoice) ? customerInvoice.name.first + ' ' + customerInvoice.name.last : ''%></span>
+                        </dd>
+
+                        <dt><span>Fiscal Position </span></dt>
+                        <dd id="fiscal_pos" class="editable" title="<%=fiscalPosition%>"><span class="no-long" data-maxlength="32"><%=fiscalPosition%></span></dd>
+
+                        <dt><span>Source Document </span></dt>
+                        <dd id="source_document" class="editable" title="<%=sourceDocument%>"><span class="no-long" data-maxlength="32"><%=sourceDocument%></span></dd>
+
+                        <dt><span>Customer Invoice Number </span></dt>
+                        <dd id="customer_invoice_num" class="editable" title="<%=customerInvoiceNumber%>"><span class="no-long" data-maxlength="32"><%=customerInvoiceNumber%></span></dd>
+
+                        <dt><span>Payment Reference </span></dt>
+                        <dd id="payment_reference" class="editable" title="<%=paymentReference%>"><span class="no-long" data-maxlength="32"><%=paymentReference%></span></dd>
+
+                    </dl>
+                </div>
+                <div class="half-block left">
+                    <dl class="opp-info">
+
+                        <dt><span>Invoice Date </span></dt>
+                        <dd id="invoice_date" class="editable"><span class="no-long" data-maxlength="32"><%=invoiceDate%></span></dd>
+
+                        <dt><span>Due Date </span></dt>
+                        <dd id="due_date" class="editable"><span class="no-long" data-maxlength="32"><%=dueDate%></span></dd>
+
+                        <dt><span>Account </span></dt>
+                        <dd id="account" class="editable" title="<%=account%>"><span class="no-long" data-maxlength="32"><%=account%></span></dd>
+
+                        <dt><span>Journal </span></dt>
+                        <dd id="journal" class="editable" title="<%=journal%>"><span class="no-long" data-maxlength="32"><%=journal%></span></dd>
+
+
+                    </dl>
+                </div>
+                <div class="clearfix"></div>
+                <ul class="dialog-tabs">
+                    <li><a class="active" href="javascript:;">Invoice</a></li>
+                    <li><a href="javascript:;">Other Info</a></li>
+                    <li><a href="javascript:;">Payments</a></li>
+                </ul>
+                <div class="clearfix"></div>
+                <div class="dialog-tabs-items">
+                    <div class="dialog-tabs-item active">
+                        <div id="invoiceItemsHolder">
+
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="dialog-tabs-item">
+                        <div class="other-info-container">
+                            <div class="half-block left">
+                                <dl class="opp-info">
+                                    <dt><label for="bank_account">Bank Account</label></dt>
+                                    <dd>
+                                        <a id="bank_account" href="javascript:;">Select</a>
+                                    </dd>
+
+                                    <dt><label for="responsible">Responsible</label></dt>
+                                    <dd>
+                                        <a id="responsible" href="javascript:;">Select</a>
+                                    </dd>
+
+                                    <dt><label for="payment_terms">Payment Terms</label></dt>
+                                    <dd>
+                                        <a id="payment_terms" href="javascript:;">Select</a>
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div class="half-block left">
+                                <dl class="opp-info">
+                                    <dt><label >Journal Entry</label></dt>
+                                    <dd></dd>
+
+                                    <dt><label for="force_period">Force Period</label></dt>
+                                    <dd>
+                                        <a id="force_period" href="javascript:;">Select</a>
+                                    </dd>
+
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dialog-tabs-item">
+                        <div class="pauments-container">
+                            <table class="list">
+                                <thead>
+                                <tr class="oe_list_header_columns">
+                                    <th class="oe_sortable" data-sort="payment_date">Payment&nbsp;Date<span class="arrow down">7</span><span class="arrow up">v</span></th>
+                                    <th class="oe_sortable" data-sort="journal_entry">Journal&nbsp;Entry<span class="arrow down">7</span><span class="arrow up">v</span></th>
+                                    <th class="oe_sortable" data-sort="reference">Reference<span class="arrow down">7</span><span class="arrow up">v</span></th>
+                                    <th class="oe_sortable" data-sort="name">Name<span class="arrow down">7</span><span class="arrow up">v</span></th>
+                                    <th class="oe_sortable" data-sort="journal">Journal<span class="arrow down">7</span><span class="arrow up">v</span></th>
+                                    <th class="oe_sortable" data-sort="debit">Debit<span class="arrow down">7</span><span class="arrow up">v</span></th>
+                                    <th class="oe_sortable" data-sort="credit">Credit<span class="arrow down">7</span><span class="arrow up">v</span></th>
+                                    <th class="oe_sortable" data-sort="amount_currency">Amount&nbsp;Currency<span class="arrow down">7</span><span class="arrow up">v</span></th>
+                                </tr>
+                                </thead>
+                                <tfoot>
+                                <tr>
+                                </tr>
+                                </tfoot>
+                                <tbody>
+                                <tr>
+                                    <td colspan="9">
+                                        &nbsp;
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="9">
+                                        &nbsp;
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="9">
+                                        &nbsp;
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="9">
+                                        &nbsp;
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </fieldset>
+    </form>
+</div>

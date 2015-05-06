@@ -1,0 +1,66 @@
+<div class="form-holder">
+
+  <form method="post" action="" id="createOpportunities" class="form notDialog">
+      <fieldset>
+         <div class="inner">
+            <ul class="dialog-tabs">
+                <li><a class="active" href="javascript:;">Main</a></li>
+                  <li><a href="javascript:;">Lead</a></li>
+                <li><a href="javascript:;">Assignees</a></li>
+            </ul>
+            <div class="clearfix"></div>
+            <div class="dialog-tabs-items">
+               <div class="dialog-tabs-item active">
+                 <dl class="subject-info">
+                      <dt><label for="name">Subject</label></dt><dd><input type="text" class="title-input" placeholder="Subject" id="name" required maxlength="48"/></dd>
+				 </dl>
+
+                  <div class="half-block left">
+                    <textarea id="internalNotes" placeholder="Internal notes..." maxlength="500" class="opp-internal-create"></textarea>
+                  </div>
+                  <div class="half-block left">
+                    <dl class="opprtunitie-info">
+                      <dt><label for="expectedRevenueValue">Expected Revenue</label></dt><dd><input type="text" id="expectedRevenueValue" class="onlyNumber date-min" value="0" maxlength="12"/></dd>
+                      <!--<dt>&nbsp;</dt><dd><input type="text" id="expectedRevenueProgress" value="0" maxlength="32"/>%</dd>-->
+                      <dt><label for="customerDd">Customer</label></dt><dd><a id="customerDd" class="current-selected" href="javascript:;"></a></dd>
+                      <dt><label for="salesPersonDd">Assigned to</label></dt><dd><a id="salesPersonDd" class="current-selected" href="javascript:;"></a></dd>
+                      <dt><label for="salesTeamDd">Sales Team</label></dt><dd><a id="salesTeamDd" class="current-selected" href="javascript:;"></a></dd>
+                      <dt><label for="workflowDd">Stages</label></dt><dd id="selectWorkflow"><a id="workflowDd" class="current-selected" href="javascript:;"></a></dd>
+
+                      <dt><label for="nextActionDate">Next Action</label></dt><dd><input type="text" id="nextActionDate" maxlength="32" placeholder="Date" readonly/></dd>
+                      <dt><label for="nextActionDescription">Next Description</label></dt><dd><input type="text" id="nextActionDescription" placeholder="Description" maxlength="32"/></dd>
+                      <dt><label for="expectedClosing">Expected Closing</label></dt><dd><input type="text" id="expectedClosing" maxlength="32" placeholder="Date" readonly /></dd>
+                      <dt><label for="priorityDd">Priority</label></dt><dd>
+					  <a id="priorityDd" class="current-selected" href="javascript:;"></a></dd>
+                    </dl>
+                  </div>
+                  <div class="clearfix"></div>
+
+				  <div class="attach-container"></div>
+                  <div class="clearfix"></div>
+               </div>
+               <div class="dialog-tabs-item">
+                  <div class="half-block left withPaddingLeft">
+                    <dl class="opprtunitie-lead-info">
+                      <dt><label for="street">Street</label></dt><dd><input type="text" class="address" id="street" name="street" placeholder="Street..." maxlength="32"/></dd>
+                      <dt><label for="city">City</label></dt><dd><input type="text" class="address" id="city" name="city" placeholder="City" maxlength="32"/></dd>
+                      <dt><label for="state">State</label></dt><dd><input type="text" class="address" id="state" name="state" placeholder="State" maxlength="32"/></dd>
+                    </dl>
+                  </div>
+                  <div class="half-block left withPaddingLeft">
+                    <dl class="opprtunitie-lead-info">
+                      <dt><label for="ZIP">Zip</label></dt><dd><input type="text" class="address" id="zip" name="zip" placeholder="Zip" maxlength="32"/></dd>
+                      <dt><label for="country">Country</label></dt><dd><input type="text" class="address" id="country" name="country" placeholder="Country" maxlength="32"/></dd>
+                    </dl>
+                  </div>
+
+			   </div>
+               <div class="dialog-tabs-item">
+				 <div class="assignees-container"></div>
+               </div>
+            </div>
+           <div class="clearfix"></div>
+	     </div>
+      </fieldset>
+  </form>
+</div>

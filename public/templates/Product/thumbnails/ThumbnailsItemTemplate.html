@@ -1,0 +1,17 @@
+    <% collection.forEach(function(product){ %>
+    <div class="thumbnailwithavatar product" id="<%=product._id%>">
+        <div class="inner">
+            <div class="avatar" style="line-height: 140px;">
+                    <img src="" />
+                <!--</a>-->
+            </div>
+        </div>
+        <div class="info">
+          <div><h4>
+           <%= product.name %>
+          </h4>
+          </div>
+            <p><label>Price: </label><%=product.info.salePrice%></p>
+        </div>
+    </div>
+    <% }) %>

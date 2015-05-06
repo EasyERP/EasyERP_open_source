@@ -1,0 +1,72 @@
+﻿﻿<div class="form-holder task-create-holder">
+<form method="post" action="" id="editTaskForm" class="form" data-id="<%=model._id%>">
+    <fieldset>
+        <div class="half-block left withPaddingLeft">
+            <a id="projectTopName" href="#easyErp/Tasks/list/pId=<%=model.project._id%>"><%=model.project.projectShortDesc%></a>
+        </div>
+        <div class="half-block left">
+            <dl class="person-info-h3 right">
+                <dt><label>Assigned to :</label></dt>
+                <dd>
+                <a id="assignedToDd" data-id="<%=(model.assignedTo) ? model.assignedTo._id : ''%>" class="current-selected" href="javascript:;"><%=(model.assignedTo)?(model.assignedTo.name.first+' '+model.assignedTo.name.last):'Select'%></a>
+            </dl>
+        </div>
+        <div class="clearfix">
+        </div>
+        <input type="text" name="summary" class="input-title-long blueback projectSummary" id="summaryEdit" value="<%=model.summary%>" required maxlength="32" />
+        <div class="half-block left withPaddingLeftProject taskNote">
+            <div class="">
+                <textarea type="text" name="description" class="taskDescriptionEdit" placeholder="Add a Description" id="description" required  maxlength="500"><%=model.description%> </textarea>
+            </div>
+        </div>
+        <div class="half-block left withPaddingRightProject">
+            <div class="inner">
+                <dl class="task-info">
+                    <dt><label>Project </label></dt>
+                    <dd>
+                        <a id="projectDd" data-shortdesc="<%=model.project.projectShortDesc%>" data-id="<%=model.project._id%>" class="current-selected" href="javascript:;"><%=model.project.projectName%></a>
+                    </dd>
+                    <dt><label for="workflowsDd">Stage </label></dt>
+                    <dd>
+                        <a id="workflowsDd" data-id="<%=(model.workflow) ? model.workflow._id : ''%>" class="current-selected" href="javascript:;"><%=(model.workflow)?model.workflow.name:'Undefinded'%></a>
+                    </dd>
+
+                    <dt><label>Type </label></dt>
+                    <dd>
+                        <a id="type" data-id="<%=model.type%>" class="current-selected" href="javascript:;"><%=model.type%></a>
+                        <ul class="newSelectList hidden">
+                            <li class="Task" id="Task">Task</li>
+                            <li class="Bug" id="Bug">Bug</li>
+                            <li class="Feature" id="Feature">Feature</li>
+                        </ul>
+                    </dd>
+                    <dt><label for="priorityDd">Priority </label></dt>
+                    <dd>
+                        <a id="priorityDd" data-id="<%=model.priority%>" class="current-selected" href="javascript:;"><%=model.priority%></a>
+                    </dd>
+
+                    <dt><label for="StartDate">Start Date</label></dt>
+                    <dd><input class="extrainfo blueback" type="text" name="StartDate" id="StartDate" value="<%= model.StartDate %>" readonly /></dd>
+
+                    <dt><label for="logged">Logged </label></dt>
+                    <dd>
+                        <input class="onlyNumber" maxlength="4" type="text" name="logged" id="logged" value="<%=model.logged%>" />
+                    </dd>
+                    <dt><label for="estimated">Estimated </label></dt>
+                    <dd><input class="onlyNumber" type="text" maxlength="4" name="estimated" id="estimated" value="<%=model.estimated%>" /></dd>
+                    <div class="clearfix"></div>
+                </dl>
+
+            </div>
+
+
+            <div class="clearfix"></div>
+        </div>
+        <div class="clearfix"></div>
+        <div id="divForNote">
+                
+        </div>
+        <div class="clearfix"></div>
+    </fieldset>
+</form>
+  </div>

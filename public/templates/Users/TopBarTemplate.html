@@ -1,0 +1,13 @@
+<h3>Users</h3>
+<div id="createBtnHolder">
+    <a href="#home/action-Users/Create" class="icon add left" title="Create" id="top-bar-createBtn">5</a>
+    <a href="#home/action-Users/Edit" class="icon edit left" title="Edit" id="top-bar-editBtn">4</a>
+    <a href="#home/action-Users/Delete" class="icon remove left" title="Delete" id="top-bar-deleteBtn">x</a>
+</div>
+
+<div id="template-switcher" class="right">
+    <ul class="btn-list">
+        <li><a href="javascript;" class="changeContentView icon icon-btn dark <%= (viewType == 'list') ? 'selected' : ''%>" data-view-type="list" id="listBtn">i</a></li>
+        <li><a href="javascript;" class="changeContentView icon icon-btn dark <%= (viewType == 'form') ? 'selected' : ''%>" data-view-type="form" id="formBtn">m</a></li>
+    </ul>
+</div>

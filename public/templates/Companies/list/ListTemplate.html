@@ -1,0 +1,15 @@
+<% companiesCollection.forEach(function(company, index){ %>
+<tr data-index="<%=index + startNumber + 1%>" data-id="<%=company._id%>">
+    <td class = "notForm"><input type="checkbox" value="<%=company._id%>" class="checkbox" /></td>
+    <td><%=startNumber + index + 1%></td>
+    <td><%=company.name.first%></td>
+    <td><%=company.email%></td>
+    <td class = "notForm">
+      <span><a href="skype:<%=company.phones.phone%>?call"><%=company.phones.phone%></a></span>
+      <span><a href="skype:<%=company.phones.mobile%>?call"><%=company.phones.mobile%></a></span>
+    </td>
+    <td><%=company.address.country%></td>
+    <td><%=company.createdBy.user?(company.createdBy.date + ' (' + company.createdBy.user.login + ')'):(company.createdBy.date?company.createdBy.date:'')%></td>
+    <td><%=(company.editedBy&&company.editedBy.date)?( company.editedBy.date + ((company.editedBy.user) ?(' (' + company.editedBy.user.login + ')') : '')):''%></td>
+</tr>
+<% }) %>

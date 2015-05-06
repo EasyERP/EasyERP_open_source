@@ -1,0 +1,291 @@
+
+/* =============================================================================
+   Primary styles
+   Author: 
+   ========================================================================== */
+div{
+    border:1px solid #808080;
+}
+body {
+  background: #ebebeb;
+}
+
+#container {
+  width: 960px;
+  margin: auto;
+  min-height: 500px;
+  background: #fff;
+}
+#menu {
+  background: #444;
+  height: 30px; color: #fff; text-align: right;
+}
+#menu ul {
+  list-style: none;
+  margin: 0; padding: 0;
+}
+#menu ul li {
+  float: left;
+  margin-left: 10px;
+}
+#menu ul li a {
+  color: #fff;
+  line-height: 30px;
+  text-decoration: none;
+}
+#menu ul li a:hover {
+  color: #ccc;
+}
+#container {
+
+}
+#logo {
+   padding: 20px;
+}
+h1{
+  padding: 0;
+  margin: 0;
+}
+#page {
+  border-top: 1px solid #ebebeb;
+  border-bottom: 1px solid #ebebeb;
+  min-height: 400px;
+  padding: 20px;
+  overflow: hidden;
+}
+
+#page  {
+  width: 960px;
+}
+
+ #page .main {
+    display: block;
+    position:relative;
+    top: 0px;
+    left: 0px;
+    padding: 0px;
+    margin: 0px;
+    width: 500px;
+    float: left;
+    overflow: hidden;
+  }
+
+ #page .sidebar {
+    display: block;
+    position:relative;
+    top: 0px;
+    left: 0px;
+    padding: 10px;
+    margin: 0px;
+    width: 400px;
+    height: 300px;
+    background-color:#FFF;
+    float: left;
+  }
+
+  #page .sidebar .ad {
+    clear:both;
+  }
+
+  #page .sidebar .ad .pic {
+    display: block;
+    position: relative;
+    margin: 0px;
+    padding: 0px;
+    float: left;
+    top: 0px;
+    left: 0px;
+    width: 150px;
+  }  
+
+  #page .sidebar .ad .info {
+    display: block;
+    position: relative;
+    margin: 0px;
+    padding: 0px;
+    float: left;
+    top: 0px;
+    left: 0px;
+    width: 250px;
+  }  
+
+  #page .sidebar .ad .info h4 {
+    font-size: 16px;
+    color:#666;
+  }
+
+  #page .sidebar .ad .info p {
+    font-size: 10px;
+    color:#999;
+  }
+
+#page .contributors-stats ul {
+  list-style: none;
+}
+
+#page .contributors-stats ul li {
+  display:block;
+  position: relative;
+  height: 20px;
+}
+
+#page .contributors-stats ul li p {
+  font-size: 20px;
+  color:#999;
+  font-weight: bold; 
+  margin: 0px;
+  padding: 0px;
+}
+
+#page #contributors-list {
+
+}
+
+#page #contributors-list .podium {
+  display: block;
+  position: relative;
+  float: left;
+  height: 100%;
+  width: 320px;
+}
+
+#page #contributors-list .podium .top {
+  display: block;
+  position: relative;
+  float: left;
+}
+
+#page #contributors-list .podium .base {
+  display: block;
+  position: relative;
+  float: left;
+  background-color: rgba(214, 214, 214, 0.38);
+  width: 100%;
+}
+
+#page #contributors-list .podium .base p {
+  text-align: left;
+  color: #666;
+  font-weight: normal; 
+  font-size: 12px; 
+  margin-left: 10px;
+}
+
+#page #contributors-list ul.contributors {
+    list-style: none;
+    margin: 0px;
+    padding: 0px;
+  }
+
+  #page #contributors-list ul.contributors li {
+    display: block;
+    position: relative;
+    margin: 0px;
+    padding: 0px;
+    top: 0px;
+    left: 0px;
+    float: left;
+  }
+
+ #page #contributors-list ul.contributors li div.contributor {
+    display: block;
+    position: relative;
+    margin: 0px;
+    padding: 0px;
+    top: 0px;
+    left: 0px;
+ } 
+
+ #page #contributors-list ul.contributors li div.contributor ul {
+    list-style: none;
+    margin: 0px;
+    padding: 0px;
+
+ } 
+
+ #page #contributors-list ul.contributors li div.contributor ul li {
+    display: block;
+    position: absolute;
+    margin: 0px;
+    padding: 0px;
+    top: 0px;
+    left: 0px;
+ }
+
+ #page #contributors-list ul.contributors li div.contributor ul li.username {
+    z-index: 2;
+    height: 14px;
+    border: none;
+ }
+
+ #page #contributors-list ul.contributors li div.contributor ul li.username p {
+    display:block;
+    position: absolute;
+    margin: 0px;
+    padding: 0px;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 14px;
+    text-align: center;
+    font-size: 10px;
+    font-weight: normal;
+    color:#333;
+    line-height: 14px !important;
+ }
+
+ #page #contributors-list ul.contributors li div.contributor ul li.username p a {
+    color:#333;
+    text-decoration: none;
+ }
+
+ #page #contributors-list ul.contributors li div.contributor ul li.username p a:hover {
+    color:#334231;
+ }
+
+ #page #contributors-list ul.contributors li div.contributor ul li.pic {
+    z-index: 1;
+ }
+
+ #page #contributors-list ul.contributors li div.contributor ul li.pic a {
+    display:block;
+    position: absolute;
+    margin: 0px;
+    padding: 0px;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    border: none;
+ }
+
+ #page #contributors-list ul.contributors li div.contributor ul li.pic p {
+    display: block;
+    position: absolute;
+    margin: 0px;
+    padding: 0px;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+ }
+
+ #page #contributors-list ul.contributors li div.contributor ul li.contributions {
+    z-index: 3;
+    pointer-events:none;
+ }
+
+ #page #contributors-list ul.contributors li div.contributor ul li.contributions p {
+    display:block;
+    position: absolute;
+    left:0px;
+    width:100%;
+    height: 15%;
+    top: 85%;
+    text-align: center;
+    line-height: 14px !important;
+    font-size: 10px;
+    font-weight: normal;
+    color:#333;
+    margin:0px;
+    padding:0px;
+ }
+

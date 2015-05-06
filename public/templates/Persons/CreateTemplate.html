@@ -1,0 +1,74 @@
+<div class="form-holder">
+
+  <form method="post" action="" id="createPersonsForm" class="form">
+    <fieldset>
+      <div class="inner">
+        <ul class="dialog-tabs">
+          <li><a class="active" href="javascript:;">Main</a></li>
+          <li><a href="javascript:;">Assignees</a></li>
+        </ul>
+        <div class="clearfix"></div>
+        <div class="dialog-tabs-items">
+          <div class="dialog-tabs-item active">
+            <div class="formTitle">
+              <h3 class="left">Personal Info</h3>
+              <div class="clearfix"></div>
+            </div>
+            <div class="avatar">
+              <div class="upload">
+                Edit
+                <input type="file" value="Edit" id="inputImg" accept="image/*">
+              </div>
+              <canvas id="avatar" width="140" height="140"></canvas>
+            </div>
+            <div class="avatarInfoContainer">
+              <div class="half-block left">
+                <dl class="person-info">
+                  <dt><label for="firstName">First Name</label></dt><dd><input type="text" name="firstName" id="firstName" placeholder="Name" required maxlength="32"/></dd>
+                  <dt><label for="lastName">Last Name</label></dt><dd><input type="text" name="lastName" id="lastName" placeholder="Surname" required maxlength="32"/></dd>
+                  <dt><label for="jobPositionInput">Job Position</label></dt><dd><input type="text" id="jobPositionInput" placeholder="e.g. Sales Manager" maxlength="32"/></dd>
+                  <dt><label for="dateBirth">Date Of Birth </label></dt><dd><input id="dateBirth" class="dateBirth" placeholder="Birthday" type="text"  readonly/></dd>
+                  <dt><label for="emailInput">Email</label></dt><dd><input type="text" id="emailInput" placeholder="e.g. email@site.com" maxlength="48"/></dd>
+                  <dt><label for="skype">Skype</label></dt><dd><input type="text" id="skype" placeholder="Skype login" maxlength="32"/></dd>
+                  <dt><label for="companiesDd">Company</label></dt>
+                  <dd>
+					<a id="companiesDd" class="current-selected" href="javascript:;">Select</a>
+                  </dd>
+                </dl>
+              </div>
+              <div class="half-block left">
+                <dl class="person-info">
+                  <dt><label for="addressInput">Street</label></dt><dd><input type="text" id="addressInput" placeholder="Street..." maxlength="32"/></dd>
+                  <dt><label for="cityInput">City</label></dt><dd><input type="text" id="cityInput"  placeholder="City" maxlength="32"/></dd>
+                  <dt><label for="stateInput">Country</label></dt><dd><input type="text" id="countryInput"  placeholder="Country" maxlength="32"/></dd>
+                  <dt><label for="zipInput">State</label></dt><dd><input type="text" id="stateInput" placeholder="State" maxlength="32"/></dd>
+                  <dt><label for="countryInput">Zip</label></dt><dd><input type="text" id="zipInput"  placeholder="Zip" maxlength="32"/></dd>
+                  <dt><label for="phoneInput">Phone</label></dt><dd><input type="text" id="phoneInput" placeholder="Phone number" maxlength="20"/></dd>
+                  <dt><label for="mobileInput">Mobile</label></dt><dd><input type="text" id="mobileInput" placeholder="Mobile number" maxlength="20"/></dd>
+                </dl>
+              </div>
+            </div>
+            <div class="clearfix">
+            </div>
+            <div class="clearfix">
+              <div class="cropImages form" style="display:none;">
+                <div class="formTitle">
+                  <h3 class="left">Crop Images</h3>
+                  <div class="clearfix"></div>
+                </div><br />
+                <div class="image_input" style="float: left;margin-right: 20px;"></div>
+                <img class="image_output" />
+                <div class="clearfix"></div>
+              </div>
+            </div>
+            <div class="clearfix"></div>
+          </div>
+          <div class="dialog-tabs-item">
+            <div class="assignees-container"></div>
+          </div>
+        </div>
+        <div class="clearfix"></div>
+      </div>
+    </fieldset>
+  </form>        <div class="clearfix"></div>
+</div>
