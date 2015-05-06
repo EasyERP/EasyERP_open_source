@@ -24,7 +24,7 @@ define([
 
             events: {
                 "click .checkbox": "checked",
-                "click .person-checkbox:not(.disabled)": "personsSalesChecked",
+                //"click .person-checkbox:not(.disabled)": "personsSalesChecked",
                 "click .details": "toggle",
                 "click .company": "gotoCompanyForm",
                 "mouseenter .editable:not(.quickEdit), .editable .no-long:not(.quickEdit)": "quickEdit",
@@ -215,13 +215,13 @@ define([
                 new editView({ collection: this.collection });
             },*/
 
-            personsSalesChecked: function (e) {
+            /*personsSalesChecked: function (e) {
                 if ($(e.target).get(0).tagName.toLowerCase() == "span") {
                     $(e.target).parent().toggleClass("active");
                 } else {
                     $(e.target).toggleClass("active");
                 }
-            },
+            },*/
 
             /*gotoCompanyForm: function (e) {
                 e.preventDefault();
