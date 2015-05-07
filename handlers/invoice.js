@@ -126,6 +126,24 @@ var Invoice = function (models) {
         });
     };
 
+    this.updateInvoice = function (req,res, _id, data) {
+
+        if (data.customerInvoice && data.customerInvoice._id) {
+            data.customerInvoice = data.customerInvoice._id;
+        }
+
+        models.get(req.session.lastDb, "Invoice", InvoiceSchema).findByIdAndUpdate(_id, data.invoice, function (err, result) {
+
+            if (err) {
+                console.log(err);
+                res.send(500, {error: "Can't update Invoice"});
+            } else {
+                res.send(200, {success: 'Invoice updated success', result: result});
+            }
+        })
+
+        }
+
     this.totalCollectionLength = function (req, response, next) {
         var res = {};
         var data = {};

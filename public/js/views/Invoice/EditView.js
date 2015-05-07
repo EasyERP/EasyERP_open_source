@@ -10,14 +10,13 @@ define([
 
         var EditView = Backbone.View.extend({
             contentType: "Invoice",
-            imageSrc: '',
             template: _.template(EditTemplate),
 
             initialize: function (options) {
                 _.bindAll(this, "render", "saveItem");
                 _.bindAll(this, "render", "deleteItem");
                 this.currentModel = (options.model) ? options.model : options.collection.getElement();
-				this.currentModel.urlRoot = "/Persons";
+				this.currentModel.urlRoot = "/Invoice";
 				this.responseObj = {};
                 this.render();
             },
@@ -62,10 +61,7 @@ define([
                 $(e.target).toggleClass("choosen");
             },
             hideDialog: function () {
-                $('.edit-person-dialog').remove();
-                $(".add-group-dialog").remove();
-                $(".add-user-dialog").remove();
-                $(".crop-images-dialog").remove();
+                $('.edit-invoice-dialog').remove();
             },
 
             saveItem: function () {
@@ -75,12 +71,12 @@ define([
                 var invoiceDate = this.$el.find("#invoiceDate").val();
                 var dueDate = this.$el.find("#dueDate").val();
 
-                var customerInvoice = $('#customerInvoice').data("id");
-                customerInvoice = (customerInvoice) ? customerInvoice : null;
+                var customerInvoiceId = this.$el.find('#customerInvoice').data("id");
+                customerInvoiceId = (customerInvoiceId) ? customerInvoiceId : null;
 
                 var data = {
 
-                    customerInvoice: customerInvoice,
+                    customerInvoice: customerInvoiceId,
                     fiscalPosition: null,
                     sourceDocument: $.trim(this.$el.find('#source_document').val()),
                     customerInvoiceNumber: $.trim(this.$el.find('#customer_invoice_num').val()),
@@ -115,8 +111,32 @@ define([
                 $(".newSelectList").hide();
             },
             chooseOption: function (e) {
-                $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id",$(e.target).attr("id"));
+                var holder = $(e.target).parents("dd").find(".current-selected");
+                holder.text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
+                if (holder.attr("id") == 'customerInvoice')
+                    this.selectCustomer($(e.target).attr("id"));
             },
+
+            selectCustomer: function (id) {
+                dataService.getData('/Customer', {
+                    id: id
+                }, function (response, context) {
+                    var customer = response.data[0];
+                    if (customer.type == 'Person') {
+                        context.$el.find('#first').val(customer.name.first);
+                        context.$el.find('#last').val(customer.name.last);
+
+                        context.$el.find('#company').val('');
+                    } else {
+                        context.$el.find('#company').val(customer.name.first);
+
+                        context.$el.find('#first').val('');
+                        context.$el.find('#last').val('');
+                    }
+                }, this);
+
+            },
+
             deleteItem: function(event) {
 
                 event.preventDefault();
@@ -147,13 +167,13 @@ define([
 					closeOnEscape: false,
                     autoOpen: true,
                     resizable: true,
-                    dialogClass: "edit-person-dialog",
+                    dialogClass: "edit-invoice-dialog",
                     title: "Edit Invoice",
                     width: "900",
                     buttons: [
                         {
                             text: "Save",
-                            click: function () { self.saveItem(); }
+                            click: self.saveItem
                         },
 
 						{
@@ -167,14 +187,14 @@ define([
 
                 });
 
- 				var notDiv = this.$el.find('.assignees-container');
+ 				/*var notDiv = this.$el.find('.assignees-container');
                 notDiv.append(
                     new AssigneesView({
-                        model: this.currentModel,
+                        model: this.currentModel
                     }).render().el
-                );
+                );*/
 
-                populate.get2name("#customerInvoice", "/Customer", {}, this, true, true);
+                populate.get2name("#customerInvoice", "/Customer",{},this,true,true, (this.model)?this.model._id:null);
 
                 this.$el.find('#invoice_date').datepicker({
                     dateFormat: "d M, yy",

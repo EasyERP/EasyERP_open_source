@@ -24,6 +24,14 @@ module.exports = function (models) {
         }
     });
 
+    router.put('/:_id', function (req, res) {
+        var data = {};
+        var id = req.param('_id');
+        data.invoice = req.body;
+
+        handler.updateInvoice(req, res, id, data);
+    });
+
     router.delete('/:_id', function (req, res) {
         var id = req.param('_id');
         handler.removeInvoice(req, res, id);
