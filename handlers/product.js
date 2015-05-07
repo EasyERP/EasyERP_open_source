@@ -7,15 +7,91 @@ var Products = function (models) {
     var access = require("../Modules/additions/access.js")(models);
     var ProductSchema = mongoose.Schemas['Products'];
 
+    var fs = require("fs");
+
+    this.getProductsImages = function (req, res, next) {
+        var data = {};
+        data.ids = req.param('ids') || [];
+
+        if (req.session && req.session.loggedIn && req.session.lastDb) {
+            access.getReadAccess(req, req.session.uId, 58, function (access) {
+                if (access) {
+                    getProductsImages(req, data, res);
+                } else {
+                    res.send(403);
+                }
+            });
+
+        } else {
+            res.send(401);
+        }
+    };
+
+    function getProductsImages(req, data, res) {
+        var query = models.get(req.session.lastDb, "Products", ProductSchema).find({});
+        query.where('_id').in(data.ids).
+            select('_id imageSrc').
+            exec(function (error, response) {
+                if (error) {
+                    res.send(500, { error: "Can't find Products Imgs" });
+                } else res.send(200, { data: response });
+            });
+
+    };
+
+    this.uploadProductFiles = function (req, res, next) {
+        var os = require("os");
+        var osType = (os.type().split('_')[0]);
+        var dir;
+        switch (osType) {
+            case "Windows":
+            {
+                dir = __dirname + "\\uploads\\";
+            }
+                break;
+            case "Linux":
+            {
+                dir = __dirname + "\/uploads\/";
+            }
+        }
+        fs.readdir(dir, function (err, files) {
+            if (err) {
+                fs.mkdir(dir, function (errr) {
+                    if (!errr)
+                        dir += req.headers.id;
+                    fs.mkdir(dir, function (errr) {
+                        if (!errr)
+                            uploadFileArray(req, res, function (files) {
+                                uploadProductFile(req, res, req.headers.id, files);
+                            });
+                    });
+                });
+            } else {
+                dir += req.headers.id;
+                fs.readdir(dir, function (err, files) {
+                    if (err) {
+                        fs.mkdir(dir, function (errr) {
+                            if (!errr)
+                                uploadFileArray(req, res, function (files) {
+                                    uploadProductFile(req, res, req.headers.id, files);
+                                });
+                        });
+                    } else {
+                        uploadFileArray(req, res, function (files) {
+                            uploadProductFile(req, res, req.headers.id, files);
+                        });
+                    }
+                });
+            }
+        });
+    };
+
     function addAtach(req, _id, files, res, next) {//to be deleted
-        models.get(req.session.lastDb, "Employees", ProductSchema).findByIdAndUpdate(_id, { $push: { attachments: { $each: files } } }, { upsert: true }, function (err, result) {
+        models.get(req.session.lastDb, "Product", ProductSchema).findByIdAndUpdate(_id, { $push: { attachments: { $each: files } } }, { upsert: true }, function (err, result) {
             if (err) {
                 next(err);
             } else {
                 res.send(200, {success: 'Products updated success', data: result});
-                if (data.recalculate) {
-                    event.emit('recalculate', req);
-                }
             }
         });
     }// end update
@@ -24,7 +100,7 @@ var Products = function (models) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getEditWritAccess(req, req.session.uId, 58, function (access) {
                 if (access) {
-                    this.addAtach(req, id, files, res);
+                    addAtach(req, id, files, res);
                 } else {
                     res.send(403);
                 }
@@ -122,8 +198,8 @@ var Products = function (models) {
         }
     };
 
-    function getProductsAlphabet(req, response, next) {
-        var query = models.get(req.session.lastDb, "Products", ProductSchema).aggregate([{$match: {}}, {$project: {later: {$substr: ["$name", 0, 1]}}}, {$group: {_id: "$later"}}]);
+    function getProductAlphabet(req, response, next) {
+        var query = models.get(req.session.lastDb, "Products", ProductSchema).aggregate([{$match: {}}, {$project: {later: {$substr: ["$name", 0, 1]}}}]);
         query.exec(function (err, result) {
             if (err) {
                 next(err)
@@ -137,7 +213,7 @@ var Products = function (models) {
 
     this.getProductsAlphabet = function (req, res, next) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
-            getProductsAlphabet(req, res, next);
+            getProductAlphabet(req, res, next);
         } else {
             res.send(401);
         }
@@ -153,6 +229,7 @@ var Products = function (models) {
         res['showMore'] = false;
 
         var optionsObject = {};
+
         if (data.filter.letter) {
             optionsObject['name'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
         }

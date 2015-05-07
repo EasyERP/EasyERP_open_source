@@ -64,7 +64,7 @@
                 var ids = _.map(collection.toJSON(), function (item) {
                     return item._id;
                 });
-                common.getImages(ids, "/getEmployeesImages");
+                //common.getImages(ids, "/product/getProductsImages");
             },
 
             //modified for filter Vasya
