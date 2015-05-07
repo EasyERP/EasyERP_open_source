@@ -19,6 +19,8 @@ define([
             "click .current-selected": "showProductsSelect",
             "mouseenter .editable:not(.quickEdit), .editable .no-long:not(.quickEdit)": "quickEdit",
             "mouseleave .editable": "removeEdit",
+            "click #cancelSpan": "cancelClick",
+            "click #saveSpan": "saveClick",
             "click #editSpan": "editClick"
         },
 
@@ -27,6 +29,8 @@ define([
 
             this.responseObj = {};
             this.render();
+
+            this.taxesRate = 0.15;
 
             products = new productCollection();
             products.bind('reset', function () {
@@ -86,7 +90,7 @@ define([
 
         editClick: function (e) {
             var parent = $(e.target).closest('td');
-            var maxlength = parent.find(".no-long").attr("data-maxlength") || 32;
+            var maxlength = parent.find(".no-long").attr("data-maxlength") || 20;
 
             e.preventDefault();
 
@@ -95,7 +99,7 @@ define([
             $('.quickEdit #saveSpan').remove();
 
             if (this.prevQuickEdit) {
-                if ($('#' + this.prevQuickEdit.id).hasClass('quickEdit')) {
+                if ($(this.prevQuickEdit).hasClass('quickEdit')) {
                     $('.quickEdit').text(this.text ? this.text : "").removeClass('quickEdit');
                 }
             }
@@ -104,19 +108,41 @@ define([
             parent.addClass('quickEdit');
 
             $('#editSpan').remove();
-            var objIndex = parent[0].id.split('_');
 
-            this.text = parent.text();
+            this.text = $.trim(parent.text());
 
             parent.text('');
-            parent.append('<input id="editInput" maxlength="' + maxlength + '" type="text" class="left"/>');
+            parent.append('<input id="editInput" maxlength="' + maxlength + '" type="text" />');
             $('#editInput').val(this.text);
 
             this.prevQuickEdit = parent;
 
-            parent.append('<span id="saveSpan"><a href="#">c</a></span>');
-            parent.append('<span id="cancelSpan"><a href="#">x</a></span>');
+            parent.append('<span id="saveSpan" class="productEdit"><a href="javascript:;">c</a></span>');
+            parent.append('<span id="cancelSpan" class="productEdit"><a href="javascript:;">x</a></span>');
             parent.find("#editInput").width(parent.find("#editInput").width() - 50);
+        },
+
+        saveClick: function (e) {
+            e.preventDefault();
+
+            var parent = $(e.target).closest('td');
+            var inputEl = parent.find('input');
+            var val = inputEl.val();
+
+            parent.removeClass('quickEdit').html('<span>' + val + '</span>');
+
+            this.recalculateTaxes(parent);
+        },
+
+        cancelClick: function (e) {
+            e.preventDefault();
+            var text = this.text ? this.text : '';
+
+            if (this.prevQuickEdit) {
+                if ($(this.prevQuickEdit).hasClass('quickEdit')) {
+                    $('.quickEdit').removeClass('quickEdit').html('<span>' + text + '</span>');
+                }
+            }
         },
 
         showProductsSelect: function (e, prev, next) {
@@ -133,24 +159,51 @@ define([
             var _id = target.attr("id");
             var model = this.products.get(_id);
             var selectedProduct = model.toJSON();
+            var taxes;
 
             trEl.attr('data-id', model.id);
 
             parrent.find(".current-selected").text(target.text()).attr("data-id", _id);
-            $(parrents[1]).text(selectedProduct.info.description || '').attr('class', 'editable');
-            $(parrents[2]).find("span[data-name='" + "quantity" + "']").text(1).attr('class', 'editable');
-            $(parrents[3]).text(selectedProduct.info.salePrice).attr('class', 'editable');
+
+            $(parrents[1]).attr('class', 'editable').find('span').text(selectedProduct.info.description || 'qwerty');
+            $(parrents[2]).attr('class', 'editable').find("span").text(1);
+            $(parrents[3]).attr('class', 'editable').find('span').text(selectedProduct.info.salePrice);
+
+            taxes = parseFloat(selectedProduct.info.salePrice) * this.taxesRate;
+            taxes = taxes.toFixed(2);
+
+            $(parrents[4]).text(taxes);
 
             $(".newSelectList").hide();
 
             this.calculateTotal(selectedProduct.info.salePrice);
         },
 
+        recalculateTaxes: function (parent) {
+            parent = parent.closest('tr');
+
+            var quantity = parent.find('[data-name="quantity"] span').text();
+            quantity = parseFloat(quantity);
+            var cost = parent.find('[data-name="price"] span').text();
+            cost = parseFloat(cost);
+
+            var taxes = quantity * cost * this.taxesRate;
+
+            taxes = taxes.toFixed(2);
+            parent.find('.taxes').text(taxes);
+
+            this.calculateTotal();
+        },
+
         calculateTotal: function () {
             var thisEl = this.$el;
+
+            var totalUntaxContainer = thisEl.find('#totalUntaxes');
+            var taxesContainer = thisEl.find('#taxes');
             var totalContainer = thisEl.find('#totalAmount');
             var resultForCalculate = thisEl.find('tr.productItem');
-            var total = 0;
+
+            var totalUntax = 0;
             var totalEls = resultForCalculate.length;
             var currentEl;
             var quantity;
@@ -161,11 +214,24 @@ define([
                     currentEl = $(resultForCalculate[i]);
                     quantity = currentEl.find('[data-name="quantity"]').text();
                     cost = currentEl.find('[data-name="price"]').text();
-                    total += (quantity * cost);
+                    totalUntax += (quantity * cost);
                 }
             }
 
+            totalUntax = totalUntax.toFixed(2);
+            totalUntaxContainer.text(totalUntax);
+            totalUntax = parseFloat(totalUntax);
+
+            taxes = totalUntax * this.taxesRate;
+            taxes = taxes.toFixed(2);
+            taxesContainer.text(taxes);
+            taxes = parseFloat(taxes);
+
+            total = totalUntax + taxes;
+            total = total.toFixed(2);
             totalContainer.text(total);
+
+
         },
 
         nextSelect: function (e) {
