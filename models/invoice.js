@@ -16,7 +16,7 @@ module.exports = (function () {
 
     var invoiceSchema = new mongoose.Schema({
 
-        supplier: { type: ObjectId, ref: 'Customers', default: null },
+        supplierId: { type: ObjectId, ref: 'Customers', default: null },
         fiscalPosition: { type: String, default: null },
         sourceDocument: { type: String, default: null },
         supplierInvoiceNumber: { type: String, default: null },

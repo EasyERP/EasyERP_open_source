@@ -90,7 +90,7 @@ define([
                 //var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
                 var data = {
 
-                    supplier: supplierId,
+                    supplierId: supplierId,
                     fiscalPosition: null,
                     sourceDocument: $.trim($('#source_document').val()),
                     supplierInvoiceNumber: $.trim($('#supplier_invoice_num').val()),

@@ -2,7 +2,7 @@
 <tr data-id="<%=Invoice._id%>">
     <td class = "notForm"><input type="checkbox" value="<%=Invoice._id%>" class="checkbox" /></td>
     <td><%=startNumber + index + 1%></td>
-    <td><%=Invoice.supplier%></td>
+    <td><%=(Invoice.supplierId.name)? Invoice.supplierId.name.first+' '+Invoice.supplierId.name.last:' - - - '%></td>
     <td><%=Invoice.invoiceDate%></td>
     <td><%=Invoice.supplierInvoiceNumber%></td>
     <td><%=Invoice.fiscalPosition%></td>

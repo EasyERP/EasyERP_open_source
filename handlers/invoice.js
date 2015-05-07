@@ -33,82 +33,89 @@ var Invoice = function (models) {
     };
 
     this.getForView = function (req, response) {
-
-        var res = {};
-        var data = {};
-        for (var i in req.query) {
-            data[i] = req.query[i];
-        };
-
-        var count = req.query.count ? req.query.count : 50;
-        var page = req.query.page;
-        var skip = (page-1)>0 ? (page-1)*count : 0;
-
-        var query = models.get(req.session.lastDb, "Invoice", InvoiceSchema).find();
-
-        if (data.sort) {
-            query.sort(data.sort)
-        };
-
-        if (data && data.filter && data.filter.workflow) {
-            data.filter.workflow = data.filter.workflow.map(function (item) {
-                return item === "null" ? null : item;
-            });
-
-            if (data && data.filter && data.filter.workflow) {
-                query.where('workflow').in(data.filter.workflow);
-            } else if (data && (!data.newCollection || data.newCollection === 'false')) {
-                query.where('workflow').in([]);
-            }
-        }
-
-        if (data && data.filter && data.filter.workflow) {
-            query.where('workflow').in(data.filter.workflow);
-        } else if (data && (!data.newCollection || data.newCollection === 'false')) {
-            query.where('workflow').in([]);
-        }
-        query.populate('customerInvoice', 'name');
-
-        query.skip(skip).limit(count).exec(function (error, _res) {
-                if (error) {
-                    response.send(500, {error: "Can't find Invoice"});
-                }
-            response.status(200).send({success: _res});
-        });
-            }
-
-    this.getInvoiceById = function (req, res/*, data*/) {
-        var data = {};
-        for (var i in req.query) {
-            data[i] = req.query[i];
-         }
-
-        /*if (req.session && req.session.loggedIn && req.session.lastDb) {
+        if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getReadAccess(req, req.session.uId, 56, function (access) {
                 if (access) {
-                    getById(req, data.id, res);
+                    var data = {};
+                    for (var i in req.query) {
+                        data[i] = req.query[i];
+                    }
+
+                    var count = req.query.count ? req.query.count : 50;
+                    var page = req.query.page;
+                    var skip = (page - 1) > 0 ? (page - 1) * count : 0;
+
+                    var query = models.get(req.session.lastDb, "Invoice", InvoiceSchema).find();
+
+                    if (data.sort) {
+                        query.sort(data.sort)
+                    }
+
+                    if (data && data.filter && data.filter.workflow) {
+                        data.filter.workflow = data.filter.workflow.map(function (item) {
+                            return item === "null" ? null : item;
+                        });
+
+                        if (data && data.filter && data.filter.workflow) {
+                            query.where('workflow').in(data.filter.workflow);
+                        } else if (data && (!data.newCollection || data.newCollection === 'false')) {
+                            query.where('workflow').in([]);
+                        }
+                    }
+
+                    if (data && data.filter && data.filter.workflow) {
+                        query.where('workflow').in(data.filter.workflow);
+                    } else if (data && (!data.newCollection || data.newCollection === 'false')) {
+                        query.where('workflow').in([]);
+                    }
+                    query.populate('supplierId', 'name');
+
+                    query.skip(skip).limit(count).exec(function (error, _res) {
+                        if (error) {
+                            response.send(500, {error: "Can't find Invoice"});
+                        }
+                        response.status(200).send({success: _res});
+                    });
+
                 } else {
-                    res.send(403);
+                    response.send(403);
                 }
             });
 
         } else {
-            res.send(401);
-        }*/
-        getById(req, data.id, res);
-    };
+            response.send(401);
+        }
+    }
 
-    function getById (req, id, response) {
-        var query = models.get(req.session.lastDb, "Invoice", InvoiceSchema).findById(id);
-        query.populate('customerInvoice','name');
+    this.getInvoiceById = function (req, response) {
+        if (req.session && req.session.loggedIn && req.session.lastDb) {
+            access.getReadAccess(req, req.session.uId, 56, function (access) {
+                if (access) {
 
-        query.exec(function (err, result) {
-            if (err) {
-                console.log(err)
-            } else {
-                response.send(result);
-            }
-        });
+                    var data = {};
+                    for (var i in req.query) {
+                        data[i] = req.query[i];
+                    }
+                    var id = data.id;
+
+                    var query = models.get(req.session.lastDb, "Invoice", InvoiceSchema).findById(id);
+                    query.populate('supplierId','name');
+
+                    query.exec(function (err, result) {
+                        if (err) {
+                            console.log(err)
+                        } else {
+                            response.send(result);
+                        }
+                    });
+                } else {
+                    response.send(403);
+                }
+            });
+
+        } else {
+            response.send(401);
+        }
     };
 
     this.removeInvoice = function(req, res, id) {
@@ -128,8 +135,8 @@ var Invoice = function (models) {
 
     this.updateInvoice = function (req,res, _id, data) {
 
-        if (data.customerInvoice && data.customerInvoice._id) {
-            data.customerInvoice = data.customerInvoice._id;
+        if (data.supplierId && data.supplierId._id) {
+            data.supplierId = data.supplierId._id;
         }
 
         models.get(req.session.lastDb, "Invoice", InvoiceSchema).findByIdAndUpdate(_id, data.invoice, function (err, result) {
