@@ -70,7 +70,8 @@ define(['Validation','common'],function (Validation,common) {
             invoiceDate: '',
             dueDate: '',
             account: '',
-            journal: ''
+            journal: '',
+            products: []
 
         },
         urlRoot: function () {

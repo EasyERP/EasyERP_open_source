@@ -133,8 +133,8 @@ define([
                         }
                     });
 
-                }  else {
-                    alert(RESPONESE.);
+                }  else {134
+                    alert(CONSTANTS.RESPONSES.CREATE_QUOTATION);
                 }
             },
 
