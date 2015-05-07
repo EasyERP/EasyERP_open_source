@@ -113,8 +113,9 @@ define([
             chooseOption: function (e) {
                 var holder = $(e.target).parents("dd").find(".current-selected");
                 holder.text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
-                if (holder.attr("id") == 'customerInvoice')
-                    this.selectCustomer($(e.target).attr("id"));
+                if (holder.attr("id") == 'customerInvoice'){
+                    this.selectCustomer($(e.target).attr("id"))
+                }
             },
 
             selectCustomer: function (id) {
@@ -194,7 +195,7 @@ define([
                     }).render().el
                 );*/
 
-                populate.get2name("#customerInvoice", "/Customer",{},this,true,true, (this.model)?this.model._id:null);
+                populate.get2name("#customerInvoice", "/Customer", {}, this, false, true);
 
                 this.$el.find('#invoice_date').datepicker({
                     dateFormat: "d M, yy",

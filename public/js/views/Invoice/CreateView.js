@@ -17,7 +17,6 @@ define([
             initialize: function (options) {
                 _.bindAll(this, "saveItem", "render");
                 this.model = new InvoiceModel();
-                this.models = (options && options.model) ? options.model : null;
 				this.responseObj = {};
                 this.render();
             },
@@ -47,30 +46,6 @@ define([
             chooseOption: function (e) {
                 var holder = $(e.target).parents("dd").find(".current-selected");
                 holder.text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
-                if (holder.attr("id") == 'customerInvoice')
-                    this.selectCustomer($(e.target).attr("id"));
-            },
-
-            selectCustomer: function (id) {
-                dataService.getData('/Customer', {
-                    id: id
-                }, function (response, context) {
-                    var customer = response.data[0];
-                    if (customer.type == 'Person') {
-                        context.$el.find('#first').val(customer.name.first);
-                        context.$el.find('#last').val(customer.name.last);
-
-                        context.$el.find('#company').val('');
-                    } else {
-                        context.$el.find('#company').val(customer.name.first);
-
-                        context.$el.find('#first').val('');
-                        context.$el.find('#last').val('');
-
-                    }
-
-                }, this);
-
             },
 
 			nextSelect:function(e){
@@ -107,19 +82,18 @@ define([
                 var self = this;
                 //var mid = 39;
 
-                var customerId = this.$("#customerInvoice").data("id");
-                var invoiceDate = $("#invoice_date").val();
-                var dueDate = $("#due_date").val();
-                //var department = $("#departmentDd option:selected").val();
+                var supplierId = this.$("#supplierId").data("id");
+                var invoiceDate = this.$("#invoice_date").val();
+                var dueDate = this.$("#due_date").val();
 
 
                 //var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
                 var data = {
 
-                    customerInvoice: customerId,
+                    supplier: supplierId,
                     fiscalPosition: null,
                     sourceDocument: $.trim($('#source_document').val()),
-                    customerInvoiceNumber: $.trim($('#customer_invoice_num').val()),
+                    supplierInvoiceNumber: $.trim($('#supplier_invoice_num').val()),
                     paymentReference: $.trim($('#payment_reference').val()),
                     invoiceDate: invoiceDate,
                     dueDate: dueDate,
@@ -191,9 +165,7 @@ define([
                     new InvoiceItemView().render().el
                 );
 
-				//populate.getCompanies("#companiesDd", "/CompaniesForDd",{},this,false,true, (this.models)?this.models._id:null);
-
-                populate.get2name("#customerInvoice", "/Customer",{},this,true,true, (this.model)?this.model._id:null);
+                populate.getCompanies("#supplierId", "/supplier", {}, this, false, true);
 
                 this.$el.find('#invoice_date').datepicker({
                     dateFormat: "d M, yy",
