@@ -4,6 +4,7 @@
     var objectId = mongoose.Types.ObjectId;
     var customerSchema = mongoose.Schemas['Customer'];
     var department = mongoose.Schemas['Department'];
+    var fs = require('fs');
 
     return {
 
@@ -911,10 +912,10 @@
                             }
                         }
 
-                        logWriter.fs.unlink(path, function (err) {
-                            logWriter.fs.readdir(dir, function (err, files) {
+                        fs.unlink(path, function (err) {
+                            fs.readdir(dir, function (err, files) {
                                 if (files.length === 0) {
-                                    logWriter.fs.rmdir(dir, function () {
+                                    fs.rmdir(dir, function () {
                                     });
                                 }
                             });

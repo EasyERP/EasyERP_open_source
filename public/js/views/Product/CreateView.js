@@ -113,13 +113,13 @@ define([
                 var name =  $.trim(this.$el.find("#product").val());
 				$("#createBtnDialog").attr("disabled","disabled");
 
-                var canBeSold = $('#solid').prop('checked') ? true : false;
-                var canBeExpensed = $('#expensed').prop('checked') ? true : false;
-                var eventSubscription = $('#subscription').prop('checked') ? true : false;
-                var canBePurchased = $('#purchased').prop('checked') ? true : false;
+                var canBeSold = $('#solid').prop('checked');
+                var canBeExpensed = $('#expensed').prop('checked');
+                var eventSubscription = $('#subscription').prop('checked');
+                var canBePurchased = $('#purchased').prop('checked');
                 var salePrice = $.trim(this.$el.find("#salePrice").val());
                 var barcode = $.trim(this.$el.find("#barcode").val());
-                var isActive = $('#active').prop('checked') ? true : false;
+                var isActive = $('#active').prop('checked');
                 var productType = this.$("#productType").data("id");
                 var valid = productModel.save({
                         canBeSold: canBeSold,
@@ -187,7 +187,7 @@ define([
                 var notDiv = this.$el.find('.attach-container');
                 this.attachView = new attachView({
                     model: new ProductModel,
-                    url:"/uploadEmployeesFiles",
+                    url:"/product/uploadProductFiles",
                     isCreate:true
                 });
                 notDiv.append(this.attachView.render().el);

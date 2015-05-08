@@ -6,6 +6,7 @@ var Opportunities = function (models, event) {
     var departmentSchema = mongoose.Schemas['Department'];
     var customerSchema = mongoose.Schemas['Customer'];
     var workflowSchema = mongoose.Schemas['workflow'];
+    var fs = require('fs');
 
     function getTotalCount (req, response) {
         var res = {};
@@ -908,11 +909,11 @@ var Opportunities = function (models, event) {
                                 }
                             }
 
-                            logWriter.fs.unlink(path, function (err) {
+                            fs.unlink(path, function (err) {
                                 console.log(err);
-                                logWriter.fs.readdir(dir, function (err, files) {
+                                fs.readdir(dir, function (err, files) {
                                     if (files.length === 0) {
-                                        logWriter.fs.rmdir(dir, function () {
+                                        fs.rmdir(dir, function () {
                                         });
                                     }
                                 });

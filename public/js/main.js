@@ -24,7 +24,8 @@ require.config({
         common: 'common',
         constants: 'constants',
         dateFormat: './libs/date.format',
-        d3: './libs/d3.v3.min'
+        d3: './libs/d3.v3.min',
+        jqueryBarcode: './libs/jquery-barcode.min'
     },
     shim: {
         'jqueryui': ['jQuery'],
