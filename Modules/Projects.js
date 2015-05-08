@@ -8,6 +8,7 @@ var Project = function (models, event) {
     var projectSchema = mongoose.Schemas['Project'];
     var projectTypeSchema = mongoose.Schemas['projectType'];
     var prioritySchema = mongoose.Schemas['Priority'];
+    var fs = require('fs');
 
     event.on('updateContent', updateContent);//binding for Event
 
@@ -1227,11 +1228,11 @@ var Project = function (models, event) {
                             }
                     }
 
-                    logWriter.fs.unlink(path, function (err) {
+                    fs.unlink(path, function (err) {
                         console.log(err);
-                        logWriter.fs.readdir(dir, function (err, files) {
+                        fs.readdir(dir, function (err, files) {
                             if (files.length === 0) {
-                                logWriter.fs.rmdir(dir, function () { });
+                                fs.rmdir(dir, function () { });
                             }
                         });
                     });
@@ -1332,11 +1333,11 @@ var Project = function (models, event) {
                                 }
                         }
 
-                        logWriter.fs.unlink(path, function (err) {
+                        fs.unlink(path, function (err) {
                             console.log(err);
-                            logWriter.fs.readdir(dir, function (err, files) {
+                            fs.readdir(dir, function (err, files) {
                                 if (files.length === 0) {
-                                    logWriter.fs.rmdir(dir, function () { });
+                                    fs.rmdir(dir, function () { });
                                 }
                             });
                         });
