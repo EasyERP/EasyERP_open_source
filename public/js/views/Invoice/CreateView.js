@@ -80,11 +80,35 @@ define([
             saveItem: function () {
                 var self = this;
                 var mid = 56;
+                var selectedProducts = this.$el.find('.productItem');
                 var products = [];
+                var selectedLength = selectedProducts.length;
+                var targetEl;
+                var productId;
+                var quantity;
+                var price;
+                var amount;
 
                 var supplierId = this.$("#supplierId").data("id");
                 var invoiceDate = this.$("#invoice_date").val();
                 var dueDate = this.$("#due_date").val();
+
+                if (selectedLength) {
+                    for (var i = selectedLength - 1; i >= 0; i--) {
+                        targetEl = $(selectedProducts[i]);
+                        productId = targetEl.data('id');
+                        quantity = targetEl.find('[data-name="quantity"]').text();
+                        price = targetEl.find('[data-name="price"]').text();
+                        amount = targetEl.find('.amount').text();
+
+                        products.push({
+                            product: productId,
+                            unitPrice: price,
+                            quantity: quantity,
+                            amount: amount
+                        });
+                    }
+                }
 
 
                 //var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
@@ -98,7 +122,8 @@ define([
                     invoiceDate: invoiceDate,
                     dueDate: dueDate,
                     account: null,
-                    journal: null
+                    journal: null,
+                    products: products
 
                     //whoCanRW: whoCanRW
 
@@ -106,9 +131,9 @@ define([
 
                 var model = new InvoiceModel();
                 model.save(data, {
-                    //headers: {
-                    //    mid: mid
-                    //},
+                    headers: {
+                        mid: mid
+                    },
                     wait: true,
                     success: function () {
                         self.hideDialog();

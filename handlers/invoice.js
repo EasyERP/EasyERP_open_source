@@ -44,11 +44,14 @@ var Invoice = function (models) {
                     var count = req.query.count ? req.query.count : 50;
                     var page = req.query.page;
                     var skip = (page - 1) > 0 ? (page - 1) * count : 0;
+                    var sort = {};
 
                     var query = models.get(req.session.lastDb, "Invoice", InvoiceSchema).find();
 
-                    if (data.sort) {
-                        query.sort(data.sort)
+                    if (req.query.sort) {
+                        sort = req.query.sort;
+                    } else {
+                        sort = { "supplier": -1 };
                     }
 
                     if (data && data.filter && data.filter.workflow) {
@@ -70,7 +73,7 @@ var Invoice = function (models) {
                     }
                     query.populate('supplierId', 'name');
 
-                    query.skip(skip).limit(count).exec(function (error, _res) {
+                    query.skip(skip).limit(count).sort(sort).exec(function (error, _res) {
                         if (error) {
                             response.send(500, {error: "Can't find Invoice"});
                         }

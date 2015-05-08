@@ -37,7 +37,8 @@ define([
                 "click .miniPagination .next:not(.not-active)": "nextMiniPage",
                 "click .miniPagination .prev:not(.not-active)": "prevMiniPage",
                 "click .miniPagination .first:not(.not-active)": "firstMiniPage",
-                "click .miniPagination .last:not(.not-active)": "lastMiniPage"
+                "click .miniPagination .last:not(.not-active)": "lastMiniPage",
+                'click .dialog-tabs a': 'changeTab'
             },
             nextMiniPage: function () {
                 this.pageMini += 1;
@@ -56,6 +57,16 @@ define([
             lastMiniPage: function () {
                 this.pageMini = this.allPages;
                 this.renderMiniOpp();
+            },
+
+            changeTab: function (e) {
+                var holder = $(e.target);
+                holder.closest(".dialog-tabs").find("a.active").removeClass("active");
+                holder.addClass("active");
+                var n = holder.parents(".dialog-tabs").find("li").index(holder.parent());
+                var dialog_holder = $(".dialog-tabs-items");
+                dialog_holder.find(".dialog-tabs-item.active").removeClass("active");
+                dialog_holder.find(".dialog-tabs-item").eq(n).addClass("active");
             },
 
             /*renderMiniOpp: function () {
