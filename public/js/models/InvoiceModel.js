@@ -58,19 +58,20 @@ define(['Validation','common'],function (Validation,common) {
                 return errors;
         },
         defaults: {
-            customerInvoice: {
+            supplierId: {
                 id: '',
                 name: ''
             },
             fiscalPosition: '',
             sourceDocument: '',
-            customerInvoiceNumber: '',
+            supplierInvoiceNumber: '',
             paymentReference: '',
 
             invoiceDate: '',
             dueDate: '',
             account: '',
-            journal: ''
+            journal: '',
+            products: []
 
         },
         urlRoot: function () {

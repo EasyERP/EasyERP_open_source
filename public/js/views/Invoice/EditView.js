@@ -71,15 +71,15 @@ define([
                 var invoiceDate = this.$el.find("#invoiceDate").val();
                 var dueDate = this.$el.find("#dueDate").val();
 
-                var customerInvoiceId = this.$el.find('#customerInvoice').data("id");
-                customerInvoiceId = (customerInvoiceId) ? customerInvoiceId : null;
+                var supplierId = this.$el.find('#supplierId').data("id");
+                supplierId = (supplierId) ? supplierId : null;
 
                 var data = {
 
-                    customerInvoice: customerInvoiceId,
+                    supplierId: supplierId,
                     fiscalPosition: null,
                     sourceDocument: $.trim(this.$el.find('#source_document').val()),
-                    customerInvoiceNumber: $.trim(this.$el.find('#customer_invoice_num').val()),
+                    supplierInvoiceNumber: $.trim(this.$el.find('#supplier_invoice_num').val()),
                     paymentReference: $.trim(this.$el.find('#payment_reference').val()),
                     invoiceDate: invoiceDate,
                     dueDate: dueDate,
@@ -113,11 +113,9 @@ define([
             chooseOption: function (e) {
                 var holder = $(e.target).parents("dd").find(".current-selected");
                 holder.text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
-                if (holder.attr("id") == 'customerInvoice')
-                    this.selectCustomer($(e.target).attr("id"));
             },
 
-            selectCustomer: function (id) {
+            /*selectCustomer: function (id) {
                 dataService.getData('/Customer', {
                     id: id
                 }, function (response, context) {
@@ -135,7 +133,7 @@ define([
                     }
                 }, this);
 
-            },
+            },*/
 
             deleteItem: function(event) {
 
@@ -194,7 +192,7 @@ define([
                     }).render().el
                 );*/
 
-                populate.get2name("#customerInvoice", "/Customer",{},this,true,true, (this.model)?this.model._id:null);
+                populate.getCompanies("#supplierId", "/supplier", {}, this, false, true);
 
                 this.$el.find('#invoice_date').datepicker({
                     dateFormat: "d M, yy",

@@ -5,9 +5,9 @@
                 <div class="half-block left">
                     <dl class="opp-info">
 
-                        <dt><span>Customer </span></dt>
-                        <dd id="customerInvoice" class="editable" title="<%=(customerInvoice) ? customerInvoice.name.first + ' ' + customerInvoice.name.last : ''%>">
-                            <span class="no-long" data-maxlength="32"><%=(customerInvoice) ? customerInvoice.name.first + ' ' + customerInvoice.name.last : ''%></span>
+                        <dt><span>Supplier </span></dt>
+                        <dd id="supplierId" class="editable" title="<%=(supplierId.name) ? supplierId.name.first+ ' '+supplierId.name.last  : ''%>">
+                            <span class="no-long" data-maxlength="32"><%=(supplierId.name) ? supplierId.name.first+ ' '+supplierId.name.last  : ' - - - '%></span>
                         </dd>
 
                         <dt><span>Fiscal Position </span></dt>
@@ -16,8 +16,8 @@
                         <dt><span>Source Document </span></dt>
                         <dd id="source_document" class="editable" title="<%=sourceDocument%>"><span class="no-long" data-maxlength="32"><%=sourceDocument%></span></dd>
 
-                        <dt><span>Customer Invoice Number </span></dt>
-                        <dd id="customer_invoice_num" class="editable" title="<%=customerInvoiceNumber%>"><span class="no-long" data-maxlength="32"><%=customerInvoiceNumber%></span></dd>
+                        <dt><span>Supplier Invoice Number </span></dt>
+                        <dd id="supplier_invoice_num" class="editable" title="<%=supplierInvoiceNumber%>"><span class="no-long" data-maxlength="32"><%=supplierInvoiceNumber%></span></dd>
 
                         <dt><span>Payment Reference </span></dt>
                         <dd id="payment_reference" class="editable" title="<%=paymentReference%>"><span class="no-long" data-maxlength="32"><%=paymentReference%></span></dd>

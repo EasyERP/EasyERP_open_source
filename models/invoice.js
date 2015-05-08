@@ -6,18 +6,44 @@ module.exports = (function () {
     var mongoose = require('mongoose');
     var ObjectId = mongoose.Schema.Types.ObjectId;
 
+    var products = {
+        _id: false,
+        id: false,
+        quantity: {type: Number, default: 1},
+        unitPrice: Number,
+        product: {type: ObjectId, ref: 'Product', default: null}
+    };
+
     var invoiceSchema = new mongoose.Schema({
 
-        customerInvoice: { type: ObjectId, ref: 'Customers', default: null },
+        supplierId: { type: ObjectId, ref: 'Customers', default: null },
         fiscalPosition: { type: String, default: null },
         sourceDocument: { type: String, default: null },
-        customerInvoiceNumber: { type: String, default: null },
+        supplierInvoiceNumber: { type: String, default: null },
         paymentReference: { type: String, default: null },
 
         invoiceDate: { type: Date, default: Date.now },
         dueDate: { type: Date, default: Date.now },
         account: { type: String, default: null },
-        journal: { type: String, default: null }
+        journal: { type: String, default: null },
+
+        products: [ products],
+        workflow: {type: ObjectId, ref: 'workflows', default: null},
+        whoCanRW: {type: String, enum: ['owner', 'group', 'everyOne'], default: 'everyOne'},
+        groups: {
+            owner: {type: ObjectId, ref: 'Users', default: null},
+            users: [{type: ObjectId, ref: 'Users', default: null}],
+            group: [{type: ObjectId, ref: 'Department', default: null}]
+        },
+        creationDate: {type: Date, default: Date.now},
+        createdBy: {
+            user: {type: ObjectId, ref: 'Users', default: null},
+            date: {type: Date, default: Date.now}
+        },
+        editedBy: {
+            user: {type: ObjectId, ref: 'Users', default: null},
+            date: {type: Date, default: Date.now}
+        }
 
     }, { collection: 'Invoice' });
 

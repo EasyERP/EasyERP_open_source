@@ -5,9 +5,9 @@
                 <div class="half-block left">
                     <dl class="opp-info">
 
-                        <dt><label for="customerInvoice">Customer</label></dt>
+                        <dt><label for="supplierId">Supplier</label></dt>
                         <dd>
-                            <a id="customerInvoice" data-id="<%=(model.customerInvoice)?model.customerInvoice._id:''%>" class="current-selected" href="javascript:;"><%=(model.customerInvoice)?(model.customerInvoice.name.first+" "+model.customerInvoice.name.last):"Select"%></a>
+                            <a id="supplierId" data-id="<%=(model.supplierId)?model.supplierId._id:''%>" class="current-selected" href="javascript:;"><%=(model.supplierId)?(model.supplierId.name.first+" "+model.supplierId.name.last):"Select"%></a>
                         </dd>
 
                         <dt><label for="fiscal_pos">Fiscal Position</label></dt>
@@ -20,9 +20,9 @@
                             <input type="text" id="source_document" value="<%=(model.sourceDocument) ? model.sourceDocument : ''%>" placeholder="Source Document"  maxlength="32"/>
                         </dd>
 
-                        <dt><label for="customer_invoice_num">Customer Invoice Number</label></dt>
+                        <dt><label for="supplier_invoice_num">Supplier Invoice Number</label></dt>
                         <dd>
-                            <input type="text" id="customer_invoice_num" value="<%=(model.customerInvoiceNumber) ? model.customerInvoiceNumber : ''%>" placeholder="Customer Invoice Number"  maxlength="32"/>
+                            <input type="text" id="supplier_invoice_num" value="<%=(model.supplierInvoiceNumber) ? model.supplierInvoiceNumber : ''%>" placeholder="Supplier Invoice Number"  maxlength="32"/>
                         </dd>
 
                         <dt><label for="payment_reference">Payment Reference</label></dt>
