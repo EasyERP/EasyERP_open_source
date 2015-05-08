@@ -3,7 +3,7 @@ define([
     "models/InvoiceModel",
     "common",
 	"populate",
-    "views/Invoice/InvoiceItems",
+    "views/Invoice/InvoiceProductItems",
     "dataService"
     ],
     function (CreateTemplate, InvoiceModel, common, populate, InvoiceItemView, dataService ) {
@@ -12,7 +12,6 @@ define([
             el: "#content-holder",
             contentType: "Invoice",
             template: _.template(CreateTemplate),
-            //imageSrc: '',
 
             initialize: function (options) {
                 _.bindAll(this, "saveItem", "render");

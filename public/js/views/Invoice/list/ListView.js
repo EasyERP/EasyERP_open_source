@@ -362,7 +362,7 @@ define([
             deleteItems: function () {
                 var currentEl = this.$el;
                 var that = this,
-                    //mid = 56,
+                    mid = 56,
                     model;
                 var localCounter = 0;
                 var count = $("#listTable input:checked").length;
@@ -370,9 +370,9 @@ define([
                 $.each($("#listTable input:checked"), function (index, checkbox) {
                     model = that.collection.get(checkbox.value);
                     model.destroy({
-                        //headers: {
-                        //    mid: mid
-                        //},
+                        headers: {
+                            mid: mid
+                        },
                         wait:true,
                         success:function(){
                             that.listLength--;

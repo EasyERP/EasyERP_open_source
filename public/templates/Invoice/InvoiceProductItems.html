@@ -1,21 +1,32 @@
-
 <table class="list2">
     <thead>
     <tr class="productListItemsColumns">
-        <th class="oe_sortable" data-sort="Product">
-            Product<span class="arrow down">7</span><span class="arrow up">v</span>
+        <th class="width20" data-sort="Product">
+            Product
         </th>
-        <th class="oe_sortable" data-sort="description">
-            Description<span class="arrow down">7</span><span class="arrow up">v</span>
+        <th class="width20" data-sort="description">
+            Description
         </th>
-        <th class="oe_sortable" data-sort="quantity">
-            Quantity<span class="arrow down">7</span><span class="arrow up">v</span>
+        <th class="width20" data-sort="account">
+            Account
         </th>
-        <th class="oe_sortable" data-sort="unitPrice">
-            Unit Price<span class="arrow down">7</span><span class="arrow up">v</span>
+        <th class="width20" data-sort="analyticAccount">
+            Analytic&nbsp;Account
         </th>
-        <th class="oe_sortable" data-sort="taxes">
-            Taxes<span class="arrow down">7</span><span class="arrow up">v</span>
+        <th class="width20" data-sort="assetCategory">
+            Asset&nbsp;Category
+        </th>
+        <th class="width20" data-sort="quantity">
+            Quantity
+        </th>
+        <th class="width20" data-sort="unitPrice">
+            Unit&nbsp;Price
+        </th>
+        <th class="width20" data-sort="taxes">
+            Taxes
+        </th>
+        <th class="width20" data-sort="amount">
+            Amount
         </th>
     </tr>
     </thead>
@@ -24,15 +35,15 @@
     </tfoot>
     <tbody>
     <tr>
-        <td colspan="6" class="addProductItem">
+        <td colspan="9" class="addProductItem">
             <a href="javascript:;">Add an item</a>
         </td>
     </tr>
     <tr>
-        <td colspan="6">&nbsp;</td>
+        <td colspan="9">&nbsp;</td>
     </tr>
     <tr>
-        <td colspan="6">&nbsp;</td>
+        <td colspan="9">&nbsp;</td>
     </tr>
     </tbody>
 </table>
@@ -42,21 +53,21 @@
         <tbody>
         <tr>
             <td>
-                <label class="" data-original-title="" title="">
+                <label>
                     Untaxed Amount
                 </label>
             </td>
-            <td class="" colspan="1" width="99%">
-                <span class=""><span class="">0.00</span>€</span>
+            <td colspan="1" width="99%">
+                <span><span id="totalUntaxes">0.00</span>€</span>
             </td>
         </tr>
-        <tr class="">
-            <td class="" colspan="1" width="1%">
-                <label class="" data-original-title="" title="">Taxes</label>
+        <tr class="taxes">
+            <td colspan="1" width="1%">
+                <label>Taxes</label>
             </td>
-            <td class="" colspan="1" width="99%">
-                    <span class="oe_form_field oe_form_field_float oe_form_field_monetary">
-                        <span class="oe_form_char_content">0.00</span>€
+            <td colspan="1" width="99%">
+                    <span>
+                        <span id="taxes">0.00</span>€
                     </span>
             </td>
         </tr>
@@ -66,6 +77,14 @@
             </td>
             <td colspan="1" width="50%">
                 <span class=""><span id="totalAmount">0.00</span>€</span>
+            </td>
+        </tr>
+        <tr class="balance">
+            <td colspan="1" width="50%">
+                <label class="" data-original-title="" title="">Balance</label>
+            </td>
+            <td colspan="1" width="50%">
+                <span class=""><span id="balance">0.00</span>€</span>
             </td>
         </tr>
         </tbody>
