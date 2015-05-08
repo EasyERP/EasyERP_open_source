@@ -163,7 +163,7 @@ define([
                 currentModel[objIndex] = ($("#" + parent[0].id + " input").prop("checked"));
                 this.formModel.save(currentModel, {
                     headers: {
-                        mid: 39
+                        mid: 56
                     },
                     patch: true
                 });

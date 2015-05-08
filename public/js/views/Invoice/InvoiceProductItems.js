@@ -2,13 +2,13 @@
  * Created by Roman on 27.04.2015.
  */
 define([
-    'text!templates/Product/ProductItems.html',
-    'text!templates/Product/ProductInputContent.html',
+    'text!templates/Invoice/InvoiceProductItems.html',
+    'text!templates/Invoice/InvoiceProductInputContent.html',
     'collections/Product/products',
     'populate'
 ], function (productItemTemplate, ProductInputContent, productCollection, populate) {
     var ProductItemTemplate = Backbone.View.extend({
-        el: '#productItemsHolder',
+        el: '#invoiceItemsHolder',
 
         events: {
             'click .addProductItem': 'getProducts',
@@ -165,14 +165,15 @@ define([
 
             parrent.find(".current-selected").text(target.text()).attr("data-id", _id);
 
-            $(parrents[1]).attr('class', 'editable').find('span').text(selectedProduct.info.description || 'qwerty');
-            $(parrents[2]).attr('class', 'editable').find("span").text(1);
-            $(parrents[3]).attr('class', 'editable').find('span').text(selectedProduct.info.salePrice);
+            $(parrents[1]).attr('class', 'editable').find('span').text(selectedProduct.info.description || '...');
+            $(parrents[5]).attr('class', 'editable').find("span").text(1);
+            $(parrents[6]).attr('class', 'editable').find('span').text(selectedProduct.info.salePrice);
 
             taxes = parseFloat(selectedProduct.info.salePrice) * this.taxesRate;
             taxes = taxes.toFixed(2);
 
-            $(parrents[4]).text(taxes);
+            $(parrents[7]).text(taxes);
+            $(parrents[8]).text(selectedProduct.info.salePrice);
 
             $(".newSelectList").hide();
 
@@ -188,9 +189,13 @@ define([
             cost = parseFloat(cost);
 
             var taxes = quantity * cost * this.taxesRate;
+            var amount = quantity * cost;
 
             taxes = taxes.toFixed(2);
+            amount = amount.toFixed(2);
+
             parent.find('.taxes').text(taxes);
+            parent.find('.amount').text(amount);
 
             this.calculateTotal();
         },
