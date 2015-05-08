@@ -3,6 +3,7 @@ define(
         //Removed cyrillic chars
         var phoneRegExp = /^[0-9\+]?([0-9-\s()])+[0-9()]$/,
             intNumberRegExp = /[0-9]+/,
+            floatNumberRegExp = /(^[0-9]+(\.[0-9]{1,2})?)$/,
             nameRegExp = /^[a-zA-Z]+[a-zA-Z-_\s]+$/,
             groupsNameRegExp = /[a-zA-Z0-9]+[a-zA-Z0-9-,#@&*-_\s()\.\/\s]+$/,
             loginRegExp = /[\w\.@]{6,100}$/,
@@ -71,6 +72,10 @@ define(
             return loggedRegExp.test(validatedString);
         }
 
+        var validateFloat = function(validatedString){
+            return floatNumberRegExp.test(validatedString);
+        }
+
         var validateNumber = function(validatedString){
             return intNumberRegExp.test(validatedString);
         }
@@ -91,6 +96,7 @@ define(
             invalidNameMsg: "field value is incorrect. It should start with letter or number",
             invalidLoginMsg: "field value is incorrect. It should contain only the following symbols: A-Z, a-z, 0-9, _ @",
             notNumberMsg: "field should contain a valid integer value",
+            notPriceMsg: "field should contain a valid price value with only two digest after dot and contain only the following symbols: 0-9, .",
             invalidCountryMsg: "field should contain only letters, whitespaces and '-' sign",
             loggedNotValid: "field should contain a valid decimal value with max 1 digit after dot",
             minLengthMsg: function(minLength){ return "field should be at least " + minLength + " characters long"},
@@ -153,6 +159,24 @@ define(
                         return;
                     }
                     if(!validateLoggedValue(fieldValue)) errorArray.push([fieldName, errorMessages.invalidNameMsg].join(' '));
+                }
+            }
+        }
+
+        var checkPriceField = function(errorArray, required, fieldValue, fieldName){
+            if(required){
+                if(hasInvalidChars(fieldValue)) {
+                    errorArray.push([fieldName, errorMessages.notPriceMsg].join(' '));
+                    return;
+                }
+                if(!validateFloat(fieldValue)) errorArray.push([fieldName, errorMessages.notPriceMsg].join(' '));
+            } else{
+                if(fieldValue){
+                    if(hasInvalidChars(fieldValue)) {
+                        errorArray.push([fieldName, errorMessages.notPriceMsg].join(' '));
+                        return;
+                    }
+                    if(!validateFloat(fieldValue)) errorArray.push([fieldName, errorMessages.notPriceMsg].join(' '));
                 }
             }
         }
@@ -526,6 +550,7 @@ define(
             validMoneyAmount: validateMoneyAmount,
             checkLogedField:checkLogedField,
 			checkWorkflowNameField:checkWorkflowNameField,
-			checkSkypeField:checkSkypeField
+			checkSkypeField:checkSkypeField,
+            checkPriceField:checkPriceField
         }
     });

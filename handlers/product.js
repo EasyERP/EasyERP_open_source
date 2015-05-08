@@ -9,6 +9,39 @@ var Products = function (models) {
 
     var fs = require("fs");
 
+    function updateOnlySelectedFields(req, id, data, res, next) {
+        var Product = models.get(req.session.lastDb, 'Product', ProductSchema);
+
+        Product.findByIdAndUpdate(id, { $set: data}, function (err, product) {
+            if (err) {
+                next(err);
+            }
+            res.send(200, { success: 'Product updated', result: product });
+        });
+
+    };
+
+    this.productsUpdateOnlySelectedFields = function (req, res, next) {
+        var id = req.param('_id');
+        var data = req.body;
+
+        if (req.session && req.session.loggedIn && req.session.lastDb) {
+            access.getEditWritAccess(req, req.session.uId, 58, function (access) {
+                if (access) {
+                    data.editedBy = {
+                        user: req.session.uId,
+                        date: new Date().toISOString()
+                    };
+                    updateOnlySelectedFields(req, id, data, res, next);
+                } else {
+                    res.send(403);
+                }
+            });
+        } else {
+            res.send(401);
+        }
+    }
+
     this.getProductsImages = function (req, res, next) {
         var data = {};
         data.ids = req.param('ids') || [];
@@ -16,7 +49,7 @@ var Products = function (models) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getReadAccess(req, req.session.uId, 58, function (access) {
                 if (access) {
-                    getProductsImages(req, data, res);
+                    getProductImages(req, data, res);
                 } else {
                     res.send(403);
                 }
@@ -27,7 +60,7 @@ var Products = function (models) {
         }
     };
 
-    function getProductsImages(req, data, res) {
+    function getProductImages(req, data, res) {
         var query = models.get(req.session.lastDb, "Products", ProductSchema).find({});
         query.where('_id').in(data.ids).
             select('_id imageSrc').
@@ -115,12 +148,39 @@ var Products = function (models) {
         var body = req.body;
         var product = new Product(body);
 
+        product.info.salePrice = parseFloat(product.info.salePrice).toFixed(2);
+
         product.save(function (err, product) {
             if (err) {
                 return next(err);
             }
             res.status(200).send({success: product});
         });
+    };
+
+    function remove(req, _id, res, next) {
+        models.get(req.session.lastDb, "Products", ProductSchema).remove({_id: _id}, function (err, customer) {
+            if (err) {
+                res.send(500, {error: "Can't remove product"});
+            } else {
+                res.send(200, {success: 'Product removed'});
+            }
+        });
+    }// end remove
+
+    this.removeProduct = function (req, res, next) {
+        var id = req.param('_id');
+        if (req.session && req.session.loggedIn && req.session.lastDb) {
+            access.getDeleteAccess(req, req.session.uId, 58, function (access) {
+                if (access) {
+                    remove(req, id, res, next);
+                } else {
+                    res.send(403);
+                }
+            });
+        } else {
+            res.send(401);
+        }
     };
 
     this.getAll = function (req, res, next) {
@@ -135,7 +195,7 @@ var Products = function (models) {
         });
     };
 
-    this.getForView = function (req, res, next) {
+    function getProductsFilter(req, res, next) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getReadAccess(req, req.session.uId, 58, function (access) {
                 if (access) {
@@ -173,6 +233,51 @@ var Products = function (models) {
         }
     };
 
+    function getProductsById(req, res, next) {
+        if (req.session && req.session.loggedIn && req.session.lastDb) {
+            access.getReadAccess(req, req.session.uId, 58, function (access) {
+                if (access) {
+                    var data = {};
+                    for (var i in req.query) {
+                        data[i] = req.query[i];
+                    }
+                    var query = models.get(req.session.lastDb, "Products", ProductSchema).findById(data.id);
+                    query.populate('info.productType', 'name _id');
+
+                    query.exec(function (err, findedProduct) {
+                        if (err) {
+                            res.send(500, { error: "Can't find Product" });
+                        } else {
+                            res.send(findedProduct);
+                        }
+                    });
+                } else {
+                    res.send(403);
+                }
+            });
+
+        } else {
+            res.send(401);
+        }
+
+    };
+
+    this.getForView = function (req, res, next) {
+        var viewType = req.params.viewType;
+
+        switch (viewType) {
+            case "list":
+                getProductsFilter(req, res, next);
+                break;
+            case "thumbnails":
+                getProductsFilter(req, res, next);
+                break;
+            case "form":
+                getProductsById(req, res, next);
+                break;
+        }
+    };
+
     function getForDd(req, response, next) {
         var ProductTypesSchema = mongoose.Schemas['productTypes'];
         var res = {};
@@ -198,8 +303,8 @@ var Products = function (models) {
         }
     };
 
-    function getProductAlphabet(req, response, next) {
-        var query = models.get(req.session.lastDb, "Products", ProductSchema).aggregate([{$match: {}}, {$project: {later: {$substr: ["$name", 0, 1]}}}]);
+    function getProductsAlphabet(req, response, next) {
+        var query = models.get(req.session.lastDb, "Products", ProductSchema).aggregate([{$match: {}}, {$project: {later: {$substr: ["$name", 0, 1]}}}, {$group: {_id: "$later"}}]);
         query.exec(function (err, result) {
             if (err) {
                 next(err)
@@ -213,7 +318,7 @@ var Products = function (models) {
 
     this.getProductsAlphabet = function (req, res, next) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
-            getProductAlphabet(req, res, next);
+            getProductsAlphabet(req, res, next);
         } else {
             res.send(401);
         }

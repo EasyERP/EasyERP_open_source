@@ -14,10 +14,12 @@ module.exports = function (models) {
     router.get('/getProductsAlphabet', handler.getProductsAlphabet);
     router.get('/getProductsTypeForDd', handler.getProductsTypeForDd);
     router.get('/totalCollectionLength', handler.totalCollectionLength);
+    router.get('/getProductsImages', handler.getProductsImages);
     router.get('/:viewType', handler.getForView);
     router.post('/', handler.create);
-    //router.post('/uploadProductFiles', multipartMiddleware, handler.uploadProductFiles);
-    //router.post('/getProductsImages', handler.getProductsImages);
+    router.post('/uploadProductFiles', multipartMiddleware, handler.uploadProductFiles);
+    router.patch('/:_id', handler.productsUpdateOnlySelectedFields);
+    router.delete('/:_id', handler.removeProduct);
 
     return router;
 };
