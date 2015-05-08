@@ -80,7 +80,8 @@ define([
 
             saveItem: function () {
                 var self = this;
-                //var mid = 39;
+                var mid = 56;
+                var products = [];
 
                 var supplierId = this.$("#supplierId").data("id");
                 var invoiceDate = this.$("#invoice_date").val();

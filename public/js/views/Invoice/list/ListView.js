@@ -2,13 +2,12 @@ define([
         'text!templates/Invoice/list/ListHeader.html',
         'views/Invoice/CreateView',
         'views/Invoice/list/ListItemView',
-        //'text!templates/Alpabet/AphabeticTemplate.html',
         'collections/Invoice/filterCollection',
         'common',
         'dataService'
     ],
 
-    function (listTemplate, createView, listItemView/*, aphabeticTemplate*/,contentCollection, common, dataService) {
+    function (listTemplate, createView, listItemView, contentCollection, common, dataService) {
         var InvoiceListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -24,8 +23,6 @@ define([
                 this.startTime = options.startTime;
                 this.collection = options.collection;
                 _.bind(this.collection.showMore, this.collection);
-                //_.bind(this.collection.showMoreAlphabet, this.collection);
-                //this.allAlphabeticArray = common.buildAllAphabeticArray();
                 this.parrentContentId = options.collection.parrentContentId;
                 this.filter = options.filter;
                 this.sort = options.sort;
@@ -49,7 +46,6 @@ define([
                 "click #itemsButton": "itemsNumber",
                 "click .currentPageList": "itemsNumber",
                 "click": "hideItemsNumber",
-                //"click .letter:not(.empty)": "alpabeticalRender",
                 "click #firstShowPage": "firstPage",
                 "click #lastShowPage": "lastPage",
                 "click .oe_sortable": "goSort"
@@ -106,25 +102,6 @@ define([
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
             },
 
-            //alpabeticalRender: function (e) {
-            //    this.startTime = new Date();
-            //    $(e.target).parent().find(".current").removeClass("current");
-            //    $(e.target).addClass("current");
-            //
-            //    var selectedLetter = $(e.target).text();
-            //    if ($(e.target).text() == "All") {
-            //        selectedLetter = "";
-            //    }
-            //    this.filter = (this.filter && this.filter !== 'empty') ? this.filter : {};
-            //    this.filter['letter'] = selectedLetter;
-            //    var itemsNumber = $("#itemsNumber").text();
-            //    $("#top-bar-deleteBtn").hide();
-            //    $('#check_all').prop('checked', false);
-            //    this.changeLocationHash(1, itemsNumber, this.filter);
-            //    this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter});
-            //    this.getTotalLength(null, itemsNumber, this.filter);
-            //},
-
             hideItemsNumber: function (e) {
                 $(".allNumberPerPage").hide();
             },
@@ -172,20 +149,6 @@ define([
                     self.hideItemsNumber(e);
                 });
 
-                //common.buildAphabeticArray(this.collection, function (arr) {
-                //    $("#startLetter").remove();
-                //    self.alphabeticArray = arr;
-                //    currentEl.prepend(_.template(aphabeticTemplate, { alphabeticArray: self.alphabeticArray, selectedLetter: (self.selectedLetter == "" ? "All" : self.selectedLetter), allAlphabeticArray: self.allAlphabeticArray }));
-                //    var currentLetter = (self.filter) ? self.filter.letter : null;
-                //    if (currentLetter) {
-                //        $('#startLetter a').each(function() {
-                //            var target = $(this);
-                //            if (target.text() == currentLetter) {
-                //                target.addClass("current");
-                //            }
-                //        });
-                //    }
-                //});
                 var pagenation = this.$el.find('.pagination');
                 if (this.collection.length === 0) {
                     pagenation.hide();
@@ -323,7 +286,7 @@ define([
 
             showPage: function (event) {
                 event.preventDefault();
-                this.showP(event,{filter: this.filter, newCollection: this.newCollection,sort: this.sort});
+                this.showP(event,{filter: this.filter, newCollection: this.newCollection, sort: this.sort});
             },
 
             showMoreContent: function (newModels) {
@@ -343,22 +306,6 @@ define([
                 holder.find('#timeRecivingDataFromServer').remove();
                 holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             },
-
-            //showMoreAlphabet: function (newModels) {
-            //    var holder = this.$el;
-            //    var alphaBet = holder.find('#startLetter');
-            //    var created = holder.find('#timeRecivingDataFromServer');
-            //    var countPerPage = this.countPerPage = newModels.length;
-            //
-            //    content.remove();
-            //
-            //    holder.append(this.template({ collection: newModels.toJSON(),page: holder.find("#currentShowPage").val(), itemsNumber: holder.find("span#itemsNumber").text() }));
-            //
-            //    this.getTotalLength(null, itemsNumber, this.filter);
-            //    created.text("Created in " + (new Date() - this.startTime) + " ms");
-            //    holder.prepend(alphaBet);
-            //    holder.append(created);
-            //},
 
             gotoForm: function (e) {
                 App.ownContentType = true;
@@ -415,7 +362,7 @@ define([
             deleteItems: function () {
                 var currentEl = this.$el;
                 var that = this,
-                    //mid = 39,
+                    //mid = 56,
                     model;
                 var localCounter = 0;
                 var count = $("#listTable input:checked").length;
