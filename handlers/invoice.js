@@ -85,7 +85,7 @@ var Invoice = function (models) {
         } else {
             response.send(401);
         }
-    }
+    };
 
     this.getInvoiceById = function (req, response) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -119,37 +119,59 @@ var Invoice = function (models) {
     };
 
     this.removeInvoice = function(req, res, id) {
+        if (req.session && req.session.loggedIn && req.session.lastDb) {
+            access.getReadAccess(req, req.session.uId, 56, function (access) {
+                if (access) {
 
-        models.get(req.session.lastDb, "Invoice", InvoiceSchema).findByIdAndRemove(id, function (err, result) {
-            if (err) {
-                console.log(err);
-                res.send(500, {error: "Can't remove Invoice"});
-            } else {
-                //if (result && result.isOpportunitie) {
-                //    event.emit('updateSequence', models.get(req.session.lastDb, "Opportunities", opportunitiesSchema), "sequence", result.sequence, 0, result.workflow, result.workflow, false, true);
-                //}
-                res.send(200, {success: 'Invoice removed'});
-            }
-        });
-    };
+                    models.get(req.session.lastDb, "Invoice", InvoiceSchema).findByIdAndRemove(id, function (err, result) {
+                        if (err) {
+                            console.log(err);
+                            res.send(500, {error: "Can't remove Invoice"});
+                        } else {
+                            res.send(200, {success: 'Invoice removed'});
+                        }
+                    });
+
+                } else {
+                    res.send(403);
+                }
+            });
+
+        } else {
+            res.send(401);
+        }
+
+        };
 
     this.updateInvoice = function (req,res, _id, data) {
+        if (req.session && req.session.loggedIn && req.session.lastDb) {
+            access.getReadAccess(req, req.session.uId, 56, function (access) {
+                if (access) {
 
-        if (data.supplierId && data.supplierId._id) {
-            data.supplierId = data.supplierId._id;
+                    if (data.supplierId && data.supplierId._id) {
+                        data.supplierId = data.supplierId._id;
+                    }
+
+                    models.get(req.session.lastDb, "Invoice", InvoiceSchema).findByIdAndUpdate(_id, data.invoice, function (err, result) {
+
+                        if (err) {
+                            console.log(err);
+                            res.send(500, {error: "Can't update Invoice"});
+                        } else {
+                            res.send(200, {success: 'Invoice updated success', result: result});
+                        }
+                    })
+
+                } else {
+                    res.send(403);
+                }
+            });
+
+        } else {
+            res.send(401);
         }
 
-        models.get(req.session.lastDb, "Invoice", InvoiceSchema).findByIdAndUpdate(_id, data.invoice, function (err, result) {
-
-            if (err) {
-                console.log(err);
-                res.send(500, {error: "Can't update Invoice"});
-            } else {
-                res.send(200, {success: 'Invoice updated success', result: result});
-            }
-        })
-
-        }
+        };
 
     this.totalCollectionLength = function (req, response, next) {
         var res = {};

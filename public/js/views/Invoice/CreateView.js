@@ -3,7 +3,7 @@ define([
     "models/InvoiceModel",
     "common",
 	"populate",
-    "views/Invoice/InvoiceItems",
+    "views/Invoice/InvoiceProductItems",
     "dataService"
     ],
     function (CreateTemplate, InvoiceModel, common, populate, InvoiceItemView, dataService ) {
@@ -12,7 +12,6 @@ define([
             el: "#content-holder",
             contentType: "Invoice",
             template: _.template(CreateTemplate),
-            //imageSrc: '',
 
             initialize: function (options) {
                 _.bindAll(this, "saveItem", "render");
@@ -80,7 +79,8 @@ define([
 
             saveItem: function () {
                 var self = this;
-                //var mid = 39;
+                var mid = 56;
+                var products = [];
 
                 var supplierId = this.$("#supplierId").data("id");
                 var invoiceDate = this.$("#invoice_date").val();

@@ -11,7 +11,7 @@
            <%= product.name %>
           </h4>
           </div>
-            <p><label>Price: </label><%=product.info.salePrice%></p>
+            <p><label>Price: </label><%=(product.info.salePrice)?(product.info.salePrice.toFixed(2)):"0.00"%></p>
         </div>
     </div>
     <% }) %>

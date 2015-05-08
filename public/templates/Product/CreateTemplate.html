@@ -6,13 +6,13 @@
               <div class="upload">Edit<input type="file" value="Edit" id="inputImg"></div>
               <canvas id="avatar" width="140" height="140"><input type="file" value="Edit" id="File1"></canvas>
             </div>
-			<div class="avatarInfoContainer employee">
+			<div class="avatarInfoContainer product">
               <div class="half-block left">
                 <dl class="create-product-info">
                     <dt><label for="product">Product Name</label></dt><dd><input type="text" id="product" required maxlength="32" placeholder="Product Name"/></dd>
                     <dt><label for="solid">Can be Solid</label></dt><dd><input type="checkbox" id="solid" required checked class="checkbox left"/></dd>
-                    <dt><label for="expensed">Can be Expensed</label></dt><dd><input type="checkbox" id="expensed" required class="checkbox left"/></dd>
-                    <dt><label for="subscription">Event Subscription</label></dt><dd><input type="checkbox" id="subscription" required class="checkbox left"/></dd>
+                    <dt><label for="expensed">Can be Expensed</label></dt><dd><input type="checkbox" id="expensed" required class="checkbox left"/></dd><!--
+                    <dt><label for="subscription">Event Subscription</label></dt><dd><input type="checkbox" id="subscription" required class="checkbox left"/></dd>-->
                     <dt><label for="purchased">Can be Purchased</label></dt><dd><input type="checkbox" id="purchased" required checked class="checkbox left"/></dd>
                 </dl>
               </div>
@@ -28,6 +28,16 @@
 				</dl>
 			  </div>
               <div class="clearfix"></div>
+                <div class="cropImages form" style="display:none;">
+                    <div class="formTitle">
+                        <h3 class="left">Crop Images</h3>
+                        <div class="clearfix"></div>
+                    </div><br />
+                    <div class="image_input" style="float: left;margin-right: 20px;"></div>
+                    <img class="image_output" />
+                    <div class="clearfix"></div>
+                </div>
+                <div class="clearfix"></div>
 			</div>
             <div class="clearfix"></div>
 		  </div>

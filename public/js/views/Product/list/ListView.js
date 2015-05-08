@@ -358,7 +358,7 @@ define([
             gotoForm: function (e) {
                 App.ownContentType = true;
                 var id = $(e.target).closest("tr").data("id");
-                window.location.hash = "#easyErp/Employees/form/" + id;
+                window.location.hash = "#easyErp/Product/form/" + id;
             },
 
             createItem: function () {
@@ -406,7 +406,7 @@ define([
 
             deleteItems: function () {
                 var that = this;
-                var mid = 39;
+                var mid = 58;
                 var model;
                 var localCounter = 0;
                 var count = $("#listTable input:checked").length;

@@ -1,6 +1,6 @@
 ﻿define([
     "text!templates/Product/thumbnails/ThumbnailsItemTemplate.html",
-    'views/Employees/EditView',
+    'views/Product/EditView',
     'views/Product/CreateView',
     'dataService',
     'models/ProductModel',
@@ -39,7 +39,7 @@
 
             events: {
                 "click #showMore": "showMore",
-                "click .thumbnailwithavatar": "gotoEditForm",
+                "click .thumbnailwithavatar": "gotoForm",
                 "click .letter:not(.empty)": "alpabeticalRender"
             },
 
@@ -64,7 +64,7 @@
                 var ids = _.map(collection.toJSON(), function (item) {
                     return item._id;
                 });
-                common.getImages(ids, "/getEmployeesImages");
+                common.getImages(ids, "/product/getProductsImages");
             },
 
             //modified for filter Vasya
@@ -117,7 +117,14 @@
                 return this;
             },
 
-            gotoEditForm: function (e) {
+            gotoForm: function (e) {
+                e.preventDefault();
+                App.ownContentType = true;
+                var id = $(e.target).closest('.thumbnailwithavatar').attr("id");
+                window.location.hash = "#easyErp/Product/form/" + id;
+            },
+
+            /*gotoEditForm: function (e) {
                this.$el.delegate('a', 'click', function(e){ e.stopPropagation(); e.default; });
                 var clas = $(e.target).parent().attr("class");
                 if ((clas === "dropDown") || (clas === "inner")) {
@@ -125,7 +132,7 @@
                     e.preventDefault();
                     var id = $(e.target).closest('.thumbnailwithavatar').attr("id");
                     var model = new currentModel({validate: false});
-                    model.urlRoot = '/Employees/form';
+                    model.urlRoot = '/Product/form';
                     model.fetch({
                         data: {id: id},
                         success: function (model) {
@@ -134,7 +141,7 @@
                         error: function () { alert('Please refresh browser'); }
                     });
                 }
-            },
+            },*/
 
             showMore: function (event) {
                 event.preventDefault();
