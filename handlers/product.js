@@ -213,7 +213,7 @@ var Products = function (models) {
                     if (req.query.sort) {
                         sort = req.query.sort;
                     } else {
-                        sort = { "name": -1 };
+                        sort = { "name": 1 };
                     }
 
                     Product.find(query).limit(count).skip(skip).sort(sort).exec(function (err, products) {

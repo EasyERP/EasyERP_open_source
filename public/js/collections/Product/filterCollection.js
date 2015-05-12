@@ -12,7 +12,6 @@
             contentType: null,
             initialize: function (options) {
                 this.startTime = new Date();
-
                 var that = this;
                 this.namberToShow = options.count;
                 this.viewType = options.viewType;

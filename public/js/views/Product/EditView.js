@@ -86,15 +86,16 @@ define([
                 var self = this;
 
                 var name =  $.trim(this.$el.find("#product").val());
+                var description = $.trim(this.$el.find('textarea.productDescriptionCreate').val());
 
-                var canBeSold = $('#solid').prop('checked');
-                var canBeExpensed = $('#expensed').prop('checked');
-                var eventSubscription = $('#subscription').prop('checked');
-                var canBePurchased = $('#purchased').prop('checked');
-                var salePrice = $.trim(this.$el.find("#salePrice").val());
+                var canBeSold = this.$el.find('#solid').prop('checked');
+                var canBeExpensed = this.$el.find('#expensed').prop('checked');
+                var eventSubscription = this.$el.find('#subscription').prop('checked');
+                var canBePurchased = this.$el.find('#purchased').prop('checked');
+                var salePrice = this.$el.find("#salePrice").val();
                 var barcode = $.trim(this.$el.find("#barcode").val());
-                var isActive = $('#active').prop('checked');
-                var productType = this.$("#productType").data("id");
+                var isActive = this.$el.find('#active').prop('checked');
+                var productType = this.$el.find("#productType").data("id");
                 var data = {
                         canBeSold: canBeSold,
                         canBeExpensed: canBeExpensed,
@@ -104,10 +105,10 @@ define([
                         name: name,
                         info: {
                             productType: productType,
-                            salePrice: salePrice,
+                            salePrice: salePrice ? salePrice : 0,
                             isActive: isActive,
                             barcode: barcode,
-                            description: ""
+                            description: description
                         },
                         workflow: null,
                         whoCanRW: 'everyOne',
