@@ -11,6 +11,8 @@ module.exports = function (models) {
 
     router.get('/', handler.getAll);
 
+    router.get('/totalCollectionLength', handler.totalCollectionLength);
+
     router.get('/:viewType', function (req, res) {
         var viewType = req.params.viewType;
         switch (viewType) {
@@ -21,8 +23,6 @@ module.exports = function (models) {
                 handler.getForView(req, res);
         }
     });
-
-    router.get('/totalCollectionLength', handler.totalCollectionLength);
 
     router.put('/:_id', function (req, res) {
         var data = {};

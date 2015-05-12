@@ -64,7 +64,7 @@ var Invoice = function (models) {
                         sort = { "supplier": -1 };
                     }
 
-                    /*if (data && data.filter && data.filter.workflow) {
+                    if (data && data.filter && data.filter.workflow) {
                         data.filter.workflow = data.filter.workflow.map(function (item) {
                             return item === "null" ? null : item;
                         });
@@ -74,13 +74,13 @@ var Invoice = function (models) {
                         } else if (data && (!data.newCollection || data.newCollection === 'false')) {
                             query.where('workflow').in([]);
                         }
-                    }*/
+                    }
 
-                    /*if (data && data.filter && data.filter.workflow) {
+                    if (data && data.filter && data.filter.workflow) {
                         query.where('workflow').in(data.filter.workflow);
                     } else if (data && (!data.newCollection || data.newCollection === 'false')) {
                         query.where('workflow').in([]);
-                    }*/
+                    }
 
                     Invoice.populate('supplierId', 'name');
 
@@ -91,7 +91,7 @@ var Invoice = function (models) {
                         res.status(200).send({success: _res});
                     });
 
-                    departmentSearcher = function (waterfallCallback) {
+                    /*departmentSearcher = function (waterfallCallback) {
                         models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
                             {
                                 $match: {
@@ -113,7 +113,7 @@ var Invoice = function (models) {
                             {
                                 $match: {
                                     $and: [
-                                        /*optionsObject,*/
+                                        /!*optionsObject,*!/
                                         {
                                             $or: [
                                                 {
@@ -167,7 +167,7 @@ var Invoice = function (models) {
                         }
 
                         res.status(200).send(result);
-                    });
+                    });*/
 
                 } else {
                     res.send(403);
@@ -302,35 +302,17 @@ var Invoice = function (models) {
 
     this.totalCollectionLength = function (req, res, next) {
         var Invoice =  models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
-        var departmentSercher;
-        var contentIdsSercher;
-        var contentSercher;
+
+        //var departmentSercher;
+        //var contentIdsSercher;
+        //var contentSercher;
         var departmentSearcher;
         var contentIdsSearcher;
-        var contentSearcher;
+        //var contentSearcher;
 
-        var _res = {};
-        var data = {};
-        for (var i in req.query) {
-            data[i] = req.query[i];
-        }
-        _res['showMore'] = false;
+        var result = {};
 
-        var optionsObject = {};
-
-        var query = optionsObject;
-        var count = req.query.count ? req.query.count : 50;
-        var page = req.query.page;
-        var skip = (page-1)>0 ? (page-1)*count : 0;
-
-        Invoice.find(query).limit(count).skip(skip).exec(function (err, invoice) {
-            if (err) {
-                return next(err);
-            }
-
-            _res['count'] = invoice.length;
-            res.status(200).send(_res);
-        });
+        result['showMore'] = false;
 
         departmentSearcher = function (waterfallCallback) {
             models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
