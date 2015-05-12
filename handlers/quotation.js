@@ -123,6 +123,7 @@ var Quotation = function (models) {
         var departmentSearcher;
         var contentIdsSearcher;
         var contentSearcher;
+        var waterfallTasks;
         /* var data = {};
 
          for (var i in req.query) {
@@ -191,11 +192,21 @@ var Quotation = function (models) {
             );
         };
 
-        /*async.waterfall([departmentSearcher, contentIdsSearcher], function(err, result){
+        contentSearcher = function (quotationsIds, waterfallCallback) {
+            var queryObject = {_id: {$in: quotationsIds}};
+            var query = Quotation.find(queryObject);
+            query.exec(waterfallCallback);
+        };
 
-        });*/
+        waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
 
-        res.status(200).send([]);
+        async.waterfall(waterfallTasks, function(err, result){
+            if(err){
+                return next(err);
+            }
+
+            res.status(200).send(result);
+        });
     };
 
 };
