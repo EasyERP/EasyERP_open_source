@@ -3,13 +3,11 @@
         <div class="inner">
             <div class="avatar" style="line-height: 140px;">
                     <img src="" />
-                <!--</a>-->
             </div>
         </div>
         <div class="info">
-          <div><h4>
-           <%= product.name %>
-          </h4>
+          <div>
+              <h4><%= product.name %></h4>
           </div>
             <p><label>Price: </label><%=(product.info.salePrice)?(product.info.salePrice.toFixed(2)):"0.00"%></p>
         </div>

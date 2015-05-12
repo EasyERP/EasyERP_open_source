@@ -1,5 +1,5 @@
 <div class="form-holder">
-    <form method="post" action="" id="createEmployeeForm" class="form">
+    <form method="post" action="" id="createProductForm" class="form">
         <fieldset>
             <div class="inner">
                 <div class="avatar left">
@@ -9,26 +9,32 @@
                 <div class="avatarInfoContainer product">
                     <div class="half-block left">
                         <dl class="create-product-info">
-
                             <dt><label for="product">Product Name</label></dt><dd><input type="text" id="product" required maxlength="32" value="<%=model.name%>"/></dd>
-                            <dt><label for="solid">Can be Solid</label></dt><dd><input type="checkbox" id="solid" required class="checkbox left" <% if(model.canBeSold) { %> checked <% } %>/></dd>
-                            <dt><label for="expensed">Can be Expensed</label></dt><dd><input type="checkbox" id="expensed" required class="checkbox left" <% if(model.canBeExpensed) { %> checked <% } %>/></dd>
+                            <dt><label for="solid">Can be Solid</label></dt><dd><input type="checkbox" id="solid" class="checkbox left" <% if(model.canBeSold) { %> checked <% } %>/></dd>
+                            <dt><label for="expensed">Can be Expensed</label></dt><dd><input type="checkbox" id="expensed" class="checkbox left" <% if(model.canBeExpensed) { %> checked <% } %>/></dd>
                             <!--<dt><label for="subscription">Event Subscription</label></dt><dd><input type="checkbox" id="subscription" required class="checkbox left" <% if(model.eventSubscription) { %> checked <% } %>/></dd>-->
-                            <dt><label for="purchased">Can be Purchased</label></dt><dd><input type="checkbox" id="purchased" required class="checkbox left" <% if(model.canBePurchased) { %> checked <% } %>/></dd>
+                            <dt><label for="purchased">Can be Purchased</label></dt><dd><input type="checkbox" id="purchased" class="checkbox left" <% if(model.canBePurchased) { %> checked <% } %>/></dd>
                         </dl>
                     </div>
                     <div class="half-block left">
                         <dl class="create-product-info">
                             <dt><label for="productType">Product Type</label></dt><dd><a id="productType" data-id="<%=(model.info.productType)?model.info.productType._id:''%>" class="current-selected" href="javascript:;"><%=(model.info.productType)?(model.info.productType.name):"Select"%></a></dd>
-                            <dl id="typeOfEvent" class="hidden">
+<!--                            <dl id="typeOfEvent" class="hidden">
                                 <dt><label for="eventType">Type of Event</label></dt><dd><a id="eventType" class="current-selected" href="javascript:;">Select</a></dd>
-                            </dl>
+                            </dl>-->
                             <dt><label for="salePrice">Sale Price</label></dt><dd><input type="text" id="salePrice" class="extra-info" maxlength="10" value="<%=model.info.salePrice%>"/></dd>
-                            <dt><label for="active">Active</label></dt><dd><input type="checkbox" id="active" required class="checkbox left" <% if(model.info.isActive) { %> checked <% } %>/></dd>
+                            <dt><label for="active">Active</label></dt><dd><input type="checkbox" id="active" class="checkbox left" <% if(model.info.isActive) { %> checked <% } %>/></dd>
                             <dt><label for="barcode">Barcode</label></dt><dd><input type="text" id="barcode" class="extra-info" maxlength="20" value="<%=model.info.barcode%>"/></dd>
                         </dl>
                     </div>
                     <div class="clearfix"></div>
+                    <div class="full-width left">
+                        <div class="inner">
+                            <div class="textarea-wrapper">
+                                <textarea type="text" class="full-width productDescriptionCreate" name="description" id="description"  maxlength="500"><%=model.info.description%></textarea>
+                            </div>
+                        </div>
+                    </div>
                     <div class="cropImages form" style="display:none;">
                         <div class="formTitle">
                             <h3 class="left">Crop Images</h3>

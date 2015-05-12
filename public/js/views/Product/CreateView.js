@@ -111,13 +111,14 @@ define([
                 var mid = 58;
                 var productModel = new ProductModel();
                 var name =  $.trim(this.$el.find("#product").val());
+                var description = $.trim(this.$el.find('#productDescriptionCreate').val());
 				$("#createBtnDialog").attr("disabled","disabled");
 
-                var canBeSold = $('#solid').prop('checked');
-                var canBeExpensed = $('#expensed').prop('checked');
-                var eventSubscription = $('#subscription').prop('checked');
-                var canBePurchased = $('#purchased').prop('checked');
-                var salePrice = $.trim(this.$el.find("#salePrice").val());
+                var canBeSold = this.$el.find('#solid').prop('checked');
+                var canBeExpensed = this.$el.find('#expensed').prop('checked');
+                var eventSubscription = this.$el.find('#subscription').prop('checked');
+                var canBePurchased = this.$el.find('#purchased').prop('checked');
+                var salePrice = this.$el.find("#salePrice").val();
                 var barcode = $.trim(this.$el.find("#barcode").val());
                 var isActive = $('#active').prop('checked');
                 var productType = this.$("#productType").data("id");
@@ -130,10 +131,10 @@ define([
                         name: name,
                         info: {
                             productType: productType,
-                            salePrice: salePrice,
+                            salePrice: salePrice ? salePrice : 0,
                             isActive: isActive,
                             barcode: barcode,
-                            description: ""
+                            description: description
                         },
                         workflow: null,
                         whoCanRW: 'everyOne',

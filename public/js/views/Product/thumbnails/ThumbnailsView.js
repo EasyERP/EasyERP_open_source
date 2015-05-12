@@ -124,25 +124,6 @@
                 window.location.hash = "#easyErp/Product/form/" + id;
             },
 
-            /*gotoEditForm: function (e) {
-               this.$el.delegate('a', 'click', function(e){ e.stopPropagation(); e.default; });
-                var clas = $(e.target).parent().attr("class");
-                if ((clas === "dropDown") || (clas === "inner")) {
-                } else {
-                    e.preventDefault();
-                    var id = $(e.target).closest('.thumbnailwithavatar').attr("id");
-                    var model = new currentModel({validate: false});
-                    model.urlRoot = '/Product/form';
-                    model.fetch({
-                        data: {id: id},
-                        success: function (model) {
-                            new editView({ model: model });
-                        },
-                        error: function () { alert('Please refresh browser'); }
-                    });
-                }
-            },*/
-
             showMore: function (event) {
                 event.preventDefault();
                 this.collection.showMore({ filter: this.filter, newCollection: this.newCollection });
@@ -190,26 +171,6 @@
             createItem: function () {
                 //create editView in dialog here
                 new createView();
-            },
-
-            editItem: function () {
-                //create editView in dialog here
-                new editView({ collection: this.collection });
-            },
-
-            deleteItems: function () {
-                var mid = 39,
-                    model;
-                model = this.collection.get(this.$el.attr("id"));
-                this.$el.fadeToggle(200, function () {
-                    model.destroy({
-                        headers: {
-                            mid: mid
-                        }
-                    });
-                    $(this).remove();
-                });
-
             }
         });
 
