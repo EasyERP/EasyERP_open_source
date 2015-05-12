@@ -9,8 +9,8 @@ var QuotationHandler = require('../handlers/quotation');
 module.exports = function (models) {
     var handler = new QuotationHandler(models);
 
-    /*router.get('/totalCollectionLength', handler.totalCollectionLength);
-    router.get('/:viewType', handler.getByViewType);*/
+    router.get('/totalCollectionLength', handler.totalCollectionLength);
+    router.get('/:viewType', handler.getByViewType);
     router.post('/', handler.create);
 
     return router;
