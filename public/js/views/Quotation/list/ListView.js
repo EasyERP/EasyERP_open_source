@@ -2,13 +2,13 @@ define([
         'text!templates/Quotation/list/ListHeader.html',
         'views/Quotation/CreateView',
         'views/Quotation/list/ListItemView',
-        'collections/Persons/filterCollection',
+        'collections/Quotation/filterCollection',
         'common',
         'dataService'
     ],
 
     function (listTemplate, createView, listItemView, contentCollection, common, dataService) {
-        var PersonsListView = Backbone.View.extend({
+        var QuotationListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
             listLength: null,
@@ -22,9 +22,6 @@ define([
             initialize: function (options) {
                 this.startTime = options.startTime;
                 this.collection = options.collection;
-                _.bind(this.collection.showMore, this.collection);
-                _.bind(this.collection.showMoreAlphabet, this.collection);
-                this.allAlphabeticArray = common.buildAllAphabeticArray();
                 this.filter = options.filter;
                 this.sort = options.sort;
                 this.defaultItemsNumber = this.collection.namberToShow || 50;
@@ -49,7 +46,7 @@ define([
                 "click": "hideItemsNumber",
                 "click #firstShowPage": "firstPage",
                 "click #lastShowPage": "lastPage",
-                "click .oe_sortable": "goSort",
+                "click .oe_sortable": "goSort"
             },
 
             fetchSortCollection: function (sortObject) {
@@ -113,7 +110,7 @@ define([
             },
 
             getTotalLength: function (currentNumber, itemsNumber, filter) {
-                dataService.getData('/totalCollectionLength/Persons', {
+                dataService.getData('/quotation/totalCollectionLength', {
                     currentNumber: currentNumber,
                     filter: filter,
                     newCollection: this.newCollection
@@ -319,26 +316,6 @@ define([
                 holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             },
 
-            showMoreAlphabet: function (newModels) {
-                var holder = this.$el;
-                var alphaBet = holder.find('#startLetter');
-                var created = holder.find('#timeRecivingDataFromServer');
-                var countPerPage = this.countPerPage = newModels.length;
-
-                content.remove();
-
-                holder.append(this.template({
-                    collection: newModels.toJSON(),
-                    page: holder.find("#currentShowPage").val(),
-                    itemsNumber: holder.find("span#itemsNumber").text()
-                }));
-
-                this.getTotalLength(null, itemsNumber, this.filter);
-                created.text("Created in " + (new Date() - this.startTime) + " ms");
-                holder.prepend(alphaBet);
-                holder.append(created);
-            },
-
             gotoForm: function (e) {
                 App.ownContentType = true;
                 var id = $(e.target).closest("tr").data("id");
@@ -364,6 +341,7 @@ define([
                     }
                 }
             },
+
             deleteItemsRender: function (deleteCounter, deletePage) {
                 dataService.getData('/totalCollectionLength/Persons', {
                     filter: this.filter,
@@ -392,6 +370,7 @@ define([
                     pagenation.show();
                 }
             },
+
             deleteItems: function () {
                 var currentEl = this.$el;
                 var that = this,
@@ -439,5 +418,5 @@ define([
 
         });
 
-        return PersonsListView;
+        return QuotationListView;
     });
