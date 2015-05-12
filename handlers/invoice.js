@@ -150,6 +150,10 @@ var Invoice = function (models) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getReadAccess(req, req.session.uId, 56, function (access) {
                 if (access) {
+                    data.invoice.editedBy = {
+                        user: req.session.uId,
+                        date: new Date().toISOString()
+                    }
 
                     if (data.supplierId && data.supplierId._id) {
                         data.supplierId = data.supplierId._id;
@@ -175,6 +179,37 @@ var Invoice = function (models) {
         }
 
         };
+
+    this.invoiceUpdateOnlySelectedFields = function (reg, res, id){
+    if (req.session && req.session.loggedIn && req.session.lastDb) {
+        access.getEditWritAccess(req, req.session.uId, 56, function (access) {
+            if (access) {
+
+                var data= req.body;
+
+                data.editedBy = {
+                    user: req.session.uId,
+                    date: new Date().toISOString()
+                };
+                //----------------------------
+                var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
+
+                Invoice.findByIdAndUpdate(id, { $set: data}, function (err, invoice) {
+                    if (err) {
+                        res.send(500, {error: "Can't update Invoice"});
+                    }
+                    res.send(200, { success: 'Invoice updated', result: invoice });
+                });
+                //----------------------------
+            } else {
+                res.send(403);
+            }
+        });
+    } else {
+        res.send(401);
+    }
+
+    }
 
     this.totalCollectionLength = function (req, response, next) {
         var res = {};

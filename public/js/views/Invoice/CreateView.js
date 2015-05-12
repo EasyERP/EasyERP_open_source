@@ -69,6 +69,7 @@ define([
 
             changeTab: function (e) {
                 var holder = $(e.target);
+                console.log(holder);
                 holder.closest(".dialog-tabs").find("a.active").removeClass("active");
                 holder.addClass("active");
                 var n = holder.parents(".dialog-tabs").find("li").index(holder.parent());
