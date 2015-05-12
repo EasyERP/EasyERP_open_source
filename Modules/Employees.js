@@ -5,6 +5,7 @@ var Employee = function (event, models) {
     var department = mongoose.Schemas['Department'];
     var objectId = mongoose.Types.ObjectId;
     var employeeSchema = mongoose.Schemas['Employee'];
+    var fs = require('fs');
 
     function getTotalCount(req, response) {
         var res = {};
@@ -900,11 +901,11 @@ var Employee = function (event, models) {
                                 }
                         }
 
-                        logWriter.fs.unlink(path, function (err) {
+                        fs.unlink(path, function (err) {
                             console.log(err);
-                            logWriter.fs.readdir(dir, function (err, files) {
+                            fs.readdir(dir, function (err, files) {
                                 if (files.length === 0) {
-                                    logWriter.fs.rmdir(dir, function () { });
+                                    fs.rmdir(dir, function () { });
                                 }
                             });
                         });

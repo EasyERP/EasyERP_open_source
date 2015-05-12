@@ -165,7 +165,7 @@ define([
 
             parrent.find(".current-selected").text(target.text()).attr("data-id", _id);
 
-            $(parrents[1]).attr('class', 'editable').find('span').text(selectedProduct.info.description || 'qwerty');
+            $(parrents[1]).attr('class', 'editable').find('span').text(selectedProduct.info.description || '');
             $(parrents[2]).attr('class', 'editable').find("span").text(1);
             $(parrents[3]).attr('class', 'editable').find('span').text(selectedProduct.info.salePrice);
 
@@ -230,8 +230,6 @@ define([
             total = totalUntax + taxes;
             total = total.toFixed(2);
             totalContainer.text(total);
-
-
         },
 
         nextSelect: function (e) {
@@ -247,7 +245,6 @@ define([
                 collection: this.collection,
                 options: options
             }));
-
 
             return this;
         }

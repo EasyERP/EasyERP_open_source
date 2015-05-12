@@ -18,7 +18,8 @@ module.exports = (function () {
         id: false,
         quantity: {type: Number, default: 1},
         unitPrice: Number,
-        product: {type: ObjectId, ref: 'Product', default: null}
+        product: {type: ObjectId, ref: 'Product', default: null},
+        description: {type: String, default: ''}
     };
 
     var quotationSchema = new Schema({
