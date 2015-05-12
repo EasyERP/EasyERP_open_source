@@ -1,4 +1,7 @@
 /**
+ * Created by soundstorm on 12.05.15.
+ */
+/**
  * Created by soundstorm on 29.04.15.
  */
 define(['Validation','common'],function (Validation, common) {
@@ -13,14 +16,14 @@ define(['Validation','common'],function (Validation, common) {
                     }
                 }
             });
-        },
+        },/*
         validate: function(attrs){
             var errors = [];
             Validation.checkNameField(errors, true, attrs.name, "Product Name");
             Validation.checkPriceField(errors, false, attrs.info.salePrice, "Price");
             if(errors.length > 0)
                 return errors;
-        },
+        },*/
         defaults: {
             canBeSold: true,
             canBeExpensed: true,
@@ -34,13 +37,7 @@ define(['Validation','common'],function (Validation, common) {
                 isActive: true,
                 barcode: "",
                 description: ""
-            },
-            groups:  {
-                group: null,
-                users: null,
-                owner: null
-            },
-            whoCanRW: "everyOne"
+            }
         },
         urlRoot: function () {
             return "/Product";

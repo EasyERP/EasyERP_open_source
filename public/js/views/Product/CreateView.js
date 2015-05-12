@@ -24,6 +24,7 @@ define([
                 "mouseenter .avatar": "showEdit",
                 "mouseleave .avatar": "hideEdit",
                 'keydown': 'keydownHandler',
+                'click .dialog-tabs a': 'changeTab',
                 "click .current-selected": "showNewSelect",
                 "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
                 "click .newSelectList li.miniStylePagination": "notHide",
@@ -82,6 +83,15 @@ define([
                         break;
                 }
             },
+            changeTab: function (e) {
+                var holder = $(e.target);
+                holder.closest(".dialog-tabs").find("a.active").removeClass("active");
+                holder.addClass("active");
+                var n = holder.parents(".dialog-tabs").find("li").index(holder.parent());
+                var dialog_holder = $(".dialog-tabs-items");
+                dialog_holder.find(".dialog-tabs-item.active").removeClass("active");
+                dialog_holder.find(".dialog-tabs-item").eq(n).addClass("active");
+            },
             hideDialog: function () {
                 $(".edit-dialog").remove();
                 $(".add-group-dialog").remove();
@@ -111,8 +121,21 @@ define([
                 var mid = 58;
                 var productModel = new ProductModel();
                 var name =  $.trim(this.$el.find("#product").val());
-                var description = $.trim(this.$el.find('#productDescriptionCreate').val());
+                var description = $.trim(this.$el.find('.productDescriptionCreate').val());
 				$("#createBtnDialog").attr("disabled","disabled");
+
+                var usersId = [];
+                var groupsId = [];
+                $(".groupsAndUser tr").each(function () {
+                    if ($(this).data("type") == "targetUsers") {
+                        usersId.push($(this).data("id"));
+                    }
+                    if ($(this).data("type") == "targetGroups") {
+                        groupsId.push($(this).data("id"));
+                    }
+
+                });
+                var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
 
                 var canBeSold = this.$el.find('#solid').prop('checked');
                 var canBeExpensed = this.$el.find('#expensed').prop('checked');
@@ -136,13 +159,12 @@ define([
                             barcode: barcode,
                             description: description
                         },
-                        workflow: null,
-                        whoCanRW: 'everyOne',
                         groups: {
-                            owner: null,
-                            users: null,
-                            group: null
-                        }
+                            owner: $("#allUsersSelect").data("id"),
+                            users: usersId,
+                            group: groupsId
+                        },
+                        whoCanRW: whoCanRW
                     },
                 {
                     headers: {

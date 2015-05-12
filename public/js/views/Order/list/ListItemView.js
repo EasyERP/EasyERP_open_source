@@ -1,5 +1,5 @@
 ﻿define([
-    'text!templates/Persons/list/ListTemplate.html'
+    'text!templates/Order/list/ListTemplate.html'
 ],
 
 function (listTemplate) {

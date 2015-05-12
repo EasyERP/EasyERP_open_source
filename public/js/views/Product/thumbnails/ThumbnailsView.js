@@ -44,8 +44,8 @@
             },
 
             //modified for filter Vasya
-            getTotalLength: function(currentNumber,filter, newCollection) {
-                dataService.getData('/product/totalCollectionLength', { currentNumber: currentNumber, filter:this.filter, newCollection: this.newCollection }, function (response, context) {
+            getTotalLength: function(currentNumber, filter, newCollection) {
+                dataService.getData('/product/totalCollectionLength', { currentNumber: currentNumber, filter:filter, newCollection: newCollection }, function (response, context) {
                     var showMore = context.$el.find('#showMoreDiv');
                     if (response.showMore) {
                         if (showMore.length === 0) {

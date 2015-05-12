@@ -1,7 +1,7 @@
 define([
     'text!templates/Order/list/ListHeader.html',
-    'views/Order/CreateView',
-    'views/Persons/list/ListItemView',
+    'views/Quotation/CreateView',
+    'views/Order/list/ListItemView',
     'text!templates/Alpabet/AphabeticTemplate.html',
     'collections/Persons/filterCollection',
 	'common',
@@ -9,7 +9,7 @@ define([
 ],
 
 function (listTemplate, createView, listItemView, aphabeticTemplate,contentCollection, common, dataService) {
-    var PersonsListView = Backbone.View.extend({
+    var OrdersListView = Backbone.View.extend({
         el: '#content-holder',
         defaultItemsNumber: null,
         listLength: null,
@@ -17,7 +17,7 @@ function (listTemplate, createView, listItemView, aphabeticTemplate,contentColle
         sort: null,
         newCollection: null,
         page: null, //if reload page, and in url is valid page
-        contentType: 'Persons',//needs in view.prototype.changeLocationHash
+        contentType: 'Orders',//needs in view.prototype.changeLocationHash
         viewType: 'list',//needs in view.prototype.changeLocationHash
         
         initialize: function (options) {
@@ -365,7 +365,7 @@ function (listTemplate, createView, listItemView, aphabeticTemplate,contentColle
 
         createItem: function () {
             //create editView in dialog here
-            new createView();
+            new createView({vissible: true});
         },
 
         checked: function () {
@@ -468,5 +468,5 @@ function (listTemplate, createView, listItemView, aphabeticTemplate,contentColle
 
     });
 
-    return PersonsListView;
+    return OrdersListView;
 });

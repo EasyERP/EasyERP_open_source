@@ -6,17 +6,41 @@ var mongoose = require('mongoose');
 var Products = function (models) {
     var access = require("../Modules/additions/access.js")(models);
     var ProductSchema = mongoose.Schemas['Products'];
+    var DepartmentSchema = mongoose.Schemas['Department'];
+    var objectId = mongoose.Types.ObjectId;
+    var async = require('async');
 
     var fs = require("fs");
+
+    this.create = function (req, res, next) {
+        var Product = models.get(req.session.lastDb, 'Product', ProductSchema);
+        var body = req.body;
+        var product = new Product(body);
+
+        if (req.session.uId) {
+            product.createdBy.user = req.session.uId;
+            product.editedBy.user = req.session.uId;
+        }
+
+        product.info.salePrice = parseFloat(product.info.salePrice).toFixed(2);
+
+        product.save(function (err, product) {
+            if (err) {
+                return next(err);
+            }
+            res.status(200).send({success: product});
+        });
+    };
 
     function updateOnlySelectedFields(req, id, data, res, next) {
         var Product = models.get(req.session.lastDb, 'Product', ProductSchema);
 
-        Product.findByIdAndUpdate(id, { $set: data}, function (err, product) {
+        Product.findByIdAndUpdate(id, {$set: data}, function (err, product) {
             if (err) {
                 next(err);
+            } else {
+                res.send(200, {success: 'Product updated', result: product});
             }
-            res.send(200, { success: 'Product updated', result: product });
         });
 
     };
@@ -66,8 +90,8 @@ var Products = function (models) {
             select('_id imageSrc').
             exec(function (error, response) {
                 if (error) {
-                    res.send(500, { error: "Can't find Products Imgs" });
-                } else res.send(200, { data: response });
+                    res.send(500, {error: "Can't find Products Imgs"});
+                } else res.send(200, {data: response});
             });
 
     };
@@ -120,7 +144,7 @@ var Products = function (models) {
     };
 
     function addAtach(req, _id, files, res, next) {//to be deleted
-        models.get(req.session.lastDb, "Product", ProductSchema).findByIdAndUpdate(_id, { $push: { attachments: { $each: files } } }, { upsert: true }, function (err, result) {
+        models.get(req.session.lastDb, "Product", ProductSchema).findByIdAndUpdate(_id, {$push: {attachments: {$each: files}}}, {upsert: true}, function (err, result) {
             if (err) {
                 next(err);
             } else {
@@ -141,21 +165,6 @@ var Products = function (models) {
         } else {
             res.send(401);
         }
-    };
-
-    this.create = function (req, res, next) {
-        var Product = models.get(req.session.lastDb, 'Product', ProductSchema);
-        var body = req.body;
-        var product = new Product(body);
-
-        product.info.salePrice = parseFloat(product.info.salePrice).toFixed(2);
-
-        product.save(function (err, product) {
-            if (err) {
-                return next(err);
-            }
-            res.status(200).send({success: product});
-        });
     };
 
     function remove(req, _id, res, next) {
@@ -200,28 +209,100 @@ var Products = function (models) {
             access.getReadAccess(req, req.session.uId, 58, function (access) {
                 if (access) {
                     var Product = models.get(req.session.lastDb, 'Product', ProductSchema);
-                    var query = {};
+                    var optionsObject = {};
                     var sort = {};
                     var count = req.query.count ? req.query.count : 50;
                     var page = req.query.page;
-                    var skip = (page - 1) > 0 ? (page - 1) * 50 : 0;
-                    var skip = (page-1)>0 ? (page-1)*count : 0;
+                    var skip = (page - 1) > 0 ? (page - 1) * count : 0;
+
+                    var departmentSearcher;
+                    var contentIdsSearcher;
+                    var contentSearcher;
+                    var waterfallTasks;
 
                     if (req.query.filter.letter) {
-                        query['name'] = new RegExp('^[' + req.query.filter.letter.toLowerCase() + req.query.filter.letter.toUpperCase() + '].*');
+                        optionsObject['name'] = new RegExp('^[' + req.query.filter.letter.toLowerCase() + req.query.filter.letter.toUpperCase() + '].*');
                     }
                     if (req.query.sort) {
                         sort = req.query.sort;
                     } else {
-                        sort = { "name": 1 };
+                        sort = {"name": 1};
                     }
 
-                    Product.find(query).limit(count).skip(skip).sort(sort).exec(function (err, products) {
-                        if (err) {
+                    departmentSearcher = function (waterfallCallback) {
+                        models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
+                            {
+                                $match: {
+                                    users: objectId(req.session.uId)
+                                }
+                            }, {
+                                $project: {
+                                    _id: 1
+                                }
+                            },
+                            waterfallCallback);
+                    };
+
+                    contentIdsSearcher = function (deps, waterfallCallback) {
+                        var arrOfObjectId = deps.objectID();
+
+                        models.get(req.session.lastDb, "Product", ProductSchema).aggregate(
+                            {
+                                $match: {
+                                    $and: [
+                                        optionsObject,
+                                        {
+                                            $or: [
+                                                {
+                                                    $or: [
+                                                        {
+                                                            $and: [
+                                                                {whoCanRW: 'group'},
+                                                                {'groups.users': objectId(req.session.uId)}
+                                                            ]
+                                                        },
+                                                        {
+                                                            $and: [
+                                                                {whoCanRW: 'group'},
+                                                                {'groups.group': {$in: arrOfObjectId}}
+                                                            ]
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    $and: [
+                                                        {whoCanRW: 'owner'},
+                                                        {'groups.owner': objectId(req.session.uId)}
+                                                    ]
+                                                },
+                                                {whoCanRW: "everyOne"}
+                                            ]
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                $project: {
+                                    _id: 1
+                                }
+                            },
+                            waterfallCallback
+                        );
+                    };
+
+                    contentSearcher = function (quotationsIds, waterfallCallback) {
+                        optionsObject._id = {$in: quotationsIds};
+                        var query = Product.find(optionsObject).limit(count).skip(skip).sort(sort);
+                        query.exec(waterfallCallback);
+                    };
+
+                    waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
+
+                    async.waterfall(waterfallTasks, function(err, result){
+                        if(err){
                             return next(err);
-                        } else {
-                            res.status(200).send({success: products});
                         }
+                        res.status(200).send({success: result});
                     });
                 } else {
                     res.send(403);
@@ -242,11 +323,17 @@ var Products = function (models) {
                         data[i] = req.query[i];
                     }
                     var query = models.get(req.session.lastDb, "Products", ProductSchema).findById(data.id);
-                    query.populate('info.productType', 'name _id');
+                    query.populate('info.productType', 'name _id').
+                        populate('department', '_id departmentName').
+                        populate('createdBy.user').
+                        populate('editedBy.user').
+                        populate('groups.users').
+                        populate('groups.group').
+                        populate('groups.owner', '_id login');
 
                     query.exec(function (err, findedProduct) {
                         if (err) {
-                            res.send(500, { error: "Can't find Product" });
+                            res.send(500, {error: "Can't find Product"});
                         } else {
                             res.send(findedProduct);
                         }
@@ -324,35 +411,113 @@ var Products = function (models) {
         }
     };
 
-    this.totalCollectionLength = function (req, response, next) {
-        var res = {};
+    this.totalCollectionLength = function (req, res, next) {
+        var result = {};
         var data = {};
 
         for (var i in req.query) {
             data[i] = req.query[i];
         }
-        res['showMore'] = false;
 
+        result['showMore'] = false;
+
+        var contentType = req.params.contentType;
         var optionsObject = {};
+
+        var Product = models.get(req.session.lastDb, 'Product', ProductSchema);
+        var departmentSearcher;
+        var contentIdsSearcher;
+
+        var contentSearcher;
+        var waterfallTasks;
 
         if (data.filter.letter) {
             optionsObject['name'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
         }
-        var Product = models.get(req.session.lastDb, 'Product', ProductSchema);
-        var query = optionsObject;
+
         var count = req.query.count ? req.query.count : 50;
         var page = req.query.page;
         var skip = (page - 1) > 0 ? (page - 1) * 50 : 0;
 
-        Product.find(query).limit(count).skip(skip).exec(function (err, products) {
+        departmentSearcher = function (waterfallCallback) {
+            models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
+                {
+                    $match: {
+                        users: objectId(req.session.uId)
+                    }
+                }, {
+                    $project: {
+                        _id: 1
+                    }
+                },
+
+                waterfallCallback);
+        };
+
+        contentIdsSearcher = function (deps, waterfallCallback) {
+            var arrOfObjectId = deps.objectID();
+
+            models.get(req.session.lastDb, "Product", ProductSchema).aggregate(
+                {
+                    $match: {
+                        $and: [
+                            optionsObject,
+                            {
+                                $or: [
+                                    {
+                                        $or: [
+                                            {
+                                                $and: [
+                                                    {whoCanRW: 'group'},
+                                                    {'groups.users': objectId(req.session.uId)}
+                                                ]
+                                            },
+                                            {
+                                                $and: [
+                                                    {whoCanRW: 'group'},
+                                                    {'groups.group': {$in: arrOfObjectId}}
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        $and: [
+                                            {whoCanRW: 'owner'},
+                                            {'groups.owner': objectId(req.session.uId)}
+                                        ]
+                                    },
+                                    {whoCanRW: "everyOne"}
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    $project: {
+                        _id: 1
+                    }
+                },
+                waterfallCallback
+            );
+        };
+
+        contentSearcher = function (quotationsIds, waterfallCallback) {
+            optionsObject._id = {$in: quotationsIds};
+            var query = Product.find(optionsObject).limit(count).skip(skip);
+            query.exec(waterfallCallback);
+        };
+
+        waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
+
+        async.waterfall(waterfallTasks, function (err, products) {
             if (err) {
                 return next(err);
             } else {
                 if (req.query.currentNumber && req.query.currentNumber < products.length) {
-                    res['showMore'] = true;
+                    result['showMore'] = true;
                 }
-                res['count'] = products.length;
-                response.status(200).send(res);
+                result['count'] = products.length;
+                res.status(200).send(result);
             }
         });
     };
