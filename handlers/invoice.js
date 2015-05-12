@@ -41,57 +41,25 @@ var Invoice = function (models) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getReadAccess(req, req.session.uId, 56, function (access) {
                 if (access) {
-                    var data = {};
-                    var query = {};
-                    for (var i in req.query) {
-                        data[i] = req.query[i];
-                    }
-                    var Invoice = models.get(req.session.lastDb, "Invoice", InvoiceSchema);
+                    var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
+                    var optionsObject = {};
+                    var sort = {};
+                    var count = req.query.count ? req.query.count : 50;
+                    var page = req.query.page;
+                    var skip = (page - 1) > 0 ? (page - 1) * count : 0;
 
                     var departmentSearcher;
                     var contentIdsSearcher;
                     var contentSearcher;
                     var waterfallTasks;
 
-                    var count = req.query.count ? req.query.count : 50;
-                    var page = req.query.page;
-                    var skip = (page - 1) > 0 ? (page - 1) * count : 0;
-                    var sort = {};
-
                     if (req.query.sort) {
                         sort = req.query.sort;
                     } else {
-                        sort = { "supplier": -1 };
+                        sort = {"supplierId": 1};
                     }
 
-                    if (data && data.filter && data.filter.workflow) {
-                        data.filter.workflow = data.filter.workflow.map(function (item) {
-                            return item === "null" ? null : item;
-                        });
-
-                        if (data && data.filter && data.filter.workflow) {
-                            query.where('workflow').in(data.filter.workflow);
-                        } else if (data && (!data.newCollection || data.newCollection === 'false')) {
-                            query.where('workflow').in([]);
-                        }
-                    }
-
-                    if (data && data.filter && data.filter.workflow) {
-                        query.where('workflow').in(data.filter.workflow);
-                    } else if (data && (!data.newCollection || data.newCollection === 'false')) {
-                        query.where('workflow').in([]);
-                    }
-
-                    Invoice.populate('supplierId', 'name');
-
-                    Invoice.find(query).limit(count).sort(sort).skip(skip).exec(function (error, _res) {
-                        if (error) {
-                            return next(error)
-                        }
-                        res.status(200).send({success: _res});
-                    });
-
-                    /*departmentSearcher = function (waterfallCallback) {
+                    departmentSearcher = function (waterfallCallback) {
                         models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
                             {
                                 $match: {
@@ -102,7 +70,6 @@ var Invoice = function (models) {
                                     _id: 1
                                 }
                             },
-
                             waterfallCallback);
                     };
 
@@ -113,7 +80,7 @@ var Invoice = function (models) {
                             {
                                 $match: {
                                     $and: [
-                                        /!*optionsObject,*!/
+                                        optionsObject,
                                         {
                                             $or: [
                                                 {
@@ -154,8 +121,18 @@ var Invoice = function (models) {
                     };
 
                     contentSearcher = function (invoicesIds, waterfallCallback) {
-                        var queryObject = {_id: {$in: invoicesIds}};
-                        var query = Invoice.find(queryObject);
+                        optionsObject._id = {$in: invoicesIds};
+
+                        var query = Invoice.find(optionsObject).limit(count).skip(skip).sort(sort);
+
+                        query.populate('supplierId','name _id').
+                            populate('department', '_id departmentName').
+                            populate('createdBy.user').
+                            populate('editedBy.user').
+                            populate('groups.users').
+                            populate('groups.group').
+                            populate('groups.owner', '_id login');
+
                         query.exec(waterfallCallback);
                     };
 
@@ -165,10 +142,8 @@ var Invoice = function (models) {
                         if(err){
                             return next(err);
                         }
-
-                        res.status(200).send(result);
-                    });*/
-
+                        res.status(200).send({success: result});
+                    });
                 } else {
                     res.send(403);
                 }
@@ -301,21 +276,21 @@ var Invoice = function (models) {
     }
 
     this.totalCollectionLength = function (req, res, next) {
-        var Invoice =  models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
 
-        //var departmentSercher;
-        //var contentIdsSercher;
-        //var contentSercher;
-        var departmentSearcher;
-        var contentIdsSearcher;
-        //var contentSearcher;
-
+        var optionsObject = {};
         var result = {};
 
         result['showMore'] = false;
 
+        var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
+
+        var departmentSearcher;
+        var contentIdsSearcher;
+        var contentSearcher;
+        var waterfallTasks;
+
         departmentSearcher = function (waterfallCallback) {
-            models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
+            models.get(req.session.lastDb, "Invoice", InvoiceSchema).aggregate(
                 {
                     $match: {
                         users: objectId(req.session.uId)
@@ -336,7 +311,7 @@ var Invoice = function (models) {
                 {
                     $match: {
                         $and: [
-                            /*optionsObject,*/
+                            optionsObject,
                             {
                                 $or: [
                                     {
@@ -376,12 +351,22 @@ var Invoice = function (models) {
             );
         };
 
-        async.waterfall([departmentSearcher, contentIdsSearcher], function(err, result){
-            if(err){
-                return next(err);
-            }
+        contentSearcher = function (invoicesIds, waterfallCallback) {
+            optionsObject._id = {$in: invoicesIds};
+            var query = Invoice.find(optionsObject);
+            query.exec(waterfallCallback);
+        };
 
-            res.status(200).send({count: result.length});
+        waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
+
+        async.waterfall(waterfallTasks, function (err, invoice) {
+            if (err) {
+                return next(err);
+            } else {
+
+                result['count'] = invoice.length;
+                res.status(200).send(result);
+            }
         });
     };
 
