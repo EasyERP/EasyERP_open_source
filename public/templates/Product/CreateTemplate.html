@@ -1,54 +1,87 @@
 <div class="form-holder">
-  <form method="post" action="" id="createEmployeeForm" class="form">
-    <fieldset>
-      <div class="inner">
-         <div class="avatar left">
-              <div class="upload">Edit<input type="file" value="Edit" id="inputImg"></div>
-              <canvas id="avatar" width="140" height="140"><input type="file" value="Edit" id="File1"></canvas>
-            </div>
-			<div class="avatarInfoContainer product">
-              <div class="half-block left">
-                <dl class="create-product-info">
-                    <dt><label for="product">Product Name</label></dt><dd><input type="text" id="product" required maxlength="32" placeholder="Product Name"/></dd>
-                    <dt><label for="solid">Can be Solid</label></dt><dd><input type="checkbox" id="solid" checked class="checkbox left"/></dd>
-                    <dt><label for="expensed">Can be Expensed</label></dt><dd><input type="checkbox" id="expensed" class="checkbox left"/></dd><!--
-                    <dt><label for="subscription">Event Subscription</label></dt><dd><input type="checkbox" id="subscription" required class="checkbox left"/></dd>-->
-                    <dt><label for="purchased">Can be Purchased</label></dt><dd><input type="checkbox" id="purchased" checked class="checkbox left"/></dd>
-                </dl>
-              </div>
-              <div class="half-block left">
-                <dl class="create-product-info">
-                    <dt><label for="productType">Product Type</label></dt><dd><a id="productType" class="current-selected" href="javascript:;">Select</a></dd>
-<!--                    <dl id="typeOfEvent" class="hidden">
-                        <dt><label for="eventType">Type of Event</label></dt><dd><a id="eventType" class="current-selected" href="javascript:;">Select</a></dd>
-                    </dl>-->
-                    <dt><label for="salePrice">Sale Price</label></dt><dd><input type="text" id="salePrice" class="extra-info" maxlength="10" placeholder="0.00"/></dd>
-                    <dt><label for="active">Active</label></dt><dd><input type="checkbox" id="active" checked class="checkbox left"/></dd>
-                    <dt><label for="barcode">Barcode</label></dt><dd><input type="text" id="barcode" class="extra-info" maxlength="20" placeholder=""/></dd>
-				</dl>
-			  </div>
-                <div class="full-width left">
-                    <div class="inner">
-                        <div class="textarea-wrapper">
-                            <textarea type="text" class="full-width productDescriptionCreate" name="description" placeholder="Add a Description..." id="description"  maxlength="500" required />
+    <form method="post" action="" id="createEmployeeForm" class="form">
+        <fieldset>
+            <div class="inner">
+                <ul class="dialog-tabs">
+                    <li><a class="active" href="javascript:;">Main</a></li>
+                    <li><a href="javascript:;">Assignees</a></li>
+                </ul>
+                <div class="clearfix"></div>
+                <div class="dialog-tabs-items">
+                    <div class="dialog-tabs-item active">
+                        <div class="avatar">
+                            <div class="upload">Edit<input type="file" value="Edit" id="inputImg"></div>
+                            <canvas id="avatar" width="140" height="140"><input type="file" value="Edit" id="File1">
+                            </canvas>
                         </div>
+                        <div class="avatarInfoContainer">
+                            <div class="half-block left">
+                                <dl class="product-info">
+                                    <dt><label for="product">Product Name</label></dt>
+                                    <dd><input type="text" id="product" required maxlength="32"
+                                               placeholder="Product Name"/></dd>
+                                    <dt><label for="solid">Can be Solid</label></dt>
+                                    <dd><input type="checkbox" id="solid" checked class="checkbox left"/></dd>
+                                    <dt><label for="expensed">Can be Expensed</label></dt>
+                                    <dd><input type="checkbox" id="expensed" class="checkbox left"/></dd>
+                                    <!--
+                                                        <dt><label for="subscription">Event Subscription</label></dt><dd><input type="checkbox" id="subscription" required class="checkbox left"/></dd>-->
+                                    <dt><label for="purchased">Can be Purchased</label></dt>
+                                    <dd><input type="checkbox" id="purchased" checked class="checkbox left"/></dd>
+                                </dl>
+                            </div>
+                            <div class="half-block left">
+                                <dl class="product-info">
+                                    <dt><label for="productType">Product Type</label></dt>
+                                    <dd><a id="productType" class="current-selected" href="javascript:;">Select</a></dd>
+                                    <!--                    <dl id="typeOfEvent" class="hidden">
+                                                            <dt><label for="eventType">Type of Event</label></dt><dd><a id="eventType" class="current-selected" href="javascript:;">Select</a></dd>
+                                                        </dl>-->
+                                    <dt><label for="salePrice">Sale Price</label></dt>
+                                    <dd><input type="text" id="salePrice" class="extra-info" maxlength="10"
+                                               placeholder="0.00"/></dd>
+                                    <dt><label for="active">Active</label></dt>
+                                    <dd><input type="checkbox" id="active" checked class="checkbox left"/></dd>
+                                    <dt><label for="barcode">Barcode</label></dt>
+                                    <dd><input type="text" id="barcode" class="extra-info" maxlength="20"
+                                               placeholder=""/></dd>
+                                </dl>
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                        <div class="full-width left">
+                            <div class="inner">
+                                <div class="textarea-wrapper">
+                                        <textarea type="text" class="full-width productDescriptionCreate"
+                                                  name="description" placeholder="Add a Description..." id="description"
+                                                  maxlength="500" required/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="clearfix">
+                            <div class="cropImages form" style="display:none;">
+                                <div class="formTitle">
+                                    <h3 class="left">Crop Images</h3>
+
+                                    <div class="clearfix"></div>
+                                </div>
+                                <br/>
+
+                                <div class="image_input" style="float: left;margin-right: 20px;"></div>
+                                <img class="image_output"/>
+
+                                <div class="clearfix"></div>
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="dialog-tabs-item">
+                        <div class="assignees-container"></div>
                     </div>
                 </div>
-              <div class="clearfix"></div>
-                <div class="cropImages form" style="display:none;">
-                    <div class="formTitle">
-                        <h3 class="left">Crop Images</h3>
-                        <div class="clearfix"></div>
-                    </div><br />
-                    <div class="image_input" style="float: left;margin-right: 20px;"></div>
-                    <img class="image_output" />
-                    <div class="clearfix"></div>
-                </div>
                 <div class="clearfix"></div>
-			</div>
-            <div class="clearfix"></div>
-		  </div>
-    </fieldset>
-  </form>
+            </div>
+        </fieldset>
+    </form>
 </div>
 

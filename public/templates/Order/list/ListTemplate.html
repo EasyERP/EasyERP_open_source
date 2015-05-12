@@ -1,7 +1,7 @@
-<!--
 <% orderCollection.forEach(function(order, index){ %>
 <tr data-id="<%=order._id%>">
     <td class = "notForm"><input type="checkbox" value="<%=order._id%>" class="checkbox" /></td>
+    <td><%=startNumber + index + 1%></td>
     <td><%=order.customerRef.substr(0,7)%></td>
     <td><%=order.orderDate%></td>
     <td><%=order.customer%></td>
@@ -12,8 +12,7 @@
     <td><%=order.status%></td>
 </tr>
 <% }) %>
--->
-<% personsCollection.forEach(function(person, index){ %>
+<!--<% personsCollection.forEach(function(person, index){ %>
 <tr data-id="<%=person._id%>">
     <td class = "notForm"><input type="checkbox" value="<%=person._id%>" class="checkbox" /></td>
     <td><%=startNumber + index + 1%></td>
@@ -24,5 +23,6 @@
     <td><%=person.address.country%></td>
     <td><%=(person.createdBy&&person.createdBy.date)?(person.createdBy.date + ((person.createdBy.user)?(' (' + person.createdBy.user.login + ')'):'')):''%></td>
     <td><%=(person.editedBy&&person.editedBy.date)?( person.editedBy.date + ((person.editedBy.user) ?(' (' + person.editedBy.user.login + ')') : '')):''%></td>
+    <td><%=startNumber + index + 1%></td>
 </tr>
-<% }) %>
+<% }) %>-->

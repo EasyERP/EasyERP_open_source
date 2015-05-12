@@ -1,18 +1,20 @@
 ﻿<div>
-    <table class="list task-list">
-	  <col width="2%">
-	  <col width="10%">
-	  <col width="10%">
-	  <col width="12%">
-	  <col width="10%">
-	  <col width="10%">
-	  <col width="8%">
-	  <col width="5%">
-	  <col width="10%">
+    <table class="list order-list">
+        <col width="2%">
+        <col width="2%">
+        <col width="10%">
+        <col width="10%">
+        <col width="12%">
+	    <col width="10%">
+	    <col width="10%">
+	    <col width="8%">
+	    <col width="5%">
+	    <col width="10%">
 
         <thead>
             <tr>
                 <th><input type="checkbox" id="check_all" /></th>
+                <th>N</th>
                 <th class="oe_sortable" data-sort="reference">Reference<span class="arrow down">7</span><span class="arrow up">v</span></th>
                 <th class="oe_sortable" data-sort="orderDate">Order Date<span class="arrow down">7</span><span class="arrow up">v</span></th>
                 <th class="oe_sortable" data-sort="customer">Customer<span class="arrow down">7</span><span class="arrow up">v</span></th>
@@ -23,19 +25,6 @@
                 <th class="oe_sortable" data-sort="status">Status<span class="arrow down">7</span><span class="arrow up">v</span></th>
             </tr>
         </thead>
-        <tfoot>
-            <tr>
-                <td></td>
-                <td class="oe_list_footer oe_number"></td>
-                <td class="oe_list_footer oe_number"></td>
-                <td class="oe_list_footer oe_number"></td>
-                <td class="oe_list_footer oe_number"></td>
-                <td class="oe_list_footer oe_number"></td>
-                <td class="oe_list_footer oe_number" data-field="amount_untaxed" title="Total Untaxed amount"></td>
-                <td class="oe_list_footer oe_number" data-field="amount_total" title="Total amount"></td>
-                <td class="oe_list_footer oe_number"></td>
-            </tr>
-        </tfoot>
         <tbody id="listTable"></tbody>
     </table>
 
