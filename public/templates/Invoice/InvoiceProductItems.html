@@ -7,20 +7,14 @@
         <th class="width20" data-sort="description">
             Description
         </th>
-        <th class="width20" data-sort="account">
-            Account
-        </th>
-        <th class="width20" data-sort="analyticAccount">
-            Analytic&nbsp;Account
-        </th>
-        <th class="width20" data-sort="assetCategory">
-            Asset&nbsp;Category
+        <th class="width20" data-sort="scheduledDate">
+            Scheduled Date
         </th>
         <th class="width20" data-sort="quantity">
             Quantity
         </th>
         <th class="width20" data-sort="unitPrice">
-            Unit&nbsp;Price
+            Unit Price
         </th>
         <th class="width20" data-sort="taxes">
             Taxes
@@ -35,21 +29,26 @@
     </tfoot>
     <tbody>
     <tr>
-        <td colspan="9" class="addProductItem">
+        <td colspan="7" class="addProductItem">
             <a href="javascript:;">Add an item</a>
         </td>
     </tr>
     <tr>
-        <td colspan="9">&nbsp;</td>
+        <td colspan="7">&nbsp;</td>
     </tr>
     <tr>
-        <td colspan="9">&nbsp;</td>
+        <td colspan="7">&nbsp;</td>
     </tr>
     </tbody>
 </table>
 <div class="clearfix"></div>
 <div class="half-block right">
-    <table border="0" cellpadding="0" cellspacing="0" class="right oe_right">
+    <div id="minScheduleDate">
+        <span>
+
+        </span>
+    </div>
+    <table border="0" cellpadding="0" cellspacing="0" class="right calculateTotal">
         <tbody>
         <tr>
             <td>
@@ -57,75 +56,37 @@
                     Untaxed Amount
                 </label>
             </td>
-            <td colspan="1" width="99%">
+            <td>
                 <span><span id="totalUntaxes">0.00</span>€</span>
             </td>
         </tr>
         <tr class="taxes">
-            <td colspan="1" width="1%">
+            <td>
                 <label>Taxes</label>
             </td>
-            <td colspan="1" width="99%">
+            <td>
                     <span>
                         <span id="taxes">0.00</span>€
                     </span>
             </td>
         </tr>
         <tr class="totalAmount">
-            <td colspan="1" width="50%">
+            <td>
                 <label class="" data-original-title="" title="">Total</label>
             </td>
-            <td colspan="1" width="50%">
+            <td>
                 <span class=""><span id="totalAmount">0.00</span>€</span>
             </td>
         </tr>
-        <tr class="balance">
-            <td colspan="1" width="50%">
+        <tr class="totalAmount">
+            <td>
                 <label class="" data-original-title="" title="">Balance</label>
             </td>
-            <td colspan="1" width="50%">
+            <td>
                 <span class=""><span id="balance">0.00</span>€</span>
             </td>
         </tr>
         </tbody>
     </table>
 </div>
-        <!--<div class="half-block left">
-            <table class="list">
-                <thead>
-                <tr class="oe_list_header_columns">
-                    <th class="oe_sortable" data-sort="taxDescription">Tax&nbsp;Description<span
-                            class="arrow down">7</span><span class="arrow up">v</span></th>
-                    <th class="oe_sortable" data-sort="taxAccount">Tax&nbsp;Account<span
-                            class="arrow down">7</span><span class="arrow up">v</span></th>
-                    <th class="oe_sortable" data-sort="analyticAccount">Analytic&nbsp;account<span class="arrow down">7</span><span
-                            class="arrow up">v</span></th>
-                    <th class="oe_sortable" data-sort="base">Base<span class="arrow down">7</span><span
-                            class="arrow up">v</span></th>
-                    <th class="oe_sortable" data-sort="amount">Amount<span class="arrow down">7</span><span
-                            class="arrow up">v</span></th>
-                </tr>
-                </thead>
-                <tfoot>
-                <tr>
-                </tr>
-                </tfoot>
-                <tbody>
-                <tr>
-                    <td colspan="6" class="">
-                        <a href="#">Add an item</a>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="6">
-                        &nbsp;
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="6">
-                        &nbsp;
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>-->
+

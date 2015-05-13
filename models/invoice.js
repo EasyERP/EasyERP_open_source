@@ -6,6 +6,14 @@ module.exports = (function () {
     var mongoose = require('mongoose');
     var ObjectId = mongoose.Schema.Types.ObjectId;
 
+    var payments = {
+        _id: false,
+        id: false,
+        total: {type: Number, default: 0},
+        taxes: {type: Number, default: 0},
+        balance: {type: Number, default: 0}
+    };
+
     var products = {
         _id: false,
         id: false,
@@ -24,11 +32,13 @@ module.exports = (function () {
         paymentReference: { type: String, default: null },
 
         invoiceDate: { type: Date, default: Date.now },
-        dueDate: { type: Date, default: Date.now },
+        dueDate: Date,
         account: { type: String, default: null },
         journal: { type: String, default: null },
 
+        paymentInfo: payments,
         products: [ products],
+
         workflow: {type: ObjectId, ref: 'workflows', default: null},
         whoCanRW: {type: String, enum: ['owner', 'group', 'everyOne'], default: 'everyOne'},
 

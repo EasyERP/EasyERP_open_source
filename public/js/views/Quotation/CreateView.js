@@ -17,7 +17,7 @@ define([
 
             initialize: function (options) {
                 if (options) {
-                    this.vissible=options.vissible;
+                    this.vissible = options.vissible;
                 }
                 _.bindAll(this, "saveItem", "render");
                 this.model = new QuotationModel();
@@ -73,12 +73,22 @@ define([
 
             changeTab: function (e) {
                 var holder = $(e.target);
-                holder.closest(".dialog-tabs").find("a.active").removeClass("active");
+                var n;
+                var dialog_holder;
+                var closestEl = holder.closest('.dialog-tabs');
+                var dataClass = closestEl.data('class');
+                var selector = '.dialog-tabs-items.' + dataClass;
+                var itemActiveSelector = '.dialog-tabs-item.' + dataClass + '.active';
+                var itemSelector = '.dialog-tabs-item.' + dataClass;
+
+                closestEl.find("a.active").removeClass("active");
                 holder.addClass("active");
-                var n = holder.parents(".dialog-tabs").find("li").index(holder.parent());
-                var dialog_holder = $(".dialog-tabs-items");
-                dialog_holder.find(".dialog-tabs-item.active").removeClass("active");
-                dialog_holder.find(".dialog-tabs-item").eq(n).addClass("active");
+
+                n = holder.parents(".dialog-tabs").find("li").index(holder.parent());
+                dialog_holder = $(selector);
+
+                dialog_holder.find(itemActiveSelector).removeClass("active");
+                dialog_holder.find(itemSelector).eq(n).addClass("active");
             },
 
             saveItem: function () {
@@ -146,7 +156,7 @@ define([
                         }
                     });
 
-                }  else {
+                } else {
                     alert(CONSTANTS.RESPONSES.CREATE_QUOTATION);
                 }
             },
