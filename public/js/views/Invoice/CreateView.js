@@ -24,7 +24,6 @@ define([
             events: {
                 'keydown': 'keydownHandler',
                 'click .dialog-tabs a': 'changeTab',
-                'click .dialog-tabs-n a': 'changeTab_n',
 				"click .details":"showDetailsBox",
                 "click .current-selected": "showNewSelect",
                 "click": "hideNewSelect",
@@ -71,22 +70,22 @@ define([
 
             changeTab: function (e) {
                 var holder = $(e.target);
-                holder.closest(".dialog-tabs").find("a.active").removeClass("active");
-                holder.addClass("active");
-                var n = holder.parents(".dialog-tabs").find("li").index(holder.parent());
-                var dialog_holder = $(".dialog-tabs-items");
-                dialog_holder.find(".dialog-tabs-item.active").removeClass("active");
-                dialog_holder.find(".dialog-tabs-item").eq(n).addClass("active");
-            },
+                var n;
+                var dialog_holder;
+                var closestEl = holder.closest('.dialog-tabs');
+                var dataClass = closestEl.data('class');
+                var selector = '.dialog-tabs-items.' + dataClass;
+                var itemActiveSelector = '.dialog-tabs-item.' + dataClass + '.active';
+                var itemSelector = '.dialog-tabs-item.' + dataClass;
 
-            changeTab_n: function (e) {
-                var holder = $(e.target);
-                holder.closest(".dialog-tabs-n").find("a.active").removeClass("active");
+                closestEl.find("a.active").removeClass("active");
                 holder.addClass("active");
-                var n = holder.parents(".dialog-tabs-n").find("li").index(holder.parent());
-                var dialog_holder = $(".dialog-tabs-items-n");
-                dialog_holder.find(".dialog-tabs-item-n.active").removeClass("active");
-                dialog_holder.find(".dialog-tabs-item-n").eq(n).addClass("active");
+
+                n = holder.parents(".dialog-tabs").find("li").index(holder.parent());
+                dialog_holder = $(selector);
+
+                dialog_holder.find(itemActiveSelector).removeClass("active");
+                dialog_holder.find(itemSelector).eq(n).addClass("active");
             },
 
             saveItem: function () {
@@ -244,7 +243,7 @@ define([
                     dateFormat: "d M, yy",
                     changeMonth: true,
                     changeYear: true
-                });
+                }).datepicker('setDate', new Date());
 
                 this.$el.find('#due_date').datepicker({
                     dateFormat: "d M, yy",

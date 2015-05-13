@@ -2,13 +2,13 @@
     <form method="post" action="" class="form" id="invoiceForm">
         <fieldset>
             <div class="inner">
-                <ul class="dialog-tabs" >
+                <ul class="dialog-tabs" data-class="mainTabs" >
                     <li><a class="active" href="javascript:;">Main</a></li>
                     <li><a href="javascript:;">Assignees</a></li>
                 </ul>
                 <div class="clearfix"></div>
-                <div class="dialog-tabs-items">
-                    <div class="dialog-tabs-item active">
+                <div class="dialog-tabs-items mainTabs">
+                    <div class="dialog-tabs-item mainTabs active">
                         <div class="half-block left">
                             <dl class="opp-info">
                                 <dt><label for="supplierId">Supplier</label></dt>
@@ -71,20 +71,20 @@
                             </dl>
                         </div>
                         <div class="clearfix"></div>
-                        <ul class="dialog-tabs-n" >
+                        <ul class="dialog-tabs" data-class="childTabs" >
                             <li><a class="active" href="javascript:;">Invoice</a></li>
                             <li><a href="javascript:;">Other Info</a></li>
                             <li><a href="javascript:;">Payments</a></li>
                         </ul>
                         <div class="clearfix"></div>
-                        <div class="dialog-tabs-items-n">
-                            <div class="dialog-tabs-item-n active">
+                        <div class="dialog-tabs-items childTabs">
+                            <div class="dialog-tabs-item childTabs active">
                                 <div id="invoiceItemsHolder">
 
                                 </div>
                                 <div class="clearfix"></div>
                             </div>
-                            <div class="dialog-tabs-item-n">
+                            <div class="dialog-tabs-item childTabs">
                                 <div class="other-info-container">
                                     <div class="half-block left">
                                         <dl class="opp-info">
@@ -118,7 +118,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="dialog-tabs-item-n">
+                            <div class="dialog-tabs-item childTabs">
                                 <div class="pauments-container">
                                     <table class="list">
                                         <thead>
@@ -164,7 +164,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="dialog-tabs-item">
+                    <div class="dialog-tabs-item mainTabs">
                         <div id="assignees-container"></div>
                     </div>
                 </div>
