@@ -122,8 +122,19 @@ define([
                     }
                 }
 
+                var usersId = [];
+                var groupsId = [];
+                $(".groupsAndUser tr").each(function () {
+                    if ($(this).data("type") == "targetUsers") {
+                        usersId.push($(this).data("id"));
+                    }
+                    if ($(this).data("type") == "targetGroups") {
+                        groupsId.push($(this).data("id"));
+                    }
 
-                //var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
+                });
+
+                var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
                 var data = {
 
                     supplierId: supplierId,
@@ -135,9 +146,14 @@ define([
                     dueDate: dueDate,
                     account: null,
                     journal: null,
-                    products: products
 
-                    //whoCanRW: whoCanRW
+                    products: products,
+                    groups: {
+                        owner: $("#allUsersSelect").data("id"),
+                        users: usersId,
+                        group: groupsId
+                    },
+                    whoCanRW: whoCanRW
 
                 };
 

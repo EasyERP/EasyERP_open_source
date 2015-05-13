@@ -13,13 +13,19 @@ var Invoice = function (models) {
     this.create = function (req, res, next) {
         var Invoice =  models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
         var body = req.body;
+
         var invoice = new Invoice(body);
 
-        invoice.save(function (err, invoice) {
+        if (req.session.uId) {
+            invoice.createdBy.user = req.session.uId;
+            invoice.editedBy.user = req.session.uId;
+        }
+
+        invoice.save(function (err, result) {
             if (err) {
                 return next(err);
             }
-            res.status(200).send({success: invoice});
+            res.status(200).send({success: result});
         });
     };
 
@@ -166,7 +172,13 @@ var Invoice = function (models) {
                     var id = data.id;
 
                     var query = models.get(req.session.lastDb, "Invoice", InvoiceSchema).findById(id);
-                    query.populate('supplierId','name');
+                    query.populate('supplierId','name').
+                        populate('department', '_id departmentName').
+                        populate('createdBy.user').
+                        populate('editedBy.user').
+                        populate('groups.users').
+                        populate('groups.group').
+                        populate('groups.owner', '_id login');
 
                     query.exec(function (err, result) {
                         if (err) {
@@ -214,7 +226,7 @@ var Invoice = function (models) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getReadAccess(req, req.session.uId, 56, function (access) {
                 if (access) {
-                    data.invoice.editedBy = {
+                    data.editedBy = {
                         user: req.session.uId,
                         date: new Date().toISOString()
                     }
@@ -223,7 +235,7 @@ var Invoice = function (models) {
                         data.supplierId = data.supplierId._id;
                     }
 
-                    models.get(req.session.lastDb, "Invoice", InvoiceSchema).findByIdAndUpdate(_id, data.invoice, function (err, result) {
+                    models.get(req.session.lastDb, "Invoice", InvoiceSchema).findByIdAndUpdate(_id, data, function (err, result) {
 
                         if (err) {
                             console.log(err);
