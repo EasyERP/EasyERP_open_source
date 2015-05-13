@@ -19,6 +19,10 @@ module.exports = function (app, mainDb) {
     var invoiceRouter = require('./invoice')(models);
     var supplierRouter = require('./supplier')(models);
     var quotationRouter = require('./quotation')(models);
+    var destinationRouter = require('./destination')(models);
+    var incotermRouter = require('./incoterm')(models);
+    var invoicingControlRouter = require('./invoicingControl')(models);
+    var paymentTermRouter = require('./paymentTerm')(models);
 
 
     app.get('/', function (req, res, next) {
@@ -40,6 +44,14 @@ module.exports = function (app, mainDb) {
     app.use('/supplier', supplierRouter);
 
     app.use('/quotation', quotationRouter);
+
+    app.use('/destination', destinationRouter);
+
+    app.use('/incoterm', incotermRouter);
+
+    app.use('/invoicingControl', invoicingControlRouter);
+
+    app.use('/paymentTerm', paymentTermRouter);
 
     app.get('/getDBS', function (req, res) {
         res.send(200, {dbsNames: dbsNames});

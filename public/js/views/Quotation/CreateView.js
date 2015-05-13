@@ -180,7 +180,6 @@ define([
                     dialogClass: "edit-dialog",
                     title: "Create Quotation",
                     width: "900px",
-                    position: {within: $("#wrapper")},
                     buttons: [
                         {
                             id: "create-person-dialog",
@@ -204,7 +203,11 @@ define([
                     new ProductItemView().render().el
                 );
 
-                populate.getCompanies("#supplierDd", "/supplier", {}, this, false, true);
+                populate.get("#destination", "/destination", {}, 'name', this, true, true);
+                populate.get("#incoterm", "/incoterm", {}, 'name', this, true, true);
+                populate.get("#invoicingControl", "/invoicingControl", {}, 'name', this, true, true);
+                populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, true, true);
+                populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
 
                 this.$el.find('#orderDate').datepicker({
                     dateFormat: "d M, yy",
@@ -212,11 +215,11 @@ define([
                     changeYear: true
                 }).datepicker('setDate', new Date());
 
-                this.$el.find('#bidValidUntill').datepicker({
+                /*this.$el.find('#bidValidUntill').datepicker({
                     dateFormat: "d M, yy",
                     changeMonth: true,
                     changeYear: true
-                });
+                });*/
 
                 this.$el.find('#expectedDate').datepicker({
                     dateFormat: "d M, yy",

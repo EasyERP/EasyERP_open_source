@@ -7,13 +7,17 @@ module.exports = (function () {
     require('./customer.js');
     require('./degree.js');
     require('./department.js');
+    require('./destination.js');
     require('./employee.js');
     require('./jobPosition.js');
     require('./jobType.js');
+    require('./incoterm.js');
+    require('./invoicingControl.js');
     require('./language.js');
     require('./module.js');
     require('./nationality.js');
     require('./opportunitie.js');
+    require('./paymentTerm.js');
     require('./priority.js');
     require('./product.js');
     require('./productTypes.js');
