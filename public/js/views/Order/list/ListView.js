@@ -2,13 +2,12 @@ define([
     'text!templates/Order/list/ListHeader.html',
     'views/Quotation/CreateView',
     'views/Order/list/ListItemView',
-    'text!templates/Alpabet/AphabeticTemplate.html',
-    'collections/Persons/filterCollection',
+    'collections/Order/filterCollection',
 	'common',
     'dataService'
 ],
 
-function (listTemplate, createView, listItemView, aphabeticTemplate,contentCollection, common, dataService) {
+function (listTemplate, createView, listItemView, contentCollection, common, dataService) {
     var OrdersListView = Backbone.View.extend({
         el: '#content-holder',
         defaultItemsNumber: null,
@@ -17,15 +16,12 @@ function (listTemplate, createView, listItemView, aphabeticTemplate,contentColle
         sort: null,
         newCollection: null,
         page: null, //if reload page, and in url is valid page
-        contentType: 'Orders',//needs in view.prototype.changeLocationHash
+        contentType: 'Order',//needs in view.prototype.changeLocationHash
         viewType: 'list',//needs in view.prototype.changeLocationHash
         
         initialize: function (options) {
             this.startTime = options.startTime;
             this.collection = options.collection;
-            _.bind(this.collection.showMore, this.collection);
-            _.bind(this.collection.showMoreAlphabet, this.collection);
-            this.allAlphabeticArray = common.buildAllAphabeticArray();
             this.filter = options.filter;
             this.sort = options.sort;
             this.defaultItemsNumber = this.collection.namberToShow || 50;
@@ -51,7 +47,7 @@ function (listTemplate, createView, listItemView, aphabeticTemplate,contentColle
             "click .letter:not(.empty)": "alpabeticalRender",
             "click #firstShowPage": "firstPage",
             "click #lastShowPage": "lastPage",
-            "click .oe_sortable": "goSort",
+            "click .oe_sortable": "goSort"
         },
 
         fetchSortCollection: function (sortObject) {
@@ -67,18 +63,19 @@ function (listTemplate, createView, listItemView, aphabeticTemplate,contentColle
                     newCollection: this.newCollection
                 });
                 this.collection.bind('reset', this.renderContent, this);
-                this.collection.bind('showmore', this.showMoreContent, this);
         },
 
         goSort: function (e) {
-                this.collection.unbind('reset');
-                this.collection.unbind('showmore');
-                var target$ = $(e.target);
-                var currentParrentSortClass = target$.attr('class');
-                var sortClass = currentParrentSortClass.split(' ')[1];
-                var sortConst = 1;
-                var sortBy = target$.data('sort');
-                var sortObject = {};
+            var target$ = $(e.target);
+            var currentParrentSortClass = target$.attr('class');
+            var sortClass = currentParrentSortClass.split(' ')[1];
+            var sortConst = 1;
+            var sortBy = target$.data('sort');
+            var sortObject = {};
+
+            this.collection.unbind('reset');
+            this.collection.unbind('showmore');
+
                 if (!sortClass) {
                     target$.addClass('sortDn');
                     sortClass = "sortDn";
@@ -105,25 +102,6 @@ function (listTemplate, createView, listItemView, aphabeticTemplate,contentColle
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
         },
 
-        alpabeticalRender: function (e) {
-                this.startTime = new Date();
-                $(e.target).parent().find(".current").removeClass("current");
-                $(e.target).addClass("current");
-
-                var selectedLetter = $(e.target).text();
-                if ($(e.target).text() == "All") {
-                    selectedLetter = "";
-                }
-                this.filter = (this.filter && this.filter !== 'empty') ? this.filter : {};
-                this.filter['letter'] = selectedLetter;
-                var itemsNumber = $("#itemsNumber").text();
-                $("#top-bar-deleteBtn").hide();
-                $('#check_all').prop('checked', false);
-                this.changeLocationHash(1, itemsNumber, this.filter);
-                this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter});
-                this.getTotalLength(null, itemsNumber, this.filter);
-        },
-
         hideItemsNumber: function (e) {
             $(".allNumberPerPage").hide();
         },
@@ -134,7 +112,7 @@ function (listTemplate, createView, listItemView, aphabeticTemplate,contentColle
         },
 
         getTotalLength: function (currentNumber, itemsNumber,filter) {
-                dataService.getData('/totalCollectionLength/Persons', {
+                dataService.getData('/order/totalCollectionLength', {
                     currentNumber: currentNumber,
                     filter: filter,
                     newCollection: this.newCollection
@@ -157,7 +135,11 @@ function (listTemplate, createView, listItemView, aphabeticTemplate,contentColle
 
             currentEl.html('');
             currentEl.append(_.template(listTemplate));
-            currentEl.append(new listItemView({ collection: this.collection, page: this.page, itemsNumber: this.collection.namberToShow }).render());//added two parameters page and items number
+            currentEl.append(new listItemView({
+                collection: this.collection,
+                page: this.page,
+                itemsNumber: this.collection.namberToShow
+            }).render());//added two parameters page and items number
 
             $('#check_all').click(function () {
                 $(':checkbox').prop('checked', this.checked);
@@ -169,21 +151,6 @@ function (listTemplate, createView, listItemView, aphabeticTemplate,contentColle
 
             $(document).on("click", function () {
                 self.hideItemsNumber();
-            });
-
-            common.buildAphabeticArray(this.collection, function (arr) {
-                $("#startLetter").remove();
-                self.alphabeticArray = arr;
-                currentEl.prepend(_.template(aphabeticTemplate, { alphabeticArray: self.alphabeticArray, selectedLetter: (self.selectedLetter == "" ? "All" : self.selectedLetter), allAlphabeticArray: self.allAlphabeticArray }));
-                var currentLetter = (self.filter) ? self.filter.letter : null;
-                    if (currentLetter) {
-                        $('#startLetter a').each(function() {
-                            var target = $(this);
-                            if (target.text() == currentLetter) {
-                                target.addClass("current");
-                            }
-                        });
-                    }
             });
                 var pagenation = this.$el.find('.pagination');
                 if (this.collection.length === 0) {
@@ -219,7 +186,7 @@ function (listTemplate, createView, listItemView, aphabeticTemplate,contentColle
                     newCollection: this.newCollection,
                     parrentContentId: this.parrentContentId
                 });
-                dataService.getData('/totalCollectionLength/Persons', {
+                dataService.getData('/order/totalCollectionLength', {
                     filter: this.filter,
                     newCollection: this.newCollection,
                     parrentContentId: this.parrentContentId
@@ -240,7 +207,7 @@ function (listTemplate, createView, listItemView, aphabeticTemplate,contentColle
 
                 });
 
-                dataService.getData('/totalCollectionLength/Persons', {
+                dataService.getData('/order/totalCollectionLength', {
                     filter: this.filter,
                     newCollection: this.newCollection,
                     parrentContentId: this.parrentContentId
@@ -258,7 +225,7 @@ function (listTemplate, createView, listItemView, aphabeticTemplate,contentColle
                     filter: this.filter,
                     newCollection: this.newCollection
                 });
-                dataService.getData('/totalCollectionLength/Persons', {
+                dataService.getData('/order/totalCollectionLength', {
                     filter: this.filter,
                     newCollection: this.newCollection
                 }, function (response, context) {
@@ -275,7 +242,7 @@ function (listTemplate, createView, listItemView, aphabeticTemplate,contentColle
                     filter: this.filter,
                     newCollection: this.newCollection
                 });
-                dataService.getData('/totalCollectionLength/Persons', {
+                dataService.getData('/order/totalCollectionLength', {
                     filter: this.filter,
                     newCollection: this.newCollection
                 }, function (response, context) {
@@ -341,22 +308,6 @@ function (listTemplate, createView, listItemView, aphabeticTemplate,contentColle
                 holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
         },
 
-        showMoreAlphabet: function (newModels) {
-            var holder = this.$el;
-            var alphaBet = holder.find('#startLetter');
-            var created = holder.find('#timeRecivingDataFromServer');
-            var countPerPage = this.countPerPage = newModels.length;
-
-            content.remove();
-
-            holder.append(this.template({ collection: newModels.toJSON(),page: holder.find("#currentShowPage").val(), itemsNumber: holder.find("span#itemsNumber").text() }));
-
-            this.getTotalLength(null, itemsNumber, this.filter);
-            created.text("Created in " + (new Date() - this.startTime) + " ms");
-            holder.prepend(alphaBet);
-            holder.append(created);
-        },
-
         gotoForm: function (e) {
             App.ownContentType = true;
             var id = $(e.target).closest("tr").data("id");
@@ -384,7 +335,7 @@ function (listTemplate, createView, listItemView, aphabeticTemplate,contentColle
             }
         },
         deleteItemsRender: function (deleteCounter, deletePage) {
-                dataService.getData('/totalCollectionLength/Persons', {
+                dataService.getData('/order/totalCollectionLength', {
                     filter: this.filter,
                     newCollection: this.newCollection
                 }, function (response, context) {
@@ -427,21 +378,7 @@ function (listTemplate, createView, listItemView, aphabeticTemplate,contentColle
 							localCounter++;
 
 							if (index==count-1){
-								common.buildAphabeticArray(that.collection, function (arr) {
 
-									$("#startLetter").remove();
-									that.alphabeticArray = arr;
-									currentEl.prepend(_.template(aphabeticTemplate, { alphabeticArray: that.alphabeticArray, selectedLetter: (that.selectedLetter == "" ? "All" : that.selectedLetter), allAlphabeticArray: that.allAlphabeticArray }));
-									var currentLetter = (that.filter) ? that.filter.letter : null
-									if (currentLetter) {
-										$('#startLetter a').each(function() {
-											var target = $(this);
-											if (target.text() == currentLetter) {
-												target.addClass("current");
-											}
-										});
-									}
-								});
 								that.deleteCounter =localCounter;
 								that.deletePage = $("#currentShowPage").val();
 								that.deleteItemsRender(that.deleteCounter, that.deletePage);
