@@ -2,8 +2,7 @@ define([
     'text!templates/Order/list/ListHeader.html',
     'views/Quotation/CreateView',
     'views/Order/list/ListItemView',
-    'text!templates/Alpabet/AphabeticTemplate.html',
-    'collections/Persons/filterCollection',
+    'collections/Order/filterCollection',
 	'common',
     'dataService'
 ],
@@ -23,9 +22,6 @@ function (listTemplate, createView, listItemView, aphabeticTemplate,contentColle
         initialize: function (options) {
             this.startTime = options.startTime;
             this.collection = options.collection;
-            _.bind(this.collection.showMore, this.collection);
-            _.bind(this.collection.showMoreAlphabet, this.collection);
-            this.allAlphabeticArray = common.buildAllAphabeticArray();
             this.filter = options.filter;
             this.sort = options.sort;
             this.defaultItemsNumber = this.collection.namberToShow || 50;
@@ -134,7 +130,7 @@ function (listTemplate, createView, listItemView, aphabeticTemplate,contentColle
         },
 
         getTotalLength: function (currentNumber, itemsNumber,filter) {
-                dataService.getData('/totalCollectionLength/Persons', {
+                dataService.getData('/order/totalCollectionLength', {
                     currentNumber: currentNumber,
                     filter: filter,
                     newCollection: this.newCollection
@@ -170,21 +166,6 @@ function (listTemplate, createView, listItemView, aphabeticTemplate,contentColle
             $(document).on("click", function () {
                 self.hideItemsNumber();
             });
-
-            common.buildAphabeticArray(this.collection, function (arr) {
-                $("#startLetter").remove();
-                self.alphabeticArray = arr;
-                currentEl.prepend(_.template(aphabeticTemplate, { alphabeticArray: self.alphabeticArray, selectedLetter: (self.selectedLetter == "" ? "All" : self.selectedLetter), allAlphabeticArray: self.allAlphabeticArray }));
-                var currentLetter = (self.filter) ? self.filter.letter : null;
-                    if (currentLetter) {
-                        $('#startLetter a').each(function() {
-                            var target = $(this);
-                            if (target.text() == currentLetter) {
-                                target.addClass("current");
-                            }
-                        });
-                    }
-            });
                 var pagenation = this.$el.find('.pagination');
                 if (this.collection.length === 0) {
                         pagenation.hide();
@@ -219,7 +200,7 @@ function (listTemplate, createView, listItemView, aphabeticTemplate,contentColle
                     newCollection: this.newCollection,
                     parrentContentId: this.parrentContentId
                 });
-                dataService.getData('/totalCollectionLength/Persons', {
+                dataService.getData('/order/totalCollectionLength', {
                     filter: this.filter,
                     newCollection: this.newCollection,
                     parrentContentId: this.parrentContentId
@@ -240,7 +221,7 @@ function (listTemplate, createView, listItemView, aphabeticTemplate,contentColle
 
                 });
 
-                dataService.getData('/totalCollectionLength/Persons', {
+                dataService.getData('/order/totalCollectionLength', {
                     filter: this.filter,
                     newCollection: this.newCollection,
                     parrentContentId: this.parrentContentId
@@ -258,7 +239,7 @@ function (listTemplate, createView, listItemView, aphabeticTemplate,contentColle
                     filter: this.filter,
                     newCollection: this.newCollection
                 });
-                dataService.getData('/totalCollectionLength/Persons', {
+                dataService.getData('/order/totalCollectionLength', {
                     filter: this.filter,
                     newCollection: this.newCollection
                 }, function (response, context) {
@@ -275,7 +256,7 @@ function (listTemplate, createView, listItemView, aphabeticTemplate,contentColle
                     filter: this.filter,
                     newCollection: this.newCollection
                 });
-                dataService.getData('/totalCollectionLength/Persons', {
+                dataService.getData('/order/totalCollectionLength', {
                     filter: this.filter,
                     newCollection: this.newCollection
                 }, function (response, context) {
@@ -384,7 +365,7 @@ function (listTemplate, createView, listItemView, aphabeticTemplate,contentColle
             }
         },
         deleteItemsRender: function (deleteCounter, deletePage) {
-                dataService.getData('/totalCollectionLength/Persons', {
+                dataService.getData('/order/totalCollectionLength', {
                     filter: this.filter,
                     newCollection: this.newCollection
                 }, function (response, context) {

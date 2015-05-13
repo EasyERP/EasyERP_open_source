@@ -15,6 +15,7 @@ module.exports = function (app, mainDb) {
     var dbsObject = mainDb.dbsObject;
     var models = require("../models.js")(dbsObject);
     var productRouter = require('./product')(models);
+    var orderRouter = require('./order')(models);
     var invoiceRouter = require('./invoice')(models);
     var supplierRouter = require('./supplier')(models);
     var quotationRouter = require('./quotation')(models);
@@ -31,6 +32,8 @@ module.exports = function (app, mainDb) {
     });
 
     app.use('/product', productRouter);
+
+    app.use('/order', orderRouter);
 
     app.use('/invoice', invoiceRouter);
 
