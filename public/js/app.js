@@ -52,6 +52,7 @@ define([
         });
         $.datepicker.setDefaults({
             dateFormat: "d M, yy",
+
             onChangeMonthYear: function (year, month) {
                 var mon;
                 switch (month) {

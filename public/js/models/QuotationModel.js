@@ -14,7 +14,7 @@ define(['Validation', 'common'], function (Validation, common) {
             orderDate: new Date(),
             expectedDate: null,
             name: 'PO',
-            ncoterm: String,
+            incoterm: String,
             invoiceControl: 'Based on generated draft invoice',
             invoiceRecived: false,
             paymentTerm: null,
