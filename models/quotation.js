@@ -26,6 +26,7 @@ module.exports = (function () {
 
 
     var quotationSchema = new Schema({
+        isOrder: {type: Boolean, default: false},
         supplier: {type: ObjectId, ref: 'Customers', default: null},
         supplierReference: {type: String, default: ''},
         /*deliverTo: {type: ObjectId, default: true},*/
