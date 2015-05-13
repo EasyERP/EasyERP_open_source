@@ -16,6 +16,9 @@ define([
             template: _.template(CreateTemplate),
 
             initialize: function (options) {
+                if (options) {
+                    this.vissible=options.vissible;
+                }
                 _.bindAll(this, "saveItem", "render");
                 this.model = new QuotationModel();
                 this.responseObj = {};
@@ -156,7 +159,7 @@ define([
             },
 
             render: function () {
-                var formString = this.template();
+                var formString = this.template({vissible: this.vissible});
                 var self = this;
                 var productItemContainer;
 

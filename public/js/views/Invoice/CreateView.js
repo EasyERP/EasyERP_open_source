@@ -4,9 +4,10 @@ define([
     "common",
 	"populate",
     "views/Invoice/InvoiceProductItems",
+    "views/Assignees/AssigneesView",
     "dataService"
     ],
-    function (CreateTemplate, InvoiceModel, common, populate, InvoiceItemView, dataService ) {
+    function (CreateTemplate, InvoiceModel, common, populate, InvoiceItemView, AssigneesView, dataService ) {
 
         var CreateView = Backbone.View.extend({
             el: "#content-holder",
@@ -23,6 +24,7 @@ define([
             events: {
                 'keydown': 'keydownHandler',
                 'click .dialog-tabs a': 'changeTab',
+                'click .dialog-tabs-n a': 'changeTab_n',
 				"click .details":"showDetailsBox",
                 "click .current-selected": "showNewSelect",
                 "click": "hideNewSelect",
@@ -75,6 +77,16 @@ define([
                 var dialog_holder = $(".dialog-tabs-items");
                 dialog_holder.find(".dialog-tabs-item.active").removeClass("active");
                 dialog_holder.find(".dialog-tabs-item").eq(n).addClass("active");
+            },
+
+            changeTab_n: function (e) {
+                var holder = $(e.target);
+                holder.closest(".dialog-tabs-n").find("a.active").removeClass("active");
+                holder.addClass("active");
+                var n = holder.parents(".dialog-tabs-n").find("li").index(holder.parent());
+                var dialog_holder = $(".dialog-tabs-items-n");
+                dialog_holder.find(".dialog-tabs-item-n.active").removeClass("active");
+                dialog_holder.find(".dialog-tabs-item-n").eq(n).addClass("active");
             },
 
             saveItem: function () {
@@ -184,6 +196,12 @@ define([
 
                 });
 
+                var notDiv = this.$el.find('#assignees-container');
+                notDiv.append(
+                    new AssigneesView({
+                        model: this.currentModel
+                    }).render().el
+                );
 
                 invoiceItemContainer = this.$el.find('#invoiceItemsHolder');
                 invoiceItemContainer.append(
