@@ -100,6 +100,7 @@ define([
                     var current = _.filter(response.data, function (item) {
                         return item._id == parrrentContentId;
                     });
+
                     $(id).text(current[0].name.first + " " + current[0].name.last).attr("data-id", current[0]._id);
                 }
             });
