@@ -1,14 +1,13 @@
-<% orderCollection.forEach(function(order, index){ %>
-<tr data-id="<%=order._id%>">
-    <td class = "notForm"><input type="checkbox" value="<%=order._id%>" class="checkbox" /></td>
+<% orderCollection.forEach(function(quotation, index){ %>
+<tr data-id="<%=quotation._id%>">
+    <td class = "notForm"><input type="checkbox" value="<%=quotation._id%>" class="checkbox" /></td>
     <td><%=startNumber + index + 1%></td>
-    <td><%=order.customerRef.substr(0,7)%></td>
-    <td><%=order.orderDate%></td>
-    <td><%=order.customer%></td>
-    <td><%=order.expectedDate%></a></td>
-    <td><%=order.sourceDocument%></td>
-    <td><%=order.untaxed%></td>
-    <td><%=order.total%></td>
-    <td><%=order.status%></td>
+    <td><%=quotation.name%></td>
+    <td><%=quotation.orderDate%></td>
+    <td><%=(quotation.supplier) ? quotation.supplier.fullName : ''%></td>
+    <td><%=quotation.expectedDate%></td>
+    <td><%=(quotation.paymentInfo) ? quotation.paymentInfo.unTaxed : '0'%></td>
+    <td><%=(quotation.paymentInfo) ? quotation.paymentInfo.total : '0'%></td>
+    <td><%=quotation.workflow%></td>
 </tr>
 <% }) %>
