@@ -10,7 +10,8 @@ module.exports = (function () {
         _id: false,
         id: false,
         total: {type: Number, default: 0},
-        taxes: {type: Number, default: 0}
+        taxes: {type: Number, default: 0},
+        balance: {type: Number, default: 0}
     };
 
     var products = {

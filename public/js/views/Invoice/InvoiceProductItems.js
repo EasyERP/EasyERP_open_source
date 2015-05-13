@@ -5,8 +5,9 @@ define([
     'text!templates/Invoice/InvoiceProductItems.html',
     'text!templates/Invoice/InvoiceProductInputContent.html',
     'collections/Product/products',
-    'populate'
-], function (productItemTemplate, ProductInputContent, productCollection, populate) {
+    'populate',
+    'helpers'
+], function (productItemTemplate, ProductInputContent, productCollection, populate, helpers) {
     var ProductItemTemplate = Backbone.View.extend({
         el: '#invoiceItemsHolder',
 
@@ -91,6 +92,7 @@ define([
         editClick: function (e) {
             var parent = $(e.target).closest('td');
             var maxlength = parent.find(".no-long").attr("data-maxlength") || 20;
+            var datePicker = parent.find('.datepicker');
 
             e.preventDefault();
 
@@ -115,6 +117,14 @@ define([
             parent.append('<input id="editInput" maxlength="' + maxlength + '" type="text" />');
             $('#editInput').val(this.text);
 
+            if (datePicker.length) {
+                $('#editInput').datepicker({
+                    dateFormat: "d M, yy",
+                    changeMonth: true,
+                    changeYear: true
+                }).addClass('datepicker');
+            }
+
             this.prevQuickEdit = parent;
 
             parent.append('<span id="saveSpan" class="productEdit"><a href="javascript:;">c</a></span>');
@@ -125,11 +135,16 @@ define([
         saveClick: function (e) {
             e.preventDefault();
 
-            var parent = $(e.target).closest('td');
+            var targetEl = $(e.target);
+            var parent = targetEl.closest('td');
             var inputEl = parent.find('input');
             var val = inputEl.val();
 
             parent.removeClass('quickEdit').html('<span>' + val + '</span>');
+
+            if (inputEl.hasClass('datepicker')) {
+                parent.find('span').addClass('datepicker');
+            }
 
             this.recalculateTaxes(parent);
         },
@@ -160,22 +175,41 @@ define([
             var model = this.products.get(_id);
             var selectedProduct = model.toJSON();
             var taxes;
+            var datePicker;
+            var spanDatePicker;
+            var price;
+
 
             trEl.attr('data-id', model.id);
+            //trEl.find('.datepicker').removeClass('notVisible');
 
             parrent.find(".current-selected").text(target.text()).attr("data-id", _id);
 
-            $(parrents[1]).attr('class', 'editable').find('span').text(selectedProduct.info.description || '...');
-            $(parrents[5]).attr('class', 'editable').find("span").text(1);
-            $(parrents[6]).attr('class', 'editable').find('span').text(selectedProduct.info.salePrice);
+            $(parrents[1]).attr('class', 'editable').find('span').text(selectedProduct.info.description || '');
+            $(parrents[2]).find('.datepicker').datepicker({
+                dateFormat: "d M, yy",
+                changeMonth: true,
+                changeYear: true
+            }).datepicker('setDate', new Date());
+            $(parrents[2]).attr('class', 'editable');
+            $(parrents[3]).attr('class', 'editable').find("span").text(1);
+
+            price = selectedProduct.info.salePrice;
+            $(parrents[4]).attr('class', 'editable').find('span').text(price);
 
             taxes = parseFloat(selectedProduct.info.salePrice) * this.taxesRate;
             taxes = taxes.toFixed(2);
 
-            $(parrents[7]).text(taxes);
-            $(parrents[8]).text(selectedProduct.info.salePrice);
+            $(parrents[5]).text(taxes);
+            $(parrents[6]).text(price.toFixed(2));
 
             $(".newSelectList").hide();
+
+            datePicker = trEl.find('input.datepicker');
+            spanDatePicker = trEl.find('span.datepicker');
+
+            spanDatePicker.text(datePicker.val());
+            datePicker.remove();
 
             this.calculateTotal(selectedProduct.info.salePrice);
         },
@@ -187,10 +221,8 @@ define([
             quantity = parseFloat(quantity);
             var cost = parent.find('[data-name="price"] span').text();
             cost = parseFloat(cost);
-
             var taxes = quantity * cost * this.taxesRate;
-            var amount = quantity * cost;
-
+            var amount = quantity * cost + taxes;
             taxes = taxes.toFixed(2);
             amount = amount.toFixed(2);
 
@@ -213,6 +245,8 @@ define([
             var currentEl;
             var quantity;
             var cost;
+            var dates = [];
+            var date;
 
             if (totalEls) {
                 for (var i = totalEls - 1; i >= 0; i--) {
@@ -220,6 +254,8 @@ define([
                     quantity = currentEl.find('[data-name="quantity"]').text();
                     cost = currentEl.find('[data-name="price"]').text();
                     totalUntax += (quantity * cost);
+                    date = currentEl.find('.datepicker').text();
+                    dates.push(date);
                 }
             }
 
@@ -236,7 +272,8 @@ define([
             total = total.toFixed(2);
             totalContainer.text(total);
 
-
+            date = helpers.minFromDates(dates);
+            thisEl.find('#minScheduleDate span').text(date);
         },
 
         nextSelect: function (e) {
@@ -252,7 +289,6 @@ define([
                 collection: this.collection,
                 options: options
             }));
-
 
             return this;
         }
