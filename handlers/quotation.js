@@ -30,8 +30,8 @@ var Quotation = function (models) {
         var contentIdsSearcher;
 
         var waterfallTasks;
-        var contentType = req.params.contentType;
-        var isOrder=!!(contentType==='Order');
+        var contentType = req.query.contentType;
+        var isOrder = !!(contentType === 'Order');
         /* var data = {};
 
          for (var i in req.query) {
@@ -137,8 +137,8 @@ var Quotation = function (models) {
         var contentSearcher;
         var waterfallTasks;
 
-        var contentType = req.params.contentType;
-        var isOrder=!!(contentType==='Order');
+        var contentType = req.query.contentType;
+        var isOrder = !!(contentType === 'Order');
 
         /* var data = {};
 
