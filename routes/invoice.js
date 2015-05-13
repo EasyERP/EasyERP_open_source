@@ -32,6 +32,11 @@ module.exports = function (models) {
         handler.updateInvoice(req, res, id, data);
     });
 
+    router.patch('/:_id', function (req, res) {
+        var id = req.param('_id');
+        handler.invoiceUpdateOnlySelectedFields(req, res, id);
+    });
+
     router.delete('/:_id', function (req, res) {
         var id = req.param('_id');
         handler.removeInvoice(req, res, id);
