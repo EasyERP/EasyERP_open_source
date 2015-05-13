@@ -105,6 +105,18 @@ define([
                 var invoiceDate = this.$("#invoice_date").val();
                 var dueDate = this.$("#due_date").val();
 
+                var total = parseFloat(this.$("#totalAmount").text());
+                var untaxed = parseFloat(this.$("#totalUntaxes").text());
+                var taxes = parseFloat(this.$("#taxes").text());
+                var balance = parseFloat(this.$("#balance").text());
+
+                var payments ={
+                    total: total,
+                    untaxed: untaxed,
+                    taxes: taxes,
+                    balance: balance
+                };
+
                 if (selectedLength) {
                     for (var i = selectedLength - 1; i >= 0; i--) {
                         targetEl = $(selectedProducts[i]);
@@ -148,6 +160,8 @@ define([
                     journal: null,
 
                     products: products,
+                    paymentInfo: payments,
+
                     groups: {
                         owner: $("#allUsersSelect").data("id"),
                         users: usersId,

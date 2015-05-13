@@ -104,10 +104,9 @@ var Quotation = function (models) {
 
         contentSearcher = function (quotationsIds, waterfallCallback) {
             var queryObject = {_id: {$in: quotationsIds}};
-            var query;
-
             queryObject.isOrder = isOrder;
-            query = Quotation.find(queryObject);
+            var query = Quotation.find(queryObject);
+
             query.populate('supplier', '_id name fullName');
 
             query.exec(waterfallCallback);
@@ -115,8 +114,8 @@ var Quotation = function (models) {
 
         waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
 
-        async.waterfall(waterfallTasks, function (err, result) {
-            if (err) {
+        async.waterfall(waterfallTasks, function(err, result){
+            if(err){
                 return next(err);
             }
 
@@ -139,7 +138,7 @@ var Quotation = function (models) {
         var waterfallTasks;
 
         var contentType = req.params.contentType;
-        var isOrder = !!(contentType === 'Order');
+        var isOrder=!!(contentType==='Order');
 
         /* var data = {};
 
@@ -211,10 +210,9 @@ var Quotation = function (models) {
 
         contentSearcher = function (quotationsIds, waterfallCallback) {
             var queryObject = {_id: {$in: quotationsIds}};
-            var query;
-
             queryObject.isOrder = isOrder;
-            query = Quotation.find(queryObject);
+            var query = Quotation.find(queryObject);
+
             query.populate('supplier', '_id name fullName');
 
             query.exec(waterfallCallback);
@@ -222,8 +220,8 @@ var Quotation = function (models) {
 
         waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
 
-        async.waterfall(waterfallTasks, function (err, result) {
-            if (err) {
+        async.waterfall(waterfallTasks, function(err, result){
+            if(err){
                 return next(err);
             }
 
