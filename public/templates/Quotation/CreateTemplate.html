@@ -6,6 +6,14 @@
                 <ul class="dialog-tabs" data-class="mainTabs">
                     <li><a class="active" href="javascript:;">Main</a></li>
                     <li><a href="javascript:;">Assignees</a></li>
+                    <li class="right">
+                        <button class="red confirmOrder">
+                            <span>Confirm Order</span>
+                        </button>
+                        <button class="red cancelOrder">
+                            <span>Cancel</span>
+                        </button>
+                    </li>
                 </ul>
                 <div class="clearfix"></div>
                 <div class="dialog-tabs-items mainTabs">
@@ -94,9 +102,11 @@
                                             <!-- <dd><input id="invoiceReceived" type="checkbox" class="checkbox left" disabled></dd>-->
                                             <dt><label for="paymentTerm">Payment Term</label></dt>
                                             <dd><a id="paymentTerm" class="current-selected"
-                                                   href="javascript:;">Select</a></dd>
+                                                   href="javascript:;">Select</a>
+                                            </dd>
                                             <dt><label for="fiscalPosition">Fiscal Position</label></dt>
-                                            <dd><a id="fiscalPosition" class="current-selected" href="javascript:;">Select</a>
+                                            <dd>
+                                                <a id="fiscalPosition" class="current-selected" href="javascript:;">Select</a>
                                             </dd>
                                         </dl>
                                     </div>
