@@ -116,7 +116,7 @@ input::-ms-clear {
   transform: rotate(@deg);
 }
 
-.dl-auto(@max-width: 120px,@with-dt: 35%, @line-height: 0px, @height: 16px, @margin-top: 0px) {
+.dl-auto(@max-width: 120px, @with-dt: 35%, @line-height: 0px, @height: 16px, @margin-top: 0px) {
   clear: both;
   font-size: 14px;
 
@@ -649,7 +649,15 @@ input::-ms-clear {
   .list;
 
   thead th:first-of-type {
-    width: initial;
+    width: 15%;
+  }
+
+  .datepicker{
+    width:90%
+  }
+
+  .datepicker.notVisible {
+    display: none;
   }
 }
 
@@ -2679,6 +2687,11 @@ dl {
 
 .right {
   float: right;
+
+  .calculateTotal {
+    width: 60%;
+    text-align: right;
+  }
 }
 
 .noPaddingMargin {
@@ -2983,6 +2996,13 @@ dl {
 
 .project-edit-info {
   .dl-auto(200px, 40%);
+}
+
+.quotation-info {
+  .dl-auto;
+  dd {
+    margin-top: 1em;
+  }
 }
 
 .edit-employee-info {
@@ -4765,8 +4785,13 @@ input::-webkit-inner-spin-button {
 }
 
 .list2 thead .width20 {
-  width: 20%;
+  width: 15%;
 }
-.form .productEdit{
+
+.form .productEdit {
   padding: 0;
+}
+
+#minScheduleDate {
+  display: none;
 }

@@ -1,14 +1,13 @@
-<% personsCollection.forEach(function(person, index){ %>
-<tr data-id="<%=person._id%>">
-    <td class = "notForm"><input type="checkbox" value="<%=person._id%>" class="checkbox" /></td>
+<% quotations.forEach(function(quotation, index){ %>
+<tr data-id="<%=quotation._id%>">
+    <td class = "notForm"><input type="checkbox" value="<%=quotation._id%>" class="checkbox" /></td>
     <td><%=startNumber + index + 1%></td>
-    <td><%=person.name.first.substr(0,15)%></td>
-    <td><%=person.name.last%></td>
-    <td><%=person.email%></td>
-    <td class = "notForm"><a href="skype:<%=person.phones.phone%>?call"><%=person.phones.phone%></a></td>
-    <td><%=person.address.country%></td>
-    <td><%=(person.createdBy&&person.createdBy.date)?(person.createdBy.date + ((person.createdBy.user)?(' (' + person.createdBy.user.login + ')'):'')):''%></td>
-    <td><%=(person.editedBy&&person.editedBy.date)?( person.editedBy.date + ((person.editedBy.user) ?(' (' + person.editedBy.user.login + ')') : '')):''%></td>
-    <td><%=person.address.country%></td>
+    <td><%=quotation.name%></td>
+    <td><%=quotation.orderDate%></td>
+    <td><%=(quotation.supplier) ? quotation.supplier.fullName : ''%></td>
+    <td><%=quotation.expectedDate%></td>
+    <td><%=(quotation.paymentInfo) ? quotation.paymentInfo.unTaxed : '0'%></td>
+    <td><%=(quotation.paymentInfo) ? quotation.paymentInfo.total : '0'%></td>
+    <td><%=quotation.workflow%></td>
 </tr>
 <% }) %>

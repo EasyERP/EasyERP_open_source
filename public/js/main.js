@@ -22,6 +22,7 @@ require.config({
         templates: '../templates',
         text: './libs/text',
         common: 'common',
+        helpers: 'helpers',
         constants: 'constants',
         dateFormat: './libs/date.format',
         d3: './libs/d3.v3.min',

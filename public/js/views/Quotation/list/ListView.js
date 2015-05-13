@@ -62,22 +62,24 @@ define([
                     newCollection: this.newCollection
                 });
                 this.collection.bind('reset', this.renderContent, this);
-                this.collection.bind('showmore', this.showMoreContent, this);
             },
 
             goSort: function (e) {
-                this.collection.unbind('reset');
-                this.collection.unbind('showmore');
                 var target$ = $(e.target);
                 var currentParrentSortClass = target$.attr('class');
                 var sortClass = currentParrentSortClass.split(' ')[1];
                 var sortConst = 1;
                 var sortBy = target$.data('sort');
                 var sortObject = {};
+
+                this.collection.unbind('reset');
+                this.collection.unbind('showmore');
+
                 if (!sortClass) {
                     target$.addClass('sortDn');
                     sortClass = "sortDn";
                 }
+
                 switch (sortClass) {
                     case "sortDn":
                     {
@@ -153,6 +155,7 @@ define([
 
 
                 var pagenation = this.$el.find('.pagination');
+
                 if (this.collection.length === 0) {
                     pagenation.hide();
                 } else {
@@ -164,16 +167,24 @@ define([
             renderContent: function () {
                 var currentEl = this.$el;
                 var tBody = currentEl.find('#listTable');
+                var itemView;
+                var pagenation;
+
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
+
                 tBody.empty();
-                var itemView = new listItemView({
+
+                itemView = new listItemView({
                     collection: this.collection,
                     page: currentEl.find("#currentShowPage").val(),
                     itemsNumber: currentEl.find("span#itemsNumber").text()
                 });
+
                 tBody.append(itemView.render());
-                var pagenation = this.$el.find('.pagination');
+
+                pagenation = this.$el.find('.pagination');
+
                 if (this.collection.length === 0) {
                     pagenation.hide();
                 } else {

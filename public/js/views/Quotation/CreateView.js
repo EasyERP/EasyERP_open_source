@@ -98,6 +98,10 @@ define([
                 var supplier = thisEl.find('#supplierDd').data('id');
                 var supplierReference = thisEl.find('#supplierReference').val();
                 var orderDate = thisEl.find('#orderDate').val();
+                var expectedDate = thisEl.find('#expectedDate').val() || thisEl.find('#minScheduleDate').text();
+
+                var total = $.trim(thisEl.find('#totalAmount').text());
+                var unTaxed = $.trim(thisEl.find('#totalUntaxes').text());
 
                 if (selectedLength) {
                     for (var i = selectedLength - 1; i >= 0; i--) {
@@ -118,7 +122,13 @@ define([
                 data = {
                     supplier: supplier,
                     supplierReference: supplierReference,
-                    products: products
+                    products: products,
+                    orderDate: orderDate,
+                    expectedDate: expectedDate,
+                    paymentInfo: {
+                        total: total,
+                        unTaxed: unTaxed
+                    }
                 };
 
                 if (supplier) {
@@ -136,7 +146,7 @@ define([
                         }
                     });
 
-                }  else {134
+                }  else {
                     alert(CONSTANTS.RESPONSES.CREATE_QUOTATION);
                 }
             },
@@ -190,7 +200,7 @@ define([
                     dateFormat: "d M, yy",
                     changeMonth: true,
                     changeYear: true
-                });
+                }).datepicker('setDate', new Date());
 
                 this.$el.find('#bidValidUntill').datepicker({
                     dateFormat: "d M, yy",

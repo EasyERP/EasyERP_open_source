@@ -73,6 +73,12 @@ module.exports = (function () {
 
     mongoose.model('Customers', customerSchema);
 
+    customerSchema.virtual('fullName').get(function(){
+        return this.name.first + ' ' + this.name.last;
+    });
+
+    customerSchema.set('toJSON', { virtuals: true });
+
     if(!mongoose.Schemas) {
         mongoose.Schemas = {};
     }

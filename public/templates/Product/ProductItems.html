@@ -1,72 +1,80 @@
 <table class="list2">
     <thead>
-        <tr class="productListItemsColumns">
-            <th class="width20" data-sort="Product">
-                Product
-            </th>
-            <th class="width20" data-sort="description">
-                Description
-            </th>
-            <th class="width20" data-sort="quantity">
-                Quantity
-            </th>
-            <th class="width20" data-sort="unitPrice">
-                Unit Price
-            </th>
-            <th class="width20" data-sort="taxes">
-                Taxes
-            </th>
-        </tr>
+    <tr class="productListItemsColumns">
+        <th class="width20" data-sort="Product">
+            Product
+        </th>
+        <th class="width20" data-sort="description">
+            Description
+        </th>
+        <th class="width20" data-sort="scheduledDate">
+            Scheduled Date
+        </th>
+        <th class="width20" data-sort="quantity">
+            Quantity
+        </th>
+        <th class="width20" data-sort="unitPrice">
+            Unit Price
+        </th>
+        <th class="width20" data-sort="taxes">
+            Taxes
+        </th>
+    </tr>
     </thead>
     <tfoot>
-        <tr></tr>
+    <tr></tr>
     </tfoot>
     <tbody>
-        <tr>
-            <td colspan="6" class="addProductItem">
-                <a href="javascript:;">Add an item</a>
-            </td>
-        </tr>
-        <tr>
-            <td colspan="6">&nbsp;</td>
-        </tr>
-        <tr>
-            <td colspan="6">&nbsp;</td>
-        </tr>
+    <tr>
+        <td colspan="6" class="addProductItem">
+            <a href="javascript:;">Add an item</a>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="6">&nbsp;</td>
+    </tr>
+    <tr>
+        <td colspan="6">&nbsp;</td>
+    </tr>
     </tbody>
 </table>
 <div class="clearfix"></div>
 <div class="half-block right">
-    <table border="0" cellpadding="0" cellspacing="0" class="right oe_right">
+    <div id="minScheduleDate">
+        <span>
+
+        </span>
+    </div>
+    <table border="0" cellpadding="0" cellspacing="0" class="right calculateTotal">
         <tbody>
-            <tr>
-                <td>
-                    <label>
-                        Untaxed Amount
-                    </label>
-                </td>
-                <td colspan="1" width="99%">
-                    <span><span id="totalUntaxes">0.00</span>€</span>
-                </td>
-            </tr>
-            <tr class="taxes">
-                <td colspan="1" width="1%">
-                    <label>Taxes</label>
-                </td>
-                <td colspan="1" width="99%">
+        <tr>
+            <td>
+                <label>
+                    Untaxed Amount
+                </label>
+            </td>
+            <td>
+                <span><span id="totalUntaxes">0.00</span>€</span>
+            </td>
+        </tr>
+        <tr class="taxes">
+            <td>
+                <label>Taxes</label>
+            </td>
+            <td>
                     <span>
                         <span id="taxes">0.00</span>€
                     </span>
-                </td>
-            </tr>
-            <tr class="totalAmount">
-                <td colspan="1" width="50%">
-                    <label class="" data-original-title="" title="">Total</label>
-                </td>
-                <td colspan="1" width="50%">
-                    <span class=""><span id="totalAmount">0.00</span>€</span>
-                </td>
-            </tr>
+            </td>
+        </tr>
+        <tr class="totalAmount">
+            <td>
+                <label class="" data-original-title="" title="">Total</label>
+            </td>
+            <td>
+                <span class=""><span id="totalAmount">0.00</span>€</span>
+            </td>
+        </tr>
         </tbody>
     </table>
 </div>
