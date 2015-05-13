@@ -26,12 +26,8 @@ var Quotation = function (models) {
     this.totalCollectionLength = function (req, res, next) {
         var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
         var result = {};
-        var departmentSercher;
-        var contentIdsSercher;
-        var contentSercher;
         var departmentSearcher;
         var contentIdsSearcher;
-        var contentSearcher;
         /* var data = {};
 
          for (var i in req.query) {
@@ -195,6 +191,9 @@ var Quotation = function (models) {
         contentSearcher = function (quotationsIds, waterfallCallback) {
             var queryObject = {_id: {$in: quotationsIds}};
             var query = Quotation.find(queryObject);
+
+            query.populate('supplier', '_id name fullName');
+
             query.exec(waterfallCallback);
         };
 

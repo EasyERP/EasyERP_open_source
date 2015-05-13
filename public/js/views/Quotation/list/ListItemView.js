@@ -3,7 +3,7 @@
 ],
 
 function (listTemplate) {
-    var PersonsListItemView = Backbone.View.extend({
+    var QuotationListItemView = Backbone.View.extend({
         el: '#listTable',
 
         initialize: function(options) {
@@ -11,9 +11,9 @@ function (listTemplate) {
             this.startNumber = (options.page - 1 ) * options.itemsNumber;
         },
         render: function() {
-            this.$el.append(_.template(listTemplate, { personsCollection: this.collection.toJSON(), startNumber: this.startNumber }));
+            this.$el.append(_.template(listTemplate, { quotations: this.collection.toJSON(), startNumber: this.startNumber }));
         }
     });
 
-    return PersonsListItemView;
+    return QuotationListItemView;
 });

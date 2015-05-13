@@ -11,12 +11,13 @@ module.exports = (function () {
         _id: false,
         id: false,
         total: {type: Number, default: 0},
-        taxes: {type: Number, default: 0}
+        unTaxed: {type: Number, default: 0}
     };
 
     var products = {
         _id: false,
         id: false,
+        scheduledDate: {type: Date},
         quantity: {type: Number, default: 1},
         unitPrice: Number,
         product: {type: ObjectId, ref: 'Product', default: null},
