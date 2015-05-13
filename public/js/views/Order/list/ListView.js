@@ -7,7 +7,7 @@ define([
     'dataService'
 ],
 
-function (listTemplate, createView, listItemView, aphabeticTemplate,contentCollection, common, dataService) {
+function (listTemplate, createView, listItemView, contentCollection, common, dataService) {
     var OrdersListView = Backbone.View.extend({
         el: '#content-holder',
         defaultItemsNumber: null,
