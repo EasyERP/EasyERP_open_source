@@ -320,7 +320,7 @@ var Quotation = function (models) {
             var query;
 
             queryObject.isOrder = isOrder;
-            query = Quotation.find(queryObject);
+            query = Quotation.findOne(queryObject);
 
             query.populate('supplier', '_id name fullName');
             query.populate('destination');

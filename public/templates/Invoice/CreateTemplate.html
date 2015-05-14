@@ -5,6 +5,14 @@
                 <ul class="dialog-tabs" data-class="mainTabs" >
                     <li><a class="active" href="javascript:;">Main</a></li>
                     <li><a href="javascript:;">Assignees</a></li>
+                    <li class="right">
+                        <button class="red confirmOrder">
+                            <span>Confirm Order</span>
+                        </button>
+                        <button class="red cancelOrder">
+                            <span>Cancel</span>
+                        </button>
+                    </li>
                 </ul>
                 <div class="clearfix"></div>
                 <div class="dialog-tabs-items mainTabs">
@@ -74,7 +82,7 @@
                         <ul class="dialog-tabs" data-class="childTabs" >
                             <li><a class="active" href="javascript:;">Invoice</a></li>
                             <li><a href="javascript:;">Other Info</a></li>
-                            <li><a href="javascript:;">Payments</a></li>
+                            <!--<li><a href="javascript:;">Payments</a></li>-->
                         </ul>
                         <div class="clearfix"></div>
                         <div class="dialog-tabs-items childTabs">
@@ -93,14 +101,14 @@
                                                 <a id="bank_account" href="javascript:;">Select</a>
                                             </dd>
 
-                                            <dt><label for="responsible">Responsible</label></dt>
+                                            <dt><label for="salesPerson">Responsible</label></dt>
                                             <dd>
-                                                <a id="responsible" href="javascript:;">Select</a>
+                                                <a id="salesPerson" class="current-selected" href="javascript:;">Select</a>
                                             </dd>
 
                                             <dt><label for="payment_terms">Payment Terms</label></dt>
                                             <dd>
-                                                <a id="payment_terms" href="javascript:;">Select</a>
+                                                <a id="payment_terms" class="current-selected" href="javascript:;">Select</a>
                                             </dd>
                                         </dl>
                                     </div>
@@ -118,7 +126,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="dialog-tabs-item childTabs">
+                            <!--<div class="dialog-tabs-item childTabs">
                                 <div class="pauments-container">
                                     <table class="list">
                                         <thead>
@@ -161,11 +169,11 @@
                                         </tbody>
                                     </table>
                                 </div>
-                            </div>
+                            </div>-->
                         </div>
                     </div>
                     <div class="dialog-tabs-item mainTabs">
-                        <div id="assignees-container"></div>
+                        <div class="assignees-container"></div>
                     </div>
                 </div>
 

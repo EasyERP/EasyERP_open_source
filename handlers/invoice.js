@@ -132,6 +132,7 @@ var Invoice = function (models) {
                         var query = Invoice.find(optionsObject).limit(count).skip(skip).sort(sort);
 
                         query.populate('supplierId','name _id').
+                            populate('salesPerson','name').
                             populate('department', '_id departmentName').
                             populate('createdBy.user').
                             populate('editedBy.user').
@@ -173,6 +174,7 @@ var Invoice = function (models) {
 
                     var query = models.get(req.session.lastDb, "Invoice", InvoiceSchema).findById(id);
                     query.populate('supplierId','name').
+                        populate('salesPerson','name').
                         populate('department', '_id departmentName').
                         populate('createdBy.user').
                         populate('editedBy.user').
