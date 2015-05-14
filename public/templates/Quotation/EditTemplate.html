@@ -1,150 +1,127 @@
 <div class="form-holder">
-    <form method="post" action="" id="editPersonsForm" class="form">
+
+    <form method="post" action="" id="createPersonsForm" class="form">
         <fieldset>
             <div class="inner">
-                <ul class="dialog-tabs">
+                <ul class="dialog-tabs" data-class="mainTabs">
                     <li><a class="active" href="javascript:;">Main</a></li>
                     <li><a href="javascript:;">Assignees</a></li>
+                    <li class="right">
+                        <button class="red confirmOrder">
+                            <span>Confirm Order</span>
+                        </button>
+                        <button class="red cancelOrder">
+                            <span>Cancel</span>
+                        </button>
+                    </li>
                 </ul>
                 <div class="clearfix"></div>
-                <div class="dialog-tabs-items">
-                    <div class="dialog-tabs-item active">
-                        <div class="formTitle">
-                            <h3>Personal Info</h3>
-
-                        </div>
-                        <div class="avatar left">
-                            <div class="upload">
-                                Edit
-                                <input type="file" value="Edit" id="inputImg" accept="image/*">
-                            </div>
-                            <canvas id="avatar" width="140" height="140"></canvas>
-                        </div>
-                        <div class="avatarInfoContainer">
+                <div class="dialog-tabs-items mainTabs">
+                    <div class="dialog-tabs-item mainTabs active">
+                        <div class="topInputHolder">
+                            <%if(vissible) {%>
+                            <h2>Request for Quotation</h2>
+                            <%}%>
                             <div class="half-block left">
                                 <dl class="person-info">
-                                    <dt><label for="firstName">First Name</label></dt>
-                                    <dd><input type="text" name="firstName" id="firstName" value="<%= model.name.first %>" placeholder="Name"  required maxlength="32"/></dd>
-                                    <dt><label for="lastName">Last Name</label></dt>
-                                    <dd><input type="text" name="lastName" id="lastName" value="<%= model.name.last %>" placeholder="Surname" required maxlength="32"/></dd>
-                                    <dt><label for="jobPositionInput">Job Position</label></dt>
-                                    <dd><input type="text" id="jobPositionInput" value="<%= model.jobPosition%>" placeholder="e.g. Sales Manager" maxlength="32"/></dd>
-
-                                    <dt><label for="dateOfBirth">Date Of Birth</label></dt>
-                                    <dd><input id="dateOfBirth" class="dateBirth" type="text" value="<%= model.dateBirth%>" placeholder="Birthday" readonly /></dd>
-                                    <dt><label for="emailInput">Email</label></dt>
-                                    <dd><input type="text" id="emailInput" value="<%= model.email%>" placeholder="e.g. email@site.com" maxlength="48"/></dd>
-                                    <dt><label for="skype">Skype</label></dt>
-                                    <dd><input type="text" id="skype" value="<%=model.skype%>" placeholder="Skype login" maxlength="32"/></dd>
-
-
-                                    <dt><label for="companiesDd">Company</label></dt>
+                                    <dt><label for="supplierDd">Supplier</label></dt>
                                     <dd>
-									  <a id="companiesDd" data-id="<%=(model.company)?model.company._id:''%>" class="current-selected" href="javascript:;"><%=(model.company)?(model.company.name.first):"Select"%></a>
+                                        <a id="supplierDd" class="current-selected" href="javascript:;">Select</a>
                                     </dd>
-<!--                                    <dt><label for="tagsDd">Tags</label></dt>
-                                    <dd>
-									  <a id="tagsDd" class="current-selected" href="javascript:;">Select</a>
-									  <ul class="newSelectList hidden">
-										<li>Select</li>
-									  </ul>
-                                    </dd>-->
+                                    <dt><label for="supplierReference">Supplier Reference</label></dt>
+                                    <dd><input type="text" name="supplierReference" id="supplierReference"
+                                               maxlength="32"/></dd>
                                 </dl>
                             </div>
                             <div class="half-block left">
-                               <!--   <div class='sale-purchase'>
-                                    <span class="left">Address</span>
-                                </div>-->
                                 <dl class="person-info">
-                                    <dt><label for="addressInput">Street</label></dt>
-                                    <dd><input type="text" id="addressInput" value="<%= model.address.street%>" placeholder="Street..." maxlength="32"/></dd>
-                                    <dt><label for="cityInput">City</label></dt>
-                                    <dd><input type="text" id="cityInput" value="<%= model.address.city%>" placeholder="City" maxlength="32"/></dd>
-                                    <dt><label for="countryInput">Country</label></dt>
-                                    <dd><input type="text" id="countryInput" value="<%= model.address.country%>" placeholder="Country" maxlength="32"/></dd>
-                                    <dt><label for="stateInput">State</label></dt>
-                                    <dd><input type="text" id="stateInput" value="<%= model.address.state%>" placeholder="State" maxlength="32"/></dd>
-                                    <dt><label for="zipInput">Zip</label></dt>
-                                    <dd><input type="text" id="zipInput" value="<%= model.address.zip%>" placeholder="Zip" maxlength="32"/></dd>
-                                    <dt><label for="phoneInput">Phone </label></dt>
-                                    <dd><input type="text" id="phoneInput" value="<%= model.phones.phone%>" placeholder="Phone number" maxlength="20"/></dd>
-                                                                        <dt><label for="mobileInput">Mobile</label></dt>
-                                    <dd><input type="text" id="mobileInput" value="<%= model.phones.mobile%>" placeholder="Mobile number" maxlength="20"/></dd>
-
+                                    <dt><label for="orderDate">Order Date</label></dt>
+                                    <dd>
+                                        <input class="extrainfo" type="text" name="orderDate" id="orderDate" value=""
+                                               readonly="" placeholder="Order Date">
+                                    </dd>
+                                    <dt><label for="deliveryDd">Deliver To</label></dt>
+                                    <dd>
+                                        <a id="deliveryDd" class="current-selected" href="javascript:;">YourCompany</a>
+                                    </dd>
                                 </dl>
                             </div>
-                            <div class="clearfix"></div>
-						</div>
-<!-- 						<div class="details center">...</div>-->
-						<div class="details-box">
-                        <div class="formTitle">
-                            <h3 class="left">Contact Info</h3>
                             <div class="clearfix"></div>
                         </div>
-                        <div class="avatarInfoContainer">
-                            <div class="half-block left">
-                                <dl class="person-info">
-                                   <dt><label for="websiteInput">Website</label></dt>
-                                    <dd><input type="text" id="websiteInput" value="<%= model.website%>" placeholder="e.g. www.site.com" maxlength="32"/></dd>
+                        <div class="clearfix"></div>
+                        <ul class="dialog-tabs" data-class="childTabs">
+                            <li><a class="active" href="javascript:;">Products</a></li>
+                            <!--<li><a href="javascript:;">Bid</a></li>-->
+                            <li><a href="javascript:;">Deliveries & Invoices</a></li>
+                        </ul>
+                        <div class="clearfix"></div>
+                        <div class="dialog-tabs-items childTabs">
+                            <div class="dialog-tabs-item childTabs active">
+                                <div id="productItemsHolder">
 
-                                    <dt><label for="departmentDd">Department</label></dt>
-                                    <dd>
-									  <a id="departmentDd" data-id="<%=(model.department)?model.department._id:'' %>" class="current-selected" href="javascript:;"><%=(model.department)?(model.department.departmentName):"Select"%></a>
-                                    </dd>-->
-<!--                                    <dt><label for="titleDd">Title</label></dt>
-                                    <dd>
-									  <a id="titleDd" data-id="<%=model.title?model.title:''%>" class="current-selected" href="javascript:;"><%=model.title?model.title:"Select"%></a>
-									  <ul class="newSelectList hidden">
-										<li class="Mr" id="Mr">Mr</li>
-										<li class="Mrs" id="Mrs">Mrs</li>
-										<li class="Miss" id="Miss">Miss</li>
-									  </ul>
-                                    </dd>-->
-                                </dl>
-                            </div>
-                            <div class="half-block left">
- <!--                               <dl class="person-info">
-                                    <dt><label for="faxInput">Fax </label></dt>
-                                    <dd><input type="text" id="faxInput" value="<%= model.phones.fax%>" maxlength="32"/></dd>
-								</dl>
-
-                                <div class='sale-purchase'>
-                                    <span class="left">Sales &amp; Purchases</span>
                                 </div>
-                                <dl class="person-info">
-                                    <dt><label>Customer </label></dt>
-                                    <dd><input type="checkbox" <% if(model.salesPurchases.isCustomer) { %> checked="checked" <% } %>  id="isCustomerInput"/></dd>
-                                    <dt><label>Supplier</label></dt>
-                                    <dd><input type="checkbox" <% if(model.salesPurchases.isSupplier) { %> checked="checked" <% } %>  id="isSupplierInput"/></dd>
-                                    <dt><label>Active</label></dt>
-                                    <dd><input type="checkbox" <% if(model.salesPurchases.active) { %> checked="checked" <% } %>  id="isActiveInput"/></dd>
-                                </dl>-->
                             </div>
+                            <!-- <div class="dialog-tabs-item">
+                                 <div class="bid-container">
+                                     <div class="half-block left">
+                                         <dl class="opp-info">
+                                             <dt><label for="bidReceivedOn">Bid Received On</label></dt>
+                                             <dd>
+                                                 <span id="bidReceivedOn">
 
-                            <div class="clearfix">
+                                                 </span>
+                                             </dd>
+                                             <dt><label for="bidValidUntill">Bid Valid Until</label></dt>
+                                             <dd><input id="bidValidUntill" placeholder="" type="text"
+                                                        readonly/></dd>
+                                         </dl>
+                                     </div>
+                                 </div>
+                             </div>-->
+                            <div class="dialog-tabs-item childTabs">
+                                <div class="delivery-invoices-container">
+                                    <div class="half-block left">
+                                        <dl class="quotation-info">
+                                            <dt><label for="expectedDate">Expected Date</label></dt>
+                                            <dd><input id="expectedDate" placeholder="" type="text" readonly/>
+                                            </dd>
+                                            <dt><label for="destination">Destination</label></dt>
+                                            <dd><a id="destination" class="current-selected"
+                                                   href="javascript:;">Select</a></dd>
+                                            <dt><label for="incoterm">Incoterm</label></dt>
+                                            <dd><a id="incoterm" class="current-selected" href="javascript:;">Select</a>
+                                            </dd>
+                                        </dl>
+                                    </div>
+                                    <div class="half-block left">
+                                        <dl class="quotation-info">
+                                            <dt><label for="invoicingControl">Invoicing Control</label></dt>
+                                            <dd><a id="invoicingControl" class="current-selected" href="javascript:;">Select</a>
+                                            </dd>
+                                            <!--<dt><label for="invoiceReceived">Invoice Received</label></dt>-->
+                                            <!-- <dd><input id="invoiceReceived" type="checkbox" class="checkbox left" disabled></dd>-->
+                                            <dt><label for="paymentTerm">Payment Term</label></dt>
+                                            <dd><a id="paymentTerm" class="current-selected"
+                                                   href="javascript:;">Select</a>
+                                            </dd>
+                                            <dt><label for="fiscalPosition">Fiscal Position</label></dt>
+                                            <dd>
+                                                <a id="fiscalPosition" class="current-selected" href="javascript:;">Select</a>
+                                            </dd>
+                                        </dl>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        </div>
-
-                        <div class="clearfix">
-                        </div>
-
-                       <div class="cropImages form" style="display:none;">
-                        <div class="formTitle">
-                        <h3 class="left">Crop Images</h3>
                         <div class="clearfix"></div>
-                        </div><br />
-                        <div class="image_input" style="float: left;margin-right: 20px;"></div>
-                        <img class="image_output" />
-                        <div class="clearfix"></div>
-                      </div>
                     </div>
-                    <div class="dialog-tabs-item">
-					  <div class="assignees-container"></div>
+                    <div class="dialog-tabs-item mainTabs">
+                        <div class="assignees-container"></div>
                     </div>
-                    <div class="clearfix"></div>
                 </div>
+                <div class="clearfix"></div>
             </div>
         </fieldset>
     </form>
+    <div class="clearfix"></div>
 </div>

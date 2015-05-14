@@ -1,5 +1,5 @@
 define([
-    "text!templates/Persons/EditTemplate.html",
+    "text!templates/Quotation/EditTemplate.html",
     'views/Assignees/AssigneesView',
     "common",
     "custom",
@@ -9,43 +9,44 @@ define([
     function (EditTemplate, AssigneesView, common, Custom, dataService, populate) {
 
         var EditView = Backbone.View.extend({
-            contentType: "Persons",
+            contentType: "Quotation",
             imageSrc: '',
             template: _.template(EditTemplate),
 
             initialize: function (options) {
                 _.bindAll(this, "render", "saveItem");
                 _.bindAll(this, "render", "deleteItem");
+
                 this.currentModel = (options.model) ? options.model : options.collection.getElement();
-				this.currentModel.urlRoot = "/Persons";
+				this.currentModel.urlRoot = "/quotation";
 				this.responseObj = {};
                 this.render();
             },
 
             events: {
-                "click #saveBtn": "saveItem",
-                "click #cancelBtn": "hideDialog",
+                'keydown': 'keydownHandler',
+                'click .dialog-tabs a': 'changeTab',
+                "click .details": "showDetailsBox",
                 "click .current-selected": "showNewSelect",
                 "click": "hideNewSelect",
-                "mouseenter .avatar": "showEdit",
-                "mouseleave .avatar": "hideEdit",
-                'click .dialog-tabs a': 'changeTab',
                 "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
                 "click .newSelectList li.miniStylePagination": "notHide",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-				"click .details":"showDetailsBox"
+                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect"
             },
 
 			showDetailsBox:function(e){
 				$(e.target).parent().find(".details-box").toggle();
 			},
+
             notHide: function () {
 				return false;
             },
+
 			nextSelect:function(e){
 				this.showNewSelect(e,false,true);
 			},
+
 			prevSelect:function(e){
 				this.showNewSelect(e,true,false);
 			},
@@ -231,7 +232,7 @@ define([
  				var notDiv = this.$el.find('.assignees-container');
                 notDiv.append(
                     new AssigneesView({
-                        model: this.currentModel,
+                        model: this.currentModel
                     }).render().el
                 );
  
