@@ -29,7 +29,6 @@ define([
             events: {
                 'keydown': 'keydownHandler',
                 'click .dialog-tabs a': 'changeTab',
-                "click .details": "showDetailsBox",
                 "click .current-selected": "showNewSelect",
                 "click": "hideNewSelect",
                 "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
@@ -57,9 +56,6 @@ define([
             },
             prevSelect: function (e) {
                 this.showNewSelect(e, true, false);
-            },
-            showDetailsBox: function (e) {
-                $(e.target).parent().find(".details-box").toggle();
             },
 
             keydownHandler: function (e) {

@@ -327,6 +327,7 @@ var Quotation = function (models) {
             query.populate('incoterm');
             query.populate('invoiceControl');
             query.populate('paymentTerm');
+            query.populate('products.product', '_id, name');
 
             query.exec(waterfallCallback);
         };
