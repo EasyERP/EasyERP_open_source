@@ -1,14 +1,16 @@
 define([
-    'text!templates/Product/list/ListHeader.html',
-    'views/Product/CreateView',
-    'views/Product/list/ListItemView',
-    'text!templates/Alpabet/AphabeticTemplate.html',
-    'collections/Product/filterCollection',
-    'common',
-    'dataService'
+        'text!templates/Product/list/ListHeader.html',
+        'views/Product/CreateView',
+        'views/Product/list/ListItemView',
+        'views/Product/EditView',
+        'models/ProductModel',
+        'text!templates/Alpabet/AphabeticTemplate.html',
+        'collections/Product/filterCollection',
+        'common',
+        'dataService'
 ],
 
-    function (listTemplate, createView, listItemView, aphabeticTemplate, contentCollection, common, dataService) {
+    function (listTemplate, createView, listItemView, editView, productModel, aphabeticTemplate, contentCollection, common, dataService) {
         var ProductsListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -43,7 +45,7 @@ define([
                 "click #previousPage": "previousPage",
                 "click #nextPage": "nextPage",
                 "click .checkbox": "checked",
-                "click  .list td:not(.notForm)": "gotoForm",
+                "click  .list td:not(.notForm)": "goToEditDialog",
                 "click #itemsButton": "itemsNumber",
                 "click .currentPageList": "itemsNumber",
                 "click": "hideItemsNumber",
@@ -359,6 +361,20 @@ define([
                 App.ownContentType = true;
                 var id = $(e.target).closest("tr").data("id");
                 window.location.hash = "#easyErp/Product/form/" + id;
+            },
+
+            goToEditDialog: function (e) {
+                e.preventDefault();
+                var id = $(e.target).closest('tr').data("id");
+                var model = new productModel({ validate: false });
+                model.urlRoot = '/Product/form';
+                model.fetch({
+                    data: { id: id },
+                    success: function (model) {
+                        new editView({ model: model });
+                    },
+                    error: function () { alert('Please refresh browser'); }
+                });
             },
 
             createItem: function () {

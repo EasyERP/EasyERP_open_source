@@ -39,7 +39,8 @@
 
             events: {
                 "click #showMore": "showMore",
-                "click .thumbnailwithavatar": "gotoForm",
+                /*"click .thumbnailwithavatar": "gotoForm",*/
+                "click .thumbnailwithavatar": "gotoEditForm",
                 "click .letter:not(.empty)": "alpabeticalRender"
             },
 
@@ -122,6 +123,25 @@
                 App.ownContentType = true;
                 var id = $(e.target).closest('.thumbnailwithavatar').attr("id");
                 window.location.hash = "#easyErp/Product/form/" + id;
+            },
+
+            gotoEditForm: function (e) {
+                this.$el.delegate('a', 'click', function(e){ e.stopPropagation(); e.default; });
+                var clas = $(e.target).parent().attr("class");
+                if ((clas === "dropDown") || (clas === "inner")) {
+                } else {
+                    e.preventDefault();
+                    var id = $(e.target).closest('.thumbnailwithavatar').attr("id");
+                    var model = new currentModel({validate: false});
+                    model.urlRoot = '/Product/form/';
+                    model.fetch({
+                        data: {id: id},
+                        success: function (model) {
+                            new editView({ model: model });
+                        },
+                        error: function () { alert('Please refresh browser'); }
+                    });
+                }
             },
 
             showMore: function (event) {

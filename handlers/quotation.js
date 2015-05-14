@@ -137,7 +137,7 @@ var Quotation = function (models) {
         var contentSearcher;
         var waterfallTasks;
 
-        var contentType = req.params.contentType;
+        var contentType = req.query.contentType;
         var isOrder=!!(contentType==='Order');
 
         /* var data = {};
