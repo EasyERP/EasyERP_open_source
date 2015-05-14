@@ -5,7 +5,7 @@ define([
         'views/Order/list/ListTotalView',
         'views/Order/EditView',
         'models/QuotationModel',
-        'collections/Order/filterCollection',
+        'collections/Quotation/filterCollection',
 	    'common',
         'dataService'
 ],
@@ -43,11 +43,10 @@ function (listTemplate, createView, listItemView, listTotalView, editView, quota
             "click #previousPage": "previousPage",
             "click #nextPage": "nextPage",
             "click .checkbox": "checked",
-            "click  .list td:not(.notForm)": "goToEditDialog",
+            "click  .list tbody td:not(.notForm)": "goToEditDialog",
             "click #itemsButton": "itemsNumber",
             "click .currentPageList": "itemsNumber",
             "click": "hideItemsNumber",
-            "click .letter:not(.empty)": "alpabeticalRender",
             "click #firstShowPage": "firstPage",
             "click #lastShowPage": "lastPage",
             "click .oe_sortable": "goSort"
@@ -276,24 +275,6 @@ function (listTemplate, createView, listItemView, listTotalView, editView, quota
                 $('#check_all').prop('checked', false);
                 this.changeLocationHash(1, itemsNumber, this.filter);
         },
-
-        showFilteredPage: function (e) {
-                this.startTime = new Date();
-                this.newCollection = false;
-
-                var selectedLetter = $(e.target).text();
-                if ($(e.target).text() == "All") {
-                    selectedLetter = '';
-                }
-                this.filter = this.filter || {};
-                this.filter['letter'] = selectedLetter;
-                var itemsNumber = $("#itemsNumber").text();
-                $("#top-bar-deleteBtn").hide();
-                $('#check_all').prop('checked', false);
-                this.changeLocationHash(1, itemsNumber, this.filter);
-                this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter});
-                this.getTotalLength(null, itemsNumber, this.filter);
-            },
         showPage: function (event) {
                 event.preventDefault();
                 this.showP(event,{filter: this.filter, newCollection: this.newCollection,sort: this.sort});
@@ -315,12 +296,6 @@ function (listTemplate, createView, listItemView, listTotalView, editView, quota
                 $('#check_all').prop('checked', false);
                 holder.find('#timeRecivingDataFromServer').remove();
                 holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
-        },
-
-        gotoForm: function (e) {
-            App.ownContentType = true;
-            var id = $(e.target).closest("tr").data("id");
-            window.location.hash = "#easyErp/Persons/form/" + id;
         },
 
         goToEditDialog: function (e) {
