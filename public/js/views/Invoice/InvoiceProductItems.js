@@ -178,6 +178,7 @@ define([
             var datePicker;
             var spanDatePicker;
             var price;
+            var amount;
 
 
             trEl.attr('data-id', model.id);
@@ -198,10 +199,11 @@ define([
             $(parrents[4]).attr('class', 'editable').find('span').text(price);
 
             taxes = parseFloat(selectedProduct.info.salePrice) * this.taxesRate;
+            amount = price + taxes;
             taxes = taxes.toFixed(2);
 
             $(parrents[5]).text(taxes);
-            $(parrents[6]).text(price.toFixed(2));
+            $(parrents[6]).text(amount.toFixed(2));
 
             $(".newSelectList").hide();
 
@@ -222,7 +224,7 @@ define([
             var cost = parent.find('[data-name="price"] span').text();
             cost = parseFloat(cost);
             var taxes = quantity * cost * this.taxesRate;
-            var amount = quantity * cost + taxes;
+            var amount = (quantity * cost) + taxes;
             taxes = taxes.toFixed(2);
             amount = amount.toFixed(2);
 

@@ -225,7 +225,7 @@ define([
 
                 });
 
-                var notDiv = this.$el.find('#assignees-container');
+                var notDiv = this.$el.find('.assignees-container');
                 notDiv.append(
                     new AssigneesView({
                         model: this.currentModel
