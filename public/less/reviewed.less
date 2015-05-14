@@ -515,6 +515,22 @@ input::-ms-clear {
   font-family: @lucida-font;
   width: 100%;
 
+  tfoot {
+    tr {
+      border-bottom: 1px solid #cacaca;
+      background: #eee !important;
+      vertical-align: middle;
+    }
+    td {
+      padding: 3px 6px;
+      line-height: 18px;
+      .bold;
+      font-size: @font-size;
+      text-align: left;
+      text-shadow: 0 1px 1px rgba(222, 222, 222, 0.5);
+    }
+  }
+
   thead {
     tr {
       border-top: 0px;

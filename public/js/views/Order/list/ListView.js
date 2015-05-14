@@ -2,6 +2,7 @@ define([
         'text!templates/Order/list/ListHeader.html',
         'views/Quotation/CreateView',
         'views/Order/list/ListItemView',
+        'views/Order/list/ListTotalView',
         'views/Order/EditView',
         'models/QuotationModel',
         'collections/Order/filterCollection',
@@ -9,7 +10,7 @@ define([
         'dataService'
 ],
 
-function (listTemplate, createView, listItemView, editView, quotationModel, contentCollection, common, dataService) {
+function (listTemplate, createView, listItemView, listTotalView, editView, quotationModel, contentCollection, common, dataService) {
     var OrdersListView = Backbone.View.extend({
         el: '#content-holder',
         defaultItemsNumber: null,
@@ -143,6 +144,7 @@ function (listTemplate, createView, listItemView, editView, quotationModel, cont
                 page: this.page,
                 itemsNumber: this.collection.namberToShow
             }).render());//added two parameters page and items number
+            currentEl.append(new listTotalView({element: this.$el.find("#listTable")}).render());
 
             $('#check_all').click(function () {
                 $(':checkbox').prop('checked', this.checked);
