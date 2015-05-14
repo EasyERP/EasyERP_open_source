@@ -101,6 +101,7 @@ define([
                 var productId;
                 var quantity;
                 var price;
+                var scheduledDate;
 
                 var supplier = thisEl.find('#supplierDd').data('id');
                 var destination = $.trim(thisEl.find('#destination').data('id'));
@@ -136,11 +137,13 @@ define([
                         productId = targetEl.data('id');
                         quantity = targetEl.find('[data-name="quantity"]').text();
                         price = targetEl.find('[data-name="price"]').text();
+                        scheduledDate = targetEl.find('[data-name="scheduledDate"]').text();
 
                         products.push({
                             product: productId,
                             unitPrice: price,
-                            quantity: quantity
+                            quantity: quantity,
+                            scheduledDate: scheduledDate
                         });
                     }
                 }
