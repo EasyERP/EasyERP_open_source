@@ -99,9 +99,11 @@ define([
                 var quantity;
                 var price;
                 var amount;
+                var description;
 
                 var supplierId = this.$("#supplierId").data("id");
                 var salesPersonId = this.$("#salesPerson").data("id");
+                var paymentTermId = this.$("#payment_terms").data("id");
                 var invoiceDate = this.$("#invoice_date").val();
                 var dueDate = this.$("#due_date").val();
 
@@ -124,9 +126,11 @@ define([
                         quantity = targetEl.find('[data-name="quantity"]').text();
                         price = targetEl.find('[data-name="price"]').text();
                         amount = targetEl.find('.amount').text();
+                        description = targetEl.find('[data-name="productDescr"]').text();
 
                         products.push({
                             product: productId,
+                            description: description,
                             unitPrice: price,
                             quantity: quantity,
                             amount: amount
@@ -160,6 +164,7 @@ define([
                     journal: null,
 
                     salesPerson: salesPersonId,
+                    paymentTerms: paymentTermId,
 
                     products: products,
                     paymentInfo: payments,

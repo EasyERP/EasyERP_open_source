@@ -9,10 +9,10 @@ module.exports = (function () {
     var payments = {
         _id: false,
         id: false,
-        total: {type: Number, default: 0.00},
-        taxes: {type: Number, default: 0.00},
-        balance: {type: Number, default: 0.00},
-        untaxed : {type: Number, default: 0.00}
+        total: {type: Number, default: 0},
+        taxes: {type: Number, default: 0},
+        balance: {type: Number, default: 0},
+        untaxed : {type: Number, default: 0}
     };
 
     var products = {
@@ -21,7 +21,8 @@ module.exports = (function () {
         quantity: {type: Number, default: 1},
         unitPrice: Number,
         product: {type: ObjectId, ref: 'Product', default: null},
-        amount: Number
+        amount: Number,
+        description: {type: String, default: ''}
     };
 
     var invoiceSchema = new mongoose.Schema({
@@ -38,6 +39,7 @@ module.exports = (function () {
         journal: { type: String, default: null },
 
         salesPerson: {type: ObjectId, ref: 'Employees', default: null},
+        paymentTerms: {type: ObjectId, ref: 'PaymentTerm', default: null},
 
         paymentInfo: payments,
         products: [ products],
