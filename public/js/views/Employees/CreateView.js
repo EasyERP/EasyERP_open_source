@@ -300,7 +300,7 @@ define([
 				notDiv = this.$el.find('.assignees-container');
                 notDiv.append(
                     new AssigneesView({
-                        model: this.currentModel,
+                        model: this.currentModel
                     }).render().el
                 );
 
@@ -310,14 +310,18 @@ define([
 				populate.get("#jobPositionDd", "/JobPositionForDd", {}, "name", this, true, true);
 				populate.get("#relatedUsersDd", "/UsersForDd", {}, "login", this, true, true);
 				populate.get("#departmentsDd", "/DepartmentsForDd", {}, "departmentName", this, true);
+
                 common.canvasDraw({ model: this.model.toJSON() }, this);
+
                 $('#dateBirth').datepicker({
                 	changeMonth: true,
                     changeYear: true,
                     yearRange: '-100y:c+nn',
                     maxDate: '-18y'
                 });
+
                 this.delegateEvents(this.events);
+
                 return this;
             }
 
