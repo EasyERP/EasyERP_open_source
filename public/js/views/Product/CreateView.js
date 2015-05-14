@@ -1,10 +1,11 @@
 define([
-    "text!templates/Product/CreateTemplate.html",
-    "models/ProductModel",
-    "common",
-    "populate",
-    'views/Notes/AttachView',
-    'views/Assignees/AssigneesView'
+        "text!templates/Product/CreateTemplate.html",
+        "models/ProductModel",
+        "common",
+        "populate",
+        'views/Notes/AttachView',
+        'views/Assignees/AssigneesView',
+        "jqueryBarcode"
 ],
     function (CreateTemplate, ProductModel, common, populate, attachView, AssigneesView) {
 
@@ -31,7 +32,20 @@ define([
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
                 "click": "hideNewSelect",
-                "click #subscription": "eventType"
+                "click #subscription": "eventType",
+                'keyup #barcode': 'drawBarcode',
+                'change #barcode': 'drawBarcode'
+            },
+
+            drawBarcode: function() {
+                var el = this.$el;
+                var content = el.find("#barcode").val();
+
+                if (!content) {
+                    el.find("#bcTarget").empty();
+                } else {
+                    el.find("#bcTarget").barcode(el.find("#barcode").val(), "code128");
+                }
             },
 
             eventType: function() {

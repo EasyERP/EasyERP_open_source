@@ -1,13 +1,16 @@
 define([
-    'text!templates/Order/list/ListHeader.html',
-    'views/Quotation/CreateView',
-    'views/Order/list/ListItemView',
-    'collections/Order/filterCollection',
-	'common',
-    'dataService'
+        'text!templates/Order/list/ListHeader.html',
+        'views/Quotation/CreateView',
+        'views/Order/list/ListItemView',
+        'views/Order/list/ListTotalView',
+        'views/Order/EditView',
+        'models/QuotationModel',
+        'collections/Quotation/filterCollection',
+	    'common',
+        'dataService'
 ],
 
-function (listTemplate, createView, listItemView, contentCollection, common, dataService) {
+function (listTemplate, createView, listItemView, listTotalView, editView, quotationModel, contentCollection, common, dataService) {
     var OrdersListView = Backbone.View.extend({
         el: '#content-holder',
         defaultItemsNumber: null,
@@ -40,11 +43,10 @@ function (listTemplate, createView, listItemView, contentCollection, common, dat
             "click #previousPage": "previousPage",
             "click #nextPage": "nextPage",
             "click .checkbox": "checked",
-            "click  .list td:not(.notForm)": "gotoForm",
+            "click  .list tbody td:not(.notForm)": "goToEditDialog",
             "click #itemsButton": "itemsNumber",
             "click .currentPageList": "itemsNumber",
             "click": "hideItemsNumber",
-            "click .letter:not(.empty)": "alpabeticalRender",
             "click #firstShowPage": "firstPage",
             "click #lastShowPage": "lastPage",
             "click .oe_sortable": "goSort"
@@ -141,6 +143,7 @@ function (listTemplate, createView, listItemView, contentCollection, common, dat
                 page: this.page,
                 itemsNumber: this.collection.namberToShow
             }).render());//added two parameters page and items number
+            currentEl.append(new listTotalView({element: this.$el.find("#listTable")}).render());
 
             $('#check_all').click(function () {
                 $(':checkbox').prop('checked', this.checked);
@@ -272,24 +275,6 @@ function (listTemplate, createView, listItemView, contentCollection, common, dat
                 $('#check_all').prop('checked', false);
                 this.changeLocationHash(1, itemsNumber, this.filter);
         },
-
-        showFilteredPage: function (e) {
-                this.startTime = new Date();
-                this.newCollection = false;
-
-                var selectedLetter = $(e.target).text();
-                if ($(e.target).text() == "All") {
-                    selectedLetter = '';
-                }
-                this.filter = this.filter || {};
-                this.filter['letter'] = selectedLetter;
-                var itemsNumber = $("#itemsNumber").text();
-                $("#top-bar-deleteBtn").hide();
-                $('#check_all').prop('checked', false);
-                this.changeLocationHash(1, itemsNumber, this.filter);
-                this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter});
-                this.getTotalLength(null, itemsNumber, this.filter);
-            },
         showPage: function (event) {
                 event.preventDefault();
                 this.showP(event,{filter: this.filter, newCollection: this.newCollection,sort: this.sort});
@@ -313,10 +298,20 @@ function (listTemplate, createView, listItemView, contentCollection, common, dat
                 holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
         },
 
-        gotoForm: function (e) {
-            App.ownContentType = true;
-            var id = $(e.target).closest("tr").data("id");
-            window.location.hash = "#easyErp/Persons/form/" + id;
+        goToEditDialog: function (e) {
+            e.preventDefault();
+            var id = $(e.target).closest('tr').data("id");
+            var model = new quotationModel({ validate: false });
+            model.urlRoot = '/Order/form/' + id;
+            model.fetch({
+                data: {contentType: this.contentType},
+                success: function (model) {
+                    new editView({ model: model });
+                },
+                error: function () {
+                    alert('Please refresh browser');
+                }
+            });
         },
 
         createItem: function () {

@@ -1,8 +1,8 @@
 /**
- * Created by Roman on 27.04.2015.
+ * Created by soundstorm on 14.05.15.
  */
 define([
-    'text!templates/Product/ProductItems.html',
+    'text!templates/Product/ProductItemsList.html',
     'text!templates/Product/ProductInputContent.html',
     'collections/Product/products',
     'populate',
@@ -279,15 +279,11 @@ define([
         },
 
         render: function (options) {
-            if(options && options.model){
-                alert('sdfsdfsfdsdf');
-            } else {
-                this.$el.html(this.template({
-                    /*collection: this.collection,
-                     options: options*/
-                }));
-
-            }
+            this.$el.html(this.template({
+                model: this.model,
+                collection: this.collection,
+                options: options
+            }));
 
             return this;
         }

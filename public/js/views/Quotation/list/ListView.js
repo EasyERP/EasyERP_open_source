@@ -2,6 +2,7 @@ define([
         'text!templates/Quotation/list/ListHeader.html',
         'views/Quotation/CreateView',
         'views/Quotation/list/ListItemView',
+        'views/Order/list/ListTotalView',
         'views/Quotation/EditView',
         'models/QuotationModel',
         'collections/Quotation/filterCollection',
@@ -9,7 +10,7 @@ define([
         'dataService'
     ],
 
-    function (listTemplate, createView, listItemView, editView, currentModel, contentCollection, common, dataService) {
+    function (listTemplate, createView, listItemView, listTotalView, editView, currentModel, contentCollection, common, dataService) {
         var QuotationListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -42,7 +43,7 @@ define([
                 "click #previousPage": "previousPage",
                 "click #nextPage": "nextPage",
                 "click .checkbox": "checked",
-                "click  .list td:not(.notForm)": "goToEditDialog",
+                "click  .list tbody td:not(.notForm)": "goToEditDialog",
                 "click #itemsButton": "itemsNumber",
                 "click .currentPageList": "itemsNumber",
                 "click": "hideItemsNumber",
@@ -144,6 +145,8 @@ define([
                     page: this.page,
                     itemsNumber: this.collection.namberToShow
                 }).render());//added two parameters page and items number
+
+                currentEl.append(new listTotalView({element: currentEl.find("#listTable")}).render());
 
                 $('#check_all').click(function () {
                     $(':checkbox').prop('checked', this.checked);
