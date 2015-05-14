@@ -10,7 +10,7 @@ define([
         'dataService'
 ],
 
-    function (listTemplate, createView, listItemView, aphabeticTemplate, contentCollection, common, dataService) {
+    function (listTemplate, createView, listItemView, editView, productModel, aphabeticTemplate, contentCollection, common, dataService) {
         var ProductsListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -366,7 +366,7 @@ define([
             goToEditDialog: function (e) {
                 e.preventDefault();
                 var id = $(e.target).closest('tr').data("id");
-                var model = new currentModel({ validate: false });
+                var model = new productModel({ validate: false });
                 model.urlRoot = '/Product/form';
                 model.fetch({
                     data: { id: id },
