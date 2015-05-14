@@ -26,7 +26,6 @@ define([
             events: {
                 'keydown': 'keydownHandler',
                 'click .dialog-tabs a': 'changeTab',
-                "click .details": "showDetailsBox",
                 "click .current-selected": "showNewSelect",
                 "click": "hideNewSelect",
                 "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
@@ -35,112 +34,130 @@ define([
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect"
             },
 
-			showDetailsBox:function(e){
-				$(e.target).parent().find(".details-box").toggle();
-			},
 
+            showNewSelect: function (e, prev, next) {
+                populate.showSelect(e, prev, next, this);
+                return false;
+
+            },
             notHide: function () {
-				return false;
+                return false;
+            },
+            hideNewSelect: function () {
+                $(".newSelectList").hide();
+            },
+            chooseOption: function (e) {
+                $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
+            },
+            nextSelect: function (e) {
+                this.showNewSelect(e, false, true);
+            },
+            prevSelect: function (e) {
+                this.showNewSelect(e, true, false);
             },
 
-			nextSelect:function(e){
-				this.showNewSelect(e,false,true);
-			},
+            keydownHandler: function (e) {
+                switch (e.which) {
+                    case 27:
+                        this.hideDialog();
+                        break;
+                    default:
+                        break;
+                }
+            },
 
-			prevSelect:function(e){
-				this.showNewSelect(e,true,false);
-			},
-
-            changeTab:function(e){
+            changeTab: function (e) {
                 var holder = $(e.target);
-                holder.closest(".dialog-tabs").find("a.active").removeClass("active");
+                var n;
+                var dialog_holder;
+                var closestEl = holder.closest('.dialog-tabs');
+                var dataClass = closestEl.data('class');
+                var selector = '.dialog-tabs-items.' + dataClass;
+                var itemActiveSelector = '.dialog-tabs-item.' + dataClass + '.active';
+                var itemSelector = '.dialog-tabs-item.' + dataClass;
+
+                closestEl.find("a.active").removeClass("active");
                 holder.addClass("active");
-                var n= holder.parents(".dialog-tabs").find("li").index(holder.parent());
-                var dialog_holder = $(".dialog-tabs-items");
-                dialog_holder.find(".dialog-tabs-item.active").removeClass("active");
-                dialog_holder.find(".dialog-tabs-item").eq(n).addClass("active");
+
+                n = holder.parents(".dialog-tabs").find("li").index(holder.parent());
+                dialog_holder = $(selector);
+
+                dialog_holder.find(itemActiveSelector).removeClass("active");
+                dialog_holder.find(itemSelector).eq(n).addClass("active");
             },
 
-            chooseUser: function(e){
-                $(e.target).toggleClass("choosen");
-            },
-            hideDialog: function () {
-                $('.edit-person-dialog').remove();
-                $(".add-group-dialog").remove();
-                $(".add-user-dialog").remove();
-                $(".crop-images-dialog").remove();
-            },
-            showEdit: function () {
-                $(".upload").animate({
-                    height: "20px",
-                    display: "block"
-                }, 250);
-
-            },
-            hideEdit: function () {
-                $(".upload").animate({
-                    height: "0px",
-                    display: "block"
-                }, 250);
-
-            },
             saveItem: function () {
+
                 var self = this;
-                var mid = 39;
+                var mid = 55;
+                var thisEl = this.$el;
+                var selectedProducts = thisEl.find('.productItem');
+                var products = [];
+                var data;
+                var selectedLength = selectedProducts.length;
+                var targetEl;
+                var productId;
+                var quantity;
+                var price;
 
-                //var dateBirthSt = $.trim(this.$el.find("#dateBirth").val());
-                var dateBirth = this.$el.find(".dateBirth").val();
-                var company = $('#companiesDd').data("id");
-                company = (company) ? company : null;
+                var supplier = thisEl.find('#supplierDd').data('id');
+                var destination = $.trim(thisEl.find('#destination').data('id'));
+                var incoterm = $.trim(thisEl.find('#incoterm').data('id'));
+                var invoiceControl = $.trim(thisEl.find('#invoicingControl').data('id'));
+                var paymentTerm = $.trim(thisEl.find('#paymentTerm').data('id'));
+                var fiscalPosition = $.trim(thisEl.find('#fiscalPosition').data('id'));
+                var supplierReference = thisEl.find('#supplierReference').val();
+                var orderDate = thisEl.find('#orderDate').val();
+                var expectedDate = thisEl.find('#expectedDate').val() || thisEl.find('#minScheduleDate').text();
 
-                var department = $("#departmentDd").data("id");
-                department = (department) ? department : null;
+                var total = $.trim(thisEl.find('#totalAmount').text());
+                var unTaxed = $.trim(thisEl.find('#totalUntaxes').text());
 
-                var jobPosition = $.trim(this.$el.find('#jobPositionInput').val());
-                jobPosition = (jobPosition) ? jobPosition : null;
+                var usersId = [];
+                var groupsId = [];
 
-                var usersId=[];
-                var groupsId=[];
-                $(".groupsAndUser tr").each(function(){
-                    if ($(this).data("type")=="targetUsers"){
+                $(".groupsAndUser tr").each(function () {
+                    if ($(this).data("type") == "targetUsers") {
                         usersId.push($(this).data("id"));
                     }
-                    if ($(this).data("type")=="targetGroups"){
+                    if ($(this).data("type") == "targetGroups") {
                         groupsId.push($(this).data("id"));
                     }
 
                 });
+
                 var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
 
-                var data = {
-                    imageSrc: this.imageSrc,
-                    name: {
-                        first: $.trim(this.$el.find('#firstName').val()),
-                        last: $.trim(this.$el.find('#lastName').val())
-                    },
-                    dateBirth: dateBirth,
-                    department: department,
-                    company: company,
-                    address: {
-                        street: $.trim(this.$el.find('#addressInput').val()),
-                        city: $.trim(this.$el.find('#cityInput').val()),
-                        state: $.trim(this.$el.find('#stateInput').val()),
-                        zip: $.trim(this.$el.find('#zipInput').val()),
-                        country: $.trim(this.$el.find('#countryInput').val())
-                    },
-                    website: $.trim(this.$el.find('#websiteInput').val()),
-                    jobPosition: jobPosition,
-                    skype: $.trim(this.$el.find('#skype').val()),
-                    phones: {
-                        phone: $.trim(this.$el.find('#phoneInput').val()),
-                        mobile: $.trim(this.$el.find('#mobileInput').val()),
-                        fax: $.trim(this.$el.find('#faxInput').val())
-                    },
-                    email: $.trim(this.$el.find('#emailInput').val()),
-                    salesPurchases: {
-                        isCustomer: $('#isCustomerInput').is(':checked'),
-                        isSupplier: $('#isSupplierInput').is(':checked'),
-                        active: $('#isActiveInput').is(':checked')
+                if (selectedLength) {
+                    for (var i = selectedLength - 1; i >= 0; i--) {
+                        targetEl = $(selectedProducts[i]);
+                        productId = targetEl.data('id');
+                        quantity = targetEl.find('[data-name="quantity"]').text();
+                        price = targetEl.find('[data-name="price"]').text();
+
+                        products.push({
+                            product: productId,
+                            unitPrice: price,
+                            quantity: quantity
+                        });
+                    }
+                }
+
+
+                data = {
+                    supplier: supplier,
+                    supplierReference: supplierReference,
+                    products: products,
+                    orderDate: orderDate,
+                    expectedDate: expectedDate,
+                    destination: destination,
+                    incoterm: incoterm,
+                    invoiceControl: invoiceControl,
+                    paymentTerm: paymentTerm,
+                    fiscalPosition: fiscalPosition,
+                    paymentInfo: {
+                        total: total,
+                        unTaxed: unTaxed
                     },
                     groups: {
                         owner: $("#allUsersSelect").data("id"),
@@ -150,69 +167,48 @@ define([
                     whoCanRW: whoCanRW
                 };
 
-                this.currentModel.save(data, {
-                    headers: {
-                        mid: mid
-                    },
-                    //wait: true,
-                    success: function (model) {
-                        self.hideDialog();
-                        Backbone.history.fragment = "";
-                        Backbone.history.navigate("#easyErp/Persons/form/" + model.id, { trigger: true });
-                    },
-                    error: function (model, xhr) {
-						self.errorNotification(xhr);
-                    }
-                });
-            },
-            
-            showNewSelect:function(e,prev,next){
-                populate.showSelect(e,prev,next,this);
-                return false;
-                
-            },
-    
-            hideNewSelect: function () {
-                $(".newSelectList").hide();
-            },
-            chooseOption: function (e) {
-                $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id",$(e.target).attr("id"));
-            },
-            deleteItem: function(event) {
-                var mid = 39;
-                event.preventDefault();
-                var self = this;
-                    var answer = confirm("Realy DELETE items ?!");
-                    if (answer == true) {
-                        this.currentModel.destroy({
-                            headers: {
-                                mid: mid
-                            },
-                            success: function () {
-                                $('.edit-person-dialog').remove();
-                                Backbone.history.navigate("easyErp/" + self.contentType, { trigger: true });
-                            },
-                            error: function (model, err) {
-								if (err.status===403){
-									alert("You do not have permission to perform this action");
-								}
-							}
-						});
-					}
+                if (supplier) {
+                    this.model.save(data, {
+                        headers: {
+                            mid: mid
+                        },
+                        wait: true,
+                        success: function () {
+                            self.hideDialog();
+                            Backbone.history.navigate("easyErp/Quotation", {trigger: true});
+                        },
+                        error: function (model, xhr) {
+                            self.errorNotification(xhr);
+                        }
+                    });
 
+                } else {
+                    alert(CONSTANTS.RESPONSES.CREATE_QUOTATION);
+                }
             },
+
+            hideDialog: function () {
+                $(".edit-dialog").remove();
+                $(".add-group-dialog").remove();
+                $(".add-user-dialog").remove();
+                $(".crop-images-dialog").remove();
+            },
+
             render: function () {
                 var self = this;
                 var formString = this.template({
                     model: this.currentModel.toJSON()
                 });
+                var notDiv;
+                var model;
+
                 this.$el = $(formString).dialog({
-					closeOnEscape: false,
+                    closeOnEscape: false,
                     autoOpen: true,
                     resizable: true,
-                    dialogClass: "edit-person-dialog",
-                    title: "Edit Person",
-                    width: "900",
+                    dialogClass: "edit-dialog",
+                    title: "Edit Quotation",
+                    width: "900px",
                     buttons: [
                         {
                             text: "Save",
@@ -229,7 +225,8 @@ define([
 						]
 
                 });
- 				var notDiv = this.$el.find('.assignees-container');
+
+ 				notDiv = this.$el.find('.assignees-container');
                 notDiv.append(
                     new AssigneesView({
                         model: this.currentModel
@@ -246,8 +243,10 @@ define([
                     yearRange: '-100y:c+nn',
                     maxDate: '-18y'
                 });
+
                 this.delegateEvents(this.events);
-                var model = this.currentModel.toJSON();
+                model = this.currentModel.toJSON();
+
                 if (model.groups)
                     if (model.groups.users.length>0||model.groups.group.length){
                         $(".groupsAndUser").show();
