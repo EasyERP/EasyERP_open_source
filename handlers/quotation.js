@@ -215,6 +215,11 @@ var Quotation = function (models) {
             var query = Quotation.find(queryObject);
 
             query.populate('supplier', '_id name fullName');
+            query.populate('destination');
+            query.populate('incoterm');
+            query.populate('invoiceControl');
+            query.populate('paymentTerm');
+            query.populate('products.product', '_id, name');
 
             query.exec(waterfallCallback);
         };
