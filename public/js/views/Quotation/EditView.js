@@ -1,6 +1,7 @@
 define([
     "text!templates/Quotation/EditTemplate.html",
     'views/Assignees/AssigneesView',
+
     "common",
     "custom",
     "dataService",
@@ -14,8 +15,12 @@ define([
             template: _.template(EditTemplate),
 
             initialize: function (options) {
+                if (options) {
+                    this.vissible = options.vissible;
+                }
+
                 _.bindAll(this, "render", "saveItem");
-                _.bindAll(this, "render", "deleteItem");
+                //_.bindAll(this, "render", "deleteItem");
 
                 this.currentModel = (options.model) ? options.model : options.collection.getElement();
 				this.currentModel.urlRoot = "/quotation";
@@ -197,7 +202,8 @@ define([
             render: function () {
                 var self = this;
                 var formString = this.template({
-                    model: this.currentModel.toJSON()
+                    model: this.currentModel.toJSON(),
+                    vissible: this.vissible
                 });
                 var notDiv;
                 var model;
@@ -232,22 +238,32 @@ define([
                         model: this.currentModel
                     }).render().el
                 );
- 
-				populate.getCompanies("#companiesDd", "/CompaniesForDd",{},this,false,true);
 
-                common.canvasDraw({ model: this.currentModel.toJSON() }, this);
-                this.$el.find('.dateBirth').datepicker({
+                populate.get("#destination", "/destination", {}, 'name', this, true, true);
+                populate.get("#incoterm", "/incoterm", {}, 'name', this, true, true);
+                populate.get("#invoicingControl", "/invoicingControl", {}, 'name', this, true, true);
+                populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, true, true);
+                populate.get("#deliveryDd", "/deliverTo", {}, 'name', this, true);
+                populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
+
+                this.$el.find('#orderDate').datepicker({
                     dateFormat: "d M, yy",
                     changeMonth: true,
-                    changeYear: true,
-                    yearRange: '-100y:c+nn',
-                    maxDate: '-18y'
-                });
+                    changeYear: true
+                }).datepicker('setDate', new Date());
 
                 this.delegateEvents(this.events);
                 model = this.currentModel.toJSON();
 
-                if (model.groups)
+                productItemContainer = this.$el.find('#productItemsHolder');
+
+                productItemContainer.append(
+                    new ProductItemView().render({model: model}).el
+                );
+
+
+
+               /* if (model.groups)
                     if (model.groups.users.length>0||model.groups.group.length){
                         $(".groupsAndUser").show();
                         model.groups.group.forEach(function(item){
@@ -259,7 +275,7 @@ define([
                             $("#targetUsers").append("<li id='"+item._id+"'>"+item.login+"</li>");
                         });
 
-                    }
+                    }*/
                 return this;
             }
 

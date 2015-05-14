@@ -146,7 +146,7 @@ define([
                     itemsNumber: this.collection.namberToShow
                 }).render());//added two parameters page and items number
 
-                currentEl.append(new listTotalView({element: this.$el.find("#listTable")}).render());
+                currentEl.append(new listTotalView({element: currentEl.find("#listTable")}).render());
 
                 $('#check_all').click(function () {
                     $(':checkbox').prop('checked', this.checked);
