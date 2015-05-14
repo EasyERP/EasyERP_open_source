@@ -41,8 +41,6 @@ var Invoice = function (models) {
         });
     };
 
-
-
     this.getForView = function (req, res, next) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getReadAccess(req, req.session.uId, 56, function (access) {
@@ -161,34 +159,135 @@ var Invoice = function (models) {
         }
     };
 
-    this.getInvoiceById = function (req, response) {
+    this.getInvoiceById = function (req, res, next) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getReadAccess(req, req.session.uId, 56, function (access) {
                 if (access) {
+                    var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
+                    var optionsObject = {};
 
-                    var data = {};
-                    for (var i in req.query) {
-                        data[i] = req.query[i];
-                    }
-                    var id = data.id;
+                    var departmentSearcher;
+                    var contentIdsSearcher;
+                    var contentSearcher;
+                    var waterfallTasks;
 
-                    var query = models.get(req.session.lastDb, "Invoice", InvoiceSchema).findById(id);
-                    query.populate('supplierId','name').
-                        populate('salesPerson','name').
-                        populate('department', '_id departmentName').
-                        populate('createdBy.user').
-                        populate('editedBy.user').
-                        populate('groups.users').
-                        populate('groups.group').
-                        populate('groups.owner', '_id login');
 
-                    query.exec(function (err, result) {
-                        if (err) {
-                            console.log(err)
-                        } else {
-                            response.send(result);
+                    departmentSearcher = function (waterfallCallback) {
+                        models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
+                            {
+                                $match: {
+                                    users: objectId(req.session.uId)
+                                }
+                            }, {
+                                $project: {
+                                    _id: 1
+                                }
+                            },
+
+                            waterfallCallback);
+                    };
+
+                    contentIdsSearcher = function (deps, waterfallCallback) {
+                        var arrOfObjectId = deps.objectID();
+
+                        models.get(req.session.lastDb, "Invoice", InvoiceSchema).aggregate(
+                            {
+                                $match: {
+                                    $and: [
+                                        /*optionsObject,*/
+                                        {
+                                            $or: [
+                                                {
+                                                    $or: [
+                                                        {
+                                                            $and: [
+                                                                {whoCanRW: 'group'},
+                                                                {'groups.users': objectId(req.session.uId)}
+                                                            ]
+                                                        },
+                                                        {
+                                                            $and: [
+                                                                {whoCanRW: 'group'},
+                                                                {'groups.group': {$in: arrOfObjectId}}
+                                                            ]
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    $and: [
+                                                        {whoCanRW: 'owner'},
+                                                        {'groups.owner': objectId(req.session.uId)}
+                                                    ]
+                                                },
+                                                {whoCanRW: "everyOne"}
+                                            ]
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                $project: {
+                                    _id: 1
+                                }
+                            },
+                            waterfallCallback
+                        );
+                    };
+
+                    contentSearcher = function (invoicesIds, waterfallCallback) {
+                        var data = {};
+                        for (var i in req.query) {
+                            data[i] = req.query[i];
                         }
+                        var id = data.id;
+                        optionsObject= {_id: id};
+
+                        var query = Invoice.findOne(optionsObject);
+
+                        query.populate('supplierId','name').
+                            populate('salesPerson','name').
+                            populate('department', '_id departmentName').
+                            populate('createdBy.user').
+                            populate('editedBy.user').
+                            populate('groups.users').
+                            populate('groups.group').
+                            populate('groups.owner', '_id login');
+
+                        query.exec(waterfallCallback);
+                    };
+
+                    waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
+
+                    async.waterfall(waterfallTasks, function (err, result) {
+                        if (err) {
+                            return next(err);
+                        }
+
+                        res.status(200).send(result);
                     });
+                    //var data = {};
+                    //for (var i in req.query) {
+                    //    data[i] = req.query[i];
+                    //}
+                    //var id = data.id;
+                    //
+                    //var query = models.get(req.session.lastDb, "Invoice", InvoiceSchema).findById(id);
+                    //query.populate('supplierId','name').
+                    //    populate('salesPerson','name').
+                    //    populate('department', '_id departmentName').
+                    //    populate('createdBy.user').
+                    //    populate('editedBy.user').
+                    //    populate('groups.users').
+                    //    populate('groups.group').
+                    //    populate('groups.owner', '_id login');
+                    //
+                    //query.exec(function (err, result) {
+                    //    if (err) {
+                    //        console.log(err)
+                    //    } else {
+                    //        response.send(result);
+                    //    }
+                    //});
                 } else {
                     response.send(403);
                 }
