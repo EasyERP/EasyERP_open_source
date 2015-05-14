@@ -6,9 +6,10 @@ define([
         "models/QuotationModel",
         "common",
         "populate",
-        'constants'
+        'constants',
+        'views/Assignees/AssigneesView'
     ],
-    function (CreateTemplate, PersonsCollection, DepartmentsCollection, ProductItemView, QuotationModel, common, populate, CONSTANTS) {
+    function (CreateTemplate, PersonsCollection, DepartmentsCollection, ProductItemView, QuotationModel, common, populate, CONSTANTS, AssigneesView) {
 
         var CreateView = Backbone.View.extend({
             el: "#content-holder",
@@ -197,6 +198,13 @@ define([
                         }]
 
                 });
+
+                var notDiv = this.$el.find('.assignees-container');
+                notDiv.append(
+                    new AssigneesView({
+                        model: this.currentModel
+                    }).render().el
+                );
 
                 productItemContainer = this.$el.find('#productItemsHolder');
                 productItemContainer.append(

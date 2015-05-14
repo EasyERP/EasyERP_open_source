@@ -113,6 +113,7 @@ function (listTemplate, createView, listItemView, contentCollection, common, dat
 
         getTotalLength: function (currentNumber, itemsNumber,filter) {
                 dataService.getData('/order/totalCollectionLength', {
+                    contentType: this.contentType,
                     currentNumber: currentNumber,
                     filter: filter,
                     newCollection: this.newCollection
@@ -189,7 +190,8 @@ function (listTemplate, createView, listItemView, contentCollection, common, dat
                 dataService.getData('/order/totalCollectionLength', {
                     filter: this.filter,
                     newCollection: this.newCollection,
-                    parrentContentId: this.parrentContentId
+                    parrentContentId: this.parrentContentId,
+                    contentType: this.contentType
                 }, function (response, context) {
                     context.listLength = response.count || 0;
                 }, this);
@@ -208,6 +210,7 @@ function (listTemplate, createView, listItemView, contentCollection, common, dat
                 });
 
                 dataService.getData('/order/totalCollectionLength', {
+                    contentType: this.contentType,
                     filter: this.filter,
                     newCollection: this.newCollection,
                     parrentContentId: this.parrentContentId
@@ -226,6 +229,7 @@ function (listTemplate, createView, listItemView, contentCollection, common, dat
                     newCollection: this.newCollection
                 });
                 dataService.getData('/order/totalCollectionLength', {
+                    contentType: this.contentType,
                     filter: this.filter,
                     newCollection: this.newCollection
                 }, function (response, context) {
@@ -243,6 +247,7 @@ function (listTemplate, createView, listItemView, contentCollection, common, dat
                     newCollection: this.newCollection
                 });
                 dataService.getData('/order/totalCollectionLength', {
+                    contentType: this.contentType,
                     filter: this.filter,
                     newCollection: this.newCollection
                 }, function (response, context) {
@@ -336,6 +341,7 @@ function (listTemplate, createView, listItemView, contentCollection, common, dat
         },
         deleteItemsRender: function (deleteCounter, deletePage) {
                 dataService.getData('/order/totalCollectionLength', {
+                    contentType: this.contentType,
                     filter: this.filter,
                     newCollection: this.newCollection
                 }, function (response, context) {
