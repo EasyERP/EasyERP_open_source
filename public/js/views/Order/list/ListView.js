@@ -1,13 +1,15 @@
 define([
-    'text!templates/Order/list/ListHeader.html',
-    'views/Quotation/CreateView',
-    'views/Order/list/ListItemView',
-    'collections/Order/filterCollection',
-	'common',
-    'dataService'
+        'text!templates/Order/list/ListHeader.html',
+        'views/Quotation/CreateView',
+        'views/Order/list/ListItemView',
+        'views/Order/EditView',
+        'models/QuotationModel',
+        'collections/Order/filterCollection',
+	    'common',
+        'dataService'
 ],
 
-function (listTemplate, createView, listItemView, contentCollection, common, dataService) {
+function (listTemplate, createView, listItemView, editView, quotationModel, contentCollection, common, dataService) {
     var OrdersListView = Backbone.View.extend({
         el: '#content-holder',
         defaultItemsNumber: null,
@@ -40,7 +42,7 @@ function (listTemplate, createView, listItemView, contentCollection, common, dat
             "click #previousPage": "previousPage",
             "click #nextPage": "nextPage",
             "click .checkbox": "checked",
-            "click  .list td:not(.notForm)": "gotoForm",
+            "click  .list td:not(.notForm)": "goToEditDialog",
             "click #itemsButton": "itemsNumber",
             "click .currentPageList": "itemsNumber",
             "click": "hideItemsNumber",
@@ -317,6 +319,20 @@ function (listTemplate, createView, listItemView, contentCollection, common, dat
             App.ownContentType = true;
             var id = $(e.target).closest("tr").data("id");
             window.location.hash = "#easyErp/Persons/form/" + id;
+        },
+
+        goToEditDialog: function (e) {
+            e.preventDefault();
+            var id = $(e.target).closest('tr').data("id");
+            var model = new quotationModel({ validate: false });
+            model.urlRoot = '/Order/form';
+            model.fetch({
+                data: { id: id },
+                success: function (model) {
+                    new editView({ model: model });
+                },
+                error: function () { alert('Please refresh browser'); }
+            });
         },
 
         createItem: function () {

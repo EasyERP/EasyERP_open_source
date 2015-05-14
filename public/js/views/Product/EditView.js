@@ -5,7 +5,8 @@ define([
         "custom",
         "dataService",
         "populate",
-        'views/Notes/AttachView'
+        'views/Notes/AttachView',
+        "jqueryBarcode"
     ],
     function (EditTemplate, AssigneesView, common, Custom, dataService, populate, attachView) {
 
@@ -35,7 +36,20 @@ define([
                 "click .newSelectList li.miniStylePagination": "notHide",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                "click .details": "showDetailsBox"
+                "click .details": "showDetailsBox",
+                'keyup #barcode': 'drawBarcode',
+                'change #barcode': 'drawBarcode'
+            },
+
+            drawBarcode: function() {
+                var el = this.$el;
+                var content = el.find("#barcode").val();
+
+                if (!content) {
+                    el.find("#bcTarget").empty();
+                } else {
+                    el.find("#bcTarget").barcode(el.find("#barcode").val(), "code128");
+                }
             },
 
             showDetailsBox: function (e) {
@@ -140,7 +154,7 @@ define([
                     patch: true,
                     success: function (model) {
                         Backbone.history.fragment = "";
-                        Backbone.history.navigate("easyErp/Product/form/" + model.id, {trigger: true});
+                        Backbone.history.navigate(window.location.hash, {trigger: true});
                         self.hideDialog();
                     },
                     error: function (model, xhr) {
@@ -216,6 +230,10 @@ define([
                     }
                 });
 
+
+                var model = this.currentModel.toJSON();
+                this.$el.find("#bcTarget").barcode(model.info.barcode, "code128");
+
                 var notDiv = this.$el.find('.attach-container');
                 this.attachView = new attachView({
                     model: this.currentModel,
@@ -233,7 +251,6 @@ define([
                 populate.get("#productType", "/product/getProductsTypeForDd", {}, 'name', this);
                 common.canvasDraw({model: this.model.toJSON()}, this);
                 this.delegateEvents(this.events);
-                var model = this.currentModel.toJSON();
                 if (model.groups)
                     if (model.groups.users.length > 0 || model.groups.group.length) {
                         $(".groupsAndUser").show();

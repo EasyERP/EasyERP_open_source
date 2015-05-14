@@ -1,23 +1,25 @@
 define([
-    "text!templates/Persons/EditTemplate.html",
-    'views/Assignees/AssigneesView',
-    "common",
-    "custom",
-    "dataService",
-	"populate"
+        "text!templates/Order/EditTemplate.html",
+        'views/Assignees/AssigneesView',
+        "collections/Departments/DepartmentsCollection",
+        'views/Product/ProductItemsList',
+        "models/QuotationModel",
+        "common",
+        "custom",
+        "dataService",
+	    "populate"
 ],
-    function (EditTemplate, AssigneesView, common, Custom, dataService, populate) {
+    function (EditTemplate, AssigneesView, DepartmentsCollection, ProductItemView, QuotationModel, common, Custom, dataService, populate) {
 
         var EditView = Backbone.View.extend({
-            contentType: "Persons",
-            imageSrc: '',
+            contentType: "Order",
             template: _.template(EditTemplate),
 
             initialize: function (options) {
                 _.bindAll(this, "render", "saveItem");
                 _.bindAll(this, "render", "deleteItem");
                 this.currentModel = (options.model) ? options.model : options.collection.getElement();
-				this.currentModel.urlRoot = "/Persons";
+				this.currentModel.urlRoot = "/Order";
 				this.responseObj = {};
                 this.render();
             },
@@ -27,19 +29,13 @@ define([
                 "click #cancelBtn": "hideDialog",
                 "click .current-selected": "showNewSelect",
                 "click": "hideNewSelect",
-                "mouseenter .avatar": "showEdit",
-                "mouseleave .avatar": "hideEdit",
                 'click .dialog-tabs a': 'changeTab',
                 "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
                 "click .newSelectList li.miniStylePagination": "notHide",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-				"click .details":"showDetailsBox"
+                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect"
             },
 
-			showDetailsBox:function(e){
-				$(e.target).parent().find(".details-box").toggle();
-			},
             notHide: function () {
 				return false;
             },
@@ -50,39 +46,32 @@ define([
 				this.showNewSelect(e,true,false);
 			},
 
-            changeTab:function(e){
+            changeTab: function (e) {
                 var holder = $(e.target);
-                holder.closest(".dialog-tabs").find("a.active").removeClass("active");
+                var n;
+                var dialog_holder;
+                var closestEl = holder.closest('.dialog-tabs');
+                var dataClass = closestEl.data('class');
+                var selector = '.dialog-tabs-items.' + dataClass;
+                var itemActiveSelector = '.dialog-tabs-item.' + dataClass + '.active';
+                var itemSelector = '.dialog-tabs-item.' + dataClass;
+
+                closestEl.find("a.active").removeClass("active");
                 holder.addClass("active");
-                var n= holder.parents(".dialog-tabs").find("li").index(holder.parent());
-                var dialog_holder = $(".dialog-tabs-items");
-                dialog_holder.find(".dialog-tabs-item.active").removeClass("active");
-                dialog_holder.find(".dialog-tabs-item").eq(n).addClass("active");
+
+                n = holder.parents(".dialog-tabs").find("li").index(holder.parent());
+                dialog_holder = $(selector);
+
+                dialog_holder.find(itemActiveSelector).removeClass("active");
+                dialog_holder.find(itemSelector).eq(n).addClass("active");
             },
 
-            chooseUser: function(e){
-                $(e.target).toggleClass("choosen");
-            },
             hideDialog: function () {
-                $('.edit-person-dialog').remove();
+                $('.edit-dialog').remove();
                 $(".add-group-dialog").remove();
                 $(".add-user-dialog").remove();
-                $(".crop-images-dialog").remove();
             },
-            showEdit: function () {
-                $(".upload").animate({
-                    height: "20px",
-                    display: "block"
-                }, 250);
 
-            },
-            hideEdit: function () {
-                $(".upload").animate({
-                    height: "0px",
-                    display: "block"
-                }, 250);
-
-            },
             saveItem: function () {
                 var self = this;
                 var mid = 39;
@@ -209,8 +198,8 @@ define([
 					closeOnEscape: false,
                     autoOpen: true,
                     resizable: true,
-                    dialogClass: "edit-person-dialog",
-                    title: "Edit Person",
+                    dialogClass: "edit-dialog",
+                    title: "Edit Order",
                     width: "900",
                     buttons: [
                         {
@@ -228,38 +217,43 @@ define([
 						]
 
                 });
- 				var notDiv = this.$el.find('.assignees-container');
+                var notDiv = this.$el.find('.assignees-container');
                 notDiv.append(
                     new AssigneesView({
-                        model: this.currentModel,
+                        model: this.currentModel
                     }).render().el
                 );
- 
-				populate.getCompanies("#companiesDd", "/CompaniesForDd",{},this,false,true);
 
-                common.canvasDraw({ model: this.currentModel.toJSON() }, this);
-                this.$el.find('.dateBirth').datepicker({
+                var productItemContainer = this.$el.find('#productItemsHolder');
+                productItemContainer.append(
+                    new ProductItemView({model: this.currentModel.toJSON()}).render().el
+                );
+
+                populate.get("#destination", "/destination", {}, 'name', this, true, true);
+                populate.get("#incoterm", "/incoterm", {}, 'name', this, true, true);
+                populate.get("#invoicingControl", "/invoicingControl", {}, 'name', this, true, true);
+                populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, true, true);
+                populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
+
+                this.$el.find('#orderDate').datepicker({
                     dateFormat: "d M, yy",
                     changeMonth: true,
-                    changeYear: true,
-                    yearRange: '-100y:c+nn',
-                    maxDate: '-18y'
-                });
-                this.delegateEvents(this.events);
-                var model = this.currentModel.toJSON();
-                if (model.groups)
-                    if (model.groups.users.length>0||model.groups.group.length){
-                        $(".groupsAndUser").show();
-                        model.groups.group.forEach(function(item){
-                            $(".groupsAndUser").append("<tr data-type='targetGroups' data-id='"+ item._id+"'><td>"+item.departmentName+"</td><td class='text-right'></td></tr>");
-                            $("#targetGroups").append("<li id='"+item._id+"'>"+item.departmentName+"</li>");
-                        });
-                        model.groups.users.forEach(function(item){
-                            $(".groupsAndUser").append("<tr data-type='targetUsers' data-id='"+ item._id+"'><td>"+item.login+"</td><td class='text-right'></td></tr>");
-                            $("#targetUsers").append("<li id='"+item._id+"'>"+item.login+"</li>");
-                        });
+                    changeYear: true
+                }).datepicker('setDate', new Date());
 
-                    }
+                /*this.$el.find('#bidValidUntill').datepicker({
+                 dateFormat: "d M, yy",
+                 changeMonth: true,
+                 changeYear: true
+                 });*/
+
+                this.$el.find('#expectedDate').datepicker({
+                    dateFormat: "d M, yy",
+                    changeMonth: true,
+                    changeYear: true
+                });
+
+                this.delegateEvents(this.events);
                 return this;
             }
 
