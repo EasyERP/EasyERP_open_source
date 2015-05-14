@@ -125,13 +125,13 @@ var Quotation = function (models) {
     };
 
     this.getByViewType = function (req, res, next) {
-        var viewType = req.params.viewType;
+        //var viewType = req.params.viewType;
         var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
-        /* var queryParams = {};
+        /*var queryParams = {};
 
-         for (var i in req.query) {
-         queryParams[i] = req.query[i];
-         }*/
+        for (var i in req.query) {
+            queryParams[i] = req.query[i];
+        }*/
 
         var departmentSearcher;
         var contentIdsSearcher;
@@ -140,6 +140,16 @@ var Quotation = function (models) {
 
         var contentType = req.query.contentType;
         var isOrder = !!(contentType === 'Order');
+        var sort = {};
+        var count = req.query.count ? req.query.count : 50;
+        var page = req.query.page;
+        var skip = (page - 1) > 0 ? (page - 1) * count : 0;
+
+        if (req.query.sort) {
+            sort = req.query.sort;
+        } else {
+            sort = {"name": 1};
+        }
 
         /* var data = {};
 
@@ -212,7 +222,7 @@ var Quotation = function (models) {
         contentSearcher = function (quotationsIds, waterfallCallback) {
             var queryObject = {_id: {$in: quotationsIds}};
             queryObject.isOrder = isOrder;
-            var query = Quotation.find(queryObject);
+            var query = Quotation.find(queryObject).limit(count).skip(skip).sort(sort);
 
             query.populate('supplier', '_id name fullName');
             query.populate('destination');
