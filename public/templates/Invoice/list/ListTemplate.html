@@ -5,7 +5,7 @@
     <td><%=(Invoice.supplierId.name)? Invoice.supplierId.name.first+' '+Invoice.supplierId.name.last:' - - - '%></td>
     <td><%=Invoice.invoiceDate%></td>
     <td><%=Invoice.supplierInvoiceNumber%></td>
-    <td></td>
+    <td><%=(Invoice.salesPerson.name && Invoice.salesPerson.name != null)? Invoice.salesPerson.name.first+' '+Invoice.salesPerson.name.last:' - - - '%></td>
     <td><%=Invoice.dueDate%></td>
     <td><%=Invoice.paymentInfo.balance%></td>
     <td><%=Invoice.paymentInfo.untaxed%></td>

@@ -175,8 +175,6 @@ define([
             var model = this.products.get(_id);
             var selectedProduct = model.toJSON();
             var taxes;
-            var datePicker;
-            var spanDatePicker;
             var price;
             var amount;
 
@@ -187,31 +185,19 @@ define([
             parrent.find(".current-selected").text(target.text()).attr("data-id", _id);
 
             $(parrents[1]).attr('class', 'editable').find('span').text(selectedProduct.info.description || '');
-            $(parrents[2]).find('.datepicker').datepicker({
-                dateFormat: "d M, yy",
-                changeMonth: true,
-                changeYear: true
-            }).datepicker('setDate', new Date());
-            $(parrents[2]).attr('class', 'editable');
-            $(parrents[3]).attr('class', 'editable').find("span").text(1);
+            $(parrents[2]).attr('class', 'editable').find("span").text(1);
 
             price = selectedProduct.info.salePrice;
-            $(parrents[4]).attr('class', 'editable').find('span').text(price);
+            $(parrents[3]).attr('class', 'editable').find('span').text(price);
 
             taxes = parseFloat(selectedProduct.info.salePrice) * this.taxesRate;
             amount = price + taxes;
             taxes = taxes.toFixed(2);
 
-            $(parrents[5]).text(taxes);
-            $(parrents[6]).text(amount.toFixed(2));
+            $(parrents[4]).text(taxes);
+            $(parrents[5]).text(amount.toFixed(2));
 
             $(".newSelectList").hide();
-
-            datePicker = trEl.find('input.datepicker');
-            spanDatePicker = trEl.find('span.datepicker');
-
-            spanDatePicker.text(datePicker.val());
-            datePicker.remove();
 
             this.calculateTotal(selectedProduct.info.salePrice);
         },
@@ -247,8 +233,6 @@ define([
             var currentEl;
             var quantity;
             var cost;
-            var dates = [];
-            var date;
 
             if (totalEls) {
                 for (var i = totalEls - 1; i >= 0; i--) {
@@ -256,8 +240,6 @@ define([
                     quantity = currentEl.find('[data-name="quantity"]').text();
                     cost = currentEl.find('[data-name="price"]').text();
                     totalUntax += (quantity * cost);
-                    date = currentEl.find('.datepicker').text();
-                    dates.push(date);
                 }
             }
 
@@ -274,8 +256,6 @@ define([
             total = total.toFixed(2);
             totalContainer.text(total);
 
-            date = helpers.minFromDates(dates);
-            thisEl.find('#minScheduleDate span').text(date);
         },
 
         nextSelect: function (e) {

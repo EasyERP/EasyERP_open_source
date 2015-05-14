@@ -62,6 +62,10 @@ define(['Validation','common'],function (Validation,common) {
                 id: '',
                 name: ''
             },
+            salesPerson: {
+                name: ''
+            },
+
             fiscalPosition: '',
             sourceDocument: '',
             supplierInvoiceNumber: '',

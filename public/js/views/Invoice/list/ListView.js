@@ -1,13 +1,15 @@
 define([
         'text!templates/Invoice/list/ListHeader.html',
         'views/Invoice/CreateView',
+        'views/Invoice/EditView',
+        'models/InvoiceModel',
         'views/Invoice/list/ListItemView',
         'collections/Invoice/filterCollection',
         'common',
         'dataService'
     ],
 
-    function (listTemplate, createView, listItemView, contentCollection, common, dataService) {
+    function (listTemplate, createView, editView, invoiceModel, listItemView, contentCollection, common, dataService) {
         var InvoiceListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -42,7 +44,8 @@ define([
                 "click #previousPage": "previousPage",
                 "click #nextPage": "nextPage",
                 "click .checkbox": "checked",
-                "click  .list td:not(.notForm)": "gotoForm",
+                //"click  .list td:not(.notForm)": "gotoForm",
+                "click  .list td:not(.notForm)": "goToEditDialog",
                 "click #itemsButton": "itemsNumber",
                 "click .currentPageList": "itemsNumber",
                 "click": "hideItemsNumber",
@@ -307,10 +310,24 @@ define([
                 holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             },
 
-            gotoForm: function (e) {
+            /*gotoForm: function (e) {
                 App.ownContentType = true;
                 var id = $(e.target).closest("tr").data("id");
                 window.location.hash = "#easyErp/Invoice/form/" + id;
+            },*/
+
+            goToEditDialog: function (e) {
+                e.preventDefault();
+                var id = $(e.target).closest('tr').data("id");
+                var model = new invoiceModel({ validate: false });
+                model.urlRoot = '/Invoice/form';
+                model.fetch({
+                    data: { id: id },
+                    success: function (model) {
+                        new editView({ model: model });
+                    },
+                    error: function () { alert('Please refresh browser'); }
+                });
             },
 
             createItem: function () {

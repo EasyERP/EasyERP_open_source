@@ -209,6 +209,7 @@ define([
                 );
 
                 populate.getCompanies("#supplierId", "/supplier", {}, this, false, true);
+                populate.get2name("#salesPerson", "/getForDdByRelatedUser",{},this,true,true);
 
                 this.$el.find('#invoice_date').datepicker({
                     dateFormat: "d M, yy",
