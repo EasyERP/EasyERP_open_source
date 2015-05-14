@@ -37,6 +37,8 @@ module.exports = (function () {
         account: { type: String, default: null },
         journal: { type: String, default: null },
 
+        salesPerson: {type: ObjectId, ref: 'Employees', default: null},
+
         paymentInfo: payments,
         products: [ products],
 

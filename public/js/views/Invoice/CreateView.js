@@ -101,6 +101,7 @@ define([
                 var amount;
 
                 var supplierId = this.$("#supplierId").data("id");
+                var salesPersonId = this.$("#salesPerson").data("id");
                 var invoiceDate = this.$("#invoice_date").val();
                 var dueDate = this.$("#due_date").val();
 
@@ -157,6 +158,8 @@ define([
                     dueDate: dueDate,
                     account: null,
                     journal: null,
+
+                    salesPerson: salesPersonId,
 
                     products: products,
                     paymentInfo: payments,
@@ -225,7 +228,7 @@ define([
 
                 });
 
-                var notDiv = this.$el.find('#assignees-container');
+                var notDiv = this.$el.find('.assignees-container');
                 notDiv.append(
                     new AssigneesView({
                         model: this.currentModel
@@ -238,6 +241,8 @@ define([
                 );
 
                 populate.getCompanies("#supplierId", "/supplier", {}, this, false, true);
+                populate.get("#payment_terms", "/paymentTerm", {}, 'name', this, true, true);
+                populate.get2name("#salesPerson", "/getForDdByRelatedUser",{},this,true,true);
 
                 this.$el.find('#invoice_date').datepicker({
                     dateFormat: "d M, yy",

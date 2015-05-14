@@ -1,12 +1,13 @@
 define([
     "text!templates/Invoice/EditTemplate.html",
     'views/Assignees/AssigneesView',
+    "views/Invoice/InvoiceProductItems",
     "common",
     "custom",
     "dataService",
 	"populate"
 ],
-    function (EditTemplate, AssigneesView, common, Custom, dataService, populate) {
+    function (EditTemplate, AssigneesView, InvoiceItemView, common, Custom, dataService, populate) {
 
         var EditView = Backbone.View.extend({
             contentType: "Invoice",
@@ -47,14 +48,24 @@ define([
 				this.showNewSelect(e,true,false);
 			},
 
-            changeTab:function(e){
+            changeTab: function (e) {
                 var holder = $(e.target);
-                holder.closest(".dialog-tabs").find("a.active").removeClass("active");
+                var n;
+                var dialog_holder;
+                var closestEl = holder.closest('.dialog-tabs');
+                var dataClass = closestEl.data('class');
+                var selector = '.dialog-tabs-items.' + dataClass;
+                var itemActiveSelector = '.dialog-tabs-item.' + dataClass + '.active';
+                var itemSelector = '.dialog-tabs-item.' + dataClass;
+
+                closestEl.find("a.active").removeClass("active");
                 holder.addClass("active");
-                var n= holder.parents(".dialog-tabs").find("li").index(holder.parent());
-                var dialog_holder = $(".dialog-tabs-items");
-                dialog_holder.find(".dialog-tabs-item.active").removeClass("active");
-                dialog_holder.find(".dialog-tabs-item").eq(n).addClass("active");
+
+                n = holder.parents(".dialog-tabs").find("li").index(holder.parent());
+                dialog_holder = $(selector);
+
+                dialog_holder.find(itemActiveSelector).removeClass("active");
+                dialog_holder.find(itemSelector).eq(n).addClass("active");
             },
 
             chooseUser: function(e){
@@ -185,14 +196,20 @@ define([
 
                 });
 
- 				/*var notDiv = this.$el.find('.assignees-container');
+ 				var notDiv = this.$el.find('.assignees-container');
                 notDiv.append(
                     new AssigneesView({
                         model: this.currentModel
                     }).render().el
-                );*/
+                );
+
+                var invoiceItemContainer = this.$el.find('#invoiceItemsHolder');
+                invoiceItemContainer.append(
+                    new InvoiceItemView().render().el
+                );
 
                 populate.getCompanies("#supplierId", "/supplier", {}, this, false, true);
+                populate.get2name("#salesPerson", "/getForDdByRelatedUser",{},this,true,true);
 
                 this.$el.find('#invoice_date').datepicker({
                     dateFormat: "d M, yy",
