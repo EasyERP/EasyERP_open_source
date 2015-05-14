@@ -279,10 +279,15 @@ define([
         },
 
         render: function (options) {
-            this.$el.html(this.template({
-                collection: this.collection,
-                options: options
-            }));
+            if(options && options.model){
+                alert('sdfsdfsfdsdf');
+            } else {
+                this.$el.html(this.template({
+                    /*collection: this.collection,
+                     options: options*/
+                }));
+
+            }
 
             return this;
         }

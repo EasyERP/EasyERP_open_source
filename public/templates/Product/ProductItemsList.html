@@ -24,17 +24,8 @@
     <tfoot>
     <tr></tr>
     </tfoot>
-    <tbody>
-    <% model.products.forEach(function(product, index){ %>
-    <tr data-id="<%=product.product._id%>">
-        <td><%=product.product.name%></td>
-        <td><%=product.scheduledDate?product.scheduledDate:''%></td>
-        <td><%=product.description%></td>
-        <td><%=product.quantity%></td>
-        <td><%=product.unitPrice%></td>
-        <td><%=product.unitPrice*product.quantity*0.15%></td>
-    </tr>
-    <% }) %>
+    <tbody id="productList">
+
     </tbody>
 </table>
 <div class="clearfix"></div>
