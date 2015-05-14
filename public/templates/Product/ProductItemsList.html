@@ -26,14 +26,13 @@
     </tfoot>
     <tbody>
     <% model.products.forEach(function(product, index){ %>
-    <tr data-id="<%=product._id%>">
-        <td><%=product.name%></td>
+    <tr data-id="<%=product.product._id%>">
+        <td><%=product.product.name%></td>
         <td><%=product.scheduledDate?product.scheduledDate:''%></td>
         <td><%=product.description%></td>
         <td><%=product.quantity%></td>
         <td><%=product.unitPrice%></td>
-        <td></td>
-        <td></td>
+        <td><%=product.unitPrice*product.quantity*0.15%></td>
     </tr>
     <% }) %>
     </tbody>
@@ -54,7 +53,7 @@
                 </label>
             </td>
             <td>
-                <span><span id="totalUntaxes">0.00</span>€</span>
+                <span><span id="totalUntaxes"><%=model.paymentInfo.unTaxed%></span>€</span>
             </td>
         </tr>
         <tr class="taxes">
@@ -72,7 +71,7 @@
                 <label class="" data-original-title="" title="">Total</label>
             </td>
             <td>
-                <span class=""><span id="totalAmount">0.00</span>€</span>
+                <span class=""><span id="totalAmount"><%=model.paymentInfo.total%></span>€</span>
             </td>
         </tr>
         </tbody>
