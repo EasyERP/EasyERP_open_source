@@ -67,7 +67,7 @@ define([
                 return {_id: item._id, name: item.name, level: item.projectShortDesc || ""};
             }));
 
-            $(id).text(this.responseObj[id][0].name).attr("data-id", this.responseObj[id][0]._id);
+            //$(id).text(this.responseObj[id][0].name).attr("data-id", this.responseObj[id][0]._id);
 
         },
 

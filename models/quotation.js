@@ -19,6 +19,7 @@ module.exports = (function () {
         id: false,
         scheduledDate: {type: Date},
         quantity: {type: Number, default: 1},
+        taxes: {type: Number},
         unitPrice: Number,
         product: {type: ObjectId, ref: 'Product', default: null},
         description: {type: String, default: ''}

@@ -114,6 +114,8 @@ define([
                 var expectedDate = thisEl.find('#expectedDate').val() || thisEl.find('#minScheduleDate').text();
 
                 var total = $.trim(thisEl.find('#totalAmount').text());
+                var taxes;
+                var description;
                 var unTaxed = $.trim(thisEl.find('#totalUntaxes').text());
 
                 var usersId = [];
@@ -138,12 +140,16 @@ define([
                         quantity = targetEl.find('[data-name="quantity"]').text();
                         price = targetEl.find('[data-name="price"]').text();
                         scheduledDate = targetEl.find('[data-name="scheduledDate"]').text();
+                        taxes = targetEl.find('.taxes').text();
+                        description = targetEl.find('[data-name="productDescr"]').text();
 
                         products.push({
                             product: productId,
                             unitPrice: price,
                             quantity: quantity,
-                            scheduledDate: scheduledDate
+                            scheduledDate: scheduledDate,
+                            taxes: taxes,
+                            description: description
                         });
                     }
                 }

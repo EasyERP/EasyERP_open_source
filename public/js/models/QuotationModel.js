@@ -24,6 +24,19 @@ define(['Validation', 'common'], function (Validation, common) {
         },
         urlRoot: function () {
             return "/quotation";
+        },
+        parse: function(model){
+            var products = model.products;
+
+            if(products){
+                products = _.map(products, function(product){
+                    if(product.scheduledDate){
+                        product.scheduledDate = common.utcDateToLocaleDate(product.scheduledDate);
+                    }
+                    return product;
+                });
+            }
+            return model;
         }
     });
 
