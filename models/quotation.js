@@ -33,17 +33,13 @@ module.exports = (function () {
         orderDate: {type: Date, default: Date.now},
         expectedDate: Date,
         name: {type: String, default: 'PO', unique: true},
-        destination: String,
-        incoterm: String,
-        invoiceControl: {
-            type: String,
-            enum: ['Based on Purchase Order lines', 'Based on generated draft invoice', 'Based on incoming shipments'],
-            default: 'Based on generated draft invoice'
-        },
+        destination: {type: ObjectId, ref: 'Destination', default: null},
+        incoterm: {type: ObjectId, ref: 'Incoterm', default: null},
+        invoiceControl: {type: ObjectId, ref: 'InvoicingControl', default: null},
         invoiceRecived: {type: Boolean, default: false},
-        paymentTerm: {type: ObjectId, ref: 'PaymentTerms', default: null},
+        paymentTerm: {type: ObjectId, ref: 'PaymentTerm', default: null},
         paymentInfo: payments,
-        fiscalPosition: {type: ObjectId, ref: 'FiscalPositions', default: null},
+       /* fiscalPosition: {type: ObjectId, ref: 'FiscalPosition', default: null},*/
         products: [products],
         workflow: {type: ObjectId, ref: 'workflows', default: null},
         whoCanRW: {type: String, enum: ['owner', 'group', 'everyOne'], default: 'everyOne'},

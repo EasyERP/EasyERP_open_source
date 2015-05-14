@@ -107,12 +107,32 @@ define([
                 var price;
 
                 var supplier = thisEl.find('#supplierDd').data('id');
+                var destination = $.trim(thisEl.find('#destination').data('id'));
+                var incoterm = $.trim(thisEl.find('#incoterm').data('id'));
+                var invoiceControl = $.trim(thisEl.find('#invoicingControl').data('id'));
+                var paymentTerm = $.trim(thisEl.find('#paymentTerm').data('id'));
+                var fiscalPosition = $.trim(thisEl.find('#fiscalPosition').data('id'));
                 var supplierReference = thisEl.find('#supplierReference').val();
                 var orderDate = thisEl.find('#orderDate').val();
                 var expectedDate = thisEl.find('#expectedDate').val() || thisEl.find('#minScheduleDate').text();
 
                 var total = $.trim(thisEl.find('#totalAmount').text());
                 var unTaxed = $.trim(thisEl.find('#totalUntaxes').text());
+
+                var usersId = [];
+                var groupsId = [];
+
+                $(".groupsAndUser tr").each(function () {
+                    if ($(this).data("type") == "targetUsers") {
+                        usersId.push($(this).data("id"));
+                    }
+                    if ($(this).data("type") == "targetGroups") {
+                        groupsId.push($(this).data("id"));
+                    }
+
+                });
+
+                var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
 
                 if (selectedLength) {
                     for (var i = selectedLength - 1; i >= 0; i--) {
@@ -136,10 +156,21 @@ define([
                     products: products,
                     orderDate: orderDate,
                     expectedDate: expectedDate,
+                    destination: destination,
+                    incoterm: incoterm,
+                    invoiceControl: invoiceControl,
+                    paymentTerm: paymentTerm,
+                    fiscalPosition: fiscalPosition,
                     paymentInfo: {
                         total: total,
                         unTaxed: unTaxed
-                    }
+                    },
+                    groups: {
+                        owner: $("#allUsersSelect").data("id"),
+                        users: usersId,
+                        group: groupsId
+                    },
+                    whoCanRW: whoCanRW
                 };
 
                 if (supplier) {

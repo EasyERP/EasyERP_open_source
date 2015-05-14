@@ -11,7 +11,9 @@ module.exports = function (models) {
 
     router.get('/totalCollectionLength', handler.totalCollectionLength);
     router.get('/:viewType', handler.getByViewType);
+    router.get('/form/:id', handler.getById);
     router.post('/', handler.create);
+    router.delete('/:id', handler.remove);
 
     return router;
 };
