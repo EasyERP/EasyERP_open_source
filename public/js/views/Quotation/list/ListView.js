@@ -2,12 +2,14 @@ define([
         'text!templates/Quotation/list/ListHeader.html',
         'views/Quotation/CreateView',
         'views/Quotation/list/ListItemView',
+        'views/Quotation/EditView',
+        'models/QuotationModel',
         'collections/Quotation/filterCollection',
         'common',
         'dataService'
     ],
 
-    function (listTemplate, createView, listItemView, contentCollection, common, dataService) {
+    function (listTemplate, createView, listItemView, editView, currentModel, contentCollection, common, dataService) {
         var QuotationListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -16,7 +18,7 @@ define([
             sort: null,
             newCollection: null,
             page: null, //if reload page, and in url is valid page
-            contentType: 'Persons',//needs in view.prototype.changeLocationHash
+            contentType: 'Quotation',//needs in view.prototype.changeLocationHash
             viewType: 'list',//needs in view.prototype.changeLocationHash
 
             initialize: function (options) {
@@ -40,7 +42,7 @@ define([
                 "click #previousPage": "previousPage",
                 "click #nextPage": "nextPage",
                 "click .checkbox": "checked",
-                "click  .list td:not(.notForm)": "gotoForm",
+                "click  .list td:not(.notForm)": "goToEditDialog",
                 "click #itemsButton": "itemsNumber",
                 "click .currentPageList": "itemsNumber",
                 "click": "hideItemsNumber",
@@ -119,11 +121,13 @@ define([
                 }, function (response, context) {
                     var page = context.page || 1;
                     var length = context.listLength = response.count || 0;
+
                     if (itemsNumber * (page - 1) > length) {
                         context.page = page = Math.ceil(length / itemsNumber);
                         context.fetchSortCollection(context.sort);
                         context.changeLocationHash(page, context.defaultItemsNumber, filter);
                     }
+
                     context.pageElementRender(response.count, itemsNumber, page);//prototype in main.js
                 }, this);
             },
@@ -327,10 +331,21 @@ define([
                 holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             },
 
-            gotoForm: function (e) {
-                App.ownContentType = true;
+            goToEditDialog: function (e) {
+                e.preventDefault();
+
                 var id = $(e.target).closest("tr").data("id");
-                window.location.hash = "#easyErp/Persons/form/" + id;
+                var model = new currentModel({validate: false});
+
+                model.urlRoot = '/quotation/form/' + id;
+                model.fetch({
+                    success: function (model) {
+                        new editView({model: model});
+                    },
+                    error: function () {
+                        alert('Please refresh browser');
+                    }
+                });
             },
 
             createItem: function () {

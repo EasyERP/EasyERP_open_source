@@ -16,6 +16,7 @@
     "express-subdomain": "1.0.3",
     "geoip-lite": "1.1.6",
     "googleapis": "0.4.6",
+    "lodash": "^3.8.0",
     "mongodb": "^2.0.31",
     "mongoose": "3.8.3",
     "morgan": "1.5.1",

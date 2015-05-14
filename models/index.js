@@ -6,6 +6,7 @@ module.exports = (function () {
     require('./campaign.js');
     require('./customer.js');
     require('./degree.js');
+    require('./deliverTo.js');
     require('./department.js');
     require('./destination.js');
     require('./employee.js');
