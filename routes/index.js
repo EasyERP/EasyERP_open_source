@@ -23,6 +23,7 @@ module.exports = function (app, mainDb) {
     var incotermRouter = require('./incoterm')(models);
     var invoicingControlRouter = require('./invoicingControl')(models);
     var paymentTermRouter = require('./paymentTerm')(models);
+    var deliverToTermRouter = require('./deliverTo')(models);
 
 
     app.get('/', function (req, res, next) {
@@ -52,6 +53,8 @@ module.exports = function (app, mainDb) {
     app.use('/invoicingControl', invoicingControlRouter);
 
     app.use('/paymentTerm', paymentTermRouter);
+
+    app.use('/deliverTo', deliverToTermRouter);
 
     app.get('/getDBS', function (req, res) {
         res.send(200, {dbsNames: dbsNames});

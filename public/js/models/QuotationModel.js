@@ -14,11 +14,12 @@ define(['Validation', 'common'], function (Validation, common) {
             orderDate: new Date(),
             expectedDate: null,
             name: 'PO',
-            incoterm: String,
-            invoiceControl: 'Based on generated draft invoice',
+            invoiceControl: null,
             invoiceRecived: false,
             paymentTerm: null,
             fiscalPosition: null,
+            destination: null,
+            incoterm: null,
             products: []
         },
         urlRoot: function () {
