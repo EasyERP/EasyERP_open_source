@@ -325,13 +325,15 @@ function (listTemplate, createView, listItemView, editView, quotationModel, cont
             e.preventDefault();
             var id = $(e.target).closest('tr').data("id");
             var model = new quotationModel({ validate: false });
-            model.urlRoot = '/Order/form';
+            model.urlRoot = '/Order/form/' + id;
             model.fetch({
-                data: { id: id },
+                data: {contentType: this.contentType},
                 success: function (model) {
                     new editView({ model: model });
                 },
-                error: function () { alert('Please refresh browser'); }
+                error: function () {
+                    alert('Please refresh browser');
+                }
             });
         },
 

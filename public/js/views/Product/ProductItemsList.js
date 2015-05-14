@@ -26,8 +26,6 @@ define([
         },
 
         initialize: function (options) {
-            var quotation = options.model;
-            console.dir(quotation);
             var products;
 
             this.responseObj = {};
@@ -282,6 +280,7 @@ define([
 
         render: function (options) {
             this.$el.html(this.template({
+                model: this.model,
                 collection: this.collection,
                 options: options
             }));

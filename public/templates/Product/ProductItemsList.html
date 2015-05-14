@@ -25,12 +25,12 @@
     <tr></tr>
     </tfoot>
     <tbody>
-    <% products.forEach(function(product, index){ %>
+    <% model.products.forEach(function(product, index){ %>
     <tr data-id="<%=product.products._id%>">
-        <td><%=product.products.product%></td>
-        <td><%=product.products.description%></td>
-        <td><%=product.products.quantity%></td>
-        <td><%=product.products.unitPrice%></td>
+        <td></td>
+        <td><%=product.description%></td>
+        <td><%=product.quantity%></td>
+        <td><%=product.unitPrice%></td>
         <td></td>
         <td></td>
     </tr>
