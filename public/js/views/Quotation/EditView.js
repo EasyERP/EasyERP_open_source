@@ -1,13 +1,13 @@
 define([
-    "text!templates/Quotation/EditTemplate.html",
-    'views/Assignees/AssigneesView',
-
-    "common",
-    "custom",
-    "dataService",
-	"populate"
-],
-    function (EditTemplate, AssigneesView, common, Custom, dataService, populate) {
+        "text!templates/Quotation/EditTemplate.html",
+        'views/Assignees/AssigneesView',
+        'views/Product/ProductItems',
+        "common",
+        "custom",
+        "dataService",
+        "populate"
+    ],
+    function (EditTemplate, AssigneesView, ProductItemView, common, Custom, dataService, populate) {
 
         var EditView = Backbone.View.extend({
             contentType: "Quotation",
@@ -23,9 +23,9 @@ define([
                 //_.bindAll(this, "render", "deleteItem");
 
                 this.currentModel = (options.model) ? options.model : options.collection.getElement();
-				this.currentModel.urlRoot = "/quotation";
-				this.responseObj = {};
-                this.render();
+                this.currentModel.urlRoot = "/quotation";
+                this.responseObj = {};
+                this.render(options);
             },
 
             events: {
@@ -218,21 +218,26 @@ define([
                     buttons: [
                         {
                             text: "Save",
-                            click: function () { self.saveItem(); }
+                            click: function () {
+                                self.saveItem();
+                            }
                         },
 
-						{
-							text: "Cancel",
-							click: function () { self.hideDialog();  }
-						},
-						{
-							text: "Delete",
-							click: self.deleteItem }
-						]
+                        {
+                            text: "Cancel",
+                            click: function () {
+                                self.hideDialog();
+                            }
+                        },
+                        {
+                            text: "Delete",
+                            click: self.deleteItem
+                        }
+                    ]
 
                 });
 
- 				notDiv = this.$el.find('.assignees-container');
+                notDiv = this.$el.find('.assignees-container');
                 notDiv.append(
                     new AssigneesView({
                         model: this.currentModel
@@ -262,20 +267,19 @@ define([
                 );
 
 
+                /* if (model.groups)
+                 if (model.groups.users.length>0||model.groups.group.length){
+                 $(".groupsAndUser").show();
+                 model.groups.group.forEach(function(item){
+                 $(".groupsAndUser").append("<tr data-type='targetGroups' data-id='"+ item._id+"'><td>"+item.departmentName+"</td><td class='text-right'></td></tr>");
+                 $("#targetGroups").append("<li id='"+item._id+"'>"+item.departmentName+"</li>");
+                 });
+                 model.groups.users.forEach(function(item){
+                 $(".groupsAndUser").append("<tr data-type='targetUsers' data-id='"+ item._id+"'><td>"+item.login+"</td><td class='text-right'></td></tr>");
+                 $("#targetUsers").append("<li id='"+item._id+"'>"+item.login+"</li>");
+                 });
 
-               /* if (model.groups)
-                    if (model.groups.users.length>0||model.groups.group.length){
-                        $(".groupsAndUser").show();
-                        model.groups.group.forEach(function(item){
-                            $(".groupsAndUser").append("<tr data-type='targetGroups' data-id='"+ item._id+"'><td>"+item.departmentName+"</td><td class='text-right'></td></tr>");
-                            $("#targetGroups").append("<li id='"+item._id+"'>"+item.departmentName+"</li>");
-                        });
-                        model.groups.users.forEach(function(item){
-                            $(".groupsAndUser").append("<tr data-type='targetUsers' data-id='"+ item._id+"'><td>"+item.login+"</td><td class='text-right'></td></tr>");
-                            $("#targetUsers").append("<li id='"+item._id+"'>"+item.login+"</li>");
-                        });
-
-                    }*/
+                 }*/
                 return this;
             }
 

@@ -4,10 +4,12 @@
 define([
     'text!templates/Product/ProductItems.html',
     'text!templates/Product/ProductInputContent.html',
+    'text!templates/Product/ProductItemsEditList.html',
+    'text!templates/Product/ItemsEditList.html',
     'collections/Product/products',
     'populate',
     'helpers'
-], function (productItemTemplate, ProductInputContent, productCollection, populate, helpers) {
+], function (productItemTemplate, ProductInputContent, ProductItemsEditList, ItemsEditList, productCollection, populate, helpers) {
     var ProductItemTemplate = Backbone.View.extend({
         el: '#productItemsHolder',
 
@@ -29,8 +31,6 @@ define([
             var products;
 
             this.responseObj = {};
-            this.render();
-
             this.taxesRate = 0.15;
 
             products = new productCollection();
@@ -279,14 +279,24 @@ define([
         },
 
         render: function (options) {
+            var productsContainer;
+            var thisEl = this.$el;
+            var products;
+
             if(options && options.model){
-                alert('sdfsdfsfdsdf');
+                products = options.model.products;
+
+                thisEl.html(_.template(ProductItemsEditList, {model: options.model}));
+
+                if(products) {
+                    productsContainer = thisEl.find('#productList');
+                    productsContainer.append(_.template(ItemsEditList, {products: products}));
+                }
             } else {
                 this.$el.html(this.template({
                     /*collection: this.collection,
                      options: options*/
                 }));
-
             }
 
             return this;

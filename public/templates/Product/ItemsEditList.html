@@ -1,0 +1,33 @@
+<% products.forEach(function(product){ %>
+<tr class="productItem" data-id="false">
+    <td data-name="productName">
+        <a class="current-selected productsDd" href="javascript:;">select</a>
+    </td>
+    <td data-name="productDescr">
+        <span>
+
+        </span>
+    </td>
+    <td data-name="scheduledDate">
+        <span class="datepicker">
+
+        </span>
+        <input type="text" class="datepicker notVisible">
+    </td>
+    <td data-name="quantity">
+        <span>
+
+        </span>
+    </td>
+    <td data-name="price">
+        <span>
+
+        </span>
+    </td>
+    <td class="taxes">
+        <span>
+
+        </span>
+    </td>
+</tr>
+<% }); %>
