@@ -177,7 +177,8 @@ define([
                         users: usersId,
                         group: groupsId
                     },
-                    whoCanRW: whoCanRW
+                    whoCanRW: whoCanRW,
+                    workflow: this.defaultWorkflow
 
                 };
 
@@ -256,6 +257,11 @@ define([
                 populate.getCompanies("#supplierId", "/supplier", {}, this, false, true);
                 populate.get("#payment_terms", "/paymentTerm", {}, 'name', this, true, true);
                 populate.get2name("#salesPerson", "/getForDdByRelatedUser",{},this,true,true);
+                populate.fetchWorkflow({wId: 'Invoice'}, function (response) {
+                    if(!response.error){
+                        self.defaultWorkflow = response._id;
+                    }
+                });
 
                 this.$el.find('#invoice_date').datepicker({
                     dateFormat: "d M, yy",

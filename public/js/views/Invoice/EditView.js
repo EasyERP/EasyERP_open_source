@@ -5,9 +5,10 @@ define([
     "common",
     "custom",
     "dataService",
-	"populate"
+	"populate",
+     'constants'
 ],
-    function (EditTemplate, AssigneesView, InvoiceItemView, common, Custom, dataService, populate) {
+    function (EditTemplate, AssigneesView, InvoiceItemView, common, Custom, dataService, populate, CONSTANTS) {
 
         var EditView = Backbone.View.extend({
             contentType: "Invoice",
@@ -77,13 +78,72 @@ define([
 
             saveItem: function () {
                 var self = this;
-                //var mid = 39;
+                var mid = 56;
+
+                var selectedProducts = this.$el.find('.productItem');
+                var products = [];
+                var selectedLength = selectedProducts.length;
+                var targetEl;
+                var productId;
+                var quantity;
+                var price;
+                var description;
+                var taxes;
+                var amount;
+                var workflow = this.currentModel.workflow ? this.currentModel.workflow._id : null;
 
                 var invoiceDate = this.$el.find("#invoiceDate").val();
                 var dueDate = this.$el.find("#dueDate").val();
 
                 var supplierId = this.$el.find('#supplierId').data("id");
                 supplierId = (supplierId) ? supplierId : null;
+
+                var total = parseFloat(this.$("#totalAmount").text());
+                var untaxed = parseFloat(this.$("#totalUntaxes").text());
+                var balance = parseFloat(this.$("#balance").text());
+
+                var payments ={
+                    total: total,
+                    untaxed: untaxed,
+                    balance: balance
+                };
+
+                if (selectedLength) {
+                    for (var i = selectedLength - 1; i >= 0; i--) {
+                        targetEl = $(selectedProducts[i]);
+                        productId = targetEl.data('id');
+                        quantity = targetEl.find('[data-name="quantity"]').text();
+                        price = targetEl.find('[data-name="price"]').text();
+                        description = targetEl.find('[data-name="productDescr"]').text();
+                        taxes = targetEl.find('[data-name="taxes"]').text();
+                        amount = targetEl.find('[data-name="amount"]').text();
+
+                        products.push({
+                            product: productId,
+                            description: description,
+                            unitPrice: price,
+                            quantity: quantity,
+                            taxes: taxes,
+                            amount: amount
+                        });
+                    }
+                }
+
+                var salesPersonId = this.$("#salesPerson").data("id") ? this.$("#salesPerson").data("id") : null;
+                var paymentTermId = this.$("#payment_terms").data("id") ? this.$("#payment_terms").data("id") : null;
+
+                var usersId=[];
+                var groupsId=[];
+                $(".groupsAndUser tr").each(function(){
+                    if ($(this).data("type")=="targetUsers"){
+                        usersId.push($(this).data("id"));
+                    }
+                    if ($(this).data("type")=="targetGroups"){
+                        groupsId.push($(this).data("id"));
+                    }
+
+                });
+                var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
 
                 var data = {
 
@@ -95,11 +155,25 @@ define([
                     invoiceDate: invoiceDate,
                     dueDate: dueDate,
                     account: null,
-                    journal: null
+                    journal: null,
+
+                    salesPerson: salesPersonId,
+                    paymentTerms: paymentTermId,
+
+                    products: products,
+                    paymentInfo: payments,
+
+                    groups: {
+                        owner: $("#allUsersSelect").data("id"),
+                        users: usersId,
+                        group: groupsId
+                    },
+                    whoCanRW: whoCanRW,
+                    workflow: workflow
 
                 };
 
-                this.currentModel.save(data, {
+                /*this.currentModel.save(data, {
                     //wait: true,
                     success: function (model) {
                         self.hideDialog();
@@ -109,7 +183,27 @@ define([
                     error: function (model, xhr) {
 						self.errorNotification(xhr);
                     }
-                });
+                });*/
+
+                if (supplierId) {
+                    this.model.save(data, {
+                        headers: {
+                            mid: mid
+                        },
+                        wait: true,
+                        patch: true,
+                        success: function () {
+                            self.hideDialog();
+                            Backbone.history.navigate("easyErp/Invoice", {trigger: true});
+                        },
+                        error: function (model, xhr) {
+                            self.errorNotification(xhr);
+                        }
+                    });
+
+                } else {
+                    alert(CONSTANTS.RESPONSES.CREATE_QUOTATION);
+                }
             },
             
             showNewSelect:function(e,prev,next){
@@ -227,6 +321,21 @@ define([
                 invoiceItemContainer.append(
                     new InvoiceItemView().render({model: model}).el
                 );
+
+                var model = this.currentModel.toJSON();
+                if (model.groups)
+                    if (model.groups.users.length>0||model.groups.group.length){
+                        $(".groupsAndUser").show();
+                        model.groups.group.forEach(function(item){
+                            $(".groupsAndUser").append("<tr data-type='targetGroups' data-id='"+ item._id+"'><td>"+item.departmentName+"</td><td class='text-right'></td></tr>");
+                            $("#targetGroups").append("<li id='"+item._id+"'>"+item.departmentName+"</li>");
+                        });
+                        model.groups.users.forEach(function(item){
+                            $(".groupsAndUser").append("<tr data-type='targetUsers' data-id='"+ item._id+"'><td>"+item.login+"</td><td class='text-right'></td></tr>");
+                            $("#targetUsers").append("<li id='"+item._id+"'>"+item.login+"</li>");
+                        });
+
+                    }
 
 
                 return this;

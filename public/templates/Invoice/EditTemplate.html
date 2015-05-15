@@ -6,12 +6,18 @@
                     <li><a class="active" href="javascript:;">Main</a></li>
                     <li><a href="javascript:;">Assignees</a></li>
                     <li class="right">
+                        <%if(model.workflow && model.workflow.status !== 'Cancelled'){%>
                         <button class="red confirmOrder">
-                            <span>Confirm Order</span>
+                            <span>Confirm Invoice</span>
                         </button>
-                        <button class="red cancelOrder">
+                        <button class="red cancelQuotation">
                             <span>Cancel</span>
                         </button>
+                        <%} else {%>
+                        <button class="red setDraft">
+                            <span>Set Draft</span>
+                        </button>
+                        <%}%>
                     </li>
                 </ul>
                 <div class="clearfix"></div>

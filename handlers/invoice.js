@@ -29,6 +29,40 @@ var Invoice = function (models) {
         });
     };
 
+    function updateOnlySelectedFields(req, id, data, res, next) {
+        var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
+
+        Invoice.findByIdAndUpdate(id, {$set: data}, function (err, invoice) {
+            if (err) {
+                next(err);
+            } else {
+                res.send(200, {success: 'Invoice updated', result: invoice});
+            }
+        });
+
+    };
+
+    this.putchModel = function (req, res, next) {
+        var id = req.params.id;
+        var data = req.body;
+
+        if (req.session && req.session.loggedIn && req.session.lastDb) {
+            access.getEditWritAccess(req, req.session.uId, 56, function (access) {
+                if (access) {
+                    data.editedBy = {
+                        user: req.session.uId,
+                        date: new Date().toISOString()
+                    };
+                    updateOnlySelectedFields(req, id, data, res, next);
+                } else {
+                    res.status(403).send();
+                }
+            });
+        } else {
+            res.send(401);
+        }
+    }
+
     this.getAll = function (req, res, next) {
         var Invoice =  models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
         var query = {};
@@ -136,7 +170,8 @@ var Invoice = function (models) {
                             populate('editedBy.user').
                             populate('groups.users').
                             populate('groups.group').
-                            populate('groups.owner', '_id login');
+                            populate('groups.owner', '_id login').
+                            populate('workflow', '-sequence');
 
                         query.exec(waterfallCallback);
                     };
@@ -252,7 +287,8 @@ var Invoice = function (models) {
                             populate('editedBy.user').
                             populate('groups.users').
                             populate('groups.group').
-                            populate('groups.owner', '_id login');
+                            populate('groups.owner', '_id login').
+                            populate('workflow', '-sequence');
 
                         query.exec(waterfallCallback);
                     };
@@ -329,19 +365,19 @@ var Invoice = function (models) {
             access.getReadAccess(req, req.session.uId, 56, function (access) {
                 if (access) {
                     var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
-                    data.editedBy = {
-                        user: req.session.uId,
-                        date: new Date().toISOString()
-                    }
+                    //data.editedBy = {
+                    //    user: req.session.uId,
+                    //    date: new Date().toISOString()
+                    //}
 
-                    if (data.supplierId && data.supplierId._id) {
-                        data.supplierId = data.supplierId._id;
-                    }
+                    //if (data.supplierId && data.supplierId._id) {
+                    //    data.supplierId = data.supplierId._id;
+                    //}
 
-                    Invoice.findByIdAndUpdate(_id, data, function (err, result) {
+                    Invoice.findByIdAndUpdate({_id: id}, data.invoice, function (err, result) {
 
                         if (err) {
-                            console.log(err);
+                            //console.log(err);
                             res.send(500, {error: "Can't update Invoice"});
                         } else {
                             res.send(200, {success: 'Invoice updated success', result: result});
@@ -359,36 +395,6 @@ var Invoice = function (models) {
 
         };
 
-    this.invoiceUpdateOnlySelectedFields = function (reg, res, id){
-    if (req.session && req.session.loggedIn && req.session.lastDb) {
-        access.getEditWritAccess(req, req.session.uId, 56, function (access) {
-            if (access) {
-
-                var data= req.body;
-
-                data.editedBy = {
-                    user: req.session.uId,
-                    date: new Date().toISOString()
-                };
-                //----------------------------
-                var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
-
-                Invoice.findByIdAndUpdate(id, { $set: data}, function (err, invoice) {
-                    if (err) {
-                        res.send(500, {error: "Can't update Invoice"});
-                    }
-                    res.send(200, { success: 'Invoice updated', result: invoice });
-                });
-                //----------------------------
-            } else {
-                res.send(403);
-            }
-        });
-    } else {
-        res.send(401);
-    }
-
-    }
 
     this.totalCollectionLength = function (req, res, next) {
 

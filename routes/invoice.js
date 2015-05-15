@@ -24,27 +24,25 @@ module.exports = function (models) {
         }
     });
 
+    router.delete('/:_id', function (req, res) {
+        var id = req.param('_id');
+        handler.removeInvoice(req, res, id);
+    });
+
+    router.patch('/:id', handler.putchModel);
+
     router.put('/:_id', function (req, res) {
-        //var data={};
+        var data={};
+        data.invoice= req.body;
         //data.invoice = req.body;
-        var data = {};
-        for (var i in req.query) {
-            data[i] = req.query[i];
-        }
+        /*var data = {};
+         for (var i in req.query) {
+         data[i] = req.query[i];
+         }*/
 
         var id = req.param('_id');
 
         handler.updateInvoice(req, res, id, data);
-    });
-
-    router.patch('/:_id', function (req, res) {
-        var id = req.param('_id');
-        handler.invoiceUpdateOnlySelectedFields(req, res, id);
-    });
-
-    router.delete('/:_id', function (req, res) {
-        var id = req.param('_id');
-        handler.removeInvoice(req, res, id);
     });
 
     router.post('/', handler.create);
