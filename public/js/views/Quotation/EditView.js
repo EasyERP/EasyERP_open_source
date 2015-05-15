@@ -202,6 +202,8 @@ define([
                 var usersId = [];
                 var groupsId = [];
 
+                var workflow = this.currentModel.workflow ? this.currentModel.workflow._id : null;
+
                 $(".groupsAndUser tr").each(function () {
                     if ($(this).data("type") == "targetUsers") {
                         usersId.push($(this).data("id"));
@@ -250,7 +252,8 @@ define([
                         users: usersId,
                         group: groupsId
                     },
-                    whoCanRW: whoCanRW
+                    whoCanRW: whoCanRW,
+                    workflow: workflow
                 };
 
                 if (supplier) {
