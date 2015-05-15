@@ -33,8 +33,15 @@ define(['Validation', 'common'], function (Validation, common) {
                     if(product.scheduledDate){
                         product.scheduledDate = common.utcDateToLocaleDate(product.scheduledDate);
                     }
+
                     return product;
                 });
+            }
+            if(model.expectedDate){
+                model.expectedDate = common.utcDateToLocaleDate(model.expectedDate);
+            }
+            if(model.orderDate){
+                model.orderDate = common.utcDateToLocaleDate(model.orderDate);
             }
             return model;
         }

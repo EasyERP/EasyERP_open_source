@@ -306,8 +306,10 @@ function (listTemplate, createView, listItemView, listTotalView, editView, quota
 
         goToEditDialog: function (e) {
             e.preventDefault();
+
             var id = $(e.target).closest('tr').data("id");
             var model = new quotationModel({ validate: false });
+
             model.urlRoot = '/Order/form/' + id;
             model.fetch({
                 data: {contentType: this.contentType},

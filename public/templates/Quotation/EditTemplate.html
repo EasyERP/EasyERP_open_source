@@ -32,11 +32,13 @@
                                 <dl class="person-info">
                                     <dt><label for="supplierDd">Supplier</label></dt>
                                     <dd>
-                                        <a id="supplierDd" class="current-selected" href="javascript:;">Select</a>
+                                        <a id="supplierDd" class="current-selected" href="javascript:;"><%=model.supplier ? model.supplier.fullName : ''%></a>
                                     </dd>
                                     <dt><label for="supplierReference">Supplier Reference</label></dt>
-                                    <dd><input type="text" name="supplierReference" id="supplierReference"
-                                               maxlength="32"/></dd>
+                                    <dd>
+                                        <input type="text" name="supplierReference" id="supplierReference"
+                                               maxlength="32" value="<%=model.supplierReference%>"/>
+                                    </dd>
                                 </dl>
                             </div>
                             <div class="half-block left">
@@ -44,11 +46,11 @@
                                     <dt><label for="orderDate">Order Date</label></dt>
                                     <dd>
                                         <input class="extrainfo" type="text" name="orderDate" id="orderDate" value=""
-                                               readonly="" placeholder="Order Date">
+                                               readonly="" placeholder="Order Date" value="<%=model.orderDate%>">
                                     </dd>
                                     <dt><label for="deliveryDd">Deliver To</label></dt>
                                     <dd>
-                                        <a id="deliveryDd" class="current-selected" href="javascript:;">YourCompany</a>
+                                        <a id="deliveryDd" class="current-selected" href="javascript:;"><%=model.deliverTo ? model.deliverTo.name : ''%></a>
                                     </dd>
                                 </dl>
                             </div>
@@ -89,26 +91,26 @@
                                     <div class="half-block left">
                                         <dl class="quotation-info">
                                             <dt><label for="expectedDate">Expected Date</label></dt>
-                                            <dd><input id="expectedDate" placeholder="" type="text" readonly/>
+                                            <dd><input id="expectedDate" placeholder="" type="text" readonly value="<%=model.expectedDate%>"/>
                                             </dd>
                                             <dt><label for="destination">Destination</label></dt>
                                             <dd><a id="destination" class="current-selected"
-                                                   href="javascript:;">Select</a></dd>
+                                                   href="javascript:;"><%=model.destination ? model.destination.name: ''%></a></dd>
                                             <dt><label for="incoterm">Incoterm</label></dt>
-                                            <dd><a id="incoterm" class="current-selected" href="javascript:;">Select</a>
+                                            <dd><a id="incoterm" class="current-selected" href="javascript:;"><%=model.incoterm ? model.incoterm.name : ''%></a>
                                             </dd>
                                         </dl>
                                     </div>
                                     <div class="half-block left">
                                         <dl class="quotation-info">
                                             <dt><label for="invoicingControl">Invoicing Control</label></dt>
-                                            <dd><a id="invoicingControl" class="current-selected" href="javascript:;">Select</a>
+                                            <dd><a id="invoicingControl" class="current-selected" href="javascript:;"><%=model.invoiceControl ? model.invoiceControl.name : ''%></a>
                                             </dd>
                                             <!--<dt><label for="invoiceReceived">Invoice Received</label></dt>-->
                                             <!-- <dd><input id="invoiceReceived" type="checkbox" class="checkbox left" disabled></dd>-->
                                             <dt><label for="paymentTerm">Payment Term</label></dt>
                                             <dd><a id="paymentTerm" class="current-selected"
-                                                   href="javascript:;">Select</a>
+                                                   href="javascript:;"><%=model.paymentTerm ? model.paymentTerm.name : ''%></a>
                                             </dd>
                                             <dt><label for="fiscalPosition">Fiscal Position</label></dt>
                                             <dd>

@@ -5,9 +5,10 @@ define([
         "common",
         "custom",
         "dataService",
-        "populate"
+        "populate",
+        'constants'
     ],
-    function (EditTemplate, AssigneesView, ProductItemView, common, Custom, dataService, populate) {
+    function (EditTemplate, AssigneesView, ProductItemView, common, Custom, dataService, populate, CONSTANTS) {
 
         var EditView = Backbone.View.extend({
             contentType: "Quotation",
@@ -351,12 +352,12 @@ define([
                     }).render().el
                 );
 
-                populate.get("#destination", "/destination", {}, 'name', this, true, true);
-                populate.get("#incoterm", "/incoterm", {}, 'name', this, true, true);
-                populate.get("#invoicingControl", "/invoicingControl", {}, 'name', this, true, true);
-                populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, true, true);
-                populate.get("#deliveryDd", "/deliverTo", {}, 'name', this, true);
-                populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
+                populate.get("#destination", "/destination", {}, 'name', this, false);
+                populate.get("#incoterm", "/incoterm", {}, 'name', this, false);
+                populate.get("#invoicingControl", "/invoicingControl", {}, 'name', this, false);
+                populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, false);
+                populate.get("#deliveryDd", "/deliverTo", {}, 'name', this, false);
+                populate.get2name("#supplierDd", "/supplier", {}, this, false);
 
                 this.$el.find('#orderDate').datepicker({
                     dateFormat: "d M, yy",

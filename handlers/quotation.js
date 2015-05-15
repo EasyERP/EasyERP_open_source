@@ -381,6 +381,7 @@ var Quotation = function (models) {
             query.populate('groups.group');
             query.populate('groups.owner', '_id login');
             query.populate('workflow', '-sequence');
+            query.populate('deliverTo', '_id, name');
 
             query.exec(waterfallCallback);
         };

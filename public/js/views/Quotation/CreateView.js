@@ -105,6 +105,7 @@ define([
 
                 var supplier = thisEl.find('#supplierDd').data('id');
                 var destination = $.trim(thisEl.find('#destination').data('id'));
+                var deliverTo = $.trim(thisEl.find('#deliveryDd').data('id'));
                 var incoterm = $.trim(thisEl.find('#incoterm').data('id'));
                 var invoiceControl = $.trim(thisEl.find('#invoicingControl').data('id'));
                 var paymentTerm = $.trim(thisEl.find('#paymentTerm').data('id'));
@@ -159,6 +160,7 @@ define([
                 data = {
                     supplier: supplier,
                     supplierReference: supplierReference,
+                    deliverTo: deliverTo,
                     products: products,
                     orderDate: orderDate,
                     expectedDate: expectedDate,
@@ -257,7 +259,7 @@ define([
                 populate.get("#deliveryDd", "/deliverTo", {}, 'name', this, true);
                 populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
                 populate.fetchWorkflow({wId: 'Quotation'}, function (response) {
-                    if(!response.error){
+                    if (!response.error) {
                         self.defaultWorkflow = response._id;
                     }
                 });

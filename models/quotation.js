@@ -31,7 +31,7 @@ module.exports = (function () {
         isOrder: {type: Boolean, default: false},
         supplier: {type: ObjectId, ref: 'Customers', default: null},
         supplierReference: {type: String, default: ''},
-        /*deliverTo: {type: ObjectId, default: true},*/
+        deliverTo: {type: ObjectId, ref: 'DeliverTo', default: null},
         orderDate: {type: Date, default: Date.now},
         expectedDate: Date,
         name: {type: String, default: 'PO', unique: true},
