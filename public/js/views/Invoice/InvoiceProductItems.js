@@ -5,7 +5,7 @@ define([
     'text!templates/Invoice/InvoiceProductItems.html',
     'text!templates/Invoice/InvoiceProductInputContent.html',
     'text!templates/Invoice/InvoiceProductItemsEditList.html',
-    'text!templates/Invoice/InvoiceProductItemsEdit.html',
+    'text!templates/Invoice/InvoiceItemsEditList.html',
     'collections/Product/products',
     'populate',
     'helpers'
