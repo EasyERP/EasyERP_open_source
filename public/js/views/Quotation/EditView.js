@@ -36,7 +36,8 @@ define([
                 "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
                 "click .newSelectList li.miniStylePagination": "notHide",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect"
+                "click .confirmOrder": "confirmOrder",
+                "click .cancelOrder": "cancelQuotation"
             },
 
 
@@ -89,6 +90,44 @@ define([
 
                 dialog_holder.find(itemActiveSelector).removeClass("active");
                 dialog_holder.find(itemSelector).eq(n).addClass("active");
+            },
+
+            fetchWorkflow: function(){
+
+            },
+
+            confirmOrder: function (e) {
+                e.preventDefault();
+
+                this.currentModel.save({
+                    isOrder: true,
+                    hired: true
+                }, {
+                    headers: {
+                        mid: 57
+                    },
+                    patch: true,
+                    success: function () {
+                        Backbone.history.navigate("easyErp/Order", { trigger: true });
+                    }
+                });
+            },
+
+            cancelQuotation: function (e) {
+                e.preventDefault();
+
+                this.currentModel.save({
+                    isOrder: true,
+                    hired: true
+                }, {
+                    headers: {
+                        mid: 57
+                    },
+                    patch: true,
+                    success: function () {
+                        Backbone.history.navigate("easyErp/Quotation", { trigger: true });
+                    }
+                });
             },
 
             saveItem: function () {
@@ -267,19 +306,19 @@ define([
                 );
 
 
-                /* if (model.groups)
-                 if (model.groups.users.length>0||model.groups.group.length){
-                 $(".groupsAndUser").show();
-                 model.groups.group.forEach(function(item){
-                 $(".groupsAndUser").append("<tr data-type='targetGroups' data-id='"+ item._id+"'><td>"+item.departmentName+"</td><td class='text-right'></td></tr>");
-                 $("#targetGroups").append("<li id='"+item._id+"'>"+item.departmentName+"</li>");
-                 });
-                 model.groups.users.forEach(function(item){
-                 $(".groupsAndUser").append("<tr data-type='targetUsers' data-id='"+ item._id+"'><td>"+item.login+"</td><td class='text-right'></td></tr>");
-                 $("#targetUsers").append("<li id='"+item._id+"'>"+item.login+"</li>");
-                 });
+                if (model.groups)
+                    if (model.groups.users.length > 0 || model.groups.group.length) {
+                        $(".groupsAndUser").show();
+                        model.groups.group.forEach(function (item) {
+                            $(".groupsAndUser").append("<tr data-type='targetGroups' data-id='" + item._id + "'><td>" + item.departmentName + "</td><td class='text-right'></td></tr>");
+                            $("#targetGroups").append("<li id='" + item._id + "'>" + item.departmentName + "</li>");
+                        });
+                        model.groups.users.forEach(function (item) {
+                            $(".groupsAndUser").append("<tr data-type='targetUsers' data-id='" + item._id + "'><td>" + item.login + "</td><td class='text-right'></td></tr>");
+                            $("#targetUsers").append("<li id='" + item._id + "'>" + item.login + "</li>");
+                        });
 
-                 }*/
+                    }
                 return this;
             }
 

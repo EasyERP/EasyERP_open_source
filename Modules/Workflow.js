@@ -4,7 +4,7 @@ var Workflow = function (models, event) {
     var relatedStatusSchema = mongoose.Schemas['relatedStatus'];
     var workflowSchema = mongoose.Schemas['workflow'];
 
-    function updateSequence (model, sequenceField, start, end, wId, isCreate, isDelete, callback) {
+    function updateSequence(model, sequenceField, start, end, wId, isCreate, isDelete, callback) {
         var query;
         var objFind = {};
         var objChange = {};
@@ -20,26 +20,26 @@ var Workflow = function (models, event) {
                 end -= 1;
             }
             objChange = {};
-            objFind = { "wId": wId };
-            objFind[sequenceField] = { $gte: start, $lte: end };
+            objFind = {"wId": wId};
+            objFind[sequenceField] = {$gte: start, $lte: end};
             objChange[sequenceField] = inc;
-            query = model.update(objFind, { $inc: objChange }, { multi: true });
+            query = model.update(objFind, {$inc: objChange}, {multi: true});
             query.exec(function (err, res) {
-				console.log(res);
+                console.log(res);
                 if (callback) callback((inc == -1) ? end : start);
             });
         } else {
             if (isCreate) {
-                query = model.count({ "wId": wId }).exec(function (err, res) {
+                query = model.count({"wId": wId}).exec(function (err, res) {
                     if (callback) callback(res);
                 });
             }
             if (isDelete) {
                 objChange = {};
-                objFind = { "wId": wId };
-                objFind[sequenceField] = { $gt: start };
+                objFind = {"wId": wId};
+                objFind[sequenceField] = {$gt: start};
                 objChange[sequenceField] = -1;
-                query = model.update(objFind, { $inc: objChange }, { multi: true });
+                query = model.update(objFind, {$inc: objChange}, {multi: true});
                 query.exec(function (err, res) {
                     if (callback) callback(res);
                 });
@@ -47,39 +47,43 @@ var Workflow = function (models, event) {
         }
 
     }
+
     return {
         create: function (req, data, result) {
             try {
                 if (data) {
-                    models.get(req.session.lastDb, "workflows", workflowSchema).find({ $and: [{ wId: data._id },{name: data.name}] }, function (err, workflows) {
+                    models.get(req.session.lastDb, "workflows", workflowSchema).find({$and: [{wId: data._id}, {name: data.name}]}, function (err, workflows) {
                         if (err) {
                             console.log(err);
                             logWriter.log('WorkFlow.js create workflow.find ' + err);
-                            result.send(400, { error: 'WorkFlow.js create workflow Incorrect Incoming Data' });
+                            result.send(400, {error: 'WorkFlow.js create workflow Incorrect Incoming Data'});
                             return;
                         } else {
                             if (workflows.length > 0) {
                                 if (workflows[0].name === data.name) {
-                                    result.send(400, { error: 'An Workflows with the same Name already exists' });
+                                    result.send(400, {error: 'An Workflows with the same Name already exists'});
                                 }
                             }
-                            else if(workflows.length === 0) {
-                                    var _workflow = new models.get(req.session.lastDb, "workflows", workflowSchema)();
-                                    _workflow.wId = data._id;
-                                    _workflow.name = data.name;
-                                    _workflow.status = data.status;
-                                    updateSequence(models.get(req.session.lastDb, "workflows", workflowSchema), "sequence", 0, 0, data._id, true, false, function(sequence){
-                                        _workflow.sequence = sequence;
-                                        _workflow.save(function (err, workfloww) {
-                                            if (err) {
-                                                console.log(err);
-                                                logWriter.log('WorkFlow.js create workflow.find _workflow.save ' + err);
-                                                result.send(500, { error: 'WorkFlow.js create save error' });
-                                            } else {
-                                                result.send(201, { success: 'A new WorkFlow crate success', createdModel: workfloww});
-                                            }
-                                        });
+                            else if (workflows.length === 0) {
+                                var _workflow = new models.get(req.session.lastDb, "workflows", workflowSchema)();
+                                _workflow.wId = data._id;
+                                _workflow.name = data.name;
+                                _workflow.status = data.status;
+                                updateSequence(models.get(req.session.lastDb, "workflows", workflowSchema), "sequence", 0, 0, data._id, true, false, function (sequence) {
+                                    _workflow.sequence = sequence;
+                                    _workflow.save(function (err, workfloww) {
+                                        if (err) {
+                                            console.log(err);
+                                            logWriter.log('WorkFlow.js create workflow.find _workflow.save ' + err);
+                                            result.send(500, {error: 'WorkFlow.js create save error'});
+                                        } else {
+                                            result.send(201, {
+                                                success: 'A new WorkFlow crate success',
+                                                createdModel: workfloww
+                                            });
+                                        }
                                     });
+                                });
                             }
                         }
                     });
@@ -91,32 +95,32 @@ var Workflow = function (models, event) {
         },
 
         update: function (req, _id, data, result) {
-            
+
             try {
                 if (data) {
-                 models.get(req.session.lastDb, "workflows", workflowSchema).find({ _id: _id }, function (err, workflows) {
-                     models.get(req.session.lastDb, "workflows", workflowSchema).find({ $and: [{ wId: workflows[0].wId  },{name: data.name}]}, function (err, workflow) {
+                    models.get(req.session.lastDb, "workflows", workflowSchema).find({_id: _id}, function (err, workflows) {
+                        models.get(req.session.lastDb, "workflows", workflowSchema).find({$and: [{wId: workflows[0].wId}, {name: data.name}]}, function (err, workflow) {
                             delete data._id;
                             if (workflow.length > 0 && workflow[0]._id != _id) {
-                                     if (workflow[0].name === data.name) {
-                                            result.send(400, { error: 'An Workflows with the same Name already exists' });
-                                     }
+                                if (workflow[0].name === data.name) {
+                                    result.send(400, {error: 'An Workflows with the same Name already exists'});
+                                }
                             }
-                            else  {
-                                models.get(req.session.lastDb, "workflows", workflowSchema).update({ _id: _id }, data, function (err, res) {
+                            else {
+                                models.get(req.session.lastDb, "workflows", workflowSchema).update({_id: _id}, data, function (err, res) {
                                     if (err) {
                                         console.log(err);
                                         logWriter.log('WorkFlow.js update workflow.update ' + err);
-                                        result.send(400, { error: 'WorkFlow.js update workflow error ' });
+                                        result.send(400, {error: 'WorkFlow.js update workflow error '});
                                         return;
                                     } else {
-                                        result.send(200, { success: 'WorkFlow update success' });
+                                        result.send(200, {success: 'WorkFlow update success'});
                                     }
                                 });
                             }
-                       });
+                        });
                     });
-                    }
+                }
             }
             catch (exception) {
                 logWriter.log("Workflow.js  create " + exception);
@@ -125,19 +129,19 @@ var Workflow = function (models, event) {
         updateOnlySelectedFields: function (req, _id, data, result) {
             try {
                 if (data) {
-					updateSequence(models.get(req.session.lastDb, "workflows", workflowSchema), "sequence", data.sequenceStart, data.sequence, data.wId, false, false, function(sequence){
-						data.sequence = sequence;
-						models.get(req.session.lastDb, "workflows", workflowSchema).findByIdAndUpdate( _id, {$set:data}, function (err, res) {
-							if (err) {
-								console.log(err);
-								logWriter.log('WorkFlow.js update workflow.update ' + err);
-								result.send(400, { error: 'WorkFlow.js update workflow error ' });
-								return;
-							} else {
-								result.send(200, { success: 'WorkFlow update success' });
-							}
-						});
-					});
+                    updateSequence(models.get(req.session.lastDb, "workflows", workflowSchema), "sequence", data.sequenceStart, data.sequence, data.wId, false, false, function (sequence) {
+                        data.sequence = sequence;
+                        models.get(req.session.lastDb, "workflows", workflowSchema).findByIdAndUpdate(_id, {$set: data}, function (err, res) {
+                            if (err) {
+                                console.log(err);
+                                logWriter.log('WorkFlow.js update workflow.update ' + err);
+                                result.send(400, {error: 'WorkFlow.js update workflow error '});
+                                return;
+                            } else {
+                                result.send(200, {success: 'WorkFlow update success'});
+                            }
+                        });
+                    });
                 }
             }
             catch (exception) {
@@ -147,14 +151,14 @@ var Workflow = function (models, event) {
         getWorkflowsForDd: function (req, data, response) {
             var res = {};
             res['data'] = [];
-            var query = models.get(req.session.lastDb, "workflows", workflowSchema).find({ wId: data.type.id });
+            var query = models.get(req.session.lastDb, "workflows", workflowSchema).find({wId: data.type.id});
             query.select('name wName');
-            query.sort({ 'sequence': -1,"editedBy.date":-1 });
+            query.sort({'sequence': -1, "editedBy.date": -1});
             query.exec(function (err, result) {
                 if (err) {
                     console.log(err);
                     logWriter.log('Workflow.js get workflow.find' + err);
-                    response.send(500, { error: "Can't find Workflow" });
+                    response.send(500, {error: "Can't find Workflow"});
                 } else {
                     res['data'] = result;
                     response.send(res);
@@ -167,15 +171,15 @@ var Workflow = function (models, event) {
                 var res = {};
                 res['data'] = [];
                 if (data) {
-                    var query = (data.id) ? { wId: data.id } : {};
+                    var query = (data.id) ? {wId: data.id} : {};
                     if (data.name) query['name'] = data.name
                     var query2 = models.get(req.session.lastDb, "workflows", workflowSchema).find(query);
-                    query2.sort({ 'sequence': -1,"editedBy.date":-1 });
+                    query2.sort({'sequence': -1, "editedBy.date": -1});
                     query2.exec(query, function (err, result) {
                         if (err) {
                             console.log(err);
                             logWriter.log('WorkFlow.js create workflow.find ' + err);
-                            response.send(500, { error: "Can't find Workflow" });
+                            response.send(500, {error: "Can't find Workflow"});
                         } else {
                             res['data'] = result;
                             response.send(res);
@@ -186,7 +190,7 @@ var Workflow = function (models, event) {
             catch (exception) {
                 console.log(exception);
                 logWriter.log("Workflow.js  create " + exception);
-                response.send(500, { error: "Can't find Workflow" });
+                response.send(500, {error: "Can't find Workflow"});
             }
         },
 
@@ -195,15 +199,15 @@ var Workflow = function (models, event) {
                 var res = {};
                 res['data'] = [];
                 if (data) {
-                    var query = (data.id) ? { wId: data.id } : {};
+                    var query = (data.id) ? {wId: data.id} : {};
                     if (data.name) query['name'] = data.name
                     var query2 = models.get(req.session.lastDb, "workflows", workflowSchema).find(query);
-                    query2.sort({ 'sequence': 1 });
+                    query2.sort({'sequence': 1});
                     query2.exec(query, function (err, result) {
                         if (err) {
                             console.log(err);
                             logWriter.log('WorkFlow.js create workflow.find ' + err);
-                            response.send(500, { error: "Can't find Workflow" });
+                            response.send(500, {error: "Can't find Workflow"});
                         } else {
                             res['data'] = result;
                             response.send(res);
@@ -214,7 +218,7 @@ var Workflow = function (models, event) {
             catch (exception) {
                 console.log(exception);
                 logWriter.log("Workflow.js  create " + exception);
-                response.send(500, { error: "Can't find Workflow" });
+                response.send(500, {error: "Can't find Workflow"});
             }
         },
 
@@ -222,12 +226,12 @@ var Workflow = function (models, event) {
             try {
                 var res = {};
                 res['data'] = [];
-                var queryObj = {type:null};
+                var queryObj = {type: null};
                 models.get(req.session.lastDb, "relatedStatus", relatedStatusSchema).find({}, function (err, _statuses) {
                     if (err) {
                         console.log(err);
                         logWriter.log('WorkFlow.js getRelatedStatus ' + err);
-                        response.send(500, { error: "Can't find relatedStatus " });
+                        response.send(500, {error: "Can't find relatedStatus "});
                     } else {
                         res['data'] = _statuses;
                         response.send(res);
@@ -237,21 +241,21 @@ var Workflow = function (models, event) {
             catch (exception) {
                 console.log(exception);
                 logWriter.log("Workflow.js  create " + exception);
-                response.send(500, { error: "Can't find Workflow" });
+                response.send(500, {error: "Can't find Workflow"});
             }
         },
 
         remove: function (req, _id, res) {
-            models.get(req.session.lastDb, "workflows", workflowSchema).findByIdAndRemove( _id, function (err, workflow) {
+            models.get(req.session.lastDb, "workflows", workflowSchema).findByIdAndRemove(_id, function (err, workflow) {
                 if (err) {
                     console.log(err);
                     logWriter.log("workflow.js remove workflow.remove " + err);
-                    res.send(500, { error: "Can't remove Company" });
+                    res.send(500, {error: "Can't remove Company"});
                 } else {
-					event.emit('removeWorkflow', req, workflow.wId, workflow._id);
-					updateSequence(models.get(req.session.lastDb, "workflows", workflowSchema), "sequence", workflow.sequence, workflow.sequence, workflow.wId, false, true, function(sequence){
-						res.send(200, { success: 'workflow removed' });
-					});
+                    event.emit('removeWorkflow', req, workflow.wId, workflow._id);
+                    updateSequence(models.get(req.session.lastDb, "workflows", workflowSchema), "sequence", workflow.sequence, workflow.sequence, workflow.wId, false, true, function (sequence) {
+                        res.send(200, {success: 'workflow removed'});
+                    });
                 }
             });
         }
