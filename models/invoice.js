@@ -20,7 +20,9 @@ module.exports = (function () {
         quantity: {type: Number, default: 1},
         unitPrice: Number,
         product: {type: ObjectId, ref: 'Product', default: null},
-        description: {type: String, default: ''}
+        description: {type: String, default: ''},
+        taxes: Number,
+        amount: Number
     };
 
     var invoiceSchema = new mongoose.Schema({

@@ -92,6 +92,7 @@ define([
             saveItem: function () {
                 var self = this;
                 var mid = 56;
+
                 var selectedProducts = this.$el.find('.productItem');
                 var products = [];
                 var selectedLength = selectedProducts.length;
@@ -99,11 +100,13 @@ define([
                 var productId;
                 var quantity;
                 var price;
+                var taxes;
+                var amount;
                 var description;
 
                 var supplierId = this.$("#supplierId").data("id");
-                var salesPersonId = this.$("#salesPerson").data("id");
-                var paymentTermId = this.$("#payment_terms").data("id");
+                var salesPersonId = this.$("#salesPerson").data("id") ? this.$("#salesPerson").data("id") : null;
+                var paymentTermId = this.$("#payment_terms").data("id") ? this.$("#payment_terms").data("id") : null;
                 var invoiceDate = this.$("#invoice_date").val();
                 var dueDate = this.$("#due_date").val();
 
@@ -123,14 +126,17 @@ define([
                         productId = targetEl.data('id');
                         quantity = targetEl.find('[data-name="quantity"]').text();
                         price = targetEl.find('[data-name="price"]').text();
-                        amount = targetEl.find('.amount').text();
                         description = targetEl.find('[data-name="productDescr"]').text();
+                        taxes = targetEl.find('.taxes').text();
+                        amount = targetEl.find('.amount').text();
 
                         products.push({
                             product: productId,
                             description: description,
                             unitPrice: price,
-                            quantity: quantity
+                            quantity: quantity,
+                            taxes: taxes,
+                            amount: amount
                         });
                     }
                 }

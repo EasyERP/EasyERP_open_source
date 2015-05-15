@@ -44,6 +44,9 @@ define([
         template: _.template(productItemTemplate),
 
         getProducts: function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
             var target = $(e.target);
             var parrent = target.closest('tbody');
             var parrentRow = parrent.find('.productItem').last();
@@ -57,6 +60,8 @@ define([
                 }
                 $(trEll[trEll.length - 1]).after(_.template(ProductInputContent));
             }
+
+            return false;
         },
 
         filterProductsForDD: function () {
