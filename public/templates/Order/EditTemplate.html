@@ -23,7 +23,7 @@
                                 <dl class="opp-info">
                                     <dt><label>Supplier</label></dt>
                                     <dd>
-                                        <a href="#easyErp/Companies/form/<%=model.supplier.id%>"><%=model.supplier.fullName%></a>
+                                        <a id="supplierDd" data-id="<%=model.supplier.id%>" href="#easyErp/Companies/form/<%=model.supplier.id%>"><%=model.supplier.fullName%></a>
                                     </dd>
                                     <dt><label>Supplier Reference</label></dt>
                                     <dd><span><%=model.supplierReference%></span></dd>
@@ -61,7 +61,7 @@
                                     <div class="half-block left">
                                         <dl class="quotation-info">
                                             <dt><label for="expectedDate">Expected Date</label></dt>
-                                            <dd><input id="expectedDate" placeholder="" type="text" val="<%=model.expectedDate%>" readonly/>
+                                            <dd><input id="expectedDate" placeholder="" type="text" value="<%=dateFormat(model.expectedDate, 'dd mmmm, yyyy')%>" readonly/>
                                             </dd>
                                             <dt><label for="destination">Destination</label></dt>
                                             <dd><a id="destination" class="current-selected"

@@ -11,6 +11,8 @@ module.exports = function (models) {
     router.get('/totalCollectionLength', handler.totalCollectionLength);
     router.get('/:viewType', handler.getByViewType);
     router.get('/form/:id', handler.getById);
+    router.delete('/:id', handler.remove);
+    router.patch('/:_id', handler.quotationUpdateOnlySelectedFields);
 
     return router;
 };

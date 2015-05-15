@@ -20,7 +20,7 @@ define([
                 }
 
                 _.bindAll(this, "render", "saveItem");
-                //_.bindAll(this, "render", "deleteItem");
+                _.bindAll(this, "render", "deleteItem");
 
                 this.currentModel = (options.model) ? options.model : options.collection.getElement();
                 this.currentModel.urlRoot = "/quotation";
@@ -197,6 +197,29 @@ define([
                 $(".add-group-dialog").remove();
                 $(".add-user-dialog").remove();
                 $(".crop-images-dialog").remove();
+            },
+            deleteItem: function (event) {
+                var mid = 55;
+                event.preventDefault();
+                var self = this;
+                var answer = confirm("Realy DELETE items ?!");
+                if (answer == true) {
+                    this.currentModel.destroy({
+                        headers: {
+                            mid: mid
+                        },
+                        success: function () {
+                            $('.edit-product-dialog').remove();
+                            Backbone.history.navigate("easyErp/" + self.contentType, {trigger: true});
+                        },
+                        error: function (model, err) {
+                            if (err.status === 403) {
+                                alert("You do not have permission to perform this action");
+                            }
+                        }
+                    });
+                }
+
             },
 
             render: function () {
