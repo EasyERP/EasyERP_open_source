@@ -1,0 +1,70 @@
+<table class="list2">
+    <thead>
+    <tr class="productListItemsColumns">
+        <th class="width20" data-sort="Product">
+            Product
+        </th>
+        <th class="width20" data-sort="description">
+            Description
+        </th>
+        <th class="width20" data-sort="scheduledDate">
+            Scheduled Date
+        </th>
+        <th class="width20" data-sort="quantity">
+            Quantity
+        </th>
+        <th class="width20" data-sort="unitPrice">
+            Unit Price
+        </th>
+        <th class="width20" data-sort="taxes">
+            Taxes
+        </th>
+    </tr>
+    </thead>
+    <tfoot>
+    <tr></tr>
+    </tfoot>
+    <tbody id="productList">
+
+    </tbody>
+</table>
+<div class="clearfix"></div>
+<div class="half-block right">
+    <div id="minScheduleDate">
+        <span>
+
+        </span>
+    </div>
+    <table border="0" cellpadding="0" cellspacing="0" class="right calculateTotal">
+        <tbody>
+        <tr>
+            <td>
+                <label>
+                    Untaxed Amount
+                </label>
+            </td>
+            <td>
+                <span><span id="totalUntaxes"><%=model.paymentInfo.unTaxed%></span>€</span>
+            </td>
+        </tr>
+        <tr class="taxes">
+            <td>
+                <label>Taxes</label>
+            </td>
+            <td>
+                    <span>
+                        <span id="taxes">0.00</span>€
+                    </span>
+            </td>
+        </tr>
+        <tr class="totalAmount">
+            <td>
+                <label class="" data-original-title="" title="">Total</label>
+            </td>
+            <td>
+                <span class=""><span id="totalAmount"><%=model.paymentInfo.total%></span>€</span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
