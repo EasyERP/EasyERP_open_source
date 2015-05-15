@@ -4,12 +4,13 @@ define([
         'views/Invoice/EditView',
         'models/InvoiceModel',
         'views/Invoice/list/ListItemView',
+        'views/Invoice/list/ListTotalView',
         'collections/Invoice/filterCollection',
         'common',
         'dataService'
     ],
 
-    function (listTemplate, createView, editView, invoiceModel, listItemView, contentCollection, common, dataService) {
+    function (listTemplate, createView, editView, invoiceModel, listItemView, listTotalView, contentCollection, common, dataService) {
         var InvoiceListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -68,6 +69,27 @@ define([
                 });
                 this.collection.bind('reset', this.renderContent, this);
                 this.collection.bind('showmore', this.showMoreContent, this);
+            },
+
+            recalculateTotal: function () {
+                parent = this.$el.find("#listTable");
+                var untaxed=0;
+                var total=0;
+
+                parent.find(".untaxed").each(function() {
+                    untaxed += parseFloat($(this).text());
+                });
+
+                parent.find(".total").each(function() {
+                    total += parseFloat($(this).text());
+                });
+
+                untaxed = untaxed.toFixed(2);
+                total = total.toFixed(2);
+
+                this.$el.find('#t_untaxed').text(untaxed);
+                this.$el.find('#t_total').text(total);
+
             },
 
             goSort: function (e) {
@@ -140,6 +162,7 @@ define([
                 currentEl.append(_.template(listTemplate));
                 currentEl.append(new listItemView({ collection: this.collection, page: this.page, itemsNumber: this.collection.namberToShow }).render());//added two parameters page and items number
 
+                currentEl.append(new listTotalView({element: this.$el.find("#listTable")}).render());
                 $('#check_all').click(function () {
                     $(':checkbox').prop('checked', this.checked);
                     if ($("input.checkbox:checked").length > 0)
@@ -175,6 +198,7 @@ define([
                 } else {
                     pagenation.show();
                 }
+
             },
 
             previousPage: function (event) {
@@ -194,6 +218,7 @@ define([
                 }, function (response, context) {
                     context.listLength = response.count || 0;
                 }, this);
+                //this.recalculate();
             },
 
             nextPage: function (event) {
@@ -215,6 +240,8 @@ define([
                 }, function (response, context) {
                     context.listLength = response.count || 0;
                 }, this);
+
+                //this.recalculate();
             },
 
             firstPage: function (event) {
