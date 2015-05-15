@@ -63,11 +63,7 @@ define([
                 return false;
             });
             $(document).on("click :not(.addProductItem a)", function (e) {
-                e.preventDefault();
-
                 $(".list2 tbody").find("[data-id='false']").remove();
-
-                return false;
             });
         },
 
