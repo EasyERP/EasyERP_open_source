@@ -204,7 +204,6 @@ define([
                 );
 
 
-
                 populate.getCompanies("#supplierId", "/supplier", {}, this, false, true);
                 populate.get2name("#salesPerson", "/getForDdByRelatedUser",{},this,true,true);
                 populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, true, true);

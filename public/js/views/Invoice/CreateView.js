@@ -99,7 +99,6 @@ define([
                 var productId;
                 var quantity;
                 var price;
-                var amount;
                 var description;
 
                 var supplierId = this.$("#supplierId").data("id");
@@ -110,13 +109,11 @@ define([
 
                 var total = parseFloat(this.$("#totalAmount").text());
                 var untaxed = parseFloat(this.$("#totalUntaxes").text());
-                var taxes = parseFloat(this.$("#taxes").text());
                 var balance = parseFloat(this.$("#balance").text());
 
                 var payments ={
                     total: total,
                     untaxed: untaxed,
-                    taxes: taxes,
                     balance: balance
                 };
 
@@ -133,8 +130,7 @@ define([
                             product: productId,
                             description: description,
                             unitPrice: price,
-                            quantity: quantity,
-                            amount: amount
+                            quantity: quantity
                         });
                     }
                 }
