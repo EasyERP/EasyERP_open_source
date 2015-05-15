@@ -4,7 +4,7 @@ define([
         'views/Invoice/EditView',
         'models/InvoiceModel',
         'views/Invoice/list/ListItemView',
-        'views/Invoice/list/ListTotalView',
+        'views/Order/list/ListTotalView',
         'collections/Invoice/filterCollection',
         'common',
         'dataService'
@@ -71,7 +71,7 @@ define([
                 this.collection.bind('showmore', this.showMoreContent, this);
             },
 
-            recalculateTotal: function () {
+            /*recalculateTotal: function () {
                 parent = this.$el.find("#listTable");
                 var untaxed=0;
                 var total=0;
@@ -90,7 +90,7 @@ define([
                 this.$el.find('#t_untaxed').text(untaxed);
                 this.$el.find('#t_total').text(total);
 
-            },
+            },*/
 
             goSort: function (e) {
                 this.collection.unbind('reset');
@@ -162,7 +162,7 @@ define([
                 currentEl.append(_.template(listTemplate));
                 currentEl.append(new listItemView({ collection: this.collection, page: this.page, itemsNumber: this.collection.namberToShow }).render());//added two parameters page and items number
 
-                currentEl.append(new listTotalView({element: this.$el.find("#listTable")}).render());
+                currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan:8}).render());
                 $('#check_all').click(function () {
                     $(':checkbox').prop('checked', this.checked);
                     if ($("input.checkbox:checked").length > 0)
@@ -192,6 +192,11 @@ define([
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
                 tBody.append(itemView.render());
+
+                currentEl.append(new listTotalView({element: tBody, cellSpan:8}).render());
+
+                //this.recalculateTotal();   //-----------------------------!
+
                 var pagenation = this.$el.find('.pagination');
                 if (this.collection.length === 0) {
                     pagenation.hide();
@@ -324,6 +329,11 @@ define([
                 holder.find("#listTable").empty();
                 var itemView = new listItemView({ collection: newModels, page: holder.find("#currentShowPage").val(), itemsNumber: holder.find("span#itemsNumber").text() });//added two parameters page and items number
                 holder.append(itemView.render());
+
+                holder.append(new listTotalView({element: holder.find("#listTable"), cellSpan:8}).render());
+
+                //this.recalculateTotal();   //-----------------------------!
+
                 itemView.undelegateEvents();
                 var pagenation = holder.find('.pagination');
                 if (newModels.length !== 0) {
@@ -395,6 +405,11 @@ define([
                     var created = holder.find('#timeRecivingDataFromServer');
                     created.before(new listItemView({ collection: this.collection, page: holder.find("#currentShowPage").val(), itemsNumber: holder.find("span#itemsNumber").text()}).render());//added two parameters page and items number
                 }
+
+                holder.append(new listTotalView({element: holder.find("#listTable"), cellSpan:8}).render());
+
+                //this.recalculateTotal();   //-----------------------------!
+
                 var pagenation = this.$el.find('.pagination');
                 if (this.collection.length === 0) {
                     pagenation.hide();

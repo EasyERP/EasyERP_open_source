@@ -10,7 +10,7 @@ define([
             el: '#listTotal',
 
             getTotal: function () {
-                var result = {untaxed: 0, total: 0};
+                var result = {untaxed: 0, total: 0, cellSpan: this.cellSpan};
                 this.element.find(".unTaxed").each(function() {
                     result.untaxed += parseFloat($(this).text());
                 })
@@ -22,11 +22,12 @@ define([
 
             initialize: function(options) {
                 this.element = options.element;
+                this.cellSpan = options.cellSpan;
             },
             render: function() {
                 if (this.$el.find("tr").length>0){
-                    this.$el.find("#unTaxed").text(this.getTotal().untaxed);
-                    this.$el.find("#total").text(this.getTotal().total);
+                    this.$el.find("#unTaxed").text(this.getTotal().untaxed.toFixed(2));
+                    this.$el.find("#total").text(this.getTotal().total.toFixed(2));
                 } else {
                     this.$el.append(_.template(listTemplate, this.getTotal()));
                 }

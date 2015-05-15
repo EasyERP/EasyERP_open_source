@@ -1,70 +1,37 @@
-<table class="list2">
-    <thead>
-    <tr class="productListItemsColumns">
-        <th class="width20" data-sort="Product">
-            Product
-        </th>
-        <th class="width20" data-sort="description">
-            Description
-        </th>
-        <th class="width20" data-sort="scheduledDate">
-            Scheduled Date
-        </th>
-        <th class="width20" data-sort="quantity">
-            Quantity
-        </th>
-        <th class="width20" data-sort="unitPrice">
-            Unit Price
-        </th>
-        <th class="width20" data-sort="taxes">
-            Taxes
-        </th>
-    </tr>
-    </thead>
-    <tfoot>
-    <tr></tr>
-    </tfoot>
-    <tbody id="productList">
-
-    </tbody>
-</table>
-<div class="clearfix"></div>
-<div class="half-block right">
-    <div id="minScheduleDate">
+<% products.forEach(function(product){ %>
+<tr class="productItem" data-id="false">
+    <td data-name="productName">
+        <%if(editable) {%>
+        <a class="current-selected productsDd" href="javascript:;"><%=product.product.name%></a>
+        <%} else {%>
+        <a href="#easyErp/Product/form/<%=product.product._id%>"><%=product.product.name%></a>
+        <%}%>
+    </td>
+    <td data-name="productDescr">
         <span>
-
+            <%=product.description%>
         </span>
-    </div>
-    <table border="0" cellpadding="0" cellspacing="0" class="right calculateTotal">
-        <tbody>
-        <tr>
-            <td>
-                <label>
-                    Untaxed Amount
-                </label>
-            </td>
-            <td>
-                <span><span id="totalUntaxes"><%=model.paymentInfo.unTaxed%></span>€</span>
-            </td>
-        </tr>
-        <tr class="taxes">
-            <td>
-                <label>Taxes</label>
-            </td>
-            <td>
-                    <span>
-                        <span id="taxes">0.00</span>€
-                    </span>
-            </td>
-        </tr>
-        <tr class="totalAmount">
-            <td>
-                <label class="" data-original-title="" title="">Total</label>
-            </td>
-            <td>
-                <span class=""><span id="totalAmount"><%=model.paymentInfo.total%></span>€</span>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-</div>
+    </td>
+    <td data-name="scheduledDate">
+        <span class="datepicker">
+            <%=product.scheduledDate%>
+        </span>
+        <input type="text" class="datepicker notVisible">
+    </td>
+    <td data-name="quantity">
+        <span>
+            <%=product.quantity%>
+        </span>
+    </td>
+    <td data-name="price">
+        <span>
+            <%=product.unitPrice%>
+        </span>
+    </td>
+    <td class="taxes">
+        <span>
+            <%=product.taxes%>
+        </span>
+    </td>
+</tr>
+<% }); %>

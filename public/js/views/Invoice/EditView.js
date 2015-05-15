@@ -203,13 +203,11 @@ define([
                     }).render().el
                 );
 
-                var invoiceItemContainer = this.$el.find('#invoiceItemsHolder');
-                invoiceItemContainer.append(
-                    new InvoiceItemView().render().el
-                );
+
 
                 populate.getCompanies("#supplierId", "/supplier", {}, this, false, true);
                 populate.get2name("#salesPerson", "/getForDdByRelatedUser",{},this,true,true);
+                populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, true, true);
 
                 this.$el.find('#invoice_date').datepicker({
                     dateFormat: "d M, yy",
@@ -224,6 +222,13 @@ define([
                 });
 
                 this.delegateEvents(this.events);
+                var model = this.currentModel.toJSON();
+
+                var invoiceItemContainer = this.$el.find('#invoiceItemsHolder');
+                invoiceItemContainer.append(
+                    new InvoiceItemView().render({model: model}).el
+                );
+
 
                 return this;
             }

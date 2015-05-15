@@ -147,7 +147,7 @@ define([
                     itemsNumber: this.collection.namberToShow
                 }).render());//added two parameters page and items number
 
-                currentEl.append(new listTotalView({element: currentEl.find("#listTable")}).render());
+                currentEl.append(new listTotalView({element: currentEl.find("#listTable"), cellSpan:6}).render());
 
                 $('#check_all').click(function () {
                     $(':checkbox').prop('checked', this.checked);
@@ -191,7 +191,7 @@ define([
 
                 tBody.append(itemView.render());
 
-                currentEl.append(new listTotalView({element: tBody}).render());
+                currentEl.append(new listTotalView({element: tBody, cellSpan:6}).render());
 
                 pagenation = this.$el.find('.pagination');
 
@@ -329,7 +329,7 @@ define([
 
                 holder.append(itemView.render());
 
-                holder.append(new listTotalView({element: holder.find("#listTable")}).render());
+                holder.append(new listTotalView({element: holder.find("#listTable"), cellSpan:6}).render());
 
                 itemView.undelegateEvents();
 
@@ -407,7 +407,7 @@ define([
                         itemsNumber: holder.find("span#itemsNumber").text()
                     }).render());//added two parameters page and items number
                 }
-                holder.append(new listTotalView({element: holder.find("#listTable")}).render());
+                holder.append(new listTotalView({element: holder.find("#listTable"), cellSpan:6}).render());
                 var pagenation = this.$el.find('.pagination');
                 if (this.collection.length === 0) {
                     pagenation.hide();

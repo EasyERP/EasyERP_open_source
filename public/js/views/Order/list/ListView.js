@@ -143,7 +143,7 @@ function (listTemplate, createView, listItemView, listTotalView, editView, quota
                 page: this.page,
                 itemsNumber: this.collection.namberToShow
             }).render());//added two parameters page and items number
-            currentEl.append(new listTotalView({element: this.$el.find("#listTable")}).render());
+            currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 6}).render());
 
             $('#check_all').click(function () {
                 $(':checkbox').prop('checked', this.checked);
@@ -174,7 +174,7 @@ function (listTemplate, createView, listItemView, listTotalView, editView, quota
                 var itemView = new listItemView({ collection: this.collection,page: currentEl.find("#currentShowPage").val(), itemsNumber: currentEl.find("span#itemsNumber").text() });
                 tBody.append(itemView.render());
 
-                currentEl.append(new listTotalView({element: tBody}).render());
+                currentEl.append(new listTotalView({element: tBody, cellSpan:6}).render());
 
                 var pagenation = this.$el.find('.pagination');
                 if (this.collection.length === 0) {
@@ -289,7 +289,7 @@ function (listTemplate, createView, listItemView, listTotalView, editView, quota
                 var itemView = new listItemView({ collection: newModels, page: holder.find("#currentShowPage").val(), itemsNumber: holder.find("span#itemsNumber").text() });//added two parameters page and items number
                 holder.append(itemView.render());
 
-                holder.append(new listTotalView({element: holder.find("#listTable")}).render());
+                holder.append(new listTotalView({element: holder.find("#listTable"), cellSpan:6}).render());
 
                 itemView.undelegateEvents();
                 var pagenation = holder.find('.pagination');
@@ -359,11 +359,9 @@ function (listTemplate, createView, listItemView, listTotalView, editView, quota
                 if (deleteCounter !== this.collectionLength) {
                     var created = holder.find('#timeRecivingDataFromServer');
                     created.before(new listItemView({ collection: this.collection, page: holder.find("#currentShowPage").val(), itemsNumber: holder.find("span#itemsNumber").text()}).render());//added two parameters page and items number
-
-                    holder.append(new listTotalView({element: holder.find("#listTable")}).render());
                 }
 
-                holder.append(new listTotalView({element: holder.find("#listTable")}).render());
+                holder.append(new listTotalView({element: holder.find("#listTable"), cellSpan:6}).render());
                 var pagenation = this.$el.find('.pagination');
                 if (this.collection.length === 0) {
                         pagenation.hide();
