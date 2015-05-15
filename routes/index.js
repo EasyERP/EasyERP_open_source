@@ -24,6 +24,7 @@ module.exports = function (app, mainDb) {
     var invoicingControlRouter = require('./invoicingControl')(models);
     var paymentTermRouter = require('./paymentTerm')(models);
     var deliverToTermRouter = require('./deliverTo')(models);
+    var workflowRouter = require('./workflow')(models);
 
 
     app.get('/', function (req, res, next) {
@@ -56,7 +57,7 @@ module.exports = function (app, mainDb) {
 
     app.use('/deliverTo', deliverToTermRouter);
 
-    app.use('/workflow', deliverToTermRouter);
+    app.use('/workflow', workflowRouter);
 
     app.get('/getDBS', function (req, res) {
         res.send(200, {dbsNames: dbsNames});

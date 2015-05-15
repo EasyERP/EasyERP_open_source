@@ -20,7 +20,7 @@ define([
                 }
 
                 _.bindAll(this, "render", "saveItem");
-                //_.bindAll(this, "render", "deleteItem");
+                _.bindAll(this, "render", "deleteItem");
 
                 this.currentModel = (options.model) ? options.model : options.collection.getElement();
                 this.currentModel.urlRoot = "/quotation";
@@ -37,7 +37,8 @@ define([
                 "click .newSelectList li.miniStylePagination": "notHide",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .confirmOrder": "confirmOrder",
-                "click .cancelOrder": "cancelQuotation"
+                "click .cancelQuotation": "cancelQuotation",
+                "click .setDraft": "setDraft"
             },
 
 
@@ -92,41 +93,82 @@ define([
                 dialog_holder.find(itemSelector).eq(n).addClass("active");
             },
 
-            fetchWorkflow: function(){
-
-            },
-
             confirmOrder: function (e) {
                 e.preventDefault();
 
-                this.currentModel.save({
-                    isOrder: true,
-                    hired: true
-                }, {
-                    headers: {
-                        mid: 57
-                    },
-                    patch: true,
-                    success: function () {
-                        Backbone.history.navigate("easyErp/Order", { trigger: true });
+                var self = this;
+
+                populate.fetchWorkflow(function (workflow) {
+                    if (workflow && workflow.error) {
+                        return alert(workflow.error.statusText);
                     }
+
+                    self.currentModel.save({
+                        isOrder: true,
+                        workflow: workflow._id
+                    }, {
+                        headers: {
+                            mid: 57
+                        },
+                        patch: true,
+                        success: function () {
+                            Backbone.history.navigate("easyErp/Order", {trigger: true});
+                        }
+                    });
                 });
             },
 
             cancelQuotation: function (e) {
                 e.preventDefault();
 
-                this.currentModel.save({
-                    isOrder: true,
-                    hired: true
-                }, {
-                    headers: {
-                        mid: 57
-                    },
-                    patch: true,
-                    success: function () {
-                        Backbone.history.navigate("easyErp/Quotation", { trigger: true });
+                var self = this;
+
+                populate.fetchWorkflow({
+                    wId: 'Quotation',
+                    status: 'Cancelled',
+                    order: 1
+                }, function (workflow) {
+                    if (workflow && workflow.error) {
+                        return alert(workflow.error.statusText);
                     }
+
+                    self.currentModel.save({
+                        workflow: workflow._id
+                    }, {
+                        headers: {
+                            mid: 57
+                        },
+                        patch: true,
+                        success: function () {
+                            Backbone.history.navigate("easyErp/Quotation", {trigger: true});
+                        }
+                    });
+                });
+            },
+
+            setDraft: function (e) {
+                e.preventDefault();
+
+                var self = this;
+
+                populate.fetchWorkflow({
+                    wId: 'Quotation'
+                }, function (workflow) {
+                    if (workflow && workflow.error) {
+                        return alert(workflow.error.statusText);
+                    }
+
+                    self.currentModel.save({
+                        workflow: workflow._id
+                    }, {
+                        headers: {
+                            mid: 57
+                        },
+                        patch: true,
+                        success: function () {
+                            Backbone.history.navigate("easyErp/Quotation", {trigger: true});
+                        }
+                    });
                 });
             },
 
@@ -159,6 +201,8 @@ define([
 
                 var usersId = [];
                 var groupsId = [];
+
+                var workflow = this.currentModel.workflow ? this.currentModel.workflow._id : null;
 
                 $(".groupsAndUser tr").each(function () {
                     if ($(this).data("type") == "targetUsers") {
@@ -208,7 +252,8 @@ define([
                         users: usersId,
                         group: groupsId
                     },
-                    whoCanRW: whoCanRW
+                    whoCanRW: whoCanRW,
+                    workflow: workflow
                 };
 
                 if (supplier) {
@@ -236,6 +281,29 @@ define([
                 $(".add-group-dialog").remove();
                 $(".add-user-dialog").remove();
                 $(".crop-images-dialog").remove();
+            },
+            deleteItem: function (event) {
+                var mid = 55;
+                event.preventDefault();
+                var self = this;
+                var answer = confirm("Realy DELETE items ?!");
+                if (answer == true) {
+                    this.currentModel.destroy({
+                        headers: {
+                            mid: mid
+                        },
+                        success: function () {
+                            $('.edit-product-dialog').remove();
+                            Backbone.history.navigate("easyErp/" + self.contentType, {trigger: true});
+                        },
+                        error: function (model, err) {
+                            if (err.status === 403) {
+                                alert("You do not have permission to perform this action");
+                            }
+                        }
+                    });
+                }
+
             },
 
             render: function () {

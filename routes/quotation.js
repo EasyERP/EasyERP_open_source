@@ -14,6 +14,7 @@ module.exports = function (models) {
     router.get('/form/:id', handler.getById);
     router.post('/', handler.create);
     router.delete('/:id', handler.remove);
+    router.patch('/:id', handler.putchModel);
 
     return router;
 };

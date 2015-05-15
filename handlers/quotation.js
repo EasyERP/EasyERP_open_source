@@ -24,11 +24,46 @@ var Quotation = function (models) {
         });
     };
 
+    function updateOnlySelectedFields(req, id, data, res, next) {
+        var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
+
+        Quotation.findByIdAndUpdate(id, {$set: data}, function (err, quotation) {
+            if (err) {
+                next(err);
+            } else {
+                res.send(200, {success: 'Quotation updated', result: quotation});
+            }
+        });
+
+    };
+
+    this.putchModel = function (req, res, next) {
+        var id = req.params.id;
+        var data = req.body;
+
+        if (req.session && req.session.loggedIn && req.session.lastDb) {
+            access.getEditWritAccess(req, req.session.uId, 55, function (access) {
+                if (access) {
+                    data.editedBy = {
+                        user: req.session.uId,
+                        date: new Date().toISOString()
+                    };
+                    updateOnlySelectedFields(req, id, data, res, next);
+                } else {
+                    res.status(403).send();
+                }
+            });
+        } else {
+            res.send(401);
+        }
+    }
+
     this.totalCollectionLength = function (req, res, next) {
         var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
         var result = {};
         var departmentSearcher;
         var contentIdsSearcher;
+        var contentSearcher;
 
         var waterfallTasks;
         var contentType = req.query.contentType;
@@ -228,6 +263,7 @@ var Quotation = function (models) {
             query.populate('invoiceControl');
             query.populate('paymentTerm');
             query.populate('products.product', '_id, name');
+            query.populate('workflow', '-sequence');
 
             query.exec(waterfallCallback);
         };
@@ -341,6 +377,10 @@ var Quotation = function (models) {
             query.populate('invoiceControl');
             query.populate('paymentTerm');
             query.populate('products.product', '_id, name');
+            query.populate('groups.users');
+            query.populate('groups.group');
+            query.populate('groups.owner', '_id login');
+            query.populate('workflow', '-sequence');
 
             query.exec(waterfallCallback);
         };
