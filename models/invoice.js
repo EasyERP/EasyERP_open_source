@@ -10,7 +10,6 @@ module.exports = (function () {
         _id: false,
         id: false,
         total: {type: Number, default: 0},
-        taxes: {type: Number, default: 0},
         balance: {type: Number, default: 0},
         untaxed : {type: Number, default: 0}
     };
@@ -21,7 +20,6 @@ module.exports = (function () {
         quantity: {type: Number, default: 1},
         unitPrice: Number,
         product: {type: ObjectId, ref: 'Product', default: null},
-        amount: Number,
         description: {type: String, default: ''}
     };
 
