@@ -17,5 +17,6 @@ module.exports = {
     UPDATED_SUCCESS: 'was updated successfully',
     NOT_EXISTS: 'is not exist',
     REMOVE_SUCCESSFULY: 'was removed successfully',
-    YOUR_DATA_ALREADY_UPDATE: "your data already update"
+    YOUR_DATA_ALREADY_UPDATE: "your data already update",
+    BAD_REQUEST: 'Bad request'
 };

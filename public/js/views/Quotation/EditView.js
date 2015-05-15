@@ -92,41 +92,65 @@ define([
                 dialog_holder.find(itemSelector).eq(n).addClass("active");
             },
 
-            fetchWorkflow: function(){
+            fetchWorkflow: function (data, callback) {
+                if (typeof data === 'function') {
+                    callback = data;
+                    data = {wId: 'Order'};
+                }
 
+                dataService.getData('workflow/getFirstForConvert', data, callback);
             },
 
             confirmOrder: function (e) {
                 e.preventDefault();
 
-                this.currentModel.save({
-                    isOrder: true,
-                    hired: true
-                }, {
-                    headers: {
-                        mid: 57
-                    },
-                    patch: true,
-                    success: function () {
-                        Backbone.history.navigate("easyErp/Order", { trigger: true });
+                var self = this;
+
+                this.fetchWorkflow(function (workflow) {
+                    if (workflow && workflow.error) {
+                        return alert(workflow.error.statusText);
                     }
+
+                    self.currentModel.save({
+                        isOrder: true,
+                        workflow: workflow._id
+                    }, {
+                        headers: {
+                            mid: 57
+                        },
+                        patch: true,
+                        success: function () {
+                            Backbone.history.navigate("easyErp/Order", {trigger: true});
+                        }
+                    });
                 });
             },
 
             cancelQuotation: function (e) {
                 e.preventDefault();
 
-                this.currentModel.save({
-                    isOrder: true,
-                    hired: true
-                }, {
-                    headers: {
-                        mid: 57
-                    },
-                    patch: true,
-                    success: function () {
-                        Backbone.history.navigate("easyErp/Quotation", { trigger: true });
+                var self = this;
+
+                this.fetchWorkflow({
+                    wId: 'Quotation',
+                    status: 'Cancelled',
+                    order: 1
+                }, function (workflow) {
+                    if (workflow && workflow.error) {
+                        return alert(workflow.error.statusText);
                     }
+
+                    self.currentModel.save({
+                        workflow: workflow._id
+                    }, {
+                        headers: {
+                            mid: 57
+                        },
+                        patch: true,
+                        success: function () {
+                            Backbone.history.navigate("easyErp/Quotation", {trigger: true});
+                        }
+                    });
                 });
             },
 
