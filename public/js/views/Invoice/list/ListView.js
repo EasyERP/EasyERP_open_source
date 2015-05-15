@@ -192,6 +192,9 @@ define([
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
                 tBody.append(itemView.render());
+
+                this.recalculateTotal();   //-----------------------------!
+
                 var pagenation = this.$el.find('.pagination');
                 if (this.collection.length === 0) {
                     pagenation.hide();
@@ -324,6 +327,9 @@ define([
                 holder.find("#listTable").empty();
                 var itemView = new listItemView({ collection: newModels, page: holder.find("#currentShowPage").val(), itemsNumber: holder.find("span#itemsNumber").text() });//added two parameters page and items number
                 holder.append(itemView.render());
+
+                this.recalculateTotal();   //-----------------------------!
+
                 itemView.undelegateEvents();
                 var pagenation = holder.find('.pagination');
                 if (newModels.length !== 0) {
@@ -395,6 +401,9 @@ define([
                     var created = holder.find('#timeRecivingDataFromServer');
                     created.before(new listItemView({ collection: this.collection, page: holder.find("#currentShowPage").val(), itemsNumber: holder.find("span#itemsNumber").text()}).render());//added two parameters page and items number
                 }
+
+                this.recalculateTotal();   //-----------------------------!
+
                 var pagenation = this.$el.find('.pagination');
                 if (this.collection.length === 0) {
                     pagenation.hide();

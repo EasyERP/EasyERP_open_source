@@ -5,9 +5,10 @@ define([
 	"populate",
     "views/Invoice/InvoiceProductItems",
     "views/Assignees/AssigneesView",
-    "dataService"
+    "dataService",
+    'constants'
     ],
-    function (CreateTemplate, InvoiceModel, common, populate, InvoiceItemView, AssigneesView, dataService ) {
+    function (CreateTemplate, InvoiceModel, common, populate, InvoiceItemView, AssigneesView, dataService, CONSTANTS ) {
 
         var CreateView = Backbone.View.extend({
             el: "#content-holder",
@@ -178,20 +179,25 @@ define([
 
                 };
 
-                var model = new InvoiceModel();
-                model.save(data, {
-                    headers: {
-                        mid: mid
-                    },
-                    wait: true,
-                    success: function () {
-                        self.hideDialog();
-                        Backbone.history.navigate("easyErp/Invoice", { trigger: true });
-                    },
-                    error: function (model, xhr) {
-						self.errorNotification(xhr);
-                    }
-                });
+                if (supplierId) {
+                    var model = new InvoiceModel();
+                    model.save(data, {
+                        headers: {
+                            mid: mid
+                        },
+                        wait: true,
+                        success: function () {
+                            self.hideDialog();
+                            Backbone.history.navigate("easyErp/Invoice", {trigger: true});
+                        },
+                        error: function (model, xhr) {
+                            self.errorNotification(xhr);
+                        }
+                    });
+
+                } else {
+                    alert(CONSTANTS.RESPONSES.CREATE_QUOTATION);
+                }
 
             },
 

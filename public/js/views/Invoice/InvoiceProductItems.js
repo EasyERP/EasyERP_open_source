@@ -4,10 +4,12 @@
 define([
     'text!templates/Invoice/InvoiceProductItems.html',
     'text!templates/Invoice/InvoiceProductInputContent.html',
+    'text!templates/Invoice/InvoiceProductItemsEditList.html',
+    'text!templates/Invoice/InvoiceProductItemsEdit.html',
     'collections/Product/products',
     'populate',
     'helpers'
-], function (productItemTemplate, ProductInputContent, productCollection, populate, helpers) {
+], function (productItemTemplate, ProductInputContent, ProductItemsEditList, ItemsEditList, productCollection, populate, helpers) {
     var ProductItemTemplate = Backbone.View.extend({
         el: '#invoiceItemsHolder',
 
@@ -67,7 +69,7 @@ define([
                 return {_id: item._id, name: item.name, level: item.projectShortDesc || ""};
             }));
 
-            $(id).text(this.responseObj[id][0].name).attr("data-id", this.responseObj[id][0]._id);
+            //$(id).text(this.responseObj[id][0].name).attr("data-id", this.responseObj[id][0]._id);
 
         },
 
@@ -117,13 +119,13 @@ define([
             parent.append('<input id="editInput" maxlength="' + maxlength + '" type="text" />');
             $('#editInput').val(this.text);
 
-            if (datePicker.length) {
-                $('#editInput').datepicker({
-                    dateFormat: "d M, yy",
-                    changeMonth: true,
-                    changeYear: true
-                }).addClass('datepicker');
-            }
+            //if (datePicker.length) {
+            //    $('#editInput').datepicker({
+            //        dateFormat: "d M, yy",
+            //        changeMonth: true,
+            //        changeYear: true
+            //    }).addClass('datepicker');
+            //}
 
             this.prevQuickEdit = parent;
 
@@ -267,10 +269,25 @@ define([
         },
 
         render: function (options) {
-            this.$el.html(this.template({
-                collection: this.collection,
-                options: options
-            }));
+            var productsContainer;
+            var thisEl = this.$el;
+            var products;
+
+            if(options && options.model){
+                products = options.model.products;
+
+                thisEl.html(_.template(ProductItemsEditList, {model: options.model}));
+
+                if(products) {
+                    productsContainer = thisEl.find('#productList');
+                    productsContainer.append(_.template(ItemsEditList, {products: products, editable: this.editable}));
+                }
+            } else {
+                this.$el.html(this.template({
+                    /*collection: this.collection,
+                     options: options*/
+                }));
+            }
 
             return this;
         }

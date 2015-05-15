@@ -327,6 +327,7 @@ var Invoice = function (models) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getReadAccess(req, req.session.uId, 56, function (access) {
                 if (access) {
+                    var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
                     data.editedBy = {
                         user: req.session.uId,
                         date: new Date().toISOString()
@@ -336,7 +337,7 @@ var Invoice = function (models) {
                         data.supplierId = data.supplierId._id;
                     }
 
-                    models.get(req.session.lastDb, "Invoice", InvoiceSchema).findByIdAndUpdate(_id, data, function (err, result) {
+                    Invoice.findByIdAndUpdate(_id, data, function (err, result) {
 
                         if (err) {
                             console.log(err);

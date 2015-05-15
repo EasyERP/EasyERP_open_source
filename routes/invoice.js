@@ -25,9 +25,8 @@ module.exports = function (models) {
     });
 
     router.put('/:_id', function (req, res) {
-        var data = {};
+        var data = req.body;
         var id = req.param('_id');
-        data = req.body;
 
         handler.updateInvoice(req, res, id, data);
     });
