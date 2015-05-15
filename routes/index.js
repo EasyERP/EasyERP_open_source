@@ -56,6 +56,8 @@ module.exports = function (app, mainDb) {
 
     app.use('/deliverTo', deliverToTermRouter);
 
+    app.use('/workflow', deliverToTermRouter);
+
     app.get('/getDBS', function (req, res) {
         res.send(200, {dbsNames: dbsNames});
     });

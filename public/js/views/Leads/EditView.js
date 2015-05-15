@@ -361,7 +361,7 @@ define([
                                     currency: null,
                                     progress: 0,
                                     value: 0
-                                },
+                                }
                             });
                             that.currentModel.save(that.currentModel.changed, {
                                 validate:false,

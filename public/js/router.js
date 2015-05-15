@@ -62,7 +62,9 @@ define([
             $(document).on("paste", ".onlyNumber", function (e) {
                 return false;
             });
-
+            $(document).on("click :not(.addProductItem a)", function (e) {
+                $(".list2 tbody").find("[data-id='false']").remove();
+            });
         },
 
         goToProfiles: function () {

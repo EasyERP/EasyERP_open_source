@@ -14,8 +14,7 @@ define([
         el: '#productItemsHolder',
 
         events: {
-            'click td.addProductItem a': 'getProducts',
-            "click :not(.addProductItem a)": "removeEmptySelect",
+            'click .addProductItem a': 'getProducts',
             "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
             "click .newSelectList li.miniStylePagination": "notHide",
             "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
@@ -47,13 +46,6 @@ define([
         },
 
         template: _.template(productItemTemplate),
-
-        removeEmptySelect: function (e) {
-            e.preventDefault();
-            $(".list2 tbody").find("[data-id='false']").remove();
-
-            return false;
-        },
 
         getProducts: function (e) {
             e.preventDefault();
