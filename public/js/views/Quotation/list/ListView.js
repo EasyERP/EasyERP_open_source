@@ -21,6 +21,7 @@ define([
             page: null, //if reload page, and in url is valid page
             contentType: 'Quotation',//needs in view.prototype.changeLocationHash
             viewType: 'list',//needs in view.prototype.changeLocationHash
+            collectionLengthUrl: '/quotation/totalCollectionLength',
 
             initialize: function (options) {
                 this.startTime = options.startTime;
@@ -115,7 +116,7 @@ define([
             },
 
             getTotalLength: function (currentNumber, itemsNumber, filter) {
-                dataService.getData('/quotation/totalCollectionLength', {
+                dataService.getData(this.collectionLengthUrl, {
                     currentNumber: currentNumber,
                     filter: filter,
                     newCollection: this.newCollection
@@ -210,7 +211,7 @@ define([
                     newCollection: this.newCollection,
                     parrentContentId: this.parrentContentId
                 });
-                dataService.getData('/totalCollectionLength/Persons', {
+                dataService.getData(this.collectionLengthUrl, {
                     filter: this.filter,
                     newCollection: this.newCollection,
                     parrentContentId: this.parrentContentId
@@ -231,7 +232,7 @@ define([
 
                 });
 
-                dataService.getData('/totalCollectionLength/Persons', {
+                dataService.getData(this.collectionLengthUrl, {
                     filter: this.filter,
                     newCollection: this.newCollection,
                     parrentContentId: this.parrentContentId
@@ -249,7 +250,7 @@ define([
                     filter: this.filter,
                     newCollection: this.newCollection
                 });
-                dataService.getData('/totalCollectionLength/Persons', {
+                dataService.getData(this.collectionLengthUrl, {
                     filter: this.filter,
                     newCollection: this.newCollection
                 }, function (response, context) {
@@ -266,7 +267,7 @@ define([
                     filter: this.filter,
                     newCollection: this.newCollection
                 });
-                dataService.getData('/totalCollectionLength/Persons', {
+                dataService.getData(this.collectionLengthUrl, {
                     filter: this.filter,
                     newCollection: this.newCollection
                 }, function (response, context) {
@@ -316,25 +317,33 @@ define([
 
             showMoreContent: function (newModels) {
                 var holder = this.$el;
+                var itemView;
+                var pagenation;
+
                 holder.find("#listTable").empty();
-                var itemView = new listItemView({
+                itemView = new listItemView({
                     collection: newModels,
                     page: holder.find("#currentShowPage").val(),
                     itemsNumber: holder.find("span#itemsNumber").text()
                 });//added two parameters page and items number
+
                 holder.append(itemView.render());
 
                 holder.append(new listTotalView({element: holder.find("#listTable")}).render());
 
                 itemView.undelegateEvents();
-                var pagenation = holder.find('.pagination');
+
+                pagenation = holder.find('.pagination');
+
                 if (newModels.length !== 0) {
                     pagenation.show();
                 } else {
                     pagenation.hide();
                 }
+
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
+
                 holder.find('#timeRecivingDataFromServer').remove();
                 holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             },
@@ -377,7 +386,7 @@ define([
             },
 
             deleteItemsRender: function (deleteCounter, deletePage) {
-                dataService.getData('/totalCollectionLength/Persons', {
+                dataService.getData(this.collectionLengthUrl, {
                     filter: this.filter,
                     newCollection: this.newCollection
                 }, function (response, context) {
