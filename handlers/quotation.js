@@ -106,11 +106,9 @@ var Quotation = function (models) {
         contentSearcher = function (quotationsIds, waterfallCallback) {
             var queryObject = {_id: {$in: quotationsIds}};
             queryObject.isOrder = isOrder;
-            var query = Quotation.find(queryObject);
+            var query = Quotation.count(queryObject);
 
-            query.populate('supplier', '_id name fullName');
-
-            query.exec(waterfallCallback);
+            query.count(waterfallCallback);
         };
 
         waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
@@ -120,7 +118,7 @@ var Quotation = function (models) {
                 return next(err);
             }
 
-            res.status(200).send({count: result.length});
+            res.status(200).send({count: result});
         });
     };
 

@@ -36,6 +36,7 @@
             showMore: function (options) {
                 var that = this;
                 var filterObject = {};
+
                 if (options) {
                     for (var i in options) {
                         filterObject[i] = options[i];
@@ -63,7 +64,6 @@
                     }
                 });
             },
-            parse: true,
             parse: function (response) {
                 return response.data;
             }

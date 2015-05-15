@@ -114,6 +114,7 @@ define([
                 var expectedDate = thisEl.find('#expectedDate').val() || thisEl.find('#minScheduleDate').text();
 
                 var total = $.trim(thisEl.find('#totalAmount').text());
+                var totalTaxes = $.trim(thisEl.find('#taxes').text());
                 var taxes;
                 var description;
                 var unTaxed = $.trim(thisEl.find('#totalUntaxes').text());
@@ -168,7 +169,8 @@ define([
                     fiscalPosition: fiscalPosition,
                     paymentInfo: {
                         total: total,
-                        unTaxed: unTaxed
+                        unTaxed: unTaxed,
+                        taxes: totalTaxes
                     },
                     groups: {
                         owner: $("#allUsersSelect").data("id"),
@@ -261,10 +263,10 @@ define([
                 }).datepicker('setDate', new Date());
 
                 /*this.$el.find('#bidValidUntill').datepicker({
-                    dateFormat: "d M, yy",
-                    changeMonth: true,
-                    changeYear: true
-                });*/
+                 dateFormat: "d M, yy",
+                 changeMonth: true,
+                 changeYear: true
+                 });*/
 
                 this.$el.find('#expectedDate').datepicker({
                     dateFormat: "d M, yy",

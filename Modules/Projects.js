@@ -14,7 +14,7 @@ var Project = function (models, event) {
 
     function updateContent(request, response, projectId, eventType, tasks, data) {
         function updatePr(projectId) {
-            models.get(request.session.lastDb - 1, 'Tasks', tasksSchema).aggregate(
+            models.get(request.session.lastDb, 'Tasks', tasksSchema).aggregate(
                        {
                            $match: { project: projectId }
                        },
@@ -43,7 +43,7 @@ var Project = function (models, event) {
                                    EndDate = result[0].endDate;
                                }
 
-                               models.get(request.session.lastDb - 1, 'Project', projectSchema).findByIdAndUpdate(projectId, {
+                               models.get(request.session.lastDb, 'Project', projectSchema).findByIdAndUpdate(projectId, {
                                    $set: {
                                        task: tasks,
                                        EndDate: EndDate,
@@ -63,7 +63,7 @@ var Project = function (models, event) {
         switch (eventType) {
             case "create":
                 {
-                    models.get(request.session.lastDb - 1, 'Project', projectSchema).findById(projectId,
+                    models.get(request.session.lastDb, 'Project', projectSchema).findById(projectId,
                         function (error, result) {
                             if (error) {
                                 console.log(error);
@@ -77,7 +77,7 @@ var Project = function (models, event) {
                                         updateCondition['EndDate'] = tasks.EndDate;
                                     }
                                     updateCondition['progress'] = (result.progress + tasks.progress) / (result.task.length + 1);
-                                    models.get(request.session.lastDb - 1, 'Project', projectSchema).findByIdAndUpdate(
+                                    models.get(request.session.lastDb, 'Project', projectSchema).findByIdAndUpdate(
                                         projectId,
                                         {
                                             $set: updateCondition,
@@ -104,14 +104,14 @@ var Project = function (models, event) {
                 break;
             case "update":
                 {
-                    models.get(request.session.lastDb - 1, 'Tasks', tasksSchema).findById(tasks, function (err, task) {
+                    models.get(request.session.lastDb, 'Tasks', tasksSchema).findById(tasks, function (err, task) {
                         if (err) {
                             console.log(err);
                             logWriter.log('updateContent in Projects module eventType="' + eventType + '" by ProjectId="' + projectId + '" error=' + err);
                             response.send(500, { error: 'Task update error' });
                         } else if (task) {
                             var oldProjectId = task.project;
-                            models.get(request.session.lastDb - 1, 'Project', projectSchema).findByIdAndUpdate(oldProjectId,
+                            models.get(request.session.lastDb, 'Project', projectSchema).findByIdAndUpdate(oldProjectId,
                                 { $pull: { task: task._id } },
                                 function (findError) {
                                     if (findError) {
@@ -120,7 +120,7 @@ var Project = function (models, event) {
                                         response.send(500, { error: 'Task update error' });
                                     }
                                 });
-                            var query = models.get(request.session.lastDb - 1, 'Tasks', tasksSchema).find({ project: projectId });
+                            var query = models.get(request.session.lastDb, 'Tasks', tasksSchema).find({ project: projectId });
                             query.sort({ taskCount: -1 });
                             query.exec(function (error, _tasks) {
                                 if (error) {
@@ -132,7 +132,7 @@ var Project = function (models, event) {
                                         var n = (_tasks[0]) ? ++_tasks[0].taskCount : 1;
                                         data.taskCount = n;
                                     }
-                                    models.get(request.session.lastDb - 1, 'Tasks', tasksSchema).findByIdAndUpdate(tasks, {
+                                    models.get(request.session.lastDb, 'Tasks', tasksSchema).findByIdAndUpdate(tasks, {
                                         $set: data
                                     }, function (err, res) {
                                         if (err) {
@@ -164,6 +164,7 @@ var Project = function (models, event) {
             var endDate = new Date(EndDate);
             var tck = endDate - startDate;
             var realDays = (((tck / 1000) / 60) / 60) / 8;
+
             days = realDays.toFixed(1);
         }
         return days;
