@@ -12,7 +12,7 @@ module.exports = function (models) {
     router.get('/:viewType', handler.getByViewType);
     router.get('/form/:id', handler.getById);
     router.delete('/:id', handler.remove);
-    router.patch('/:_id', handler.quotationUpdateOnlySelectedFields);
+    router.patch('/:id', handler.putchModel);
 
     return router;
 };

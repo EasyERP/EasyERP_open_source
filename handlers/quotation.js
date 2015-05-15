@@ -37,8 +37,8 @@ var Quotation = function (models) {
 
     };
 
-    this.quotationUpdateOnlySelectedFields = function (req, res, next) {
-        var id = req.param('_id');
+    this.putchModel = function (req, res, next) {
+        var id = req.params.id;
         var data = req.body;
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -50,7 +50,7 @@ var Quotation = function (models) {
                     };
                     updateOnlySelectedFields(req, id, data, res, next);
                 } else {
-                    res.send(403);
+                    res.status(403).send();
                 }
             });
         } else {
@@ -63,6 +63,7 @@ var Quotation = function (models) {
         var result = {};
         var departmentSearcher;
         var contentIdsSearcher;
+        var contentSearcher;
 
         var waterfallTasks;
         var contentType = req.query.contentType;
