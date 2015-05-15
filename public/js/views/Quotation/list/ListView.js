@@ -190,6 +190,8 @@ define([
 
                 tBody.append(itemView.render());
 
+                currentEl.append(new listTotalView({element: tBody}).render());
+
                 pagenation = this.$el.find('.pagination');
 
                 if (this.collection.length === 0) {
@@ -321,6 +323,9 @@ define([
                     itemsNumber: holder.find("span#itemsNumber").text()
                 });//added two parameters page and items number
                 holder.append(itemView.render());
+
+                holder.append(new listTotalView({element: holder.find("#listTable")}).render());
+
                 itemView.undelegateEvents();
                 var pagenation = holder.find('.pagination');
                 if (newModels.length !== 0) {
@@ -383,8 +388,9 @@ define([
                     newCollection: this.newCollection,
                     parrentContentId: this.parrentContentId
                 });
+
+                var holder = this.$el;
                 if (deleteCounter !== this.collectionLength) {
-                    var holder = this.$el;
                     var created = holder.find('#timeRecivingDataFromServer');
                     created.before(new listItemView({
                         collection: this.collection,
@@ -392,6 +398,7 @@ define([
                         itemsNumber: holder.find("span#itemsNumber").text()
                     }).render());//added two parameters page and items number
                 }
+                holder.append(new listTotalView({element: holder.find("#listTable")}).render());
                 var pagenation = this.$el.find('.pagination');
                 if (this.collection.length === 0) {
                     pagenation.hide();

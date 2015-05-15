@@ -1,7 +1,11 @@
 <% products.forEach(function(product){ %>
 <tr class="productItem" data-id="false">
     <td data-name="productName">
+        <%if(editable) {%>
         <a class="current-selected productsDd" href="javascript:;"><%=product.product.name%></a>
+        <%} else {%>
+        <a href="#easyErp/Product/form/<%=product.product._id%>"><%=product.product.name%></a>
+        <%}%>
     </td>
     <td data-name="productDescr">
         <span>

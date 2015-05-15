@@ -32,6 +32,11 @@ define([
 
             this.responseObj = {};
             this.taxesRate = 0.15;
+            if (options && !options.editable) {
+                this.editable = false;
+            } else {
+                this.editable = true;
+            }
 
             products = new productCollection();
             products.bind('reset', function () {
@@ -290,7 +295,7 @@ define([
 
                 if(products) {
                     productsContainer = thisEl.find('#productList');
-                    productsContainer.append(_.template(ItemsEditList, {products: products}));
+                    productsContainer.append(_.template(ItemsEditList, {products: products, editable: this.editable}));
                 }
             } else {
                 this.$el.html(this.template({

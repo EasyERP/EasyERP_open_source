@@ -24,8 +24,12 @@ define([
                 this.element = options.element;
             },
             render: function() {
-
-                this.$el.append(_.template(listTemplate, this.getTotal()));
+                if (this.$el.find("tr").length>0){
+                    this.$el.find("#unTaxed").text(this.getTotal().untaxed);
+                    this.$el.find("#total").text(this.getTotal().total);
+                } else {
+                    this.$el.append(_.template(listTemplate, this.getTotal()));
+                }
             }
         });
 

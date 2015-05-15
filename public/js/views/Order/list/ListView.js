@@ -5,7 +5,7 @@ define([
         'views/Order/list/ListTotalView',
         'views/Order/EditView',
         'models/QuotationModel',
-        'collections/Quotation/filterCollection',
+        'collections/Order/filterCollection',
 	    'common',
         'dataService'
 ],
@@ -173,6 +173,9 @@ function (listTemplate, createView, listItemView, listTotalView, editView, quota
                 tBody.empty();
                 var itemView = new listItemView({ collection: this.collection,page: currentEl.find("#currentShowPage").val(), itemsNumber: currentEl.find("span#itemsNumber").text() });
                 tBody.append(itemView.render());
+
+                currentEl.append(new listTotalView({element: tBody}).render());
+
                 var pagenation = this.$el.find('.pagination');
                 if (this.collection.length === 0) {
                     pagenation.hide();
@@ -285,6 +288,9 @@ function (listTemplate, createView, listItemView, listTotalView, editView, quota
                 holder.find("#listTable").empty();
                 var itemView = new listItemView({ collection: newModels, page: holder.find("#currentShowPage").val(), itemsNumber: holder.find("span#itemsNumber").text() });//added two parameters page and items number
                 holder.append(itemView.render());
+
+                holder.append(new listTotalView({element: holder.find("#listTable")}).render());
+
                 itemView.undelegateEvents();
                 var pagenation = holder.find('.pagination');
                 if (newModels.length !== 0) {
@@ -347,11 +353,17 @@ function (listTemplate, createView, listItemView, listTotalView, editView, quota
                     newCollection: this.newCollection,
                     parrentContentId: this.parrentContentId
                 });
+
+                var holder = this.$el;
+
                 if (deleteCounter !== this.collectionLength) {
-                    var holder = this.$el;
                     var created = holder.find('#timeRecivingDataFromServer');
                     created.before(new listItemView({ collection: this.collection, page: holder.find("#currentShowPage").val(), itemsNumber: holder.find("span#itemsNumber").text()}).render());//added two parameters page and items number
+
+                    holder.append(new listTotalView({element: holder.find("#listTable")}).render());
                 }
+
+                holder.append(new listTotalView({element: holder.find("#listTable")}).render());
                 var pagenation = this.$el.find('.pagination');
                 if (this.collection.length === 0) {
                         pagenation.hide();
