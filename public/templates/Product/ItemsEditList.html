@@ -1,5 +1,5 @@
 <% products.forEach(function(product){ %>
-<tr class="productItem">
+<tr class="productItem" data-id="<%=product.product._id%>">
     <td data-name="productName">
         <%if(editable) {%>
         <a class="current-selected productsDd" href="javascript:;"><%=product.product.name%></a>

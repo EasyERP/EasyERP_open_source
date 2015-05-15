@@ -1,0 +1,32 @@
+<% products.forEach(function(product){ %>
+<tr class="productItem">
+    <td data-name="productName">
+        <a class="current-selected productsDd" href="javascript:;"><%=product.product.name%></a>
+    </td>
+    <td data-name="productDescr">
+        <span class="editable">
+            <%=product.description ? product.description : ''%>
+        </span>
+    </td>
+    <td data-name="quantity" class="editable">
+        <span>
+            <%=product.quantity%>
+        </span>
+    </td>
+    <td data-name="price" class="editable">
+        <span>
+            <%=product.unitPrice%>
+        </span>
+    </td>
+    <td class="taxes">
+        <span>
+
+        </span>
+    </td>
+    <td class="amount">
+        <span>
+
+        </span>
+    </td>
+</tr>
+<% }); %>

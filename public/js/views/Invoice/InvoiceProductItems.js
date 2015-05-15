@@ -4,12 +4,11 @@
 define([
     'text!templates/Invoice/InvoiceProductItems.html',
     'text!templates/Invoice/InvoiceProductInputContent.html',
-    'text!templates/Invoice/InvoiceProductItemsEditList.html',
-    'text!templates/Invoice/InvoiceItemsEditList.html',
+    'text!templates/Invoice/EditInvoiceProductInputContent.html',//   <-------
     'collections/Product/products',
     'populate',
     'helpers'
-], function (productItemTemplate, ProductInputContent, ProductItemsEditList, ItemsEditList, productCollection, populate, helpers) {
+], function (productItemTemplate, ProductInputContent, ProductItemsEditList, productCollection, populate, helpers) {
     var ProductItemTemplate = Backbone.View.extend({
         el: '#invoiceItemsHolder',
 
@@ -276,11 +275,11 @@ define([
             if(options && options.model){
                 products = options.model.products;
 
-                thisEl.html(_.template(ProductItemsEditList, {model: options.model}));
+                thisEl.html(_.template(productItemTemplate, {model: options.model}));
 
                 if(products) {
                     productsContainer = thisEl.find('#productList');
-                    productsContainer.append(_.template(ItemsEditList, {products: products, editable: this.editable}));
+                    productsContainer.prepend(_.template(ProductItemsEditList, {products: products}));
                 }
             } else {
                 this.$el.html(this.template({

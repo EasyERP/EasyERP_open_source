@@ -20,7 +20,7 @@ define([
                 }
 
                 _.bindAll(this, "render", "saveItem");
-                //_.bindAll(this, "render", "deleteItem");
+                _.bindAll(this, "render", "deleteItem");
 
                 this.currentModel = (options.model) ? options.model : options.collection.getElement();
                 this.currentModel.urlRoot = "/order";
@@ -155,11 +155,11 @@ define([
                     products: products,
                     orderDate: orderDate,
                     expectedDate: expectedDate,
-                    destination: destination,
-                    incoterm: incoterm,
-                    invoiceControl: invoiceControl,
-                    paymentTerm: paymentTerm,
-                    fiscalPosition: fiscalPosition,
+                    destination: destination ? destination : null,
+                    incoterm: incoterm ? incoterm : null,
+                    invoiceControl: invoiceControl ? invoiceControl : null,
+                    paymentTerm: paymentTerm ? paymentTerm : null,
+                    fiscalPosition: fiscalPosition ? fiscalPosition : null,
                     paymentInfo: {
                         total: total,
                         unTaxed: unTaxed
@@ -177,10 +177,11 @@ define([
                         headers: {
                             mid: mid
                         },
-                        wait: true,
-                        success: function () {
+                        patch: true,
+                        success: function (model) {
+                            Backbone.history.fragment = "";
+                            Backbone.history.navigate(window.location.hash, {trigger: true});
                             self.hideDialog();
-                            Backbone.history.navigate("easyErp/Order", {trigger: true});
                         },
                         error: function (model, xhr) {
                             self.errorNotification(xhr);
@@ -197,6 +198,29 @@ define([
                 $(".add-group-dialog").remove();
                 $(".add-user-dialog").remove();
                 $(".crop-images-dialog").remove();
+            },
+            deleteItem: function (event) {
+                var mid = 55;
+                event.preventDefault();
+                var self = this;
+                var answer = confirm("Realy DELETE items ?!");
+                if (answer == true) {
+                    this.currentModel.destroy({
+                        headers: {
+                            mid: mid
+                        },
+                        success: function () {
+                            $('.edit-product-dialog').remove();
+                            Backbone.history.navigate("easyErp/" + self.contentType, {trigger: true});
+                        },
+                        error: function (model, err) {
+                            if (err.status === 403) {
+                                alert("You do not have permission to perform this action");
+                            }
+                        }
+                    });
+                }
+
             },
 
             render: function () {
