@@ -24,7 +24,8 @@ define([
             "mouseleave .editable": "removeEdit",
             "click #cancelSpan": "cancelClick",
             "click #saveSpan": "saveClick",
-            "click #editSpan": "editClick"
+            "click #editSpan": "editClick",
+            "click :not(.addProductItem)": "removeEmptySelect"
         },
 
         initialize: function (options) {
@@ -46,6 +47,10 @@ define([
         },
 
         template: _.template(productItemTemplate),
+
+        removeEmptySelect: function () {
+            $(".list2 tbody").find("[data-id='false']").remove();
+        },
 
         getProducts: function (e) {
             var target = $(e.target);
