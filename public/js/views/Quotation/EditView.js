@@ -37,7 +37,8 @@ define([
                 "click .newSelectList li.miniStylePagination": "notHide",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .confirmOrder": "confirmOrder",
-                "click .cancelOrder": "cancelQuotation"
+                "click .cancelQuotation": "cancelQuotation",
+                "click .setDraft": "setDraft"
             },
 
 
@@ -92,21 +93,12 @@ define([
                 dialog_holder.find(itemSelector).eq(n).addClass("active");
             },
 
-            fetchWorkflow: function (data, callback) {
-                if (typeof data === 'function') {
-                    callback = data;
-                    data = {wId: 'Order'};
-                }
-
-                dataService.getData('workflow/getFirstForConvert', data, callback);
-            },
-
             confirmOrder: function (e) {
                 e.preventDefault();
 
                 var self = this;
 
-                this.fetchWorkflow(function (workflow) {
+                populate.fetchWorkflow(function (workflow) {
                     if (workflow && workflow.error) {
                         return alert(workflow.error.statusText);
                     }
@@ -131,10 +123,36 @@ define([
 
                 var self = this;
 
-                this.fetchWorkflow({
+                populate.fetchWorkflow({
                     wId: 'Quotation',
                     status: 'Cancelled',
                     order: 1
+                }, function (workflow) {
+                    if (workflow && workflow.error) {
+                        return alert(workflow.error.statusText);
+                    }
+
+                    self.currentModel.save({
+                        workflow: workflow._id
+                    }, {
+                        headers: {
+                            mid: 57
+                        },
+                        patch: true,
+                        success: function () {
+                            Backbone.history.navigate("easyErp/Quotation", {trigger: true});
+                        }
+                    });
+                });
+            },
+
+            setDraft: function (e) {
+                e.preventDefault();
+
+                var self = this;
+
+                populate.fetchWorkflow({
+                    wId: 'Quotation'
                 }, function (workflow) {
                     if (workflow && workflow.error) {
                         return alert(workflow.error.statusText);

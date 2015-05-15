@@ -177,7 +177,8 @@ define([
                         users: usersId,
                         group: groupsId
                     },
-                    whoCanRW: whoCanRW
+                    whoCanRW: whoCanRW,
+                    workflow: this.defaultWorkflow
                 };
 
                 if (supplier) {
@@ -255,6 +256,11 @@ define([
                 populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, true, true);
                 populate.get("#deliveryDd", "/deliverTo", {}, 'name', this, true);
                 populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
+                populate.fetchWorkflow({wId: 'Quotation'}, function (response) {
+                    if(!response.error){
+                        self.defaultWorkflow = response._id;
+                    }
+                });
 
                 this.$el.find('#orderDate').datepicker({
                     dateFormat: "d M, yy",

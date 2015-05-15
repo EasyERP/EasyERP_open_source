@@ -156,6 +156,7 @@ define([
             var start = (currentPage - 1) * elementVisible;
             var end = Math.min(currentPage * elementVisible, data.length);
             var allPages = Math.ceil(data.length / elementVisible);
+
             parent.append(_.template(selectTemplate, {
                 collection: data.slice(start, end),
                 currentPage: currentPage,
@@ -163,7 +164,7 @@ define([
                 start: start,
                 end: end,
                 dataLength: data.length,
-                elementVisible: elementVisible,
+                elementVisible: elementVisible
             }));
         };
 
@@ -248,6 +249,16 @@ define([
                 level: data.level
             }));
         };
+
+        var fetchWorkflow =  function (data, callback) {
+            if (typeof data === 'function') {
+                callback = data;
+                data = {wId: 'Order'};
+            }
+
+            dataService.getData('workflow/getFirstForConvert', data, callback);
+        };
+
         return {
             get: get,
             get2name: get2name,
@@ -257,6 +268,7 @@ define([
             getParrentDepartment: getParrentDepartment,
             getCompanies: getCompanies,
             showSelectPriority: showSelectPriority,
-            showProductsSelect: showProductsSelect
+            showProductsSelect: showProductsSelect,
+            fetchWorkflow: fetchWorkflow
         };
     });
