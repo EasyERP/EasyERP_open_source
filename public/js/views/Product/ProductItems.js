@@ -14,7 +14,8 @@ define([
         el: '#productItemsHolder',
 
         events: {
-            'click .addProductItem': 'getProducts',
+            'click td.addProductItem a': 'getProducts',
+            "click :not(.addProductItem a)": "removeEmptySelect",
             "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
             "click .newSelectList li.miniStylePagination": "notHide",
             "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
@@ -24,8 +25,7 @@ define([
             "mouseleave .editable": "removeEdit",
             "click #cancelSpan": "cancelClick",
             "click #saveSpan": "saveClick",
-            "click #editSpan": "editClick",
-            "click :not(.addProductItem)": "removeEmptySelect"
+            "click #editSpan": "editClick"
         },
 
         initialize: function (options) {
@@ -48,11 +48,17 @@ define([
 
         template: _.template(productItemTemplate),
 
-        removeEmptySelect: function () {
+        removeEmptySelect: function (e) {
+            e.preventDefault();
             $(".list2 tbody").find("[data-id='false']").remove();
+
+            return false;
         },
 
         getProducts: function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
             var target = $(e.target);
             var parrent = target.closest('tbody');
             var parrentRow = parrent.find('.productItem').last();
@@ -66,6 +72,8 @@ define([
                 }
                 $(trEll[trEll.length - 1]).after(_.template(ProductInputContent));
             }
+
+            return false;
         },
 
         filterProductsForDD: function () {
