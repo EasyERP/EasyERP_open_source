@@ -29,31 +29,29 @@ var Invoice = function (models) {
         });
     };
 
-    function updateOnlySelectedFields(req, id, data, res, next) {
-        var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
-
-        Invoice.findByIdAndUpdate(id, {$set: data}, function (err, invoice) {
-            if (err) {
-                next(err);
-            } else {
-                res.send(200, {success: 'Invoice updated', result: invoice});
-            }
-        });
-
-    };
-
-    this.putchModel = function (req, res, next) {
+    this.updateOnlySelected = function (req, res, next) {
         var id = req.params.id;
         var data = req.body;
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getEditWritAccess(req, req.session.uId, 56, function (access) {
                 if (access) {
+
                     data.editedBy = {
                         user: req.session.uId,
                         date: new Date().toISOString()
                     };
-                    updateOnlySelectedFields(req, id, data, res, next);
+
+                    var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
+
+                    Invoice.findByIdAndUpdate(id, {$set: data}, function (err, invoice) {
+                        if (err) {
+                            next(err);
+                        } else {
+                            res.send(200, {success: 'Invoice updated', result: invoice});
+                        }
+                    });
+
                 } else {
                     res.status(403).send();
                 }
@@ -394,7 +392,6 @@ var Invoice = function (models) {
         }
 
         };
-
 
     this.totalCollectionLength = function (req, res, next) {
 

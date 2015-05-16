@@ -115,8 +115,8 @@ define([
                         quantity = targetEl.find('[data-name="quantity"]').text();
                         price = targetEl.find('[data-name="price"]').text();
                         description = targetEl.find('[data-name="productDescr"]').text();
-                        taxes = targetEl.find('[data-name="taxes"]').text();
-                        amount = targetEl.find('[data-name="amount"]').text();
+                        taxes = targetEl.find('.taxes').text();
+                        amount = targetEl.find('.amount').text();
 
                         products.push({
                             product: productId,
@@ -298,7 +298,7 @@ define([
                 );
 
 
-                populate.getCompanies("#supplierId", "/supplier", {}, this, false, true);
+                populate.get2name("#supplierId", "/supplier", {}, this, false);
                 populate.get2name("#salesPerson", "/getForDdByRelatedUser",{},this,true,true);
                 populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, true, true);
 
