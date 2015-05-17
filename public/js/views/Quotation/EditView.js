@@ -189,6 +189,7 @@ define([
 
                 var supplier = thisEl.find('#supplierDd').data('id');
                 var destination = $.trim(thisEl.find('#destination').data('id'));
+                var deliverTo = $.trim(thisEl.find('#deliveryDd').data('id'));
                 var incoterm = $.trim(thisEl.find('#incoterm').data('id'));
                 var invoiceControl = $.trim(thisEl.find('#invoicingControl').data('id'));
                 var paymentTerm = $.trim(thisEl.find('#paymentTerm').data('id'));
@@ -199,6 +200,7 @@ define([
 
                 var total = $.trim(thisEl.find('#totalAmount').text());
                 var unTaxed = $.trim(thisEl.find('#totalUntaxes').text());
+                var totalTaxes = $.trim(thisEl.find('#taxes').text());
 
                 var usersId = [];
                 var groupsId = [];
@@ -236,6 +238,7 @@ define([
                 data = {
                     supplier: supplier,
                     supplierReference: supplierReference,
+                    deliverTo: deliverTo,
                     products: products,
                     orderDate: orderDate,
                     expectedDate: expectedDate,
@@ -246,7 +249,8 @@ define([
                     fiscalPosition: fiscalPosition,
                     paymentInfo: {
                         total: total,
-                        unTaxed: unTaxed
+                        unTaxed: unTaxed,
+                        taxes: totalTaxes
                     },
                     groups: {
                         owner: $("#allUsersSelect").data("id"),
