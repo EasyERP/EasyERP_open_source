@@ -31,6 +31,7 @@ define([
 
             initialize: function (options) {
                 this.actionType = options.actionType;
+
                 if (this.actionType !== "Content")
                     Custom.setCurrentVT("form");
                 if (options.collection) {
@@ -42,9 +43,13 @@ define([
 
             render: function () {
                 $('title').text(this.contentType);
+
                 var viewType = Custom.getCurrentVT();
+
                 this.$el.html(this.template({ viewType: viewType, contentType: this.contentType }));
+
                 Common.displayControlBtnsByActionType('Content', viewType);
+
                 return this;
             },
 

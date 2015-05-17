@@ -253,6 +253,7 @@ function (WorkflowsTemplate, kanbanSettingsTemplate, WorkflowsCollection, Kanban
 			var self = this;
 			
             var workflows = this.workflowsCollection.toJSON();
+
             this.$el.html(_.template(WorkflowsTemplate, { workflowsCollection: workflows }));
             $(".column").last().addClass("lastColumn");
             var itemCount;

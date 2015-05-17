@@ -12,7 +12,7 @@ define(function () {
                 return callback(false);
             }
         });
-    }
+    };
 
     return {
         checkLogin: checkLogin
