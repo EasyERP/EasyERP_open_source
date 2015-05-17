@@ -29,7 +29,7 @@ module.exports = function (models) {
         handler.removeInvoice(req, res, id);
     });
 
-    router.patch('/:id', handler.putchModel);
+    router.patch('/:id', handler.updateOnlySelected);
 
     router.put('/:_id', function (req, res) {
         var data={};

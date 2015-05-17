@@ -254,7 +254,7 @@ define([
                     new InvoiceItemView().render().el
                 );
 
-                populate.getCompanies("#supplierId", "/supplier", {}, this, false, true);
+                populate.get2name("#supplierId", "/supplier", {}, this, false, true);
                 populate.get("#payment_terms", "/paymentTerm", {}, 'name', this, true, true);
                 populate.get2name("#salesPerson", "/getForDdByRelatedUser",{},this,true,true);
                 populate.fetchWorkflow({wId: 'Invoice'}, function (response) {

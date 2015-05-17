@@ -285,6 +285,7 @@ define([
                 if(products) {
                     productsContainer = thisEl.find('#productList');
                     productsContainer.prepend(_.template(ProductItemsEditList, {products: products}));
+                    this.recalculateTaxes(this.$el.find('.listTable'))
                 }
             } else {
                 this.$el.html(this.template({

@@ -29,31 +29,29 @@ var Invoice = function (models) {
         });
     };
 
-    function updateOnlySelectedFields(req, id, data, res, next) {
-        var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
-
-        Invoice.findByIdAndUpdate(id, {$set: data}, function (err, invoice) {
-            if (err) {
-                next(err);
-            } else {
-                res.send(200, {success: 'Invoice updated', result: invoice});
-            }
-        });
-
-    };
-
-    this.putchModel = function (req, res, next) {
+    this.updateOnlySelected = function (req, res, next) {
         var id = req.params.id;
         var data = req.body;
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getEditWritAccess(req, req.session.uId, 56, function (access) {
                 if (access) {
+
                     data.editedBy = {
                         user: req.session.uId,
                         date: new Date().toISOString()
                     };
-                    updateOnlySelectedFields(req, id, data, res, next);
+
+                    var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
+
+                    Invoice.findByIdAndUpdate(id, {$set: data}, function (err, invoice) {
+                        if (err) {
+                            next(err);
+                        } else {
+                            res.send(200, {success: 'Invoice updated', result: invoice});
+                        }
+                    });
+
                 } else {
                     res.status(403).send();
                 }
@@ -164,7 +162,7 @@ var Invoice = function (models) {
                         var query = Invoice.find(optionsObject).limit(count).skip(skip).sort(sort);
 
                         query.populate('supplierId','name _id').
-                            populate('salesPerson','name').
+                            populate('salesPerson','name _id').
                             populate('department', '_id departmentName').
                             populate('createdBy.user').
                             populate('editedBy.user').
@@ -280,8 +278,8 @@ var Invoice = function (models) {
                         var query = Invoice.findOne(optionsObject);
 
                         query.populate('supplierId','name').
-                            populate('salesPerson','name').
-                            populate('products.product','name').
+                            populate('salesPerson','_id name').
+                            populate('products.product', '_id name').
                             populate('department', '_id departmentName').
                             populate('createdBy.user').
                             populate('editedBy.user').
@@ -302,29 +300,6 @@ var Invoice = function (models) {
 
                         res.status(200).send(result);
                     });
-                    //var data = {};
-                    //for (var i in req.query) {
-                    //    data[i] = req.query[i];
-                    //}
-                    //var id = data.id;
-                    //
-                    //var query = models.get(req.session.lastDb, "Invoice", InvoiceSchema).findById(id);
-                    //query.populate('supplierId','name').
-                    //    populate('salesPerson','name').
-                    //    populate('department', '_id departmentName').
-                    //    populate('createdBy.user').
-                    //    populate('editedBy.user').
-                    //    populate('groups.users').
-                    //    populate('groups.group').
-                    //    populate('groups.owner', '_id login');
-                    //
-                    //query.exec(function (err, result) {
-                    //    if (err) {
-                    //        console.log(err)
-                    //    } else {
-                    //        response.send(result);
-                    //    }
-                    //});
                 } else {
                     response.send(403);
                 }
@@ -394,7 +369,6 @@ var Invoice = function (models) {
         }
 
         };
-
 
     this.totalCollectionLength = function (req, res, next) {
 

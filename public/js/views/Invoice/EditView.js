@@ -92,8 +92,8 @@ define([
                 var amount;
                 var workflow = this.currentModel.workflow ? this.currentModel.workflow._id : null;
 
-                var invoiceDate = this.$el.find("#invoiceDate").val();
-                var dueDate = this.$el.find("#dueDate").val();
+                var invoiceDate = this.$el.find("#invoice_date").val();
+                var dueDate = this.$el.find("#due_date").val();
 
                 var supplierId = this.$el.find('#supplierId').data("id");
                 supplierId = (supplierId) ? supplierId : null;
@@ -115,8 +115,8 @@ define([
                         quantity = targetEl.find('[data-name="quantity"]').text();
                         price = targetEl.find('[data-name="price"]').text();
                         description = targetEl.find('[data-name="productDescr"]').text();
-                        taxes = targetEl.find('[data-name="taxes"]').text();
-                        amount = targetEl.find('[data-name="amount"]').text();
+                        taxes = targetEl.find('.taxes').text();
+                        amount = targetEl.find('.amount').text();
 
                         products.push({
                             product: productId,
@@ -173,17 +173,6 @@ define([
 
                 };
 
-                /*this.currentModel.save(data, {
-                    //wait: true,
-                    success: function (model) {
-                        self.hideDialog();
-                        Backbone.history.fragment = "";
-                        Backbone.history.navigate("#easyErp/Invoice/form/" + model.id, { trigger: true });
-                    },
-                    error: function (model, xhr) {
-						self.errorNotification(xhr);
-                    }
-                });*/
 
                 if (supplierId) {
                     this.model.save(data, {
@@ -220,25 +209,6 @@ define([
                 holder.text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
             },
 
-            /*selectCustomer: function (id) {
-                dataService.getData('/Customer', {
-                    id: id
-                }, function (response, context) {
-                    var customer = response.data[0];
-                    if (customer.type == 'Person') {
-                        context.$el.find('#first').val(customer.name.first);
-                        context.$el.find('#last').val(customer.name.last);
-
-                        context.$el.find('#company').val('');
-                    } else {
-                        context.$el.find('#company').val(customer.name.first);
-
-                        context.$el.find('#first').val('');
-                        context.$el.find('#last').val('');
-                    }
-                }, this);
-
-            },*/
 
             deleteItem: function(event) {
 
@@ -298,7 +268,7 @@ define([
                 );
 
 
-                populate.getCompanies("#supplierId", "/supplier", {}, this, false, true);
+                populate.get2name("#supplierId", "/supplier", {}, this, false);
                 populate.get2name("#salesPerson", "/getForDdByRelatedUser",{},this,true,true);
                 populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, true, true);
 
@@ -322,7 +292,6 @@ define([
                     new InvoiceItemView().render({model: model}).el
                 );
 
-                var model = this.currentModel.toJSON();
                 if (model.groups)
                     if (model.groups.users.length>0||model.groups.group.length){
                         $(".groupsAndUser").show();
