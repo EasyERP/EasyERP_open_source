@@ -161,7 +161,6 @@ define([
                     self.hideItemsNumber();
                 });
 
-
                 var pagenation = this.$el.find('.pagination');
 
                 if (this.collection.length === 0) {
