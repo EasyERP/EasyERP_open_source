@@ -352,9 +352,11 @@ define([
                 this.startTime = new Date();
                 this.newCollection = false;
                 var workflowIdArray = [];
+
                 $('.filter-check-list input:checked').each(function () {
                     workflowIdArray.push($(this).val());
                 });
+
                 this.filter = this.filter || {};
                 this.filter['workflow'] = workflowIdArray;
 
