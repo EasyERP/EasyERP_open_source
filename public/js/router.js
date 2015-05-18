@@ -66,7 +66,9 @@ define([
             var self = this;
 
             $(document).on("click", function () {
-                if (self.contentType==='Quotation' || self.contentType==='Order' || self.contentType==='Invoice') {
+                var currentContentType = self.contentType ? self.contentType.toUpperCase() : '';
+                var contentTypes = {QUOTATION:'Quotation', ORDER:'Order', INVOICE:'Invoice'};
+                if (contentTypes[currentContentType]) {
                     $(".list2 tbody").find("[data-id='false']").remove();
                 }
             });
