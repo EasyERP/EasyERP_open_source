@@ -333,14 +333,14 @@ define([
                 populate.get("#deliveryDd", "/deliverTo", {}, 'name', this, false, true);
                 populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
 
-                this.$el.find('#orderDate').datepicker({
+                this.delegateEvents(this.events);
+                model = this.currentModel.toJSON();
+
+                this.$el.find('#expectedDate').datepicker({
                     dateFormat: "d M, yy",
                     changeMonth: true,
                     changeYear: true
-                }).datepicker('setDate', new Date());
-
-                this.delegateEvents(this.events);
-                model = this.currentModel.toJSON();
+                }).datepicker('setDate', model.expectedDate);
 
                 productItemContainer = this.$el.find('#productItemsHolder');
 
