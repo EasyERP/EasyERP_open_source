@@ -36,7 +36,10 @@ define([
                 "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
                 "click .newSelectList li.miniStylePagination": "notHide",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect"
+                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
+                "click .receiveInvoice": "receiveInvoice",
+                "click .cancelOrder": "cancelOrder",
+                "click .setDraft": "setDraft"
             },
 
 
@@ -89,6 +92,60 @@ define([
 
                 dialog_holder.find(itemActiveSelector).removeClass("active");
                 dialog_holder.find(itemSelector).eq(n).addClass("active");
+            },
+
+            cancelOrder: function (e) {
+                e.preventDefault();
+
+                var self = this;
+
+                populate.fetchWorkflow({
+                    wId: 'Order',
+                    status: 'Cancelled',
+                    order: 1
+                }, function (workflow) {
+                    if (workflow && workflow.error) {
+                        return alert(workflow.error.statusText);
+                    }
+
+                    self.currentModel.save({
+                        workflow: workflow._id
+                    }, {
+                        headers: {
+                            mid: 57
+                        },
+                        patch: true,
+                        success: function () {
+                            Backbone.history.navigate("easyErp/Order", {trigger: true});
+                        }
+                    });
+                });
+            },
+
+            setDraft: function (e) {
+                e.preventDefault();
+
+                var self = this;
+
+                populate.fetchWorkflow({
+                    wId: 'Order'
+                }, function (workflow) {
+                    if (workflow && workflow.error) {
+                        return alert(workflow.error.statusText);
+                    }
+
+                    self.currentModel.save({
+                        workflow: workflow._id
+                    }, {
+                        headers: {
+                            mid: 57
+                        },
+                        patch: true,
+                        success: function () {
+                            Backbone.history.navigate("easyErp/Order", {trigger: true});
+                        }
+                    });
+                });
             },
 
             saveItem: function () {
