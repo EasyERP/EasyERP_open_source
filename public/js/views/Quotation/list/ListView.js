@@ -32,6 +32,9 @@ define([
                 this.newCollection = options.newCollection;
                 this.deleteCounter = 0;
                 this.page = options.collection.page;
+                $(document).on("click", function (e) {
+                    $(".list2 tbody").find("[data-id='false']").remove();
+                });
                 this.render();
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
                 this.contentCollection = contentCollection;

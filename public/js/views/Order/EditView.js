@@ -271,7 +271,7 @@ define([
                 populate.get("#destination", "/destination", {}, 'name', this, true, true);
                 populate.get("#incoterm", "/incoterm", {}, 'name', this, true, true);
                 populate.get("#invoicingControl", "/invoicingControl", {}, 'name', this, true, true);
-                populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, true, true);
+                populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, false, true);
                 populate.get("#deliveryDd", "/deliverTo", {}, 'name', this, true);
                 populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
 

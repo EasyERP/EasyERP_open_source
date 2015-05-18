@@ -139,20 +139,22 @@ define([
                     for (var i = selectedLength - 1; i >= 0; i--) {
                         targetEl = $(selectedProducts[i]);
                         productId = targetEl.data('id');
-                        quantity = targetEl.find('[data-name="quantity"]').text();
-                        price = targetEl.find('[data-name="price"]').text();
-                        scheduledDate = targetEl.find('[data-name="scheduledDate"]').text();
-                        taxes = targetEl.find('.taxes').text();
-                        description = targetEl.find('[data-name="productDescr"]').text();
+                        if (productId) {
+                            quantity = targetEl.find('[data-name="quantity"]').text();
+                            price = targetEl.find('[data-name="price"]').text();
+                            scheduledDate = targetEl.find('[data-name="scheduledDate"]').text();
+                            taxes = targetEl.find('.taxes').text();
+                            description = targetEl.find('[data-name="productDescr"]').text();
 
-                        products.push({
-                            product: productId,
-                            unitPrice: price,
-                            quantity: quantity,
-                            scheduledDate: scheduledDate,
-                            taxes: taxes,
-                            description: description
-                        });
+                            products.push({
+                                product: productId,
+                                unitPrice: price,
+                                quantity: quantity,
+                                scheduledDate: scheduledDate,
+                                taxes: taxes,
+                                description: description
+                            });
+                        }
                     }
                 }
 
