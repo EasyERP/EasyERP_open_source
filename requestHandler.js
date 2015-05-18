@@ -1081,14 +1081,14 @@ var requestHandler = function (event, mainDb) {
     // Get  Persons or Companies or ownCompanies images for thumbnails
     function getCustomersImages(req, res) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, 43, function (access) {
+            /*access.getReadAccess(req, req.session.uId, 43, function (access) {
                 if (access) {
                     customer.getCustomersImages(req, res);
                 } else {
                     res.send(403);
                 }
-            });
-
+            });*/
+            customer.getCustomersImages(req, res);
         } else {
             res.send(401);
         }
