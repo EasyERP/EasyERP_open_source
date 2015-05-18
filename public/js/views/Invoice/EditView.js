@@ -112,20 +112,22 @@ define([
                     for (var i = selectedLength - 1; i >= 0; i--) {
                         targetEl = $(selectedProducts[i]);
                         productId = targetEl.data('id');
-                        quantity = targetEl.find('[data-name="quantity"]').text();
-                        price = targetEl.find('[data-name="price"]').text();
-                        description = targetEl.find('[data-name="productDescr"]').text();
-                        taxes = targetEl.find('.taxes').text();
-                        amount = targetEl.find('.amount').text();
+                        if (productId) {
+                            quantity = targetEl.find('[data-name="quantity"]').text();
+                            price = targetEl.find('[data-name="price"]').text();
+                            description = targetEl.find('[data-name="productDescr"]').text();
+                            taxes = targetEl.find('.taxes').text();
+                            amount = targetEl.find('.amount').text();
 
-                        products.push({
-                            product: productId,
-                            description: description,
-                            unitPrice: price,
-                            quantity: quantity,
-                            taxes: taxes,
-                            amount: amount
-                        });
+                            products.push({
+                                product: productId,
+                                description: description,
+                                unitPrice: price,
+                                quantity: quantity,
+                                taxes: taxes,
+                                amount: amount
+                            });
+                        }
                     }
                 }
 
