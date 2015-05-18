@@ -100,22 +100,28 @@ define([
                 var self = this;
 
                 populate.fetchWorkflow(function (workflow) {
+                    var products;
+
                     if (workflow && workflow.error) {
                         return alert(workflow.error.statusText);
                     }
-
-                    self.currentModel.save({
-                        isOrder: true,
-                        workflow: workflow._id
-                    }, {
-                        headers: {
-                            mid: 57
-                        },
-                        patch: true,
-                        success: function () {
-                            Backbone.history.navigate("easyErp/Order", {trigger: true});
-                        }
-                    });
+                    products = self.currentModel.products;
+                    if (products && products.length) {
+                        self.currentModel.save({
+                            isOrder: true,
+                            workflow: workflow._id
+                        }, {
+                            headers: {
+                                mid: 57
+                            },
+                            patch: true,
+                            success: function () {
+                                Backbone.history.navigate("easyErp/Order", {trigger: true});
+                            }
+                        });
+                    } else {
+                        return alert(CONSTANTS.RESPONSES.CONFIRM_ORDER);
+                    }
                 });
             },
 

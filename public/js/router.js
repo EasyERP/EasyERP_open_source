@@ -62,6 +62,14 @@ define([
             $(document).on("paste", ".onlyNumber", function (e) {
                 return false;
             });
+
+            var self = this;
+
+            $(document).on("click", function () {
+                if (self.contentType==='Quotation' || self.contentType==='Order' || self.contentType==='Invoice') {
+                    $(".list2 tbody").find("[data-id='false']").remove();
+                }
+            });
         },
 
         goToProfiles: function () {
@@ -605,6 +613,7 @@ define([
         },
 
         getList: function (contentType) {
+            this.contentType = contentType;
             contentType = this.testContent(contentType);
             var viewType = custom.getCurrentVT({contentType: contentType});
             Backbone.history.navigate('#easyErp/' + contentType + '/' + viewType, {trigger: true, replace: true});
