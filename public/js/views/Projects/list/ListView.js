@@ -198,6 +198,7 @@ define([
                 var targetElement = target$.parents("td");
                 var id = targetElement.attr("id");
                 var model = this.collection.get(id);
+
                 model.save({ workflow: target$.attr("id") }, {
                     headers:
                         {
