@@ -51,7 +51,31 @@ function (listTemplate, stagesTamplate, createView, listItemView, listTotalView,
             "click": "hideItemsNumber",
             "click #firstShowPage": "firstPage",
             "click #lastShowPage": "lastPage",
-            "click .oe_sortable": "goSort"
+            "click .oe_sortable": "goSort",
+            "click .newSelectList li": "chooseOption"
+        },
+
+        chooseOption: function (e) {
+            var self = this;
+            var target$ = $(e.target);
+            var targetElement = target$.parents("td");
+            var id = targetElement.attr("id");
+            var model = this.collection.get(id);
+
+            model.save({ workflow: target$.attr("id") }, {
+                headers:
+                {
+                    mid: 55
+                },
+                patch: true,
+                validate: false,
+                success: function () {
+                    self.showFilteredPage();
+                }
+            });
+
+            this.hideNewSelect();
+            return false;
         },
 
         fetchSortCollection: function (sortObject) {
@@ -108,6 +132,7 @@ function (listTemplate, stagesTamplate, createView, listItemView, listTotalView,
 
         hideItemsNumber: function (e) {
             $(".allNumberPerPage").hide();
+            $(".newSelectList").hide();
         },
 
         showNewSelect: function (e) {
@@ -305,6 +330,28 @@ function (listTemplate, stagesTamplate, createView, listItemView, listTotalView,
                 $('#check_all').prop('checked', false);
                 this.changeLocationHash(1, itemsNumber, this.filter);
         },
+
+        showFilteredPage: function () {
+            var itemsNumber;
+
+            this.startTime = new Date();
+            this.newCollection = false;
+            var workflowIdArray = [];
+            $('.filter-check-list input:checked').each(function () {
+                workflowIdArray.push($(this).val());
+            });
+            this.filter = this.filter || {};
+            this.filter['workflow'] = workflowIdArray;
+
+            itemsNumber = $("#itemsNumber").text();
+            $("#top-bar-deleteBtn").hide();
+            $('#check_all').prop('checked', false);
+
+            this.changeLocationHash(1, itemsNumber, this.filter);
+            this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter });
+            this.getTotalLength(null, itemsNumber, this.filter);
+        },
+
         showPage: function (event) {
                 event.preventDefault();
                 this.showP(event,{filter: this.filter, newCollection: this.newCollection,sort: this.sort});
