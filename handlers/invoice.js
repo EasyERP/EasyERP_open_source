@@ -91,8 +91,8 @@ var Invoice = function (models) {
 
                     if (req.query.sort) {
                         sort = req.query.sort;
-                    } else {
-                        sort = {"supplierId": 1};
+                    //} else {
+                    //    sort = {"supplierId": 1};
                     }
 
                     departmentSearcher = function (waterfallCallback) {
@@ -277,8 +277,8 @@ var Invoice = function (models) {
 
                         var query = Invoice.findOne(optionsObject);
 
-                        query.populate('supplierId','name').
-                            populate('salesPerson','_id name').
+                        query.populate('supplierId','_id name').
+                            populate('salesPerson','name _id').
                             populate('products.product', '_id name').
                             populate('department', '_id departmentName').
                             populate('createdBy.user').
@@ -349,7 +349,7 @@ var Invoice = function (models) {
                     //    data.supplierId = data.supplierId._id;
                     //}
 
-                    Invoice.findByIdAndUpdate({_id: id}, data.invoice, function (err, result) {
+                    Invoice.findByIdAndUpdate(_id, data.invoice, function (err, result) {
 
                         if (err) {
                             //console.log(err);

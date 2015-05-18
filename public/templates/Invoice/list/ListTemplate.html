@@ -10,7 +10,7 @@
     <td><%=Invoice.paymentInfo.balance%></td>
     <td class="unTaxed"><%=(Invoice.paymentInfo) ? Invoice.paymentInfo.untaxed.toFixed(2) : '0.00'%></td>
     <td class="total"><%=(Invoice.paymentInfo) ? Invoice.paymentInfo.total.toFixed(2) : '0.00'%></td>
-    <td></td>
+    <td><%=Invoice.workflow ? Invoice.workflow.name: ''%></td>
 
 </tr>
 <% }) %>
