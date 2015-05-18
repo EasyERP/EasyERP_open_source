@@ -105,7 +105,7 @@ define([
                     if (workflow && workflow.error) {
                         return alert(workflow.error.statusText);
                     }
-                    products = self.currentModel.toJSON().products;
+                    products = self.currentModel.get('products');
                     if (products && products.length) {
                         self.currentModel.save({
                             isOrder: true,
@@ -326,6 +326,7 @@ define([
                 });
                 var notDiv;
                 var model;
+                var productItemContainer;
 
                 this.$el = $(formString).dialog({
                     closeOnEscape: false,
@@ -379,7 +380,7 @@ define([
                 this.delegateEvents(this.events);
                 model = this.currentModel.toJSON();
 
-                var productItemContainer = this.$el.find('#productItemsHolder');
+                productItemContainer = this.$el.find('#productItemsHolder');
 
                 productItemContainer.append(
                     new ProductItemView().render({model: model}).el

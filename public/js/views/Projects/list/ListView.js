@@ -59,7 +59,7 @@ define([
                 "click td:not(:has('input[type='checkbox']'))": "goToEditDialog",
                 "click .oe_sortable": "goSort",
                 "click #firstShowPage": "firstPage",
-                "click #lastShowPage": "lastPage",
+                "click #lastShowPage": "lastPage"
             },
 
             fetchSortCollection: function (sortObject) {

@@ -1,5 +1,6 @@
 define([
         'text!templates/Quotation/list/ListHeader.html',
+        'text!templates/stages.html',
         'views/Quotation/CreateView',
         'views/Quotation/list/ListItemView',
         'views/Order/list/ListTotalView',
@@ -10,7 +11,7 @@ define([
         'dataService'
     ],
 
-    function (listTemplate, createView, listItemView, listTotalView, editView, currentModel, contentCollection, common, dataService) {
+    function (listTemplate, stagesTamplate, createView, listItemView, listTotalView, editView, currentModel, contentCollection, common, dataService) {
         var QuotationListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -35,6 +36,7 @@ define([
                 this.render();
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
                 this.contentCollection = contentCollection;
+                this.stages = [];
             },
 
             events: {
@@ -44,6 +46,7 @@ define([
                 "click #previousPage": "previousPage",
                 "click #nextPage": "nextPage",
                 "click .checkbox": "checked",
+                "click .stageSelect": "showNewSelect",
                 "click  .list tbody td:not(.notForm)": "goToEditDialog",
                 "click #itemsButton": "itemsNumber",
                 "click .currentPageList": "itemsNumber",
@@ -110,6 +113,20 @@ define([
                 $(".allNumberPerPage").hide();
             },
 
+            showNewSelect: function (e) {
+                if ($(".newSelectList").is(":visible")) {
+                    this.hideNewSelect();
+                    return false;
+                } else {
+                    $(e.target).parent().append(_.template(stagesTamplate, { stagesCollection: this.stages }));
+                    return false;
+                }
+            },
+
+            hideNewSelect: function (e) {
+                $(".newSelectList").remove();
+            },
+
             itemsNumber: function (e) {
                 $(e.target).closest("button").next("ul").toggle();
                 return false;
@@ -169,6 +186,18 @@ define([
                     pagenation.show();
                 }
                 currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+
+                common.populateWorkflowsList("Quotation", null, "", "/Workflows", null, function (stages) {
+                    //For Filter Logic
+                    /*var stage = (self.filter) ? self.filter.workflow || [] : [];
+                    if (self.filter && stage) {
+                        $('.filter-check-list input').each(function () {
+                            var target = $(this);
+                            target.attr('checked', $.inArray(target.val(), stage) > -1);
+                        });
+                    }*/
+                    self.stages = stages;
+                });
             },
 
             renderContent: function () {

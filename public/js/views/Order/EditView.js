@@ -231,6 +231,7 @@ define([
                 });
                 var notDiv;
                 var model;
+                var productItemContainer;
 
                 this.$el = $(formString).dialog({
                     closeOnEscape: false,
@@ -284,7 +285,7 @@ define([
                 this.delegateEvents(this.events);
                 model = this.currentModel.toJSON();
 
-                var productItemContainer = this.$el.find('#productItemsHolder');
+                productItemContainer = this.$el.find('#productItemsHolder');
 
                 productItemContainer.append(
                     new ProductItemView({editable: false}).render({model: model}).el

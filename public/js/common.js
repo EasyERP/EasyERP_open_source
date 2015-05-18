@@ -625,6 +625,9 @@
             var selectList = $(selectId);
             var workflowNamesDd = $(workflowNamesDd);
             var self = this;
+            var wNames;
+            var wfNamesOption;
+
             dataService.getData(url, {mid: 39, id: workflowType}, function (response) {
                 var options = [];
                 if (model && model.workflow) {
@@ -648,15 +651,18 @@
 
                     });
                 }
-                var wNames = $.map(response.data, function (item) {
+                wNames = $.map(response.data, function (item) {
                     return item.wName;
                 });
                 wNames = _.uniq(wNames);
-                var wfNamesOption = $.map(wNames, function (item) {
+                wfNamesOption = $.map(wNames, function (item) {
                     return $('<option/>').text(item);
                 });
                 workflowNamesDd.append(wfNamesOption);
-                selectList.append(options);
+
+                if(selectList) {
+                    selectList.append(options);
+                }
                 if (callback) callback(response.data);
             });
         }
