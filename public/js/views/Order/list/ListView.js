@@ -1,5 +1,6 @@
 define([
         'text!templates/Order/list/ListHeader.html',
+        'text!templates/stages.html',
         'views/Quotation/CreateView',
         'views/Order/list/ListItemView',
         'views/Order/list/ListTotalView',
@@ -10,7 +11,7 @@ define([
         'dataService'
 ],
 
-function (listTemplate, createView, listItemView, listTotalView, editView, quotationModel, contentCollection, common, dataService) {
+function (listTemplate, stagesTamplate, createView, listItemView, listTotalView, editView, quotationModel, contentCollection, common, dataService) {
     var OrdersListView = Backbone.View.extend({
         el: '#content-holder',
         defaultItemsNumber: null,
@@ -31,9 +32,6 @@ function (listTemplate, createView, listItemView, listTotalView, editView, quota
             this.newCollection = options.newCollection;
             this.deleteCounter = 0;
             this.page = options.collection.page;
-            $(document).on("click", function (e) {
-                $(".list2 tbody").find("[data-id='false']").remove();
-            });
             this.render();
             this.getTotalLength(null, this.defaultItemsNumber, this.filter);
             this.contentCollection = contentCollection;
@@ -46,13 +44,38 @@ function (listTemplate, createView, listItemView, listTotalView, editView, quota
             "click #previousPage": "previousPage",
             "click #nextPage": "nextPage",
             "click .checkbox": "checked",
+            "click .stageSelect": "showNewSelect",
             "click  .list tbody td:not(.notForm)": "goToEditDialog",
             "click #itemsButton": "itemsNumber",
             "click .currentPageList": "itemsNumber",
             "click": "hideItemsNumber",
             "click #firstShowPage": "firstPage",
             "click #lastShowPage": "lastPage",
-            "click .oe_sortable": "goSort"
+            "click .oe_sortable": "goSort",
+            "click .newSelectList li": "chooseOption"
+        },
+
+        chooseOption: function (e) {
+            var self = this;
+            var target$ = $(e.target);
+            var targetElement = target$.parents("td");
+            var id = targetElement.attr("id");
+            var model = this.collection.get(id);
+
+            model.save({ workflow: target$.attr("id") }, {
+                headers:
+                {
+                    mid: 55
+                },
+                patch: true,
+                validate: false,
+                success: function () {
+                    self.showFilteredPage();
+                }
+            });
+
+            this.hideNewSelect();
+            return false;
         },
 
         fetchSortCollection: function (sortObject) {
@@ -109,6 +132,21 @@ function (listTemplate, createView, listItemView, listTotalView, editView, quota
 
         hideItemsNumber: function (e) {
             $(".allNumberPerPage").hide();
+            $(".newSelectList").hide();
+        },
+
+        showNewSelect: function (e) {
+            if ($(".newSelectList").is(":visible")) {
+                this.hideNewSelect();
+                return false;
+            } else {
+                $(e.target).parent().append(_.template(stagesTamplate, { stagesCollection: this.stages }));
+                return false;
+            }
+        },
+
+        hideNewSelect: function (e) {
+            $(".newSelectList").remove();
         },
 
         itemsNumber: function (e) {
@@ -166,6 +204,17 @@ function (listTemplate, createView, listItemView, listTotalView, editView, quota
                         pagenation.show();
                 }
             currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+            common.populateWorkflowsList("Order", null, "", "/Workflows", null, function (stages) {
+                //For Filter Logic
+                /*var stage = (self.filter) ? self.filter.workflow || [] : [];
+                 if (self.filter && stage) {
+                 $('.filter-check-list input').each(function () {
+                 var target = $(this);
+                 target.attr('checked', $.inArray(target.val(), stage) > -1);
+                 });
+                 }*/
+                self.stages = stages;
+            });
         },
 
         renderContent: function () {
@@ -281,6 +330,28 @@ function (listTemplate, createView, listItemView, listTotalView, editView, quota
                 $('#check_all').prop('checked', false);
                 this.changeLocationHash(1, itemsNumber, this.filter);
         },
+
+        showFilteredPage: function () {
+            var itemsNumber;
+
+            this.startTime = new Date();
+            this.newCollection = false;
+            var workflowIdArray = [];
+            $('.filter-check-list input:checked').each(function () {
+                workflowIdArray.push($(this).val());
+            });
+            this.filter = this.filter || {};
+            this.filter['workflow'] = workflowIdArray;
+
+            itemsNumber = $("#itemsNumber").text();
+            $("#top-bar-deleteBtn").hide();
+            $('#check_all').prop('checked', false);
+
+            this.changeLocationHash(1, itemsNumber, this.filter);
+            this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter });
+            this.getTotalLength(null, itemsNumber, this.filter);
+        },
+
         showPage: function (event) {
                 event.preventDefault();
                 this.showP(event,{filter: this.filter, newCollection: this.newCollection,sort: this.sort});
