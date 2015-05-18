@@ -205,7 +205,8 @@ define([
                 var usersId = [];
                 var groupsId = [];
 
-                var workflow = this.currentModel.workflow ? this.currentModel.workflow._id : null;
+                var workflow = this.currentModel.get('workflow');
+                workflow = workflow ? workflow._id : null;
 
                 $(".groupsAndUser tr").each(function () {
                     if ($(this).data("type") == "targetUsers") {
@@ -356,12 +357,12 @@ define([
                     }).render().el
                 );
 
-                populate.get("#destination", "/destination", {}, 'name', this, false);
-                populate.get("#incoterm", "/incoterm", {}, 'name', this, false);
-                populate.get("#invoicingControl", "/invoicingControl", {}, 'name', this, false);
-                populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, false);
-                populate.get("#deliveryDd", "/deliverTo", {}, 'name', this, false);
-                populate.get2name("#supplierDd", "/supplier", {}, this, false);
+                populate.get("#destination", "/destination", {}, 'name', this, false, true);
+                populate.get("#incoterm", "/incoterm", {}, 'name', this, false, true);
+                populate.get("#invoicingControl", "/invoicingControl", {}, 'name', this, false, true);
+                populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, false, true);
+                populate.get("#deliveryDd", "/deliverTo", {}, 'name', this, false, true);
+                populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
 
                 this.$el.find('#orderDate').datepicker({
                     dateFormat: "d M, yy",

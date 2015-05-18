@@ -39,7 +39,7 @@ var Quotation = function (models) {
 
     this.putchModel = function (req, res, next) {
         var id = req.params.id;
-        var data = req.body;
+        var data = mapObject(req.body);
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getEditWritAccess(req, req.session.uId, 55, function (access) {
@@ -60,7 +60,7 @@ var Quotation = function (models) {
 
     this.updateModel = function (req, res, next) {
         var id = req.params.id;
-        var data = req.body;
+        var data = mapObject(req.body);
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getEditWritAccess(req, req.session.uId, 55, function (access) {
