@@ -105,7 +105,7 @@ define([
                     if (workflow && workflow.error) {
                         return alert(workflow.error.statusText);
                     }
-                    products = self.currentModel.products;
+                    products = self.currentModel.toJSON().products;
                     if (products && products.length) {
                         self.currentModel.save({
                             isOrder: true,
@@ -379,7 +379,7 @@ define([
                 this.delegateEvents(this.events);
                 model = this.currentModel.toJSON();
 
-                productItemContainer = this.$el.find('#productItemsHolder');
+                var productItemContainer = this.$el.find('#productItemsHolder');
 
                 productItemContainer.append(
                     new ProductItemView().render({model: model}).el

@@ -268,11 +268,11 @@ define([
                     }).render().el
                 );
 
-                populate.get("#destination", "/destination", {}, 'name', this, true, true);
-                populate.get("#incoterm", "/incoterm", {}, 'name', this, true, true);
-                populate.get("#invoicingControl", "/invoicingControl", {}, 'name', this, true, true);
+                populate.get("#destination", "/destination", {}, 'name', this, false, true);
+                populate.get("#incoterm", "/incoterm", {}, 'name', this, false, true);
+                populate.get("#invoicingControl", "/invoicingControl", {}, 'name', this, false, true);
                 populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, false, true);
-                populate.get("#deliveryDd", "/deliverTo", {}, 'name', this, true);
+                populate.get("#deliveryDd", "/deliverTo", {}, 'name', this, false, true);
                 populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
 
                 this.$el.find('#orderDate').datepicker({
@@ -284,26 +284,26 @@ define([
                 this.delegateEvents(this.events);
                 model = this.currentModel.toJSON();
 
-                productItemContainer = this.$el.find('#productItemsHolder');
+                var productItemContainer = this.$el.find('#productItemsHolder');
 
                 productItemContainer.append(
                     new ProductItemView({editable: false}).render({model: model}).el
                 );
 
 
-                /* if (model.groups)
-                 if (model.groups.users.length>0||model.groups.group.length){
-                 $(".groupsAndUser").show();
-                 model.groups.group.forEach(function(item){
-                 $(".groupsAndUser").append("<tr data-type='targetGroups' data-id='"+ item._id+"'><td>"+item.departmentName+"</td><td class='text-right'></td></tr>");
-                 $("#targetGroups").append("<li id='"+item._id+"'>"+item.departmentName+"</li>");
-                 });
-                 model.groups.users.forEach(function(item){
-                 $(".groupsAndUser").append("<tr data-type='targetUsers' data-id='"+ item._id+"'><td>"+item.login+"</td><td class='text-right'></td></tr>");
-                 $("#targetUsers").append("<li id='"+item._id+"'>"+item.login+"</li>");
-                 });
+                if (model.groups)
+                    if (model.groups.users.length > 0 || model.groups.group.length) {
+                        $(".groupsAndUser").show();
+                        model.groups.group.forEach(function (item) {
+                            $(".groupsAndUser").append("<tr data-type='targetGroups' data-id='" + item._id + "'><td>" + item.departmentName + "</td><td class='text-right'></td></tr>");
+                            $("#targetGroups").append("<li id='" + item._id + "'>" + item.departmentName + "</li>");
+                        });
+                        model.groups.users.forEach(function (item) {
+                            $(".groupsAndUser").append("<tr data-type='targetUsers' data-id='" + item._id + "'><td>" + item.login + "</td><td class='text-right'></td></tr>");
+                            $("#targetUsers").append("<li id='" + item._id + "'>" + item.login + "</li>");
+                        });
 
-                 }*/
+                    }
                 return this;
             }
 

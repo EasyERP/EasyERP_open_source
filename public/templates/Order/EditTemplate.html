@@ -23,7 +23,9 @@
                                 <dl class="opp-info">
                                     <dt><label>Supplier</label></dt>
                                     <dd>
-                                        <a id="supplierDd" data-id="<%=model.supplier.id%>" href="#easyErp/Companies/form/<%=model.supplier.id%>"><%=model.supplier.fullName%></a>
+                                        <%if(model.supplier){%>
+                                            <a id="supplierDd" data-id="<%=model.supplier.id%>" href="#easyErp/Companies/form/<%=model.supplier.id%>"><%=model.supplier.fullName%></a>
+                                        <%}%>
                                     </dd>
                                     <dt><label>Supplier Reference</label></dt>
                                     <dd><span><%=model.supplierReference%></span></dd>
@@ -37,7 +39,9 @@
                                     </dd>
                                     <dt><label>Deliver To</label></dt>
                                     <dd>
-                                        <a href="javascript:;">Your Company</a>
+                                        <%if(model.deliverTo){%>
+                                            <a id="deliveryDd" href="#easyErp/Companies/form/<%=model.deliverTo._id%>" data-id="<%=model.deliverTo._id%>"><%=model.deliverTo.name%></a>
+                                        <%}%>
                                     </dd>
                                 </dl>
                             </div>
@@ -64,23 +68,45 @@
                                             <dd><input id="expectedDate" placeholder="" type="text" value="<%=model.expectedDate%>" readonly/>
                                             </dd>
                                             <dt><label for="destination">Destination</label></dt>
-                                            <dd><a id="destination" class="current-selected"
-                                                   href="javascript:;"><%=model.destination%></a></dd>
+                                            <dd>
+                                                <%if(model.destination){%>
+                                                    <a id="destination" class="current-selected"
+                                                   href="javascript:;" data-id="<%=model.destination._id%>"><%=model.destination.name%></a>
+                                                <%} else {%>
+                                                    <a id="destination" class="current-selected" href="javascript:;" data-id="">Select</a>
+                                                <%}%>
                                             <dt><label for="incoterm">Incoterm</label></dt>
-                                            <dd><a id="incoterm" class="current-selected" href="javascript:;"><%=model.incoterm%></a>
+                                            <dd>
+                                                <%if(model.incoterm){%>
+                                                <a id="incoterm" class="current-selected" href="javascript:;" data-id="<%= model.incoterm._id%>"><%=model.incoterm.name %></a>
+                                                <%} else {%>
+                                                <a id="incoterm" class="current-selected" href="javascript:;" data-id="">Select</a>
+                                                <%}%>
+                                            </dd>
                                             </dd>
                                         </dl>
                                     </div>
                                     <div class="half-block left">
                                         <dl class="quotation-info">
                                             <dt><label for="invoicingControl">Invoicing Control</label></dt>
-                                            <dd><a id="invoicingControl" class="current-selected" href="javascript:;"><%=model.invoiceControl%></a>
+                                            <dd>
+                                                <%if(model.invoiceControl){%>
+                                                <a id="invoicingControl" class="current-selected" href="javascript:;" data-id="<%= model.invoiceControl._id %>"><%=model.invoiceControl.name%></a>
+                                                <%} else {%>
+                                                <a id="invoicingControl" class="current-selected" href="javascript:;" data-id="">Select</a>
+                                                <%}%>
+                                            </dd>
                                             </dd>
                                             <!--<dt><label for="invoiceReceived">Invoice Received</label></dt>-->
                                             <!-- <dd><input id="invoiceReceived" type="checkbox" class="checkbox left" disabled></dd>-->
                                             <dt><label for="paymentTerm">Payment Term</label></dt>
-                                            <dd><a id="paymentTerm" data-id="<%=model.paymentTerm._id%>" class="current-selected"
-                                                   href="javascript:;"><%=model.paymentTerm.name%></a>
+                                            <dd>
+                                                <%if(model.paymentTerm){%>
+                                                <a id="paymentTerm" class="current-selected"
+                                                   href="javascript:;" data-id="<%= model.paymentTerm._id %>"><%= model.paymentTerm.name %></a>
+                                                <%} else {%>
+                                                <a id="paymentTerm" class="current-selected" href="javascript:;" data-id="">Select</a>
+                                                <%}%>
                                             </dd>
                                             <dt><label for="fiscalPosition">Fiscal Position</label></dt>
                                             <dd>
