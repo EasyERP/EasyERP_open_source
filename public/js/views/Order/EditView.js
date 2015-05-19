@@ -16,7 +16,7 @@ define([
 
             initialize: function (options) {
                 if (options) {
-                    this.vissible = options.vissible;
+                    this.visible = options.visible;
                 }
 
                 _.bindAll(this, "render", "saveItem");
@@ -284,7 +284,7 @@ define([
                 var self = this;
                 var formString = this.template({
                     model: this.currentModel.toJSON(),
-                    vissible: this.vissible
+                    visible: this.visible
                 });
                 var notDiv;
                 var model;
