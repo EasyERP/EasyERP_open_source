@@ -6,10 +6,11 @@ define([
     'text!templates/Product/ProductInputContent.html',
     'text!templates/Product/ProductItemsEditList.html',
     'text!templates/Product/ItemsEditList.html',
+    'text!templates/Product/TotalAmount.html',
     'collections/Product/products',
     'populate',
     'helpers'
-], function (productItemTemplate, ProductInputContent, ProductItemsEditList, ItemsEditList, productCollection, populate, helpers) {
+], function (productItemTemplate, ProductInputContent, ProductItemsEditList, ItemsEditList, totalAmount, productCollection, populate, helpers) {
     var ProductItemTemplate = Backbone.View.extend({
         el: '#productItemsHolder',
 
@@ -46,6 +47,7 @@ define([
         },
 
         template: _.template(productItemTemplate),
+
 
         getProducts: function (e) {
             e.preventDefault();
@@ -238,10 +240,11 @@ define([
 
         calculateTotal: function () {
             var thisEl = this.$el;
+            var totalAmountEl = thisEl.find('#totalAmountContainer');
 
-            var totalUntaxContainer = thisEl.find('#totalUntaxes');
-            var taxesContainer = thisEl.find('#taxes');
-            var totalContainer = thisEl.find('#totalAmount');
+            var totalUntaxContainer = totalAmountEl.find('#totalUntaxes');
+            var taxesContainer = totalAmountEl.find('#taxes');
+            var totalContainer = totalAmountEl.find('#totalAmount');
             var resultForCalculate = thisEl.find('tr.productItem');
 
             var totalUntax = 0;
@@ -290,6 +293,7 @@ define([
 
         render: function (options) {
             var productsContainer;
+            var totalAmountContainer;
             var thisEl = this.$el;
             var products;
 
@@ -301,12 +305,16 @@ define([
                 if(products) {
                     productsContainer = thisEl.find('#productList');
                     productsContainer.append(_.template(ItemsEditList, {products: products, editable: this.editable}));
+                    totalAmountContainer = thisEl.find('#totalAmountContainer');
+                    totalAmountContainer.append(_.template(totalAmount, {model: options.model}));
                 }
             } else {
                 this.$el.html(this.template({
                     /*collection: this.collection,
                      options: options*/
                 }));
+                totalAmountContainer = thisEl.find('#totalAmountContainer');
+                totalAmountContainer.append(_.template(totalAmount, {model: {}}));
             }
 
             return this;
