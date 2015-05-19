@@ -21,6 +21,7 @@ module.exports = (function () {
         scheduledDate: {type: Date},
         quantity: {type: Number, default: 1},
         taxes: {type: Number},
+        subTotal: Number,
         unitPrice: Number,
         product: {type: ObjectId, ref: 'Product', default: null},
         description: {type: String, default: ''}

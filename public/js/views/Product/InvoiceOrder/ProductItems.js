@@ -191,6 +191,8 @@ define([
             var taxes;
             var datePicker;
             var spanDatePicker;
+            var total;
+            var subtotal;
 
 
             trEl.attr('data-id', model.id);
@@ -208,10 +210,14 @@ define([
             $(parrents[3]).attr('class', 'editable').find("span").text(1);
             $(parrents[4]).attr('class', 'editable').find('span').text(selectedProduct.info.salePrice);
 
-            taxes = parseFloat(selectedProduct.info.salePrice) * this.taxesRate;
+            total = parseFloat(selectedProduct.info.salePrice);
+            taxes = total * this.taxesRate;
+            subtotal = total + taxes;
             taxes = taxes.toFixed(2);
+            subtotal.toFixed(2);
 
             $(parrents[5]).text(taxes);
+            $(parrents[6]).text(subtotal);
 
             $(".newSelectList").hide();
 
@@ -232,10 +238,15 @@ define([
             var cost = parent.find('[data-name="price"] span').text();
             cost = parseFloat(cost);
 
-            var taxes = quantity * cost * this.taxesRate;
+            var total = quantity * cost;
+            var taxes = total * this.taxesRate;
+            var subtotal = total + taxes;
 
             taxes = taxes.toFixed(2);
             parent.find('.taxes').text(taxes);
+
+            subtotal = subtotal.toFixed(2);
+            parent.find('.subtotal').text(subtotal);
 
             this.calculateTotal();
         },

@@ -119,6 +119,7 @@ define([
                 var taxes;
                 var description;
                 var unTaxed = $.trim(thisEl.find('#totalUntaxes').text());
+                var subTotal;
 
                 var usersId = [];
                 var groupsId = [];
@@ -145,6 +146,7 @@ define([
                             scheduledDate = targetEl.find('[data-name="scheduledDate"]').text();
                             taxes = targetEl.find('.taxes').text();
                             description = targetEl.find('[data-name="productDescr"]').text();
+                            subTotal = targetEl.find('.subtotal').text();
 
                             products.push({
                                 product: productId,
@@ -152,7 +154,8 @@ define([
                                 quantity: quantity,
                                 scheduledDate: scheduledDate,
                                 taxes: taxes,
-                                description: description
+                                description: description,
+                                subTotal: subTotal
                             });
                         }
                     }
