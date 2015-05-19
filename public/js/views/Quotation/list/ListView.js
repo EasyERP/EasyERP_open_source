@@ -180,6 +180,7 @@ define([
                 $('.ui-dialog ').remove();
                 var self = this;
                 var currentEl = this.$el;
+                var filteredStatuses = [];
 
                 currentEl.html('');
                 currentEl.append(_.template(listTemplate));

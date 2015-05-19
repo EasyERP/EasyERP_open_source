@@ -375,7 +375,7 @@ define([
                     dateFormat: "d M, yy",
                     changeMonth: true,
                     changeYear: true
-                }).datepicker('setDate', new Date());
+                });
 
                 this.delegateEvents(this.events);
                 model = this.currentModel.toJSON();
