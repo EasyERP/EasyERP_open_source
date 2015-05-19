@@ -11,7 +11,8 @@ module.exports = (function () {
         id: false,
         total: {type: Number, default: 0},
         balance: {type: Number, default: 0},
-        untaxed : {type: Number, default: 0}
+        unTaxed: {type: Number, default: 0},
+        taxes: {type: Number, default: 0}
     };
 
     var products = {
@@ -27,8 +28,8 @@ module.exports = (function () {
 
     var invoiceSchema = new mongoose.Schema({
 
-        supplierId: { type: ObjectId, ref: 'Customers', default: null },
-        fiscalPosition: { type: String, default: null },
+        supplier: { type: ObjectId, ref: 'Customers', default: null },
+        /*fiscalPosition: { type: String, default: null },*/
         sourceDocument: { type: String, default: null },
         supplierInvoiceNumber: { type: String, default: null },
         paymentReference: { type: String, default: null },

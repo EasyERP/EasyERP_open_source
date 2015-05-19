@@ -99,7 +99,12 @@ define([
 
                 var self = this;
 
-                populate.fetchWorkflow(function (workflow) {
+                populate.fetchWorkflow({
+                    wId: 'Order',
+                    source: 'purchase',
+                    status: 'In Progress',
+                    targetSource: 'order'
+                }, function (workflow) {
                     var products;
 
                     if (workflow && workflow.error) {
@@ -131,7 +136,9 @@ define([
                 var self = this;
 
                 populate.fetchWorkflow({
-                    wId: 'Quotation',
+                    wId: 'Order',
+                    source: 'purchase',
+                    targetSource: 'quotation',
                     status: 'Cancelled',
                     order: 1
                 }, function (workflow) {

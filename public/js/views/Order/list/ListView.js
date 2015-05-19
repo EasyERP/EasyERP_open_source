@@ -204,7 +204,12 @@ function (listTemplate, stagesTamplate, createView, listItemView, listTotalView,
                         pagenation.show();
                 }
             currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
-            common.populateWorkflowsList("Order", null, "", "/Workflows", null, function (stages) {
+
+            dataService.getData("/workflow/fetch", {
+                wId: 'Order',
+                source: 'purchase',
+                targetSource: 'order'
+            }, function (stages) {
                 //For Filter Logic
                 /*var stage = (self.filter) ? self.filter.workflow || [] : [];
                  if (self.filter && stage) {
@@ -416,6 +421,7 @@ function (listTemplate, stagesTamplate, createView, listItemView, listTotalView,
                 }
             }
         },
+
         deleteItemsRender: function (deleteCounter, deletePage) {
                 dataService.getData('/order/totalCollectionLength', {
                     contentType: this.contentType,
@@ -447,12 +453,13 @@ function (listTemplate, stagesTamplate, createView, listItemView, listTotalView,
         },
         deleteItems: function () {
             var currentEl = this.$el;
-            var that = this,
-                     mid = 39,
-                     model;
+            var that = this;
+            var mid = 39;
+            var model;
             var localCounter = 0;
 			var count = $("#listTable input:checked").length;
             this.collectionLength = this.collection.length;
+
             $.each($("#listTable input:checked"), function (index, checkbox) {
                 model = that.collection.get(checkbox.value);
                 model.destroy({

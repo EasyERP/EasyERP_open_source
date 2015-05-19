@@ -122,7 +122,7 @@ define([
                 });
             },
 
-            setDraft: function (e) {
+            receiveInvoice: function (e) {
                 e.preventDefault();
 
                 var self = this;
