@@ -18,7 +18,7 @@ define([
 
             initialize: function (options) {
                 if (options) {
-                    this.vissible = options.vissible;
+                    this.visible = options.visible;
                 }
                 _.bindAll(this, "saveItem", "render");
                 this.model = new QuotationModel();
@@ -213,7 +213,7 @@ define([
             },
 
             render: function () {
-                var formString = this.template({vissible: this.vissible});
+                var formString = this.template({visible: this.visible});
                 var self = this;
                 var productItemContainer;
 

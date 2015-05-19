@@ -398,7 +398,7 @@ function (listTemplate, stagesTamplate, createView, listItemView, listTotalView,
 
         createItem: function () {
             //create editView in dialog here
-            new createView({vissible: true});
+            new createView({visible: true});
         },
 
         checked: function () {
