@@ -316,7 +316,7 @@ define([
                      options: options*/
                 }));
                 totalAmountContainer = thisEl.find('#totalAmountContainer');
-                totalAmountContainer.append(_.template(totalAmount, {model: {}, balanceVisible: this.visible}));
+                totalAmountContainer.append(_.template(totalAmount, {model: null, balanceVisible: this.visible}));
             }
 
             return this;
