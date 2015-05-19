@@ -39,6 +39,10 @@ define([
                 this.editable = true;
             }
 
+            if (options) {
+                this.vissible = options.vissible;
+            }
+
             products = new productCollection();
             products.bind('reset', function () {
                 this.products = products;

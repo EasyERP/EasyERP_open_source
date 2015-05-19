@@ -13,7 +13,7 @@
             </td>
             <td>
                 <span><span id="totalUntaxes">
-                    <%if (model.paymentInfo && model.paymentInfo.unTaxed) {%>
+                    <%if (model && model.paymentInfo && model.paymentInfo.unTaxed) {%>
                         <%=(model.paymentInfo.unTaxed)%>
                     <%} else {%>
                         0.00
@@ -27,7 +27,7 @@
             </td>
             <td>
                 <span><span id="taxes">
-                    <%if (model.paymentInfo && model.paymentInfo.taxes) {%>
+                    <%if (model && model.paymentInfo && model.paymentInfo.taxes) {%>
                         <%=(model.paymentInfo.taxes)%>
                     <%} else {%>
                         0.00
@@ -41,7 +41,7 @@
             </td>
             <td>
                 <span class=""><span id="totalAmount">
-                    <%if (model.paymentInfo && model.paymentInfo.total) {%>
+                    <%if (model && model.paymentInfo && model.paymentInfo.total) {%>
                         <%=(model.paymentInfo.total)%>
                     <%} else {%>
                         0.00
@@ -49,5 +49,21 @@
                 </span>€</span>
             </td>
         </tr>
+ <!--       {%if (balanceVissible) {%}
+        <tr class="balance">
+            <td>
+                <label>Balance</label>
+            </td>
+            <td>
+                <span class=""><span id="balance">
+                    <%if (model && model.paymentInfo && model.paymentInfo.balance) {%>
+                        <%=model.paymentInfo.balance%>
+                    <%} else {%>
+                        0.00
+                    <%}%>
+                </span>€</span>
+            </td>
+        </tr>
+        <%}%>-->
         </tbody>
     </table>
