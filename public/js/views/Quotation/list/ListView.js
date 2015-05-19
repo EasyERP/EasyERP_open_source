@@ -213,7 +213,11 @@ define([
                 }
                 currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
-                common.populateWorkflowsList("Quotation", null, "", "/Workflows", null, function (stages) {
+                dataService.getData("/workflow/fetch", {
+                    wId: 'Order',
+                    source: 'purchase',
+                    targetSource: 'quotation'
+                }, function (stages) {
                     //For Filter Logic
                     /*var stage = (self.filter) ? self.filter.workflow || [] : [];
                     if (self.filter && stage) {

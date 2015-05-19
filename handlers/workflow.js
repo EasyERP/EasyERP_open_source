@@ -9,13 +9,18 @@ var workflows = function (models) {
 
     this.getFirstForConvert = function (req, res, next) {
         var Workflow = models.get(req.session.lastDb, 'workflows', WorkflowSchema);
-        var wId = req.query.wId;
-        var status = req.query.status || 'New';
-        var order = req.query.order || -1;
+
+        var queryObject = req.query;
+        var wId = queryObject.wId;
+        var status = queryObject.status || 'New';
+        var order = queryObject.order || -1;
+        var source = queryObject.source;
+        var targetSource = queryObject.targetSource;
+
         var err;
         var query;
 
-        if(!wId){
+        if (!wId) {
             err = new Error(RESPONSES.BAD_REQUEST);
             err.status = 400;
 
@@ -27,6 +32,13 @@ var workflows = function (models) {
             status: status
         };
 
+        if (source) {
+            query.source = source;
+        }
+        if (targetSource) {
+            query.targetSource = targetSource;
+        }
+
         Workflow
             .findOne(query)
             .sort({sequence: order})
@@ -35,6 +47,47 @@ var workflows = function (models) {
                     return next(err);
                 }
                 res.status(200).send(workflow)
+            });
+    };
+
+    this.fetch = function (req, res, next) {
+        var Workflow = models.get(req.session.lastDb, 'workflows', WorkflowSchema);
+
+        var queryObject = req.query;
+        var wId = queryObject.wId;
+        var order = queryObject.order || -1;
+        var source = queryObject.source;
+        var targetSource = queryObject.targetSource;
+
+        var err;
+        var query;
+
+        if (!wId) {
+            err = new Error(RESPONSES.BAD_REQUEST);
+            err.status = 400;
+
+            return next(err);
+        }
+
+        query = {
+            wId: wId
+        };
+
+        if (source) {
+            query.source = source;
+        }
+        if (targetSource) {
+            query.targetSource = targetSource;
+        }
+
+        Workflow
+            .find(query)
+            .sort({sequence: order})
+            .exec(function (err, workflows) {
+                if (err) {
+                    return next(err);
+                }
+                res.status(200).send(workflows)
             });
     };
 

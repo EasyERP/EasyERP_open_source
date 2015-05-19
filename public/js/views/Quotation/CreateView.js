@@ -263,7 +263,12 @@ define([
                 populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, true, true);
                 populate.get("#deliveryDd", "/deliverTo", {}, 'name', this, true);
                 populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
-                populate.fetchWorkflow({wId: 'Quotation'}, function (response) {
+
+                populate.fetchWorkflow({
+                    wId: 'Order',
+                    source: 'purchase',
+                    targetSource: 'quotation'
+                }, function (response) {
                     if (!response.error) {
                         self.defaultWorkflow = response._id;
                     }
