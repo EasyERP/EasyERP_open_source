@@ -5,10 +5,11 @@ define([
     'text!templates/Invoice/InvoiceProductItems.html',
     'text!templates/Invoice/InvoiceProductInputContent.html',
     'text!templates/Invoice/EditInvoiceProductInputContent.html',//   <-------
+    'text!templates/Product/InvoiceOrder/TotalAmount.html',
     'collections/Product/products',
     'populate',
     'helpers'
-], function (productItemTemplate, ProductInputContent, ProductItemsEditList, productCollection, populate, helpers) {
+], function (productItemTemplate, ProductInputContent, ProductItemsEditList, totalAmount, productCollection, populate, helpers) {
     var ProductItemTemplate = Backbone.View.extend({
         el: '#invoiceItemsHolder',
 
@@ -33,6 +34,10 @@ define([
             this.render();
 
             this.taxesRate = 0.15;
+
+            if (options && options.balanceVisible) {
+                this.visible = options.balanceVisible;
+            };
 
             products = new productCollection();
             products.bind('reset', function () {
@@ -274,6 +279,7 @@ define([
 
         render: function (options) {
             var productsContainer;
+            var totalAmountContainer;
             var thisEl = this.$el;
             var products;
 
@@ -286,12 +292,16 @@ define([
                     productsContainer = thisEl.find('#productList');
                     productsContainer.prepend(_.template(ProductItemsEditList, {products: products}));
                     this.recalculateTaxes(this.$el.find('.listTable'))
+                    totalAmountContainer = thisEl.find('#totalAmountContainer');
+                    totalAmountContainer.append(_.template(totalAmount, {model: options.model, balanceVisible: this.visible}));
                 }
             } else {
                 this.$el.html(this.template({
                     /*collection: this.collection,
                      options: options*/
                 }));
+                totalAmountContainer = thisEl.find('#totalAmountContainer');
+                totalAmountContainer.append(_.template(totalAmount, {model: null, balanceVisible: this.visible}));
             }
 
             return this;

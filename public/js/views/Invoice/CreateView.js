@@ -253,7 +253,7 @@ define([
 
                 invoiceItemContainer = this.$el.find('#invoiceItemsHolder');
                 invoiceItemContainer.append(
-                    new InvoiceItemView().render().el
+                    new InvoiceItemView({balanceVisible: true}).render().el
                 );
 
                 populate.get2name("#supplierId", "/supplier", {}, this, false, true);

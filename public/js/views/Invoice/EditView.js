@@ -291,7 +291,7 @@ define([
 
                 var invoiceItemContainer = this.$el.find('#invoiceItemsHolder');
                 invoiceItemContainer.append(
-                    new InvoiceItemView().render({model: model}).el
+                    new InvoiceItemView({balanceVisible: true}).render({model: model}).el
                 );
 
                 if (model.groups)
