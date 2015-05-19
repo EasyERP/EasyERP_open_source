@@ -2,7 +2,7 @@ define([
         "text!templates/Quotation/CreateTemplate.html",
         "collections/Persons/PersonsCollection",
         "collections/Departments/DepartmentsCollection",
-        'views/Product/ProductItems',
+        'views/Product/InvoiceOrder/ProductItems',
         "models/QuotationModel",
         "common",
         "populate",

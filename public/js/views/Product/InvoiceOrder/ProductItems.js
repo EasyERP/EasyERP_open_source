@@ -2,11 +2,11 @@
  * Created by Roman on 27.04.2015.
  */
 define([
-    'text!templates/Product/ProductItems.html',
-    'text!templates/Product/ProductInputContent.html',
-    'text!templates/Product/ProductItemsEditList.html',
-    'text!templates/Product/ItemsEditList.html',
-    'text!templates/Product/TotalAmount.html',
+    'text!templates/Product/InvoiceOrder/ProductItems.html',
+    'text!templates/Product/InvoiceOrder/ProductInputContent.html',
+    'text!templates/Product/InvoiceOrder/ProductItemsEditList.html',
+    'text!templates/Product/InvoiceOrder/ItemsEditList.html',
+    'text!templates/Product/InvoiceOrder/TotalAmount.html',
     'collections/Product/products',
     'populate',
     'helpers'
@@ -33,15 +33,13 @@ define([
 
             this.responseObj = {};
             this.taxesRate = 0.15;
-            if (options && !options.editable) {
-                this.editable = false;
-            } else {
-                this.editable = true;
-            }
+            if (options && options.editable) {
+                this.editable = options.editable;
+            };
 
-            if (options) {
-                this.vissible = options.vissible;
-            }
+            if (options && options.balanceVisible) {
+                this.visible = options.balanceVisible;
+            };
 
             products = new productCollection();
             products.bind('reset', function () {
@@ -310,7 +308,7 @@ define([
                     productsContainer = thisEl.find('#productList');
                     productsContainer.append(_.template(ItemsEditList, {products: products, editable: this.editable}));
                     totalAmountContainer = thisEl.find('#totalAmountContainer');
-                    totalAmountContainer.append(_.template(totalAmount, {model: options.model}));
+                    totalAmountContainer.append(_.template(totalAmount, {model: options.model, balanceVisible: this.visible}));
                 }
             } else {
                 this.$el.html(this.template({
@@ -318,7 +316,7 @@ define([
                      options: options*/
                 }));
                 totalAmountContainer = thisEl.find('#totalAmountContainer');
-                totalAmountContainer.append(_.template(totalAmount, {model: {}}));
+                totalAmountContainer.append(_.template(totalAmount, {model: {}, balanceVisible: this.visible}));
             }
 
             return this;

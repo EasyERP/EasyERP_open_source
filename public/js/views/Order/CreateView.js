@@ -3,7 +3,7 @@ define([
         "collections/Persons/PersonsCollection",
         "collections/Departments/DepartmentsCollection",
         'views/Assignees/AssigneesView',
-        'views/Product/CreateProductItem',
+        'views/Product/InvoiceOrder/CreateProductItem',
         "models/PersonsModel",
         "common",
         "populate"

@@ -1,7 +1,7 @@
 define([
         "text!templates/Quotation/EditTemplate.html",
         'views/Assignees/AssigneesView',
-        'views/Product/ProductItems',
+        'views/Product/InvoiceOrder/ProductItems',
         "common",
         "custom",
         "dataService",
@@ -383,7 +383,7 @@ define([
                 productItemContainer = this.$el.find('#productItemsHolder');
 
                 productItemContainer.append(
-                    new ProductItemView().render({model: model}).el
+                    new ProductItemView({editable: true}).render({model: model}).el
                 );
 
 
