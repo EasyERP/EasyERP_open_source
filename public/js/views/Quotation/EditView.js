@@ -212,8 +212,11 @@ define([
                 var expectedDate = thisEl.find('#expectedDate').val() || thisEl.find('#minScheduleDate').text();
 
                 var total = $.trim(thisEl.find('#totalAmount').text());
-                var unTaxed = $.trim(thisEl.find('#totalUntaxes').text());
                 var totalTaxes = $.trim(thisEl.find('#taxes').text());
+                var taxes;
+                var description;
+                var unTaxed = $.trim(thisEl.find('#totalUntaxes').text());
+                var subTotal;
 
                 var usersId = [];
                 var groupsId = [];
@@ -237,14 +240,25 @@ define([
                     for (var i = selectedLength - 1; i >= 0; i--) {
                         targetEl = $(selectedProducts[i]);
                         productId = targetEl.data('id');
-                        quantity = targetEl.find('[data-name="quantity"]').text();
-                        price = targetEl.find('[data-name="price"]').text();
 
-                        products.push({
-                            product: productId,
-                            unitPrice: price,
-                            quantity: quantity
-                        });
+                        if (productId) {
+                            quantity = targetEl.find('[data-name="quantity"]').text();
+                            price = targetEl.find('[data-name="price"]').text();
+                            scheduledDate = targetEl.find('[data-name="scheduledDate"]').text();
+                            taxes = targetEl.find('.taxes').text();
+                            description = targetEl.find('[data-name="productDescr"]').text();
+                            subTotal = targetEl.find('.subtotal').text();
+
+                            products.push({
+                                product: productId,
+                                unitPrice: price,
+                                quantity: quantity,
+                                scheduledDate: scheduledDate,
+                                taxes: taxes,
+                                description: description,
+                                subTotal: subTotal
+                            });
+                        }
                     }
                 }
 
