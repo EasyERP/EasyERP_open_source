@@ -39,14 +39,14 @@ var Products = function (models) {
             if (err) {
                 next(err);
             } else {
-                res.send(200, {success: 'Product updated', result: product});
+                res.status(200).send({success: 'Product updated', result: product});
             }
         });
 
     };
 
     this.productsUpdateOnlySelectedFields = function (req, res, next) {
-        var id = req.param('_id');
+        var id = req.params._id;
         var data = req.body;
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -58,40 +58,40 @@ var Products = function (models) {
                     };
                     updateOnlySelectedFields(req, id, data, res, next);
                 } else {
-                    res.send(403);
+                    res.status(403).send();
                 }
             });
         } else {
-            res.send(401);
+            res.status(401).send();
         }
     }
 
     this.getProductsImages = function (req, res, next) {
         var data = {};
-        data.ids = req.param('ids') || [];
+        data.ids = req.params.ids || [];
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getReadAccess(req, req.session.uId, 58, function (access) {
                 if (access) {
-                    getProductImages(req, data, res);
+                    getProductImages(req, data, res, next);
                 } else {
-                    res.send(403);
+                    res.status(403).send();
                 }
             });
 
         } else {
-            res.send(401);
+            res.status(401).send();
         }
     };
 
-    function getProductImages(req, data, res) {
+    function getProductImages(req, data, res, next) {
         var query = models.get(req.session.lastDb, "Products", ProductSchema).find({});
         query.where('_id').in(data.ids).
             select('_id imageSrc').
             exec(function (error, response) {
                 if (error) {
-                    res.send(500, {error: "Can't find Products Imgs"});
-                } else res.send(200, {data: response});
+                    next(err);
+                } else res.status(200).send({data: response});
             });
 
     };
@@ -148,7 +148,7 @@ var Products = function (models) {
             if (err) {
                 next(err);
             } else {
-                res.send(200, {success: 'Products updated success', data: result});
+                res.status(200).send({success: 'Products updated success', data: result});
             }
         });
     }// end update
@@ -159,36 +159,36 @@ var Products = function (models) {
                 if (access) {
                     addAtach(req, id, files, res);
                 } else {
-                    res.send(403);
+                    res.status(403).send();
                 }
             });
         } else {
-            res.send(401);
+            res.status(401).send();
         }
     };
 
     function remove(req, _id, res, next) {
-        models.get(req.session.lastDb, "Products", ProductSchema).remove({_id: _id}, function (err, customer) {
+        models.get(req.session.lastDb, "Products", ProductSchema).remove({_id: _id}, function (err, product) {
             if (err) {
-                res.send(500, {error: "Can't remove product"});
+                return next(err);
             } else {
-                res.send(200, {success: 'Product removed'});
+                res.status(200).send({success: product});
             }
         });
-    }// end remove
+    };
 
     this.removeProduct = function (req, res, next) {
-        var id = req.param('_id');
+        var id = req.params._id;
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getDeleteAccess(req, req.session.uId, 58, function (access) {
                 if (access) {
                     remove(req, id, res, next);
                 } else {
-                    res.send(403);
+                    res.status(403).send();
                 }
             });
         } else {
-            res.send(401);
+            res.status(401).send();
         }
     };
 
@@ -315,38 +315,103 @@ var Products = function (models) {
     };
 
     function getProductsById(req, res, next) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, 58, function (access) {
-                if (access) {
-                    var data = {};
-                    for (var i in req.query) {
-                        data[i] = req.query[i];
+        var id = req.params.id;
+        var Product = models.get(req.session.lastDb, "Products", ProductSchema);
+
+        var departmentSearcher;
+        var contentIdsSearcher;
+        var contentSearcher;
+        var waterfallTasks;
+
+        var contentType = req.query.contentType;
+
+        departmentSearcher = function (waterfallCallback) {
+            models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
+                {
+                    $match: {
+                        users: objectId(req.session.uId)
                     }
-                    var query = models.get(req.session.lastDb, "Products", ProductSchema).findById(data.id);
-                    query.populate('info.productType', 'name _id').
-                        populate('department', '_id departmentName').
-                        populate('createdBy.user').
-                        populate('editedBy.user').
-                        populate('groups.users').
-                        populate('groups.group').
-                        populate('groups.owner', '_id login');
+                }, {
+                    $project: {
+                        _id: 1
+                    }
+                },
 
-                    query.exec(function (err, findedProduct) {
-                        if (err) {
-                            res.send(500, {error: "Can't find Product"});
-                        } else {
-                            res.send(findedProduct);
-                        }
-                    });
-                } else {
-                    res.send(403);
-                }
-            });
+                waterfallCallback);
+        };
 
-        } else {
-            res.send(401);
-        }
+        contentIdsSearcher = function (deps, waterfallCallback) {
+            var arrOfObjectId = deps.objectID();
 
+            models.get(req.session.lastDb, "Product", ProductSchema).aggregate(
+                {
+                    $match: {
+                        $and: [
+                            /*optionsObject,*/
+                            {
+                                $or: [
+                                    {
+                                        $or: [
+                                            {
+                                                $and: [
+                                                    {whoCanRW: 'group'},
+                                                    {'groups.users': objectId(req.session.uId)}
+                                                ]
+                                            },
+                                            {
+                                                $and: [
+                                                    {whoCanRW: 'group'},
+                                                    {'groups.group': {$in: arrOfObjectId}}
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        $and: [
+                                            {whoCanRW: 'owner'},
+                                            {'groups.owner': objectId(req.session.uId)}
+                                        ]
+                                    },
+                                    {whoCanRW: "everyOne"}
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    $project: {
+                        _id: 1
+                    }
+                },
+                waterfallCallback
+            );
+        };
+
+        contentSearcher = function (quotationsIds, waterfallCallback) {
+            var query;
+
+            query = Product.findById(id);
+
+            query.populate('info.productType', 'name _id').
+                populate('department', '_id departmentName').
+                populate('createdBy.user').
+                populate('editedBy.user').
+                populate('groups.users').
+                populate('groups.group').
+                populate('groups.owner', '_id login');
+
+            query.exec(waterfallCallback);
+        };
+
+        waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
+
+        async.waterfall(waterfallTasks, function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send(result);
+        });
     };
 
     this.getForView = function (req, res, next) {
@@ -386,7 +451,7 @@ var Products = function (models) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             getForDd(req, res, next);
         } else {
-            res.send(401);
+            res.status(401).send();
         }
     };
 

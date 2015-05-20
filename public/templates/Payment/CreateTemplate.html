@@ -1,0 +1,47 @@
+<div class="form-holder">
+    <form method="post" action="" id="createPaymentForm" class="form">
+        <fieldset>
+            <div class="inner">
+                <div class="topInputHolder">
+                    <h2>Pay Invoice</h2>
+                </div>
+                <div class="half-block left">
+                    <dl class="opp-info">
+                        <dt><label for="supplierDD">Supplier</label></dt>
+                        <dd>
+                            <a id="supplierDd" class="current-selected" href="javascript:;">Select</a>
+                        </dd>
+                        <dt><label for="paidAmount">Paid Amount</label></dt>
+                        <dd><input type="text" name="paidAmount" id="paidAmount" maxlength="10"></dd>
+                        <dt><label for="paymentMethod">Payment Method</label></dt>
+                        <dd>
+                            <a id="paymentMethod" class="current-selected" href="javascript:;">Select</a>
+                        </dd>
+                    </dl>
+                </div>
+                <div class="half-block left">
+                    <dl class="opp-info">
+                        <dt><label for="paymentDate">Date</label></dt>
+                        <dd><input id="paymentDate" class="extrainfo" type="text" name="paymentDate"></dd>
+                        <dt><label for="period">Period</label></dt>
+                        <dd>
+                            <a id="period" class="current-selected" href="javascript:;">Select</a>
+                        </dd>
+                        <dt><label for="paymentRef">Payment Ref</label></dt>
+                        <dd><input type="text" name="paymentRef" id="paymentRef" maxlength="20"></dd>
+                        <dt><label for="memo">Memo</label></dt>
+                        <dd><input type="text" name="memo" id="memo" maxlength="20"></dd>
+                    </dl>
+                </div>
+                <div class="half-block left">
+                    <dt><label>Difference Amount</label></dt>
+                    <dd><span id="differenceAmount"></span></dd>
+                    <!--<dt><label for="paymentDifference">Payment Difference</label></dt>
+                    <dd>
+                        <a id="paymentDifference" class="current-selected" href="javascript:;">Select</a>
+                    </dd>-->
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>

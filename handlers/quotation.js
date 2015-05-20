@@ -31,7 +31,7 @@ var Quotation = function (models) {
             if (err) {
                 next(err);
             } else {
-                res.send(200, {success: 'Quotation updated', result: quotation});
+                res.status.(200).send({success: 'Quotation updated', result: quotation});
             }
         });
 
@@ -54,7 +54,7 @@ var Quotation = function (models) {
                 }
             });
         } else {
-            res.send(401);
+            res.status(401).send();
         }
     };
 
