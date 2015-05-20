@@ -214,7 +214,7 @@ define([
             taxes = total * this.taxesRate;
             subtotal = total + taxes;
             taxes = taxes.toFixed(2);
-            subtotal.toFixed(2);
+            subtotal = subtotal.toFixed(2);
 
             $(parrents[5]).text(taxes);
             $(parrents[6]).text(subtotal);

@@ -1,6 +1,6 @@
 <% orderCollection.forEach(function(quotation, index){ %>
 <tr data-id="<%=quotation._id%>"
-    <%if (quotation.workflow && quotation.workflow._id==='5559f344dadd53e09d753ead') { %>
+    <%if (quotation.workflow && quotation.workflow.status === 'Cancelled') { %>
 class="canceledListItem"
 <%}%>>
     <td class = "notForm"><input type="checkbox" value="<%=quotation._id%>" class="checkbox" /></td>
