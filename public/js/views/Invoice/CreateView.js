@@ -137,7 +137,7 @@ define([
                                     unitPrice: price,
                                     quantity: quantity,
                                     taxes: taxes,
-                                    amount: amount
+                                    subTotal: amount
                                 });
                             }
                     }

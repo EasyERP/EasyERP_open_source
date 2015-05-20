@@ -1,5 +1,6 @@
 define([
         'text!templates/Invoice/list/ListHeader.html',
+        'text!templates/stages.html',
         'views/Invoice/CreateView',
         'views/Invoice/EditView',
         'models/InvoiceModel',
@@ -10,7 +11,7 @@ define([
         'dataService'
     ],
 
-    function (listTemplate, createView, editView, invoiceModel, listItemView, listTotalView, contentCollection, common, dataService) {
+    function (listTemplate, stagesTemplate, createView, editView, invoiceModel, listItemView, listTotalView, contentCollection, common, dataService) {
         var InvoiceListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -36,6 +37,7 @@ define([
                 this.render();
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
                 this.contentCollection = contentCollection;
+                this.stages = [];
             },
 
             events: {
@@ -45,6 +47,7 @@ define([
                 "click #previousPage": "previousPage",
                 "click #nextPage": "nextPage",
                 "click .checkbox": "checked",
+                "click .stageSelect": "showNewSelect",
                 //"click  .list td:not(.notForm)": "gotoForm",
                 "click  .list td:not(.notForm)": "goToEditDialog",
                 "click #itemsButton": "itemsNumber",
@@ -52,7 +55,8 @@ define([
                 "click": "hideItemsNumber",
                 "click #firstShowPage": "firstPage",
                 "click #lastShowPage": "lastPage",
-                "click .oe_sortable": "goSort"
+                "click .oe_sortable": "goSort",
+                "click .newSelectList li": "chooseOption"
             },
 
             fetchSortCollection: function (sortObject) {
@@ -71,26 +75,28 @@ define([
                 this.collection.bind('showmore', this.showMoreContent, this);
             },
 
-            /*recalculateTotal: function () {
-                parent = this.$el.find("#listTable");
-                var unTaxed=0;
-                var total=0;
+            chooseOption: function (e) {
+                var self = this;
+                var target$ = $(e.target);
+                var targetElement = target$.parents("td");
+                var id = targetElement.attr("id");
+                var model = this.collection.get(id);
 
-                parent.find(".unTaxed").each(function() {
-                    unTaxed += parseFloat($(this).text());
+                model.save({ workflow: target$.attr("id") }, {
+                    headers:
+                    {
+                        mid: 55
+                    },
+                    patch: true,
+                    validate: false,
+                    success: function () {
+                        self.showFilteredPage();
+                    }
                 });
 
-                parent.find(".total").each(function() {
-                    total += parseFloat($(this).text());
-                });
-
-                unTaxed = unTaxed.toFixed(2);
-                total = total.toFixed(2);
-
-                this.$el.find('#t_unTaxed').text(unTaxed);
-                this.$el.find('#t_total').text(total);
-
-            },*/
+                this.hideNewSelect();
+                return false;
+            },
 
             goSort: function (e) {
                 this.collection.unbind('reset');
@@ -134,6 +140,20 @@ define([
             itemsNumber: function (e) {
                 $(e.target).closest("button").next("ul").toggle();
                 return false;
+            },
+
+            showNewSelect: function (e) {
+                if ($(".newSelectList").is(":visible")) {
+                    this.hideNewSelect();
+                    return false;
+                } else {
+                    $(e.target).parent().append(_.template(stagesTemplate, { stagesCollection: this.stages }));
+                    return false;
+                }
+            },
+
+            hideNewSelect: function (e) {
+                $(".newSelectList").remove();
             },
 
             getTotalLength: function (currentNumber, itemsNumber,filter) {
@@ -182,6 +202,22 @@ define([
                     pagenation.show();
                 }
                 currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+
+                dataService.getData("/workflow/fetch", {
+                    wId: 'Order',
+                    source: 'purchase',
+                    targetSource: 'quotation'
+                }, function (stages) {
+                    //For Filter Logic
+                    /*var stage = (self.filter) ? self.filter.workflow || [] : [];
+                     if (self.filter && stage) {
+                     $('.filter-check-list input').each(function () {
+                     var target = $(this);
+                     target.attr('checked', $.inArray(target.val(), stage) > -1);
+                     });
+                     }*/
+                    self.stages = stages;
+                });
             },
 
             renderContent: function () {
@@ -305,12 +341,7 @@ define([
                 this.startTime = new Date();
                 this.newCollection = false;
 
-                var selectedLetter = $(e.target).text();
-                if ($(e.target).text() == "All") {
-                    selectedLetter = '';
-                }
                 this.filter = this.filter || {};
-                this.filter['letter'] = selectedLetter;
                 var itemsNumber = $("#itemsNumber").text();
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
