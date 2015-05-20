@@ -23,7 +23,7 @@ module.exports = (function () {
         product: {type: ObjectId, ref: 'Product', default: null},
         description: {type: String, default: ''},
         taxes: Number,
-        amount: Number
+        subTotal: Number
     };
 
     var invoiceSchema = new mongoose.Schema({
@@ -32,7 +32,7 @@ module.exports = (function () {
         /*fiscalPosition: { type: String, default: null },*/
         sourceDocument: { type: String, default: null },
         supplierInvoiceNumber: { type: String, default: null },
-        paymentReference: { type: String, default: null },
+        paymentReference: { type: String, default: 'free' },
 
         invoiceDate: { type: Date, default: Date.now },
         dueDate: Date,

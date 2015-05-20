@@ -3,15 +3,20 @@
  */
 
 var mongoose = require('mongoose');
+var WorkflowHandler = require('./workflow');
+var RESPONSES = require('../constants/responses');
+
 var Invoice = function (models) {
     var access = require("../Modules/additions/access.js")(models);
     var InvoiceSchema = mongoose.Schemas['Invoice'];
+    var OrderSchema = mongoose.Schemas['Quotation'];
     var DepartmentSchema = mongoose.Schemas['Department'];
     var objectId = mongoose.Types.ObjectId;
     var async = require('async');
+    var workflowHandler = new WorkflowHandler(models);
 
     this.create = function (req, res, next) {
-        var Invoice =  models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
+        var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
         var body = req.body;
 
         var invoice = new Invoice(body);
@@ -27,6 +32,79 @@ var Invoice = function (models) {
             }
             res.status(200).send({success: result});
         });
+    };
+
+    this.receive = function (req, res, next) {
+        var id = req.body.orderId;
+        var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
+        var Order = models.get(req.session.lastDb, 'Quotation', OrderSchema);
+        var parallelTasks;
+        var waterFallTasks;
+
+        function fetchFirstWorkflow(callback) {
+            var request = {
+                query: {
+                    wId: 'Invoice',
+                    source: 'purchase',
+                    targetSource: 'invoice'
+                },
+                session: req.session
+            };
+
+            workflowHandler.getFirstForConvert(request, callback);
+        }
+
+        function findOrder(callback) {
+            Order.findById(id, callback);
+        };
+
+        function parallel(callback) {
+            async.parallel(parallelTasks, callback);
+        };
+
+        function createInvoice(parallelResponse, callback) {
+            var order;
+            var workflow;
+            var err;
+            var invoice;
+
+            if (parallelResponse && parallelResponse.length) {
+                order = parallelResponse[0];
+                workflow = parallelResponse[1];
+            } else {
+                err = new Error(RESPONSES.BAD_REQUEST);
+                err.status = 400;
+
+                return callback(err);
+            }
+
+            invoice = new Invoice(order);
+
+            if (req.session.uId) {
+                invoice.createdBy.user = req.session.uId;
+                invoice.editedBy.user = req.session.uId;
+            }
+
+            invoice.sourceDocument = order.name;
+            invoice.paymentReference = order.name;
+            invoice.workflow = workflow._id;
+            invoice.paymentInfo.balance = order.paymentInfo.total;
+
+            invoice.save(callback);
+
+        };
+
+        parallelTasks = [findOrder, fetchFirstWorkflow];
+        waterFallTasks = [parallel, createInvoice];
+
+        async.waterfall(waterFallTasks, function (err, result) {
+            if (err) {
+                return next(err)
+            }
+
+            res.status(201).send({success: result});
+        });
+
     };
 
     this.updateOnlySelected = function (req, res, next) {
@@ -62,7 +140,7 @@ var Invoice = function (models) {
     }
 
     this.getAll = function (req, res, next) {
-        var Invoice =  models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
+        var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
         var query = {};
 
         Invoice.find(query, function (err, invoice) {
@@ -91,8 +169,8 @@ var Invoice = function (models) {
 
                     if (req.query.sort) {
                         sort = req.query.sort;
-                    //} else {
-                    //    sort = {"supplierId": 1};
+                        //} else {
+                        //    sort = {"supplier": 1};
                     }
 
                     departmentSearcher = function (waterfallCallback) {
@@ -161,8 +239,8 @@ var Invoice = function (models) {
 
                         var query = Invoice.find(optionsObject).limit(count).skip(skip).sort(sort);
 
-                        query.populate('supplierId','name _id').
-                            populate('salesPerson','name _id').
+                        query.populate('supplier', 'name _id').
+                            populate('salesPerson', 'name _id').
                             populate('department', '_id departmentName').
                             populate('createdBy.user').
                             populate('editedBy.user').
@@ -176,8 +254,8 @@ var Invoice = function (models) {
 
                     waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
 
-                    async.waterfall(waterfallTasks, function(err, result){
-                        if(err){
+                    async.waterfall(waterfallTasks, function (err, result) {
+                        if (err) {
                             return next(err);
                         }
                         res.status(200).send({success: result});
@@ -273,12 +351,12 @@ var Invoice = function (models) {
                             data[i] = req.query[i];
                         }
                         var id = data.id;
-                        optionsObject= {_id: id};
+                        optionsObject = {_id: id};
 
                         var query = Invoice.findOne(optionsObject);
 
-                        query.populate('supplierId','_id name').
-                            populate('salesPerson','name _id').
+                        query.populate('supplier', '_id name').
+                            populate('salesPerson', 'name _id').
                             populate('products.product', '_id name').
                             populate('department', '_id departmentName').
                             populate('createdBy.user').
@@ -310,7 +388,7 @@ var Invoice = function (models) {
         }
     };
 
-    this.removeInvoice = function(req, res, id) {
+    this.removeInvoice = function (req, res, id) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getReadAccess(req, req.session.uId, 56, function (access) {
                 if (access) {
@@ -333,9 +411,9 @@ var Invoice = function (models) {
             res.send(401);
         }
 
-        };
+    };
 
-    this.updateInvoice = function (req,res, _id, data) {
+    this.updateInvoice = function (req, res, _id, data) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getReadAccess(req, req.session.uId, 56, function (access) {
                 if (access) {
@@ -345,8 +423,8 @@ var Invoice = function (models) {
                     //    date: new Date().toISOString()
                     //}
 
-                    //if (data.supplierId && data.supplierId._id) {
-                    //    data.supplierId = data.supplierId._id;
+                    //if (data.supplier && data.supplier._id) {
+                    //    data.supplier = data.supplier._id;
                     //}
 
                     Invoice.findByIdAndUpdate(_id, data.invoice, function (err, result) {
@@ -368,7 +446,7 @@ var Invoice = function (models) {
             res.send(401);
         }
 
-        };
+    };
 
     this.totalCollectionLength = function (req, res, next) {
 
@@ -464,7 +542,6 @@ var Invoice = function (models) {
             }
         });
     };
-
 
 
 };

@@ -58,7 +58,7 @@ define(['Validation','common'],function (Validation,common) {
                 return errors;
         },
         defaults: {
-            supplierId: {
+            supplier: {
                 id: '',
                 name: ''
             },

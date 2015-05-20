@@ -46,7 +46,7 @@
                 if (this.foldWorkflows.length === 0) {
                     this.foldWorkflows = ["Empty"];
                 }
-                dataService.postData('/currentUser', { 'kanbanSettings.tasks.foldWorkflows': this.foldWorkflows }, function (seccess, error) {
+                dataService.postData('/currentUser', { 'kanbanSettings.tasks.foldWorkflows': this.foldWorkflows }, function (error,  success) {
                 });
             },
             foldUnfoldKanban: function (e, id) {
@@ -155,8 +155,8 @@
                     countPerPage = 5;
                 var id = window.location.hash.split('/')[3];
                 var url = (id && id.length === 24) ? "easyErp/Tasks/kanban/" + id : "easyErp/Tasks/kanban";
-                dataService.postData('/currentUser', { 'kanbanSettings.tasks.countPerPage': countPerPage }, function (seccess, error) {
-                    if (seccess) {
+                dataService.postData('/currentUser', { 'kanbanSettings.tasks.countPerPage': countPerPage }, function (error,  success) {
+                    if (success) {
                         $(".edit-dialog").remove();
                         Backbone.history.fragment = '';
                         Backbone.history.navigate(url, { trigger: true });

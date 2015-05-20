@@ -95,16 +95,16 @@ define([
                 var invoiceDate = this.$el.find("#invoice_date").val();
                 var dueDate = this.$el.find("#due_date").val();
 
-                var supplierId = this.$el.find('#supplierId').data("id");
-                supplierId = (supplierId) ? supplierId : null;
+                var supplier = this.$el.find('#supplier').data("id");
+                supplier = (supplier) ? supplier : null;
 
                 var total = parseFloat(this.$("#totalAmount").text());
-                var untaxed = parseFloat(this.$("#totalUntaxes").text());
+                var unTaxed = parseFloat(this.$("#totalUntaxes").text());
                 var balance = parseFloat(this.$("#balance").text());
 
                 var payments ={
                     total: total,
-                    untaxed: untaxed,
+                    unTaxed: unTaxed,
                     balance: balance
                 };
 
@@ -149,7 +149,7 @@ define([
 
                 var data = {
 
-                    supplierId: supplierId,
+                    supplier: supplier,
                     fiscalPosition: null,
                     sourceDocument: $.trim(this.$el.find('#source_document').val()),
                     supplierInvoiceNumber: $.trim(this.$el.find('#supplier_invoice_num').val()),
@@ -176,7 +176,7 @@ define([
                 };
 
 
-                if (supplierId) {
+                if (supplier) {
                     this.model.save(data, {
                         headers: {
                             mid: mid
@@ -270,7 +270,7 @@ define([
                 );
 
 
-                populate.get2name("#supplierId", "/supplier", {}, this, false);
+                populate.get2name("#supplier", "/supplier", {}, this, false);
                 populate.get2name("#salesPerson", "/getForDdByRelatedUser",{},this,true,true);
                 populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, true, true);
 

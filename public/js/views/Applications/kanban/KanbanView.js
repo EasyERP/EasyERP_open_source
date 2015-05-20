@@ -33,7 +33,7 @@
 				if (this.foldWorkflows.length===0){
 					this.foldWorkflows =["Empty"];
 				}
-				dataService.postData('/currentUser', { 'kanbanSettings.applications.foldWorkflows': this.foldWorkflows }, function (seccess, error) {});
+				dataService.postData('/currentUser', { 'kanbanSettings.applications.foldWorkflows': this.foldWorkflows }, function (error, success) {});
 			},
 
             foldUnfoldKanban:function(e,id){
@@ -82,8 +82,8 @@
                 var countPerPage = $(this).find('#cPerPage').val();
                 if (countPerPage == 0)
                     countPerPage = 5;
-                dataService.postData('/currentUser', { 'kanbanSettings.applications.countPerPage': countPerPage }, function (seccess, error) {
-                    if (seccess) {
+                dataService.postData('/currentUser', { 'kanbanSettings.applications.countPerPage': countPerPage }, function (error,  success) {
+                    if (success) {
                         $(".edit-dialog").remove();
                         Backbone.history.fragment = '';
                         Backbone.history.navigate("easyErp/Applications", { trigger: true });

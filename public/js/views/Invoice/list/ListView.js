@@ -73,21 +73,21 @@ define([
 
             /*recalculateTotal: function () {
                 parent = this.$el.find("#listTable");
-                var untaxed=0;
+                var unTaxed=0;
                 var total=0;
 
-                parent.find(".untaxed").each(function() {
-                    untaxed += parseFloat($(this).text());
+                parent.find(".unTaxed").each(function() {
+                    unTaxed += parseFloat($(this).text());
                 });
 
                 parent.find(".total").each(function() {
                     total += parseFloat($(this).text());
                 });
 
-                untaxed = untaxed.toFixed(2);
+                unTaxed = unTaxed.toFixed(2);
                 total = total.toFixed(2);
 
-                this.$el.find('#t_untaxed').text(untaxed);
+                this.$el.find('#t_unTaxed').text(unTaxed);
                 this.$el.find('#t_total').text(total);
 
             },*/

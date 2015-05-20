@@ -38,8 +38,7 @@ define([
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
                 "click .receiveInvoice": "receiveInvoice",
-                "click .cancelOrder": "cancelOrder",
-                "click .setDraft": "setDraft"
+                "click .cancelOrder": "cancelOrder"
             },
 
 
@@ -116,7 +115,7 @@ define([
                         },
                         patch: true,
                         success: function () {
-                            Backbone.history.navigate("easyErp/Order", {trigger: true});
+                            Backbone.history.navigate("easyErp/Quotation", {trigger: true});
                         }
                     });
                 });
@@ -125,26 +124,17 @@ define([
             receiveInvoice: function (e) {
                 e.preventDefault();
 
-                var self = this;
+                var url = '/invoice/receive';
+                var data = {
+                    orderId: this.currentModel.id
+                };
 
-                populate.fetchWorkflow({
-                    wId: 'Order'
-                }, function (workflow) {
-                    if (workflow && workflow.error) {
-                        return alert(workflow.error.statusText);
+                dataService.postData(url, data, function (err, response) {
+                    if (err) {
+                        alert('Can\'t receive invoice');
+                    } else {
+                        Backbone.history.navigate("easyErp/Invoice", {trigger: true});
                     }
-
-                    self.currentModel.save({
-                        workflow: workflow._id
-                    }, {
-                        headers: {
-                            mid: 57
-                        },
-                        patch: true,
-                        success: function () {
-                            Backbone.history.navigate("easyErp/Order", {trigger: true});
-                        }
-                    });
                 });
             },
 

@@ -8,6 +8,7 @@ var workflows = function (models) {
     var RESPONSES = require('../constants/responses.js');
 
     this.getFirstForConvert = function (req, res, next) {
+        var callback;
         var Workflow = models.get(req.session.lastDb, 'workflows', WorkflowSchema);
 
         var queryObject = req.query;
@@ -20,9 +21,17 @@ var workflows = function (models) {
         var err;
         var query;
 
+        if (arguments.length === 2 && typeof res === 'function') {
+            callback = res;
+        }
+
         if (!wId) {
             err = new Error(RESPONSES.BAD_REQUEST);
             err.status = 400;
+
+            if (callback) {
+                return callback(err);
+            }
 
             return next(err);
         }
@@ -44,8 +53,16 @@ var workflows = function (models) {
             .sort({sequence: order})
             .exec(function (err, workflow) {
                 if (err) {
+                    if (callback) {
+                        return callback(err);
+                    }
                     return next(err);
                 }
+                ;
+                if (callback) {
+                    return callback(null, workflow);
+                }
+                ;
                 res.status(200).send(workflow)
             });
     };

@@ -35,7 +35,7 @@ function (WorkflowsTemplate, kanbanSettingsTemplate, WorkflowsCollection, Kanban
 			if (this.foldWorkflows.length===0){
 				this.foldWorkflows =["Empty"];
 			}
-            dataService.postData('/currentUser', { 'kanbanSettings.opportunities.foldWorkflows': this.foldWorkflows }, function (seccess, error) {
+            dataService.postData('/currentUser', { 'kanbanSettings.opportunities.foldWorkflows': this.foldWorkflows }, function (error, success) {
             });
         },
 
@@ -95,8 +95,8 @@ function (WorkflowsTemplate, kanbanSettingsTemplate, WorkflowsCollection, Kanban
             var countPerPage = context.$el.find('#cPerPage').val();
                 if (countPerPage == 0)
                     countPerPage = 5;
-            dataService.postData('/currentUser', { 'kanbanSettings.opportunities.countPerPage': countPerPage }, function (seccess, error) {
-                if (seccess) {
+            dataService.postData('/currentUser', { 'kanbanSettings.opportunities.countPerPage': countPerPage }, function (error,  success) {
+                if (success) {
                     $(".edit-dialog").remove();
 					Backbone.history.fragment = '';
                     Backbone.history.navigate("easyErp/Opportunities", { trigger: true });

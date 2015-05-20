@@ -46,6 +46,7 @@ module.exports = function (models) {
     });
 
     router.post('/', handler.create);
+    router.post('/receive', handler.receive);
 
 
     return router;

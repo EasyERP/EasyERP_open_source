@@ -104,19 +104,19 @@ define([
                 var amount;
                 var description;
 
-                var supplierId = this.$("#supplierId").data("id");
+                var supplier = this.$("#supplier").data("id");
                 var salesPersonId = this.$("#salesPerson").data("id") ? this.$("#salesPerson").data("id") : null;
                 var paymentTermId = this.$("#payment_terms").data("id") ? this.$("#payment_terms").data("id") : null;
                 var invoiceDate = this.$("#invoice_date").val();
                 var dueDate = this.$("#due_date").val();
 
                 var total = parseFloat(this.$("#totalAmount").text());
-                var untaxed = parseFloat(this.$("#totalUntaxes").text());
+                var unTaxed = parseFloat(this.$("#totalUntaxes").text());
                 var balance = parseFloat(this.$("#balance").text());
 
                 var payments ={
                     total: total,
-                    untaxed: untaxed,
+                    unTaxed: unTaxed,
                     balance: balance
                 };
 
@@ -158,7 +158,7 @@ define([
                 var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
                 var data = {
 
-                    supplierId: supplierId,
+                    supplier: supplier,
                     fiscalPosition: null,
                     sourceDocument: $.trim($('#source_document').val()),
                     supplierInvoiceNumber: $.trim($('#supplier_invoice_num').val()),
@@ -184,7 +184,7 @@ define([
 
                 };
 
-                if (supplierId) {
+                if (supplier) {
                     var model = new InvoiceModel();
                     model.save(data, {
                         headers: {
@@ -256,7 +256,7 @@ define([
                     new InvoiceItemView({balanceVisible: true}).render().el
                 );
 
-                populate.get2name("#supplierId", "/supplier", {}, this, false, true);
+                populate.get2name("#supplier", "/supplier", {}, this, false, true);
                 populate.get("#payment_terms", "/paymentTerm", {}, 'name', this, true, true);
                 populate.get2name("#salesPerson", "/getForDdByRelatedUser",{},this,true,true);
                 populate.fetchWorkflow({wId: 'Invoice'}, function (response) {

@@ -2,13 +2,13 @@
 <tr data-id="<%=Invoice._id%>">
     <td class = "notForm"><input type="checkbox" value="<%=Invoice._id%>" class="checkbox" /></td>
     <td><%=startNumber + index + 1%></td>
-    <td><%=(Invoice.supplierId.name)? Invoice.supplierId.name.first+' '+Invoice.supplierId.name.last:' - - - '%></td>
+    <td><%=(Invoice.supplier.name)? Invoice.supplier.name.first+' '+Invoice.supplier.name.last:' - - - '%></td>
     <td><%=Invoice.invoiceDate%></td>
     <td><%=Invoice.supplierInvoiceNumber%></td>
     <td><%=(Invoice.salesPerson)? Invoice.salesPerson.name.first+' '+Invoice.salesPerson.name.last:''%></td>
     <td><%=Invoice.dueDate%></td>
     <td><%=Invoice.paymentInfo.balance%></td>
-    <td class="unTaxed"><%=(Invoice.paymentInfo) ? Invoice.paymentInfo.untaxed.toFixed(2) : '0.00'%></td>
+    <td class="unTaxed"><%=(Invoice.paymentInfo) ? Invoice.paymentInfo.unTaxed.toFixed(2) : '0.00'%></td>
     <td class="total"><%=(Invoice.paymentInfo) ? Invoice.paymentInfo.total.toFixed(2) : '0.00'%></td>
     <td><%=Invoice.workflow ? Invoice.workflow.name: ''%></td>
 
