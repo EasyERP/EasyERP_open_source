@@ -108,7 +108,7 @@ var Invoice = function (models) {
     };
 
     this.updateOnlySelected = function (req, res, next) {
-        var id = req.params._id;
+        var id = req.params.id;
         var data = req.body;
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {

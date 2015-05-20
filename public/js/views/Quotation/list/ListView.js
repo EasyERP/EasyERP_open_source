@@ -11,7 +11,7 @@ define([
         'dataService'
     ],
 
-    function (listTemplate, stagesTamplate, createView, listItemView, listTotalView, editView, currentModel, contentCollection, common, dataService) {
+    function (listTemplate, stagesTemplate, createView, listItemView, listTotalView, editView, currentModel, contentCollection, common, dataService) {
         var QuotationListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -143,7 +143,7 @@ define([
                     this.hideNewSelect();
                     return false;
                 } else {
-                    $(e.target).parent().append(_.template(stagesTamplate, { stagesCollection: this.stages }));
+                    $(e.target).parent().append(_.template(stagesTemplate, { stagesCollection: this.stages }));
                     return false;
                 }
             },

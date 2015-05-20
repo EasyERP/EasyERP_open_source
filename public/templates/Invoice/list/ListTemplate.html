@@ -10,7 +10,8 @@
     <td><%=Invoice.paymentInfo.balance%></td>
     <td class="unTaxed"><%=(Invoice.paymentInfo) ? Invoice.paymentInfo.unTaxed.toFixed(2) : '0.00'%></td>
     <td class="total"><%=(Invoice.paymentInfo) ? Invoice.paymentInfo.total.toFixed(2) : '0.00'%></td>
-    <td><%=Invoice.workflow ? Invoice.workflow.name: ''%></td>
-
+    <td id='<%=Invoice._id%>'>
+        <a href="javascript:;" class="stageSelect"><%=Invoice.workflow ? Invoice.workflow.name: 'Undefinded'%></a>
+    </td>
 </tr>
 <% }) %>

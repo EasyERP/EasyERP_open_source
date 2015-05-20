@@ -237,6 +237,7 @@ define([
             var totalUntaxContainer = thisEl.find('#totalUntaxes');
             var taxesContainer = thisEl.find('#taxes');
             var totalContainer = thisEl.find('#totalAmount');
+            var balanceContainer = thisEl.find('#balance');
             var resultForCalculate = thisEl.find('tr.productItem');
 
             var totalUntax = 0;
@@ -266,6 +267,8 @@ define([
             total = totalUntax + taxes;
             total = total.toFixed(2);
             totalContainer.text(total);
+
+            balanceContainer.text(total);
 
         },
 

@@ -31,7 +31,7 @@ var Quotation = function (models) {
             if (err) {
                 next(err);
             } else {
-                res.status.(200).send({success: 'Quotation updated', result: quotation});
+                res.status(200).send({success: 'Quotation updated', result: quotation});
             }
         });
 
