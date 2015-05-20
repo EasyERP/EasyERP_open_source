@@ -30,7 +30,7 @@ var Invoice = function (models) {
     };
 
     this.updateOnlySelected = function (req, res, next) {
-        var id = req.params.id;
+        var id = req.params._id;
         var data = req.body;
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -48,7 +48,7 @@ var Invoice = function (models) {
                         if (err) {
                             next(err);
                         } else {
-                            res.send(200, {success: 'Invoice updated', result: invoice});
+                            res.status(200).send({success: 'Invoice updated', result: invoice});
                         }
                     });
 
@@ -57,7 +57,7 @@ var Invoice = function (models) {
                 }
             });
         } else {
-            res.send(401);
+            res.status(401).send();
         }
     }
 
@@ -183,12 +183,12 @@ var Invoice = function (models) {
                         res.status(200).send({success: result});
                     });
                 } else {
-                    res.send(403);
+                    res.status(403).send();
                 }
             });
 
         } else {
-            res.send(401);
+            res.status(401).send();
         }
     };
 
@@ -310,32 +310,31 @@ var Invoice = function (models) {
         }
     };
 
-    this.removeInvoice = function(req, res, id) {
+    this.removeInvoice = function(req, res, id, next) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getReadAccess(req, req.session.uId, 56, function (access) {
                 if (access) {
 
                     models.get(req.session.lastDb, "Invoice", InvoiceSchema).findByIdAndRemove(id, function (err, result) {
                         if (err) {
-                            console.log(err);
-                            res.send(500, {error: "Can't remove Invoice"});
+                            next(err);
                         } else {
-                            res.send(200, {success: 'Invoice removed'});
+                            res.status(200).send({success: result});
                         }
                     });
 
                 } else {
-                    res.send(403);
+                    res.status(403).send();
                 }
             });
 
         } else {
-            res.send(401);
+            res.status(401).send();
         }
 
         };
 
-    this.updateInvoice = function (req,res, _id, data) {
+    this.updateInvoice = function (req,res, _id, data, next) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getReadAccess(req, req.session.uId, 56, function (access) {
                 if (access) {
@@ -352,20 +351,19 @@ var Invoice = function (models) {
                     Invoice.findByIdAndUpdate(_id, data.invoice, function (err, result) {
 
                         if (err) {
-                            //console.log(err);
-                            res.send(500, {error: "Can't update Invoice"});
+                            next(err);
                         } else {
-                            res.send(200, {success: 'Invoice updated success', result: result});
+                            res.status(200).send({success: 'Invoice updated success', result: result});
                         }
                     })
 
                 } else {
-                    res.send(403);
+                    res.status(403).send();
                 }
             });
 
         } else {
-            res.send(401);
+            res.status(401).send();
         }
 
         };
@@ -464,9 +462,6 @@ var Invoice = function (models) {
             }
         });
     };
-
-
-
 };
 
 module.exports = Invoice;
