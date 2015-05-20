@@ -315,7 +315,7 @@ var Products = function (models) {
     };
 
     function getProductsById(req, res, next) {
-        var id = req.params.id;
+        var id = req.query.id;
         var Product = models.get(req.session.lastDb, "Products", ProductSchema);
 
         var departmentSearcher;
