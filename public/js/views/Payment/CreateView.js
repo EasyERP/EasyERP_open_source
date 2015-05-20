@@ -12,7 +12,7 @@ define([
     ],
     function (CreateTemplate, PersonCollection, DepartmentCollection, QuotationModel, common, populate, constants) {
         var CreateView = Backbone.View.extend({
-            el: "#content-holder",
+            el: "#paymentHolder",
             contentType: "Payment",
             template: _.template(CreateTemplate),
 
@@ -55,7 +55,6 @@ define([
             },
             hideDialog: function () {
                 $(".edit-dialog").remove();
-                $(".add-group-dialog").remove();
             },
             render: function () {
                 var self = this;

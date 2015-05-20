@@ -1,14 +1,15 @@
 define([
-    "text!templates/Invoice/EditTemplate.html",
-    'views/Assignees/AssigneesView',
-    "views/Invoice/InvoiceProductItems",
-    "common",
-    "custom",
-    "dataService",
-	"populate",
-     'constants'
-],
-    function (EditTemplate, AssigneesView, InvoiceItemView, common, Custom, dataService, populate, CONSTANTS) {
+        "text!templates/Invoice/EditTemplate.html",
+        'views/Assignees/AssigneesView',
+        "views/Invoice/InvoiceProductItems",
+        "views/Payment/CreateView",
+        "common",
+        "custom",
+        "dataService",
+        "populate",
+        'constants'
+    ],
+    function (EditTemplate, AssigneesView, InvoiceItemView, PaymentCreateView, common, Custom, dataService, populate, CONSTANTS) {
 
         var EditView = Backbone.View.extend({
             contentType: "Invoice",
@@ -18,8 +19,8 @@ define([
                 _.bindAll(this, "render", "saveItem");
                 _.bindAll(this, "render", "deleteItem");
                 this.currentModel = (options.model) ? options.model : options.collection.getElement();
-				this.currentModel.urlRoot = "/Invoice";
-				this.responseObj = {};
+                this.currentModel.urlRoot = "/Invoice";
+                this.responseObj = {};
                 this.render();
             },
 
@@ -33,21 +34,35 @@ define([
                 "click .newSelectList li.miniStylePagination": "notHide",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-				"click .details":"showDetailsBox"
+                "click .details": "showDetailsBox",
+                "click .newPayment": "newPayment",
+                "click .cancelInvoice": "cancelInvoice",
+                "click .refund": "refund",
+                "click .setDraft": "setDraft"
+
             },
 
-			showDetailsBox:function(e){
-				$(e.target).parent().find(".details-box").toggle();
-			},
-            notHide: function () {
-				return false;
+            newPayment: function (e) {
+                e.preventDefault();
+
+                var targetEl = $(e.target);
+                var paymentView = new PaymentCreateView();
+                var paymentHtml = paymentView.render().el;
+
             },
-			nextSelect:function(e){
-				this.showNewSelect(e,false,true);
-			},
-			prevSelect:function(e){
-				this.showNewSelect(e,true,false);
-			},
+
+            showDetailsBox: function (e) {
+                $(e.target).parent().find(".details-box").toggle();
+            },
+            notHide: function () {
+                return false;
+            },
+            nextSelect: function (e) {
+                this.showNewSelect(e, false, true);
+            },
+            prevSelect: function (e) {
+                this.showNewSelect(e, true, false);
+            },
 
             changeTab: function (e) {
                 var holder = $(e.target);
@@ -69,9 +84,10 @@ define([
                 dialog_holder.find(itemSelector).eq(n).addClass("active");
             },
 
-            chooseUser: function(e){
+            chooseUser: function (e) {
                 $(e.target).toggleClass("choosen");
             },
+
             hideDialog: function () {
                 $('.edit-invoice-dialog').remove();
             },
@@ -102,7 +118,7 @@ define([
                 var unTaxed = parseFloat(this.$("#totalUntaxes").text());
                 var balance = parseFloat(this.$("#balance").text());
 
-                var payments ={
+                var payments = {
                     total: total,
                     unTaxed: unTaxed,
                     balance: balance
@@ -134,13 +150,13 @@ define([
                 var salesPersonId = this.$("#salesPerson").data("id") ? this.$("#salesPerson").data("id") : null;
                 var paymentTermId = this.$("#payment_terms").data("id") ? this.$("#payment_terms").data("id") : null;
 
-                var usersId=[];
-                var groupsId=[];
-                $(".groupsAndUser tr").each(function(){
-                    if ($(this).data("type")=="targetUsers"){
+                var usersId = [];
+                var groupsId = [];
+                $(".groupsAndUser tr").each(function () {
+                    if ($(this).data("type") == "targetUsers") {
                         usersId.push($(this).data("id"));
                     }
-                    if ($(this).data("type")=="targetGroups"){
+                    if ($(this).data("type") == "targetGroups") {
                         groupsId.push($(this).data("id"));
                     }
 
@@ -196,13 +212,13 @@ define([
                     alert(CONSTANTS.RESPONSES.CREATE_QUOTATION);
                 }
             },
-            
-            showNewSelect:function(e,prev,next){
-                populate.showSelect(e,prev,next,this);
+
+            showNewSelect: function (e, prev, next) {
+                populate.showSelect(e, prev, next, this);
                 return false;
-                
+
             },
-    
+
             hideNewSelect: function () {
                 $(".newSelectList").hide();
             },
@@ -212,24 +228,24 @@ define([
             },
 
 
-            deleteItem: function(event) {
+            deleteItem: function (event) {
 
                 event.preventDefault();
                 var self = this;
-                    var answer = confirm("Realy DELETE items ?!");
-                    if (answer == true) {
-                        this.currentModel.destroy({
-                            success: function () {
-                                $('.edit-invoice-dialog').remove();
-                                Backbone.history.navigate("easyErp/" + self.contentType, { trigger: true });
-                            },
-                            error: function (model, err) {
-								if (err.status===403){
-									alert("You do not have permission to perform this action");
-								}
-							}
-						});
-					}
+                var answer = confirm("Realy DELETE items ?!");
+                if (answer == true) {
+                    this.currentModel.destroy({
+                        success: function () {
+                            $('.edit-invoice-dialog').remove();
+                            Backbone.history.navigate("easyErp/" + self.contentType, {trigger: true});
+                        },
+                        error: function (model, err) {
+                            if (err.status === 403) {
+                                alert("You do not have permission to perform this action");
+                            }
+                        }
+                    });
+                }
 
             },
 
@@ -238,8 +254,12 @@ define([
                 var formString = this.template({
                     model: this.currentModel.toJSON()
                 });
+                var notDiv;
+                var model;
+                var invoiceItemContainer;
+
                 this.$el = $(formString).dialog({
-					closeOnEscape: false,
+                    closeOnEscape: false,
                     autoOpen: true,
                     resizable: true,
                     dialogClass: "edit-invoice-dialog",
@@ -251,18 +271,21 @@ define([
                             click: self.saveItem
                         },
 
-						{
-							text: "Cancel",
-							click: function () { self.hideDialog();  }
-						},
-						{
-							text: "Delete",
-							click: self.deleteItem }
-						]
+                        {
+                            text: "Cancel",
+                            click: function () {
+                                self.hideDialog();
+                            }
+                        },
+                        {
+                            text: "Delete",
+                            click: self.deleteItem
+                        }
+                    ]
 
                 });
 
- 				var notDiv = this.$el.find('.assignees-container');
+                notDiv = this.$el.find('.assignees-container');
                 notDiv.append(
                     new AssigneesView({
                         model: this.currentModel
@@ -271,7 +294,7 @@ define([
 
 
                 populate.get2name("#supplier", "/supplier", {}, this, false);
-                populate.get2name("#salesPerson", "/getForDdByRelatedUser",{},this,true,true);
+                populate.get2name("#salesPerson", "/getForDdByRelatedUser", {}, this, true, true);
                 populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, true, true);
 
                 this.$el.find('#invoice_date').datepicker({
@@ -287,23 +310,23 @@ define([
                 });
 
                 this.delegateEvents(this.events);
-                var model = this.currentModel.toJSON();
+                model = this.currentModel.toJSON();
 
-                var invoiceItemContainer = this.$el.find('#invoiceItemsHolder');
+                invoiceItemContainer = this.$el.find('#invoiceItemsHolder');
                 invoiceItemContainer.append(
                     new InvoiceItemView({balanceVisible: true}).render({model: model}).el
                 );
 
                 if (model.groups)
-                    if (model.groups.users.length>0||model.groups.group.length){
+                    if (model.groups.users.length > 0 || model.groups.group.length) {
                         $(".groupsAndUser").show();
-                        model.groups.group.forEach(function(item){
-                            $(".groupsAndUser").append("<tr data-type='targetGroups' data-id='"+ item._id+"'><td>"+item.departmentName+"</td><td class='text-right'></td></tr>");
-                            $("#targetGroups").append("<li id='"+item._id+"'>"+item.departmentName+"</li>");
+                        model.groups.group.forEach(function (item) {
+                            $(".groupsAndUser").append("<tr data-type='targetGroups' data-id='" + item._id + "'><td>" + item.departmentName + "</td><td class='text-right'></td></tr>");
+                            $("#targetGroups").append("<li id='" + item._id + "'>" + item.departmentName + "</li>");
                         });
-                        model.groups.users.forEach(function(item){
-                            $(".groupsAndUser").append("<tr data-type='targetUsers' data-id='"+ item._id+"'><td>"+item.login+"</td><td class='text-right'></td></tr>");
-                            $("#targetUsers").append("<li id='"+item._id+"'>"+item.login+"</li>");
+                        model.groups.users.forEach(function (item) {
+                            $(".groupsAndUser").append("<tr data-type='targetUsers' data-id='" + item._id + "'><td>" + item.login + "</td><td class='text-right'></td></tr>");
+                            $("#targetUsers").append("<li id='" + item._id + "'>" + item.login + "</li>");
                         });
 
                     }

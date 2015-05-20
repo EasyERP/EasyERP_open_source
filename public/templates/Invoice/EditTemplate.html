@@ -7,12 +7,18 @@
                     <li><a href="javascript:;">Assignees</a></li>
                     <li class="right">
                         <%if(model.workflow && model.workflow.status !== 'Cancelled'){%>
-                        <button class="red confirmOrder">
-                            <span>Confirm Invoice</span>
+                        <button class="red newPayment">
+                            <span>Pay</span>
                         </button>
-                        <button class="red cancelQuotation">
-                            <span>Cancel</span>
-                        </button>
+                        <%if(model.workflow.status === 'New'){%>
+                            <button class="red cancelInvoice">
+                                <span>Cancel</span>
+                            </button>
+                        <%} else {%>
+                            <button class="red refund">
+                                <span>Refund</span>
+                            </button>
+                        <%}%>
                         <%} else {%>
                         <button class="red setDraft">
                             <span>Set Draft</span>
@@ -185,6 +191,9 @@
                     </div>
                 </div>
 
+                <div id="paymentHolder">
+
+                </div>
 
                 <div class="clearfix"></div>
             </div>
