@@ -32,7 +32,7 @@ var Products = function (models) {
         });
     };
 
-    function updateOnlySelectedFields(req, id, data, res, next) {
+    function updateOnlySelectedFields(req, res, next, id, data) {
         var Product = models.get(req.session.lastDb, 'Product', ProductSchema);
 
         Product.findByIdAndUpdate(id, {$set: data}, function (err, product) {
@@ -56,7 +56,7 @@ var Products = function (models) {
                         user: req.session.uId,
                         date: new Date().toISOString()
                     };
-                    updateOnlySelectedFields(req, id, data, res, next);
+                    updateOnlySelectedFields(req, res, next, id, data);
                 } else {
                     res.status(403).send();
                 }
@@ -84,7 +84,7 @@ var Products = function (models) {
         }
     };
 
-    function getProductImages(req, data, res, next) {
+    function getProductImages(req, res, next, data) {
         var query = models.get(req.session.lastDb, "Products", ProductSchema).find({});
         query.where('_id').in(data.ids).
             select('_id imageSrc').
@@ -119,7 +119,7 @@ var Products = function (models) {
                     fs.mkdir(dir, function (errr) {
                         if (!errr)
                             uploadFileArray(req, res, function (files) {
-                                uploadProductFile(req, res, req.headers.id, files);
+                                uploadProductFile(req, res, next, req.headers.id, files);
                             });
                     });
                 });
@@ -130,12 +130,12 @@ var Products = function (models) {
                         fs.mkdir(dir, function (errr) {
                             if (!errr)
                                 uploadFileArray(req, res, function (files) {
-                                    uploadProductFile(req, res, req.headers.id, files);
+                                    uploadProductFile(req, res, next, req.headers.id, files);
                                 });
                         });
                     } else {
                         uploadFileArray(req, res, function (files) {
-                            uploadProductFile(req, res, req.headers.id, files);
+                            uploadProductFile(req, res, next, req.headers.id, files);
                         });
                     }
                 });
@@ -143,7 +143,7 @@ var Products = function (models) {
         });
     };
 
-    function addAtach(req, _id, files, res, next) {//to be deleted
+    function addAtach(req, res, next, _id, files) {//to be deleted
         models.get(req.session.lastDb, "Product", ProductSchema).findByIdAndUpdate(_id, {$push: {attachments: {$each: files}}}, {upsert: true}, function (err, result) {
             if (err) {
                 next(err);
@@ -153,11 +153,11 @@ var Products = function (models) {
         });
     }// end update
 
-    function uploadProductFile(req, res, id, files) {
+    function uploadProductFile(req, res, next, id, files) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getEditWritAccess(req, req.session.uId, 58, function (access) {
                 if (access) {
-                    addAtach(req, id, files, res);
+                    addAtach(req, res, next, id, files);
                 } else {
                     res.status(403).send();
                 }
@@ -167,7 +167,7 @@ var Products = function (models) {
         }
     };
 
-    function remove(req, _id, res, next) {
+    function remove(req, res, next, _id) {
         models.get(req.session.lastDb, "Products", ProductSchema).remove({_id: _id}, function (err, product) {
             if (err) {
                 return next(err);
