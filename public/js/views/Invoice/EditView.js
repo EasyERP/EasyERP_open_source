@@ -3,13 +3,14 @@ define([
         'views/Assignees/AssigneesView',
         "views/Invoice/InvoiceProductItems",
         "views/Payment/CreateView",
+        "views/Payment/list/ListHeaderInvoice",
         "common",
         "custom",
         "dataService",
         "populate",
         'constants'
     ],
-    function (EditTemplate, AssigneesView, InvoiceItemView, PaymentCreateView, common, Custom, dataService, populate, CONSTANTS) {
+    function (EditTemplate, AssigneesView, InvoiceItemView, PaymentCreateView, listHederInvoice, common, Custom, dataService, populate, CONSTANTS) {
 
         var EditView = Backbone.View.extend({
             contentType: "Invoice",
@@ -47,6 +48,62 @@ define([
 
                 var paymentView = new PaymentCreateView({model: this.currentModel});
 
+            },
+
+            cancelInvoice: function (e) {
+                e.preventDefault();
+
+                var self = this;
+
+                populate.fetchWorkflow({
+                    wId: 'Invoice',
+                    source: 'purchase',
+                    targetSource: 'invoice',
+                    status: 'Cancelled',
+                    order: 1
+                }, function (workflow) {
+                    if (workflow && workflow.error) {
+                        return alert(workflow.error.statusText);
+                    }
+
+                    self.currentModel.save({
+                        workflow: workflow._id
+                    }, {
+                        headers: {
+                            mid: 57
+                        },
+                        patch: true,
+                        success: function () {
+                            Backbone.history.navigate("easyErp/Invoice", {trigger: true});
+                        }
+                    });
+                });
+            },
+
+            setDraft: function (e) {
+                e.preventDefault();
+
+                var self = this;
+
+                populate.fetchWorkflow({
+                    wId: 'Invoice'
+                }, function (workflow) {
+                    if (workflow && workflow.error) {
+                        return alert(workflow.error.statusText);
+                    }
+
+                    self.currentModel.save({
+                        workflow: workflow._id
+                    }, {
+                        headers: {
+                            mid: 57
+                        },
+                        patch: true,
+                        success: function () {
+                            Backbone.history.navigate("easyErp/Invoice", {trigger: true});
+                        }
+                    });
+                });
             },
 
             showDetailsBox: function (e) {
@@ -291,6 +348,10 @@ define([
                     }).render().el
                 );
 
+                var paymentContainer = this.$el.find('#payments-container');
+                paymentContainer.append(
+                    new listHederInvoice().render({model: this.currentModel.toJSON()}).el
+                );
 
                 populate.get2name("#supplier", "/supplier", {}, this, false);
                 populate.get2name("#salesPerson", "/getForDdByRelatedUser", {}, this, true, true);

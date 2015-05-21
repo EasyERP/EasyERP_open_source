@@ -1,14 +1,15 @@
 define([
-	"text!templates/Invoice/CreateTemplate.html",
-    "models/InvoiceModel",
-    "common",
-	"populate",
-    "views/Invoice/InvoiceProductItems",
-    "views/Assignees/AssigneesView",
-    "dataService",
-    'constants'
+        "text!templates/Invoice/CreateTemplate.html",
+        "models/InvoiceModel",
+        "common",
+        "populate",
+        "views/Invoice/InvoiceProductItems",
+        "views/Assignees/AssigneesView",
+        "views/Payment/list/ListHeaderInvoice",
+        "dataService",
+        'constants'
     ],
-    function (CreateTemplate, InvoiceModel, common, populate, InvoiceItemView, AssigneesView, dataService, CONSTANTS ) {
+    function (CreateTemplate, InvoiceModel, common, populate, InvoiceItemView, AssigneesView, listHederInvoice, dataService, CONSTANTS) {
 
         var CreateView = Backbone.View.extend({
             el: "#content-holder",
@@ -18,28 +19,28 @@ define([
             initialize: function (options) {
                 _.bindAll(this, "saveItem", "render");
                 this.model = new InvoiceModel();
-				this.responseObj = {};
+                this.responseObj = {};
                 this.render();
             },
 
             events: {
                 'keydown': 'keydownHandler',
                 'click .dialog-tabs a': 'changeTab',
-				"click .details":"showDetailsBox",
+                "click .details": "showDetailsBox",
                 "click .current-selected": "showNewSelect",
                 "click": "hideNewSelect",
-				"click .newSelectList li:not(.miniStylePagination)": "chooseOption",
+                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
                 "click .newSelectList li.miniStylePagination": "notHide",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect"
             },
-            showNewSelect:function(e,prev,next){
-                populate.showSelect(e,prev,next,this);
+            showNewSelect: function (e, prev, next) {
+                populate.showSelect(e, prev, next, this);
                 return false;
-                
+
             },
             notHide: function () {
-				return false;
+                return false;
             },
             hideNewSelect: function () {
                 $(".newSelectList").hide();
@@ -49,15 +50,15 @@ define([
                 holder.text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
             },
 
-			nextSelect:function(e){
-				this.showNewSelect(e,false,true);
-			},
-			prevSelect:function(e){
-				this.showNewSelect(e,true,false);
-			},
-			showDetailsBox:function(e){
-				$(e.target).parent().find(".details-box").toggle();
-			},
+            nextSelect: function (e) {
+                this.showNewSelect(e, false, true);
+            },
+            prevSelect: function (e) {
+                this.showNewSelect(e, true, false);
+            },
+            showDetailsBox: function (e) {
+                $(e.target).parent().find(".details-box").toggle();
+            },
 
             keydownHandler: function (e) {
                 switch (e.which) {
@@ -114,7 +115,7 @@ define([
                 var unTaxed = parseFloat(this.$("#totalUntaxes").text());
                 var balance = parseFloat(this.$("#balance").text());
 
-                var payments ={
+                var payments = {
                     total: total,
                     unTaxed: unTaxed,
                     balance: balance
@@ -124,22 +125,22 @@ define([
                     for (var i = selectedLength - 1; i >= 0; i--) {
                         targetEl = $(selectedProducts[i]);
                         productId = targetEl.data('id');
-                            if (productId) {
-                                quantity = targetEl.find('[data-name="quantity"]').text();
-                                price = targetEl.find('[data-name="price"]').text();
-                                description = targetEl.find('[data-name="productDescr"]').text();
-                                taxes = targetEl.find('.taxes').text();
-                                amount = targetEl.find('.amount').text();
+                        if (productId) {
+                            quantity = targetEl.find('[data-name="quantity"]').text();
+                            price = targetEl.find('[data-name="price"]').text();
+                            description = targetEl.find('[data-name="productDescr"]').text();
+                            taxes = targetEl.find('.taxes').text();
+                            amount = targetEl.find('.amount').text();
 
-                                products.push({
-                                    product: productId,
-                                    description: description,
-                                    unitPrice: price,
-                                    quantity: quantity,
-                                    taxes: taxes,
-                                    subTotal: amount
-                                });
-                            }
+                            products.push({
+                                product: productId,
+                                description: description,
+                                unitPrice: price,
+                                quantity: quantity,
+                                taxes: taxes,
+                                subTotal: amount
+                            });
+                        }
                     }
                 }
 
@@ -206,7 +207,7 @@ define([
 
             },
 
-            hideDialog: function() {
+            hideDialog: function () {
                 $(".edit-dialog").remove();
                 $(".add-group-dialog").remove();
                 $(".add-user-dialog").remove();
@@ -219,13 +220,13 @@ define([
                 var invoiceItemContainer;
 
                 this.$el = $(formString).dialog({
-					closeOnEscape: false,
+                    closeOnEscape: false,
                     autoOpen: true,
                     resizable: true,
                     dialogClass: "edit-dialog",
                     title: "Create Invoice",
                     width: "900px",
-					position:{within:$("#wrapper")},
+                    position: {within: $("#wrapper")},
                     buttons: [
                         {
                             id: "create-invoice-dialog",
@@ -235,12 +236,12 @@ define([
                             }
                         },
 
-						{
-						    text: "Cancel",
-						    click: function () {
+                        {
+                            text: "Cancel",
+                            click: function () {
                                 self.hideDialog();
                             }
-						}]
+                        }]
 
                 });
 
@@ -256,11 +257,17 @@ define([
                     new InvoiceItemView({balanceVisible: true}).render().el
                 );
 
+                var paymentContainer = this.$el.find('#payments-container');
+                paymentContainer.append(
+                    new listHederInvoice().render().el
+                );
+
+
                 populate.get2name("#supplier", "/supplier", {}, this, false, true);
                 populate.get("#payment_terms", "/paymentTerm", {}, 'name', this, true, true);
-                populate.get2name("#salesPerson", "/getForDdByRelatedUser",{},this,true,true);
+                populate.get2name("#salesPerson", "/getForDdByRelatedUser", {}, this, true, true);
                 populate.fetchWorkflow({wId: 'Invoice'}, function (response) {
-                    if(!response.error){
+                    if (!response.error) {
                         self.defaultWorkflow = response._id;
                     }
                 });
