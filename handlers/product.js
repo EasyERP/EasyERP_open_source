@@ -68,12 +68,12 @@ var Products = function (models) {
 
     this.getProductsImages = function (req, res, next) {
         var data = {};
-        data.ids = req.params.ids || [];
+        data.ids = req.query.ids || [];
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getReadAccess(req, req.session.uId, 58, function (access) {
                 if (access) {
-                    getProductImages(req, data, res, next);
+                    getProductImages(req, res, next, data);
                 } else {
                     res.status(403).send();
                 }
@@ -315,7 +315,7 @@ var Products = function (models) {
     };
 
     function getProductsById(req, res, next) {
-        var id = req.params.id;
+        var id = req.query.id;
         var Product = models.get(req.session.lastDb, "Products", ProductSchema);
 
         var departmentSearcher;
