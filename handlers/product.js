@@ -290,8 +290,8 @@ var Products = function (models) {
                         );
                     };
 
-                    contentSearcher = function (quotationsIds, waterfallCallback) {
-                        optionsObject._id = {$in: quotationsIds};
+                    contentSearcher = function (productsIds, waterfallCallback) {
+                        optionsObject._id = {$in: productsIds};
                         var query = Product.find(optionsObject).limit(count).skip(skip).sort(sort);
                         query.exec(waterfallCallback);
                     };
@@ -387,7 +387,7 @@ var Products = function (models) {
             );
         };
 
-        contentSearcher = function (quotationsIds, waterfallCallback) {
+        contentSearcher = function (productsIds, waterfallCallback) {
             var query;
 
             query = Product.findById(id);
@@ -566,8 +566,8 @@ var Products = function (models) {
             );
         };
 
-        contentSearcher = function (quotationsIds, waterfallCallback) {
-            optionsObject._id = {$in: quotationsIds};
+        contentSearcher = function (productsIds, waterfallCallback) {
+            optionsObject._id = {$in: productsIds};
             var query = Product.find(optionsObject).limit(count).skip(skip);
             query.exec(waterfallCallback);
         };

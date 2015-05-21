@@ -74,6 +74,7 @@ define(['libs/date.format', 'common', 'constants'], function (dateformat, common
                     case CONTENT_TYPES.QUOTATION:
                     case CONTENT_TYPES.ORDER:
                     case CONTENT_TYPES.INVOICE:
+                    case CONTENT_TYPES.PAYMENT:
                         App.currentViewType = 'list';
                         break;
                     case CONTENT_TYPES.APPLICATIONS:
