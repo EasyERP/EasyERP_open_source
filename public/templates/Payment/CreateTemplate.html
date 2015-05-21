@@ -10,16 +10,18 @@
                         <dt><label for="supplierDD">Supplier</label></dt>
                         <dd>
                             <%if(invoice && invoice.supplier){%>
-                                <a id="supplierDd" class="current-selected" href="javascript:;" data-id="<%=invoice.supplier._id%>"><%=invoice.supplier.fullName%></a>
+                            <a id="supplierDd" class="current-selected" href="javascript:;"
+                               data-id="<%=invoice.supplier._id%>"><%=invoice.supplier.fullName%></a>
                             <%} else {%>
-                                <a id="supplierDd" class="current-selected" href="javascript:;">Select</a>
+                            <a id="supplierDd" class="current-selected" href="javascript:;">Select</a>
                             <%}%>
                         </dd>
                         <dt>
                             <label for="paidAmount">Paid Amount</label>
                         </dt>
                         <dd>
-                            <input type="text" name="paidAmount" id="paidAmount" maxlength="10" value="<%=invoice.paymentInfo ? invoice.paymentInfo.total : 0%>">
+                            <input type="text" name="paidAmount" id="paidAmount" maxlength="10"
+                                   value="<%=invoice.paymentInfo ? invoice.paymentInfo.total : 0%>">
                             <span>€</span>
                         </dd>
                         <dt>
@@ -40,12 +42,15 @@
                             <a id="period" class="current-selected" href="javascript:;">Select</a>
                         </dd>
                         <dt><label for="paymentRef">Payment Ref</label></dt>
-                        <dd><input type="text" name="paymentRef" id="paymentRef" maxlength="20"></dd>
-<!--                        <dt><label for="memo">Memo</label></dt>
-                        <dd><input type="text" name="memo" id="memo" maxlength="20"></dd>-->
+                        <dd>
+                            <input type="text" name="paymentRef" id="paymentRef" maxlength="20"
+                                   value="<%=invoice.sourceDocument%>">
+                        </dd>
+                        <!--                        <dt><label for="memo">Memo</label></dt>
+                                                <dd><input type="text" name="memo" id="memo" maxlength="20"></dd>-->
                     </dl>
                 </div>
-                <div class="half-block left">
+                <div id="differenceAmountContainer" class="half-block left hidden">
                     <dt><label>Difference Amount</label></dt>
                     <dd><span id="differenceAmount"></span></dd>
                     <!--<dt><label for="paymentDifference">Payment Difference</label></dt>
