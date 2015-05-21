@@ -205,9 +205,9 @@ define([
                 currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
                 dataService.getData("/workflow/fetch", {
-                    wId: 'Order',
+                    wId: 'Invoice',
                     source: 'purchase',
-                    targetSource: 'quotation'
+                    targetSource: 'invoice'
                 }, function (stages) {
                     //For Filter Logic
                     /*var stage = (self.filter) ? self.filter.workflow || [] : [];
