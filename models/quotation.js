@@ -69,7 +69,7 @@ module.exports = (function () {
         var db = quotation.db.db;
 
         db.collection('settings').findAndModify({
-                _id: db.databaseName,
+                dbName: db.databaseName,
                 name: 'quotation'
             },
             [['name', 1]],

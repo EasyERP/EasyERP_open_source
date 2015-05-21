@@ -1,4 +1,4 @@
-<%if (paymentCollection) {
+<%if (paymentCollection && paymentCollection.length) {
 paymentCollection.forEach(function(payment) {%>
 <tr data-id="<%=payment._id%>">
     <td data-name="date"><%=payment.date%></td>

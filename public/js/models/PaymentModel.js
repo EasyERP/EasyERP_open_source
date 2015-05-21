@@ -25,23 +25,9 @@ define(['Validation', 'common'], function (Validation, common) {
             return "/payment";
         },
         parse: function (model) {
-            /*var products = model.products;
-
-             if(products){
-             products = _.map(products, function(product){
-             if(product.scheduledDate){
-             product.scheduledDate = common.utcDateToLocaleDate(product.scheduledDate);
-             }
-
-             return product;
-             });
-             }
-             if(model.expectedDate){
-             model.expectedDate = common.utcDateToLocaleDate(model.expectedDate);
-             }
-             if(model.orderDate){
-             model.orderDate = common.utcDateToLocaleDate(model.orderDate);
-             }*/
+            if (model.date) {
+                model.date = common.utcDateToLocaleDate(model.date);
+            }
             return model;
         }
     });

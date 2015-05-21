@@ -19,7 +19,7 @@ define([
             initialize: function (options) {
                 if (options) {
                     this.invoiceModel = options.model;
-                    this.totalAmount = this.invoiceModel.get('paymentInfo').total || 0;
+                    this.totalAmount = this.invoiceModel.get('paymentInfo').balance || 0;
                 }
                 this.responseObj = {};
                 this.model = new PaymentModel();

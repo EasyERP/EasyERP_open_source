@@ -358,7 +358,7 @@ var Invoice = function (models) {
                         query.populate('supplier', '_id name').
                             populate('salesPerson', 'name _id').
                             populate('products.product', '_id name').
-                            populate('payments', '_id name').
+                            populate('payments', '_id name date paymentRef paidAmount').
                             populate('department', '_id departmentName').
                             populate('createdBy.user').
                             populate('editedBy.user').

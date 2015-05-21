@@ -31,7 +31,7 @@ var Payment = function (models) {
         function savePayment(invoice, waterfallCallback) {
             var payment = new Payment(body);
 
-            payment.paidAmount = invoice.paymentInfo ? invoice.paymentInfo.total : 0;
+            //payment.paidAmount = invoice.paymentInfo ? invoice.paymentInfo.total : 0;
             payment.name = invoice.sourceDocument;
             payment.whoCanRW = invoice.whoCanRW;
             payment.groups = invoice.groups;
@@ -47,7 +47,7 @@ var Payment = function (models) {
         };
 
         function invoiceUpdater(invoice, payment, waterfallCallback) {
-            var tottalToPay = (invoice.paymentInfo) ? invoice.paymentInfo.total : 0;
+            var tottalToPay = (invoice.paymentInfo) ? invoice.paymentInfo.balance : 0;
             var paid = payment.paidAmount;
             var isNotFullPaid;
             var request = {
@@ -78,7 +78,8 @@ var Payment = function (models) {
                 }
 
                 invoice.workflow = workflow._id;
-                invoice.balance = tottalToPay - paid;
+                invoice.paymentInfo.balance = (tottalToPay - paid).toFixed(2);
+                invoice.payments.push(payment._id);
                 invoice.save(waterfallCallback);
             });
         };
