@@ -12,8 +12,6 @@ define([
         events: {},
 
         initialize: function (options) {
-
-            this.currentModel = (options.model) ? options.model : options.collection.getElement();
             this.render();
         },
 
