@@ -19,8 +19,10 @@ module.exports = (function () {
     require('./nationality.js');
     require('./opportunitie.js');
     require('./payment.js');
+    require('./paymentMethod.js');
     require('./paymentTerm.js');
     require('./priority.js');
+    require('./period.js');
     require('./product.js');
     require('./productTypes.js');
     require('./profile.js');
