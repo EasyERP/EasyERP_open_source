@@ -39,7 +39,7 @@ module.exports = (function () {
 
     paymentSchema.pre('save', function (next) {
         var payment = this;
-        var db = quotation.db.db;
+        var db = payment.db.db;
 
         db.collection('settings').findAndModify({
                 dbName: db.databaseName,
