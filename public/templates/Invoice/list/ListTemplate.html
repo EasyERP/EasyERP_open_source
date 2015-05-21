@@ -14,7 +14,15 @@
     <td class="unTaxed"><%=(Invoice.paymentInfo) ? Invoice.paymentInfo.unTaxed.toFixed(2) : '0.00'%></td>
     <td class="total"><%=(Invoice.paymentInfo) ? Invoice.paymentInfo.total.toFixed(2) : '0.00'%></td>
     <td id='<%=Invoice._id%>'>
-        <a href="javascript:;" class="stageSelect"><%=Invoice.workflow ? Invoice.workflow.name: 'Undefinded'%></a>
+        <%if(Invoice.workflow){%>
+            <%if(Invoice.workflow.status !== 'Done'){%>
+                <a href="javascript:;" class="stageSelect"><%=Invoice.workflow.name%></a>
+            <% } else {%>
+                <span><%=Invoice.workflow.name%></span>
+            <%}%>
+        <% } else {%>
+            <span> </span>
+        <%}%>
     </td>
 </tr>
 <% }) %>
