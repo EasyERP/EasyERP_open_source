@@ -9,11 +9,23 @@
                     <dl class="opp-info">
                         <dt><label for="supplierDD">Supplier</label></dt>
                         <dd>
-                            <a id="supplierDd" class="current-selected" href="javascript:;">Select</a>
+                            <%if(invoice && invoice.supplier){%>
+                                <a id="supplierDd" class="current-selected" href="javascript:;" data-id="<%=invoice.supplier._id%>"><%=invoice.supplier.fullName%></a>
+                            <%} else {%>
+                                <a id="supplierDd" class="current-selected" href="javascript:;">Select</a>
+                            <%}%>
                         </dd>
-                        <dt><label for="paidAmount">Paid Amount</label></dt>
-                        <dd><input type="text" name="paidAmount" id="paidAmount" maxlength="10"></dd>
-                        <dt><label for="paymentMethod">Payment Method</label></dt>
+                        <dt>
+                            <label for="paidAmount">Paid Amount</label>
+                        </dt>
+                        <dd>
+                            <input type="text" name="paidAmount" id="paidAmount" maxlength="10" value="<%=invoice.paymentInfo ? invoice.paymentInfo.total : 0%>">
+                            <span>€</span>
+                        </dd>
+                        <dt>
+                            <label for="paymentMethod">Payment Method
+                            </label>
+                        </dt>
                         <dd>
                             <a id="paymentMethod" class="current-selected" href="javascript:;">Select</a>
                         </dd>

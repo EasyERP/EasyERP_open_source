@@ -5,21 +5,23 @@ define([
     "text!templates/Payment/CreateTemplate.html",
     "collections/Persons/PersonsCollection",
     "collections/Departments/DepartmentsCollection",
-    "models/QuotationModel",
+    "models/PaymentModel",
     "common",
     "populate",
     'constants'
     ],
-    function (CreateTemplate, PersonCollection, DepartmentCollection, QuotationModel, common, populate, constants) {
+    function (CreateTemplate, PersonCollection, DepartmentCollection, PaymentModel, common, populate, constants) {
         var CreateView = Backbone.View.extend({
             el: "#paymentHolder",
             contentType: "Payment",
             template: _.template(CreateTemplate),
 
             initialize: function (options) {
-                //_.bindAll(this, "saveItem", "render");
+                if(options){
+                    this.invoiceModel = options.model;
+                }
                 this.responseObj = {};
-                this.model = new QuotationModel();
+                this.model = new PaymentModel();
                 this.render();
             },
 
@@ -58,8 +60,9 @@ define([
             },
             render: function () {
                 var self = this;
+                var htmBody = this.template({invoice: this.invoiceModel.toJSON()});
 
-                this.$el = $(this.template()).dialog({
+                this.$el = $(htmBody).dialog({
                     closeOnEscape: false,
                     autoOpen: true,
                     resizable: true,

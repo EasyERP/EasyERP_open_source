@@ -25,6 +25,7 @@ module.exports = function (app, mainDb) {
     var paymentTermRouter = require('./paymentTerm')(models);
     var deliverToTermRouter = require('./deliverTo')(models);
     var workflowRouter = require('./workflow')(models);
+    var paymentRouter = require('./payment')(models);
 
 
     app.get('/', function (req, res, next) {
@@ -58,6 +59,8 @@ module.exports = function (app, mainDb) {
     app.use('/deliverTo', deliverToTermRouter);
 
     app.use('/workflow', workflowRouter);
+
+    app.use('/payment', paymentRouter);
 
     app.get('/getDBS', function (req, res) {
         res.send(200, {dbsNames: dbsNames});

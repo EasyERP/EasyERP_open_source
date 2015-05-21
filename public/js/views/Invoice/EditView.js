@@ -45,9 +45,7 @@ define([
             newPayment: function (e) {
                 e.preventDefault();
 
-                var targetEl = $(e.target);
-                var paymentView = new PaymentCreateView();
-                var paymentHtml = paymentView.render().el;
+                var paymentView = new PaymentCreateView({model: this.currentModel});
 
             },
 
@@ -265,6 +263,7 @@ define([
                     dialogClass: "edit-invoice-dialog",
                     title: "Edit Invoice",
                     width: "900",
+                    position: {my: "center bottom", at: "center", of: window},
                     buttons: [
                         {
                             text: "Save",

@@ -48,7 +48,7 @@ define([
 					top: top,
 					left: left
 				});
-			} 
+			}
         });
         $.datepicker.setDefaults({
             dateFormat: "d M, yy",

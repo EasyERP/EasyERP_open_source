@@ -43,6 +43,7 @@ module.exports = (function () {
         paymentTerms: {type: ObjectId, ref: 'PaymentTerm', default: null},
 
         paymentInfo: payments,
+        payments: {type: ObjectId, ref: 'Payment', default: null},
         products: [ products],
 
         workflow: {type: ObjectId, ref: 'workflows', default: null},
