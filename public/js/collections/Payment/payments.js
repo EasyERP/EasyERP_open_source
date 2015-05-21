@@ -22,8 +22,11 @@ define([
                     }
                 });
             },
-            parse: function(response){
-                return response.success;
+            parse: function(model){
+                if (model.date) {
+                    model.date = common.utcDateToLocaleDate(model.date);
+                }
+                return model;
             }
         });
         return PaymentCollection;
