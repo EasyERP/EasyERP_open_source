@@ -46,7 +46,7 @@ var Payment = function (models) {
 
     function getPaymentFilter(req, res, next) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, 59/*TODO*/, function (access) {
+            access.getReadAccess(req, req.session.uId, 60/*TODO*/, function (access) {
                 if (access) {
                     var Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
                     var optionsObject = {};
