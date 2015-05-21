@@ -7,18 +7,25 @@
                     <li><a href="javascript:;">Assignees</a></li>
                     <li class="right">
                         <%if(model.workflow && model.workflow.status !== 'Cancelled'){%>
-                        <button class="red newPayment">
-                            <span>Pay</span>
-                        </button>
-                        <%if(model.workflow.status === 'New'){%>
-                            <button class="red cancelInvoice">
-                                <span>Cancel</span>
-                            </button>
-                        <%} else {%>
-                            <button class="red refund">
-                                <span>Refund</span>
-                            </button>
-                        <%}%>
+                            <%if(model.workflow.status === 'New'){%>
+                                <button class="red newPayment">
+                                    <span>Pay</span>
+                                </button>
+                                <button class="red cancelInvoice">
+                                    <span>Cancel</span>
+                                </button>
+                            <%} else if(model.workflow.status === 'Done'){%>
+                                <button class="red refund">
+                                    <span>Refund</span>
+                                </button>
+                            <%} else {%>
+                                <button class="red newPayment">
+                                    <span>Pay</span>
+                                </button>
+                                <button class="red refund">
+                                    <span>Refund</span>
+                                </button>
+                            <%}%>
                         <%} else {%>
                         <button class="red setDraft">
                             <span>Set Draft</span>
