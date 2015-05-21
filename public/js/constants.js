@@ -25,6 +25,8 @@ define([], function(){
         LEADSWORKFLOW: 'LeadsWorkflow',
         MYPROFILE: 'myProfile',
         PRODUCT: 'Product',
+        SUPPLIERPAYMENTS: 'supplierPayments',
+        CUSTOMERPAYMENTS: 'customerPayments',
 
         RESPONSES: {
             CREATE_QUOTATION: 'Please check at most one supplier or create one',
