@@ -14,7 +14,7 @@ var Payment = function (models) {
     var access = require("../Modules/additions/access.js")(models);
 
     var PaymentSchema = mongoose.Schemas['Payment'];
-    var InvoiceSchema = mongoose.Schemas['Payment'];
+    var InvoiceSchema = mongoose.Schemas['Invoice'];
     var waterfallTasks;
 
     this.create = function (req, res, next) {
