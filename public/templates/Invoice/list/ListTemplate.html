@@ -16,7 +16,7 @@
     <td id='<%=Invoice._id%>'>
         <%if(Invoice.workflow){%>
             <%if(Invoice.workflow.status !== 'Done'){%>
-                <a href="javascript:;" class="stageSelect <%=Invoice.workflow.status.toLowerCase()%>"><%=Invoice.workflow.name%></a>
+                <a href="javascript:;" class="stageSelect <%=Invoice.workflow.status.toLowerCase().replace(' ', '')%>"><%=Invoice.workflow.name%></a>
             <% } else {%>
                 <span class="done"><%=Invoice.workflow.name%></span>
             <%}%>
