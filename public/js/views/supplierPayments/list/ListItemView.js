@@ -2,11 +2,11 @@
  * Created by soundstorm on 21.05.15.
  */
 define([
-        'text!templates/Payment/list/ListTemplate.html'
+        'text!templates/supplierPayments/list/ListTemplate.html'
     ],
 
     function (PaymentListTemplate) {
-        var ProductListItemView = Backbone.View.extend({
+        var PaymentListItemView = Backbone.View.extend({
             el: '#listTable',
 
             initialize: function(options) {
@@ -18,5 +18,5 @@ define([
             }
         });
 
-        return ProductListItemView;
+        return PaymentListItemView;
     });

@@ -46,7 +46,7 @@ var Payment = function (models) {
 
     function getPaymentFilter(req, res, next) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, 60/*TODO*/, function (access) {
+            access.getReadAccess(req, req.session.uId, 60, function (access) {
                 if (access) {
                     var Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
                     var optionsObject = {};
@@ -130,6 +130,9 @@ var Payment = function (models) {
                     contentSearcher = function (paymentsIds, waterfallCallback) {
                         optionsObject._id = {$in: paymentsIds};
                         var query = Payment.find(optionsObject).limit(count).skip(skip).sort(sort);
+
+                        query.populate('supplier', '_id name fullName');
+
                         query.exec(waterfallCallback);
                     };
 
@@ -139,7 +142,7 @@ var Payment = function (models) {
                         if(err){
                             return next(err);
                         }
-                        res.status(200).send({success: result});
+                        res.status(200).send(result);
                     });
                 } else {
                     res.send(403);

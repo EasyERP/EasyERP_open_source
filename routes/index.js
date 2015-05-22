@@ -62,7 +62,7 @@ module.exports = function (app, mainDb) {
 
     app.use('/workflow', workflowRouter);
 
-    app.use('/payment', paymentRouter);
+    app.use('/supplierPayments', paymentRouter);
 
     app.use('/period', periodRouter);
 
