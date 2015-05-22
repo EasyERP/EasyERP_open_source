@@ -247,6 +247,37 @@ define([
                 }, this);
             },
 
+            showMoreContent: function (newModels) {
+                var holder = this.$el;
+                var itemView;
+                var pagenation;
+
+                holder.find("#listTable").empty();
+                itemView = new listItemView({
+                    collection: newModels,
+                    page: holder.find("#currentShowPage").val(),
+                    itemsNumber: holder.find("span#itemsNumber").text()
+                });//added two parameters page and items number
+
+                holder.append(itemView.render());
+
+                itemView.undelegateEvents();
+
+                pagenation = holder.find('.pagination');
+
+                if (newModels.length !== 0) {
+                    pagenation.show();
+                } else {
+                    pagenation.hide();
+                }
+
+                $("#top-bar-deleteBtn").hide();
+                $('#check_all').prop('checked', false);
+
+                holder.find('#timeRecivingDataFromServer').remove();
+                holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+            },
+
             renderContent: function () {
                 var currentEl = this.$el;
                 var tBody = currentEl.find('#listTable');
