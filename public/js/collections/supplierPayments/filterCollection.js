@@ -17,10 +17,12 @@ define([
             showMore: function (options) {
                 var that = this;
                 var filterObject = options || {};
+
                 filterObject['page'] = (options && options.page) ? options.page : this.page;
                 filterObject['count'] = (options && options.count) ? options.count : this.namberToShow;
                 filterObject['viewType'] = (options && options.viewType) ? options.viewType : this.viewType;
                 filterObject['contentType'] = (options && options.contentType) ? options.contentType : this.contentType;
+
                 this.fetch({
                     data: filterObject,
                     waite: true,
@@ -59,39 +61,6 @@ define([
                 });
             },
 
-            showMore: function (options) {
-                var that = this;
-                var filterObject = {};
-
-                if (options) {
-                    for (var i in options) {
-                        filterObject[i] = options[i];
-                    }
-                }
-                if (options && options.page) {
-                    this.page = options.page;
-                }
-                if (options && options.count) {
-                    this.namberToShow = options.count;
-                }
-
-                filterObject['page'] = this.page;
-                filterObject['count'] = this.namberToShow;
-                filterObject['filter'] = (options) ? options.filter : {};
-                filterObject['contentType'] = (options && options.contentType) ? options.contentType: this.contentType;
-
-                this.fetch({
-                    data: filterObject,
-                    waite: true,
-                    success: function (models) {
-                        that.page ++;
-                        that.trigger('showmore', models);
-                    },
-                    error: function() {
-                        alert('Some Error');
-                    }
-                });
-            },
 
             parse: function (payments) {
                 /*_.map(quotations, function (quotation) {

@@ -81,7 +81,6 @@ var Quotation = function (models) {
 
     this.totalCollectionLength = function (req, res, next) {
         var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
-        var result = {};
         var departmentSearcher;
         var contentIdsSearcher;
         var contentSearcher;
@@ -89,13 +88,6 @@ var Quotation = function (models) {
         var waterfallTasks;
         var contentType = req.query.contentType;
         var isOrder = !!(contentType === 'Order');
-        /* var data = {};
-
-         for (var i in req.query) {
-         data[i] = req.query[i];
-         }*/
-
-        result['showMore'] = false;
 
         departmentSearcher = function (waterfallCallback) {
             models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
@@ -161,8 +153,10 @@ var Quotation = function (models) {
 
         contentSearcher = function (quotationsIds, waterfallCallback) {
             var queryObject = {_id: {$in: quotationsIds}};
+            var query;
+
             queryObject.isOrder = isOrder;
-            var query = Quotation.count(queryObject);
+            query = Quotation.count(queryObject);
 
             query.count(waterfallCallback);
         };
@@ -179,13 +173,7 @@ var Quotation = function (models) {
     };
 
     this.getByViewType = function (req, res, next) {
-        //var viewType = req.params.viewType;
         var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
-        /*var queryParams = {};
-
-        for (var i in req.query) {
-            queryParams[i] = req.query[i];
-        }*/
 
         var departmentSearcher;
         var contentIdsSearcher;
@@ -204,12 +192,6 @@ var Quotation = function (models) {
         } else {
             sort = {"name": 1};
         }
-
-        /* var data = {};
-
-         for (var i in req.query) {
-         data[i] = req.query[i];
-         }*/
 
         departmentSearcher = function (waterfallCallback) {
             models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(

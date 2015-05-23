@@ -233,27 +233,12 @@ var Payment = function (models) {
     };
 
     this.totalCollectionLength = function (req, res, next) {
-        var result = {};
-        var data = {};
-
-        for (var i in req.query) {
-            data[i] = req.query[i];
-        }
-
-        result['showMore'] = false;
-
-        var optionsObject = {};
-
         var Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
         var departmentSearcher;
         var contentIdsSearcher;
 
         var contentSearcher;
         var waterfallTasks;
-
-        var count = req.query.count ? req.query.count : 50;
-        var page = req.query.page;
-        var skip = (page - 1) > 0 ? (page - 1) * 50 : 0;
 
         departmentSearcher = function (waterfallCallback) {
             models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
@@ -277,7 +262,6 @@ var Payment = function (models) {
                 {
                     $match: {
                         $and: [
-                            optionsObject,
                             {
                                 $or: [
                                     {
@@ -318,23 +302,21 @@ var Payment = function (models) {
         };
 
         contentSearcher = function (paymentIds, waterfallCallback) {
-            optionsObject._id = {$in: paymentIds};
-            var query = Payment.find(optionsObject).limit(count).skip(skip);
-            query.exec(waterfallCallback);
+            var query;
+            var queryObject = {_id: {$in: paymentIds}};
+
+            query = Payment.find(queryObject);
+            query.count(waterfallCallback);
         };
 
         waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
 
-        async.waterfall(waterfallTasks, function (err, payments) {
+        async.waterfall(waterfallTasks, function (err, result) {
             if (err) {
                 return next(err);
-            } else {
-                if (req.query.currentNumber && req.query.currentNumber < payments.length) {
-                    result['showMore'] = true;
-                }
-                result['count'] = payments.length;
-                res.status(200).send(result);
             }
+
+            res.status(200).send({count: result});
         });
     };
 };
