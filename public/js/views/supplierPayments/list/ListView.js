@@ -4,10 +4,11 @@
 define([
         'text!templates/supplierPayments/list/ListHeader.html',
         'views/supplierPayments/list/ListItemView',
+        'views/supplierPayments/list/ListTotalView',
         'collections/supplierPayments/filterCollection',
         'dataService'
     ],
-    function (listTemplate, listItemView, paymentCollection, dataService) {
+    function (listTemplate, listItemView, listTotalView, paymentCollection, dataService) {
         var PaymentListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -261,6 +262,8 @@ define([
 
                 holder.append(itemView.render());
 
+                holder.append(new listTotalView({element: holder.find("#listTable"), cellSpan:7}).render());
+
                 itemView.undelegateEvents();
 
                 pagenation = holder.find('.pagination');
@@ -287,6 +290,8 @@ define([
                 var itemView = new listItemView({ collection: this.collection,page: currentEl.find("#currentShowPage").val(), itemsNumber: currentEl.find("span#itemsNumber").text() });
                 tBody.append(itemView.render());
 
+                currentEl.append(new listTotalView({element: tBody, cellSpan:7}).render());
+
                 var pagenation = this.$el.find('.pagination');
                 if (this.collection.length === 0) {
                     pagenation.hide();
@@ -308,6 +313,7 @@ define([
                     page: this.page,
                     itemsNumber: this.collection.namberToShow
                 }).render());
+                currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 7}).render());
 
                 $('#check_all').click(function () {
                     $(':checkbox').prop('checked', this.checked);
@@ -330,7 +336,83 @@ define([
                 currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
                 return this;
+            },
+
+            deleteItemsRender: function (deleteCounter, deletePage) {
+                dataService.getData('/supplierPayments/totalCollectionLength', {
+                    contentType: this.contentType,
+                    filter: this.filter,
+                    newCollection: this.newCollection
+                }, function (response, context) {
+                    context.listLength = response.count || 0;
+                }, this);
+                this.deleteRender(deleteCounter, deletePage, {
+                    filter: this.filter,
+                    newCollection: this.newCollection,
+                    parrentContentId: this.parrentContentId
+                });
+
+                var holder = this.$el;
+
+                if (deleteCounter !== this.collectionLength) {
+                    var created = holder.find('#timeRecivingDataFromServer');
+                    created.before(new listItemView({ collection: this.collection, page: holder.find("#currentShowPage").val(), itemsNumber: holder.find("span#itemsNumber").text()}).render());//added two parameters page and items number
+                }
+
+                holder.append(new listTotalView({element: holder.find("#listTable"), cellSpan:7}).render());
+                var pagenation = this.$el.find('.pagination');
+                if (this.collection.length === 0) {
+                    pagenation.hide();
+                } else {
+                    pagenation.show();
+                }
+            },
+            deleteItems: function () {
+                var currentEl = this.$el;
+                var that = this;
+                var mid = 39;
+                var model;
+                var localCounter = 0;
+                var count = $("#listTable input:checked").length;
+                this.collectionLength = this.collection.length;
+
+                $.each($("#listTable input:checked"), function (index, checkbox) {
+                    model = that.collection.get(checkbox.value);
+                    model.destroy({
+                        headers: {
+                            mid: mid
+                        },
+                        wait:true,
+                        success:function(){
+                            that.listLength--;
+                            localCounter++;
+
+                            if (index==count-1){
+
+                                that.deleteCounter =localCounter;
+                                that.deletePage = $("#currentShowPage").val();
+                                that.deleteItemsRender(that.deleteCounter, that.deletePage);
+
+                            }
+                        },
+                        error: function (model, res) {
+                            if(res.status===403&&index===0){
+                                alert("You do not have permission to perform this action");
+                            }
+                            that.listLength--;
+                            localCounter++;
+                            if (index==count-1){
+                                that.deleteCounter =localCounter;
+                                that.deletePage = $("#currentShowPage").val();
+                                that.deleteItemsRender(that.deleteCounter, that.deletePage);
+
+                            }
+
+                        }
+                    });
+                });
             }
         });
+
         return PaymentListView;
     });

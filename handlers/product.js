@@ -478,15 +478,10 @@ var Products = function (models) {
 
     this.totalCollectionLength = function (req, res, next) {
         var result = {};
-        var data = {};
-
-        for (var i in req.query) {
-            data[i] = req.query[i];
-        }
+        var data = req.query;
 
         result['showMore'] = false;
 
-        var contentType = req.params.contentType;
         var optionsObject = {};
 
         var Product = models.get(req.session.lastDb, 'Product', ProductSchema);
@@ -496,13 +491,9 @@ var Products = function (models) {
         var contentSearcher;
         var waterfallTasks;
 
-        if (data.filter.letter) {
+        if (data.filter && data.filter.letter) {
             optionsObject['name'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
         }
-
-        var count = req.query.count ? req.query.count : 50;
-        var page = req.query.page;
-        var skip = (page - 1) > 0 ? (page - 1) * 50 : 0;
 
         departmentSearcher = function (waterfallCallback) {
             models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
@@ -567,8 +558,10 @@ var Products = function (models) {
         };
 
         contentSearcher = function (productsIds, waterfallCallback) {
-            optionsObject._id = {$in: productsIds};
-            var query = Product.find(optionsObject).limit(count).skip(skip);
+            var query;
+            var queryObject = {_id: {$in: productsIds}};
+
+            query = Product.find(queryObject);
             query.exec(waterfallCallback);
         };
 
@@ -577,13 +570,13 @@ var Products = function (models) {
         async.waterfall(waterfallTasks, function (err, products) {
             if (err) {
                 return next(err);
-            } else {
-                if (req.query.currentNumber && req.query.currentNumber < products.length) {
-                    result['showMore'] = true;
-                }
-                result['count'] = products.length;
-                res.status(200).send(result);
             }
+            if (data.currentNumber && data.currentNumber < products.length) {
+                result['showMore'] = true;
+            }
+            result['count'] = products.length;
+            res.status(200).send(result);
+
         });
     };
 
