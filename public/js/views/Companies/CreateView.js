@@ -4,11 +4,12 @@ define([
     "collections/Employees/EmployeesCollection",
     "collections/Departments/DepartmentsCollection",
     'views/Assignees/AssigneesView',
+    'views/CustomersSuppliers/salesPurchases',
     "models/CompaniesModel",
     "common",
 	"populate"
 ],
-    function (CreateTemplate, CompaniesCollection, EmployeesCollection, DepartmentsCollection, AssigneesView, CompanyModel, common, populate) {
+    function (CreateTemplate, CompaniesCollection, EmployeesCollection, DepartmentsCollection, AssigneesView, SalesPurchasesView, CompanyModel, common, populate) {
 
         var CreateView = Backbone.View.extend({
             el: "#content-holder",
@@ -137,6 +138,8 @@ define([
                 var active = (this.$el.find("#active").is(":checked")) ? true : false;
                 var usersId=[];
                 var groupsId=[];
+                var whoCanRW;
+
                 $(".groupsAndUser tr").each(function(){
                     if ($(this).data("type")=="targetUsers"){
                         usersId.push($(this).data("id"));
@@ -146,7 +149,8 @@ define([
                     }
 
                 });
-                var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
+
+                whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
                 companyModel.save({
                     name: name,
                     imageSrc: this.imageSrc,
@@ -194,7 +198,10 @@ define([
                 var companyModel = new CompanyModel();
                 var formString = this.template({});
 				var self = this;
-                this.$el = $(formString).dialog({
+                var notDiv;
+                var salesPurchasesEl;
+
+                var thisEl = this.$el = $(formString).dialog({
 					closeOnEscape: false,
                     autoOpen:true,
                     resizable:true,
@@ -216,16 +223,24 @@ define([
 						}]
 
                 });
-				var notDiv = this.$el.find('.assignees-container');
+
+				notDiv = thisEl.find('.assignees-container');
+                salesPurchasesEl = thisEl.find('#salesPurchases-container');
+
                 notDiv.append(
                     new AssigneesView({
-                        model: this.currentModel,
+                        model: this.currentModel
                     }).render().el
                 );
-				populate.get("#departmentDd", "/DepartmentsForDd",{},"departmentName",this,true,true);
-				populate.get("#language", "/Languages",{},"name",this,true,false);
-				populate.get2name("#employeesDd", "/getSalesPerson",{},this,true,true);
+
+                salesPurchasesEl.append(
+                    new SalesPurchasesView({
+                        parrent: self
+                    }).render().el
+                );
+
                 common.canvasDraw({ model: companyModel.toJSON() }, this);
+
                 this.$el.find('#date').datepicker({
                     dateFormat: "d M, yy",
                     changeMonth: true,
@@ -233,7 +248,9 @@ define([
                     yearRange: '-100y:c+nn',
                     maxDate: '-18y'
                 });
+
                 this.delegateEvents(this.events);
+
                 return this;
             }
         });
