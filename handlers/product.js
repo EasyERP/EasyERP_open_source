@@ -419,8 +419,6 @@ var Products = function (models) {
 
         switch (viewType) {
             case "list":
-                getProductsFilter(req, res, next);
-                break;
             case "thumbnails":
                 getProductsFilter(req, res, next);
                 break;
