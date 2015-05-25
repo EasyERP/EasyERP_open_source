@@ -87,7 +87,7 @@ var Quotation = function (models) {
 
         var waterfallTasks;
         var contentType = req.query.contentType;
-        var isOrder = !!(contentType === 'Order');
+        var isOrder = (contentType === 'Order' || contentType === 'salesOrder');
 
         departmentSearcher = function (waterfallCallback) {
             models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
@@ -181,7 +181,7 @@ var Quotation = function (models) {
         var waterfallTasks;
 
         var contentType = req.query.contentType;
-        var isOrder = !!(contentType === 'Order');
+        var isOrder = (contentType === 'Order' || contentType === 'salesOrder');
         var sort = {};
         var count = req.query.count ? req.query.count : 50;
         var page = req.query.page;

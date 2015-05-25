@@ -27,6 +27,9 @@ define([], function(){
         PRODUCT: 'Product',
         SUPPLIERPAYMENTS: 'supplierPayments',
         CUSTOMERPAYMENTS: 'customerPayments',
+        SALESQUOTATION: 'salesQuotation',
+        SALESORDER: 'salesOrder',
+        SALESINVOICE: 'salesInvoice',
 
         RESPONSES: {
             CREATE_QUOTATION: 'Please check at most one supplier or create one',
