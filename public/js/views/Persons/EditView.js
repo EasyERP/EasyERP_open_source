@@ -87,16 +87,17 @@ define([
             saveItem: function () {
                 var self = this;
                 var mid = 39;
+                var thisEl = this.$el;
 
                 //var dateBirthSt = $.trim(this.$el.find("#dateBirth").val());
-                var dateBirth = this.$el.find(".dateBirth").val();
+                var dateBirth = thisEl.find(".dateBirth").val();
                 var company = $('#companiesDd').data("id");
                 company = (company) ? company : null;
 
                 var department = $("#departmentDd").data("id");
                 department = (department) ? department : null;
 
-                var jobPosition = $.trim(this.$el.find('#jobPositionInput').val());
+                var jobPosition = $.trim(thisEl.find('#jobPositionInput').val());
                 jobPosition = (jobPosition) ? jobPosition : null;
 
                 var usersId = [];
@@ -110,37 +111,42 @@ define([
                     }
 
                 });
-                var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
+                var whoCanRW = thisEl.find("[name='whoCanRW']:checked").val();
 
                 var data = {
                     imageSrc: this.imageSrc,
                     name: {
-                        first: $.trim(this.$el.find('#firstName').val()),
-                        last: $.trim(this.$el.find('#lastName').val())
+                        first: $.trim(thisEl.find('#firstName').val()),
+                        last: $.trim(thisEl.find('#lastName').val())
                     },
                     dateBirth: dateBirth,
                     department: department,
                     company: company,
                     address: {
-                        street: $.trim(this.$el.find('#addressInput').val()),
-                        city: $.trim(this.$el.find('#cityInput').val()),
-                        state: $.trim(this.$el.find('#stateInput').val()),
-                        zip: $.trim(this.$el.find('#zipInput').val()),
-                        country: $.trim(this.$el.find('#countryInput').val())
+                        street: $.trim(thisEl.find('#addressInput').val()),
+                        city: $.trim(thisEl.find('#cityInput').val()),
+                        state: $.trim(thisEl.find('#stateInput').val()),
+                        zip: $.trim(thisEl.find('#zipInput').val()),
+                        country: $.trim(thisEl.find('#countryInput').val())
                     },
-                    website: $.trim(this.$el.find('#websiteInput').val()),
+                    website: $.trim(thisEl.find('#websiteInput').val()),
                     jobPosition: jobPosition,
-                    skype: $.trim(this.$el.find('#skype').val()),
+                    skype: $.trim(thisEl.find('#skype').val()),
                     phones: {
-                        phone: $.trim(this.$el.find('#phoneInput').val()),
-                        mobile: $.trim(this.$el.find('#mobileInput').val()),
-                        fax: $.trim(this.$el.find('#faxInput').val())
+                        phone: $.trim(thisEl.find('#phoneInput').val()),
+                        mobile: $.trim(thisEl.find('#mobileInput').val()),
+                        fax: $.trim(thisEl.find('#faxInput').val())
                     },
-                    email: $.trim(this.$el.find('#emailInput').val()),
+                    email: $.trim(thisEl.find('#emailInput').val()),
                     salesPurchases: {
-                        isCustomer: $('#isCustomerInput').is(':checked'),
-                        isSupplier: $('#isSupplierInput').is(':checked'),
-                        active: $('#isActiveInput').is(':checked')
+                        isCustomer: thisEl.find("#isCustomer").is(":checked"),
+                        isSupplier: thisEl.find("#isSupplier").is(":checked"),
+                        active: thisEl.find("#active").is(":checked"),
+                        implementedBy: thisEl.find("#implementedBy").data("id"),
+                        salesPerson: thisEl.find('#employeesDd').data("id"),
+                        salesTeam: thisEl.find("#departmentDd").data("id"),
+                        reference: thisEl.find("#reference").val(),
+                        language: thisEl.find("#language").text()
                     },
                     groups: {
                         owner: $("#allUsersSelect").data("id"),
@@ -282,6 +288,7 @@ define([
                         });
 
                     }
+                this.delegateEvents(this.events);
                 return this;
             }
 
