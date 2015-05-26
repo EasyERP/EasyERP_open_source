@@ -1,0 +1,25 @@
+<% invoiceCollection.forEach(function(Invoice, index){ %>
+<tr data-id="<%=Invoice._id%>"
+    <%if (Invoice.workflow && Invoice.workflow.status === 'Cancelled') { %>
+    class="canceledListItem"
+    <%}%>>
+    <td class = "notForm"><input type="checkbox" value="<%=Invoice._id%>" class="checkbox" /></td>
+    <td><%=startNumber + index + 1%></td>
+    <td><%=Invoice.invoiceDate%></td>
+    <td><%=(Invoice.description) ? Invoice.description : ''%></td>
+    <td><%=(Invoice.salesPerson)? Invoice.salesPerson.name.first+' '+Invoice.salesPerson.name.last:''%></td>
+    <td><%=(Invoice.supplier.name)? Invoice.supplier.name.first+' '+Invoice.supplier.name.last:' - - - '%></td>
+    <td><%=(Invoice.analytic) ? Invoice.analytic : ''%></td>
+    <td id='<%=Invoice._id%>'>
+        <%if(Invoice.workflow){%>
+            <%if(Invoice.workflow.status !== 'Done'){%>
+                <a href="javascript:;" class="stageSelect <%=Invoice.workflow.status.toLowerCase().replace(' ', '')%>"><%=Invoice.workflow.name%></a>
+            <% } else {%>
+                <span class="done"><%=Invoice.workflow.name%></span>
+            <%}%>
+        <% } else {%>
+            <span> </span>
+        <%}%>
+    </td>
+</tr>
+<% }) %>

@@ -133,9 +133,9 @@ define([
                 var salesTeam = this.$("#departmentDd").data("id");
                 var reference = $.trim(this.$el.find("#reference").val());
                 var language = $.trim(this.$el.find("#language").text());
-                var isCustomer = (this.$el.find("#isCustomer").is(":checked")) ? true : false;
-                var isSupplier = (this.$el.find("#isSupplier").is(":checked")) ? true : false;
-                var active = (this.$el.find("#active").is(":checked")) ? true : false;
+                var isCustomer = this.$el.find("#isCustomer").is(":checked");
+                var isSupplier = this.$el.find("#isSupplier").is(":checked");
+                var active = this.$el.find("#active").is(":checked");
                 var usersId=[];
                 var groupsId=[];
                 var whoCanRW;
