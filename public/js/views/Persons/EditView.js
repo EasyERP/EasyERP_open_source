@@ -88,6 +88,8 @@ define([
                 var self = this;
                 var mid = 39;
                 var thisEl = this.$el;
+                var whoCanRW;
+                var data;
 
                 //var dateBirthSt = $.trim(this.$el.find("#dateBirth").val());
                 var dateBirth = thisEl.find(".dateBirth").val();
@@ -100,6 +102,28 @@ define([
                 var jobPosition = $.trim(thisEl.find('#jobPositionInput').val());
                 jobPosition = (jobPosition) ? jobPosition : null;
 
+                var isCustomer = thisEl.find("#isCustomer").is(":checked");
+                var isSupplier = thisEl.find("#isSupplier").is(":checked");
+                var active = thisEl.find("#active").is(":checked");
+                var salesPerson = thisEl.find('#employeesDd').data("id");
+                var salesTeam = thisEl.find("#departmentDd").data("id");
+                var implementedBy = thisEl.find("#implementedBy").data("id");
+                var reference = thisEl.find("#reference").val();
+                var language = thisEl.find("#language").text();
+
+                if (event) {
+                    event.preventDefault()
+                }
+                if (salesPerson === '') {
+                    salesPerson = null
+                }
+                if (salesTeam === '') {
+                    salesTeam = null
+                }
+                if (implementedBy === '') {
+                    implementedBy = null
+                }
+
                 var usersId = [];
                 var groupsId = [];
                 $(".groupsAndUser tr").each(function () {
@@ -111,9 +135,9 @@ define([
                     }
 
                 });
-                var whoCanRW = thisEl.find("[name='whoCanRW']:checked").val();
+                whoCanRW = thisEl.find("[name='whoCanRW']:checked").val();
 
-                var data = {
+                data = {
                     imageSrc: this.imageSrc,
                     name: {
                         first: $.trim(thisEl.find('#firstName').val()),
@@ -139,14 +163,14 @@ define([
                     },
                     email: $.trim(thisEl.find('#emailInput').val()),
                     salesPurchases: {
-                        isCustomer: thisEl.find("#isCustomer").is(":checked"),
-                        isSupplier: thisEl.find("#isSupplier").is(":checked"),
-                        active: thisEl.find("#active").is(":checked"),
-                        implementedBy: thisEl.find("#implementedBy").data("id"),
-                        salesPerson: thisEl.find('#employeesDd').data("id"),
-                        salesTeam: thisEl.find("#departmentDd").data("id"),
-                        reference: thisEl.find("#reference").val(),
-                        language: thisEl.find("#language").text()
+                        isCustomer: isCustomer,
+                        isSupplier: isSupplier,
+                        active: active,
+                        salesPerson: salesPerson,
+                        salesTeam: salesTeam,
+                        implementedBy: implementedBy,
+                        reference: reference,
+                        language: language
                     },
                     groups: {
                         owner: $("#allUsersSelect").data("id"),
