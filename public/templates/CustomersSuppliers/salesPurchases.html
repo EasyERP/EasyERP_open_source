@@ -7,7 +7,7 @@
         </span>
     </div>-->
     <dl class="person-info">
-        <dt><label for="isCustomer">Sales Team</label></dt>
+        <dt><label for="isCustomer">Is Customer</label></dt>
         <dd>
             <input id="isCustomer" type="checkbox" class="checkbox" <%=(model &&  model.salesPurchases && model.salesPurchases.isCustomer) ? 'checked' :  ''%>>
         </dd>
@@ -32,7 +32,7 @@
             Purchase
         </span>
     </div>-->
-    <dt><label for="isSupplier">Sales Team</label></dt>
+    <dt><label for="isSupplier">Is Supplier</label></dt>
     <dd>
         <input id="isSupplier" type="checkbox" class="checkbox" <%=(model &&  model.salesPurchases && model.salesPurchases.isSupplier) ? 'checked' :  ''%>>
     </dd>
