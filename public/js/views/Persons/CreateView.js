@@ -1,13 +1,14 @@
 define([
-	"text!templates/Persons/CreateTemplate.html",
-    "collections/Persons/PersonsCollection",
-    "collections/Departments/DepartmentsCollection",
-    'views/Assignees/AssigneesView',
-    "models/PersonsModel",
-    "common",
-	"populate"
-],
-    function (CreateTemplate, PersonsCollection, DepartmentsCollection, AssigneesView, PersonModel, common, populate) {
+        "text!templates/Persons/CreateTemplate.html",
+        "collections/Persons/PersonsCollection",
+        "collections/Departments/DepartmentsCollection",
+        'views/Assignees/AssigneesView',
+        'views/CustomersSuppliers/salesPurchases',
+        "models/PersonsModel",
+        "common",
+        "populate"
+    ],
+    function (CreateTemplate, PersonsCollection, DepartmentsCollection, AssigneesView, SalesPurchasesView, PersonModel, common, populate) {
 
         var CreateView = Backbone.View.extend({
             el: "#content-holder",
@@ -19,7 +20,7 @@ define([
                 _.bindAll(this, "saveItem", "render");
                 this.model = new PersonModel();
                 this.models = (options && options.model) ? options.model : null;
-				this.responseObj = {};
+                this.responseObj = {};
                 this.render();
             },
 
@@ -28,37 +29,37 @@ define([
                 "mouseleave .avatar": "hideEdit",
                 'keydown': 'keydownHandler',
                 'click .dialog-tabs a': 'changeTab',
-				"click .details":"showDetailsBox",
+                "click .details": "showDetailsBox",
                 "click .current-selected": "showNewSelect",
                 "click": "hideNewSelect",
-				"click .newSelectList li:not(.miniStylePagination)": "chooseOption",
+                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
                 "click .newSelectList li.miniStylePagination": "notHide",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect"
             },
-            showNewSelect:function(e,prev,next){
-                populate.showSelect(e,prev,next,this);
+            showNewSelect: function (e, prev, next) {
+                populate.showSelect(e, prev, next, this);
                 return false;
-                
+
             },
             notHide: function () {
-				return false;
+                return false;
             },
             hideNewSelect: function () {
                 $(".newSelectList").hide();
             },
             chooseOption: function (e) {
-                $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id",$(e.target).attr("id"));
+                $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
             },
-			nextSelect:function(e){
-				this.showNewSelect(e,false,true);
-			},
-			prevSelect:function(e){
-				this.showNewSelect(e,true,false);
-			},
-			showDetailsBox:function(e){
-				$(e.target).parent().find(".details-box").toggle();
-			},
+            nextSelect: function (e) {
+                this.showNewSelect(e, false, true);
+            },
+            prevSelect: function (e) {
+                this.showNewSelect(e, true, false);
+            },
+            showDetailsBox: function (e) {
+                $(e.target).parent().find(".details-box").toggle();
+            },
 
             keydownHandler: function (e) {
                 switch (e.which) {
@@ -79,8 +80,6 @@ define([
                 dialog_holder.find(".dialog-tabs-item.active").removeClass("active");
                 dialog_holder.find(".dialog-tabs-item").eq(n).addClass("active");
             },
-
-  
 
 
             showEdit: function () {
@@ -145,9 +144,9 @@ define([
                     },
                     email: $.trim($('#emailInput').val()),
                     salesPurchases: {
-                        isCustomer: $('#isCustomerInput').is(':checked'),
-                        isSupplier: $('#isSupplierInput').is(':checked'),
-                        active: $('#isActiveInput').is('checked')
+                        isCustomer: this.$el.find("#isCustomer").is(":checked"),
+                        isSupplier: this.$el.find("#isSupplier").is(":checked"),
+                        active: this.$el.find("#active").is(":checked")
                     },
                     groups: {
                         owner: $("#allUsersSelect").data("id"),
@@ -166,10 +165,10 @@ define([
                     wait: true,
                     success: function () {
                         self.hideDialog();
-                        Backbone.history.navigate("easyErp/Persons", { trigger: true });
+                        Backbone.history.navigate("easyErp/Persons", {trigger: true});
                     },
                     error: function (model, xhr) {
-						self.errorNotification(xhr);
+                        self.errorNotification(xhr);
                     }
                 });
 
@@ -183,16 +182,20 @@ define([
             },
 
             render: function () {
+                var personModel = new PersonModel();
                 var formString = this.template();
                 var self = this;
-                this.$el = $(formString).dialog({
-					closeOnEscape: false,
+                var notDiv;
+                var salesPurchasesEl;
+
+                var thisEl = this.$el = $(formString).dialog({
+                    closeOnEscape: false,
                     autoOpen: true,
                     resizable: true,
                     dialogClass: "edit-dialog",
                     title: "Edit Person",
                     width: "900px",
-					position:{within:$("#wrapper")},
+                    position: {within: $("#wrapper")},
                     buttons: [
                         {
                             id: "create-person-dialog",
@@ -202,23 +205,31 @@ define([
                             }
                         },
 
-						{
-						    text: "Cancel",
-						    click: function () {
+                        {
+                            text: "Cancel",
+                            click: function () {
                                 self.hideDialog();
                             }
-						}]
+                        }]
 
                 });
-				var notDiv = this.$el.find('.assignees-container');
+                notDiv = thisEl.find('.assignees-container');
+                salesPurchasesEl = thisEl.find('#salesPurchases-container');
+
                 notDiv.append(
                     new AssigneesView({
                         model: null
-					}).render().el
+                    }).render().el
                 );
-                var personModel = new PersonModel();
-				populate.getCompanies("#companiesDd", "/CompaniesForDd",{},this,false,true, (this.models)?this.models._id:null);
-                common.canvasDraw({ model: personModel.toJSON() }, this);
+
+                salesPurchasesEl.append(
+                    new SalesPurchasesView({
+                        parrent: self
+                    }).render().el
+                );
+
+                populate.getCompanies("#companiesDd", "/CompaniesForDd", {}, this, false, true, (this.models) ? this.models._id : null);
+                common.canvasDraw({model: personModel.toJSON()}, this);
                 this.$el.find('.dateBirth').datepicker({
                     dateFormat: "d M, yy",
                     changeMonth: true,
