@@ -265,7 +265,7 @@ define([
                 populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
 
                 populate.fetchWorkflow({
-                    wId: 'Order',
+                    wId: 'Purchase Order',
                     source: 'purchase',
                     targetSource: 'quotation'
                 }, function (response) {

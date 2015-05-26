@@ -189,7 +189,7 @@ var Payment = function (models) {
             var isNotFullPaid;
             var request = {
                 query: {
-                    wId: 'Invoice',
+                    wId: 'Purchase Invoice',
                     source: 'purchase',
                     targetSource: 'invoice'
                 },

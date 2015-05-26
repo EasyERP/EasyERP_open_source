@@ -100,7 +100,7 @@ define([
                 var self = this;
 
                 populate.fetchWorkflow({
-                    wId: 'Order',
+                    wId: 'Purchase Order',
                     source: 'purchase',
                     status: 'In Progress',
                     targetSource: 'order'
@@ -136,7 +136,7 @@ define([
                 var self = this;
 
                 populate.fetchWorkflow({
-                    wId: 'Order',
+                    wId: 'Purchase Order',
                     source: 'purchase',
                     targetSource: 'quotation',
                     status: 'Cancelled',

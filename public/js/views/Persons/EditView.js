@@ -96,8 +96,8 @@ define([
                 var company = $('#companiesDd').data("id");
                 company = (company) ? company : null;
 
-                var department = $("#departmentDd").data("id");
-                department = (department) ? department : null;
+                /*var department = $("#departmentDd").data("id");
+                department = (department) ? department : null;*/
 
                 var jobPosition = $.trim(thisEl.find('#jobPositionInput').val());
                 jobPosition = (jobPosition) ? jobPosition : null;
@@ -144,7 +144,7 @@ define([
                         last: $.trim(thisEl.find('#lastName').val())
                     },
                     dateBirth: dateBirth,
-                    department: department,
+                    /*department: department,*/
                     company: company,
                     address: {
                         street: $.trim(thisEl.find('#addressInput').val()),

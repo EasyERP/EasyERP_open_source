@@ -253,7 +253,7 @@ define([
         var fetchWorkflow =  function (data, callback) {
             if (typeof data === 'function') {
                 callback = data;
-                data = {wId: 'Order'};
+                data = {wId: 'Purchase Order'};
             }
 
             dataService.getData('workflow/getFirstForConvert', data, callback);

@@ -244,8 +244,9 @@
                             if (data.salesPurchases.reference !== '') {
                                 _customer.salesPurchases.reference = data.salesPurchases.reference;
                             }
-
-                            _customer.salesPurchases.receiveMessages = !!data.salesPurchases.receiveMessages;
+                            if (data.salesPurchases.receiveMessages) {
+                                _customer.salesPurchases.receiveMessages = data.salesPurchases.receiveMessages;
+                            }
 
                             if (data.imageSrc) {
                                 _customer.imageSrc = data.imageSrc;
@@ -417,6 +418,9 @@
         getPersonById: function (req, id, response) {
             var query = models.get(req.session.lastDb, "Customers", customerSchema).findById(id);
             query.populate('company', '_id name').
+                populate('salesPurchases.salesPerson', '_id name fullName').
+                populate('salesPurchases.salesTeam', '_id departmentName').
+                populate('salesPurchases.implementedBy', '_id name fullName').
                 populate('department', '_id departmentName').
                 populate('createdBy.user').
                 populate('editedBy.user').

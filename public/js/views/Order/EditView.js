@@ -99,7 +99,7 @@ define([
                 var self = this;
 
                 populate.fetchWorkflow({
-                    wId: 'Order',
+                    wId: 'Purchase Order',
                     status: 'Cancelled',
                     order: 1
                 }, function (workflow) {

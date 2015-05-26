@@ -56,7 +56,7 @@ define([
                 var self = this;
 
                 populate.fetchWorkflow({
-                    wId: 'Invoice',
+                    wId: 'Purchase Invoice',
                     source: 'purchase',
                     targetSource: 'invoice',
                     status: 'Cancelled',
@@ -86,7 +86,7 @@ define([
                 var self = this;
 
                 populate.fetchWorkflow({
-                    wId: 'Invoice'
+                    wId: 'Purchase Invoice'
                 }, function (workflow) {
                     if (workflow && workflow.error) {
                         return alert(workflow.error.statusText);

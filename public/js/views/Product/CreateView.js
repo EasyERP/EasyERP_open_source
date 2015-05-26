@@ -202,7 +202,7 @@ define([
                 var self = this;
                 this.$el = $(formString).dialog({
                     dialogClass: "edit-dialog",
-                    width: 800,
+                    width: 900,
                     title: "Create Product",
                     buttons:{
                         save:{

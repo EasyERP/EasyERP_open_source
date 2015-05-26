@@ -266,7 +266,7 @@ define([
                 populate.get2name("#supplier", "/supplier", {}, this, false, true);
                 populate.get("#payment_terms", "/paymentTerm", {}, 'name', this, true, true);
                 populate.get2name("#salesPerson", "/getForDdByRelatedUser", {}, this, true, true);
-                populate.fetchWorkflow({wId: 'Invoice'}, function (response) {
+                populate.fetchWorkflow({wId: 'Purchase Invoice'}, function (response) {
                     if (!response.error) {
                         self.defaultWorkflow = response._id;
                     }
