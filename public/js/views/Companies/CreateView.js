@@ -131,6 +131,7 @@ define([
                 var internalNotes = $.trim(this.$el.find("#internalNotes").val());
                 var salesPerson = this.$("#employeesDd").data("id");
                 var salesTeam = this.$("#departmentDd").data("id");
+                var implementedBy = this.$("#implementedBy").data("id");
                 var reference = $.trim(this.$el.find("#reference").val());
                 var language = $.trim(this.$el.find("#language").text());
                 var isCustomer = this.$el.find("#isCustomer").is(":checked");
@@ -169,6 +170,7 @@ define([
                         active: active,
                         salesPerson: salesPerson,
                         salesTeam: salesTeam,
+                        implementedBy: implementedBy,
                         reference: reference,
                         language: language
                     },

@@ -125,11 +125,29 @@ define([
                 var whoCanRW;
                 var website;
                 var data;
+                var thisEl = this.$el;
+
+                var isCustomer = thisEl.find("#isCustomer").is(":checked");
+                var isSupplier = thisEl.find("#isSupplier").is(":checked");
+                var active = thisEl.find("#active").is(":checked");
+                var salesPerson = thisEl.find('#employeesDd').data("id");
+                var salesTeam = thisEl.find("#departmentDd").data("id");
+                var implementedBy = thisEl.find("#implementedBy").data("id");
+                var reference = thisEl.find("#reference").val();
+                var language = thisEl.find("#language").text();
 
                 if (event) {
                     event.preventDefault()
                 }
-                ;
+                if (salesPerson === '') {
+                    salesPerson = null
+                }
+                if (salesTeam === '') {
+                    salesTeam = null
+                }
+                if (implementedBy === '') {
+                    implementedBy = null
+                }
 
                 $(".groupsAndUser tr").each(function () {
                     if ($(this).data("type") == "targetUsers") {
@@ -167,13 +185,14 @@ define([
                     internalNotes: $.trim(this.$el.find("#internalNotes").val()),
 
                     salesPurchases: {
-                        isCustomer: this.$el.find("#isCustomer").is(":checked"),
-                        isSupplier: this.$el.find("#isSupplier").is(":checked"),
-                        active: this.$el.find("#active").is(":checked"),
-                        salesPerson: this.$el.find('#employeesDd').data("id") === "" ? null : this.$el.find('#employeesDd').data("id"),
-                        salesTeam: this.$el.find("#departmentDd").data("id") === "" ? null : this.$el.find("#departmentDd").data("id"),
-                        reference: this.$el.find("#reference").val(),
-                        language: this.$el.find("#language").text()
+                        isCustomer: isCustomer,
+                        isSupplier: isSupplier,
+                        active: active,
+                        salesPerson: salesPerson,
+                        salesTeam: salesTeam,
+                        implementedBy: implementedBy,
+                        reference: reference,
+                        language: language
                     },
                     groups: {
                         owner: $("#allUsersSelect").data("id"),
