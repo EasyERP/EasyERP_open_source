@@ -13,15 +13,15 @@
         </dd>
         <dt><label for="departmentDd">Sales Team</label></dt>
         <dd>
-            <a id="departmentDd" class="current-selected" href="javascript:;">Select</a>
+            <a id="departmentDd" class="current-selected" href="javascript:;"><%=(model &&  model.salesPurchases && model.salesPurchases.salesTeam) ? model.salesPurchases.salesTeam.departmentName :  'Select'%></a>
         </dd>
         <dt><label for="employeesDd">Sales Person</label></dt>
         <dd>
-            <a id="employeesDd" class="current-selected" href="javascript:;">Select</a>
+            <a id="employeesDd" class="current-selected" href="javascript:;"><%=(model &&  model.salesPurchases && model.salesPurchases.salesPerson) ? model.salesPurchases.salesPerson.fullName :  'Select'%></a>
         </dd>
         <dt><label for="implementedBy">Implemented By</label></dt>
         <dd>
-            <a id="implementedBy" class="current-selected" href="javascript:;">Select</a>
+            <a id="implementedBy" class="current-selected" href="javascript:;"><%=(model &&  model.salesPurchases && model.salesPurchases.salesPerson) ? model.salesPurchases.salesPerson.fullName :  'Select'%></a>
         </dd>
 
     </dl>

@@ -119,11 +119,17 @@ define([
             },
             saveItem: function (event) {
                 var self = this;
-                if (event) event.preventDefault();
                 var mid = 39;
-
                 var usersId = [];
                 var groupsId = [];
+                var whoCanRW;
+                var website;
+                var data;
+
+                if (event) {
+                    event.preventDefault()
+                }
+                ;
 
                 $(".groupsAndUser tr").each(function () {
                     if ($(this).data("type") == "targetUsers") {
@@ -133,10 +139,12 @@ define([
                         groupsId.push($(this).data("id"));
                     }
                 });
-                var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
-                var website = this.$el.find('#website').val();
+
+                whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
+                website = this.$el.find('#website').val();
+
                 website.replace('http://', '');
-                var data = {
+                data = {
                     name: {
                         first: this.$el.find("#name").val(),
                         last: ''
@@ -195,6 +203,7 @@ define([
 
             deleteItem: function (event) {
                 var mid = 39;
+
                 event.preventDefault();
                 var self = this;
                 var answer = confirm("Realy DELETE items ?!");
@@ -217,10 +226,16 @@ define([
             },
 
             render: function () {
+
                 var formString = this.template({
                     model: this.currentModel.toJSON()
                 });
                 var self = this;
+                var notDiv;
+                var salesPurchasesEl;
+                var thisEl;
+                var model;
+
                 this.$el = $(formString).dialog({
                     closeOnEscape: false,
                     autoOpen: true,
@@ -248,21 +263,33 @@ define([
                     ],
                     modal: true
                 });
-                var notDiv = this.$el.find('.assignees-container');
+
+                thisEl = this.$el;
+                notDiv = this.$el.find('.assignees-container');
+                salesPurchasesEl = thisEl.find('#salesPurchases-container');
+
                 notDiv.append(
                     new AssigneesView({
+                        model: this.currentModel
+                    }).render().el
+                );
+
+                salesPurchasesEl.append(
+                    new SalesPurchasesView({
+                        parrent: self,
                         model: this.currentModel,
+                        editState: true
                     }).render().el
                 );
 
                 $('#text').datepicker({dateFormat: "d M, yy"});
-                populate.get("#departmentDd", "/DepartmentsForDd", {}, "departmentName", this);
-                populate.get("#language", "/Languages", {}, "name", this);
-                populate.get2name("#employeesDd", "/getSalesPerson", {}, this);
+
                 this.delegateEvents(this.events);
                 common.canvasDraw({model: this.currentModel.toJSON()}, this);
-                var model = this.currentModel.toJSON();
-                if (model.groups)
+
+                model = this.currentModel.toJSON();
+
+                if (model.groups) {
                     if (model.groups.users.length > 0 || model.groups.group.length) {
                         $(".groupsAndUser").show();
                         model.groups.group.forEach(function (item) {
@@ -275,7 +302,10 @@ define([
                         });
 
                     }
+                }
+
                 this.delegateEvents(this.events);
+
                 return this;
             }
 

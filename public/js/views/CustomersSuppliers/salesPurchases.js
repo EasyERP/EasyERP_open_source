@@ -12,17 +12,24 @@ define([
             template: _.template(listTemplate),
 
             initialize: function (options) {
-                this.parrent = options ? options.parrent : null
+                if (options) {
+                    this.parrent = options.parrent;
+                    this.model = options.parrent ? options.parrent.model : null;
+                    this.editState = options.editState;
+                }
             },
 
             render: function () {
-                this.$el.append(this.template({}));
+                var isForCreate = !this.editState;
+                var model = this.model ? this.model.toJSON() : null;
 
-                populate.get("#departmentDd", "/DepartmentsForDd", {}, "departmentName", this.parrent, true, true);
-                populate.get2name("#employeesDd", "/getForDdByRelatedUser", {}, this.parrent, true, true);
-                populate.get("#language", "/Languages", {}, "name", this.parrent, true, false);
+                this.$el.append(this.template({model: model}));
+
+                populate.get("#departmentDd", "/DepartmentsForDd", {}, "departmentName", this.parrent, isForCreate, true);
+                populate.get2name("#employeesDd", "/getForDdByRelatedUser", {}, this.parrent, isForCreate, true);
+                populate.get("#language", "/Languages", {}, "name", this.parrent, isForCreate, false);
                 //populate.get2name("#employeesDd", "/getSalesPerson", {}, this.parrent, true, true);
-                populate.get2name("#implementedBy", "/Customer", {}, this.parrent, true, true);
+                populate.get2name("#implementedBy", "/Customer", {}, this.parrent, isForCreate, true);
 
                 return this;
             }

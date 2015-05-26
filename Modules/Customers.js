@@ -437,7 +437,7 @@
         getCompanyById: function (req, id, response) {
             var query = models.get(req.session.lastDb, "Customers", customerSchema).findById(id);
             query.populate('department', '_id departmentName').
-                populate('salesPurchases.salesPerson', '_id name').
+                populate('salesPurchases.salesPerson', '_id name fullName').
                 populate('salesPurchases.salesTeam', '_id departmentName').
                 populate('createdBy.user').
                 populate('editedBy.user').

@@ -85,6 +85,10 @@ module.exports = (function () {
         sequence: { type: Number, default: 0 }
     }, { collection: 'Employees' });
 
+    employeeSchema.virtual('fullName').get(function(){
+        return this.name.first + ' ' + this.name.last;
+    });
+
     mongoose.model('Employees', employeeSchema);
 
     if(!mongoose.Schemas) {

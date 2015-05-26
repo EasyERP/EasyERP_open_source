@@ -1,104 +1,82 @@
 <div class="form-holder">
-  <form method="post" action="" id="editEmployeeForm" class="form">
-    <fieldset>
-      <div class="inner">
-        <ul class="dialog-tabs">
-          <li><a class="active" href="javascript:;">Main</a></li>
-          <li><a href="javascript:;">Assignees</a></li>
-        </ul>
-        <div class="clearfix"></div>
-        <div class="dialog-tabs-items">
-          <div class="dialog-tabs-item active">
-            <div class="avatar">
-              <div class="upload">
-                Edit
-                <input type="file" value="Edit" id="inputImg" accept="image/*">
-              </div>
-              <canvas id="avatar" width="140" height="140"></canvas>
-            </div>
-			<div class="avatarInfoContainer">
-              <div class="half-block left">
-                <dl class="person-info">
-                  <dt><label for="name">Company </label></dt>
-                  <dd><input type="text" name="name" id="name" required value="<%=model.name.first%>" placeholder="Name" maxlength="32"/></dd>
-                  <dt><label for="website">Website </label></dt>
-                  <dd><input type="text" name="website" id="website" value="<%=model.website%>" placeholder="e.g. www.site.com" maxlength="32" /></dd>
-                  <dt><label for="email">Email </label></dt>
-                  <dd><input type="text" name="mail" id="email" value="<%=model.email%>" placeholder="e.g. email@site.com" maxlength="48" /></dd>
-                  <dt><label for="phone">Phone </label></dt>
-                  <dd><input type="text" name="phone" id="phone" value="<%=model.phones.phone%>" placeholder="Phone Number" maxlength="20" /></dd>
-                  <dt><label for="mobile">Mobile </label></dt>
-                  <dd><input type="text" name="mobile" id="mobile" value="<%=model.phones.mobile%>" placeholder="Mobile Number" maxlength="20" /></dd>
-                </dl>
-                <dt><label for="employeesDd">Assigned to</label></dt>
-                <dd>
-				  <a id="employeesDd" data-id="<%=(model.salesPurchases.salesPerson)?model.salesPurchases.salesPerson._id:''%>" class="current-selected" href="javascript:;"><%=(model.salesPurchases.salesPerson)?(model.salesPurchases.salesPerson.name.first+" "+model.salesPurchases.salesPerson.name.last):"Select"%></a>
-                </dd>
-              </div>
-              <div class="half-block left">
-
-                <dl class="person-info">
-                  <dt><label for="street">Street </label></dt>
-                  <dd><input type="text" name="street" id="street" value="<%=model.address.street%>" placeholder="Street..." maxlength="32" /></dd>
-                  <dt><label for="city">City </label></dt>
-                  <dd><input type="text" name="city" id="city" value="<%=model.address.city%>" placeholder="City" maxlength="32" /></dd>
-                  <dt><label for="state">State </label></dt>
-                  <dd><input type="text" name="state" id="state" value="<%=model.address.state%>" placeholder="State" maxlength="32" /></dd>
-                  <dt><label for="zip">Zip </label></dt>
-                  <dd><input type="text" name="zip" id="zip" value="<%=model.address.zip%>" placeholder="Zip" maxlength="32" /></dd>
-                  <dt><label for="country">Country </label></dt>
-                  <dd><input type="text" name="country" id="country" value="<%=model.address.country%>" placeholder="Country" maxlength="32" /></dd>
-                </dl>
-
-              </div>
-              <div class="clearfix"></div>
-            </div>
-			<!--            <div class="details right">...</div> -->
-            <div id="details-dialog">
-			  <!--              <div class="formTitle">
-								<h3 class="left">Sales &amp; Purchases</h3>
-								<div class="clearfix"></div>
-              </div>
-			  <div class="avatarInfoContainer">
-				<div class="half-block left">
-                  <dl class="person-info">
-                    <dt><label for="employeesDd">Sales Person </label></dt>
-                    <dd>
-					  <a id="employeesDd" data-id="<%=(model.salesPurchases.salesPerson)?model.salesPurchases.salesPerson._id:''%>" class="current-selected" href="javascript:;"><%=(model.salesPurchases.salesPerson)?(model.salesPurchases.salesPerson.name.first+" "+model.salesPurchases.salesPerson.name.last):"Select"%></a>
-                    </dd>
-                    <dt><label for="departmentDd">Sales Team </label></dt>
-                    <dd>
-					  <a id="departmentDd" data-id="<%=(model.salesPurchases.salesTeam)?model.salesPurchases.salesTeam._id:''%>" class="current-selected" href="javascript:;"><%=(model.salesPurchases.salesTeam)?(model.salesPurchases.salesTeam.departmentName):"Select"%></a>
-                    </dd>
-                  </dl>
-                </div>
-                <div class="half-block left">
-                  <dl class="person-info">
-                    <dt><label for="reference">Reference </label></dt><dd><input type="text" id="reference" value="<%=model.salesPurchases.reference%>" placeholder="Reference" maxlength="32"/></dd>
-                    <dt><label for="language">Language </label></dt>
-                    <dd>
-					  <a id="language" data-id="<%=(model.salesPurchases.salesTeam)?model.salesPurchases.language:''%>" class="current-selected" href="javascript:;"><%=(model.salesPurchases.language)?(model.salesPurchases.language):"Select"%></a>
-                    </dd>
-                </div>
-              </div>-->
-            </div>
-            <div class="clearfix"></div>
-            <div class="cropImages form" style="display:none;">
-              <div class="formTitle">
-                <h3 class="left">Crop Images</h3>
+    <form method="post" action="" id="editEmployeeForm" class="form">
+        <fieldset>
+            <div class="inner">
+                <ul class="dialog-tabs">
+                    <li><a class="active" href="javascript:;">Main</a></li>
+                    <li><a href="javascript:;">Sales & Purchases</a></li>
+                    <li><a href="javascript:;">Assignees</a></li>
+                </ul>
                 <div class="clearfix"></div>
-              </div><br />
-              <div class="image_input" style="float: left;margin-right: 20px;"></div>
-              <img class="image_output" />
-              <div class="clearfix"></div>
+                <div class="dialog-tabs-items">
+                    <div class="dialog-tabs-item active">
+                        <div class="avatar">
+                            <div class="upload">
+                                Edit
+                                <input type="file" value="Edit" id="inputImg" accept="image/*">
+                            </div>
+                            <canvas id="avatar" width="140" height="140"></canvas>
+                        </div>
+                        <div class="avatarInfoContainer">
+                            <div class="half-block left">
+                                <dl class="person-info">
+                                    <dt><label for="name">Company </label></dt>
+                                    <dd><input type="text" name="name" id="name" required value="<%=model.name.first%>" placeholder="Name" maxlength="32"/></dd>
+                                    <dt><label for="website">Website </label></dt>
+                                    <dd><input type="text" name="website" id="website" value="<%=model.website%>" placeholder="e.g. www.site.com" maxlength="32" /></dd>
+                                    <dt><label for="email">Email </label></dt>
+                                    <dd><input type="text" name="mail" id="email" value="<%=model.email%>" placeholder="e.g. email@site.com" maxlength="48" /></dd>
+                                    <dt><label for="phone">Phone </label></dt>
+                                    <dd><input type="text" name="phone" id="phone" value="<%=model.phones.phone%>" placeholder="Phone Number" maxlength="20" /></dd>
+                                    <dt><label for="mobile">Mobile </label></dt>
+                                    <dd><input type="text" name="mobile" id="mobile" value="<%=model.phones.mobile%>" placeholder="Mobile Number" maxlength="20" /></dd>
+                                </dl>
+                                <dt><label for="employeesDd">Assigned to</label></dt>
+                                <dd>
+                                    <a id="employeesDd" data-id="<%=(model.salesPurchases.salesPerson)?model.salesPurchases.salesPerson._id:''%>" class="current-selected" href="javascript:;"><%=(model.salesPurchases.salesPerson)?(model.salesPurchases.salesPerson.name.first+" "+model.salesPurchases.salesPerson.name.last):"Select"%></a>
+                                </dd>
+                            </div>
+                            <div class="half-block left">
+
+                                <dl class="person-info">
+                                    <dt><label for="street">Street </label></dt>
+                                    <dd><input type="text" name="street" id="street" value="<%=model.address.street%>" placeholder="Street..." maxlength="32" /></dd>
+                                    <dt><label for="city">City </label></dt>
+                                    <dd><input type="text" name="city" id="city" value="<%=model.address.city%>" placeholder="City" maxlength="32" /></dd>
+                                    <dt><label for="state">State </label></dt>
+                                    <dd><input type="text" name="state" id="state" value="<%=model.address.state%>" placeholder="State" maxlength="32" /></dd>
+                                    <dt><label for="zip">Zip </label></dt>
+                                    <dd><input type="text" name="zip" id="zip" value="<%=model.address.zip%>" placeholder="Zip" maxlength="32" /></dd>
+                                    <dt><label for="country">Country </label></dt>
+                                    <dd><input type="text" name="country" id="country" value="<%=model.address.country%>" placeholder="Country" maxlength="32" /></dd>
+                                </dl>
+
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div id="details-dialog">
+
+                        </div>
+                        <div class="clearfix"></div>
+                        <div class="cropImages form" style="display:none;">
+                            <div class="formTitle">
+                                <h3 class="left">Crop Images</h3>
+                                <div class="clearfix"></div>
+                            </div><br />
+                            <div class="image_input" style="float: left;margin-right: 20px;"></div>
+                            <img class="image_output" />
+                            <div class="clearfix"></div>
+                        </div>
+                    </div>
+                    <div class="dialog-tabs-item">
+                        <div id="salesPurchases-container"></div>
+                    </div>
+                    <div class="dialog-tabs-item">
+                        <div class="assignees-container"></div>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
             </div>
-          </div>
-          <div class="dialog-tabs-item">
-			<div class="assignees-container"></div>
-          </div>
-          <div class="clearfix"></div>
-        </div>
-      </div>
-    </fieldset>
-  </form>
+        </fieldset>
+    </form>
 </div>
