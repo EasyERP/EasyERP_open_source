@@ -101,6 +101,7 @@ define([
             saveItem: function () {
                 var self = this;
                 var mid = 39;
+                var thisEl = this.$el;
 
                 var company = $('#companiesDd').data("id");
                 var dateBirth = $(".dateBirth").val();
@@ -120,8 +121,8 @@ define([
                 var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
                 var data = {
                     name: {
-                        first: $.trim(this.$el.find('#firstName').val()),
-                        last: $.trim(this.$el.find('#lastName').val())
+                        first: $.trim(thisEl.find('#firstName').val()),
+                        last: $.trim(thisEl.find('#lastName').val())
                     },
                     imageSrc: this.imageSrc,
                     dateBirth: dateBirth,
@@ -144,9 +145,14 @@ define([
                     },
                     email: $.trim($('#emailInput').val()),
                     salesPurchases: {
-                        isCustomer: this.$el.find("#isCustomer").is(":checked"),
-                        isSupplier: this.$el.find("#isSupplier").is(":checked"),
-                        active: this.$el.find("#active").is(":checked")
+                        isCustomer: thisEl.find("#isCustomer").is(":checked"),
+                        isSupplier: thisEl.find("#isSupplier").is(":checked"),
+                        active: thisEl.find("#active").is(":checked"),
+                        implementedBy: thisEl.find("#implementedBy").data("id"),
+                        salesPerson: thisEl.find('#employeesDd').data("id"),
+                        salesTeam: thisEl.find("#departmentDd").data("id"),
+                        reference: thisEl.find("#reference").val(),
+                        language: thisEl.find("#language").text()
                     },
                     groups: {
                         owner: $("#allUsersSelect").data("id"),
