@@ -223,38 +223,35 @@
                             _customer.title = data.title;
                         }
                         if (data.salesPurchases) {
-                            if (data.salesPurchases.active) {
-                                _customer.salesPurchases.active = data.salesPurchases.active;
-                            }
-                            if (data.salesPurchases.language) {
+                            _customer.salesPurchases.active = !!data.salesPurchases.active;
+
+                            if (data.salesPurchases.language !== '') {
                                 _customer.salesPurchases.language = data.salesPurchases.language;
                             }
-                            if (data.salesPurchases.isCustomer) {
-                                _customer.salesPurchases.isCustomer = data.salesPurchases.isCustomer;
-                            }
-                            if (data.salesPurchases.isSupplier) {
-                                _customer.salesPurchases.isSupplier = data.salesPurchases.isSupplier;
-                            }
-                            if (data.salesPurchases.salesPerson) {
+
+                            _customer.salesPurchases.isCustomer = !!data.salesPurchases.isCustomer;
+                            _customer.salesPurchases.isSupplier = !!data.salesPurchases.isSupplier;
+
+                            if (data.salesPurchases.salesPerson !== '') {
                                 _customer.salesPurchases.salesPerson = data.salesPurchases.salesPerson;
                             }
-                            if (data.salesPurchases.salesTeam) {
+                            if (data.salesPurchases.salesTeam !== '') {
                                 _customer.salesPurchases.salesTeam = data.salesPurchases.salesTeam;
                             }
-                            if (data.salesPurchases.implementedBy) {
+                            if (data.salesPurchases.implementedBy !== '') {
                                 _customer.salesPurchases.implementedBy = data.salesPurchases.implementedBy;
                             }
-                            if (data.salesPurchases.reference) {
+                            if (data.salesPurchases.reference !== '') {
                                 _customer.salesPurchases.reference = data.salesPurchases.reference;
                             }
-                            if (data.salesPurchases.receiveMessages) {
-                                _customer.salesPurchases.receiveMessages = data.usalesPurchases.receiveMessages;
-                            }
+
+                            _customer.salesPurchases.receiveMessages = !!data.salesPurchases.receiveMessages;
+
                             if (data.imageSrc) {
                                 _customer.imageSrc = data.imageSrc;
                             }
                         }
-                        if (data.relatedUser) {
+                        if (data.relatedUser !== '') {
                             _customer.relatedUser = data.relatedUser;
                         }
                         if (data.history) {
