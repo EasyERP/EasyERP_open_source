@@ -41,6 +41,7 @@ module.exports = (function () {
             isSupplier: { type: Boolean, default: false },
             salesPerson: { type: ObjectId, ref: 'Employees', default: null },
             salesTeam: { type: ObjectId, ref: 'Department', default: null },
+            implementedBy: { type: ObjectId, ref: 'Customers', default: null },
             active: { type: Boolean, default: true },
             reference: { type: String, default: '' },
             language: { type: String, default: 'English' },

@@ -9,7 +9,7 @@
     <dl class="person-info">
         <dt><label for="isCustomer">Sales Team</label></dt>
         <dd>
-            <input id="isCustomer" type="checkbox" class="checkbox" checked>
+            <input id="isCustomer" type="checkbox" class="checkbox" <%=(model &&  model.salesPurchases && model.salesPurchases.isCustomer) ? 'checked' :  ''%>>
         </dd>
         <dt><label for="departmentDd">Sales Team</label></dt>
         <dd>
@@ -21,7 +21,7 @@
         </dd>
         <dt><label for="implementedBy">Implemented By</label></dt>
         <dd>
-            <a id="implementedBy" class="current-selected" href="javascript:;"><%=(model &&  model.salesPurchases && model.salesPurchases.salesPerson) ? model.salesPurchases.salesPerson.fullName :  'Select'%></a>
+            <a id="implementedBy" class="current-selected" href="javascript:;"><%=(model &&  model.salesPurchases && model.salesPurchases.implementedBy) ? model.salesPurchases.implementedBy.fullName :  'Select'%></a>
         </dd>
 
     </dl>
@@ -34,7 +34,7 @@
     </div>-->
     <dt><label for="isSupplier">Sales Team</label></dt>
     <dd>
-        <input id="isSupplier" type="checkbox" class="checkbox">
+        <input id="isSupplier" type="checkbox" class="checkbox" <%=(model &&  model.salesPurchases && model.salesPurchases.isSupplier) ? 'checked' :  ''%>>
     </dd>
     <dt><label for="reference">Reference</label></dt>
     <dd>

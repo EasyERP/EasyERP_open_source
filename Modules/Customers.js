@@ -439,6 +439,7 @@
             query.populate('department', '_id departmentName').
                 populate('salesPurchases.salesPerson', '_id name fullName').
                 populate('salesPurchases.salesTeam', '_id departmentName').
+                populate('salesPurchases.implementedBy', '_id name fullName').
                 populate('createdBy.user').
                 populate('editedBy.user').
                 populate('groups.users').
