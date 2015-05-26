@@ -1,12 +1,13 @@
 define([
-    "text!templates/Persons/EditTemplate.html",
-    'views/Assignees/AssigneesView',
-    "common",
-    "custom",
-    "dataService",
-	"populate"
-],
-    function (EditTemplate, AssigneesView, common, Custom, dataService, populate) {
+        "text!templates/Persons/EditTemplate.html",
+        'views/Assignees/AssigneesView',
+        'views/CustomersSuppliers/salesPurchases',
+        "common",
+        "custom",
+        "dataService",
+        "populate"
+    ],
+    function (EditTemplate, AssigneesView, SalesPurchasesView, common, Custom, dataService, populate) {
 
         var EditView = Backbone.View.extend({
             contentType: "Persons",
@@ -17,8 +18,8 @@ define([
                 _.bindAll(this, "render", "saveItem");
                 _.bindAll(this, "render", "deleteItem");
                 this.currentModel = (options.model) ? options.model : options.collection.getElement();
-				this.currentModel.urlRoot = "/Persons";
-				this.responseObj = {};
+                this.currentModel.urlRoot = "/Persons";
+                this.responseObj = {};
                 this.render();
             },
 
@@ -34,33 +35,33 @@ define([
                 "click .newSelectList li.miniStylePagination": "notHide",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-				"click .details":"showDetailsBox"
+                "click .details": "showDetailsBox"
             },
 
-			showDetailsBox:function(e){
-				$(e.target).parent().find(".details-box").toggle();
-			},
+            showDetailsBox: function (e) {
+                $(e.target).parent().find(".details-box").toggle();
+            },
             notHide: function () {
-				return false;
+                return false;
             },
-			nextSelect:function(e){
-				this.showNewSelect(e,false,true);
-			},
-			prevSelect:function(e){
-				this.showNewSelect(e,true,false);
-			},
+            nextSelect: function (e) {
+                this.showNewSelect(e, false, true);
+            },
+            prevSelect: function (e) {
+                this.showNewSelect(e, true, false);
+            },
 
-            changeTab:function(e){
+            changeTab: function (e) {
                 var holder = $(e.target);
                 holder.closest(".dialog-tabs").find("a.active").removeClass("active");
                 holder.addClass("active");
-                var n= holder.parents(".dialog-tabs").find("li").index(holder.parent());
+                var n = holder.parents(".dialog-tabs").find("li").index(holder.parent());
                 var dialog_holder = $(".dialog-tabs-items");
                 dialog_holder.find(".dialog-tabs-item.active").removeClass("active");
                 dialog_holder.find(".dialog-tabs-item").eq(n).addClass("active");
             },
 
-            chooseUser: function(e){
+            chooseUser: function (e) {
                 $(e.target).toggleClass("choosen");
             },
             hideDialog: function () {
@@ -98,13 +99,13 @@ define([
                 var jobPosition = $.trim(this.$el.find('#jobPositionInput').val());
                 jobPosition = (jobPosition) ? jobPosition : null;
 
-                var usersId=[];
-                var groupsId=[];
-                $(".groupsAndUser tr").each(function(){
-                    if ($(this).data("type")=="targetUsers"){
+                var usersId = [];
+                var groupsId = [];
+                $(".groupsAndUser tr").each(function () {
+                    if ($(this).data("type") == "targetUsers") {
                         usersId.push($(this).data("id"));
                     }
-                    if ($(this).data("type")=="targetGroups"){
+                    if ($(this).data("type") == "targetGroups") {
                         groupsId.push($(this).data("id"));
                     }
 
@@ -157,56 +158,60 @@ define([
                     success: function (model) {
                         self.hideDialog();
                         Backbone.history.fragment = "";
-                        Backbone.history.navigate("#easyErp/Persons/form/" + model.id, { trigger: true });
+                        Backbone.history.navigate("#easyErp/Persons/form/" + model.id, {trigger: true});
                     },
                     error: function (model, xhr) {
-						self.errorNotification(xhr);
+                        self.errorNotification(xhr);
                     }
                 });
             },
-            
-            showNewSelect:function(e,prev,next){
-                populate.showSelect(e,prev,next,this);
+
+            showNewSelect: function (e, prev, next) {
+                populate.showSelect(e, prev, next, this);
                 return false;
-                
+
             },
-    
+
             hideNewSelect: function () {
                 $(".newSelectList").hide();
             },
             chooseOption: function (e) {
-                $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id",$(e.target).attr("id"));
+                $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
             },
-            deleteItem: function(event) {
+            deleteItem: function (event) {
                 var mid = 39;
                 event.preventDefault();
                 var self = this;
-                    var answer = confirm("Realy DELETE items ?!");
-                    if (answer == true) {
-                        this.currentModel.destroy({
-                            headers: {
-                                mid: mid
-                            },
-                            success: function () {
-                                $('.edit-person-dialog').remove();
-                                Backbone.history.navigate("easyErp/" + self.contentType, { trigger: true });
-                            },
-                            error: function (model, err) {
-								if (err.status===403){
-									alert("You do not have permission to perform this action");
-								}
-							}
-						});
-					}
+                var answer = confirm("Realy DELETE items ?!");
+                if (answer == true) {
+                    this.currentModel.destroy({
+                        headers: {
+                            mid: mid
+                        },
+                        success: function () {
+                            $('.edit-person-dialog').remove();
+                            Backbone.history.navigate("easyErp/" + self.contentType, {trigger: true});
+                        },
+                        error: function (model, err) {
+                            if (err.status === 403) {
+                                alert("You do not have permission to perform this action");
+                            }
+                        }
+                    });
+                }
 
             },
             render: function () {
                 var self = this;
+                var notDiv;
+                var thisEl;
+                var salesPurchasesEl;
+                var model;
                 var formString = this.template({
                     model: this.currentModel.toJSON()
                 });
                 this.$el = $(formString).dialog({
-					closeOnEscape: false,
+                    closeOnEscape: false,
                     autoOpen: true,
                     resizable: true,
                     dialogClass: "edit-person-dialog",
@@ -215,30 +220,47 @@ define([
                     buttons: [
                         {
                             text: "Save",
-                            click: function () { self.saveItem(); }
+                            click: function () {
+                                self.saveItem();
+                            }
                         },
 
-						{
-							text: "Cancel",
-							click: function () { self.hideDialog();  }
-						},
-						{
-							text: "Delete",
-							click: self.deleteItem }
-						]
+                        {
+                            text: "Cancel",
+                            click: function () {
+                                self.hideDialog();
+                            }
+                        },
+                        {
+                            text: "Delete",
+                            click: self.deleteItem
+                        }
+                    ]
 
                 });
- 				var notDiv = this.$el.find('.assignees-container');
+
+                thisEl = this.$el;
+                notDiv = thisEl.find('.assignees-container');
+                salesPurchasesEl = thisEl.find('#salesPurchases-container');
+
                 notDiv.append(
                     new AssigneesView({
-                        model: this.currentModel,
+                        model: this.currentModel
                     }).render().el
                 );
- 
-				populate.getCompanies("#companiesDd", "/CompaniesForDd",{},this,false,true);
 
-                common.canvasDraw({ model: this.currentModel.toJSON() }, this);
-                this.$el.find('.dateBirth').datepicker({
+                salesPurchasesEl.append(
+                    new SalesPurchasesView({
+                        parrent: self,
+                        model: this.currentModel,
+                        editState: true
+                    }).render().el
+                );
+
+                //populate.getCompanies("#companiesDd", "/CompaniesForDd", {}, this, false, true);
+
+                common.canvasDraw({model: this.currentModel.toJSON()}, this);
+                thisEl.find('.dateBirth').datepicker({
                     dateFormat: "d M, yy",
                     changeMonth: true,
                     changeYear: true,
@@ -246,17 +268,17 @@ define([
                     maxDate: '-18y'
                 });
                 this.delegateEvents(this.events);
-                var model = this.currentModel.toJSON();
+                model = this.currentModel.toJSON();
                 if (model.groups)
-                    if (model.groups.users.length>0||model.groups.group.length){
+                    if (model.groups.users.length > 0 || model.groups.group.length) {
                         $(".groupsAndUser").show();
-                        model.groups.group.forEach(function(item){
-                            $(".groupsAndUser").append("<tr data-type='targetGroups' data-id='"+ item._id+"'><td>"+item.departmentName+"</td><td class='text-right'></td></tr>");
-                            $("#targetGroups").append("<li id='"+item._id+"'>"+item.departmentName+"</li>");
+                        model.groups.group.forEach(function (item) {
+                            $(".groupsAndUser").append("<tr data-type='targetGroups' data-id='" + item._id + "'><td>" + item.departmentName + "</td><td class='text-right'></td></tr>");
+                            $("#targetGroups").append("<li id='" + item._id + "'>" + item.departmentName + "</li>");
                         });
-                        model.groups.users.forEach(function(item){
-                            $(".groupsAndUser").append("<tr data-type='targetUsers' data-id='"+ item._id+"'><td>"+item.login+"</td><td class='text-right'></td></tr>");
-                            $("#targetUsers").append("<li id='"+item._id+"'>"+item.login+"</li>");
+                        model.groups.users.forEach(function (item) {
+                            $(".groupsAndUser").append("<tr data-type='targetUsers' data-id='" + item._id + "'><td>" + item.login + "</td><td class='text-right'></td></tr>");
+                            $("#targetUsers").append("<li id='" + item._id + "'>" + item.login + "</li>");
                         });
 
                     }
