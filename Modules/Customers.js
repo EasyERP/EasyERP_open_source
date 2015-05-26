@@ -241,6 +241,9 @@
                             if (data.salesPurchases.salesTeam) {
                                 _customer.salesPurchases.salesTeam = data.salesPurchases.salesTeam;
                             }
+                            if (data.salesPurchases.implementedBy) {
+                                _customer.salesPurchases.implementedBy = data.salesPurchases.implementedBy;
+                            }
                             if (data.salesPurchases.reference) {
                                 _customer.salesPurchases.reference = data.salesPurchases.reference;
                             }
