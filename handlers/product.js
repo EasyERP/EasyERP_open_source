@@ -194,9 +194,16 @@ var Products = function (models) {
 
     this.getAll = function (req, res, next) {
         var Product = models.get(req.session.lastDb, 'Product', ProductSchema);
-        var query = {};
+        var queryObject = {};
+        var query = req.query;
 
-        Product.find(query, function (err, products) {
+        if (query && query.canBeSold) {
+            queryObject.canBeSold = true;
+        } else {
+            queryObject.canBePurchased =true;
+        }
+
+        Product.find(queryObject, function (err, products) {
             if (err) {
                 return next(err);
             }
@@ -209,9 +216,10 @@ var Products = function (models) {
             access.getReadAccess(req, req.session.uId, 58, function (access) {
                 if (access) {
                     var Product = models.get(req.session.lastDb, 'Product', ProductSchema);
-                    var optionsObject = {};
+                    var query = req.query;
+                    var queryObject = {};
                     var sort = {};
-                    var count = req.query.count ? req.query.count : 50;
+                    var count = query.count ? query.count : 50;
                     var page = req.query.page;
                     var skip = (page - 1) > 0 ? (page - 1) * count : 0;
 
@@ -220,11 +228,19 @@ var Products = function (models) {
                     var contentSearcher;
                     var waterfallTasks;
 
-                    if (req.query.filter.letter) {
-                        optionsObject['name'] = new RegExp('^[' + req.query.filter.letter.toLowerCase() + req.query.filter.letter.toUpperCase() + '].*');
+                    if (query && query.filter && query.filter.canBeSold) {
+                        queryObject['canBeSold'] = query.filter.canBeSold;
                     }
-                    if (req.query.sort) {
-                        sort = req.query.sort;
+
+                    if (query && query.filter && query.filter.canBePurchased) {
+                        queryObject['canBePurchased'] = query.filter.canBePurchased;
+                    }
+
+                    if (query && query.filter && query.filter.letter) {
+                        queryObject['name'] = new RegExp('^[' + query.filter.letter.toLowerCase() + query.filter.letter.toUpperCase() + '].*');
+                    }
+                    if (query && query.sort) {
+                        sort = query.sort;
                     } else {
                         sort = {"name": 1};
                     }
@@ -250,7 +266,7 @@ var Products = function (models) {
                             {
                                 $match: {
                                     $and: [
-                                        optionsObject,
+                                        queryObject,
                                         {
                                             $or: [
                                                 {
@@ -291,8 +307,8 @@ var Products = function (models) {
                     };
 
                     contentSearcher = function (productsIds, waterfallCallback) {
-                        optionsObject._id = {$in: productsIds};
-                        var query = Product.find(optionsObject).limit(count).skip(skip).sort(sort);
+                        queryObject._id = {$in: productsIds};
+                        var query = Product.find(queryObject).limit(count).skip(skip).sort(sort);
                         query.exec(waterfallCallback);
                     };
 
@@ -430,6 +446,7 @@ var Products = function (models) {
 
     function getForDd(req, response, next) {
         var ProductTypesSchema = mongoose.Schemas['productTypes'];
+
         var res = {};
         res['data'] = [];
         var query = models.get(req.session.lastDb, 'productTypes', ProductTypesSchema).find();

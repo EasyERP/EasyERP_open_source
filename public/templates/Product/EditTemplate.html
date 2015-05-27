@@ -20,8 +20,8 @@
                                     <dt><label for="product">Product Name</label></dt>
                                     <dd><input type="text" id="product" required maxlength="32"
                                                value="<%=model.name%>"/></dd>
-                                    <dt><label for="solid">Can be Solid</label></dt>
-                                    <dd><input type="checkbox" id="solid" class="checkbox left" <% if(model.canBeSold) {
+                                    <dt><label for="sold">Can be Sold</label></dt>
+                                    <dd><input type="checkbox" id="sold" class="checkbox left" <% if(model.canBeSold) {
                                         %> checked <% } %>/>
                                     </dd>
                                     <dt><label for="expensed">Can be Expensed</label></dt>

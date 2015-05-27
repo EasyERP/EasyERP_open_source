@@ -1,7 +1,7 @@
 define([
         'text!templates/salesQuotation/list/ListHeader.html',
         'text!templates/stages.html',
-        'views/Quotation/CreateView',
+        'views/salesQuotation/CreateView',
         'views/salesQuotation/list/ListItemView',
         'views/supplierPayments/list/ListTotalView',
         'views/Quotation/EditView',
