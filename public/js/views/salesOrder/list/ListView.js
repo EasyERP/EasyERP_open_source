@@ -206,7 +206,7 @@ define([
                 currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
                 dataService.getData("/workflow/fetch", {
-                    wId: 'Order',
+                    wId: 'Sales Order',
                     source: 'purchase',
                     targetSource: 'order'
                 }, function (stages) {

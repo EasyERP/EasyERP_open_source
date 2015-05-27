@@ -44,7 +44,7 @@ var Invoice = function (models) {
         function fetchFirstWorkflow(callback) {
             var request = {
                 query: {
-                    wId: 'Invoice',
+                    wId: 'Purchase Invoice',
                     source: 'purchase',
                     targetSource: 'invoice'
                 },
