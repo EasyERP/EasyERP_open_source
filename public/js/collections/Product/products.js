@@ -9,6 +9,7 @@
             initialize: function (options) {
                 
                 this.fetch({
+                    data: options,
                     reset: true,
                     success: function () {
                     },
