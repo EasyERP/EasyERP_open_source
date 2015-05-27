@@ -10,16 +10,32 @@
             namberToShow: null,
             viewType: null,
             contentType: null,
+
             initialize: function (options) {
-                this.startTime = new Date();
                 var that = this;
+                var regex = /^sales/;
+
+                this.startTime = new Date();
+
                 this.namberToShow = options.count;
                 this.viewType = options.viewType;
                 this.contentType = options.contentType;
                 this.page = options.page || 1;
+
+                if (options && options.contentType && !(options.filter))
+                {
+                    options.filter = {};
+                    if (regex.test(this.contentType)) {
+                        options.filter.canBeSold = true;
+                    } else {
+                        options.filter.canBePurchased = true;
+                    }
+                }
+
                 if (options && options.viewType) {
                     this.url += options.viewType;
                 }
+
                 this.fetch({
                     data: options,
                     reset: true,

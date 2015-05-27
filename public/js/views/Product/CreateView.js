@@ -151,7 +151,7 @@ define([
                 });
                 var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
 
-                var canBeSold = this.$el.find('#solid').prop('checked');
+                var canBeSold = this.$el.find('#sold').prop('checked');
                 var canBeExpensed = this.$el.find('#expensed').prop('checked');
                 var eventSubscription = this.$el.find('#subscription').prop('checked');
                 var canBePurchased = this.$el.find('#purchased').prop('checked');

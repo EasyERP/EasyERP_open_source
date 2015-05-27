@@ -254,7 +254,7 @@ define([
 
                 productItemContainer = this.$el.find('#productItemsHolder');
                 productItemContainer.append(
-                    new ProductItemView().render().el
+                    new ProductItemView({canBeSold: this.canBeSold}).render().el
                 );
 
                 populate.get("#destination", "/destination", {}, 'name', this, true, true);

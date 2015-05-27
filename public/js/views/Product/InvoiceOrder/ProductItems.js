@@ -41,7 +41,7 @@ define([
                 this.visible = options.balanceVisible;
             };
 
-            products = new productCollection({canBeSold: true});
+            products = new productCollection(options);
             products.bind('reset', function () {
                 this.products = products;
                 this.filterProductsForDD();
