@@ -229,11 +229,11 @@ var Products = function (models) {
                     var waterfallTasks;
 
                     if (query && query.filter && query.filter.canBeSold) {
-                        queryObject['canBeSold'] = query.filter.canBeSold;
+                        queryObject['canBeSold'] = true;
                     }
 
                     if (query && query.filter && query.filter.canBePurchased) {
-                        queryObject['canBePurchased'] = query.filter.canBePurchased;
+                        queryObject['canBePurchased'] = true;
                     }
 
                     if (query && query.filter && query.filter.letter) {
@@ -308,6 +308,7 @@ var Products = function (models) {
 
                     contentSearcher = function (productsIds, waterfallCallback) {
                         queryObject._id = {$in: productsIds};
+
                         var query = Product.find(queryObject).limit(count).skip(skip).sort(sort);
                         query.exec(waterfallCallback);
                     };
@@ -471,7 +472,19 @@ var Products = function (models) {
     };
 
     function getProductsAlphabet(req, response, next) {
-        var query = models.get(req.session.lastDb, "Products", ProductSchema).aggregate([{$match: {}}, {$project: {later: {$substr: ["$name", 0, 1]}}}, {$group: {_id: "$later"}}]);
+        var options = req.query;
+        var queryObject = {};
+        var query;
+
+        if (options && options.filter && options.filter.canBeSold) {
+            queryObject['canBeSold'] = true;
+        }
+
+        if (options && options.filter && options.filter.canBePurchased) {
+            queryObject['canBePurchased'] = true;
+        }
+
+        query = models.get(req.session.lastDb, "Products", ProductSchema).aggregate([{$match: queryObject}, {$project: {later: {$substr: ["$name", 0, 1]}}}, {$group: {_id: "$later"}}]);
         query.exec(function (err, result) {
             if (err) {
                 next(err)
@@ -505,6 +518,14 @@ var Products = function (models) {
 
         var contentSearcher;
         var waterfallTasks;
+
+        if (data && data.filter && data.filter.canBeSold) {
+            optionsObject['canBeSold'] = true;
+        }
+
+        if (data && data.filter && data.filter.canBePurchased) {
+            optionsObject['canBePurchased'] = true;
+        }
 
         if (data.filter && data.filter.letter) {
             optionsObject['name'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
@@ -574,9 +595,9 @@ var Products = function (models) {
 
         contentSearcher = function (productsIds, waterfallCallback) {
             var query;
-            var queryObject = {_id: {$in: productsIds}};
+            optionsObject._id = {$in: productsIds};
 
-            query = Product.find(queryObject);
+            query = Product.find(optionsObject);
             query.exec(waterfallCallback);
         };
 
