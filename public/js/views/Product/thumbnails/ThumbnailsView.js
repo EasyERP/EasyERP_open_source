@@ -1,12 +1,12 @@
 ﻿define([
-    "text!templates/Product/thumbnails/ThumbnailsItemTemplate.html",
-    'views/Product/EditView',
-    'views/Product/CreateView',
-    'dataService',
-    'models/ProductModel',
-    'common',
-    'text!templates/Alpabet/AphabeticTemplate.html'
-],
+        "text!templates/Product/thumbnails/ThumbnailsItemTemplate.html",
+        'views/Product/EditView',
+        'views/Product/CreateView',
+        'dataService',
+        'models/ProductModel',
+        'common',
+        'text!templates/Alpabet/AphabeticTemplate.html'
+    ],
 
     function (thumbnailsItemTemplate, editView, createView, dataService, currentModel, common, AphabeticTemplate) {
         var ProductThumbnalView = Backbone.View.extend({
@@ -45,8 +45,12 @@
             },
 
             //modified for filter Vasya
-            getTotalLength: function(currentNumber, filter, newCollection) {
-                dataService.getData('/product/totalCollectionLength', { currentNumber: currentNumber, filter:filter, newCollection: newCollection }, function (response, context) {
+            getTotalLength: function (currentNumber, filter, newCollection) {
+                dataService.getData('/product/totalCollectionLength', {
+                    currentNumber: currentNumber,
+                    filter: filter,
+                    newCollection: newCollection
+                }, function (response, context) {
                     var showMore = context.$el.find('#showMoreDiv');
                     if (response.showMore) {
                         if (showMore.length === 0) {
@@ -70,22 +74,23 @@
 
             //modified for filter Vasya
             alpabeticalRender: function (e) {
-                    this.$el.find('.thumbnailwithavatar').remove();
-                    this.startTime = new Date();
-                    this.newCollection = false;
-                    var target = $(e.target);
-                    target.parent().find(".current").removeClass("current");
-                    target.addClass("current");
-                    var selectedLetter = $(e.target).text();
-                    if ($(e.target).text() == "All") {
-                        selectedLetter = "";
-                    }
-                    this.filter = (this.filter && this.filter !== 'empty') ? this.filter : {};
-                    this.filter['letter'] = selectedLetter;
-                    this.defaultItemsNumber = 0;
-                    this.changeLocationHash(null, this.defaultItemsNumber, this.filter);
-                    this.collection.showMoreAlphabet({ count:this.defaultItemsNumber, filter: this.filter });
-                    this.getTotalLength(this.defaultItemsNumber, this.filter);
+                this.$el.find('.thumbnailwithavatar').remove();
+                this.startTime = new Date();
+                this.newCollection = false;
+                var target = $(e.target);
+                target.parent().find(".current").removeClass("current");
+                target.addClass("current");
+                var selectedLetter = $(e.target).text();
+                if ($(e.target).text() == "All") {
+                    selectedLetter = "";
+                }
+                this.filter = (this.filter && this.filter !== 'empty') ? this.filter : {};
+                this.filter['letter'] = selectedLetter;
+                this.filter['canBePurchased'] = true;
+                this.defaultItemsNumber = 0;
+                this.changeLocationHash(null, this.defaultItemsNumber, this.filter);
+                this.collection.showMoreAlphabet({count: this.defaultItemsNumber, filter: this.filter});
+                this.getTotalLength(this.defaultItemsNumber, this.filter);
             },
 
             render: function () {
@@ -94,13 +99,17 @@
                 var createdInTag = "<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>";
 
                 currentEl.html('');
-                common.buildAphabeticArray(this.collection,function(arr){
+                common.buildAphabeticArray(this.collection, function (arr) {
                     $(".startLetter").remove();
                     self.alphabeticArray = arr;
-                    self.$el.prepend(_.template(AphabeticTemplate, { alphabeticArray: self.alphabeticArray,selectedLetter: (self.selectedLetter==""?"All":self.selectedLetter),allAlphabeticArray:self.allAlphabeticArray}));
-                var currentLetter = (self.filter) ? self.filter.letter : null
+                    self.$el.prepend(_.template(AphabeticTemplate, {
+                        alphabeticArray: self.alphabeticArray,
+                        selectedLetter: (self.selectedLetter == "" ? "All" : self.selectedLetter),
+                        allAlphabeticArray: self.allAlphabeticArray
+                    }));
+                    var currentLetter = (self.filter) ? self.filter.letter : null
                     if (currentLetter) {
-                        $('#startLetter a').each(function() {
+                        $('#startLetter a').each(function () {
                             var target = $(this);
                             if (target.text() == currentLetter) {
                                 target.addClass("current");
@@ -110,7 +119,7 @@
                 });
 
                 if (this.collection.length > 0) {
-                    currentEl.append(this.template({ collection: this.collection.toJSON() }));
+                    currentEl.append(this.template({collection: this.collection.toJSON()}));
                 } else {
                     currentEl.html('<h2>No Products found</h2>');
                 }
@@ -126,7 +135,10 @@
             },
 
             gotoEditForm: function (e) {
-                this.$el.delegate('a', 'click', function(e){ e.stopPropagation(); e.default; });
+                this.$el.delegate('a', 'click', function (e) {
+                    e.stopPropagation();
+                    e.default;
+                });
                 var clas = $(e.target).parent().attr("class");
                 if ((clas === "dropDown") || (clas === "inner")) {
                 } else {
@@ -137,16 +149,18 @@
                     model.fetch({
                         data: {id: id},
                         success: function (model) {
-                            new editView({ model: model });
+                            new editView({model: model});
                         },
-                        error: function () { alert('Please refresh browser'); }
+                        error: function () {
+                            alert('Please refresh browser');
+                        }
                     });
                 }
             },
 
             showMore: function (event) {
                 event.preventDefault();
-                this.collection.showMore({ filter: this.filter, newCollection: this.newCollection });
+                this.collection.showMore({filter: this.filter, newCollection: this.newCollection});
             },
 
             //modified for filter Vasya
@@ -160,12 +174,12 @@
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
 
                 if (showMore.length != 0) {
-                    showMore.before(this.template({ collection: this.collection.toJSON() }));
+                    showMore.before(this.template({collection: this.collection.toJSON()}));
                     $(".filter-check-list").eq(1).remove();
 
                     showMore.after(created);
                 } else {
-                    content.html(this.template({ collection: this.collection.toJSON() }));
+                    content.html(this.template({collection: this.collection.toJSON()}));
 
                 }
                 this.asyncLoadImgs(newModels);
@@ -181,7 +195,7 @@
                 this.defaultItemsNumber += newModels.length;
                 this.changeLocationHash(null, (this.defaultItemsNumber < 50) ? 50 : this.defaultItemsNumber, this.filter);
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
-                holder.append(this.template({ collection: newModels.toJSON() }));
+                holder.append(this.template({collection: newModels.toJSON()}));
                 holder.prepend(alphaBet);
                 holder.append(created);
                 created.before(showMore);

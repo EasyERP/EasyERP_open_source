@@ -84,6 +84,7 @@ define([
                 }
                 this.filter = (this.filter && this.filter !== 'empty') ? this.filter : {};
                 this.filter['letter'] = selectedLetter;
+                this.filter['canBePurchased'] = true;
                 var itemsNumber = $("#itemsNumber").text();
                 this.changeLocationHash(1, itemsNumber, this.filter);
                 this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter });
