@@ -14,6 +14,7 @@ define([
             el: "#content-holder",
             template: _.template(CreateTemplate),
             imageSrc: '',
+
             initialize: function (options) {
                 _.bindAll(this, "saveItem");
                 if (options && options.contentType) {
