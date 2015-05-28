@@ -382,7 +382,7 @@ define([
 
             createItem: function () {
                 //create editView in dialog here
-                new createView();
+                new createView({contentType: this.contentType});
             },
 
             checked: function () {
