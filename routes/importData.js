@@ -51,12 +51,34 @@ module.exports = function (models) {
             handler.importData(query, callback);
         }
 
-        function saverDepartment(callback) {
-            var collection = task.collection;
+        function saverDepartment(fetchedArray, callback) {
+            var collection = departmentShema.collection;
             var Schema = mongoose.Schemas[collection];
             var Model = models.get(req.session.lastDb, collection, Schema);
-            var query = queryBuilder(task.table);
-            var model = new Model();
+            var model;
+            var q = async.queue(function (fetchedDepartment, callback) {
+                if (fetchedDepartment) {
+                    console.log('fetchedDepartment.ID = ' + fetchedDepartment.ID);
+                    model = new Model();
+                    model.save(callback);
+                }
+            }, 100);
+
+            q.drain = function () {
+                callback(null, 'done');
+            };
+
+            async.each(fetchedArray, function (fetchedDepartment) {
+                q.push(fetchedDepartment, function () {
+                    console.log('finished ' + fetchedDepartment.ID);
+                });
+            }, function (err) {
+                if (err) {
+                    return callback(err);
+                }
+
+                callback(null, 'Completed');
+            })
         }
 
         function departmentImporter(callback) {
