@@ -5,10 +5,11 @@
         'dataService',
         'models/ProductModel',
         'common',
-        'text!templates/Alpabet/AphabeticTemplate.html'
+        'text!templates/Alpabet/AphabeticTemplate.html',
+        'constants'
     ],
 
-    function (thumbnailsItemTemplate, editView, createView, dataService, currentModel, common, AphabeticTemplate) {
+    function (thumbnailsItemTemplate, editView, createView, dataService, currentModel, common, AphabeticTemplate, CONSTANTS) {
         var ProductThumbnalView = Backbone.View.extend({
             el: '#content-holder',
             countPerPage: 0,
@@ -18,7 +19,7 @@
             filter: null,
             newCollection: null,
             //page: null, //if reload page, and in url is valid page
-            contentType: 'Product',//needs in view.prototype.changeLocationHash
+            contentType: CONSTANTS.SALESPRODUCT,//needs in view.prototype.changeLocationHash
             viewType: 'thumbnails',//needs in view.prototype.changeLocationHash
 
             initialize: function (options) {
@@ -86,7 +87,7 @@
                 }
                 this.filter = (this.filter && this.filter !== 'empty') ? this.filter : {};
                 this.filter['letter'] = selectedLetter;
-                this.filter['canBePurchased'] = true;
+                this.filter['canBeSold'] = true;
                 this.defaultItemsNumber = 0;
                 this.changeLocationHash(null, this.defaultItemsNumber, this.filter);
                 this.collection.showMoreAlphabet({count: this.defaultItemsNumber, filter: this.filter});
@@ -131,7 +132,7 @@
                 e.preventDefault();
                 App.ownContentType = true;
                 var id = $(e.target).closest('.thumbnailwithavatar').attr("id");
-                window.location.hash = "#easyErp/Product/form/" + id;
+                window.location.hash = "#easyErp/salesProduct/form/" + id;
             },
 
             gotoEditForm: function (e) {
@@ -145,7 +146,7 @@
                     e.preventDefault();
                     var id = $(e.target).closest('.thumbnailwithavatar').attr("id");
                     var model = new currentModel({validate: false});
-                    model.urlRoot = '/Product/form/';
+                    model.urlRoot = '/salesProduct/form/';
                     model.fetch({
                         data: {id: id},
                         success: function (model) {
@@ -204,7 +205,7 @@
 
             createItem: function () {
                 //create editView in dialog here
-                new createView();
+                new createView({contentType: this.contentType});
             }
         });
 

@@ -1,16 +1,17 @@
 define([
         'text!templates/Product/list/ListHeader.html',
         'views/Product/CreateView',
-        'views/Product/list/ListItemView',
+        'views/salesProduct/list/ListItemView',
         'views/Product/EditView',
         'models/ProductModel',
         'text!templates/Alpabet/AphabeticTemplate.html',
-        'collections/Product/filterCollection',
+        'collections/salesProduct/filterCollection',
         'common',
-        'dataService'
+        'dataService',
+        'constants'
 ],
 
-    function (listTemplate, createView, listItemView, editView, productModel, aphabeticTemplate, contentCollection, common, dataService) {
+    function (listTemplate, createView, listItemView, editView, productModel, aphabeticTemplate, contentCollection, common, dataService, CONSTANT) {
         var ProductsListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -19,7 +20,7 @@ define([
             sort: null,
             newCollection: null,
             page: null, //if reload page, and in url is valid page
-            contentType: 'Product',//needs in view.prototype.changeLocationHash
+            contentType: CONSTANT.SALESPRODUCT,//needs in view.prototype.changeLocationHash
             viewType: 'list',//needs in view.prototype.changeLocationHash
 
             initialize: function (options) {
@@ -29,7 +30,7 @@ define([
                 _.bind(this.collection.showMoreAlphabet, this.collection);
                 this.allAlphabeticArray = common.buildAllAphabeticArray();
                 this.filter = options.filter ? options.filter : {};
-                this.filter.canBePurchased = true;
+                this.filter.canBeSold = true;
                 this.defaultItemsNumber = this.collection.namberToShow || 50;
                 this.newCollection = options.newCollection;
                 this.deleteCounter = 0;
@@ -84,7 +85,7 @@ define([
                 }
                 this.filter = (this.filter && this.filter !== 'empty') ? this.filter : {};
                 this.filter['letter'] = selectedLetter;
-                this.filter['canBePurchased'] = true;
+                this.filter['canBeSold'] = true;
                 var itemsNumber = $("#itemsNumber").text();
                 this.changeLocationHash(1, itemsNumber, this.filter);
                 this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter });
@@ -362,14 +363,14 @@ define([
             gotoForm: function (e) {
                 App.ownContentType = true;
                 var id = $(e.target).closest("tr").data("id");
-                window.location.hash = "#easyErp/Product/form/" + id;
+                window.location.hash = "#easyErp/salesProduct/form/" + id;
             },
 
             goToEditDialog: function (e) {
                 e.preventDefault();
                 var id = $(e.target).closest('tr').data("id");
                 var model = new productModel({ validate: false });
-                model.urlRoot = '/Product/form';
+                model.urlRoot = '/salesProduct/form';
                 model.fetch({
                     data: { id: id },
                     success: function (model) {
@@ -381,7 +382,7 @@ define([
 
             createItem: function () {
                 //create editView in dialog here
-                new createView();
+                new createView({contentType: this.contentType});
             },
 
             checked: function () {

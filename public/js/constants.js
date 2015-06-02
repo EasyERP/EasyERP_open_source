@@ -30,6 +30,7 @@ define([], function(){
         SALESQUOTATION: 'salesQuotation',
         SALESORDER: 'salesOrder',
         SALESINVOICE: 'salesInvoice',
+        SALESPRODUCT: 'salesProduct',
 
         RESPONSES: {
             CREATE_QUOTATION: 'Please check at most one supplier or create one',

@@ -5,17 +5,23 @@ define([
         "populate",
         'views/Notes/AttachView',
         'views/Assignees/AssigneesView',
+        'constants',
         "jqueryBarcode"
 ],
-    function (CreateTemplate, ProductModel, common, populate, attachView, AssigneesView) {
+    function (CreateTemplate, ProductModel, common, populate, attachView, AssigneesView, CONSTANTS) {
 
         var CreateView = Backbone.View.extend({
             el: "#content-holder",
-            contentType: "Product",
             template: _.template(CreateTemplate),
             imageSrc: '',
-            initialize: function () {
+
+            initialize: function (options) {
                 _.bindAll(this, "saveItem");
+                if (options && options.contentType) {
+                    this.contentType = options.contentType;
+                } else {
+                    this.contentType = CONSTANTS.PRODUCT;
+                }
                 this.model = new ProductModel();
                 this.responseObj = {};
                 this.render();
@@ -198,7 +204,7 @@ define([
             },
 
             render: function () {
-                var formString = this.template();
+                var formString = this.template({contentType: this.contentType});
                 var self = this;
                 this.$el = $(formString).dialog({
                     dialogClass: "edit-dialog",
