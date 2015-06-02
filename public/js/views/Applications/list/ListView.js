@@ -135,6 +135,7 @@ define([
                         mid: 39
                     },
                     patch: true,
+                    validate: false,
                     success: function (err, model) {
                         self.showFilteredPage();
                     }
