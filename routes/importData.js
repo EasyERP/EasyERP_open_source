@@ -36,6 +36,18 @@ module.exports = function (models) {
         function importDepartment(departmentShema, callback) {
             var query = queryBuilder(departmentShema.table);
 
+            var waterfallTasks = [getData, saverDepartment];
+
+            async.waterfall(waterfallTasks, function (err, result) {
+                if (err) {
+                    callback(err);
+                }
+
+                callback(null, 'Complete')
+            });
+        }
+
+        function getData(callback) {
             handler.importData(query, callback);
         }
 
