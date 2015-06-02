@@ -242,7 +242,6 @@ define([
                 );
 
                 populate.get("#productType", "/product/getProductsTypeForDd", {}, 'name', this, true, true);
-                //populate.get2name("#eventType", "/Customer", {}, this, true);
                 common.canvasDraw({ model: this.model.toJSON() }, this);
                 this.delegateEvents(this.events);
                 return this;

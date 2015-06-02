@@ -90,7 +90,7 @@ var Products = function (models) {
             select('_id imageSrc').
             exec(function (error, response) {
                 if (error) {
-                    next(err);
+                    next(error);
                 } else res.status(200).send({data: response});
             });
 
@@ -450,6 +450,7 @@ var Products = function (models) {
 
         var res = {};
         res['data'] = [];
+
         var query = models.get(req.session.lastDb, 'productTypes', ProductTypesSchema).find();
         query.select('_id name ');
         query.sort({'name': 1});

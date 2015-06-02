@@ -40,7 +40,6 @@
 
             events: {
                 "click #showMore": "showMore",
-                /*"click .thumbnailwithavatar": "gotoForm",*/
                 "click .thumbnailwithavatar": "gotoEditForm",
                 "click .letter:not(.empty)": "alpabeticalRender"
             },
@@ -132,7 +131,7 @@
                 e.preventDefault();
                 App.ownContentType = true;
                 var id = $(e.target).closest('.thumbnailwithavatar').attr("id");
-                window.location.hash = "#easyErp/salesProduct/form/" + id;
+                window.location.hash = "#easyErp/product/form/" + id;
             },
 
             gotoEditForm: function (e) {
@@ -146,7 +145,7 @@
                     e.preventDefault();
                     var id = $(e.target).closest('.thumbnailwithavatar').attr("id");
                     var model = new currentModel({validate: false});
-                    model.urlRoot = '/salesProduct/form/';
+                    model.urlRoot = '/product/form/';
                     model.fetch({
                         data: {id: id},
                         success: function (model) {

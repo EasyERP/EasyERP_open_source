@@ -363,14 +363,14 @@ define([
             gotoForm: function (e) {
                 App.ownContentType = true;
                 var id = $(e.target).closest("tr").data("id");
-                window.location.hash = "#easyErp/salesProduct/form/" + id;
+                window.location.hash = "#easyErp/product/form/" + id;
             },
 
             goToEditDialog: function (e) {
                 e.preventDefault();
                 var id = $(e.target).closest('tr').data("id");
                 var model = new productModel({ validate: false });
-                model.urlRoot = '/salesProduct/form';
+                model.urlRoot = '/product/form';
                 model.fetch({
                     data: { id: id },
                     success: function (model) {
