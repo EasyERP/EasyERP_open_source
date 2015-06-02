@@ -82,7 +82,14 @@ module.exports = (function () {
         marital: { type: String, enum: ['married', 'unmarried'], default: 'unmarried' },
         gender: { type: String, enum: ['male', 'female'], default: 'male' },
         jobType: { type: String, default: '' },
-        sequence: { type: Number, default: 0 }
+        sequence: { type: Number, default: 0 },
+        isLead: Number,
+        ID: Number,
+        social: {
+            FB: { type: String, default: '' },
+            LI: { type: String, default: '' },
+            GP: { type: String, default: '' }
+        }
     }, { collection: 'Employees' });
 
     employeeSchema.virtual('fullName').get(function(){

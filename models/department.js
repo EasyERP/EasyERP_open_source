@@ -16,8 +16,8 @@
             date: { type: Date }
         },
         nestingLevel: { type: Number, default: 0 },
-        sequence: { type: Number, default: 0 }
-
+        sequence: { type: Number, default: 0 },
+        ID: Number
     }, { collection: 'Department' });
 
     mongoose.model('Department', DepartmentSchema);

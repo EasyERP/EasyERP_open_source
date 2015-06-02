@@ -7,16 +7,18 @@ function connectorLoader(configOptions) {
     var msSql = configOptions.msSql;
     var sql = configOptions.sql;
     var reqestedUrl;
-    var type = csv ? 'csvParser' : msSql ? 'msSql' : 'sql';
+    var type = csv ? 'csv' : msSql ? 'msSql' : 'sql';
+    var Connector;
 
     if (!type) {
         console.error('Config Options must be provided for importer.js');
         process.exit(1);
     }
 
-    reqestedUrl = './' + type + '/';
+    reqestedUrl = './' + type;
+    Connector = require(reqestedUrl);
 
-    return require(reqestedUrl);
+    return Connector.call(null, configOptions[type]);
 };
 
 module.exports = function (configOptions) {
@@ -29,5 +31,5 @@ module.exports = function (configOptions) {
 
     Connector = connectorLoader(configOptions);
 
-
+    this.importData = Connector.importData
 };

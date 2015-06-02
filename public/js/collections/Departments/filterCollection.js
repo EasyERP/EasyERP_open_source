@@ -27,6 +27,7 @@
                     error: this.fetchError
                 });
             },
+
             showMore: function (options) {
                 var that = this;
                 
@@ -50,7 +51,7 @@
                     }
                 });
             },
-            parse: true,
+
             parse: function (response) {
                 if (response.data) {
                     _.map(response.data, function (lead) {

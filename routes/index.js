@@ -28,6 +28,7 @@ module.exports = function (app, mainDb) {
     var paymentRouter = require('./payment')(models);
     var paymentMethodRouter = require('./paymentMethod')(models);
     var periodRouter = require('./period')(models);
+    var importDataRouter = require('./importData')(models);
 
 
     app.get('/', function (req, res, next) {
@@ -67,6 +68,8 @@ module.exports = function (app, mainDb) {
     app.use('/period', periodRouter);
 
     app.use('/paymentMethod', paymentMethodRouter);
+
+    app.use('/importData', importDataRouter);
 
     app.get('/getDBS', function (req, res) {
         res.send(200, {dbsNames: dbsNames});
