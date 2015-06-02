@@ -60,7 +60,7 @@ var jobPosition = {
         }
     };
 
-    var tasks = [department, jobPosition, employee];
+    var hrTasks = [department, jobPosition, employee];
 
-    return tasks;
+    return hrTasks;
 })();
