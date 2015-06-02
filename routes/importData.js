@@ -39,6 +39,14 @@ module.exports = function (models) {
             handler.importData(query, callback);
         }
 
+        function saverDepartment(callback) {
+            var collection = task.collection;
+            var Schema = mongoose.Schemas[collection];
+            var Model = models.get(req.session.lastDb, collection, Schema);
+            var query = queryBuilder(task.table);
+            var model = new Model();
+        }
+
         function departmentImporter(callback) {
             importDepartment(departmentShema, callback);
         }

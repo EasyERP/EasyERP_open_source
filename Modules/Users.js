@@ -138,7 +138,7 @@ var Users = function (mainDb, models) {
         try {
             if (data) {
                 if (data.login || data.email) {
-                    models.get(data.dbId, 'Users', userSchema).findOne({ $or: [{ login: data.login }, { email: data.email }] }, function (err, _user) {
+                    models.get(data.dbId, 'Users', userSchema).findOne({ $or: [{ login: (data.login).toLowerCase() }, { email: data.email }] }, function (err, _user) {
                         try {
                             if (_user && _user._id) {
                                 var shaSum = crypto.createHash('sha256');

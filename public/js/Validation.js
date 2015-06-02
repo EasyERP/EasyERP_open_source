@@ -93,6 +93,7 @@ define(
         }
 
         var errorMessages = {
+            userName: "field value is incorrect. It should contain only the following symbols: A-Z, a-z",
             invalidNameMsg: "field value is incorrect. It should start with letter or number",
             invalidLoginMsg: "field value is incorrect. It should contain only the following symbols: A-Z, a-z, 0-9, _ @",
             notNumberMsg: "field should contain a valid integer value",
@@ -125,14 +126,14 @@ define(
                     errorArray.push([fieldName, errorMessages.minLengthMsg(MIN_LENGTH)].join(' '));
                     return;
                 }
-                if(!validateName(fieldValue)) errorArray.push([fieldName, errorMessages.invalidNameMsg].join(' '));
+                if(!validateName(fieldValue)) errorArray.push([fieldName, errorMessages.userName].join(' '));
             } else{
                 if(fieldValue){
                     if(hasInvalidChars(fieldValue)) {
                         errorArray.push([fieldName, errorMessages.invalidCharsMsg].join(' '));
                         return;
                     }
-                    if(!validateName(fieldValue)) errorArray.push([fieldName, errorMessages.invalidNameMsg].join(' '));
+                    if(!validateName(fieldValue)) errorArray.push([fieldName, errorMessages.userName].join(' '));
                 }
             }
         }
