@@ -6,4 +6,3 @@ var Connector = require('./connector/');
 module.exports = function(options) {
     return new Connector(options);
 };
-

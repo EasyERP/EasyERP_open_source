@@ -29,6 +29,7 @@ module.exports = function (models) {
     }
 
     router.post('/', function (req, res, next) {
+        var tasksLength = tasks.length || 0;
         /*handler.importData("SELECT * FROM Employee", function(err, employees){
          if(err){
          return next(err);
@@ -36,7 +37,12 @@ module.exports = function (models) {
 
          res.status(200).send(employees);
          });*/
-        async.each(tasks, function (task, callback) {
+
+        for (var i = tasksLength - 1; i >= 0; i--) {
+            tasks[i] = handler.importData.bind(tasks[i]);
+        }
+
+        async.waterfall(tasks, function (task, callback) {
             var collection = task.collection;
             var Schema = mongoose.Schemas[collection];
             var Model = models.get(req.session.lastDb, collection, Schema);
