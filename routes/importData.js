@@ -43,6 +43,16 @@ module.exports = function (models) {
         var employeeShema = tasks[2];
         var ownerId = req.session ? req.session.uId : null;
 
+        var collection = jobPositionShema.collection;
+        var departmentCollection = departmentShema.collection;
+        var employeeCollection = employeeShema.collection;
+        var Schema = mongoose.Schemas[collection];
+        var DepartmentSchema = mongoose.Schemas[departmentCollection];
+        var EmployeeSchema = mongoose.Schemas[employeeCollection];
+        var Model = models.get(req.session.lastDb, collection, Schema);
+        var Department = models.get(req.session.lastDb, departmentCollection, DepartmentSchema);
+        var Employee = models.get(req.session.lastDb, employeeCollection, EmployeeSchema);
+
         function importDepartment(departmentShema, seriesCb) {
             var query = queryBuilder(departmentShema.table);
             var waterfallTasks;
@@ -52,9 +62,6 @@ module.exports = function (models) {
             }
 
             function saverDepartment(fetchedArray, callback) {
-                var collection = departmentShema.collection;
-                var Schema = mongoose.Schemas[collection];
-                var Model = models.get(req.session.lastDb, collection, Schema);
                 var model;
 
                 var mongooseFields = Object.keys(departmentShema.aliases);
@@ -109,6 +116,10 @@ module.exports = function (models) {
             });
         }
 
+        function departmentImporter(callback) {
+            importDepartment(departmentShema, callback);
+        }
+
         function importJobPosition(jobPositionShema, seriesCb) {
             var query = queryBuilder(jobPositionShema.table);
             var waterfallTasks;
@@ -118,12 +129,6 @@ module.exports = function (models) {
             }
 
             function saverJobPosition(fetchedArray, callback) {
-                var collection = jobPositionShema.collection;
-                var departmentCollection = departmentShema.collection;
-                var Schema = mongoose.Schemas[collection];
-                var DepartmentSchema = mongoose.Schemas[departmentCollection];
-                var Model = models.get(req.session.lastDb, collection, Schema);
-                var Department = models.get(req.session.lastDb, departmentCollection, DepartmentSchema);
                 var model;
 
                 var mongooseFields = Object.keys(jobPositionShema.aliases);
@@ -198,22 +203,95 @@ module.exports = function (models) {
             importJobPosition(jobPositionShema, callback);
         }
 
-        function departmentImporter(callback) {
-            importDepartment(departmentShema, callback);
+        function importEmployee(employeeShema, seriesCb) {
+            var query = queryBuilder(employeeShema.table);
+            var waterfallTasks;
+
+            function getData(callback) {
+                handler.importData(query, callback);
+            }
+
+            function saverEmployee(fetchedArray, callback) {
+                var model;
+
+                var mongooseFields = Object.keys(jobPositionShema.aliases);
+
+                var q = async.queue(function (fetchedJobPosition, cb) {
+                    var objectToSave = {};
+                    var departmentQuery;
+
+                    for (var i = mongooseFields.length - 1; i >= 0; i--) {
+                        var key = mongooseFields[i];
+                        var msSqlKey = jobPositionShema.aliases[key];
+
+                        if (msSqlKey in jobPositionShema.comparator) {
+                            fetchedJobPosition[msSqlKey] = comparator(fetchedJobPosition[msSqlKey], jobPositionShema.comparator[msSqlKey]);
+                        }
+
+                        objectToSave[key] = fetchedJobPosition[msSqlKey];
+                        objectToSave.createdBy = {
+                            user: ownerId
+                        };
+                        objectToSave.editedBy = {
+                            user: ownerId
+                        }
+                    }
+
+                    if (fetchedJobPosition) {
+                        departmentQuery = {
+                            ID: fetchedJobPosition['Department']
+                        };
+                        Department.findOne(departmentQuery, {_id: 1}, function (err, department) {
+                            if (err) {
+                                return cb(err);
+                            }
+
+                            objectToSave.department = department._id;
+
+                            model = new Model(objectToSave);
+                            model.save(cb);
+                        });
+                    }
+                }, 100);
+
+                q.drain = function () {
+                    callback(null, 'done');
+                };
+
+                async.each(fetchedArray, function (fetchedDepartment) {
+                    q.push(fetchedDepartment, function () {
+                        console.log('finished ' + fetchedDepartment.ID);
+                    });
+                }, function (err) {
+                    if (err) {
+                        return callback(err);
+                    }
+
+                    callback(null, 'Completed');
+                })
+            }
+
+            waterfallTasks = [getData, saverEmployee];
+
+            async.waterfall(waterfallTasks, function (err, result) {
+                if (err) {
+                    seriesCb(err);
+                }
+
+                seriesCb(null, 'Complete')
+            });
         }
 
-        return [departmentImporter, jobPositionImporter];
+        function employeeImporter(callback) {
+            importEmployee(employeeShema, callback);
+        }
+
+        return [departmentImporter, jobPositionImporter, employeeImporter];
     }
 
     router.post('/', function (req, res, next) {
         var seriesTasks = hrImporter(req, tasks);
-        /*handler.importData("SELECT * FROM Employee", function(err, employees){
-         if(err){
-         return next(err);
-         }
 
-         res.status(200).send(employees);
-         });*/
 
         async.series(seriesTasks, function (err) {
             if (err) {
