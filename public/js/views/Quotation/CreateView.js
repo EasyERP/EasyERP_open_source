@@ -103,6 +103,8 @@ define([
                 var price;
                 var scheduledDate;
 
+                var forSales = (this.forSales) ? true : false;
+
                 var supplier = thisEl.find('#supplierDd').data('id');
                 var destination = $.trim(thisEl.find('#destination').data('id'));
                 var deliverTo = $.trim(thisEl.find('#deliveryDd').data('id'));
@@ -163,6 +165,7 @@ define([
 
 
                 data = {
+                    forSales: forSales,
                     supplier: supplier,
                     supplierReference: supplierReference,
                     deliverTo: deliverTo,
@@ -254,7 +257,7 @@ define([
 
                 productItemContainer = this.$el.find('#productItemsHolder');
                 productItemContainer.append(
-                    new ProductItemView({canBeSold: this.canBeSold}).render().el
+                    new ProductItemView({canBeSold: this.forSales}).render().el
                 );
 
                 populate.get("#destination", "/destination", {}, 'name', this, true, true);

@@ -27,7 +27,7 @@ module.exports = (function () {
     };
 
     var invoiceSchema = new mongoose.Schema({
-
+        forSales: {type: Boolean, default: true},
         supplier: { type: ObjectId, ref: 'Customers', default: null },
         /*fiscalPosition: { type: String, default: null },*/
         sourceDocument: { type: String, default: null },
