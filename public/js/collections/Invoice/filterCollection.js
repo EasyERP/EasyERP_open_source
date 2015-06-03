@@ -11,12 +11,24 @@
             contentType: null,
             initialize: function (options) {
                 this.startTime = new Date();
+                var regex = /^sales/;
 
                 var that = this;
                 this.namberToShow = options.count;
                 this.viewType = options.viewType;
                 this.contentType = options.contentType;
                 this.page = options.page || 1;
+
+                if (options && options.contentType && !(options.filter))
+                {
+                    options.filter = {};
+                    if (regex.test(this.contentType)) {
+                        options.filter.forSales = true;
+                    }
+                }
+
+                this.filter = options.filter;
+
                 if (options && options.viewType) {
                     this.url += options.viewType;
                 }
@@ -34,6 +46,7 @@
 
             showMore: function (options) {
                 var that = this;
+                var regex = /^sales/;
                 var filterObject = options || {};
 
                 filterObject['page'] = (options && options.page) ? options.page : this.page;
@@ -41,6 +54,14 @@
                 filterObject['viewType'] = (options && options.viewType) ? options.viewType : this.viewType;
                 filterObject['contentType'] = (options && options.contentType) ? options.contentType : this.contentType;
                 filterObject['filter'] = (options) ? options.filter : {};
+
+                if (options && options.contentType && !(options.filter))
+                {
+                    options.filter = {};
+                    if (regex.test(this.contentType)) {
+                        filterObject.filter.forSales = true;
+                    }
+                }
 
                 this.fetch({
                     data: filterObject,

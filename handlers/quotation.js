@@ -84,10 +84,19 @@ var Quotation = function (models) {
         var departmentSearcher;
         var contentIdsSearcher;
         var contentSearcher;
+        var data = req.query;
 
         var waterfallTasks;
-        var contentType = req.query.contentType;
+        var contentType = data.contentType;
         var isOrder = (contentType === 'Order' || contentType === 'salesOrder');
+
+        var optionsObject = {};
+
+        if (data && data.filter && data.filter.forSales) {
+            optionsObject['forSales'] = true;
+        } else {
+            optionsObject['forSales'] = false;
+        }
 
         departmentSearcher = function (waterfallCallback) {
             models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
@@ -111,7 +120,7 @@ var Quotation = function (models) {
                 {
                     $match: {
                         $and: [
-                            /*optionsObject,*/
+                            optionsObject,
                             {
                                 $or: [
                                     {
@@ -175,20 +184,29 @@ var Quotation = function (models) {
     this.getByViewType = function (req, res, next) {
         var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
 
+        var query = req.query;
+        var queryObject = {};
+
         var departmentSearcher;
         var contentIdsSearcher;
         var contentSearcher;
         var waterfallTasks;
 
-        var contentType = req.query.contentType;
+        var contentType = query.contentType;
         var isOrder = (contentType === 'Order' || contentType === 'salesOrder');
         var sort = {};
-        var count = req.query.count ? req.query.count : 50;
-        var page = req.query.page;
+        var count = query.count ? query.count : 50;
+        var page = query.page;
         var skip = (page - 1) > 0 ? (page - 1) * count : 0;
 
-        if (req.query.sort) {
-            sort = req.query.sort;
+        if (query && query.filter && query.filter.forSales) {
+            queryObject['forSales'] = true;
+        } else {
+            queryObject['forSales'] = false;
+        }
+
+        if (query.sort) {
+            sort = query.sort;
         } else {
             sort = {"name": 1};
         }
@@ -215,7 +233,7 @@ var Quotation = function (models) {
                 {
                     $match: {
                         $and: [
-                            /*optionsObject,*/
+                            queryObject,
                             {
                                 $or: [
                                     {

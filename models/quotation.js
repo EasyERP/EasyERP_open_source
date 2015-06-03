@@ -29,6 +29,7 @@ module.exports = (function () {
 
 
     var quotationSchema = new Schema({
+        forSales: {type: Boolean, default: true},
         isOrder: {type: Boolean, default: false},
         supplier: {type: ObjectId, ref: 'Customers', default: null},
         supplierReference: {type: String, default: ''},

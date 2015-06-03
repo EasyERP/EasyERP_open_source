@@ -105,6 +105,8 @@ define([
                 var amount;
                 var description;
 
+                var forSales = (this.forSales) ? true : false;
+
                 var supplier = this.$("#supplier").data("id");
                 var salesPersonId = this.$("#salesPerson").data("id") ? this.$("#salesPerson").data("id") : null;
                 var paymentTermId = this.$("#payment_terms").data("id") ? this.$("#payment_terms").data("id") : null;
@@ -158,6 +160,7 @@ define([
 
                 var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
                 var data = {
+                    forSales: forSales,
 
                     supplier: supplier,
                     fiscalPosition: null,
@@ -254,7 +257,7 @@ define([
 
                 invoiceItemContainer = this.$el.find('#invoiceItemsHolder');
                 invoiceItemContainer.append(
-                    new InvoiceItemView({balanceVisible: true}).render().el
+                    new InvoiceItemView({balanceVisible: true, canBeSold: this.forSales}).render().el
                 );
 
                 var paymentContainer = this.$el.find('#payments-container');

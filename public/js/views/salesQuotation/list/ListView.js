@@ -8,10 +8,11 @@ define([
         'models/QuotationModel',
         'collections/salesQuotation/filterCollection',
         'common',
-        'dataService'
+        'dataService',
+        'constants'
     ],
 
-    function (listTemplate, stagesTemplate, createView, listItemView, listTotalView, editView, currentModel, contentCollection, common, dataService) {
+    function (listTemplate, stagesTemplate, createView, listItemView, listTotalView, editView, currentModel, contentCollection, common, dataService, CONSTANTS) {
         var QuotationListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -20,14 +21,15 @@ define([
             sort: null,
             newCollection: null,
             page: null, //if reload page, and in url is valid page
-            contentType: 'Quotation',//needs in view.prototype.changeLocationHash
+            contentType: CONSTANTS.SALESQUOTATION,//needs in view.prototype.changeLocationHash
             viewType: 'list',//needs in view.prototype.changeLocationHash
             collectionLengthUrl: '/quotation/totalCollectionLength',
 
             initialize: function (options) {
                 this.startTime = options.startTime;
                 this.collection = options.collection;
-                this.filter = options.filter;
+                this.filter = options.filter ? options.filter : {};
+                this.filter.forSales = true;
                 this.sort = options.sort;
                 this.defaultItemsNumber = this.collection.namberToShow || 50;
                 this.newCollection = options.newCollection;

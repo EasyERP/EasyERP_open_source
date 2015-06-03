@@ -2,12 +2,12 @@
  * Created by soundstorm on 27.05.15.
  */
 define([
-    'views/Quotation/CreateView'
+    'views/Invoice/CreateView'
 ],
 function(CreateView) {
-    var salesQuotation = CreateView.extend({
+    var salesInvoice = CreateView.extend({
         forSales: true
     });
 
-    return salesQuotation;
+    return salesInvoice;
 })

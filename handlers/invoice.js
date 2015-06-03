@@ -156,16 +156,26 @@ var Invoice = function (models) {
             access.getReadAccess(req, req.session.uId, 56, function (access) {
                 if (access) {
                     var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
+
+                    var query = req.query;
+                    var queryObject = {};
+
                     var optionsObject = {};
                     var sort = {};
-                    var count = req.query.count ? req.query.count : 50;
-                    var page = req.query.page;
+                    var count = query.count ? query.count : 50;
+                    var page = query.page;
                     var skip = (page - 1) > 0 ? (page - 1) * count : 0;
 
                     var departmentSearcher;
                     var contentIdsSearcher;
                     var contentSearcher;
                     var waterfallTasks;
+
+                    if (query && query.filter && query.filter.forSales) {
+                        queryObject['forSales'] = true;
+                    } else {
+                        queryObject['forSales'] = false;
+                    }
 
                     if (req.query.sort) {
                         sort = req.query.sort;
@@ -194,7 +204,7 @@ var Invoice = function (models) {
                             {
                                 $match: {
                                     $and: [
-                                        optionsObject,
+                                        queryObject,
                                         {
                                             $or: [
                                                 {
@@ -380,12 +390,12 @@ var Invoice = function (models) {
                         res.status(200).send(result);
                     });
                 } else {
-                    response.send(403);
+                    res.send(403);
                 }
             });
 
         } else {
-            response.send(401);
+            res.send(401);
         }
     };
 
@@ -448,6 +458,7 @@ var Invoice = function (models) {
     };
 
     this.totalCollectionLength = function (req, res, next) {
+        var data = req.query;
 
         var optionsObject = {};
         var result = {};
@@ -460,6 +471,12 @@ var Invoice = function (models) {
         var contentIdsSearcher;
         var contentSearcher;
         var waterfallTasks;
+
+        if (data && data.filter && data.filter.forSales) {
+            optionsObject['forSales'] = true;
+        } else {
+            optionsObject['forSales'] = false;
+        }
 
         departmentSearcher = function (waterfallCallback) {
             models.get(req.session.lastDb, "Invoice", InvoiceSchema).aggregate(

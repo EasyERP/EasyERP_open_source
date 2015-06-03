@@ -1,7 +1,7 @@
 define([
         'text!templates/salesInvoice/list/ListHeader.html',
         'text!templates/stages.html',
-        'views/Invoice/CreateView',
+        'views/salesInvoice/CreateView',
         'views/Invoice/EditView',
         'models/InvoiceModel',
         'views/salesInvoice/list/ListItemView',
@@ -27,7 +27,8 @@ define([
                 this.collection = options.collection;
                 _.bind(this.collection.showMore, this.collection);
                 this.parrentContentId = options.collection.parrentContentId;
-                this.filter = options.filter;
+                this.filter = options.filter ? options.filter : {};
+                this.filter.forSales = true;
                 this.sort = options.sort;
                 this.defaultItemsNumber = this.collection.namberToShow || 50;
                 this.newCollection = options.newCollection;
