@@ -37,11 +37,24 @@ module.exports = function (models) {
     };
 
     function salesImporter(req, tasks) {
-        var departmentShema = tasks[0];
-        var projectShema = tasks[1];
-        var employeeShema = tasks[2];
+        var departmentSchema = tasks[0];
+        var projectSchema = tasks[1];
+        var employeeSchema = tasks[2];
         var customerSchema = tasks[3];
         var ownerId = req.session ? req.session.uId : null;
+
+        var customerCollection = customerSchema.collection;
+        var projectCollection = projectSchema.collection;
+        var departmentCollection = departmentSchema.collection;
+        var employeeCollection = employeeSchema.collection;
+        var ProjectSchema = projectCollection[projectCollection];
+        var CustomerSchema = mongoose.Schemas[customerCollection];
+        var DepartmentSchema = mongoose.Schemas[departmentCollection];
+        var EmployeeSchema = mongoose.Schemas[employeeCollection];
+        var Project = models.get(req.session.lastDb, projectCollection, ProjectSchema);
+        var Customer = models.get(req.session.lastDb, customerCollection, CustomerSchema);
+        var Department = models.get(req.session.lastDb, departmentCollection, DepartmentSchema);
+        var Employee = models.get(req.session.lastDb, employeeCollection, EmployeeSchema);
 
         function importCustomer(customerSchema, seriesCb) {
             var query = queryBuilder(customerSchema.table);
@@ -52,11 +65,7 @@ module.exports = function (models) {
             }
 
             function saverCustomer(fetchedArray, callback) {
-                var collection = customerSchema.collection;
-                var Schema = mongoose.Schemas[collection];
-                var Model = models.get(req.session.lastDb, collection, Schema);
                 var model;
-
                 var mongooseFields = Object.keys(customerSchema.aliases);
 
                 var q = async.queue(function (fetchedCustomer, cb) {
@@ -76,7 +85,7 @@ module.exports = function (models) {
                     }
 
                     if (fetchedCustomer) {
-                        model = new Model(objectToSave);
+                        model = new Customer(objectToSave);
                         model.save(cb);
                     }
                 }, 100);
@@ -109,6 +118,10 @@ module.exports = function (models) {
             });
         };
 
+        function customerImporter(callback) {
+            importCustomer(customerSchema, callback);
+        };
+
         function importProject(projectShema, seriesCb) {
             var query = queryBuilder(projectShema.table);
             var waterfallTasks;
@@ -118,15 +131,6 @@ module.exports = function (models) {
             }
 
             function saverProject(fetchedArray, callback) {
-                var collection = projectShema.collection;
-                var customerCollection = customerSchema.collection;
-                var employeeCollection = employeeShema.collection;
-                var Schema = mongoose.Schemas[collection];
-                var CustomerSchema = mongoose.Schemas[customerCollection];
-                var EmployeeShema = mongoose.Schema[employeeCollection];
-                var Model = models.get(req.session.lastDb, collection, Schema);
-                var Customer = models.get(req.session.lastDb, customerCollection, CustomerSchema);
-                var Employee = models.get(req.session.lastDb, employeeCollection, EmployeeShema);
                 var model;
 
                 var mongooseFields = Object.keys(projectShema.aliases);
@@ -185,7 +189,7 @@ module.exports = function (models) {
                         }, function(err, result) {
                             objectToSave.customer = result.customerResult._id;
                             objectToSave.employee = result.employeeResult._id;
-                            model = new Model(objectToSave);
+                            model = new Project(objectToSave);
                             model.save(cb);
                         });
                     }
@@ -220,11 +224,7 @@ module.exports = function (models) {
         };
 
         function projectImporter(callback) {
-            importProject(projectShema, callback);
-        };
-
-        function customerImporter(callback) {
-            importCustomer(customerSchema, callback);
+            importProject(projectSchema, callback);
         };
 
         return [customerImporter, projectImporter];
