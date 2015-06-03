@@ -46,7 +46,7 @@ var jobPosition = {
             totalForecastedEmployees: 'Forecasted',
             numberOfEmployees: 'CurrentNumber',
             expectedRecruitment: 'ExpectedRecruit',
-            department: 'Department.ID',
+            department: 'Department',
             workflow: 'RecruitStatus'
         }
     };
