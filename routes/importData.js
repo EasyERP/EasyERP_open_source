@@ -45,6 +45,72 @@ module.exports = function (models) {
         var customerSchema = tasks[4];
         var ownerId = req.session ? req.session.uId : null;
 
+        function importCustomer(customerSchema, seriesCb) {
+            var query = queryBuilder(customerSchema.table);
+            var waterfallTasks;
+
+            function getData(callback) {
+                handler.importData(query, callback);
+            }
+
+            function saverCustomer(fetchedArray, callback) {
+                var collection = customerSchema.collection;
+                var Schema = mongoose.Schemas[collection];
+                var Model = models.get(req.session.lastDb, collection, Schema);
+                var model;
+
+                var mongooseFields = Object.keys(customerSchema.aliases);
+
+                var q = async.queue(function (fetchedCustomer, cb) {
+                    var objectToSave = {};
+
+                    for (var i = mongooseFields.length - 1; i >= 0; i--) {
+                        var key = mongooseFields[i];
+                        var msSqlKey = departmentShema.aliases[key];
+
+                        objectToSave[key] = fetchedCustomer[msSqlKey];
+                        objectToSave.createdBy = {
+                            user: ownerId
+                        };
+                        objectToSave.editedBy = {
+                            user: ownerId
+                        }
+                    }
+
+                    if (fetchedCustomer) {
+                        model = new Model(objectToSave);
+                        model.save(cb);
+                    }
+                }, 100);
+
+                q.drain = function () {
+                    callback(null, 'done');
+                };
+
+                async.each(fetchedArray, function (fetchedCustomer) {
+                    q.push(fetchedCustomer, function () {
+                        console.log('finished ' + fetchedCustomer.ID);
+                    });
+                }, function (err) {
+                    if (err) {
+                        return callback(err);
+                    }
+
+                    callback(null, 'Completed');
+                })
+            }
+
+            waterfallTasks = [getData, saverCustomer];
+
+            async.waterfall(waterfallTasks, function (err, result) {
+                if (err) {
+                    seriesCb(err);
+                }
+
+                seriesCb(null, 'Complete')
+            });
+        }
+
         function importDepartment(departmentShema, seriesCb) {
             var query = queryBuilder(departmentShema.table);
             var waterfallTasks;
@@ -247,25 +313,30 @@ module.exports = function (models) {
                         customerQuery = {
                             ID: fetchedProject['Company']
                         };
-                        Customer.findOne(customerQuery, {_id: 1}, function (err, customer) {
-                            if (err) {
-                                return cb(err);
+
+                        async.parallel({
+                            customerFinder: function(cbresult) {
+                                Customer.findOne(customerQuery, {_id: 1}, function (err, customer) {
+                                    if (err) {
+                                        return cbresult(err);
+                                    }
+                                    cbresult(null, customer);
+                                });
+                            },
+                            employeeFinder: function(cbresult) {
+                                Employee.findOne(employeeQuery, {_id: 1}, function (err, employee) {
+                                    if (err) {
+                                        return cbresult(err);
+                                    }
+                                    cbresult(null, employee);
+                                });
                             }
-
-                            objectToSave.customer = customer._id;
+                        }, function(err, result) {
+                            objectToSave.customer = result.customerFinder._id;
+                            objectToSave.employee = result.employeeFinder._id;
+                            model = new Model(objectToSave);
+                            model.save(cb);
                         });
-
-                        Employee.findOne(employeeQuery, {_id: 1}, function (err, employee) {
-                            if (err) {
-                                return cb(err);
-                            }
-
-                            objectToSave.employee = employee._id;
-                        });
-
-                        /*TODO*/
-                        model = new Model(objectToSave);
-                        model.save(cb);
                     }
                 }, 100);
 
@@ -309,7 +380,7 @@ module.exports = function (models) {
             importDepartment(departmentShema, callback);
         }
 
-        return [departmentImporter, jobPositionImporter, projectImporter];
+        return [departmentImporter, jobPositionImporter, importCustomer, projectImporter];
     }
 
     router.post('/', function (req, res, next) {
