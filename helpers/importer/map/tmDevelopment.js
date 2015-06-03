@@ -22,8 +22,8 @@ module.exports = (function () {
             'social.GP': 'GooglePlus',
             'social.FB': 'FaceBook',
             dateBirth: 'Birthday',
-            department: 'Department.ID',
-            jobPosition: 'JobPosition.ID'
+            department: 'Department',
+            jobPosition: 'JobPosition'
         }
     };
 

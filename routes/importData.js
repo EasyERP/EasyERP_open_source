@@ -407,21 +407,23 @@ module.exports = function (models) {
             function saverEmployee(fetchedArray, callback) {
                 var model;
 
-                var mongooseFields = Object.keys(jobPositionShema.aliases);
+                var mongooseFields = Object.keys(EmployeeSchema.aliases);
 
-                var q = async.queue(function (fetchedJobPosition, cb) {
+                var q = async.queue(function (fetchedEmployee, cb) {
                     var objectToSave = {};
                     var departmentQuery;
+                    var key;
+                    var msSqlKey;
 
                     for (var i = mongooseFields.length - 1; i >= 0; i--) {
-                        var key = mongooseFields[i];
-                        var msSqlKey = jobPositionShema.aliases[key];
+                        key = mongooseFields[i];
+                        msSqlKey = EmployeeSchema.aliases[key];
 
-                        if (msSqlKey in jobPositionShema.comparator) {
-                            fetchedJobPosition[msSqlKey] = comparator(fetchedJobPosition[msSqlKey], jobPositionShema.comparator[msSqlKey]);
+                        if (msSqlKey in EmployeeSchema.comparator) {
+                            fetchedEmployee[msSqlKey] = comparator(fetchedEmployee[msSqlKey], EmployeeSchema.comparator[msSqlKey]);
                         }
 
-                        objectToSave[key] = fetchedJobPosition[msSqlKey];
+                        objectToSave[key] = fetchedEmployee[msSqlKey];
                         objectToSave.createdBy = {
                             user: ownerId
                         };
@@ -430,9 +432,9 @@ module.exports = function (models) {
                         }
                     }
 
-                    if (fetchedJobPosition) {
+                    if (fetchedEmployee) {
                         departmentQuery = {
-                            ID: fetchedJobPosition['Department']
+                            ID: fetchedEmployee['Department']
                         };
                         Department.findOne(departmentQuery, {_id: 1}, function (err, department) {
                             if (err) {
