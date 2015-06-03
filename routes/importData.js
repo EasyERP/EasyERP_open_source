@@ -236,13 +236,13 @@ module.exports = function (models) {
         var employeeShema = tasks[2];
         var ownerId = req.session ? req.session.uId : null;
 
-        var collection = jobPositionShema.collection;
+        var jobPositionCollection = jobPositionShema.collection;
         var departmentCollection = departmentShema.collection;
         var employeeCollection = employeeShema.collection;
-        var Schema = mongoose.Schemas[collection];
+        var JobPositionSchema = mongoose.Schemas[jobPositionCollection];
         var DepartmentSchema = mongoose.Schemas[departmentCollection];
         var EmployeeSchema = mongoose.Schemas[employeeCollection];
-        var Model = models.get(req.session.lastDb, collection, Schema);
+        var JobPosition = models.get(req.session.lastDb, jobPositionCollection, JobPositionSchema);
         var Department = models.get(req.session.lastDb, departmentCollection, DepartmentSchema);
         var Employee = models.get(req.session.lastDb, employeeCollection, EmployeeSchema);
 
@@ -276,7 +276,7 @@ module.exports = function (models) {
                     }
 
                     if (fetchedDepartment) {
-                        model = new Model(objectToSave);
+                        model = new Department(objectToSave);
                         model.save(cb);
                     }
                 }, 100);
@@ -358,7 +358,7 @@ module.exports = function (models) {
 
                             objectToSave.department = department._id;
 
-                            model = new Model(objectToSave);
+                            model = new JobPosition(objectToSave);
                             model.save(cb);
                         });
                     }
@@ -484,13 +484,8 @@ module.exports = function (models) {
 
     router.post('/', function (req, res, next) {
         var hrTasks = hrImporter(req, tasks);
-        var salesTasks = salesImporter(req, tasks);
-        var seriesTasks = hrTasks.concat(salesTasks);
-        /*handler.importData("SELECT * FROM Employee", function(err, employees){
-         if(err){
-         return next(err);
-         }
-
+        //var salesTasks = salesImporter(req, tasks);
+        var seriesTasks = hrTasks.concat(/*salesTasks*/[]);
 
         async.series(seriesTasks, function (err) {
             if (err) {
