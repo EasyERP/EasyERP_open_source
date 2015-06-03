@@ -87,7 +87,7 @@ module.exports = (function () {
     };
 
     var customer = {
-        collection: 'Customer',
+        collection: 'Customers',
         table: 'Company',
         aliases: {
             ID: 'ID',
@@ -101,7 +101,18 @@ module.exports = (function () {
         }
     };
 
-    var hrTasks = [department, jobPosition, employee, project, customer];
+    var user = {
+        collection: 'Users',
+        table: 'Users',
+        aliases: {
+            ID: 'ID',
+            login: 'Login',
+            pass: 'Password',
+            RelatedEmployee: 'Employee' /*TODO*/
+        }
+    };
+
+    var hrTasks = [department, jobPosition, employee, project, customer, user];
 
     return hrTasks;
 })();
