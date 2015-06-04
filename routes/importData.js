@@ -208,8 +208,8 @@ module.exports = function (models) {
                             customerResult: customerFinder,
                             employeeResult: employeeFinder
                         }, function (err, result) {
-                            objectToSave.customer = result.customerResult._id;
-                            objectToSave.employee = result.employeeResult._id;
+                            objectToSave.customer = result.customerResult ? result.customerResult._id : null;
+                            objectToSave.employee = result.employeeResult ? result.employeeResult._id : null;
 
                             model = new Project(objectToSave);
                             model.save(cb);
