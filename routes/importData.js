@@ -25,11 +25,32 @@ module.exports = function (models) {
         }
     });
 
+    function getAge(birthday) {
+        var today = new Date();
+        var years;
+        if (birthday) {
+            birthday = new Date(birthday);
+            years = today.getFullYear() - birthday.getFullYear();
+
+            birthday.setFullYear(today.getFullYear());
+
+            if (today < birthday) {
+                years--;
+            }
+            return (years < 0) ? 0 : years;
+        }
+
+        return 0;
+    };
+
     function comparator(columnName, field) {
         var targetObject = _.find(field, function (fieldValue) {
+            if (columnName === null || columnName === undefined) {
+                columnName = 'null';
+            }
             return fieldValue.value.toLowerCase() === columnName.toString().toLowerCase();
         });
-        return targetObject.fieldValue;
+        return targetObject ? targetObject.fieldValue : targetObject;
     };
 
     function queryBuilder(table) {
@@ -247,6 +268,9 @@ module.exports = function (models) {
         var Department = models.get(req.session.lastDb, departmentCollection, DepartmentSchema);
         var Employee = models.get(req.session.lastDb, employeeCollection, EmployeeSchema);
 
+        var WorkflowSchema = mongoose.Schemas['workflow'];
+        var Workflow = models.get(req.session.lastDb, 'workflows', WorkflowSchema);
+
         function importDepartment(departmentShema, seriesCb) {
             var query = queryBuilder(departmentShema.table);
             var waterfallTasks;
@@ -397,9 +421,11 @@ module.exports = function (models) {
             importJobPosition(jobPositionShema, callback);
         }
 
-        function importEmployee(employeeShema, seriesCb) {
+        function importEmployee(employeeShema, workflow, seriesCb) {
             var query = queryBuilder(employeeShema.table);
             var waterfallTasks;
+
+            workflow = workflow ? workflow._id : null;
 
             function getData(callback) {
                 handler.importData(query, callback);
@@ -427,7 +453,17 @@ module.exports = function (models) {
                         }
 
                         if (employeeShema.comparator && msSqlKey in employeeShema.comparator) {
-                            fetchedEmployee[msSqlKey] = comparator(fetchedEmployee[msSqlKey], employeeShema.comparator[msSqlKey]);
+                            fetchedEmployee[msSqlKey] = comparator(fetchedEmployee[msSqlKey], employeeShema.comparator[msSqlKey]) || fetchedEmployee[msSqlKey];
+                        }
+
+                        if (key === 'dateBirth') {
+                            objectToSave.age = getAge(fetchedEmployee[msSqlKey]);
+                        }
+
+                        if (key === 'isEmployee') {
+                            if(fetchedEmployee[msSqlKey] === false){
+                                objectToSave.workflow = workflow;
+                            }
                         }
 
                         objectToSave[key] = fetchedEmployee[msSqlKey];
@@ -508,7 +544,19 @@ module.exports = function (models) {
         }
 
         function employeeImporter(callback) {
-            importEmployee(employeeShema, callback);
+            Workflow
+                .findOne({
+                    wId: 'Applications',
+                    status: "Cancelled"
+                }, {_id: 1})
+                .sort({sequence: -1})
+                .exec(function (err, workflow) {
+                    if (err) {
+                        return callback(err);
+                    }
+
+                    importEmployee(employeeShema, workflow, callback);
+                });
         }
 
         return [departmentImporter, jobPositionImporter, employeeImporter];

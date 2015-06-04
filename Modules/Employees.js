@@ -120,9 +120,11 @@ var Employee = function (event, models) {
     };
 
     function getAge(birthday) {
-        birthday = new Date(birthday);
         var today = new Date();
-        var years = today.getFullYear() - birthday.getFullYear();
+        var years;
+
+        birthday = new Date(birthday);
+        years = today.getFullYear() - birthday.getFullYear();
 
         birthday.setFullYear(today.getFullYear());
 
