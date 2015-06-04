@@ -42,6 +42,7 @@ module.exports = (function () {
             }]
         },
         aliases: {
+            ID: 'ID',
             name: 'JobName',
             totalForecastedEmployees: 'Forecasted',
             numberOfEmployees: 'CurrentNumber',

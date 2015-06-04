@@ -26,9 +26,9 @@ module.exports = function (models) {
     });
 
     function comparator(columnName, field) {
-       var targetObject =  _.find(field, function(fieldValue){
-           return fieldValue.value.toLowerCase() === columnName.toString().toLowerCase();
-       });
+        var targetObject = _.find(field, function (fieldValue) {
+            return fieldValue.value.toLowerCase() === columnName.toString().toLowerCase();
+        });
         return targetObject.fieldValue;
     };
 
@@ -165,7 +165,7 @@ module.exports = function (models) {
                             ID: fetchedProject['Company']
                         };
 
-                        function customerFinder (callback) {
+                        function customerFinder(callback) {
                             Customer.findOne(customerQuery, {_id: 1}, function (err, customer) {
                                 if (err) {
                                     return callback(err);
@@ -174,7 +174,7 @@ module.exports = function (models) {
                             });
                         };
 
-                        function employeeFinder (callback) {
+                        function employeeFinder(callback) {
                             Employee.findOne(employeeQuery, {_id: 1}, function (err, employee) {
                                 if (err) {
                                     return callback(err);
@@ -186,9 +186,10 @@ module.exports = function (models) {
                         async.parallel({
                             customerResult: customerFinder,
                             employeeResult: employeeFinder
-                        }, function(err, result) {
+                        }, function (err, result) {
                             objectToSave.customer = result.customerResult._id;
                             objectToSave.employee = result.employeeResult._id;
+
                             model = new Project(objectToSave);
                             model.save(cb);
                         });
@@ -334,7 +335,7 @@ module.exports = function (models) {
                         var key = mongooseFields[i];
                         var msSqlKey = jobPositionShema.aliases[key];
 
-                        if (msSqlKey in jobPositionShema.comparator) {
+                        if (jobPositionShema.comparator && msSqlKey in jobPositionShema.comparator) {
                             fetchedJobPosition[msSqlKey] = comparator(fetchedJobPosition[msSqlKey], jobPositionShema.comparator[msSqlKey]);
                         }
 
@@ -407,7 +408,7 @@ module.exports = function (models) {
             function saverEmployee(fetchedArray, callback) {
                 var model;
 
-                var mongooseFields = Object.keys(EmployeeSchema.aliases);
+                var mongooseFields = Object.keys(employeeShema.aliases);
 
                 var q = async.queue(function (fetchedEmployee, cb) {
                     var objectToSave = {};
@@ -417,10 +418,16 @@ module.exports = function (models) {
 
                     for (var i = mongooseFields.length - 1; i >= 0; i--) {
                         key = mongooseFields[i];
-                        msSqlKey = EmployeeSchema.aliases[key];
+                        msSqlKey = employeeShema.aliases[key];
 
-                        if (msSqlKey in EmployeeSchema.comparator) {
-                            fetchedEmployee[msSqlKey] = comparator(fetchedEmployee[msSqlKey], EmployeeSchema.comparator[msSqlKey]);
+                        if (employeeShema.defaultValues) {
+                            for (var defKey in employeeShema.defaultValues) {
+                                objectToSave[defKey] = employeeShema.defaultValues[defKey];
+                            }
+                        }
+
+                        if (employeeShema.comparator && msSqlKey in employeeShema.comparator) {
+                            fetchedEmployee[msSqlKey] = comparator(fetchedEmployee[msSqlKey], employeeShema.comparator[msSqlKey]);
                         }
 
                         objectToSave[key] = fetchedEmployee[msSqlKey];
@@ -436,14 +443,37 @@ module.exports = function (models) {
                         departmentQuery = {
                             ID: fetchedEmployee['Department']
                         };
-                        Department.findOne(departmentQuery, {_id: 1}, function (err, department) {
-                            if (err) {
-                                return cb(err);
-                            }
 
-                            objectToSave.department = department._id;
+                        jobPositionQuery = {
+                            ID: fetchedEmployee['JobPosition']
+                        };
 
-                            model = new Model(objectToSave);
+                        function departmentFinder(callback) {
+                            Department.findOne(departmentQuery, {_id: 1}, function (err, department) {
+                                if (err) {
+                                    return callback(err);
+                                }
+                                callback(null, department);
+                            });
+                        };
+
+                        function jobPositionFinder(callback) {
+                            JobPosition.findOne(jobPositionQuery, {_id: 1}, function (err, jobPosition) {
+                                if (err) {
+                                    return callback(err);
+                                }
+                                callback(null, jobPosition);
+                            });
+                        }
+
+                        async.parallel({
+                            department: departmentFinder,
+                            jobPosition: jobPositionFinder
+                        }, function (err, result) {
+                            objectToSave.department = result.department ? result.department._id : null;
+                            objectToSave.jobPosition = result.jobPosition ? result.jobPosition._id : null;
+
+                            model = new Employee(objectToSave);
                             model.save(cb);
                         });
                     }
