@@ -107,19 +107,28 @@ define([
             var parent = $(e.target).closest('td');
             var maxlength = parent.find(".no-long").attr("data-maxlength") || 20;
             var datePicker = parent.find('.datepicker');
-
+            var textarea = parent.find('.textarea');
+            var prevParent = $(this.prevQuickEdit).closest("td");
+            var inputEl = prevParent.find('input');
+            if (!inputEl.length)
+                inputEl = prevParent.find('textarea');
             e.preventDefault();
-
-            $('.quickEdit #editInput').remove();
-            $('.quickEdit #cancelSpan').remove();
-            $('.quickEdit #saveSpan').remove();
 
             if (this.prevQuickEdit) {
                 if ($(this.prevQuickEdit).hasClass('quickEdit')) {
-                    $('.quickEdit').text(this.text ? this.text : "").removeClass('quickEdit');
+                    $('.quickEdit').html('<span>'+(this.text ? this.text : "")+'</span>');
+                    $('.quickEdit').removeClass('quickEdit');
                 }
             }
-
+            if (inputEl.hasClass('datepicker')) {
+                prevParent.find('span').addClass('datepicker');
+            }
+            if (inputEl.hasClass('textarea')) {
+                prevParent.find('span').addClass('textarea');
+            }
+            $('.quickEdit #editInput').remove();
+            $('.quickEdit #cancelSpan').remove();
+            $('.quickEdit #saveSpan').remove();
 
             parent.addClass('quickEdit');
 
@@ -128,8 +137,13 @@ define([
             this.text = $.trim(parent.text());
 
             parent.text('');
-            parent.append('<input id="editInput" maxlength="' + maxlength + '" type="text" />');
-            $('#editInput').val(this.text);
+            if (textarea.length){
+                parent.append('<textarea id="editInput" class="textarea"/>');
+                $('#editInput').val(this.text);
+            }else {
+                parent.append('<input id="editInput"  maxlength="' + maxlength + '" type="text" />');
+                $('#editInput').val(this.text);
+            }
 
             if (datePicker.length) {
                 $('#editInput').datepicker({
@@ -140,10 +154,15 @@ define([
             }
 
             this.prevQuickEdit = parent;
+            if (textarea.length) {
+                parent.append('<span id="cancelSpan" class="productEdit right"><a href="javascript:;">x</a></span>');
+                parent.append('<span id="saveSpan" class="productEdit right"><a href="javascript:;">c</a></span>');
 
-            parent.append('<span id="saveSpan" class="productEdit"><a href="javascript:;">c</a></span>');
-            parent.append('<span id="cancelSpan" class="productEdit"><a href="javascript:;">x</a></span>');
-            parent.find("#editInput").width(parent.find("#editInput").width() - 50);
+            }else{
+                parent.append('<span id="saveSpan" class="productEdit"><a href="javascript:;">c</a></span>');
+                parent.append('<span id="cancelSpan" class="productEdit"><a href="javascript:;">x</a></span>');
+            }
+            parent.find("#editInput").width(parent.find("#editInput").parent().width() - 55);
         },
 
         saveClick: function (e) {
@@ -152,12 +171,17 @@ define([
             var targetEl = $(e.target);
             var parent = targetEl.closest('td');
             var inputEl = parent.find('input');
+            if (!inputEl.length)
+            inputEl = parent.find('textarea');
             var val = inputEl.val();
 
             parent.removeClass('quickEdit').html('<span>' + val + '</span>');
 
             if (inputEl.hasClass('datepicker')) {
                 parent.find('span').addClass('datepicker');
+            }
+            if (inputEl.hasClass('textarea')) {
+                parent.find('span').addClass('textarea');
             }
 
             this.recalculateTaxes(parent);
@@ -166,12 +190,23 @@ define([
         cancelClick: function (e) {
             e.preventDefault();
             var text = this.text ? this.text : '';
-
+            var targetEl = $(e.target);
+            var parent = targetEl.closest('td');
+            var inputEl = parent.find('input');
+            if (!inputEl.length)
+                inputEl = parent.find('textarea');
             if (this.prevQuickEdit) {
                 if ($(this.prevQuickEdit).hasClass('quickEdit')) {
                     $('.quickEdit').removeClass('quickEdit').html('<span>' + text + '</span>');
                 }
             }
+            if (inputEl.hasClass('datepicker')) {
+                parent.find('span').addClass('datepicker');
+            }
+            if (inputEl.hasClass('textarea')) {
+                parent.find('span').addClass('textarea');
+            }
+
         },
 
         showProductsSelect: function (e, prev, next) {
