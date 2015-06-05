@@ -5,9 +5,6 @@ module.exports = (function () {
     var employee = {
         collection: 'Employees',
         table: 'Employee',
-        /*defaultValues: {
-            isEmployee: true
-        },*/
         comparator: {
             'Avatar': [{
                 value: 'Null',
@@ -102,15 +99,42 @@ module.exports = (function () {
     var customer = {
         collection: 'Customers',
         table: 'Company',
+        comparator: {
+            'CompanySize': [{
+                value: '1',
+                field: 'size',
+                fieldValue: '1-50'
+            }, {
+                value: '2',
+                field: 'size',
+                fieldValue: '50-200'
+            }, {
+                value: '3',
+                field: 'size',
+                fieldValue: '200-500'
+            }, {
+                value: '4',
+                field: 'size',
+                fieldValue: '>500'
+            }],
+            'IsCompany': [{
+                value: 'True',
+                field: 'type',
+                fieldValue: 'Company'
+            }, {
+                value: 'False',
+                field: 'type',
+                fieldValue: 'Person'
+            }]
+
+        },
         aliases: {
             ID: 'ID',
-            name: {
-                first: 'Name'
-            },
-            address: {
-                country: 'Country'
-            }
-            /*industry: companySize:*/ /*TODO*/
+            'name.first': 'Name',
+            'address.country': 'Country',
+            'companyInfo.size': 'CompanySize',
+            'companyInfo.industry': 'Industry',
+            type: 'IsCompany'
         }
     };
 
@@ -128,4 +152,5 @@ module.exports = (function () {
     var hrTasks = [department, jobPosition, employee, project, customer, user];
 
     return hrTasks;
-})();
+})
+();

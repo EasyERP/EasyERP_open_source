@@ -69,7 +69,12 @@ module.exports = (function () {
         editedBy: {
             user: { type: ObjectId, ref: 'Users', default: null },
             date: { type: Date, default: Date.now }
-        }
+        },
+        companyInfo: {
+            size: String,
+            industry: {type: ObjectId, ref: 'Industries', default: null}
+        },
+        ID: Number
     }, { collection: 'Customers' });
 
     mongoose.model('Customers', customerSchema);
