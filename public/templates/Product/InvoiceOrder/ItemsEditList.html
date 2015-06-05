@@ -1,29 +1,29 @@
 <% products.forEach(function(product){ %>
 <tr class="productItem" data-id="<%=product.product._id%>">
-    <td data-name="productName">
+    <td data-name="productName" class="width20">
         <%if(editable) {%>
         <a class="current-selected productsDd" href="javascript:;"><%=product.product.name%></a>
         <%} else {%>
         <a href="#easyErp/Product/form/<%=product.product._id%>"><%=product.product.name%></a>
         <%}%>
     </td>
-    <td data-name="productDescr">
-        <span>
+    <td data-name="productDescr" class="editable">
+        <span class="textarea">
             <%=product.description%>
         </span>
     </td>
-    <td data-name="scheduledDate">
+    <td data-name="scheduledDate" class="editable">
         <span class="datepicker">
             <%=product.scheduledDate%>
         </span>
         <input type="text" class="datepicker notVisible">
     </td>
-    <td data-name="quantity">
+    <td data-name="quantity" class="editable">
         <span>
             <%=product.quantity%>
         </span>
     </td>
-    <td data-name="price">
+    <td data-name="price"  class="editable">
         <span>
             <%=product.unitPrice%>
         </span>
