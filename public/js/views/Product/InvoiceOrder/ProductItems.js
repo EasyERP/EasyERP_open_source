@@ -110,13 +110,16 @@ define([
             var textarea = parent.find('.textarea');
             var prevParent = $(this.prevQuickEdit).closest("td");
             var inputEl = prevParent.find('input');
-            if (!inputEl.length)
+
+            if (!inputEl.length) {
                 inputEl = prevParent.find('textarea');
+            }
+
             e.preventDefault();
 
             if (this.prevQuickEdit) {
                 if ($(this.prevQuickEdit).hasClass('quickEdit')) {
-                    $('.quickEdit').html('<span>'+(this.text ? this.text : "")+'</span>');
+                    $('.quickEdit').html('<span>' + (this.text ? this.text : "") + '</span>');
                     $('.quickEdit').removeClass('quickEdit');
                 }
             }
@@ -126,6 +129,7 @@ define([
             if (inputEl.hasClass('textarea')) {
                 prevParent.find('span').addClass('textarea');
             }
+
             $('.quickEdit #editInput').remove();
             $('.quickEdit #cancelSpan').remove();
             $('.quickEdit #saveSpan').remove();
@@ -137,10 +141,11 @@ define([
             this.text = $.trim(parent.text());
 
             parent.text('');
-            if (textarea.length){
+
+            if (textarea.length) {
                 parent.append('<textarea id="editInput" class="textarea"/>');
                 $('#editInput').val(this.text);
-            }else {
+            } else {
                 parent.append('<input id="editInput"  maxlength="' + maxlength + '" type="text" />');
                 $('#editInput').val(this.text);
             }
@@ -154,11 +159,12 @@ define([
             }
 
             this.prevQuickEdit = parent;
+
             if (textarea.length) {
                 parent.append('<span id="cancelSpan" class="productEdit right"><a href="javascript:;">x</a></span>');
                 parent.append('<span id="saveSpan" class="productEdit right"><a href="javascript:;">c</a></span>');
 
-            }else{
+            } else {
                 parent.append('<span id="saveSpan" class="productEdit"><a href="javascript:;">c</a></span>');
                 parent.append('<span id="cancelSpan" class="productEdit"><a href="javascript:;">x</a></span>');
             }
@@ -172,7 +178,7 @@ define([
             var parent = targetEl.closest('td');
             var inputEl = parent.find('input');
             if (!inputEl.length)
-            inputEl = parent.find('textarea');
+                inputEl = parent.find('textarea');
             var val = inputEl.val();
 
             parent.removeClass('quickEdit').html('<span>' + val + '</span>');
@@ -189,12 +195,15 @@ define([
 
         cancelClick: function (e) {
             e.preventDefault();
+
             var text = this.text ? this.text : '';
             var targetEl = $(e.target);
             var parent = targetEl.closest('td');
             var inputEl = parent.find('input');
-            if (!inputEl.length)
+
+            if (!inputEl.length) {
                 inputEl = parent.find('textarea');
+            }
             if (this.prevQuickEdit) {
                 if ($(this.prevQuickEdit).hasClass('quickEdit')) {
                     $('.quickEdit').removeClass('quickEdit').html('<span>' + text + '</span>');
@@ -345,16 +354,19 @@ define([
             var thisEl = this.$el;
             var products;
 
-            if(options && options.model){
+            if (options && options.model) {
                 products = options.model.products;
 
                 thisEl.html(_.template(ProductItemsEditList, {model: options.model}));
 
-                if(products) {
+                if (products) {
                     productsContainer = thisEl.find('#productList');
                     productsContainer.append(_.template(ItemsEditList, {products: products, editable: this.editable}));
                     totalAmountContainer = thisEl.find('#totalAmountContainer');
-                    totalAmountContainer.append(_.template(totalAmount, {model: options.model, balanceVisible: this.visible}));
+                    totalAmountContainer.append(_.template(totalAmount, {
+                        model: options.model,
+                        balanceVisible: this.visible
+                    }));
                 }
             } else {
                 this.$el.html(this.template());

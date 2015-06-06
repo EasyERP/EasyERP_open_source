@@ -13,6 +13,7 @@ module.exports = (function () {
     require('./jobPosition.js');
     require('./jobType.js');
     require('./incoterm.js');
+    require('./industry.js');
     require('./invoicingControl.js');
     require('./language.js');
     require('./module.js');

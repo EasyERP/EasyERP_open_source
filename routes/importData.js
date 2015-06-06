@@ -58,24 +58,25 @@ module.exports = function (models) {
     };
 
     function salesImporter(req, tasks) {
-        var departmentSchema = tasks[0];
-        var projectSchema = tasks[1];
-        var employeeSchema = tasks[2];
-        var customerSchema = tasks[3];
+        var projectSchema = tasks[3];
+        var customerSchema = tasks[4];
+
         var ownerId = req.session ? req.session.uId : null;
 
         var customerCollection = customerSchema.collection;
         var projectCollection = projectSchema.collection;
-        var departmentCollection = departmentSchema.collection;
-        var employeeCollection = employeeSchema.collection;
+
         var ProjectSchema = projectCollection[projectCollection];
         var CustomerSchema = mongoose.Schemas[customerCollection];
-        var DepartmentSchema = mongoose.Schemas[departmentCollection];
-        var EmployeeSchema = mongoose.Schemas[employeeCollection];
+        var EmployeeSchema = mongoose.Schemas['Employee'];
+        var IndustrySchema = mongoose.Schemas['Industry'];
+        var WorkflowSchema = mongoose.Schemas['workflow'];
+
         var Project = models.get(req.session.lastDb, projectCollection, ProjectSchema);
         var Customer = models.get(req.session.lastDb, customerCollection, CustomerSchema);
-        var Department = models.get(req.session.lastDb, departmentCollection, DepartmentSchema);
-        var Employee = models.get(req.session.lastDb, employeeCollection, EmployeeSchema);
+        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var Industry = models.get(req.session.lastDb, 'Industry', IndustrySchema);
+        var Workflow = models.get(req.session.lastDb, 'workflows', WorkflowSchema);
 
         function importCustomer(customerSchema, seriesCb) {
             var query = queryBuilder(customerSchema.table);
@@ -89,12 +90,18 @@ module.exports = function (models) {
                 var model;
                 var mongooseFields = Object.keys(customerSchema.aliases);
 
-                var q = async.queue(function (fetchedCustomer, cb) {
+                async.eachLimit(fetchedArray, 100, function (fetchedCustomer, cb) {
                     var objectToSave = {};
+                    var industryQuery;
 
                     for (var i = mongooseFields.length - 1; i >= 0; i--) {
                         var key = mongooseFields[i];
-                        var msSqlKey = departmentShema.aliases[key];
+                        var msSqlKey = customerSchema.aliases[key];
+                        var _comparator = customerSchema.comparator;
+
+                        if (_comparator && msSqlKey in _comparator) {
+                            fetchedCustomer[msSqlKey] = comparator(fetchedCustomer[msSqlKey], _comparator[msSqlKey]) || fetchedCustomer[msSqlKey];
+                        }
 
                         objectToSave[key] = fetchedCustomer[msSqlKey];
                         objectToSave.createdBy = {
@@ -106,19 +113,27 @@ module.exports = function (models) {
                     }
 
                     if (fetchedCustomer) {
-                        model = new Customer(objectToSave);
-                        model.save(cb);
+                        industryQuery = {
+                            ID: fetchedCustomer['Industry']
+                        };
+                        Industry.findOne(industryQuery, {_id: 1}, function (err, industry) {
+                            if (err) {
+                                return cb(err);
+                            }
+
+                            objectToSave['companyInfo.industry'] = industry ? industry._id : industry;
+
+                            model = new Customer(objectToSave);
+                            model.save(function (err, customer) {
+                                if (err) {
+                                    console.error(err);
+                                    return cb(err);
+                                }
+                                cb();
+                            });
+                        });
+
                     }
-                }, 100);
-
-                q.drain = function () {
-                    callback(null, 'done');
-                };
-
-                async.each(fetchedArray, function (fetchedCustomer) {
-                    q.push(fetchedCustomer, function () {
-                        console.log('finished ' + fetchedCustomer.ID);
-                    });
                 }, function (err) {
                     if (err) {
                         return callback(err);
@@ -151,12 +166,33 @@ module.exports = function (models) {
                 handler.importData(query, callback);
             }
 
-            function saverProject(fetchedArray, callback) {
+            function fetchWorkflows(fetchedArray, callback) {
+                var query = {
+                    wId: 'Projects'
+                };
+
+                var projectionObject = {
+                    status: 1,
+                    _id: 1
+                };
+
+                Workflow.find(query, projectionObject, function (err, workflows) {
+                    if (err) {
+                        return callback(err);
+                    }
+
+                    workflows = _.groupBy(workflows, 'status');
+
+                    callback(null, workflows, fetchedArray);
+                });
+            }
+
+            function saverProject(workflows, fetchedArray, callback) {
                 var model;
 
                 var mongooseFields = Object.keys(projectShema.aliases);
 
-                var q = async.queue(function (fetchedProject, cb) {
+                async.eachLimit(fetchedArray, 100, function (fetchedProject, cb) {
                     var objectToSave = {};
                     var customerQuery;
                     var employeeQuery;
@@ -169,7 +205,11 @@ module.exports = function (models) {
                             fetchedProject[msSqlKey] = comparator(fetchedProject[msSqlKey], projectShema.comparator[msSqlKey]);
                         }
 
-                        objectToSave[key] = fetchedProject[msSqlKey];
+                        if (key === 'workflow') {
+                            objectToSave[key] = workflows[fetchedProject[msSqlKey]][0];
+                        } else {
+                            objectToSave[key] = fetchedProject[msSqlKey];
+                        }
                         objectToSave.createdBy = {
                             user: ownerId
                         };
@@ -209,22 +249,18 @@ module.exports = function (models) {
                             employeeResult: employeeFinder
                         }, function (err, result) {
                             objectToSave.customer = result.customerResult ? result.customerResult._id : null;
-                            objectToSave.employee = result.employeeResult ? result.employeeResult._id : null;
+                            objectToSave.projectmanager = result.employeeResult ? result.employeeResult._id : null;
 
                             model = new Project(objectToSave);
-                            model.save(cb);
+                            model.save(function (err, project) {
+                                if (err) {
+                                    console.error(err);
+                                    return cb(err);
+                                }
+                                cb();
+                            });
                         });
                     }
-                }, 100);
-
-                q.drain = function () {
-                    callback(null, 'done');
-                };
-
-                async.each(fetchedArray, function (fetchedCustomer) {
-                    q.push(fetchedCustomer, function () {
-                        console.log('finished ' + fetchedCustomer.ID);
-                    });
                 }, function (err) {
                     if (err) {
                         return callback(err);
@@ -234,7 +270,7 @@ module.exports = function (models) {
                 })
             }
 
-            waterfallTasks = [getData, saverProject];
+            waterfallTasks = [getData, fetchWorkflows, saverProject];
 
             async.waterfall(waterfallTasks, function (err, result) {
                 if (err) {
@@ -261,14 +297,15 @@ module.exports = function (models) {
         var jobPositionCollection = jobPositionShema.collection;
         var departmentCollection = departmentShema.collection;
         var employeeCollection = employeeShema.collection;
+
         var JobPositionSchema = mongoose.Schemas[jobPositionCollection];
         var DepartmentSchema = mongoose.Schemas[departmentCollection];
         var EmployeeSchema = mongoose.Schemas[employeeCollection];
+        var WorkflowSchema = mongoose.Schemas['workflow'];
+
         var JobPosition = models.get(req.session.lastDb, jobPositionCollection, JobPositionSchema);
         var Department = models.get(req.session.lastDb, departmentCollection, DepartmentSchema);
         var Employee = models.get(req.session.lastDb, employeeCollection, EmployeeSchema);
-
-        var WorkflowSchema = mongoose.Schemas['workflow'];
         var Workflow = models.get(req.session.lastDb, 'workflows', WorkflowSchema);
 
         function importDepartment(departmentShema, seriesCb) {
@@ -281,10 +318,9 @@ module.exports = function (models) {
 
             function saverDepartment(fetchedArray, callback) {
                 var model;
-
                 var mongooseFields = Object.keys(departmentShema.aliases);
 
-                var q = async.queue(function (fetchedDepartment, cb) {
+                async.eachLimit(fetchedArray, 100, function (fetchedDepartment, cb) {
                     var objectToSave = {};
 
                     for (var i = mongooseFields.length - 1; i >= 0; i--) {
@@ -304,16 +340,6 @@ module.exports = function (models) {
                         model = new Department(objectToSave);
                         model.save(cb);
                     }
-                }, 100);
-
-                q.drain = function () {
-                    callback(null, 'done');
-                };
-
-                async.each(fetchedArray, function (fetchedDepartment) {
-                    q.push(fetchedDepartment, function () {
-                        console.log('finished ' + fetchedDepartment.ID);
-                    });
                 }, function (err) {
                     if (err) {
                         return callback(err);
@@ -348,10 +374,9 @@ module.exports = function (models) {
 
             function saverJobPosition(fetchedArray, callback) {
                 var model;
-
                 var mongooseFields = Object.keys(jobPositionShema.aliases);
 
-                var q = async.queue(function (fetchedJobPosition, cb) {
+                async.eachLimit(fetchedArray, 100, function (fetchedJobPosition, cb) {
                     var objectToSave = {};
                     var departmentQuery;
 
@@ -387,16 +412,6 @@ module.exports = function (models) {
                             model.save(cb);
                         });
                     }
-                }, 100);
-
-                q.drain = function () {
-                    callback(null, 'done');
-                };
-
-                async.each(fetchedArray, function (fetchedDepartment) {
-                    q.push(fetchedDepartment, function () {
-                        console.log('finished ' + fetchedDepartment.ID);
-                    });
                 }, function (err) {
                     if (err) {
                         return callback(err);
@@ -433,10 +448,9 @@ module.exports = function (models) {
 
             function saverEmployee(fetchedArray, callback) {
                 var model;
-
                 var mongooseFields = Object.keys(employeeShema.aliases);
 
-                var q = async.queue(function (fetchedEmployee, cb) {
+                async.eachLimit(fetchedArray, 100, function (fetchedEmployee, cb) {
                     var objectToSave = {};
                     var departmentQuery;
                     var key;
@@ -461,7 +475,7 @@ module.exports = function (models) {
                         }
 
                         if (key === 'isEmployee') {
-                            if(fetchedEmployee[msSqlKey] === false){
+                            if (fetchedEmployee[msSqlKey] === false) {
                                 objectToSave.workflow = workflow;
                             }
                         }
@@ -513,16 +527,6 @@ module.exports = function (models) {
                             model.save(cb);
                         });
                     }
-                }, 100);
-
-                q.drain = function () {
-                    callback(null, 'done');
-                };
-
-                async.each(fetchedArray, function (fetchedDepartment) {
-                    q.push(fetchedDepartment, function () {
-                        console.log('finished ' + fetchedDepartment.ID);
-                    });
                 }, function (err) {
                     if (err) {
                         return callback(err);
@@ -564,8 +568,8 @@ module.exports = function (models) {
 
     router.post('/', function (req, res, next) {
         var hrTasks = hrImporter(req, tasks);
-        //var salesTasks = salesImporter(req, tasks);
-        var seriesTasks = hrTasks.concat(/*salesTasks*/[]);
+        var salesTasks = salesImporter(req, tasks);
+        var seriesTasks = hrTasks.concat(salesTasks);
 
         async.series(seriesTasks, function (err) {
             if (err) {

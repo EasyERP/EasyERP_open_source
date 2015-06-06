@@ -35,7 +35,6 @@ module.exports = (function () {
             jobPosition: 'JobPosition'
         }
     };
-
     var jobPosition = {
         collection: 'JobPosition',
         table: 'JobPositions',
@@ -60,7 +59,6 @@ module.exports = (function () {
             workflow: 'RecruitStatus'
         }
     };
-
     var department = {
         collection: 'Department',
         table: 'Department',
@@ -69,33 +67,47 @@ module.exports = (function () {
             ID: 'ID'
         }
     };
-
     var project = {
         collection: 'Project',
         table: 'Project',
         comparator: {
             'ProjectStatus': [{
-                value: 'Completed',
+                value: '1',
                 field: 'workflow',
-                fieldValue: '528ce82df3f67bc40b000025'
+                fieldValue: 'New'
             }, {
-                value: 'In Progress',
+                value: '2',
                 field: 'workflow',
-                fieldValue: '528ce7f2f3f67bc40b000023'
+                fieldValue: 'Pending'
+            }, {
+                value: '3',
+                field: 'workflow',
+                fieldValue: 'In Progress'
+            }, {
+                value: '4',
+                field: 'workflow',
+                fieldValue: 'Done'
+            }, {
+                value: '5',
+                field: 'workflow',
+                fieldValue: 'Cancelled'
+            }, {
+                value: '6',
+                field: 'workflow',
+                fieldValue: 'In Progress'
             }]
         },
         aliases: {
             ID: 'ID',
             projectName: 'ProjectName',
-            customer: 'Company', /*TODO*/
+            customer: 'Company',
             workflow: 'ProjectStatus',
             StartDate: 'StartDate',
             EndDate: 'EndDate',
-            projectmanager: 'Assigned' /*TODO*/
+            projectmanager: 'Assigned'
         }
 
     };
-
     var customer = {
         collection: 'Customers',
         table: 'Company',
@@ -149,8 +161,6 @@ module.exports = (function () {
         }
     };
 
-    var hrTasks = [department, jobPosition, employee, project, customer, user];
-
-    return hrTasks;
+    return [department, jobPosition, employee, project, customer, user];
 })
 ();

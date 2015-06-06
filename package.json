@@ -28,5 +28,8 @@
     "swig": "1.4.2",
     "underscore": "1.8.3",
     "xml2js": "0.4.0"
+  },
+  "dependencies": {
+    "bower": "^1.4.1"
   }
 }

@@ -625,21 +625,21 @@
         },
 
         getFilterCustomers: function (req, response) {
-            var data = {};
-            for (var i in req.query) {
-                data[i] = req.query[i];
-            }
+            var data = req.query;
             var viewType = data.viewType;
             var contentType = data.contentType;
-            var res = {};
-            res['data'] = [];
+            var res = {
+                data: []
+            };
             var optionsObject = {};
+
             switch (contentType) {
                 case ('Persons'):
                 {
                     optionsObject['type'] = 'Person';
-                    if (data && data.filter && data.filter.letter)
+                    if (data && data.filter && data.filter.letter) {
                         optionsObject['name.last'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
+                    }
                 }
                     break;
                 case ('Companies'):
@@ -672,39 +672,40 @@
                 function (err, deps) {
                     if (!err) {
                         var arrOfObjectId = deps.objectID();
+                        var queryObject = {
+                            $or: [
+                                {
+                                    $or: [
+                                        {
+                                            $and: [
+                                                {whoCanRW: 'group'},
+                                                {'groups.users': objectId(req.session.uId)}
+                                            ]
+                                        },
+                                        {
+                                            $and: [
+                                                {whoCanRW: 'group'},
+                                                {'groups.group': {$in: arrOfObjectId}}
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    $and: [
+                                        {whoCanRW: 'owner'},
+                                        {'groups.owner': objectId(req.session.uId)}
+                                    ]
+                                },
+                                {whoCanRW: "everyOne"}
+                            ]
+                        };
 
                         models.get(req.session.lastDb, "Customers", customerSchema).aggregate(
                             {
                                 $match: {
                                     $and: [
                                         optionsObject,
-                                        {
-                                            $or: [
-                                                {
-                                                    $or: [
-                                                        {
-                                                            $and: [
-                                                                {whoCanRW: 'group'},
-                                                                {'groups.users': objectId(req.session.uId)}
-                                                            ]
-                                                        },
-                                                        {
-                                                            $and: [
-                                                                {whoCanRW: 'group'},
-                                                                {'groups.group': {$in: arrOfObjectId}}
-                                                            ]
-                                                        }
-                                                    ]
-                                                },
-                                                {
-                                                    $and: [
-                                                        {whoCanRW: 'owner'},
-                                                        {'groups.owner': objectId(req.session.uId)}
-                                                    ]
-                                                },
-                                                {whoCanRW: "everyOne"}
-                                            ]
-                                        }
+                                        queryObject
                                     ]
                                 }
                             },

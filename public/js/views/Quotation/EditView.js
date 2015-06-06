@@ -110,7 +110,9 @@ define([
                     if (workflow && workflow.error) {
                         return alert(workflow.error.statusText);
                     }
+
                     products = self.currentModel.get('products');
+
                     if (products && products.length) {
                         self.currentModel.save({
                             isOrder: true,
