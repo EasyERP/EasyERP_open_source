@@ -150,6 +150,19 @@ module.exports = (function () {
         }
     };
 
+    var wTrack = {
+        collection: 'wTrack',
+        table: 'wTrack',
+        aliases: {
+            ID: 'ID',
+            project: 'Project',
+            customer: 'Company',
+            'companyInfo.size': 'CompanySize',
+            'companyInfo.industry': 'Industry',
+            type: 'IsCompany'
+        }
+    };
+
     var user = {
         collection: 'Users',
         table: 'Users',
@@ -162,5 +175,4 @@ module.exports = (function () {
     };
 
     return [department, jobPosition, employee, project, customer, user];
-})
-();
+})();
