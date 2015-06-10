@@ -60,23 +60,29 @@ module.exports = function (models) {
     function salesImporter(req, tasks) {
         var projectSchema = tasks[3];
         var customerSchema = tasks[4];
+        var wTrackSchema = tasks[5];
 
         var ownerId = req.session ? req.session.uId : null;
 
         var customerCollection = customerSchema.collection;
         var projectCollection = projectSchema.collection;
+        var wTrackCollection = wTrackSchema.collection;
 
         var ProjectSchema = projectCollection[projectCollection];
         var CustomerSchema = mongoose.Schemas[customerCollection];
+        var DepartmentSchema = mongoose.Schemas['Department'];
         var EmployeeSchema = mongoose.Schemas['Employee'];
         var IndustrySchema = mongoose.Schemas['Industry'];
         var WorkflowSchema = mongoose.Schemas['workflow'];
+        var WTrackSchema = mongoose.Schemas[wTrackCollection];
 
         var Project = models.get(req.session.lastDb, projectCollection, ProjectSchema);
         var Customer = models.get(req.session.lastDb, customerCollection, CustomerSchema);
+        var Department = models.get(req.session.lastDb, 'Department', DepartmentSchema);
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
         var Industry = models.get(req.session.lastDb, 'Industry', IndustrySchema);
         var Workflow = models.get(req.session.lastDb, 'workflows', WorkflowSchema);
+        var Wtrack = models.get(req.session.lastDb, wTrackCollection, WTrackSchema);
 
         function importCustomer(customerSchema, seriesCb) {
             var query = queryBuilder(customerSchema.table);
@@ -285,7 +291,137 @@ module.exports = function (models) {
             importProject(projectSchema, callback);
         };
 
-        return [customerImporter, projectImporter];
+        function importWtrack(wTrackSchema, seriesCb) {
+            var query = queryBuilder(wTrackSchema.table);
+            var waterfallTasks;
+
+            function getData(callback) {
+                handler.importData(query, callback);
+            }
+
+            function saverWtrack(fetchedArray, callback) {
+                var model;
+                var mongooseFields = Object.keys(wTrackSchema.aliases);
+
+                async.eachLimit(fetchedArray, 100, function (fetchedWtrack, cb) {
+                    var objectToSave = {};
+
+                    for (var i = mongooseFields.length - 1; i >= 0; i--) {
+                        var key = mongooseFields[i];
+                        var msSqlKey = wTrackSchema.aliases[key];
+                        var _comparator = wTrackSchema.comparator;
+
+                        var projectQuery;
+                        var customerQuery;
+                        var employeeQuery;
+                        var departmentQuery;
+
+                        if (_comparator && msSqlKey in _comparator) {
+                            fetchedWtrack[msSqlKey] = comparator(fetchedWtrack[msSqlKey], _comparator[msSqlKey]) || fetchedWtrack[msSqlKey];
+                        }
+
+                        objectToSave[key] = fetchedWtrack[msSqlKey];
+                        objectToSave.createdBy = {
+                            user: ownerId
+                        };
+                        objectToSave.editedBy = {
+                            user: ownerId
+                        }
+                    }
+
+                    if (fetchedWtrack) {
+                        departmentQuery = {
+                            ID: fetchedWtrack['Department']
+                        };
+
+                        projectQuery = {
+                            ID: fetchedWtrack['Project']
+                        };
+
+                        customerQuery = {
+                            ID: fetchedWtrack['Company']
+                        };
+
+                        employeeQuery = {
+                            ID: fetchedWtrack['Employee']
+                        };
+
+                        function departmentFinder(callback) {
+                            Department.findOne(departmentQuery, {_id: 1}, function (err, department) {
+                                if (err) {
+                                    return callback(err);
+                                }
+                                callback(null, department);
+                            });
+                        };
+
+                        function projectFinder(callback) {
+                            Project.findOne(projectQuery, {_id: 1}, function (err, project) {
+                                if (err) {
+                                    return callback(err);
+                                }
+                                callback(null, project);
+                            });
+                        }
+
+                        function customerFinder(callback) {
+                            Customer.findOne(customerQuery, {_id: 1}, function (err, customer) {
+                                if (err) {
+                                    return callback(err);
+                                }
+                                callback(null, customer);
+                            });
+                        };
+
+                        function employeeFinder(callback) {
+                            Employee.findOne(employeeQuery, {_id: 1}, function (err, employee) {
+                                if (err) {
+                                    return callback(err);
+                                }
+                                callback(null, employee);
+                            });
+                        }
+
+                        async.parallel({
+                            department: departmentFinder,
+                            project: projectFinder,
+                            customer: customerFinder,
+                            employee: employeeFinder
+                        }, function (err, result) {
+                            objectToSave.department = result.department ? result.department._id : null;
+                            objectToSave.project = result.project ? result.project._id : null;
+                            objectToSave.customer = result.customer ? result.customer._id : null;
+                            objectToSave.employee = result.employee ? result.employee._id : null;
+
+                            model = new Wtrack(objectToSave);
+                            model.save(cb);
+                        });
+                    }
+                }, function (err) {
+                    if (err) {
+                        return callback(err);
+                    }
+
+                    callback(null, 'Completed');
+                })
+            }
+
+            waterfallTasks = [getData, saverWtrack];
+
+            async.waterfall(waterfallTasks, function (err, result) {
+                if (err) {
+                    seriesCb(err);
+                }
+
+                seriesCb(null, 'Complete')
+            });
+        };
+
+        function wTrackImporter(callback) {
+            importWtrack(wTrackSchema, callback);
+        };
+
+        return [customerImporter, projectImporter, wTrackImporter];
     };
 
     function hrImporter(req, tasks) {

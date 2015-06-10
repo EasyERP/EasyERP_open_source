@@ -31,6 +31,7 @@ define([], function(){
         SALESORDER: 'salesOrder',
         SALESINVOICE: 'salesInvoice',
         SALESPRODUCT: 'salesProduct',
+        WTRACK: 'wTrack',
 
         RESPONSES: {
             CREATE_QUOTATION: 'Please check at most one supplier or create one',

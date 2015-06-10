@@ -17,7 +17,7 @@ module.exports = function (models) {
     router.get('/getProductsImages', handler.getProductsImages);
     router.get('/:viewType', handler.getForView);
     router.post('/', handler.create);
-    router.post('/uploadProductFiles', multipartMiddleware, handler.uploadProductFiles);
+    /*router.post('/uploadProductFiles', multipartMiddleware, handler.uploadProductFiles);*///FixMe
     router.patch('/:_id', handler.productsUpdateOnlySelectedFields);
     router.delete('/:_id', handler.removeProduct);
 

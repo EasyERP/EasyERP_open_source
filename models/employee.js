@@ -96,6 +96,8 @@ module.exports = (function () {
         return this.name.first + ' ' + this.name.last;
     });
 
+    employeeSchema.set('toJSON', { virtuals: true });
+
     mongoose.model('Employees', employeeSchema);
 
     if(!mongoose.Schemas) {

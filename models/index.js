@@ -35,6 +35,7 @@ module.exports = (function () {
     require('./saas.js');
     require('./task.js');
     require('./user.js');
-    require('./workflow.js');
     require('./invoice.js');
+    require('./workflow.js');
+    require('./wTrack.js');
 })();

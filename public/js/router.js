@@ -331,8 +331,9 @@ define([
                 var contentViewUrl = "views/" + contentType + "/list/ListView";
                 var topBarViewUrl = "views/" + contentType + "/TopBarView";
                 var collectionUrl = context.buildCollectionRoute(contentType);
-                var navigatePage = (page) ? parseInt(page) || 1 : 1;
+                var navigatePage = (page) ? parseInt(page) : 1;
                 var count = (countPerPage) ? parseInt(countPerPage) || 50 : 50;
+
                 if (filter === 'empty') {
                     newCollection = false;
                 } else if (filter) {

@@ -637,7 +637,9 @@ var Project = function (models, event) {
                         },
                         function (err, result) {
                             if (!err) {
-                                var query = models.get(req.session.lastDb, "Project", projectSchema).find().where('_id').in(result);
+                                var query = models.get(req.session.lastDb, "Project", projectSchema)
+                                    .find()
+                                    .where('_id').in(result);
                                 if (data && data.filter && data.filter.workflow) {
                                     data.filter.workflow = data.filter.workflow.map(function (item) {
                                         return item === "null" ? null : item;

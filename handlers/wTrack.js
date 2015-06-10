@@ -3,39 +3,43 @@
  */
 
 var mongoose = require('mongoose');
-var Quotation = function (models) {
+var wTrack = function (models) {
     var access = require("../Modules/additions/access.js")(models);
-    var QuotationSchema = mongoose.Schemas['Quotation'];
+    var wTrackSchema = mongoose.Schemas['wTrack'];
     var DepartmentSchema = mongoose.Schemas['Department'];
+    var CustomerSchema = mongoose.Schemas['Customer'];
+    var EmployeeSchema = mongoose.Schemas['Employee'];
+    var WorkflowSchema = mongoose.Schemas['workflow'];
+
     var objectId = mongoose.Types.ObjectId;
     var async = require('async');
     var mapObject = require('../helpers/bodyMaper');
 
     this.create = function (req, res, next) {
-        var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
+        var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
         var body = mapObject(req.body);
-        var quotation = new Quotation(body);
+        var wTrack = new WTrack(body);
 
-        quotation.save(function (err, _quotation) {
+        wTrack.save(function (err, wTrack) {
             if (err) {
                 return next(err);
             }
-            res.status(200).send({success: _quotation});
+            res.status(200).send({success: wTrack});
         });
     };
 
-    function updateOnlySelectedFields(req, res, next, id, data) {
-        var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
+    /*  function updateOnlySelectedFields(req, res, next, id, data) {
+     var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
 
-        Quotation.findByIdAndUpdate(id, {$set: data}, function (err, quotation) {
-            if (err) {
-                next(err);
-            } else {
-                res.status(200).send({success: 'Quotation updated', result: quotation});
-            }
-        });
+     Quotation.findByIdAndUpdate(id, {$set: data}, function (err, quotation) {
+     if (err) {
+     next(err);
+     } else {
+     res.status(200).send({success: 'Quotation updated', result: quotation});
+     }
+     });
 
-    };
+     };*/
 
     this.putchModel = function (req, res, next) {
         var id = req.params.id;
@@ -80,23 +84,18 @@ var Quotation = function (models) {
     };
 
     this.totalCollectionLength = function (req, res, next) {
-        var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
+        var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
         var departmentSearcher;
         var contentIdsSearcher;
         var contentSearcher;
-        var data = req.query;
+        var query = req.query;
+        var queryObject = {};
+        var filter = query.filter;
 
-        var waterfallTasks;
-        var contentType = data.contentType;
-        var isOrder = (contentType === 'Order' || contentType === 'salesOrder');
-
-        var optionsObject = {};
-
-        if (data && data.filter && data.filter.forSales) {
-            optionsObject['forSales'] = true;
-        } else {
-            optionsObject['forSales'] = false;
+        if (filter && typeof filter === 'object') {
+            queryObject = query.filter;
         }
+        var waterfallTasks;
 
         departmentSearcher = function (waterfallCallback) {
             models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
@@ -115,41 +114,49 @@ var Quotation = function (models) {
 
         contentIdsSearcher = function (deps, waterfallCallback) {
             var arrOfObjectId = deps.objectID();
-
-            Quotation.aggregate(
-                {
-                    $match: {
+            var userId = req.session.uId;
+            var everyOne = {
+                whoCanRW: "everyOne"
+            };
+            var owner = {
+                $and: [
+                    {
+                        whoCanRW: 'owner'
+                    },
+                    {
+                        'groups.owner': objectId(userId)
+                    }
+                ]
+            };
+            var group = {
+                $or: [
+                    {
                         $and: [
-                            optionsObject,
-                            {
-                                $or: [
-                                    {
-                                        $or: [
-                                            {
-                                                $and: [
-                                                    {whoCanRW: 'group'},
-                                                    {'groups.users': objectId(req.session.uId)}
-                                                ]
-                                            },
-                                            {
-                                                $and: [
-                                                    {whoCanRW: 'group'},
-                                                    {'groups.group': {$in: arrOfObjectId}}
-                                                ]
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        $and: [
-                                            {whoCanRW: 'owner'},
-                                            {'groups.owner': objectId(req.session.uId)}
-                                        ]
-                                    },
-                                    {whoCanRW: "everyOne"}
-                                ]
-                            }
+                            {whoCanRW: 'group'},
+                            {'groups.users': objectId(userId)}
+                        ]
+                    },
+                    {
+                        $and: [
+                            {whoCanRW: 'group'},
+                            {'groups.group': {$in: arrOfObjectId}}
                         ]
                     }
+                ]
+            };
+            var whoCanRw = [everyOne, owner, group];
+            var matchQuery = {
+                $and: [
+                    queryObject,
+                    {
+                        $or: whoCanRw
+                    }
+                ]
+            };
+
+            WTrack.aggregate(
+                {
+                    $match: matchQuery
                 },
                 {
                     $project: {
@@ -160,12 +167,11 @@ var Quotation = function (models) {
             );
         };
 
-        contentSearcher = function (quotationsIds, waterfallCallback) {
-            var queryObject = {_id: {$in: quotationsIds}};
+        contentSearcher = function (wTrackIDs, waterfallCallback) {
+            var queryObject = {_id: {$in: wTrackIDs}};
             var query;
 
-            queryObject.isOrder = isOrder;
-            query = Quotation.count(queryObject);
+            query = WTrack.count(queryObject);
 
             query.count(waterfallCallback);
         };
@@ -182,28 +188,28 @@ var Quotation = function (models) {
     };
 
     this.getByViewType = function (req, res, next) {
-        var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
+        var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+        var Customer = models.get(req.session.lastDb, 'Customers', CustomerSchema);
+        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var Workflow = models.get(req.session.lastDb, 'workflows', WorkflowSchema);
 
         var query = req.query;
         var queryObject = {};
-
+        var filter = query.filter;
         var departmentSearcher;
         var contentIdsSearcher;
         var contentSearcher;
         var waterfallTasks;
 
-        var contentType = query.contentType;
-        var isOrder = (contentType === 'Order' || contentType === 'salesOrder');
         var sort = {};
+
+        if (filter && typeof filter === 'object') {
+            queryObject = query.filter;
+        }
+
         var count = query.count ? query.count : 50;
         var page = query.page;
         var skip = (page - 1) > 0 ? (page - 1) * count : 0;
-
-        if (query && query.filter && query.filter.forSales) {
-            queryObject['forSales'] = true;
-        } else {
-            queryObject['forSales'] = false;
-        }
 
         if (query.sort) {
             sort = query.sort;
@@ -228,41 +234,49 @@ var Quotation = function (models) {
 
         contentIdsSearcher = function (deps, waterfallCallback) {
             var arrOfObjectId = deps.objectID();
-
-            models.get(req.session.lastDb, "Quotation", QuotationSchema).aggregate(
-                {
-                    $match: {
+            var userId = req.session.uId;
+            var everyOne = {
+                whoCanRW: "everyOne"
+            };
+            var owner = {
+                $and: [
+                    {
+                        whoCanRW: 'owner'
+                    },
+                    {
+                        'groups.owner': objectId(userId)
+                    }
+                ]
+            };
+            var group = {
+                $or: [
+                    {
                         $and: [
-                            queryObject,
-                            {
-                                $or: [
-                                    {
-                                        $or: [
-                                            {
-                                                $and: [
-                                                    {whoCanRW: 'group'},
-                                                    {'groups.users': objectId(req.session.uId)}
-                                                ]
-                                            },
-                                            {
-                                                $and: [
-                                                    {whoCanRW: 'group'},
-                                                    {'groups.group': {$in: arrOfObjectId}}
-                                                ]
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        $and: [
-                                            {whoCanRW: 'owner'},
-                                            {'groups.owner': objectId(req.session.uId)}
-                                        ]
-                                    },
-                                    {whoCanRW: "everyOne"}
-                                ]
-                            }
+                            {whoCanRW: 'group'},
+                            {'groups.users': objectId(userId)}
+                        ]
+                    },
+                    {
+                        $and: [
+                            {whoCanRW: 'group'},
+                            {'groups.group': {$in: arrOfObjectId}}
                         ]
                     }
+                ]
+            };
+            var whoCanRw = [everyOne, owner, group];
+            var matchQuery = {
+                $and: [
+                    queryObject,
+                    {
+                        $or: whoCanRw
+                    }
+                ]
+            };
+
+            WTrack.aggregate(
+                {
+                    $match: matchQuery
                 },
                 {
                     $project: {
@@ -273,20 +287,68 @@ var Quotation = function (models) {
             );
         };
 
-        contentSearcher = function (quotationsIds, waterfallCallback) {
-            var queryObject = {_id: {$in: quotationsIds}};
-            queryObject.isOrder = isOrder;
-            var query = Quotation.find(queryObject).limit(count).skip(skip).sort(sort);
+        contentSearcher = function (wtrackIds, waterfallCallback) {
+            var queryObject = {_id: {$in: wtrackIds}};
+            var query = WTrack
+                .find(queryObject)
+                .limit(count)
+                .skip(skip)
+                .sort(sort)/*.lean(true)*/;
 
-            query.populate('supplier', '_id name fullName');
-            query.populate('destination');
-            query.populate('incoterm');
-            query.populate('invoiceControl');
-            query.populate('paymentTerm');
-            query.populate('products.product', '_id, name');
-            query.populate('workflow', '-sequence');
-
-            query.exec(waterfallCallback);
+            query.populate('project', '_id projectName projectmanager customer workflow')
+                .populate('employee', 'name fullName')
+                .populate({
+                    path: 'department',
+                    select: 'departmentName',
+                    options: {lean: true}
+                })
+                .populate('order')
+                .populate({
+                    path: 'createdBy.user',
+                    select: 'login',
+                    options: {lean: true}
+                })
+                .populate({
+                    path: 'editedBy.user',
+                    select: 'login',
+                    options: {lean: true}
+                })
+                .exec(function (err, wtracks) {
+                    if (err) {
+                        return waterfallCallback(err);
+                    }
+                    async.parallel({
+                        customer: function (parallelCb) {
+                            Customer.populate(wtracks, {
+                                path: 'project.customer',
+                                select: '_id name',
+                                options: {
+                                    lean: true,
+                                    sort: sort
+                                }
+                            }, parallelCb)
+                        },
+                        projectmanager: function (parallelCb) {
+                            Employee.populate(wtracks, {
+                                path: 'project.projectmanager',
+                                select: '_id name',
+                                options: {
+                                    lean: true,
+                                    sort: sort
+                                }
+                            }, parallelCb)
+                        },
+                        workflow: function (parallelCb) {
+                            Workflow.populate(wtracks, {
+                                path: 'project.workflow',
+                                select: '_id name',
+                                options: {
+                                    lean: true
+                                }
+                            }, parallelCb)
+                        }
+                    }, waterfallCallback);
+                });
         };
 
         waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
@@ -296,7 +358,7 @@ var Quotation = function (models) {
                 return next(err);
             }
 
-            res.status(200).send(result);
+            res.status(200).send(result.customer || result.projecmanager || result.workflow);
         });
     };
 
@@ -432,4 +494,4 @@ var Quotation = function (models) {
 
 };
 
-module.exports = Quotation;
+module.exports = wTrack;

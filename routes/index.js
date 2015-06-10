@@ -29,6 +29,7 @@ module.exports = function (app, mainDb) {
     var paymentMethodRouter = require('./paymentMethod')(models);
     var periodRouter = require('./period')(models);
     var importDataRouter = require('./importData')(models);
+    var wTrackRouter = require('./wTrack')(models);
 
 
     app.get('/', function (req, res, next) {
@@ -42,35 +43,21 @@ module.exports = function (app, mainDb) {
     });
 
     app.use('/product', productRouter);
-
     app.use('/order', orderRouter);
-
     app.use('/invoice', invoiceRouter);
-
     app.use('/supplier', supplierRouter);
-
     app.use('/quotation', quotationRouter);
-
     app.use('/destination', destinationRouter);
-
     app.use('/incoterm', incotermRouter);
-
     app.use('/invoicingControl', invoicingControlRouter);
-
     app.use('/paymentTerm', paymentTermRouter);
-
     app.use('/deliverTo', deliverToTermRouter);
-
     app.use('/workflow', workflowRouter);
-
     app.use('/supplierPayments', paymentRouter);
-
     app.use('/period', periodRouter);
-
     app.use('/paymentMethod', paymentMethodRouter);
-
     app.use('/importData', importDataRouter);
-
+    app.use('/wTrack', wTrackRouter);
     app.get('/getDBS', function (req, res) {
         res.send(200, {dbsNames: dbsNames});
     });

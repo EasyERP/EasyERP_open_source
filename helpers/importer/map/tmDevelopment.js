@@ -157,9 +157,24 @@ module.exports = (function () {
             ID: 'ID',
             project: 'Project',
             customer: 'Company',
-            'companyInfo.size': 'CompanySize',
-            'companyInfo.industry': 'Industry',
-            type: 'IsCompany'
+            employee: 'Employee',
+            department: 'Department',
+            year: 'Year',
+            month: 'Month',
+            week: 'Week',
+            worked: 'Worked',
+            rate: 'Rate',
+            revenue: 'Revenue',
+            cost: 'Cost',
+            amount: 'Amount',
+            isPaid: 'isPaid',
+            1: 'Mo',
+            2: 'Tu',
+            3: 'We',
+            4: 'Th',
+            5: 'Fr',
+            6: 'Sa',
+            7: 'Su'
         }
     };
 
@@ -174,5 +189,5 @@ module.exports = (function () {
         }
     };
 
-    return [department, jobPosition, employee, project, customer, user];
+    return [department, jobPosition, employee, project, customer, wTrack];
 })();

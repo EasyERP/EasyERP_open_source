@@ -39,7 +39,8 @@ module.exports = (function () {
             user: { type: ObjectId, ref: 'Users', default: null },
             date: { type: Date }
         },
-        health: { type: Number, default: 1 }
+        health: { type: Number, default: 1 },
+        ID: Number
     }, { collection: 'Project' });
 
     mongoose.model('Project', projectSchema);

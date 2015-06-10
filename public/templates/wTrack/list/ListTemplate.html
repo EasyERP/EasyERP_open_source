@@ -1,0 +1,29 @@
+<% wTracks.forEach(function(wTrack, index){ %>
+<tr data-id="<%=wTrack._id%>">
+    <td class = "notForm"><input type="checkbox" value="<%=wTrack._id%>" class="checkbox" /></td>
+    <td><%=startNumber + index + 1%></td>
+    <td><%=wTrack.project && wTrack.project.projectmanager && wTrack.project.projectmanager.name? wTrack.project.projectmanager.name.first + ' ' + wTrack.project.projectmanager.name.last : ''%></td>
+    <td><%=wTrack.project ? wTrack.project.projectName : ''%></td>
+    <td><%=wTrack.project && wTrack.project.workflow? wTrack.project.workflow.name : ''%></td>
+    <td><%=wTrack.project && wTrack.project.customer && wTrack.project.customer.name? wTrack.project.customer.name.first + ' ' + wTrack.project.customer.name.last : ''%></td>
+    <td><%=wTrack.employee ? wTrack.employee.fullName : ''%></td>
+    <td><%=wTrack.department ? wTrack.department.departmentName : ''%></td>
+    <td><%=wTrack.year%></td>
+    <td><%=wTrack.month%></td>
+    <td><%=wTrack.week%></td>
+    <td><%=wTrack.rate%></td>
+    <td><%=wTrack.worked%></td>
+    <td><%=wTrack['1']%></td>
+    <td><%=wTrack['2']%></td>
+    <td><%=wTrack['3']%></td>
+    <td><%=wTrack['4']%></td>
+    <td><%=wTrack['5']%></td>
+    <td><%=wTrack['6']%></td>
+    <td><%=wTrack['7']%></td>
+    <td><%=wTrack.isPaid ? 'Paid' : 'Unpaid'%></td>
+    <td><%=wTrack.revenue%></td>
+    <td><%=wTrack.cost%></td>
+    <td><%=wTrack.revenue%></td>
+    <td><%=wTrack.amount%></td>
+</tr>
+<% }) %>
