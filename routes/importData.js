@@ -338,60 +338,81 @@ module.exports = function (models) {
                             ID: fetchedWtrack['Project']
                         };
 
-                        customerQuery = {
-                            ID: fetchedWtrack['Company']
-                        };
-
                         employeeQuery = {
                             ID: fetchedWtrack['Employee']
                         };
 
                         function departmentFinder(callback) {
-                            Department.findOne(departmentQuery, {_id: 1}, function (err, department) {
-                                if (err) {
-                                    return callback(err);
-                                }
-                                callback(null, department);
-                            });
+                            Department
+                                .findOne(departmentQuery, {
+                                    _id: 1,
+                                    departmentName: 1
+                                })
+                                .lean()
+                                .exec(function (err, department) {
+                                    if (err) {
+                                        return callback(err);
+                                    }
+                                    callback(null, department);
+                                });
                         };
 
                         function projectFinder(callback) {
-                            Project.findOne(projectQuery, {_id: 1}, function (err, project) {
-                                if (err) {
-                                    return callback(err);
-                                }
-                                callback(null, project);
-                            });
-                        }
-
-                        function customerFinder(callback) {
-                            Customer.findOne(customerQuery, {_id: 1}, function (err, customer) {
-                                if (err) {
-                                    return callback(err);
-                                }
-                                callback(null, customer);
-                            });
+                            Project
+                                .findOne(projectQuery)
+                                .populate('projectmanager')
+                                .populate('customer')
+                                .populate('workflow')
+                                .lean()
+                                .exec(function (err, project) {
+                                    if (err) {
+                                        return callback(err);
+                                    }
+                                    callback(null, project);
+                                });
                         };
 
                         function employeeFinder(callback) {
-                            Employee.findOne(employeeQuery, {_id: 1}, function (err, employee) {
-                                if (err) {
-                                    return callback(err);
-                                }
-                                callback(null, employee);
-                            });
-                        }
+                            Employee.findOne(employeeQuery, {
+                                _id: 1,
+                                name: 1
+                            })
+                                .lean(true)
+                                .exec(function (err, employee) {
+                                    if (err) {
+                                        return callback(err);
+                                    }
+                                    callback(null, employee);
+                                });
+                        };
 
                         async.parallel({
                             department: departmentFinder,
                             project: projectFinder,
-                            customer: customerFinder,
                             employee: employeeFinder
                         }, function (err, result) {
-                            objectToSave.department = result.department ? result.department._id : null;
-                            objectToSave.project = result.project ? result.project._id : null;
-                            objectToSave.customer = result.customer ? result.customer._id : null;
-                            objectToSave.employee = result.employee ? result.employee._id : null;
+                            if (result.department) {
+                                objectToSave.department = {};
+                                objectToSave.department._id = result.department._id || null;
+                                objectToSave.department.departmentName = result.department.departmentName || '';
+                            }
+                            if (result.project) {
+                                objectToSave.project = {};
+                                objectToSave.project._id = result.project._id || null;
+                                objectToSave.project.projectName = result.project.projectName || '';
+                                objectToSave.project.projectmanager = result.project.projectmanager &&  result.project.projectmanager.name? result.project.projectmanager.name.first + ' ' + result.project.projectmanager.name.last: '';
+                                objectToSave.project.customer = result.project.customer && result.project.customer.name? result.project.customer.name.first + ' ' + result.project.customer.name.last : '';
+                                objectToSave.project.workflow = result.project.workflow ? result.project.workflow.name : '';
+                            }
+                            /*objectToSave.department = result.department ? result.department._id : null;
+                             objectToSave.project = result.project ? result.project._id : null;
+                             objectToSave.employee = result.employee ? result.employee._id : null;*/
+                            if (result.employee) {
+                                objectToSave.employee = {};
+                                objectToSave.employee._id = result.employee._id || null;
+                                objectToSave.employee.name = result.employee.name ?  result.employee.name.first + ' ' + result.employee.name.last: '';
+                            }
+
 
                             model = new Wtrack(objectToSave);
                             model.save(cb);

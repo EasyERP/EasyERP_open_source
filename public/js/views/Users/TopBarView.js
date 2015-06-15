@@ -14,7 +14,6 @@ define([
                 "click a.changeContentView": 'changeContentViewType',
                 "click ul.changeContentIndex a": 'changeItemIndex',
                 "click #top-bar-deleteBtn": "deleteEvent",
-                "click #top-bar-saveBtn": "saveEvent",
                 "click #top-bar-discardBtn": "discardEvent",
                 "click #top-bar-editBtn": "editEvent",
                 "click #top-bar-createBtn": "createEvent"
@@ -61,10 +60,6 @@ define([
                 return this;
             },
 
-            saveEvent:function(event){
-                event.preventDefault();
-                this.trigger('saveEvent');
-            },
             discardEvent: function (event) {
                 event.preventDefault();
                 Backbone.history.navigate("home/content-" + this.contentType, { trigger: true });

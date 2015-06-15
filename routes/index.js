@@ -29,6 +29,9 @@ module.exports = function (app, mainDb) {
     var paymentMethodRouter = require('./paymentMethod')(models);
     var periodRouter = require('./period')(models);
     var importDataRouter = require('./importData')(models);
+    var projectRouter = require('./project')(models);
+    var employeeRouter = require('./employee')(models);
+    var departmentRouter = require('./department')(models);
     var wTrackRouter = require('./wTrack')(models);
 
 
@@ -58,6 +61,9 @@ module.exports = function (app, mainDb) {
     app.use('/paymentMethod', paymentMethodRouter);
     app.use('/importData', importDataRouter);
     app.use('/wTrack', wTrackRouter);
+    app.use('/project', projectRouter);
+    app.use('/employee', employeeRouter);
+    app.use('/department', departmentRouter);
     app.get('/getDBS', function (req, res) {
         res.send(200, {dbsNames: dbsNames});
     });
@@ -706,9 +712,8 @@ module.exports = function (app, mainDb) {
         requestHandler.getProjectsById(req, res, data);
     });
 
-    app.get('/getProjectsForDd', function (req, res) {
-        requestHandler.getProjectsForDd(req, res);
-    });
+    app.get('/getProjectsForDd', requestHandler.getProjectsForDd);
+
     app.get('/getProjectPMForDashboard', function (req, res) {
         requestHandler.getProjectPMForDashboard(req, res);
     });

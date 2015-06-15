@@ -680,9 +680,9 @@ var requestHandler = function (event, mainDb) {
         }
     };
 
-    function getProjectsForDd(req, res) {
+    function getProjectsForDd(req, res, next) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
-            project.getForDd(req, res);
+            project.getForDd(req, res, next);
         } else {
             res.send(401);
         }

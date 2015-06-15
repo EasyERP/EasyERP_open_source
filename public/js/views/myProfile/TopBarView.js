@@ -19,11 +19,6 @@ define([
                 "click #top-bar-createBtn" : "createEvent"
             },
 
-            saveEvent: function(event)
-            {
-                event.preventDefault();
-                this.trigger('saveEvent');
-            },
             nextEvent: function(event)
             {
                 event.preventDefault();

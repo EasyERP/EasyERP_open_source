@@ -12,18 +12,12 @@ define([
             
             events:{
             	"click #top-bar-deleteBtn": "deleteEvent",
-            	"click #top-bar-saveBtn": "saveEvent",
             	"click #top-bar-nextBtn": "nextEvent",
             	"click #top-bar-discardBtn": "discardEvent",
                 "click #top-bar-editBtn" : "editEvent",
                 "click #top-bar-createBtn" : "createEvent"
             },
 
-            saveEvent: function(event)
-            {
-                event.preventDefault();
-                this.trigger('saveEvent');
-            },
             nextEvent: function(event)
             {
                 event.preventDefault();

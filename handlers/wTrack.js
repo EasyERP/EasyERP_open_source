@@ -28,22 +28,11 @@ var wTrack = function (models) {
         });
     };
 
-    /*  function updateOnlySelectedFields(req, res, next, id, data) {
-     var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
-
-     Quotation.findByIdAndUpdate(id, {$set: data}, function (err, quotation) {
-     if (err) {
-     next(err);
-     } else {
-     res.status(200).send({success: 'Quotation updated', result: quotation});
-     }
-     });
-
-     };*/
 
     this.putchModel = function (req, res, next) {
         var id = req.params.id;
         var data = mapObject(req.body);
+        var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getEditWritAccess(req, req.session.uId, 55, function (access) {
@@ -52,7 +41,13 @@ var wTrack = function (models) {
                         user: req.session.uId,
                         date: new Date().toISOString()
                     };
-                    updateOnlySelectedFields(req, res, next, id, data);
+                    WTrack.findByIdAndUpdate(id, {$set: data}, function(err, response){
+                        if(err){
+                            return next(err);
+                        }
+
+                        res.status(200).send({success: 'updated'});
+                    });
                 } else {
                     res.status(403).send();
                 }
@@ -289,66 +284,13 @@ var wTrack = function (models) {
 
         contentSearcher = function (wtrackIds, waterfallCallback) {
             var queryObject = {_id: {$in: wtrackIds}};
-            var query = WTrack
+
+            WTrack
                 .find(queryObject)
                 .limit(count)
                 .skip(skip)
-                .sort(sort)/*.lean(true)*/;
-
-            query.populate('project', '_id projectName projectmanager customer workflow')
-                .populate('employee', 'name fullName')
-                .populate({
-                    path: 'department',
-                    select: 'departmentName',
-                    options: {lean: true}
-                })
-                .populate('order')
-                .populate({
-                    path: 'createdBy.user',
-                    select: 'login',
-                    options: {lean: true}
-                })
-                .populate({
-                    path: 'editedBy.user',
-                    select: 'login',
-                    options: {lean: true}
-                })
-                .exec(function (err, wtracks) {
-                    if (err) {
-                        return waterfallCallback(err);
-                    }
-                    async.parallel({
-                        customer: function (parallelCb) {
-                            Customer.populate(wtracks, {
-                                path: 'project.customer',
-                                select: '_id name',
-                                options: {
-                                    lean: true,
-                                    sort: sort
-                                }
-                            }, parallelCb)
-                        },
-                        projectmanager: function (parallelCb) {
-                            Employee.populate(wtracks, {
-                                path: 'project.projectmanager',
-                                select: '_id name',
-                                options: {
-                                    lean: true,
-                                    sort: sort
-                                }
-                            }, parallelCb)
-                        },
-                        workflow: function (parallelCb) {
-                            Workflow.populate(wtracks, {
-                                path: 'project.workflow',
-                                select: '_id name',
-                                options: {
-                                    lean: true
-                                }
-                            }, parallelCb)
-                        }
-                    }, waterfallCallback);
-                });
+                .sort(sort)
+                .exec(waterfallCallback );
         };
 
         waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
@@ -358,7 +300,7 @@ var wTrack = function (models) {
                 return next(err);
             }
 
-            res.status(200).send(result.customer || result.projecmanager || result.workflow);
+            res.status(200).send(result);
         });
     };
 

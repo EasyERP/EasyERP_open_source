@@ -128,34 +128,54 @@ define([
         };
 
         var showSelect = function (e, prev, next, context) {
-            var data = context.responseObj["#" + $(e.target).attr("id")];
+            var attr = $(e.target).attr("id") || $(e.target).data("content");
+            var data = context.responseObj["#" + attr];
             var elementVisible = 10;
             var newSel = $(e.target).parent().find(".newSelectList");
+            var parent;
+            var currentPage = 1;
+            var s;
+            var start;
+            var end;
+            var allPages;
+
             if (prev || next) {
                 newSel = $(e.target).closest(".newSelectList");
                 data = context.responseObj["#" + newSel.parent().find(".current-selected").attr("id")];
             }
-            var parent = newSel.length > 0 ? newSel.parent() : $(e.target).parent();
-            var currentPage = 1;
+
+            parent = newSel.length > 0 ? newSel.parent() : $(e.target).parent();
+
+            if (parent.prop('tagName') === 'TR'){
+                parent = $(e.target);
+            }
+
             if (newSel.length && newSel.is(":visible") && !prev && !next) {
                 newSel.hide();
                 return;
             }
+
             $(".newSelectList").hide();
+
             if ((prev || next) && newSel.length) {
                 currentPage = newSel.data("page");
                 newSel.remove();
-            }
-            else if (newSel.length) {
+            } else if (newSel.length) {
                 newSel.show();
                 return;
             }
-            if (prev) currentPage--;
-            if (next) currentPage++;
-            var s = "<ul class='newSelectList' data-page='" + currentPage + "'>";
-            var start = (currentPage - 1) * elementVisible;
-            var end = Math.min(currentPage * elementVisible, data.length);
-            var allPages = Math.ceil(data.length / elementVisible);
+
+            if (prev) {
+                currentPage--;
+            }
+            if (next) {
+                currentPage++;
+            }
+
+            s = "<ul class='newSelectList' data-page='" + currentPage + "'>";
+            start = (currentPage - 1) * elementVisible;
+            end = Math.min(currentPage * elementVisible, data.length);
+            allPages = Math.ceil(data.length / elementVisible);
 
             parent.append(_.template(selectTemplate, {
                 collection: data.slice(start, end),
@@ -166,6 +186,12 @@ define([
                 dataLength: data.length,
                 elementVisible: elementVisible
             }));
+
+            $(document).off("click");
+            /*$(document).on("click", function () {
+                $(".allNumberPerPage").hide();
+                $(".newSelectList").hide();
+            });*/
         };
 
         var showProductsSelect = function (e, prev, next, context) {
@@ -250,7 +276,7 @@ define([
             }));
         };
 
-        var fetchWorkflow =  function (data, callback) {
+        var fetchWorkflow = function (data, callback) {
             if (typeof data === 'function') {
                 callback = data;
                 data = {wId: 'Purchase Order'};

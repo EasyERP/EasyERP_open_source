@@ -370,6 +370,7 @@ define([
 
                         topbarView.bind('createEvent', contentview.createItem, contentview);
                         topbarView.bind('editEvent', contentview.editItem, contentview);
+                        topbarView.bind('saveEvent', contentview.saveItem, contentview);
                         topbarView.bind('deleteEvent', contentview.deleteItems, contentview);
 
                         collection.bind('showmore', contentview.showMoreContent, contentview);

@@ -14,7 +14,6 @@ define([
             	"click a.changeContentView": 'changeContentViewType',
             	"click ul.changeContentIndex a": 'changeItemIndex',
             	"click #top-bar-deleteBtn": "deleteEvent",
-            	"click #top-bar-saveBtn": "saveEvent",
             	"click #top-bar-discardBtn": "discardEvent"
             },
             changeContentViewType: Custom.changeContentViewType,
@@ -43,12 +42,6 @@ define([
             	event.preventDefault();
             	var answer=confirm("Realy DELETE items ?!");
             	if (answer==true) this.trigger('deleteEvent');
-            },
-            
-            saveEvent: function(event)
-            {
-            	event.preventDefault();
-            	this.trigger('saveEvent');
             },
             
             discardEvent: function(event)

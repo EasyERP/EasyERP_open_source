@@ -31,6 +31,7 @@ define([
 
             createEvent: function (event) {
                 event.preventDefault();
+
                 this.trigger('createEvent');
             },
 
@@ -59,6 +60,7 @@ define([
 
             saveEvent: function (event) {
                 event.preventDefault();
+
                 this.trigger('saveEvent');
             }
         });

@@ -13,7 +13,6 @@
                 "click a.changeContentView": 'changeContentViewType',
                 "click ul.changeContentIndex a": 'changeItemIndex',
                 "click #top-bar-deleteBtn": "deleteEvent",
-                "click #top-bar-saveBtn": "saveEvent",
                 "click #top-bar-discardBtn": "discardEvent",
 				"click #top-bar-editBtn": "editEvent",
                 "click #top-bar-createBtn": "createEvent"
@@ -59,11 +58,6 @@
                 event.preventDefault();
                 var answer = confirm("Realy DELETE items ?!");
                 if (answer) this.trigger('deleteEvent');
-            },
-
-            saveEvent: function (event) {
-                event.preventDefault();
-                this.trigger('saveEvent');
             },
 
             discardEvent: function (event) {

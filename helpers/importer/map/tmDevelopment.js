@@ -156,7 +156,6 @@ module.exports = (function () {
         aliases: {
             ID: 'ID',
             project: 'Project',
-            customer: 'Company',
             employee: 'Employee',
             department: 'Department',
             year: 'Year',
