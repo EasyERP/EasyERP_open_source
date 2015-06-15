@@ -80,6 +80,7 @@ define(['libs/date.format', 'common', 'constants'], function (dateformat, common
                     case CONTENT_TYPES.SALESORDER:
                     case CONTENT_TYPES.SALESINVOICE:
                     case CONTENT_TYPES.WTRACK:
+                    case CONTENT_TYPES.SALARY:
                         App.currentViewType = 'list';
                         break;
                     case CONTENT_TYPES.APPLICATIONS:
@@ -118,6 +119,7 @@ define(['libs/date.format', 'common', 'constants'], function (dateformat, common
                     case CONTENT_TYPES.SALESORDER:
                     case CONTENT_TYPES.SALESINVOICE:
                     case CONTENT_TYPES.WTRACK:
+                    case CONTENT_TYPES.SALARY:
                         App.currentViewType = 'list';
                         break;
                     case CONTENT_TYPES.APPLICATIONS:

@@ -776,10 +776,9 @@ module.exports = function (models) {
                                 return cb(err);
                             }
                             objectToSave.employee = employee ? employee._id : null;
+                            model = new Salary(objectToSave);
+                            model.save(cb);
                         });
-
-                        model = new Salary(objectToSave);
-                        model.save(cb);
                     }
                 }, function (err) {
                     if (err) {
