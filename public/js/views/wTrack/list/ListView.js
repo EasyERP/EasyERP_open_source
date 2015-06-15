@@ -75,6 +75,8 @@ define([
                 var worked = 0;
                 var value;
                 var calcEl;
+                var editWtrackModel;
+                var workedEl = tr.find('[data-content="worked"]');
 
                 for (var i = days.length - 1; i >= 0; i--) {
                     calcEl = $(days[i]);
@@ -91,7 +93,9 @@ define([
                     worked += parseInt(value);
                 }
 
-                //var editWtrackModel = this.editCollection.get(wTrackId);
+                editWtrackModel = this.editCollection.get(wTrackId);
+                workedEl.text(worked);
+                editWtrackModel.set('worked', worked);
             },
 
             editRow: function (e, prev, next) {
@@ -109,7 +113,7 @@ define([
                 var editedElementValue;
                 var editedElementContent;
 
-                if (wTrackId && wTrackId !== this.wTrackId) {
+                if (wTrackId) {
                     if (this.wTrackId) {
                         editedElement = this.$listTable.find('.editing');
 
@@ -123,10 +127,10 @@ define([
                             editWtrackModel.set(editedElementContent, editedElementValue);
 
                             editedCol.text(editedElementValue);
-                            editedElement.remove();
+                            /*editedElement.remove();*/
                         }
+                        editedElement.remove();
                     }
-
                     this.wTrackId = wTrackId;
                 }
 

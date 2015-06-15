@@ -810,7 +810,7 @@ module.exports = function (models) {
             importSalary(salaryShema, callback);
         }
 
-        return [departmentImporter, jobPositionImporter, employeeImporter, salaryImporter];
+        return [departmentImporter, jobPositionImporter, employeeImporter/*, salaryImporter*/];
     }
 
     router.post('/', function (req, res, next) {

@@ -36,9 +36,9 @@ module.exports = (function () {
         7: Number,
         worked: Number,
         rate: Number,
-        revenue: {type: Number, get: getPrice, set: setPrice},
-        cost: {type: Number, get: getPrice, set: setPrice},
-        amount: {type: Number, get: getPrice, set: setPrice},
+        revenue: {type: Number, /*get: getPrice,*/ set: setPrice},
+        cost: {type: Number, /*get: getPrice,*/ set: setPrice},
+        amount: {type: Number, /*get: getPrice,*/ set: setPrice},
         isPaid: {type: Boolean, default: false},
         order: {type: ObjectId, ref: 'Quotation', default: null},
         whoCanRW: {type: String, enum: ['owner', 'group', 'everyOne'], default: 'everyOne'},
@@ -57,9 +57,9 @@ module.exports = (function () {
         }
     }, {collection: 'wTrack'});
 
-    function getPrice(num) {
-        return '$' + (num / 100).toFixed(2);
-    }
+    /*function getPrice(num) {
+        return (num / 100).toFixed(2);
+    }*/
 
     function setPrice(num) {
         return num * 100;
