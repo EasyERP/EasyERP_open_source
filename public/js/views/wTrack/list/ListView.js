@@ -55,8 +55,8 @@ define([
                 "click #nextPage": "nextPage",
                 "click .checkbox": "checked",
                 "click .stageSelect": "showNewSelect",
-                /*"click  .list tbody tr:not(#false) td:not(.notForm)": "editRow",*/
-                /* "click  .list tbody tr:not(#false) td:not(.notForm)": "goToEditDialog",*/
+                "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
+                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
                 "click td.editable": "editRow",
                 "click #itemsButton": "itemsNumber",
                 "click .currentPageList": "itemsNumber",
@@ -64,9 +64,16 @@ define([
                 "click #firstShowPage": "firstPage",
                 "click #lastShowPage": "lastPage",
                 "click .oe_sortable": "goSort",
-                "click .newSelectList li": "chooseOption",
+                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
                 "change .autoCalc": "autoCalc",
                 "change .editable ": "setEditable"
+            },
+
+            nextSelect: function (e) {
+                this.showNewSelect(e, false, true);
+            },
+            prevSelect: function (e) {
+                this.showNewSelect(e, true, false);
             },
 
             autoCalc: function (e) {
@@ -300,14 +307,10 @@ define([
                 $(".newSelectList").hide();
             },
 
-            showNewSelect: function (e) {
-                if ($(".newSelectList").is(":visible")) {
-                    this.hideNewSelect();
-                    return false;
-                } else {
-                    $(e.target).parent().append(_.template(stagesTemplate, {stagesCollection: this.stages}));
-                    return false;
-                }
+            showNewSelect: function (e, prev, next) {
+                populate.showSelect(e, prev, next, this);
+
+                return false;
             },
 
             hideNewSelect: function (e) {

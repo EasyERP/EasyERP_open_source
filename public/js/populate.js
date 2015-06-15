@@ -128,10 +128,22 @@ define([
         };
 
         var showSelect = function (e, prev, next, context) {
-            var attr = $(e.target).attr("id") || $(e.target).data("content");
+            e.stopPropagation();
+
+            var targetEl = $(e.target);
+            var attr = targetEl.attr("id") || targetEl.closest('td').data("content");
             var data = context.responseObj["#" + attr];
             var elementVisible = 10;
-            var newSel = $(e.target).parent().find(".newSelectList");
+            var targetParent = $(e.target).parent();
+            var newSel;
+
+            if (targetParent.prop('tagName') !== 'TR') {
+                newSel = targetParent.find(".newSelectList");
+            } else {
+                newSel = targetParent.find(".emptySelector");
+            }
+
+
             var parent;
             var currentPage = 1;
             var s;
@@ -141,12 +153,14 @@ define([
 
             if (prev || next) {
                 newSel = $(e.target).closest(".newSelectList");
-                data = context.responseObj["#" + newSel.parent().find(".current-selected").attr("id")];
+                if (!data) {
+                    data = context.responseObj["#" + newSel.parent().find(".current-selected").attr("id")];
+                }
             }
 
             parent = newSel.length > 0 ? newSel.parent() : $(e.target).parent();
 
-            if (parent.prop('tagName') === 'TR'){
+            if (parent.prop('tagName') === 'TR') {
                 parent = $(e.target);
             }
 
@@ -187,11 +201,7 @@ define([
                 elementVisible: elementVisible
             }));
 
-            $(document).off("click");
-            /*$(document).on("click", function () {
-                $(".allNumberPerPage").hide();
-                $(".newSelectList").hide();
-            });*/
+            return false;
         };
 
         var showProductsSelect = function (e, prev, next, context) {
