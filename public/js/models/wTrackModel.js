@@ -8,7 +8,15 @@ define(['Validation', 'common'], function (Validation, common) {
 
         },
         defaults: {
-
+            worked: 40,
+            1: 8,
+            2: 8,
+            3: 8,
+            4: 8,
+            5: 8,
+            revenue: 120,
+            cost: 0,
+            amount: 0
         },
         urlRoot: function () {
             return "/wTrack/";

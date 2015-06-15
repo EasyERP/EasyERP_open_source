@@ -17,10 +17,6 @@
     "tests"
   ],
   "dependencies": {
-    "jquery": "~2.1.4",
-    "backbone": "1.1.2",
-    "text": "~2.0.14",
-    "less": "~2.5.1",
-    "date.format": "~1.2.3"
+    "async": "~1.2.1"
   }
 }

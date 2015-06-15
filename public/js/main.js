@@ -12,6 +12,7 @@ var App = App ||
 
 require.config({
     paths: {
+        async: './libs/async/lib/async',
         jQuery: './libs/jquery-2.1.0.min.map',
         ajaxForm: './libs/jquery.form',
         imageCrop: './libs/jquery.Jcrop.min',
@@ -289,11 +290,13 @@ require(['app'], function (app) {
         }
         $("#previousPage").prop("disabled", false);
         $("#firstShowPage").prop("disabled", false);
+
         var serchObject = {
             count: itemsNumber,
             page: page,
             letter: this.selectedLetter
         };
+
         if (dataObject) _.extend(serchObject, dataObject);
         this.collection.showMore(serchObject);
         this.changeLocationHash(page, itemsNumber);

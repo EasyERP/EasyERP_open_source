@@ -91,27 +91,6 @@ var wTrack = function (models) {
         }
     };
 
-    this.updateModel = function (req, res, next) {
-        var id = req.params.id;
-        var data = mapObject(req.body);
-
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getEditWritAccess(req, req.session.uId, 55, function (access) {
-                if (access) {
-                    data.editedBy = {
-                        user: req.session.uId,
-                        date: new Date().toISOString()
-                    };
-                    updateOnlySelectedFields(req, res, next, id, data);
-                } else {
-                    res.status(403).send();
-                }
-            });
-        } else {
-            res.send(401);
-        }
-    };
-
     this.totalCollectionLength = function (req, res, next) {
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
         var departmentSearcher;
