@@ -30,7 +30,7 @@ define(['Validation', 'common'], function (Validation, common) {
             profit = (revenue - cost) / 100;
             revenue = (revenue/100).toFixed(2);
             cost = (cost / 100).toFixed(2);
-            amount = amount ? (amount/100).toFixed(2) : null;
+            amount = amount ? (amount/100).toFixed(2) : 0;
 
             model.revenue = revenue;
             model.profit = profit.toFixed(2);

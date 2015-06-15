@@ -1,5 +1,6 @@
 define([
         'text!templates/wTrack/list/ListHeader.html',
+        'text!templates/wTrack/list/cancelEdit.html',
         'views/wTrack/CreateView',
         'views/wTrack/list/ListItemView',
         'views/wTrack/EditView',
@@ -8,10 +9,11 @@ define([
         'collections/wTrack/editCollection',
         'common',
         'dataService',
-        'populate'
+        'populate',
+        'async'
     ],
 
-    function (listTemplate, createView, listItemView, editView, currentModel, contentCollection, EditCollection, common, dataService, populate) {
+    function (listTemplate, cancelEdit, createView, listItemView, editView, currentModel, contentCollection, EditCollection, common, dataService, populate, async) {
         var wTrackListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -63,7 +65,8 @@ define([
                 "click #lastShowPage": "lastPage",
                 "click .oe_sortable": "goSort",
                 "click .newSelectList li": "chooseOption",
-                "change .autoCalc": "autoCalc"
+                "change .autoCalc": "autoCalc",
+                "change .editable ": "setEditable"
             },
 
             autoCalc: function (e) {
@@ -98,6 +101,27 @@ define([
                 editWtrackModel.set('worked', worked);
             },
 
+            setEditable: function (td) {
+                var tr = td.parents('tr');
+
+                /*tr.addClass('edited');*/
+                td.addClass('edited');
+
+                if (this.isEditRows()) {
+                    this.setChangedValue();
+                }
+
+                return false;
+            },
+
+            isEditRows: function () {
+                var edited = this.$listTable.find('.edited');
+
+                this.edited = edited;
+
+                return !!edited.length;
+            },
+
             editRow: function (e, prev, next) {
                 var el = $(e.target);
                 var tr = $(e.target).closest('tr');
@@ -113,11 +137,11 @@ define([
                 var editedElementValue;
                 var editedElementContent;
 
-                if (wTrackId) {
+                if (wTrackId && el.prop('tagName') !== 'INPUT') {
                     if (this.wTrackId) {
                         editedElement = this.$listTable.find('.editing');
 
-                        if (editedElement.length) {
+                        if (/*wTrackId !== this.wTrackId &&*/ editedElement.length) {
                             editedCol = editedElement.closest('td');
                             editedElementRowId = editedElement.closest('tr').data('id');
                             editedElementContent = editedCol.data('content');
@@ -127,9 +151,9 @@ define([
                             editWtrackModel.set(editedElementContent, editedElementValue);
 
                             editedCol.text(editedElementValue);
-                            /*editedElement.remove();*/
+                            editedElement.remove();
                         }
-                        editedElement.remove();
+                        /*editedElement.remove();*/
                     }
                     this.wTrackId = wTrackId;
                 }
@@ -204,12 +228,14 @@ define([
                 targetElement.text(target.text());
 
                 this.hideNewSelect();
+                this.setEditable(targetElement);
 
                 return false;
             },
 
             saveItem: function () {
                 this.editCollection.save();
+                this.editCollection.on('saved', this.render, this);
             },
 
             fetchSortCollection: function (sortObject) {
@@ -228,7 +254,7 @@ define([
             },
 
             goSort: function (e) {
-                if (this.isNewRow) {
+                if (this.isNewRow()) {
                     return false;
                 }
 
@@ -383,7 +409,7 @@ define([
                 setTimeout(function () {
                     self.editCollection = new EditCollection(self.collection.toJSON());
 
-                    self.listenTo(self.editCollection, 'change', self.setChangedValue);
+                    //self.listenTo(self.editCollection, 'change', self.setChangedValue);
 
                     self.$listTable = $('#listTable');
                 }, 10);
@@ -397,8 +423,6 @@ define([
                     this.changed = true;
                     this.showSaveCancelBtns()
                 }
-
-
             },
 
             renderContent: function () {
@@ -642,6 +666,20 @@ define([
                 return false;
             },
 
+            hideSaveCancelBtns: function () {
+                var createBtnEl = $('#top-bar-createBtn');
+                var saveBtnEl = $('#top-bar-saveBtn');
+                var cancelBtnEl = $('#top-bar-deleteBtn');
+
+                this.changed = false;
+
+                saveBtnEl.hide();
+                cancelBtnEl.hide();
+                createBtnEl.show();
+
+                return false;
+            },
+
             checked: function () {
                 if (this.collection.length > 0) {
                     var checkLength = $("input.checkbox:checked").length;
@@ -696,7 +734,7 @@ define([
                 this.editCollection.reset(this.collection.models);
             },
 
-            triggerDeleteItemsRender: function(deleteCounter){
+            triggerDeleteItemsRender: function (deleteCounter) {
                 this.deleteCounter = deleteCounter;
                 this.deletePage = $("#currentShowPage").val();
                 this.deleteItemsRender(deleteCounter, this.deletePage);
@@ -719,9 +757,9 @@ define([
                         $.each($("#listTable input:checked"), function (index, checkbox) {
                             value = checkbox.value;
 
-                            if (value.length < 24){
+                            if (value.length < 24) {
                                 that.editCollection.remove(value);
-                                that.editCollection.on('remove', function(){
+                                that.editCollection.on('remove', function () {
                                     this.listLength--;
                                     localCounter++;
 
@@ -769,7 +807,33 @@ define([
             },
 
             cancelChanges: function () {
-                alert('cancelChanges');
+                var self = this;
+                var edited = this.edited;
+                var collection = this.collection;
+                var editedCollectin = this.editCollection;
+
+                async.each(edited, function (el, cb) {
+                    var tr = $(el).closest('tr');
+                    var rowNumber = tr.find('[data-content="number"]').text();
+                    var id = tr.data('id');
+                    var template = _.template(cancelEdit);
+                    var model;
+
+                    if (!id) {
+                        return cb('Empty id');
+                    }
+
+                    model = collection.get(id);
+                    model = model.toJSON();
+                    model.startNumber = rowNumber;
+                    tr.replaceWith(template(model));
+                    cb();
+                }, function (err) {
+                    if (!err) {
+                        self.editCollection = new EditCollection(collection.toJSON());
+                        self.hideSaveCancelBtns();
+                    }
+                });
             }
 
         });

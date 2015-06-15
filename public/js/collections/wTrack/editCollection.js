@@ -9,6 +9,7 @@
             },
 
             save: function(){
+                var self = this;
                 var model;
                 var models = [];
                 var modelObject;
@@ -21,7 +22,7 @@
 
                 var options = {
                     success: function (model, resp, xhr) {
-                        alert('success')
+                        self.trigger('saved');
                     }
                 };
 
