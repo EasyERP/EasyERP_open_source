@@ -33,6 +33,7 @@ module.exports = (function () {
     require('./relatedStatus.js');
     require('./source.js');
     require('./saas.js');
+    require('./salary.js');
     require('./task.js');
     require('./user.js');
     require('./invoice.js');

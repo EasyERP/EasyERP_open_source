@@ -400,8 +400,8 @@ module.exports = function (models) {
                                 objectToSave.project = {};
                                 objectToSave.project._id = result.project._id || null;
                                 objectToSave.project.projectName = result.project.projectName || '';
-                                objectToSave.project.projectmanager = result.project.projectmanager &&  result.project.projectmanager.name? result.project.projectmanager.name.first + ' ' + result.project.projectmanager.name.last: '';
-                                objectToSave.project.customer = result.project.customer && result.project.customer.name? result.project.customer.name.first + ' ' + result.project.customer.name.last : '';
+                                objectToSave.project.projectmanager = result.project.projectmanager && result.project.projectmanager.name ? result.project.projectmanager.name.first + ' ' + result.project.projectmanager.name.last : '';
+                                objectToSave.project.customer = result.project.customer && result.project.customer.name ? result.project.customer.name.first + ' ' + result.project.customer.name.last : '';
                                 objectToSave.project.workflow = result.project.workflow ? result.project.workflow.name : '';
                             }
                             /*objectToSave.department = result.department ? result.department._id : null;
@@ -410,7 +410,7 @@ module.exports = function (models) {
                             if (result.employee) {
                                 objectToSave.employee = {};
                                 objectToSave.employee._id = result.employee._id || null;
-                                objectToSave.employee.name = result.employee.name ?  result.employee.name.first + ' ' + result.employee.name.last: '';
+                                objectToSave.employee.name = result.employee.name ? result.employee.name.first + ' ' + result.employee.name.last : '';
                             }
 
 
@@ -724,7 +724,7 @@ module.exports = function (models) {
                 });
         }
 
-        function importSalary(salaryShema, workflow, seriesCb) {
+        function importSalary(salaryShema, seriesCb) {
             var query = queryBuilder(salaryShema.table);
             var waterfallTasks;
 
@@ -741,7 +741,6 @@ module.exports = function (models) {
                     var employeeQuery;
                     var key;
                     var msSqlKey;
-                    var employeeResult;
 
                     for (var i = mongooseFields.length - 1; i >= 0; i--) {
                         key = mongooseFields[i];
@@ -771,17 +770,13 @@ module.exports = function (models) {
                             ID: fetchedSalary['Employee']
                         };
 
-                        function employeeFinder(callback) {
-                            Employee.findOne(employeeQuery, {_id: 1}, function (err, employee) {
-                                if (err) {
-                                    return callback(err);
-                                }
-                                callback(null, employee);
-                            });
-                        };
 
-                        employeeResult = employeeFinder();
-                        objectToSave.employee = employeeResult ? employeeResult._id : null;
+                        Employee.findOne(employeeQuery, {_id: 1}, function (err, employee) {
+                            if (err) {
+                                return cb(err);
+                            }
+                            objectToSave.employee = employee ? employee._id : null;
+                        });
 
                         model = new Salary(objectToSave);
                         model.save(cb);
