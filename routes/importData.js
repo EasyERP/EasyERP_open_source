@@ -772,7 +772,7 @@ module.exports = function (models) {
                         };
 
                         function employeeFinder(callback) {
-                            Department.findOne(employeeQuery, {_id: 1}, function (err, employee) {
+                            Employee.findOne(employeeQuery, {_id: 1}, function (err, employee) {
                                 if (err) {
                                     return callback(err);
                                 }
