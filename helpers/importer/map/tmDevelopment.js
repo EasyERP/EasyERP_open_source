@@ -2,6 +2,28 @@
  * Created by Roman on 27.05.2015.
  */
 module.exports = (function () {
+    var salary = {
+        collection: 'Salary',
+        table: 'Salary',
+        aliases: {
+            ID: 'ID',
+            employee: 'Employee',
+            'monthRate.year': 'Year',
+            'monthRate.month': 'Month',
+            'monthRate.baseSalary': 'BaseSalary',
+            'monthRate.hourlyWithExpense': 'HourlyWithExpense',
+            'calc.salary': 'CalcSalary',
+            'calc.onCash': 'CalcOnCash',
+            'calc.onCard': 'CalcOnCard',
+            'calc.onBonus': 'CalcOnBonus',
+            'paid.onCash': 'PaidOnCash',
+            'paid.onCard': 'PaidOnCard',
+            'paid.onBonus': 'PaidOnBonus',
+            'diff.onCash': 'OnCashDiff',
+            'diff.onCard': 'OnCardDiff',
+            'diff.onBonus': 'OnBonusDiff'
+        }
+    };
     var employee = {
         collection: 'Employees',
         table: 'Employee',
@@ -188,5 +210,5 @@ module.exports = (function () {
         }
     };
 
-    return [department, jobPosition, employee, project, customer, wTrack];
+    return [department, jobPosition, employee, project, customer, wTrack, salary];
 })();

@@ -449,20 +449,24 @@ module.exports = function (models) {
         var departmentShema = tasks[0];
         var jobPositionShema = tasks[1];
         var employeeShema = tasks[2];
+        var salaryShema = tasks[6];
         var ownerId = req.session ? req.session.uId : null;
 
         var jobPositionCollection = jobPositionShema.collection;
         var departmentCollection = departmentShema.collection;
         var employeeCollection = employeeShema.collection;
+        var salaryCollection = salaryShema.collection;
 
         var JobPositionSchema = mongoose.Schemas[jobPositionCollection];
         var DepartmentSchema = mongoose.Schemas[departmentCollection];
         var EmployeeSchema = mongoose.Schemas[employeeCollection];
+        var SalarySchema = mongoose.Schemas[salaryCollection];
         var WorkflowSchema = mongoose.Schemas['workflow'];
 
         var JobPosition = models.get(req.session.lastDb, jobPositionCollection, JobPositionSchema);
         var Department = models.get(req.session.lastDb, departmentCollection, DepartmentSchema);
         var Employee = models.get(req.session.lastDb, employeeCollection, EmployeeSchema);
+        var Salary = models.get(req.session.lastDb, salaryCollection, SalarySchema);
         var Workflow = models.get(req.session.lastDb, 'workflows', WorkflowSchema);
 
         function importDepartment(departmentShema, seriesCb) {
@@ -720,7 +724,93 @@ module.exports = function (models) {
                 });
         }
 
-        return [departmentImporter, jobPositionImporter, employeeImporter];
+        function importSalary(salaryShema, workflow, seriesCb) {
+            var query = queryBuilder(salaryShema.table);
+            var waterfallTasks;
+
+            function getData(callback) {
+                handler.importData(query, callback);
+            }
+
+            function saverSalary(fetchedArray, callback) {
+                var model;
+                var mongooseFields = Object.keys(salaryShema.aliases);
+
+                async.eachLimit(fetchedArray, 100, function (fetchedSalary, cb) {
+                    var objectToSave = {};
+                    var employeeQuery;
+                    var key;
+                    var msSqlKey;
+                    var employeeResult;
+
+                    for (var i = mongooseFields.length - 1; i >= 0; i--) {
+                        key = mongooseFields[i];
+                        msSqlKey = salaryShema.aliases[key];
+
+                        if (salaryShema.defaultValues) {
+                            for (var defKey in salaryShema.defaultValues) {
+                                objectToSave[defKey] = salaryShema.defaultValues[defKey];
+                            }
+                        }
+
+                        if (salaryShema.comparator && msSqlKey in salaryShema.comparator) {
+                            fetchedSalary[msSqlKey] = comparator(fetchedSalary[msSqlKey], salaryShema.comparator[msSqlKey]) || fetchedSalary[msSqlKey];
+                        }
+
+                        objectToSave[key] = fetchedSalary[msSqlKey];
+                        objectToSave.createdBy = {
+                            user: ownerId
+                        };
+                        objectToSave.editedBy = {
+                            user: ownerId
+                        }
+                    }
+
+                    if (fetchedSalary) {
+                        employeeQuery = {
+                            ID: fetchedSalary['Employee']
+                        };
+
+                        function employeeFinder(callback) {
+                            Department.findOne(employeeQuery, {_id: 1}, function (err, employee) {
+                                if (err) {
+                                    return callback(err);
+                                }
+                                callback(null, employee);
+                            });
+                        };
+
+                        employeeResult = employeeFinder();
+                        objectToSave.employee = employeeResult ? employeeResult._id : null;
+
+                        model = new Salary(objectToSave);
+                        model.save(cb);
+                    }
+                }, function (err) {
+                    if (err) {
+                        return callback(err);
+                    }
+
+                    callback(null, 'Completed');
+                })
+            }
+
+            waterfallTasks = [getData, saverSalary];
+
+            async.waterfall(waterfallTasks, function (err, result) {
+                if (err) {
+                    seriesCb(err);
+                }
+
+                seriesCb(null, 'Complete')
+            });
+        }
+
+        function salaryImporter(callback) {
+            importSalary(salaryShema, callback);
+        }
+
+        return [departmentImporter, jobPositionImporter, employeeImporter, salaryImporter];
     }
 
     router.post('/', function (req, res, next) {
