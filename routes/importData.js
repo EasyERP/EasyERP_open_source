@@ -770,7 +770,6 @@ module.exports = function (models) {
                             ID: fetchedSalary['Employee']
                         };
 
-
                         Employee.findOne(employeeQuery, {_id: 1}, function (err, employee) {
                             if (err) {
                                 return cb(err);
@@ -805,7 +804,7 @@ module.exports = function (models) {
             importSalary(salaryShema, callback);
         }
 
-        return [departmentImporter, jobPositionImporter, employeeImporter/*, salaryImporter*/];
+        return [departmentImporter, jobPositionImporter, employeeImporter, salaryImporter];
     }
 
     router.post('/', function (req, res, next) {
