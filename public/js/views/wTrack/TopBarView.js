@@ -47,15 +47,13 @@ define([
 
             editEvent: function (event) {
                 event.preventDefault();
+
                 this.trigger('editEvent');
             },
 
             deleteEvent: function (event) {
                 event.preventDefault();
-                var answer = confirm("Realy DELETE items ?!");
-                if (answer === true) {
-                    this.trigger('deleteEvent');
-                }
+                this.trigger('deleteEvent');
             },
 
             saveEvent: function (event) {

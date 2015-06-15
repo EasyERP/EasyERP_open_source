@@ -41,8 +41,42 @@ var wTrack = function (models) {
                         user: req.session.uId,
                         date: new Date().toISOString()
                     };
-                    WTrack.findByIdAndUpdate(id, {$set: data}, function(err, response){
-                        if(err){
+                    WTrack.findByIdAndUpdate(id, {$set: data}, function (err, response) {
+                        if (err) {
+                            return next(err);
+                        }
+
+                        res.status(200).send({success: 'updated'});
+                    });
+                } else {
+                    res.status(403).send();
+                }
+            });
+        } else {
+            res.status(401).send();
+        }
+    };
+
+    this.putchBulk = function (req, res, next) {
+        var body = req.body;
+        var uId;
+        var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+
+        if (req.session && req.session.loggedIn && req.session.lastDb) {
+            uId = req.session.uId;
+            access.getEditWritAccess(req, req.session.uId, 55, function (access) {
+                if (access) {
+                    async.each(body, function (data, cb) {
+                        var id = data._id;
+
+                        data.editedBy = {
+                            user: uId,
+                            date: new Date().toISOString()
+                        };
+                        delete data._id;
+                        WTrack.findByIdAndUpdate(id, {$set: data}, cb);
+                    }, function (err) {
+                        if (err) {
                             return next(err);
                         }
 
@@ -290,7 +324,7 @@ var wTrack = function (models) {
                 .limit(count)
                 .skip(skip)
                 .sort(sort)
-                .exec(waterfallCallback );
+                .exec(waterfallCallback);
         };
 
         waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
@@ -424,9 +458,9 @@ var wTrack = function (models) {
 
     this.remove = function (req, res, next) {
         var id = req.params.id;
-        var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
+        var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
 
-        Quotation.remove({_id: id}, function (err, product) {
+        WTrack.remove({_id: id}, function (err, product) {
             if (err) {
                 return next(err);
             }

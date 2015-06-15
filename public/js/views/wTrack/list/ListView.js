@@ -66,7 +66,7 @@ define([
                 "change .autoCalc": "autoCalc"
             },
 
-            autoCalc: function(e){
+            autoCalc: function (e) {
                 var el = $(e.target);
                 var tr = $(e.target).closest('tr');
                 var input = tr.find('input.editing');
@@ -76,12 +76,12 @@ define([
                 var value;
                 var calcEl;
 
-                for (var i = days.length - 1; i >= 0; i--){
+                for (var i = days.length - 1; i >= 0; i--) {
                     calcEl = $(days[i]);
                     value = calcEl.text();
 
-                    if(value === ''){
-                        if(calcEl.children('input').length) {
+                    if (value === '') {
+                        if (calcEl.children('input').length) {
                             value = input.val();
                         } else {
                             value = '0';
@@ -204,7 +204,7 @@ define([
                 return false;
             },
 
-            saveItem: function(){
+            saveItem: function () {
                 this.editCollection.save();
             },
 
@@ -224,6 +224,10 @@ define([
             },
 
             goSort: function (e) {
+                if(this.isNewRow) {
+                    return false;
+                }
+
                 var target$ = $(e.target);
                 var currentParrentSortClass = target$.attr('class');
                 var sortClass = currentParrentSortClass.split(' ')[1];
@@ -589,6 +593,12 @@ define([
                 });
             },
 
+            isNewRow: function () {
+                var newRow = $('#false');
+
+                return !!newRow.length;
+            },
+
             createItem: function () {
                 var now = new Date();
                 var year = now.getFullYear();
@@ -605,17 +615,11 @@ define([
                     rate: rate
                 };
 
-                if (!isNewRow()) {
+                if (!this.isNewRow()) {
                     this.showSaveCancelBtns();
                     this.editCollection.add(model);
 
                     new createView(startData);
-                }
-
-                function isNewRow() {
-                    var newRow = $('#false');
-
-                    return !!newRow.length;
                 }
             },
 
@@ -624,7 +628,7 @@ define([
                 var saveBtnEl = $('#top-bar-saveBtn');
                 var cancelBtnEl = $('#top-bar-deleteBtn');
 
-                if(!this.changed) {
+                if (!this.changed) {
                     createBtnEl.hide();
                 }
                 saveBtnEl.show();
@@ -636,13 +640,13 @@ define([
             checked: function () {
                 if (this.collection.length > 0) {
                     var checkLength = $("input.checkbox:checked").length;
+
                     if ($("input.checkbox:checked").length > 0) {
                         $("#top-bar-deleteBtn").show();
                         if (checkLength == this.collection.length) {
                             $('#check_all').prop('checked', true);
                         }
-                    }
-                    else {
+                    } else {
                         $("#top-bar-deleteBtn").hide();
                         $('#check_all').prop('checked', false);
                     }
@@ -694,41 +698,52 @@ define([
                 var count = $("#listTable input:checked").length;
                 this.collectionLength = this.collection.length;
 
-                $.each($("#listTable input:checked"), function (index, checkbox) {
-                    model = that.collection.get(checkbox.value);
-                    model.destroy({
-                        headers: {
-                            mid: mid
-                        },
-                        wait: true,
-                        success: function () {
-                            that.listLength--;
-                            localCounter++;
+                if (!this.changed) {
+                    var answer = confirm("Realy DELETE items ?!");
+                    if (answer === true) {
+                        $.each($("#listTable input:checked"), function (index, checkbox) {
+                            model = that.collection.get(checkbox.value);
+                            model.destroy({
+                                headers: {
+                                    mid: mid
+                                },
+                                wait: true,
+                                success: function () {
+                                    that.listLength--;
+                                    localCounter++;
 
-                            if (index == count - 1) {
+                                    if (index == count - 1) {
 
-                                that.deleteCounter = localCounter;
-                                that.deletePage = $("#currentShowPage").val();
-                                that.deleteItemsRender(that.deleteCounter, that.deletePage);
+                                        that.deleteCounter = localCounter;
+                                        that.deletePage = $("#currentShowPage").val();
+                                        that.deleteItemsRender(that.deleteCounter, that.deletePage);
 
-                            }
-                        },
-                        error: function (model, res) {
-                            if (res.status === 403 && index === 0) {
-                                alert("You do not have permission to perform this action");
-                            }
-                            that.listLength--;
-                            localCounter++;
-                            if (index == count - 1) {
-                                that.deleteCounter = localCounter;
-                                that.deletePage = $("#currentShowPage").val();
-                                that.deleteItemsRender(that.deleteCounter, that.deletePage);
+                                    }
+                                },
+                                error: function (model, res) {
+                                    if (res.status === 403 && index === 0) {
+                                        alert("You do not have permission to perform this action");
+                                    }
+                                    that.listLength--;
+                                    localCounter++;
+                                    if (index == count - 1) {
+                                        that.deleteCounter = localCounter;
+                                        that.deletePage = $("#currentShowPage").val();
+                                        that.deleteItemsRender(that.deleteCounter, that.deletePage);
 
-                            }
+                                    }
 
-                        }
-                    });
-                });
+                                }
+                            });
+                        });
+                    }
+                } else {
+                    this.cancelChanges();
+                }
+            },
+
+            cancelChanges: function () {
+                alert('cancelChanges');
             }
 
         });

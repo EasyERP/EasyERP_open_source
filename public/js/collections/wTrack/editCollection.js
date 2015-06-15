@@ -28,7 +28,7 @@
                 for (var i = this.models.length - 1; i >=0; i--){
                     model = this.models[i];
 
-                    if(model && model.hasChanged()){
+                    if(model && model.id && model.hasChanged()){
                         modelObject = model.changedAttributes();
                         modelObject._id = model.id;
                         models.push(modelObject);
@@ -37,7 +37,9 @@
                     }
                 }
 
-                Backbone.sync("patch", syncObject, options);
+                if(models.length) {
+                    Backbone.sync("patch", syncObject, options);
+                }
             }
         });
 

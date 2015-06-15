@@ -13,6 +13,7 @@ module.exports = function (models) {
     router.get('/:viewType', handler.getByViewType);
     router.post('/', handler.create);
     router.delete('/:id', handler.remove);
+    router.patch('/', handler.putchBulk);
     router.patch('/:id', handler.putchModel);
    /* router.put('/:id', handler.updateModel);*/
 
