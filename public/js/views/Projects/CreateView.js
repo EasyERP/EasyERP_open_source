@@ -194,7 +194,7 @@ define([
 				notDiv = this.$el.find('.assignees-container');
                 notDiv.append(
                     new AssigneesView({
-                        model: this.currentModel,
+                        model: this.currentModel
                     }).render().el
                 );
                 populate.get("#projectTypeDD", "/projectType", {}, "name", this, true, true);

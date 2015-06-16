@@ -2,9 +2,9 @@
         'models/wTrackModel',
         'common'
     ],
-    function (QuotationModel, common) {
+    function (wTrackModel, common) {
         var wTrackCollection = Backbone.Collection.extend({
-            model: QuotationModel,
+            model: wTrackModel,
             url: "/wTrack/",
             page: null,
             namberToShow: null,
