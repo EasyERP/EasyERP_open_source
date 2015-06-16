@@ -18,10 +18,7 @@ module.exports = (function () {
             'calc.onBonus': 'CalcOnBonus',
             'paid.onCash': 'PaidOnCash',
             'paid.onCard': 'PaidOnCard',
-            'paid.onBonus': 'PaidOnBonus',
-            'diff.onCash': 'OnCashDiff',
-            'diff.onCard': 'OnCardDiff',
-            'diff.onBonus': 'OnBonusDiff'
+            'paid.onBonus': 'PaidOnBonus'
         }
     };
     var employee = {

@@ -11,7 +11,7 @@ module.exports = (function () {
             _id: {type: ObjectId, ref: 'Employees', default: null},
             name: String
         },
-        year: '',
+        year: Number,
         month: Number,
         baseSalary: Number,
         hourlyWithExpense: Number,
