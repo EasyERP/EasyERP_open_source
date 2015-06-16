@@ -8,7 +8,7 @@ var SalaryHandler = require('../handlers/salary');
 module.exports = function (models) {
     var handler = new SalaryHandler(models);
 
-    router.get('/', handler.getAll);
+/*    router.get('/', handler.getAll);
     router.get('/getProductsAlphabet', handler.getProductsAlphabet);
     router.get('/getProductsTypeForDd', handler.getProductsTypeForDd);
     router.get('/totalCollectionLength', handler.totalCollectionLength);
@@ -16,7 +16,7 @@ module.exports = function (models) {
     router.get('/:viewType', handler.getForView);
     router.post('/', handler.create);
     router.patch('/:_id', handler.productsUpdateOnlySelectedFields);
-    router.delete('/:_id', handler.removeProduct);
+    router.delete('/:_id', handler.removeProduct);*/
 
     return router;
 };
