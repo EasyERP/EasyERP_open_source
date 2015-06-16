@@ -33,6 +33,7 @@ define([], function(){
         SALESPRODUCT: 'salesProduct',
         WTRACK: 'wTrack',
         SALARY: 'Salary',
+        REVENUE: 'Revenue',
 
         RESPONSES: {
             CREATE_QUOTATION: 'Please check at most one supplier or create one',

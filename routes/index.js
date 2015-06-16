@@ -32,9 +32,9 @@ module.exports = function (app, mainDb) {
     var projectRouter = require('./project')(models);
     var employeeRouter = require('./employee')(models);
     var departmentRouter = require('./department')(models);
+    var revenueRouter = require('./revenue')(models);
     var wTrackRouter = require('./wTrack')(models);
     var salaryRouter = require('./salary')(models);
-
 
     app.get('/', function (req, res, next) {
         res.sendfile('index.html');
@@ -65,6 +65,7 @@ module.exports = function (app, mainDb) {
     app.use('/project', projectRouter);
     app.use('/employee', employeeRouter);
     app.use('/department', departmentRouter);
+    app.use('/revenue', revenueRouter);
     app.use('/salary', salaryRouter);
     app.get('/getDBS', function (req, res) {
         res.send(200, {dbsNames: dbsNames});

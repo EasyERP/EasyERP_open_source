@@ -17,6 +17,7 @@
     "tests"
   ],
   "dependencies": {
-    "async": "~1.2.1"
+    "async": "~1.2.1",
+    "moment": "~2.10.3"
   }
 }

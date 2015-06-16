@@ -35,7 +35,7 @@ var wTrack = function (models) {
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getEditWritAccess(req, req.session.uId, 55, function (access) {
+            access.getEditWritAccess(req, req.session.uId, 65, function (access) {
                 if (access) {
                     data.editedBy = {
                         user: req.session.uId,
@@ -64,7 +64,7 @@ var wTrack = function (models) {
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             uId = req.session.uId;
-            access.getEditWritAccess(req, req.session.uId, 55, function (access) {
+            access.getEditWritAccess(req, req.session.uId, 65, function (access) {
                 if (access) {
                     async.each(body, function (data, cb) {
                         var id = data._id;
@@ -197,9 +197,6 @@ var wTrack = function (models) {
 
     this.getByViewType = function (req, res, next) {
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
-        /*var Customer = models.get(req.session.lastDb, 'Customers', CustomerSchema);
-        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
-        var Workflow = models.get(req.session.lastDb, 'workflows', WorkflowSchema);*/
 
         var query = req.query;
         var queryObject = {};
@@ -308,12 +305,18 @@ var wTrack = function (models) {
 
         waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
 
-        async.waterfall(waterfallTasks, function (err, result) {
-            if (err) {
-                return next(err);
+        access.getEditWritAccess(req, req.session.uId, 65, function (access) {
+            if (!access) {
+                return res.status(403).send();
             }
 
-            res.status(200).send(result);
+            async.waterfall(waterfallTasks, function (err, result) {
+                if (err) {
+                    return next(err);
+                }
+
+                res.status(200).send(result);
+            });
         });
     };
 
