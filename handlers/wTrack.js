@@ -197,9 +197,9 @@ var wTrack = function (models) {
 
     this.getByViewType = function (req, res, next) {
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
-        var Customer = models.get(req.session.lastDb, 'Customers', CustomerSchema);
+        /*var Customer = models.get(req.session.lastDb, 'Customers', CustomerSchema);
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
-        var Workflow = models.get(req.session.lastDb, 'workflows', WorkflowSchema);
+        var Workflow = models.get(req.session.lastDb, 'workflows', WorkflowSchema);*/
 
         var query = req.query;
         var queryObject = {};

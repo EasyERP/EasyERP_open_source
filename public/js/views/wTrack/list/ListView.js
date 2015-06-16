@@ -130,6 +130,8 @@ define([
             },
 
             editRow: function (e, prev, next) {
+                $(".newSelectList").hide();
+
                 var el = $(e.target);
                 var tr = $(e.target).closest('tr');
                 var wTrackId = tr.data('id');
@@ -160,7 +162,6 @@ define([
                             editedCol.text(editedElementValue);
                             editedElement.remove();
                         }
-                        /*editedElement.remove();*/
                     }
                     this.wTrackId = wTrackId;
                 }
@@ -175,6 +176,10 @@ define([
                 }
 
                 return false;
+            },
+
+            calculateCost: function(employeeId, callback){
+
             },
 
             chooseOption: function (e) {
@@ -258,6 +263,7 @@ define([
                     newCollection: this.newCollection
                 });
                 this.collection.bind('reset', this.renderContent, this);
+                this.collection.bind('showmore', this.showMoreContent, this);
             },
 
             goSort: function (e) {

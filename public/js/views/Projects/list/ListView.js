@@ -81,12 +81,14 @@ define([
             goSort: function (e) {
                 this.collection.unbind('reset');
                 this.collection.unbind('showmore');
+
                 var target$ = $(e.target);
                 var currentParrentSortClass = target$.attr('class');
                 var sortClass = currentParrentSortClass.split(' ')[1];
                 var sortConst = 1;
                 var sortBy = target$.data('sort');
                 var sortObject = {};
+
                 if (!sortClass) {
                     target$.addClass('sortDn');
                     sortClass = "sortDn";
@@ -108,6 +110,7 @@ define([
                         break;
                 }
                 sortObject[sortBy] = sortConst;
+
                 this.fetchSortCollection(sortObject);
                 this.changeLocationHash(1, this.defaultItemsNumber);
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
