@@ -8,8 +8,8 @@ var SalaryHandler = require('../handlers/salary');
 module.exports = function (models) {
     var handler = new SalaryHandler(models);
 
-/*    router.get('/', handler.getAll);
-    router.get('/getProductsAlphabet', handler.getProductsAlphabet);
+    //router.get('/', handler.groupForSalaryCash);
+/*    router.get('/getProductsAlphabet', handler.getProductsAlphabet);
     router.get('/getProductsTypeForDd', handler.getProductsTypeForDd);
     router.get('/totalCollectionLength', handler.totalCollectionLength);
     router.get('/getProductsImages', handler.getProductsImages);

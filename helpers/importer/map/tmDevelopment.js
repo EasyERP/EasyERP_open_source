@@ -8,20 +8,17 @@ module.exports = (function () {
         aliases: {
             ID: 'ID',
             employee: 'Employee',
-            'monthRate.year': 'Year',
-            'monthRate.month': 'Month',
-            'monthRate.baseSalary': 'BaseSalary',
-            'monthRate.hourlyWithExpense': 'HourlyWithExpense',
+            year: 'Year',
+            month: 'Month',
+            baseSalary: 'BaseSalary',
+            hourlyWithExpense: 'HourlyWithExpense',
             'calc.salary': 'CalcSalary',
             'calc.onCash': 'CalcOnCash',
             'calc.onCard': 'CalcOnCard',
             'calc.onBonus': 'CalcOnBonus',
             'paid.onCash': 'PaidOnCash',
             'paid.onCard': 'PaidOnCard',
-            'paid.onBonus': 'PaidOnBonus',
-            'diff.onCash': 'OnCashDiff',
-            'diff.onCard': 'OnCardDiff',
-            'diff.onBonus': 'OnBonusDiff'
+            'paid.onBonus': 'PaidOnBonus'
         }
     };
     var employee = {
