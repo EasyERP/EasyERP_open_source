@@ -7,8 +7,9 @@ var router = express.Router();
 var ImportHandler = require('../helpers/importer/importer');
 var mongoose = require('mongoose');
 var _ = require('lodash');
-/*var multipart = require('connect-multiparty');
- var multipartMiddleware = multipart();*/
+
+var dateCalc = require('../helpers/dateManipulator');
+
 var tasks = require('../helpers/importer/map/').tmDevelopment;
 
 module.exports = function (models) {
@@ -391,6 +392,8 @@ module.exports = function (models) {
                             project: projectFinder,
                             employee: employeeFinder
                         }, function (err, result) {
+                            objectToSave.dateByWeek = dateCalc(fetchedWtrack.Week, fetchedWtrack.Year);
+
                             if (result.department) {
                                 objectToSave.department = {};
                                 objectToSave.department._id = result.department._id || null;
@@ -404,9 +407,7 @@ module.exports = function (models) {
                                 objectToSave.project.customer = result.project.customer && result.project.customer.name ? result.project.customer.name.first + ' ' + result.project.customer.name.last : '';
                                 objectToSave.project.workflow = result.project.workflow ? result.project.workflow.name : '';
                             }
-                            /*objectToSave.department = result.department ? result.department._id : null;
-                             objectToSave.project = result.project ? result.project._id : null;
-                             objectToSave.employee = result.employee ? result.employee._id : null;*/
+
                             if (result.employee) {
                                 objectToSave.employee = {};
                                 objectToSave.employee._id = result.employee._id || null;
