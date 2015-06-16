@@ -1,7 +1,7 @@
 <% salaryCollection.forEach(function(salary, index){ %>
 <tr data-id="<%=salary._id%>">
     <td class = "notForm"><input type="checkbox" value="<%=salary._id%>" class="checkbox" /></td>
-    <td><a href="javascript;" data-id="<%=salary.dataKey%>" class="icon add left" title="open" id="list-createBtn">5</a></td>
+    <td class="icon add left" id="list-createBtn">5</a></td>
     <td><%=salary.month%></td>
     <td><%=salary.year%></td>
     <td><%=salary.calc.salary%></td>

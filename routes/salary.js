@@ -9,14 +9,7 @@ module.exports = function (models) {
     var handler = new SalaryHandler(models);
 
     router.get('/', handler.recalculateCashSalary);
-
-    //router.get('/', handler.importCashSalary);
-/*    router.get('/getProductsAlphabet', handler.getProductsAlphabet);
-    router.get('/getProductsTypeForDd', handler.getProductsTypeForDd);*/
     router.get('/totalCollectionLength', handler.totalCollectionLength);
-    /*
-    router.get('/getProductsImages', handler.getProductsImages);
-    */
     router.get('/:viewType', handler.getForView);
     /*router.post('/', handler.create);
     router.patch('/:_id', handler.productsUpdateOnlySelectedFields);
