@@ -12,18 +12,15 @@ module.exports = (function () {
         calc: {
             salary: Number,
             onCash: Number,
-            onCard: Number,
-            onBonus: Number
+            onCard: Number
         },
         paid: {
             onCash: Number,
-            onCard: Number,
-            onBonus: Number
+            onCard: Number
         },
         diff: {
             onCash: Number,
-            onCard: Number,
-            onBonus: Number
+            onCard: Number
         },
         employeesArray: [{
             ID: Number,

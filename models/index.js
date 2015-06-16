@@ -34,6 +34,7 @@ module.exports = (function () {
     require('./source.js');
     require('./saas.js');
     require('./salary.js');
+    require('./salaryCash.js');
     require('./task.js');
     require('./user.js');
     require('./invoice.js');
