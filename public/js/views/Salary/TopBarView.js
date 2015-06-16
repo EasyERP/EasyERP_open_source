@@ -1,5 +1,5 @@
 define([
-        'text!templates/Order/TopBarTemplate.html',
+        'text!templates/Salary/TopBarTemplate.html',
         'custom',
         'common',
         'constants'
@@ -7,7 +7,7 @@ define([
     function (ContentTopBarTemplate, Custom, Common, CONSTANTS) {
         var TopBarView = Backbone.View.extend({
             el: '#top-bar',
-            contentType: CONSTANTS.ORDER,
+            contentType: CONSTANTS.SALARY,
             template: _.template(ContentTopBarTemplate),
 
             events: {

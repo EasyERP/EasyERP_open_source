@@ -1,9 +1,9 @@
 ﻿define([
-    'text!templates/Order/list/ListTemplate.html'
+    'text!templates/Salary/list/ListTemplate.html'
 ],
 
 function (listTemplate) {
-    var OrderListItemView = Backbone.View.extend({
+    var SalaryListItemView = Backbone.View.extend({
         el: '#listTable',
 
         initialize: function(options) {
@@ -11,9 +11,9 @@ function (listTemplate) {
             this.startNumber = (options.page - 1 ) * options.itemsNumber;
         },
         render: function() {
-            this.$el.append(_.template(listTemplate, { orderCollection: this.collection.toJSON(), startNumber: this.startNumber }));
+            this.$el.append(_.template(listTemplate, { salaryCollection: this.collection.toJSON()}));
         }
     });
 
-    return OrderListItemView;
+    return SalaryListItemView;
 });

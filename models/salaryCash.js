@@ -50,8 +50,6 @@ module.exports = (function () {
 
     }, {collection: 'SalaryCash'});
 
-    salaryCashSchema.set('toJSON', {virtuals: true});
-
     mongoose.model('SalaryCash', salaryCashSchema);
 
     if (!mongoose.Schemas) {

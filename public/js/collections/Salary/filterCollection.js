@@ -55,20 +55,12 @@ define([
                         if (xhr.status == 401) Backbone.history.navigate('#login', {trigger: true});
                     }
                 });
-            }
-/*
-            parse: function (quotations) {
-                _.map(quotations, function (quotation) {
-                    quotation.orderDate = common.utcDateToLocaleDate(quotation.orderDate);
-                    if(quotation.expectedDate){
-                        quotation.expectedDate = common.utcDateToLocaleDate(quotation.expectedDate);
-                    }
+            },
 
-                    return quotation;
-                });
-
-                return quotations;
-            }*/
+            parse: true,
+            parse: function (response) {
+            return response.success;
+        }
         });
         return SalaryCollection;
     });
