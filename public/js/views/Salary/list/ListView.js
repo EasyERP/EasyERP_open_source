@@ -1,18 +1,16 @@
 define([
-        'text!templates/Order/list/ListHeader.html',
-        'text!templates/stages.html',
+        'text!templates/Salary/list/ListHeader.html',
         'views/Quotation/CreateView',
-        'views/Order/list/ListItemView',
-        'views/Order/list/ListTotalView',
+        'views/Salary/list/ListItemView',
         'views/Order/EditView',
-        'models/QuotationModel',
-        'collections/Order/filterCollection',
+        'models/SalaryModel',
+        'collections/Salary/filterCollection',
 	    'common',
         'dataService'
 ],
 
-function (listTemplate, stagesTamplate, createView, listItemView, listTotalView, editView, quotationModel, contentCollection, common, dataService) {
-    var OrdersListView = Backbone.View.extend({
+function (listTemplate, createView, listItemView, editView, quotationModel, contentCollection, common, dataService) {
+    var SalaryListView = Backbone.View.extend({
         el: '#content-holder',
         defaultItemsNumber: null,
         listLength: null,
@@ -20,7 +18,7 @@ function (listTemplate, stagesTamplate, createView, listItemView, listTotalView,
         sort: null,
         newCollection: null,
         page: null, //if reload page, and in url is valid page
-        contentType: 'Order',//needs in view.prototype.changeLocationHash
+        contentType: 'Salary',//needs in view.prototype.changeLocationHash
         viewType: 'list',//needs in view.prototype.changeLocationHash
         
         initialize: function (options) {
@@ -51,31 +49,7 @@ function (listTemplate, stagesTamplate, createView, listItemView, listTotalView,
             "click": "hideItemsNumber",
             "click #firstShowPage": "firstPage",
             "click #lastShowPage": "lastPage",
-            "click .oe_sortable": "goSort",
-            "click .newSelectList li": "chooseOption"
-        },
-
-        chooseOption: function (e) {
-            var self = this;
-            var target$ = $(e.target);
-            var targetElement = target$.parents("td");
-            var id = targetElement.attr("id");
-            var model = this.collection.get(id);
-
-            model.save({ workflow: target$.attr("id") }, {
-                headers:
-                {
-                    mid: 55
-                },
-                patch: true,
-                validate: false,
-                success: function () {
-                    self.showFilteredPage();
-                }
-            });
-
-            this.hideNewSelect();
-            return false;
+            "click .oe_sortable": "goSort"
         },
 
         fetchSortCollection: function (sortObject) {
@@ -135,27 +109,13 @@ function (listTemplate, stagesTamplate, createView, listItemView, listTotalView,
             $(".newSelectList").hide();
         },
 
-        showNewSelect: function (e) {
-            if ($(".newSelectList").is(":visible")) {
-                this.hideNewSelect();
-                return false;
-            } else {
-                $(e.target).parent().append(_.template(stagesTamplate, { stagesCollection: this.stages }));
-                return false;
-            }
-        },
-
-        hideNewSelect: function (e) {
-            $(".newSelectList").remove();
-        },
-
         itemsNumber: function (e) {
             $(e.target).closest("button").next("ul").toggle();
             return false;
         },
 
         getTotalLength: function (currentNumber, itemsNumber,filter) {
-                dataService.getData('/order/totalCollectionLength', {
+                dataService.getData('/salary/totalCollectionLength', {
                     contentType: this.contentType,
                     currentNumber: currentNumber,
                     filter: filter,
@@ -184,7 +144,6 @@ function (listTemplate, stagesTamplate, createView, listItemView, listTotalView,
                 page: this.page,
                 itemsNumber: this.collection.namberToShow
             }).render());//added two parameters page and items number
-            currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 6}).render());
 
             $('#check_all').click(function () {
                 $(':checkbox').prop('checked', this.checked);
@@ -204,22 +163,6 @@ function (listTemplate, stagesTamplate, createView, listItemView, listTotalView,
                         pagenation.show();
                 }
             currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
-
-            dataService.getData("/workflow/fetch", {
-                wId: 'Purchase Order',
-                source: 'purchase',
-                targetSource: 'order'
-            }, function (stages) {
-                //For Filter Logic
-                /*var stage = (self.filter) ? self.filter.workflow || [] : [];
-                 if (self.filter && stage) {
-                 $('.filter-check-list input').each(function () {
-                 var target = $(this);
-                 target.attr('checked', $.inArray(target.val(), stage) > -1);
-                 });
-                 }*/
-                self.stages = stages;
-            });
         },
 
         renderContent: function () {
@@ -230,8 +173,6 @@ function (listTemplate, stagesTamplate, createView, listItemView, listTotalView,
                 tBody.empty();
                 var itemView = new listItemView({ collection: this.collection,page: currentEl.find("#currentShowPage").val(), itemsNumber: currentEl.find("span#itemsNumber").text() });
                 tBody.append(itemView.render());
-
-                currentEl.append(new listTotalView({element: tBody, cellSpan:6}).render());
 
                 var pagenation = this.$el.find('.pagination');
                 if (this.collection.length === 0) {
@@ -250,7 +191,7 @@ function (listTemplate, stagesTamplate, createView, listItemView, listTotalView,
                     newCollection: this.newCollection,
                     parrentContentId: this.parrentContentId
                 });
-                dataService.getData('/order/totalCollectionLength', {
+                dataService.getData('/salary/totalCollectionLength', {
                     filter: this.filter,
                     newCollection: this.newCollection,
                     parrentContentId: this.parrentContentId,
@@ -272,7 +213,7 @@ function (listTemplate, stagesTamplate, createView, listItemView, listTotalView,
 
                 });
 
-                dataService.getData('/order/totalCollectionLength', {
+                dataService.getData('/salary/totalCollectionLength', {
                     contentType: this.contentType,
                     filter: this.filter,
                     newCollection: this.newCollection,
@@ -291,7 +232,7 @@ function (listTemplate, stagesTamplate, createView, listItemView, listTotalView,
                     filter: this.filter,
                     newCollection: this.newCollection
                 });
-                dataService.getData('/order/totalCollectionLength', {
+                dataService.getData('/salary/totalCollectionLength', {
                     contentType: this.contentType,
                     filter: this.filter,
                     newCollection: this.newCollection
@@ -309,7 +250,7 @@ function (listTemplate, stagesTamplate, createView, listItemView, listTotalView,
                     filter: this.filter,
                     newCollection: this.newCollection
                 });
-                dataService.getData('/order/totalCollectionLength', {
+                dataService.getData('/salary/totalCollectionLength', {
                     contentType: this.contentType,
                     filter: this.filter,
                     newCollection: this.newCollection
@@ -368,8 +309,6 @@ function (listTemplate, stagesTamplate, createView, listItemView, listTotalView,
                 var itemView = new listItemView({ collection: newModels, page: holder.find("#currentShowPage").val(), itemsNumber: holder.find("span#itemsNumber").text() });//added two parameters page and items number
                 holder.append(itemView.render());
 
-                holder.append(new listTotalView({element: holder.find("#listTable"), cellSpan:6}).render());
-
                 itemView.undelegateEvents();
                 var pagenation = holder.find('.pagination');
                 if (newModels.length !== 0) {
@@ -423,7 +362,7 @@ function (listTemplate, stagesTamplate, createView, listItemView, listTotalView,
         },
 
         deleteItemsRender: function (deleteCounter, deletePage) {
-                dataService.getData('/order/totalCollectionLength', {
+                dataService.getData('/salary/totalCollectionLength', {
                     contentType: this.contentType,
                     filter: this.filter,
                     newCollection: this.newCollection
@@ -442,8 +381,6 @@ function (listTemplate, stagesTamplate, createView, listItemView, listTotalView,
                     var created = holder.find('#timeRecivingDataFromServer');
                     created.before(new listItemView({ collection: this.collection, page: holder.find("#currentShowPage").val(), itemsNumber: holder.find("span#itemsNumber").text()}).render());//added two parameters page and items number
                 }
-
-                holder.append(new listTotalView({element: holder.find("#listTable"), cellSpan:6}).render());
                 var pagenation = this.$el.find('.pagination');
                 if (this.collection.length === 0) {
                         pagenation.hide();
@@ -499,5 +436,5 @@ function (listTemplate, stagesTamplate, createView, listItemView, listTotalView,
 
     });
 
-    return OrdersListView;
+    return SalaryListView;
 });

@@ -13,10 +13,12 @@ module.exports = function (models) {
     //router.get('/', handler.importCashSalary);
 /*    router.get('/getProductsAlphabet', handler.getProductsAlphabet);
     router.get('/getProductsTypeForDd', handler.getProductsTypeForDd);*/
-    router.get('/totalCollectionLength', handler.totalCollectionLength);/*
+    router.get('/totalCollectionLength', handler.totalCollectionLength);
+    /*
     router.get('/getProductsImages', handler.getProductsImages);
+    */
     router.get('/:viewType', handler.getForView);
-    router.post('/', handler.create);
+    /*router.post('/', handler.create);
     router.patch('/:_id', handler.productsUpdateOnlySelectedFields);
     router.delete('/:_id', handler.removeProduct);*/
 
