@@ -770,14 +770,19 @@ module.exports = function (models) {
                             ID: fetchedSalary['Employee']
                         };
 
-
-                        Employee.findOne(employeeQuery, {_id: 1}, function (err, employee) {
+                        Employee.findOne(employeeQuery, {_id: 1, name: 1}, function (err, employee) {
                             if (err) {
                                 return cb(err);
                             }
-                            objectToSave.employee = employee ? employee._id : null;
-                            model = new Salary(objectToSave);
-                            model.save(cb);
+
+                            if (employee) {
+                                objectToSave.employee = {};
+                                objectToSave.employee._id = employee._id || null;
+                                objectToSave.employee.name = employee.name ? employee.name.first + ' ' + employee.name.last : '';
+
+                                model = new Salary(objectToSave);
+                                model.save(cb);
+                            }
                         });
                     }
                 }, function (err) {

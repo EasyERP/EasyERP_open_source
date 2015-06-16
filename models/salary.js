@@ -7,13 +7,14 @@ module.exports = (function () {
 
     var salarySchema = new mongoose.Schema({
         ID: Number,
-        employee: { type: ObjectId, ref: 'Employees', default: null },
-        monthRate: {
-            year: '',
-            month: Number,
-            baseSalary: Number,
-            hourlyWithExpense: Number
+        employee: {
+            _id: {type: ObjectId, ref: 'Employees', default: null},
+            name: String
         },
+        year: '',
+        month: Number,
+        baseSalary: Number,
+        hourlyWithExpense: Number,
         calc: {
             salary: Number,
             onCash: Number,
