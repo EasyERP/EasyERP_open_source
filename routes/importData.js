@@ -403,7 +403,13 @@ module.exports = function (models) {
                                 objectToSave.project = {};
                                 objectToSave.project._id = result.project._id || null;
                                 objectToSave.project.projectName = result.project.projectName || '';
-                                objectToSave.project.projectmanager = result.project.projectmanager && result.project.projectmanager.name ? result.project.projectmanager.name.first + ' ' + result.project.projectmanager.name.last : '';
+
+                                if (result.project.projectmanager && result.project.projectmanager.name) {
+                                    objectToSave.project.projectmanager = {
+                                        _id: result.project.projectmanager._id,
+                                        name: result.project.projectmanager.name.first + ' ' + result.project.projectmanager.name.last
+                                    };
+                                }
                                 objectToSave.project.customer = result.project.customer && result.project.customer.name ? result.project.customer.name.first + ' ' + result.project.customer.name.last : '';
                                 objectToSave.project.workflow = result.project.workflow ? result.project.workflow.name : '';
                             }

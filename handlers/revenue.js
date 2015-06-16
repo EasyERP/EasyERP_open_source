@@ -6,14 +6,6 @@ var mongoose = require('mongoose');
 var wTrack = function (models) {
     var access = require("../Modules/additions/access.js")(models);
     var wTrackSchema = mongoose.Schemas['wTrack'];
-    var DepartmentSchema = mongoose.Schemas['Department'];
-    var CustomerSchema = mongoose.Schemas['Customer'];
-    var EmployeeSchema = mongoose.Schemas['Employee'];
-    var WorkflowSchema = mongoose.Schemas['workflow'];
-
-    var objectId = mongoose.Types.ObjectId;
-    var async = require('async');
-    var mapObject = require('../helpers/bodyMaper');
 
     var dateCalc = require('../helpers/dateManipulator');
 
@@ -22,13 +14,14 @@ var wTrack = function (models) {
 
         access.getReadAccess(req, req.session.uId, 67, function (access) {
             var options = req.query;
-            var startWeek = Number(options.week);
-            var startYear = Number(options.year);
+            var startWeek = parseInt(options.week);
+            var startYear = parseInt(options.year);
             var endWeek;
             var endYear;
             var startDate;
             var endDate;
             var match;
+            var groupBy;
 
             if (!access) {
                 return res.status(403).send();
@@ -42,24 +35,36 @@ var wTrack = function (models) {
                 endYear = Number(startYear);
             }
 
+            startDate = dateCalc(startWeek, startYear);
+            endDate = dateCalc(endWeek, endYear);
+            startDate = new Date(startDate);
+            endDate = new Date(endDate);
+
             match = {
-                $and: [{
-                    'project._id': {$exists: true},
-                    'project._id': {$ne: null}
-                }]
+                $and: [
+                    {'project._id': {$exists: true}},
+                    {'project._id': {$ne: null}},
+                    {dateByWeek: {$gte: startDate, $lte: endDate}}
+                ]
             };
 
-            startDate = startYear * 100 + startWeek;
-            endDate = endYear * 100 + endWeek;
+            groupBy = {
+                _id: {
+                    employee: 'project.projectmanager._id',
+                    year: '$year',
+                    week: '$week'
+                },
+                revenue: {$sum: {$multiply: ["$rate", {$add: ["$1", "$2", "$3", "$4", "$5", "$6", "$7"]}]}}
+            };
 
             WTrack.aggregate([{
                 $match: match
+            }, {
+                $group: groupBy
             }], function (err, response) {
                 if (err) {
                     return next(err);
                 }
-
-                console.log(dateCalc(13, 2015));
 
                 res.status(200).send(response);
             });
