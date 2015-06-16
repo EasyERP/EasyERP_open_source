@@ -789,7 +789,6 @@ module.exports = function (models) {
                             }
 
                             if (employee) {
-                                console.log(fetchedSalary['BaseSalary']);
                                 objectToSave.employee = {};
                                 objectToSave.employee._id = employee._id || null;
                                 objectToSave.employee.name = employee.name ? employee.name.first + ' ' + employee.name.last : '';
