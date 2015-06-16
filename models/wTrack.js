@@ -13,7 +13,10 @@ module.exports = (function () {
                 type: ObjectId, ref: 'Project', default: null
             },
             projectName: String,
-            projectmanager: String,
+            projectmanager: {
+                _id: { type: ObjectId, ref: 'Project', default: null },
+                name: String
+            },
             workflow: String,
             customer: String
         },
