@@ -50,7 +50,7 @@ var wTrack = function (models) {
 
             groupBy = {
                 _id: {
-                    employee: 'project.projectmanager._id',
+                    employee: '$project.projectmanager._id',
                     year: '$year',
                     week: '$week'
                 },

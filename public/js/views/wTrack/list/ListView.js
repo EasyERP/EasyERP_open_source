@@ -178,7 +178,7 @@ define([
                 return false;
             },
 
-            calculateCost: function(employeeId, callback){
+            calculateCost: function (employeeId, callback) {
 
             },
 
@@ -212,7 +212,10 @@ define([
                             projectName: element.projectName,
                             workflow: element.workflow.name,
                             customer: element.customer.name.first + ' ' + element.customer.name.last,
-                            projectmanager: element.projectmanager.name.first + ' ' + element.projectmanager.name.last
+                            projectmanager: {
+                                name: element.projectmanager.name.first + ' ' + element.projectmanager.name.last,
+                                _id: element.projectmanager._id
+                            }
                         }
                     });
                 } else if (elementType === '#employee') {
@@ -247,7 +250,25 @@ define([
 
             saveItem: function () {
                 this.editCollection.save();
-                this.editCollection.on('saved', this.render, this);
+                this.editCollection.on('saved', this.savedNewModel, this);
+                this.editCollection.on('saved', this.updatedOptions, this);
+            },
+
+            savedNewModel: function(modelObject){
+                var savedRow = this.$listTable.find('#false');
+
+                modelObject = modelObject.success;
+
+                if(modelObject) {
+                    savedRow.data("id", modelObject._id);
+                    savedRow.removeAttr('id');
+                }
+
+                this.hideSaveCancelBtns();
+            },
+
+            updatedOptions: function(){
+                this.hideSaveCancelBtns();
             },
 
             fetchSortCollection: function (sortObject) {

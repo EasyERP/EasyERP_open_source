@@ -22,7 +22,12 @@
 
                 var options = {
                     success: function (model, resp, xhr) {
-                        self.trigger('saved');
+                        self.trigger('saved', model);
+                    }
+                };
+                var updatedOptions = {
+                    success: function (model, resp, xhr) {
+                        self.trigger('updated');
                     }
                 };
 
@@ -39,7 +44,7 @@
                 }
 
                 if(models.length) {
-                    Backbone.sync("patch", syncObject, options);
+                    Backbone.sync("patch", syncObject, updatedOptions);
                 }
             }
         });

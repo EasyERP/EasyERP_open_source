@@ -313,7 +313,6 @@ module.exports = function (models) {
                         var _comparator = wTrackSchema.comparator;
 
                         var projectQuery;
-                        var customerQuery;
                         var employeeQuery;
                         var departmentQuery;
 
