@@ -251,24 +251,39 @@ define([
             saveItem: function () {
                 this.editCollection.save();
                 this.editCollection.on('saved', this.savedNewModel, this);
-                this.editCollection.on('saved', this.updatedOptions, this);
+                this.editCollection.on('updated', this.updatedOptions, this);
             },
 
             savedNewModel: function(modelObject){
                 var savedRow = this.$listTable.find('#false');
+                var modelId;
+                var checkbox = savedRow.find('input[type=checkbox]');
 
                 modelObject = modelObject.success;
 
                 if(modelObject) {
-                    savedRow.data("id", modelObject._id);
+                    modelId = modelObject._id
+                    savedRow.attr("data-id", modelId);
+                    checkbox.val(modelId);
                     savedRow.removeAttr('id');
                 }
 
                 this.hideSaveCancelBtns();
+                this.resetCollection(modelObject);
+            },
+
+            resetCollection: function(model){
+                if(model && model._id){
+                    model = new currentModel(model);
+                    this.collection.add(model);
+                } else {
+                    this.collection.set(this.editCollection.models, {remove: false});
+                }
             },
 
             updatedOptions: function(){
                 this.hideSaveCancelBtns();
+                this.resetCollection();
             },
 
             fetchSortCollection: function (sortObject) {

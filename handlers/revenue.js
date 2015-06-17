@@ -35,10 +35,10 @@ var wTrack = function (models) {
                 endYear = Number(startYear);
             }
 
-            startDate = dateCalc(startWeek, startYear);
-            endDate = dateCalc(endWeek, endYear);
-            startDate = new Date(startDate);
-            endDate = new Date(endDate);
+            //startDate = dateCalc(startWeek, startYear);
+            //endDate = dateCalc(endWeek, endYear);
+            startDate = startYear * 100 + startWeek;
+            endDate = endYear * 100 + endWeek;
 
             match = {
                 $and: [
