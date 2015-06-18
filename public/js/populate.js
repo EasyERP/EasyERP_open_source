@@ -245,47 +245,6 @@ define([
             }));
         };
 
-        var showEmployeesSelect = function (e, prev, next, context) {
-            var data = context.responseObj[".employeesDd"];
-            var elementVisible = 10;
-            var newSel = $(e.target).parent().find(".newSelectList");
-            if (prev || next) {
-                newSel = $(e.target).closest(".newSelectList");
-                data = context.responseObj["#" + newSel.parent().find(".current-selected").attr("id")];
-            }
-            var parent = newSel.length > 0 ? newSel.parent() : $(e.target).parent();
-            var currentPage = 1;
-            if (newSel.length && newSel.is(":visible") && !prev && !next) {
-                newSel.hide();
-                return;
-            }
-            $(".newSelectList").hide();
-            if ((prev || next) && newSel.length) {
-                currentPage = newSel.data("page");
-                newSel.remove();
-            }
-            else if (newSel.length) {
-                newSel.show();
-                return;
-            }
-            if (prev) currentPage--;
-            if (next) currentPage++;
-            var s = "<ul class='newSelectList' data-page='" + currentPage + "'>";
-            var start = (currentPage - 1) * elementVisible;
-            var end = Math.min(currentPage * elementVisible, data.length);
-            var allPages = Math.ceil(data.length / elementVisible);
-
-            parent.append(_.template(selectTemplate, {
-                collection: data.slice(start, end),
-                currentPage: currentPage,
-                allPages: allPages,
-                start: start,
-                end: end,
-                dataLength: data.length,
-                elementVisible: elementVisible
-            }));
-        };
-
         var showSelectPriority = function (e, prev, next, context) {
             var data = context.responseObj["#priority"];
             var elementVisible = 25;
@@ -346,7 +305,6 @@ define([
             getCompanies: getCompanies,
             showSelectPriority: showSelectPriority,
             showProductsSelect: showProductsSelect,
-            showEmployeesSelect: showEmployeesSelect,
             fetchWorkflow: fetchWorkflow
         };
     });

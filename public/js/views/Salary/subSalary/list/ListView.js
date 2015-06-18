@@ -2,89 +2,200 @@ define([
         'text!templates/Salary/subSalary/list/ListHeader.html',
         'views/Salary/subSalary/list/ListItemView',
         'collections/Employees/employee',
-        'populate'
+        'populate',
+        'dataService'
 ],
 
-function (listTemplate, listItemView, employeesCollection, populate) {
+function (listTemplate, listItemView, employeesCollection, populate, dataService) {
     var subSalaryListView = Backbone.View.extend({
         el: '#subSalary-holder',
         viewType: 'list',//needs in view.prototype.changeLocationHash
         
         initialize: function (options) {
-            var employees;
+
+            var paretntSalaryModel = Backbone.Model.extend({
+                idAttribute: "_id"
+            });
+
+            this.parentSalaryCollection = Backbone.Collection.extend({
+                model: paretntSalaryModel
+            })
 
             this.model = options.model;
             this.responseObj = {};
 
-            employees = new employeesCollection();
-            employees.bind('reset', function () {
-                this.employees = employees;
-                this.filterEmployeesForDD();
-            }, this);
             this.render();
         },
 
         events: {
             "click .checkbox": "checked",
-            "click .current-selected": "showEmployeesSelect",
-            "click": "hideNewSelect",
-            "click": "disableRowClick",
             "click td.editable": "editRow",
             "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
             "click .newSelectList li.miniStylePagination": "notHide",
             "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-            "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect"
+            "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
+            "change .editable ": "setEditable"
         },
 
-        filterEmployeesForDD: function () {
-            var id = '.employeesDd';
-            var employees = this.employees.toJSON();
+        isEditRows: function () {
+            var edited = this.$('#subSalary-listTable').find('.edited');
 
-            this.responseObj[id] = [];
-            this.responseObj[id] = this.responseObj[id].concat(_.map(employees, function (item) {
-                return {_id: item._id, name: item.name.first + " " + item.name.last, level: item.projectShortDesc || ""};
-            }));
+            this.edited = edited;
 
-            //$(id).text(this.responseObj[id][0].name).attr("data-id", this.responseObj[id][0]._id);
-
+            return !!edited.length;
         },
 
-        showEmployeesSelect: function (e, prev, next) {
-            e.stopPropagation();
-            populate.showEmployeesSelect(e, prev, next, this);
+        setEditable: function (td) {
+            var tr = $(td).closest('tr');
+
+            td.addClass('edited');
+
+            if (this.isEditRows()) {
+                this.setChangedValue();
+            }
 
             return false;
         },
+
+        setChangedValue: function () {
+            if (!this.changed) {
+                this.changed = true;
+                this.showSaveCancelBtns()
+            }
+        },
+
+        showSaveCancelBtns: function () {
+            var createBtnEl = $('#top-bar-createBtn');
+            var saveBtnEl = $('#top-bar-saveBtn');
+            var cancelBtnEl = $('#top-bar-deleteBtn');
+
+            if (!this.changed) {
+                createBtnEl.hide();
+            }
+            saveBtnEl.show();
+            cancelBtnEl.show();
+
+            return false;
+        },
+
+        editRow: function (e, prev, next) {
+            $(".newSelectList").hide();
+
+            var el = $(e.target);
+            var tr = $(e.target).closest('tr');
+            var salaryId = tr.data('id');
+            var colType = el.data('type');
+            var isSelect = colType !== 'input' && el.prop("tagName") !== 'INPUT';
+            var tempContainer;
+            var width;
+            var editEmployyeModel;
+            var editedElement;
+            var editedCol;
+            var editedElementRowId;
+            var editedElementValue;
+            var editedElementContent;
+            var curRowModel = this.model.toJSON();
+
+            if (salaryId && el.prop('tagName') !== 'INPUT') {
+                if (this.salaryId) {
+                    editedElement = this.$('#subSalary-listTable').find('.editing');
+
+                    if (editedElement.length) {
+                        editedCol = editedElement.closest('td');
+                        editedElementRowId = editedElement.closest('tr').data('id');
+                        editedElementContent = editedCol.data('content');
+                        editedElementValue = editedElement.val();
+
+                        curRowModel.employeesArray = new this.parentSalaryCollection(curRowModel.employeesArray);
+
+                        editEmployyeModel = curRowModel.employeesArray.get(editedElementRowId);
+                        editEmployyeModel.set(editedElementContent, editedElementValue);
+
+                        editedCol.text(editedElementValue);
+                        editedElement.remove();
+                    }
+                }
+                this.salaryId = salaryId;
+            }
+
+
+            if (isSelect) {
+                populate.showSelect(e, prev, next, this);
+            } else {
+                tempContainer = el.text();
+                width = el.width() - 6;
+                el.html('<input class="editing" type="text" value="' + tempContainer + '"  maxLength="4" style="width:' + width + 'px">');
+            }
+
+            return false;
+        },
+
+        filterEmployeesForDD: function (content) {
+            dataService.getData("/employee/getForDD", null, function (employees) {
+                employees = _.map(employees.data, function (employee) {
+                    employee.name = employee.name.first + ' ' + employee.name.last;
+
+                    return employee
+                });
+
+                content.responseObj['#employee'] = employees;
+            });
+        },
+
+        showNewSelect: function (e, prev, next) {
+            e.stopPropagation();
+            populate.showSelect(e, prev, next, this);
+
+            return false;
+        },
+
 
         notHide: function () {
             return false;
         },
+
         hideNewSelect: function () {
             $(".newSelectList").hide();
         },
+
         chooseOption: function (e) {
+            e.preventDefault();
             var target = $(e.target);
-            var parrent = target.parents("td");
-            var trEl = target.parents("tr");
-            var parrents = trEl.find('td');
-            var _id = target.attr("id");
-            var model = this.employees.get(_id);
+            var targetElement = target.closest("td");
+            var tr = target.closest("tr");
+            var modelId = tr.data('id');
+            var id = target.attr("id");
+            var attr = targetElement.attr("id") || targetElement.data("content");
+            var elementType = '#' + attr;
+            var element = _.find(this.responseObj[elementType], function (el) {
+                return el._id === id;
+            });
 
-            trEl.attr('data-id', model.id);
+            var editSalaryModel = this.model;
 
-            parrent.find(".current-selected").text(target.text()).attr("data-id", _id);
-            $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
+            if (elementType === '#employee') {
+                tr.find('[data-content="employee"]').text(element.name);
+
+                editSalaryModel.set({
+                    employee: {
+                        _id: element._id,
+                        name: target.text()
+                    }
+                });
+            }
+
+            targetElement.text(target.text());
+
+            this.hideNewSelect();
+            this.setEditable(targetElement);
+
+            return false;
         },
         nextSelect: function (e) {
-            this.showEmployeesSelect(e, false, true);
+            this.showNewSelect(e, false, true);
         },
         prevSelect: function (e) {
-            this.showEmployeesSelect(e, true, false);
-        },
-
-        disableRowClick: function (e) {
-            e.stopPropagation();
-            return false;
+            this.showNewSelect(e, true, false);
         },
         
         render: function () {
@@ -103,6 +214,8 @@ function (listTemplate, listItemView, employeesCollection, populate) {
                 else
                     $("#top-bar-deleteBtn").hide();
             });
+
+            this.filterEmployeesForDD(this);
         }
     });
 
