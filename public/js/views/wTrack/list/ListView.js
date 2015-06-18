@@ -109,7 +109,13 @@ define([
             },
 
             setEditable: function (td) {
-                var tr = td.parents('tr');
+                var tr;
+
+                if(!td.parents) {
+                    td = $(td.target);
+                }
+
+                tr = td.parents('tr');
 
                 /*tr.addClass('edited');*/
                 td.addClass('edited');

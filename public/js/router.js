@@ -20,6 +20,7 @@ define([
             "easyErp/:contentType/thumbnails(/c=:countPerPage)(/filter=:filter)": "goToThumbnails",
             "easyErp/:contentType/form(/:modelId)": "goToForm", //FixMe chenge to required Id after test
             "easyErp/:contentType/list(/pId=:parrentContentId)(/p=:page)(/c=:countPerPage)(/filter=:filter)": "goToList",
+            "easyErp/Revenue": "revenue",
             "easyErp/Profiles": "goToProfiles",
             "easyErp/myProfile": "goToUserPages",
             "easyErp/Workflows": "goToWorkflows",
@@ -72,6 +73,45 @@ define([
                     $(".list2 tbody").find("[data-id='false']").remove();
                 }
             });
+        },
+
+        revenue: function(){
+            var self = this;
+
+            if(!this.isAuth) {
+                this.checkLogin(function (success) {
+                    if (success) {
+                        self.isAuth = true;
+                        renderRevenue();
+                    } else {
+                        if (App.requestedURL == null)
+                            App.requestedURL = Backbone.history.fragment;
+                        Backbone.history.fragment = "";
+                        Backbone.history.navigate("login", {trigger: true});
+                    }
+                });
+            }
+
+            function renderRevenue () {
+                var startTime = new Date();
+                var contentViewUrl = "views/Revenue/index";
+
+                if (self.mainView === null) {
+                    self.main("Revenue");
+                } else {
+                    self.mainView.updateMenu("Revenue");
+                }
+
+                require([contentViewUrl], function (contentView) {
+                    var contentview;
+
+                    custom.setCurrentVT('list');
+
+                    contentview = new contentView({startTime: startTime});
+
+                    self.changeView(contentview);
+                });
+            }
         },
 
         goToProfiles: function () {
