@@ -313,7 +313,6 @@ module.exports = function (models) {
                         var _comparator = wTrackSchema.comparator;
 
                         var projectQuery;
-                        var customerQuery;
                         var employeeQuery;
                         var departmentQuery;
 
@@ -392,7 +391,8 @@ module.exports = function (models) {
                             project: projectFinder,
                             employee: employeeFinder
                         }, function (err, result) {
-                            objectToSave.dateByWeek = dateCalc(fetchedWtrack.Week, fetchedWtrack.Year);
+                            //objectToSave.dateByWeek = dateCalc(fetchedWtrack.Week, fetchedWtrack.Year);
+                            objectToSave.dateByWeek = fetchedWtrack.Week + 100*fetchedWtrack.Year;
 
                             if (result.department) {
                                 objectToSave.department = {};

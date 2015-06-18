@@ -7,7 +7,7 @@ module.exports = (function () {
 
     var wTrackSchema = mongoose.Schema({
         ID: Number,
-        dateByWeek: Date,
+        dateByWeek: Number,
         project: {
             _id: {
                 type: ObjectId, ref: 'Project', default: null
