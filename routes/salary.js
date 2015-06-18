@@ -11,6 +11,7 @@ module.exports = function (models) {
     router.get('/', handler.recalculateCashSalary);
     router.get('/totalCollectionLength', handler.totalCollectionLength);
     router.get('/:viewType', handler.getForView);
+    router.get('/form/:id', handler.getById);
     /*router.post('/', handler.create);
     router.patch('/:_id', handler.productsUpdateOnlySelectedFields);
     router.delete('/:_id', handler.removeProduct);*/

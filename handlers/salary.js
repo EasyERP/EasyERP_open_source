@@ -2,6 +2,7 @@
  * Created by soundstorm on 15.06.15.
  */
 var mongoose = require('mongoose');
+var moment = require('../public/js/libs/moment/moment');
 var Salary = function (models) {
     var access = require("../Modules/additions/access.js")(models);
     var SalarySchema = mongoose.Schemas['Salary'];
@@ -32,84 +33,84 @@ var Salary = function (models) {
                     }
 
                     /*departmentSearcher = function (waterfallCallback) {
-                        models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
-                            {
-                                $match: {
-                                    users: objectId(req.session.uId)
-                                }
-                            }, {
-                                $project: {
-                                    _id: 1
-                                }
-                            },
-                            waterfallCallback);
-                    };*/
+                     models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
+                     {
+                     $match: {
+                     users: objectId(req.session.uId)
+                     }
+                     }, {
+                     $project: {
+                     _id: 1
+                     }
+                     },
+                     waterfallCallback);
+                     };*/
 
                     /*contentIdsSearcher = function (deps, waterfallCallback) {
-                        var arrOfObjectId = deps.objectID();
+                     var arrOfObjectId = deps.objectID();
 
-                        models.get(req.session.lastDb, "Product", ProductSchema).aggregate(
-                            {
-                                $match: {
-                                    $and: [
-                                        queryObject,
-                                        {
-                                            $or: [
-                                                {
-                                                    $or: [
-                                                        {
-                                                            $and: [
-                                                                {whoCanRW: 'group'},
-                                                                {'groups.users': objectId(req.session.uId)}
-                                                            ]
-                                                        },
-                                                        {
-                                                            $and: [
-                                                                {whoCanRW: 'group'},
-                                                                {'groups.group': {$in: arrOfObjectId}}
-                                                            ]
-                                                        }
-                                                    ]
-                                                },
-                                                {
-                                                    $and: [
-                                                        {whoCanRW: 'owner'},
-                                                        {'groups.owner': objectId(req.session.uId)}
-                                                    ]
-                                                },
-                                                {whoCanRW: "everyOne"}
-                                            ]
-                                        }
-                                    ]
-                                }
-                            },
-                            {
-                                $project: {
-                                    _id: 1
-                                }
-                            },
-                            waterfallCallback
-                        );
-                    };*/
+                     models.get(req.session.lastDb, "Product", ProductSchema).aggregate(
+                     {
+                     $match: {
+                     $and: [
+                     queryObject,
+                     {
+                     $or: [
+                     {
+                     $or: [
+                     {
+                     $and: [
+                     {whoCanRW: 'group'},
+                     {'groups.users': objectId(req.session.uId)}
+                     ]
+                     },
+                     {
+                     $and: [
+                     {whoCanRW: 'group'},
+                     {'groups.group': {$in: arrOfObjectId}}
+                     ]
+                     }
+                     ]
+                     },
+                     {
+                     $and: [
+                     {whoCanRW: 'owner'},
+                     {'groups.owner': objectId(req.session.uId)}
+                     ]
+                     },
+                     {whoCanRW: "everyOne"}
+                     ]
+                     }
+                     ]
+                     }
+                     },
+                     {
+                     $project: {
+                     _id: 1
+                     }
+                     },
+                     waterfallCallback
+                     );
+                     };*/
 
                     /*contentSearcher = function (productsIds, waterfallCallback) {
-                        queryObject._id = {$in: productsIds};
+                     queryObject._id = {$in: productsIds};
 
-                        var query = Product.find(queryObject).limit(count).skip(skip).sort(sort);
-                        query.exec(waterfallCallback);
-                    };
+                     var query = Product.find(queryObject).limit(count).skip(skip).sort(sort);
+                     query.exec(waterfallCallback);
+                     };
 
-                    waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
+                     waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
 
-                    async.waterfall(waterfallTasks, function(err, result){
-                        if(err){
-                            return next(err);
-                        }
-                        res.status(200).send({success: result});
-                    });*/
+                     async.waterfall(waterfallTasks, function(err, result){
+                     if(err){
+                     return next(err);
+                     }
+                     res.status(200).send({success: result});
+                     });*/
                     var query = Salary.find(queryObject).limit(count).skip(skip).sort(sort);
-                    query.exec(function(err, result){
-                        if(err){
+                    query.exec(function (err, result) {
+                        if (err) {
                             return next(err);
                         }
                         res.status(200).send({success: result});
@@ -132,9 +133,26 @@ var Salary = function (models) {
                 getSalaryFilter(req, res, next);
                 break;
             /*case "form":
-                getProductsById(req, res, next);
-                break;*/
+             getProductsById(req, res, next);
+             break;*/
         }
+    };
+
+    this.getById = function (req, res, next) {
+        var id = req.params.id;
+        var Salary = models.get(req.session.lastDb, 'SalaryCash', SalaryCashSchema);
+
+        var queryObject = {_id: id};
+        var query;
+
+        query = Salary.findOne(queryObject);
+
+        query.exec(function (err, result) {
+            if (err) {
+                return next(err);
+            }
+            res.status(200).send(result);
+        });
     };
 
     this.totalCollectionLength = function (req, res, next) {
@@ -142,7 +160,7 @@ var Salary = function (models) {
         var query;
 
         query = Salary.find();
-        query.exec(function(err, result){
+        query.exec(function (err, result) {
             if (err) {
                 return next(err);
             }
@@ -151,7 +169,7 @@ var Salary = function (models) {
         });
     };
 
-    this.recalculateCashSalary = function(req, res, next) {
+    this.recalculateCashSalary = function (req, res, next) {
 
         var Salary = models.get(req.session.lastDb, 'Salary', SalarySchema);
         var CashSalary = models.get(req.session.lastDb, 'SalaryCash', SalaryCashSchema);
@@ -184,7 +202,7 @@ var Salary = function (models) {
 
                 if (fetchedSalary) {
                     objectToSave = {
-                        dataKey: fetchedSalary._id.month + "_" + fetchedSalary._id.year,
+                        dataKey: moment().month(fetchedSalary._id.month-1).format('MMM') + "/" + moment().year(fetchedSalary._id.year).format('YY'),
                         month: fetchedSalary._id.month,
                         year: fetchedSalary._id.year,
                         calc: {
@@ -193,12 +211,12 @@ var Salary = function (models) {
                             onCard: fetchedSalary.calcOnCard
                         },
                         paid: {
-                            onCash: fetchedSalary.diffOnCash,
-                            onCard: fetchedSalary.diffOnCard
+                            onCash: fetchedSalary.paidOnCash,
+                            onCard: fetchedSalary.paidOnCard
                         },
                         diff: {
-                            onCash: fetchedSalary.calcOnCash,
-                            onCard: fetchedSalary.calcOnCard
+                            onCash: fetchedSalary.diffOnCash,
+                            onCard: fetchedSalary.diffOnCard
                         },
                         employeesArray: fetchedSalary.employeesArray
                     }

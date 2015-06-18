@@ -2,57 +2,57 @@ define([
         'text!templates/Salary/list/ListHeader.html',
         'views/Quotation/CreateView',
         'views/Salary/list/ListItemView',
-        'views/Order/EditView',
+        'views/Salary/subSalary/list/ListView',
         'models/SalaryModel',
         'collections/Salary/filterCollection',
-	    'common',
+        'common',
         'dataService'
-],
+    ],
 
-function (listTemplate, createView, listItemView, editView, quotationModel, contentCollection, common, dataService) {
-    var SalaryListView = Backbone.View.extend({
-        el: '#content-holder',
-        defaultItemsNumber: null,
-        listLength: null,
-        filter: null,
-        sort: null,
-        newCollection: null,
-        page: null, //if reload page, and in url is valid page
-        contentType: 'Salary',//needs in view.prototype.changeLocationHash
-        viewType: 'list',//needs in view.prototype.changeLocationHash
-        
-        initialize: function (options) {
-            this.startTime = options.startTime;
-            this.collection = options.collection;
-            this.filter = options.filter;
-            this.sort = options.sort;
-            this.defaultItemsNumber = this.collection.namberToShow || 50;
-            this.newCollection = options.newCollection;
-            this.deleteCounter = 0;
-            this.page = options.collection.page;
-            this.render();
-            this.getTotalLength(null, this.defaultItemsNumber, this.filter);
-            this.contentCollection = contentCollection;
-        },
+    function (listTemplate, createView, listItemView, subSalaryView, salaryModel, contentCollection, common, dataService) {
+        var SalaryListView = Backbone.View.extend({
+            el: '#content-holder',
+            defaultItemsNumber: null,
+            listLength: null,
+            filter: null,
+            sort: null,
+            newCollection: null,
+            page: null, //if reload page, and in url is valid page
+            contentType: 'Salary',//needs in view.prototype.changeLocationHash
+            viewType: 'list',//needs in view.prototype.changeLocationHash
 
-        events: {
-            "click .itemsNumber": "switchPageCounter",
-            "click .showPage": "showPage",
-            "change #currentShowPage": "showPage",
-            "click #previousPage": "previousPage",
-            "click #nextPage": "nextPage",
-            "click .checkbox": "checked",
-            "click .stageSelect": "showNewSelect",
-            "click  .list tbody td:not(.notForm)": "goToEditDialog",
-            "click #itemsButton": "itemsNumber",
-            "click .currentPageList": "itemsNumber",
-            "click": "hideItemsNumber",
-            "click #firstShowPage": "firstPage",
-            "click #lastShowPage": "lastPage",
-            "click .oe_sortable": "goSort"
-        },
+            initialize: function (options) {
+                this.startTime = options.startTime;
+                this.collection = options.collection;
+                this.filter = options.filter;
+                this.sort = options.sort;
+                this.defaultItemsNumber = this.collection.namberToShow || 50;
+                this.newCollection = options.newCollection;
+                this.deleteCounter = 0;
+                this.page = options.collection.page;
+                this.render();
+                this.getTotalLength(null, this.defaultItemsNumber, this.filter);
+                this.contentCollection = contentCollection;
+            },
 
-        fetchSortCollection: function (sortObject) {
+            events: {
+                "click .itemsNumber": "switchPageCounter",
+                "click .showPage": "showPage",
+                "change #currentShowPage": "showPage",
+                "click #previousPage": "previousPage",
+                "click #nextPage": "nextPage",
+                "click .checkbox": "checked",
+                "click .stageSelect": "showNewSelect",
+                "click .list tbody tr:not(.subRow) td:not(.notForm)": "showSubSalary",
+                "click #itemsButton": "itemsNumber",
+                "click .currentPageList": "itemsNumber",
+                "click": "hideItemsNumber",
+                "click #firstShowPage": "firstPage",
+                "click #lastShowPage": "lastPage",
+                "click .oe_sortable": "goSort"
+            },
+
+            fetchSortCollection: function (sortObject) {
                 this.sort = sortObject;
                 this.collection = new contentCollection({
                     viewType: 'list',
@@ -65,56 +65,56 @@ function (listTemplate, createView, listItemView, editView, quotationModel, cont
                     newCollection: this.newCollection
                 });
                 this.collection.bind('reset', this.renderContent, this);
-        },
+            },
 
-        goSort: function (e) {
-            var target$ = $(e.target);
-            var currentParrentSortClass = target$.attr('class');
-            var sortClass = currentParrentSortClass.split(' ')[1];
-            var sortConst = 1;
-            var sortBy = target$.data('sort');
-            var sortObject = {};
+            goSort: function (e) {
+                var target$ = $(e.target);
+                var currentParrentSortClass = target$.attr('class');
+                var sortClass = currentParrentSortClass.split(' ')[1];
+                var sortConst = 1;
+                var sortBy = target$.data('sort');
+                var sortObject = {};
 
-            this.collection.unbind('reset');
-            this.collection.unbind('showmore');
+                this.collection.unbind('reset');
+                this.collection.unbind('showmore');
 
                 if (!sortClass) {
                     target$.addClass('sortDn');
                     sortClass = "sortDn";
                 }
                 switch (sortClass) {
-                        case "sortDn":
-                            {
-								target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
-                                target$.removeClass('sortDn').addClass('sortUp');
-                                sortConst = 1;
-                            }
-                            break;
-                        case "sortUp":
-                            {
-								target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
-                                target$.removeClass('sortUp').addClass('sortDn');
-                                sortConst = -1;
-                            }
-                            break;
+                    case "sortDn":
+                    {
+                        target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
+                        target$.removeClass('sortDn').addClass('sortUp');
+                        sortConst = 1;
                     }
+                        break;
+                    case "sortUp":
+                    {
+                        target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
+                        target$.removeClass('sortUp').addClass('sortDn');
+                        sortConst = -1;
+                    }
+                        break;
+                }
                 sortObject[sortBy] = sortConst;
                 this.fetchSortCollection(sortObject);
                 this.changeLocationHash(1, this.defaultItemsNumber);
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
-        },
+            },
 
-        hideItemsNumber: function (e) {
-            $(".allNumberPerPage").hide();
-            $(".newSelectList").hide();
-        },
+            hideItemsNumber: function (e) {
+                $(".allNumberPerPage").hide();
+                $(".newSelectList").hide();
+            },
 
-        itemsNumber: function (e) {
-            $(e.target).closest("button").next("ul").toggle();
-            return false;
-        },
+            itemsNumber: function (e) {
+                $(e.target).closest("button").next("ul").toggle();
+                return false;
+            },
 
-        getTotalLength: function (currentNumber, itemsNumber,filter) {
+            getTotalLength: function (currentNumber, itemsNumber, filter) {
                 dataService.getData('/salary/totalCollectionLength', {
                     contentType: this.contentType,
                     currentNumber: currentNumber,
@@ -130,48 +130,52 @@ function (listTemplate, createView, listItemView, editView, quotationModel, cont
                     }
                     context.pageElementRender(response.count, itemsNumber, page);//prototype in main.js
                 }, this);
-        },
-        
-        render: function () {
-            $('.ui-dialog ').remove();
-            var self = this;
-            var currentEl = this.$el;
+            },
 
-            currentEl.html('');
-            currentEl.append(_.template(listTemplate));
-            currentEl.append(new listItemView({
-                collection: this.collection,
-                page: this.page,
-                itemsNumber: this.collection.namberToShow
-            }).render());//added two parameters page and items number
+            render: function () {
+                $('.ui-dialog ').remove();
+                var self = this;
+                var currentEl = this.$el;
 
-            $('#check_all').click(function () {
-                $(':checkbox').prop('checked', this.checked);
-                if ($("input.checkbox:checked").length > 0)
-                    $("#top-bar-deleteBtn").show();
-                else
-                    $("#top-bar-deleteBtn").hide();
-            });
+                currentEl.html('');
+                currentEl.append(_.template(listTemplate));
+                currentEl.append(new listItemView({
+                    collection: this.collection,
+                    page: this.page,
+                    itemsNumber: this.collection.namberToShow
+                }).render());//added two parameters page and items number
 
-            $(document).on("click", function () {
-                self.hideItemsNumber();
-            });
+                $('#check_all').click(function () {
+                    $(':checkbox').prop('checked', this.checked);
+                    if ($("input.checkbox:checked").length > 0)
+                        $("#top-bar-deleteBtn").show();
+                    else
+                        $("#top-bar-deleteBtn").hide();
+                });
+
+                $(document).on("click", function () {
+                    self.hideItemsNumber();
+                });
                 var pagenation = this.$el.find('.pagination');
                 if (this.collection.length === 0) {
-                        pagenation.hide();
+                    pagenation.hide();
                 } else {
-                        pagenation.show();
+                    pagenation.show();
                 }
-            currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
-        },
+                currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+            },
 
-        renderContent: function () {
+            renderContent: function () {
                 var currentEl = this.$el;
                 var tBody = currentEl.find('#listTable');
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
                 tBody.empty();
-                var itemView = new listItemView({ collection: this.collection,page: currentEl.find("#currentShowPage").val(), itemsNumber: currentEl.find("span#itemsNumber").text() });
+                var itemView = new listItemView({
+                    collection: this.collection,
+                    page: currentEl.find("#currentShowPage").val(),
+                    itemsNumber: currentEl.find("span#itemsNumber").text()
+                });
                 tBody.append(itemView.render());
 
                 var pagenation = this.$el.find('.pagination');
@@ -180,8 +184,8 @@ function (listTemplate, createView, listItemView, editView, quotationModel, cont
                 } else {
                     pagenation.show();
                 }
-        },
-        previousPage: function (event) {
+            },
+            previousPage: function (event) {
                 event.preventDefault();
                 $('#check_all').prop('checked', false);
                 $("#top-bar-deleteBtn").hide();
@@ -201,7 +205,7 @@ function (listTemplate, createView, listItemView, editView, quotationModel, cont
                 }, this);
             },
 
-        nextPage: function (event) {
+            nextPage: function (event) {
                 event.preventDefault();
                 $('#check_all').prop('checked', false);
                 $("#top-bar-deleteBtn").hide();
@@ -221,7 +225,7 @@ function (listTemplate, createView, listItemView, editView, quotationModel, cont
                 }, function (response, context) {
                     context.listLength = response.count || 0;
                 }, this);
-        },
+            },
 
             firstPage: function (event) {
                 event.preventDefault();
@@ -259,7 +263,7 @@ function (listTemplate, createView, listItemView, editView, quotationModel, cont
                 }, this);
             },  //end first last page in paginations
 
-        switchPageCounter: function (event) {
+            switchPageCounter: function (event) {
                 event.preventDefault();
                 this.startTime = new Date();
                 var itemsNumber = event.target.textContent;
@@ -275,38 +279,42 @@ function (listTemplate, createView, listItemView, editView, quotationModel, cont
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
                 this.changeLocationHash(1, itemsNumber, this.filter);
-        },
+            },
 
-        showFilteredPage: function () {
-            var itemsNumber;
+            showFilteredPage: function () {
+                var itemsNumber;
 
-            this.startTime = new Date();
-            this.newCollection = false;
-            var workflowIdArray = [];
-            $('.filter-check-list input:checked').each(function () {
-                workflowIdArray.push($(this).val());
-            });
-            this.filter = this.filter || {};
-            this.filter['workflow'] = workflowIdArray;
+                this.startTime = new Date();
+                this.newCollection = false;
+                var workflowIdArray = [];
+                $('.filter-check-list input:checked').each(function () {
+                    workflowIdArray.push($(this).val());
+                });
+                this.filter = this.filter || {};
+                this.filter['workflow'] = workflowIdArray;
 
-            itemsNumber = $("#itemsNumber").text();
-            $("#top-bar-deleteBtn").hide();
-            $('#check_all').prop('checked', false);
+                itemsNumber = $("#itemsNumber").text();
+                $("#top-bar-deleteBtn").hide();
+                $('#check_all').prop('checked', false);
 
-            this.changeLocationHash(1, itemsNumber, this.filter);
-            this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter });
-            this.getTotalLength(null, itemsNumber, this.filter);
-        },
+                this.changeLocationHash(1, itemsNumber, this.filter);
+                this.collection.showMore({count: itemsNumber, page: 1, filter: this.filter});
+                this.getTotalLength(null, itemsNumber, this.filter);
+            },
 
-        showPage: function (event) {
+            showPage: function (event) {
                 event.preventDefault();
-                this.showP(event,{filter: this.filter, newCollection: this.newCollection,sort: this.sort});
-        },
+                this.showP(event, {filter: this.filter, newCollection: this.newCollection, sort: this.sort});
+            },
 
-        showMoreContent: function (newModels) {
+            showMoreContent: function (newModels) {
                 var holder = this.$el;
                 holder.find("#listTable").empty();
-                var itemView = new listItemView({ collection: newModels, page: holder.find("#currentShowPage").val(), itemsNumber: holder.find("span#itemsNumber").text() });//added two parameters page and items number
+                var itemView = new listItemView({
+                    collection: newModels,
+                    page: holder.find("#currentShowPage").val(),
+                    itemsNumber: holder.find("span#itemsNumber").text()
+                });//added two parameters page and items number
                 holder.append(itemView.render());
 
                 itemView.undelegateEvents();
@@ -320,48 +328,54 @@ function (listTemplate, createView, listItemView, editView, quotationModel, cont
                 $('#check_all').prop('checked', false);
                 holder.find('#timeRecivingDataFromServer').remove();
                 holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
-        },
+            },
 
-        goToEditDialog: function (e) {
-            e.preventDefault();
+            showSubSalary: function (e) {
+                e.preventDefault();
+                var self = this;
 
-            var id = $(e.target).closest('tr').data("id");
-            var model = new quotationModel({ validate: false });
+                var tr = $(e.target).closest('tr');
+                var id = $(tr).data("id");
+                var subId ="subSalary-row" + id
+                var subRowCheck = $('#' + subId);
 
-            model.urlRoot = '/Order/form/' + id;
-            model.fetch({
-                data: {contentType: this.contentType},
-                success: function (model) {
-                    new editView({ model: model });
-                },
-                error: function () {
-                    alert('Please refresh browser');
+                if (subRowCheck.length > 0) {
+                    $(tr).find('.icon').html('5');
+                    $(subRowCheck).remove();
+                } else {
+                    $(tr).find('.icon').html('6');
+                    $('<tr id=' + subId + ' class="subRow">' +
+                    '<td colspan="3"></td>' +
+                    '<td colspan="6" id="subSalary-holder"></td>' +
+                    '<td colspan="2"></td>' +
+                    '</tr>').insertAfter(tr);
+                    $('#subSalary-holder').append(new subSalaryView({model: self.collection.get(id)}).render());
                 }
-            });
-        },
 
-        createItem: function () {
-            //create editView in dialog here
-            new createView({visible: true});
-        },
+            },
 
-        checked: function () {
-            if (this.collection.length > 0) {
-                var checkLength = $("input.checkbox:checked").length;
-                if ($("input.checkbox:checked").length > 0) {
-                    $("#top-bar-deleteBtn").show();
+            createItem: function () {
+                //create editView in dialog here
+                new createView({visible: true});
+            },
+
+            checked: function () {
+                if (this.collection.length > 0) {
+                    var checkLength = $("input.checkbox:checked").length;
+                    if ($("input.checkbox:checked").length > 0) {
+                        $("#top-bar-deleteBtn").show();
                         if (checkLength == this.collection.length) {
-                                $('#check_all').prop('checked', true);
+                            $('#check_all').prop('checked', true);
                         }
+                    }
+                    else {
+                        $("#top-bar-deleteBtn").hide();
+                        $('#check_all').prop('checked', false);
+                    }
                 }
-                else {
-                    $("#top-bar-deleteBtn").hide();
-                    $('#check_all').prop('checked', false);
-                }
-            }
-        },
+            },
 
-        deleteItemsRender: function (deleteCounter, deletePage) {
+            deleteItemsRender: function (deleteCounter, deletePage) {
                 dataService.getData('/salary/totalCollectionLength', {
                     contentType: this.contentType,
                     filter: this.filter,
@@ -379,62 +393,66 @@ function (listTemplate, createView, listItemView, editView, quotationModel, cont
 
                 if (deleteCounter !== this.collectionLength) {
                     var created = holder.find('#timeRecivingDataFromServer');
-                    created.before(new listItemView({ collection: this.collection, page: holder.find("#currentShowPage").val(), itemsNumber: holder.find("span#itemsNumber").text()}).render());//added two parameters page and items number
+                    created.before(new listItemView({
+                        collection: this.collection,
+                        page: holder.find("#currentShowPage").val(),
+                        itemsNumber: holder.find("span#itemsNumber").text()
+                    }).render());//added two parameters page and items number
                 }
                 var pagenation = this.$el.find('.pagination');
                 if (this.collection.length === 0) {
-                        pagenation.hide();
+                    pagenation.hide();
                 } else {
-                        pagenation.show();
+                    pagenation.show();
                 }
-        },
-        deleteItems: function () {
-            var currentEl = this.$el;
-            var that = this;
-            var mid = 39;
-            var model;
-            var localCounter = 0;
-			var count = $("#listTable input:checked").length;
-            this.collectionLength = this.collection.length;
+            },
+            deleteItems: function () {
+                var currentEl = this.$el;
+                var that = this;
+                var mid = 39;
+                var model;
+                var localCounter = 0;
+                var count = $("#listTable input:checked").length;
+                this.collectionLength = this.collection.length;
 
-            $.each($("#listTable input:checked"), function (index, checkbox) {
-                model = that.collection.get(checkbox.value);
-                model.destroy({
-                    headers: {
-                        mid: mid
-                    },
-						wait:true,
-						success:function(){
-							that.listLength--;
-							localCounter++;
+                $.each($("#listTable input:checked"), function (index, checkbox) {
+                    model = that.collection.get(checkbox.value);
+                    model.destroy({
+                        headers: {
+                            mid: mid
+                        },
+                        wait: true,
+                        success: function () {
+                            that.listLength--;
+                            localCounter++;
 
-							if (index==count-1){
+                            if (index == count - 1) {
 
-								that.deleteCounter =localCounter;
-								that.deletePage = $("#currentShowPage").val();
-								that.deleteItemsRender(that.deleteCounter, that.deletePage);
-								
-							}
-						},
-						error: function (model, res) {
-							if(res.status===403&&index===0){
-								alert("You do not have permission to perform this action");
-							}
-							that.listLength--;
-							localCounter++;
-							if (index==count-1){
-								that.deleteCounter =localCounter;
-								that.deletePage = $("#currentShowPage").val();
-								that.deleteItemsRender(that.deleteCounter, that.deletePage);
-								
-							}
+                                that.deleteCounter = localCounter;
+                                that.deletePage = $("#currentShowPage").val();
+                                that.deleteItemsRender(that.deleteCounter, that.deletePage);
 
-						}
+                            }
+                        },
+                        error: function (model, res) {
+                            if (res.status === 403 && index === 0) {
+                                alert("You do not have permission to perform this action");
+                            }
+                            that.listLength--;
+                            localCounter++;
+                            if (index == count - 1) {
+                                that.deleteCounter = localCounter;
+                                that.deletePage = $("#currentShowPage").val();
+                                that.deleteItemsRender(that.deleteCounter, that.deletePage);
+
+                            }
+
+                        }
+                    });
                 });
-            });
-        }
+            }
 
+        });
+
+        return SalaryListView;
     });
-
-    return SalaryListView;
-});

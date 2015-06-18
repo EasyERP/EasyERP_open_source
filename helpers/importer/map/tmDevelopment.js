@@ -11,7 +11,6 @@ module.exports = (function () {
             year: 'Year',
             month: 'Month',
             baseSalary: 'BaseSalary',
-            hourlyWithExpense: 'HourlyWithExpense',
             'calc.salary': 'CalcSalary',
             'calc.onCash': 'CalcOnCash',
             'calc.onCard': 'CalcOnCard',

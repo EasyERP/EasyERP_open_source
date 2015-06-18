@@ -14,7 +14,6 @@ module.exports = (function () {
         year: Number,
         month: Number,
         baseSalary: Number,
-        hourlyWithExpense: Number,
         calc: {
             salary: Number,
             onCash: Number,
