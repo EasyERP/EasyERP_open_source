@@ -47,6 +47,9 @@
 @taskBorderColor: #4d5a75;
 @tabColor: #BDC3C7;
 @birthdayColor: #555;
+.i(@name) {
+  background-image: url("@{imagesfolder}/@{name}");
+}
 
 /*------------------------Functions-----------------------------*/
 .money:before {
@@ -4843,4 +4846,49 @@ textarea#editInput{
 }
 .rowEdit{
   padding: 0px !important;
+}
+
+.grid-conatiner.revenue {
+  //  background-color: #2b2d37;
+  background-color: #303031;
+  color: #ffffff;
+  //  color: #7f7f80;
+  padding: 20px;
+  font-size: 13px;
+  font-weight: 300;
+
+  input {
+    color: #000;
+  }
+
+  .chartContainer {
+    margin: 20px auto;
+
+    #chart {
+      /*width: 100%;
+      margin: 0;
+      padding-right: 140px;
+      margin-right: -140px;*/
+    }
+
+    &:after {
+
+    }
+  }
+  .revenueTable {
+
+  }
+}
+
+.legend {
+  /*float: left;
+  line-height: 11px;
+  font-size: 11px;
+  > div {
+    margin-bottom: 10px;
+  }
+  img {
+    float: left;
+    margin-right: 5px;
+  }*/
 }

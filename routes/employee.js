@@ -9,6 +9,7 @@ module.exports = function (models) {
     var handler = new EmployeeHandler(models);
 
     router.get('/getForDD', handler.getForDD);
+    router.get('/getBySales', handler.getBySales);
 
     return router;
 };

@@ -951,7 +951,7 @@ var Employee = function (event, models) {
             } else {
                 if (result && !result.isEmployee) {
                     event.emit('updateSequence', models.get(req.session.lastDb, "Employees", employeeSchema), "sequence", result.sequence, 0, result.workflow, result.workflow, false, true, function () {
-                        res.send(200, { success: 'Employees removed' });
+                        //res.send(200, { success: 'Employees removed' });
                     });
                 }
                 event.emit('recalculate', req);

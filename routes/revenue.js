@@ -11,7 +11,8 @@ var expressSession = require('../handlers/expressSession');
 module.exports = function (models) {
     var handler = new revenueHandler(models);
 
-    router.get('/bysales', expressSession.authenticatedUser, handler.bySales);
+    router.get('/bySales', expressSession.authenticatedUser, handler.bySales);
+    router.get('/byDepartment', expressSession.authenticatedUser, handler.byDepartment);
 
     return router;
 };
