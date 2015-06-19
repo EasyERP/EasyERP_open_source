@@ -1,8 +1,8 @@
 define([
-    'text!templates/Opportunities/TopBarTemplate.html',
-    'custom',
-    'common'
-],
+        'text!templates/Opportunities/TopBarTemplate.html',
+        'custom',
+        'common'
+    ],
     function (ContentTopBarTemplate, Custom, Common) {
         var TopBarView = Backbone.View.extend({
             el: '#top-bar',
@@ -57,10 +57,12 @@ define([
                 var answer = confirm("Realy DELETE items ?!");
                 if (answer == true) this.trigger('deleteEvent');
             },
+
             editEvent: function (event) {
                 event.preventDefault();
                 this.trigger('editEvent');
             },
+
             createEvent: function (event) {
                 event.preventDefault();
                 this.trigger('createEvent');
@@ -71,6 +73,7 @@ define([
                 $('#content-holder').html('');
                 Backbone.history.navigate("home/content-" + this.contentType, { trigger: true });
             },
+
             editKanban: function (event) {
                 event.preventDefault();
                 this.trigger('editKanban');
