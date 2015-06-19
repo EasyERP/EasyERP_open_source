@@ -8,6 +8,7 @@ module.exports = (function () {
 
 
     var paymentSchema = new Schema({
+        byType:{type: String, default: 'customers'},
         invoice: {type: ObjectId, ref: 'Invoice', default: null},
         supplier: {type: ObjectId, ref: 'Customers', default: null},
         paidAmount: {type: Number, default: 0},

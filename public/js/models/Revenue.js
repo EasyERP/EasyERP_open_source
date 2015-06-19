@@ -10,7 +10,9 @@ define([], function(){
             currentYear: null,
             currentMonth: null,
             yearOfMonth: null,
-            weeksArr: []
+            weeksArr: [],
+            bySalesData: [],
+            byDepData: []
         }
     });
 

@@ -112,7 +112,7 @@ define([
                 var tr;
 
                 if(!td.parents) {
-                    td = $(td.target);
+                    td = $(td.target).closest('td');
                 }
 
                 tr = td.parents('tr');
@@ -256,8 +256,6 @@ define([
 
             saveItem: function () {
                 this.editCollection.save();
-                this.editCollection.on('saved', this.savedNewModel, this);
-                this.editCollection.on('updated', this.updatedOptions, this);
             },
 
             savedNewModel: function(modelObject){
@@ -459,8 +457,8 @@ define([
 
                 setTimeout(function () {
                     self.editCollection = new EditCollection(self.collection.toJSON());
-
-                    //self.listenTo(self.editCollection, 'change', self.setChangedValue);
+                    self.editCollection.on('saved', this.savedNewModel, this);
+                    self.editCollection.on('updated', this.updatedOptions, this);
 
                     self.$listTable = $('#listTable');
                 }, 10);
@@ -877,7 +875,7 @@ define([
                     model = collection.get(id);
                     model = model.toJSON();
                     model.startNumber = rowNumber;
-                    tr.replaceWith(template(model));
+                    tr.replaceWith(template({model: model}));
                     cb();
                 }, function (err) {
                     if (!err) {
