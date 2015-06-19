@@ -8,13 +8,14 @@ var SalaryHandler = require('../handlers/salary');
 module.exports = function (models) {
     var handler = new SalaryHandler(models);
 
-    router.get('/', handler.recalculateCashSalary);
+    router.get('/recalculateSalaryCash', handler.recalculateCashSalary);
     router.get('/totalCollectionLength', handler.totalCollectionLength);
     router.get('/:viewType', handler.getForView);
     router.get('/form/:id', handler.getById);
-    /*router.post('/', handler.create);
-    router.patch('/:_id', handler.productsUpdateOnlySelectedFields);
-    router.delete('/:_id', handler.removeProduct);*/
+    router.post('/', handler.create);
+    router.patch('/', handler.putchBulk);
+    router.patch('/:id', handler.putchModel);
+    router.delete('/:id', handler.remove);
 
     return router;
 };

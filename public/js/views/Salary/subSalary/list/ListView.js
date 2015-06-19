@@ -1,40 +1,168 @@
 define([
         'text!templates/Salary/subSalary/list/ListHeader.html',
         'views/Salary/subSalary/list/ListItemView',
+        'text!templates/Salary/subSalary/list/ListTotal.html',
+        'collections/Salary/editCollection',
         'collections/Employees/employee',
+        'models/SalaryModel',
         'populate',
         'dataService'
 ],
 
-function (listTemplate, listItemView, employeesCollection, populate, dataService) {
+function (listTemplate, listItemView, subSalaryTotalTemplate, salaryEditableCollection, employeesCollection, currentModel, populate, dataService) {
     var subSalaryListView = Backbone.View.extend({
         el: '#subSalary-holder',
         viewType: 'list',//needs in view.prototype.changeLocationHash
         
         initialize: function (options) {
-
-            var paretntSalaryModel = Backbone.Model.extend({
-                idAttribute: "_id"
-            });
-
-            this.parentSalaryCollection = Backbone.Collection.extend({
-                model: paretntSalaryModel
-            })
-
             this.model = options.model;
             this.responseObj = {};
+
+            this.employeesArary = this.model.toJSON().employeesArray;
+
+            this.employeesCollection = new salaryEditableCollection(this.employeesArary);
+
+            this.editCollection = this.employeesCollection;
 
             this.render();
         },
 
         events: {
             "click .checkbox": "checked",
+            //"click td": "tdDisable",
             "click td.editable": "editRow",
             "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
             "click .newSelectList li.miniStylePagination": "notHide",
             "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
             "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-            "change .editable ": "setEditable"
+            "change .editable": "setEditable",
+            "click #top-bar-saveBtn": "saveItem",
+            "click #top-bar-deleteBtn": "deleteItems"
+        },
+
+        saveItem: function (e) {
+            e.preventDefault();
+            this.editCollection.save();
+            this.editCollection.on('saved', this.savedNewModel, this);
+            this.editCollection.on('updated', this.updatedOptions, this);
+
+            dataService.getData('/salary/recalculateSalaryCash', {}, function (response, context) {
+                context.listLength = response.count || 0;
+            }, this);
+            this.reRender();
+        },
+
+        savedNewModel: function(modelObject){
+            var savedRow = this.$('#subSalary-listTable').find('#false');
+            var modelId;
+            var checkbox = savedRow.find('input[type=checkbox]');
+
+            modelObject = modelObject.success;
+
+            if(modelObject) {
+                modelId = modelObject._id
+                savedRow.attr("data-id", modelId);
+                checkbox.val(modelId);
+                savedRow.removeAttr('id');
+            }
+
+            this.hideSaveCancelBtns();
+            this.resetCollection(modelObject);
+        },
+
+        resetCollection: function(model){
+            if(model && model._id){
+                model = new currentModel(model);
+                this.editCollection.add(model);
+            } else {
+                this.model.employeesArray.set(this.editCollection.models, {remove: false});
+            }
+        },
+
+        reRender: function (deleteCounter, deletePage) {
+            this.model.set({"employeesArray": this.editCollection.toJSON()});
+            this.render();
+        },
+
+
+        deleteItems: function (e) {
+            e.preventDefault();
+            var currentEl = this.$el;
+            var that = this,
+                mid = 39,
+                model;
+            var localCounter = 0;
+            var count = $("#subSalary-listTable input:checked").length;
+            this.collectionLength = this.editCollection.length;
+
+            if (!this.changed) {
+                var answer = confirm("Realy DELETE items ?!");
+                var value;
+
+                if (answer === true) {
+                    $.each($("#subSalary-listTable input:checked"), function (index, checkbox) {
+                        value = checkbox.value;
+
+                        if (value.length < 24) {
+                            that.editCollection.remove(value);
+                            that.editCollection.on('remove', function () {
+
+                                this.listLength--;
+                                localCounter++;
+
+                                if (index === count - 1) {
+                                    that.reRender();
+                                }
+
+                            }, that);
+                        } else {
+
+                            model = that.editCollection.get(value);
+                            model.destroy({
+                                headers: {
+                                    mid: mid
+                                },
+                                wait: true,
+                                success: function () {
+                                    dataService.getData('/salary/recalculateSalaryCash');
+
+                                    that.listLength--;
+                                    localCounter++;
+
+                                    if (index === count - 1) {
+                                        that.reRender();
+                                    }
+                                },
+                                error: function (model, res) {
+                                    if (res.status === 403 && index === 0) {
+                                        alert("You do not have permission to perform this action");
+                                    }
+                                    that.listLength--;
+                                    localCounter++;
+                                    if (index == count - 1) {
+                                        if (index === count - 1) {
+                                            that.reRender();
+                                        }
+                                    }
+
+                                }
+                            });
+                        }
+                    });
+                }
+            } else {
+                this.cancelChanges();
+            }
+        },
+
+        updatedOptions: function(){
+            this.hideSaveCancelBtns();
+            this.resetCollection();
+        },
+
+        tdDisable: function (e) {
+            e.preventDefault();
+            return false;
         },
 
         isEditRows: function () {
@@ -46,8 +174,15 @@ function (listTemplate, listItemView, employeesCollection, populate, dataService
         },
 
         setEditable: function (td) {
-            var tr = $(td).closest('tr');
+            var tr;
 
+            if(!td.parents) {
+                td = $(td.target);
+            }
+
+            tr = td.parents('tr');
+
+            /*tr.addClass('edited');*/
             td.addClass('edited');
 
             if (this.isEditRows()) {
@@ -78,6 +213,36 @@ function (listTemplate, listItemView, employeesCollection, populate, dataService
             return false;
         },
 
+        hideSaveCancelBtns: function () {
+            var createBtnEl = $('#top-bar-createBtn');
+            var saveBtnEl = $('#top-bar-saveBtn');
+            var cancelBtnEl = $('#top-bar-deleteBtn');
+
+            this.changed = false;
+
+            saveBtnEl.hide();
+            cancelBtnEl.hide();
+            createBtnEl.show();
+
+            return false;
+        },
+
+        checked: function () {
+            if (this.editCollection.length > 0) {
+                var checkLength = $("input.checkbox:checked").length;
+
+                if ($("input.checkbox:checked").length > 0) {
+                    $("#top-bar-deleteBtn").show();
+                    if (checkLength == this.editCollection.length) {
+                        $('#check_all').prop('checked', true);
+                    }
+                } else {
+                    $("#top-bar-deleteBtn").hide();
+                    $('#check_all').prop('checked', false);
+                }
+            }
+        },
+
         editRow: function (e, prev, next) {
             $(".newSelectList").hide();
 
@@ -94,7 +259,6 @@ function (listTemplate, listItemView, employeesCollection, populate, dataService
             var editedElementRowId;
             var editedElementValue;
             var editedElementContent;
-            var curRowModel = this.model.toJSON();
 
             if (salaryId && el.prop('tagName') !== 'INPUT') {
                 if (this.salaryId) {
@@ -106,9 +270,7 @@ function (listTemplate, listItemView, employeesCollection, populate, dataService
                         editedElementContent = editedCol.data('content');
                         editedElementValue = editedElement.val();
 
-                        curRowModel.employeesArray = new this.parentSalaryCollection(curRowModel.employeesArray);
-
-                        editEmployyeModel = curRowModel.employeesArray.get(editedElementRowId);
+                        editEmployyeModel = this.editCollection.get(editedElementRowId);
                         editEmployyeModel.set(editedElementContent, editedElementValue);
 
                         editedCol.text(editedElementValue);
@@ -163,7 +325,6 @@ function (listTemplate, listItemView, employeesCollection, populate, dataService
             var target = $(e.target);
             var targetElement = target.closest("td");
             var tr = target.closest("tr");
-            var modelId = tr.data('id');
             var id = target.attr("id");
             var attr = targetElement.attr("id") || targetElement.data("content");
             var elementType = '#' + attr;
@@ -207,6 +368,8 @@ function (listTemplate, listItemView, employeesCollection, populate, dataService
                 model: this.model
             }).render());//added two parameters page and items number
 
+            currentEl.find('#subSalary-listTotal').append(_.template(subSalaryTotalTemplate, this.model.toJSON()));
+
             $('#check_all').click(function () {
                 $(':checkbox').prop('checked', this.checked);
                 if ($("input.checkbox:checked").length > 0)
@@ -216,6 +379,9 @@ function (listTemplate, listItemView, employeesCollection, populate, dataService
             });
 
             this.filterEmployeesForDD(this);
+
+            this.hideSaveCancelBtns();
+            $("#top-bar-deleteBtn").hide();
         }
     });
 

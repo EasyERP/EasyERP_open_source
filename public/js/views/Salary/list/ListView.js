@@ -343,7 +343,7 @@ define([
                     $(tr).find('.icon').html('5');
                     $(subRowCheck).remove();
                 } else {
-                    $(tr).find('.icon').html('6');
+                    $(tr).find('.icon').html('2');
                     $('<tr id=' + subId + ' class="subRow">' +
                     '<td colspan="3"></td>' +
                     '<td colspan="6" id="subSalary-holder"></td>' +

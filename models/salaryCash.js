@@ -20,7 +20,8 @@ module.exports = (function () {
         },
         diff: {
             onCash: Number,
-            onCard: Number
+            onCard: Number,
+            total: Number
         },
         employeesArray: [{
             ID: Number,

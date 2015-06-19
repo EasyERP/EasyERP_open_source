@@ -1,8 +1,11 @@
-﻿define([
+/**
+ * Created by soundstorm on 19.06.15.
+ */
+define([
         './filterCollection'
     ],
-    function (ParrantCollection) {
-        var EditableCoolecton = ParrantCollection.extend({
+    function (ParentCollection) {
+        var EditableCollection = ParentCollection.extend({
 
             initialize: function(){
                 this.on( "change", this.change, this);
@@ -49,5 +52,5 @@
             }
         });
 
-        return EditableCoolecton;
+        return EditableCollection;
     });

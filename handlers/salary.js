@@ -8,6 +8,93 @@ var Salary = function (models) {
     var SalarySchema = mongoose.Schemas['Salary'];
     var SalaryCashSchema = mongoose.Schemas['SalaryCash'];
     var async = require('async');
+    var mapObject = require('../helpers/bodyMaper');
+
+    this.remove = function (req, res, next) {
+        var self = this;
+        var id = req.params.id;
+        var Salary = models.get(req.session.lastDb, 'Salary', SalarySchema);
+
+        Salary.remove({_id: id}, function (err, salary) {
+            if (err) {
+                return next(err);
+            }
+            res.status(200).send({success: salary});
+        });
+    };
+
+    this.putchModel = function (req, res, next) {
+        var id = req.params.id;
+        var data = mapObject(req.body);
+        var Salary = models.get(req.session.lastDb, 'Salary', SalarySchema);
+
+        if (req.session && req.session.loggedIn && req.session.lastDb) {
+            access.getEditWritAccess(req, req.session.uId, 66, function (access) {
+                if (access) {
+                    data.editedBy = {
+                        user: req.session.uId,
+                        date: new Date().toISOString()
+                    };
+                    Salary.findByIdAndUpdate(id, {$set: data}, function (err, response) {
+                        if (err) {
+                            return next(err);
+                        }
+                        res.status(200).send({success: 'updated'});
+                    });
+                } else {
+                    res.status(403).send();
+                }
+            });
+        } else {
+            res.status(401).send();
+        }
+    };
+
+    this.putchBulk = function (req, res, next) {
+        var body = req.body;
+        var uId;
+        var Salary = models.get(req.session.lastDb, 'Salary', SalarySchema);
+
+        if (req.session && req.session.loggedIn && req.session.lastDb) {
+            uId = req.session.uId;
+            access.getEditWritAccess(req, req.session.uId, 66, function (access) {
+                if (access) {
+                    async.each(body, function (data, cb) {
+                        var id = data._id;
+
+                        data.editedBy = {
+                            user: uId,
+                            date: new Date().toISOString()
+                        };
+                        delete data._id;
+                        Salary.findByIdAndUpdate(id, {$set: data}, cb);
+                    }, function (err) {
+                        if (err) {
+                            return next(err);
+                        }
+                        res.status(200).send({success: 'updated'});
+                    });
+                } else {
+                    res.status(403).send();
+                }
+            });
+        } else {
+            res.status(401).send();
+        }
+    };
+
+    this.create = function (req, res, next) {
+        var Salary = models.get(req.session.lastDb, 'Salary', SalarySchema);
+        var body = mapObject(req.body);
+        var Salary = new Salary(body);
+
+        Salary.save(function (err, salary) {
+            if (err) {
+                return next(err);
+            }
+            res.status(200).send({success: salary});
+        });
+    };
 
     function getSalaryFilter(req, res, next) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -188,6 +275,7 @@ var Salary = function (models) {
                             paidOnCard: {$sum: "$paid.onCard"},
                             diffOnCash: {$sum: "$diff.onCash"},
                             diffOnCard: {$sum: "$diff.onCard"},
+                            diffTotal: {$sum: "$diff.total"},
                             employeesArray: {$push: "$$ROOT"}
                         }
                     }
@@ -216,7 +304,8 @@ var Salary = function (models) {
                         },
                         diff: {
                             onCash: fetchedSalary.diffOnCash,
-                            onCard: fetchedSalary.diffOnCard
+                            onCard: fetchedSalary.diffOnCard,
+                            total: fetchedSalary.diffTotal
                         },
                         employeesArray: fetchedSalary.employeesArray
                     }
