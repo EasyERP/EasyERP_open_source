@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
-  "dependencies": {
+  "dependncies": {
     "async": "0.9.0",
     "body-parser": "1.10.2",
     "connect-mongo": "0.8.0",
@@ -27,6 +27,7 @@
     "request": "2.55.0",
     "swig": "1.4.2",
     "underscore": "1.8.3",
-    "xml2js": "0.4.0"
-  }
+    "xml2js": "0.4.0",
+    "bower": "^1.4.1"
+}
 }

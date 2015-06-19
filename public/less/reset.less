@@ -1,17 +1,68 @@
+@font-face {
+  font-family: 'Segoe UI';
+  src: url("../font/segoeui.woff") format('woff');
+}
+
+@font-face {
+  font-family: 'Title';
+  src: url("../font/title.woff") format('woff');
+}
+
+@font-face {
+  font-family: 'Icons';
+  src: url("../font/easyERP.eot");
+  src: url("../font/easyERP.eot?#iefix") format('embedded-opentype'), url("../font/easyERP.woff") format('woff'), url("../font/easyERP.ttf") format('truetype'), url("../font/easyERP.svg#quartzregular") format('svg');
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 300;
+  src: local('Open Sans Light'), local('OpenSans-Light'), url(../font/Open-Sans-Light.woff) format('woff');
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Open Sans'), local('OpenSans'), url(../font/Open-Sans.woff) format('woff');
+}
+
 /* Reset.less
  * Props to Eric Meyer (meyerweb.com) for his CSS reset file. We're using an adapted version here	that cuts out some of the reset HTML elements we will never need here (i.e., dfn, samp, etc).
  * ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
 
-
 // ERIC MEYER RESET
 // --------------------------------------------------
 
-html, body { margin: 0; padding: 0; }
-h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, cite, code, del, dfn, em, img, q, s, samp, small, strike, strong, sub, sup, tt, var, dd, dl, dt, li, ol, ul, fieldset, form, label, legend, button, table, caption, tbody, tfoot, thead, tr, th, td { margin: 0; padding: 0; border: 0; font-weight: normal; font-style: normal; font-size: 100%; line-height: 1; font-family: inherit; }
-table { border-collapse: collapse; border-spacing: 0; }
-ol, ul { list-style: none; }
-q:before, q:after, blockquote:before, blockquote:after { content: ""; }
+html, body {
+  margin: 0;
+  padding: 0;
+}
 
+h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, cite, code, del, dfn, em, img, q, s, samp, small, strike, strong, sub, sup, tt, var, dd, dl, dt, li, ol, ul, fieldset, form, label, legend, button, table, caption, tbody, tfoot, thead, tr, th, td {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-weight: normal;
+  font-style: normal;
+  font-size: 100%;
+  line-height: 1;
+  font-family: inherit;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+ol, ul {
+  list-style: none;
+}
+
+q:before, q:after, blockquote:before, blockquote:after {
+  content: "";
+}
 
 // Normalize.css
 // Pulling in select resets form the normalize.css project
@@ -21,17 +72,19 @@ q:before, q:after, blockquote:before, blockquote:after { content: ""; }
 // -------------------------
 // Source: http://github.com/necolas/normalize.css
 html {
-//  overflow-y: scroll;
+  //  overflow-y: scroll;
   font-size: 100%;
   -webkit-text-size-adjust: 100%;
-      -ms-text-size-adjust: 100%;
-	  width:100%;
-	  height:100%;
+  -ms-text-size-adjust: 100%;
+  width: 100%;
+  height: 100%;
 }
+
 // Focus states
 a:focus {
   outline: thin dotted;
 }
+
 // Hover & Active
 a:hover,
 a:active {
@@ -69,7 +122,7 @@ video {
 // -------------------------
 // Source: http://github.com/necolas/normalize.css
 audio:not([controls]) {
-    display: none;
+  display: none;
 }
 
 // Prevents sub and sup affecting line-height in all browsers
@@ -82,9 +135,11 @@ sup {
   position: relative;
   vertical-align: baseline;
 }
+
 sup {
   top: -0.5em;
 }
+
 sub {
   bottom: -0.25em;
 }
@@ -93,8 +148,8 @@ sub {
 // -------------------------
 // Source: http://github.com/necolas/normalize.css
 img {
-    border: 0;
-    -ms-interpolation-mode: bicubic;
+  border: 0;
+  -ms-interpolation-mode: bicubic;
 }
 
 // Forms
@@ -111,16 +166,20 @@ textarea {
   vertical-align: baseline;
   *vertical-align: middle;
 }
+
 button,
 input {
   line-height: normal; // FF3/4 have !important on line-height in UA stylesheet
   *overflow: visible; // Inner spacing ie IE6/7
 }
+
 button::-moz-focus-inner,
-input::-moz-focus-inner { // Inner padding and border oddities in FF3/4
+input::-moz-focus-inner {
+  // Inner padding and border oddities in FF3/4
   border: 0;
   padding: 0;
 }
+
 button,
 input[type="button"],
 input[type="reset"],
@@ -128,16 +187,136 @@ input[type="submit"] {
   cursor: pointer; // Cursors on all buttons applied consistently
   -webkit-appearance: button; // Style clicable inputs in iOS
 }
-input[type="search"] { // Appearance in Safari/Chrome
+
+input[type="search"] {
+  // Appearance in Safari/Chrome
   -webkit-appearance: textfield;
   -webkit-box-sizing: content-box;
-     -moz-box-sizing: content-box;
-          box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
 }
+
 input[type="search"]::-webkit-search-decoration {
   -webkit-appearance: none; // Inner-padding issues in Chrome OSX, Safari 5
 }
+
 textarea {
   overflow: auto; // Remove vertical scrollbar in IE6-9
   vertical-align: top; // Readability and alignment cross-browser
+}
+//------ styles for filter
+.search-view {
+  float: right;
+  position: relative;
+  right: 20px;
+  bottom: 25px;
+}
+
+.search-field:before {
+  content: "\f0d8";
+}
+
+.search-content:before {
+  content: "v";
+}
+.arrow-down:before {
+  content: "7";
+}
+
+.search-input {
+  border-radius: 3px;
+}
+
+.search-button {
+  cursor: pointer;
+  position: absolute;
+  top: 2px;
+  left: -10px;
+}
+
+.search-content {
+  cursor: pointer;
+  position: absolute;
+  top: 2px;
+  left: 170px;
+}
+
+.search-options {
+  width: 220px;
+  height: 30px;
+  display: none;
+  top: 5px;
+  position: relative;
+  float: right;
+}
+
+.filter:before {
+  content: "\f0b0";
+}
+
+.favorites:before {
+  content: "\f005";
+}
+
+.group:before {
+  content: "\f0c9";
+}
+
+.btn-filter {
+  position: relative;
+  float: left;
+}
+
+.btn-groupBy {
+  position: relative;
+  float: left;
+}
+
+.drop-down-filter {
+  background-color: #F5F5F5;
+  display: none;
+  position: absolute;
+  z-index: 10;
+  width: 100px;
+  margin-top: 5px;
+}
+
+.drop-down-filter li {
+  cursor: pointer;
+  margin-bottom: 5px;
+}
+
+.drop-down-filter li:nth-child(2n) {
+  border-bottom: 2px solid rgba(248, 129, 99, 0.42);
+  padding-bottom: 5px;
+}
+
+.drop-down-filter li:last-child {
+  border-bottom: none;
+  padding-bottom: 0px;
+}
+
+.filter-icons {
+  display: none;
+}
+
+.active {
+  display: inline-block;
+}
+
+#searchContainer {
+  float: right;
+  width: 50%;
+  position: relative;
+  margin-top: -35px;
+  margin-right: 65px;
+}
+
+.filterValues:before {
+  content: "\f0b0";
+  cursor: pointer;
+}
+
+.removeValues {
+  cursor: pointer;
 }
