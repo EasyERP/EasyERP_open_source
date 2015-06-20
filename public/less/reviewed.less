@@ -4865,30 +4865,60 @@ textarea#editInput{
     margin: 20px auto;
 
     #chart {
-      /*width: 100%;
+      width: 100%;
       margin: 0;
       padding-right: 140px;
-      margin-right: -140px;*/
+      margin-right: -140px;
     }
-
+    .legend {
+      float: left;
+      line-height: 11px;
+    }
     &:after {
 
     }
   }
-  .revenueTable {
-
+  .divTable
+  {
+    padding-top: 5px;
+    display:  table;
+    width:100%;
+    border-spacing:5px;
+    &#tableBySales {
+      .th {
+        border-bottom: 2px solid #ed9409;
+      }
+    }
+    &#tableByDep {
+      .th-green {
+        border-bottom: 2px solid #00af00;
+      }
+    }
   }
-}
-
-.legend {
-  /*float: left;
-  line-height: 11px;
-  font-size: 11px;
-  > div {
-    margin-bottom: 10px;
+  .headRow{
+    display: table-row;
+    //font-weight: bold;
   }
-  img {
-    float: left;
-    margin-right: 5px;
-  }*/
+
+  .divRow
+  {
+    display:table-row;
+    width:auto;
+    &.totalBySales{
+      background-color: #ed9409
+    }
+    &.totalByDep{
+      background-color: #00af00
+    }
+  }
+
+  .divCell
+  {
+    float:left;
+    display:table-column;
+    width: 5.5%;
+    &.left-cell{
+      width: 10%;
+    }
+  }
 }

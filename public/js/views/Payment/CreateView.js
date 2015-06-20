@@ -18,6 +18,7 @@ define([
 
             initialize: function (options) {
                 if (options) {
+                    this.byType = options.byType;
                     this.invoiceModel = options.model;
                     this.totalAmount = this.invoiceModel.get('paymentInfo').balance || 0;
                 }
@@ -108,6 +109,7 @@ define([
                 period = period || null;
 
                 data = {
+                    byType: this.byType,
                     invoice: invoiceModel._id,
                     supplier: supplier,
                     paymentMethod: paymentMethod,

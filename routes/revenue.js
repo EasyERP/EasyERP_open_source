@@ -13,6 +13,7 @@ module.exports = function (models) {
 
     router.get('/bySales', expressSession.authenticatedUser, handler.bySales);
     router.get('/byDepartment', expressSession.authenticatedUser, handler.byDepartment);
+    router.get('/paidwtrack', expressSession.authenticatedUser, handler.paidwtrack);
 
     return router;
 };

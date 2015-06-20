@@ -10,7 +10,7 @@ module.exports = function (models) {
 
     //router.get('/', handler.getAll);
     router.get('/totalCollectionLength', handler.totalCollectionLength);
-    router.get('/:viewType', handler.getForView);
+    router.get('/:byType/:viewType', handler.getForView);
     router.post('/', handler.create);
 
     return router;

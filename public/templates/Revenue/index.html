@@ -10,7 +10,7 @@
             <div><img src="images/chart3.png">WP</div>
             <div><img src="images/chart4.png">Web</div>
             <div>
-                Week: <input type="number" id="currentStartWeek" bg-change="changeWeek" value="<%= currentStartWeek %>">
+                Week: <input type="number" id="currentStartWeek" value="<%= currentStartWeek %>">
             </div>
             <div>
                 Year: <span class="pull-right" id="currentYear"><%= currentYear %></span>
@@ -18,41 +18,40 @@
         </div>
     </div>
     <br>
-    <table class="revenueTable" cellspacing="0" cellpadding="0">
-        <thead>
-        <tr>
-            <th class="revenueEmp fill1">
-                <span>Revenue By Sales</span>
-            </th>
-            <th id="revenueBySales"  class="fill1 revenueWeek">
 
-            </th>
-            <th class="fill1 revenueTotal"><span>YTD</span></th>
-            <th class="fill1 revenueTrend"><span>Trend</span></th>
-        </tr>
-        </thead>
-        <tr ng-repeat="emp in revenueCtrl.employee">
-            <td><span>{{emp.FirstName+" "+emp.LastName}}</span></td>
-            <td ng-repeat="week in revenueCtrl.weeksArr">
-                <span>{{(revenueCtrl.revenueBySales[emp.ID][week.week][0].Revenue) < 1 ? "" : (revenueCtrl.revenueBySales[emp.ID][week.week][0].Revenue) | customcurrency}}</span>
-            </td>
-            <td class="text-right"><span>{{(revenueCtrl.sumByEmp[emp.ID]) < 1 ? "" : (revenueCtrl.sumByEmp[emp.ID]) | customcurrency}}</span>
-            </td>
-            <td>
-                <chart ng-if="revenueCtrl.revenueBySales[emp.ID]" type="line" scale="revenueCtrl.weeksArr"
-                       data="revenueCtrl.revenueBySales[emp.ID]" unit="week" field="Revenue"></chart>
-            </td>
-        </tr>
-        <tr>
-            <td class="fill1"><span>Total Revenue</span></td>
-            <td class="fill1" ng-repeat="week in revenueCtrl.weeksArr"><span>{{(revenueCtrl.sumByWeek[week.week]) < 1 ? "" : (revenueCtrl.sumByWeek[week.week] | customcurrency)}}</span>
-            </td>
-            <td class="fill1 text-right"><span>{{(revenueCtrl.totalSum) < 1 ? "" : (revenueCtrl.totalSum | customcurrency)}}</span>
-            </td>
-            <td>
-                <chart ng-if="revenueCtrl.sumByWeek" type="bar" scale="revenueCtrl.weeksArr"
-                       data="revenueCtrl.sumByWeek" style-class="fill1" unit="week"></chart>
-            </td>
-        </tr>
-    </table>
+    <div class="divTable" id="tableBySales">
+        <div class="headRow">
+            <div class="divCell left-cell th">
+                <span>Revenue By Sales</span>
+            </div>
+            <div id="revenueBySales">
+
+            </div>
+
+            <div class="divCell th"><span>YTD</span></div>
+            <div class="divCell th"><span>Trend</span></div>
+        </div>
+        <% employees.forEach(function(employee){ %>
+        <div id="<%= employee._id %>" class="divRow">
+            <div class="divCell left-cell">
+                    <span><%= employee.name.first + " " + employee.name.last %>
+                    </span>
+            </div>
+            <div data-id="<%= employee._id %>">
+
+            </div>
+
+            <div class="divCell chart_mini">
+            </div>
+
+        </div>
+        <% }) %>
+        <div data-content="totalBySales" class="divRow totalBySales">
+
+        </div>
+    </div>
+    <div class="divTable" id="tableByDep">
+
+    </div>
+
 </div>
