@@ -7,9 +7,10 @@
         'views/Opportunities/CreateView',
         'collections/Opportunities/OpportunitiesCollection',
         'models/OpportunitiesModel',
-        'dataService'
+        'dataService',
+        'views/Filter/FilterView'
 ],
-function (WorkflowsTemplate, kanbanSettingsTemplate, WorkflowsCollection, KanbanItemView, EditView, CreateView, OpportunitiesCollection, CurrentModel, dataService) {
+function (WorkflowsTemplate, kanbanSettingsTemplate, WorkflowsCollection, KanbanItemView, EditView, CreateView, OpportunitiesCollection, CurrentModel, dataService, filterView) {
     var collection = new OpportunitiesCollection();
     var OpportunitiesKanbanView = Backbone.View.extend({
         el: '#content-holder',
@@ -212,6 +213,7 @@ function (WorkflowsTemplate, kanbanSettingsTemplate, WorkflowsCollection, Kanban
             //create editView in dialog here
             new CreateView();
         },
+
 		updateSequence:function(item, workflow, sequence, workflowStart, sequenceStart ){
 			if (workflow==workflowStart){
 				if (sequence>sequenceStart)
@@ -244,14 +246,31 @@ function (WorkflowsTemplate, kanbanSettingsTemplate, WorkflowsCollection, Kanban
 
 			}
 		},
+
         updateCounter:function(el,inc){
 			var i = inc?1:-1;
 			var counter = el.closest(".column").find(".totalCount");
 			counter.html(parseInt(counter.html())+i);
 		},
+
+        hideItemsNumber: function (e) {
+            $(".allNumberPerPage").hide();
+            $(".newSelectList").hide();
+            if (!$(e.target).closest(".drop-down-filter").length) {
+                $(".allNumberPerPage").hide();
+                if ($(".drop-down-filter").is(":visible")) {
+                    $(".drop-down-filter").hide();
+                }
+            }
+        },
+
         render: function () {
 			var self = this;
-			
+            var FilterView;
+            var showList;
+            var el;
+            var list_id;
+            var foldList;
             var workflows = this.workflowsCollection.toJSON();
 
             this.$el.html(_.template(WorkflowsTemplate, { workflowsCollection: workflows }));
@@ -306,6 +325,53 @@ function (WorkflowsTemplate, kanbanSettingsTemplate, WorkflowsCollection, Kanban
 			$(document).on("keypress","#cPerPage",this.isNumberKey);
 
 			this.$el.unbind();
+
+            // Filter rendering begin------
+            setTimeout(function () {
+                FilterView = new filterView({ collection: workflows});
+            }, 1);
+            // Filter rendering end--------
+
+            $(document).on("click", function (e) {
+                self.hideItemsNumber(e);
+            });
+
+            // Filter custom event listen ------begin
+            this.$el.on('filter', function () {
+                list_id = _.pluck(workflows, '_id');
+                showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
+                foldList = _.difference(list_id, showList);
+
+                foldList.forEach(function (id) {
+                    var w;
+                    var k;
+
+                    el = $("td.column[data-id='"+id+"']");
+                    el.addClass("fold");
+                    w = el.find(".columnName .text").width();
+                    k = w/2-20;
+                    if (k<=0){
+                        k= 20-w/2;
+                    }
+                    k=-k;
+                    el.find(".columnName .text").css({"left":k+"px","top":Math.abs(w/2+47)+"px" });
+                });
+                showList.forEach(function (id) {
+                    el = $("td.column[data-id='"+id+"']");
+                    el.removeClass("fold");
+                });
+
+            });
+            this.$el.on('defaultFilter', function () {
+                showList = _.pluck(workflows, '_id');
+
+                showList.forEach(function (id) {
+                        el = $("td.column[data-id='"+id+"']");
+                        el.removeClass("fold");
+                    });
+            });
+            // Filter custom event listen ------end
+
 			return this;
         }
     });

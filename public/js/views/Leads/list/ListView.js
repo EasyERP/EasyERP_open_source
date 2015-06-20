@@ -1,16 +1,17 @@
 define([
-    'text!templates/Leads/list/ListHeader.html',
-    'text!templates/stages.html',
-    'views/Leads/CreateView',
-    'views/Leads/list/ListItemView',
-    'views/Leads/EditView',
-    'models/LeadsModel',
-    'collections/Leads/filterCollection',
-    'common',
-    'dataService'
-],
+        'text!templates/Leads/list/ListHeader.html',
+        'text!templates/stages.html',
+        'views/Leads/CreateView',
+        'views/Leads/list/ListItemView',
+        'views/Leads/EditView',
+        'models/LeadsModel',
+        'collections/Leads/filterCollection',
+        'views/Filter/FilterView',
+        'common',
+        'dataService'
+    ],
 
-    function (listTemplate, stagesTamplate, createView, listItemView, editView, currentModel, contentCollection, common, dataService) {
+    function (listTemplate, stagesTamplate, createView, listItemView, editView, currentModel, contentCollection, filterView, common, dataService) {
         var LeadsListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -53,12 +54,12 @@ define([
                 "click .list td:not(.notForm)": "goToEditDialog",
                 "click #itemsButton": "itemsNumber",
                 "click .currentPageList": "itemsNumber",
-                "click .filterButton": "showfilter",
-                "click .filter-check-list li": "checkCheckbox",
+                //"click .filterButton": "showfilter",
+                //"click .filter-check-list li": "checkCheckbox",
                 "click #convertToOpportunity": "openDialog",
                 "click .stageSelect": "showNewSelect",
                 "click .newSelectList li": "chooseOption",
-                "click .oe_sortable": "goSort",
+                "click .oe_sortable": "goSort"
             },
 
             fetchSortCollection: function (sortObject) {
@@ -92,18 +93,18 @@ define([
                 }
                 switch (sortClass) {
                     case "sortDn":
-                        {
-                            target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
-                            target$.removeClass('sortDn').addClass('sortUp');
-                            sortConst = 1;
-                        }
+                    {
+                        target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
+                        target$.removeClass('sortDn').addClass('sortUp');
+                        sortConst = 1;
+                    }
                         break;
                     case "sortUp":
-                        {
-                            target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
-                            target$.removeClass('sortUp').addClass('sortDn');
-                            sortConst = -1;
-                        }
+                    {
+                        target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
+                        target$.removeClass('sortUp').addClass('sortDn');
+                        sortConst = -1;
+                    }
                         break;
                 }
                 sortObject[sortBy] = sortConst;
@@ -161,19 +162,19 @@ define([
                 }
             },
             //modified for filter Vasya
-            showFilteredPage: function (event) {
+            showFilteredPage: function (workflowIdArray) {
                 this.startTime = new Date();
                 this.newCollection = false;
-                var workflowIdArray = [];
+                //var workflowIdArray = [];
                 var isConverted = null;
                 this.filter = this.filter || {};
-                $('.filter-check-list input:checked').each(function () {
+                /*$('.filter-check-list input:checked').each(function () {
                     if ($(this).attr("id") == 'isConverted') {
                         isConverted = true;
                     } else {
                         workflowIdArray.push($(this).val());
                     }
-                })
+                })*/
 
                 this.filter['isConverted'] = isConverted;
                 this.filter['workflow'] = workflowIdArray;
@@ -185,19 +186,19 @@ define([
                 this.getTotalLength(null, itemsNumber, this.filter);
             },
 
-            showfilter: function (e) {
+           /* showfilter: function (e) {
                 $(".filter-check-list").toggle();
                 return false;
-            },
+            },*/
 
             hideItemsNumber: function (e) {
                 $(".allNumberPerPage").hide();
                 $(".newSelectList").hide();
                 if (!$(e.target).closest(".filter-check-list").length) {
                     $(".allNumberPerPage").hide();
-                    if ($(".filter-check-list").is(":visible")) {
-                        $(".filter-check-list").hide();
-                        this.showFilteredPage();
+                    if ($(".drop-down-filter").is(":visible")) {
+                        $(".drop-down-filter").hide();
+                        //this.showFilteredPage();
                     }
                 }
             },
@@ -229,6 +230,10 @@ define([
                 $('.ui-dialog ').remove();
                 var self = this;
                 var currentEl = this.$el;
+                var FilterView;
+                var filterList = [];
+                var pagenation;
+                var showList;
 
                 currentEl.html('');
                 currentEl.append(_.template(listTemplate));
@@ -246,22 +251,38 @@ define([
                 });
 
 
+                common.populateWorkflowsList("Leads", ".drop-down-filter", "", "/Workflows", null, function (stages) {
+                    self.stages = stages;
+                    var stage = (self.filter) ? self.filter.workflow : null;
+                    // Filter rendering begin--------
+                    FilterView = new filterView({ collection: stages});
+                    // Filter rendering end--------
+
+                   /* if (stage) {
+                        $('.drop-down-filter input').each(function () {
+                            var target = $(this);
+                            target.attr('checked', $.inArray(target.val(), stage) > -1);
+                        });
+                    }*/
+                    itemView.trigger('incomingStages', stages);
+                });
+
+                // Filter custom event listen ------begin
+                this.$el.on('filter', function () {
+                    showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
+                    self.showFilteredPage(showList)
+                });
+                this.$el.on('defaultFilter', function () {
+                    showList = _.pluck(self.stages, '_id');
+                    self.showFilteredPage(showList)
+                });
+                // Filter custom event listen ------end
+
                 $(document).on("click", function (e) {
                     self.hideItemsNumber(e);
                 });
 
-                common.populateWorkflowsList("Leads", ".filter-check-list", "", "/Workflows", null, function (stages) {
-                    self.stages = stages;
-                    var stage = (self.filter) ? self.filter.workflow : null;
-                    if (stage) {
-                        $('.filter-check-list input').each(function () {
-                            var target = $(this);
-                            target.attr('checked', $.inArray(target.val(), stage) > -1);
-                        });
-                    }
-                    itemView.trigger('incomingStages', stages);
-                });
-                var pagenation = this.$el.find('.pagination');
+                pagenation = this.$el.find('.pagination');
                 if (this.collection.length === 0) {
                     pagenation.hide();
                 } else {
@@ -409,7 +430,9 @@ define([
                     success: function (model) {
                         new editView({ model: model });
                     },
-                    error: function () { alert('Please refresh browser'); }
+                    error: function () {
+                        alert('Please refresh browser');
+                    }
                 });
             },
 
