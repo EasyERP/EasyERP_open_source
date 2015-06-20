@@ -457,8 +457,8 @@ define([
 
                 setTimeout(function () {
                     self.editCollection = new EditCollection(self.collection.toJSON());
-                    self.editCollection.on('saved', this.savedNewModel, this);
-                    self.editCollection.on('updated', this.updatedOptions, this);
+                    self.editCollection.on('saved', self.savedNewModel, self);
+                    self.editCollection.on('updated', self.updatedOptions, self);
 
                     self.$listTable = $('#listTable');
                 }, 10);

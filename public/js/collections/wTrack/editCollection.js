@@ -13,7 +13,8 @@
                 var model;
                 var models = [];
                 var modelObject;
-                var syncObject = syncObject = {
+                var syncObject = {
+                    trigger: this.trigger,
                     url: this.url,
                     toJSON: function () {
                         return models;
