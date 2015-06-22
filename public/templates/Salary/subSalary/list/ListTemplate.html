@@ -1,6 +1,6 @@
 <% salaryModel.employeesArray.forEach(function(employee, index){ %>
 <tr data-id="<%=employee._id%>">
-    <td><%=index+1%></td>
+    <td data-content="number"><%=index+1%></td>
     <td class = "notForm"><input type="checkbox" value="<%=employee._id%>" class="checkbox" /></td>
     <td class="editable" data-content="employee"><%=employee.employee ? employee.employee.name : ''%></td>
     <td><%=salaryModel.dataKey%></td>

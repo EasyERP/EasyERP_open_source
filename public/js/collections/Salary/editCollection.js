@@ -17,6 +17,7 @@ define([
                 var models = [];
                 var modelObject;
                 var syncObject = {
+                    trigger: this.trigger,
                     url: this.url,
                     toJSON: function () {
                         return models;

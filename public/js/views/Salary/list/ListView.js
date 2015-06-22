@@ -346,10 +346,10 @@ define([
                     $(tr).find('.icon').html('2');
                     $('<tr id=' + subId + ' class="subRow">' +
                     '<td colspan="3"></td>' +
-                    '<td colspan="6" id="subSalary-holder"></td>' +
+                    '<td colspan="6" id="subSalary-holder' + id + '"></td>' +
                     '<td colspan="2"></td>' +
                     '</tr>').insertAfter(tr);
-                    $('#subSalary-holder').append(new subSalaryView({model: self.collection.get(id)}).render());
+                    $('#subSalary-holder' + id).append(new subSalaryView({el: '#subSalary-holder' + id, model: self.collection.get(id)}).render());
                 }
 
             },

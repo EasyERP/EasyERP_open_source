@@ -4,8 +4,6 @@
 
 function (listTemplate) {
     var SalaryListItemView = Backbone.View.extend({
-        el: '#subSalary-listTable',
-
         initialize: function(options) {
             this.model = options.model;
         },
