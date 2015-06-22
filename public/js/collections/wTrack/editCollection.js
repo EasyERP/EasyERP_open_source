@@ -1,4 +1,4 @@
-﻿define([
+﻿﻿define([
         './filterCollection'
     ],
     function (ParrantCollection) {
@@ -14,6 +14,7 @@
                 var models = [];
                 var modelObject;
                 var syncObject = {
+                    trigger: this.trigger,
                     url: this.url,
                     toJSON: function () {
                         return models;
