@@ -6,6 +6,7 @@ module.exports = (function () {
     var ObjectId = mongoose.Schema.Types.ObjectId;
 
     var productSchema = new mongoose.Schema({
+        wTrack: { type: String, ref: 'wTrack', default: null },
         canBeSold: { type: Boolean, default: true },
         canBeExpensed: { type: Boolean, default: true },
         eventSubscription: { type: Boolean, default: true },

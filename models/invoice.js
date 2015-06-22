@@ -27,12 +27,15 @@ module.exports = (function () {
     };
 
     var invoiceSchema = new mongoose.Schema({
+        name: {type: String, default: ''},
         forSales: {type: Boolean, default: true},
         supplier: { type: ObjectId, ref: 'Customers', default: null },
         /*fiscalPosition: { type: String, default: null },*/
         sourceDocument: { type: String, default: null },
         supplierInvoiceNumber: { type: String, default: null },
         paymentReference: { type: String, default: 'free' },
+
+        project: {type: ObjectId, ref: 'Project', default: null},
 
         invoiceDate: { type: Date, default: Date.now },
         dueDate: Date,
