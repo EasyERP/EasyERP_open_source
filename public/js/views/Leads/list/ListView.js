@@ -181,9 +181,15 @@ define([
             },
 
             hideItemsNumber: function (e) {
+                var el = e.target;
+
                 $(".allNumberPerPage").hide();
                 $(".newSelectList").hide();
-                $(".drop-down-filter").hide();
+
+                if (!el.closest('.search-view')) {
+                    $(".drop-down-filter").hide();
+                    $('.search-options').hide();
+                };
             },
 
             itemsNumber: function (e) {
@@ -252,8 +258,8 @@ define([
                     // Filter custom event listen ------end
                 });
 
-                $(document).on("click", function () {
-                    self.hideItemsNumber();
+                $(document).on("click", function (e) {
+                    self.hideItemsNumber(e);
                 });
 
                 pagenation = this.$el.find('.pagination');

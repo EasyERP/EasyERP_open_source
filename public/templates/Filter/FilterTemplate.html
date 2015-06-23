@@ -2,7 +2,7 @@
     <div class="search-button"></div>
     <div class="search-field">
         <span class="search fa fa-search fa-lg"></span>
-        <div class="filter-icons"><span class="filterValues"></span><span class="removeValues">x</span></div>
+        <div class="filter-icons"><span class="zoomIcon"></span><span class="filterValues"></span><span class="removeValues">x</span></div>
         <!--<input class="search-input" type="text"/>-->
         <div class="oe_searchview_input" contenteditable="true" tabindex="0"></div>
         <span class="search-content fa fa-lg fa-fw fa-caret-down"></span>
@@ -11,12 +11,12 @@
     <div class="search-options">
         <div class="btn-group">
             <div class="btn-group">
-                <button class="btn btn-default filter">
+                <button class="<!--btn btn-default--> filter">
                     <span class="fa fa-filter"></span>
                     Filters
                     <span class="caret"></span>
                 </button>
-                <ul class="filter-check-list">
+                <ul class="drop-down-filter"><!--drop-down-filter-->
                     <% collection.forEach(function(model, index){ %>
                     <li>
                         <input type="checkbox" id="<%=model.name%>" value="<%=(model._id) ? model._id : ''%>">
