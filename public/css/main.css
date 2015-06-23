@@ -7458,10 +7458,17 @@ textarea#editInput {
 }
 #searchContainer {
   float: right;
-  width: 50%;
+  width: 25%;
   position: relative;
   margin-top: -26px;
   margin-right: 65px;
+}
+#searchContainer .btn {
+  background: #eeeeee;
+  padding: 6px;
+}
+#searchContainer .filter-check-list {
+  margin-top: -1px;
 }
 .removeValues {
   cursor: pointer;
