@@ -1,4 +1,4 @@
-﻿@font-face {
+@font-face {
   font-family: 'Segoe UI';
   src: url("../font/segoeui.woff") format('woff');
 }
@@ -88,16 +88,6 @@ q:before, q:after, blockquote:before, blockquote:after {
   content: "";
 }
 
-// Normalize.css
-// Pulling in select resets form the normalize.css project
-// --------------------------------------------------
-
-// Display in IE6-9 and FF3
-// -------------------------
-// Source: http://github.com/necolas/normalize.css
-
-
-// Focus states
 a:focus {
   outline: thin dotted;
 }
@@ -108,9 +98,6 @@ a:active {
   outline: 0;
 }
 
-// Display in IE6-9 and FF3
-// -------------------------
-// Source: http://github.com/necolas/normalize.css
 article,
 aside,
 details,
@@ -124,9 +111,6 @@ section {
   display: block;
 }
 
-// Display block in IE6-9 and FF3
-// -------------------------
-// Source: http://github.com/necolas/normalize.css
 audio,
 canvas,
 video {
@@ -135,16 +119,10 @@ video {
   *zoom: 1;
 }
 
-// Prevents modern browsers from displaying 'audio' without controls
-// -------------------------
-// Source: http://github.com/necolas/normalize.css
 audio:not([controls]) {
   display: none;
 }
 
-// Prevents sub and sup affecting line-height in all browsers
-// -------------------------
-// Source: http://github.com/necolas/normalize.css
 sub,
 sup {
   font-size: 75%;
@@ -161,19 +139,11 @@ sub {
   bottom: -0.25em;
 }
 
-// Img border in a's and image quality
-// -------------------------
-// Source: http://github.com/necolas/normalize.css
 img {
   border: 0;
   -ms-interpolation-mode: bicubic;
 }
 
-// Forms
-// -------------------------
-// Source: http://github.com/necolas/normalize.css
-
-// Font size in all browsers, margin changes, misc consistency
 button,
 input,
 select,
@@ -186,13 +156,12 @@ textarea {
 
 button,
 input {
-  line-height: normal; // FF3/4 have !important on line-height in UA stylesheet
-  *overflow: visible; // Inner spacing ie IE6/7
+  line-height: normal;
+  *overflow: visible;
 }
 
 button::-moz-focus-inner,
 input::-moz-focus-inner {
-  // Inner padding and border oddities in FF3/4
   border: 0;
   padding: 0;
 }
@@ -201,12 +170,11 @@ button,
 input[type="button"],
 input[type="reset"],
 input[type="submit"] {
-  cursor: pointer; // Cursors on all buttons applied consistently
-  -webkit-appearance: button; // Style clicable inputs in iOS
+  cursor: pointer;
+  -webkit-appearance: button;
 }
 
 input[type="search"] {
-  // Appearance in Safari/Chrome
   -webkit-appearance: textfield;
   -webkit-box-sizing: content-box;
   -moz-box-sizing: content-box;
@@ -214,12 +182,12 @@ input[type="search"] {
 }
 
 input[type="search"]::-webkit-search-decoration {
-  -webkit-appearance: none; // Inner-padding issues in Chrome OSX, Safari 5
+  -webkit-appearance: none;
 }
 
 textarea {
-  overflow: auto; // Remove vertical scrollbar in IE6-9
-  vertical-align: top; // Readability and alignment cross-browser
+  overflow: auto;
+  vertical-align: top;
 }
 
 /*------------------------Functions-----------------------------*/
@@ -257,7 +225,7 @@ input::-ms-clear {
     text-align: center;
     display: block;
     .position;
-    height: 0px;
+    height: 0;
     width: 100%;
     background: rgba(0, 0, 0, 0.7);
     color: #fff;
@@ -294,7 +262,7 @@ input::-ms-clear {
   transform: rotate(@deg);
 }
 
-.dl-auto(@max-width: 120px, @with-dt: 35%, @line-height: 0px, @height: 16px, @margin-top: 0px) {
+.dl-auto(@max-width: 120px, @with-dt: 35%, @line-height: 0, @height: 16px, @margin-top: 0) {
   clear: both;
   font-size: 14px;
 
@@ -347,7 +315,6 @@ input::-ms-clear {
 }
 
 .form(@width: 860px, @border: 1px, @background: #fff) {
-  background-color: #fff;
   width: @width;
   max-width: @width;
   margin: 0 auto;
@@ -369,7 +336,7 @@ input::-ms-clear {
       border-bottom: @thin-border @lightgrey;
 
       &.inner {
-        margin: 0px !important;
+        margin: 0 !important;
         padding: 4px 10px;
 
         &:hover {
@@ -387,7 +354,7 @@ input::-ms-clear {
 
   .formTitle {
     &.withMargin {
-      margin-bottom: 0px;
+      margin-bottom: 0;
     }
 
     width: 100%;
@@ -523,7 +490,7 @@ input::-ms-clear {
       text-align: center;
       display: block;
       .position;
-      height: 0px;
+      height: 0;
       width: 100%;
       background: rgba(0, 0, 0, 0.7);
       color: #fff;
@@ -551,7 +518,7 @@ input::-ms-clear {
   & > #tabList {
     li {
       .left;
-      margin: 0px 2px 5px 0;
+      margin: 0 2px 5px 0;
     }
   }
 
@@ -604,8 +571,7 @@ input::-ms-clear {
         line-height: 15px;
         color: #4D5A75;
         font-size: 16px;
-        background-position: 0 50%;
-        background-repeat: no-repeat;
+        background: no-repeat 0 50%;
         margin-right: 5px;
         font-family: Icons;
       }
@@ -618,8 +584,7 @@ input::-ms-clear {
         line-height: 27px;
         color: #4D5A75;
         font-size: 16px;
-        background-position: 0 50%;
-        background-repeat: no-repeat;
+        background: no-repeat 0 50%;
         margin-right: 5px;
         font-family: Icons;
       }
@@ -632,8 +597,7 @@ input::-ms-clear {
         line-height: 27px;
         color: #4D5A75;
         font-size: 16px;
-        background-position: 0 50%;
-        background-repeat: no-repeat;
+        background: no-repeat 0 50%;
         margin-right: 5px;
         font-family: Icons;
       }
@@ -651,7 +615,7 @@ input::-ms-clear {
   }
 
   input {
-    margin: 2px 2px 2px 0px;
+    margin: 2px 2px 2px 0;
   }
 
   textarea {
@@ -711,8 +675,7 @@ input::-ms-clear {
 
   thead {
     tr {
-      border-top: 0px;
-      //background: #eee !important;
+      border-top: 0;
       background: #fff !important;
       vertical-align: top;
     }
@@ -732,8 +695,7 @@ input::-ms-clear {
         cursor: pointer;
         .arrow {
           display: none;
-          padding: 0;
-          padding-left: 5px;
+          padding: 0 0 0 5px;
           margin: 0;
           text-align: center;
           width: 5px;
@@ -1118,7 +1080,7 @@ input::-ms-clear {
   }
 
   p {
-    margin: 10px 0px;
+    margin: 10px 0;
   }
 
   h3 {
@@ -1337,7 +1299,7 @@ input::-ms-clear {
   }
 
   .avatar {
-    .avatar(44px, 0px, 5px, 5px, 0px);
+    .avatar(44px, 0, 5px, 5px, 0);
   }
 
   .project-text {
@@ -1411,7 +1373,7 @@ input::-ms-clear {
       .border-radius(0px);
 
       &.active {
-        .box-shadow(0px, 0px, 10px, rgba(50, 50, 50, 0.75));
+        .box-shadow(0px, 0, 10px, rgba(50, 50, 50, 0.75));
         transition: box-shadow 1s ease;
         transition: border-color 1s ease;
       }
@@ -1452,7 +1414,7 @@ input::-ms-clear {
         position: relative;
 
         .info {
-          padding: 5px 5px 2px 0px;
+          padding: 5px 5px 2px 0;
           width: auto;
 
           p.bold {
@@ -1461,7 +1423,7 @@ input::-ms-clear {
         }
 
         .bottom {
-          .position(absolute, 0px, auto, auto, 5px);
+          .position(absolute, 0, auto, auto, 5px);
         }
 
         .avatar-small {
@@ -1614,13 +1576,13 @@ input::-ms-clear {
       min-height: 100px;
 
       .columnNameDiv {
-        top: 0px;
-        left: 0px;
+        top: 0;
+        left: 0;
         background-color: white;
         width: 40px;
         z-index: 100;
         .columnName {
-          border-width: 0px;
+          border-width: 0;
           text-align: center;
           height: 17px;
           border-bottom: 2px solid silver;
@@ -1635,15 +1597,15 @@ input::-ms-clear {
             position: absolute;
             display: block;
             width: 40px;
-            border: 0px;
+            border: 0;
             color: @lightblue;
             font-size: 18px;
             line-height: 26px;
             float: none;
             text-align: center;
             display: block;
-            top: 0px;
-            left: 0px;
+            top: 0;
+            left: 0;
             padding: 0;
           }
           .text {
@@ -1809,14 +1771,13 @@ input::-ms-clear {
       height: 1.8em;
 
       span {
-        background-image: url("http://localhost:8088/images/datepicker-sprite.png");
         width: 6px;
         height: 7px;
         margin-top: -4px;
         margin-left: -3px;
         text-indent: -99999px;
         overflow: hidden;
-        background-repeat: no-repeat;
+        background: url("http://localhost:8088/images/datepicker-sprite.png") no-repeat;
         display: block;
         .position(absolute, 50%, 50%);
         cursor: pointer;
@@ -1827,7 +1788,7 @@ input::-ms-clear {
       left: 2px;
 
       span {
-        background-position: 0px -7px;
+        background-position: 0 -7px;
       }
     }
 
@@ -1893,7 +1854,6 @@ input::-ms-clear {
   background: @background;
   color: @color;
   z-index: 1000;
-  //  left:auto !important;
   margin: 0 auto;
   .border-radius(0px);
 
@@ -1904,7 +1864,7 @@ input::-ms-clear {
   }
 
   .avatar {
-    .avatar(140px, 5px, 5px, 5px, 0px);
+    .avatar(140px, 5px, 5px, 5px, 0);
     .box-shadow;
     border: @thin-border @lightgrey;
   }
@@ -2008,7 +1968,7 @@ input::-ms-clear {
 
     dt, dd {
       clear: none;
-      margin-top: 0px !important;
+      margin-top: 0 !important;
 
       a {
         line-height: 22px;
@@ -2037,9 +1997,9 @@ input::-ms-clear {
   }
 
   input {
-    -moz-border-radius: 0px;
-    -webkit-border-radius: 0px;
-    border-radius: 0px;
+    -moz-border-radius: 0;
+    -webkit-border-radius: 0;
+    border-radius: 0;
     border: 1px solid #E2E9EF;
     border-top: 1px solid #CBD3E2;
     max-width: 280px;
@@ -2232,7 +2192,7 @@ input::-ms-clear {
   }
 
   .inner {
-    margin-top: 0px;
+    margin-top: 0;
   }
   input:not([type=checkbox]) {
     .border-radius(0px);
@@ -2271,7 +2231,6 @@ input::-ms-clear {
       }
       .no-long {
         width: auto;
-        //        display: block;
         line-height: 17px;
         float: left;
         max-width: 95%;
@@ -2326,13 +2285,11 @@ input::-ms-clear {
     font-size: 12px;
   }
   #previousPage {
-    /*  background-image: url("@{imagesfolder}/arrow-left-1.png");*/
     margin: 0 3px;
     font-size: 12px;
   }
 
   #nextPage {
-    //    background-image: url("@{imagesfolder}/arrow-right-1.png");
     margin: 0 3px;
     font-size: 12px;
   }
@@ -2453,7 +2410,7 @@ input::-ms-clear {
   }
 }
 
-.tabs(@marginTop: 0px, @marginLeft: -20px) {
+.tabs(@marginTop: 0, @marginLeft: -20px) {
   height: 35px;
   border-bottom: @thin-border #DDD;
   margin: @marginTop -20px 0 @marginLeft;
@@ -2524,7 +2481,7 @@ input::-ms-clear {
 #sub-details {
   &.workflow-details {
     display: block;
-    padding-top: 0px;
+    padding-top: 0;
   }
   .listWorkflow {
     margin-left: 20px;
@@ -2759,7 +2716,7 @@ input, textarea, select {
   }
 
   &.stage {
-    left: 0px;
+    left: 0;
   }
 
   &.taskPriority {
@@ -2795,14 +2752,11 @@ input, textarea, select {
 
 .btn-list {
   height: 24px;
-  margin: 0 12px;
   border: @thin-border #ababab;
   border-right: 0;
   border-bottom: 0;
   float: left;
-  margin-top: 5px;
-  margin-left: 5px;
-  //  .position(absolute, auto, auto, 5px, 0);
+  margin: 5px 12px 0 5px;
 
   li {
     border-right: @thin-border #ababab;
@@ -2824,7 +2778,7 @@ input, textarea, select {
 
     a {
       color: white;
-      text-shadow: 0px 1px 2px black;
+      text-shadow: 0 1px 2px black;
     }
   }
 }
@@ -2929,7 +2883,7 @@ dl {
   }
 
   .form {
-    .form(98%, 0px);
+    .form(98%, 0);
     margin-bottom: 10px;
   }
 }
@@ -3014,14 +2968,11 @@ dl {
     }
 
     textarea {
-      padding: 2px 4px;
       min-height: inherit;
       width: 100%;
       height: 17px;
-      padding-left: 3px;
-      padding-right: 0;
+      padding: 2px 0 2px 3px;
       .border-radius(0);
-      //      max-width: 555px;
       resize: none;
       &:focus {
         .box-shadow(0, 0, 5px, rgba(82, 168, 236, 0.5));
@@ -3105,7 +3056,7 @@ dl {
         display: none;
 
         .sep {
-          padding: 0px 3px;
+          padding: 0 3px;
           font-size: 12px;
           color: #CCC;
         }
@@ -3138,7 +3089,6 @@ dl {
 }
 
 #wrapper {
-  //	width:inherit;
   .fullsize;
   width: auto;
   min-width: 100%;
@@ -3156,7 +3106,7 @@ dl {
 }
 
 #startLetter {
-  margin: 0px;
+  margin: 0;
   padding: 5px 0;
   text-align: center;
   border-bottom: @thin-border #D5D5D5;
@@ -3196,7 +3146,6 @@ dl {
 .customer-info {
   dt {
     span {
-      //			line-height:25px;
     }
   }
 }
@@ -3228,12 +3177,12 @@ dl {
     .inner {
       padding-top: 5px;
       padding-left: 8px;
-      padding-right: 0px;
+      padding-right: 0;
     }
   }
   &.withPaddingLeftProject {
     .inner {
-      padding-left: 0px;
+      padding-left: 0;
     }
   }
   &.projectNote {
@@ -3465,7 +3414,7 @@ button.red, a.red {
 
     .ava {
       float: left;
-      .avatar(100px, 0px, 10px, 0px, 0px);
+      .avatar(100px, 0, 10px, 0, 0);
     }
 
     .text {
@@ -3479,7 +3428,7 @@ button.red, a.red {
       margin-top: 10px;
       color: rgb(255, 255, 255);
       font-size: 14px;
-      padding: 0px;
+      padding: 0;
       text-align: left;
       text-decoration: none;
       float: right;
@@ -3499,7 +3448,7 @@ button.red, a.red {
           font-style: normal;
         }
 
-        margin-top: 0px;
+        margin-top: 0;
         line-height: 14px;
         vertical-align: top;
         background-repeat: no-repeat;
@@ -3559,7 +3508,7 @@ button.red, a.red {
     width: 130px;
     float: left;
     height: auto;
-    padding: 0px;
+    padding: 0;
 
     img {
       float: left;
@@ -3769,16 +3718,13 @@ button.red, a.red {
 #addUsersGroups, #removeUsersGroups {
   width: 30px;
   height: 30px;
-  background-image: url("@{imagesfolder}/arrow-left.png");
-  background-repeat: no-repeat;
-  background-position: 50% 50%;
-  background-color: white;
+  background: white url("@{imagesfolder}/arrow-left.png") no-repeat 50% 50%;
   border-radius: 0;
   margin-top: 5px;
   display: block;
 
   &:hover {
-    .box-shadow(0px, 0px, 10px);
+    .box-shadow(0px, 0, 10px);
   }
 }
 
@@ -3814,7 +3760,6 @@ button.red, a.red {
 
     ul {
       li {
-        //			border: 1px solid #CCC;
         clear: both;
       }
       clear: both;
@@ -3848,11 +3793,9 @@ button.red, a.red {
 
     .text {
       display: block;
-      //      margin-left: 20px;
       cursor: pointer;
       padding-left: 17px;
-      background-repeat: no-repeat;
-      background-position: 0 50%;
+      background: no-repeat 0 50%;
 
       &:hover {
         background-color: #eee;
@@ -3865,8 +3808,7 @@ button.red, a.red {
       height: @linh;
       color: @blue;
       font-size: 16px;
-      background-position: 0 50%;
-      background-repeat: no-repeat;
+      background: no-repeat 0 50%;
       float: right;
       margin-right: 5px;
 
@@ -3881,8 +3823,7 @@ button.red, a.red {
       height: @linh;
       color: @blue;
       font-size: 16px;
-      background-position: 0 50%;
-      background-repeat: no-repeat;
+      background: no-repeat 0 50%;
       float: right;
       margin-right: 5px;
 
@@ -3902,9 +3843,8 @@ button.red, a.red {
       }
 
       .text {
-        padding-left: 0px;
+        padding-left: 0;
         background-image: none;
-        //        margin-left: 40px;
       }
     }
 
@@ -4042,7 +3982,6 @@ table#workflows {
     vertical-align: baseline;
 
     &:hover {
-      //border-bottom: @thin-border @blue;
       color: @blue + #333;
     }
   }
@@ -4146,7 +4085,7 @@ ul.dialog-tabs {
       display: none;
       width: 112px;
       margin-top: 22px;
-      right: 0px;
+      right: 0;
       li {
         padding-left: 10px;
         float: none;
@@ -4192,7 +4131,7 @@ ul.dialog-tabs {
 }
 
 ul.chart-tabs {
-  .tabs(10px, 0px);
+  .tabs(10px, 0);
   &.dashboard {
     margin: 10px 0;
   }
@@ -4202,7 +4141,7 @@ ul.chart-tabs {
       display: none;
       width: 112px;
       margin-top: 22px;
-      right: 0px;
+      right: 0;
       li {
         padding-left: 10px;
         float: none;
@@ -4226,8 +4165,6 @@ ul.chart-tabs {
     }
     .arrow {
       border-left: 1px solid #ABABAB;
-      height: 24px;
-      width: 24px;
       font-family: Icons;
       color: white;
       font-weight: 500;
@@ -4359,7 +4296,7 @@ ul.chart-tabs {
     cursor: pointer;
 
     &:first-child {
-      margin-left: 0px;
+      margin-left: 0;
     }
 
     &.active {
@@ -4370,14 +4307,11 @@ ul.chart-tabs {
 }
 
 .legend-box {
-  padding: 5px;
   border: @thin-border #efefef;
   width: 525px;
-  margin: 0 auto;
   height: 32px;
-  padding: 0;
-  padding-top: 3px;
-  margin-top: -39px;
+  padding: 3px 0 0;
+  margin: -39px auto 0;
 
   &.small {
     width: 255px;
@@ -4397,9 +4331,7 @@ ul.chart-tabs {
     .text {
       line-height: 20px;
       height: 20px;
-      padding: 0;
-      padding-left: 10px;
-      padding-right: 10px;
+      padding: 0 10px;
     }
 
     &.unconverted {
@@ -4955,7 +4887,6 @@ input::-webkit-inner-spin-button {
   padding: .4em 1em !important;
   background: white !important;
   border: 1px solid #E2E9EF !important;
-
 }
 
 #createUserForm #resetBtn:hover, #createUserForm #saveBtn:hover, .changePassword:hover {
@@ -4994,6 +4925,7 @@ input::-webkit-inner-spin-button {
 .list2 .width20 {
   width: 15%;
 }
+
 .list2 .width25 {
   width: 25%;
 }
@@ -5009,21 +4941,20 @@ input::-webkit-inner-spin-button {
 .h2 {
   color: @tilte-color;
   font-size: 1.3em;
-  padding: 5px 0px;
+  padding: 5px 0;
 }
 
-textarea#editInput{
+textarea#editInput {
   position: absolute;
 }
-.rowEdit{
-  padding: 0px !important;
+
+.rowEdit {
+  padding: 0 !important;
 }
 
 .grid-conatiner.revenue {
-  //  background-color: #2b2d37;
   background-color: #303031;
   color: #ffffff;
-  //  color: #7f7f80;
   padding: 20px;
   font-size: 13px;
   font-weight: 300;
@@ -5037,9 +4968,8 @@ textarea#editInput{
 
     #chart {
       width: 100%;
-      margin: 0;
       padding-right: 140px;
-      margin-right: -140px;
+      margin: 0 -140px 0 0;
     }
     .legend {
       float: left;
@@ -5049,12 +4979,11 @@ textarea#editInput{
 
     }
   }
-  .divTable
-  {
+  .divTable {
     padding-top: 5px;
-    display:  table;
-    width:100%;
-    border-spacing:5px;
+    display: table;
+    width: 100%;
+    border-spacing: 5px;
     &#tableBySales {
       .th {
         border-bottom: 2px solid #ed9409;
@@ -5066,30 +4995,227 @@ textarea#editInput{
       }
     }
   }
-  .headRow{
+  .headRow {
     display: table-row;
-    //font-weight: bold;
   }
 
-  .divRow
-  {
-    display:table-row;
-    width:auto;
-    &.totalBySales{
+  .divRow {
+    display: table-row;
+    width: auto;
+    &.totalBySales {
       background-color: #ed9409
     }
-    &.totalByDep{
+    &.totalByDep {
       background-color: #00af00
     }
   }
 
-  .divCell
-  {
-    float:left;
-    display:table-column;
+  .divCell {
+    float: left;
+    display: table-column;
     width: 5.5%;
-    &.left-cell{
+    &.left-cell {
       width: 10%;
     }
   }
+}
+
+.search-field {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  height: 26px;
+  padding: 2px 24px;
+  font-size: 14px;
+  line-height: 1.42857143;
+  color: #555;
+  background: #fff none;
+  border: 1px solid #ababab;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+  -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+  -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+}
+
+.search-field {
+  .search {
+    cursor: pointer;
+    position: absolute;
+    top: 6px;
+    left: 5px;
+  }
+  .search-content {
+    position: absolute;
+    top: 6px;
+    right: 5px;
+    cursor: pointer;
+  }
+}
+
+.caret {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-left: 2px;
+  vertical-align: middle;
+  border-top: 4px solid;
+  border-right: 4px solid transparent;
+  border-left: 4px solid transparent;
+}
+
+.btn .caret {
+  margin: 0;
+}
+
+.btn-group {
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+  & > .btn-group {
+    float: left;
+
+    & > .btn {
+      border-radius: 0;
+    }
+  }
+  & > .btn-group:first-child > .btn:first-child {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+  & > .btn-group:last-child > .btn:first-child {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+  & > .btn-group:not(:first-child):not(:last-child) > .btn {
+    border-radius: 0;
+  }
+}
+
+.btn-group .btn + .btn, .btn-group .btn + .btn-group, .btn-group .btn-group + .btn, .btn-group .btn-group + .btn-group {
+  margin-left: -1px;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1000;
+  //display: none;
+  float: left;
+  min-width: 160px;
+  padding: 5px 0;
+  margin: 2px 0 0;
+  font-size: 14px;
+  text-align: left;
+  list-style: none;
+  background-color: #fff;
+  -webkit-background-clip: padding-box;
+  background-clip: padding-box;
+  //border: 1px solid #ccc;
+  border: 1px solid rgba(0, 0, 0, .15);
+  border-radius: 4px;
+  -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+
+  li {
+    display: block;
+    padding: 3px 20px;
+    clear: both;
+    font-weight: normal;
+    line-height: 1.42857143;
+    color: #333;
+    white-space: nowrap;
+  }
+}
+
+.arrow-down:before {
+  content: "7";
+}
+
+.search-input {
+  border: none !important;
+  padding: 0 !important;
+  outline: none;
+  outline-offset: 0;
+}
+
+.search-button {
+  cursor: pointer;
+  position: absolute;
+  top: 2px;
+  left: -10px;
+}
+
+.search-options {
+  height: 30px;
+  display: none;
+  position: absolute;
+  top: ~"calc(100% - 1px)";
+  right: 0;
+
+  .filter-check-list {
+    right: auto;
+    left: 0;
+    top: calc(100% - 1px);
+  }
+}
+
+.btn-filter {
+  position: relative;
+  float: left;
+}
+
+.btn-groupBy {
+  position: relative;
+  float: left;
+}
+
+.drop-down-filter {
+  background-color: #F5F5F5;
+  display: none;
+  position: absolute;
+  z-index: 10;
+  width: 100px;
+  margin-top: 5px;
+}
+
+.drop-down-filter li {
+  cursor: pointer;
+  margin-bottom: 5px;
+}
+
+.drop-down-filter li:nth-child(2n) {
+  border-bottom: 2px solid rgba(248, 129, 99, 0.42);
+  padding-bottom: 5px;
+}
+
+.drop-down-filter li:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.filter-icons {
+  display: none;
+}
+
+.active {
+  display: inline-block;
+}
+
+#searchContainer {
+  float: right;
+  width: 50%;
+  position: relative;
+  margin-top: -26px;
+  margin-right: 65px;
+}
+
+.filterValues:before {
+  content: "\f0b0";
+  cursor: pointer;
+}
+
+.removeValues {
+  cursor: pointer;
 }
