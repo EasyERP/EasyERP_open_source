@@ -7447,6 +7447,11 @@ textarea#editInput {
 }
 .filter-icons {
   display: none;
+  border: 1px solid #ababab;
+  font-size: 12px;
+  background: #f0f0fa;
+  height: 18px;
+  line-height: 18px;
 }
 .active {
   display: inline-block;
@@ -7457,10 +7462,6 @@ textarea#editInput {
   position: relative;
   margin-top: -26px;
   margin-right: 65px;
-}
-.filterValues:before {
-  content: "\f0b0";
-  cursor: pointer;
 }
 .removeValues {
   cursor: pointer;

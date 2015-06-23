@@ -13,7 +13,7 @@ define([
             events: {
                 "click .search-content": 'showSearchContent',
                 "click .filter": 'showFilterContent',
-                "click .drop-down-filter input": "writeValue",
+                "click .filter-check-list input": "writeValue",
                 "click .removeValues": "removeValues"
             },
 
@@ -43,7 +43,7 @@ define([
             },
 
             showFilterContent: function () {
-                $('.drop-down-filter').toggle('fast');
+                $('.filter-check-list').toggle('fast');
                 return false;
             },
 
@@ -51,13 +51,13 @@ define([
                 var inputText = e.target.nextElementSibling.textContent;
                 var filterValues = $('.filterValues');
                 var filterIcons = $('.filter-icons');
-                var input = $('.drop-down-filter input');
+                var input = $('.filter-check-list input');
                 var checked;
 
                 filterIcons.addClass('active');
 
                 if (!filterValues.find('.iconFilter').length) {
-                    filterValues.prepend('<span class="iconFilter"></span>')
+                    filterValues.prepend('<span class="iconFilter fa fa-filter"></span>')
                 }
 
                 $.each(input, function (index, value) {
@@ -90,7 +90,7 @@ define([
                     this.trigger('defaultFilter');
                 }
 
-                if ($('.drop-down-filter input:checkbox:checked').length === 0) {
+                if ($('.filter-check-list input:checkbox:checked').length === 0) {
                     this.trigger('defaultFilter');
                 }
 
@@ -99,7 +99,7 @@ define([
             removeValues: function () {
                 $('.filterValues').empty();
                 $('.filter-icons').removeClass('active');
-                $.each($('.drop-down-filter input'), function (index, value) {
+                $.each($('.filter-check-list input'), function (index, value) {
                     value.checked = false
                 });
                 this.trigger('defaultFilter');

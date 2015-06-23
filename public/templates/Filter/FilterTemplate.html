@@ -16,7 +16,7 @@
                     Filters
                     <span class="caret"></span>
                 </button>
-                <ul class="filter-check-list drop-down-filter">
+                <ul class="filter-check-list">
                     <% collection.forEach(function(model, index){ %>
                     <li>
                         <input type="checkbox" id="<%=model.name%>" value="<%=(model._id) ? model._id : ''%>">
