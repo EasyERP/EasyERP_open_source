@@ -198,27 +198,38 @@ module.exports = (function () {
     var invoice = {
         collection: 'Invoice',
         table: 'Invoice',
+        comparator: {
+            'InvoiceStatus': [{
+                value: '1',
+                field: 'workflow',
+                fieldValue: 'New'
+            }, {
+                value: '2',
+                field: 'workflow',
+                fieldValue: 'New'
+            }, {
+                value: '3',
+                field: 'workflow',
+                fieldValue: 'Done'
+            }, {
+                value: '4',
+                field: 'workflow',
+                fieldValue: 'Cancelled'
+            }, {
+                value: '5',
+                field: 'workflow',
+                fieldValue: 'In Progress'
+            }]
+        },
         aliases: {
             ID: 'ID',
             name: 'InvoiceName',
             project: 'Project',
-            invoiceDate: 'Department',
-            year: 'Year',
-            month: 'Month',
-            week: 'Week',
-            worked: 'Worked',
-            rate: 'Rate',
-            revenue: 'Revenue',
-            cost: 'Cost',
-            amount: 'Amount',
-            isPaid: 'isPaid',
-            1: 'Mo',
-            2: 'Tu',
-            3: 'We',
-            4: 'Th',
-            5: 'Fr',
-            6: 'Sa',
-            7: 'Su'
+            invoiceDate: 'InvoiceDate',
+            dueDate: 'DueDate',
+            paymentDate: 'PaymentDate',
+            'paymentInfo.total': 'Amount',
+            workflow: 'InvoiceStatus'
         }
     };
 
