@@ -1,16 +1,17 @@
 define([
-    'text!templates/Projects/list/ListHeader.html',
-    'text!templates/stages.html',
-    'views/Projects/CreateView',
-    'views/Projects/list/ListItemView',
-    'views/Projects/EditView',
-    'models/ProjectsModel',
-    'collections/Projects/filterCollection',
-    'common',
-    'dataService'
-],
+        'text!templates/Projects/list/ListHeader.html',
+        'text!templates/stages.html',
+        'views/Projects/CreateView',
+        'views/Projects/list/ListItemView',
+        'views/Projects/EditView',
+        'models/ProjectsModel',
+        'collections/Projects/filterCollection',
+        'views/Filter/FilterView',
+        'common',
+        'dataService'
+    ],
 
-    function (listTemplate, stagesTamplate, CreateView, listItemView, editView, currentModel, contentCollection, common, dataService) {
+    function (listTemplate, stagesTamplate, CreateView, listItemView, editView, currentModel, contentCollection, filterView, common, dataService) {
         var ProjectsListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -95,18 +96,18 @@ define([
                 }
                 switch (sortClass) {
                     case "sortDn":
-                        {
-                            target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
-                            target$.removeClass('sortDn').addClass('sortUp');
-                            sortConst = 1;
-                        }
+                    {
+                        target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
+                        target$.removeClass('sortDn').addClass('sortUp');
+                        sortConst = 1;
+                    }
                         break;
                     case "sortUp":
-                        {
-                            target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
-                            target$.removeClass('sortUp').addClass('sortDn');
-                            sortConst = -1;
-                        }
+                    {
+                        target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
+                        target$.removeClass('sortUp').addClass('sortDn');
+                        sortConst = -1;
+                    }
                         break;
                 }
                 sortObject[sortBy] = sortConst;
@@ -125,7 +126,9 @@ define([
                     success: function (model) {
                         new editView({ model: model });
                     },
-                    error: function () { alert('Please refresh browser'); }
+                    error: function () {
+                        alert('Please refresh browser');
+                    }
                 });
             },
 
@@ -143,10 +146,9 @@ define([
                 var id = target.data("id");
                 var model = this.collection.get(id);
                 model.save({ health: target.find("div a").data("value") }, {
-                    headers:
-                        {
-                            mid: 39
-                        },
+                    headers: {
+                        mid: 39
+                    },
                     patch: true,
                     validate: false,
                     success: function () {
@@ -203,10 +205,9 @@ define([
                 var model = this.collection.get(id);
 
                 model.save({ workflow: target$.attr("id") }, {
-                    headers:
-                        {
-                            mid: 39
-                        },
+                    headers: {
+                        mid: 39
+                    },
                     patch: true,
                     validate: false,
                     success: function () {
@@ -218,16 +219,12 @@ define([
                 return false;
             },
 
-            showFilteredPage: function () {
+            showFilteredPage: function (workflowIdArray) {
+                var itemsNumber = $("#itemsNumber").text();
                 this.startTime = new Date();
                 this.newCollection = false;
-                var workflowIdArray = [];
-                $('.filter-check-list input:checked').each(function () {
-                    workflowIdArray.push($(this).val());
-                });
                 this.filter = this.filter || {};
                 this.filter['workflow'] = workflowIdArray;
-                var itemsNumber = $("#itemsNumber").text();
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
                 this.changeLocationHash(1, itemsNumber, this.filter);
@@ -248,11 +245,10 @@ define([
                 $(".allNumberPerPage").hide();
                 $("#health ul").hide();
                 $(".newSelectList").hide();
-                if (!$(e.target).closest(".filter-check-list").length) {
+                if (!$(e.target).closest(".drop-down-filter").length) {
                     $(".allNumberPerPage").hide();
-                    if ($(".filter-check-list").is(":visible")) {
-                        $(".filter-check-list").hide();
-                        this.showFilteredPage();
+                    if ($(".drop-down-filter").is(":visible")) {
+                        $(".drop-down-filter").hide();
                     }
                 }
 
@@ -366,10 +362,13 @@ define([
                 var self = this;
                 $('.ui-dialog ').remove();
                 var currentEl = this.$el;
+                var FilterView;
+                var showList;
+                var itemView;
                 currentEl.html('');
 
                 currentEl.append(_.template(listTemplate));
-                var itemView = new listItemView({ collection: this.collection, page: this.page, itemsNumber: this.collection.namberToShow });
+                itemView = new listItemView({ collection: this.collection, page: this.page, itemsNumber: this.collection.namberToShow });
                 itemView.bind('incomingStages', this.pushStages, this);
 
                 currentEl.append(itemView.render());//added two parameters page and items number
@@ -383,13 +382,18 @@ define([
 
                 common.populateWorkflowsList("Projects", ".filter-check-list", "", "/Workflows", null, function (stages) {
                     var stage = (self.filter) ? self.filter.workflow || [] : [];
-                    if (self.filter && stage) {
-                        $('.filter-check-list input').each(function () {
-                            var target = $(this);
-                            target.attr('checked', $.inArray(target.val(), stage) > -1);
-                        });
-                    }
+                    FilterView = new filterView({ collection: stages});
                     itemView.trigger('incomingStages', stages);
+                    // Filter custom event listen ------begin
+                    FilterView.bind('filter', function () {
+                        showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
+                        self.showFilteredPage(showList)
+                    });
+                    FilterView.bind('defaultFilter', function () {
+                        showList = _.pluck(self.stages, '_id');
+                        self.showFilteredPage(showList)
+                    });
+                    // Filter custom event listen ------end
                 });
 
                 $(document).on("click", function (e) {

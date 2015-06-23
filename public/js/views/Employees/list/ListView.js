@@ -138,9 +138,10 @@ define([
                 this.collection.bind('showmore', this.showMoreContent, this);
             },
 
-
             hideItemsNumber: function () {
                 $(".allNumberPerPage").hide();
+                $(".newSelectList").hide();
+                $(".drop-down-filter").hide();
             },
 
             itemsNumber: function (e) {
@@ -282,6 +283,7 @@ define([
                 }, this);
             },  //end first last page in paginations
             //modified for filter Vasya
+
             switchPageCounter: function (event) {
                 event.preventDefault();
                 this.startTime = new Date();
@@ -301,23 +303,24 @@ define([
             },
             //modified for filter Vasya
             showFilteredPage: function (e) {
-                this.startTime = new Date();
-                this.newCollection = false;
-
-                var selectedLetter = $(e.target).text();
-                if ($(e.target).text() == "All") {
-                    selectedLetter = "";
-                }
-                this.filter = this.filter || {};
-                this.filter['letter'] = selectedLetter;
                 var itemsNumber = $("#itemsNumber").text();
+                var selectedLetter = $(e.target).text();
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
+
+                if ($(e.target).text() == "All") {
+                    selectedLetter = "";
+                }
+                this.startTime = new Date();
+                this.newCollection = false;
+                this.filter = this.filter || {};
+                this.filter['letter'] = selectedLetter;
                 this.changeLocationHash(1, itemsNumber, this.filter);
                 this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter });
                 this.getTotalLength(null, itemsNumber, this.filter);
             },
+
             showPage: function (event) {
                 event.preventDefault();
                 this.showP(event, { filter: this.filter, newCollection: this.newCollection, sort: this.sort });
