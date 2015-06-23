@@ -1,12 +1,4 @@
-<div class="filterButton">
-    <span class="text">Stage</span>
-    <div class="arrow">
-        7
-    </div>
-</div>
-<ul class="filter-check-list">
-  <li><input type="checkbox"  value="null" checked="checked"><span>Undefinded</span></li>
-</ul>
+<div id="searchContainer"></div>
 <div id="thumbnailContent">
     <% collection.forEach(function(project){ %>
     <div class="thumbnail" id="<%=project._id%>">
@@ -45,7 +37,7 @@
         <div class="bottom">
             <div class="half-block left">
                 <p class="inner">
-				 
+
                     <a id="<%=project._id%>" class="tasksByProject" href="#easyErp/Tasks/kanban/<%= project._id %>"><%=project.task.length%> Tasks</a>
                 </p>
                 <div class="inner">

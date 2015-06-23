@@ -163,44 +163,27 @@ define([
             },
             //modified for filter Vasya
             showFilteredPage: function (workflowIdArray) {
-                this.startTime = new Date();
-                this.newCollection = false;
-                //var workflowIdArray = [];
+                var itemsNumber = $("#itemsNumber").text();
                 var isConverted = null;
-                this.filter = this.filter || {};
-                /*$('.filter-check-list input:checked').each(function () {
-                    if ($(this).attr("id") == 'isConverted') {
-                        isConverted = true;
-                    } else {
-                        workflowIdArray.push($(this).val());
-                    }
-                })*/
 
-                this.filter['isConverted'] = isConverted;
-                this.filter['workflow'] = workflowIdArray;
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
-                var itemsNumber = $("#itemsNumber").text();
+
+                this.startTime = new Date();
+                this.newCollection = false;
+                this.filter = this.filter || {};
+                this.filter['isConverted'] = isConverted;
+                this.filter['workflow'] = workflowIdArray;
+
                 this.changeLocationHash(1, itemsNumber, this.filter);
                 this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter, parrentContentId: this.parrentContentId });
                 this.getTotalLength(null, itemsNumber, this.filter);
             },
 
-           /* showfilter: function (e) {
-                $(".filter-check-list").toggle();
-                return false;
-            },*/
-
             hideItemsNumber: function (e) {
                 $(".allNumberPerPage").hide();
                 $(".newSelectList").hide();
-                if (!$(e.target).closest(".filter-check-list").length) {
-                    $(".allNumberPerPage").hide();
-                    if ($(".drop-down-filter").is(":visible")) {
-                        $(".drop-down-filter").hide();
-                        //this.showFilteredPage();
-                    }
-                }
+                $(".drop-down-filter").hide();
             },
 
             itemsNumber: function (e) {
@@ -231,7 +214,6 @@ define([
                 var self = this;
                 var currentEl = this.$el;
                 var FilterView;
-                var filterList = [];
                 var pagenation;
                 var showList;
 
@@ -256,30 +238,22 @@ define([
                     var stage = (self.filter) ? self.filter.workflow : null;
                     // Filter rendering begin--------
                     FilterView = new filterView({ collection: stages});
-                    // Filter rendering end--------
-
-                   /* if (stage) {
-                        $('.drop-down-filter input').each(function () {
-                            var target = $(this);
-                            target.attr('checked', $.inArray(target.val(), stage) > -1);
-                        });
-                    }*/
                     itemView.trigger('incomingStages', stages);
+
+                    // Filter custom event listen ------begin
+                    FilterView.bind('filter', function () {
+                        showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
+                        self.showFilteredPage(showList)
+                    });
+                    FilterView.bind('defaultFilter', function () {
+                        showList = _.pluck(self.stages, '_id');
+                        self.showFilteredPage(showList)
+                    });
+                    // Filter custom event listen ------end
                 });
 
-                // Filter custom event listen ------begin
-                this.$el.on('filter', function () {
-                    showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
-                    self.showFilteredPage(showList)
-                });
-                this.$el.on('defaultFilter', function () {
-                    showList = _.pluck(self.stages, '_id');
-                    self.showFilteredPage(showList)
-                });
-                // Filter custom event listen ------end
-
-                $(document).on("click", function (e) {
-                    self.hideItemsNumber(e);
+                $(document).on("click", function () {
+                    self.hideItemsNumber();
                 });
 
                 pagenation = this.$el.find('.pagination');
