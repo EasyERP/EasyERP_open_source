@@ -62,7 +62,7 @@ module.exports = function (models) {
         var projectSchema = tasks[3];
         var customerSchema = tasks[4];
         var wTrackSchema = tasks[5];
-        var InvoiceSchema = tasks[7];
+        var invoiceSchema = tasks[7];
 
         var ownerId = req.session ? req.session.uId : null;
 
@@ -77,6 +77,7 @@ module.exports = function (models) {
         var IndustrySchema = mongoose.Schemas['Industry'];
         var WorkflowSchema = mongoose.Schemas['workflow'];
         var WTrackSchema = mongoose.Schemas[wTrackCollection];
+        var InvoiceSchema = mongoose.Schemas['wTrackInvoice'];
 
         var Project = models.get(req.session.lastDb, projectCollection, ProjectSchema);
         var Customer = models.get(req.session.lastDb, customerCollection, CustomerSchema);
@@ -85,6 +86,7 @@ module.exports = function (models) {
         var Industry = models.get(req.session.lastDb, 'Industry', IndustrySchema);
         var Workflow = models.get(req.session.lastDb, 'workflows', WorkflowSchema);
         var Wtrack = models.get(req.session.lastDb, wTrackCollection, WTrackSchema);
+        var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', InvoiceSchema);
 
         function importCustomer(customerSchema, seriesCb) {
             var query = queryBuilder(customerSchema.table);
@@ -166,6 +168,27 @@ module.exports = function (models) {
             importCustomer(customerSchema, callback);
         };
 
+        function fetchWorkflow(query, callback) {
+            query = query || {
+                wId: 'Projects'
+            };
+
+            var projectionObject = {
+                status: 1,
+                _id: 1
+            };
+
+            Workflow.find(query, projectionObject, function (err, workflows) {
+                if (err) {
+                    return callback(err);
+                }
+
+                workflows = _.groupBy(workflows, 'status');
+
+                callback(null, workflows);
+            });
+        };
+
         function importProject(projectShema, seriesCb) {
             var query = queryBuilder(projectShema.table);
             var waterfallTasks;
@@ -175,25 +198,14 @@ module.exports = function (models) {
             }
 
             function fetchWorkflows(fetchedArray, callback) {
-                var query = {
-                    wId: 'Projects'
-                };
-
-                var projectionObject = {
-                    status: 1,
-                    _id: 1
-                };
-
-                Workflow.find(query, projectionObject, function (err, workflows) {
+                fetchWorkflow(null, function(err, workflows){
                     if (err) {
                         return callback(err);
                     }
 
-                    workflows = _.groupBy(workflows, 'status');
-
                     callback(null, workflows, fetchedArray);
                 });
-            }
+            };
 
             function saverProject(workflows, fetchedArray, callback) {
                 var model;
@@ -454,10 +466,9 @@ module.exports = function (models) {
         };
 
         function importInvoice(InvoiceSchema, callback){
-            var query = queryBuilder(InvoiceSchema.table);
-            var waterfallTasks;
+            var query = queryBuilder(invoiceSchema.table);
 
-            async.waterfall([wTrackInvoiceImporter, groupByInvoice, getData, saverInvoice], function(err, wTrackInvoices){
+            async.waterfall([wTrackInvoiceImporter, groupByInvoice, getData, fetchWorkflows, saverInvoice], function(err, wTrackInvoices){
                 if(err){
                     return callback(err);
                 }
@@ -465,31 +476,45 @@ module.exports = function (models) {
                 callback(null, wTrackInvoices);
             });
 
-            function getData(callback) {
-                handler.importData(query, callback);
+            function getData(groupedInvoices, callback) {
+                handler.importData(query, function(err, invoicecs){
+                    if(err){
+                        return callback(err);
+                    }
+
+                    callback(null, groupedInvoices, invoicecs);
+                });
             }
 
-            function saverInvoice(fetchedArray, callback) {
+            function saverInvoice(groupedInvoices, workflows, fetchedArray, callback) {
                 var model;
-                var mongooseFields = Object.keys(InvoiceSchema.aliases);
+                var mongooseFields = Object.keys(invoiceSchema.aliases);
 
                 async.eachLimit(fetchedArray, 100, function (fetchedInvoice, cb) {
                     var objectToSave = {};
 
                     for (var i = mongooseFields.length - 1; i >= 0; i--) {
                         var key = mongooseFields[i];
-                        var msSqlKey = InvoiceSchema.aliases[key];
-                        var _comparator = InvoiceSchema.comparator;
+                        var msSqlKey = invoiceSchema.aliases[key];
+                        var _comparator = invoiceSchema.comparator;
 
+                        var wTrackQueryQuery;
                         var projectQuery;
-                        var employeeQuery;
-                        var departmentQuery;
+                        var invoiceAmmount = 0;
+                        var invoicePaid = 0;
+                        var balance = 0;
+                        var wTrackInvoice;
 
                         if (_comparator && msSqlKey in _comparator) {
                             fetchedInvoice[msSqlKey] = comparator(fetchedInvoice[msSqlKey], _comparator[msSqlKey]) || fetchedInvoice[msSqlKey];
                         }
 
-                        objectToSave[key] = fetchedInvoice[msSqlKey];
+                        if (key === 'workflow') {
+                            objectToSave[key] = workflows[fetchedInvoice[msSqlKey]][0];
+                        } else {
+                            objectToSave[key] = fetchedInvoice[msSqlKey];
+                        }
+
                         objectToSave.createdBy = {
                             user: ownerId
                         };
@@ -499,30 +524,33 @@ module.exports = function (models) {
                     }
 
                     if (fetchedInvoice) {
-                        departmentQuery = {
-                            ID: fetchedInvoice['Department']
+                        wTrackInvoice = groupedInvoices[fetchedInvoice['ID']];
+
+                        for(var i = wTrackInvoice.length -1; i >=0; i--){
+                            invoiceAmmount += groupedInvoices[fetchedInvoice['ID']][i].Amount;
+                            invoicePaid += groupedInvoices[fetchedInvoice['ID']][i].Paid;
+                        }
+
+                        balance = invoiceAmmount - invoicePaid;
+
+                        wTrackQueryQuery = {
+                            ID: {$in: _.pluck(groupedInvoices[fetchedInvoice['ID']], 'wTrackID')}
                         };
 
                         projectQuery = {
                             ID: fetchedInvoice['Project']
                         };
 
-                        employeeQuery = {
-                            ID: fetchedInvoice['Employee']
-                        };
 
-                        function departmentFinder(callback) {
-                            Department
-                                .findOne(departmentQuery, {
-                                    _id: 1,
-                                    departmentName: 1
-                                })
+                        function wTrackFinder(callback) {
+                            Wtrack
+                                .find(wTrackQueryQuery)
                                 .lean()
-                                .exec(function (err, department) {
+                                .exec(function (err, wTracks) {
                                     if (err) {
                                         return callback(err);
                                     }
-                                    callback(null, department);
+                                    callback(null, wTracks);
                                 });
                         };
 
@@ -530,8 +558,8 @@ module.exports = function (models) {
                             Project
                                 .findOne(projectQuery)
                                 .populate('projectmanager')
-                                .populate('customer')
-                                .populate('workflow')
+                               /* .populate('customer')
+                                .populate('workflow')*/
                                 .lean()
                                 .exec(function (err, project) {
                                     if (err) {
@@ -541,59 +569,37 @@ module.exports = function (models) {
                                 });
                         };
 
-                        function employeeFinder(callback) {
-                            Employee.findOne(employeeQuery, {
-                                _id: 1,
-                                name: 1
-                            })
-                                .lean(true)
-                                .exec(function (err, employee) {
-                                    if (err) {
-                                        return callback(err);
-                                    }
-                                    callback(null, employee);
-                                });
-                        };
-
                         async.parallel({
-                            department: departmentFinder,
-                            project: projectFinder,
-                            employee: employeeFinder
+                            wTrack: wTrackFinder,
+                            project: projectFinder
                         }, function (err, result) {
-                            //objectToSave.dateByWeek = dateCalc(fetchedWtrack.Week, fetchedWtrack.Year);
-                            objectToSave.dateByWeek = fetchedWtrack.Week + 100*fetchedWtrack.Year;
 
-                            if (result.department) {
-                                objectToSave.department = {};
-                                objectToSave.department._id = result.department._id || null;
-                                objectToSave.department.departmentName = result.department.departmentName || '';
-                            }
-                            if (result.project) {
-                                objectToSave.project = {};
-                                objectToSave.project._id = result.project._id || null;
-                                objectToSave.project.projectName = result.project.projectName || '';
-
-                                if (result.project.projectmanager && result.project.projectmanager.name) {
-                                    objectToSave.project.projectmanager = {
-                                        _id: result.project.projectmanager._id,
-                                        name: result.project.projectmanager.name.first + ' ' + result.project.projectmanager.name.last
-                                    };
-                                }
-                                objectToSave.project.customer = result.project.customer && result.project.customer.name ? result.project.customer.name.first + ' ' + result.project.customer.name.last : '';
-                                objectToSave.project.workflow = result.project.workflow ? result.project.workflow.name : '';
-                            }
-
-                            if (result.employee) {
-                                objectToSave.employee = {};
-                                objectToSave.employee._id = result.employee._id || null;
-                                objectToSave.employee.name = result.employee.name ? result.employee.name.first + ' ' + result.employee.name.last : '';
-                            }
-
-                            objectToSave.info = {
-                                salePrice: fetchedWtrack['Revenue']
+                            objectToSave.paymentInfo = {
+                                total: invoiceAmmount,
+                                balance: balance,
+                                unTaxed: invoiceAmmount,
+                                taxes: 0
                             };
 
-                            model = new Wtrack(objectToSave);
+                            if (result.wTrack) {
+                                objectToSave.products = [];
+                                result.wTrack.forEach(function(wTrack){
+                                    var productObject = {};
+
+                                    productObject.unitPrice = wTrack.revenue;
+                                    productObject.product = wTrack._id;
+                                    productObject.taxes = 0;
+                                    productObject.subTotal = wTrack.amount;
+                                    objectToSave.products.push(productObject);
+                                });
+                            }
+                            if (result.project) {
+                                objectToSave.salesPerson = result.project.projectmanager ? result.project.projectmanager._id : null;
+                                objectToSave.project = result.project._id;
+                            }
+
+
+                            model = new Invoice(objectToSave);
                             model.save(cb);
                         });
                     }
@@ -618,6 +624,16 @@ module.exports = function (models) {
                 });
 
                 cbForInvoiceImporter(null, groupedResult);
+            };
+
+            function fetchWorkflows(groupedInvoices, fetchedArray, callback) {
+                fetchWorkflow({wId: 'Sales Invoice'}, function(err, workflows){
+                    if (err) {
+                        return callback(err);
+                    }
+
+                    callback(null, groupedInvoices, workflows, fetchedArray);
+                });
             };
         };
 
