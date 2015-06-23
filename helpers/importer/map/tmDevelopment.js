@@ -11,7 +11,6 @@ module.exports = (function () {
             year: 'Year',
             month: 'Month',
             baseSalary: 'BaseSalary',
-            hourlyWithExpense: 'HourlyWithExpense',
             'calc.salary': 'CalcSalary',
             'calc.onCash': 'CalcOnCash',
             'calc.onCard': 'CalcOnCard',
@@ -196,6 +195,33 @@ module.exports = (function () {
         }
     };
 
+    var invoice = {
+        collection: 'Invoice',
+        table: 'Invoice',
+        aliases: {
+            ID: 'ID',
+            name: 'InvoiceName',
+            project: 'Project',
+            invoiceDate: 'Department',
+            year: 'Year',
+            month: 'Month',
+            week: 'Week',
+            worked: 'Worked',
+            rate: 'Rate',
+            revenue: 'Revenue',
+            cost: 'Cost',
+            amount: 'Amount',
+            isPaid: 'isPaid',
+            1: 'Mo',
+            2: 'Tu',
+            3: 'We',
+            4: 'Th',
+            5: 'Fr',
+            6: 'Sa',
+            7: 'Su'
+        }
+    };
+
     var user = {
         collection: 'Users',
         table: 'Users',
@@ -207,5 +233,5 @@ module.exports = (function () {
         }
     };
 
-    return [department, jobPosition, employee, project, customer, wTrack, salary];
+    return [department, jobPosition, employee, project, customer, wTrack, salary, invoice];
 })();

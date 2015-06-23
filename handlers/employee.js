@@ -30,13 +30,9 @@ var Employee = function (models) {
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
         var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
 
-        function assigneFinder(){
+        function assigneFinder(cb){
             var match = {
                 projectmanager: {$ne: null}
-            };
-
-            var projection = {
-                projectmanager: 1
             };
 
             Project.aggregate([{
@@ -45,21 +41,26 @@ var Employee = function (models) {
                 $group: {
                     _id: "$projectmanager"
                 }
-            }])
+            }], cb);
         };
 
-        Employee
-            .find()
-            .select('_id name department')
-            .populate('department', '_id departmentName')
-            .sort({'name.first': 1})
-            .lean()
-            .exec(function (err, employees) {
-                if (err) {
-                    return next(err);
-                }
-                res.status(200).send({data: employees})
-            });
+        function employeeFinder(assignedArr, cb){
+            Employee
+                .find({_id: {$in: assignedArr}})
+                .select('_id name')
+                .sort({'name.first': 1, 'name.last': 1})
+                .lean()
+                .exec(cb);
+        }
+
+        async.waterfall([assigneFinder, employeeFinder], function(err, employees){
+            if(err){
+                return next(err);
+            }
+
+            res.status(200).send(employees);
+        });
+
     };
 
 };

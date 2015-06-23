@@ -14,22 +14,19 @@ module.exports = (function () {
         year: Number,
         month: Number,
         baseSalary: Number,
-        hourlyWithExpense: Number,
         calc: {
             salary: Number,
             onCash: Number,
-            onCard: Number,
-            onBonus: Number
+            onCard: Number
         },
         paid: {
             onCash: Number,
-            onCard: Number,
-            onBonus: Number
+            onCard: Number
         },
         diff: {
             onCash: Number,
             onCard: Number,
-            onBonus: Number
+            total: Number
         }
     }, {collection: 'Salary'});
 

@@ -1,15 +1,15 @@
 <% salaryCollection.forEach(function(salary, index){ %>
 <tr data-id="<%=salary._id%>">
     <td class = "notForm"><input type="checkbox" value="<%=salary._id%>" class="checkbox" /></td>
-    <td><a href="javascript;" data-id="<%=salary.dataKey%>" class="icon add left" title="open" id="list-createBtn">5</a></td>
+    <td class="icon left">5</td>
     <td><%=salary.month%></td>
     <td><%=salary.year%></td>
-    <td><%=salary.calc.salary%></td>
-    <td><%=salary.calc.onCard%></td>
-    <td><%=salary.paid.onCard%></td>
-    <td><%=salary.diff.onCard%></td>
-    <td><%=salary.calc.onCash%></td>
-    <td><%=salary.paid.onCash%></td>
-    <td><%=salary.diff.onCash%></td>
+    <td class=""><%=salary.calc.salary%></td>
+    <td class=""><%=salary.calc.onCard%></td>
+    <td class=""><%=salary.paid.onCard%></td>
+    <td class=""><%=salary.diff.onCard%></td>
+    <td class=""><%=salary.calc.onCash%></td>
+    <td class=""><%=salary.paid.onCash%></td>
+    <td class=""><%=salary.diff.onCash%></td>
 </tr>
 <% }) %>

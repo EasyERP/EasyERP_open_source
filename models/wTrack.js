@@ -44,7 +44,11 @@ module.exports = (function () {
         cost: {type: Number, /*get: getPrice,*/ set: setPrice},
         amount: {type: Number, /*get: getPrice,*/ set: setPrice},
         isPaid: {type: Boolean, default: false},
-        order: {type: ObjectId, ref: 'Quotation', default: null},
+        invoice: {type: ObjectId, ref: 'Invoice', default: null},
+        info: {
+            productType: { type: String, ref: 'productTypes', default: 'wTrack' },
+            salePrice: {type: Number, default: 100, set: setPrice}
+        },
         whoCanRW: {type: String, enum: ['owner', 'group', 'everyOne'], default: 'everyOne'},
         groups: {
             owner: {type: ObjectId, ref: 'Users', default: null},

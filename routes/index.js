@@ -57,7 +57,7 @@ module.exports = function (app, mainDb) {
     app.use('/paymentTerm', paymentTermRouter);
     app.use('/deliverTo', deliverToTermRouter);
     app.use('/workflow', workflowRouter);
-    app.use('/supplierPayments', paymentRouter);
+    app.use('/payment', paymentRouter);
     app.use('/period', periodRouter);
     app.use('/paymentMethod', paymentMethodRouter);
     app.use('/importData', importDataRouter);
