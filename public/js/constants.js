@@ -34,6 +34,7 @@ define([], function(){
         WTRACK: 'wTrack',
         SALARY: 'Salary',
         REVENUE: 'Revenue',
+        MONTHHOURS: 'monthHours',
 
         RESPONSES: {
             CREATE_QUOTATION: 'Please check at most one supplier or create one',

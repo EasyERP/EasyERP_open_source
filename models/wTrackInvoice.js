@@ -8,35 +8,38 @@ module.exports = (function () {
 
     var payments = {
         _id: false,
-        total: {type: Number, default: 0},
-        balance: {type: Number, default: 0},
-        unTaxed: {type: Number, default: 0},
-        taxes: {type: Number, default: 0}
+        payments: [{ type: ObjectId, ref: 'Payment', default: null }],
+        total: {type: Number, default: 0, set: setPrice},
+        balance: {type: Number, default: 0, set: setPrice},
+        unTaxed: {type: Number, default: 0, set: setPrice},
+        taxes: {type: Number, default: 0, set: setPrice}
     };
 
     var products = {
         _id: false,
         quantity: {type: Number, default: 1},
         unitPrice: Number,
-        product: {type: ObjectId, ref: 'Product', default: null},
+        product: {type: ObjectId, ref: 'wTrack', default: null},
         description: {type: String, default: ''},
-        taxes: Number,
+        taxes: {type: Number, default: 0},
         subTotal: Number
     };
 
     var invoiceSchema = new mongoose.Schema({
+        ID: Number,
+        name: {type: String, default: ''},
+        invoiceType: {type: String, default: 'wTrack'},
         forSales: {type: Boolean, default: true},
         supplier: { type: ObjectId, ref: 'Customers', default: null },
         /*fiscalPosition: { type: String, default: null },*/
         sourceDocument: { type: String, default: null },
-        supplierInvoiceNumber: { type: String, default: null },
         paymentReference: { type: String, default: 'free' },
+
+        project: {type: ObjectId, ref: 'Project', default: null},
 
         invoiceDate: { type: Date, default: Date.now },
         dueDate: Date,
         paymentDate: Date,
-        account: { type: String, default: null },
-        journal: { type: String, default: null },
 
         salesPerson: {type: ObjectId, ref: 'Employees', default: null},
         paymentTerms: {type: ObjectId, ref: 'PaymentTerm', default: null},
@@ -67,11 +70,17 @@ module.exports = (function () {
 
     }, { collection: 'Invoice' });
 
-    mongoose.model('Invoice', invoiceSchema);
+    function setPrice(num) {
+        return num * 100;
+    }
+
+    invoiceSchema.set('toJSON', {getters: true});
+
+    mongoose.model('wTrackInvoice', invoiceSchema);
 
     if(!mongoose.Schemas) {
         mongoose.Schemas = {};
     }
 
-    mongoose.Schemas['Invoice'] = invoiceSchema;
+    mongoose.Schemas['wTrackInvoice'] = invoiceSchema;
 })();

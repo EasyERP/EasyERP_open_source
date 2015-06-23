@@ -5153,6 +5153,7 @@ textarea#editInput {
   position: absolute;
   top: ~"calc(100% - 1px)";
   right: 0;
+  z-index: 50;
 
   .filter-check-list {
     right: auto;
@@ -5210,10 +5211,19 @@ textarea#editInput {
 
 #searchContainer {
   float: right;
-  width: 50%;
+  width: 25%;
   position: relative;
   margin-top: -26px;
-  margin-right: 65px;
+  margin-right: 90px;
+
+  .btn {
+    background: #eeeeee;
+    padding: 6px;
+  }
+
+  .filter-check-list {
+    margin-top: -1px;
+  }
 }
 
 //.filterValues:before {
