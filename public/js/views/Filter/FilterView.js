@@ -38,7 +38,7 @@ define([
 
             showSearchContent: function () {
                 var el = $('.search-content');
-                var selector = 'arrow-down';
+                var selector = 'fa-caret-up';
 
                 $('.search-options').toggle();
 

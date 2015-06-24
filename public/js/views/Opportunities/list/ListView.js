@@ -178,6 +178,7 @@ define([
                 if (!el.closest('.search-view')) {
                     $(".drop-down-filter").hide();
                     $('.search-options').hide();
+                    $('.search-content').removeClass('fa-caret-up')
                 };
 
 
