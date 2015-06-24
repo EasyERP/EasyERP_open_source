@@ -70,7 +70,13 @@ module.exports = function (app, mainDb) {
     app.get('/getDBS', function (req, res) {
         res.send(200, {dbsNames: dbsNames});
     });
-
+    app.get('/currentDb', function (req, res, next) {
+        if (req.session && req.session.lastDb) {
+            res.status(200).send(req.session.lastDb);
+        } else {
+            res.status(401).send();
+        }
+    });
     app.get('/account/authenticated', function (req, res, next) {
         if (req.session && req.session.loggedIn) {
             res.send(200);

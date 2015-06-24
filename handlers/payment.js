@@ -33,11 +33,11 @@ var Payment = function (models) {
 
     this.getForView = function (req, res, next) {
         var viewType = req.params.viewType;
-        var byType = req.params.byType;
+        var forSale = req.params.byType === 'sales';
 
         switch (viewType) {
             case "list":
-                getPaymentFilter(req, res, next, byType);
+                getPaymentFilter(req, res, next, forSale);
                 break;
             /*case "form":
                 getProductsById(req, res, next);
@@ -45,12 +45,12 @@ var Payment = function (models) {
         }
     };
 
-    function getPaymentFilter(req, res, next, byType) {
+    function getPaymentFilter(req, res, next, forSale) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getReadAccess(req, req.session.uId, 60, function (access) {
                 if (access) {
                     var Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
-                    var optionsObject = {byType: byType};
+                    var optionsObject = {forSale: forSale};
                     var sort = {};
                     var count = req.query.count ? req.query.count : 50;
                     var page = req.query.page;

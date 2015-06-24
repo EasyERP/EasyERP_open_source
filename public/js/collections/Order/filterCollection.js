@@ -33,15 +33,28 @@
 
             initialize: function (options) {
                 this.startTime = new Date();
+
                 var that = this;
+                var regex = /^sales/;
+
                 this.namberToShow = options.count;
                 this.viewType = options.viewType;
                 this.contentType = options.contentType;
                 this.count = options.count;
                 this.page = options.page || 1;
+
+                options.filter = {};
+
+                if (regex.test(this.contentType)) {
+                    options.filter.forSales = true;
+                }
+
                 if (options && options.viewType) {
                     this.url += options.viewType;
                 }
+
+                this.filter = options.filter;
+
                 this.fetch({
                     data: options,
                     reset: true,

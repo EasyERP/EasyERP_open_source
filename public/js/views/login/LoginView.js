@@ -6,6 +6,7 @@ define([
 
     var LoginView = Backbone.View.extend({
         el: '#wrapper',
+
         initialize: function (options) {
             if (options && options.dbs) {
                 this.render(options);
@@ -22,55 +23,64 @@ define([
             "focusout #upass": "passwordFocus",
             "click .remember-me": "checkClick"
         },
-        render: function(options){
+        render: function (options) {
             $('title').text('Login');
             if (options) {
-                this.$el.html(_.template(LoginTemplate, { options: options.dbs }));
+                this.$el.html(_.template(LoginTemplate, {options: options.dbs}));
             } else {
                 this.$el.html(LoginTemplate);
                 $("#loginForm").addClass("notRegister");
             }
             return this;
         },
-        usernameFocus: function(event){
+        usernameFocus: function (event) {
             this.$el.find(".icon-login").toggleClass("active");
         },
-        passwordFocus: function(event){
+        passwordFocus: function (event) {
             this.$el.find(".icon-pass").toggleClass("active");
 
         },
 
-        checkClick: function(event){
+        checkClick: function (event) {
             this.$el.find(".remember-me").toggleClass("active");
-            if (this.$el.find("#urem").attr("checked")){
+            if (this.$el.find("#urem").attr("checked")) {
                 this.$el.find("#urem").removeAttr("checked");
-            }else{
-                this.$el.find("#urem").attr("checked","checked");
+            } else {
+                this.$el.find("#urem").attr("checked", "checked");
             }
         },
 
-        login: function(event){
+        login: function (event) {
             event.preventDefault();
+
+            var err = "";
+            var currentDb = this.$el.find("#dbs :selected").data("id");
+
+            App.currentDb = currentDb;
+
             $("#loginForm").removeClass("notRegister");
             $("#loginForm").removeClass("notRegister");
+
             var data = {
                 login: this.$("#ulogin").val(),
                 pass: this.$("#upass").val(),
-                dbId: this.$el.find("#dbs :selected").data("id")
+                dbId: currentDb
             };
-            var err = "";
-            if (data.login.length<3){
-                err+="Login must be longer than 3 characters<br/>";
+
+            if (data.login.length < 3) {
+                err += "Login must be longer than 3 characters<br/>";
             }
-            if (data.pass.length<3){
-                err+="Password must be longer than 3 characters";
+            if (data.pass.length < 3) {
+                err += "Password must be longer than 3 characters";
             }
-            if (err){
+            if (err) {
                 $("#loginForm .error").html(err);
                 $("#loginForm").addClass("notRegister");
                 return;
             }
-            if(data.login == ""){$("#loginForm").addClass("notRegister");}
+            if (data.login == "") {
+                $("#loginForm").addClass("notRegister");
+            }
             $.ajax({
                 url: "/login",
                 type: "POST",

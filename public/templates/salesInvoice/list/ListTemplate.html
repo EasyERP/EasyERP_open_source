@@ -8,7 +8,7 @@
     <td><%=Invoice.invoiceDate%></td>
     <td><%=(Invoice.description) ? Invoice.description : ''%></td>
     <td><%=(Invoice.salesPerson)? Invoice.salesPerson.name.first+' '+Invoice.salesPerson.name.last:''%></td>
-    <td><%=(Invoice.supplier.name)? Invoice.supplier.name.first+' '+Invoice.supplier.name.last:' - - - '%></td>
+    <td><%=(Invoice.supplier)? Invoice.supplier.name.first+' '+Invoice.supplier.name.last:' - - - '%></td>
     <td><%=(Invoice.analytic) ? Invoice.analytic : ''%></td>
     <td id='<%=Invoice._id%>'>
         <%if(Invoice.workflow){%>
