@@ -63,9 +63,9 @@ define([
 
                 filterIcons.addClass('active');
 
-                if (!filterValues.find('.iconFilter').length) {
-                    filterValues.prepend('<span class="iconFilter"></span>')
-                }
+                //if (!filterValues.find('.iconFilter').length) {
+                //    filterValues.prepend('<span class="iconFilter"></span>')
+                //}
 
                 $.each(input, function (index, value) {
                     if (value.checked) {
@@ -92,7 +92,8 @@ define([
                         if (value.id !== 'defaultFilter') value.checked = false
                     });
                     $.each($('.filterValues span'), function (index, item) {
-                        if (item.className !== 'Default' && item.className !== 'iconFilter') item.remove();
+                        //if (item.className !== 'Default' && item.className !== 'iconFilter') item.remove();
+                        if (item.className !== 'Default') item.remove();
                     });
                     this.trigger('defaultFilter');
                 }

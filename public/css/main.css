@@ -7411,7 +7411,7 @@ textarea#editInput {
   position: absolute;
   top: calc(100% - 1px);
   right: 0;
-  z-index: 50;
+  z-index: 500;
 }
 .search-options .filter-check-list {
   right: auto;
