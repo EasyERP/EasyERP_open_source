@@ -170,14 +170,15 @@
             },
 
             hideItemsNumber: function (e) {
+                var el = e.target;
+
                 $(".allNumberPerPage").hide();
                 $(".newSelectList").hide();
-                if (!$(e.target).closest(".drop-down-filter").length) {
-                    $(".allNumberPerPage").hide();
-                    if ($(".drop-down-filter").is(":visible")) {
-                        $(".drop-down-filter").hide();
-                    }
-                }
+                if (!el.closest('.search-view')) {
+                    $(".drop-down-filter").hide();
+                    $('.search-options').hide();
+                    $('.search-content').removeClass('fa-caret-up')
+                };
             },
 
             render: function () {

@@ -171,10 +171,17 @@ define([
                 this.getTotalLength(null, itemsNumber, this.filter);
             },
 
-            hideItemsNumber: function () {
+            hideItemsNumber: function (e) {
+                var el = e.target;
                 $(".allNumberPerPage").hide();
                 $(".newSelectList").hide();
-                $(".drop-down-filter").hide();
+                if (!el.closest('.search-view')) {
+                    $(".drop-down-filter").hide();
+                    $('.search-options').hide();
+                    $('.search-content').removeClass('fa-caret-up')
+                };
+
+
             },
 
             itemsNumber: function (e) {
@@ -227,9 +234,6 @@ define([
                         $("#top-bar-deleteBtn").hide();
                 });
 
-                $(document).on("click", function (e) {
-                    self.hideItemsNumber(e);
-                });
 
                 common.populateWorkflowsList("Opportunities", ".filter-check-list", "", "/Workflows", null, function (stages) {
                     self.stages = stages;
@@ -246,6 +250,9 @@ define([
                         self.showFilteredPage(showList)
                     });
                     // Filter custom event listen ------end
+                });
+                $(document).on("click", function (e) {
+                    self.hideItemsNumber(e);
                 });
                 var pagenation = this.$el.find('.pagination');
                 if (this.collection.length === 0) {

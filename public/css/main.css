@@ -3253,6 +3253,48 @@ dl dd a.formLink {
 .half-block.taskNote #noteArea {
   width: 100%;
 }
+.funnelIcon {
+  display: inline-block;
+  height: 100%;
+  vertical-align: top;
+  background-color: #777;
+  color: #fff;
+  font-size: 100%;
+  line-height: 18px !important;
+  width: 15px;
+  text-align: center;
+}
+.filterValues {
+  display: inline-block;
+  height: 100%;
+  vertical-align: top;
+}
+.filterValues > span {
+  padding: 0 2px;
+  border-left: 1px solid #afafb6;
+  height: 100%;
+  display: inline-block;
+}
+.filterValues > span:first-child {
+  border: none;
+}
+.filterValues > span:last-child {
+  padding-right: 16px;
+}
+.removeValues {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  color: #8786b7;
+  line-height: 8px;
+  width: 12px;
+  height: 12px;
+  padding-top: 1px;
+  text-align: center;
+  font-weight: bold;
+  cursor: pointer;
+  text-shadow: 0 1px 1px white;
+}
 .filterButton {
   background-color: #FFF;
   border: 1px solid #ababab;
@@ -7411,6 +7453,7 @@ textarea#editInput {
   position: absolute;
   top: calc(100% - 1px);
   right: 0;
+  z-index: 500;
 }
 .search-options .filter-check-list {
   right: auto;
@@ -7426,19 +7469,19 @@ textarea#editInput {
   float: left;
 }
 .drop-down-filter {
-  background-color: #F5F5F5;
   display: none;
   position: absolute;
   z-index: 10;
-  width: 100px;
-  margin-top: 5px;
+  width: 150px;
+  background-color: white;
+  border: 1px solid #c0c0c0;
 }
 .drop-down-filter li {
   cursor: pointer;
   margin-bottom: 5px;
 }
 .drop-down-filter li:nth-child(2n) {
-  border-bottom: 2px solid rgba(248, 129, 99, 0.42);
+  border-bottom: 1px solid #c0c0c0;
   padding-bottom: 5px;
 }
 .drop-down-filter li:last-child {
@@ -7452,16 +7495,24 @@ textarea#editInput {
   background: #f0f0fa;
   height: 18px;
   line-height: 18px;
+  position: relative;
 }
 .active {
   display: inline-block;
 }
 #searchContainer {
   float: right;
-  width: 50%;
+  width: 25%;
   position: relative;
   margin-top: -26px;
-  margin-right: 65px;
+  margin-right: 90px;
+}
+#searchContainer .btn {
+  background: #eeeeee;
+  padding: 6px;
+}
+#searchContainer .filter-check-list {
+  margin-top: -1px;
 }
 .removeValues {
   cursor: pointer;

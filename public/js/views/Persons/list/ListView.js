@@ -125,10 +125,15 @@ define([
                 this.getTotalLength(null, itemsNumber, this.filter);
             },
 
-            hideItemsNumber: function () {
+            hideItemsNumber: function (e) {
+                var el = e.target;
                 $(".allNumberPerPage").hide();
                 $(".newSelectList").hide();
-                $(".drop-down-filter").hide();
+                if (!el.closest('.search-view')) {
+                    $(".drop-down-filter").hide();
+                    $('.search-options').hide();
+                    $('.search-content').removeClass('fa-caret-up')
+                };
             },
 
             itemsNumber: function (e) {
@@ -190,12 +195,12 @@ define([
                     self.showFilteredPage(null, showList)
                 });
                 FilterView.bind('defaultFilter', function () {
-                    showList = $('#defaultFilter').val().split(',');
+                    showList = [];
                     self.showFilteredPage(null, showList)
                 });
                 // Filter custom event listen ------end
-                $(document).on("click", function () {
-                    self.hideItemsNumber();
+                $(document).on("click", function (e) {
+                    self.hideItemsNumber(e);
                 });
 
                 common.buildAphabeticArray(this.collection, function (arr) {
@@ -236,6 +241,7 @@ define([
                     pagenation.show();
                 }
             },
+
             previousPage: function (event) {
                 event.preventDefault();
                 $('#check_all').prop('checked', false);
@@ -342,13 +348,18 @@ define([
                    }
                }
                 this.filter = this.filter || {};
-                if (showList.indexOf('isCustomer')) {
-                    this.filter['isCustomer'] = true;
+                if (showList.indexOf('isCustomer') !== -1) {
+                    this.filter['isCustomer'] = 1;
+                }else if (showList.indexOf('isSupplier') !== -1) {
+                    this.filter['isSupplier'] = 1;
+                } else {
+                    delete this.filter['isSupplier'];
+                    delete this.filter['isCustomer'];
                 }
-                if (showList.indexOf('isSupplier')) {
-                    this.filter['isSupplier'] = true;
+                if (this.filter['isSupplier'] && this.filter['isCustomer']) {
+                    delete this.filter['isSupplier'];
+                    delete this.filter['isCustomer'];
                 }
-
                 this.startTime = new Date();
                 this.newCollection = false;
                 this.filter['letter'] = selectedLetter;
@@ -356,6 +367,7 @@ define([
                 this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter});
                 this.getTotalLength(null, itemsNumber, this.filter);
             },
+
             showPage: function (event) {
                 event.preventDefault();
                 this.showP(event, {filter: this.filter, newCollection: this.newCollection, sort: this.sort});
@@ -421,6 +433,7 @@ define([
                     }
                 }
             },
+
             deleteItemsRender: function (deleteCounter, deletePage) {
                 dataService.getData('/totalCollectionLength/Persons', {
                     filter: this.filter,
@@ -445,6 +458,7 @@ define([
                     pagenation.show();
                 }
             },
+
             deleteItems: function () {
                 var currentEl = this.$el;
                 var that = this,

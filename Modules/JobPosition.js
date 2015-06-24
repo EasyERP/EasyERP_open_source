@@ -310,6 +310,11 @@ var JobPosition = function (models) {
                                 } else {
                                     query.sort({"editedBy.date": -1});
                                 }
+                                if (data && data.filter && data.filter.workflow) {
+                                    query.where('workflow').in(data.filter.workflow);
+                                } else if (data && (!data.newCollection || data.newCollection === 'false')) {
+                                    query.where('workflow').in([]);
+                                }
                                 query.select("_id createdBy editedBy name department totalForecastedEmployees numberOfEmployees expectedRecruitment workflow").
                                     populate('createdBy.user', 'login').
                                     populate('editedBy.user', 'login').

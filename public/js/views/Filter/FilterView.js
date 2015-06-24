@@ -13,7 +13,8 @@ define([
             events: {
                 "click .search-content": 'showSearchContent',
                 "click .filter": 'showFilterContent',
-                "click .filter-check-list input": "writeValue",
+                "click .drop-down-filter input": "writeValue",
+                "click .drop-down-filter li": "triggerClick",
                 "click .removeValues": "removeValues"
             },
 
@@ -29,9 +30,15 @@ define([
                 return this;
             },
 
+            triggerClick: function (e) {
+                if (e.target.localName === 'li') {
+                    $(e.target.children[0]).trigger('click');
+                }
+            },
+
             showSearchContent: function () {
                 var el = $('.search-content');
-                var selector = 'arrow-down';
+                var selector = 'fa-caret-up';
 
                 $('.search-options').toggle();
 
@@ -43,7 +50,7 @@ define([
             },
 
             showFilterContent: function () {
-                $('.filter-check-list').toggle('fast');
+                $('.drop-down-filter').toggle();
                 return false;
             },
 
@@ -51,14 +58,14 @@ define([
                 var inputText = e.target.nextElementSibling.textContent;
                 var filterValues = $('.filterValues');
                 var filterIcons = $('.filter-icons');
-                var input = $('.filter-check-list input');
+                var input = $('.drop-down-filter input');
                 var checked;
 
                 filterIcons.addClass('active');
 
-                if (!filterValues.find('.iconFilter').length) {
-                    filterValues.prepend('<span class="iconFilter fa fa-filter"></span>')
-                }
+                //if (!filterValues.find('.iconFilter').length) {
+                //    filterValues.prepend('<span class="iconFilter"></span>')
+                //}
 
                 $.each(input, function (index, value) {
                     if (value.checked) {
@@ -85,12 +92,13 @@ define([
                         if (value.id !== 'defaultFilter') value.checked = false
                     });
                     $.each($('.filterValues span'), function (index, item) {
-                        if (item.className !== 'Default' && item.className !== 'iconFilter') item.remove();
+                        //if (item.className !== 'Default' && item.className !== 'iconFilter') item.remove();
+                        if (item.className !== 'Default') item.remove();
                     });
                     this.trigger('defaultFilter');
                 }
 
-                if ($('.filter-check-list input:checkbox:checked').length === 0) {
+                if ($('.drop-down-filter input:checkbox:checked').length === 0) {
                     this.trigger('defaultFilter');
                 }
 
@@ -99,7 +107,7 @@ define([
             removeValues: function () {
                 $('.filterValues').empty();
                 $('.filter-icons').removeClass('active');
-                $.each($('.filter-check-list input'), function (index, value) {
+                $.each($('.drop-down-filter input'), function (index, value) {
                     value.checked = false
                 });
                 this.trigger('defaultFilter');

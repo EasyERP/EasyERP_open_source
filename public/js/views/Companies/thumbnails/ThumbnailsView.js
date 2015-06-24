@@ -1,13 +1,14 @@
 ﻿define([
-    'common',
-    'views/Companies/EditView',
-    'views/Companies/CreateView',
-    'text!templates/Alpabet/AphabeticTemplate.html',
-    "text!templates/Companies/thumbnails/ThumbnailsItemTemplate.html",
-    'dataService'
-],
+        'common',
+        'views/Companies/EditView',
+        'views/Companies/CreateView',
+        'text!templates/Alpabet/AphabeticTemplate.html',
+        "text!templates/Companies/thumbnails/ThumbnailsItemTemplate.html",
+        'dataService',
+        'views/Filter/FilterView'
+    ],
 
-    function (common, editView, createView, AphabeticTemplate, ThumbnailsItemTemplate, dataService) {
+    function (common, editView, createView, AphabeticTemplate, ThumbnailsItemTemplate, dataService, filterView) {
         var CompaniesThumbnalView = Backbone.View.extend({
             el: '#content-holder',
             countPerPage: 0,
@@ -50,8 +51,8 @@
                 common.getImages(ids, "/getCustomersImages");
             },
 
-            getTotalLength: function(currentNumber,filter, newCollection) {
-                dataService.getData('/totalCollectionLength/Companies', { currentNumber: currentNumber, filter:this.filter, newCollection: this.newCollection }, function (response, context) {
+            getTotalLength: function (currentNumber, filter, newCollection) {
+                dataService.getData('/totalCollectionLength/Companies', { currentNumber: currentNumber, filter: this.filter, newCollection: this.newCollection }, function (response, context) {
                     var showMore = context.$el.find('#showMoreDiv');
                     if (response.showMore) {
                         if (showMore.length === 0) {
@@ -66,23 +67,46 @@
                 }, this);
             },
 
-            alpabeticalRender: function (e) {
-                    this.$el.find('.thumbnailwithavatar').remove();
-                    this.startTime = new Date();
-                    this.newCollection = false;
-                    var target = $(e.target);
-                    target.parent().find(".current").removeClass("current");
-                    target.addClass("current");
-                    var selectedLetter = $(e.target).text();
+            alpabeticalRender: function (e, showList) {
+                var selectedLetter;
+                var target;
+                if (e && e.target) {
+                    selectedLetter = $(e.target).text();
+                    target = $(e.target);
                     if ($(e.target).text() == "All") {
                         selectedLetter = "";
                     }
-                    this.filter = (this.filter && this.filter !== 'empty') ? this.filter : {};
-                    this.filter['letter'] = selectedLetter;
-                    this.defaultItemsNumber = 0;
-                    this.changeLocationHash(null, this.defaultItemsNumber, this.filter);
-                    this.collection.showMoreAlphabet({ count:this.defaultItemsNumber, filter: this.filter });
-                    this.getTotalLength(this.defaultItemsNumber, this.filter);
+                    target.parent().find(".current").removeClass("current");
+                    target.addClass("current");
+                }
+
+
+                this.$el.find('.thumbnailwithavatar').remove();
+                this.startTime = new Date();
+                this.newCollection = false;
+                this.filter = (this.filter && this.filter !== 'empty') ? this.filter : {};
+
+                if (showList) {
+                    if (showList.indexOf('isCustomer') !== -1) {
+                        this.filter['isCustomer'] = 1;
+                    }else if (showList.indexOf('isSupplier') !== -1) {
+                        this.filter['isSupplier'] = 1;
+                    } else {
+                        delete this.filter['isSupplier'];
+                        delete this.filter['isCustomer'];
+                    }
+                    if (this.filter['isSupplier'] && this.filter['isCustomer']) {
+                        delete this.filter['isSupplier'];
+                        delete this.filter['isCustomer'];
+                    }
+                }
+
+                if (selectedLetter || selectedLetter === '') this.filter['letter'] = selectedLetter;
+
+                this.defaultItemsNumber = 0;
+                this.changeLocationHash(null, this.defaultItemsNumber, this.filter);
+                this.collection.showMoreAlphabet({ count: this.defaultItemsNumber, page: 1, filter: this.filter });
+                this.getTotalLength(this.defaultItemsNumber, this.filter);
             },
 
             gotoForm: function (e) {
@@ -96,6 +120,9 @@
                 var self = this;
                 var createdInTag = "<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>";
                 var currentEl = this.$el;
+                var filterObject;
+                var FilterView;
+                var showList;
 
                 currentEl.html('');
 
@@ -112,9 +139,9 @@
                         selectedLetter: (self.selectedLetter == "" ? "All" : self.selectedLetter),
                         allAlphabeticArray: self.allAlphabeticArray
                     }));
-                var currentLetter = (self.filter) ? self.filter.letter : null
+                    var currentLetter = (self.filter) ? self.filter.letter : null
                     if (currentLetter) {
-                        $('#startLetter a').each(function() {
+                        $('#startLetter a').each(function () {
                             var target = $(this);
                             if (target.text() == currentLetter) {
                                 target.addClass("current");
@@ -123,7 +150,70 @@
                     }
                 });
                 currentEl.append(createdInTag);
+                filterObject = [
+                    {
+                        name: 'isCustomer',
+                        _id: 'isCustomer'
+                    },
+                    {
+                        name: 'isSupplier',
+                        _id: 'isSupplier'
+                    }
+                ];
+                FilterView = new filterView({ collection: filterObject});
+                // Filter custom event listen ------begin
+                FilterView.bind('filter', function () {
+                    showList = $('.drop-down-filter input:checkbox:checked').map(function () {
+                        return this.value;
+                    }).get();
+                    self.alpabeticalRender(null, showList)
+                });
+                FilterView.bind('defaultFilter', function () {
+                    showList = [];
+                    self.alpabeticalRender(null, showList)
+                });
+                // Filter custom event listen ------end
+                $(document).on("click", function (e) {
+                    self.hideItemsNumber(e);
+                });
                 return this;
+            },
+
+            showFilteredPage: function (showList) {
+                var itemsNumber = $("#itemsNumber").text();
+                $("#top-bar-deleteBtn").hide();
+                $('#check_all').prop('checked', false);
+
+                this.filter = this.filter || {};
+                if (showList.indexOf('isCustomer') !== -1) {
+                    this.filter['isCustomer'] = 1;
+                }else if (showList.indexOf('isSupplier') !== -1) {
+                    this.filter['isSupplier'] = 1;
+                } else {
+                    delete this.filter['isSupplier'];
+                    delete this.filter['isCustomer'];
+                }
+                if (this.filter['isSupplier'] && this.filter['isCustomer']) {
+                    delete this.filter['isSupplier'];
+                    delete this.filter['isCustomer'];
+                }
+                this.filter['isSupplier'] = 1;
+                this.startTime = new Date();
+                this.newCollection = false;
+                this.changeLocationHash(1, itemsNumber, this.filter);
+                this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter});
+                this.getTotalLength(null, itemsNumber, this.filter);
+            },
+            hideItemsNumber: function (e) {
+                var el = e.target;
+
+                $(".allNumberPerPage").hide();
+                $(".newSelectList").hide();
+                if (!el.closest('.search-view')) {
+                    $(".drop-down-filter").hide();
+                    $('.search-options').hide();
+                    $('.search-content').removeClass('fa-caret-up')
+                };
             },
 
             showMore: function (event) {
