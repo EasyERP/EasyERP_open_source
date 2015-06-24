@@ -36,6 +36,7 @@ var Invoice = function (models) {
 
     this.receive = function (req, res, next) {
         var id = req.body.orderId;
+        var forSales = !!req.body.forSales;
         var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
         var Order = models.get(req.session.lastDb, 'Quotation', OrderSchema);
         var parallelTasks;
@@ -55,7 +56,7 @@ var Invoice = function (models) {
         }
 
         function findOrder(callback) {
-            Order.findById(id, callback);
+            Order.findById(id).lean().exec(callback);
         };
 
         function parallel(callback) {
@@ -78,6 +79,7 @@ var Invoice = function (models) {
                 return callback(err);
             }
 
+            delete order._id;
             invoice = new Invoice(order);
 
             if (req.session.uId) {

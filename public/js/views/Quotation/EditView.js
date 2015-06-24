@@ -98,9 +98,16 @@ define([
                 e.preventDefault();
 
                 var self = this;
+                var wId;
+
+                if (this.forSales) {
+                    wId = 'Sales Order';
+                } else {
+                    wId = 'Purchase Order';
+                }
 
                 populate.fetchWorkflow({
-                    wId: 'Purchase Order',
+                    wId: wId,
                     source: 'purchase',
                     status: 'In Progress',
                     targetSource: 'order'
@@ -123,7 +130,9 @@ define([
                             },
                             patch: true,
                             success: function () {
-                                Backbone.history.navigate("easyErp/Order", {trigger: true});
+                                var redirectUrl = self.forSales ? "easyErp/salesOrder" : "easyErp/Order";
+
+                                Backbone.history.navigate(redirectUrl, {trigger: true});
                             }
                         });
                     } else {
@@ -144,6 +153,8 @@ define([
                     status: 'Cancelled',
                     order: 1
                 }, function (workflow) {
+                    var redirectUrl = self.forSales ? "easyErp/salesQuotation" : "easyErp/Quotation";
+
                     if (workflow && workflow.error) {
                         return alert(workflow.error.statusText);
                     }
@@ -156,7 +167,7 @@ define([
                         },
                         patch: true,
                         success: function () {
-                            Backbone.history.navigate("easyErp/Quotation", {trigger: true});
+                            Backbone.history.navigate(redirectUrl, {trigger: true});
                         }
                     });
                 });
@@ -170,6 +181,8 @@ define([
                 populate.fetchWorkflow({
                     wId: 'Quotation'
                 }, function (workflow) {
+                    var redirectUrl = self.forSales ? "easyErp/salesQuotation" : "easyErp/Quotation";
+
                     if (workflow && workflow.error) {
                         return alert(workflow.error.statusText);
                     }
@@ -182,7 +195,7 @@ define([
                         },
                         patch: true,
                         success: function () {
-                            Backbone.history.navigate("easyErp/Quotation", {trigger: true});
+                            Backbone.history.navigate(redirectUrl, {trigger: true});
                         }
                     });
                 });

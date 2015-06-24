@@ -17,8 +17,10 @@ define([
             template: _.template(EditTemplate),
 
             initialize: function (options) {
+
                 _.bindAll(this, "render", "saveItem");
                 _.bindAll(this, "render", "deleteItem");
+
                 this.currentModel = (options.model) ? options.model : options.collection.getElement();
                 this.currentModel.urlRoot = "/Invoice";
                 this.responseObj = {};
