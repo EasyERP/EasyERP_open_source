@@ -125,10 +125,14 @@ define([
                 this.getTotalLength(null, itemsNumber, this.filter);
             },
 
-            hideItemsNumber: function () {
+            hideItemsNumber: function (e) {
+                var el = e.target;
                 $(".allNumberPerPage").hide();
                 $(".newSelectList").hide();
-                $(".drop-down-filter").hide();
+                if (!el.closest('.search-view')) {
+                    $(".drop-down-filter").hide();
+                    $('.search-options').hide();
+                };
             },
 
             itemsNumber: function (e) {
@@ -194,8 +198,8 @@ define([
                     self.showFilteredPage(null, showList)
                 });
                 // Filter custom event listen ------end
-                $(document).on("click", function () {
-                    self.hideItemsNumber();
+                $(document).on("click", function (e) {
+                    self.hideItemsNumber(e);
                 });
 
                 common.buildAphabeticArray(this.collection, function (arr) {
@@ -342,10 +346,10 @@ define([
                    }
                }
                 this.filter = this.filter || {};
-                if (showList.indexOf('isCustomer')) {
+                if (showList.indexOf('isCustomer') !== -1) {
                     this.filter['isCustomer'] = true;
                 }
-                if (showList.indexOf('isSupplier')) {
+                if (showList.indexOf('isSupplier') !== -1) {
                     this.filter['isSupplier'] = true;
                 }
 
