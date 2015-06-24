@@ -3253,6 +3253,48 @@ dl dd a.formLink {
 .half-block.taskNote #noteArea {
   width: 100%;
 }
+.funnelIcon {
+  display: inline-block;
+  height: 100%;
+  vertical-align: top;
+  background-color: #777;
+  color: #fff;
+  font-size: 100%;
+  line-height: 18px !important;
+  width: 15px;
+  text-align: center;
+}
+.filterValues {
+  display: inline-block;
+  height: 100%;
+  vertical-align: top;
+}
+.filterValues > span {
+  padding: 0 2px;
+  border-left: 1px solid #afafb6;
+  height: 100%;
+  display: inline-block;
+}
+.filterValues > span:first-child {
+  border: none;
+}
+.filterValues > span:last-child {
+  padding-right: 16px;
+}
+.removeValues {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  color: #8786b7;
+  line-height: 8px;
+  width: 12px;
+  height: 12px;
+  padding-top: 1px;
+  text-align: center;
+  font-weight: bold;
+  cursor: pointer;
+  text-shadow: 0 1px 1px white;
+}
 .filterButton {
   background-color: #FFF;
   border: 1px solid #ababab;
@@ -7453,6 +7495,7 @@ textarea#editInput {
   background: #f0f0fa;
   height: 18px;
   line-height: 18px;
+  position: relative;
 }
 .active {
   display: inline-block;
