@@ -1,0 +1,14 @@
+<tr id="false" data-id="<%=cid%>">
+    <td data-content="number"><%=cid%></td>
+    <td class="notForm"><input type="checkbox" value="<%=cid%>" class="checkbox" /></td>
+    <td class="editable" data-content="employee"><%=employee ? employee.name : ''%></td>
+    <td><%=dataKey%></td>
+    <td data-type="input" class="editable autoCalc calc" data-content="salary"><%=baseSalary%></td>
+    <td data-type="input" class="editable autoCalc cash calc" data-content="onCash"><%=calc.onCash%></td>
+    <td data-type="input" class="editable autoCalc cash paid" data-content="onCash"><%=paid.onCash%></td>
+    <td class="diff" data-content="onCash"><%=diff.onCash%></td>
+    <td data-type="input" class="editable autoCalc card calc" data-content="onCard"><%=calc.onCard%></td>
+    <td data-type="input" class="editable autoCalc card paid" data-content="onCard"><%=paid.onCard%></td>
+    <td class="diff" data-content="onCard"><%=diff.onCard%></td>
+    <td class="diff" data-content="total"><%=diff.total%></td>
+</tr>

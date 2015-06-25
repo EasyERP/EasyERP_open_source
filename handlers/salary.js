@@ -9,6 +9,7 @@ var Salary = function (models) {
     var SalaryCashSchema = mongoose.Schemas['SalaryCash'];
     var async = require('async');
     var mapObject = require('../helpers/bodyMaper');
+    var self = this;
 
     this.remove = function (req, res, next) {
         var self = this;
@@ -67,6 +68,7 @@ var Salary = function (models) {
                             date: new Date().toISOString()
                         };
                         delete data._id;
+                        data.baseSalary = data.calc['salary'];
                         Salary.findByIdAndUpdate(id, {$set: data}, cb);
                     }, function (err) {
                         if (err) {
@@ -95,45 +97,43 @@ var Salary = function (models) {
             month = body[0].month;
             year = body[0].year;
 
-            async.series([
-                    function () {
-                        async.each(body, function (element, callback) {
-                                salaryModel = new Salary(mapObject(element));
+            async.each(body, function (element, callback) {
+                    salaryModel = new Salary(mapObject(element));
 
-                                salaryModel.save(function (err, result) {
-                                    if (err) {
-                                        return callback(err);
-                                    }
-                                    callback();
-                                });
-                            }, function (err) {
-                                if (err) {
-                                    next(err);
-                                }
-                                console.log('Done!');
-                            }
-                        );
-                    },
-                    function () {
-                        this.recalculateCashSalary(req, res, next);
-                    },
-                    function () {
-                        var query = SalaryCash.findOne({"$and": [{month: month}, {year: year}]});
-
-                        query.exec(function (err, result) {
-                            if (err) {
-                                return next(err);
-                            }
-                            res.status(200).send({success: result});
-                        });
-                        //callback(null, "Done!");
-                    }
-                ],
-                function (err, results) {
+                    salaryModel.save(function (err, result) {
+                        if (err) {
+                            return callback(err);
+                        }
+                        callback();
+                    });
+                }, function (err) {
                     if (err) {
                         next(err);
                     }
-                    console.log('Done!');
+                    async.series([
+                            function (callback) {
+                                self.recalculateCashSalary(req, callback);
+                            },
+                            function (callback) {
+                                var query = SalaryCash.findOne({"$and": [{month: month}, {year: year}]});
+
+                                query.exec(function (err, result) {
+                                    if (err) {
+                                        return callback(err);
+                                    }
+                                    callback(null, result);
+                                });
+                            }
+                        ],
+                        function (err, results) {
+                            if (err) {
+                                next(err);
+                            }
+                            if (results[1]) {
+                                res.status(200).send({success: results[1]});
+                            }
+                        }
+                    );
                 }
             );
 
@@ -248,13 +248,40 @@ var Salary = function (models) {
                      }
                      res.status(200).send({success: result});
                      });*/
-                    var query = Salary.find(queryObject).limit(count).skip(skip).sort(sort);
-                    query.exec(function (err, result) {
-                        if (err) {
-                            return next(err);
+                    self.totalCollectionLength(req, function (err, ressult) {
+                        if (ressult) {
+                            var query = Salary.find(queryObject).limit(count).skip(skip).sort(sort);
+                            query.exec(function (err, result) {
+                                if (err) {
+                                    return next(err);
+                                }
+                                res.status(200).send({success: result});
+                            });
+                        } else {
+                            async.series({
+                                    first: function (callback) {
+                                        self.recalculateCashSalary(req, callback);
+                                    },
+                                    second: function (callback) {
+                                        var query = Salary.find(queryObject).limit(count).skip(skip).sort(sort);
+                                        query.exec(function (err, result) {
+                                            if (err) {
+                                                callback(err);
+                                            }
+                                            callback(null, result);
+                                        });
+                                    }
+                                },
+                                function (err, results) {
+                                    if (err) {
+                                        next(err);
+                                    }
+                                    if (results.second) {
+                                        res.status(200).send({success: results.second});
+                                    }
+                                });
                         }
-                        res.status(200).send({success: result});
-                    });
+                    })
                 } else {
                     res.send(403);
                 }
@@ -301,11 +328,15 @@ var Salary = function (models) {
 
         query = Salary.find();
         query.exec(function (err, result) {
-            if (err) {
-                return next(err);
-            }
+            if (next) {
+                if (err) {
+                    next(err);
+                }
 
-            res.status(200).send({count: result.length});
+                res.status(200).send({count: result.length});
+            } else if (typeof res == 'function') {
+                res(null, result.length);
+            }
         });
     };
 
@@ -379,11 +410,15 @@ var Salary = function (models) {
         waterfallTasks = [getGroupedData, saveGroupedData];
 
         async.waterfall(waterfallTasks, function (err, result) {
-            if (err) {
-                next(err);
-            }
+            if (next) {
+                if (err) {
+                    next(err);
+                }
 
-            res.status(200).send('Complete');
+                res.status(200).send('Complete');
+            } else if (typeof res == 'function') {
+                res(null, 'Done!');
+            }
         });
     }
 };
