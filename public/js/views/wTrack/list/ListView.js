@@ -31,6 +31,8 @@ define([
             collectionLengthUrl: '/wTrack/totalCollectionLength',
             $listTable: null, //cashedJqueryEllemnt
             editCollection: null,
+            selectedProjectId: [],
+            genInvoiceEl: null,
 
             initialize: function (options) {
                 this.startTime = options.startTime;
@@ -61,6 +63,7 @@ define([
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
                 "click td.editable": "editRow",
                 "click #itemsButton": "itemsNumber",
+                "click #check_all": "checkAll",
                 "click .currentPageList": "itemsNumber",
                 "click": "hideItemsNumber",
                 "click #firstShowPage": "firstPage",
@@ -93,7 +96,12 @@ define([
                     cb();
                 }, function (err) {
                     if (!err) {
-                        new wTrackCreateView({ wTracks: wTracks, project: project, assigned: assigned, customer: customer });
+                        new wTrackCreateView({
+                            wTracks: wTracks,
+                            project: project,
+                            assigned: assigned,
+                            customer: customer
+                        });
                     }
                 });
             },
@@ -140,7 +148,7 @@ define([
             setEditable: function (td) {
                 var tr;
 
-                if(!td.parents) {
+                if (!td.parents) {
                     td = $(td.target).closest('td');
                 }
 
@@ -237,6 +245,7 @@ define([
                     projectManager = element.projectmanager.name.first + ' ' + element.projectmanager.name.last;
                     assignedContainer = tr.find('[data-content="assigned"]');
                     assignedContainer.text(projectManager);
+                    targetElement.attr('data-id', id);
 
                     tr.find('[data-content="workflow"]').text(element.workflow.name);
                     tr.find('[data-content="customer"]').text(element.customer.name.first + ' ' + element.customer.name.last);
@@ -287,15 +296,15 @@ define([
                 this.editCollection.save();
             },
 
-            savedNewModel: function(modelObject){
+            savedNewModel: function (modelObject) {
                 var savedRow = this.$listTable.find('#false');
                 var modelId;
                 var checkbox = savedRow.find('input[type=checkbox]');
 
                 modelObject = modelObject.success;
 
-                if(modelObject) {
-                    modelId = modelObject._id
+                if (modelObject) {
+                    modelId = modelObject._id;
                     savedRow.attr("data-id", modelId);
                     checkbox.val(modelId);
                     savedRow.removeAttr('id');
@@ -305,8 +314,8 @@ define([
                 this.resetCollection(modelObject);
             },
 
-            resetCollection: function(model){
-                if(model && model._id){
+            resetCollection: function (model) {
+                if (model && model._id) {
                     model = new currentModel(model);
                     this.collection.add(model);
                 } else {
@@ -314,7 +323,7 @@ define([
                 }
             },
 
-            updatedOptions: function(){
+            updatedOptions: function () {
                 this.hideSaveCancelBtns();
                 this.resetCollection();
             },
@@ -416,8 +425,18 @@ define([
                 }, this);
             },
 
+            checkAll: function (e) {
+                $(':checkbox').prop('checked', this.checked);
+                if ($("input.checkbox:checked").length > 0) {
+                    $("#top-bar-deleteBtn").show();
+                } else {
+                    $("#top-bar-deleteBtn").hide();
+                }
+            },
+
             render: function () {
                 $('.ui-dialog ').remove();
+
                 var self = this;
                 var currentEl = this.$el;
                 var filteredStatuses = [];
@@ -430,16 +449,6 @@ define([
                     page: this.page,
                     itemsNumber: this.collection.namberToShow
                 }).render());//added two parameters page and items number
-
-
-                $('#check_all').click(function () {
-                    $(':checkbox').prop('checked', this.checked);
-                    if ($("input.checkbox:checked").length > 0) {
-                        $("#top-bar-deleteBtn").show();
-                    } else {
-                        $("#top-bar-deleteBtn").hide();
-                    }
-                });
 
                 $(document).on("click", function () {
                     self.hideItemsNumber();
@@ -492,6 +501,7 @@ define([
                     self.$listTable = $('#listTable');
                 }, 10);
 
+                this.genInvoiceEl = $('#top-bar-generateBtn');
 
                 return this;
             },
@@ -758,13 +768,46 @@ define([
                 return false;
             },
 
-            checked: function () {
+            checkProjectId: function (e, checkLength) {
+                var ellement = e.target;
+                var checked = ellement.checked;
+                var targetEl = $(ellement);
+                var tr = targetEl.closest('tr');
+                var projectContainer = tr.find('td[data-content="project"]');
+                var projectId = projectContainer.data('id');
+
+                if (!checkLength) {
+                    this.selectedProjectId = [];
+                    this.genInvoiceEl.hide();
+
+                    return false;
+                }
+
+                if (checked) {
+                    this.selectedProjectId.push(projectId);
+                } else {
+                    this.selectedProjectId = _.without(this.selectedProjectId, projectId);
+                }
+
+                this.selectedProjectId = _.uniq(this.selectedProjectId);
+
+                if (this.selectedProjectId.length !== 1) {
+                    this.genInvoiceEl.hide();
+                } else {
+                    this.genInvoiceEl.show();
+                }
+            },
+
+            checked: function (e) {
+
                 if (this.collection.length > 0) {
                     var checkLength = $("input.checkbox:checked").length;
 
+                    this.checkProjectId(e, checkLength);
+
                     if ($("input.checkbox:checked").length > 0) {
                         $("#top-bar-deleteBtn").show();
-                        if (checkLength == this.collection.length) {
+                        if (checkLength === this.collection.length) {
                             $('#check_all').prop('checked', true);
                         }
                     } else {

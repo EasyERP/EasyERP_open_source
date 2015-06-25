@@ -7,9 +7,10 @@
         "views/Assignees/AssigneesView",
         "views/Payment/list/ListHeaderInvoice",
         "dataService",
-        'constants'
+        'constants',
+        'moment'
 ],
-    function (CreateTemplate, InvoiceModel, common, populate, wTrackRows, AssigneesView, listHederInvoice, dataService, CONSTANTS) {
+    function (CreateTemplate, InvoiceModel, common, populate, wTrackRows, AssigneesView, listHederInvoice, dataService, CONSTANTS, moment) {
 
         var CreateView = Backbone.View.extend({
             el: "#content-holder",
@@ -17,10 +18,19 @@
             template: _.template(CreateTemplate),
 
             initialize: function (options) {
+                var self = this;
+                var projectId = options.project ? options.project._id : null;
+
                 _.bindAll(this, "saveItem", "render");
                 this.model = new InvoiceModel();
                 this.responseObj = {};
-                this.render(options);
+
+                dataService.getData('/invoice/generateName?projectId=' + projectId, null, function (name) {
+                    if (name) {
+                        options.invoiceName = name;
+                    }
+                    self.render(options);
+                });
             },
 
             events: {
@@ -34,6 +44,7 @@
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect"
             },
+
             showNewSelect: function (e, prev, next) {
                 populate.showSelect(e, prev, next, this);
                 return false;
@@ -218,6 +229,11 @@
             },
 
             render: function (options) {
+                options.model = null;
+                options.balanceVisible = null;
+
+                var now = new Date();
+                var dueDate = moment().add(15, 'days').toDate();
                 var formString = this.template(options);
                 var self = this;
                 var invoiceItemContainer;
@@ -258,7 +274,7 @@
                     }).render().el
                 );
 
-                
+
                 invoiceContainer = new wTrackRows(options);
 
                 paymentContainer = this.$el.find('#payments-container');
@@ -266,27 +282,19 @@
                     new listHederInvoice().render().el
                 );
 
-
-                populate.get2name("#supplier", "/supplier", {}, this, false, true);
                 populate.get("#payment_terms", "/paymentTerm", {}, 'name', this, true);
-                populate.get2name("#salesPerson", "/getForDdByRelatedUser", {}, this, true, true);
-                populate.fetchWorkflow({ wId: 'Purchase Invoice' }, function (response) {
-                    if (!response.error) {
-                        self.defaultWorkflow = response._id;
-                    }
-                });
 
-                this.$el.find('#invoice_date').datepicker({
+                this.$el.find('#invoiceDate').datepicker({
                     dateFormat: "d M, yy",
                     changeMonth: true,
                     changeYear: true
-                }).datepicker('setDate', new Date());
+                }).datepicker('setDate', now);
 
-                this.$el.find('#due_date').datepicker({
+                this.$el.find('#dueDate').datepicker({
                     dateFormat: "d M, yy",
                     changeMonth: true,
                     changeYear: true
-                });
+                }).datepicker('setDate', dueDate);
 
 
                 this.delegateEvents(this.events);
