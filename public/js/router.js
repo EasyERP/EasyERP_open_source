@@ -412,6 +412,7 @@ define([
                         topbarView.bind('editEvent', contentview.editItem, contentview);
                         topbarView.bind('saveEvent', contentview.saveItem, contentview);
                         topbarView.bind('deleteEvent', contentview.deleteItems, contentview);
+                        topbarView.bind('generateInvoice', contentview.generateInvoice, contentview);
 
                         collection.bind('showmore', contentview.showMoreContent, contentview);
                         context.changeView(contentview);

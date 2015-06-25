@@ -4,7 +4,7 @@ define([
         'common',
         'constants',
         'dataService'
-    ],
+],
     function (ContentTopBarTemplate, Custom, Common, CONSTANTS, dataService) {
         var TopBarView = Backbone.View.extend({
             el: '#top-bar',
@@ -37,21 +37,31 @@ define([
                 $('title').text(this.contentType);
 
                 var viewType = Custom.getCurrentVT();
+                var self = this;
 
                 if (!App || !App.currentDb) {
-                    dataService.getData('/currentDb', null, function(response){
-                        if(response && !response.error){
+                    dataService.getData('/currentDb', null, function (response) {
+                        if (response && !response.error) {
                             App.currentDb = response;
+                            self.checkDbValue(App.currentDb);
                         } else {
                             console.log('can\'t fetch current db');
                         }
                     });
+                } else {
+                    this.checkDbValue(App.currentDb);
                 }
 
-                this.$el.html(this.template({viewType: viewType, contentType: this.contentType}));
+                this.$el.html(this.template({ viewType: viewType, contentType: this.contentType }));
 
                 Common.displayControlBtnsByActionType('Content', viewType);
                 return this;
+            },
+
+            checkDbValue: function (dbName) {
+                if (dbName === 'weTrack') {
+                    this.hideSaveCancelBtns();
+                }
             },
 
             hideSaveCancelBtns: function () {
