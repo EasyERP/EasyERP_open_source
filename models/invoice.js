@@ -8,7 +8,6 @@ module.exports = (function () {
 
     var payments = {
         _id: false,
-        id: false,
         total: {type: Number, default: 0},
         balance: {type: Number, default: 0},
         unTaxed: {type: Number, default: 0},
@@ -17,7 +16,6 @@ module.exports = (function () {
 
     var products = {
         _id: false,
-        id: false,
         quantity: {type: Number, default: 1},
         unitPrice: Number,
         product: {type: ObjectId, ref: 'Product', default: null},
@@ -36,6 +34,7 @@ module.exports = (function () {
 
         invoiceDate: { type: Date, default: Date.now },
         dueDate: Date,
+        paymentDate: Date,
         account: { type: String, default: null },
         journal: { type: String, default: null },
 

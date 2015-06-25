@@ -4,7 +4,7 @@ define([
         'views/salesQuotation/CreateView',
         'views/salesQuotation/list/ListItemView',
         'views/supplierPayments/list/ListTotalView',
-        'views/Quotation/EditView',
+        'views/salesQuotation/EditView',
         'models/QuotationModel',
         'collections/salesQuotation/filterCollection',
         'common',
@@ -28,8 +28,10 @@ define([
             initialize: function (options) {
                 this.startTime = options.startTime;
                 this.collection = options.collection;
+
                 this.filter = options.filter ? options.filter : {};
                 this.filter.forSales = true;
+
                 this.sort = options.sort;
                 this.defaultItemsNumber = this.collection.namberToShow || 50;
                 this.newCollection = options.newCollection;

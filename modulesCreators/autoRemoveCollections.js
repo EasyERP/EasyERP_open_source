@@ -13,7 +13,7 @@ MongoClient.connect(url, function (err, db) {
     }
     console.log('connected');
 
-    var collections = ['Customers', 'Department', 'Employees', 'JobPosition', 'Project', 'Salary', 'SalaryCash', 'wTrack'];
+    var collections = ['Customers', 'Department', 'Employees', 'JobPosition', 'Project', 'Salary', 'SalaryCash', 'wTrack', 'Invoice', 'Payment'];
 
     var collection;
 

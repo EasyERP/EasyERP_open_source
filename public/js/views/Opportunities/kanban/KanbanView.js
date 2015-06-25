@@ -254,14 +254,45 @@ function (WorkflowsTemplate, kanbanSettingsTemplate, WorkflowsCollection, Kanban
 		},
 
         hideItemsNumber: function (e) {
+            var el = e.target;
+
             $(".allNumberPerPage").hide();
             $(".newSelectList").hide();
-            if (!$(e.target).closest(".drop-down-filter").length) {
-                $(".allNumberPerPage").hide();
-                if ($(".drop-down-filter").is(":visible")) {
-                    $(".drop-down-filter").hide();
+            if (!el.closest('.search-view')) {
+                $(".drop-down-filter").hide();
+                $('.search-options').hide();
+            };
+
+        },
+
+        showFiltredPage: function (workflows) {
+            var list_id;
+            var foldList;
+            var showList;
+            var el;
+
+            list_id = _.pluck(workflows, '_id');
+            showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
+            foldList = _.difference(list_id, showList);
+
+            foldList.forEach(function (id) {
+                var w;
+                var k;
+
+                el = $("td.column[data-id='"+id+"']");
+                el.addClass("fold");
+                w = el.find(".columnName .text").width();
+                k = w/2-20;
+                if (k<=0){
+                    k= 20-w/2;
                 }
-            }
+                k=-k;
+                el.find(".columnName .text").css({"left":k+"px","top":Math.abs(w/2+47)+"px" });
+            });
+            showList.forEach(function (id) {
+                el = $("td.column[data-id='"+id+"']");
+                el.removeClass("fold");
+            });
         },
 
         render: function () {
@@ -269,8 +300,6 @@ function (WorkflowsTemplate, kanbanSettingsTemplate, WorkflowsCollection, Kanban
             var FilterView;
             var showList;
             var el;
-            var list_id;
-            var foldList;
             var workflows = this.workflowsCollection.toJSON();
 
             this.$el.html(_.template(WorkflowsTemplate, { workflowsCollection: workflows }));
@@ -326,43 +355,16 @@ function (WorkflowsTemplate, kanbanSettingsTemplate, WorkflowsCollection, Kanban
 
 			this.$el.unbind();
 
-            // Filter rendering begin------
-            setTimeout(function () {
-                FilterView = new filterView({ collection: workflows});
-            }, 1);
-            // Filter rendering end--------
-
+            FilterView = new filterView({ collection: workflows});
             $(document).on("click", function (e) {
                 self.hideItemsNumber(e);
             });
 
             // Filter custom event listen ------begin
-            this.$el.on('filter', function () {
-                list_id = _.pluck(workflows, '_id');
-                showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
-                foldList = _.difference(list_id, showList);
-
-                foldList.forEach(function (id) {
-                    var w;
-                    var k;
-
-                    el = $("td.column[data-id='"+id+"']");
-                    el.addClass("fold");
-                    w = el.find(".columnName .text").width();
-                    k = w/2-20;
-                    if (k<=0){
-                        k= 20-w/2;
-                    }
-                    k=-k;
-                    el.find(".columnName .text").css({"left":k+"px","top":Math.abs(w/2+47)+"px" });
-                });
-                showList.forEach(function (id) {
-                    el = $("td.column[data-id='"+id+"']");
-                    el.removeClass("fold");
-                });
-
+            FilterView.bind('filter', function () {
+                self.showFiltredPage(workflows)
             });
-            this.$el.on('defaultFilter', function () {
+            FilterView.on('defaultFilter', function () {
                 showList = _.pluck(workflows, '_id');
 
                 showList.forEach(function (id) {

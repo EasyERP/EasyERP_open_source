@@ -1,46 +1,55 @@
 <div class="search-view">
     <div class="search-button"></div>
     <div class="search-field">
-        <div class="filter-icons"><span class="filterValues"></span><span class="removeValues">x</span></div>
-        <input class="search-input" type="text"/>
-
-        <div class="search-content"></div>
+        <span class="search fa fa-search fa-lg"></span>
+        <div class="filter-icons"><span class="fa fa-filter funnelIcon"></span><span class="filterValues"></span><span class="removeValues">x</span></div>
+        <!--<input class="search-input" type="text"/>-->
+        <div class="oe_searchview_input" contenteditable="true" tabindex="0"></div>
+        <span class="search-content fa fa-lg fa-fw fa-caret-down"></span>
+        <!--<div class="search-content"></div>-->
     </div>
     <div class="search-options">
-        <div class="btn-filter">
-            <button class="btn btn-default">
-                <span class="filter">Filters</span>
-            </button>
-            <ul class="drop-down-filter">
-                <% collection.forEach(function(model, index){ %>
-                <li>
-                    <input type="checkbox" id="<%=model.name%>" value="<%=(model._id) ? model._id : ''%>">
-                    <label for="<%=model.name%>"><%=(model.name) ? model.name : 'Undefinded'%></label>
-                </li>
-                <%
-                }) %>
+        <div class="btn-group">
+            <div class="btn-group">
+                <button class="< group btn btn-default filter">
+                    <span class="fa fa-filter"></span>
+                    Filters
+                    <span class="caret"></span>
+                </button>
+                <ul class="drop-down-filter"><!--drop-down-filter-->
+                    <% collection.forEach(function(model, index){ %>
+                    <li>
+                        <input type="checkbox" id="<%=model.name%>" value="<%=(model._id) ? model._id : ''%>">
+                        <label for="<%=model.name%>"><%=(model.name) ? model.name : 'Undefinded'%></label>
+                    </li>
+                    <%
+                    }) %>
 
-                <%
-                var totalVal = [];
-                collection.forEach(function(model, index){
-                if (model._id) totalVal.push(model._id)
-                }) %>
-                <li>
-                    <input type="checkbox" id="defaultFilter" value="<%=totalVal%>">
-                    <label for="defaultFilter">Default</label>
-                </li>
-            </ul>
-        </div>
-        <div class="btn-groupBy">
-            <button class="btn btn-default">
-                <span class="group"></span> Group by <span class="caret"></span>
-            </button>
-        </div>
-        <div class="btn-favorites">
-            <button class="btn btn-default">
-                <span class="favorites"></span>Favorites <span class="caret"></span>
-            </button>
+                    <%
+                    var totalVal = [];
+                    collection.forEach(function(model, index){
+                    if (model._id) totalVal.push(model._id)
+                    }) %>
+                    <li>
+                        <input type="checkbox" id="defaultFilter" value="<%=totalVal%>">
+                        <label for="defaultFilter">Default</label>
+                    </li>
+                </ul>
+            </div>
+            <div class="btn-group">
+                <button class="group btn btn-default">
+                    <span class="fa fa-bars"></span>
+                    Group by
+                    <span class="caret"></span>
+                </button>
+            </div>
+            <!--<div class="btn-group">-->
+                <!--<button class="btn btn-default">-->
+                    <!--<span class="fa fa-star"></span>-->
+                    <!--Favorites-->
+                    <!--<span class="caret"></span>-->
+                <!--</button>-->
+            <!--</div>-->
         </div>
     </div>
-
 </div>

@@ -40,4 +40,5 @@ module.exports = (function () {
     require('./invoice.js');
     require('./workflow.js');
     require('./wTrack.js');
+    require('./wTrackInvoice.js');
 })();

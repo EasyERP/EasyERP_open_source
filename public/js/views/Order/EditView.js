@@ -38,7 +38,8 @@ define([
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
                 "click .receiveInvoice": "receiveInvoice",
-                "click .cancelOrder": "cancelOrder"
+                "click .cancelOrder": "cancelOrder",
+                "click .setDraft": "setDraft"
             },
 
 
@@ -103,6 +104,8 @@ define([
                     status: 'Cancelled',
                     order: 1
                 }, function (workflow) {
+                    var redirectUrl = self.forSales ? "easyErp/salesOrder" : "easyErp/Order";
+
                     if (workflow && workflow.error) {
                         return alert(workflow.error.statusText);
                     }
@@ -115,7 +118,7 @@ define([
                         },
                         patch: true,
                         success: function () {
-                            Backbone.history.navigate("easyErp/Quotation", {trigger: true});
+                            Backbone.history.navigate(redirectUrl, {trigger: true});
                         }
                     });
                 });
@@ -124,17 +127,49 @@ define([
             receiveInvoice: function (e) {
                 e.preventDefault();
 
+                var self =this;
                 var url = '/invoice/receive';
                 var data = {
+                    forsSales: this.forSales,
                     orderId: this.currentModel.id
                 };
 
                 dataService.postData(url, data, function (err, response) {
+                    var redirectUrl = self.forSales ? "easyErp/salesInvoice" : "easyErp/Invoice";
+
                     if (err) {
                         alert('Can\'t receive invoice');
                     } else {
-                        Backbone.history.navigate("easyErp/Invoice", {trigger: true});
+                        Backbone.history.navigate(redirectUrl, {trigger: true});
                     }
+                });
+            },
+
+            setDraft: function (e) {
+                e.preventDefault();
+
+                var self = this;
+
+                populate.fetchWorkflow({
+                    wId: 'Quotation'
+                }, function (workflow) {
+                    var redirectUrl = self.forSales ? "easyErp/salesOrder" : "easyErp/Order";
+
+                    if (workflow && workflow.error) {
+                        return alert(workflow.error.statusText);
+                    }
+
+                    self.currentModel.save({
+                        workflow: workflow._id
+                    }, {
+                        headers: {
+                            mid: 57
+                        },
+                        patch: true,
+                        success: function () {
+                            Backbone.history.navigate(redirectUrl, {trigger: true});
+                        }
+                    });
                 });
             },
 

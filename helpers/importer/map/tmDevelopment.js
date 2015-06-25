@@ -195,6 +195,75 @@ module.exports = (function () {
         }
     };
 
+    var invoice = {
+        collection: 'Invoice',
+        table: 'Invoice',
+        comparator: {
+            'InvoiceStatus': [{
+                value: '1',
+                field: 'workflow',
+                fieldValue: 'New'
+            }, {
+                value: '2',
+                field: 'workflow',
+                fieldValue: 'New'
+            }, {
+                value: '3',
+                field: 'workflow',
+                fieldValue: 'Done'
+            }, {
+                value: '4',
+                field: 'workflow',
+                fieldValue: 'Cancelled'
+            }, {
+                value: '5',
+                field: 'workflow',
+                fieldValue: 'In Progress'
+            }]
+        },
+        aliases: {
+            ID: 'ID',
+            name: 'InvoiceName',
+            project: 'Project',
+            invoiceDate: 'InvoiceDate',
+            dueDate: 'DueDate',
+            paymentDate: 'PaymentDate',
+            'paymentInfo.total': 'Amount',
+            workflow: 'InvoiceStatus'
+        }
+    };
+
+    var payment = {
+        collection: 'Payment',
+        table: 'Payment',
+        comparator: {
+            'PaymentWay': [{
+                value: '1',
+                field: 'paymentMethod',
+                fieldValue: '5589888738a5416cab8bdc5d'
+            }, {
+                value: '2',
+                field: 'paymentMethod',
+                fieldValue: '5589888738a5416cab8bdc5e'
+            }, {
+                value: '3',
+                field: 'paymentMethod',
+                fieldValue: '5589888738a5416cab8bdc5f'
+            }]
+        },
+        aliases: {
+            ID: 'ID',
+            name: 'ID',
+            invoice: 'Invoice',
+            date: 'PaymentDate',
+            paymentMethod: 'PaymentWay',
+            paidAmount: 'Amount',
+            paymentDate: 'PaymentDate',
+            'paymentInfo.total': 'Amount',
+            workflow: 'PaymentStatus'
+        }
+    };
+
     var user = {
         collection: 'Users',
         table: 'Users',
@@ -206,5 +275,5 @@ module.exports = (function () {
         }
     };
 
-    return [department, jobPosition, employee, project, customer, wTrack, salary];
+    return [department, jobPosition, employee, project, customer, wTrack, salary, invoice, payment];
 })();

@@ -10,4 +10,4 @@ function(CreateView) {
     });
 
     return salesQuotation;
-})
+});

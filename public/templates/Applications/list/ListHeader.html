@@ -1,14 +1,5 @@
 ﻿<div>
-    <div class="filterButton">
-        <span class="text">Stage</span>
-
-        <div class="arrow">
-            7
-        </div>
-    </div>
-    <ul class="filter-check-list">
-      <li><input type="checkbox"  value="null" checked="checked"><span>Undefinded</span></li>
-    </ul>
+    <div id="searchContainer"></div>
     <table class="list task-list">
         <thead>
         <tr>
@@ -16,14 +7,20 @@
                 <input type="checkbox" id="check_all"/></th>
             <th>N</th>
             <!--  <th>Creation Date</th>-->
-            <th class="oe_sortable" data-sort="name.first">Applicant's Name<span class="arrow down">7</span><span class="arrow up">v</span></th>
-            <th class="oe_sortable" data-sort="personalEmail">Email<span class="arrow down">7</span><span class="arrow up">v</span></th>
-            <th class="oe_sortable" data-sort="workPhones.phone">Phone<span class="arrow down">7</span><span class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="name.first">Applicant's Name<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="personalEmail">Email<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="workPhones.phone">Phone<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
             <th>Applied Job</th>
             <th>Stage</th>
-            <th class="oe_sortable" data-sort="jobType">Job Type<span class="arrow down">7</span><span class="arrow up">v</span></th>
-            <th class="oe_sortable" data-sort="createdBy.date">Created By<span class="arrow down">7</span><span class="arrow up">v</span></th>
-            <th class="oe_sortable sortDn" data-sort="editedBy.date">Edited By<span class="arrow down">7</span><span class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="jobType">Job Type<span class="arrow down">7</span><span class="arrow up">v</span>
+            </th>
+            <th class="oe_sortable" data-sort="createdBy.date">Created By<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <th class="oe_sortable sortDn" data-sort="editedBy.date">Edited By<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
         </tr>
         </thead>
         <tbody id="listTable"></tbody>
@@ -91,7 +88,7 @@
         </span>
             </div>
             <button id="nextPage" type="button" class="icon" disabled="disabled">9</button>
-            <button id="lastShowPage" type="button" class="icon"  disabled="disabled">99</button>
+            <button id="lastShowPage" type="button" class="icon" disabled="disabled">99</button>
         </div>
     </div>
 </div>

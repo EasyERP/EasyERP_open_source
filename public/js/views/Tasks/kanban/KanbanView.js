@@ -1,17 +1,18 @@
 ﻿define([
-    'text!templates/Tasks/kanban/WorkflowsTemplate.html',
-    'text!templates/Tasks/kanbanSettings.html',
-    'collections/Workflows/WorkflowsCollection',
-    'views/Tasks/kanban/KanbanItemView',
-    'views/Tasks/EditView',
-    'views/Tasks/CreateView',
-    'collections/Tasks/TasksCollection',
-    'models/TasksModel',
-    'dataService',
-    'common',
-	'populate'
-],
-    function (WorkflowsTemplate, kanbanSettingsTemplate, WorkflowsCollection, KanbanItemView, EditView, CreateView, TasksCollection, CurrentModel, dataService, common, populate) {
+        'text!templates/Tasks/kanban/WorkflowsTemplate.html',
+        'text!templates/Tasks/kanbanSettings.html',
+        'collections/Workflows/WorkflowsCollection',
+        'views/Tasks/kanban/KanbanItemView',
+        'views/Tasks/EditView',
+        'views/Tasks/CreateView',
+        'collections/Tasks/TasksCollection',
+        'models/TasksModel',
+        'dataService',
+        'views/Filter/FilterView',
+        'common',
+        'populate'
+    ],
+    function (WorkflowsTemplate, kanbanSettingsTemplate, WorkflowsCollection, KanbanItemView, EditView, CreateView, TasksCollection, CurrentModel, dataService, filterView, common, populate) {
         var collection = new TasksCollection();
         var TasksKanbanView = Backbone.View.extend({
             el: '#content-holder',
@@ -46,7 +47,7 @@
                 if (this.foldWorkflows.length === 0) {
                     this.foldWorkflows = ["Empty"];
                 }
-                dataService.postData('/currentUser', { 'kanbanSettings.tasks.foldWorkflows': this.foldWorkflows }, function (error,  success) {
+                dataService.postData('/currentUser', { 'kanbanSettings.tasks.foldWorkflows': this.foldWorkflows }, function (error, success) {
                 });
             },
             foldUnfoldKanban: function (e, id) {
@@ -81,8 +82,8 @@
                     el.closest("table").css({ "min-width": "100%" });
                 }
                 el.closest("table").css({ "min-height": ($(window).height() - 110) + "px" });
-				this.$(".column").sortable("enable");
-				this.$(".column.fold").sortable("disable");
+                this.$(".column").sortable("enable");
+                this.$(".column.fold").sortable("disable");
             },
             nextSelect: function (e) {
                 this.showNewSelect(e, false, true);
@@ -111,32 +112,32 @@
                     model = collection.get(id);
                     var priority = currentSelected.text();
                     model.save({
-                        priority: priority
-                    },
-                    {
-                        headers: {
-                            mid: 39
+                            priority: priority
                         },
-                        patch: true,
-                        success: function () {
-                        }
-                    });
+                        {
+                            headers: {
+                                mid: 39
+                            },
+                            patch: true,
+                            success: function () {
+                            }
+                        });
                 } else if (selectType == 'type') {
                     var type = currentSelected.text();
                     id = currentSelected.attr("id").replace("type_", "");
                     model = collection.get(id);
                     model.save({
-                        type: type
-                    },
-                    {
-                        headers: {
-                            mid: 39
+                            type: type
                         },
-                        patch: true,
-                        success: function () {
+                        {
+                            headers: {
+                                mid: 39
+                            },
+                            patch: true,
+                            success: function () {
 
-                        }
-                    });
+                            }
+                        });
                 }
                 this.hideNewSelect();
                 return false;
@@ -155,7 +156,7 @@
                     countPerPage = 5;
                 var id = window.location.hash.split('/')[3];
                 var url = (id && id.length === 24) ? "easyErp/Tasks/kanban/" + id : "easyErp/Tasks/kanban";
-                dataService.postData('/currentUser', { 'kanbanSettings.tasks.countPerPage': countPerPage }, function (error,  success) {
+                dataService.postData('/currentUser', { 'kanbanSettings.tasks.countPerPage': countPerPage }, function (error, success) {
                     if (success) {
                         $(".edit-dialog").remove();
                         Backbone.history.fragment = '';
@@ -225,7 +226,9 @@
                     success: function (model) {
                         new EditView({ model: model });
                     },
-                    error: function () { alert('Please refresh browser'); }
+                    error: function () {
+                        alert('Please refresh browser');
+                    }
                 });
             },
 
@@ -243,7 +246,7 @@
                     return item.assignedTo._id;
                 });
                 //added condition(ids.length>0)  if no ids don't run common code)
-                if(ids.length>0)common.getImages(ids, "/getEmployeesImages");
+                if (ids.length > 0)common.getImages(ids, "/getEmployeesImages");
             },
 
             asyncRender: function (response, context) {
@@ -312,12 +315,67 @@
 
                 }
             },
+
+            hideItemsNumber: function (e) {
+                $(".allNumberPerPage").hide();
+                $(".newSelectList").hide();
+                if (!$(e.target).closest(".drop-down-filter").length) {
+                    $(".allNumberPerPage").hide();
+                    if ($(".drop-down-filter").is(":visible")) {
+                        $(".drop-down-filter").hide();
+                        $('.search-content').removeClass('fa-caret-up')
+                    }
+                }
+            },
+
+            foldUnfiltredItems: function (workflows) {
+                var showList;
+                var el;
+                var list_id;
+                var foldList;
+
+                list_id = _.pluck(workflows, '_id');
+                showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
+                foldList = _.difference(list_id, showList);
+
+                foldList.forEach(function (id) {
+                    var w;
+                    var k;
+
+                    el = $("td.column[id='" + id + "']");
+                    el.addClass("fold");
+                    w = el.find(".columnName .text").width();
+                    k = w/2-20;
+                    if (k<=0){
+                        k= 20-w/2;
+                    }
+                    k=-k;
+                    el.find(".columnName .text").css({"left":k+"px","top":Math.abs(w/2+47)+"px" });
+                });
+                showList.forEach(function (id) {
+                    el = $("td.column[id='" + id + "']");
+                    el.removeClass("fold");
+                });
+            },
+
+            showDefaultFilter: function(workflows) {
+                var el;
+                var showList = _.pluck(workflows, '_id');
+
+                showList.forEach(function (id) {
+                    el = $("td.column[id='" + id + "']");
+                    el.removeClass("fold");
+                });
+            },
+
             render: function () {
                 var self = this;
+                var FilterView;
+                var itemCount;
                 var workflows = this.workflowsCollection.toJSON();
+
                 this.$el.html(_.template(WorkflowsTemplate, { workflowsCollection: workflows }));
                 $(".column").last().addClass("lastColumn");
-                var itemCount;
                 _.each(workflows, function (workflow, i) {
                     itemCount = 0;
                     var column = this.$(".column").eq(i);
@@ -334,7 +392,7 @@
                     opacity: 0.7,
                     revert: true,
                     helper: 'clone',
-                    containment:'document',
+                    containment: 'document',
                     start: function (event, ui) {
                         var id = ui.item.context.id;
                         var model = collection.get(id);
@@ -356,20 +414,20 @@
                             var secStart = parseInt($(".inner[data-id='" + model.toJSON()._id + "']").attr("data-sequence"));
                             var workStart = model.toJSON().workflow._id ? model.toJSON().workflow._id : model.toJSON().workflow;
                             model.save({
-                                workflow: column.attr('id'),
-                                sequenceStart: parseInt($(".inner[data-id='" + model.toJSON()._id + "']").attr("data-sequence")),
-                                sequence: sequence,
-                                workflowStart: model.toJSON().workflow._id ? model.toJSON().workflow._id : model.toJSON().workflow
-                            },
-                            {
-                                patch: true,
-                                validate: false,
-                                success: function (model2) {
-                                    self.updateSequence(ui.item, column.attr("id"), sequence, workStart, secStart);
+                                    workflow: column.attr('id'),
+                                    sequenceStart: parseInt($(".inner[data-id='" + model.toJSON()._id + "']").attr("data-sequence")),
+                                    sequence: sequence,
+                                    workflowStart: model.toJSON().workflow._id ? model.toJSON().workflow._id : model.toJSON().workflow
+                                },
+                                {
+                                    patch: true,
+                                    validate: false,
+                                    success: function (model2) {
+                                        self.updateSequence(ui.item, column.attr("id"), sequence, workStart, secStart);
 
-                                    collection.add(model2, { merge: true });
-                                }
-                            });
+                                        collection.add(model2, { merge: true });
+                                    }
+                                });
                             column.find(".counter").html(parseInt(column.find(".counter").html()) + 1);
                             column.find(".totalCount").html(parseInt(column.find(".totalCount").html()) + 1);
                             column.find(".remaining").html(parseInt(column.find(".remaining").html()) + parseInt(model.get('remaining')));
@@ -378,7 +436,25 @@
                 }).disableSelection();
                 this.$el.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
                 $(document).on("keypress", "#cPerPage", this.isNumberKey);
-				this.$el.unbind();
+                this.$el.unbind();
+
+                // Filter rendering begin------
+                FilterView = new filterView({ collection: workflows});
+                // Filter rendering end--------
+
+                // Filter custom event listen ------begin
+                FilterView.bind('filter', function(){
+                    self.foldUnfiltredItems(workflows)
+                });
+                FilterView.bind('defaultFilter', function () {
+                    self.showDefaultFilter(workflows)
+                });
+
+                // Filter custom event listen ------end
+                $(document).on("click", function (e) {
+                    self.hideItemsNumber(e);
+                });
+
                 return this;
             }
         });

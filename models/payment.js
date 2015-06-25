@@ -8,7 +8,7 @@ module.exports = (function () {
 
 
     var paymentSchema = new Schema({
-        byType:{type: String, default: 'customers'},
+        forSale:{type: Boolean, default: true},
         invoice: {type: ObjectId, ref: 'Invoice', default: null},
         supplier: {type: ObjectId, ref: 'Customers', default: null},
         paidAmount: {type: Number, default: 0},
@@ -17,6 +17,7 @@ module.exports = (function () {
         name: {type: String, default: '', unique: true},
         period: {type: ObjectId, ref: 'Destination', default: null},
         paymentRef: {type: String, default: ''},
+        workflow: {type: String, enum: ['Draft', 'Paid'], default: 'Draft'},
         differenceAmount: {type: Number, default: 0},
         whoCanRW: {type: String, enum: ['owner', 'group', 'everyOne'], default: 'everyOne'},
 

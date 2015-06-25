@@ -657,6 +657,7 @@ define([
         },
 
         getList: function (contentType) {
+
             this.contentType = contentType;
             contentType = this.testContent(contentType);
             var viewType = custom.getCurrentVT({contentType: contentType});

@@ -62,12 +62,15 @@ module.exports = function (models) {
         var projectSchema = tasks[3];
         var customerSchema = tasks[4];
         var wTrackSchema = tasks[5];
+        var invoiceSchema = tasks[7];
+        var paymentSchema = tasks[8];
 
         var ownerId = req.session ? req.session.uId : null;
 
         var customerCollection = customerSchema.collection;
         var projectCollection = projectSchema.collection;
         var wTrackCollection = wTrackSchema.collection;
+        var paymentCollection = paymentSchema.collection;
 
         var ProjectSchema = projectCollection[projectCollection];
         var CustomerSchema = mongoose.Schemas[customerCollection];
@@ -76,6 +79,8 @@ module.exports = function (models) {
         var IndustrySchema = mongoose.Schemas['Industry'];
         var WorkflowSchema = mongoose.Schemas['workflow'];
         var WTrackSchema = mongoose.Schemas[wTrackCollection];
+        var InvoiceSchema = mongoose.Schemas['wTrackInvoice'];
+        var PaymentSchema = mongoose.Schemas[paymentCollection];
 
         var Project = models.get(req.session.lastDb, projectCollection, ProjectSchema);
         var Customer = models.get(req.session.lastDb, customerCollection, CustomerSchema);
@@ -84,6 +89,8 @@ module.exports = function (models) {
         var Industry = models.get(req.session.lastDb, 'Industry', IndustrySchema);
         var Workflow = models.get(req.session.lastDb, 'workflows', WorkflowSchema);
         var Wtrack = models.get(req.session.lastDb, wTrackCollection, WTrackSchema);
+        var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', InvoiceSchema);
+        var Payment = models.get(req.session.lastDb, paymentCollection, PaymentSchema);
 
         function importCustomer(customerSchema, seriesCb) {
             var query = queryBuilder(customerSchema.table);
@@ -165,6 +172,27 @@ module.exports = function (models) {
             importCustomer(customerSchema, callback);
         };
 
+        function fetchWorkflow(query, callback) {
+            query = query || {
+                    wId: 'Projects'
+                };
+
+            var projectionObject = {
+                status: 1,
+                _id: 1
+            };
+
+            Workflow.find(query, projectionObject, function (err, workflows) {
+                if (err) {
+                    return callback(err);
+                }
+
+                workflows = _.groupBy(workflows, 'status');
+
+                callback(null, workflows);
+            });
+        };
+
         function importProject(projectShema, seriesCb) {
             var query = queryBuilder(projectShema.table);
             var waterfallTasks;
@@ -174,25 +202,14 @@ module.exports = function (models) {
             }
 
             function fetchWorkflows(fetchedArray, callback) {
-                var query = {
-                    wId: 'Projects'
-                };
-
-                var projectionObject = {
-                    status: 1,
-                    _id: 1
-                };
-
-                Workflow.find(query, projectionObject, function (err, workflows) {
+                fetchWorkflow(null, function (err, workflows) {
                     if (err) {
                         return callback(err);
                     }
 
-                    workflows = _.groupBy(workflows, 'status');
-
                     callback(null, workflows, fetchedArray);
                 });
-            }
+            };
 
             function saverProject(workflows, fetchedArray, callback) {
                 var model;
@@ -391,8 +408,7 @@ module.exports = function (models) {
                             project: projectFinder,
                             employee: employeeFinder
                         }, function (err, result) {
-                            //objectToSave.dateByWeek = dateCalc(fetchedWtrack.Week, fetchedWtrack.Year);
-                            objectToSave.dateByWeek = fetchedWtrack.Week + 100*fetchedWtrack.Year;
+                            objectToSave.dateByWeek = fetchedWtrack.Week + 100 * fetchedWtrack.Year;
 
                             if (result.department) {
                                 objectToSave.department = {};
@@ -420,6 +436,9 @@ module.exports = function (models) {
                                 objectToSave.employee.name = result.employee.name ? result.employee.name.first + ' ' + result.employee.name.last : '';
                             }
 
+                            objectToSave.info = {
+                                salePrice: fetchedWtrack['Revenue']
+                            };
 
                             model = new Wtrack(objectToSave);
                             model.save(cb);
@@ -449,7 +468,293 @@ module.exports = function (models) {
             importWtrack(wTrackSchema, callback);
         };
 
-        return [customerImporter, projectImporter, wTrackImporter];
+        function importInvoice(InvoiceSchema, callback) {
+            var query = queryBuilder(invoiceSchema.table);
+
+            async.waterfall([wTrackInvoiceImporter, groupByInvoice, getData, fetchWorkflows, saverInvoice], function (err, wTrackInvoices) {
+                if (err) {
+                    return callback(err);
+                }
+                console.dir(wTrackInvoices);
+                callback(null, wTrackInvoices);
+            });
+
+            function getData(groupedInvoices, callback) {
+                handler.importData(query, function (err, invoicecs) {
+                    if (err) {
+                        return callback(err);
+                    }
+
+                    callback(null, groupedInvoices, invoicecs);
+                });
+            }
+
+            function saverInvoice(groupedInvoices, workflows, fetchedArray, callback) {
+                var model;
+                var mongooseFields = Object.keys(invoiceSchema.aliases);
+
+                async.eachLimit(fetchedArray, 100, function (fetchedInvoice, cb) {
+                    var objectToSave = {};
+
+                    for (var i = mongooseFields.length - 1; i >= 0; i--) {
+                        var key = mongooseFields[i];
+                        var msSqlKey = invoiceSchema.aliases[key];
+                        var _comparator = invoiceSchema.comparator;
+
+                        var wTrackQueryQuery;
+                        var projectQuery;
+                        var invoiceAmmount = 0;
+                        var invoicePaid = 0;
+                        var balance = 0;
+                        var wTrackInvoice;
+
+                        if (_comparator && msSqlKey in _comparator) {
+                            fetchedInvoice[msSqlKey] = comparator(fetchedInvoice[msSqlKey], _comparator[msSqlKey]) || fetchedInvoice[msSqlKey];
+                        }
+
+                        if (key === 'workflow') {
+                            objectToSave[key] = workflows[fetchedInvoice[msSqlKey]][0];
+                        } else {
+                            objectToSave[key] = fetchedInvoice[msSqlKey];
+                        }
+
+                        objectToSave.createdBy = {
+                            user: ownerId
+                        };
+                        objectToSave.editedBy = {
+                            user: ownerId
+                        }
+                    }
+
+                    if (fetchedInvoice) {
+                        wTrackInvoice = groupedInvoices[fetchedInvoice['ID']];
+
+                        for (var i = wTrackInvoice.length - 1; i >= 0; i--) {
+                            invoiceAmmount += groupedInvoices[fetchedInvoice['ID']][i].Amount;
+                            invoicePaid += groupedInvoices[fetchedInvoice['ID']][i].Paid;
+                        }
+
+                        balance = invoiceAmmount - invoicePaid;
+
+                        wTrackQueryQuery = {
+                            ID: {$in: _.pluck(groupedInvoices[fetchedInvoice['ID']], 'wTrackID')}
+                        };
+
+                        projectQuery = {
+                            ID: fetchedInvoice['Project']
+                        };
+
+
+                        function wTrackFinder(callback) {
+                            Wtrack
+                                .find(wTrackQueryQuery)
+                                .lean()
+                                .exec(function (err, wTracks) {
+                                    if (err) {
+                                        return callback(err);
+                                    }
+                                    callback(null, wTracks);
+                                });
+                        };
+
+                        function projectFinder(callback) {
+                            Project
+                                .findOne(projectQuery)
+                                .populate('projectmanager')
+                                .lean()
+                                .exec(function (err, project) {
+                                    if (err) {
+                                        return callback(err);
+                                    }
+                                    callback(null, project);
+                                });
+                        };
+
+                        async.parallel({
+                            wTrack: wTrackFinder,
+                            project: projectFinder
+                        }, function (err, result) {
+
+                            objectToSave.paymentInfo = {
+                                //total: invoiceAmmount,
+                                balance: balance,
+                                unTaxed: invoiceAmmount,
+                                taxes: 0
+                            };
+
+                            if (result.wTrack) {
+                                objectToSave.products = [];
+                                result.wTrack.forEach(function (wTrack) {
+                                    var productObject = {};
+
+                                    productObject.unitPrice = wTrack.revenue;
+                                    productObject.product = wTrack._id;
+                                    productObject.taxes = 0;
+                                    productObject.subTotal = wTrack.amount;
+                                    objectToSave.products.push(productObject);
+                                });
+                            }
+                            if (result.project) {
+                                objectToSave.salesPerson = result.project.projectmanager ? result.project.projectmanager._id : null;
+                                objectToSave.project = result.project._id;
+                            }
+
+
+                            model = new Invoice(objectToSave);
+                            model.save(cb);
+                        });
+                    }
+                }, function (err) {
+                    if (err) {
+                        return callback(err);
+                    }
+
+                    callback(null, 'Completed');
+                })
+            }
+
+            function wTrackInvoiceImporter(cbForInvoiceImporter) {
+                var query = queryBuilder('wTrackInvoice');
+
+                handler.importData(query, cbForInvoiceImporter);
+            };
+
+            function groupByInvoice(wTrackInvoices, cbForInvoiceImporter) {
+                var groupedResult = _.groupBy(wTrackInvoices, function (wTrackInvoice) {
+                    return wTrackInvoice.InvoiceID;
+                });
+
+                cbForInvoiceImporter(null, groupedResult);
+            };
+
+            function fetchWorkflows(groupedInvoices, fetchedArray, callback) {
+                fetchWorkflow({wId: 'Sales Invoice'}, function (err, workflows) {
+                    if (err) {
+                        return callback(err);
+                    }
+
+                    callback(null, groupedInvoices, workflows, fetchedArray);
+                });
+            };
+        };
+
+        function invoiceImporter(callback) {
+            importInvoice(InvoiceSchema, callback);
+        };
+
+        function importPayment(paymentSchema, seriesCb) {
+            var query = queryBuilder(paymentSchema.table);
+            var waterfallTasks;
+
+            function getData(callback) {
+                handler.importData(query, callback);
+            }
+
+            function saverPayment(fetchedArray, callback) {
+                var model;
+                var mongooseFields = Object.keys(paymentSchema.aliases);
+
+                async.eachLimit(fetchedArray, 100, function (fetchedPayment, cb) {
+                    var objectToSave = {};
+
+                    for (var i = mongooseFields.length - 1; i >= 0; i--) {
+                        var key = mongooseFields[i];
+                        var msSqlKey = paymentSchema.aliases[key];
+                        var _comparator = paymentSchema.comparator;
+
+                        var invoiceQuery;
+
+                        if (_comparator && msSqlKey in _comparator) {
+                            fetchedPayment[msSqlKey] = comparator(fetchedPayment[msSqlKey], _comparator[msSqlKey]) || fetchedPayment[msSqlKey];
+                        }
+
+                        objectToSave[key] = fetchedPayment[msSqlKey];
+                        objectToSave.createdBy = {
+                            user: ownerId
+                        };
+                        objectToSave.editedBy = {
+                            user: ownerId
+                        }
+                    }
+
+                    if (fetchedPayment) {
+                        invoiceQuery = {
+                            ID: fetchedPayment['Invoice']
+                        };
+
+                        function invoiceFinder(callback) {
+                            Invoice
+                                .findOne(invoiceQuery)
+                                .populate('project')
+                                .exec(function (err, invoice) {
+                                    if (err) {
+                                        return callback(err);
+                                    }
+                                    Customer.populate(invoice.project, { path: 'customer' , options: {lean: true}}, function(err, customer){
+                                        if(err){
+                                            return callback(err);
+                                        }
+
+                                        callback(null, invoice);
+                                    });
+                                });
+                        };
+
+                        async.parallel({
+                            invoce: invoiceFinder
+                        }, function (err, result) {
+                            var invoiceId;
+
+                            if (result.invoce) {
+                                invoiceId = result.invoce._id;
+                                objectToSave.invoice = invoiceId;
+                                objectToSave.supplier = result.invoce.project.customer._id;
+                            }
+
+                            model = new Payment(objectToSave);
+                            model.save(function(err, result){
+                                if(err){
+                                    return cb(err);
+                                }
+
+                                console.log('============== invoiceId =============');
+                                console.log(invoiceId);
+                                console.log('======================================');
+
+                                Invoice.update({_id: invoiceId}, {$addToSet: {payments: result._id}}, function(err, invoice){
+                                    if(err){
+                                        return cb(err);
+                                    }
+                                    cb(null, result);
+                                });
+                            });
+                        });
+                    }
+                }, function (err) {
+                    if (err) {
+                        return callback(err);
+                    }
+
+                    callback(null, 'Completed');
+                });
+            }
+
+            waterfallTasks = [getData, saverPayment];
+
+            async.waterfall(waterfallTasks, function (err, result) {
+                if (err) {
+                    seriesCb(err);
+                }
+
+                seriesCb(null, 'Complete')
+            });
+        };
+
+        function paymentImporter(callback) {
+            importPayment(paymentSchema, callback);
+        };
+
+        return [customerImporter, projectImporter, wTrackImporter, invoiceImporter, paymentImporter];
     };
 
     function hrImporter(req, tasks) {

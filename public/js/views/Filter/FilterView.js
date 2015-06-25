@@ -4,7 +4,8 @@ define([
         'common'
     ],
     function (ContentFilterTemplate, Custom, Common) {
-        var FilterView = Backbone.View.extend({
+        var FilterView;
+        FilterView = Backbone.View.extend({
             el: '#searchContainer',
             contentType: "Opportunities",
             template: _.template(ContentFilterTemplate),
@@ -13,11 +14,12 @@ define([
                 "click .search-content": 'showSearchContent',
                 "click .filter": 'showFilterContent',
                 "click .drop-down-filter input": "writeValue",
+                "click .drop-down-filter li": "triggerClick",
                 "click .removeValues": "removeValues"
             },
 
 
-            initialize: function (options) {
+            initialize: function () {
                 this.render();
             },
 
@@ -28,70 +30,87 @@ define([
                 return this;
             },
 
-            showSearchContent: function (e) {
-                var el = $('.search-content');
-                $('.search-options').toggle();
-
-                if (el.hasClass('arrow-down')) {
-                    el.removeClass('arrow-down')
-                } else {
-                    el.addClass('arrow-down')
+            triggerClick: function (e) {
+                if (e.target.localName === 'li') {
+                    $(e.target.children[0]).trigger('click');
                 }
             },
 
-            showFilterContent: function (e) {
-                $('.drop-down-filter').toggle('fast');
+            showSearchContent: function () {
+                var el = $('.search-content');
+                var selector = 'fa-caret-up';
+
+                $('.search-options').toggle();
+
+                if (el.hasClass(selector)) {
+                    el.removeClass(selector)
+                } else {
+                    el.addClass(selector)
+                }
+            },
+
+            showFilterContent: function () {
+                $('.drop-down-filter').toggle();
                 return false;
             },
 
             writeValue: function (e) {
                 var inputText = e.target.nextElementSibling.textContent;
+                var filterValues = $('.filterValues');
+                var filterIcons = $('.filter-icons');
+                var input = $('.drop-down-filter input');
                 var checked;
 
-                $('.filter-icons').addClass('active');
+                filterIcons.addClass('active');
 
-                if (!$('.filterValues').find('.iconFilter').length) {
-                    $('.filterValues').prepend('<span class="iconFilter"></span>')
-                }
+                //if (!filterValues.find('.iconFilter').length) {
+                //    filterValues.prepend('<span class="iconFilter"></span>')
+                //}
 
-                $.each($('.drop-down-filter input'), function (index, value) {
+                $.each(input, function (index, value) {
                     if (value.checked) {
                         return checked = true
                     }
                 });
                 if (!checked) {
-                    $('#content-holder').trigger('defaultFilter');
-                    $('.filterValues').empty();
-                    $('.filter-icons').removeClass('active');
+                    this.trigger('defaultFilter');
+                    filterValues.empty();
+                    filterIcons.removeClass('active');
                 }
                 if (e.target.checked) {
-                    $('.filterValues').append('<span class=' + '"' + inputText + '">' + inputText + '</span>')
+                    filterValues.append('<span class=' + '"' + inputText + '">' + inputText + '</span>')
                 } else {
-                    $('.filterValues').find('.' + inputText).remove()
+                    filterValues.find('.' + inputText).remove()
                 }
-                if (e.target.id !== 'defaultFilter' && e.target.checked) {
+
+                if (e.target.id !== 'defaultFilter') {
                     $('#defaultFilter').removeAttr('checked');
-                    $('.filterValues').find('.Default').remove();
-                    $('#content-holder').trigger('filter')
+                    filterValues.find('.Default').remove();
+                    this.trigger('filter')
                 } else {
-                    $.each($('.drop-down-filter input'), function (index, value) {
+                    $.each(input, function (index, value) {
                         if (value.id !== 'defaultFilter') value.checked = false
                     });
                     $.each($('.filterValues span'), function (index, item) {
-                        if (item.className !== 'Default' && item.className !== 'iconFilter') item.remove();
+                        //if (item.className !== 'Default' && item.className !== 'iconFilter') item.remove();
+                        if (item.className !== 'Default') item.remove();
                     });
-                    $('#content-holder').trigger('defaultFilter');
+                    this.trigger('defaultFilter');
+                }
+
+                if ($('.drop-down-filter input:checkbox:checked').length === 0) {
+                    this.trigger('defaultFilter');
                 }
 
             },
 
-            removeValues: function (e) {
+            removeValues: function () {
                 $('.filterValues').empty();
                 $('.filter-icons').removeClass('active');
                 $.each($('.drop-down-filter input'), function (index, value) {
                     value.checked = false
                 });
-                $('#content-holder').trigger('defaultFilter');
+                this.trigger('defaultFilter');
 
             }
 
