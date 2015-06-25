@@ -22,8 +22,6 @@ define([
             viewType: 'list',//needs in view.prototype.changeLocationHash
 
             initialize: function (options) {
-                dataService.getData('/salary/recalculateSalaryCash', {}, function (response, context) {
-                }, this);
                 this.startTime = options.startTime;
                 this.collection = options.collection;
                 this.filter = options.filter;
@@ -85,17 +83,18 @@ define([
                 self.newCollection.save();
             },
 
-            savedNewModel: function(modelObjects){
+            savedNewModel: function(modelObject){
                 var savedRow = $("#listTable").find('tr[data-id="false"]');
                 var modelId;
                 var checkbox = savedRow.find('input.mainCB');
                 var editedEl = savedRow.find('.editing');
                 var editedCol = editedEl.closest('td');
 
-                modelObjects = modelObjects.success;
+                modelObject = modelObject.success;
 
-                if(modelObjects) {
-                    modelId = modelObjects._id
+                if(modelObject) {
+                    this.collection.add(modelObject);
+                    modelId = modelObject._id
                     savedRow.attr("data-id", modelId);
                     savedRow.find('.mainCB').attr('id', modelId);
                     checkbox.val(modelId);

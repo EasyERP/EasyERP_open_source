@@ -1,6 +1,7 @@
 define([
         'text!templates/Salary/subSalary/list/ListHeader.html',
         'text!templates/Salary/subSalary/list/cancelEdit.html',
+        'views/Salary/subSalary/CreateView',
         'views/Salary/subSalary/list/ListItemView',
         'text!templates/Salary/subSalary/list/ListTotal.html',
         'collections/Salary/editCollection',
@@ -8,10 +9,11 @@ define([
         'models/SalaryModel',
         'populate',
         'dataService',
-        'async'
+        'async',
+        'moment'
 ],
 
-function (listTemplate, cancelEdit, listItemView, subSalaryTotalTemplate, salaryEditableCollection, employeesCollection, currentModel, populate, dataService, async) {
+function (listTemplate, cancelEdit, createView, listItemView, subSalaryTotalTemplate, salaryEditableCollection, employeesCollection, currentModel, populate, dataService, async, moment) {
     var subSalaryListView = Backbone.View.extend({
         viewType: 'list',//needs in view.prototype.changeLocationHash
         responseObj: {},
@@ -25,6 +27,10 @@ function (listTemplate, cancelEdit, listItemView, subSalaryTotalTemplate, salary
             this.id = this.model.id;
 
             this.bodyContainerId = '#subSalary-listTable' + this.id;
+
+            this.deleteButton ='#top-bar-createBtn' + this.id;
+            this.events['click ' + this.deleteButton] = 'createItem';
+            this.delegateEvents();
 
             this.deleteButton ='#top-bar-deleteBtn' + this.id;
             this.events['click ' + this.deleteButton] = 'deleteItems';
@@ -177,6 +183,61 @@ function (listTemplate, cancelEdit, listItemView, subSalaryTotalTemplate, salary
             dataService.getData('/salary/recalculateSalaryCash', {}, function (response, context) {
                 context.listLength = response.count || 0;
             }, this);
+        },
+
+        createItem: function (e) {
+            e.preventDefault();
+
+            var month = this.model.get('month');
+            var year = this.model.get('year');
+
+            var momentYear = moment().year(year).format('YY');
+            var momentMonth = moment().month(month - 1).format('MMM');
+
+
+            var startData = {
+                dataKey: momentMonth + "/" + momentYear,
+                baseSalary: 0,
+                month: month,
+                year: year,
+                diff: {
+                    onCash: 0,
+                    onCard: 0,
+                    total: 0
+                },
+                paid: {
+                    onCash: 0,
+                    onCard: 0
+                },
+                calc: {
+                    onCash: 0,
+                    onCard: 0,
+                    salary: 0
+                },
+                employee: {
+                    name: '',
+                    _id: null
+                }
+            }
+
+            var model = new currentModel(startData);
+
+
+
+            startData.cid = model.cid;
+
+            if (!this.isNewRow()) {
+                this.showSaveCancelBtns();
+                this.editCollection.add(model);
+
+                new createView({model: startData, el: "#subSalary-listTable" + this.id});
+            }
+        },
+
+        isNewRow: function () {
+            var newRow = $('#false');
+
+            return !!newRow.length;
         },
 
         savedNewModel: function(modelObject){
@@ -419,16 +480,17 @@ function (listTemplate, cancelEdit, listItemView, subSalaryTotalTemplate, salary
                         paid = _.clone(editEmployeeModel.get('paid'));
 
                         if (editedCol.hasClass('calc')) {
-                            calc[editedElementContent] = editedElementValue;
-                            this.whatToSet['calc'] = calc;
-                            //editEmployeeModel.set('calc', calc);
+                            //if (editedCol.data('content') === 'salary') {
+                                //this.whatToSet['baseSalary'] = editedElementValue;
+                            //} else {
+                                calc[editedElementContent] = editedElementValue;
+                                this.whatToSet['calc'] = calc;
+                            //}
                         } else if (editedCol.hasClass('paid')) {
                             paid[editedElementContent] = editedElementValue;
                             this.whatToSet['paid'] = paid;
-                            //editEmployeeModel.set('paid', paid);
                         } else {
                             this.whatToSet[editedElementContent] = editedElementValue;
-                            //editEmployeeModel.set(editedElementContent, editedElementValue);
                         }
 
                         editEmployeeModel.set(this.whatToSet);
@@ -484,6 +546,7 @@ function (listTemplate, cancelEdit, listItemView, subSalaryTotalTemplate, salary
             var target = $(e.target);
             var targetElement = target.closest("td");
             var tr = target.closest("tr");
+            var modelId = tr.data('id');
             var id = target.attr("id");
             var attr = targetElement.attr("id") || targetElement.data("content");
             var elementType = '#' + attr;
@@ -491,7 +554,7 @@ function (listTemplate, cancelEdit, listItemView, subSalaryTotalTemplate, salary
                 return el._id === id;
             });
 
-            var editSalaryModel = this.model;
+            var editSalaryModel = this.editCollection.get(modelId);
 
             if (elementType === '#employee') {
                 tr.find('[data-content="employee"]').text(element.name);
