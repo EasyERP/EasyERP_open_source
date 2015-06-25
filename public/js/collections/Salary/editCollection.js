@@ -13,25 +13,15 @@ define([
 
             save: function(){
                 var self = this;
-                var model;
+                var ModelsForCreate = Backbone.Collection.extend({
+                    url: this.url
+                });
+                var ModelsForUpdate = Backbone.Collection.extend({
+                    url: this.url
+                });
                 var modelsForUpdate;
                 var modelsForCreate;
-                var modelObject;
-                var syncObjectUpdate = {
-                    trigger: this.trigger,
-                    url: this.url,
-                    toJSON: function () {
-                        return modelsForUpdate;
-                    }
-                };
 
-                var syncObjectCreate = {
-                    trigger: this.trigger,
-                    url: this.url,
-                    toJSON: function () {
-                        return modelsForCreate;
-                    }
-                };
 
                 var options = {
                     success: function (model, resp, xhr) {
@@ -48,32 +38,21 @@ define([
                    return !model.id;
                 });
 
-                var ModelsForCreate = Backbone.Collection.extend({
-                    url: this.url
+                modelsForUpdate = this.filter(function(model) {
+                    return model.hasChanged();
                 });
 
-                /*for (var i = this.models.length - 1; i >=0; i--){
-                    model = this.models[i];
-
-                    if(model && model.id && model.hasChanged()){
-                        modelObject = model.changedAttributes();
-                        modelObject._id = model.id;
-                        modelsForUpdate.push(modelObject);
-                    } else if (model && !model.id){
-                        modelsForCreate.push(model);
-                    }
-                }*/
-
                 modelsForCreate = new ModelsForCreate(modelsForCreate);
+                modelsForUpdate = new ModelsForUpdate(modelsForUpdate);
 
                 if(modelsForCreate.length) {
                     modelsForCreate.sync("create", modelsForCreate, options);
                 };
 
 
-                /*if(modelsForUpdate.length) {
-                    Backbone.sync("patch", syncObjectUpdate, updatedOptions);
-                };*/
+                if(modelsForUpdate.length) {
+                    Backbone.sync("patch", modelsForUpdate, updatedOptions);
+                };
             }
         });
 

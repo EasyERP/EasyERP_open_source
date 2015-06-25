@@ -85,15 +85,68 @@ var Salary = function (models) {
 
     this.create = function (req, res, next) {
         var Salary = models.get(req.session.lastDb, 'Salary', SalarySchema);
-        var body = mapObject(req.body);
-        var Salary = new Salary(body);
+        var SalaryCash = models.get(req.session.lastDb, 'SalaryCash', SalaryCashSchema);
+        var body = req.body;
+        var salaryModel;
+        var month;
+        var year;
 
-        Salary.save(function (err, salary) {
-            if (err) {
-                return next(err);
-            }
-            res.status(200).send({success: salary});
-        });
+        if (body.length) {
+            month = body[0].month;
+            year = body[0].year;
+
+            async.series([
+                    function() {
+                        async.each(body, function (element, callback) {
+                                salaryModel = new Salary(mapObject(element));
+
+                                salaryModel.save(function (err, result) {
+                                    if (err) {
+                                        return callback(err);
+                                    }
+                                    callback();
+                                });
+                            }, function (err) {
+                                if (err) {
+                                    next(err);
+                                }
+                                console.log('Done!');
+                            }
+                        );
+                    },
+                    function () {
+                        this.recalculateCashSalary(req, res, next);
+                    },
+                    function () {
+                        var query = SalaryCash.findOne({"$and": [{month: month}, {year: year}]});
+
+                        query.exec(function (err, result) {
+                            if (err) {
+                                return next(err);
+                            }
+                            res.status(200).send({success: result});
+                        });
+                        //callback(null, "Done!");
+                    }
+                ],
+                function (err, results) {
+                    if (err) {
+                        next(err);
+                    }
+                    console.log('Done!');
+                }
+            );
+
+        } else {
+            salaryModel = new Salary(mapObject(body));
+
+            salaryModel.save(function (err, salary) {
+                if (err) {
+                    return next(err);
+                }
+                res.status(200).send({success: salary});
+            });
+        }
     };
 
     function getSalaryFilter(req, res, next) {
@@ -287,10 +340,12 @@ var Salary = function (models) {
             mongoose.connections[4].db.collection('SalaryCash').drop();
             async.eachLimit(fetchedArray, 100, function (fetchedSalary, cb) {
                 var objectToSave = {};
+                var momentYear = moment().year(fetchedSalary._id.year).format('YY');
+                var momentMonth = moment().month(fetchedSalary._id.month - 1).format('MMM');
 
                 if (fetchedSalary) {
                     objectToSave = {
-                        dataKey: moment().month(fetchedSalary._id.month-1).format('MMM') + "/" + moment().year(fetchedSalary._id.year).format('YY'),
+                        dataKey: momentMonth + "/" + momentYear,
                         month: fetchedSalary._id.month,
                         year: fetchedSalary._id.year,
                         calc: {
