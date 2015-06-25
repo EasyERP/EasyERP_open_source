@@ -132,13 +132,13 @@
                                                 </td>
                                                 <td>
                                                     <span>
-                                                        <span id="totalUntaxes">
-                                                            <%if (model && model.paymentInfo && model.paymentInfo.unTaxed) {%>
-                                                            <%=(model.paymentInfo.unTaxed)%>
+                                                        <span id="totalUntaxes" class="currency">
+                                                            <%if (total) {%>
+                                                            <%= total%>
                                                             <%} else {%>
                                                             0.00
                                                             <%}%>
-                                                        </span>$
+                                                        </span>
                                                     </span>
                                                 </td>
                                             </tr>
@@ -148,13 +148,9 @@
                                                 </td>
                                                 <td>
                                                     <span>
-                                                        <span id="taxes">
-                                                            <%if (model && model.paymentInfo && model.paymentInfo.taxes) {%>
-                                                            <%=(model.paymentInfo.taxes)%>
-                                                            <%} else {%>
+                                                        <span id="taxes" class="currency">
                                                             0.00
-                                                            <%}%>
-                                                        </span>$
+                                                        </span>
                                                     </span>
                                                 </td>
                                             </tr>
@@ -164,13 +160,13 @@
                                                 </td>
                                                 <td>
                                                     <span class="">
-                                                        <span id="totalAmount">
-                                                            <%if (model && model.paymentInfo && model.paymentInfo.total) {%>
-                                                            <%=(model.paymentInfo.total)%>
+                                                        <span id="totalAmount" class="currency">
+                                                            <%if (total) {%>
+                                                            <%=total%>
                                                             <%} else {%>
                                                             0.00
                                                             <%}%>
-                                                        </span>$
+                                                        </span>
                                                     </span>
                                                 </td>
                                             </tr>

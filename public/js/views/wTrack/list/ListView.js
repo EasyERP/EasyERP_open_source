@@ -81,10 +81,16 @@ define([
                 var project;
                 var assigned;
                 var customer;
+                var total = 0;
 
                 async.each(selectedWtracks, function (el, cb) {
                     var id = $(el).val();
                     var model = self.collection.get(id);
+                    var revenue = model.get('revenue').replace('$', '');
+
+                    revenue = parseFloat(revenue);
+
+                    total += revenue;
 
                     if (!project) {
                         project = model.get('project');
@@ -100,7 +106,8 @@ define([
                             wTracks: wTracks,
                             project: project,
                             assigned: assigned,
-                            customer: customer
+                            customer: customer,
+                            total: total
                         });
                     }
                 });

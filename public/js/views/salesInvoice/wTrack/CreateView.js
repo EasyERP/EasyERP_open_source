@@ -16,13 +16,16 @@
             el: "#content-holder",
             contentType: "Invoice",
             template: _.template(CreateTemplate),
+            $linwoiceGenerateTable: null,
 
             initialize: function (options) {
                 var self = this;
                 var projectId = options.project ? options.project._id : null;
 
                 _.bindAll(this, "saveItem", "render");
+
                 this.model = new InvoiceModel(options);
+                this.model.bind('change:paymentInfo', this.changeTotal, this);
                 this.responseObj = {};
 
                 dataService.getData('/invoice/generateName?projectId=' + projectId, null, function (name) {
@@ -35,12 +38,30 @@
 
             events: {
                 'keydown': 'keydownHandler',
+                "click td.editable": "editRow",
                 'click .dialog-tabs a': 'changeTab',
-                "click .details": "showDetailsBox"
+                "change .editing": "changeValue"
             },
 
-            showDetailsBox: function (e) {
-                $(e.target).parent().find(".details-box").toggle();
+            changeTotal: function(model, val){
+               this.$el.find("#totalAmount").text(val.total);
+               this.$el.find("#totalUntaxes").text(val.total);
+            },
+
+            changeValue: function(e){
+                var paymentInfo;
+                var total = 0;
+                var targetEl = $(e.target);
+                var editableArr = this.$el.find('.editable:not(:has(input))');
+
+                editableArr.each(function(index, el){
+                    total += parseFloat($(el).text());
+                });
+
+                paymentInfo = _.clone(this.model.get('paymentInfo'));
+                paymentInfo.total = parseFloat(targetEl.val()) + total;
+
+                this.model.set('paymentInfo', paymentInfo);
             },
 
             keydownHandler: function (e) {
@@ -51,6 +72,41 @@
                     default:
                         break;
                 }
+            },
+
+            editRow: function (e, prev, next) {
+                var el = $(e.target);
+                var tr = el.closest('tr');
+                var wTrackId = tr.data('id');
+                var tempContainer;
+                var width;
+                var editedElement;
+                var editedCol;
+                var editedElementValue;
+                var paymentInfo;
+
+                if (wTrackId && el.prop('tagName') !== 'INPUT') {
+                    if (this.wTrackId) {
+                        editedElement = this.$linwoiceGenerateTable.find('.editing');
+
+                        if (editedElement.length) {
+
+                            editedCol = editedElement.closest('td');
+                            editedElementValue = editedElement.val();
+
+                            editedCol.text(editedElementValue);
+                            editedElement.remove();
+                        }
+                    }
+                    this.wTrackId = wTrackId;
+                }
+
+
+                tempContainer = el.text();
+                width = el.width() - 6;
+                el.html('<input class="editing" type="text" value="' + tempContainer + '"  maxLength="4" style="width:' + width + 'px">');
+
+                return false;
             },
 
             changeTab: function (e) {
@@ -165,13 +221,10 @@
                 if (supplier) {
                     var model = new InvoiceModel();
                     model.save(data, {
-                        headers: {
-                            mid: mid
-                        },
                         wait: true,
                         success: function () {
                             self.hideDialog();
-                            Backbone.history.navigate("easyErp/Invoice", {trigger: true});
+                            Backbone.history.navigate("easyErp/salesInvoice", {trigger: true});
                         },
                         error: function (model, xhr) {
                             self.errorNotification(xhr);
@@ -261,6 +314,7 @@
 
 
                 this.delegateEvents(this.events);
+                this.$linwoiceGenerateTable = this.$el.find('#linwoiceGenerateTable');
 
                 return this;
             }

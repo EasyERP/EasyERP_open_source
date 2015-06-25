@@ -7517,3 +7517,6 @@ textarea#editInput {
 .removeValues {
   cursor: pointer;
 }
+.currency::before {
+  content: "$"
+}
