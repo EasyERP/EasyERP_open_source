@@ -4,6 +4,7 @@ define([
         'views/wTrack/CreateView',
         'views/wTrack/list/ListItemView',
         'views/wTrack/EditView',
+        'views/salesInvoice/wTrack/CreateView',
         'models/wTrackModel',
         'collections/wTrack/filterCollection',
         'collections/wTrack/editCollection',
@@ -14,7 +15,7 @@ define([
         'async'
     ],
 
-    function (listTemplate, cancelEdit, createView, listItemView, editView, currentModel, contentCollection, EditCollection, filterView, common, dataService, populate, async) {
+    function (listTemplate, cancelEdit, createView, listItemView, editView, wTrackCreateView, currentModel, contentCollection, EditCollection, filterView, common, dataService, populate, async) {
         var wTrackListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -68,6 +69,33 @@ define([
                 "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
                 "change .autoCalc": "autoCalc",
                 "change .editable ": "setEditable"
+            },
+
+            generateInvoice: function (e) {
+                var selectedWtracks = this.$el.find('input:checked');
+                var wTracks = [];
+                var self = this;
+                var project;
+                var assigned;
+                var customer;
+
+                async.each(selectedWtracks, function (el, cb) {
+                    var id = $(el).val();
+                    var model = self.collection.get(id);
+
+                    if (!project) {
+                        project = model.get('project');
+                        assigned = project.projectmanager ? project.projectmanager.name : '';
+                        customer = project.customer;
+                    }
+
+                    wTracks.push(model.toJSON());
+                    cb();
+                }, function (err) {
+                    if (!err) {
+                        new wTrackCreateView({ wTracks: wTracks, project: project, assigned: assigned, customer: customer });
+                    }
+                });
             },
 
             nextSelect: function (e) {

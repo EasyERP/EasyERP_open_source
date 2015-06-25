@@ -457,7 +457,9 @@ define([
                     model;
                 var localCounter = 0;
                 var count = $("#listTable input:checked").length;
+
                 this.collectionLength = this.collection.length;
+
                 $.each($("#listTable input:checked"), function (index, checkbox) {
                     model = that.collection.get(checkbox.value);
                     model.destroy({

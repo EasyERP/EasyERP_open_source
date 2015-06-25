@@ -221,6 +221,7 @@ define([
                 var formString = this.template();
                 var self = this;
                 var invoiceItemContainer;
+                var paymentContainer;
 
                 this.$el = $(formString).dialog({
                     closeOnEscape: false,
@@ -248,7 +249,7 @@ define([
 
                 });
 
-                var notDiv = this.$el.find('.assignees-container');
+                notDiv = this.$el.find('.assignees-container');
                 notDiv.append(
                     new AssigneesView({
                         model: this.currentModel
@@ -260,7 +261,7 @@ define([
                     new InvoiceItemView({balanceVisible: true, canBeSold: this.forSales}).render().el
                 );
 
-                var paymentContainer = this.$el.find('#payments-container');
+                paymentContainer = this.$el.find('#payments-container');
                 paymentContainer.append(
                     new listHederInvoice().render().el
                 );

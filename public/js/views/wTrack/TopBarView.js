@@ -15,7 +15,12 @@ define([
                 "click #top-bar-deleteBtn": "deleteEvent",
                 "click #top-bar-saveBtn": "saveEvent",
                 "click #top-bar-editBtn": "editEvent",
-                "click #top-bar-createBtn": "createEvent"
+                "click #top-bar-createBtn": "createEvent",
+                "click #top-bar-generateBtn": "generateInvoice"
+            },
+
+            generateInvoice: function (e) {
+                this.trigger('generateInvoice');
             },
 
             changeContentViewType: function (e) {
