@@ -426,8 +426,16 @@ module.exports = function (models) {
                                         name: result.project.projectmanager.name.first + ' ' + result.project.projectmanager.name.last
                                     };
                                 }
-                                objectToSave.project.customer = result.project.customer && result.project.customer.name ? result.project.customer.name.first + ' ' + result.project.customer.name.last : '';
-                                objectToSave.project.workflow = result.project.workflow ? result.project.workflow.name : '';
+
+                                objectToSave.project.customer = {
+                                    _id: result.project.customer ? result.project.customer._id: null,
+                                    name: result.project.customer && result.project.customer.name ? result.project.customer.name.first + ' ' + result.project.customer.name.last : ''
+                                };
+
+                                objectToSave.project.workflow = {
+                                    _id: result.project.workflow ? result.project.workflow._id : null,
+                                    name: result.project.workflow ? result.project.workflow.name : ''
+                                };
                             }
 
                             if (result.employee) {

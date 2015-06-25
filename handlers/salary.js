@@ -96,7 +96,7 @@ var Salary = function (models) {
             year = body[0].year;
 
             async.series([
-                    function() {
+                    function () {
                         async.each(body, function (element, callback) {
                                 salaryModel = new Salary(mapObject(element));
 

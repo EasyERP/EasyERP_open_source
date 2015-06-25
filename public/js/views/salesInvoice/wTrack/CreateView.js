@@ -22,7 +22,7 @@
                 var projectId = options.project ? options.project._id : null;
 
                 _.bindAll(this, "saveItem", "render");
-                this.model = new InvoiceModel();
+                this.model = new InvoiceModel(options);
                 this.responseObj = {};
 
                 dataService.getData('/invoice/generateName?projectId=' + projectId, null, function (name) {
@@ -36,37 +36,9 @@
             events: {
                 'keydown': 'keydownHandler',
                 'click .dialog-tabs a': 'changeTab',
-                "click .details": "showDetailsBox",
-                "click .current-selected": "showNewSelect",
-                "click": "hideNewSelect",
-                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-                "click .newSelectList li.miniStylePagination": "notHide",
-                "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect"
+                "click .details": "showDetailsBox"
             },
 
-            showNewSelect: function (e, prev, next) {
-                populate.showSelect(e, prev, next, this);
-                return false;
-
-            },
-            notHide: function () {
-                return false;
-            },
-            hideNewSelect: function () {
-                $(".newSelectList").hide();
-            },
-            chooseOption: function (e) {
-                var holder = $(e.target).parents("dd").find(".current-selected");
-                holder.text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
-            },
-
-            nextSelect: function (e) {
-                this.showNewSelect(e, false, true);
-            },
-            prevSelect: function (e) {
-                this.showNewSelect(e, true, false);
-            },
             showDetailsBox: function (e) {
                 $(e.target).parent().find(".details-box").toggle();
             },
@@ -103,7 +75,6 @@
 
             saveItem: function () {
                 var self = this;
-                var mid = 56;
 
                 var selectedProducts = this.$el.find('.productItem');
                 var products = [];
@@ -116,13 +87,11 @@
                 var amount;
                 var description;
 
-                var forSales = (this.forSales) ? true : false;
-
                 var supplier = this.$("#supplier").data("id");
                 var salesPersonId = this.$("#salesPerson").data("id") ? this.$("#salesPerson").data("id") : null;
-                var paymentTermId = this.$("#payment_terms").data("id") ? this.$("#payment_terms").data("id") : null;
-                var invoiceDate = this.$("#invoice_date").val();
-                var dueDate = this.$("#due_date").val();
+                var paymentTermId = this.$("#paymentTerms").data("id") ? this.$("#payment_terms").data("id") : null;
+                var invoiceDate = this.$("#invoiceFate").val();
+                var dueDate = this.$("#dueDate").val();
 
                 var total = parseFloat(this.$("#totalAmount").text());
                 var unTaxed = parseFloat(this.$("#totalUntaxes").text());
@@ -171,13 +140,7 @@
 
                 var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
                 var data = {
-                    forSales: forSales,
-
                     supplier: supplier,
-                    fiscalPosition: null,
-                    sourceDocument: $.trim($('#source_document').val()),
-                    supplierInvoiceNumber: $.trim($('#supplier_invoice_num').val()),
-                    paymentReference: $.trim($('#payment_reference').val()),
                     invoiceDate: invoiceDate,
                     dueDate: dueDate,
                     account: null,
@@ -208,7 +171,7 @@
                         wait: true,
                         success: function () {
                             self.hideDialog();
-                            Backbone.history.navigate("easyErp/Invoice", { trigger: true });
+                            Backbone.history.navigate("easyErp/Invoice", {trigger: true});
                         },
                         error: function (model, xhr) {
                             self.errorNotification(xhr);
@@ -231,7 +194,7 @@
             render: function (options) {
                 options.model = null;
                 options.balanceVisible = null;
-
+                var notDiv;
                 var now = new Date();
                 var dueDate = moment().add(15, 'days').toDate();
                 var formString = this.template(options);
@@ -282,7 +245,7 @@
                     new listHederInvoice().render().el
                 );
 
-                populate.get("#payment_terms", "/paymentTerm", {}, 'name', this, true);
+                populate.get("#paymentTerms", "/paymentTerm", {}, 'name', this, true);
 
                 this.$el.find('#invoiceDate').datepicker({
                     dateFormat: "d M, yy",

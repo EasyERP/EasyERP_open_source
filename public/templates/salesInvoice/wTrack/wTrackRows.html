@@ -1,5 +1,5 @@
 ﻿<% wTracks.forEach(function(wTrack, index){ %>
-<tr data-id="<%=wTrack._id%>">
+<tr data-id="<%=wTrack._id%>" class="productItem">
     <td data-content="number"><%= index + 1%></td>
     <td class="editable" data-content="project"><%=wTrack.project ? wTrack.project.projectName : ''%></td>
     <td class="editable" data-content="employee"><%=wTrack.employee ? wTrack.employee.name : ''%></td>
@@ -18,6 +18,6 @@
     <td data-type="input" class="editable autoCalc" data-content="7"><%=wTrack['7']%></td>
     <td><%=wTrack.isPaid ? 'Paid' : 'Unpaid'%></td>
     <td><%='$' + wTrack.revenue%></td>
-    <td><%=wTrack.amount ? '$' + wTrack.amount : ''%></td>
+    <td><%='$' + wTrack.revenue%></td>
 </tr>
 <% }) %>

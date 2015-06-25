@@ -33,6 +33,7 @@ define([
             editCollection: null,
             selectedProjectId: [],
             genInvoiceEl: null,
+            changedModels: {},
 
             initialize: function (options) {
                 this.startTime = options.startTime;
@@ -63,7 +64,6 @@ define([
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
                 "click td.editable": "editRow",
                 "click #itemsButton": "itemsNumber",
-                "click #check_all": "checkAll",
                 "click .currentPageList": "itemsNumber",
                 "click": "hideItemsNumber",
                 "click #firstShowPage": "firstPage",
@@ -88,7 +88,7 @@ define([
 
                     if (!project) {
                         project = model.get('project');
-                        assigned = project.projectmanager ? project.projectmanager.name : '';
+                        assigned = project.projectmanager;
                         customer = project.customer;
                     }
 
@@ -200,7 +200,12 @@ define([
                             editedElementValue = editedElement.val();
 
                             editWtrackModel = this.editCollection.get(editedElementRowId);
-                            editWtrackModel.set(editedElementContent, editedElementValue);
+
+                            if(!this.changedModels[editedElementRowId]) {
+                                this.changedModels[editedElementRowId] = {};
+                            }
+
+                            this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
 
                             editedCol.text(editedElementValue);
                             editedElement.remove();
@@ -235,11 +240,22 @@ define([
                 var elementType = '#' + attr;
                 var projectManager;
                 var assignedContainer;
+                var project;
+                var employee;
+                var department;
+                var changedAttr;
+
                 var element = _.find(this.responseObj[elementType], function (el) {
                     return el._id === id;
                 });
 
                 var editWtrackModel = this.editCollection.get(modelId);
+
+                if(!this.changedModels[modelId]){
+                    this.changedModels[modelId] = {};
+                }
+
+                changedAttr = this.changedModels[modelId];
 
                 if (elementType === '#project') {
                     projectManager = element.projectmanager.name.first + ' ' + element.projectmanager.name.last;
@@ -250,38 +266,39 @@ define([
                     tr.find('[data-content="workflow"]').text(element.workflow.name);
                     tr.find('[data-content="customer"]').text(element.customer.name.first + ' ' + element.customer.name.last);
 
-                    editWtrackModel.set({
-                        project: {
-                            _id: element._id,
-                            projectName: element.projectName,
-                            workflow: element.workflow.name,
-                            customer: element.customer.name.first + ' ' + element.customer.name.last,
-                            projectmanager: {
-                                name: element.projectmanager.name.first + ' ' + element.projectmanager.name.last,
-                                _id: element.projectmanager._id
-                            }
-                        }
-                    });
+                    project = _.clone(editWtrackModel.get('project'));
+                    project._id = element._id;
+                    project.projectName = element.projectName;
+                    project.workflow._id = element.workflow._id;
+                    project.workflow.name = element.workflow.name;
+                    project.customer._id = element.customer._id;
+                    project.customer.name = element.customer.name.first + ' ' + element.customer.name.last;
+
+                    project.projectmanager.name = element.projectmanager.name.first + ' ' + element.projectmanager.name.last;
+                    project.projectmanager._id = element.projectmanager._id;
+
+                    changedAttr.project = project;
+
                 } else if (elementType === '#employee') {
                     tr.find('[data-content="department"]').text(element.department.departmentName);
 
-                    editWtrackModel.set({
-                        employee: {
-                            _id: element._id,
-                            name: target.text()
-                        },
-                        department: {
-                            _id: element.department._id,
-                            departmentName: element.department.departmentName
-                        }
-                    });
+                    employee = _.clone(editWtrackModel.get('employee'));
+                    department = _.clone(editWtrackModel.get('department'));
+
+                    employee._id = element._id;
+                    employee.name = target.text();
+
+                    department._id = element.department._id;
+                    department.departmentName = element.department.departmentName;
+
+                    changedAttr.employee = employee;
+                    changedAttr.department = department;
                 } else if (elementType === '#department') {
-                    editWtrackModel.set({
-                        department: {
-                            _id: element._id,
-                            departmentName: element.departmentName
-                        }
-                    });
+                    department = _.clone(editWtrackModel.get('department'));
+                    department._id = element.department._id;
+                    department.departmentName = element.department.departmentName;
+
+                    changedAttr.department = department;
                 }
 
                 targetElement.text(target.text());
@@ -293,6 +310,12 @@ define([
             },
 
             saveItem: function () {
+                var model;
+
+                for (var id in this.changedModels){
+                    model = this.editCollection.get(id);
+                    model.changed = this.changedModels[id];
+                }
                 this.editCollection.save();
             },
 
@@ -425,17 +448,7 @@ define([
                 }, this);
             },
 
-            checkAll: function (e) {
-                $(':checkbox').prop('checked', this.checked);
-                if ($("input.checkbox:checked").length > 0) {
-                    $("#top-bar-deleteBtn").show();
-                } else {
-                    $("#top-bar-deleteBtn").hide();
-                }
-            },
-
             render: function () {
-                $('.ui-dialog ').remove();
 
                 var self = this;
                 var currentEl = this.$el;
@@ -462,6 +475,17 @@ define([
                     pagenation.show();
                 }
                 currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+
+                $('#check_all').click(function () {
+                    $(':checkbox').prop('checked', this.checked);
+                    if ($("input.checkbox:checked").length > 0) {
+                        $("#top-bar-deleteBtn").show();
+                    } else {
+                        $("#top-bar-deleteBtn").hide();
+                    }
+
+                    self.genInvoiceEl.hide();
+                });
 
                 dataService.getData("/project/getForWtrack", null, function (projects) {
                     projects = _.map(projects.data, function (project) {

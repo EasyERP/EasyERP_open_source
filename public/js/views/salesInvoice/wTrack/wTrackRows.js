@@ -18,8 +18,8 @@
             var thisEl = this.$el;
 
             thisEl.html(this.template(options));
+
             totalAmountContainer = thisEl.find('#totalAmountContainer');
-            totalAmountContainer.append(_.template(totalAmount, {model: options.model, balanceVisible: this.visible}));
 
             return this;
         }

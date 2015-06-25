@@ -13,19 +13,19 @@
                             <dl class="opp-info">
                                 <dt><label for="assigned">Assigned</label></dt>
                                 <dd>
-                                    <span id="assigned"><%= assigned%></span>
+                                    <span id="assigned" data-id="<%= assigned._id%>"><%= assigned.name%></span>
                                 </dd>
                                 <dt><label for="supplier">Customer</label></dt>
                                 <dd>
-                                    <span id="supplier"><%= customer%></span>
+                                    <span id="supplier" data-id="<%= customer._id%>"><%= customer.name%></span>
                                 </dd>
                                 <dt><label for="project">Project</label></dt>
                                 <dd>
                                     <span id="project"><%= project.projectName%></span>
                                 </dd>
-                                <dt><label for="payment_terms">Payment Terms</label></dt>
+                                <dt><label for="paymentTerms">Payment Terms</label></dt>
                                 <dd>
-                                    <a id="payment_terms" class="current-selected" href="javascript:;">Select</a>
+                                    <a id="paymentTerms" class="current-selected" href="javascript:;">Select</a>
                                 </dd>
                             </dl>
                         </div>
@@ -138,7 +138,7 @@
                                                             <%} else {%>
                                                             0.00
                                                             <%}%>
-                                                        </span>€
+                                                        </span>$
                                                     </span>
                                                 </td>
                                             </tr>
@@ -154,7 +154,7 @@
                                                             <%} else {%>
                                                             0.00
                                                             <%}%>
-                                                        </span>€
+                                                        </span>$
                                                     </span>
                                                 </td>
                                             </tr>
@@ -170,7 +170,7 @@
                                                             <%} else {%>
                                                             0.00
                                                             <%}%>
-                                                        </span>€
+                                                        </span>$
                                                     </span>
                                                 </td>
                                             </tr>
