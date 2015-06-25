@@ -136,7 +136,7 @@ define([
                     },
                     patch: true,
                     success: function (err, model) {
-                        self.showFilteredPage();
+                        self.showFilteredPage(_.pluck(self.stages, '_id'));
                     }
                 });
 
@@ -165,7 +165,7 @@ define([
                 this.newCollection = false;
                 this.filter = this.filter || {};
                 this.filter['isConverted'] = isConverted;
-                this.filter['workflow'] = workflowIdArray;
+                if (workflowIdArray) this.filter['workflow'] = workflowIdArray;
                 this.changeLocationHash(1, itemsNumber, this.filter);
                 this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter, parrentContentId: this.parrentContentId });
                 this.getTotalLength(null, itemsNumber, this.filter);

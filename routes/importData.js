@@ -1080,8 +1080,8 @@ module.exports = function (models) {
                     if (fetchedSalary) {
                         objectToSave.diff = {};
 
-                        objectToSave.diff.onCash = fetchedSalary['CalcOnCash'] - fetchedSalary['PaidOnCash'];
-                        objectToSave.diff.onCard = fetchedSalary['CalcOnCard'] - fetchedSalary['PaidOnCard'];
+                        objectToSave.diff.onCash = fetchedSalary['PaidOnCash'] - fetchedSalary['CalcOnCash'];
+                        objectToSave.diff.onCard = fetchedSalary['PaidOnCard'] - fetchedSalary['CalcOnCard'];
                         objectToSave.diff.total = objectToSave.diff.onCash + objectToSave.diff.onCard;
 
                         employeeQuery = {

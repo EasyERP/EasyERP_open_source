@@ -139,7 +139,7 @@ define([
                     },
                     patch: true,
                     success: function (model) {
-                        self.showFilteredPage();
+                        self.showFilteredPage(_.pluck(self.stages, '_id'));
                     }
                 });
 

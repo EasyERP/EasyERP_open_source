@@ -15,35 +15,161 @@ function (listTemplate, cancelEdit, listItemView, subSalaryTotalTemplate, salary
     var subSalaryListView = Backbone.View.extend({
         viewType: 'list',//needs in view.prototype.changeLocationHash
         responseObj: {},
+        editCollection: null,
+        bodyContainerId: '',
+        bodyContainer: null,
+        whatToSet: {},
 
         initialize: function (options) {
             this.model = options.model;
             this.id = this.model.id;
 
-            this.bodyContainer = '#subSalary-listTable' + this.id;
+            this.bodyContainerId = '#subSalary-listTable' + this.id;
 
             this.deleteButton ='#top-bar-deleteBtn' + this.id;
             this.events['click ' + this.deleteButton] = 'deleteItems';
             this.delegateEvents();
 
+            this.deleteButton ='#top-bar-saveBtn' + this.id;
+            this.events['click ' + this.deleteButton] = 'saveItem';
+            this.delegateEvents();
+
             this.employeesArary = this.model.toJSON().employeesArray;
+
+            this.employeesStartCollection = new salaryEditableCollection(this.employeesArary);
 
             this.render();
         },
 
         events: {
+            "click td:not(.editable, .notForm)": "tdDisable",
             "click .checkbox": "checked",
-            "click td:not(.editable)": "tdDisable",
-            "click td.editable": "editRow",
-            "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-            "click .newSelectList li.miniStylePagination": "notHide",
             "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
             "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
+            "click td.editable": "editRow",
+            "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
+            "change .autoCalc": "autoCalc",
             "change .editable": "setEditable"
+        },
+
+        autoCalc: function (e) {
+            var el = $(e.target);
+            var td = $(el.closest('td'));
+            var tr = el.closest('tr');
+            var input = tr.find('input.editing');
+            var salaryId = tr.data('id');
+            var editEmployeeModel = this.editCollection.get(salaryId);
+
+            var diffOnCash = tr.find('.diff[data-content="onCash"]');
+            var diffOnCard = tr.find('.diff[data-content="onCard"]');
+            var diffTotal = tr.find('.diff[data-content="total"]');
+
+            var value;
+            var totalValue;
+            var calcKey;
+            var tdForUpdate;
+            var paid;
+            var calc;
+            var diffObj;
+
+            if ($(td).hasClass('cash')) {
+                calcKey = 'onCash';
+                tdForUpdate = diffOnCash;
+                paid = tr.find('.paid[data-content="onCash"]').text() ;
+                calc = tr.find('.calc[data-content="onCash"]').text();
+            } else if ($(td).hasClass('card')) {
+                calcKey = 'onCard';
+                tdForUpdate = diffOnCard;
+                paid = tr.find('.paid[data-content="onCard"]').text();
+                calc = tr.find('.calc[data-content="onCard"]').text();
+            }
+
+            if (tdForUpdate) {
+
+                paid = paid ? parseInt(paid) : input.val();
+                calc = calc ? parseInt(calc) : input.val();
+
+                value = paid - calc;
+                tdForUpdate.text(value);
+
+                totalValue = parseInt(diffOnCash.text()) + parseInt(diffOnCard.text());
+                diffTotal.text(totalValue);
+
+                diffObj = _.clone(editEmployeeModel.get('diff'));
+                diffObj['total'] = totalValue;
+                diffObj[calcKey] = value;
+
+                this.whatToSet['diff'] = diffObj;
+            }
+
+            this.getTotal(td);
+        },
+
+        getTotal: function (td) {
+            var self = this;
+            var className;
+
+            if (td && td.hasClass('calc')) {
+                className = 'calc';
+            } else if (td && td.hasClass('paid')) {
+                className = 'paid';
+            };
+
+            function setTotal (name, className) {
+                var tdVal;
+                var addVal = 0;
+                var calcVal = 0;
+                var input;
+
+                var diffNameVal = 0;
+                var diffTotalVal = 0;
+
+                var diffOnCash;
+                var diffOnCard;
+
+                self.bodyContainer.find('.' + className + '[data-content="' + name +'"]').each(function() {
+                    input = $(this).find('input.editing');
+                    tdVal = $(this).text();
+                    addVal = tdVal ? parseInt(tdVal) :  parseInt(input.val());
+                    calcVal += addVal;
+                });
+
+                $('#subSalary-listTotal' + self.id).find('.total_' + className + '_' + name).text(calcVal);
+                $('tr[data-id="' + self.id + '"]').find('.total_' + className + '_' + name).text(calcVal);
+
+                if ( name==='onCard' || name==='onCash' ) {
+
+                    self.bodyContainer.find('.diff[data-content="' + name + '"]').each(function () {
+                        diffNameVal += parseInt($(this).text());
+                    });
+
+                    $('#subSalary-listTotal' + self.id).find('.total_diff_' + name).text(diffNameVal);
+                    $('tr[data-id="' + self.id + '"]').find('.total_diff_' + name).text(diffNameVal);
+
+                    diffOnCash = $('#subSalary-listTotal' + self.id).find('.total_diff_onCash').text();
+                    diffOnCard = $('#subSalary-listTotal' + self.id).find('.total_diff_onCard').text();
+
+                    diffTotalVal = parseInt(diffOnCash) + parseInt(diffOnCard);
+                    $('#subSalary-listTotal' + self.id).find('.total_diff').text(diffTotalVal);
+                }
+            };
+
+            if (td) {
+                setTotal(td.data('content'), className);
+            } else {
+                setTotal('onCash', 'calc');
+                setTotal('onCash', 'paid');
+
+                setTotal('onCard', 'calc');
+                setTotal('onCard', 'paid');
+
+                setTotal('salary', 'calc');
+            }
         },
 
         saveItem: function (e) {
             e.preventDefault();
+
             this.editCollection.save();
             this.editCollection.on('saved', this.savedNewModel, this);
             this.editCollection.on('updated', this.updatedOptions, this);
@@ -51,11 +177,10 @@ function (listTemplate, cancelEdit, listItemView, subSalaryTotalTemplate, salary
             dataService.getData('/salary/recalculateSalaryCash', {}, function (response, context) {
                 context.listLength = response.count || 0;
             }, this);
-            this.reRender();
         },
 
         savedNewModel: function(modelObject){
-            var savedRow = this.$(this.bodyContainer).find('#false');
+            var savedRow = this.bodyContainer.find('#false');
             var modelId;
             var checkbox = savedRow.find('input[type=checkbox]');
 
@@ -81,41 +206,41 @@ function (listTemplate, cancelEdit, listItemView, subSalaryTotalTemplate, salary
             }
         },
 
-        reRender: function (deleteCounter, deletePage) {
-            this.model.set({"employeesArray": this.editCollection.toJSON()});
+        deleterender: function() {
+            this.resetCollection();
             this.render();
-        },
+            this.bodyContainer = $(this.bodyContainerId);
+            this.getTotal();
 
+            dataService.getData('/salary/recalculateSalaryCash', {}, function (response, context) {
+                context.listLength = response.count || 0;
+            }, this);
+        },
 
         deleteItems: function (e) {
             e.preventDefault();
-            var currentEl = this.$el;
             var that = this,
                 mid = 39,
                 model;
-            var localCounter = 0;
-            var count = $(this.bodyContainer + " input:checked").length;
+            var count = $(this.bodyContainerId + " input:checked").length;
             this.collectionLength = this.editCollection.length;
 
             if (!this.changed) {
                 var answer = confirm("Realy DELETE items ?!");
                 var value;
+                var localCounter = 0;
 
                 if (answer === true) {
-                    $.each($(this.bodyContainer + " input:checked"), function (index, checkbox) {
+                    $.each($(this.bodyContainerId + " input:checked"), function (index, checkbox) {
                         value = checkbox.value;
 
                         if (value.length < 24) {
                             that.editCollection.remove(value);
                             that.editCollection.on('remove', function () {
-
-                                this.listLength--;
-                                localCounter++;
-
-                                if (index === count - 1) {
-                                    that.reRender();
+                                localCounter ++;
+                                if (localCounter === count) {
+                                    that.deleterender();
                                 }
-
                             }, that);
                         } else {
 
@@ -126,27 +251,15 @@ function (listTemplate, cancelEdit, listItemView, subSalaryTotalTemplate, salary
                                 },
                                 wait: true,
                                 success: function () {
-                                    dataService.getData('/salary/recalculateSalaryCash');
-
-                                    that.listLength--;
-                                    localCounter++;
-
-                                    if (index === count - 1) {
-                                        that.reRender();
+                                    localCounter ++;
+                                    if (localCounter === count) {
+                                        that.deleterender();
                                     }
                                 },
                                 error: function (model, res) {
                                     if (res.status === 403 && index === 0) {
                                         alert("You do not have permission to perform this action");
                                     }
-                                    that.listLength--;
-                                    localCounter++;
-                                    if (index == count - 1) {
-                                        if (index === count - 1) {
-                                            that.reRender();
-                                        }
-                                    }
-
                                 }
                             });
                         }
@@ -160,7 +273,7 @@ function (listTemplate, cancelEdit, listItemView, subSalaryTotalTemplate, salary
         cancelChanges: function () {
             var self = this;
             var edited = this.edited;
-            var collection = this.employeesCollection;
+            var collection = this.employeesStartCollection;
 
             async.each(edited, function (el, cb) {
                 var tr = $(el).closest('tr');
@@ -198,7 +311,7 @@ function (listTemplate, cancelEdit, listItemView, subSalaryTotalTemplate, salary
         },
 
         isEditRows: function () {
-            var edited = this.$(this.bodyContainer).find('.edited');
+            var edited = this.bodyContainer.find('.edited');
 
             this.edited = edited;
 
@@ -206,8 +319,9 @@ function (listTemplate, cancelEdit, listItemView, subSalaryTotalTemplate, salary
         },
 
         setEditable: function (td) {
+
             if(!td.parents) {
-                td = $(td.target);
+                td = $(td.target).closest('td');
             }
 
             td.addClass('edited');
@@ -259,13 +373,13 @@ function (listTemplate, cancelEdit, listItemView, subSalaryTotalTemplate, salary
                 var checkLength = $("input.checkbox:checked").length;
 
                 if ($("input.checkbox:checked").length > 0) {
-                    $("#top-bar-deleteBtn").show();
+                    $('#top-bar-deleteBtn' + this.id).show();
                     if (checkLength == this.editCollection.length) {
-                        $('#check_all').prop('checked', true);
+                        $('#check_all' + this.id).prop('checked', true);
                     }
                 } else {
-                    $("#top-bar-deleteBtn").hide();
-                    $('#check_all').prop('checked', false);
+                    $('#top-bar-deleteBtn' + this.id).hide();
+                    $('#check_all' + this.id).prop('checked', false);
                 }
             }
         },
@@ -280,16 +394,19 @@ function (listTemplate, cancelEdit, listItemView, subSalaryTotalTemplate, salary
             var isSelect = colType !== 'input' && el.prop("tagName") !== 'INPUT';
             var tempContainer;
             var width;
-            var editEmployyeModel;
+            var editEmployeeModel;
             var editedElement;
             var editedCol;
             var editedElementRowId;
             var editedElementValue;
             var editedElementContent;
 
+            var calc;
+            var paid;
+
             if (salaryId && el.prop('tagName') !== 'INPUT') {
                 if (this.salaryId) {
-                    editedElement = this.$(this.bodyContainer).find('.editing');
+                    editedElement = this.bodyContainer.find('.editing');
 
                     if (editedElement.length) {
                         editedCol = editedElement.closest('td');
@@ -297,8 +414,24 @@ function (listTemplate, cancelEdit, listItemView, subSalaryTotalTemplate, salary
                         editedElementContent = editedCol.data('content');
                         editedElementValue = editedElement.val();
 
-                        editEmployyeModel = this.editCollection.get(editedElementRowId);
-                        editEmployyeModel.set(editedElementContent, editedElementValue);
+                        editEmployeeModel = this.editCollection.get(editedElementRowId);
+                        calc = _.clone(editEmployeeModel.get('calc'));
+                        paid = _.clone(editEmployeeModel.get('paid'));
+
+                        if (editedCol.hasClass('calc')) {
+                            calc[editedElementContent] = editedElementValue;
+                            this.whatToSet['calc'] = calc;
+                            //editEmployeeModel.set('calc', calc);
+                        } else if (editedCol.hasClass('paid')) {
+                            paid[editedElementContent] = editedElementValue;
+                            this.whatToSet['paid'] = paid;
+                            //editEmployeeModel.set('paid', paid);
+                        } else {
+                            this.whatToSet[editedElementContent] = editedElementValue;
+                            //editEmployeeModel.set(editedElementContent, editedElementValue);
+                        }
+
+                        editEmployeeModel.set(this.whatToSet);
 
                         editedCol.text(editedElementValue);
                         editedElement.remove();
@@ -337,7 +470,6 @@ function (listTemplate, cancelEdit, listItemView, subSalaryTotalTemplate, salary
 
             return false;
         },
-
 
         notHide: function () {
             return false;
@@ -379,9 +511,11 @@ function (listTemplate, cancelEdit, listItemView, subSalaryTotalTemplate, salary
 
             return false;
         },
+
         nextSelect: function (e) {
             this.showNewSelect(e, false, true);
         },
+
         prevSelect: function (e) {
             this.showNewSelect(e, true, false);
         },
@@ -394,23 +528,32 @@ function (listTemplate, cancelEdit, listItemView, subSalaryTotalTemplate, salary
             currentEl.html('');
             currentEl.append(_.template(listTemplate, modelJSON));
             currentEl.append(new listItemView({
-                el: this.bodyContainer,
+                el: this.bodyContainerId,
                 model: this.model
             }).render());//added two parameters page and items number
 
             currentEl.find('#subSalary-listTotal'  + this.model.id).append(_.template(subSalaryTotalTemplate, modelJSON));
-
             this.filterEmployeesForDD(this);
 
             this.hideSaveCancelBtns();
             $('#top-bar-deleteBtn' + this.id).hide();
 
+            $('#check_all' + this.model.id).click(function () {
+                $(self.bodyContainerId).find('.checkbox').prop('checked', this.checked);
+                if ($(self.bodyContainerId).find("input.checkbox:checked").length > 0) {
+                    $("#top-bar-deleteBtn" + self.model.id).show();
+                } else {
+                    $("#top-bar-deleteBtn" + self.model.id).hide();
+                }
+            });
+
             setTimeout(function () {
-                self.employeesCollection = new salaryEditableCollection(self.employeesArary);
-                self.editCollection = self.employeesCollection;
+                self.editCollection = new salaryEditableCollection(self.employeesArary);
 
                 self.editCollection.on('saved', self.savedNewModel, self);
                 self.editCollection.on('updated', self.updatedOptions, self);
+
+                self.bodyContainer = $(self.bodyContainerId);
             }, 10);/*
 
             $('#top-bar-saveBtn' + self.id).click(this.saveItem);

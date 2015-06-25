@@ -284,7 +284,7 @@ var Salary = function (models) {
         };
 
         function saveGroupedData(fetchedArray, callback) {
-
+            mongoose.connections[4].db.collection('SalaryCash').drop();
             async.eachLimit(fetchedArray, 100, function (fetchedSalary, cb) {
                 var objectToSave = {};
 

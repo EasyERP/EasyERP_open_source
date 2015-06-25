@@ -8,13 +8,14 @@ define([
         'models/wTrackModel',
         'collections/wTrack/filterCollection',
         'collections/wTrack/editCollection',
+        'views/Filter/FilterView',
         'common',
         'dataService',
         'populate',
         'async'
     ],
 
-    function (listTemplate, cancelEdit, createView, listItemView, editView, wTrackCreateView, currentModel, contentCollection, EditCollection, common, dataService, populate, async) {
+    function (listTemplate, cancelEdit, createView, listItemView, editView, wTrackCreateView, currentModel, contentCollection, EditCollection, filterView, common, dataService, populate, async) {
         var wTrackListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
