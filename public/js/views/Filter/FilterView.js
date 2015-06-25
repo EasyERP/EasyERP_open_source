@@ -7,7 +7,7 @@ define([
         var FilterView;
         FilterView = Backbone.View.extend({
             el: '#searchContainer',
-            contentType: "Opportunities",
+            contentType: "Filter",
             template: _.template(ContentFilterTemplate),
 
             events: {
@@ -19,11 +19,11 @@ define([
             },
 
 
-            initialize: function () {
+            initialize: function (options) {
                 this.render();
             },
 
-            render: function () {
+            render: function (options) {
 
                 this.$el.html(this.template({collection: this.collection}));
 

@@ -350,8 +350,14 @@ define([
             },
 
             hideItemsNumber: function (e) {
+                var el = e.target;
                 $(".allNumberPerPage").hide();
                 $(".newSelectList").hide();
+                if (!el.closest('.search-view')) {
+                    $(".drop-down-filter").hide();
+                    $('.search-options').hide();
+                    $('.search-content').removeClass('fa-caret-up')
+                };
             },
 
             showNewSelect: function (e, prev, next) {
@@ -392,8 +398,8 @@ define([
                 $('.ui-dialog ').remove();
                 var self = this;
                 var currentEl = this.$el;
-                var filteredStatuses = [];
                 var pagenation;
+                var FilterView;
 
                 currentEl.html('');
                 currentEl.append(_.template(listTemplate));
@@ -413,8 +419,8 @@ define([
                     }
                 });
 
-                $(document).on("click", function () {
-                    self.hideItemsNumber();
+                $(document).on("click", function (e) {
+                    self.hideItemsNumber(e);
                 });
 
                 pagenation = this.$el.find('.pagination');
@@ -452,9 +458,14 @@ define([
 
                         return department
                     });
-
                     self.responseObj['#department'] = departments;
                 });
+
+                dataService.getData('/wTrack/getFilterValues', null, function (values) {
+                    console.log(values)
+                });
+
+                FilterView = new filterView({ collection: [{name:'Assigned'}, {name:'Project'}, {name:'Project Status'}, {name:'Customer'}, {name:'Employee'}, {name:'Department'}, {name:'Year'}, {name:'Month'}, {name:'Week'}, {name:'Status'}], wTrack: true});
 
                 setTimeout(function () {
                     self.editCollection = new EditCollection(self.collection.toJSON());

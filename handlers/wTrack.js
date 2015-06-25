@@ -28,7 +28,6 @@ var wTrack = function (models) {
         });
     };
 
-
     this.putchModel = function (req, res, next) {
         var id = req.params.id;
         var data = mapObject(req.body);
@@ -449,6 +448,52 @@ var wTrack = function (models) {
             res.status(200).send({success: product});
         });
     };
+
+    this.getFilterValues = function (req, res, next) {
+        models.get(req.session.lastDb, "weTrack", wTrackSchema).aggregate([
+            {
+                $group:{
+                    _id: null,
+                    projectmanagers: {
+                        $addToSet: '$project.projectmanager'
+                    },
+                    projectsname: {
+                        $addToSet: '$project.projectName'
+                    },
+                    workflows: {
+                        $addToSet: '$project.workflow'
+                    },
+                    customers: {
+                        $addToSet: '$project.customer'
+                    },
+                    employees: {
+                        $addToSet: '$employee'
+                    },
+                    departments: {
+                        $addToSet: '$department'
+                    },
+                    years: {
+                        $addToSet: '$year'
+                    },
+                    months: {
+                        $addToSet: '$month'
+                    },
+                    weeks: {
+                        $addToSet: '$week'
+                    },
+                    isPaid: {
+                        $addToSet: '$isPaid'
+                    }
+                }
+            }
+        ], function (err, result) {
+            if (!err) {
+                res.status(200).send(result[0])
+            } else {
+                next(err)
+            }
+        })
+    }
 
 };
 
