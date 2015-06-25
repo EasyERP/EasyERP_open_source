@@ -48,6 +48,10 @@ define([
                    return !model.id;
                 });
 
+                var ModelsForCreate = Backbone.Collection.extend({
+                    url: this.url
+                });
+
                 /*for (var i = this.models.length - 1; i >=0; i--){
                     model = this.models[i];
 
@@ -60,10 +64,10 @@ define([
                     }
                 }*/
 
-                modelsForCreate = new ParentCollection(modelsForCreate);
+                modelsForCreate = new ModelsForCreate(modelsForCreate);
 
-                if(modelsForCreate) {
-                    modelsForCreate.sync("create", modelsForCreate, {});
+                if(modelsForCreate.length) {
+                    modelsForCreate.sync("create", modelsForCreate, options);
                 };
 
 
