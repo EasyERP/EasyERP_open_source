@@ -312,7 +312,7 @@ var wTrack = function (models) {
             var matchQuery = {
                 $and: [
 
-                    /*{$or:[{'project.projectName': {$in: ['iOS2', 'Android1']}}]},*/queryObject,
+                    queryObject,
                     {
                         $or: whoCanRw
                     }
