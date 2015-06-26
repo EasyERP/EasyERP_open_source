@@ -7,57 +7,61 @@
         "views/Assignees/AssigneesView",
         "views/Payment/list/ListHeaderInvoice",
         "dataService",
-        'constants'
-],
-    function (CreateTemplate, InvoiceModel, common, populate, wTrackRows, AssigneesView, listHederInvoice, dataService, CONSTANTS) {
+        'constants',
+        'moment'
+    ],
+    function (CreateTemplate, InvoiceModel, common, populate, wTrackRows, AssigneesView, listHederInvoice, dataService, CONSTANTS, moment) {
 
         var CreateView = Backbone.View.extend({
             el: "#content-holder",
             contentType: "Invoice",
             template: _.template(CreateTemplate),
+            $linwoiceGenerateTable: null,
 
             initialize: function (options) {
+                var self = this;
+                var projectId = options.project ? options.project._id : null;
+
                 _.bindAll(this, "saveItem", "render");
-                this.model = new InvoiceModel();
+
+                this.model = new InvoiceModel(options);
+                this.model.bind('change:paymentInfo', this.changeTotal, this);
                 this.responseObj = {};
-                this.render(options);
+
+                dataService.getData('/invoice/generateName?projectId=' + projectId, null, function (name) {
+                    if (name) {
+                        options.invoiceName = name;
+                    }
+                    self.render(options);
+                });
             },
 
             events: {
                 'keydown': 'keydownHandler',
+                "click td.editable": "editRow",
                 'click .dialog-tabs a': 'changeTab',
-                "click .details": "showDetailsBox",
-                "click .current-selected": "showNewSelect",
-                "click": "hideNewSelect",
-                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-                "click .newSelectList li.miniStylePagination": "notHide",
-                "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect"
-            },
-            showNewSelect: function (e, prev, next) {
-                populate.showSelect(e, prev, next, this);
-                return false;
-
-            },
-            notHide: function () {
-                return false;
-            },
-            hideNewSelect: function () {
-                $(".newSelectList").hide();
-            },
-            chooseOption: function (e) {
-                var holder = $(e.target).parents("dd").find(".current-selected");
-                holder.text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
+                "change .editing": "changeValue"
             },
 
-            nextSelect: function (e) {
-                this.showNewSelect(e, false, true);
+            changeTotal: function (model, val) {
+                this.$el.find("#totalAmount").text(val.total);
+                this.$el.find("#totalUntaxes").text(val.total);
             },
-            prevSelect: function (e) {
-                this.showNewSelect(e, true, false);
-            },
-            showDetailsBox: function (e) {
-                $(e.target).parent().find(".details-box").toggle();
+
+            changeValue: function (e) {
+                var paymentInfo;
+                var total = 0;
+                var targetEl = $(e.target);
+                var editableArr = this.$el.find('.editable:not(:has(input))');
+
+                editableArr.each(function (index, el) {
+                    total += parseFloat($(el).text());
+                });
+
+                paymentInfo = _.clone(this.model.get('paymentInfo'));
+                paymentInfo.total = parseFloat(targetEl.val()) + total;
+
+                this.model.set('paymentInfo', paymentInfo);
             },
 
             keydownHandler: function (e) {
@@ -68,6 +72,41 @@
                     default:
                         break;
                 }
+            },
+
+            editRow: function (e, prev, next) {
+                var el = $(e.target);
+                var tr = el.closest('tr');
+                var wTrackId = tr.data('id');
+                var tempContainer;
+                var width;
+                var editedElement;
+                var editedCol;
+                var editedElementValue;
+                var paymentInfo;
+
+                if (wTrackId && el.prop('tagName') !== 'INPUT') {
+                    if (this.wTrackId) {
+                        editedElement = this.$linwoiceGenerateTable.find('.editing');
+
+                        if (editedElement.length) {
+
+                            editedCol = editedElement.closest('td');
+                            editedElementValue = editedElement.val();
+
+                            editedCol.text(editedElementValue);
+                            editedElement.remove();
+                        }
+                    }
+                    this.wTrackId = wTrackId;
+                }
+
+
+                tempContainer = el.text();
+                width = el.width() - 6;
+                el.html('<input class="editing" type="text" value="' + tempContainer + '"  maxLength="4" style="width:' + width + 'px">');
+
+                return false;
             },
 
             changeTab: function (e) {
@@ -92,9 +131,13 @@
 
             saveItem: function () {
                 var self = this;
-                var mid = 56;
 
-                var selectedProducts = this.$el.find('.productItem');
+                var thisEl = this.$el;
+
+                var usersId = [];
+                var groupsId = [];
+
+                var selectedProducts = thisEl.find('.productItem');
                 var products = [];
                 var selectedLength = selectedProducts.length;
                 var targetEl;
@@ -105,17 +148,15 @@
                 var amount;
                 var description;
 
-                var forSales = (this.forSales) ? true : false;
+                var supplier = thisEl.find("#supplier").data("id") || null;
+                var salesPersonId = thisEl.find("#assigned").data("id") || null;
+                var paymentTermId = thisEl.find("#paymentTerms").data("id") || null;
+                var invoiceDate = thisEl.find("#invoiceDate").val();
+                var dueDate = thisEl.find("#dueDate").val();
 
-                var supplier = this.$("#supplier").data("id");
-                var salesPersonId = this.$("#salesPerson").data("id") ? this.$("#salesPerson").data("id") : null;
-                var paymentTermId = this.$("#payment_terms").data("id") ? this.$("#payment_terms").data("id") : null;
-                var invoiceDate = this.$("#invoice_date").val();
-                var dueDate = this.$("#due_date").val();
-
-                var total = parseFloat(this.$("#totalAmount").text());
-                var unTaxed = parseFloat(this.$("#totalUntaxes").text());
-                var balance = parseFloat(this.$("#balance").text());
+                var total = parseFloat(thisEl.find("#totalAmount").text());
+                var unTaxed = parseFloat(thisEl.find("#totalUntaxes").text());
+                var balance = parseFloat(thisEl.find("#balance").text());
 
                 var payments = {
                     total: total,
@@ -128,7 +169,7 @@
                         targetEl = $(selectedProducts[i]);
                         productId = targetEl.data('id');
                         if (productId) {
-                            quantity = targetEl.find('[data-name="quantity"]').text();
+                            quantity = targetEl.find('[data-name="quantity"]').text() || 1;
                             price = targetEl.find('[data-name="price"]').text();
                             description = targetEl.find('[data-name="productDescr"]').text();
                             taxes = targetEl.find('.taxes').text();
@@ -146,13 +187,12 @@
                     }
                 }
 
-                var usersId = [];
-                var groupsId = [];
+
                 $(".groupsAndUser tr").each(function () {
-                    if ($(this).data("type") == "targetUsers") {
+                    if ($(this).data("type") === "targetUsers") {
                         usersId.push($(this).data("id"));
                     }
-                    if ($(this).data("type") == "targetGroups") {
+                    if ($(this).data("type") === "targetGroups") {
                         groupsId.push($(this).data("id"));
                     }
 
@@ -160,13 +200,7 @@
 
                 var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
                 var data = {
-                    forSales: forSales,
-
                     supplier: supplier,
-                    fiscalPosition: null,
-                    sourceDocument: $.trim($('#source_document').val()),
-                    supplierInvoiceNumber: $.trim($('#supplier_invoice_num').val()),
-                    paymentReference: $.trim($('#payment_reference').val()),
                     invoiceDate: invoiceDate,
                     dueDate: dueDate,
                     account: null,
@@ -191,13 +225,10 @@
                 if (supplier) {
                     var model = new InvoiceModel();
                     model.save(data, {
-                        headers: {
-                            mid: mid
-                        },
                         wait: true,
                         success: function () {
                             self.hideDialog();
-                            Backbone.history.navigate("easyErp/Invoice", { trigger: true });
+                            Backbone.history.navigate("easyErp/salesInvoice", {trigger: true});
                         },
                         error: function (model, xhr) {
                             self.errorNotification(xhr);
@@ -218,6 +249,11 @@
             },
 
             render: function (options) {
+                options.model = null;
+                options.balanceVisible = null;
+                var notDiv;
+                var now = new Date();
+                var dueDate = moment().add(15, 'days').toDate();
                 var formString = this.template(options);
                 var self = this;
                 var invoiceItemContainer;
@@ -232,7 +268,7 @@
                     title: "Create Invoice",
                     width: '1000',
                     //width: 'auto',
-                    position: { within: $("#wrapper") },
+                    position: {within: $("#wrapper")},
                     buttons: [
                         {
                             id: "create-invoice-dialog",
@@ -258,7 +294,7 @@
                     }).render().el
                 );
 
-                
+
                 invoiceContainer = new wTrackRows(options);
 
                 paymentContainer = this.$el.find('#payments-container');
@@ -266,30 +302,23 @@
                     new listHederInvoice().render().el
                 );
 
+                populate.get("#paymentTerms", "/paymentTerm", {}, 'name', this, true);
 
-                populate.get2name("#supplier", "/supplier", {}, this, false, true);
-                populate.get("#payment_terms", "/paymentTerm", {}, 'name', this, true);
-                populate.get2name("#salesPerson", "/getForDdByRelatedUser", {}, this, true, true);
-                populate.fetchWorkflow({ wId: 'Purchase Invoice' }, function (response) {
-                    if (!response.error) {
-                        self.defaultWorkflow = response._id;
-                    }
-                });
-
-                this.$el.find('#invoice_date').datepicker({
+                this.$el.find('#invoiceDate').datepicker({
                     dateFormat: "d M, yy",
                     changeMonth: true,
                     changeYear: true
-                }).datepicker('setDate', new Date());
+                }).datepicker('setDate', now);
 
-                this.$el.find('#due_date').datepicker({
+                this.$el.find('#dueDate').datepicker({
                     dateFormat: "d M, yy",
                     changeMonth: true,
                     changeYear: true
-                });
+                }).datepicker('setDate', dueDate);
 
 
                 this.delegateEvents(this.events);
+                this.$linwoiceGenerateTable = this.$el.find('#linwoiceGenerateTable');
 
                 return this;
             }

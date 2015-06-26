@@ -8,7 +8,7 @@
                 this.on( "change", this.change, this);
             },
 
-            save: function(){
+            save: function(changedValues){
                 var self = this;
                 var model;
                 var models = [];

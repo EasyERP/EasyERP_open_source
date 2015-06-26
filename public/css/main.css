@@ -7525,3 +7525,6 @@ textarea#editInput {
 .chooseOption {
   width: 130px;
 }
+.currency::before {
+  content: "$"
+}

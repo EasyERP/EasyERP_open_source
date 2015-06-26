@@ -14,10 +14,12 @@
         },
 
         render: function (options) {
-            var wTracks = options.wTracks;
+            var totalAmountContainer;
             var thisEl = this.$el;
 
             thisEl.html(this.template(options));
+
+            totalAmountContainer = thisEl.find('#totalAmountContainer');
 
             return this;
         }

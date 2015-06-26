@@ -66,6 +66,8 @@ define([
                 var year;
                 this.newCollection = new salaryEditableCollection();
 
+                this.newCollection.on('saved', this.savedNewModel, this);
+
                 this.editCollection.each(function(model, index){
                     modelJSON = model.toJSON();
                     delete modelJSON._id;
@@ -79,10 +81,52 @@ define([
                 });
 
                 self.newCollection.save();
+            },
 
-                dataService.getData('/salary/recalculateSalaryCash', {}, function (response, context) {
+            savedNewModel: function(modelObject){
+                var savedRow = $("#listTable").find('tr[data-id="false"]');
+                var modelId;
+                var checkbox = savedRow.find('input.mainCB');
+                var editedEl = savedRow.find('.editing');
+                var editedCol = editedEl.closest('td');
 
-                }, this);
+                modelObject = modelObject.success;
+
+                if(modelObject) {
+                    this.collection.add(modelObject);
+                    modelId = modelObject._id
+                    savedRow.attr("data-id", modelId);
+                    savedRow.find('.mainCB').attr('id', modelId);
+                    checkbox.val(modelId);
+                }
+                savedRow.find('.month').removeClass('editable');
+                savedRow.find('.month').attr('data-type', '');
+
+                savedRow.find('.year').removeClass('editable');
+                savedRow.find('.year').attr('data-type', '');
+                savedRow.find('.mainCB').attr('checked', 'false');
+
+                savedRow.removeClass('copy');
+
+                $('#listTable').find('tr:not(.copy)').each(function (index, element) {
+                    $(element).removeClass('disabled');
+                    $(element).find('.mainCB').attr("disabled", false);
+                })
+                this.hideSaveCancelBtns();
+                editedCol.text(editedEl.val());
+                editedEl.remove();
+            },
+
+            hideSaveCancelBtns: function () {
+                var saveBtnEl = $('#top-bar-saveBtn');
+                var cancelBtnEl = $('#top-bar-deleteBtn');
+
+                this.changed = false;
+
+                saveBtnEl.hide();
+                cancelBtnEl.hide();
+
+                return false;
             },
 
             setEditable: function (td) {
@@ -576,10 +620,10 @@ define([
                 $.each(checkedCB, function (index, checkbox) {
                     salaryModel = that.collection.get(checkbox.value);
                     employeesArary = salaryModel.toJSON().employeesArray;
-                    this.editCollection = new salaryEditableCollection(employeesArary);
-                    count = editCollection.length;
+                    that.editCollection = new salaryEditableCollection(employeesArary);
+                    count = that.editCollection.length;
                     if ($(checkbox).attr("id") !== 'copy') {
-                        editCollection.each(function (model) {
+                        that.editCollection.each(function (model) {
                             model.destroy({
                                 headers: {
                                     mid: mid

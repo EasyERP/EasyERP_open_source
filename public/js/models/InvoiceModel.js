@@ -75,7 +75,12 @@ define(['Validation', 'common'], function (Validation, common) {
             dueDate: '',
             account: '',
             journal: '',
-            products: []
+            products: [],
+            paymentInfo: {
+                total: 0,
+                unTaxed: 0,
+                balance: 0
+            }
 
         },
         urlRoot: function () {
