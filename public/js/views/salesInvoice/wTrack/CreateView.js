@@ -9,7 +9,7 @@
         "dataService",
         'constants',
         'moment'
-],
+    ],
     function (CreateTemplate, InvoiceModel, common, populate, wTrackRows, AssigneesView, listHederInvoice, dataService, CONSTANTS, moment) {
 
         var CreateView = Backbone.View.extend({
@@ -43,18 +43,18 @@
                 "change .editing": "changeValue"
             },
 
-            changeTotal: function(model, val){
-               this.$el.find("#totalAmount").text(val.total);
-               this.$el.find("#totalUntaxes").text(val.total);
+            changeTotal: function (model, val) {
+                this.$el.find("#totalAmount").text(val.total);
+                this.$el.find("#totalUntaxes").text(val.total);
             },
 
-            changeValue: function(e){
+            changeValue: function (e) {
                 var paymentInfo;
                 var total = 0;
                 var targetEl = $(e.target);
                 var editableArr = this.$el.find('.editable:not(:has(input))');
 
-                editableArr.each(function(index, el){
+                editableArr.each(function (index, el) {
                     total += parseFloat($(el).text());
                 });
 
@@ -132,7 +132,12 @@
             saveItem: function () {
                 var self = this;
 
-                var selectedProducts = this.$el.find('.productItem');
+                var thisEl = this.$el;
+
+                var usersId = [];
+                var groupsId = [];
+
+                var selectedProducts = thisEl.find('.productItem');
                 var products = [];
                 var selectedLength = selectedProducts.length;
                 var targetEl;
@@ -143,15 +148,15 @@
                 var amount;
                 var description;
 
-                var supplier = this.$("#supplier").data("id");
-                var salesPersonId = this.$("#salesPerson").data("id") ? this.$("#salesPerson").data("id") : null;
-                var paymentTermId = this.$("#paymentTerms").data("id") ? this.$("#payment_terms").data("id") : null;
-                var invoiceDate = this.$("#invoiceFate").val();
-                var dueDate = this.$("#dueDate").val();
+                var supplier = thisEl.find("#supplier").data("id") || null;
+                var salesPersonId = thisEl.find("#assigned").data("id") || null;
+                var paymentTermId = thisEl.find("#paymentTerms").data("id") || null;
+                var invoiceDate = thisEl.find("#invoiceDate").val();
+                var dueDate = thisEl.find("#dueDate").val();
 
-                var total = parseFloat(this.$("#totalAmount").text());
-                var unTaxed = parseFloat(this.$("#totalUntaxes").text());
-                var balance = parseFloat(this.$("#balance").text());
+                var total = parseFloat(thisEl.find("#totalAmount").text());
+                var unTaxed = parseFloat(thisEl.find("#totalUntaxes").text());
+                var balance = parseFloat(thisEl.find("#balance").text());
 
                 var payments = {
                     total: total,
@@ -164,7 +169,7 @@
                         targetEl = $(selectedProducts[i]);
                         productId = targetEl.data('id');
                         if (productId) {
-                            quantity = targetEl.find('[data-name="quantity"]').text();
+                            quantity = targetEl.find('[data-name="quantity"]').text() || 1;
                             price = targetEl.find('[data-name="price"]').text();
                             description = targetEl.find('[data-name="productDescr"]').text();
                             taxes = targetEl.find('.taxes').text();
@@ -182,13 +187,12 @@
                     }
                 }
 
-                var usersId = [];
-                var groupsId = [];
+
                 $(".groupsAndUser tr").each(function () {
-                    if ($(this).data("type") == "targetUsers") {
+                    if ($(this).data("type") === "targetUsers") {
                         usersId.push($(this).data("id"));
                     }
-                    if ($(this).data("type") == "targetGroups") {
+                    if ($(this).data("type") === "targetGroups") {
                         groupsId.push($(this).data("id"));
                     }
 
@@ -264,7 +268,7 @@
                     title: "Create Invoice",
                     width: '1000',
                     //width: 'auto',
-                    position: { within: $("#wrapper") },
+                    position: {within: $("#wrapper")},
                     buttons: [
                         {
                             id: "create-invoice-dialog",
