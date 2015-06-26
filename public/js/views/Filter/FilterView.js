@@ -15,19 +15,75 @@ define([
                 "click .filter": 'showFilterContent',
                 "click .drop-down-filter input": "writeValue",
                 "click .drop-down-filter li": "triggerClick",
-                "click .removeValues": "removeValues"
+                "click .removeValues": "removeValues",
+                'change .chooseTerm': 'chooseOptions',
+                'click .addCondition': 'addCondition',
+                'click .removeFilter': 'removeFilter',
+                'click .customFilter': 'showCustomFilter',
+                'click .applyFilter': 'applyFilter'
             },
 
 
             initialize: function (options) {
-                this.render();
+                this.render(options);
             },
 
             render: function (options) {
+                var value;
+                this.customCollection =  options.customCollection;
 
-                this.$el.html(this.template({collection: this.collection}));
+                this.$el.html(this.template({collection: this.collection, customCollection: options.customCollection}));
+
+                value  = $('.chooseTerm').val();
+                if (value) {
+                    options.customCollection[0][value].forEach(function (opt) {
+                        if (opt && opt.name) {
+                            $('.chooseOption').append('<option value="' + opt.name + '">' + opt.name + '</option>');
+                        } else {
+                            $('.chooseOption').append('<option value="' + opt + '">' + opt + '</option>');
+                        }
+                    });
+                }
 
                 return this;
+            },
+
+            applyFilter: function () {
+                this.trigger('filter');
+            },
+
+            showCustomFilter: function () {
+                $(".filterOptions").toggle();
+                $(".filterActions").toggle();
+            },
+
+            removeFilter: function (e) {
+                if ($('.filterOptions').length > 1) {
+                    $(e.target).closest('.filterOptions').remove();
+                }
+                e.stopPropagation();
+            },
+
+            addCondition: function () {
+                $(".filterOptions:first").clone().insertBefore('.filterActions');
+                $(".filterOptions:last").children('.chooseOption').children().remove();
+                $(".filterOptions:last").removeClass('chosen')
+            },
+
+            chooseOptions: function (e) {
+             var el = $(e.target).next();
+                var value  = e.target.value;
+                $(e.target).closest('.filterOptions').addClass('chosen');
+
+                el.html('');
+                this.customCollection[0][value].forEach(function (opt) {
+                    if (opt && opt.name) {
+                        el.append('<option value="' + opt.name + '">' + opt.name + '</option>')
+                    } else {
+                        el.append('<option value="' + opt + '">' + opt + '</option>')
+                    }
+                });
+
             },
 
             triggerClick: function (e) {
@@ -63,10 +119,6 @@ define([
 
                 filterIcons.addClass('active');
 
-                //if (!filterValues.find('.iconFilter').length) {
-                //    filterValues.prepend('<span class="iconFilter"></span>')
-                //}
-
                 $.each(input, function (index, value) {
                     if (value.checked) {
                         return checked = true
@@ -86,13 +138,12 @@ define([
                 if (e.target.id !== 'defaultFilter') {
                     $('#defaultFilter').removeAttr('checked');
                     filterValues.find('.Default').remove();
-                    this.trigger('filter')
+                    this.trigger('filter');
                 } else {
                     $.each(input, function (index, value) {
                         if (value.id !== 'defaultFilter') value.checked = false
                     });
                     $.each($('.filterValues span'), function (index, item) {
-                        //if (item.className !== 'Default' && item.className !== 'iconFilter') item.remove();
                         if (item.className !== 'Default') item.remove();
                     });
                     this.trigger('defaultFilter');

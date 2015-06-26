@@ -5,6 +5,7 @@
 var mongoose = require('mongoose');
 var wTrack = function (models) {
     var access = require("../Modules/additions/access.js")(models);
+    var _ = require('../node_modules/underscore');
     var wTrackSchema = mongoose.Schemas['wTrack'];
     var DepartmentSchema = mongoose.Schemas['Department'];
     var CustomerSchema = mongoose.Schemas['Customer'];
@@ -204,12 +205,51 @@ var wTrack = function (models) {
         var contentIdsSearcher;
         var contentSearcher;
         var waterfallTasks;
+        var conditionList;
 
         var sort = {};
 
         if (filter && typeof filter === 'object') {
-            queryObject = query.filter;
-        }
+            queryObject['$or'] = [];
+            conditionList = _.keys(filter);
+            conditionList.forEach(function (condition) {
+                switch (condition) {
+                    case 'department':
+                        queryObject['$or'].push({ 'department.departmentName': {$in: filter.department}});
+                        break;
+                    case 'projectmanagers':
+                        queryObject['$or'].push({ 'project.projectmanager.name': {$in: filter.projectmanagers}});
+                        break;
+                    case 'projectsname':
+                        queryObject['$or'].push({ 'project.projectName': {$in: filter.projectsname}});
+                        break;
+                    case 'workflows':
+                        queryObject['$or'].push({ 'project.workflow': {$in: filter.workflows}});
+                        break;
+                    case 'customers':
+                        queryObject['$or'].push({ 'project.customer': {$in: filter.customers}});
+                        break;
+                    case 'employees':
+                        queryObject['$or'].push({ 'employee.name': {$in: filter.employees}});
+                        break;
+                    case 'departments':
+                        queryObject['$or'].push({ 'department.departmentName': {$in: filter.departments}});
+                        break;
+                    case 'years':
+                        queryObject['$or'].push({ 'year': {$in: filter.years}});
+                        break;
+                    case 'months':
+                        queryObject['$or'].push({ 'month': {$in: filter.months}});
+                        break;
+                    case 'weeks':
+                        queryObject['$or'].push({ 'week': {$in: filter.weeks}});
+                        break;
+                    case 'isPaid':
+                        queryObject['$or'].push({ 'isPaid': {$in: filter.isPaid}});
+                        break;
+                }
+            });
+       }
 
         var count = query.count ? query.count : 50;
         var page = query.page;
@@ -271,7 +311,8 @@ var wTrack = function (models) {
             var whoCanRw = [everyOne, owner, group];
             var matchQuery = {
                 $and: [
-                    queryObject,
+
+                    /*{$or:[{'project.projectName': {$in: ['iOS2', 'Android1']}}]},*/queryObject,
                     {
                         $or: whoCanRw
                     }
@@ -488,7 +529,7 @@ var wTrack = function (models) {
             }
         ], function (err, result) {
             if (!err) {
-                res.status(200).send(result[0])
+                res.status(200).send(result)
             } else {
                 next(err)
             }

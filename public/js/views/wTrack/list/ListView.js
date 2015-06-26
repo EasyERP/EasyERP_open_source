@@ -140,7 +140,7 @@ define([
             setEditable: function (td) {
                 var tr;
 
-                if(!td.parents) {
+                if (!td.parents) {
                     td = $(td.target).closest('td');
                 }
 
@@ -287,14 +287,14 @@ define([
                 this.editCollection.save();
             },
 
-            savedNewModel: function(modelObject){
+            savedNewModel: function (modelObject) {
                 var savedRow = this.$listTable.find('#false');
                 var modelId;
                 var checkbox = savedRow.find('input[type=checkbox]');
 
                 modelObject = modelObject.success;
 
-                if(modelObject) {
+                if (modelObject) {
                     modelId = modelObject._id
                     savedRow.attr("data-id", modelId);
                     checkbox.val(modelId);
@@ -305,8 +305,8 @@ define([
                 this.resetCollection(modelObject);
             },
 
-            resetCollection: function(model){
-                if(model && model._id){
+            resetCollection: function (model) {
+                if (model && model._id) {
                     model = new currentModel(model);
                     this.collection.add(model);
                 } else {
@@ -314,7 +314,7 @@ define([
                 }
             },
 
-            updatedOptions: function(){
+            updatedOptions: function () {
                 this.hideSaveCancelBtns();
                 this.resetCollection();
             },
@@ -385,7 +385,8 @@ define([
                     $(".drop-down-filter").hide();
                     $('.search-options').hide();
                     $('.search-content').removeClass('fa-caret-up')
-                };
+                }
+                ;
             },
 
             showNewSelect: function (e, prev, next) {
@@ -428,6 +429,7 @@ define([
                 var currentEl = this.$el;
                 var pagenation;
                 var FilterView;
+                var showList;
 
                 currentEl.html('');
                 currentEl.append(_.template(listTemplate));
@@ -490,10 +492,28 @@ define([
                 });
 
                 dataService.getData('/wTrack/getFilterValues', null, function (values) {
-                    console.log(values)
+                    values[0].departments = _.map(values[0].departments, function (department) {
+                        department.name = department.departmentName;
+
+                        return department
+                    });
+
+                    FilterView = new filterView({ collection: values[0].departments, customCollection: values, wTrack: true});
+
+                    // Filter custom event listen ------begin
+                    FilterView.bind('filter', function () {
+                        showList = $('.drop-down-filter input:checkbox:checked').map(function () {
+                            return this.id;
+                        }).get();
+                        self.showFilteredPage(showList)
+                    });
+                    FilterView.bind('defaultFilter', function () {
+                        showList = _.pluck(values[0].departments, 'name');
+                        self.showFilteredPage(showList)
+                    });
+                    // Filter custom event listen ------end
                 });
 
-                FilterView = new filterView({ collection: [{name:'Assigned'}, {name:'Project'}, {name:'Project Status'}, {name:'Customer'}, {name:'Employee'}, {name:'Department'}, {name:'Year'}, {name:'Month'}, {name:'Week'}, {name:'Status'}], wTrack: true});
 
                 setTimeout(function () {
                     self.editCollection = new EditCollection(self.collection.toJSON());
@@ -635,19 +655,35 @@ define([
                 this.changeLocationHash(1, itemsNumber, this.filter);
             },
 
-            showFilteredPage: function () {
+            showFilteredPage: function (depIdArray) {
                 var itemsNumber;
+                var showList;
+                var self = this;
+                var checkedElements = $('.drop-down-filter input:checkbox:checked');
 
                 this.startTime = new Date();
                 this.newCollection = false;
-                var workflowIdArray = [];
+                this.filter = /*this.filter || */{};
 
-                $('.filter-check-list input:checked').each(function () {
-                    workflowIdArray.push($(this).val());
-                });
+                if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
+                    showList = checkedElements.map(function () {
+                        return this.id;
+                    }).get();
 
-                this.filter = this.filter || {};
-                this.filter['workflow'] = workflowIdArray;
+                    this.filter['department'] = showList;
+                } else {
+                    this.filter = {};
+                }
+                if ($('.chosen')) {
+                    $('.chosen').each(function (index, elem) {
+                        if (self.filter[elem.children[0].value]) {
+                            self.filter[elem.children[0].value].push(elem.children[1].value);
+                        } else {
+                            self.filter[elem.children[0].value] = [];
+                            self.filter[elem.children[0].value].push(elem.children[1].value);
+                        }
+                    });
+                }
 
                 itemsNumber = $("#itemsNumber").text();
                 $("#top-bar-deleteBtn").hide();
@@ -657,6 +693,7 @@ define([
                 this.collection.showMore({count: itemsNumber, page: 1, filter: this.filter});
                 this.getTotalLength(null, itemsNumber, this.filter);
             },
+
             showPage: function (event) {
                 event.preventDefault();
                 this.showP(event, {filter: this.filter, newCollection: this.newCollection, sort: this.sort});
