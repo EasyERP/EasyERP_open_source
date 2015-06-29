@@ -33,7 +33,6 @@ define([
                 this.page = options.collection.page;
                 this.render();
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
-                this.contentCollection = contentCollection;
                 this.editCollection;
                 this.newCollection;
             },
@@ -68,7 +67,6 @@ define([
                 var dataKey;
                 var momentYear;
                 var momentMonth;
-                var checkDataKey;
 
                 month = row.find('.month').text();
                 year = row.find('.year').text();
@@ -78,17 +76,12 @@ define([
                 momentMonth = moment().month(month - 1).format('MMM');
                 dataKey = momentMonth + "/" + momentYear;
 
-                dataService.getData('/salary/getDataKey', {'datakey': dataKey}, function (response, context) {
-                    context = response.count;
-                }, checkDataKey);
+                function save () {
+                    self.newCollection = new salaryEditableCollection();
 
-                if (true) {
+                    self.newCollection.on('saved', self.savedNewModel, self);
 
-                    this.newCollection = new salaryEditableCollection();
-
-                    this.newCollection.on('saved', this.savedNewModel, this);
-
-                    this.editCollection.each(function (model, index) {
+                    self.editCollection.each(function (model, index) {
                         modelJSON = model.toJSON();
                         delete modelJSON._id;
                         modelJSON['month'] = month;
@@ -99,9 +92,15 @@ define([
                     });
 
                     self.newCollection.save();
-                } else {
-                    alert('This month already exists.');
                 }
+
+                dataService.getData('/salary/checkDataKey', {'dataKey': dataKey}, function (response) {
+                    if (!response.count) {
+                        save();
+                    } else {
+                        alert ('This month already exists!');
+                    }
+                });
             },
 
             savedNewModel: function(modelObject){
