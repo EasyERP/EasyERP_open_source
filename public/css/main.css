@@ -5611,6 +5611,16 @@ ul.dialog-tabs li.right button {
     text-align: left;
 }
 
+.list tbody tr td[data-type=input] {
+    position: relative;
+}
+
+.list tbody tr td input {
+    position: absolute;
+    left: 0;
+    top: calc(50% - 10px);
+}
+
 .list tbody tr td.red-border {
     color: red;
 }
