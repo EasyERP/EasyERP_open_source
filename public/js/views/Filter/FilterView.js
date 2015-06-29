@@ -60,6 +60,12 @@ define([
             removeFilter: function (e) {
                 if ($('.filterOptions').length > 1) {
                     $(e.target).closest('.filterOptions').remove();
+                } else {
+                    $(".filterOptions").removeClass('chosen');
+                    $('.chooseOption').children().remove();
+                    $(".chooseTerm").val($(".chooseTerm option:first").val());
+                    this.trigger('defaultFilter');
+
                 }
                 e.stopPropagation();
             },
@@ -67,7 +73,7 @@ define([
             addCondition: function () {
                 $(".filterOptions:first").clone().insertBefore('.filterActions');
                 $(".filterOptions:last").children('.chooseOption').children().remove();
-                $(".filterOptions:last").removeClass('chosen')
+                $(".filterOptions:last").removeClass('chosen');
             },
 
             chooseOptions: function (e) {

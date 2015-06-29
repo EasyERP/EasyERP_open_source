@@ -417,8 +417,14 @@ define([
         },
 
         hideItemsNumber: function (e) {
+            var el = e.target;
             $(".allNumberPerPage").hide();
             $(".newSelectList").hide();
+            if (!el.closest('.search-view')) {
+                $(".drop-down-filter").hide();
+                $('.search-options').hide();
+                $('.search-content').removeClass('fa-caret-up')
+            };
         },
 
         showNewSelect: function (e, prev, next) {
@@ -472,8 +478,8 @@ define([
                 itemsNumber: this.collection.namberToShow
             }).render());//added two parameters page and items number
 
-            $(document).on("click", function () {
-                self.hideItemsNumber();
+            $(document).on("click", function (e) {
+                self.hideItemsNumber(e);
             });
 
             pagenation = this.$el.find('.pagination');
@@ -705,9 +711,9 @@ define([
                 }).get();
 
                 this.filter['departments'] = showList;
-            } else {
+            }/* else {
                 this.filter = {};
-            }
+            }*/
             if ($('.chosen')) {
                 $('.chosen').each(function (index, elem) {
                     if (self.filter[elem.children[0].value]) {
@@ -717,6 +723,9 @@ define([
                         self.filter[elem.children[0].value].push(elem.children[1].value);
                     }
                 });
+            }
+            if (checkedElements.length && checkedElements.attr('id') === 'defaultFilter') {
+                self.filter = {};
             }
 
             itemsNumber = $("#itemsNumber").text();
