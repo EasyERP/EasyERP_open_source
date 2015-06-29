@@ -6,10 +6,11 @@ define([
         'collections/Salary/filterCollection',
         'collections/Salary/editCollection',
         'common',
-        'dataService'
+        'dataService',
+        'moment'
     ],
 
-    function (listTemplate, listItemView, subSalaryView, salaryModel, contentCollection, salaryEditableCollection, common, dataService) {
+    function (listTemplate, listItemView, subSalaryView, salaryModel, contentCollection, salaryEditableCollection, common, dataService, moment) {
         var SalaryListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -32,7 +33,6 @@ define([
                 this.page = options.collection.page;
                 this.render();
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
-                this.contentCollection = contentCollection;
                 this.editCollection;
                 this.newCollection;
             },
@@ -64,23 +64,43 @@ define([
                 var input = row.find('input.editing');
                 var month;
                 var year;
-                this.newCollection = new salaryEditableCollection();
+                var dataKey;
+                var momentYear;
+                var momentMonth;
 
-                this.newCollection.on('saved', this.savedNewModel, this);
+                month = row.find('.month').text();
+                year = row.find('.year').text();
+                month = month ? month : input.val();
+                year = year ? year : input.val();
+                momentYear = moment().year(year).format('YY');
+                momentMonth = moment().month(month - 1).format('MMM');
+                dataKey = momentMonth + "/" + momentYear;
 
-                this.editCollection.each(function(model, index){
-                    modelJSON = model.toJSON();
-                    delete modelJSON._id;
-                    month = row.find('.month').text();
-                    year = row.find('.year').text();
-                    modelJSON['month'] = month ? month : input.val();
-                    modelJSON['year'] = year ? year : input.val();
+                function save () {
+                    self.newCollection = new salaryEditableCollection();
 
-                    modelToSave = new salaryModel(modelJSON);
-                    self.newCollection.add(modelToSave);
+                    self.newCollection.on('saved', self.savedNewModel, self);
+
+                    self.editCollection.each(function (model, index) {
+                        modelJSON = model.toJSON();
+                        delete modelJSON._id;
+                        modelJSON['month'] = month;
+                        modelJSON['year'] = year;
+
+                        modelToSave = new salaryModel(modelJSON);
+                        self.newCollection.add(modelToSave);
+                    });
+
+                    self.newCollection.save();
+                }
+
+                dataService.getData('/salary/checkDataKey', {'dataKey': dataKey}, function (response) {
+                    if (!response.count) {
+                        save();
+                    } else {
+                        alert ('This month already exists!');
+                    }
                 });
-
-                self.newCollection.save();
             },
 
             savedNewModel: function(modelObject){
@@ -104,7 +124,9 @@ define([
 
                 savedRow.find('.year').removeClass('editable');
                 savedRow.find('.year').attr('data-type', '');
-                savedRow.find('.mainCB').attr('checked', 'false');
+
+
+                savedRow.find('.mainCB').attr('checked', false);
 
                 savedRow.removeClass('copy');
 
@@ -138,7 +160,6 @@ define([
 
                 tr = td.parents('tr');
 
-                /*tr.addClass('edited');*/
                 td.addClass('edited');
 
                 if (this.isEditRows()) {
@@ -638,7 +659,6 @@ define([
                                                     dataService.getData('/salary/recalculateSalaryCash', {}, function (response, context) {}, that);
 
                                                     that.deleteItemsRender(that.deleteCounter, that.deletePage);
-
                                                 }
                                             }
                                         });

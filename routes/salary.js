@@ -8,6 +8,7 @@ var SalaryHandler = require('../handlers/salary');
 module.exports = function (models) {
     var handler = new SalaryHandler(models);
 
+    router.get('/checkDataKey', handler.checkDataKey);
     router.get('/recalculateSalaryCash', handler.recalculateCashSalary);
     router.get('/totalCollectionLength', handler.totalCollectionLength);
     router.get('/:viewType', handler.getForView);

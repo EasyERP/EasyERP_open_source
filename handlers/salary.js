@@ -421,6 +421,22 @@ var Salary = function (models) {
             }
         });
     }
+
+    this.checkDataKey = function (req, res, next) {
+        var Salary = models.get(req.session.lastDb, 'SalaryCash', SalaryCashSchema);
+        var query;
+        var body = req.query;
+
+        query = Salary.find({'dataKey': body.dataKey})
+
+        query.exec(function (err, result) {
+            if (err) {
+                next(err);
+            }
+
+            res.status(200).send({count: result.length});
+        });
+    };
 };
 
 module.exports = Salary;
