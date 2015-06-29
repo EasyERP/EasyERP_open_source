@@ -350,7 +350,7 @@ define([
                 common.populateWorkflowsList("Tasks", ".filter-check-list", "#workflowNamesDd", "/Workflows", null, function (stages) {
                     var stage = (self.filter) ? self.filter.workflow || [] : [];
 
-                    FilterView = new filterView({ collection: stages});
+                    FilterView = new filterView({ collection: stages, customCollection: []});
                     itemView.trigger('incomingStages', stages);
                     // Filter custom event listen ------begin
                     FilterView.bind('filter', function () {

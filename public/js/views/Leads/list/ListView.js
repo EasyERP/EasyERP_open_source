@@ -244,7 +244,7 @@ define([
                     self.stages = stages;
                     var stage = (self.filter) ? self.filter.workflow : null;
                     // Filter rendering begin--------
-                    FilterView = new filterView({ collection: stages});
+                    FilterView = new filterView({ collection: stages, customCollection: []});
                     itemView.trigger('incomingStages', stages);
 
                     // Filter custom event listen ------begin

@@ -7472,7 +7472,7 @@ textarea#editInput {
   display: none;
   position: absolute;
   z-index: 10;
-  width: 150px;
+  width: 165px;
   background-color: white;
   border: 1px solid #c0c0c0;
 }

@@ -439,7 +439,7 @@
                 this.$el.unbind();
 
                 // Filter rendering begin------
-                FilterView = new filterView({ collection: workflows});
+                FilterView = new filterView({ collection: workflows, customCollection: []});
                 // Filter rendering end--------
 
                 // Filter custom event listen ------begin

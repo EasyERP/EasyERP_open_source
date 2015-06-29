@@ -188,21 +188,24 @@ define([
                         _id: 'isSupplier'
                     }
                 ];
-                FilterView = new filterView({ collection: filterObject});
-                // Filter custom event listen ------begin
-                FilterView.bind('filter', function () {
-                    showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
-                    self.showFilteredPage(null, showList)
+                dataService.getData('/supplier/getFilterValues', null, function (values) {
+                    FilterView = new filterView({ collection: filterObject, customCollection: values});
+                    // Filter custom event listen ------begin
+                    FilterView.bind('filter', function () {
+                        showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
+                        self.showFilteredPage(null, showList)
+                    });
+                    FilterView.bind('defaultFilter', function () {
+                        showList = [];
+                        self.showFilteredPage(null, showList)
+                    });
+                    // Filter custom event listen ------end
+
                 });
-                FilterView.bind('defaultFilter', function () {
-                    showList = [];
-                    self.showFilteredPage(null, showList)
-                });
-                // Filter custom event listen ------end
+
                 $(document).on("click", function (e) {
                     self.hideItemsNumber(e);
                 });
-
                 common.buildAphabeticArray(this.collection, function (arr) {
                     $("#startLetter").remove();
                     self.alphabeticArray = arr;
@@ -337,6 +340,9 @@ define([
             showFilteredPage: function (e, showList) {
                 var itemsNumber = $("#itemsNumber").text();
                 var selectedLetter;
+                var self = this;
+                var checkedElements = $('.drop-down-filter input:checkbox:checked');
+
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
 
@@ -347,7 +353,7 @@ define([
                        selectedLetter = '';
                    }
                }
-                this.filter = this.filter || {};
+                this.filter = /*this.filter || */{};
                 if (showList.indexOf('isCustomer') !== -1) {
                     this.filter['isCustomer'] = 1;
                 }else if (showList.indexOf('isSupplier') !== -1) {
@@ -356,10 +362,20 @@ define([
                     delete this.filter['isSupplier'];
                     delete this.filter['isCustomer'];
                 }
-                if (this.filter['isSupplier'] && this.filter['isCustomer']) {
-                    delete this.filter['isSupplier'];
-                    delete this.filter['isCustomer'];
-                }
+                if (checkedElements.length && checkedElements.attr('id') === 'defaultFilter') {
+                    this.filter = {};
+                };
+                if ($('.chosen')) {
+                    $('.chosen').each(function (index, elem) {
+                        if (self.filter[elem.children[0].value]) {
+                            self.filter[elem.children[0].value].push(elem.children[1].value);
+                        } else {
+                            self.filter[elem.children[0].value] = [];
+                            self.filter[elem.children[0].value].push(elem.children[1].value);
+                        }
+                    });
+                };
+
                 this.startTime = new Date();
                 this.newCollection = false;
                 this.filter['letter'] = selectedLetter;
