@@ -704,7 +704,7 @@ define([
                     return this.id;
                 }).get();
 
-                this.filter['department'] = showList;
+                this.filter['departments'] = showList;
             } else {
                 this.filter = {};
             }

@@ -214,9 +214,9 @@ var wTrack = function (models) {
             conditionList = _.keys(filter);
             conditionList.forEach(function (condition) {
                 switch (condition) {
-                    case 'department':
+                   /* case 'department':
                         queryObject['$or'].push({ 'department.departmentName': {$in: filter.department}});
-                        break;
+                        break;*/
                     case 'projectmanagers':
                         queryObject['$or'].push({ 'project.projectmanager.name': {$in: filter.projectmanagers}});
                         break;
