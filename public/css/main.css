@@ -5615,7 +5615,7 @@ ul.dialog-tabs li.right button {
     position: relative;
 }
 
-.list tbody tr td input {
+.list tbody tr td[data-type=input] input {
     position: absolute;
     left: 0;
     top: calc(50% - 10px);
