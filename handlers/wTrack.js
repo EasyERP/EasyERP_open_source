@@ -206,13 +206,20 @@ var wTrack = function (models) {
         var contentSearcher;
         var waterfallTasks;
         var conditionList;
+        var condition;
+        var or;
 
         var sort = {};
 
         if (filter && typeof filter === 'object') {
             queryObject['$or'] = [];
-            conditionList = _.keys(filter);
-            conditionList.forEach(function (condition) {
+            or = queryObject['$or'];
+
+            /*conditionList = _.keys(filter);
+            conditionList.forEach(function (condition) {*/
+            for (var key in filter){
+                condition = filter[key];
+
                 switch (condition) {
                     case 'department':
                         queryObject['$or'].push({ 'department.departmentName': {$in: filter.department}});
@@ -491,7 +498,9 @@ var wTrack = function (models) {
     };
 
     this.getFilterValues = function (req, res, next) {
-        models.get(req.session.lastDb, "weTrack", wTrackSchema).aggregate([
+        var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+
+        WTrack.aggregate([
             {
                 $group:{
                     _id: null,
@@ -528,13 +537,13 @@ var wTrack = function (models) {
                 }
             }
         ], function (err, result) {
-            if (!err) {
-                res.status(200).send(result)
-            } else {
-                next(err)
+            if (err) {
+                return next(err);
             }
-        })
-    }
+
+            res.status(200).send(result);
+        });
+    };
 
 };
 
