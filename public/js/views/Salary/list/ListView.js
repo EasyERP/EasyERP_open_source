@@ -584,16 +584,6 @@ define([
                     parrentContentId: this.parrentContentId
                 });
 
-                var holder = this.$el;
-
-                if (deleteCounter !== this.collectionLength) {
-                    var created = holder.find('#timeRecivingDataFromServer');
-                    created.before(new listItemView({
-                        collection: this.collection,
-                        page: holder.find("#currentShowPage").val(),
-                        itemsNumber: holder.find("span#itemsNumber").text()
-                    }).render());//added two parameters page and items number
-                }
                 var pagenation = this.$el.find('.pagination');
                 if (this.collection.length === 0) {
                     pagenation.hide();
@@ -607,7 +597,6 @@ define([
                 var that = this;
                 var mid = 39;
                 var salaryModel;
-                var editCollection;
                 var localCounter = 0;
                 var count;
                 this.collectionLength = this.collection.length;
@@ -623,6 +612,10 @@ define([
                     that.editCollection = new salaryEditableCollection(employeesArary);
                     count = that.editCollection.length;
                     if ($(checkbox).attr("id") !== 'copy') {
+                        checkCount--;
+                        localCounter++;
+                        that.listLength--;
+
                         that.editCollection.each(function (model) {
                             model.destroy({
                                 headers: {
@@ -630,20 +623,25 @@ define([
                                 },
                                 wait: true,
                                 success: function () {
-                                    that.listLength--;
-                                    localCounter++;
+                                    count--;
+                                    if (count === 0) {
+                                        salaryModel.destroy({
+                                            headers: {
+                                                mid: mid
+                                            },
+                                            wait: true,
+                                            success: function () {
+                                                if (checkCount === 0) {
+                                                    that.deleteCounter = localCounter;
+                                                    that.deletePage = $("#currentShowPage").val();
 
-                                    if (localCounter == count) {
+                                                    dataService.getData('/salary/recalculateSalaryCash', {}, function (response, context) {}, that);
 
-                                        that.deleteCounter = localCounter;
-                                        that.deletePage = $("#currentShowPage").val();
+                                                    that.deleteItemsRender(that.deleteCounter, that.deletePage);
 
-                                        dataService.getData('/salary/recalculateSalaryCash', {}, function (response, context) {
-                                            context.listLength = response.count || 0;
-                                        }, that);
-
-                                        that.deleteItemsRender(checkCount, that.deletePage);
-
+                                                }
+                                            }
+                                        });
                                     }
                                 },
                                 error: function (model, res) {
@@ -662,8 +660,6 @@ define([
                                 }
                             });
                         });
-                    } else {
-                        that.render();
                     };
 
                 });
