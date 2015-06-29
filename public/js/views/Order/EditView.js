@@ -104,6 +104,8 @@ define([
                     status: 'Cancelled',
                     order: 1
                 }, function (workflow) {
+                    var redirectUrl = self.forSales ? "easyErp/salesOrder" : "easyErp/Order";
+
                     if (workflow && workflow.error) {
                         return alert(workflow.error.statusText);
                     }
@@ -116,7 +118,7 @@ define([
                         },
                         patch: true,
                         success: function () {
-                            Backbone.history.navigate("easyErp/Quotation", {trigger: true});
+                            Backbone.history.navigate(redirectUrl, {trigger: true});
                         }
                     });
                 });
@@ -125,16 +127,20 @@ define([
             receiveInvoice: function (e) {
                 e.preventDefault();
 
+                var self =this;
                 var url = '/invoice/receive';
                 var data = {
+                    forsSales: this.forSales,
                     orderId: this.currentModel.id
                 };
 
                 dataService.postData(url, data, function (err, response) {
+                    var redirectUrl = self.forSales ? "easyErp/salesInvoice" : "easyErp/Invoice";
+
                     if (err) {
                         alert('Can\'t receive invoice');
                     } else {
-                        Backbone.history.navigate("easyErp/Invoice", {trigger: true});
+                        Backbone.history.navigate(redirectUrl, {trigger: true});
                     }
                 });
             },
@@ -147,6 +153,8 @@ define([
                 populate.fetchWorkflow({
                     wId: 'Quotation'
                 }, function (workflow) {
+                    var redirectUrl = self.forSales ? "easyErp/salesOrder" : "easyErp/Order";
+
                     if (workflow && workflow.error) {
                         return alert(workflow.error.statusText);
                     }
@@ -159,7 +167,7 @@ define([
                         },
                         patch: true,
                         success: function () {
-                            Backbone.history.navigate("easyErp/Quotation", {trigger: true});
+                            Backbone.history.navigate(redirectUrl, {trigger: true});
                         }
                     });
                 });

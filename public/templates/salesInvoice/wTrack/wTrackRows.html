@@ -1,0 +1,23 @@
+﻿<% wTracks.forEach(function(wTrack, index){ %>
+<tr data-id="<%=wTrack._id%>" class="productItem">
+    <td data-content="number"><%= index + 1%></td>
+    <td data-content="project"><%=wTrack.project ? wTrack.project.projectName : ''%></td>
+    <td data-content="employee"><%=wTrack.employee ? wTrack.employee.name : ''%></td>
+    <td data-content="department"><%=wTrack.department ? wTrack.department.departmentName : ''%></td>
+    <td data-type="input" data-content="year"><%=wTrack.year%></td>
+    <td data-type="input" data-content="month"><%=wTrack.month%></td>
+    <td data-type="input" data-content="week"><%=wTrack.week%></td>
+    <td data-type="input" data-content="rate"><%=wTrack.rate%></td>
+    <td data-content="worked"><%=wTrack.worked%></td>
+    <td data-type="input" data-content="1"><%=wTrack['1']%></td>
+    <td data-type="input" data-content="2"><%=wTrack['2']%></td>
+    <td data-type="input" data-content="3"><%=wTrack['3']%></td>
+    <td data-type="input" data-content="4"><%=wTrack['4']%></td>
+    <td data-type="input" data-content="5"><%=wTrack['5']%></td>
+    <td data-type="input" data-content="6"><%=wTrack['6']%></td>
+    <td data-type="input" data-content="7"><%=wTrack['7']%></td>
+    <td><%=wTrack.isPaid ? 'Paid' : 'Unpaid'%></td>
+    <td class="currency"><%=wTrack.revenue%></td>
+    <td class="editable autoCalc currency" ><%=wTrack.revenue%></td>
+</tr>
+<% }) %>

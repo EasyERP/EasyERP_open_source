@@ -253,10 +253,15 @@ function (WorkflowsTemplate, kanbanSettingsTemplate, WorkflowsCollection, Kanban
 			counter.html(parseInt(counter.html())+i);
 		},
 
-        hideItemsNumber: function () {
+        hideItemsNumber: function (e) {
+            var el = e.target;
+
             $(".allNumberPerPage").hide();
             $(".newSelectList").hide();
-            $(".drop-down-filter").hide();
+            if (!el.closest('.search-view')) {
+                $(".drop-down-filter").hide();
+                $('.search-options').hide();
+            };
 
         },
 
@@ -351,8 +356,8 @@ function (WorkflowsTemplate, kanbanSettingsTemplate, WorkflowsCollection, Kanban
 			this.$el.unbind();
 
             FilterView = new filterView({ collection: workflows});
-            $(document).on("click", function () {
-                self.hideItemsNumber();
+            $(document).on("click", function (e) {
+                self.hideItemsNumber(e);
             });
 
             // Filter custom event listen ------begin

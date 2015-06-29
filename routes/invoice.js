@@ -13,6 +13,8 @@ module.exports = function (models) {
 
     router.get('/totalCollectionLength', handler.totalCollectionLength);
 
+    router.get('/generateName', handler.generateName);
+    
     router.get('/:viewType', function (req, res) {
         var viewType = req.params.viewType;
         switch (viewType) {

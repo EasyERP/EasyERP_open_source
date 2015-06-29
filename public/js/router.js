@@ -417,6 +417,7 @@ define([
                         topbarView.bind('editEvent', contentview.editItem, contentview);
                         topbarView.bind('saveEvent', contentview.saveItem, contentview);
                         topbarView.bind('deleteEvent', contentview.deleteItems, contentview);
+                        topbarView.bind('generateInvoice', contentview.generateInvoice, contentview);
 
                         collection.bind('showmore', contentview.showMoreContent, contentview);
                         context.changeView(contentview);
@@ -662,6 +663,7 @@ define([
         },
 
         getList: function (contentType) {
+
             this.contentType = contentType;
             contentType = this.testContent(contentType);
             var viewType = custom.getCurrentVT({contentType: contentType});

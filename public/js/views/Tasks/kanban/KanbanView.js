@@ -323,6 +323,7 @@
                     $(".allNumberPerPage").hide();
                     if ($(".drop-down-filter").is(":visible")) {
                         $(".drop-down-filter").hide();
+                        $('.search-content').removeClass('fa-caret-up')
                     }
                 }
             },

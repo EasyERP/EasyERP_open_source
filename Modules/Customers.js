@@ -640,13 +640,26 @@
                     if (data && data.filter && data.filter.letter) {
                         optionsObject['name.last'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
                     }
+                    if (data && data.filter && data.filter.isCustomer) {
+                        optionsObject['salesPurchases.isCustomer'] = true;
+                    }
+                    if (data && data.filter && data.filter.isSupplier) {
+                        optionsObject['salesPurchases.isSupplier'] = true;
+                    }
                 }
                     break;
                 case ('Companies'):
                 {
                     optionsObject['type'] = 'Company';
-                    if (data && data.filter && data.filter.letter)
+                    if (data && data.filter && data.filter.letter) {
                         optionsObject['name.first'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
+                    }
+                    if (data && data.filter && data.filter.isCustomer) {
+                        optionsObject['salesPurchases.isCustomer'] = true;
+                    }
+                    if (data && data.filter && data.filter.isSupplier) {
+                        optionsObject['salesPurchases.isSupplier'] = true;
+                    }
                 }
                     break;
                 case ('ownCompanies'):

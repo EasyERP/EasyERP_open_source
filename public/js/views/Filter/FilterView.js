@@ -7,31 +7,100 @@ define([
         var FilterView;
         FilterView = Backbone.View.extend({
             el: '#searchContainer',
-            contentType: "Opportunities",
+            contentType: "Filter",
             template: _.template(ContentFilterTemplate),
 
             events: {
                 "click .search-content": 'showSearchContent',
                 "click .filter": 'showFilterContent',
-                "click .filter-check-list input": "writeValue",
-                "click .removeValues": "removeValues"
+                "click .drop-down-filter input": "writeValue",
+                "click .drop-down-filter li": "triggerClick",
+                "click .removeValues": "removeValues",
+                'change .chooseTerm': 'chooseOptions',
+                'click .addCondition': 'addCondition',
+                'click .removeFilter': 'removeFilter',
+                'click .customFilter': 'showCustomFilter',
+                'click .applyFilter': 'applyFilter'
             },
 
 
-            initialize: function () {
-                this.render();
+            initialize: function (options) {
+                this.render(options);
             },
 
-            render: function () {
+            render: function (options) {
+                var value;
+                this.customCollection =  options.customCollection;
 
-                this.$el.html(this.template({collection: this.collection}));
+                this.$el.html(this.template({collection: this.collection, customCollection: options.customCollection}));
+
+                value  = $('.chooseTerm').val();
+                if (value) {
+                    options.customCollection[0][value].forEach(function (opt) {
+                        if (opt && opt.name) {
+                            $('.chooseOption').append('<option value="' + opt.name + '">' + opt.name + '</option>');
+                        } else {
+                            $('.chooseOption').append('<option value="' + opt + '">' + opt + '</option>');
+                        }
+                    });
+                }
 
                 return this;
             },
 
+            applyFilter: function () {
+                this.trigger('filter');
+            },
+
+            showCustomFilter: function () {
+                $(".filterOptions").toggle();
+                $(".filterActions").toggle();
+            },
+
+            removeFilter: function (e) {
+                if ($('.filterOptions').length > 1) {
+                    $(e.target).closest('.filterOptions').remove();
+                } else {
+                    $(".filterOptions").removeClass('chosen');
+                    $('.chooseOption').children().remove();
+                    $(".chooseTerm").val($(".chooseTerm option:first").val());
+                    this.trigger('defaultFilter');
+
+                }
+                e.stopPropagation();
+            },
+
+            addCondition: function () {
+                $(".filterOptions:first").clone().insertBefore('.filterActions');
+                $(".filterOptions:last").children('.chooseOption').children().remove();
+                $(".filterOptions:last").removeClass('chosen');
+            },
+
+            chooseOptions: function (e) {
+             var el = $(e.target).next();
+                var value  = e.target.value;
+                $(e.target).closest('.filterOptions').addClass('chosen');
+
+                el.html('');
+                this.customCollection[0][value].forEach(function (opt) {
+                    if (opt && opt.name) {
+                        el.append('<option value="' + opt.name + '">' + opt.name + '</option>')
+                    } else {
+                        el.append('<option value="' + opt + '">' + opt + '</option>')
+                    }
+                });
+
+            },
+
+            triggerClick: function (e) {
+                if (e.target.localName === 'li') {
+                    $(e.target.children[0]).trigger('click');
+                }
+            },
+
             showSearchContent: function () {
                 var el = $('.search-content');
-                var selector = 'arrow-down';
+                var selector = 'fa-caret-up';
 
                 $('.search-options').toggle();
 
@@ -43,7 +112,7 @@ define([
             },
 
             showFilterContent: function () {
-                $('.filter-check-list').toggle('fast');
+                $('.drop-down-filter').toggle();
                 return false;
             },
 
@@ -51,14 +120,10 @@ define([
                 var inputText = e.target.nextElementSibling.textContent;
                 var filterValues = $('.filterValues');
                 var filterIcons = $('.filter-icons');
-                var input = $('.filter-check-list input');
+                var input = $('.drop-down-filter input');
                 var checked;
 
                 filterIcons.addClass('active');
-
-                if (!filterValues.find('.iconFilter').length) {
-                    filterValues.prepend('<span class="iconFilter fa fa-filter"></span>')
-                }
 
                 $.each(input, function (index, value) {
                     if (value.checked) {
@@ -79,18 +144,18 @@ define([
                 if (e.target.id !== 'defaultFilter') {
                     $('#defaultFilter').removeAttr('checked');
                     filterValues.find('.Default').remove();
-                    this.trigger('filter')
+                    this.trigger('filter');
                 } else {
                     $.each(input, function (index, value) {
                         if (value.id !== 'defaultFilter') value.checked = false
                     });
                     $.each($('.filterValues span'), function (index, item) {
-                        if (item.className !== 'Default' && item.className !== 'iconFilter') item.remove();
+                        if (item.className !== 'Default') item.remove();
                     });
                     this.trigger('defaultFilter');
                 }
 
-                if ($('.filter-check-list input:checkbox:checked').length === 0) {
+                if ($('.drop-down-filter input:checkbox:checked').length === 0) {
                     this.trigger('defaultFilter');
                 }
 
@@ -99,7 +164,7 @@ define([
             removeValues: function () {
                 $('.filterValues').empty();
                 $('.filter-icons').removeClass('active');
-                $.each($('.filter-check-list input'), function (index, value) {
+                $.each($('.drop-down-filter input'), function (index, value) {
                     value.checked = false
                 });
                 this.trigger('defaultFilter');

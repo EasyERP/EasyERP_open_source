@@ -5,6 +5,7 @@
 var mongoose = require('mongoose');
 var wTrack = function (models) {
     var access = require("../Modules/additions/access.js")(models);
+    var _ = require('../node_modules/underscore');
     var wTrackSchema = mongoose.Schemas['wTrack'];
     var DepartmentSchema = mongoose.Schemas['Department'];
     var CustomerSchema = mongoose.Schemas['Customer'];
@@ -27,7 +28,6 @@ var wTrack = function (models) {
             res.status(200).send({success: wTrack});
         });
     };
-
 
     this.putchModel = function (req, res, next) {
         var id = req.params.id;
@@ -205,12 +205,70 @@ var wTrack = function (models) {
         var contentIdsSearcher;
         var contentSearcher;
         var waterfallTasks;
+        var condition;
+        var or;
 
         var sort = {};
 
         if (filter && typeof filter === 'object') {
-            queryObject = query.filter;
-        }
+            queryObject['$or'] = [];
+            or = queryObject['$or'];
+
+            for (var key in filter){
+                condition = filter[key];
+
+                switch (key) {
+                    case 'projectmanagers':
+                        or.push({ 'project.projectmanager.name': {$in: condition}});
+                        break;
+                    case 'projectsname':
+                       or.push({ 'project.projectName': {$in: condition}});
+                        break;
+                    case 'workflows':
+                        or.push({ 'project.workflow': {$in: condition}});
+                        break;
+                    case 'customers':
+                        or.push({ 'project.customer': {$in: condition}});
+                        break;
+                    case 'employees':
+                        or.push({ 'employee.name': {$in: condition}});
+                        break;
+                    case 'departments':
+                        or.push({ 'department.departmentName': {$in: condition}});
+                        break;
+                    case 'years':
+                        for (var i = 0; i <= condition.length - 1; i++) {
+                            condition[i] = parseInt(condition[i]);
+                        };
+                        or.push({ 'year': {$in: condition}});
+                        break;
+                    case 'months':
+                        for (var i = 0; i <= condition.length - 1; i++) {
+                            condition[i] = parseInt(condition[i]);
+                        };
+                        or.push({ 'month': {$in: condition}});
+                        break;
+                    case 'weeks':
+                        for (var i = 0; i <= condition.length - 1; i++) {
+                            condition[i] = parseInt(condition[i]);
+                        };
+                        or.push({ 'week': {$in: condition}});
+                        break;
+                    case 'isPaid':
+                        for (var i = 0; i <= condition.length - 1; i++) {
+                            if (condition[i] === 'true') {
+                                condition[i] = true;
+                            } else if (condition[i] === 'false') {
+                                condition[i] = false;
+                            } else {
+                                condition[i] = null;
+                            }
+                        };
+                        or.push({ 'isPaid': {$in: condition}});
+                        break;
+                }
+            };
+       }
 
         var count = query.count ? query.count : 50;
         var page = query.page;
@@ -272,6 +330,7 @@ var wTrack = function (models) {
             var whoCanRw = [everyOne, owner, group];
             var matchQuery = {
                 $and: [
+
                     queryObject,
                     {
                         $or: whoCanRw
@@ -447,6 +506,54 @@ var wTrack = function (models) {
                 return next(err);
             }
             res.status(200).send({success: product});
+        });
+    };
+
+    this.getFilterValues = function (req, res, next) {
+        var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+
+        WTrack.aggregate([
+            {
+                $group:{
+                    _id: null,
+                    projectmanagers: {
+                        $addToSet: '$project.projectmanager'
+                    },
+                    projectsname: {
+                        $addToSet: '$project.projectName'
+                    },
+                    workflows: {
+                        $addToSet: '$project.workflow'
+                    },
+                    customers: {
+                        $addToSet: '$project.customer'
+                    },
+                    employees: {
+                        $addToSet: '$employee'
+                    },
+                    departments: {
+                        $addToSet: '$department'
+                    },
+                    years: {
+                        $addToSet: '$year'
+                    },
+                    months: {
+                        $addToSet: '$month'
+                    },
+                    weeks: {
+                        $addToSet: '$week'
+                    },
+                    isPaid: {
+                        $addToSet: '$isPaid'
+                    }
+                }
+            }
+        ], function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send(result);
         });
     };
 

@@ -13,8 +13,10 @@
 
             initialize: function (options) {
                 this.startTime = new Date();
+
                 var that = this;
                 var regex = /^sales/;
+
                 this.namberToShow = options.count;
                 this.viewType = options.viewType;
                 this.contentType = options.contentType;

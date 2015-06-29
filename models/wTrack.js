@@ -17,8 +17,14 @@ module.exports = (function () {
                 _id: { type: ObjectId, ref: 'Project', default: null },
                 name: String
             },
-            workflow: String,
-            customer: String
+            workflow: {
+                _id: { type: ObjectId, ref: 'workflows', default: null },
+                name: String
+            },
+            customer: {
+                _id: { type: ObjectId, ref: 'Customers', default: null },
+                name: String
+            }
         },
         employee: {
             _id: {type: ObjectId, ref: 'Employees', default: null},

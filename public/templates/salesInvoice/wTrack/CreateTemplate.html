@@ -1,0 +1,207 @@
+<div class="form-holder">
+    <form method="post" action="" class="form" id="invoiceForm">
+        <fieldset>
+            <div class="inner">
+                <ul class="dialog-tabs" data-class="mainTabs">
+                    <li><a class="active" href="javascript:;">Main</a></li>
+                    <li><a href="javascript:;">Assignees</a></li>
+                </ul>
+                <div class="clearfix"></div>
+                <div class="dialog-tabs-items mainTabs">
+                    <div class="dialog-tabs-item mainTabs active">
+                        <div class="half-block left">
+                            <dl class="opp-info">
+                                <dt><label for="assigned">Assigned</label></dt>
+                                <dd>
+                                    <span id="assigned" data-id="<%= assigned._id%>"><%= assigned.name%></span>
+                                </dd>
+                                <dt><label for="supplier">Customer</label></dt>
+                                <dd>
+                                    <span id="supplier" data-id="<%= customer._id%>"><%= customer.name%></span>
+                                </dd>
+                                <dt><label for="project">Project</label></dt>
+                                <dd>
+                                    <span id="project"><%= project.projectName%></span>
+                                </dd>
+                                <dt><label for="paymentTerms">Payment Terms</label></dt>
+                                <dd>
+                                    <a id="paymentTerms" class="current-selected" href="javascript:;">Select</a>
+                                </dd>
+                            </dl>
+                        </div>
+                        <div class="half-block left">
+                            <dl class="opp-info">
+                                <dt><label for="invoiceName">Invoice Name</label></dt>
+                                <dd>
+                                    <input type="text" id="invoiceName" name="invoiceName" placeholder="Invoice Name"
+                                           maxlength="32" value="<%= invoiceName%>" />
+                                </dd>
+                                <dt><label for="invoiceDate">Invoice Date</label></dt>
+                                <dd>
+                                    <input class="extrainfo" type="text" name="invoiceDate" id="invoiceDate" value=""
+                                           readonly="" placeholder="Invoice Date">
+                                </dd>
+                                <dt><label for="dueDate">Due Date</label></dt>
+                                <dd>
+                                    <input class="extrainfo" type="text" name="dueDate" id="dueDate" value=""
+                                           readonly="" placeholder="Due Date">
+                                </dd>
+                            </dl>
+                        </div>
+                        <div class="clearfix"></div>
+                        <ul class="dialog-tabs" data-class="childTabs">
+                            <li><a class="active" href="javascript:;">Invoice</a></li>
+                            <li><a href="javascript:;">Payments</a></li>
+                        </ul>
+                        <div class="clearfix"></div>
+                        <div class="dialog-tabs-items childTabs">
+                            <div class="dialog-tabs-item childTabs active">
+                                <div>
+                                    <table class="list task-list">
+                                        <thead>
+                                            <tr>
+                                                <th>N</th>
+                                                <th class="oe_sortable" data-sort="project.projectName">
+                                                    Project<span class="arrow down">7</span><span class="arrow up">v</span>
+                                                </th>
+                                                <th class="oe_sortable" data-sort="employee.name">
+                                                    Employee<span class="arrow down">7</span><span class="arrow up">v</span>
+                                                </th>
+                                                <th class="oe_sortable sortDn" data-sort="department.departmentName">
+                                                    Department<span class="arrow down">7</span><span class="arrow up">v</span>
+                                                </th>
+                                                <th class="oe_sortable" data-sort="year">
+                                                    Year<span class="arrow down">7</span><span class="arrow up">v</span>
+                                                </th>
+                                                <th class="oe_sortable" data-sort="month">
+                                                    Month<span class="arrow down">7</span><span class="arrow up">v</span>
+                                                </th>
+                                                <th class="oe_sortable" data-sort="week">
+                                                    Week<span class="arrow down">7</span><span class="arrow up">v</span>
+                                                </th>
+                                                <th class="oe_sortable" data-sort="rate">
+                                                    Rate<span class="arrow down">7</span><span class="arrow up">v</span>
+                                                </th>
+                                                <th class="oe_sortable" data-sort="worked">
+                                                    Hours<span class="arrow down">7</span><span class="arrow up">v</span>
+                                                </th>
+                                                <th class="oe_sortable" data-sort="1">
+                                                    Mo<span class="arrow down">7</span><span class="arrow up">v</span>
+                                                </th>
+                                                <th class="oe_sortable" data-sort="2">
+                                                    Tu<span class="arrow down">7</span><span class="arrow up">v</span>
+                                                </th>
+                                                <th class="oe_sortable" data-sort="3">
+                                                    We<span class="arrow down">7</span><span class="arrow up">v</span>
+                                                </th>
+                                                <th class="oe_sortable" data-sort="4">
+                                                    Th<span class="arrow down">7</span><span class="arrow up">v</span>
+                                                </th>
+                                                <th class="oe_sortable" data-sort="5">
+                                                    Fr<span class="arrow down">7</span><span class="arrow up">v</span>
+                                                </th>
+                                                <th class="oe_sortable" data-sort="6">
+                                                    Sa<span class="arrow down">7</span><span class="arrow up">v</span>
+                                                </th>
+                                                <th class="oe_sortable" data-sort="7">
+                                                    Su<span class="arrow down">7</span><span class="arrow up">v</span>
+                                                </th>
+                                                <th class="oe_sortable" data-sort="isPaid">
+                                                    Status<span class="arrow down">7</span><span class="arrow up">v</span>
+                                                </th>
+                                                <th class="oe_sortable" data-sort="revenue">
+                                                    Revenue<span class="arrow down">7</span><span class="arrow up">v</span>
+                                                </th>
+                                                <th class="oe_sortable" data-sort="amount">
+                                                    Amount<span class="arrow down">7</span><span class="arrow up">v</span>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="linwoiceGenerateTable"></tbody>
+                                    </table>
+                                </div>
+                                <div class="clearfix"></div>
+                                <div id="totalAmountContainer" class="half-block right">
+                                    <table border="0" cellpadding="0" cellspacing="0" class="right calculateTotal">
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <label>
+                                                        Untaxed Amount
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <span>
+                                                        <span id="totalUntaxes" class="currency">
+                                                            <%if (total) {%>
+                                                            <%= total%>
+                                                            <%} else {%>
+                                                            0.00
+                                                            <%}%>
+                                                        </span>
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                            <tr class="taxes">
+                                                <td>
+                                                    <label>Taxes</label>
+                                                </td>
+                                                <td>
+                                                    <span>
+                                                        <span id="taxes" class="currency">
+                                                            0.00
+                                                        </span>
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                            <tr class="totalAmount">
+                                                <td>
+                                                    <label class="" data-original-title="" title="">Total</label>
+                                                </td>
+                                                <td>
+                                                    <span class="">
+                                                        <span id="totalAmount" class="currency">
+                                                            <%if (total) {%>
+                                                            <%=total%>
+                                                            <%} else {%>
+                                                            0.00
+                                                            <%}%>
+                                                        </span>
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                            <%if (balanceVisible) {%>
+                                            <tr class="balance">
+                                                <td>
+                                                    <label>Balance</label>
+                                                </td>
+                                                <td>
+                                                    <span class="">
+                                                        <span id="balance">
+                                                            <%if (model && model.paymentInfo && model.paymentInfo.balance) {%>
+                                                            <%=model.paymentInfo.balance%>
+                                                            <%} else {%>
+                                                            0.00
+                                                            <%}%>
+                                                        </span>€
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                            <%}%>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="dialog-tabs-item childTabs">
+                                <div id="payments-container"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dialog-tabs-item mainTabs">
+                        <div class="assignees-container"></div>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>

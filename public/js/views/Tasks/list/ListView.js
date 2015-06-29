@@ -285,10 +285,15 @@ define([
                 this.getTotalLength(null, itemsNumber, this.filter);
             },
 
-            hideItemsNumber: function () {
+            hideItemsNumber: function (e) {
+                var el = e.target;
                 $(".allNumberPerPage").hide();
                 $(".newSelectList").hide();
-                $(".drop-down-filter").hide();
+                if (!el.closest('.search-view')) {
+                    $(".drop-down-filter").hide();
+                    $('.search-options').hide();
+                    $('.search-content').removeClass('fa-caret-up');
+                };
             },
 
             itemsNumber: function (e) {
@@ -547,16 +552,11 @@ define([
                                 that.deleteCounter = localCounter;
                                 that.deletePage = $("#currentShowPage").val();
                                 that.deleteItemsRender(that.deleteCounter, that.deletePage);
-
                             }
-
                         }
                     });
-
                 });
-
             }
-
         });
 
         return TasksListView;

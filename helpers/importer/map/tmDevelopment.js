@@ -233,6 +233,37 @@ module.exports = (function () {
         }
     };
 
+    var payment = {
+        collection: 'Payment',
+        table: 'Payment',
+        comparator: {
+            'PaymentWay': [{
+                value: '1',
+                field: 'paymentMethod',
+                fieldValue: '5589888738a5416cab8bdc5d'
+            }, {
+                value: '2',
+                field: 'paymentMethod',
+                fieldValue: '5589888738a5416cab8bdc5e'
+            }, {
+                value: '3',
+                field: 'paymentMethod',
+                fieldValue: '5589888738a5416cab8bdc5f'
+            }]
+        },
+        aliases: {
+            ID: 'ID',
+            name: 'ID',
+            invoice: 'Invoice',
+            date: 'PaymentDate',
+            paymentMethod: 'PaymentWay',
+            paidAmount: 'Amount',
+            paymentDate: 'PaymentDate',
+            'paymentInfo.total': 'Amount',
+            workflow: 'PaymentStatus'
+        }
+    };
+
     var user = {
         collection: 'Users',
         table: 'Users',
@@ -244,5 +275,5 @@ module.exports = (function () {
         }
     };
 
-    return [department, jobPosition, employee, project, customer, wTrack, salary, invoice];
+    return [department, jobPosition, employee, project, customer, wTrack, salary, invoice, payment];
 })();

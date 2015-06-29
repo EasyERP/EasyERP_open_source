@@ -14,6 +14,7 @@ var Invoice = function (models) {
     var objectId = mongoose.Types.ObjectId;
     var async = require('async');
     var workflowHandler = new WorkflowHandler(models);
+    var moment = require('../public/js/libs/moment/moment');
 
     this.create = function (req, res, next) {
         var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
@@ -36,6 +37,7 @@ var Invoice = function (models) {
 
     this.receive = function (req, res, next) {
         var id = req.body.orderId;
+        var forSales = !!req.body.forSales;
         var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
         var Order = models.get(req.session.lastDb, 'Quotation', OrderSchema);
         var parallelTasks;
@@ -55,7 +57,7 @@ var Invoice = function (models) {
         }
 
         function findOrder(callback) {
-            Order.findById(id, callback);
+            Order.findById(id).lean().exec(callback);
         };
 
         function parallel(callback) {
@@ -78,6 +80,7 @@ var Invoice = function (models) {
                 return callback(err);
             }
 
+            delete order._id;
             invoice = new Invoice(order);
 
             if (req.session.uId) {
@@ -399,7 +402,7 @@ var Invoice = function (models) {
         }
     };
 
-    this.removeInvoice = function(req, res, id, next) {
+    this.removeInvoice = function (req, res, id, next) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getReadAccess(req, req.session.uId, 56, function (access) {
                 if (access) {
@@ -423,7 +426,7 @@ var Invoice = function (models) {
 
     };
 
-    this.updateInvoice = function (req,res, _id, data, next) {
+    this.updateInvoice = function (req, res, _id, data, next) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getReadAccess(req, req.session.uId, 56, function (access) {
                 if (access) {
@@ -559,6 +562,36 @@ var Invoice = function (models) {
         });
     };
 
+    this.generateName = function (req, res, next) {
+        var project = req.query.projectId;
+        var currentDbName = req.session ? req.session.lastDb : null;
+        var db = currentDbName ? models.connection(currentDbName) : null;
+        var date = moment().format('DD/MM/YYYY');
+
+        db.collection('settings').findAndModify({
+                dbName: currentDbName,
+                name: 'invoice',
+                project: project
+            },
+            [['name', 1]],
+            {
+                $inc: {seq: 1}
+            },
+            {
+                new: true,
+                upsert: true
+            },
+            function (err, rate) {
+                var resultName;
+
+                if (err) {
+                    return next(err);
+                }
+
+                resultName = rate.seq + '-' + date;
+                res.status(200).send(resultName) ;
+            });
+    };
 
 };
 

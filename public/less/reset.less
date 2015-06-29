@@ -418,17 +418,22 @@ textarea {
 }
 
 .drop-down-filter {
-  background-color: #F5F5F5;
   display: none;
   position: absolute;
   z-index: 10;
-  width: 100px;
   margin-top: 5px;
+  width: 150px;
+  background-color: white;
+  border: 1px solid #c0c0c0;
 }
 
 .drop-down-filter li {
   cursor: pointer;
   margin-bottom: 5px;
+  line-height: 20px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .drop-down-filter li:nth-child(2n) {
@@ -457,7 +462,7 @@ textarea {
   margin-right: 65px;
 }
 
-.filterValues:before {
+.zoomIcon:before {
   content: "\f0b0";
   cursor: pointer;
 }
