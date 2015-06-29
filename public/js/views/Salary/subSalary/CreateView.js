@@ -16,7 +16,7 @@ define([
             },
 
             render: function () {
-                this.$el.prepend(this.template(this.model));
+                this.$el.append(this.template(this.model));
 
                 return this;
             }
