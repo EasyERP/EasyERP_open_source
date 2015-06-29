@@ -8607,15 +8607,37 @@ textarea#editInput {
     margin: 20px auto;
 }
 
+.grid-conatiner.revenue .chartContainer:after {
+    clear: both;
+    content: ' ';
+    display: table;
+}
+
 .grid-conatiner.revenue .chartContainer #chart {
     width: 100%;
     padding-right: 140px;
     margin: 0 -140px 0 0;
+    float: left;
+    box-sizing: border-box;
 }
 
 .grid-conatiner.revenue .chartContainer .legend {
     float: left;
-    line-height: 11px;
+    line-height: 24px;
+    width: 140px;
+}
+
+.grid-conatiner.revenue .chartContainer .legend div:after {
+    clear: both;
+    content: ' ';
+    display: table;
+}
+
+.grid-conatiner.revenue .chartContainer .legend input {
+    height: 24px;
+    box-sizing: border-box;
+    float: right;
+    width: 50px;
 }
 
 .grid-conatiner.revenue .divTable {
@@ -8658,6 +8680,11 @@ textarea#editInput {
 
 .grid-conatiner.revenue .divCell.left-cell {
     width: 10%;
+}
+
+.grid-conatiner.revenue .th-trend,
+.grid-conatiner.revenue .trend{
+    width: 7.5%;
 }
 
 .search-field {
