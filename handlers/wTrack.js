@@ -210,6 +210,25 @@ var wTrack = function (models) {
 
         var sort = {};
 
+        function ConvertType(array, type) {
+            if (type === 'integer') {
+                for (var i = 0; i <= array.length - 1; i++) {
+                    array[i] = parseInt(array[i]);
+                }
+            } else  if (type === 'boolean') {
+                for (var i = 0; i <= condition.length - 1; i++) {
+                    if (condition[i] === 'true') {
+                        condition[i] = true;
+                    } else if (condition[i] === 'false') {
+                        condition[i] = false;
+                    } else {
+                        condition[i] = null;
+                    }
+                }
+            }
+
+        };
+
         if (filter && typeof filter === 'object') {
             queryObject['$or'] = [];
             or = queryObject['$or'];
@@ -237,33 +256,23 @@ var wTrack = function (models) {
                         or.push({ 'department.departmentName': {$in: condition}});
                         break;
                     case 'years':
-                        for (var i = 0; i <= condition.length - 1; i++) {
-                            condition[i] = parseInt(condition[i]);
-                        };
+                        ConvertType(condition, 'integer');
+
                         or.push({ 'year': {$in: condition}});
                         break;
                     case 'months':
-                        for (var i = 0; i <= condition.length - 1; i++) {
-                            condition[i] = parseInt(condition[i]);
-                        };
+                        ConvertType(condition, 'integer');
+
                         or.push({ 'month': {$in: condition}});
                         break;
                     case 'weeks':
-                        for (var i = 0; i <= condition.length - 1; i++) {
-                            condition[i] = parseInt(condition[i]);
-                        };
+                        ConvertType(condition, 'integer');
+
                         or.push({ 'week': {$in: condition}});
                         break;
                     case 'isPaid':
-                        for (var i = 0; i <= condition.length - 1; i++) {
-                            if (condition[i] === 'true') {
-                                condition[i] = true;
-                            } else if (condition[i] === 'false') {
-                                condition[i] = false;
-                            } else {
-                                condition[i] = null;
-                            }
-                        };
+                        ConvertType(condition, 'boolean');
+
                         or.push({ 'isPaid': {$in: condition}});
                         break;
                 }

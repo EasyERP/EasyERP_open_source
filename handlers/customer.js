@@ -26,6 +26,30 @@ var Customers = function (models) {
             }
         });
     };
+
+    this.getFilterValues = function (req, res, next) {
+        var opportunity = models.get(req.session.lastDb, 'Customers', CustomerSchema);
+
+        opportunity.aggregate([
+            {
+                $group:{
+                    _id: null,
+                    name: {
+                        $addToSet: '$name.first'
+                    },
+                    country: {
+                        $addToSet: '$address.country'
+                    }
+                }
+            }
+        ], function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send(result);
+        });
+    }
 };
 
 module.exports = Customers;

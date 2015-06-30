@@ -711,9 +711,8 @@ define([
                 }).get();
 
                 this.filter['departments'] = showList;
-            }/* else {
-                this.filter = {};
-            }*/
+            };
+
             if ($('.chosen')) {
                 $('.chosen').each(function (index, elem) {
                     if (self.filter[elem.children[0].value]) {
@@ -723,7 +722,7 @@ define([
                         self.filter[elem.children[0].value].push(elem.children[1].value);
                     }
                 });
-            }
+            };
             if (checkedElements.length && checkedElements.attr('id') === 'defaultFilter') {
                 self.filter = {};
             }

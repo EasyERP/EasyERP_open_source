@@ -4,6 +4,7 @@ define([
     'custom',
     'common',
     'constants'
+
 ], function (mainView, loginView, custom, common, CONTENT_TYPES) {
 
     var appRouter = Backbone.Router.extend({
@@ -27,8 +28,11 @@ define([
             "easyErp/Dashboard": "goToDashboard",
             "easyErp/projectDashboard": "goToProjectDashboard",
             "easyErp/:contentType": "getList",
+
             "*any": "any"
         },
+
+
 
         initialize: function () {
             this.on('all', function () {
@@ -74,6 +78,7 @@ define([
                 }
             });
         },
+
 
         revenue: function(){
             var self = this;

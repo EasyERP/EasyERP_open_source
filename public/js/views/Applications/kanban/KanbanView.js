@@ -280,6 +280,9 @@
                 var self = this;
                 var FilterView;
                 var workflows = this.workflowsCollection.toJSON();
+                var showList;
+                var el;
+
                 this.$el.html(_.template(WorkflowsTemplate, { workflowsCollection: workflows }));
                 $(".column").last().addClass("lastColumn");
                 var itemCount;
@@ -333,7 +336,7 @@
                 this.$el.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
                 $(document).on("keypress", "#cPerPage", this.isNumberKey);
                 this.$el.unbind();
-                FilterView = new filterView({ collection: workflows});
+                FilterView = new filterView({ collection: workflows, customCollection: []});
                 $(document).on("click", function (e) {
                     self.hideItemsNumber(e);
                 });

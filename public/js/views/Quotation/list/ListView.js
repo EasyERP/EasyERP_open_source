@@ -244,7 +244,7 @@ define([
                     targetSource: 'quotation'
                 }, function (stages) {
                     self.stages = stages;
-                    FilterView = new filterView({ collection: stages});
+                    FilterView = new filterView({ collection: stages, customCollection: []});
                     // Filter custom event listen ------begin
                     FilterView.bind('filter', function () {
                         showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();

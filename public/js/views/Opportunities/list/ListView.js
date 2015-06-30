@@ -155,19 +155,45 @@ define([
             },
             //modified for filter Vasya
             showFilteredPage: function (workflowIdArray) {
+                var self = this;
                 var isConverted = true;
                 var itemsNumber = $("#itemsNumber").text();
+                var checkedElements = $('.drop-down-filter input:checkbox:checked');
+                var showList;
+
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
 
                 this.startTime = new Date();
-                this.newCollection = false;
-                this.filter = this.filter || {};
+                this.newCollection = true;
+                this.filter = {};
                 this.filter['isConverted'] = isConverted;
-                if (workflowIdArray) this.filter['workflow'] = workflowIdArray;
+
+                if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
+                    showList = checkedElements.map(function () {
+                        return this.value;
+                    }).get();
+
+                    this.filter['workflow'] = showList;
+                };
+
+                if ($('.chosen')) {
+                    $('.chosen').each(function (index, elem) {
+                        if (self.filter[elem.children[0].value]) {
+                            self.filter[elem.children[0].value].push(elem.children[1].value);
+                        } else {
+                            self.filter[elem.children[0].value] = [];
+                            self.filter[elem.children[0].value].push(elem.children[1].value);
+                        }
+                    });
+                }
+                if (checkedElements.length && checkedElements.attr('id') === 'defaultFilter') {
+                    self.filter = {};
+                }
+
                 this.changeLocationHash(1, itemsNumber, this.filter);
-                this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter, parrentContentId: this.parrentContentId });
+                this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter, newCollection: this.newCollection, parrentContentId: this.parrentContentId });
                 this.getTotalLength(null, itemsNumber, this.filter);
             },
 
@@ -235,21 +261,27 @@ define([
                 });
 
 
+
                 common.populateWorkflowsList("Opportunities", ".filter-check-list", "", "/Workflows", null, function (stages) {
                     self.stages = stages;
                     var stage = (self.filter) ? self.filter.workflow : null;
-                    FilterView = new filterView({ collection: stages});
-                    itemView.trigger('incomingStages', stages);
-                    // Filter custom event listen ------begin
-                    FilterView.bind('filter', function () {
-                        showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
-                        self.showFilteredPage(showList)
+                    dataService.getData('/opportunity/getFilterValues', null, function (values) {
+                        FilterView = new filterView({ collection: stages, customCollection: values});
+                        itemView.trigger('incomingStages', stages);
+                        // Filter custom event listen ------begin
+                        FilterView.bind('filter', function () {
+                            showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
+                            self.showFilteredPage(showList)
+                        });
+                        FilterView.bind('defaultFilter', function () {
+                            showList = _.pluck(self.stages, '_id');
+                            self.showFilteredPage(showList)
+                        });
+                        // Filter custom event listen ------end
+
                     });
-                    FilterView.bind('defaultFilter', function () {
-                        showList = _.pluck(self.stages, '_id');
-                        self.showFilteredPage(showList)
-                    });
-                    // Filter custom event listen ------end
+
+
                 });
                 $(document).on("click", function (e) {
                     self.hideItemsNumber(e);

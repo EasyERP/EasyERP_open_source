@@ -474,16 +474,62 @@ var Opportunities = function (models, event) {
 
     function getFilter (req, response) {
         var res = {};
+        var condition;
+        var or;
         res['data'] = [];
         var data = {};
         for (var i in req.query) {
             data[i] = req.query[i];
         }
         var optionsObject = {};
+        function ConvertType(array, type) {
+            if (type === 'integer') {
+                for (var i = 0; i <= array.length - 1; i++) {
+                    array[i] = parseInt(array[i]);
+                }
+            } else  if (type === 'date') {
+                for (var i = 0; i <= condition.length - 1; i++) {
+                    array[i] = new Date(array[i]);
+                }
+            }
+
+        };
+
         switch (data.contentType) {
             case ('Opportunities'):
             {
-                optionsObject['isOpportunitie'] = true;
+                //optionsObject['isOpportunitie'] = true;
+
+                if (data && data.filter) {
+                    optionsObject['$or'] = [];
+                    or = optionsObject['$or'];
+
+                    for (var key in data.filter) {
+                        condition = data.filter[key];
+
+                        switch (key) {
+                            case 'name':
+                                or.push({ 'name': {$in: condition}});
+                                break;
+                            case 'creationDate':
+                                ConvertType(condition, 'date');
+                                or.push({ 'creationDate': {$in: condition}});
+                                break;
+                            case 'nextAction':
+                                if (!condition.length) condition = [''];
+                                or.push({ 'nextAction.desc': {$in: condition}});
+                                break;
+                            case 'expectedRevenue':
+                                ConvertType(condition, 'integer');
+                                or.push({ 'expectedRevenue.value': {$in: condition}});
+                                break;
+
+                        }
+                    }
+                    if (!or.length) {
+                        delete optionsObject['$or']
+                    }
+                }
             }
                 break;
             case ('Leads'):
@@ -1245,6 +1291,8 @@ var Opportunities = function (models, event) {
             }
         });
     }
+
+
 
     return {
         getTotalCount: getTotalCount,

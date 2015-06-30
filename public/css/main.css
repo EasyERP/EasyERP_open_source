@@ -8852,12 +8852,12 @@ textarea#editInput {
 }
 
 .drop-down-filter {
-    display: none;
-    position: absolute;
-    z-index: 10;
-    width: 150px;
-    background-color: white;
-    border: 1px solid #c0c0c0;
+  display: none;
+  position: absolute;
+  z-index: 10;
+  width: 165px;
+  background-color: white;
+  border: 1px solid #c0c0c0;
 }
 
 .drop-down-filter li {
