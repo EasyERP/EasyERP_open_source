@@ -1,45 +1,21 @@
 ﻿<div>
-    <table class="list task-list">
+    <table class="list holidays-list">
         <col width="2%">
         <col width="2%">
-        <col width="10%">
-        <col width="10%">
-        <col width="10%">
-        <col width="10%">
-        <col width="10%">
-        <col width="10%">
-        <col width="10%">
-        <col width="10%">
-        <col width="10%">
+        <col width="40%">
+        <col width="56%">
 
         <thead>
         <tr>
-            <th><input type="checkbox" id="check_all"/></th>
-            <th>N</th>
-            <th class="oe_sortable" data-sort="supplier">Customer<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
-            <th class="oe_sortable" data-sort="invoiceDate">Invoice Date<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
-            <th class="oe_sortable" data-sort="supplierInvoiceNumber">Payment Date<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
-            <th class="oe_sortable" data-sort="salesPerson"><%= currentDb !== 'weTrack' ? 'SalesPerson' : 'Assigned'%><span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
-            <th class="oe_sortable" data-sort="dueDate">Due Date<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
-            <th class="oe_sortable" data-sort="paymentInfo.balance">Balance<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
-            <th class="oe_sortable" data-sort="paymentInfo.unTaxed"><%= currentDb !== 'weTrack' ? 'Untaxed' : 'Paid'%><span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
-            <th class="oe_sortable" data-sort="paymentInfo.total">Total<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
-            <th class="oe_sortable" data-sort="workflow">Status<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
+            <th><span>#</span></th>
+            <th><input type="checkbox" id="check_all" /></th>
+            <th class="oe_sortable" data-sort="date">Date</th>
+            <th class="oe_sortable" data-sort="comment">Comment</th>
         </tr>
         </thead>
         <tbody id="listTable"></tbody>
         <tfoot id="listTotal"></tfoot>
     </table>
-
     <div class="pagination">
         <div class="countOnPage">
             <div>

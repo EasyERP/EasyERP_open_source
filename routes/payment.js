@@ -9,7 +9,7 @@ module.exports = function (models) {
     var handler = new PaymentHandler(models);
 
     //router.get('/', handler.getAll);
-    router.get('/totalCollectionLength', handler.totalCollectionLength);
+    router.get('/:byType/totalCollectionLength', handler.totalCollectionLength);
     router.get('/:byType/:viewType', handler.getForView);
     router.post('/', handler.create);
 

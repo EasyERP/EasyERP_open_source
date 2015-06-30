@@ -1,8 +1,8 @@
 ﻿define([
         './filterCollection'
     ],
-    function (ParrantCollection) {
-        var EditableCoolecton = ParrantCollection.extend({
+    function (ParentCollection) {
+        var EditableCoolecton = ParentCollection.extend({
 
             initialize: function(){
                 this.on( "change", this.change, this);
@@ -12,8 +12,8 @@
                 var self = this;
                 var model;
                 var models = [];
-                var newModel;
                 var modelObject;
+                var newModel;
                 var syncObject = {
                     trigger: this.trigger,
                     url: this.url,
@@ -48,7 +48,7 @@
                         modelObject = model.changed;
                         modelObject._id = model.id;
                         models.push(modelObject);
-                    } else if (model && !model.id){
+                    } else if (model && !model.id) {
                         newModel = model.changed;
                         newModel._id =  model.id;
                         Backbone.sync("create", saveObject, options);

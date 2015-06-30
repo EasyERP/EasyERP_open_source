@@ -18,12 +18,32 @@ define(['Validation', 'common'], function (Validation, common) {
         parse: function (response) {
             if (!response.data) {
                 var payments = response.payments;
+                var balance;
+                var paid;
+                var total;
+
+                if(response.paymentInfo){
+                    balance = response.paymentInfo.balance || 0;
+                    paid = response.paymentInfo.unTaxed || 0;
+                    total = response.paymentInfo.total || 0;
+                }
+
+                balance = (balance/ 100).toFixed(2);
+                paid = (paid/100).toFixed(2);
+                total = (total / 100).toFixed(2);
+
+                response.paymentInfo.balance = balance;
+                response.paymentInfo.unTaxed = paid;
+                response.paymentInfo.total = total;
 
                 if (response.invoiceDate) {
                     response.invoiceDate = common.utcDateToLocaleDate(response.invoiceDate);
                 }
                 if (response.dueDate) {
                     response.dueDate = common.utcDateToLocaleDate(response.dueDate);
+                }
+                if (response.paymentDate) {
+                    response.paymentDate = common.utcDateToLocaleDate(response.paymentDate);
                 }
                 if (payments && payments.length) {
                     payments = _.map(payments, function (payment) {
@@ -33,6 +53,7 @@ define(['Validation', 'common'], function (Validation, common) {
                         return payment;
                     });
                 }
+
                 return response;
             }
         },

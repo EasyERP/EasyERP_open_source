@@ -1,17 +1,19 @@
 define([
-        'text!templates/Salary/list/ListHeader.html',
-        'views/Salary/list/ListItemView',
-        'views/Salary/subSalary/list/ListView',
-        'models/SalaryModel',
-        'collections/Salary/filterCollection',
-        'collections/Salary/editCollection',
+        'text!templates/Holiday/list/ListHeader.html',
+        'text!templates/Holiday/list/cancelEdit.html',
+        'views/Holiday/CreateView',
+        'views/Holiday/list/ListItemView',
+        'models/HolidayModel',
+        'collections/Holiday/filterCollection',
+        'collections/Holiday/editCollection',
         'common',
         'dataService',
-        'moment'
+        'constants',
+        'async'
     ],
 
-    function (listTemplate, listItemView, subSalaryView, salaryModel, contentCollection, salaryEditableCollection, common, dataService, moment) {
-        var SalaryListView = Backbone.View.extend({
+    function (listTemplate, cancelEdit, createView, listItemView, holidayModel, holidayCollection, editCollection, common, dataService, CONSTANTS, async) {
+        var HolidayListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
             listLength: null,
@@ -19,23 +21,25 @@ define([
             sort: null,
             newCollection: null,
             page: null, //if reload page, and in url is valid page
-            contentType: 'Salary',//needs in view.prototype.changeLocationHash
+            contentType: CONSTANTS.HOLIDAY,//needs in view.prototype.changeLocationHash
             viewType: 'list',//needs in view.prototype.changeLocationHash
+            changedModels: {},
+            holidayId: null,
+            editCollection: null,
 
             initialize: function (options) {
                 this.startTime = options.startTime;
                 this.collection = options.collection;
-                this.filter = options.filter;
-                this.sort = options.sort;
+                _.bind(this.collection.showMore, this.collection);
+                this.filter = options.filter ? options.filter : {};
+                this.sort = options.sort ? options.sort : {};
                 this.defaultItemsNumber = this.collection.namberToShow || 50;
                 this.newCollection = options.newCollection;
                 this.deleteCounter = 0;
                 this.page = options.collection.page;
                 this.render();
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
-                this.editCollection;
-                this.newCollection;
-                this.contentCollection = contentCollection;
+                this.contentCollection = holidayCollection;
             },
 
             events: {
@@ -44,10 +48,8 @@ define([
                 "change #currentShowPage": "showPage",
                 "click #previousPage": "previousPage",
                 "click #nextPage": "nextPage",
-                "click .mainCB": "checked",
-                "click .stageSelect": "showNewSelect",
+                "click .checkbox": "checked",
                 "click td.editable": "editRow",
-                "click .list tbody tr:not(.subRow, .disabled, .copy) td:not(.notForm, .editable)": "showSubSalary",
                 "click #itemsButton": "itemsNumber",
                 "click .currentPageList": "itemsNumber",
                 "click": "hideItemsNumber",
@@ -57,90 +59,51 @@ define([
                 "change .editable ": "setEditable"
             },
 
-            saveItem: function () {
-                var self = this;
-                var modelToSave;
-                var row = $('#listTable').find('tr.copy');
-                var modelJSON;
-                var input = row.find('input.editing');
-                var month;
-                var year;
-                var dataKey;
-                var momentYear;
-                var momentMonth;
-
-                month = row.find('.month').text();
-                year = row.find('.year').text();
-                month = month ? month : input.val();
-                year = year ? year : input.val();
-                momentYear = moment().year(year).format('YY');
-                momentMonth = moment().month(month - 1).format('MMM');
-                dataKey = momentMonth + "/" + momentYear;
-
-                function save () {
-                    self.newCollection = new salaryEditableCollection();
-
-                    self.newCollection.on('saved', self.savedNewModel, self);
-
-                    self.editCollection.each(function (model, index) {
-                        modelJSON = model.toJSON();
-                        delete modelJSON._id;
-                        modelJSON['month'] = month;
-                        modelJSON['year'] = year;
-
-                        modelToSave = new salaryModel(modelJSON);
-                        self.newCollection.add(modelToSave);
-                    });
-
-                    self.newCollection.save();
-                }
-
-                dataService.getData('/salary/checkDataKey', {'dataKey': dataKey}, function (response) {
-                    if (!response.count) {
-                        save();
-                    } else {
-                        alert ('This month already exists!');
-                    }
-                });
-            },
-
-            savedNewModel: function(modelObject){
-                var savedRow = $("#listTable").find('tr[data-id="false"]');
+            savedNewModel: function (modelObject) {
+                var savedRow = this.$listTable.find('#false');
                 var modelId;
-                var checkbox = savedRow.find('input.mainCB');
+                var checkbox = savedRow.find('input[type=checkbox]');
                 var editedEl = savedRow.find('.editing');
                 var editedCol = editedEl.closest('td');
 
                 modelObject = modelObject.success;
 
-                if(modelObject) {
-                    this.collection.add(modelObject);
-                    modelId = modelObject._id
+                if (modelObject) {
+                    modelId = modelObject._id;
                     savedRow.attr("data-id", modelId);
-                    savedRow.find('.mainCB').attr('id', modelId);
                     checkbox.val(modelId);
+                    savedRow.removeAttr('id');
                 }
-                savedRow.find('.month').removeClass('editable');
-                savedRow.find('.month').attr('data-type', '');
 
-                savedRow.find('.year').removeClass('editable');
-                savedRow.find('.year').attr('data-type', '');
-
-
-                savedRow.find('.mainCB').attr('checked', false);
-
-                savedRow.removeClass('copy');
-
-                $('#listTable').find('tr:not(.copy)').each(function (index, element) {
-                    $(element).removeClass('disabled');
-                    $(element).find('.mainCB').attr("disabled", false);
-                })
                 this.hideSaveCancelBtns();
                 editedCol.text(editedEl.val());
                 editedEl.remove();
+                this.resetCollection(modelObject);
+            },
+
+            resetCollection: function (model) {
+                if (model && model._id) {
+                    model = new holidayModel(model);
+                    this.collection.add(model);
+                } else {
+                    this.collection.set(this.editCollection.models, { remove: false });
+                }
+            },
+
+            updatedOptions: function () {
+                var savedRow = this.$listTable.find('#false');
+                var editedEl = savedRow.find('.editing');
+                var editedCol = editedEl.closest('td');
+                this.hideSaveCancelBtns();
+
+                editedCol.text(editedEl.val());
+                editedEl.remove();
+
+                this.resetCollection();
             },
 
             hideSaveCancelBtns: function () {
+                var createBtnEl = $('#top-bar-createBtn');
                 var saveBtnEl = $('#top-bar-saveBtn');
                 var cancelBtnEl = $('#top-bar-deleteBtn');
 
@@ -148,6 +111,85 @@ define([
 
                 saveBtnEl.hide();
                 cancelBtnEl.hide();
+                createBtnEl.show();
+
+                return false;
+            },
+
+            saveItem: function () {
+                var model;
+
+                for (var id in this.changedModels) {
+                    model = this.editCollection.get(id);
+                    model.changed = this.changedModels[id];
+                }
+                this.editCollection.save();
+            },
+
+            setChangedValueToModel: function(){
+                var editedElement = this.$listTable.find('.editing');
+                var editedCol;
+                var editedElementRowId;
+                var editedElementContent;
+                var editedElementValue;
+                var editHolidayModel;
+
+                if (editedElement.length) {
+                    editedCol = editedElement.closest('td');
+                    editedElementRowId = editedElement.closest('tr').data('id');
+                    editedElementContent = editedCol.data('content');
+                    editedElementValue = editedElement.val();
+
+                    editHolidayModel = this.editCollection.get(editedElementRowId);
+
+                    if (!this.changedModels[editedElementRowId]) {
+                        if(!editHolidayModel.id){
+                            this.changedModels[editedElementRowId] = editHolidayModel.attributes;
+                        } else {
+                            this.changedModels[editedElementRowId] = {};
+                        }
+                    }
+
+                    this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
+
+                    editedCol.text(editedElementValue);
+                    editedElement.remove();
+                }
+            },
+
+            editRow: function (e, prev, next) {
+                var self = this;
+
+                var el = $(e.target);
+                var tr = $(e.target).closest('tr');
+                var holidayId = tr.data('id');
+                var colType = el.data('type');
+                var isDTPicker = colType !== 'input' && el.prop("tagName") !== 'INPUT';
+                var tempContainer;
+                var width;
+
+                if (holidayId && el.prop('tagName') !== 'INPUT') {
+                    if (this.holidayId) {
+                        this.setChangedValueToModel();
+                    }
+                    this.holidayId = holidayId;
+                }
+
+
+                if (isDTPicker) {
+                    tempContainer = (el.text()).trim();
+                    el.html('<input class="editing" type="text" value="' + tempContainer + '"  maxLength="255">');
+                    $('.editing').datepicker({
+                        dateFormat: "d M, yy",
+                        changeMonth: true,
+                        changeYear: true,
+                        onChanged: self.setChangedValue()
+                    }).addClass('datepicker');
+                } else {
+                    tempContainer = el.text();
+                    width = el.width() - 6;
+                    el.html('<input class="editing" type="text" value="' + tempContainer + '"  maxLength="255" style="width:' + width + 'px">');
+                }
 
                 return false;
             },
@@ -155,7 +197,7 @@ define([
             setEditable: function (td) {
                 var tr;
 
-                if(!td.parents) {
+                if (!td.parents) {
                     td = $(td.target).closest('td');
                 }
 
@@ -170,14 +212,6 @@ define([
                 return false;
             },
 
-            isEditRows: function () {
-                var edited = $('#listTable').find('.edited');
-
-                this.edited = edited;
-
-                return !!edited.length;
-            },
-
             setChangedValue: function () {
                 if (!this.changed) {
                     this.changed = true;
@@ -185,49 +219,31 @@ define([
                 }
             },
 
+            isEditRows: function () {
+                var edited = this.$listTable.find('.edited');
+
+                this.edited = edited;
+
+                return !!edited.length;
+            },
+
             showSaveCancelBtns: function () {
+                var createBtnEl = $('#top-bar-createBtn');
                 var saveBtnEl = $('#top-bar-saveBtn');
                 var cancelBtnEl = $('#top-bar-deleteBtn');
 
+                if (!this.changed) {
+                    createBtnEl.hide();
+                }
                 saveBtnEl.show();
                 cancelBtnEl.show();
 
                 return false;
             },
 
-            editRow: function (e, prev, next) {
-                var el = $(e.target);
-                var tr = $(e.target).closest('tr');
-                var tempContainer;
-                var width;
-                var editedElement;
-                var editedCol;
-                var editedElementValue;
-
-                if (el.prop('tagName') !== 'INPUT') {
-                    editedElement = $("#listTable").find('.editing');
-
-                    if (editedElement.length) {
-                        editedCol = editedElement.closest('td');
-                        editedElementValue = editedElement.val();
-
-                        editedCol.text(editedElementValue);
-                        editedElement.remove();
-                    }
-                }
-
-
-                tempContainer = el.text();
-                width = el.width() - 6;
-                el.html('<input class="editing" type="text" value="' + tempContainer + '"  maxLength="4" style="width:' + width + 'px">');
-
-
-                return false;
-            },
-
             fetchSortCollection: function (sortObject) {
                 this.sort = sortObject;
-                this.collection = new contentCollection({
+                this.collection = new holidayCollection({
                     viewType: 'list',
                     sort: sortObject,
                     page: this.page,
@@ -288,7 +304,7 @@ define([
             },
 
             getTotalLength: function (currentNumber, itemsNumber, filter) {
-                dataService.getData('/salary/totalCollectionLength', {
+                dataService.getData('/holiday/totalCollectionLength', {
                     contentType: this.contentType,
                     currentNumber: currentNumber,
                     filter: filter,
@@ -318,16 +334,22 @@ define([
                     itemsNumber: this.collection.namberToShow
                 }).render());//added two parameters page and items number
 
+                setTimeout(function () {
+                    self.editCollection = new editCollection(self.collection.toJSON());
+                    self.editCollection.on('saved', self.savedNewModel, self);
+                    self.editCollection.on('updated', self.updatedOptions, self);
+
+                    self.$listTable = $('#listTable');
+                }, 10);
+
                 $('#check_all').click(function () {
-                    $('.mainCB').prop('checked', this.checked);
-                    if ($("input.mainCb:checked").length > 0) {
+                    $('.checkbox').prop('checked', this.checked);
+                    if ($("input.checkbox:checked").length > 0) {
                         $("#top-bar-deleteBtn").show();
                     }
                     else
                         $("#top-bar-deleteBtn").hide();
                 });
-
-                $("#top-bar-createBtn").hide();
 
                 $(document).on("click", function () {
                     self.hideItemsNumber();
@@ -345,7 +367,6 @@ define([
                 var currentEl = this.$el;
                 var tBody = currentEl.find('#listTable');
                 $("#top-bar-deleteBtn").hide();
-                $("#top-bar-createBtn").hide();
                 $('#check_all').prop('checked', false);
                 tBody.empty();
                 var itemView = new listItemView({
@@ -362,11 +383,11 @@ define([
                     pagenation.show();
                 }
             },
+
             previousPage: function (event) {
                 event.preventDefault();
                 $('#check_all').prop('checked', false);
                 $("#top-bar-deleteBtn").hide();
-                $("#top-bar-createBtn").hide();
                 this.prevP({
                     sort: this.sort,
                     filter: this.filter,
@@ -387,7 +408,6 @@ define([
                 event.preventDefault();
                 $('#check_all').prop('checked', false);
                 $("#top-bar-deleteBtn").hide();
-                $("#top-bar-createBtn").hide();
                 this.nextP({
                     sort: this.sort,
                     filter: this.filter,
@@ -410,7 +430,6 @@ define([
                 event.preventDefault();
                 $('#check_all').prop('checked', false);
                 $("#top-bar-deleteBtn").hide();
-                $("#top-bar-createBtn").hide();
                 this.firstP({
                     sort: this.sort,
                     filter: this.filter,
@@ -429,7 +448,6 @@ define([
                 event.preventDefault();
                 $('#check_all').prop('checked', false);
                 $("#top-bar-deleteBtn").hide();
-                $("#top-bar-createBtn").hide();
                 this.lastP({
                     sort: this.sort,
                     filter: this.filter,
@@ -458,7 +476,6 @@ define([
                 });
                 this.page = 1;
                 $("#top-bar-deleteBtn").hide();
-                $("#top-bar-createBtn").hide();
                 $('#check_all').prop('checked', false);
                 this.changeLocationHash(1, itemsNumber, this.filter);
             },
@@ -477,7 +494,6 @@ define([
 
                 itemsNumber = $("#itemsNumber").text();
                 $("#top-bar-deleteBtn").hide();
-                $("#top-bar-createBtn").hide();
                 $('#check_all').prop('checked', false);
 
                 this.changeLocationHash(1, itemsNumber, this.filter);
@@ -508,93 +524,56 @@ define([
                     pagenation.hide();
                 }
                 $("#top-bar-deleteBtn").hide();
-                $("#top-bar-createBtn").hide();
                 $('#check_all').prop('checked', false);
                 holder.find('#timeRecivingDataFromServer').remove();
                 holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             },
 
-            showSubSalary: function (e) {
-                e.preventDefault();
-                var self = this;
+            createItem: function () {
+                var now = new Date();
+                var startData = {
+                    date: now
+                };
 
-                var tr = $(e.target).closest('tr');
-                var id = $(tr).data("id");
-                var subId ="subSalary-row" + id
-                var subRowCheck = $('#' + subId);
+                var model = new holidayModel(startData, { parse: true });
 
-                if (subRowCheck.length > 0) {
-                    $(tr).find('.icon').html('5');
-                    $(subRowCheck).remove();
-                } else {
-                    $(tr).find('.icon').html('2');
-                    $('<tr id=' + subId + ' class="subRow">' +
-                    '<td colspan="3"></td>' +
-                    '<td colspan="6" id="subSalary-holder' + id + '"></td>' +
-                    '<td colspan="2"></td>' +
-                    '</tr>').insertAfter(tr);
-                    $('#subSalary-holder' + id).append(new subSalaryView({el: '#subSalary-holder' + id, model: self.collection.get(id)}));
+                startData.cid = model.cid;
+
+                if (!this.isNewRow()) {
+                    this.showSaveCancelBtns();
+                    this.editCollection.add(model);
+
+                    new createView(startData);
                 }
-
             },
 
-            createItem: function () {
-                var checked = $("#listTable input.mainCB:checked");
-                var row = checked.closest('tr');
-                var id = $(row).data('id');
-                var salaryModel = this.collection.get(id);
-                var employeesArary = salaryModel.toJSON().employeesArray;
+            isNewRow: function () {
+                var newRow = $('#false');
 
-                this.editCollection = new salaryEditableCollection(employeesArary);
-
-                checked[0].checked = false;
-
-                $(row).find('.month').addClass('editable');
-                $(row).find('.month').attr('data-type', 'input');
-
-                $(row).find('.year').addClass('editable');
-                $(row).find('.year').attr('data-type', 'input');
-                $(row).find('.mainCB').attr('checked', 'true');
-                $(row).find('.mainCB').attr('id', 'copy');
-
-                $('#listTable').prepend('<tr data-id="false" class="copy">' + $(row).html() + '</tr>');
-                $("#top-bar-createBtn").hide();
-
-                $('#listTable').find('tr:not(.copy)').each(function (index, element) {
-                    $(element).addClass('disabled');
-                    $(element).find('.mainCB').attr("disabled", true);
-                })
-
+                return !!newRow.length;
             },
 
             checked: function () {
-                var checked = $("input.mainCB:checked");
+                if (this.editCollection.length > 0) {
+                    var checkLength = $("input.checkbox:checked").length;
 
-                if (this.collection.length > 0) {
-                    var checkLength = checked.length;
                     if (checkLength > 0) {
-                        if (checked.length === 1 && !checked.closest('tr.copy').length) {
-                            $("#top-bar-createBtn").show();
-                        } else {
-                            $("#top-bar-createBtn").hide();
-                        }
-                        $("#top-bar-deleteBtn").show();
-
-                        if (checkLength == this.collection.length) {
+                        $('#top-bar-deleteBtn').show();
+                        if (checkLength == this.editCollection.length) {
                             $('#check_all').prop('checked', true);
                         }
-                    }
-                    else {
-                        $("#top-bar-createBtn").hide();
-                        $("#top-bar-deleteBtn").hide();
+                    } else {
+                        $('#top-bar-deleteBtn').hide();
                         $('#check_all').prop('checked', false);
                     }
                 }
             },
 
             deleteItemsRender: function (deleteCounter, deletePage) {
-                dataService.getData('/salary/totalCollectionLength', {
-                    contentType: this.contentType,
+                var pagenation;
+                var holder;
+
+                dataService.getData(this.collectionLengthUrl, {
                     filter: this.filter,
                     newCollection: this.newCollection
                 }, function (response, context) {
@@ -606,87 +585,131 @@ define([
                     parrentContentId: this.parrentContentId
                 });
 
-                var pagenation = this.$el.find('.pagination');
+                holder = this.$el;
+
+                if (deleteCounter !== this.collectionLength) {
+                    var created = holder.find('#timeRecivingDataFromServer');
+                    created.before(new listItemView({
+                        collection: this.collection,
+                        page: holder.find("#currentShowPage").val(),
+                        itemsNumber: holder.find("span#itemsNumber").text()
+                    }).render());//added two parameters page and items number
+                }
+
+                pagenation = this.$el.find('.pagination');
+
                 if (this.collection.length === 0) {
                     pagenation.hide();
                 } else {
                     pagenation.show();
                 }
+
+                this.editCollection.reset(this.collection.models);
+            },
+
+            triggerDeleteItemsRender: function (deleteCounter) {
+                this.deleteCounter = deleteCounter;
+                this.deletePage = $("#currentShowPage").val();
+                this.deleteItemsRender(deleteCounter, this.deletePage);
             },
 
             deleteItems: function () {
                 var currentEl = this.$el;
-                var that = this;
-                var mid = 39;
-                var salaryModel;
+                var that = this,
+                    mid = 39,
+                    model;
                 var localCounter = 0;
-                var count;
+                var count = $("#listTable input:checked").length;
                 this.collectionLength = this.collection.length;
-                var checkedCB = $("#listTable input.mainCB:checked");
-                var checkCount = checkedCB.length;
-                var employeesArary;
 
-                $("#top-bar-saveBtn").hide();
+                if (!this.changed) {
+                    var answer = confirm("Realy DELETE items ?!");
+                    var value;
 
-                $.each(checkedCB, function (index, checkbox) {
-                    salaryModel = that.collection.get(checkbox.value);
-                    employeesArary = salaryModel.toJSON().employeesArray;
-                    that.editCollection = new salaryEditableCollection(employeesArary);
-                    count = that.editCollection.length;
-                    if ($(checkbox).attr("id") !== 'copy') {
-                        checkCount--;
-                        localCounter++;
-                        that.listLength--;
+                    if (answer === true) {
+                        $.each($("#listTable input:checked"), function (index, checkbox) {
+                            value = checkbox.value;
 
-                        that.editCollection.each(function (model) {
-                            model.destroy({
-                                headers: {
-                                    mid: mid
-                                },
-                                wait: true,
-                                success: function () {
-                                    count--;
-                                    if (count === 0) {
-                                        salaryModel.destroy({
-                                            headers: {
-                                                mid: mid
-                                            },
-                                            wait: true,
-                                            success: function () {
-                                                if (checkCount === 0) {
-                                                    that.deleteCounter = localCounter;
-                                                    that.deletePage = $("#currentShowPage").val();
-
-                                                    dataService.getData('/salary/recalculateSalaryCash', {}, function (response, context) {}, that);
-
-                                                    that.deleteItemsRender(that.deleteCounter, that.deletePage);
-                                                }
-                                            }
-                                        });
-                                    }
-                                },
-                                error: function (model, res) {
-                                    if (res.status === 403 && index === 0) {
-                                        alert("You do not have permission to perform this action");
-                                    }
-                                    that.listLength--;
+                            if (value.length < 24) {
+                                that.editCollection.remove(value);
+                                that.editCollection.on('remove', function () {
+                                    this.listLength--;
                                     localCounter++;
-                                    if (index == count - 1) {
-                                        that.deleteCounter = localCounter;
-                                        that.deletePage = $("#currentShowPage").val();
-                                        that.deleteItemsRender(that.deleteCounter, that.deletePage);
 
+                                    if (index === count - 1) {
+                                        that.triggerDeleteItemsRender(localCounter);
                                     }
 
-                                }
-                            });
-                        });
-                    };
+                                }, that);
+                            } else {
 
+                                model = that.collection.get(value);
+                                model.destroy({
+                                    headers: {
+                                        mid: mid
+                                    },
+                                    wait: true,
+                                    success: function () {
+                                        that.listLength--;
+                                        localCounter++;
+
+                                        if (index === count - 1) {
+                                            that.triggerDeleteItemsRender(localCounter);
+                                        }
+                                    },
+                                    error: function (model, res) {
+                                        if (res.status === 403 && index === 0) {
+                                            alert("You do not have permission to perform this action");
+                                        }
+                                        that.listLength--;
+                                        localCounter++;
+                                        if (index == count - 1) {
+                                            if (index === count - 1) {
+                                                that.triggerDeleteItemsRender(localCounter);
+                                            }
+                                        }
+
+                                    }
+                                });
+                            }
+                        });
+                    }
+                } else {
+                    this.cancelChanges();
+                }
+            },
+
+            cancelChanges: function () {
+                var self = this;
+                var edited = this.edited;
+                var collection = this.collection;
+                var editedCollectin = this.editCollection;
+
+                async.each(edited, function (el, cb) {
+                    var tr = $(el).closest('tr');
+                    var rowNumber = tr.find('[data-content="number"]').text();
+                    var id = tr.data('id');
+                    var template = _.template(cancelEdit);
+                    var model;
+
+                    if (!id) {
+                        return cb('Empty id');
+                    }
+
+                    model = collection.get(id);
+                    model = model.toJSON();
+                    model.index = rowNumber;
+                    tr.replaceWith(template({ holiday: model }));
+                    cb();
+                }, function (err) {
+                    if (!err) {
+                        self.editCollection = new editCollection(collection.toJSON());
+                        self.hideSaveCancelBtns();
+                    }
                 });
             }
 
         });
 
-        return SalaryListView;
+        return HolidayListView;
     });

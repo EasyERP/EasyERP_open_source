@@ -65,6 +65,27 @@ module.exports = (function () {
             });
     });
 
+    /*paymentSchema.post('save', function (doc) {
+        var payment = this;
+        var db = payment.db.db;
+
+        db.collection('Invoice').findAndModify({
+                _id: doc.invoice
+            },
+            [['name', 1]],
+            {
+                paymentDate: new Date()
+            },
+            null,
+            function (err) {
+                if (err) {
+                    return console.error('An error was occurred during updating %s', doc.invoice);
+                }
+
+                console.log('Invoice %s was updated success', doc.invoice);
+            });
+    });*/
+
     if (!mongoose.Schemas) {
         mongoose.Schemas = {};
     }
