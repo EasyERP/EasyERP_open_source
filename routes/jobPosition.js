@@ -1,11 +1,10 @@
 var express = require('express');
 var router = express.Router();
-var ProjectHandler = require('../handlers/project');
+var jobPositionHandler = require('../handlers/jobPosition');
 
 module.exports = function (models) {
-    var handler = new ProjectHandler(models);
+    var handler = new jobPositionHandler(models);
 
-    router.get('/getForWtrack', handler.getForWtrack);
     router.get('/getFilterValues', handler.getFilterValues);
 
     return router;

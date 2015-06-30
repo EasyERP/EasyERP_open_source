@@ -63,6 +63,30 @@ var Employee = function (models) {
 
     };
 
+    this.getFilterValues = function (req, res, next) {
+        var task = models.get(req.session.lastDb, 'Employee', EmployeeSchema);
+
+        task.aggregate([
+            {
+                $group:{
+                    _id: null,
+                    'Name': {
+                        $addToSet: '$name.last'
+                    },
+                    'Email': {
+                        $addToSet: '$workEmail'
+                    }
+                }
+            }
+        ], function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send(result);
+        });
+    };
+
 };
 
 module.exports = Employee;

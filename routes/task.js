@@ -1,11 +1,10 @@
 var express = require('express');
 var router = express.Router();
-var ProjectHandler = require('../handlers/project');
+var taskHandler = require('../handlers/task');
 
 module.exports = function (models) {
-    var handler = new ProjectHandler(models);
+    var handler = new taskHandler(models);
 
-    router.get('/getForWtrack', handler.getForWtrack);
     router.get('/getFilterValues', handler.getFilterValues);
 
     return router;

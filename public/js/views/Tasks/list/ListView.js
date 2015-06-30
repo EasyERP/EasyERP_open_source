@@ -272,15 +272,26 @@ define([
 
             showFilteredPage: function (workflowIdArray) {
                 var itemsNumber = $("#itemsNumber").text();
+                var self = this;
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
 
                 this.startTime = new Date();
                 this.newCollection = false;
-                this.filter = (this.filter && this.filter !== 'empty') ? this.filter : {};
-                this.filter['workflow'] = workflowIdArray;
-                this.changeLocationHash(1, itemsNumber, { workflow: workflowIdArray });
+                this.filter = /*(this.filter && this.filter !== 'empty') ? this.filter :*/ {};
+                if (workflowIdArray.length) this.filter['workflow'] = workflowIdArray;
+                if ($('.chosen')) {
+                    $('.chosen').each(function (index, elem) {
+                        if (self.filter[elem.children[0].value]) {
+                            self.filter[elem.children[0].value].push(elem.children[1].value);
+                        } else {
+                            self.filter[elem.children[0].value] = [];
+                            self.filter[elem.children[0].value].push(elem.children[1].value);
+                        }
+                    });
+                }
+                this.changeLocationHash(1, itemsNumber, this.filter);
                 this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter, parrentContentId: this.parrentContentId });
                 this.getTotalLength(null, itemsNumber, this.filter);
             },
@@ -349,19 +360,21 @@ define([
 
                 common.populateWorkflowsList("Tasks", ".filter-check-list", "#workflowNamesDd", "/Workflows", null, function (stages) {
                     var stage = (self.filter) ? self.filter.workflow || [] : [];
-
-                    FilterView = new filterView({ collection: stages, customCollection: []});
                     itemView.trigger('incomingStages', stages);
-                    // Filter custom event listen ------begin
-                    FilterView.bind('filter', function () {
-                        showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
-                        self.showFilteredPage(showList)
+                    dataService.getData('/task/getFilterValues', null, function (values) {
+                        FilterView = new filterView({ collection: stages, customCollection: values});
+                        itemView.trigger('incomingStages', stages);
+                        // Filter custom event listen ------begin
+                        FilterView.bind('filter', function () {
+                            showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
+                            self.showFilteredPage(showList)
+                        });
+                        FilterView.bind('defaultFilter', function () {
+                            showList = _.pluck(self.stages, '_id');
+                            self.showFilteredPage(showList)
+                        });
+                        // Filter custom event listen ------end
                     });
-                    FilterView.bind('defaultFilter', function () {
-                        showList = _.pluck(self.stages, '_id');
-                        self.showFilteredPage(showList)
-                    });
-                    // Filter custom event listen ------end
                 });
 
 
