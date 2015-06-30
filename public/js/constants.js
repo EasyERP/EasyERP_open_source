@@ -36,6 +36,7 @@ define([], function(){
         REVENUE: 'Revenue',
         MONTHHOURS: 'monthHours',
         HOLIDAY: 'Holiday',
+        VOCATION: 'Vocation',
 
         RESPONSES: {
             CREATE_QUOTATION: 'Please check at most one supplier or create one',
