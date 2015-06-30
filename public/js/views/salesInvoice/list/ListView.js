@@ -82,9 +82,8 @@ define([
                 var id = targetElement.attr("id");
                 var model = this.collection.get(id);
 
-                model.save({ workflow: target$.attr("id") }, {
-                    headers:
-                    {
+                model.save({workflow: target$.attr("id")}, {
+                    headers: {
                         mid: 55
                     },
                     patch: true,
@@ -148,7 +147,7 @@ define([
                     this.hideNewSelect();
                     return false;
                 } else {
-                    $(e.target).parent().append(_.template(stagesTemplate, { stagesCollection: this.stages }));
+                    $(e.target).parent().append(_.template(stagesTemplate, {stagesCollection: this.stages}));
                     return false;
                 }
             },
@@ -157,7 +156,7 @@ define([
                 $(".newSelectList").remove();
             },
 
-            getTotalLength: function (currentNumber, itemsNumber,filter) {
+            getTotalLength: function (currentNumber, itemsNumber, filter) {
                 dataService.getData('/Invoice/totalCollectionLength', {
                     currentNumber: currentNumber,
                     filter: filter,
@@ -180,51 +179,69 @@ define([
                 var currentEl = this.$el;
 
                 currentEl.html('');
-                currentEl.append(_.template(listTemplate));
-                currentEl.append(new listItemView({ collection: this.collection, page: this.page, itemsNumber: this.collection.namberToShow }).render());//added two parameters page and items number
 
-                $('#check_all').click(function () {
-                    $(':checkbox').prop('checked', this.checked);
-                    if ($("input.checkbox:checked").length > 0)
-                        $("#top-bar-deleteBtn").show();
-                    else
-                        $("#top-bar-deleteBtn").hide();
-                });
+                if (!App || !App.currentDb) {
+                    dataService.getData('/currentDb', null, function (response) {
+                        if (response && !response.error) {
+                            App.currentDb = response;
+
+                        }
+
+                        currentEllistRenderer();
+                    });
+                } else {
+                    currentEllistRenderer();
+                }
 
                 $(document).on("click", function (e) {
                     self.hideItemsNumber(e);
                 });
-
-                var pagenation = this.$el.find('.pagination');
-                if (this.collection.length === 0) {
-                    pagenation.hide();
-                } else {
-                    pagenation.show();
-                }
-                currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
                 dataService.getData("/workflow/fetch", {
                     wId: 'Sales Invoice',
                     source: 'purchase',
                     targetSource: 'invoice'
                 }, function (stages) {
-                    //For Filter Logic
-                    /*var stage = (self.filter) ? self.filter.workflow || [] : [];
-                     if (self.filter && stage) {
-                     $('.filter-check-list input').each(function () {
-                     var target = $(this);
-                     target.attr('checked', $.inArray(target.val(), stage) > -1);
-                     });
-                     }*/
                     self.stages = stages;
                 });
+
+                function currentEllistRenderer(){
+                    currentEl.append(_.template(listTemplate, {currentDb: App.currentDb}));
+                    currentEl.append(new listItemView({
+                        collection: self.collection,
+                        page: self.page,
+                        itemsNumber: self.collection.namberToShow
+                    }).render());//added two parameters page and items number
+
+                    var pagenation = self.$el.find('.pagination');
+                    if (self.collection.length === 0) {
+                        pagenation.hide();
+                    } else {
+                        pagenation.show();
+                    }
+
+                    currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - self.startTime) + " ms</div>");
+
+                    $('#check_all').click(function () {
+                        $(':checkbox').prop('checked', this.checked);
+                        if ($("input.checkbox:checked").length > 0) {
+                            $("#top-bar-deleteBtn").show();
+                        } else {
+                            $("#top-bar-deleteBtn").hide();
+                        }
+                    });
+                }
             },
 
             renderContent: function () {
                 var currentEl = this.$el;
                 var tBody = currentEl.find('#listTable');
                 tBody.empty();
-                var itemView = new listItemView({ collection: this.collection,page: currentEl.find("#currentShowPage").val(), itemsNumber: currentEl.find("span#itemsNumber").text() });
+                var itemView = new listItemView({
+                    collection: this.collection,
+                    page: currentEl.find("#currentShowPage").val(),
+                    itemsNumber: currentEl.find("span#itemsNumber").text()
+                });
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
                 tBody.append(itemView.render());
@@ -342,19 +359,23 @@ define([
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
                 this.changeLocationHash(1, itemsNumber, this.filter);
-                this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter});
+                this.collection.showMore({count: itemsNumber, page: 1, filter: this.filter});
                 this.getTotalLength(null, itemsNumber, this.filter);
             },
 
             showPage: function (event) {
                 event.preventDefault();
-                this.showP(event,{filter: this.filter, newCollection: this.newCollection, sort: this.sort});
+                this.showP(event, {filter: this.filter, newCollection: this.newCollection, sort: this.sort});
             },
 
             showMoreContent: function (newModels) {
                 var holder = this.$el;
                 holder.find("#listTable").empty();
-                var itemView = new listItemView({ collection: newModels, page: holder.find("#currentShowPage").val(), itemsNumber: holder.find("span#itemsNumber").text() });//added two parameters page and items number
+                var itemView = new listItemView({
+                    collection: newModels,
+                    page: holder.find("#currentShowPage").val(),
+                    itemsNumber: holder.find("span#itemsNumber").text()
+                });//added two parameters page and items number
                 holder.append(itemView.render());
 
                 itemView.undelegateEvents();
@@ -371,22 +392,24 @@ define([
             },
 
             /*gotoForm: function (e) {
-                App.ownContentType = true;
-                var id = $(e.target).closest("tr").data("id");
-                window.location.hash = "#easyErp/Invoice/form/" + id;
-            },*/
+             App.ownContentType = true;
+             var id = $(e.target).closest("tr").data("id");
+             window.location.hash = "#easyErp/Invoice/form/" + id;
+             },*/
 
             goToEditDialog: function (e) {
                 e.preventDefault();
                 var id = $(e.target).closest('tr').data("id");
-                var model = new invoiceModel({ validate: false });
+                var model = new invoiceModel({validate: false});
                 model.urlRoot = '/Invoice/form';
                 model.fetch({
-                    data: { id: id },
+                    data: {id: id},
                     success: function (model) {
-                        new editView({ model: model });
+                        new editView({model: model});
                     },
-                    error: function () { alert('Please refresh browser'); }
+                    error: function () {
+                        alert('Please refresh browser');
+                    }
                 });
             },
 
@@ -426,7 +449,11 @@ define([
                 if (deleteCounter !== this.collectionLength) {
                     var holder = this.$el;
                     var created = holder.find('#timeRecivingDataFromServer');
-                    created.before(new listItemView({ collection: this.collection, page: holder.find("#currentShowPage").val(), itemsNumber: holder.find("span#itemsNumber").text()}).render());//added two parameters page and items number
+                    created.before(new listItemView({
+                        collection: this.collection,
+                        page: holder.find("#currentShowPage").val(),
+                        itemsNumber: holder.find("span#itemsNumber").text()
+                    }).render());//added two parameters page and items number
                 }
 
                 var pagenation = this.$el.find('.pagination');
@@ -451,26 +478,26 @@ define([
                         headers: {
                             mid: mid
                         },
-                        wait:true,
-                        success:function(){
+                        wait: true,
+                        success: function () {
                             that.listLength--;
                             localCounter++;
 
-                            if (index==count-1){
-                                that.deleteCounter =localCounter;
+                            if (index == count - 1) {
+                                that.deleteCounter = localCounter;
                                 that.deletePage = $("#currentShowPage").val();
                                 that.deleteItemsRender(that.deleteCounter, that.deletePage);
 
                             }
                         },
                         error: function (model, res) {
-                            if(res.status===403 && index===0){
+                            if (res.status === 403 && index === 0) {
                                 alert("You do not have permission to perform this action");
                             }
                             that.listLength--;
                             localCounter++;
-                            if (index==count-1){
-                                that.deleteCounter =localCounter;
+                            if (index == count - 1) {
+                                that.deleteCounter = localCounter;
                                 that.deletePage = $("#currentShowPage").val();
                                 that.deleteItemsRender(that.deleteCounter, that.deletePage);
 

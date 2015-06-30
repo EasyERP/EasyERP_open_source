@@ -8,22 +8,31 @@
         <col width="10%">
         <col width="10%">
         <col width="10%">
+        <col width="10%">
+        <col width="10%">
+        <col width="10%">
 
         <thead>
         <tr>
             <th><input type="checkbox" id="check_all"/></th>
             <th>N</th>
-            <th class="oe_sortable" data-sort="invoiceDate">Date<span class="arrow down">7</span><span
+            <th class="oe_sortable" data-sort="supplier">Customer<span class="arrow down">7</span><span
                     class="arrow up">v</span></th>
-            <th class="oe_sortable" data-sort="description">Description<span class="arrow down">7</span><span
+            <th class="oe_sortable" data-sort="invoiceDate">Invoice Date<span class="arrow down">7</span><span
                     class="arrow up">v</span></th>
-            <th class="oe_sortable" data-sort="salesPerson">User<span class="arrow down">7</span><span
+            <th class="oe_sortable" data-sort="supplierInvoiceNumber">Payment Date<span class="arrow down">7</span><span
                     class="arrow up">v</span></th>
-            <th class="oe_sortable" data-sort="supplier">Partner<span class="arrow down">7</span><span
+            <th class="oe_sortable" data-sort="salesPerson"><%= currentDb !== 'weTrack' ? 'SalesPerson' : 'Assigned'%><span class="arrow down">7</span><span
                     class="arrow up">v</span></th>
-            <th class="oe_sortable" data-sort="analytic">Analytic account/project<span class="arrow down">7</span><span
+            <th class="oe_sortable" data-sort="dueDate">Due Date<span class="arrow down">7</span><span
                     class="arrow up">v</span></th>
-            <th class="oe_sortable" data-sort="workflow">Invoiceable<span class="arrow down">7</span><span
+            <th class="oe_sortable" data-sort="paymentInfo.balance">Balance<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="paymentInfo.unTaxed"><%= currentDb !== 'weTrack' ? 'Untaxed' : 'Paid'%><span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="paymentInfo.total">Total<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="workflow">Status<span class="arrow down">7</span><span
                     class="arrow up">v</span></th>
         </tr>
         </thead>
