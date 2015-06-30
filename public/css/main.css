@@ -4328,18 +4328,26 @@ a.red:hover {
 #loginPanel .dropdown-button {
     text-indent: 5px;
     cursor: pointer;
-    width: 130px;
+    min-width: 130px;
     float: left;
     height: auto;
     padding: 0;
+    position: relative;
+}
+
+#loginPanel .dropdown-button #userName {
+    float: left;
 }
 
 #loginPanel .dropdown-button #loginSelect {
+    box-sizing: border-box;
     display: none;
-    position: relative;
+    position: absolute;
     z-index: 999;
     border: 1px solid silver;
     background-color: white;
+    top: 100%;
+    width: 100%;
 }
 
 #loginPanel .dropdown-button #loginSelect li {
