@@ -168,7 +168,7 @@ define([
                 this.startTime = new Date();
                 this.newCollection = true;
                 this.filter = {};
-                this.filter['isConverted'] = isConverted;
+                //this.filter['isConverted'] = isConverted;
 
                 if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
                     showList = checkedElements.map(function () {
@@ -265,9 +265,9 @@ define([
                 common.populateWorkflowsList("Opportunities", ".filter-check-list", "", "/Workflows", null, function (stages) {
                     self.stages = stages;
                     var stage = (self.filter) ? self.filter.workflow : null;
+                    itemView.trigger('incomingStages', stages);
                     dataService.getData('/opportunity/getFilterValues', null, function (values) {
                         FilterView = new filterView({ collection: stages, customCollection: values});
-                        itemView.trigger('incomingStages', stages);
                         // Filter custom event listen ------begin
                         FilterView.bind('filter', function () {
                             showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();

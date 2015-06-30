@@ -157,19 +157,27 @@ define([
             },
 
             showFilteredPage: function (workflowIdArray) {
-                this.startTime = new Date();
-                this.newCollection = false;
-               // var workflowIdArray = [];
-                this.filter = this.filter || {};
-                /*$('.filter-check-list input:checked').each(function () {
-                    workflowIdArray.push($(this).val());
-                });*/
-                this.filter['workflow'] = workflowIdArray;
+                var self = this;
                 var itemsNumber = $("#itemsNumber").text();
+                this.startTime = new Date();
+                this.newCollection = true;
+
+                this.filter = /*this.filter ||*/ {};
+                if (workflowIdArray.length) this.filter['workflow'] = workflowIdArray;
+                if ($('.chosen')) {
+                    $('.chosen').each(function (index, elem) {
+                        if (self.filter[elem.children[0].value]) {
+                            self.filter[elem.children[0].value].push(elem.children[1].value);
+                        } else {
+                            self.filter[elem.children[0].value] = [];
+                            self.filter[elem.children[0].value].push(elem.children[1].value);
+                        }
+                    });
+                }
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
                 this.changeLocationHash(1, itemsNumber, this.filter);
-                this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter, parrentContentId: this.parrentContentId });
+                this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter, newCollection: this.newCollection, parrentContentId: this.parrentContentId });
                 this.getTotalLength(null, itemsNumber, this.filter);
             },
 
@@ -238,18 +246,20 @@ define([
                 common.populateWorkflowsList("Applications", ".filter-check-list", "", "/Workflows", null, function (stages) {
                     self.stages = stages;
                     var stage = (self.filter) ? self.filter.workflow : null;
-                    FilterView = new filterView({ collection: stages, customCollection: []});
                     itemView.trigger('incomingStages', stages);
-                    // Filter custom event listen ------begin
-                    FilterView.bind('filter', function () {
-                        showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
-                        self.showFilteredPage(showList)
+                    dataService.getData('/employee/getFilterValues', null, function (values) {
+                        FilterView = new filterView({ collection: stages, customCollection: values});
+                        // Filter custom event listen ------begin
+                        FilterView.bind('filter', function () {
+                            showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
+                            self.showFilteredPage(showList)
+                        });
+                        FilterView.bind('defaultFilter', function () {
+                            showList = _.pluck(self.stages, '_id');
+                            self.showFilteredPage(showList)
+                        });
+                        // Filter custom event listen ------end
                     });
-                    FilterView.bind('defaultFilter', function () {
-                        showList = _.pluck(self.stages, '_id');
-                        self.showFilteredPage(showList)
-                    });
-                    // Filter custom event listen ------end
                 });
                 var pagenation = this.$el.find('.pagination');
                 if (this.collection.length === 0) {

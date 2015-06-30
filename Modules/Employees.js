@@ -1,5 +1,6 @@
 // JavaScript source code
-var Employee = function (event, models) {
+var Employee = function (event, models)
+{
     var mongoose = require('mongoose');
     var logWriter = require('../helpers/logWriter.js');
     var department = mongoose.Schemas['Department'];
@@ -461,6 +462,9 @@ var Employee = function (event, models) {
 
     function getFilter(req, response) {
         var data = {};
+        var optionsObject = {};
+        var filterObj = {};
+        var or;
         for (var i in req.query) {
             data[i] = req.query[i];
         }
@@ -469,17 +473,69 @@ var Employee = function (event, models) {
         var contentType = data.contentType;
         var res = {};
         res['data'] = [];
-        var optionsObject = {};
 
         switch (contentType) {
             case ('Employees'): {
-                optionsObject['isEmployee'] = true;
-                if (data.filter.letter)
+                //----------------------
+                optionsObject['$and'] = [];
+                optionsObject['$and'].push({'isEmployee': true});
+
+                if (data && data.filter) {
+                    filterObj = {};
+                    optionsObject['$and'].push(filterObj);
+                    filterObj['$or'] = [];
+                    or = filterObj['$or'];
+                    /*if (data.filter.department) {
+                        or.push({ 'department': {$in: data.filter.department}});
+                    }*/
+
+                    if (data.filter.Name) {
+                     or.push({ 'name.last': {$in: data.filter.Name}});
+                     }
+                    if (data.filter.Email) {
+                        or.push({ 'workEmail': {$in: data.filter.Email}});
+                    }
+
+                    if (!or.length) {
+                        optionsObject['$and'].pop();
+                    }
+
+
+                }
+                //----------------------
+                if (data.filter.letter) {
                     optionsObject['name.last'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
+
+                }
             }
                 break;
             case ('Applications'): {
-                optionsObject['isEmployee'] = false;
+                optionsObject['$and'] = [];
+                optionsObject['$and'].push({'isEmployee': false});
+
+                if (data && data.filter) {
+                    filterObj = {};
+                    optionsObject['$and'].push(filterObj);
+                    filterObj['$or'] = [];
+                    or = filterObj['$or'];
+
+                    for (var key in data.filter) {
+
+                        switch (key) {
+                            case 'Name':
+                                or.push({ 'name.last': {$in: data.filter.Name}});
+                                break;
+                            case 'Email':
+                                or.push({ 'workEmail': {$in: data.filter.Email}});
+                                break;
+
+                        }
+                    }
+                    if (!or.length) {
+                        optionsObject['$and'].pop();
+                    }
+                }
+
             }
                 break;
         }

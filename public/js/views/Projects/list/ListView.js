@@ -221,10 +221,26 @@ define([
 
             showFilteredPage: function (workflowIdArray) {
                 var itemsNumber = $("#itemsNumber").text();
+                var checkedElements = $('.drop-down-filter input:checkbox:checked');
+                var self = this;
+                var showList;
+
                 this.startTime = new Date();
                 this.newCollection = false;
-                this.filter = this.filter || {};
-                this.filter['workflow'] = workflowIdArray;
+                this.filter = /*this.filter ||*/ {};
+                if (workflowIdArray.length) this.filter['workflow'] = workflowIdArray;
+
+                if ($('.chosen')) {
+                    $('.chosen').each(function (index, elem) {
+                        if (self.filter[elem.children[0].value]) {
+                            self.filter[elem.children[0].value].push(elem.children[1].value);
+                        } else {
+                            self.filter[elem.children[0].value] = [];
+                            self.filter[elem.children[0].value].push(elem.children[1].value);
+                        }
+                    });
+                }
+
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
                 this.changeLocationHash(1, itemsNumber, this.filter);
@@ -382,18 +398,22 @@ define([
 
                 common.populateWorkflowsList("Projects", ".filter-check-list", "", "/Workflows", null, function (stages) {
                     var stage = (self.filter) ? self.filter.workflow || [] : [];
-                    FilterView = new filterView({ collection: stages, customCollection: []});
                     itemView.trigger('incomingStages', stages);
-                    // Filter custom event listen ------begin
-                    FilterView.bind('filter', function () {
-                        showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
-                        self.showFilteredPage(showList)
+                    dataService.getData('/project/getFilterValues', null, function (values) {
+                        FilterView = new filterView({ collection: stages, customCollection: values});
+                        itemView.trigger('incomingStages', stages);
+                        // Filter custom event listen ------begin
+                        FilterView.bind('filter', function () {
+                            showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
+                            self.showFilteredPage(showList)
+                        });
+                        FilterView.bind('defaultFilter', function () {
+                            showList = _.pluck(self.stages, '_id');
+                            self.showFilteredPage(showList)
+                        });
+                        // Filter custom event listen ------end
+
                     });
-                    FilterView.bind('defaultFilter', function () {
-                        showList = _.pluck(self.stages, '_id');
-                        self.showFilteredPage(showList)
-                    });
-                    // Filter custom event listen ------end
                 });
 
                 $(document).on("click", function (e) {
