@@ -294,7 +294,11 @@ define([
             var editWtrackModel = this.editCollection.get(modelId);
 
             if (!this.changedModels[modelId]) {
-                this.changedModels[modelId] = {};
+                if(!editWtrackModel.id){
+                    this.changedModels[modelId] = editWtrackModel.attributes;
+                } else {
+                    this.changedModels[modelId] = {};
+                }
             }
 
             changedAttr = this.changedModels[modelId];
@@ -358,6 +362,7 @@ define([
                 model = this.editCollection.get(id);
                 model.changed = this.changedModels[id];
             }
+
             this.editCollection.save();
         },
 

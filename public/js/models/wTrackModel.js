@@ -8,6 +8,13 @@ define(['Validation', 'common'], function (Validation, common) {
 
         },
         defaults: {
+            project: {
+                workflow: {},
+                customer: {},
+                projectmanager: {}
+            },
+            employee: {},
+            department: {},
             worked: 40,
             1: 8,
             2: 8,

@@ -12,12 +12,21 @@
                 var self = this;
                 var model;
                 var models = [];
+                var newModel;
                 var modelObject;
                 var syncObject = {
                     trigger: this.trigger,
                     url: this.url,
                     toJSON: function () {
                         return models;
+                    }
+                };
+
+                var saveObject = {
+                    trigger: this.trigger,
+                    url: this.url,
+                    toJSON: function () {
+                        return newModel;
                     }
                 };
 
@@ -36,11 +45,13 @@
                     model = this.models[i];
 
                     if(model && model.id && model.hasChanged()){
-                        modelObject = model.changedAttributes();
+                        modelObject = model.changed;
                         modelObject._id = model.id;
                         models.push(modelObject);
                     } else if (model && !model.id){
-                        Backbone.sync("create", model, options);
+                        newModel = model.changed;
+                        newModel._id =  model.id;
+                        Backbone.sync("create", saveObject, options);
                     }
                 }
 

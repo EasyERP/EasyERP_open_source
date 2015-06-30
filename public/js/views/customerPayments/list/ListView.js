@@ -231,7 +231,7 @@ define([
             },
 
             getTotalLength: function (currentNumber, itemsNumber,filter) {
-                dataService.getData('/supplierPayments/totalCollectionLength', {
+                dataService.getData('/payments/customers/totalCollectionLength', {
                     contentType: this.contentType,
                     currentNumber: currentNumber,
                     filter: filter,

@@ -125,7 +125,7 @@ define([
                 if (success) {
                     goProfile(that);
                 } else {
-                    if (App.requestedURL == null)
+                    if (App.requestedURL === null)
                         App.requestedURL = Backbone.history.fragment;
                     Backbone.history.fragment = "";
                     Backbone.history.navigate("login", {trigger: true});
