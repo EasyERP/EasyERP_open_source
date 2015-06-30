@@ -646,6 +646,12 @@
                     if (data && data.filter && data.filter.isSupplier) {
                         optionsObject['salesPurchases.isSupplier'] = true;
                     }
+                    if (data && data.filter && data.filter.name) {
+                        optionsObject['name.first'] = {$in: data.filter.name};
+                    }
+                    if (data && data.filter && data.filter.country) {
+                        optionsObject['address.country'] = {$in: data.filter.country};
+                    }
                 }
                     break;
                 case ('Companies'):
@@ -659,6 +665,12 @@
                     }
                     if (data && data.filter && data.filter.isSupplier) {
                         optionsObject['salesPurchases.isSupplier'] = true;
+                    }
+                    if (data && data.filter && data.filter.name) {
+                        optionsObject['name.first'] = {$in: data.filter.name};
+                    }
+                    if (data && data.filter && data.filter.country) {
+                        optionsObject['address.country'] = {$in: data.filter.country};
                     }
                 }
                     break;

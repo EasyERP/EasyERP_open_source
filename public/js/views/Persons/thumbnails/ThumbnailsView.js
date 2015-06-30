@@ -69,6 +69,14 @@
             alpabeticalRender: function (e, showList) {
                 var selectedLetter;
                 var target;
+                var checkedElements = $('.drop-down-filter input:checkbox:checked');
+                var self = this;
+
+                this.$el.find('.thumbnailwithavatar').remove();
+                this.startTime = new Date();
+                this.newCollection = false;
+                this.filter =/* (this.filter && this.filter !== 'empty') ? this.filter :*/ {};
+
                 if (e && e.target) {
                     selectedLetter = $(e.target).text();
                     target = $(e.target);
@@ -79,11 +87,19 @@
                     target.addClass("current");
                 }
 
-
-                this.$el.find('.thumbnailwithavatar').remove();
-                this.startTime = new Date();
-                this.newCollection = false;
-                this.filter = (this.filter && this.filter !== 'empty') ? this.filter : {};
+                if (checkedElements.length && checkedElements.attr('id') === 'defaultFilter') {
+                    this.filter = {};
+                };
+                if ($('.chosen')) {
+                    $('.chosen').each(function (index, elem) {
+                        if (self.filter[elem.children[0].value]) {
+                            self.filter[elem.children[0].value].push(elem.children[1].value);
+                        } else {
+                            self.filter[elem.children[0].value] = [];
+                            self.filter[elem.children[0].value].push(elem.children[1].value);
+                        }
+                    });
+                };
 
                 if (showList) {
                     if (showList.indexOf('isCustomer') !== -1) {
@@ -164,19 +180,20 @@
                         _id: 'isSupplier'
                     }
                 ];
-                FilterView = new filterView({ collection: filterObject});
-                // Filter custom event listen ------begin
-                FilterView.bind('filter', function () {
-                    showList = $('.drop-down-filter input:checkbox:checked').map(function () {
-                        return this.value;
-                    }).get();
-                    self.alpabeticalRender(null, showList)
+                dataService.getData('/supplier/getFilterValues', null, function (values) {
+                    FilterView = new filterView({ collection: filterObject, customCollection: values});
+                    // Filter custom event listen ------begin
+                    FilterView.bind('filter', function () {
+                        showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
+                        self.alpabeticalRender(null, showList)
+                    });
+                    FilterView.bind('defaultFilter', function () {
+                        showList = [];
+                        self.alpabeticalRender(null, showList)
+                    });
+                    // Filter custom event listen ------end
+
                 });
-                FilterView.bind('defaultFilter', function () {
-                    showList = [];
-                    self.alpabeticalRender(null, showList)
-                });
-                // Filter custom event listen ------end
                 $(document).on("click", function (e) {
                     self.hideItemsNumber(e);
                 });

@@ -2033,7 +2033,6 @@ var requestHandler = function (event, mainDb) {
         getJobType: getJobType,
 		getNationality: getNationality,
         customerTotalCollectionLength: customerTotalCollectionLength
-
     }
 }
 //---------EXPORTS----------------------------------------

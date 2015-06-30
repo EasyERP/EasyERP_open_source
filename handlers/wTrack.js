@@ -205,54 +205,75 @@ var wTrack = function (models) {
         var contentIdsSearcher;
         var contentSearcher;
         var waterfallTasks;
-        var conditionList;
         var condition;
         var or;
 
         var sort = {};
 
+        function ConvertType(array, type) {
+            if (type === 'integer') {
+                for (var i = 0; i <= array.length - 1; i++) {
+                    array[i] = parseInt(array[i]);
+                }
+            } else  if (type === 'boolean') {
+                for (var i = 0; i <= condition.length - 1; i++) {
+                    if (condition[i] === 'true') {
+                        condition[i] = true;
+                    } else if (condition[i] === 'false') {
+                        condition[i] = false;
+                    } else {
+                        condition[i] = null;
+                    }
+                }
+            }
+
+        };
+
         if (filter && typeof filter === 'object') {
             queryObject['$or'] = [];
             or = queryObject['$or'];
 
-            /*conditionList = _.keys(filter);
-            conditionList.forEach(function (condition) {*/
             for (var key in filter){
                 condition = filter[key];
 
-                switch (condition) {
-                    case 'department':
-                        queryObject['$or'].push({ 'department.departmentName': {$in: filter.department}});
-                        break;
+                switch (key) {
                     case 'projectmanagers':
-                        queryObject['$or'].push({ 'project.projectmanager.name': {$in: filter.projectmanagers}});
+                        or.push({ 'project.projectmanager.name': {$in: condition}});
                         break;
                     case 'projectsname':
-                        queryObject['$or'].push({ 'project.projectName': {$in: filter.projectsname}});
+                       or.push({ 'project.projectName': {$in: condition}});
                         break;
                     case 'workflows':
-                        queryObject['$or'].push({ 'project.workflow': {$in: filter.workflows}});
+                        or.push({ 'project.workflow': {$in: condition}});
                         break;
                     case 'customers':
-                        queryObject['$or'].push({ 'project.customer': {$in: filter.customers}});
+                        or.push({ 'project.customer': {$in: condition}});
                         break;
                     case 'employees':
-                        queryObject['$or'].push({ 'employee.name': {$in: filter.employees}});
+                        or.push({ 'employee.name': {$in: condition}});
                         break;
                     case 'departments':
-                        queryObject['$or'].push({ 'department.departmentName': {$in: filter.departments}});
+                        or.push({ 'department.departmentName': {$in: condition}});
                         break;
                     case 'years':
-                        queryObject['$or'].push({ 'year': {$in: filter.years}});
+                        ConvertType(condition, 'integer');
+
+                        or.push({ 'year': {$in: condition}});
                         break;
                     case 'months':
-                        queryObject['$or'].push({ 'month': {$in: filter.months}});
+                        ConvertType(condition, 'integer');
+
+                        or.push({ 'month': {$in: condition}});
                         break;
                     case 'weeks':
-                        queryObject['$or'].push({ 'week': {$in: filter.weeks}});
+                        ConvertType(condition, 'integer');
+
+                        or.push({ 'week': {$in: condition}});
                         break;
                     case 'isPaid':
-                        queryObject['$or'].push({ 'isPaid': {$in: filter.isPaid}});
+                        ConvertType(condition, 'boolean');
+
+                        or.push({ 'isPaid': {$in: condition}});
                         break;
                 }
             };
