@@ -35,6 +35,7 @@ module.exports = function (app, mainDb) {
     var revenueRouter = require('./revenue')(models);
     var wTrackRouter = require('./wTrack')(models);
     var salaryRouter = require('./salary')(models);
+    var opportunityRouter = require('./opportunity')(models);
     var holidayRouter = require('./holiday')(models);
 
     app.get('/', function (req, res, next) {
@@ -68,6 +69,7 @@ module.exports = function (app, mainDb) {
     app.use('/department', departmentRouter);
     app.use('/revenue', revenueRouter);
     app.use('/salary', salaryRouter);
+    app.use('/opportunity', opportunityRouter);
     app.use('/holiday', holidayRouter);
     app.get('/getDBS', function (req, res) {
         res.send(200, {dbsNames: dbsNames});
@@ -1287,7 +1289,6 @@ module.exports = function (app, mainDb) {
         data.opportunitie = req.body;
         requestHandler.createOpportunitie(req, res, data);
     });
-
     app.get('/Opportunities/:viewType', function (req, res) {
         var data = {};
         for (var i in req.query) {
@@ -1314,6 +1315,7 @@ module.exports = function (app, mainDb) {
         requestHandler.getFilterOpportunitiesForMiniView(req, res, data);
 
     });
+
     app.get('/getLengthByWorkflows', function (req, res) {
         requestHandler.getOpportunitiesLengthByWorkflows(req, res);
     });

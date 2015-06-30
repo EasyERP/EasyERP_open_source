@@ -98,7 +98,7 @@
                     $(".startLetter").remove();
                     self.alphabeticArray = arr;
                     self.$el.prepend(_.template(AphabeticTemplate, { alphabeticArray: self.alphabeticArray,selectedLetter: (self.selectedLetter==""?"All":self.selectedLetter),allAlphabeticArray:self.allAlphabeticArray}));
-                var currentLetter = (self.filter) ? self.filter.letter : null
+                var currentLetter = (self.filter) ? self.filter.letter : null;
                     if (currentLetter) {
                         $('#startLetter a').each(function() {
                             var target = $(this);

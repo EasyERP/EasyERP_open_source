@@ -71,9 +71,16 @@ define([
             "click .oe_sortable": "goSort",
             "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
             "change .autoCalc": "autoCalc",
-            "change .editable ": "setEditable"
+            "change .editable ": "setEditable",
+            "keydown input.editing ": "keyDown"
         },
-        
+
+        keyDown: function(e){
+            if(e.which === 13){
+                this.setChangedValueToModel();
+            }
+        },
+
         generateInvoice: function (e) {
             var selectedWtracks = this.$el.find('input:checked');
             var wTracks = [];
@@ -179,6 +186,33 @@ define([
             return !!edited.length;
         },
 
+        setChangedValueToModel: function(){
+            var editedElement = this.$listTable.find('.editing');
+            var editedCol;
+            var editedElementRowId;
+            var editedElementContent;
+            var editedElementValue;
+            var editWtrackModel;
+
+            if (/*wTrackId !== this.wTrackId &&*/ editedElement.length) {
+                editedCol = editedElement.closest('td');
+                editedElementRowId = editedElement.closest('tr').data('id');
+                editedElementContent = editedCol.data('content');
+                editedElementValue = editedElement.val();
+
+                editWtrackModel = this.editCollection.get(editedElementRowId);
+
+                if (!this.changedModels[editedElementRowId]) {
+                    this.changedModels[editedElementRowId] = {};
+                }
+
+                this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
+
+                editedCol.text(editedElementValue);
+                editedElement.remove();
+            }
+        },
+
         editRow: function (e, prev, next) {
             $(".newSelectList").hide();
 
@@ -200,7 +234,7 @@ define([
                 if (this.wTrackId) {
                     editedElement = this.$listTable.find('.editing');
 
-                    if (/*wTrackId !== this.wTrackId &&*/ editedElement.length) {
+                    /*if (/!*wTrackId !== this.wTrackId &&*!/ editedElement.length) {
                         editedCol = editedElement.closest('td');
                         editedElementRowId = editedElement.closest('tr').data('id');
                         editedElementContent = editedCol.data('content');
@@ -216,7 +250,8 @@ define([
 
                         editedCol.text(editedElementValue);
                         editedElement.remove();
-                    }
+                    }*/
+                    this.setChangedValueToModel();
                 }
                 this.wTrackId = wTrackId;
             }
@@ -711,9 +746,8 @@ define([
                 }).get();
 
                 this.filter['departments'] = showList;
-            }/* else {
-                this.filter = {};
-            }*/
+            };
+
             if ($('.chosen')) {
                 $('.chosen').each(function (index, elem) {
                     if (self.filter[elem.children[0].value]) {
@@ -723,7 +757,7 @@ define([
                         self.filter[elem.children[0].value].push(elem.children[1].value);
                     }
                 });
-            }
+            };
             if (checkedElements.length && checkedElements.attr('id') === 'defaultFilter') {
                 self.filter = {};
             }

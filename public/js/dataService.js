@@ -3,7 +3,9 @@ define(function () {
         $.get(url, data, function (response) {
             if (context) {
                 callback(response, context);
-            } else callback(response);
+            } else {
+                callback(response);
+            }
         }).fail(function (err) {
             callback({error: err});
         });
