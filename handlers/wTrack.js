@@ -255,7 +255,7 @@ var wTrack = function (models) {
                         queryObject['$or'].push({ 'isPaid': {$in: filter.isPaid}});
                         break;
                 }
-            });
+            };
        }
 
         var count = query.count ? query.count : 50;

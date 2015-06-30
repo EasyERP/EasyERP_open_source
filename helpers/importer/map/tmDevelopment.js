@@ -140,7 +140,7 @@ module.exports = (function () {
                 fieldValue: '50-200'
             }, {
                 value: '3',
-                field: 'size',
+                field: 'companyInfo.size',
                 fieldValue: '200-500'
             }, {
                 value: '4',

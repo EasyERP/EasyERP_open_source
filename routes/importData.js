@@ -19,6 +19,7 @@ module.exports = function (models) {
             password: '1q2w3e!@#',
             server: 'wbje9y2n5u.database.windows.net',
             database: 'ex_dev',
+            //database: 'production',
 
             options: {
                 encrypt: true
@@ -136,6 +137,10 @@ module.exports = function (models) {
                             }
 
                             objectToSave['companyInfo.industry'] = industry ? industry._id : industry;
+
+                            if(!objectToSave.type){
+                                objectToSave.type = objectToSave['companyInfo.size'] ? 'Company': 'Person';
+                            }
 
                             model = new Customer(objectToSave);
                             model.save(function (err, customer) {
@@ -521,7 +526,7 @@ module.exports = function (models) {
                         }
 
                         if (key === 'workflow') {
-                            objectToSave[key] = workflows[fetchedInvoice[msSqlKey]][0];
+                            objectToSave[key] = workflows[fetchedInvoice[msSqlKey]][0]._id;
                         } else {
                             objectToSave[key] = fetchedInvoice[msSqlKey];
                         }
@@ -569,6 +574,7 @@ module.exports = function (models) {
                             Project
                                 .findOne(projectQuery)
                                 .populate('projectmanager')
+                                .populate('customer')
                                 .lean()
                                 .exec(function (err, project) {
                                     if (err) {
@@ -603,13 +609,19 @@ module.exports = function (models) {
                                 });
                             }
                             if (result.project) {
+                                objectToSave.supplier = result.project.customer ? result.project.customer._id : null;
                                 objectToSave.salesPerson = result.project.projectmanager ? result.project.projectmanager._id : null;
                                 objectToSave.project = result.project._id;
                             }
 
 
                             model = new Invoice(objectToSave);
-                            model.save(cb);
+                            model.save(function(err, invoice){
+                                if(err){
+                                    return cb(err);
+                                }
+                                cb();
+                            });
                         });
                     }
                 }, function (err) {
