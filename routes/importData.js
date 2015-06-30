@@ -770,23 +770,27 @@ module.exports = function (models) {
         var jobPositionShema = tasks[1];
         var employeeShema = tasks[2];
         var salaryShema = tasks[6];
+        var holidayShema = tasks[9];
         var ownerId = req.session ? req.session.uId : null;
 
         var jobPositionCollection = jobPositionShema.collection;
         var departmentCollection = departmentShema.collection;
         var employeeCollection = employeeShema.collection;
         var salaryCollection = salaryShema.collection;
+        var holidayCollection = holidayShema.collection;
 
         var JobPositionSchema = mongoose.Schemas[jobPositionCollection];
         var DepartmentSchema = mongoose.Schemas[departmentCollection];
         var EmployeeSchema = mongoose.Schemas[employeeCollection];
         var SalarySchema = mongoose.Schemas[salaryCollection];
+        var HolidaySchema = mongoose.Schemas[holidayCollection];
         var WorkflowSchema = mongoose.Schemas['workflow'];
 
         var JobPosition = models.get(req.session.lastDb, jobPositionCollection, JobPositionSchema);
         var Department = models.get(req.session.lastDb, departmentCollection, DepartmentSchema);
         var Employee = models.get(req.session.lastDb, employeeCollection, EmployeeSchema);
         var Salary = models.get(req.session.lastDb, salaryCollection, SalarySchema);
+        var Holiday = models.get(req.session.lastDb, holidayCollection, HolidaySchema);
         var Workflow = models.get(req.session.lastDb, 'workflows', WorkflowSchema);
 
         function importDepartment(departmentShema, seriesCb) {
@@ -1135,7 +1139,75 @@ module.exports = function (models) {
             importSalary(salaryShema, callback);
         }
 
-        return [departmentImporter, jobPositionImporter, employeeImporter, salaryImporter];
+        function importHoliday(holidayShema, seriesCb) {
+            var query = queryBuilder(holidayShema.table);
+            var waterfallTasks;
+
+            function getData(callback) {
+                handler.importData(query, callback);
+            }
+
+            function saverHoliday(fetchedArray, callback) {
+                var model;
+                var mongooseFields = Object.keys(holidayShema.aliases);
+
+                async.eachLimit(fetchedArray, 100, function (fetchedHoliday, cb) {
+                    var objectToSave = {};
+                    var key;
+                    var msSqlKey;
+
+                    for (var i = mongooseFields.length - 1; i >= 0; i--) {
+                        key = mongooseFields[i];
+                        msSqlKey = holidayShema.aliases[key];
+
+                        if (holidayShema.defaultValues) {
+                            for (var defKey in holidayShema.defaultValues) {
+                                objectToSave[defKey] = holidayShema.defaultValues[defKey];
+                            }
+                        }
+
+                        if (holidayShema.comparator && msSqlKey in holidayShema.comparator) {
+                            fetchedHoliday[msSqlKey] = comparator(fetchedHoliday[msSqlKey], holidayShema.comparator[msSqlKey]) || fetchedHoliday[msSqlKey];
+                        }
+
+                        objectToSave[key] = fetchedHoliday[msSqlKey];
+                        objectToSave.createdBy = {
+                            user: ownerId
+                        };
+                        objectToSave.editedBy = {
+                            user: ownerId
+                        }
+                    }
+
+                    if (fetchedHoliday) {
+                        model = new Holiday(objectToSave);
+                        model.save(cb);
+                    }
+                }, function (err) {
+                    if (err) {
+                        return callback(err);
+                    }
+
+                    callback(null, 'Completed');
+                })
+            }
+
+            waterfallTasks = [getData, saverHoliday];
+
+            async.waterfall(waterfallTasks, function (err, result) {
+                if (err) {
+                    seriesCb(err);
+                }
+
+                seriesCb(null, 'Complete')
+            });
+        }
+
+        function holidayImporter(callback) {
+            importHoliday(holidayShema, callback);
+        }
+
+        return [departmentImporter, jobPositionImporter, employeeImporter, salaryImporter, holidayImporter];
     }
 
     router.post('/', function (req, res, next) {

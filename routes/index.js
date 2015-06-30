@@ -35,6 +35,7 @@ module.exports = function (app, mainDb) {
     var revenueRouter = require('./revenue')(models);
     var wTrackRouter = require('./wTrack')(models);
     var salaryRouter = require('./salary')(models);
+    var holidayRouter = require('./holiday')(models);
 
     app.get('/', function (req, res, next) {
         res.sendfile('index.html');
@@ -67,6 +68,7 @@ module.exports = function (app, mainDb) {
     app.use('/department', departmentRouter);
     app.use('/revenue', revenueRouter);
     app.use('/salary', salaryRouter);
+    app.use('/holiday', holidayRouter);
     app.get('/getDBS', function (req, res) {
         res.send(200, {dbsNames: dbsNames});
     });

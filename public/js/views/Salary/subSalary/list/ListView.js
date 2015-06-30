@@ -45,6 +45,7 @@ function (listTemplate, cancelEdit, createView, listItemView, subSalaryTotalTemp
             this.employeesStartCollection = new salaryEditableCollection(this.employeesArary);
 
             this.render();
+            this.contentCollection = salaryEditableCollection;
         },
 
         events: {
