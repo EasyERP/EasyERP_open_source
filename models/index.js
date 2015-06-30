@@ -41,7 +41,7 @@ module.exports = (function () {
     require('./workflow.js');
     require('./wTrack.js');
     require('./wTrackInvoice.js');
-    require('./monthHours.js');
+    //require('./monthHours.js');
     require('./holiday.js');
     require('./vocation.js');
 })();

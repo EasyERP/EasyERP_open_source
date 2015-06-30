@@ -23,10 +23,10 @@ define([
 
         $currentStartWeek: null,
         $revenueBySales: null,
-        $revenueBySales: null,
 
         events: {
-            'change #currentStartWeek': 'changeWeek'
+            'change #currentStartWeek': 'changeWeek',
+            'click .ui-spinner-button': 'changeWeek'
         },
 
         initialize: function () {
@@ -344,6 +344,11 @@ define([
             model.employees = employees;
 
             this.$el.html(this.template(model));
+
+            this.$el.find("#currentStartWeek").spinner({
+                min: 1,
+                max: 53
+            });
 
             this.$currentStartWeek = thisEl.find('#currentStartWeek');
             this.$revenueBySales = thisEl.find('#revenueBySales');
