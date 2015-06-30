@@ -79,6 +79,13 @@ define([
             });
         },
 
+        redirectTo: function(){
+            if (App.requestedURL === null) {
+                App.requestedURL = Backbone.history.fragment;
+            }
+            Backbone.history.fragment = "";
+            Backbone.history.navigate("login", {trigger: true});
+        },
 
         revenue: function(){
             var self = this;
@@ -89,10 +96,7 @@ define([
                         self.isAuth = true;
                         renderRevenue();
                     } else {
-                        if (App.requestedURL == null)
-                            App.requestedURL = Backbone.history.fragment;
-                        Backbone.history.fragment = "";
-                        Backbone.history.navigate("login", {trigger: true});
+
                     }
                 });
             }
@@ -120,15 +124,12 @@ define([
         },
 
         goToProfiles: function () {
-            var that = this;
+            var self = this;
             this.checkLogin(function (success) {
                 if (success) {
-                    goProfile(that);
+                    goProfile(self);
                 } else {
-                    if (App.requestedURL === null)
-                        App.requestedURL = Backbone.history.fragment;
-                    Backbone.history.fragment = "";
-                    Backbone.history.navigate("login", {trigger: true});
+                   self.redirectTo();
                 }
             });
 
@@ -172,15 +173,12 @@ define([
         },
 
         goToUserPages: function () {
-            var that = this;
+            var self = this;
             this.checkLogin(function (success) {
                 if (success) {
-                    goMyProfile(that);
+                    goMyProfile(self);
                 } else {
-                    if (App.requestedURL == null)
-                        App.requestedURL = Backbone.history.fragment;
-                    Backbone.history.fragment = "";
-                    Backbone.history.navigate("login", {trigger: true});
+                    self.redirectTo();
                 }
             });
 
@@ -211,15 +209,12 @@ define([
         },
 
         goToDashboard: function () {
-            var that = this;
+            var self = this;
             this.checkLogin(function (success) {
                 if (success) {
-                    goDashboard(that);
+                    goDashboard(self);
                 } else {
-                    if (App.requestedURL == null)
-                        App.requestedURL = Backbone.history.fragment;
-                    Backbone.history.fragment = "";
-                    Backbone.history.navigate("login", {trigger: true});
+                    self.redirectTo();
                 }
             });
 
@@ -247,15 +242,12 @@ define([
             }
         },
         goToProjectDashboard: function () {
-            var that = this;
+            var self = this;
             this.checkLogin(function (success) {
                 if (success) {
-                    goProjectDashboard(that);
+                    goProjectDashboard(self);
                 } else {
-                    if (App.requestedURL == null)
-                        App.requestedURL = Backbone.history.fragment;
-                    Backbone.history.fragment = "";
-                    Backbone.history.navigate("login", {trigger: true});
+                    self.redirectTo();
                 }
             });
 
@@ -284,15 +276,12 @@ define([
         },
 
         goToWorkflows: function () {
-            var that = this;
+            var self = this;
             this.checkLogin(function (success) {
                 if (success) {
-                    goToWorkflows(that);
+                    goToWorkflows(self);
                 } else {
-                    if (App.requestedURL == null)
-                        App.requestedURL = Backbone.history.fragment;
-                    Backbone.history.fragment = "";
-                    Backbone.history.navigate("login", {trigger: true});
+                    self.redirectTo();
                 }
             });
 
@@ -349,15 +338,12 @@ define([
         },
 
         goToList: function (contentType, parrentContentId, page, countPerPage, filter) {
-            var that = this;
+            var self = this;
             this.checkLogin(function (success) {
                 if (success) {
-                    goList(that);
+                    goList(self);
                 } else {
-                    if (App.requestedURL == null)
-                        App.requestedURL = Backbone.history.fragment;
-                    Backbone.history.fragment = "";
-                    Backbone.history.navigate("login", {trigger: true});
+                    self.redirectTo();
                 }
             });
 
@@ -428,15 +414,12 @@ define([
         },
 
         goToForm: function (contentType, modelId) {
-            var that = this;
+            var self = this;
             this.checkLogin(function (success) {
                 if (success) {
-                    goForm(that);
+                    goForm(self);
                 } else {
-                    if (App.requestedURL == null)
-                        App.requestedURL = Backbone.history.fragment;
-                    Backbone.history.fragment = "";
-                    Backbone.history.navigate("login", {trigger: true});
+                    self.redirectTo();
                 }
             });
 
@@ -512,15 +495,12 @@ define([
         },
 
         goToKanban: function (contentType, parrentContentId) {
-            var that = this;
+            var self = this;
             this.checkLogin(function (success) {
                 if (success) {
-                    goKanban(that);
+                    goKanban(self);
                 } else {
-                    if (App.requestedURL == null)
-                        App.requestedURL = Backbone.history.fragment;
-                    Backbone.history.fragment = "";
-                    Backbone.history.navigate("login", {trigger: true});
+                    self.redirectTo();
                 }
             });
 
@@ -576,15 +556,12 @@ define([
         },
 
         goToThumbnails: function (contentType, countPerPage, filter) {
-            var that = this;
+            var self = this;
             this.checkLogin(function (success) {
                 if (success) {
-                    goThumbnails(that);
+                    goThumbnails(self);
                 } else {
-                    if (App.requestedURL == null)
-                        App.requestedURL = Backbone.history.fragment;
-                    Backbone.history.fragment = "";
-                    Backbone.history.navigate("login", {trigger: true});
+                    self.redirectTo();
                 }
             });
 
@@ -704,7 +681,7 @@ define([
 
         login: function () {
             var url = "/getDBS";
-            var that = this;
+            var self = this;
 
             this.mainView = null;
 
@@ -712,10 +689,10 @@ define([
                 url: url,
                 type: "GET",
                 success: function (response) {
-                    that.changeWrapperView(new loginView({dbs: response.dbsNames}));
+                    self.changeWrapperView(new loginView({dbs: response.dbsNames}));
                 },
                 error: function () {
-                    that.changeWrapperView(new loginView());
+                    self.changeWrapperView(new loginView());
                 }
             });
         }
