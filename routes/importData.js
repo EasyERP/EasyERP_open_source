@@ -783,6 +783,7 @@ module.exports = function (models) {
         var employeeShema = tasks[2];
         var salaryShema = tasks[6];
         var holidayShema = tasks[9];
+        var vocationShema = tasks[10];
         var ownerId = req.session ? req.session.uId : null;
 
         var jobPositionCollection = jobPositionShema.collection;
@@ -790,12 +791,14 @@ module.exports = function (models) {
         var employeeCollection = employeeShema.collection;
         var salaryCollection = salaryShema.collection;
         var holidayCollection = holidayShema.collection;
+        var vocationCollection = vocationShema.collection;
 
         var JobPositionSchema = mongoose.Schemas[jobPositionCollection];
         var DepartmentSchema = mongoose.Schemas[departmentCollection];
         var EmployeeSchema = mongoose.Schemas[employeeCollection];
         var SalarySchema = mongoose.Schemas[salaryCollection];
         var HolidaySchema = mongoose.Schemas[holidayCollection];
+        var VocationSchema = mongoose.Schemas[vocationCollection];
         var WorkflowSchema = mongoose.Schemas['workflow'];
 
         var JobPosition = models.get(req.session.lastDb, jobPositionCollection, JobPositionSchema);
@@ -803,6 +806,7 @@ module.exports = function (models) {
         var Employee = models.get(req.session.lastDb, employeeCollection, EmployeeSchema);
         var Salary = models.get(req.session.lastDb, salaryCollection, SalarySchema);
         var Holiday = models.get(req.session.lastDb, holidayCollection, HolidaySchema);
+        var Vocation = models.get(req.session.lastDb, vocationCollection, VocationSchema);
         var Workflow = models.get(req.session.lastDb, 'workflows', WorkflowSchema);
 
         function importDepartment(departmentShema, seriesCb) {
@@ -1219,7 +1223,94 @@ module.exports = function (models) {
             importHoliday(holidayShema, callback);
         }
 
-        return [departmentImporter, jobPositionImporter, employeeImporter, salaryImporter, holidayImporter];
+        function importVocation(vocationShema, seriesCb) {
+            var query = queryBuilder(vocationShema.table);
+            var waterfallTasks;
+
+            function getData(callback) {
+                handler.importData(query, callback);
+            }
+
+            function saverVocation(fetchedArray, callback) {
+                var model;
+                var mongooseFields = Object.keys(vocationShema.aliases);
+
+                async.eachLimit(fetchedArray, 100, function (fetchedVocation, cb) {
+                    var objectToSave = {};
+                    var employeeQuery;
+                    var key;
+                    var msSqlKey;
+
+                    for (var i = mongooseFields.length - 1; i >= 0; i--) {
+                        key = mongooseFields[i];
+                        msSqlKey = vocationShema.aliases[key];
+
+                        if (vocationShema.defaultValues) {
+                            for (var defKey in vocationShema.defaultValues) {
+                                objectToSave[defKey] = vocationShema.defaultValues[defKey];
+                            }
+                        }
+
+                        if (vocationShema.comparator && msSqlKey in vocationShema.comparator) {
+                            fetchedVocation[msSqlKey] = comparator(fetchedVocation[msSqlKey], vocationShema.comparator[msSqlKey]) || fetchedVocation[msSqlKey];
+                        }
+
+                        objectToSave[key] = fetchedVocation[msSqlKey];
+                        objectToSave.createdBy = {
+                            user: ownerId
+                        };
+                        objectToSave.editedBy = {
+                            user: ownerId
+                        }
+                    }
+
+                    if (fetchedVocation) {
+                        objectToSave.diff = {};
+
+                        employeeQuery = {
+                            ID: fetchedVocation['Employee']
+                        };
+
+                        Employee.findOne(employeeQuery, {_id: 1, name: 1}, function (err, employee) {
+                            if (err) {
+                                return cb(err);
+                            }
+
+                            if (employee) {
+                                objectToSave.employee = {};
+                                objectToSave.employee._id = employee._id || null;
+                                objectToSave.employee.name = employee.name ? employee.name.first + ' ' + employee.name.last : '';
+
+                                model = new Salary(objectToSave);
+                                model.save(cb);
+                            }
+                        });
+                    }
+                }, function (err) {
+                    if (err) {
+                        return callback(err);
+                    }
+
+                    callback(null, 'Completed');
+                })
+            }
+
+            waterfallTasks = [getData, saverVocation];
+
+            async.waterfall(waterfallTasks, function (err, result) {
+                if (err) {
+                    seriesCb(err);
+                }
+
+                seriesCb(null, 'Complete')
+            });
+        }
+
+        function vocationImporter(callback) {
+            importVocation(vocationShema, callback);
+        }
+
+        return [departmentImporter, jobPositionImporter, employeeImporter, salaryImporter, holidayImporter, vocationImporter];
     }
 
     router.post('/', function (req, res, next) {

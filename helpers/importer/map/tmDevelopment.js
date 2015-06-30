@@ -2,6 +2,36 @@
  * Created by Roman on 27.05.2015.
  */
 module.exports = (function () {
+    var vocation = {
+        collection: 'Vocation',
+        table: 'Absence',
+        comparator: {
+            'AbsenceType': [{
+                value: '1',
+                field: 'vocationType',
+                fieldValue: 'V'
+            }, {
+                value: '2',
+                field: 'vocationType',
+                fieldValue: 'P'
+            }, {
+                value: '3',
+                field: 'vocationType',
+                fieldValue: 'S'
+            }, {
+                value: '4',
+                field: 'vocationType',
+                fieldValue: 'E'
+            }]
+        },
+        aliases: {
+            ID: 'ID',
+            employee: 'Employee',
+            startDate: 'StartDate',
+            endDate: 'EndDate',
+            vocationType: 'AbsenceType'
+        }
+    };
     var holiday = {
         collection: 'Holiday',
         table: 'HoliDays',
@@ -10,7 +40,7 @@ module.exports = (function () {
             date: 'Date',
             comment: 'Comment'
         }
-    }
+    };
     var salary = {
         collection: 'Salary',
         table: 'Salary',
@@ -284,5 +314,5 @@ module.exports = (function () {
         }
     };
 
-    return [department, jobPosition, employee, project, customer, wTrack, salary, invoice, payment, holiday];
+    return [department, jobPosition, employee, project, customer, wTrack, salary, invoice, payment, holiday, vocation];
 })();
