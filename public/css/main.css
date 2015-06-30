@@ -8644,7 +8644,7 @@ textarea#editInput {
 .grid-conatiner.revenue .chartContainer .legend input {
     height: 24px;
     box-sizing: border-box;
-    float: right;
+    /*float: right;*/
     width: 50px;
 }
 
