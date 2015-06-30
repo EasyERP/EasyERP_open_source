@@ -126,6 +126,37 @@ define([
                 this.editCollection.save();
             },
 
+            setChangedValueToModel: function(){
+                var editedElement = this.$listTable.find('.editing');
+                var editedCol;
+                var editedElementRowId;
+                var editedElementContent;
+                var editedElementValue;
+                var editHolidayModel;
+
+                if (editedElement.length) {
+                    editedCol = editedElement.closest('td');
+                    editedElementRowId = editedElement.closest('tr').data('id');
+                    editedElementContent = editedCol.data('content');
+                    editedElementValue = editedElement.val();
+
+                    editHolidayModel = this.editCollection.get(editedElementRowId);
+
+                    if (!this.changedModels[editedElementRowId]) {
+                        if(!editHolidayModel.id){
+                            this.changedModels[editedElementRowId] = editHolidayModel.attributes;
+                        } else {
+                            this.changedModels[editedElementRowId] = {};
+                        }
+                    }
+
+                    this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
+
+                    editedCol.text(editedElementValue);
+                    editedElement.remove();
+                }
+            },
+
             editRow: function (e, prev, next) {
                 var self = this;
 
@@ -136,32 +167,10 @@ define([
                 var isDTPicker = colType !== 'input' && el.prop("tagName") !== 'INPUT';
                 var tempContainer;
                 var width;
-                var editHolidayModel;
-                var editedElement;
-                var editedCol;
-                var editedElementRowId;
-                var editedElementValue;
-                var editedElementContent;
 
                 if (holidayId && el.prop('tagName') !== 'INPUT') {
                     if (this.holidayId) {
-                        editedElement = this.$listTable.find('.editing');
-
-                        if (editedElement.length) {
-                            editedCol = editedElement.closest('td');
-                            editedElementRowId = editedElement.closest('tr').data('id');
-                            editedElementContent = editedCol.data('content');
-                            editedElementValue = editedElement.val();
-
-                            if (!this.changedModels[editedElementRowId]) {
-                                this.changedModels[editedElementRowId] = {};
-                            }
-
-                            this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
-
-                            editedCol.text(editedElementValue);
-                            editedElement.remove();
-                        }
+                        this.setChangedValueToModel();
                     }
                     this.holidayId = holidayId;
                 }

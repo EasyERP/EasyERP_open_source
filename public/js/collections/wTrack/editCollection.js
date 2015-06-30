@@ -1,4 +1,4 @@
-﻿﻿define([
+﻿define([
         './filterCollection'
     ],
     function (ParrantCollection) {

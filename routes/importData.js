@@ -1281,7 +1281,7 @@ module.exports = function (models) {
                                 objectToSave.employee._id = employee._id || null;
                                 objectToSave.employee.name = employee.name ? employee.name.first + ' ' + employee.name.last : '';
 
-                                model = new Salary(objectToSave);
+                                model = new Vocation(objectToSave);
                                 model.save(cb);
                             }
                         });
