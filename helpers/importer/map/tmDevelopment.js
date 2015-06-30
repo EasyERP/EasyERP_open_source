@@ -2,6 +2,15 @@
  * Created by Roman on 27.05.2015.
  */
 module.exports = (function () {
+    var holiday = {
+        collection: 'Holiday',
+        table: 'HoliDays',
+        aliases: {
+            ID: 'ID',
+            date: 'Date',
+            comment: 'Comment'
+        }
+    }
     var salary = {
         collection: 'Salary',
         table: 'Salary',
@@ -275,5 +284,5 @@ module.exports = (function () {
         }
     };
 
-    return [department, jobPosition, employee, project, customer, wTrack, salary, invoice, payment];
+    return [department, jobPosition, employee, project, customer, wTrack, salary, invoice, payment, holiday];
 })();
