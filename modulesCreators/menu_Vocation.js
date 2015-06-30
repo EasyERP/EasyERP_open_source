@@ -42,8 +42,8 @@ MongoClient.connect(url, function (err, db) {
     function childModule(parrent, callback) {
         var module = {
             _id: 70,
-            mname: 'Vocation',
-            href: 'Vocation',
+            mname: 'Vacation',
+            href: 'Vacation',
             sequence: 70,
             parrent: parrent._id,
             link: true,

@@ -2,25 +2,25 @@
  * Created by Roman on 27.05.2015.
  */
 module.exports = (function () {
-    var vocation = {
-        collection: 'Vocation',
+    var vacation = {
+        collection: 'Vacation',
         table: 'Absence',
         comparator: {
             'AbsenceType': [{
                 value: '1',
-                field: 'vocationType',
+                field: 'vacationType',
                 fieldValue: 'V'
             }, {
                 value: '2',
-                field: 'vocationType',
+                field: 'vacationType',
                 fieldValue: 'P'
             }, {
                 value: '3',
-                field: 'vocationType',
+                field: 'vacationType',
                 fieldValue: 'S'
             }, {
                 value: '4',
-                field: 'vocationType',
+                field: 'vacationType',
                 fieldValue: 'E'
             }]
         },
@@ -314,5 +314,5 @@ module.exports = (function () {
         }
     };
 
-    return [department, jobPosition, employee, project, customer, wTrack, salary, invoice, payment, holiday, vocation];
+    return [department, jobPosition, employee, project, customer, wTrack, salary, invoice, payment, holiday, vacation];
 })();
