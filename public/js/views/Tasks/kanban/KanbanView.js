@@ -317,15 +317,15 @@
             },
 
             hideItemsNumber: function (e) {
+                var el = e.target;
+
                 $(".allNumberPerPage").hide();
                 $(".newSelectList").hide();
-                if (!$(e.target).closest(".drop-down-filter").length) {
-                    $(".allNumberPerPage").hide();
-                    if ($(".drop-down-filter").is(":visible")) {
-                        $(".drop-down-filter").hide();
-                        $('.search-content').removeClass('fa-caret-up')
-                    }
-                }
+                if (!el.closest('.search-view')) {
+                    $(".drop-down-filter").hide();
+                    $('.search-options').hide();
+                    $('.search-content').removeClass('fa-caret-up');
+                };
             },
 
             foldUnfiltredItems: function (workflows) {
@@ -333,6 +333,26 @@
                 var el;
                 var list_id;
                 var foldList;
+                var choosen = this.$el.find('.chosen');
+                var self = this;
+
+                this.filter = {};
+                if (choosen.length) {
+                    choosen.each(function (index, elem) {
+                        if (self.filter[elem.children[0].value]) {
+                            self.filter[elem.children[0].value].push(elem.children[1].value);
+                        } else {
+                            self.filter[elem.children[0].value] = [];
+                            self.filter[elem.children[0].value].push(elem.children[1].value);
+                        }
+                    });
+                    _.each(workflows, function (wfModel) {
+                        $('.column').children('.item').remove();
+                        dataService.getData('/Tasks/kanban', { workflowId: wfModel._id, filter: this.filter }, this.asyncRender, this);
+                    }, this);
+
+                    return false
+                }
 
                 list_id = _.pluck(workflows, '_id');
                 showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
@@ -371,6 +391,7 @@
             render: function () {
                 var self = this;
                 var FilterView;
+                var showList;
                 var itemCount;
                 var workflows = this.workflowsCollection.toJSON();
 
@@ -438,19 +459,19 @@
                 $(document).on("keypress", "#cPerPage", this.isNumberKey);
                 this.$el.unbind();
 
-                // Filter rendering begin------
-                FilterView = new filterView({ collection: workflows, customCollection: []});
-                // Filter rendering end--------
-
-                // Filter custom event listen ------begin
-                FilterView.bind('filter', function(){
-                    self.foldUnfiltredItems(workflows)
+                dataService.getData('/task/getFilterValues', null, function (values) {
+                    FilterView = new filterView({ collection: workflows, customCollection: values});
+                    // Filter custom event listen ------begin
+                    FilterView.bind('filter', function(){
+                        self.foldUnfiltredItems(workflows)
+                    });
+                    FilterView.bind('defaultFilter', function () {
+                        self.showDefaultFilter(workflows)
+                    });
+                    // Filter custom event listen ------end
                 });
-                FilterView.bind('defaultFilter', function () {
-                    self.showDefaultFilter(workflows)
-                });
 
-                // Filter custom event listen ------end
+
                 $(document).on("click", function (e) {
                     self.hideItemsNumber(e);
                 });

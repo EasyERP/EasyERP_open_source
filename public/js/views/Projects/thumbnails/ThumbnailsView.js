@@ -55,6 +55,7 @@
                     target$.closest("li").find("input").prop("checked", !target$.closest("li").find("input").prop("checked"));
                 }
             },
+
             showNewSelect: function (e) {
                 if ($(".newSelectList").is(":visible")) {
                     this.hideHealth();
@@ -84,6 +85,7 @@
                 this.hideHealth();
                 return false;
             },
+
             chooseHealthDd: function (e) {
                 var target$ = $(e.target);
                 var target = target$.parents(".health-wrapper");
@@ -108,10 +110,12 @@
                 $(".health-wrapper ul").hide();
                 $(".newSelectList").hide();
             },
+
             showHealthDd: function (e) {
                 $(e.target).parents(".health-wrapper").find("ul").toggle();
                 return false;
             },
+
             showfilter: function (e) {
                 $(".filter-check-list").toggle();
                 return false;
@@ -129,16 +133,31 @@
             },
 
             showFilteredPage: function (workflowIdArray) {
+                var chosen = this.$el.find('.chosen');
+                var self = this;
+
                 this.$el.find('.thumbnail').remove();
                 this.startTime = new Date();
                 this.newCollection = false;
-                this.filter = (this.filter && this.filter !== 'empty') ? this.filter : {};
-                this.filter['workflow'] = workflowIdArray;
+                this.filter =  {};
+                if (workflowIdArray.length) this.filter['workflow'] = workflowIdArray;
                 this.defaultItemsNumber = 0;
+
+                if (chosen) {
+                    chosen.each(function (index, elem) {
+                        if (self.filter[elem.children[0].value]) {
+                            self.filter[elem.children[0].value].push(elem.children[1].value);
+                        } else {
+                            self.filter[elem.children[0].value] = [];
+                            self.filter[elem.children[0].value].push(elem.children[1].value);
+                        }
+                    });
+                }
                 this.changeLocationHash(null, this.defaultItemsNumber, this.filter);
                 this.collection.showMore({ count: this.defaultItemsNumber, page: 1, filter: this.filter });
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
             },
+
             getTotalLength: function (currentNumber, filter, newCollection) {
                 dataService.getData('/totalCollectionLength/Projects', { currentNumber: currentNumber, filter: this.filter, newCollection: this.newCollection }, function (response, context) {
                     var showMore = context.$el.find('#showMoreDiv');
@@ -206,18 +225,21 @@
 
                 common.populateWorkflowsList("Projects", ".filter-check-list", "", "/Workflows", null, function (stages) {
                     var stage = (self.filter) ? self.filter.workflow || [] : [];
-                    FilterView = new filterView({ collection: stages, customCollection: []});
                     self.trigger('incomingStages', stages);
-                    // Filter custom event listen ------begin
-                    FilterView.bind('filter', function () {
-                        showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
-                        self.showFilteredPage(showList)
+                    dataService.getData('/project/getFilterValues', null, function (values) {
+                        FilterView = new filterView({ collection: stages, customCollection: values});
+                        // Filter custom event listen ------begin
+                        FilterView.bind('filter', function () {
+                            showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
+                            self.showFilteredPage(showList)
+                        });
+                        FilterView.bind('defaultFilter', function () {
+                            showList = _.pluck(self.stages, '_id');
+                            self.showFilteredPage(showList)
+                        });
+                        // Filter custom event listen ------end
+
                     });
-                    FilterView.bind('defaultFilter', function () {
-                        showList = _.pluck(self.stages, '_id');
-                        self.showFilteredPage(showList)
-                    });
-                    // Filter custom event listen ------end
                 });
                 $('#check_all').click(function () {
                     $(':checkbox').prop('checked', this.checked);
@@ -259,6 +281,7 @@
                 event.preventDefault();
                 this.collection.showMore({ filter: this.filter, newCollection: this.newCollection });
             },
+
             showMoreContent: function (newModels) {
                 var holder = this.$el;
                 var showMore = holder.find('#showMoreDiv');

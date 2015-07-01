@@ -64,9 +64,10 @@ var Employee = function (models) {
     };
 
     this.getFilterValues = function (req, res, next) {
-        var task = models.get(req.session.lastDb, 'Employee', EmployeeSchema);
+        var Employee = models.get(req.session.lastDb, 'Employee', EmployeeSchema);
 
-        task.aggregate([
+        Employee
+            .aggregate([
             {
                 $group:{
                     _id: null,

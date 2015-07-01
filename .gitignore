@@ -38,3 +38,8 @@ menu_Sales_\[quotation|order|Invoice|Product\].js
 public/js/libs/async
 public/js/libs/backbone.memento
 public/js/libs/moment
+EasyErp-Desktop.njsproj
+.ntvs_analysis.dat
+EasyErp-Desktop.sln
+.vs
+routes/uploads
