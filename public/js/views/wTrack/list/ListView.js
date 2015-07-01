@@ -294,7 +294,11 @@ define([
             var editWtrackModel = this.editCollection.get(modelId);
 
             if (!this.changedModels[modelId]) {
-                this.changedModels[modelId] = {};
+                if(!editWtrackModel.id){
+                    this.changedModels[modelId] = editWtrackModel.attributes;
+                } else {
+                    this.changedModels[modelId] = {};
+                }
             }
 
             changedAttr = this.changedModels[modelId];
@@ -358,6 +362,7 @@ define([
                 model = this.editCollection.get(id);
                 model.changed = this.changedModels[id];
             }
+
             this.editCollection.save();
         },
 
@@ -735,6 +740,7 @@ define([
             var showList;
             var self = this;
             var checkedElements = $('.drop-down-filter input:checkbox:checked');
+            var chosen = this.$el.find('.chosen');
 
             this.startTime = new Date();
             this.newCollection = false;
@@ -748,8 +754,8 @@ define([
                 this.filter['departments'] = showList;
             };
 
-            if ($('.chosen')) {
-                $('.chosen').each(function (index, elem) {
+            if (chosen) {
+                chosen.each(function (index, elem) {
                     if (self.filter[elem.children[0].value]) {
                         self.filter[elem.children[0].value].push(elem.children[1].value);
                     } else {

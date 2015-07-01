@@ -14,6 +14,7 @@ function (WorkflowsTemplate, kanbanSettingsTemplate, WorkflowsCollection, Kanban
     var collection = new OpportunitiesCollection();
     var OpportunitiesKanbanView = Backbone.View.extend({
         el: '#content-holder',
+        that: this,
         events: {
             "dblclick .item": "gotoEditForm",
             "click .item": "selectItem",
@@ -270,6 +271,28 @@ function (WorkflowsTemplate, kanbanSettingsTemplate, WorkflowsCollection, Kanban
             var foldList;
             var showList;
             var el;
+            var self = this;
+            var itemsNumber = $("#itemsNumber").text();
+            var chosen = this.$el.find('.chosen');
+
+            this.filter = {};
+            if (chosen.length) {
+                chosen.each(function (index, elem) {
+                    if (self.filter[elem.children[0].value]) {
+                        self.filter[elem.children[0].value].push(elem.children[1].value);
+                    } else {
+                        self.filter[elem.children[0].value] = [];
+                        self.filter[elem.children[0].value].push(elem.children[1].value);
+                    }
+                });
+                _.each(workflows, function (wfModel) {
+                    $('.column').children('.item').remove();
+                    dataService.getData('/Opportunities/kanban', { workflowId: wfModel._id, filter: this.filter }, this.asyncRender, this);
+                }, this);
+
+
+               return false
+            }
 
             list_id = _.pluck(workflows, '_id');
             showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();

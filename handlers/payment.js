@@ -33,7 +33,7 @@ var Payment = function (models) {
 
     this.getForView = function (req, res, next) {
         var viewType = req.params.viewType;
-        var forSale = req.params.byType === 'sales';
+        var forSale = req.params.byType === 'customers';
 
         switch (viewType) {
             case "list":
@@ -235,11 +235,21 @@ var Payment = function (models) {
 
     this.totalCollectionLength = function (req, res, next) {
         var Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
+        var forSale = req.params.byType === 'customers';
+
+        var queryObject;
+
         var departmentSearcher;
         var contentIdsSearcher;
 
         var contentSearcher;
         var waterfallTasks;
+
+        if(forSale) {
+            queryObject = {
+                forSale: forSale
+            };
+        }
 
         departmentSearcher = function (waterfallCallback) {
             models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
@@ -263,6 +273,7 @@ var Payment = function (models) {
                 {
                     $match: {
                         $and: [
+                            queryObject,
                             {
                                 $or: [
                                     {

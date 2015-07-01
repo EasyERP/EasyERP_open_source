@@ -251,6 +251,28 @@
                 var foldList;
                 var showList;
                 var el;
+                var self = this;
+                var chosen = this.$el.find('.chosen');
+
+                this.filter = {};
+
+                if (chosen.length) {
+                    chosen.each(function (index, elem) {
+                        if (self.filter[elem.children[0].value]) {
+                            self.filter[elem.children[0].value].push(elem.children[1].value);
+                        } else {
+                            self.filter[elem.children[0].value] = [];
+                            self.filter[elem.children[0].value].push(elem.children[1].value);
+                        }
+                    });
+                    _.each(workflows, function (wfModel) {
+                        $('.column').children('.item').remove();
+                        dataService.getData('/Applications/kanban', { workflowId: wfModel._id, filter: this.filter }, this.asyncRender, this);
+                    }, this);
+
+
+                    return false
+                }
 
                 list_id = _.pluck(workflows, '_id');
                 showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
@@ -336,24 +358,27 @@
                 this.$el.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
                 $(document).on("keypress", "#cPerPage", this.isNumberKey);
                 this.$el.unbind();
-                FilterView = new filterView({ collection: workflows, customCollection: []});
                 $(document).on("click", function (e) {
                     self.hideItemsNumber(e);
                 });
 
-                // Filter custom event listen ------begin
-                FilterView.bind('filter', function () {
-                    self.showFiltredPage(workflows)
-                });
-                FilterView.on('defaultFilter', function () {
-                    showList = _.pluck(workflows, '_id');
-
-                    showList.forEach(function (id) {
-                        el = $("td.column[data-id='"+id+"']");
-                        el.removeClass("fold");
+                dataService.getData('/employee/getFilterValues', null, function (values) {
+                    FilterView = new filterView({ collection: workflows, customCollection: values});
+                    // Filter custom event listen ------begin
+                    FilterView.bind('filter', function () {
+                        self.showFiltredPage(workflows)
                     });
+                    FilterView.on('defaultFilter', function () {
+                        showList = _.pluck(workflows, '_id');
+
+                        showList.forEach(function (id) {
+                            el = $("td.column[data-id='"+id+"']");
+                            el.removeClass("fold");
+                        });
+                    });
+                    // Filter custom event listen ------end
                 });
-                // Filter custom event listen ------end
+
                 return this;
             }
         });
