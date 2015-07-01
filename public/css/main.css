@@ -8599,6 +8599,89 @@ textarea#editInput {
     padding: 0 !important;
 }
 
+.grid-conatiner .attendanceTop {
+    margin-bottom: 10px;
+}
+
+.grid-conatiner .attendanceTop div {
+    border: 1px solid #d2d2d2;
+    padding: 5px;
+}
+
+.grid-conatiner .attendanceTop div.pull-left {
+    margin-right: 10px;
+}
+
+.grid-conatiner .statisticsAtten {
+    margin-top: 10px;
+}
+
+.grid-conatiner .statisticsAtten table {
+    width: 100%;
+}
+
+.grid-conatiner .statisticsAtten table tr.footerRow {
+    border-bottom: 1px solid #4c5975;
+}
+
+.grid-conatiner .statisticsAtten table tr.footerRow td span {
+    min-height: 10px;
+    content: " ";
+}
+
+.grid-conatiner .statisticsAtten table tr td {
+    border-right: 1px solid #4c5975;
+}
+
+.grid-conatiner .statisticsAtten table tr td .item {
+    padding: 0 0 10px 0;
+}
+
+.grid-conatiner .statisticsAtten table tr td .item .title {
+    text-align: center;
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.grid-conatiner .statisticsAtten table tr td .item .countDays {
+    font-size: 52px;
+    color: #fff;
+    width: 126px;
+    padding: 0 20px;
+    text-align: center;
+    margin: 0 auto;
+}
+
+.grid-conatiner .statisticsAtten table tr td .item .countDays.leave, .grid-conatiner .statisticsAtten table tr td .item .countDays.working {
+    background-color: #36384e;
+}
+
+.grid-conatiner .statisticsAtten table tr td .item .countDays.vacation {
+    background-color: #a22a2d;
+}
+
+.grid-conatiner .statisticsAtten table tr td .item .countDays.personal {
+    background-color: #f9a203;
+}
+
+.grid-conatiner .statisticsAtten table tr td .item .countDays.sick {
+    background-color: #228825;
+}
+
+.grid-conatiner .statisticsAtten table tr td .item .countDays.education {
+    background-color: #0000fc;
+}
+
+.grid-conatiner .statisticsAtten table tr td .item .lastTime {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.grid-conatiner .statisticsAtten table tr td .item .percent {
+    text-align: center;
+    color: #eb759e;
+}
+
 .grid-conatiner.revenue {
     background-color: #303031;
     color: #ffffff;
@@ -8691,7 +8774,7 @@ textarea#editInput {
 }
 
 .grid-conatiner.revenue .th-trend,
-.grid-conatiner.revenue .trend{
+.grid-conatiner.revenue .trend {
     width: 7.5%;
 }
 
@@ -8852,12 +8935,12 @@ textarea#editInput {
 }
 
 .drop-down-filter {
-  display: none;
-  position: absolute;
-  z-index: 10;
-  width: 170px;
-  background-color: white;
-  border: 1px solid #c0c0c0;
+    display: none;
+    position: absolute;
+    z-index: 10;
+    width: 165px;
+    background-color: white;
+    border: 1px solid #c0c0c0;
 }
 
 .drop-down-filter li {

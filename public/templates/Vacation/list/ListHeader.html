@@ -1,5 +1,5 @@
 ﻿<div>
-    <table class="list vacation-list">
+    <table class="vacation-list">
         <col width="5%">
         <col width="5%">
         <col width="75%">
@@ -8,29 +8,13 @@
         <thead>
         <tr>
             <th colspan="2">
-                <a id="monthSelect" class="current-selected" href="javascript:;">Select</a>
+                <a id="monthSelect" class="current-selected" href="javascript:;">May</a>
             </th>
-            <th rowspan="2">
-                <table class="list subVacationHeader-list">
-                    <thead>
-                        <tr>
-                            <th colspan="<%=daysNameArray.length%>" >Something</th>
-                        </tr>
-                        <tr>
-                            <%for (var i = 0; i <= daysNameArray.length - 1; i++) {%>
-                                <th><%=daysNameArray[i]%></th>
-                            <%}%>
-                        </tr>
-                        <tr>
-                            <%for (var i = 1; i <= daysNameArray.length; i++) {%>
-                                <th><%=i%></th>
-                            <%}%>
-                        </tr>
-                    </thead>
-                </table>
+            <th id="subHeaderHolder" rowspan="2">
+
             </th>
             <th>
-                <a id="yearSelect" class="current-selected" href="javascript:;">Select</a>
+                <a id="yearSelect" class="current-selected" href="javascript:;">2015</a>
             </th>
         </tr>
         <tr>

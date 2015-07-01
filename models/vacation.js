@@ -11,8 +11,14 @@ module.exports = (function () {
             _id: {type: ObjectId, ref: 'Employees', default: null},
             name: String
         },
+        department: {
+            _id: {type: ObjectId, ref: 'Department', default: null},
+            name: String
+        },
         startDate: Date,
         endDate: Date,
+        month: String,
+        year: String,
         vacationType: String
     }, {collection: 'Vacation'});
 

@@ -2,6 +2,7 @@
  * Created by soundstorm on 30.06.15.
  */
 var mongoose = require('mongoose');
+var moment = require('../public/js/libs/moment/moment');
 var Vacation = function (models) {
     var access = require("../Modules/additions/access.js")(models);
     var VacationSchema = mongoose.Schemas['Vacation'];
@@ -22,6 +23,29 @@ var Vacation = function (models) {
                         sort = options.sort;
                     } else {
                         sort = {"startDate": -1};
+                    }
+
+                    if (options) {
+                        if (options.sort) {
+                            sort = options.sort;
+                        } else {
+                            sort = {"startDate": -1};
+                        }
+                        if (options.employee) {
+                            queryObject['employee._id'] = options.employee;
+                        }
+                        if (options.year && options.year !== 'line') {
+                            queryObject.year = options.year;
+                        } else if (options.year) {
+                            var date;
+
+                            date = new Date();
+                            date = moment([date.getFullYear(), date.getMonth() + 1]);
+                            queryObject.endDate = {'$lte': date.toISOString()};
+
+                            date.subtract(12, 'M');
+                            queryObject.startDate = {'$gte': date.toISOString()};
+                        }
                     }
 
                     query = Vacation.find(queryObject).sort(sort);
@@ -46,6 +70,9 @@ var Vacation = function (models) {
 
         switch (viewType) {
             case "list":
+                getVacationFilter(req, res, next);
+                break;
+            case "attendance":
                 getVacationFilter(req, res, next);
                 break;
         }

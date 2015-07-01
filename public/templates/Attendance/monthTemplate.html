@@ -1,0 +1,14 @@
+<% months.forEach(function(month){ %>
+<tr>
+    <td>
+        <span class="text-left"><%=month%></span>
+    </td>
+    <% days[month].forEach(function(day){ %>
+    <td class="dayOfMonth">
+        <span class="text-left <%= day.type %>">
+            <%=day.number%>
+        </span>
+    </td>
+    <% }) %>
+</tr>
+<% }) %>
