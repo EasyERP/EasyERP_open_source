@@ -90,37 +90,26 @@ define([
         attendance: function () {
             var self = this;
 
-            if (!this.isAuth) {
-                this.checkLogin(function (success) {
-                    if (success) {
-                        self.isAuth = true;
-                        renderAttendance();
-                    } else {
-                        if (App.requestedURL == null)
-                            App.requestedURL = Backbone.history.fragment;
-                        Backbone.history.fragment = "";
-                        Backbone.history.navigate("login", {trigger: true});
-                    }
-                });
-            }
-
-            function renderAttendance() {
-                var startTime = new Date();
-                var contentViewUrl = "views/Attendance/index";
-
-                if (self.mainView === null) {
-                    self.main("Attendance");
+            this.checkLogin(function (success) {
+                if (success) {
+                    renderAttendance(self);
                 } else {
-                    self.mainView.updateMenu("Attendance");
+                    self.redirectTo();
+                }
+            });
+
+            function renderAttendance(context) {
+                var contentViewUrl = "views/Attendance/index";
+                var self = context;
+
+                if (context.mainView === null) {
+                    context.main("Attendance");
+                } else {
+                    context.mainView.updateMenu("Attendance");
                 }
 
                 require([contentViewUrl], function (contentView) {
-                    var contentview;
-
-                    custom.setCurrentVT('list');
-
-                    contentview = new contentView({startTime: startTime});
-
+                    var contentview = new contentView();
                     self.changeView(contentview);
                 });
             }

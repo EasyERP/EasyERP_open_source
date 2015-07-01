@@ -3241,6 +3241,7 @@ dl {
     }
   }
 }
+
 .removeValues {
   position: absolute;
   top: 3px;
@@ -4998,6 +4999,155 @@ textarea#editInput {
   padding: 0 !important;
 }
 
+.grid {
+  min-width: 100%;
+  font-size: 11px;
+  border-bottom: 1px solid transparent;
+
+  tr th span {
+    padding-right: 6px;
+    text-align: right;
+    height: 25px;
+    line-height: 25px;
+    display: block;
+  }
+
+  &.attendance {
+    border-bottom: 5px solid #4c5975;
+
+    tr:first-child {
+      border-right: 1px solid #4c5975;
+    }
+    th {
+      border: 1px solid #4c5975;
+      background-color: #4c5975;
+      color: #fff;
+    }
+
+    tr {
+      border-bottom: none;
+
+      td:first-child {
+        min-width: 100px;
+        border-left: 1px solid #4c5975;
+        border-right: 1px solid #4c5975;
+      }
+    }
+
+    .vacation {
+      background-color: #a32a2c;
+      color: #ffffff;
+    }
+    .personal {
+      background-color: #fba302;
+      color: #ffffff;
+    }
+    .sick {
+      background-color: #228924;
+      color: #ffffff;
+    }
+    .education {
+      background-color: #0000fd;
+      color: #ffffff;
+    }
+    .borderRight {
+      border-right: 1px solid #4c5975;
+    }
+    .weekend {
+      color: #ccc;
+      //      background-color: #ccc;
+    }
+  }
+}
+
+.grid-conatiner {
+  .attendanceTop {
+    margin-bottom: 10px;
+    div {
+      border: 1px solid #d2d2d2;
+      padding: 5px;
+
+      &.pull-left {
+        margin-right: 10px;
+      }
+    }
+    &:after {
+      display: table;
+      content: " ";
+      clear: both;
+    }
+  }
+  .statisticsAtten {
+    margin-top: 10px;
+    table {
+      width: 100%;
+
+      tr {
+
+        &.footerRow {
+          border-bottom: 1px solid #4c5975;
+          td {
+            span {
+              min-height: 10px;
+              content: " ";
+            }
+          }
+        }
+
+        td {
+          border-right: 1px solid #4c5975;
+
+          &:last-child {
+            border: none;
+          }
+
+          .item {
+            padding: 0 0 10px 0;
+
+            .title {
+              text-align: center;
+              font-size: 16px;
+              margin-bottom: 10px;
+            }
+            .countDays {
+              font-size: 52px;
+              color: #ffffff;
+              width: 126px;
+              padding: 20px;
+              text-align: center;
+              margin: 0 auto;
+
+              &.leave, &.working {
+                background-color: #36384e;
+              }
+              &.vacation {
+                background-color: #a22a2d;
+              }
+              &.personal {
+                background-color: #f9a203;
+              }
+              &.sick {
+                background-color: #228825;
+              }
+              &.education {
+                background-color: #0000fc;
+              }
+            }
+            .lastTime {
+              text-align: center;
+              margin-top: 10px;
+            }
+            .percent {
+              text-align: center;
+              color: #eb759e;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
 .grid-conatiner.revenue {
   background-color: #303031;
   color: #ffffff;
@@ -5256,6 +5406,19 @@ textarea#editInput {
   display: inline-block;
 }
 
+#profilesList {
+
+  a {
+    width: 100%;
+    display: inline-block;
+    box-sizing: border-box;
+  }
+
+  .active {
+    display: list-item;
+  }
+}
+
 #searchContainer {
   float: right;
   width: 25%;
@@ -5277,7 +5440,7 @@ textarea#editInput {
   cursor: pointer;
 }
 
-.filterOptions, .filterActions{
+.filterOptions, .filterActions {
   display: none;
 }
 

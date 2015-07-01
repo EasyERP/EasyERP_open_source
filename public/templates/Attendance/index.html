@@ -38,17 +38,17 @@
 
     <table class="grid attendance" cellspacing="0" cellpadding="0">
         <thead>
-            <tr>
-                <th>
-                    <span></span>
-                </th>
+        <tr>
+            <th>
+                <span></span>
+            </th>
 
-                <% for(var i = 0,i < 6;i++){ weekDays.forEach(function(day){ %>
-                <th>
-                    <%= day %>
-                </th>
-                <% })} %>
-            </tr>
+            <% weekDays.forEach(function(day){ %>
+            <th>
+                <%= day %>
+            </th>
+            <% }) %>
+        </tr>
         </thead>
         <tbody id="attendanceMonth">
         </tbody>
@@ -78,7 +78,7 @@
                             <%= workingDays %>
                         </div>
                         <div class="lastTime">
-                            <%= lastWorkingDays %>
+                            LAST YEAR <%= lastWorkingDays %>
                         </div>
                         <div class="percent">
                             0
@@ -92,7 +92,7 @@
                             <%= vacation %>
                         </div>
                         <div class="lastTime">
-                            <%= lastVacation %>
+                            LAST YEAR <%= lastVacation %>
                         </div>
                         <div class="percent">
                             0
@@ -106,7 +106,7 @@
                             <%= personal %>
                         </div>
                         <div class="lastTime">
-                            <%= lastPersonal %>
+                            LAST YEAR <%= lastPersonal %>
                         </div>
                         <div class="percent">
                             0
@@ -120,7 +120,7 @@
                             <%= sick %>
                         </div>
                         <div class="lastTime">
-                            <%= lastSick %>
+                            LAST YEAR <%= lastSick %>
                         </div>
                         <div class="percent">
                             0
@@ -134,7 +134,7 @@
                             <%= education %>
                         </div>
                         <div class="lastTime">
-                            <%= lastEducation %>
+                            LAST YEAR <%= lastEducation %>
                         </div>
                         <div class="percent">
                             0
