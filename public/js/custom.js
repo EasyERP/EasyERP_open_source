@@ -82,6 +82,7 @@ define(['libs/date.format', 'common', 'constants'], function (dateformat, common
                     case CONTENT_TYPES.WTRACK:
                     case CONTENT_TYPES.SALARY:
                     case CONTENT_TYPES.MONTHHOURS:
+                    case CONTENT_TYPES.BONUSTYPE:
                     case CONTENT_TYPES.HOLIDAY:
                     case CONTENT_TYPES.VACATION:
                         App.currentViewType = 'list';
@@ -124,6 +125,7 @@ define(['libs/date.format', 'common', 'constants'], function (dateformat, common
                     case CONTENT_TYPES.WTRACK:
                     case CONTENT_TYPES.SALARY:
                     case CONTENT_TYPES.MONTHHOURS:
+                    case CONTENT_TYPES.BONUSTYPE:
                     case CONTENT_TYPES.HOLIDAY:
                     case CONTENT_TYPES.VACATION:
                         App.currentViewType = 'list';
