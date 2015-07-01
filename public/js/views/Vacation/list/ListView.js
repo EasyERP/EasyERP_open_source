@@ -1,18 +1,20 @@
 define([
         'text!templates/Vacation/list/ListHeader.html',
+        'text!templates/Vacation/list/subHeader/ListHeader.html',
         'text!templates/Holiday/list/cancelEdit.html',
         'views/Holiday/CreateView',
-        'views/Holiday/list/ListItemView',
-        'models/HolidayModel',
-        'collections/Holiday/filterCollection',
+        'views/Vacation/list/ListItemView',
+        'models/VacationModel',
+        'collections/Vacation/filterCollection',
         'collections/Holiday/editCollection',
         'common',
         'dataService',
         'constants',
-        'async'
+        'async',
+        'moment'
     ],
 
-    function (listTemplate, cancelEdit, createView, listItemView, holidayModel, holidayCollection, editCollection, common, dataService, CONSTANTS, async) {
+    function (listTemplate, subListTemplate, cancelEdit, createView, listItemView, vacationModel, vacationCollection, editCollection, common, dataService, CONSTANTS, async, moment) {
         var HolidayListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -39,7 +41,7 @@ define([
                 this.page = options.collection.page;
                 this.render();
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
-                this.contentCollection = holidayCollection;
+                this.contentCollection = vacationCollection;
             },
 
             events: {
@@ -83,7 +85,7 @@ define([
 
             resetCollection: function (model) {
                 if (model && model._id) {
-                    model = new holidayModel(model);
+                    model = new vacationModel(model);
                     this.collection.add(model);
                 } else {
                     this.collection.set(this.editCollection.models, { remove: false });
@@ -132,7 +134,7 @@ define([
                 var editedElementRowId;
                 var editedElementContent;
                 var editedElementValue;
-                var editHolidayModel;
+                var editVacationModel;
 
                 if (editedElement.length) {
                     editedCol = editedElement.closest('td');
@@ -140,11 +142,11 @@ define([
                     editedElementContent = editedCol.data('content');
                     editedElementValue = editedElement.val();
 
-                    editHolidayModel = this.editCollection.get(editedElementRowId);
+                    editVacationModel = this.editCollection.get(editedElementRowId);
 
                     if (!this.changedModels[editedElementRowId]) {
-                        if(!editHolidayModel.id){
-                            this.changedModels[editedElementRowId] = editHolidayModel.attributes;
+                        if(!editVacationModel.id){
+                            this.changedModels[editedElementRowId] = editVacationModel.attributes;
                         } else {
                             this.changedModels[editedElementRowId] = {};
                         }
@@ -243,7 +245,7 @@ define([
 
             fetchSortCollection: function (sortObject) {
                 this.sort = sortObject;
-                this.collection = new holidayCollection({
+                this.collection = new vacationCollection({
                     viewType: 'list',
                     sort: sortObject,
                     page: this.page,
@@ -321,20 +323,66 @@ define([
                 }, this);
             },
 
+            renderdSubHeader: function (currentEl) {
+                var subHeaderContainer;
+
+                var monthElement;
+                var yearElement;
+
+                var month;
+                var year;
+
+                var date;
+
+                var daysInMonth;
+                var dateDay;
+                var daysRow = '';
+                var daysNumRow = '';
+                var options;
+
+                subHeaderContainer = currentEl.find('#subHeaderHolder');
+                monthElement = currentEl.find('#monthSelect');
+                yearElement = currentEl.find('#yearSelect');
+
+                month = moment().month(monthElement.text()).format('MM');
+                year = moment().year(yearElement.text()).format('YYYY');
+
+                date = moment([year, month - 1, 1]);
+                daysInMonth = date.daysInMonth();
+                dateDay = date;
+
+                for ( var i = 1; i <= daysInMonth; i++ ) {
+                    daysRow += '<th>' + dateDay.format('ddd') + '</th>';
+                    daysNumRow += '<th>' + i + '</th>';
+                    dateDay = date.add(1, 'd');
+                }
+
+                options = {
+                    'daysRow': daysRow,
+                    'daysNumRow': daysNumRow,
+                    'daysCount': daysInMonth
+                };
+
+                subHeaderContainer.html('');
+
+                subHeaderContainer.append(_.template(subListTemplate, {options: options}));
+            },
+
+
             render: function () {
                 $('.ui-dialog ').remove();
                 var self = this;
                 var currentEl = this.$el;
-                var daysNameArray = ['Thu',  'Fri',  'Sat',  'Sun',  'Mon',  'Tue',  'Wed',  'Thu',  'Fri',  'Sat',  'Sun',  'Mon',  'Tue',  'Wed',  'Thu',  'Fri',  'Sat',  'Sun',  'Mon',  'Tue',  'Wed',  'Thu',  'Fri',  'Sat',  'Sun',  'Mon',  'Tue',  'Wed',  'Thu',  'Fri',  'Sat'];
 
                 currentEl.html('');
-                currentEl.append(_.template(listTemplate, {daysNameArray: daysNameArray}));
-                /*currentEl.append(new listItemView({
-                    collection: this.collection,
-                    page: this.page,
-                    itemsNumber: this.collection.namberToShow
+                currentEl.append(_.template(listTemplate));
+
+                this.renderdSubHeader(currentEl);
+
+                currentEl.append(new listItemView({
+                    collection: this.collection
                 }).render());//added two parameters page and items number
-*/
+
                 setTimeout(function () {
                     self.editCollection = new editCollection(self.collection.toJSON());
                     self.editCollection.on('saved', self.savedNewModel, self);
@@ -536,7 +584,7 @@ define([
                     date: now
                 };
 
-                var model = new holidayModel(startData, { parse: true });
+                var model = new vacationModel(startData, { parse: true });
 
                 startData.cid = model.cid;
 
