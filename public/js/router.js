@@ -74,7 +74,7 @@ define([
 
             $(document).on("click", function () {
                 var currentContentType = self.contentType ? self.contentType.toUpperCase() : '';
-                var contentTypes = {QUOTATION:'Quotation', ORDER:'Order', INVOICE:'Invoice'};
+                var contentTypes = {QUOTATION: 'Quotation', ORDER: 'Order', INVOICE: 'Invoice'};
                 if (contentTypes[currentContentType]) {
                     $(".list2 tbody").find("[data-id='false']").remove();
                 }

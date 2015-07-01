@@ -9,6 +9,7 @@ module.exports = function (models) {
     var handler = new ProjectHandler(models);
 
     router.get('/getForWtrack', handler.getForWtrack);
+    router.get('/getFilterValues', handler.getFilterValues);
 
     return router;
 };

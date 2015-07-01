@@ -43,4 +43,6 @@ module.exports = (function () {
     require('./wTrackInvoice.js');
     require('./monthHours.js');
     require('./holiday.js');
+    require('./vacation.js');
+    require('./bonusType.js');
 })();

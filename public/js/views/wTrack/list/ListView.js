@@ -365,6 +365,7 @@ define([
             var savedRow = this.$listTable.find('#false');
             var modelId;
             var checkbox = savedRow.find('input[type=checkbox]');
+
             modelObject = modelObject.success;
 
             if (modelObject) {

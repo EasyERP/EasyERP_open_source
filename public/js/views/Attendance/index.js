@@ -26,56 +26,64 @@ define([
 
         initialize: function () {
             var self = this;
+            var employees;
+            var status;
+            var years;
 
             this.model = new AttendanceModel();
             this.listenTo(this.model, 'change:currentEmployee', this.changeEmployee);
             this.listenTo(this.model, 'change:currentStatus', this.changeStatus);
             this.listenTo(this.model, 'change:currentTime', this.changeTime);
 
-            while (find(this.model.years,moment().year()) == -1) {
-                this.model.years.push(this.model.years.pop() + 1);
-            }
+            employees = this.model.get('employees');
+            status = this.model.get('status');
+            years = this.model.get('years');
+            var currentEmployee = employees[0];
+            var currentStatus = status[0];
+            var currentTime = years[0];
 
-            var currentEmployee = this.model.employees[0];
-            var currentStatus = this.model.status[0];
-            var currentTime = this.model.years[0];
+            while (years.indexOf(moment().year()) === -1) {
+                years.push(years[years.length-1] + 1);
+            }
 
             this.model.set({
                 currentEmployee: currentEmployee,
                 currentStatus: currentStatus,
-                currentTime: currentTime
+                currentTime: currentTime,
+                years: years
             });
 
-            dataService.getData('/attendance', {
-                ID: currentEmployee._id,
-                TIME: currentTime,
-                STATUS: currentStatus
-            }, function (attendance) {
-                self.render(attendance);
-            });
+            //dataService.getData('/attendance', {
+            //    ID: currentEmployee._id,
+            //    TIME: currentTime,
+            //    STATUS: currentStatus
+            //}, function (attendance) {
+            //    self.render(attendance);
+            //});
         },
 
         changeEmployee: function () {
             var self = this;
 
-            dataService.getData('/attendance', {ID: id, TIME: time, STATUS: status}, function (attendance) {
-                self.render(attendance);
-            });
+            //dataService.getData('/attendance', {ID: 5, TIME: 5, STATUS: 5}, function (attendance) {
+            //    self.render(attendance);
+            //});
+            self.render();
         },
 
         changeStatus: function () {
-            dataService.getData('/employees', {STATUS: status}, function (employees) {
-                this.model.employees = employees;
-                this.model.currentEmployee = employees[0];
-            });
+            //dataService.getData('/employees', {STATUS: 5}, function (employees) {
+            //    this.model.employees = employees;
+            //    this.model.currentEmployee = employees[0];
+            //});
         },
 
         changeTime: function () {
             var self = this;
 
-            dataService.getData('/attendance', {ID: id, TIME: time, STATUS: status}, function (attendance) {
-                self.render(attendance);
-            });
+            //dataService.getData('/attendance', {ID: 5, TIME: 5, STATUS: 5}, function (attendance) {
+            //    self.render(attendance);
+            //});
         },
 
         generateMonthArray: function () {
@@ -144,7 +152,7 @@ define([
         render: function (attendance) {
             var self = this;
 
-            this.$el.html(this.template(model));
+            this.$el.html(this.template(self.model.toJSON()));
 
             var itemView = new MonthView({month: this.month, attendance: attendance});
             self.$el.append(itemView.render());

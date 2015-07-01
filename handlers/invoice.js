@@ -257,7 +257,14 @@ var Invoice = function (models) {
                     };
 
                     contentSearcher = function (invoicesIds, waterfallCallback) {
-                        optionsObject._id = {$in: invoicesIds};
+                        var workflowArray;
+                        if (req.query && req.query.filter && req.query.filter.workflow) {
+                            workflowArray = req.query.filter.workflow;
+                            optionsObject.workflow = {$in: workflowArray};
+                        } else {
+                            optionsObject._id = {$in: invoicesIds};
+
+                        }
 
                         var query = Invoice.find(optionsObject).limit(count).skip(skip).sort(sort);
 

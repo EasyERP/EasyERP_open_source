@@ -35,7 +35,9 @@ define([], function(){
         SALARY: 'Salary',
         REVENUE: 'Revenue',
         MONTHHOURS: 'monthHours',
+        BONUSTYPE: 'bonusType',
         HOLIDAY: 'Holiday',
+        VACATION: 'Vacation',
         ATTENDANCE: 'Attendance',
 
         RESPONSES: {

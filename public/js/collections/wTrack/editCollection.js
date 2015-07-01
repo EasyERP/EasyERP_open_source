@@ -1,9 +1,12 @@
-﻿﻿define(['./filterCollection'], function (ParentCollection) {
-    var EditableCollection = ParentCollection.extend({
+﻿define([
+        './filterCollection'
+    ],
+    function (ParrantCollection) {
+        var EditableCoolecton = ParrantCollection.extend({
 
-        initialize: function () {
-            this.on('change', this.change, this);
-        },
+            initialize: function(){
+                this.on( "change", this.change, this);
+            },
 
         save: function (changes) {
             var self = this;
