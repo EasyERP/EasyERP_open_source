@@ -39,7 +39,9 @@ module.exports = function (app, mainDb) {
     var taskRouter = require('./task')(models);
     var jobPositionRouter = require('./jobPosition')(models);
     var holidayRouter = require('./holiday')(models);
+    var monthHoursRouter = require('./monthHours')(models);
     var vacationRouter = require('./vacation')(models);
+    var bonusTypeRouter = require('./bonusType')(models);
 
     app.get('/', function (req, res, next) {
         res.sendfile('index.html');
@@ -77,6 +79,8 @@ module.exports = function (app, mainDb) {
     app.use('/jobPosition', jobPositionRouter);
     app.use('/holiday', holidayRouter);
     app.use('/vacation', vacationRouter);
+    app.use('/monthHours', monthHoursRouter);
+    app.use('/bonusType', bonusTypeRouter);
     app.get('/getDBS', function (req, res) {
         res.send(200, {dbsNames: dbsNames});
     });

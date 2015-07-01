@@ -278,7 +278,7 @@ var Quotation = function (models) {
             var queryObject = {};// {_id: {$in: quotationsIds}};
             var query;
             var workflowArray;
-            //queryObject.isOrder = isOrder;
+            queryObject.isOrder = isOrder;
 
             if (req.query && req.query.filter && req.query.filter.workflow) {
                 workflowArray = req.query.filter.workflow;
