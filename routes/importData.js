@@ -138,8 +138,8 @@ module.exports = function (models) {
 
                             objectToSave['companyInfo.industry'] = industry ? industry._id : industry;
 
-                            if(!objectToSave.type){
-                                objectToSave.type = objectToSave['companyInfo.size'] ? 'Company': 'Person';
+                            if (!objectToSave.type) {
+                                objectToSave.type = objectToSave['companyInfo.size'] ? 'Company' : 'Person';
                             }
 
                             model = new Customer(objectToSave);
@@ -179,8 +179,8 @@ module.exports = function (models) {
 
         function fetchWorkflow(query, callback) {
             query = query || {
-                    wId: 'Projects'
-                };
+                wId: 'Projects'
+            };
 
             var projectionObject = {
                 status: 1,
@@ -433,7 +433,7 @@ module.exports = function (models) {
                                 }
 
                                 objectToSave.project.customer = {
-                                    _id: result.project.customer ? result.project.customer._id: null,
+                                    _id: result.project.customer ? result.project.customer._id : null,
                                     name: result.project.customer && result.project.customer.name ? result.project.customer.name.first + ' ' + result.project.customer.name.last : ''
                                 };
 
@@ -616,8 +616,8 @@ module.exports = function (models) {
 
 
                             model = new Invoice(objectToSave);
-                            model.save(function(err, invoice){
-                                if(err){
+                            model.save(function (err, invoice) {
+                                if (err) {
                                     return cb(err);
                                 }
                                 cb();
@@ -710,8 +710,11 @@ module.exports = function (models) {
                                     if (err) {
                                         return callback(err);
                                     }
-                                    Customer.populate(invoice.project, { path: 'customer' , options: {lean: true}}, function(err, customer){
-                                        if(err){
+                                    Customer.populate(invoice.project, {
+                                        path: 'customer',
+                                        options: {lean: true}
+                                    }, function (err, customer) {
+                                        if (err) {
                                             return callback(err);
                                         }
 
@@ -732,8 +735,8 @@ module.exports = function (models) {
                             }
 
                             model = new Payment(objectToSave);
-                            model.save(function(err, result){
-                                if(err){
+                            model.save(function (err, result) {
+                                if (err) {
                                     return cb(err);
                                 }
 
@@ -741,8 +744,8 @@ module.exports = function (models) {
                                 console.log(invoiceId);
                                 console.log('======================================');
 
-                                Invoice.update({_id: invoiceId}, {$addToSet: {payments: result._id}}, function(err, invoice){
-                                    if(err){
+                                Invoice.update({_id: invoiceId}, {$addToSet: {payments: result._id}}, function (err, invoice) {
+                                    if (err) {
                                         return cb(err);
                                     }
                                     cb(null, result);
@@ -1265,26 +1268,38 @@ module.exports = function (models) {
                     }
 
                     if (fetchedVacation) {
-                        objectToSave.diff = {};
+                        var date = new Date(fetchedVacation['StartDate']);
+                        objectToSave.month =date.getMonth();
+                        objectToSave.year = date.getFullYear();
 
                         employeeQuery = {
                             ID: fetchedVacation['Employee']
                         };
 
-                        Employee.findOne(employeeQuery, {_id: 1, name: 1}, function (err, employee) {
-                            if (err) {
-                                return cb(err);
-                            }
+                        Employee.findOne(employeeQuery,
+                            {_id: 1, name: 1, department: 1})
+                            .populate('department')
+                            .lean()
+                            .exec(function (err, employee) {
+                                if (err) {
+                                    return cb(err);
+                                }
 
-                            if (employee) {
-                                objectToSave.employee = {};
-                                objectToSave.employee._id = employee._id || null;
-                                objectToSave.employee.name = employee.name ? employee.name.first + ' ' + employee.name.last : '';
+                                if (employee) {
+                                    objectToSave.employee = {};
+                                    objectToSave.employee._id = employee._id || null;
+                                    objectToSave.employee.name = employee.name ? employee.name.first + ' ' + employee.name.last : '';
 
-                                model = new Vacation(objectToSave);
-                                model.save(cb);
-                            }
-                        });
+                                    if (employee.department && employee.department.departmentName) {
+                                        objectToSave.department = {}
+                                        objectToSave.department._id = employee.department._id;
+                                        objectToSave.department.name = employee.department.departmentName;
+                                    }
+
+                                    model = new Vacation(objectToSave);
+                                    model.save(cb);
+                                }
+                            });
                     }
                 }, function (err) {
                     if (err) {
