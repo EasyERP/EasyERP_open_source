@@ -1,4 +1,4 @@
-﻿define([
+﻿﻿define([
         './filterCollection'
     ],
     function (ParentCollection) {
@@ -13,20 +13,11 @@
                 var model;
                 var models = [];
                 var modelObject;
-                var newModel;
                 var syncObject = {
                     trigger: this.trigger,
                     url: this.url,
                     toJSON: function () {
                         return models;
-                    }
-                };
-
-                var saveObject = {
-                    trigger: this.trigger,
-                    url: this.url,
-                    toJSON: function () {
-                        return newModel;
                     }
                 };
 
@@ -49,9 +40,10 @@
                         modelObject._id = model.id;
                         models.push(modelObject);
                     } else if (model && !model.id) {
-                        newModel = model.changed;
-                        newModel._id =  model.id;
-                        Backbone.sync("create", saveObject, options);
+                        modelObject = model.changed;
+                        model.set(modelObject);
+
+                        Backbone.sync("create", model, options);
                     }
                 }
 

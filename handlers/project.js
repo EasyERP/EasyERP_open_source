@@ -24,32 +24,6 @@ var Project = function (models) {
             });
     };
 
-    this.getFilterValues = function (req, res, next) {
-        var project = models.get(req.session.lastDb, 'Project', ProjectSchema);
-
-        project.aggregate([
-            {
-                $group:{
-                    _id: null,
-                    project: {
-                        $addToSet: '$projectName'
-                    },
-                    startDate: {
-                        $addToSet: '$StartDate'
-                    },
-                    endDate: {
-                        $addToSet: '$EndDate'
-                    }
-                }
-            }
-        ], function (err, result) {
-            if (err) {
-                return next(err);
-            }
-
-            res.status(200).send(result);
-        });
-    };
 };
 
 module.exports = Project;

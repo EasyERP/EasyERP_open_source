@@ -36,12 +36,8 @@ module.exports = function (app, mainDb) {
     var wTrackRouter = require('./wTrack')(models);
     var salaryRouter = require('./salary')(models);
     var opportunityRouter = require('./opportunity')(models);
-    var taskRouter = require('./task')(models);
-    var jobPositionRouter = require('./jobPosition')(models);
     var holidayRouter = require('./holiday')(models);
     var monthHoursRouter = require('./monthHours')(models);
-    var vacationRouter = require('./vacation')(models);
-    var bonusTypeRouter = require('./bonusType')(models);
 
     app.get('/', function (req, res, next) {
         res.sendfile('index.html');
@@ -75,12 +71,9 @@ module.exports = function (app, mainDb) {
     app.use('/revenue', revenueRouter);
     app.use('/salary', salaryRouter);
     app.use('/opportunity', opportunityRouter);
-    app.use('/task', taskRouter);
-    app.use('/jobPosition', jobPositionRouter);
     app.use('/holiday', holidayRouter);
-    app.use('/vacation', vacationRouter);
     app.use('/monthHours', monthHoursRouter);
-    app.use('/bonusType', bonusTypeRouter);
+
     app.get('/getDBS', function (req, res) {
         res.send(200, {dbsNames: dbsNames});
     });

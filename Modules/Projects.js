@@ -643,35 +643,13 @@ var Project = function (models, event) {
                                 var query = models.get(req.session.lastDb, "Project", projectSchema)
                                     .find()
                                     .where('_id').in(result);
-                                /*if (data && data.filter && data.filter.workflow) {
+                                if (data && data.filter && data.filter.workflow) {
                                     data.filter.workflow = data.filter.workflow.map(function (item) {
                                         return item === "null" ? null : item;
                                     });
 
                                     query.where('workflow').in(data.filter.workflow);
-
-                                } */
-                            if (data && data.filter) {
-                                for (var key in data.filter) {
-                                    switch (key) {
-                                        case 'workflow':
-                                            data.filter.workflow = data.filter.workflow.map(function (item) {
-                                                return item === "null" ? null : item;
-                                            });
-                                            query.where('workflow').in(data.filter.workflow);
-                                            break;
-                                        case 'project':
-                                            query.where('projectName').in(data.filter.project);
-                                            break;
-                                        case 'startDate':
-                                            query.where('StartDate').in(data.filter.startDate);
-                                            break;
-                                        case 'endDate':
-                                            query.where('EndDate').in(data.filter.endDate);
-                                            break;
-                                    }
-                                }
-                            } else if (data && (!data.newCollection || data.newCollection === 'false')) {
+                                } else if (data && (!data.newCollection || data.newCollection === 'false')) {
                                     query.where('workflow').in([]);
                                 }
                                 if (data.sort) {
@@ -880,27 +858,12 @@ var Project = function (models, event) {
                             if (!err) {
 
                                 var query = models.get(req.session.lastDb, "Project", projectSchema).find().where('_id').in(result);
+                                if (data && data.filter && data.filter.workflow) {
+                                    data.filter.workflow = data.filter.workflow.map(function (item) {
+                                        return item === "null" ? null : item;
+                                    });
 
-                                if (data && data.filter) {
-                                    for (var key in data.filter) {
-                                        switch (key) {
-                                            case 'workflow':
-                                                data.filter.workflow = data.filter.workflow.map(function (item) {
-                                                    return item === "null" ? null : item;
-                                                });
-                                                query.where('workflow').in(data.filter.workflow);
-                                                break;
-                                            case 'project':
-                                                query.where('projectName').in(data.filter.project);
-                                                break;
-                                            case 'startDate':
-                                                query.where('StartDate').in(data.filter.startDate);
-                                                break;
-                                            case 'endDate':
-                                                query.where('EndDate').in(data.filter.endDate);
-                                                break;
-                                        }
-                                    }
+                                    query.where('workflow').in(data.filter.workflow);
                                 } else if (data && (!data.newCollection || data.newCollection === 'false')) {
                                     query.where('workflow').in([]);
                                 }
@@ -1803,22 +1766,11 @@ var Project = function (models, event) {
                             if (!err) {
                                 var query = models.get(req.session.lastDb, 'Tasks', tasksSchema).
                                     where('project').in(projectsId.objectID());
-                                if (data && data.filter) {
-
-                                    for (var key in data.filter) {
-                                        switch (key) {
-                                            case 'workflow':
-                                                data.filter.workflow = data.filter.workflow.map(function (item) {
-                                                    return item === "null" ? null : item;
-                                                });
-                                                query.where('workflow').in(data.filter.workflow);
-                                                break;
-                                            case 'type':
-                                                query.where('type').in(data.filter.type);
-                                                break;
-                                        }
-                                    }
-
+                                if (data && data.filter && data.filter.workflow) {
+                                    data.filter.workflow = data.filter.workflow.map(function (item) {
+                                        return item === "null" ? null : item;
+                                    });
+                                    query.where('workflow').in(data.filter.workflow);
                                 } else if (data && (!data.newCollection || data.newCollection === 'false')) {
                                     query.where('workflow').in([]);
                                 }

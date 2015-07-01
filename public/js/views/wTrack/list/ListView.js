@@ -223,12 +223,7 @@ define([
             var isSelect = colType !== 'input' && el.prop("tagName") !== 'INPUT';
             var tempContainer;
             var width;
-            var editWtrackModel;
             var editedElement;
-            var editedCol;
-            var editedElementRowId;
-            var editedElementValue;
-            var editedElementContent;
 
             if (wTrackId && el.prop('tagName') !== 'INPUT') {
                 if (this.wTrackId) {
@@ -370,7 +365,6 @@ define([
             var savedRow = this.$listTable.find('#false');
             var modelId;
             var checkbox = savedRow.find('input[type=checkbox]');
-
             modelObject = modelObject.success;
 
             if (modelObject) {

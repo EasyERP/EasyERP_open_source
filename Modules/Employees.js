@@ -1,6 +1,5 @@
 // JavaScript source code
-var Employee = function (event, models)
-{
+var Employee = function (event, models) {
     var mongoose = require('mongoose');
     var logWriter = require('../helpers/logWriter.js');
     var department = mongoose.Schemas['Department'];
@@ -462,9 +461,6 @@ var Employee = function (event, models)
 
     function getFilter(req, response) {
         var data = {};
-        var optionsObject = {};
-        var or;
-        var filterObj;
         for (var i in req.query) {
             data[i] = req.query[i];
         }
@@ -473,68 +469,17 @@ var Employee = function (event, models)
         var contentType = data.contentType;
         var res = {};
         res['data'] = [];
+        var optionsObject = {};
 
         switch (contentType) {
             case ('Employees'): {
-                //----------------------
-                optionsObject['$and'] = [];
-                optionsObject['$and'].push({'isEmployee': true});
-
-                if (data && data.filter) {
-                    optionsObject['$and'].push({$or: []});
-                    or = optionsObject['$and'][1]['$or'];
-
-                    if (data.filter.department) {
-                        var arrOfObjectId = data.filter.department.objectID();
-                        or.push({ 'department': {$in: arrOfObjectId}});
-                    }
-                    if (data.filter.Name) {
-                     or.push({ 'name.last': {$in: data.filter.Name}});
-                     }
-                    if (data.filter.Email) {
-                        or.push({ 'workEmail': {$in: data.filter.Email}});
-                    }
-
-                    if (!or.length) {
-                        optionsObject['$and'].pop();
-                    }
-
-
-                }
-
-                if (data.filter.letter) {
+                optionsObject['isEmployee'] = true;
+                if (data.filter.letter)
                     optionsObject['name.last'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
-
-                }
             }
                 break;
             case ('Applications'): {
-                optionsObject['$and'] = [];
-                optionsObject['$and'].push({'isEmployee': false});
-
-                if (data && data.filter) {
-                    filterObj = {};
-                    optionsObject['$and'].push(filterObj);
-                    filterObj['$or'] = [];
-                    or = filterObj['$or'];
-
-                    for (var key in data.filter) {
-
-                        switch (key) {
-                            case 'Name':
-                                or.push({ 'name.last': {$in: data.filter.Name}});
-                                break;
-                            case 'Email':
-                                or.push({ 'workEmail': {$in: data.filter.Email}});
-                                break;
-
-                        }
-                    }
-                    if (!or.length) {
-                        optionsObject['$and'].pop();
-                    }
-                }
-
+                optionsObject['isEmployee'] = false;
             }
                 break;
         }
@@ -558,7 +503,6 @@ var Employee = function (event, models)
                             $match: {
                                 $and: [
                                     optionsObject,
-
                                     {
                                         $or: [
                                             {
@@ -749,9 +693,6 @@ var Employee = function (event, models)
 
         var res = {};
         var startTime = new Date();
-        var filterObj = {};
-        var or;
-
         res['data'] = [];
         res['workflowId'] = data.workflowId;
         models.get(req.session.lastDb, "Department", department).aggregate(
@@ -767,28 +708,17 @@ var Employee = function (event, models)
             function (err, deps) {
                 if (!err) {
                     var arrOfObjectId = deps.objectID();
-                    filterObj['$and'] = [];
-                    filterObj['$and'].push({isEmployee: false});
-                    filterObj['$and'].push({workflow: objectId(data.workflowId)});
-                    filterObj['$and'].push({$or: []});
-                    or = filterObj['$and'][2]['$or'];
-
-
-                    if ( data.filter && data.filter.Name) {
-                        or .push({ 'name.last': {$in: data.filter.Name}});
-                    }
-                    if ( data.filter && data.filter.Email) {
-                        or .push({ 'workEmail': {$in: data.filter.Email}});
-                    }
-                    if (!filterObj['$and'][2]['$or'].length) {
-                       filterObj['$and'].pop();
-                    }
 
                     models.get(req.session.lastDb, "Employees", employeeSchema).aggregate(
                         {
                             $match: {
                                 $and: [
-                                    filterObj,
+                                    {
+                                        isEmployee: false
+                                    },
+                                    {
+                                        workflow: objectId(data.workflowId)
+                                    },
                                     {
                                         $or: [
                                             {

@@ -368,6 +368,7 @@ var wTrack = function (models) {
                 .limit(count)
                 .skip(skip)
                 .sort(sort)
+                .lean()
                 .exec(waterfallCallback);
         };
 

@@ -35,13 +35,14 @@ define([], function(){
         SALARY: 'Salary',
         REVENUE: 'Revenue',
         MONTHHOURS: 'monthHours',
-        BONUSTYPE: 'bonusType',
         HOLIDAY: 'Holiday',
-        VACATION: 'Vacation',
+        ATTENDANCE: 'Attendance',
 
         RESPONSES: {
             CREATE_QUOTATION: 'Please check at most one supplier or create one',
             CONFIRM_ORDER: 'Please add at most one product to quotation'
-        }
+        },
+
+        WTRACK_DB_NAME: 'weTrack'
     }
 });

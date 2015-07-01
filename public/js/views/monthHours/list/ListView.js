@@ -13,10 +13,7 @@ define([
         'constants'
     ],
 
-    function (listTemplate, createView, listItemView,
-              editView, currentModel, contentCollection,
-              EditCollection, common, dataService, populate,
-              async, constants) {
+    function (listTemplate, createView, listItemView, editView, currentModel, contentCollection, EditCollection, common, dataService, populate, async, constants) {
         var monthHoursListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -82,6 +79,7 @@ define([
                 var editedElementContent;
                 var editedElementValue;
                 var editModel;
+
                 if (editedElement.length) {
                     editedCol = editedElement.closest('td');
                     editedElementRowId = editedElement.closest('tr').data('id');

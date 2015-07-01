@@ -10,7 +10,9 @@
         },
 
         initialize: function (options) {
-            this.render(options);
+            if(!options.stopRender) {
+                this.render(options);
+            }
         },
 
         render: function (options) {

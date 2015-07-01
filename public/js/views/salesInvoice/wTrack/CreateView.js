@@ -30,7 +30,7 @@
 
                 dataService.getData('/invoice/generateName?projectId=' + projectId, null, function (name) {
                     if (name) {
-                        options.invoiceName = name;
+                        options.name = name;
                     }
                     self.render(options);
                 });
@@ -40,7 +40,14 @@
                 'keydown': 'keydownHandler',
                 "click td.editable": "editRow",
                 'click .dialog-tabs a': 'changeTab',
+                "click .current-selected": "showNewSelect",
                 "change .editing": "changeValue"
+            },
+
+            showNewSelect: function (e, prev, next) {
+                populate.showSelect(e, prev, next, this);
+                return false;
+
             },
 
             changeTotal: function (model, val) {
@@ -153,10 +160,13 @@
                 var paymentTermId = thisEl.find("#paymentTerms").data("id") || null;
                 var invoiceDate = thisEl.find("#invoiceDate").val();
                 var dueDate = thisEl.find("#dueDate").val();
+                var name = thisEl.find("#invoiceName").val();
 
                 var total = parseFloat(thisEl.find("#totalAmount").text());
                 var unTaxed = parseFloat(thisEl.find("#totalUntaxes").text());
                 var balance = parseFloat(thisEl.find("#balance").text());
+
+                var project = thisEl.find("#project").data('id');
 
                 var payments = {
                     total: total,
@@ -203,8 +213,7 @@
                     supplier: supplier,
                     invoiceDate: invoiceDate,
                     dueDate: dueDate,
-                    account: null,
-                    journal: null,
+                    project: project,
 
                     salesPerson: salesPersonId,
                     paymentTerms: paymentTermId,
@@ -218,7 +227,8 @@
                         group: groupsId
                     },
                     whoCanRW: whoCanRW,
-                    workflow: this.defaultWorkflow
+                    workflow: this.defaultWorkflow,
+                    name: name
 
                 };
 
@@ -251,6 +261,7 @@
             render: function (options) {
                 options.model = null;
                 options.balanceVisible = null;
+
                 var notDiv;
                 var now = new Date();
                 var dueDate = moment().add(15, 'days').toDate();

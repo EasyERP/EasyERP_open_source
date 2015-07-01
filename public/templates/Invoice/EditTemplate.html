@@ -36,80 +36,243 @@
                 <div class="clearfix"></div>
                 <div class="dialog-tabs-items mainTabs">
                     <div class="dialog-tabs-item mainTabs active">
-                        <div class="half-block left">
-                            <dl class="opp-info">
+                        <%if(!isWtrack){%>
+                            <div class="half-block left">
+                                <dl class="opp-info">
 
-                                <dt><label for="supplier">Supplier</label></dt>
-                                <dd>
-                                    <a id="supplier" data-id="<%=(model.supplier)?model.supplier._id:''%>" class="current-selected" href="javascript:;"><%=(model.supplier)?(model.supplier.name.first+" "+model.supplier.name.last):"Select"%></a>
-                                </dd>
+                                    <dt><label for="supplier">Supplier</label></dt>
+                                    <dd>
+                                        <a id="supplier" data-id="<%=(model.supplier)?model.supplier._id:''%>" class="current-selected" href="javascript:;"><%=(model.supplier)?(model.supplier.name.first+" "+model.supplier.name.last):"Select"%></a>
+                                    </dd>
 
-                                <dt><label for="fiscal_pos">Fiscal Position</label></dt>
-                                <dd>
-                                    <a id="fiscal_pos" data-id="" class="current-selected" href="javascript:;">Select</a>
-                                </dd>
+                                    <dt><label for="fiscal_pos">Fiscal Position</label></dt>
+                                    <dd>
+                                        <a id="fiscal_pos" data-id="" class="current-selected" href="javascript:;">Select</a>
+                                    </dd>
 
-                                <dt><label for="source_document">Source Document</label></dt>
-                                <dd>
-                                    <input type="text" id="source_document" value="<%=(model.sourceDocument) ? model.sourceDocument : ''%>" placeholder="Source Document"  maxlength="32"/>
-                                </dd>
+                                    <dt><label for="source_document">Source Document</label></dt>
+                                    <dd>
+                                        <input type="text" id="source_document" value="<%=(model.sourceDocument) ? model.sourceDocument : ''%>" placeholder="Source Document"  maxlength="32"/>
+                                    </dd>
 
-                                <dt><label for="supplier_invoice_num">Supplier Invoice Number</label></dt>
-                                <dd>
-                                    <input type="text" id="supplier_invoice_num" value="<%=(model.supplierInvoiceNumber) ? model.supplierInvoiceNumber : ''%>" placeholder="Supplier Invoice Number"  maxlength="32"/>
-                                </dd>
+                                    <dt><label for="supplier_invoice_num">Supplier Invoice Number</label></dt>
+                                    <dd>
+                                        <input type="text" id="supplier_invoice_num" value="<%=(model.supplierInvoiceNumber) ? model.supplierInvoiceNumber : ''%>" placeholder="Supplier Invoice Number"  maxlength="32"/>
+                                    </dd>
 
-                                <dt>
-                                    <label for="payment_reference">Payment Reference</label>
-                                </dt>
-                                <dd>
-                                    <input type="text" id="payment_reference" value="<%=(model.paymentReference) ? model.paymentReference : ''%>" placeholder="Payment Reference"  maxlength="32"/>
-                                </dd>
+                                    <dt>
+                                        <label for="payment_reference">Payment Reference</label>
+                                    </dt>
+                                    <dd>
+                                        <input type="text" id="payment_reference" value="<%=(model.paymentReference) ? model.paymentReference : ''%>" placeholder="Payment Reference"  maxlength="32"/>
+                                    </dd>
 
 
 
-                            </dl>
-                        </div>
-                        <div class="half-block left">
-                            <dl class="opp-info">
+                                </dl>
+                            </div>
+                            <div class="half-block left">
+                                <dl class="opp-info">
 
-                                <dt><label for="invoice_date">Invoice Date </label></dt>
-                                <dd>
-                                    <input type="text" class="date" id="invoice_date" value="<%=(model.invoiceDate) ? model.invoiceDate : ''%>" maxlength="32" placeholder="Invoice Date" readonly />
-                                </dd>
+                                    <dt><label for="invoice_date">Invoice Date </label></dt>
+                                    <dd>
+                                        <input type="text" class="date" id="invoice_date" value="<%=(model.invoiceDate) ? model.invoiceDate : ''%>" maxlength="32" placeholder="Invoice Date" readonly />
+                                    </dd>
 
-                                <dt><label for="due_date">Due Date </label></dt>
-                                <dd>
-                                    <input type="text" class="date" id="due_date" value="<%=(model.dueDate) ? model.dueDate : ''%>" maxlength="32" placeholder="Due Date" readonly />
-                                </dd>
+                                    <dt><label for="due_date">Due Date </label></dt>
+                                    <dd>
+                                        <input type="text" class="date" id="due_date" value="<%=(model.dueDate) ? model.dueDate : ''%>" maxlength="32" placeholder="Due Date" readonly />
+                                    </dd>
 
-                                <dt><label for="account">Account</label></dt>
-                                <dd>
-                                    <a id="account" data-id="" class="current-selected" href="javascript:;">Select</a>
-                                </dd>
+                                    <dt><label for="account">Account</label></dt>
+                                    <dd>
+                                        <a id="account" data-id="" class="current-selected" href="javascript:;">Select</a>
+                                    </dd>
 
-                                <dt><label for="journal">Journal</label></dt>
-                                <dd>
-                                    <a id="journal" data-id="" class="current-selected" href="javascript:;">Select</a>
-                                </dd>
+                                    <dt><label for="journal">Journal</label></dt>
+                                    <dd>
+                                        <a id="journal" data-id="" class="current-selected" href="javascript:;">Select</a>
+                                    </dd>
 
-                            </dl>
-                        </div>
+                                </dl>
+                            </div>
+                        <%} else {%>
+                            <div class="half-block left">
+                                <dl class="opp-info">
+                                    <dt><label for="assigned">Assigned</label></dt>
+                                    <dd>
+                                        <span id="assigned" data-id="<%= assigned._id%>"><%= assigned.name ? assigned.name.first + ' ' + assigned.name.last : ''%></span>
+                                    </dd>
+                                    <dt><label for="supplier">Customer</label></dt>
+                                    <dd>
+                                        <span id="supplier" data-id="<%= customer._id%>"><%= customer.name ? customer.name.first + ' ' + customer.name.last : ''%></span>
+                                    </dd>
+                                    <dt><label for="project">Project</label></dt>
+                                    <dd>
+                                        <span id="project" data-id="<%= project._id%>"><%= project.projectName%></span>
+                                    </dd>
+                                    <dt><label for="paymentTerms">Payment Terms</label></dt>
+                                    <dd>
+                                        <span id="paymentTerms"><%= model.paymentTerms ? model.paymentTerms.name : ''%></span>
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div class="half-block left">
+                                <dl class="opp-info">
+                                    <dt><label for="invoiceName">Invoice Name</label></dt>
+                                    <dd>
+                                        <span id="invoiceName"><%= model.name%></span>
+                                    </dd>
+                                    <dt><label for="invoiceDate">Invoice Date</label></dt>
+                                    <dd>
+                                        <span id="invoiceDate"><%= model.invoiceDate%></span>
+                                    </dd>
+                                    <dt><label for="dueDate">Due Date</label></dt>
+                                    <dd>
+                                        <span id="dueDate"><%= model.dueDate%></span>
+                                    </dd>
+                                </dl>
+                            </div>
+                        <%}%>
                         <div class="clearfix"></div>
                         <ul class="dialog-tabs" data-class="childTabs">
                             <li><a class="active" href="javascript:;">Invoice</a></li>
-                            <li><a href="javascript:;">Other Info</a></li>
+                            <%if(!isWtrack){%>
+                                <li><a href="javascript:;">Other Info</a></li>
+                            <%}%>
                             <li><a href="javascript:;">Payments</a></li>
                         </ul>
                         <div class="clearfix"></div>
                         <div class="dialog-tabs-items childTabs">
                             <div class="dialog-tabs-item childTabs active">
+                                <%if(!isWtrack) {%>
                                 <div id="invoiceItemsHolder">
 
                                 </div>
                                 <div class="clearfix"></div>
+                                <%} else { %>
+                                <div>
+                                    <table class="list task-list">
+                                        <thead>
+                                        <tr>
+                                            <th>N</th>
+                                            <th>
+                                                Project
+                                            </th>
+                                            <th>
+                                                Employee
+                                            </th>
+                                            <th>
+                                                Department
+                                            </th>
+                                            <th>
+                                                Year
+                                            </th>
+                                            <th>
+                                                Month
+                                            </th>
+                                            <th>
+                                                Week
+                                            </th>
+                                            <th>
+                                                Rate
+                                            </th>
+                                            <th>
+                                                Hours
+                                            </th>
+                                            <th>
+                                                Mo
+                                            </th>
+                                            <th>
+                                                Tu
+                                            </th>
+                                            <th>
+                                                We
+                                            </th>
+                                            <th>
+                                                Th
+                                            </th>
+                                            <th>
+                                                Fr
+                                            </th>
+                                            <th>
+                                                Sa
+                                            </th>
+                                            <th>
+                                                Su
+                                            </th>
+                                            <th>
+                                                Status
+                                            </th>
+                                            <th>
+                                                Revenue
+                                            </th>
+                                            <th>
+                                                Amount
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="linwoiceGenerateTable"></tbody>
+                                    </table>
+                                </div>
+                                <div class="clearfix"></div>
+                                <div id="totalAmountContainer" class="half-block right">
+                                    <table border="0" cellpadding="0" cellspacing="0" class="right calculateTotal">
+                                        <tbody>
+                                        <tr>
+                                            <td>
+                                                <label>
+                                                    Untaxed Amount
+                                                </label>
+                                            </td>
+                                            <td>
+                                                    <span>
+                                                        <span id="totalUntaxes" class="currency">
+                                                            <%if (total) {%>
+                                                            <%= total%>
+                                                            <%} else {%>
+                                                            0.00
+                                                            <%}%>
+                                                        </span>
+                                                    </span>
+                                            </td>
+                                        </tr>
+                                        <tr class="taxes">
+                                            <td>
+                                                <label>Taxes</label>
+                                            </td>
+                                            <td>
+                                                    <span>
+                                                        <span id="taxes" class="currency">
+                                                            0.00
+                                                        </span>
+                                                    </span>
+                                            </td>
+                                        </tr>
+                                        <tr class="totalAmount">
+                                            <td>
+                                                <label class="" data-original-title="" title="">Total</label>
+                                            </td>
+                                            <td>
+                                                    <span class="">
+                                                        <span id="totalAmount" class="currency">
+                                                            <%if (total) {%>
+                                                            <%=total%>
+                                                            <%} else {%>
+                                                            0.00
+                                                            <%}%>
+                                                        </span>
+                                                    </span>
+                                            </td>
+                                        </tr>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <%}%>
                             </div>
-                            <div class="dialog-tabs-item childTabs">
+                            <%if(!isWtrack){%>
+                                <div class="dialog-tabs-item childTabs">
                                 <div class="other-info-container">
                                     <div class="half-block left">
                                         <dl class="opp-info">
@@ -143,6 +306,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <%}%>
                             <div class="dialog-tabs-item childTabs">
                                 <div id="payments-container"></div>
                             </div>

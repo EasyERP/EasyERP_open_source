@@ -121,7 +121,6 @@ var Quotation = function (models) {
                     $match: {
                         $and: [
                             optionsObject,
-
                             {
                                 $or: [
                                     {
@@ -271,25 +270,13 @@ var Quotation = function (models) {
                     }
                 },
                 waterfallCallback
-                
             );
         };
 
         contentSearcher = function (quotationsIds, waterfallCallback) {
-            var queryObject = {};// {_id: {$in: quotationsIds}};
-            var query;
-            var workflowArray;
+            var queryObject = {_id: {$in: quotationsIds}};
             queryObject.isOrder = isOrder;
-
-            if (req.query && req.query.filter && req.query.filter.workflow) {
-                workflowArray = req.query.filter.workflow;
-                queryObject.workflow = {$in: workflowArray};
-                //  {workflow: {$in: ['55647b9d2e4aa3804a765ec8']}}   '55647b932e4aa3804a765ec5'
-            } else {
-                queryObject._id = {$in: quotationsIds};
-
-            }
-            query = Quotation.find(queryObject).limit(count).skip(skip).sort(sort);
+            var query = Quotation.find(queryObject).limit(count).skip(skip).sort(sort);
 
             query.populate('supplier', '_id name fullName');
             query.populate('destination');

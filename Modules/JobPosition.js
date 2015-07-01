@@ -310,28 +310,8 @@ var JobPosition = function (models) {
                                 } else {
                                     query.sort({"editedBy.date": -1});
                                 }
-                                if (data && data.filter) {
-                                    for (var key in data.filter) {
-                                        switch (key) {
-                                            case 'workflow':
-                                                query.where('workflow').in(data.filter.workflow);
-                                                break;
-                                            case 'Job name':
-                                                query.where('name').in(data.filter['Job name']);
-                                                break;
-                                            case 'Total forecasted employees':
-                                                query.where('totalForecastedEmployees').in(data.filter['Total forecasted employees']);
-                                                break;
-                                            case 'Current number of employees':
-                                                query.where('numberOfEmployees').in(data.filter['Current number of employees']);
-                                                break;
-                                            case 'Expected in recruitment':
-                                                query.where('expectedRecruitment').in(data.filter['Expected in recruitment']);
-                                                break;
-
-                                        }
-                                    }
-
+                                if (data && data.filter && data.filter.workflow) {
+                                    query.where('workflow').in(data.filter.workflow);
                                 } else if (data && (!data.newCollection || data.newCollection === 'false')) {
                                     query.where('workflow').in([]);
                                 }

@@ -47,6 +47,8 @@ define([
                 this.$el.html(this.template({viewType: viewType, contentType: this.contentType}));
 
                 Common.displayControlBtnsByActionType('Content', viewType);
+                this.$el.find('#top-bar-generateBtn').hide();
+
                 return this;
             },
 

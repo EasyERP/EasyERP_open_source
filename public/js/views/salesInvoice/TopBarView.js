@@ -39,6 +39,10 @@ define([
                 var viewType = Custom.getCurrentVT();
                 var self = this;
 
+                this.$el.html(this.template({ viewType: viewType, contentType: this.contentType }));
+
+                Common.displayControlBtnsByActionType('Content', viewType);
+
                 if (!App || !App.currentDb) {
                     dataService.getData('/currentDb', null, function (response) {
                         if (response && !response.error) {
@@ -52,14 +56,11 @@ define([
                     this.checkDbValue(App.currentDb);
                 }
 
-                this.$el.html(this.template({ viewType: viewType, contentType: this.contentType }));
-
-                Common.displayControlBtnsByActionType('Content', viewType);
                 return this;
             },
 
             checkDbValue: function (dbName) {
-                if (dbName === 'weTrack') {
+                if (dbName === CONSTANTS.WTRACK_DB_NAME) {
                     this.hideSaveCancelBtns();
                 }
             },

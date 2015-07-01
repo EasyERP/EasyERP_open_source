@@ -2,6 +2,7 @@ define([
         "text!templates/Invoice/EditTemplate.html",
         'views/Assignees/AssigneesView',
         "views/Invoice/InvoiceProductItems",
+        "views/salesInvoice/wTrack/wTrackRows",
         "views/Payment/CreateView",
         "views/Payment/list/ListHeaderInvoice",
         "common",
@@ -10,7 +11,7 @@ define([
         "populate",
         'constants'
     ],
-    function (EditTemplate, AssigneesView, InvoiceItemView, PaymentCreateView, listHederInvoice, common, Custom, dataService, populate, CONSTANTS) {
+    function (EditTemplate, AssigneesView, InvoiceItemView, wTrackRows, PaymentCreateView, listHederInvoice, common, Custom, dataService, populate, CONSTANTS) {
 
         var EditView = Backbone.View.extend({
             contentType: "Invoice",
@@ -21,10 +22,27 @@ define([
                 _.bindAll(this, "render", "saveItem");
                 _.bindAll(this, "render", "deleteItem");
 
+                this.isWtrack = !!options.isWtrack;
+
                 this.currentModel = (options.model) ? options.model : options.collection.getElement();
                 this.currentModel.urlRoot = "/Invoice";
                 this.responseObj = {};
-                this.render();
+
+                if (!App || !App.currentDb) {
+                    dataService.getData('/currentDb', null, function (response) {
+                        if (response && !response.error) {
+                            App.currentDb = response;
+                        } else {
+                            console.log('can\'t fetch current db');
+                        }
+
+                        this.render();
+                    });
+                } else {
+                    this.render();
+                }
+
+               /* this.render();*/
             },
 
             events: {
@@ -308,12 +326,60 @@ define([
 
             render: function () {
                 var self = this;
-                var formString = this.template({
-                    model: this.currentModel.toJSON()
-                });
+                var formString;
                 var notDiv;
                 var model;
                 var invoiceItemContainer;
+                var paymentContainer;
+                var wTracks;
+                var project;
+                var assigned;
+                var customer;
+                var total;
+                var wTracksDom;
+                var buttons;
+
+                model = this.currentModel.toJSON();
+
+                if (this.isWtrack) {
+                    wTracks = _.map(model.products, function (product) {
+                        return product.product;
+                    });
+                    project = model.project;
+                    assigned = model.salesPerson;
+                    customer = model.supplier;
+                    total = model.paymentInfo ? model.paymentInfo.total : '0.00';
+                }
+
+                formString = this.template({
+                    model: this.currentModel.toJSON(),
+                    isWtrack: self.isWtrack,
+                    wTracks: wTracks,
+                    project: project,
+                    assigned: assigned,
+                    customer: customer,
+                    total: total
+                });
+
+                if(this.isWtrack){
+                    buttons = [
+                        {
+                            text: "Save",
+                            click: self.saveItem
+                        },
+
+                        {
+                            text: "Cancel",
+                            click: function () {
+                                self.hideDialog();
+                            }
+                        },
+                        {
+                            text: "Delete",
+                            click: self.deleteItem
+                        }
+                    ]
+                }
 
                 this.$el = $(formString).dialog({
                     closeOnEscape: false,
@@ -321,7 +387,7 @@ define([
                     resizable: true,
                     dialogClass: "edit-invoice-dialog",
                     title: "Edit Invoice",
-                    width: "900",
+                    width: self.isWtrack ? '1000': '900',
                     position: {my: "center bottom", at: "center", of: window},
                     buttons: [
                         {
@@ -350,7 +416,7 @@ define([
                     }).render().el
                 );
 
-                var paymentContainer = this.$el.find('#payments-container');
+                paymentContainer = this.$el.find('#payments-container');
                 paymentContainer.append(
                     new listHederInvoice().render({model: this.currentModel.toJSON()}).el
                 );
@@ -372,13 +438,25 @@ define([
                 });
 
                 this.delegateEvents(this.events);
-                model = this.currentModel.toJSON();
 
                 invoiceItemContainer = this.$el.find('#invoiceItemsHolder');
-                invoiceItemContainer.append(
-                    new InvoiceItemView({balanceVisible: true}).render({model: model}).el
-                );
 
+                //if currentDb = 'weTrack' render wTrackRows instead of ProductItems
+                if (!this.isWtrack) {
+                    invoiceItemContainer.append(
+                        new InvoiceItemView({balanceVisible: true}).render({model: model}).el
+                    );
+                } else {
+                    wTracksDom = new wTrackRows({stopRender: true}).render({
+                        wTracks: wTracks,
+                        project: project,
+                        assigned: assigned,
+                        customer: customer,
+                        total: total
+                    }).el;
+
+                    invoiceItemContainer.append(wTracksDom);
+                }
                 if (model.groups)
                     if (model.groups.users.length > 0 || model.groups.group.length) {
                         $(".groupsAndUser").show();

@@ -476,15 +476,12 @@ var Opportunities = function (models, event) {
         var res = {};
         var condition;
         var or;
-        var filterObj;
-        var optionsObject = {};
-
         res['data'] = [];
         var data = {};
         for (var i in req.query) {
             data[i] = req.query[i];
         }
-
+        var optionsObject = {};
         function ConvertType(array, type) {
             if (type === 'integer') {
                 for (var i = array.length - 1; i >= 0; i--) {
@@ -501,14 +498,11 @@ var Opportunities = function (models, event) {
         switch (data.contentType) {
             case ('Opportunities'):
             {
-                optionsObject['$and'] = [];
-                optionsObject['$and'].push({'isOpportunitie': true});
+                //optionsObject['isOpportunitie'] = true;
 
                 if (data && data.filter) {
-                    filterObj = {};
-                    optionsObject['$and'].push(filterObj);
-                    filterObj['$or'] = [];
-                    or = filterObj['$or'];
+                    optionsObject['$or'] = [];
+                    or = optionsObject['$or'];
 
                     for (var key in data.filter) {
                         condition = data.filter[key];
@@ -533,50 +527,17 @@ var Opportunities = function (models, event) {
                         }
                     }
                     if (!or.length) {
-                        delete filterObj['$or']
+                        delete optionsObject['$or']
                     }
                 }
             }
                 break;
             case ('Leads'):
             {
-                optionsObject['$and'] = [];
-                optionsObject['$and'].push({'isOpportunitie': false});
+                optionsObject['isOpportunitie'] = false;
                 if (data.filter.isConverted) {
                     optionsObject['isConverted'] = true;
                     optionsObject['isOpportunitie'] = true;
-                }
-                if (data && data.filter) {
-                    filterObj = {};
-                    optionsObject['$and'].push(filterObj);
-                    filterObj['$or'] = [];
-                    or = filterObj['$or'];
-
-                    for (var key in data.filter) {
-                        condition = data.filter[key];
-
-                        switch (key) {
-                            case 'name':
-                                or.push({ 'name': {$in: condition}});
-                                break;
-                            case 'creationDate':
-                                ConvertType(condition, 'date');
-                                or.push({ 'creationDate': {$in: condition}});
-                                break;
-                            case 'nextAction':
-                                if (!condition.length) condition = [''];
-                                or.push({ 'nextAction.desc': {$in: condition}});
-                                break;
-                            case 'expectedRevenue':
-                                ConvertType(condition, 'integer');
-                                or.push({ 'expectedRevenue.value': {$in: condition}});
-                                break;
-
-                        }
-                    }
-                    if (!or.length) {
-                        delete filterObj['$or']
-                    }
                 }
             }
                 break;

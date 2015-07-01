@@ -12,6 +12,7 @@ var PaymentTerm = function (models) {
         PaymentTerm
             .find()
             .sort({name: 1})
+            .lean()
             .exec(function (err, terms) {
                 if (err) {
                     return next(err);

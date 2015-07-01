@@ -4,12 +4,11 @@ define([
     'views/Employees/list/ListItemView',
     'text!templates/Alpabet/AphabeticTemplate.html',
     'collections/Employees/filterCollection',
-        'views/Filter/FilterView',
     'common',
     'dataService'
 ],
 
-    function (listTemplate, createView, listItemView, aphabeticTemplate, contentCollection, filterView, common, dataService) {
+    function (listTemplate, createView, listItemView, aphabeticTemplate, contentCollection, common, dataService) {
         var EmployeesListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -139,15 +138,10 @@ define([
                 this.collection.bind('showmore', this.showMoreContent, this);
             },
 
-            hideItemsNumber: function (e) {
-                var el = e.target;
+            hideItemsNumber: function () {
                 $(".allNumberPerPage").hide();
                 $(".newSelectList").hide();
-                if (!el.closest('.search-view')) {
-                    $(".drop-down-filter").hide();
-                    $('.search-options').hide();
-                    $('.search-content').removeClass('fa-caret-up');
-                };
+                $(".drop-down-filter").hide();
             },
 
             itemsNumber: function (e) {
@@ -176,8 +170,6 @@ define([
                 $('.ui-dialog ').remove();
                 var self = this;
                 var currentEl = this.$el;
-                var FilterView;
-                var showList;
 
                 currentEl.html('');
                 currentEl.append(_.template(listTemplate));
@@ -192,8 +184,8 @@ define([
                 });
 
 
-                $(document).on("click", function (e) {
-                    self.hideItemsNumber(e);
+                $(document).on("click", function () {
+                    self.hideItemsNumber();
                 });
 
                 common.buildAphabeticArray(this.collection, function (arr) {
@@ -210,25 +202,6 @@ define([
                         });
                     }
                 });
-                dataService.getData('/department/getForDD', null, function (departments) {
-                    departments.data.forEach(function (department) {
-                        department.name = department.departmentName;
-                    });
-                    dataService.getData('/employee/getFilterValues', null, function (values) {
-                        FilterView = new filterView({ collection: departments.data, customCollection: values});
-                        // Filter custom event listen ------begin
-                        FilterView.bind('filter', function () {
-                            showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
-                            self.showFilteredPage(null, showList)
-                        });
-                        FilterView.bind('defaultFilter', function () {
-                            showList = _.pluck(departments.data, '_id');
-                            self.showFilteredPage(null, showList)
-                        });
-                        // Filter custom event listen ------end
-                    });
-                });
-
                 var pagenation = this.$el.find('.pagination');
                 if (this.collection.length === 0) {
                     pagenation.hide();
@@ -329,35 +302,19 @@ define([
                 this.changeLocationHash(1, itemsNumber, this.filter);
             },
             //modified for filter Vasya
-            showFilteredPage: function (e, showList) {
+            showFilteredPage: function (e) {
                 var itemsNumber = $("#itemsNumber").text();
-                var selectedLetter;
-                var self = this;
-                var chosen = this.$el.find('.chosen');
+                var selectedLetter = $(e.target).text();
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
-                this.filter ={};
-                if (e && e.target) {
-                    selectedLetter = $(e.target).text();
-                    if ($(e.target).text() == "All") {
-                        selectedLetter = "";
-                    }
-                }
-                if (showList.length) this.filter['department'] = showList;
-                if (chosen) {
-                    chosen.each(function (index, elem) {
-                        if (self.filter[elem.children[0].value]) {
-                            self.filter[elem.children[0].value].push(elem.children[1].value);
-                        } else {
-                            self.filter[elem.children[0].value] = [];
-                            self.filter[elem.children[0].value].push(elem.children[1].value);
-                        }
-                    });
+
+                if ($(e.target).text() == "All") {
+                    selectedLetter = "";
                 }
                 this.startTime = new Date();
                 this.newCollection = false;
-
+                this.filter = this.filter || {};
                 this.filter['letter'] = selectedLetter;
                 this.changeLocationHash(1, itemsNumber, this.filter);
                 this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter });

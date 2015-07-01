@@ -9,6 +9,7 @@ var RESPONSES = require('../constants/responses');
 var Invoice = function (models) {
     var access = require("../Modules/additions/access.js")(models);
     var InvoiceSchema = mongoose.Schemas['Invoice'];
+    var wTrackInvoiceSchema = mongoose.Schemas['wTrackInvoice'];
     var OrderSchema = mongoose.Schemas['Quotation'];
     var DepartmentSchema = mongoose.Schemas['Department'];
     var objectId = mongoose.Types.ObjectId;
@@ -17,10 +18,18 @@ var Invoice = function (models) {
     var moment = require('../public/js/libs/moment/moment');
 
     this.create = function (req, res, next) {
-        var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
+        var isWtrack = req.session.lastDb === 'weTrack';
         var body = req.body;
+        var Invoice;
+        var invoice;
 
-        var invoice = new Invoice(body);
+        if(isWtrack){
+            Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
+        } else {
+            Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
+        }
+
+        invoice = new Invoice(body);
 
         if (req.session.uId) {
             invoice.createdBy.user = req.session.uId;
@@ -31,7 +40,7 @@ var Invoice = function (models) {
             if (err) {
                 return next(err);
             }
-            res.status(200).send({success: result});
+            res.status(200).send(result);
         });
     };
 
@@ -180,7 +189,6 @@ var Invoice = function (models) {
                         queryObject['forSales'] = false;
                     }
 
-
                     if (req.query.sort) {
                         sort = req.query.sort;
                         //} else {
@@ -249,30 +257,21 @@ var Invoice = function (models) {
                     };
 
                     contentSearcher = function (invoicesIds, waterfallCallback) {
-                        var workflowArray;
-                        if (req.query && req.query.filter && req.query.filter.workflow) {
-                            workflowArray = req.query.filter.workflow;
-                            optionsObject.workflow = {$in: workflowArray};
-                        } else {
-                            optionsObject._id = {$in: invoicesIds};
-
-                        }
+                        optionsObject._id = {$in: invoicesIds};
 
                         var query = Invoice.find(optionsObject).limit(count).skip(skip).sort(sort);
 
-                            query.populate('supplier', 'name _id').
-                                populate('salesPerson', 'name _id').
-                                populate('department', '_id departmentName').
-                                populate('createdBy.user').
-                                populate('editedBy.user').
-                                populate('groups.users').
-                                populate('groups.group').
-                                populate('groups.owner', '_id login').
-                                populate('workflow', '-sequence');
+                        query.populate('supplier', 'name _id').
+                            populate('salesPerson', 'name _id').
+                            populate('department', '_id departmentName').
+                            populate('createdBy.user').
+                            populate('editedBy.user').
+                            populate('groups.users').
+                            populate('groups.group').
+                            populate('groups.owner', '_id login').
+                            populate('workflow', '-sequence');
 
-                            query.exec(waterfallCallback);
-
-
+                        query.lean().exec(waterfallCallback);
                     };
 
                     waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
@@ -294,10 +293,12 @@ var Invoice = function (models) {
     };
 
     this.getInvoiceById = function (req, res, next) {
+        var isWtrack = req.session.lastDb === 'weTrack';
+
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getReadAccess(req, req.session.uId, 56, function (access) {
                 if (access) {
-                    var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
+                    var Invoice;
                     var optionsObject = {};
 
                     var departmentSearcher;
@@ -305,6 +306,11 @@ var Invoice = function (models) {
                     var contentSearcher;
                     var waterfallTasks;
 
+                    if(isWtrack){
+                        Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
+                    } else {
+                        Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
+                    }
 
                     departmentSearcher = function (waterfallCallback) {
                         models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
@@ -380,9 +386,11 @@ var Invoice = function (models) {
 
                         query.populate('supplier', '_id name').
                             populate('salesPerson', 'name _id').
-                            populate('products.product', '_id name').
+                            populate('project', '_id projectName').
+                            populate('products.product').
                             populate('payments', '_id name date paymentRef paidAmount').
                             populate('department', '_id departmentName').
+                            populate('paymentTerms', '_id name').
                             populate('createdBy.user').
                             populate('editedBy.user').
                             populate('groups.users').
@@ -390,7 +398,7 @@ var Invoice = function (models) {
                             populate('groups.owner', '_id login').
                             populate('workflow', '-sequence');
 
-                        query.exec(waterfallCallback);
+                        query.lean().exec(waterfallCallback);
                     };
 
                     waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
