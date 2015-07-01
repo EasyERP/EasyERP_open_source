@@ -206,17 +206,18 @@ define([
             showFilteredPage: function (workflowIdArray) {
                 var itemsNumber = $("#itemsNumber").text();
                 var self = this;
+                var chosen = this.$el.find('.chosen');
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
 
                 this.startTime = new Date();
                 this.newCollection = false;
-                this.filter = /*(this.filter && this.filter !== 'empty') ? this.filter : */{};
+                this.filter = {};
                 if (workflowIdArray.length) this.filter['workflow'] = workflowIdArray;
 
-                if ($('.chosen')) {
-                    $('.chosen').each(function (index, elem) {
+                if (chosen) {
+                    chosen.each(function (index, elem) {
                         if (self.filter[elem.children[0].value]) {
                             self.filter[elem.children[0].value].push(elem.children[1].value);
                         } else {

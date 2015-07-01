@@ -273,10 +273,11 @@ function (WorkflowsTemplate, kanbanSettingsTemplate, WorkflowsCollection, Kanban
             var el;
             var self = this;
             var itemsNumber = $("#itemsNumber").text();
+            var chosen = this.$el.find('.chosen');
 
             this.filter = {};
-            if ($('.chosen').length) {
-                $('.chosen').each(function (index, elem) {
+            if (chosen.length) {
+                chosen.each(function (index, elem) {
                     if (self.filter[elem.children[0].value]) {
                         self.filter[elem.children[0].value].push(elem.children[1].value);
                     } else {
@@ -284,14 +285,12 @@ function (WorkflowsTemplate, kanbanSettingsTemplate, WorkflowsCollection, Kanban
                         self.filter[elem.children[0].value].push(elem.children[1].value);
                     }
                 });
-                _.each(workflows.toJSON(), function (wfModel) {
-                    dataService.getData('/Opportunities/kanban', { workflowId: wfModel._id }, this.asyncRender, this);
+                _.each(workflows, function (wfModel) {
+                    $('.column').children('.item').remove();
+                    dataService.getData('/Opportunities/kanban', { workflowId: wfModel._id, filter: this.filter }, this.asyncRender, this);
                 }, this);
-                
-                dataService.getData('/Opportunities/kanban', self.filter, function (result) {
-                    console.log(result)
 
-                })
+
                return false
             }
 

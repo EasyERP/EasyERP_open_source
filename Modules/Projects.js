@@ -1626,6 +1626,7 @@ var Project = function (models, event) {
         if (data.parrentContentId) {
             addObj['_id'] = objectId(data.parrentContentId);
         }
+
         models.get(req.session.lastDb, "Department", department).aggregate(
             {
                 $match: {
@@ -1681,10 +1682,16 @@ var Project = function (models, event) {
                         },
                         function (err, projectsId) {
                             if (!err) {
-                                models.get(req.session.lastDb, 'Tasks', tasksSchema).
+                                var query = models.get(req.session.lastDb, 'Tasks', tasksSchema).
                                     where('project').in(projectsId.objectID()).
-                                    where('workflow', objectId(data.workflowId)).
-                                    select("_id assignedTo workflow editedBy.date project taskCount summary type remaining priority sequence").
+                                    where('workflow', objectId(data.workflowId));
+
+                                    if (data.filter && data.filter.type) {
+                                        query.where('type').in(data.filter.type);
+                                }
+
+
+                                query.select("_id assignedTo workflow editedBy.date project taskCount summary type remaining priority sequence").
                                     populate('assignedTo', 'name').
                                     populate('project', 'projectShortDesc').
                                     populate('workflow', '_id').

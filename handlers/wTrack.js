@@ -212,11 +212,11 @@ var wTrack = function (models) {
 
         function ConvertType(array, type) {
             if (type === 'integer') {
-                for (var i = 0; i <= array.length - 1; i++) {
+                for (var i = array.length - 1; i >= 0; i--) {
                     array[i] = parseInt(array[i]);
                 }
             } else  if (type === 'boolean') {
-                for (var i = 0; i <= condition.length - 1; i++) {
+                for (var i = array.length - 1; i >= 0; i--) {
                     if (condition[i] === 'true') {
                         condition[i] = true;
                     } else if (condition[i] === 'false') {

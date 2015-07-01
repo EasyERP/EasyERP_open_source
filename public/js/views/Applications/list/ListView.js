@@ -159,13 +159,15 @@ define([
             showFilteredPage: function (workflowIdArray) {
                 var self = this;
                 var itemsNumber = $("#itemsNumber").text();
+                var chosen = this.$el.find('.chosen');
+
                 this.startTime = new Date();
                 this.newCollection = true;
+                this.filter = {};
 
-                this.filter = /*this.filter ||*/ {};
                 if (workflowIdArray.length) this.filter['workflow'] = workflowIdArray;
-                if ($('.chosen')) {
-                    $('.chosen').each(function (index, elem) {
+                if (chosen) {
+                    chosen.each(function (index, elem) {
                         if (self.filter[elem.children[0].value]) {
                             self.filter[elem.children[0].value].push(elem.children[1].value);
                         } else {
@@ -247,6 +249,7 @@ define([
                     self.stages = stages;
                     var stage = (self.filter) ? self.filter.workflow : null;
                     itemView.trigger('incomingStages', stages);
+
                     dataService.getData('/employee/getFilterValues', null, function (values) {
                         FilterView = new filterView({ collection: stages, customCollection: values});
                         // Filter custom event listen ------begin

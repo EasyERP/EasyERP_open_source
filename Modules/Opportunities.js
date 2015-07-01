@@ -487,11 +487,11 @@ var Opportunities = function (models, event) {
 
         function ConvertType(array, type) {
             if (type === 'integer') {
-                for (var i = 0; i <= array.length - 1; i++) {
+                for (var i = array.length - 1; i >= 0; i--) {
                     array[i] = parseInt(array[i]);
                 }
             } else  if (type === 'date') {
-                for (var i = 0; i <= condition.length - 1; i++) {
+                for (var i = array.length - 1; i >= 0; i--) {
                     array[i] = new Date(array[i]);
                 }
             }
@@ -1140,6 +1140,23 @@ var Opportunities = function (models, event) {
 
     function getFilterOpportunitiesForKanban (req, data, response) {
         var res = {};
+        var condition;
+        var or;
+        var filterObj;
+        var optionsObject = {};
+        function ConvertType(array, type) {
+            if (type === 'integer') {
+                for (var i = array.length - 1; i >= 0; i--) {
+                    array[i] = parseInt(array[i]);
+                }
+            } else  if (type === 'date') {
+                for (var i = array.length - 1; i >= 0; i--) {
+                    array[i] = new Date(array[i]);
+                }
+            }
+
+        };
+
         res['data'] = [];
         res['workflowId'] = data.workflowId;
         models.get(req.session.lastDb, "Department", departmentSchema).aggregate(
@@ -1156,13 +1173,47 @@ var Opportunities = function (models, event) {
                 if (!err) {
                     var arrOfObjectId = deps.objectID();
 
+                    if (data && data.filter) {
+                        optionsObject['$or'] = [];
+                        or = optionsObject['$or'];
+
+                        for (var key in data.filter) {
+                            condition = data.filter[key];
+
+                            switch (key) {
+                                case 'name':
+                                    or.push({ 'name': {$in: condition}});
+                                    break;
+                                case 'creationDate':
+                                    ConvertType(condition, 'date');
+                                    or.push({ 'creationDate': {$in: condition}});
+                                    break;
+                                case 'nextAction':
+                                    if (!condition.length) condition = [''];
+                                    or.push({ 'nextAction.desc': {$in: condition}});
+                                    break;
+                                case 'expectedRevenue':
+                                    ConvertType(condition, 'integer');
+                                    or.push({ 'expectedRevenue.value': {$in: condition}});
+                                    break;
+
+                            }
+                        }
+                        if (!or.length) {
+                            delete filterObj['$or']
+                        }
+                    }
+
                     models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).aggregate(
                         {
                             $match: {
                                 $and: [
-                                    {
-                                        isOpportunitie: true
-                                    },
+                                    {$and: [
+                                        {
+                                            isOpportunitie: true
+                                        },
+                                        optionsObject
+                                    ]},
                                     {
                                         workflow: objectId(data.workflowId)
                                     },

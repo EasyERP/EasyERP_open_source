@@ -333,10 +333,11 @@ define([
                 var itemsNumber = $("#itemsNumber").text();
                 var selectedLetter;
                 var self = this;
+                var chosen = this.$el.find('.chosen');
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
-                this.filter =/* this.filter || */{};
+                this.filter ={};
                 if (e && e.target) {
                     selectedLetter = $(e.target).text();
                     if ($(e.target).text() == "All") {
@@ -344,8 +345,8 @@ define([
                     }
                 }
                 if (showList.length) this.filter['department'] = showList;
-                if ($('.chosen')) {
-                    $('.chosen').each(function (index, elem) {
+                if (chosen) {
+                    chosen.each(function (index, elem) {
                         if (self.filter[elem.children[0].value]) {
                             self.filter[elem.children[0].value].push(elem.children[1].value);
                         } else {

@@ -37,7 +37,7 @@ module.exports = function (app, mainDb) {
     var salaryRouter = require('./salary')(models);
     var opportunityRouter = require('./opportunity')(models);
     var taskRouter = require('./task')(models);
-    var jobPositionRouter = require('./task')(models);
+    var jobPositionRouter = require('./jobPosition')(models);
     var holidayRouter = require('./holiday')(models);
 
     app.get('/', function (req, res, next) {
