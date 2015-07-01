@@ -180,6 +180,7 @@ var Invoice = function (models) {
                         queryObject['forSales'] = false;
                     }
 
+
                     if (req.query.sort) {
                         sort = req.query.sort;
                         //} else {
@@ -248,21 +249,30 @@ var Invoice = function (models) {
                     };
 
                     contentSearcher = function (invoicesIds, waterfallCallback) {
-                        optionsObject._id = {$in: invoicesIds};
+                        var workflowArray;
+                        if (req.query && req.query.filter && req.query.filter.workflow) {
+                            workflowArray = req.query.filter.workflow;
+                            optionsObject.workflow = {$in: workflowArray};
+                        } else {
+                            optionsObject._id = {$in: invoicesIds};
+
+                        }
 
                         var query = Invoice.find(optionsObject).limit(count).skip(skip).sort(sort);
 
-                        query.populate('supplier', 'name _id').
-                            populate('salesPerson', 'name _id').
-                            populate('department', '_id departmentName').
-                            populate('createdBy.user').
-                            populate('editedBy.user').
-                            populate('groups.users').
-                            populate('groups.group').
-                            populate('groups.owner', '_id login').
-                            populate('workflow', '-sequence');
+                            query.populate('supplier', 'name _id').
+                                populate('salesPerson', 'name _id').
+                                populate('department', '_id departmentName').
+                                populate('createdBy.user').
+                                populate('editedBy.user').
+                                populate('groups.users').
+                                populate('groups.group').
+                                populate('groups.owner', '_id login').
+                                populate('workflow', '-sequence');
 
-                        query.exec(waterfallCallback);
+                            query.exec(waterfallCallback);
+
+
                     };
 
                     waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];

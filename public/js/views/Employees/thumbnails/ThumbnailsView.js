@@ -168,7 +168,7 @@
                         }
                     });
                 }
-                
+
                 this.startTime = new Date();
                 this.newCollection = true;
                 this.$el.find('.thumbnailwithavatar').remove();

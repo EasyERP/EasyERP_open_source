@@ -7,12 +7,13 @@ define([
         'views/salesQuotation/EditView',
         'models/QuotationModel',
         'collections/salesQuotation/filterCollection',
+        'views/Filter/FilterView',
         'common',
         'dataService',
         'constants'
     ],
 
-    function (listTemplate, stagesTemplate, createView, listItemView, listTotalView, editView, currentModel, contentCollection, common, dataService, CONSTANTS) {
+    function (listTemplate, stagesTemplate, createView, listItemView, listTotalView, editView, currentModel, contentCollection, filterView, common, dataService, CONSTANTS) {
         var QuotationListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -138,8 +139,14 @@ define([
             },
 
             hideItemsNumber: function (e) {
+                var el = e.target;
                 $(".allNumberPerPage").hide();
                 $(".newSelectList").hide();
+                if (!el.closest('.search-view')) {
+                    $(".drop-down-filter").hide();
+                    $('.search-options').hide();
+                    $('.search-content').removeClass('fa-caret-up');
+                };
             },
 
             showNewSelect: function (e) {
@@ -185,6 +192,8 @@ define([
                 var self = this;
                 var currentEl = this.$el;
                 var filteredStatuses = [];
+                var FilterView;
+                var showList;
 
                 currentEl.html('');
                 currentEl.append(_.template(listTemplate));
@@ -204,8 +213,8 @@ define([
                         $("#top-bar-deleteBtn").hide();
                 });
 
-                $(document).on("click", function () {
-                    self.hideItemsNumber();
+                $(document).on("click", function (e) {
+                    self.hideItemsNumber(e);
                 });
 
                 var pagenation = this.$el.find('.pagination');
@@ -222,16 +231,21 @@ define([
                     source: 'purchase',
                     targetSource: 'quotation'
                 }, function (stages) {
-                    //For Filter Logic
-                    /*var stage = (self.filter) ? self.filter.workflow || [] : [];
-                    if (self.filter && stage) {
-                        $('.filter-check-list input').each(function () {
-                            var target = $(this);
-                            target.attr('checked', $.inArray(target.val(), stage) > -1);
-                        });
-                    }*/
                     self.stages = stages;
+
+                    FilterView = new filterView({ collection: stages, customCollection: []});
+                    // Filter custom event listen ------begin
+                    FilterView.bind('filter', function () {
+                        showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
+                        self.showFilteredPage(showList)
+                    });
+                    FilterView.bind('defaultFilter', function () {
+                        showList = _.pluck(stages, '_id');
+                        self.showFilteredPage(showList)
+                    });
+                    // Filter custom event listen ------end
                 });
+                return this
             },
 
             renderContent: function () {
@@ -355,19 +369,15 @@ define([
                 this.changeLocationHash(1, itemsNumber, this.filter);
             },
 
-            showFilteredPage: function () {
+            showFilteredPage: function (workflowIdArray) {
                 var itemsNumber;
 
                 this.startTime = new Date();
                 this.newCollection = false;
-                var workflowIdArray = [];
 
-                $('.filter-check-list input:checked').each(function () {
-                    workflowIdArray.push($(this).val());
-                });
 
-                this.filter = this.filter || {};
-                this.filter['workflow'] = workflowIdArray;
+                this.filter = {};
+                if (workflowIdArray.length) this.filter['workflow'] = workflowIdArray;
 
                 itemsNumber = $("#itemsNumber").text();
                 $("#top-bar-deleteBtn").hide();

@@ -6,11 +6,12 @@ define([
         'models/InvoiceModel',
         'views/salesInvoice/list/ListItemView',
         'collections/salesInvoice/filterCollection',
+        'views/Filter/FilterView',
         'common',
         'dataService'
     ],
 
-    function (listTemplate, stagesTemplate, createView, editView, invoiceModel, listItemView, contentCollection, common, dataService) {
+    function (listTemplate, stagesTemplate, createView, editView, invoiceModel, listItemView, contentCollection, filterView, common, dataService) {
         var InvoiceListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -133,8 +134,14 @@ define([
             },
 
             hideItemsNumber: function (e) {
+                var el = e.target;
                 $(".allNumberPerPage").hide();
                 $(".newSelectList").hide();
+                if (!el.closest('.search-view')) {
+                    $(".drop-down-filter").hide();
+                    $('.search-options').hide();
+                    $('.search-content').removeClass('fa-caret-up');
+                };
             },
 
             itemsNumber: function (e) {
@@ -177,6 +184,8 @@ define([
                 $('.ui-dialog ').remove();
                 var self = this;
                 var currentEl = this.$el;
+                var FilterView;
+                var showList;
 
                 currentEl.html('');
 
@@ -203,6 +212,18 @@ define([
                     targetSource: 'invoice'
                 }, function (stages) {
                     self.stages = stages;
+
+                    FilterView = new filterView({ collection: stages, customCollection: []});
+                    // Filter custom event listen ------begin
+                    FilterView.bind('filter', function () {
+                        showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
+                        self.showFilteredPage(showList)
+                    });
+                    FilterView.bind('defaultFilter', function () {
+                        showList = _.pluck(stages, '_id');
+                        self.showFilteredPage(showList)
+                    });
+                    // Filter custom event listen ------end
                 });
 
                 function currentEllistRenderer(){
@@ -350,12 +371,15 @@ define([
                 this.changeLocationHash(1, itemsNumber, this.filter);
             },
 
-            showFilteredPage: function (e) {
+            showFilteredPage: function (showList) {
+                var itemsNumber = $("#itemsNumber").text();
                 this.startTime = new Date();
                 this.newCollection = false;
 
-                this.filter = this.filter || {};
-                var itemsNumber = $("#itemsNumber").text();
+                this.filter = {};
+                if (showList.length) this.filter['workflow'] = showList;
+
+
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
                 this.changeLocationHash(1, itemsNumber, this.filter);
