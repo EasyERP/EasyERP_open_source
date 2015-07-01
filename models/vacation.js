@@ -5,7 +5,7 @@ module.exports = (function () {
     var mongoose = require('mongoose');
     var ObjectId = mongoose.Schema.Types.ObjectId;
 
-    var vocationSchema = new mongoose.Schema({
+    var vacationSchema = new mongoose.Schema({
         ID: Number,
         employee: {
             _id: {type: ObjectId, ref: 'Employees', default: null},
@@ -13,16 +13,16 @@ module.exports = (function () {
         },
         startDate: Date,
         endDate: Date,
-        vocationType: String
-    }, {collection: 'Vocation'});
+        vacationType: String
+    }, {collection: 'Vacation'});
 
-    vocationSchema.set('toJSON', {virtuals: true});
+    vacationSchema.set('toJSON', {virtuals: true});
 
-    mongoose.model('Vocation', vocationSchema);
+    mongoose.model('Vacation', vacationSchema);
 
     if (!mongoose.Schemas) {
         mongoose.Schemas = {};
     }
 
-    mongoose.Schemas['Vocation'] = vocationSchema;
+    mongoose.Schemas['Vacation'] = vacationSchema;
 })();
