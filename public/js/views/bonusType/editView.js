@@ -7,19 +7,19 @@ define([
         "dataService",
         "populate",
         'constants'
-    ],
-    function (common, Custom, dataService, populate, CONSTANTS) {
+    ], function (common, Custom, dataService, populate, CONSTANTS) {
 
         var EditView = Backbone.View.extend({
             contentType: CONSTANTS.BONUSTYPE,
-
 
             initialize: function (options) {
                 if (options) {
                     this.visible = options.visible;
                 }
+
                 _.bindAll(this, "render", "saveItem");
                 _.bindAll(this, "render", "deleteItem");
+
                 this.currentModel = (options.model) ? options.model : options.collection.getElement();
                 this.currentModel.urlRoot = "/bonusType";
                 this.responseObj = {};
@@ -42,13 +42,13 @@ define([
                 var thisEl = this.$el;
                 var name = thisEl.find('#name').val();
                 var value =  thisEl.find('#value').val();
-                var type =  thisEl.find('#type').val();
-                var isPercent =  thisEl.find('input.checkbox2'.val());
+                var department =  thisEl.find('#department').val();
+                var isPercent = thisEl.find('#isPercent').val();
 
                 this.model.save({
                     name: name,
                     value: value,
-                    type: type,
+                    department: department,
                     isPercent: isPercent
                 }, {
                     headers: {
@@ -84,18 +84,19 @@ define([
 
             showNewSelect: function (e, prev, next) {
                 populate.showSelect(e, prev, next, this);
+
                 return false;
             },
 
             changeTab: function (e) {
                 var holder = $(e.target);
-                var n;
                 var dialog_holder;
                 var closestEl = holder.closest('.dialog-tabs');
                 var dataClass = closestEl.data('class');
                 var selector = '.dialog-tabs-items.' + dataClass;
                 var itemActiveSelector = '.dialog-tabs-item.' + dataClass + '.active';
                 var itemSelector = '.dialog-tabs-item.' + dataClass;
+                var n;
 
                 closestEl.find("a.active").removeClass("active");
                 holder.addClass("active");
@@ -120,8 +121,10 @@ define([
 
             deleteItem: function(event) {
                 var mid = 72;
-                event.preventDefault();
                 var self = this;
+
+                event.preventDefault();
+
                 this.currentModel.destroy({
                     headers: {
                         mid: mid
@@ -137,7 +140,6 @@ define([
             },
 
             render: function () {
-
                 var formString = this.template({
                     model: this.currentModel.toJSON(),
                     visible: this.visible
@@ -157,7 +159,6 @@ define([
                                 self.saveItem();
                             }
                         },
-
                         {
                             text: "Cancel",
                             click: function () {
@@ -171,6 +172,7 @@ define([
                     ]
 
                 });
+
                 this.delegateEvents(this.events);
                 model = this.currentModel.toJSON();
 
