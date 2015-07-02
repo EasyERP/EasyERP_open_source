@@ -36,6 +36,9 @@ var Vacation = function (models) {
                         }
                         if (options.year && options.year !== 'line') {
                             queryObject.year = options.year;
+                            if (options.month) {
+                                queryObject.month = options.month;
+                            }
                         } else if (options.year) {
                             var date;
 
@@ -49,6 +52,18 @@ var Vacation = function (models) {
                     }
 
                     query = Vacation.find(queryObject).sort(sort);
+                    /*query = Vacation.aggregate(
+                     [
+                     { $match: queryObject},
+                     {$sort: sort},
+                     {
+                     $group: {
+                     _id: {employee: "$employee", month: "$month", year: "$year"}
+                     //vacationArray: {$push: {"$"}}
+                     }
+                     }
+                     ]
+                     );*/
                     query.exec(function (err, result) {
                         if (err) {
                             return next(err);
