@@ -43,7 +43,7 @@ define([
                 var name = thisEl.find('#name').val();
                 var value =  thisEl.find('#value').val();
                 var type =  thisEl.find('#type').val();
-                //var isPercent =  thisEl.find('input.checkbox2'.val());
+                var isPercent =  thisEl.find('input.checkbox2'.val());
 
                 this.model.save({
                     name: name,
