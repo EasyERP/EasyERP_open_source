@@ -199,6 +199,9 @@ textarea {
 input::-ms-clear {
   display: none;
 }
+.text-center {
+  text-align: center;
+}
 .list2 {
   color: #000000 !important;
   font-family: "Lucida Grande", Helvetica, Verdana, Arial, sans-serif;
@@ -7290,10 +7293,28 @@ textarea#editInput {
   line-height: 25px;
   display: block;
 }
+.grid tr td {
+  border-top: 1px solid transparent;
+}
+.grid tr td,
+.grid tr th {
+  border-bottom: 1px solid #d2d2d2;
+}
+.grid tr td span {
+  height: 20px;
+  padding: 0 7px;
+  line-height: 20px;
+  display: block;
+}
+.grid tr td.dayOfMonth,
+.grid tr tr th.dayOfMonth {
+  min-width: 27px;
+}
 .grid.attendance {
   border-bottom: 5px solid #4c5975;
 }
-.grid.attendance tr:first-child {
+.grid.attendance tr:first-child,
+.grid.attendance .borderRight {
   border-right: 1px solid #4c5975;
 }
 .grid.attendance th {
@@ -7304,9 +7325,18 @@ textarea#editInput {
 .grid.attendance tr {
   border-bottom: none;
 }
+.grid.attendance tr:nth-child(even) {
+  background-color: #f5f5f5;
+}
+.grid.attendance tr td {
+  border-left: 1px solid #d2d2d2;
+}
 .grid.attendance tr td:first-child {
   min-width: 100px;
   border-left: 1px solid #4c5975;
+  border-right: 1px solid #4c5975;
+}
+.grid.attendance tr td:nth-child(7n+1) {
   border-right: 1px solid #4c5975;
 }
 .grid.attendance .vacation {
