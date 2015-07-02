@@ -285,7 +285,8 @@ var Quotation = function (models) {
                 //  {workflow: {$in: ['55647b9d2e4aa3804a765ec8']}}   '55647b932e4aa3804a765ec5'
             } else {
                 queryObject._id = {$in: quotationsIds};
-
+                //{$and: [{isOrder: isOrder}, {_id: {$in: quotationsIds}}]}
+                //{$and: [{isOrder: isOrder}, {_id: {$in: quotationsIds}}, {workflow: '55647b932e4aa3804a765ec5'}]}
             }
             query = Quotation.find(queryObject).limit(count).skip(skip).sort(sort);
 
