@@ -64,12 +64,6 @@ define([
                     if (xhr.status == 401) Backbone.history.navigate('#login', {trigger: true});
                 }
             });
-        },
-
-        parse: true,
-        parse: function (response) {
-            var vacations = response.success;
-            return vacations;
         }
     });
     return VacationCollection;

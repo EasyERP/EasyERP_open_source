@@ -7665,3 +7665,14 @@ textarea#editInput {
   margin-top: -25px;
   margin-left: 8px;
 }
+.vacation-list {
+  margin-top: 30px;
+}
+.vacation-list,
+.vacation-list .subVacationHeader-list {
+  width: 100%;
+}
+.vacation-list th:not(#subHeaderHolder),
+.vacation-list .subVacationHeader-list th:not(#subHeaderHolder) {
+  border: 1px solid #000000;
+}
