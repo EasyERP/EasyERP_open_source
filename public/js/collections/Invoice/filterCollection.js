@@ -74,10 +74,6 @@
                         alert('Some Error');
                     }
                 });
-            },
-
-            parse: function (response) {
-                return response.success;
             }
         });
         return InvoiceCollection;

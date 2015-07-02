@@ -364,6 +364,19 @@ define([
                 if(this.isWtrack){
                     buttons = [
                         {
+                            text: "Cancel",
+                            click: function () {
+                                self.hideDialog();
+                            }
+                        },
+                        {
+                            text: "Delete",
+                            click: self.deleteItem
+                        }
+                    ]
+                } else {
+                    buttons = [
+                        {
                             text: "Save",
                             click: self.saveItem
                         },
@@ -389,23 +402,7 @@ define([
                     title: "Edit Invoice",
                     width: self.isWtrack ? '1000': '900',
                     position: {my: "center bottom", at: "center", of: window},
-                    buttons: [
-                        {
-                            text: "Save",
-                            click: self.saveItem
-                        },
-
-                        {
-                            text: "Cancel",
-                            click: function () {
-                                self.hideDialog();
-                            }
-                        },
-                        {
-                            text: "Delete",
-                            click: self.deleteItem
-                        }
-                    ]
+                    buttons: buttons
 
                 });
 

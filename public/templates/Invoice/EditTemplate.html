@@ -14,7 +14,7 @@
                                 <button class="red cancelInvoice">
                                     <span>Cancel</span>
                                 </button>
-                            <%} else if(model.workflow.status === 'Done'){%>
+                            <%} else if(model.workflow.status === 'Done' && !isWtrack){%>
                                 <button class="red refund">
                                     <span>Refund</span>
                                 </button>

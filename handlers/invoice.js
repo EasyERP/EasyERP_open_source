@@ -114,7 +114,7 @@ var Invoice = function (models) {
                 return next(err)
             }
 
-            res.status(201).send({success: result});
+            res.status(201).send(result);
         });
 
     };
@@ -138,7 +138,7 @@ var Invoice = function (models) {
                         if (err) {
                             next(err);
                         } else {
-                            res.status(200).send({success: 'Invoice updated', result: invoice});
+                            res.status(200).send(invoice);
                         }
                     });
 
@@ -155,11 +155,11 @@ var Invoice = function (models) {
         var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
         var query = {};
 
-        Invoice.find(query, function (err, invoice) {
+        Invoice.find(query, function (err, invoices) {
             if (err) {
                 return next(err);
             }
-            res.status(200).send({success: invoice});
+            res.status(200).send(invoices);
         });
     };
 
@@ -287,7 +287,7 @@ var Invoice = function (models) {
                         if (err) {
                             return next(err);
                         }
-                        res.status(200).send({success: result});
+                        res.status(200).send(result);
                     });
                 } else {
                     res.status(403).send();
@@ -436,7 +436,7 @@ var Invoice = function (models) {
                         if (err) {
                             next(err);
                         } else {
-                            res.status(200).send({success: result});
+                            res.status(200).send(result);
                         }
                     });
 
@@ -470,7 +470,7 @@ var Invoice = function (models) {
                         if (err) {
                             next(err);
                         } else {
-                            res.status(200).send({success: 'Invoice updated success', result: result});
+                            res.status(200).send(result);
                         }
                     })
 
