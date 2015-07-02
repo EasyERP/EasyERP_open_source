@@ -13,7 +13,7 @@ define([
             events: {
                 "click .search-content": 'showSearchContent',
                 "click .filter": 'showFilterContent',
-                "click .drop-down-filter input": "writeValue",
+                "click .drop-down-filter input[type='checkbox']": "writeValue",
                 "click .drop-down-filter li": "triggerClick",
                 "click .removeValues": "removeValues",
                 'change .chooseTerm': 'chooseOptions',
@@ -29,21 +29,9 @@ define([
             },
 
             render: function (options) {
-                var value;
                 this.customCollection =  options.customCollection;
 
                 this.$el.html(this.template({collection: this.collection, customCollection: options.customCollection}));
-
-                value  = $('.chooseTerm').val();
-                if (value) {
-                    options.customCollection[0][value].forEach(function (opt) {
-                        if (opt && opt.name) {
-                            $('.chooseOption').append('<option value="' + opt.name + '">' + opt.name + '</option>');
-                        } else {
-                            $('.chooseOption').append('<option value="' + opt + '">' + opt + '</option>');
-                        }
-                    });
-                }
 
                 return this;
             },
@@ -58,10 +46,12 @@ define([
             },
 
             removeFilter: function (e) {
-                if ($('.filterOptions').length > 1) {
+                var filter = this.$el.find('.filterOptions');
+
+                if (filter.length > 1) {
                     $(e.target).closest('.filterOptions').remove();
                 } else {
-                    $(".filterOptions").removeClass('chosen');
+                    filter.removeClass('chosen');
                     $('.chooseOption').children().remove();
                     $(".chooseTerm").val($(".chooseTerm option:first").val());
                     this.trigger('defaultFilter');
@@ -77,19 +67,24 @@ define([
             },
 
             chooseOptions: function (e) {
-             var el = $(e.target).next();
+                var el = $('.chooseOption');
                 var value  = e.target.value;
                 $(e.target).closest('.filterOptions').addClass('chosen');
 
-                el.html('');
-                this.customCollection[0][value].forEach(function (opt) {
-                    if (opt && opt.name) {
-                        el.append('<option value="' + opt.name + '">' + opt.name + '</option>')
-                    } else {
-                        el.append('<option value="' + opt + '">' + opt + '</option>')
-                    }
-                });
-
+                if (/date/.test(value.toLowerCase())) {
+                    el.html('').hide();
+                    $('<div class=\'chooseDate\'><input id="start" type="date"/><input id="end" type="date"/><div>').insertBefore(el)
+                } else {
+                    if ($('.chooseDate')) $('.chooseDate').remove();
+                    el.show()
+                    this.customCollection[0][value].forEach(function (opt) {
+                        if (opt && opt.name) {
+                            el.append('<option value="' + opt.name + '">' + opt.name + '</option>')
+                        } else {
+                            el.append('<option value="' + opt + '">' + opt + '</option>')
+                        }
+                    });
+                }
             },
 
             triggerClick: function (e) {

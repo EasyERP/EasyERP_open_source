@@ -125,42 +125,32 @@ define([
             }
         },
 
-        attendance: function(){
+        attendance: function () {
             var self = this;
 
-           /* if(!this.isAuth) {
-                this.checkLogin(function (success) {
-                    if (success) {
-                        self.isAuth = true;
-                        renderRevenue();
-                    } else {
-
-                    }
-                });
-            }
-
-            function renderRevenue () {
-                var startTime = new Date();
-                var contentViewUrl = "views/Revenue/index";
-
-                if (self.mainView === null) {
-                    self.main("Revenue");
+            this.checkLogin(function (success) {
+                if (success) {
+                    renderAttendance(self);
                 } else {
-                    self.mainView.updateMenu("Revenue");
+                    self.redirectTo();
+                }
+            });
+
+            function renderAttendance(context) {
+                var contentViewUrl = "views/Attendance/index";
+                var self = context;
+
+                if (context.mainView === null) {
+                    context.main("Attendance");
+                } else {
+                    context.mainView.updateMenu("Attendance");
                 }
 
                 require([contentViewUrl], function (contentView) {
-                    var contentview;
-
-                    custom.setCurrentVT('list');
-
-                    contentview = new contentView({startTime: startTime});
-
+                    var contentview = new contentView();
                     self.changeView(contentview);
                 });
-            }*/
-
-            alert('wsfddefgdf');
+            }
         },
 
         goToProfiles: function () {

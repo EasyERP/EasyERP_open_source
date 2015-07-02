@@ -490,10 +490,6 @@ var Opportunities = function (models, event) {
                 for (var i = array.length - 1; i >= 0; i--) {
                     array[i] = parseInt(array[i]);
                 }
-            } else  if (type === 'date') {
-                for (var i = array.length - 1; i >= 0; i--) {
-                    array[i] = new Date(array[i]);
-                }
             }
 
         };
@@ -518,8 +514,7 @@ var Opportunities = function (models, event) {
                                 or.push({ 'name': {$in: condition}});
                                 break;
                             case 'creationDate':
-                                ConvertType(condition, 'date');
-                                or.push({ 'creationDate': {$in: condition}});
+                                or.push({ 'creationDate': {$gte: new Date(condition[0].start), $lte: new Date(condition[0].end)}});
                                 break;
                             case 'nextAction':
                                 if (!condition.length) condition = [''];
@@ -560,8 +555,7 @@ var Opportunities = function (models, event) {
                                 or.push({ 'name': {$in: condition}});
                                 break;
                             case 'creationDate':
-                                ConvertType(condition, 'date');
-                                or.push({ 'creationDate': {$in: condition}});
+                                or.push({ 'creationDate': {$gte: new Date(condition[0].start), $lte: new Date(condition[0].end)}});
                                 break;
                             case 'nextAction':
                                 if (!condition.length) condition = [''];
@@ -1149,12 +1143,7 @@ var Opportunities = function (models, event) {
                 for (var i = array.length - 1; i >= 0; i--) {
                     array[i] = parseInt(array[i]);
                 }
-            } else  if (type === 'date') {
-                for (var i = array.length - 1; i >= 0; i--) {
-                    array[i] = new Date(array[i]);
-                }
             }
-
         };
 
         res['data'] = [];
@@ -1185,8 +1174,7 @@ var Opportunities = function (models, event) {
                                     or.push({ 'name': {$in: condition}});
                                     break;
                                 case 'creationDate':
-                                    ConvertType(condition, 'date');
-                                    or.push({ 'creationDate': {$in: condition}});
+                                    or.push({ 'creationDate': {$gte: new Date(condition[0].start), $lte: new Date(condition[0].end)}});
                                     break;
                                 case 'nextAction':
                                     if (!condition.length) condition = [''];
