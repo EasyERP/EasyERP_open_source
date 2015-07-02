@@ -52,7 +52,8 @@ define([
                 options.month = (this.startTime.getMonth() + 1).toString();
             }
 
-            options.month = "3";
+            /*REMOVE*/
+            options.month = "1";
 
             this.fetch({
                 data: options,

@@ -1,6 +1,5 @@
 define([
         'text!templates/Vacation/list/ListHeader.html',
-        'text!templates/Vacation/list/subHeader/ListHeader.html',
         'text!templates/Holiday/list/cancelEdit.html',
         'views/Holiday/CreateView',
         'views/Vacation/list/ListItemView',
@@ -14,7 +13,7 @@ define([
         'moment'
     ],
 
-    function (listTemplate, subListTemplate, cancelEdit, createView, listItemView, vacationModel, vacationCollection, editCollection, common, dataService, CONSTANTS, async, moment) {
+    function (listTemplate, cancelEdit, createView, listItemView, vacationModel, vacationCollection, editCollection, common, dataService, CONSTANTS, async, moment) {
         var VacationListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -42,6 +41,8 @@ define([
                 this.render();
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
                 this.contentCollection = vacationCollection;
+                this.daysCount;
+
             },
 
             events: {
@@ -338,9 +339,8 @@ define([
                 var dateDay;
                 var daysRow = '';
                 var daysNumRow = '';
-                var options;
 
-                subHeaderContainer = currentEl.find('#subHeaderHolder');
+                subHeaderContainer = currentEl.find('.subHeaderHolder');
                 monthElement = currentEl.find('#monthSelect');
                 yearElement = currentEl.find('#yearSelect');
 
@@ -357,15 +357,25 @@ define([
                     dateDay = date.add(1, 'd');
                 }
 
-                options = {
-                    'daysRow': daysRow,
-                    'daysNumRow': daysNumRow,
-                    'daysCount': daysInMonth
-                };
+                daysRow = '<tr>' + daysRow + '</tr>';
 
-                subHeaderContainer.html('');
+                daysNumRow = '<tr><th class="oe_sortable" data-sort="employee.name">Employee Name</th><th>Department</th>' + daysNumRow +'<th>Total Days</th></tr>';
 
-                subHeaderContainer.append(_.template(subListTemplate, {options: options}));
+                this.daysCount = daysInMonth;
+
+                var columnContainer = $('#columnForDays');
+                var width = 80/daysInMonth;
+
+                columnContainer.append('<col width="8%">');
+                columnContainer.append('<col width="7%">');
+
+                for (var i=daysInMonth; i>0; i--) {
+                    columnContainer.append('<col width="' + width + '%">');
+                }
+
+                $(subHeaderContainer[0]).attr('colspan', daysInMonth);
+                $(subHeaderContainer[1]).replaceWith(daysRow);
+                $(subHeaderContainer[2]).replaceWith(daysNumRow);
             },
 
 
@@ -380,7 +390,8 @@ define([
                 this.renderdSubHeader(currentEl);
 
                 currentEl.append(new listItemView({
-                    collection: this.collection
+                    collection: this.collection,
+                    daysCount: this.daysCount
                 }).render());//added two parameters page and items number
 
                 setTimeout(function () {
