@@ -894,10 +894,10 @@ var Project = function (models, event) {
                                                 query.where('projectName').in(data.filter.project);
                                                 break;
                                             case 'startDate':
-                                                query.where('StartDate').in(data.filter.startDate);
+                                                query.where('StartDate', {$gte: new Date(data.filter.startDate[0].start), $lte: new Date(data.filter.startDate[0].end)});
                                                 break;
                                             case 'endDate':
-                                                query.where('EndDate').in(data.filter.endDate);
+                                                query.where('EndDate', {$gte: new Date(data.filter.endDate[0].start), $lte: new Date(data.filter.endDate[0].end)});
                                                 break;
                                         }
                                     }
