@@ -40,6 +40,7 @@
                         Add Custom Filter
                     </li>
                     <li class="filterOptions">
+                        <span class="removeFilter">x</span>
                         <select class="chooseTerm">
                             <option selected value="">Choose Term</option>
                             <% var keys = _.keys(customCollection[0]);
@@ -51,7 +52,7 @@
                         <select class="chooseOption">
 
                         </select>
-                        <span class="removeFilter">x</span>
+
                     </li>
                     <li class="filterActions">
                         <button class="pull-left group btn btn-default applyFilter">Apply</button>

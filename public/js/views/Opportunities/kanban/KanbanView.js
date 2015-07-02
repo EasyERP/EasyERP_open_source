@@ -277,20 +277,20 @@ function (WorkflowsTemplate, kanbanSettingsTemplate, WorkflowsCollection, Kanban
             this.filter = {};
             if (chosen.length) {
                 chosen.each(function (index, elem) {
-                    if (elem.children[1].attributes.class.nodeValue === 'chooseDate') {
-                        if (self.filter[elem.children[0].value]) {
-                            self.filter[elem.children[0].value].push({start: $('#start').val(), end: $('#end').val()});
+                    if (elem.children[2].attributes.class.nodeValue === 'chooseDate') {
+                        if (self.filter[elem.children[1].value]) {
+                            self.filter[elem.children[1].value].push({start: $('#start').val(), end: $('#end').val()});
 
                         } else {
-                            self.filter[elem.children[0].value] = [];
-                            self.filter[elem.children[0].value].push({start: $('#start').val(), end: $('#end').val()});
+                            self.filter[elem.children[1].value] = [];
+                            self.filter[elem.children[1].value].push({start: $('#start').val(), end: $('#end').val()});
                         }
                     } else {
-                        if (self.filter[elem.children[0].value]) {
-                            self.filter[elem.children[0].value].push(elem.children[1].value);
+                        if (self.filter[elem.children[1].value]) {
+                            self.filter[elem.children[1].value].push(elem.children[2].value);
                         } else {
-                            self.filter[elem.children[0].value] = [];
-                            self.filter[elem.children[0].value].push(elem.children[1].value);
+                            self.filter[elem.children[1].value] = [];
+                            self.filter[elem.children[1].value].push(elem.children[2].value);
                         }
                     }
 

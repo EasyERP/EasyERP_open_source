@@ -227,24 +227,24 @@ define([
                 this.startTime = new Date();
                 this.newCollection = false;
                 this.filter = {};
-                if (workflowIdArray.length) this.filter['workflow'] = workflowIdArray;
+                if (workflowIdArray && workflowIdArray.length) this.filter['workflow'] = workflowIdArray;
 
                 if (chosen) {
                     chosen.each(function (index, elem) {
                         if (elem.children[1].attributes.class.nodeValue === 'chooseDate') {
-                            if (self.filter[elem.children[0].value]) {
-                                self.filter[elem.children[0].value].push({start: $('#start').val(), end: $('#end').val()});
+                            if (self.filter[elem.children[1].value]) {
+                                self.filter[elem.children[1].value].push({start: $('#start').val(), end: $('#end').val()});
 
                             } else {
-                                self.filter[elem.children[0].value] = [];
-                                self.filter[elem.children[0].value].push({start: $('#start').val(), end: $('#end').val()});
+                                self.filter[elem.children[1].value] = [];
+                                self.filter[elem.children[1].value].push({start: $('#start').val(), end: $('#end').val()});
                             }
                         } else {
-                            if (self.filter[elem.children[0].value]) {
-                                self.filter[elem.children[0].value].push(elem.children[1].value);
+                            if (self.filter[elem.children[1].value]) {
+                                self.filter[elem.children[1].value].push(elem.children[2].value);
                             } else {
-                                self.filter[elem.children[0].value] = [];
-                                self.filter[elem.children[0].value].push(elem.children[1].value);
+                                self.filter[elem.children[1].value] = [];
+                                self.filter[elem.children[1].value].push(elem.children[2].value);
                             }
                         }
 

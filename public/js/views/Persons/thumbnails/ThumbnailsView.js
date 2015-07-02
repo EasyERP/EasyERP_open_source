@@ -70,12 +70,13 @@
                 var selectedLetter;
                 var target;
                 var checkedElements = $('.drop-down-filter input:checkbox:checked');
+                var chosen = this.$el.find('.chosen');
                 var self = this;
 
                 this.$el.find('.thumbnailwithavatar').remove();
                 this.startTime = new Date();
                 this.newCollection = false;
-                this.filter =/* (this.filter && this.filter !== 'empty') ? this.filter :*/ {};
+                this.filter = {};
 
                 if (e && e.target) {
                     selectedLetter = $(e.target).text();
@@ -87,16 +88,16 @@
                     target.addClass("current");
                 }
 
-                if (checkedElements.length && checkedElements.attr('id') === 'defaultFilter') {
+                if (checkedElements && checkedElements.length && checkedElements.attr('id') === 'defaultFilter') {
                     this.filter = {};
                 };
-                if ($('.chosen')) {
-                    $('.chosen').each(function (index, elem) {
-                        if (self.filter[elem.children[0].value]) {
-                            self.filter[elem.children[0].value].push(elem.children[1].value);
+                if (chosen) {
+                    chosen.each(function (index, elem) {
+                        if (self.filter[elem.children[1].value]) {
+                            self.filter[elem.children[1].value].push(elem.children[2].value);
                         } else {
-                            self.filter[elem.children[0].value] = [];
-                            self.filter[elem.children[0].value].push(elem.children[1].value);
+                            self.filter[elem.children[1].value] = [];
+                            self.filter[elem.children[1].value].push(elem.children[2].value);
                         }
                     });
                 };

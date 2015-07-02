@@ -214,17 +214,18 @@ define([
                 }, function (stages) {
                     self.stages = stages;
 
-                    FilterView = new filterView({ collection: stages, customCollection: []});
-                    // Filter custom event listen ------begin
-                    FilterView.bind('filter', function () {
-                        showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
-                        self.showFilteredPage(showList)
+                    dataService.getData('/invoice/getFilterValues', null, function (values) {
+                        FilterView = new filterView({ collection: stages, customCollection: values});
+                        // Filter custom event listen ------begin
+                        FilterView.bind('filter', function () {
+                            self.showFilteredPage()
+                        });
+                        FilterView.bind('defaultFilter', function () {
+                            self.showFilteredPage()
+                        });
+                        // Filter custom event listen ------end
+
                     });
-                    FilterView.bind('defaultFilter', function () {
-                        showList = _.pluck(stages, '_id');
-                        self.showFilteredPage(showList)
-                    });
-                    // Filter custom event listen ------end
                 });
 
                 function currentEllistRenderer(){
@@ -372,13 +373,46 @@ define([
                 this.changeLocationHash(1, itemsNumber, this.filter);
             },
 
-            showFilteredPage: function (showList) {
+            showFilteredPage: function () {
                 var itemsNumber = $("#itemsNumber").text();
+                var checkedElements = $('.drop-down-filter input:checkbox:checked');
+                var chosen = this.$el.find('.chosen');
+                var self = this;
+                var showList;
+
                 this.startTime = new Date();
                 this.newCollection = false;
 
-                this.filter = {};
-                if (showList.length) this.filter['workflow'] = showList;
+                if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
+                    showList = checkedElements.map(function () {
+                        return this.value;
+                    }).get();
+
+                    this.filter['workflow'] = showList;
+
+                } else  if (chosen && chosen.length) {
+                    chosen.each(function (index, elem) {
+                        if (elem.children[2].attributes.class.nodeValue === 'chooseDate') {
+                            if (self.filter[elem.children[1].value]) {
+                                self.filter[elem.children[1].value].push({start: $('#start').val(), end: $('#end').val()});
+
+                            } else {
+                                self.filter[elem.children[1].value] = [];
+                                self.filter[elem.children[1].value].push({start: $('#start').val(), end: $('#end').val()});
+                            }
+                        } else {
+                            if (self.filter[elem.children[1].value]) {
+                                self.filter[elem.children[1].value].push(elem.children[2].value);
+                            } else {
+                                self.filter[elem.children[1].value] = [];
+                                self.filter[elem.children[1].value].push(elem.children[2].value);
+                            }
+                        }
+
+                    });
+                } else {
+                    this.filter['workflow'] = _.pluck(this.stages, '_id');
+                }
 
 
                 $("#top-bar-deleteBtn").hide();

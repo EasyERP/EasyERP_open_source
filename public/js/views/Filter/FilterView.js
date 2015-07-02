@@ -47,13 +47,18 @@ define([
 
             removeFilter: function (e) {
                 var filter = this.$el.find('.filterOptions');
+                var opt = this.$el.find('.chooseOption');
+                var term = this.$el.find('.chooseTerm');
+                var date = this.$el.find('.chooseDate');
 
                 if (filter.length > 1) {
                     $(e.target).closest('.filterOptions').remove();
                 } else {
                     filter.removeClass('chosen');
-                    $('.chooseOption').children().remove();
-                    $(".chooseTerm").val($(".chooseTerm option:first").val());
+                    opt.children().remove();
+                    term.val($(".chooseTerm option:first").val());
+                    date.remove();
+                    opt.show();
                     this.trigger('defaultFilter');
 
                 }
@@ -63,20 +68,29 @@ define([
             addCondition: function () {
                 $(".filterOptions:first").clone().insertBefore('.filterActions');
                 $(".filterOptions:last").children('.chooseOption').children().remove();
+                $(".filterOptions:last").children('.chooseOption').show();
+                $(".filterOptions:last").children('.chooseDate').remove();
                 $(".filterOptions:last").removeClass('chosen');
             },
 
             chooseOptions: function (e) {
-                var el = $('.chooseOption');
+                var el = $(e.target.nextElementSibling);
                 var value  = e.target.value;
+                var optDate = this.$el.find('.chooseDate');
+
                 $(e.target).closest('.filterOptions').addClass('chosen');
 
                 if (/date/.test(value.toLowerCase())) {
                     el.html('').hide();
                     $('<div class=\'chooseDate\'><input id="start" type="date"/><input id="end" type="date"/><div>').insertBefore(el)
                 } else {
-                    if ($('.chooseDate')) $('.chooseDate').remove();
-                    el.show()
+                    if ($('.chooseDate')) $('.chooseDate').remove(); if (optDate.length) {
+                        optDate.remove();
+                        el = $(e.target).next();
+                    }
+
+                    el.show();
+
                     this.customCollection[0][value].forEach(function (opt) {
                         if (opt && opt.name) {
                             el.append('<option value="' + opt.name + '">' + opt.name + '</option>')
