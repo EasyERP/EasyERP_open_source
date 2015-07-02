@@ -11,14 +11,14 @@ module.exports = (function () {
         forSale:{type: Boolean, default: true},
         invoice: {type: ObjectId, ref: 'Invoice', default: null},
         supplier: {type: ObjectId, ref: 'Customers', default: null},
-        paidAmount: {type: Number, default: 0},
+        paidAmount: {type: Number, default: 0, set: setPrice},
         paymentMethod: {type: ObjectId, ref: 'PaymentMethod', default: null},
         date: {type: Date, default: Date.now},
         name: {type: String, default: '', unique: true},
         period: {type: ObjectId, ref: 'Destination', default: null},
         paymentRef: {type: String, default: ''},
         workflow: {type: String, enum: ['Draft', 'Paid'], default: 'Draft'},
-        differenceAmount: {type: Number, default: 0},
+        differenceAmount: {type: Number, default: 0, set: setPrice},
         whoCanRW: {type: String, enum: ['owner', 'group', 'everyOne'], default: 'everyOne'},
 
         groups: {
@@ -65,7 +65,7 @@ module.exports = (function () {
             });
     });
 
-    /*paymentSchema.post('save', function (doc) {
+    paymentSchema.post('save', function (doc) {
         var payment = this;
         var db = payment.db.db;
 
@@ -84,7 +84,11 @@ module.exports = (function () {
 
                 console.log('Invoice %s was updated success', doc.invoice);
             });
-    });*/
+    });
+
+    function setPrice(num) {
+        return num * 100;
+    }
 
     if (!mongoose.Schemas) {
         mongoose.Schemas = {};

@@ -185,7 +185,7 @@ var Payment = function (models) {
         };
 
         function invoiceUpdater(invoice, payment, waterfallCallback) {
-            var tottalToPay = (invoice.paymentInfo) ? invoice.paymentInfo.balance : 0;
+            var totalToPay = (invoice.paymentInfo) ? invoice.paymentInfo.balance : 0;
             var paid = payment.paidAmount;
             var isNotFullPaid;
             var request = {
@@ -197,10 +197,10 @@ var Payment = function (models) {
                 session: req.session
             };
 
-            tottalToPay = parseFloat(tottalToPay);
+            totalToPay = parseFloat(totalToPay);
             paid = parseFloat(paid);
 
-            isNotFullPaid = paid < tottalToPay;
+            isNotFullPaid = paid < totalToPay;
 
             if (isNotFullPaid) {
                 request.query.status = 'In Progress';
@@ -216,7 +216,8 @@ var Payment = function (models) {
                 }
 
                 invoice.workflow = workflow._id;
-                invoice.paymentInfo.balance = (tottalToPay - paid).toFixed(2);
+                invoice.paymentInfo.balance = (totalToPay - paid).toFixed(2);
+                invoice.paymentInfo.unTaxed = paid.toFixed(2);
                 invoice.payments.push(payment._id);
                 invoice.save(waterfallCallback);
             });

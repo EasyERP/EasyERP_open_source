@@ -2,7 +2,7 @@
  * Created by soundstorm on 21.05.15.
  */
 define([
-        'text!templates/supplierPayments/TopBarTemplate.html',
+        'text!templates/customerPayments/TopBarTemplate.html',
         'custom',
         'common',
         'constants'
@@ -10,7 +10,7 @@ define([
     function (ContentTopBarTemplate, Custom, Common, CONSTANTS) {
         var TopBarView = Backbone.View.extend({
             el: '#top-bar',
-            contentType: CONSTANTS.SUPPLIERPAYMENTS,
+            contentType: CONSTANTS.CUSTOMERPAYMENTS,
             template: _.template(ContentTopBarTemplate),
 
             events: {
