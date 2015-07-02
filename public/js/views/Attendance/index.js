@@ -45,18 +45,18 @@ define([
 
                 status = self.model.get('status');
                 years = self.model.get('years');
-                var currentEmployee = employees[0];
-                var currentStatus = status[0];
-                var currentTime = years[0];
+                $currentEmployee = employees[0];
+                $currentStatus = status[0];
+                $currentTime = years[0];
 
                 while (years.indexOf(moment().year()) == -1) {
                     years.push(years[years.length - 1] + 1);
                 }
 
                 self.model.set({
-                    currentEmployee: currentEmployee,
-                    currentStatus: currentStatus,
-                    currentTime: currentTime,
+                    currentEmployee: $currentEmployee,
+                    currentStatus: $currentStatus,
+                    currentTime: $currentTime,
                     years: years
                 });
                 self.render();
@@ -65,18 +65,35 @@ define([
 
         changeEmployee: function () {
             var self = this;
+            $currentEmployee = $("#currentEmployee option:selected").attr('id');
 
-            //dataService.getData("/getPersonsForDd", {}, function (result) {
-            //
-            //});
+            if (!$currentEmployee) {
+                $currentEmployee = self.model.get('employees')[0].id;
+            }
+
+            dataService.getData("/vacation/attendance", {year: $currentTime, employee: $currentEmployee}, function (result) {
+
+            });
         },
 
         changeStatus: function () {
             var self = this;
+            $currentStatus = $("#currentStatus option:selected").attr('id');
+
+            dataService.getData("/getPersonsForDd", {}, function (result) {});
         },
 
         changeTime: function () {
             var self = this;
+            $currentTime = $("#currentTime option:selected").attr('id');
+
+            if (!$currentTime) {
+                $currentTime = self.model.get('years')[0].id;
+            }
+
+            dataService.getData("/vacation/attendance", {year: $currentTime, employee: $currentEmployee}, function (result) {
+
+            });
         },
 
         percentDiff: function (now, last) {

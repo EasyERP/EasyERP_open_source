@@ -18,7 +18,7 @@
             </span>
             <select id="currentStatus">
                 <% status.forEach(function(stat){ %>
-                <option>
+                <option id="stat">
                     <%= stat %>
                 </option>
                 <% }) %>
@@ -28,7 +28,7 @@
             <span>Select a Year:</span>
             <select id="currentTime">
                 <% years.forEach(function(year){ %>
-                <option>
+                <option id="year">
                     <%= year %>
                 </option>
                 <% }) %>
@@ -38,20 +38,20 @@
 
     <table class="grid attendance" cellspacing="0" cellpadding="0">
         <thead>
-            <tr>
-                <th>
-                    <span></span>
-                </th>
+        <tr>
+            <th>
+                <span></span>
+            </th>
 
-                <% for (var i = 1; i <= 6; i++) { %>
-                    <% weekDays.forEach(function(day){ %>
-                    <th>
-                        <%= day %>
-                    </th>
-                    <% }) %>
-                <% } %>
+            <% for (var i = 1; i <= 6; i++) { %>
+            <% weekDays.forEach(function(day){ %>
+            <th>
+                <%= day %>
+            </th>
+            <% }) %>
+            <% } %>
 
-            </tr>
+        </tr>
         </thead>
         <tbody id="attendanceMonth">
         </tbody>

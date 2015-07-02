@@ -2,8 +2,9 @@
  * Created by German on 30.06.2015.
  */
 define([
-    'text!templates/Attendance/monthTemplate.html'
-], function (ListTemplate) {
+    'text!templates/Attendance/monthTemplate.html',
+    'moment'
+], function (ListTemplate,moment) {
     var MonthView = Backbone.View.extend({
         el: '#attendanceMonth',
         initialize: function (options) {
@@ -12,6 +13,7 @@ define([
             this.days = options.attendance;
 
             this.generateMonthArray();
+            this.generateMonthData('2014');
         },
 
         events: {},
@@ -59,7 +61,7 @@ define([
                     monthYear = currentInterval;
                 }
 
-                var monthNumber = moment().set('year', monthYear).set('month', self.monthArray[i].label).months();
+                var monthNumber = moment().set('year', monthYear).set('month', self.monthArray[i].label).month();
                 if (monthNumber > 11) {
                     monthNumber = monthNumber - 12;
                 }
@@ -69,11 +71,11 @@ define([
                     startOfMonth = 7;
                 }
 
-                var dayCount = moment().set('year', monthYear).set('month', monthNumber).endOf('month').dates();
+                var dayCount = moment().set('year', monthYear).set('month', monthNumber).endOf('month').date();
 
                 var dayNumber = 1;
 
-                self.monthCur = _.filter(self.dataDays, function (item) {
+                self.monthCur = _.filter(self.days, function (item) {
                     var currectStartDate = new Date(item.StartDate);
                     var numMonth = moment(currectStartDate).month();
                     var numYear = moment(currectStartDate).year();
@@ -82,8 +84,12 @@ define([
                         return item;
                     }
                 });
+                for (var j = 0; j < startOfMonth; j++) {
+                    self.monthArray[i].daysData[j] = {};
+                    self.monthArray[i].daysData[j].number = '&nbsp';
+                }
                 for (var j = startOfMonth; j < startOfMonth + dayCount; j++) {
-                    var isType = false;
+                    //var isType = false;
                     var day = new Date(monthYear, i, j - startOfMonth + 1);
                     day = day.getDay();
                     if (day === 0 || day == 6) {
@@ -99,12 +105,15 @@ define([
                         var endDate = moment(currectEndDate).date();
 
                         if (dayNumber >= startDate && dayNumber <= endDate) {
-                            isType = true;
                             return item.absenceTypeID;
                         }
                     });
 
                     dayNumber++;
+                }
+                for (var j = startOfMonth + dayCount; j < 42; j++) {
+                    self.monthArray[i].daysData[j] = {};
+                    self.monthArray[i].daysData[j].number = '&nbsp';
                 }
             }
             if (currentInterval !== 'Line Year') {
