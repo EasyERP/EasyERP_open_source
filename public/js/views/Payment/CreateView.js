@@ -169,7 +169,7 @@ define([
 
                 populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
                 populate.get("#period", "/period", {}, 'name', this, true, true);
-                populate.get("#paymentMethod", "/paymentMethod", {}, 'name', this, true, true);
+                populate.get("#paymentMethod", "/paymentMethod", {}, 'name', this, true);
 
                 this.$el.find('#paymentDate').datepicker({
                     dateFormat: "d M, yy",

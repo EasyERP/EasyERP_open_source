@@ -314,6 +314,15 @@
                 );
 
                 populate.get("#paymentTerms", "/paymentTerm", {}, 'name', this, true);
+                populate.fetchWorkflow({
+                    wId: 'Sales Invoice',
+                    source: 'purchase',
+                    targetSource: 'invoice'
+                }, function (response) {
+                    if (!response.error) {
+                        self.defaultWorkflow = response._id;
+                    }
+                });
 
                 this.$el.find('#invoiceDate').datepicker({
                     dateFormat: "d M, yy",
