@@ -42,6 +42,11 @@ define([
 
         generateMonthData: function (currentInterval) {
             var self = this;
+            self.weekend = 0;
+            self.vacationDays = 0;
+            self.personalDays = 0;
+            self.sickDays = 0;
+            self.educationDays = 0;
 
             for (var i = 0; i < self.monthArray.length; i++) {
                 var monthYear;
@@ -68,6 +73,7 @@ define([
                 }
 
                 var dayCount = moment().set('year', monthYear).set('month', monthNumber).endOf('month').date();
+                self.workingDays += dayCount;
 
                 var dayNumber = 1;
 
@@ -100,6 +106,20 @@ define([
                         var end = moment(vacationArray[j].endDate).date();
                         for (var k = start+startOfMonth-1; k <= end+startOfMonth-1; k++) {
                             self.monthArray[i].daysData[k].type = vacationArray[j].vacationType;
+                            switch (vacationArray[j].vacationType) {
+                                case 'V':
+                                    self.vacationDays++;
+                                    break;
+                                case 'P':
+                                    self.personalDays++;
+                                    break;
+                                case 'S':
+                                    self.sickDays++;
+                                    break;
+                                case 'E':
+                                    self.educationDays++;
+                                    break;
+                            }
                         }
                     }
                 }
@@ -130,12 +150,12 @@ define([
             }));
 
             var statictics = new StatisticsView({
-                leaveDays: 5,
-                workingDays: 260,
-                vacation: 10,
-                personal: 10,
-                sick: 5,
-                education: 30,
+                leaveDays: self.daysLeave,
+                workingDays: self.workingDays,
+                vacation: self.vacationDays,
+                personal: self.personalDays,
+                sick: self.sickDays,
+                education: self.educationDays,
 
                 lastLeave: 0,
                 lastWorkingDays: 270,
