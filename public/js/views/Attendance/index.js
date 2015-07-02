@@ -5,11 +5,12 @@ define([
     'text!templates/Attendance/index.html',
     'models/AttendanceModel',
     'views/Attendance/MonthView',
+    'views/Attendance/StatisticsView',
     'populate',
     'moment',
     'dataService',
     'async'
-], function (mainTemplate, AttendanceModel, MonthView, populate, moment, dataService) {
+], function (mainTemplate, AttendanceModel, MonthView, StatisticsView, populate, moment, dataService) {
     var View = Backbone.View.extend({
         el: '#content-holder',
 
@@ -65,9 +66,9 @@ define([
         changeEmployee: function () {
             var self = this;
 
-            dataService.getData("/getPersonsForDd", {}, function (result) {
-
-            });
+            //dataService.getData("/getPersonsForDd", {}, function (result) {
+            //
+            //});
         },
 
         changeStatus: function () {
@@ -76,50 +77,6 @@ define([
 
         changeTime: function () {
             var self = this;
-        },
-
-        generateMonthArray: function () {
-            var number;
-            var self = this;
-
-            if (self.model.currentTime == 'Line Year') {
-                self.monthArray = new Array(13);
-                self.lastMonthArray = new Array(13);
-                self.startMonth = moment().month();
-            } else {
-                self.monthArray = new Array(12);
-                self.lastMonthArray = new Array(12);
-                self.startMonth = 0;
-            }
-
-            for (var i = 0; i < self.monthArray.length; i++) {
-                if (self.startMonth + i > 11) {
-                    number = self.startMonth + i - 12;
-                } else {
-                    number = self.startMonth + i;
-                }
-                self.monthArray.push({
-                    label: self.model.labelMonth[number],
-                    daysData: new Array(42)
-                });
-            }
-            for (i = 0; i < self.lastMonthArray.length; i++) {
-                if (self.startMonth + i > 11) {
-                    number = self.startMonth + i - 12;
-                } else {
-                    number = self.startMonth + i;
-                }
-                self.lastMonthArray.push({
-                    label: self.labelMonth[number],
-                    daysData: new Array(42)
-                });
-            }
-        },
-
-        generateMonthData: function () {
-            var self = this;
-
-
         },
 
         percentDiff: function (now, last) {
@@ -143,11 +100,15 @@ define([
 
         render: function (attendance) {
             var self = this;
+            var labels = self.model.get('labelMonth');
 
             this.$el.html(this.template(self.model.toJSON()));
 
-            var itemView = new MonthView({month: this.month, attendance: attendance});
-            self.$el.append(itemView.render());
+            var month = new MonthView({labels: labels,month: this.month, attendance: attendance});
+            self.$el.append(month.render());
+
+            var statictics = new StatisticsView({month: this.month, attendance: attendance});
+            self.$el.append(statictics.render());
 
             this.rendered = true;
 
