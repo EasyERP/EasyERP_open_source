@@ -5,8 +5,8 @@
     </td>
     <% month.daysData.forEach(function(day){ %>
     <td class="dayOfMonth">
-        <span class="text-left <%= day.type %>">
-            <%=day.number%>
+        <span class="text-center <%= day.type %> ">
+            <%=day.number ? day.number : 0%>
         </span>
     </td>
     <% }) %>

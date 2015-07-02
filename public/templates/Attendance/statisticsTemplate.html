@@ -3,10 +3,10 @@
         <div class="item">
             <div class="title">Days on Leave</div>
             <div class="countDays leave">
-                <%= leaveDays %>
+                <%= leaveDays ? leaveDays : 0 %>
             </div>
             <div class="lastTime">
-                LAST YEAR <%= lastLeave %>
+                LAST YEAR <%= lastLeave ? lastLeave : 0%>
             </div>
             <div class="percent">
                 <%=percentLeave%>
@@ -17,10 +17,10 @@
         <div class="item">
             <div class="title">Working Days</div>
             <div class="countDays working">
-                <%= workingDays %>
+                <%= workingDays ? workingDays : 0%>
             </div>
             <div class="lastTime">
-                LAST YEAR <%= lastWorkingDays %>
+                LAST YEAR <%= lastWorkingDays ? lastWorkingDays : 0%>
             </div>
             <div class="percent">
                 <%=percentWork%>
@@ -31,10 +31,10 @@
         <div class="item">
             <div class="title">on Vacation</div>
             <div class="countDays vacation">
-                <%= vacation %>
+                <%= vacation ? vacation : 0%>
             </div>
             <div class="lastTime">
-                LAST YEAR <%= lastVacation %>
+                LAST YEAR <%= lastVacation ? lastVacation : 0%>
             </div>
             <div class="percent">
                 <%=percentVacation%>
@@ -45,10 +45,10 @@
         <div class="item">
             <div class="title">on Personal</div>
             <div class="countDays personal">
-                <%= personal %>
+                <%= personal ? personal : 0%>
             </div>
             <div class="lastTime">
-                LAST YEAR <%= lastPersonal %>
+                LAST YEAR <%= lastPersonal ? lastPersonal : 0%>
             </div>
             <div class="percent">
                 <%=percentPersonal%>
@@ -59,10 +59,10 @@
         <div class="item">
             <div class="title">on Sick</div>
             <div class="countDays sick">
-                <%= sick %>
+                <%= sick ? sick : 0 %>
             </div>
             <div class="lastTime">
-                LAST YEAR <%= lastSick %>
+                LAST YEAR <%= lastSick ? lastSick : 0%>
             </div>
             <div class="percent">
                 <%=percentSick%>
@@ -73,10 +73,10 @@
         <div class="item">
             <div class="title">on Education</div>
             <div class="countDays education">
-                <%= education %>
+                <%= education ? education : 0%>
             </div>
             <div class="lastTime">
-                LAST YEAR <%= lastEducation %>
+                LAST YEAR <%= lastEducation ? lastEducation : 0 %>
             </div>
             <div class="percent">
                 <%=percentEducation%>

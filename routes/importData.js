@@ -783,6 +783,7 @@ module.exports = function (models) {
         var employeeShema = tasks[2];
         var salaryShema = tasks[6];
         var holidayShema = tasks[9];
+        var vacationShema = tasks[10];
         var ownerId = req.session ? req.session.uId : null;
 
         var jobPositionCollection = jobPositionShema.collection;
@@ -790,12 +791,14 @@ module.exports = function (models) {
         var employeeCollection = employeeShema.collection;
         var salaryCollection = salaryShema.collection;
         var holidayCollection = holidayShema.collection;
+        var vacationCollection = vacationShema.collection;
 
         var JobPositionSchema = mongoose.Schemas[jobPositionCollection];
         var DepartmentSchema = mongoose.Schemas[departmentCollection];
         var EmployeeSchema = mongoose.Schemas[employeeCollection];
         var SalarySchema = mongoose.Schemas[salaryCollection];
         var HolidaySchema = mongoose.Schemas[holidayCollection];
+        var VacationSchema = mongoose.Schemas[vacationCollection];
         var WorkflowSchema = mongoose.Schemas['workflow'];
 
         var JobPosition = models.get(req.session.lastDb, jobPositionCollection, JobPositionSchema);
@@ -803,6 +806,7 @@ module.exports = function (models) {
         var Employee = models.get(req.session.lastDb, employeeCollection, EmployeeSchema);
         var Salary = models.get(req.session.lastDb, salaryCollection, SalarySchema);
         var Holiday = models.get(req.session.lastDb, holidayCollection, HolidaySchema);
+        var Vacation = models.get(req.session.lastDb, vacationCollection, VacationSchema);
         var Workflow = models.get(req.session.lastDb, 'workflows', WorkflowSchema);
 
         function importDepartment(departmentShema, seriesCb) {
@@ -1219,7 +1223,106 @@ module.exports = function (models) {
             importHoliday(holidayShema, callback);
         }
 
-        return [departmentImporter, jobPositionImporter, employeeImporter, salaryImporter, holidayImporter];
+        function importVacation(vacationShema, seriesCb) {
+            var query = queryBuilder(vacationShema.table);
+            var waterfallTasks;
+
+            function getData(callback) {
+                handler.importData(query, callback);
+            }
+
+            function saverVacation(fetchedArray, callback) {
+                var model;
+                var mongooseFields = Object.keys(vacationShema.aliases);
+
+                async.eachLimit(fetchedArray, 100, function (fetchedVacation, cb) {
+                    var objectToSave = {};
+                    var employeeQuery;
+                    var key;
+                    var msSqlKey;
+
+                    for (var i = mongooseFields.length - 1; i >= 0; i--) {
+                        key = mongooseFields[i];
+                        msSqlKey = vacationShema.aliases[key];
+
+                        if (vacationShema.defaultValues) {
+                            for (var defKey in vacationShema.defaultValues) {
+                                objectToSave[defKey] = vacationShema.defaultValues[defKey];
+                            }
+                        }
+
+                        if (vacationShema.comparator && msSqlKey in vacationShema.comparator) {
+                            fetchedVacation[msSqlKey] = comparator(fetchedVacation[msSqlKey], vacationShema.comparator[msSqlKey]) || fetchedVacation[msSqlKey];
+                        }
+
+                        objectToSave[key] = fetchedVacation[msSqlKey];
+                        objectToSave.createdBy = {
+                            user: ownerId
+                        };
+                        objectToSave.editedBy = {
+                            user: ownerId
+                        }
+                    }
+
+                    if (fetchedVacation) {
+                        var date = new Date(fetchedVacation['StartDate']);
+                        objectToSave.month =date.getMonth();
+                        objectToSave.year = date.getFullYear();
+
+                        employeeQuery = {
+                            ID: fetchedVacation['Employee']
+                        };
+
+                        Employee.findOne(employeeQuery,
+                            {_id: 1, name: 1, department: 1})
+                            .populate('department')
+                            .lean()
+                            .exec(function (err, employee) {
+                                if (err) {
+                                    return cb(err);
+                                }
+
+                                if (employee) {
+                                    objectToSave.employee = {};
+                                    objectToSave.employee._id = employee._id || null;
+                                    objectToSave.employee.name = employee.name ? employee.name.first + ' ' + employee.name.last : '';
+
+                                    if (employee.department && employee.department.departmentName) {
+                                        objectToSave.department = {}
+                                        objectToSave.department._id = employee.department._id;
+                                        objectToSave.department.name = employee.department.departmentName;
+                                    }
+
+                                    model = new Vacation(objectToSave);
+                                    model.save(cb);
+                                }
+                            });
+                    }
+                }, function (err) {
+                    if (err) {
+                        return callback(err);
+                    }
+
+                    callback(null, 'Completed');
+                })
+            }
+
+            waterfallTasks = [getData, saverVacation];
+
+            async.waterfall(waterfallTasks, function (err, result) {
+                if (err) {
+                    seriesCb(err);
+                }
+
+                seriesCb(null, 'Complete')
+            });
+        }
+
+        function vacationImporter(callback) {
+            importVacation(vacationShema, callback);
+        }
+
+        return [departmentImporter, jobPositionImporter, employeeImporter, salaryImporter, holidayImporter, vacationImporter];
     }
 
     router.post('/', function (req, res, next) {

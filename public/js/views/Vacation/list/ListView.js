@@ -6,7 +6,7 @@ define([
         'views/Vacation/list/ListItemView',
         'models/VacationModel',
         'collections/Vacation/filterCollection',
-        'collections/Holiday/editCollection',
+        'collections/Vacation/editCollection',
         'common',
         'dataService',
         'constants',
@@ -15,7 +15,7 @@ define([
     ],
 
     function (listTemplate, subListTemplate, cancelEdit, createView, listItemView, vacationModel, vacationCollection, editCollection, common, dataService, CONSTANTS, async, moment) {
-        var HolidayListView = Backbone.View.extend({
+        var VacationListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
             listLength: null,
@@ -23,7 +23,7 @@ define([
             sort: null,
             newCollection: null,
             page: null, //if reload page, and in url is valid page
-            contentType: CONSTANTS.HOLIDAY,//needs in view.prototype.changeLocationHash
+            contentType: CONSTANTS.VACATION,//needs in view.prototype.changeLocationHash
             viewType: 'list',//needs in view.prototype.changeLocationHash
             changedModels: {},
             holidayId: null,
@@ -760,5 +760,5 @@ define([
 
         });
 
-        return HolidayListView;
+        return VacationListView;
     });

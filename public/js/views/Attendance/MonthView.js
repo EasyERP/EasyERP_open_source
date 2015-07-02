@@ -2,16 +2,14 @@
  * Created by German on 30.06.2015.
  */
 define([
-    'text!templates/Attendance/monthTemplate.html'
-], function (ListTemplate) {
+    'text!templates/Attendance/monthTemplate.html',
+    'views/Attendance/StatisticsView',
+    'moment'
+], function (ListTemplate,StatisticsView,moment) {
     var MonthView = Backbone.View.extend({
         el: '#attendanceMonth',
-        initialize: function (options) {
-            this.labels = options.labels;
-            this.type = options.type;
-            this.days = options.attendance;
+        initialize: function () {
 
-            this.generateMonthArray();
         },
 
         events: {},
@@ -44,6 +42,11 @@ define([
 
         generateMonthData: function (currentInterval) {
             var self = this;
+            self.weekend = 0;
+            self.vacationDays = 0;
+            self.personalDays = 0;
+            self.sickDays = 0;
+            self.educationDays = 0;
 
             for (var i = 0; i < self.monthArray.length; i++) {
                 var monthYear;
@@ -59,7 +62,7 @@ define([
                     monthYear = currentInterval;
                 }
 
-                var monthNumber = moment().set('year', monthYear).set('month', self.monthArray[i].label).months();
+                var monthNumber = moment().set('year', monthYear).set('month', self.monthArray[i].label).month();
                 if (monthNumber > 11) {
                     monthNumber = monthNumber - 12;
                 }
@@ -69,19 +72,16 @@ define([
                     startOfMonth = 7;
                 }
 
-                var dayCount = moment().set('year', monthYear).set('month', monthNumber).endOf('month').dates();
+                var dayCount = moment().set('year', monthYear).set('month', monthNumber).endOf('month').date();
+                self.workingDays += dayCount;
 
                 var dayNumber = 1;
 
-                self.monthCur = _.filter(self.dataDays, function (item) {
-                    var currectStartDate = new Date(item.StartDate);
-                    var numMonth = moment(currectStartDate).month();
-                    var numYear = moment(currectStartDate).year();
-
-                    if (numMonth == monthNumber && numYear == monthYear) {
-                        return item;
-                    }
-                });
+                self.monthCur = self.days[monthNumber];
+                for (var j = 0; j < startOfMonth; j++) {
+                    self.monthArray[i].daysData[j] = {};
+                    self.monthArray[i].daysData[j].number = '&nbsp';
+                }
                 for (var j = startOfMonth; j < startOfMonth + dayCount; j++) {
                     var isType = false;
                     var day = new Date(monthYear, i, j - startOfMonth + 1);
@@ -91,20 +91,37 @@ define([
                     }
                     self.monthArray[i].daysData[j] = {};
                     self.monthArray[i].daysData[j].number = dayNumber;
-                    self.monthArray[i].daysData[j].type = _.find(self.monthCur, function (item) {
-                        var currectStartDate = new Date(item.StartDate);
-                        var currectEndDate = new Date(item.EndDate);
-                        var currentYear = moment(currectStartDate).year();
-                        var startDate = moment(currectStartDate).date();
-                        var endDate = moment(currectEndDate).date();
-
-                        if (dayNumber >= startDate && dayNumber <= endDate) {
-                            isType = true;
-                            return item.absenceTypeID;
-                        }
-                    });
-
                     dayNumber++;
+                }
+                for (var j = startOfMonth + dayCount; j < 42; j++) {
+                    self.monthArray[i].daysData[j] = {};
+                    self.monthArray[i].daysData[j].number = '&nbsp';
+                }
+
+                if (self.monthCur) {
+                    var countVacation = self.monthCur[0].vacationArray.length;
+                    var vacationArray = self.monthCur[0].vacationArray;
+                    for (var j = 0; j < countVacation; j++) {
+                        var start = moment(vacationArray[j].startDate).date();
+                        var end = moment(vacationArray[j].endDate).date();
+                        for (var k = start+startOfMonth-1; k <= end+startOfMonth-1; k++) {
+                            self.monthArray[i].daysData[k].type = vacationArray[j].vacationType;
+                            switch (vacationArray[j].vacationType) {
+                                case 'V':
+                                    self.vacationDays++;
+                                    break;
+                                case 'P':
+                                    self.personalDays++;
+                                    break;
+                                case 'S':
+                                    self.sickDays++;
+                                    break;
+                                case 'E':
+                                    self.educationDays++;
+                                    break;
+                            }
+                        }
+                    }
                 }
             }
             if (currentInterval !== 'Line Year') {
@@ -119,10 +136,35 @@ define([
             self.workingDays = endYear.diff(startYear, 'days') - self.daysLeave - self.weekend;
         },
 
-        render: function () {
-            this.$el.append(_.template(ListTemplate, {
+        render: function (options) {
+            var self = this;
+            self.labels = options.labels;
+            self.type = options.type;
+            self.days = options.attendance;
+
+            self.generateMonthArray();
+            self.generateMonthData('2014');
+
+            self.$el.html(_.template(ListTemplate, {
                 months: this.monthArray
             }));
+
+            var statictics = new StatisticsView({
+                leaveDays: self.daysLeave,
+                workingDays: self.workingDays,
+                vacation: self.vacationDays,
+                personal: self.personalDays,
+                sick: self.sickDays,
+                education: self.educationDays,
+
+                lastLeave: 0,
+                lastWorkingDays: 270,
+                lastVacation: 7,
+                lastPersonal: 8,
+                lastSick: 14,
+                lastEducation: 4
+            });
+            self.$el.html(statictics.render());
         }
     });
 
