@@ -84,7 +84,8 @@ define([
                     el.html('').hide();
                     $('<div class=\'chooseDate\'><input id="start" type="date"/><input id="end" type="date"/><div>').insertBefore(el)
                 } else {
-                    if ($('.chooseDate')) $('.chooseDate').remove(); if (optDate.length) {
+                    if ($('.chooseDate')) $('.chooseDate').remove();
+                    if (optDate.length) {
                         optDate.remove();
                         el = $(e.target).next();
                     }
