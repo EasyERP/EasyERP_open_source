@@ -7,19 +7,19 @@ define([
     var StatisticsView = Backbone.View.extend({
         el: '#statictics',
         initialize: function (options) {
-            this.leaveDays = options.leaveDays;
-            this.workingDays = options.workingDays;
-            this.vacation = options.vacation;
-            this.personal = options.personal;
-            this.sick = options.sick;
-            this.education = options.education;
+            this.leaveDays = options.leaveDays || 0;
+            this.workingDays = options.workingDays || 0;
+            this.vacation = options.vacation || 0;
+            this.personal = options.personal || 0;
+            this.sick = options.sick || 0;
+            this.education = options.education || 0;
 
-            this.lastLeave = options.lastLeave;
-            this.lastWorkingDays = options.lastWorkingDays;
-            this.lastVacation = options.lastVacation;
-            this.lastPersonal = options.lastPersonal;
-            this.lastSick = options.lastSick;
-            this.lastEducation = options.lastEducation;
+            this.lastLeave = options.lastLeave || 0;
+            this.lastWorkingDays = options.lastWorkingDays || 0;
+            this.lastVacation = options.lastVacation || 0;
+            this.lastPersonal = options.lastPersonal || 0;
+            this.lastSick = options.lastSick || 0;
+            this.lastEducation = options.lastEducation || 0;
         },
 
         events: {},

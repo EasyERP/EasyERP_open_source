@@ -3,8 +3,9 @@
  */
 define([
     'text!templates/Attendance/monthTemplate.html',
+    'views/Attendance/StatisticsView',
     'moment'
-], function (ListTemplate,moment) {
+], function (ListTemplate,StatisticsView,moment) {
     var MonthView = Backbone.View.extend({
         el: '#attendanceMonth',
         initialize: function (options) {
@@ -129,9 +130,27 @@ define([
         },
 
         render: function () {
+            var self = this;
             this.$el.append(_.template(ListTemplate, {
                 months: this.monthArray
             }));
+
+            var statictics = new StatisticsView({
+                leaveDays: 5,
+                workingDays: 260,
+                vacation: 10,
+                personal: 10,
+                sick: 5,
+                education: 30,
+
+                lastLeave: 0,
+                lastWorkingDays: 270,
+                lastVacation: 7,
+                lastPersonal: 8,
+                lastSick: 14,
+                lastEducation: 4
+            });
+            self.$el.append(statictics.render());
         }
     });
 

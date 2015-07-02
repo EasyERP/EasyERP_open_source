@@ -124,8 +124,8 @@ define([
             var month = new MonthView({labels: labels,month: this.month, attendance: attendance});
             self.$el.append(month.render());
 
-            var statictics = new StatisticsView({month: this.month, attendance: attendance});
-            self.$el.append(statictics.render());
+            //var statictics = new StatisticsView({month: this.month, attendance: attendance});
+            //self.$el.append(statictics.render());
 
             this.rendered = true;
 

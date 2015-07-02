@@ -28,7 +28,7 @@
             <span>Select a Year:</span>
             <select id="currentTime">
                 <% years.forEach(function(year){ %>
-                <option id="year">
+                <option id="<%= year %>">
                     <%= year %>
                 </option>
                 <% }) %>
