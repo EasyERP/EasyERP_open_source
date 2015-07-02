@@ -53,13 +53,15 @@ define([
                     years.push(years[years.length - 1] + 1);
                 }
 
+                self.render();
+
                 self.model.set({
                     currentEmployee: $currentEmployee,
                     currentStatus: $currentStatus,
                     currentTime: $currentTime,
                     years: years
                 });
-                self.render();
+
             });
         },
 
@@ -72,7 +74,10 @@ define([
             }
 
             dataService.getData("/vacation/attendance", {year: $currentTime, employee: $currentEmployee}, function (result) {
-
+                var labels = self.model.get('labelMonth');
+                var month = new MonthView();
+                var data = _.groupBy(result, "month");
+                self.$el.append(month.render({labels: labels,month: this.month, attendance: data}));
             });
         },
 
@@ -85,14 +90,18 @@ define([
 
         changeTime: function () {
             var self = this;
-            $currentTime = $("#currentTime option:selected").attr('id');
+            //$currentTime = $("#currentTime option:selected").attr('id');
+            $currentTime = $("#currentTime option:selected").text().trim();
 
             if (!$currentTime) {
                 $currentTime = self.model.get('years')[0].id;
             }
 
             dataService.getData("/vacation/attendance", {year: $currentTime, employee: $currentEmployee}, function (result) {
-
+                var labels = self.model.get('labelMonth');
+                var month = new MonthView();
+                var data = _.groupBy(result, "month");
+                self.$el.append(month.render({labels: labels,month: this.month, attendance: data}));
             });
         },
 
@@ -117,12 +126,12 @@ define([
 
         render: function (attendance) {
             var self = this;
-            var labels = self.model.get('labelMonth');
+            //var labels = self.model.get('labelMonth');
 
             this.$el.html(this.template(self.model.toJSON()));
 
-            var month = new MonthView({labels: labels,month: this.month, attendance: attendance});
-            self.$el.append(month.render());
+            //var month = new MonthView({labels: labels,month: this.month, attendance: attendance});
+            //self.$el.append(month.render());
 
             //var statictics = new StatisticsView({month: this.month, attendance: attendance});
             //self.$el.append(statictics.render());

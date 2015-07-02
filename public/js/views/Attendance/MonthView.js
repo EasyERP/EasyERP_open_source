@@ -8,13 +8,8 @@ define([
 ], function (ListTemplate,StatisticsView,moment) {
     var MonthView = Backbone.View.extend({
         el: '#attendanceMonth',
-        initialize: function (options) {
-            this.labels = options.labels;
-            this.type = options.type;
-            this.days = options.attendance;
+        initialize: function () {
 
-            this.generateMonthArray();
-            this.generateMonthData('2014');
         },
 
         events: {},
@@ -76,21 +71,13 @@ define([
 
                 var dayNumber = 1;
 
-                self.monthCur = _.filter(self.days, function (item) {
-                    var currectStartDate = new Date(item.StartDate);
-                    var numMonth = moment(currectStartDate).month();
-                    var numYear = moment(currectStartDate).year();
-
-                    if (numMonth == monthNumber && numYear == monthYear) {
-                        return item;
-                    }
-                });
+                self.monthCur = self.days[monthNumber];
                 for (var j = 0; j < startOfMonth; j++) {
                     self.monthArray[i].daysData[j] = {};
                     self.monthArray[i].daysData[j].number = '&nbsp';
                 }
                 for (var j = startOfMonth; j < startOfMonth + dayCount; j++) {
-                    //var isType = false;
+                    var isType = false;
                     var day = new Date(monthYear, i, j - startOfMonth + 1);
                     day = day.getDay();
                     if (day === 0 || day == 6) {
@@ -98,23 +85,23 @@ define([
                     }
                     self.monthArray[i].daysData[j] = {};
                     self.monthArray[i].daysData[j].number = dayNumber;
-                    self.monthArray[i].daysData[j].type = _.find(self.monthCur, function (item) {
-                        var currectStartDate = new Date(item.StartDate);
-                        var currectEndDate = new Date(item.EndDate);
-                        var currentYear = moment(currectStartDate).year();
-                        var startDate = moment(currectStartDate).date();
-                        var endDate = moment(currectEndDate).date();
-
-                        if (dayNumber >= startDate && dayNumber <= endDate) {
-                            return item.absenceTypeID;
-                        }
-                    });
-
                     dayNumber++;
                 }
                 for (var j = startOfMonth + dayCount; j < 42; j++) {
                     self.monthArray[i].daysData[j] = {};
                     self.monthArray[i].daysData[j].number = '&nbsp';
+                }
+
+                if (self.monthCur) {
+                    var countVacation = self.monthCur[0].vacationArray.length;
+                    var vacationArray = self.monthCur[0].vacationArray;
+                    for (var j = 0; j < countVacation; j++) {
+                        var start = moment(vacationArray[j].startDate).date();
+                        var end = moment(vacationArray[j].endDate).date();
+                        for (var k = start+startOfMonth-1; k <= end+startOfMonth-1; k++) {
+                            self.monthArray[i].daysData[k].type = vacationArray[j].vacationType;
+                        }
+                    }
                 }
             }
             if (currentInterval !== 'Line Year') {
@@ -129,9 +116,16 @@ define([
             self.workingDays = endYear.diff(startYear, 'days') - self.daysLeave - self.weekend;
         },
 
-        render: function () {
+        render: function (options) {
             var self = this;
-            this.$el.append(_.template(ListTemplate, {
+            self.labels = options.labels;
+            self.type = options.type;
+            self.days = options.attendance;
+
+            self.generateMonthArray();
+            self.generateMonthData('2014');
+
+            self.$el.html(_.template(ListTemplate, {
                 months: this.monthArray
             }));
 
@@ -150,7 +144,7 @@ define([
                 lastSick: 14,
                 lastEducation: 4
             });
-            self.$el.append(statictics.render());
+            self.$el.html(statictics.render());
         }
     });
 

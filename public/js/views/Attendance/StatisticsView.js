@@ -52,7 +52,7 @@ define([
             var percentSick = self.percentDiff(self.sick,self.lastSick);
             var percentEducation = self.percentDiff(self.education,self.lastEducation);
 
-            self.$el.append(_.template(statiscticsBlock, {
+            self.$el.html(_.template(statiscticsBlock, {
                 leaveDays: self.leaveDays,
                 workingDays: self.workingDays,
                 vacation: self.vacation,
