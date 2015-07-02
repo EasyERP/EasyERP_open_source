@@ -49,7 +49,7 @@ define([
                 $currentStatus = status[0];
                 $currentTime = years[0];
 
-                while (years.indexOf(moment().year()) == -1) {
+                while (years.indexOf(moment().year()) === -1) {
                     years.push(years[years.length - 1] + 1);
                 }
 
@@ -67,6 +67,10 @@ define([
 
         changeEmployee: function () {
             var self = this;
+            var labels;
+            var month;
+            var data;
+
             $currentEmployee = $("#currentEmployee option:selected").attr('id');
 
             if (!$currentEmployee) {
@@ -74,9 +78,9 @@ define([
             }
 
             dataService.getData("/vacation/attendance", {year: $currentTime, employee: $currentEmployee}, function (result) {
-                var labels = self.model.get('labelMonth');
-                var month = new MonthView();
-                var data = _.groupBy(result, "month");
+                labels = self.model.get('labelMonth');
+                month = new MonthView();
+                data = _.groupBy(result, "month");
                 self.$el.append(month.render({labels: labels,month: this.month, attendance: data}));
             });
         },
@@ -90,7 +94,10 @@ define([
 
         changeTime: function () {
             var self = this;
-            //$currentTime = $("#currentTime option:selected").attr('id');
+            var labels;
+            var month;
+            var data;
+
             $currentTime = $("#currentTime option:selected").text().trim();
 
             if (!$currentTime) {
@@ -98,9 +105,9 @@ define([
             }
 
             dataService.getData("/vacation/attendance", {year: $currentTime, employee: $currentEmployee}, function (result) {
-                var labels = self.model.get('labelMonth');
-                var month = new MonthView();
-                var data = _.groupBy(result, "month");
+                labels = self.model.get('labelMonth');
+                month = new MonthView();
+                data = _.groupBy(result, "month");
                 self.$el.append(month.render({labels: labels,month: this.month, attendance: data}));
             });
         },
@@ -113,7 +120,7 @@ define([
                 numberPercent = now / onePercent;
                 numberPercent = "DOWN " + Math.abs(Math.ceil(100 - numberPercent)) + "%";
             } else {
-                if (last == 0) {
+                if (last === 0) {
                     numberPercent = "UP " + Math.ceil(now * 100) + "%";
                 } else {
                     onePercent = last / 100;
@@ -124,17 +131,10 @@ define([
             return numberPercent;
         },
 
-        render: function (attendance) {
+        render: function () {
             var self = this;
-            //var labels = self.model.get('labelMonth');
 
             this.$el.html(this.template(self.model.toJSON()));
-
-            //var month = new MonthView({labels: labels,month: this.month, attendance: attendance});
-            //self.$el.append(month.render());
-
-            //var statictics = new StatisticsView({month: this.month, attendance: attendance});
-            //self.$el.append(statictics.render());
 
             this.rendered = true;
 
