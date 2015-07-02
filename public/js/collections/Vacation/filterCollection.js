@@ -39,6 +39,21 @@ define([
             if (options && options.viewType) {
                 this.url += options.viewType;
             }
+
+            if (options && options.year) {
+                options.year = options.year
+            } else {
+                options.year = (this.startTime.getFullYear()).toString();
+            }
+
+            if (options && options.month) {
+                options.month = options.month
+            } else {
+                options.month = (this.startTime.getMonth() + 1).toString();
+            }
+
+            options.month = "3";
+
             this.fetch({
                 data: options,
                 reset: true,
