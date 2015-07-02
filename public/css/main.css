@@ -7278,6 +7278,59 @@ textarea#editInput {
 .rowEdit {
   padding: 0 !important;
 }
+.grid {
+  min-width: 100%;
+  font-size: 11px;
+  border-bottom: 1px solid transparent;
+}
+.grid tr th span {
+  padding-right: 6px;
+  text-align: right;
+  height: 25px;
+  line-height: 25px;
+  display: block;
+}
+.grid.attendance {
+  border-bottom: 5px solid #4c5975;
+}
+.grid.attendance tr:first-child {
+  border-right: 1px solid #4c5975;
+}
+.grid.attendance th {
+  border: 1px solid #4c5975;
+  background-color: #4c5975;
+  color: #fff;
+}
+.grid.attendance tr {
+  border-bottom: none;
+}
+.grid.attendance tr td:first-child {
+  min-width: 100px;
+  border-left: 1px solid #4c5975;
+  border-right: 1px solid #4c5975;
+}
+.grid.attendance .vacation {
+  background-color: #a32a2c;
+  color: #ffffff;
+}
+.grid.attendance .personal {
+  background-color: #fba302;
+  color: #ffffff;
+}
+.grid.attendance .sick {
+  background-color: #228924;
+  color: #ffffff;
+}
+.grid.attendance .education {
+  background-color: #0000fd;
+  color: #ffffff;
+}
+.grid.attendance .borderRight {
+  border-right: 1px solid #4c5975;
+}
+.grid.attendance .weekend {
+  color: #ccc;
+}
 .grid-conatiner .attendanceTop {
   margin-bottom: 10px;
 }
@@ -7287,6 +7340,11 @@ textarea#editInput {
 }
 .grid-conatiner .attendanceTop div.pull-left {
   margin-right: 10px;
+}
+.grid-conatiner .attendanceTop:after {
+  display: table;
+  content: " ";
+  clear: both;
 }
 .grid-conatiner .statisticsAtten {
   margin-top: 10px;
@@ -7304,6 +7362,9 @@ textarea#editInput {
 .grid-conatiner .statisticsAtten table tr td {
   border-right: 1px solid #4c5975;
 }
+.grid-conatiner .statisticsAtten table tr td:last-child {
+  border: none;
+}
 .grid-conatiner .statisticsAtten table tr td .item {
   padding: 0 0 10px 0;
 }
@@ -7314,9 +7375,9 @@ textarea#editInput {
 }
 .grid-conatiner .statisticsAtten table tr td .item .countDays {
   font-size: 52px;
-  color: #fff;
+  color: #ffffff;
   width: 126px;
-  padding: 0 20px;
+  padding: 20px;
   text-align: center;
   margin: 0 auto;
 }

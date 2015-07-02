@@ -145,12 +145,23 @@
 
                 if (chosen) {
                     chosen.each(function (index, elem) {
-                        if (self.filter[elem.children[0].value]) {
-                            self.filter[elem.children[0].value].push(elem.children[1].value);
+                        if (elem.children[1].attributes.class.nodeValue === 'chooseDate') {
+                            if (self.filter[elem.children[0].value]) {
+                                self.filter[elem.children[0].value].push({start: $('#start').val(), end: $('#end').val()});
+
+                            } else {
+                                self.filter[elem.children[0].value] = [];
+                                self.filter[elem.children[0].value].push({start: $('#start').val(), end: $('#end').val()});
+                            }
                         } else {
-                            self.filter[elem.children[0].value] = [];
-                            self.filter[elem.children[0].value].push(elem.children[1].value);
+                            if (self.filter[elem.children[0].value]) {
+                                self.filter[elem.children[0].value].push(elem.children[1].value);
+                            } else {
+                                self.filter[elem.children[0].value] = [];
+                                self.filter[elem.children[0].value].push(elem.children[1].value);
+                            }
                         }
+
                     });
                 }
                 this.changeLocationHash(null, this.defaultItemsNumber, this.filter);

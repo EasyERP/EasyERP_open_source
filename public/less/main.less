@@ -4999,86 +4999,151 @@ textarea#editInput {
   padding: 0 !important;
 }
 
-.grid-conatiner .attendanceTop {
-  margin-bottom: 10px;
+.grid {
+  min-width: 100%;
+  font-size: 11px;
+  border-bottom: 1px solid transparent;
 
-  div {
-    border: 1px solid #d2d2d2;
-    padding: 5px;
+  tr th span {
+    padding-right: 6px;
+    text-align: right;
+    height: 25px;
+    line-height: 25px;
+    display: block;
   }
 
-  div.pull-left {
-    margin-right: 10px;
+  &.attendance {
+    border-bottom: 5px solid #4c5975;
+
+    tr:first-child {
+      border-right: 1px solid #4c5975;
+    }
+    th {
+      border: 1px solid #4c5975;
+      background-color: #4c5975;
+      color: #fff;
+    }
+
+    tr {
+      border-bottom: none;
+
+      td:first-child {
+        min-width: 100px;
+        border-left: 1px solid #4c5975;
+        border-right: 1px solid #4c5975;
+      }
+    }
+
+    .vacation {
+      background-color: #a32a2c;
+      color: #ffffff;
+    }
+    .personal {
+      background-color: #fba302;
+      color: #ffffff;
+    }
+    .sick {
+      background-color: #228924;
+      color: #ffffff;
+    }
+    .education {
+      background-color: #0000fd;
+      color: #ffffff;
+    }
+    .borderRight {
+      border-right: 1px solid #4c5975;
+    }
+    .weekend {
+      color: #ccc;
+      //      background-color: #ccc;
+    }
   }
 }
 
-.grid-conatiner .statisticsAtten {
-  margin-top: 10px;
+.grid-conatiner {
+  .attendanceTop {
+    margin-bottom: 10px;
+    div {
+      border: 1px solid #d2d2d2;
+      padding: 5px;
 
-  table {
-    width: 100%;
-
-    tr.footerRow {
-      border-bottom: 1px solid #4c5975;
+      &.pull-left {
+        margin-right: 10px;
+      }
     }
-
-    tr.footerRow td span {
-      min-height: 10px;
+    &:after {
+      display: table;
       content: " ";
+      clear: both;
     }
+  }
+  .statisticsAtten {
+    margin-top: 10px;
+    table {
+      width: 100%;
 
-    tr td {
-      border-right: 1px solid #4c5975;
-    }
+      tr {
 
-    tr td .item {
-      padding: 0 0 10px 0;
-    }
+        &.footerRow {
+          border-bottom: 1px solid #4c5975;
+          td {
+            span {
+              min-height: 10px;
+              content: " ";
+            }
+          }
+        }
 
-    tr td .item .title {
-      text-align: center;
-      font-size: 16px;
-      margin-bottom: 10px;
-    }
+        td {
+          border-right: 1px solid #4c5975;
 
-    tr td .item .countDays {
-      font-size: 52px;
-      color: #fff;
-      width: 126px;
-      padding: 0 20px;
-      text-align: center;
-      margin: 0 auto;
+          &:last-child {
+            border: none;
+          }
 
-      &.leave,
-      &.working {
-        background-color: #36384e;
+          .item {
+            padding: 0 0 10px 0;
+
+            .title {
+              text-align: center;
+              font-size: 16px;
+              margin-bottom: 10px;
+            }
+            .countDays {
+              font-size: 52px;
+              color: #ffffff;
+              width: 126px;
+              padding: 20px;
+              text-align: center;
+              margin: 0 auto;
+
+              &.leave, &.working {
+                background-color: #36384e;
+              }
+              &.vacation {
+                background-color: #a22a2d;
+              }
+              &.personal {
+                background-color: #f9a203;
+              }
+              &.sick {
+                background-color: #228825;
+              }
+              &.education {
+                background-color: #0000fc;
+              }
+            }
+            .lastTime {
+              text-align: center;
+              margin-top: 10px;
+            }
+            .percent {
+              text-align: center;
+              color: #eb759e;
+            }
+          }
+        }
       }
-
-      &.vacation {
-        background-color: #a22a2d;
-      }
-
-      &.personal {
-        background-color: #f9a203;
-      }
-
-      &.sick {
-        background-color: #228825;
-      }
-
-      &.education {
-        background-color: #0000fc;
-      }
-    }
-
-    tr td .item .lastTime {
-      text-align: center;
-      margin-top: 10px;
-    }
-
-    tr td .item .percent {
-      text-align: center;
-      color: #eb759e;
     }
   }
 }
