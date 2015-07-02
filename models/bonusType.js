@@ -3,10 +3,15 @@
  */
 module.exports = (function () {
     var mongoose = require('mongoose');
+    var ObjectId = mongoose.Schema.Types.ObjectId;
+    var bonusTypeSchema;
 
-    var bonusTypeSchema = mongoose.Schema({
+    bonusTypeSchema = mongoose.Schema({
         name: {type: String},
-        type: {type: String},
+        department: {
+            _id: {type: ObjectId, ref: 'Department', default: null},
+            departmentName: {type: String, default: ""}
+        },
         value: {type: Number},
         isPercent: {type: Boolean}
     }, {collection: 'bonusType'});

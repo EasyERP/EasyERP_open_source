@@ -59,12 +59,13 @@ define(['./filterCollection'], function (ParentCollection) {
                     newModel._id =  model.id;
                     Backbone.sync("create", saveObject, options);
                 }
-            };
+            }
 
             if(models.length) {
                 Backbone.sync("patch", syncObject, updatedOptions);
             }
         }
     });
+
     return EditableCollection;
 });

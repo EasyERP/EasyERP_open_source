@@ -3,8 +3,9 @@
  */
 module.exports = (function () {
     var mongoose = require('mongoose');
+    var monthHoursSchema;
 
-    var monthHoursSchema = mongoose.Schema({
+    monthHoursSchema = mongoose.Schema({
         month: {type: Number},
         hours: {type: Number},
         year: {type: Number},

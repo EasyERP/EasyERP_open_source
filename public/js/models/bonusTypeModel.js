@@ -8,6 +8,13 @@ define([], function () {
 
         urlRoot: function () {
             return "/bonusType";
+        },
+
+        defaults: {
+            department: {
+                departmentName: '',
+                _id: null
+            }
         }
     });
     return bonusTypeModel;

@@ -4,11 +4,9 @@
 var mongoose = require('mongoose');
 var async = require('async');
 
-
 var MonthHours = function (models) {
     var MonthHoursSchema = mongoose.Schemas['MonthHours'];
     var access = require("../Modules/additions/access.js")(models);
-
 
     this.create = function(req, res, next){
         var MonthHoursModel = models.get(req.session.lastDb, 'MonthHours', MonthHoursSchema);
@@ -21,7 +19,6 @@ var MonthHours = function (models) {
             }
             res.status(200).send(monthHours);
         });
-
     };
 
     this.patchM = function (req, res, next) {
@@ -89,7 +86,6 @@ var MonthHours = function (models) {
 
         });
     };
-
 
     this.remove = function(req, res, id, next) {
        var MonthHoursModel = models.get(req.session.lastDb, "MonthHours", MonthHoursSchema);

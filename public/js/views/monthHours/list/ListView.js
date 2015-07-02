@@ -11,9 +11,7 @@ define([
         'populate',
         'async',
         'constants'
-    ],
-
-    function (listTemplate, createView, listItemView, editView, currentModel, contentCollection, EditCollection, common, dataService, populate, async, constants) {
+    ], function (listTemplate, createView, listItemView, editView, currentModel, contentCollection, EditCollection, common, dataService, populate, async, constants) {
         var monthHoursListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -119,6 +117,7 @@ define([
                 if (this.isEditRows()) {
                     this.setChangedValue();
                 }
+
                 return false;
             },
 
@@ -156,6 +155,7 @@ define([
                     width = el.width() - 6;
                     el.html('<input class="editing" type="text" value="' + tempContainer + '"  maxLength="4" style="width:' + width + 'px">');
                 }
+
                 return false;
             },
 
@@ -266,11 +266,11 @@ define([
                     $('.search-options').hide();
                     $('.search-content').removeClass('fa-caret-up')
                 }
-                ;
             },
 
             showNewSelect: function (e, prev, next) {
                 populate.showSelect(e, prev, next, this);
+
                 return false;
             },
 
@@ -280,6 +280,7 @@ define([
 
             itemsNumber: function (e) {
                 $(e.target).closest("button").next("ul").toggle();
+
                 return false;
             },
 
@@ -337,7 +338,6 @@ define([
                     pagenation.show();
                 }
                 currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
-
 
                 setTimeout(function () {
                     self.editCollection = new EditCollection(self.collection.toJSON());
@@ -713,7 +713,6 @@ define([
                 var self = this;
                 var edited = this.edited;
                 var collection = this.collection;
-                var editedCollection = this.editCollection;
 
                 async.each(edited, function (el, cb) {
                     var tr = $(el).closest('tr');
