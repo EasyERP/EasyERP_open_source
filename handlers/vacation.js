@@ -3,6 +3,7 @@
  */
 var mongoose = require('mongoose');
 var moment = require('../public/js/libs/moment/moment');
+var objectId = mongoose.Types.ObjectId;
 var Vacation = function (models) {
     var access = require("../Modules/additions/access.js")(models);
     var VacationSchema = mongoose.Schemas['Vacation'];
@@ -16,12 +17,11 @@ var Vacation = function (models) {
                     var Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
                     var options = req.query;
                     var queryObject = {};
-                    var sort = {};
                     var query;
 
                     if (options) {
                         if (options.employee) {
-                            queryObject['employee._id'] = options.employee;
+                            queryObject['employee._id'] = objectId(options.employee);
                         }
                         if (options.year && options.year !== 'Line Year') {
                             queryObject.year = options.year;
@@ -67,6 +67,8 @@ var Vacation = function (models) {
                             }
                         ]
                     );
+
+                    console.dir(queryObject);
 
                     query.exec(function (err, result) {
                         if (err) {
