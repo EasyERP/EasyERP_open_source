@@ -130,7 +130,7 @@ define([
                 var self =this;
                 var url = '/invoice/receive';
                 var data = {
-                    forsSales: this.forSales,
+                    forSales: this.forSales,
                     orderId: this.currentModel.id
                 };
 

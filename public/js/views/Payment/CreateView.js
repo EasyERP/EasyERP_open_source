@@ -142,7 +142,8 @@ define([
 
             render: function () {
                 var self = this;
-                var htmBody = this.template({invoice: this.invoiceModel.toJSON()});
+                var model = this.invoiceModel.toJSON();
+                var htmBody = this.template({invoice: model});
 
                 this.$el = $(htmBody).dialog({
                     closeOnEscape: false,
