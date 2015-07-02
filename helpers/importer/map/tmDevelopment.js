@@ -29,7 +29,7 @@ module.exports = (function () {
             employee: 'Employee',
             startDate: 'StartDate',
             endDate: 'EndDate',
-            vocationType: 'AbsenceType'
+            vacationType: 'AbsenceType'
         }
     };
     var holiday = {

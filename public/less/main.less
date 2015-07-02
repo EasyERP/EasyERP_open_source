@@ -199,10 +199,6 @@ input::-ms-clear {
   display: none;
 }
 
-.text-center {
-  text-align: center;
-}
-
 .avatar(@size: 32px, @t: 5px, @r: 5px, @b: 5px, @l: 5px) {
   display: block;
   overflow: hidden;
@@ -5008,41 +5004,18 @@ textarea#editInput {
   font-size: 11px;
   border-bottom: 1px solid transparent;
 
-  tr {
-
-    th span {
-      padding-right: 6px;
-      text-align: right;
-      height: 25px;
-      line-height: 25px;
-      display: block;
-    }
-
-    td {
-      border-top: 1px solid transparent;
-    }
-
-    td,
-    th {
-      border-bottom: 1px solid #d2d2d2;
-    }
-
-    td span {
-      height: 20px;
-      padding: 0 7px;
-      line-height: 20px;
-      display: block;
-    }
-
-    td.dayOfMonth, tr th.dayOfMonth {
-      min-width: 27px;
-    }
+  tr th span {
+    padding-right: 6px;
+    text-align: right;
+    height: 25px;
+    line-height: 25px;
+    display: block;
   }
 
   &.attendance {
     border-bottom: 5px solid #4c5975;
 
-    tr:first-child, .borderRight {
+    tr:first-child {
       border-right: 1px solid #4c5975;
     }
     th {
@@ -5054,21 +5027,9 @@ textarea#editInput {
     tr {
       border-bottom: none;
 
-      &:nth-child(even) {
-        background-color: #f5f5f5;
-      }
-
-      td {
-        border-left: 1px solid #d2d2d2;
-      }
-
       td:first-child {
         min-width: 100px;
         border-left: 1px solid #4c5975;
-        border-right: 1px solid #4c5975;
-      }
-
-      td:nth-child(7n+1) {
         border-right: 1px solid #4c5975;
       }
     }
