@@ -153,7 +153,7 @@ define([
                 } else {
                     tempContainer = el.text();
                     width = el.width() - 6;
-                    el.html('<input class="editing" type="text" value="' + tempContainer + '"  maxLength="4" style="width:' + width + 'px">');
+                    el.html('<input class="editing" type="text" value="' + tempContainer + '"  style="width:' + width + 'px">');
                 }
 
                 return false;
