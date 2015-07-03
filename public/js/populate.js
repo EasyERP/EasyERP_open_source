@@ -127,15 +127,17 @@ define([
             });
         };
 
-        var showSelect = function (e, prev, next, context) {
+        var showSelect = function (e, prev, next, context, number) {
             e.stopPropagation();
 
             var targetEl = $(e.target);
             var attr = targetEl.attr("id") || targetEl.closest('td').data("content");
             var data = context.responseObj["#" + attr];
-            var elementVisible = 10;
+            var elementVisible;
             var targetParent = $(e.target).parent();
             var newSel;
+
+            elementVisible = number || 10;
 
             if (targetParent.prop('tagName') !== 'TR') {
                 newSel = targetParent.find(".newSelectList");

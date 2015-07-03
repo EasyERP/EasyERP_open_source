@@ -8,17 +8,12 @@ define([
     'views/Attendance/StatisticsView',
     'populate',
     'moment',
-    'dataService',
-    'async'
+    'dataService'
 ], function (mainTemplate, AttendanceModel, MonthView, StatisticsView, populate, moment, dataService) {
     var View = Backbone.View.extend({
         el: '#content-holder',
 
         template: _.template(mainTemplate),
-
-        $currentEmployee: null,
-        $currentStatus: null,
-        $currentTime: null,
 
         events: {
             'change #currentEmployee': 'changeEmployee',
@@ -32,12 +27,17 @@ define([
             var status;
             var years;
 
+            this.currentEmployee = null;
+            this.currentStatus = null;
+            this.currentTime = null;
+
             this.model = new AttendanceModel();
             this.listenTo(this.model, 'change:currentEmployee', this.changeEmployee);
             this.listenTo(this.model, 'change:currentStatus', this.changeStatus);
             this.listenTo(this.model, 'change:currentTime', this.changeTime);
 
             dataService.getData("/getPersonsForDd", {}, function (result) {
+                var yearToday = moment().year();
                 employees = result.data;
                 self.model.set({
                     employees: employees
@@ -45,20 +45,20 @@ define([
 
                 status = self.model.get('status');
                 years = self.model.get('years');
-                $currentEmployee = employees[0];
-                $currentStatus = status[0];
-                $currentTime = years[0];
+                self.currentEmployee = employees[0];
+                self.currentStatus = status[0];
+                self.currentTime = years[0];
 
-                while (years.indexOf(moment().year()) == -1) {
+                while (years.indexOf(yearToday) === -1) {
                     years.push(years[years.length - 1] + 1);
                 }
 
                 self.render();
 
                 self.model.set({
-                    currentEmployee: $currentEmployee,
-                    currentStatus: $currentStatus,
-                    currentTime: $currentTime,
+                    currentEmployee: self.currentEmployee,
+                    currentStatus: self.currentStatus,
+                    currentTime: self.currentTime,
                     years: years
                 });
 
@@ -67,79 +67,85 @@ define([
 
         changeEmployee: function () {
             var self = this;
-            $currentEmployee = $("#currentEmployee option:selected").attr('id');
+            var labels;
+            var month;
+            var data;
+            var keys;
 
-            if (!$currentEmployee) {
-                $currentEmployee = self.model.get('employees')[0].id;
+            this.currentEmployee = this.$el.find("#currentEmployee option:selected").attr('id');
+
+            if (!self.currentEmployee) {
+                self.currentEmployee = self.model.get('employees')[0].id;
             }
 
-            dataService.getData("/vacation/attendance", {year: $currentTime, employee: $currentEmployee}, function (result) {
-                var labels = self.model.get('labelMonth');
-                var month = new MonthView();
-                var data = _.groupBy(result, "month");
-                self.$el.append(month.render({labels: labels,month: this.month, attendance: data}));
+            dataService.getData("/vacation/attendance", {
+                year: self.currentTime,
+                employee: self.currentEmployee
+            }, function (result) {
+                labels = self.model.get('labelMonth');
+                month = new MonthView();
+
+                data = _.groupBy(result, "year");
+                keys = Object.keys(data);
+
+                keys.forEach(function (key) {
+                    data[key] = _.groupBy(data[key], 'month');
+                });
+
+                self.$el.append(month.render({labels: labels, year: self.currentTime, attendance: data}));
             });
         },
 
         changeStatus: function () {
             var self = this;
-            $currentStatus = $("#currentStatus option:selected").attr('id');
+            self.currentStatus = this.$el.find("#currentStatus option:selected").attr('id');
 
-            dataService.getData("/getPersonsForDd", {}, function (result) {});
+            dataService.getData("/getPersonsForDd", {}, function (result) {
+                //ToDo Hired and Not Hired
+            });
         },
 
         changeTime: function () {
             var self = this;
-            //$currentTime = $("#currentTime option:selected").attr('id');
-            $currentTime = $("#currentTime option:selected").text().trim();
+            var labels;
+            var month;
+            var data;
+            var keys;
 
-            if (!$currentTime) {
-                $currentTime = self.model.get('years')[0].id;
+            self.currentTime = this.$el.find("#currentTime option:selected").text().trim();
+
+            if (!self.currentTime) {
+                self.currentTime = self.model.get('years')[0].id;
             }
 
-            dataService.getData("/vacation/attendance", {year: $currentTime, employee: $currentEmployee}, function (result) {
-                var labels = self.model.get('labelMonth');
-                var month = new MonthView();
-                var data = _.groupBy(result, "month");
-                self.$el.append(month.render({labels: labels,month: this.month, attendance: data}));
+            dataService.getData("/vacation/attendance", {
+                year: self.currentTime,
+                employee: self.currentEmployee
+            }, function (result) {
+                labels = self.model.get('labelMonth');
+                month = new MonthView();
+
+                data = _.groupBy(result, "year");
+                keys = Object.keys(data);
+
+                keys.forEach(function (key) {
+                    data[key] = _.groupBy(data[key], 'month');
+                });
+
+                self.$el.append(month.render({labels: labels, year: self.currentTime, attendance: data}));
             });
         },
 
-        percentDiff: function (now, last) {
-            var numberPercent = 0;
-            var onePercent = 0;
-            if (now < last) {
-                onePercent = last / 100;
-                numberPercent = now / onePercent;
-                numberPercent = "DOWN " + Math.abs(Math.ceil(100 - numberPercent)) + "%";
-            } else {
-                if (last == 0) {
-                    numberPercent = "UP " + Math.ceil(now * 100) + "%";
-                } else {
-                    onePercent = last / 100;
-                    numberPercent = (now - last) / onePercent;
-                    numberPercent = "UP " + Math.ceil(numberPercent) + "%";
-                }
-            }
-            return numberPercent;
-        },
-
-        render: function (attendance) {
+        render: function () {
             var self = this;
-            //var labels = self.model.get('labelMonth');
 
             this.$el.html(this.template(self.model.toJSON()));
-
-            //var month = new MonthView({labels: labels,month: this.month, attendance: attendance});
-            //self.$el.append(month.render());
-
-            //var statictics = new StatisticsView({month: this.month, attendance: attendance});
-            //self.$el.append(statictics.render());
 
             this.rendered = true;
 
             return this;
         }
+
     });
 
     return View;

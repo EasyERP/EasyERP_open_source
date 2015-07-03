@@ -1266,7 +1266,7 @@ module.exports = function (models) {
 
                     if (fetchedVacation) {
                         var date = new Date(fetchedVacation['StartDate']);
-                        objectToSave.month =date.getMonth();
+                        objectToSave.month = date.getMonth() + 1;
                         objectToSave.year = date.getFullYear();
 
                         employeeQuery = {

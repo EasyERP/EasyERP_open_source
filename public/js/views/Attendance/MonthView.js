@@ -8,23 +8,18 @@ define([
 ], function (ListTemplate,StatisticsView,moment) {
     var MonthView = Backbone.View.extend({
         el: '#attendanceMonth',
-        initialize: function () {
-
-        },
-
-        events: {},
 
         generateMonthArray: function () {
             var number;
             var self = this;
             var startMonth = 0;
 
-            if (self.type == 'Line Year') {
+            if (self.year === 'Line Year') {
                 self.monthArray = new Array(13);
-                startMonth = moment().month();
+                self.startMonth = moment().month();
             } else {
                 self.monthArray = new Array(12);
-                startMonth = 0;
+                self.startMonth = 0;
             }
 
             for (var i = 0; i < self.monthArray.length; i++) {
@@ -42,6 +37,15 @@ define([
 
         generateMonthData: function (currentInterval) {
             var self = this;
+            var monthYear;
+            var monthNumber;
+            var startOfMonth;
+            var dayCount;
+            var dayNumber;
+            var startYear;
+            var endYear;
+            var keys;
+
             self.weekend = 0;
             self.vacationDays = 0;
             self.personalDays = 0;
@@ -49,50 +53,55 @@ define([
             self.educationDays = 0;
 
             for (var i = 0; i < self.monthArray.length; i++) {
-                var monthYear;
+                dayNumber = 1;
 
-                if (currentInterval == 'Line Year') {
-                    if (i < (self.monthArray.length - self.startMonth - 1)) {
+                if (currentInterval === 'Line Year') {
+                    if (i >= self.startMonth) {
                         monthYear = moment().year() - 1;
-                    }
-                    if (i >= (self.monthArray.length - self.startMonth - 1)) {
+                    } else {
                         monthYear = moment().year();
                     }
                 } else {
                     monthYear = currentInterval;
                 }
 
-                var monthNumber = moment().set('year', monthYear).set('month', self.monthArray[i].label).month();
+                monthNumber = moment().set('year', monthYear).set('month', self.monthArray[i].label).month();
                 if (monthNumber > 11) {
                     monthNumber = monthNumber - 12;
                 }
-                var startOfMonth = new Date(monthYear, monthNumber, 1);
+
+                startOfMonth = new Date(monthYear, monthNumber, 1);
                 startOfMonth = startOfMonth.getDay();
                 if (startOfMonth === 0) {
                     startOfMonth = 7;
                 }
 
-                var dayCount = moment().set('year', monthYear).set('month', monthNumber).endOf('month').date();
+                dayCount = moment().set('year', monthYear).set('month', monthNumber).endOf('month').date();
                 self.workingDays += dayCount;
 
-                var dayNumber = 1;
+                keys = Object.keys(self.days);
+                if (keys.length) {
+                    self.monthCur = self.days[monthYear] ? self.days[monthYear][monthNumber] : 0;
+                }
 
-                self.monthCur = self.days[monthNumber];
+                //ToDo review
+
                 for (var j = 0; j < startOfMonth; j++) {
                     self.monthArray[i].daysData[j] = {};
                     self.monthArray[i].daysData[j].number = '&nbsp';
                 }
+
                 for (var j = startOfMonth; j < startOfMonth + dayCount; j++) {
-                    var isType = false;
                     var day = new Date(monthYear, i, j - startOfMonth + 1);
                     day = day.getDay();
-                    if (day === 0 || day == 6) {
+                    if (day === 0 || day === 6) {
                         self.weekend++;
                     }
                     self.monthArray[i].daysData[j] = {};
                     self.monthArray[i].daysData[j].number = dayNumber;
                     dayNumber++;
                 }
+
                 for (var j = startOfMonth + dayCount; j < 42; j++) {
                     self.monthArray[i].daysData[j] = {};
                     self.monthArray[i].daysData[j].number = '&nbsp';
@@ -125,12 +134,12 @@ define([
                 }
             }
             if (currentInterval !== 'Line Year') {
-                var startYear = moment([currentInterval, 0, 1]);
-                var endYear = moment([currentInterval, 11, 31]);
+                startYear = moment([currentInterval, 0, 1]);
+                endYear = moment([currentInterval, 11, 31]);
             } else {
-                var dayCount = moment().set('year', moment().year()).set('month', moment().month()).endOf('month').dates();
-                var startYear = moment([moment().year() - 1, moment().month(), 1]);
-                var endYear = moment([moment().year(), moment().month(), dayCount]);
+                dayCount = moment().set('year', moment().year()).set('month', moment().month()).endOf('month').date();
+                startYear = moment([moment().year() - 1, moment().month(), 1]);
+                endYear = moment([moment().year(), moment().month(), dayCount]);
             }
             self.daysLeave = self.vacationDays + self.personalDays + self.sickDays + self.educationDays;
             self.workingDays = endYear.diff(startYear, 'days') - self.daysLeave - self.weekend;
@@ -139,11 +148,11 @@ define([
         render: function (options) {
             var self = this;
             self.labels = options.labels;
-            self.type = options.type;
+            self.year = options.year;
             self.days = options.attendance;
 
             self.generateMonthArray();
-            self.generateMonthData('2014');
+            self.generateMonthData(self.year);
 
             self.$el.html(_.template(ListTemplate, {
                 months: this.monthArray

@@ -13,13 +13,12 @@ define([
         showMore: function (options) {
             var that = this;
             var filterObject = options || {};
-            filterObject['viewType'] = (options && options.viewType) ? options.viewType : this.viewType;
-            filterObject['contentType'] = (options && options.contentType) ? options.contentType : this.contentType;
+            filterObject['month'] = (options && options.month) ? options.month.toString() : this.monthto;
+            filterObject['year'] = (options && options.year) ? options.year : this.year;
             this.fetch({
                 data: filterObject,
                 waite: true,
                 success: function (models) {
-                    that.page += 1;
                     that.trigger('showmore', models);
                 },
                 error: function () {
@@ -30,6 +29,8 @@ define([
 
         initialize: function (options) {
             this.startTime = new Date();
+            this.month = (this.startTime.getMonth() + 1).toString();
+            this.year = (this.startTime.getFullYear()).toString();
             var that = this;
             this.namberToShow = options.count;
             this.viewType = options.viewType;
@@ -43,16 +44,14 @@ define([
             if (options && options.year) {
                 options.year = options.year
             } else {
-                options.year = (this.startTime.getFullYear()).toString();
+                options.year = this.year;
             }
 
             if (options && options.month) {
                 options.month = options.month
             } else {
-                options.month = (this.startTime.getMonth() + 1).toString();
+                options.month = this.month;
             }
-
-            options.month = "3";
 
             this.fetch({
                 data: options,
