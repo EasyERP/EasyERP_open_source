@@ -264,7 +264,7 @@ define([
         },
 
         calculateCost: function (employeeId, callback) {
-
+            
         },
 
         chooseOption: function (e) {
