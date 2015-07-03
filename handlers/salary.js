@@ -108,7 +108,7 @@ var Salary = function (models) {
                     });
                 }, function (err) {
                     if (err) {
-                        next(err);
+                        return next(err);
                     }
                     async.series([
                             function (callback) {
@@ -127,7 +127,7 @@ var Salary = function (models) {
                         ],
                         function (err, results) {
                             if (err) {
-                                next(err);
+                                return next(err);
                             }
                             if (results[1]) {
                                 res.status(200).send({success: results[1]});
@@ -274,7 +274,7 @@ var Salary = function (models) {
                                 },
                                 function (err, results) {
                                     if (err) {
-                                        next(err);
+                                        return next(err);
                                     }
                                     if (results.second) {
                                         res.status(200).send({success: results.second});
@@ -330,7 +330,7 @@ var Salary = function (models) {
         query.exec(function (err, result) {
             if (next) {
                 if (err) {
-                    next(err);
+                    return next(err);
                 }
 
                 res.status(200).send({count: result.length});
@@ -412,7 +412,7 @@ var Salary = function (models) {
         async.waterfall(waterfallTasks, function (err, result) {
             if (next) {
                 if (err) {
-                    next(err);
+                    return next(err);
                 }
 
                 res.status(200).send('Complete');
@@ -431,7 +431,7 @@ var Salary = function (models) {
 
         query.exec(function (err, result) {
             if (err) {
-                next(err);
+                return next(err);
             }
 
             res.status(200).send({count: result.length});

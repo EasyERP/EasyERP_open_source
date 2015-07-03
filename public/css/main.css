@@ -1500,6 +1500,9 @@ dl dd a.formLink {
 .form #internalNotes {
   resize: none;
 }
+.form #differenceAmount {
+  line-height: 26px;
+}
 .form.employee {
   width: 100%;
   max-width: 100%;
@@ -2066,6 +2069,9 @@ dl dd a.formLink {
 .formLeftColumn .form #internalNotes {
   resize: none;
 }
+.formLeftColumn .form #differenceAmount {
+  line-height: 26px;
+}
 .formLeftColumn .form.employee {
   width: 100%;
   max-width: 100%;
@@ -2412,6 +2418,9 @@ dl dd a.formLink {
 }
 .formRightColumn .form #internalNotes {
   resize: none;
+}
+.formRightColumn .form #differenceAmount {
+  line-height: 26px;
 }
 .formRightColumn .form.employee {
   width: 100%;
