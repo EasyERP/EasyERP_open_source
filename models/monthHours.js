@@ -6,6 +6,7 @@ module.exports = (function () {
     var monthHoursSchema;
 
     monthHoursSchema = mongoose.Schema({
+        ID: Number,
         month: {type: Number},
         hours: {type: Number},
         year: {type: Number},

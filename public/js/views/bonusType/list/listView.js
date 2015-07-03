@@ -155,11 +155,13 @@ define([
                 }
 
                 if (isSelect) {
-                    populate.showSelect(e, prev, next, this);
+                    var ul= "<ul class='newSelectList'>" + "<li data-id='HR'>HR</li>" + "<li data-id='Sales'>Sales</li>" +
+                        "<li data-id='PM'>PM</li>" + "<li data-id='Developer'>Developer</li></ul>";
+                    el.html(ul);
                 } else {
                     tempContainer = el.text();
                     width = el.width() - 6;
-                    el.html('<input class="editing" type="text" value="' + tempContainer + '"  maxLength="4" style="width:' + width + 'px">');
+                    el.html('<input class="editing" type="text" value="' + tempContainer + '"   style="width:' + width + 'px">');
                 }
 
                 return false;
@@ -168,43 +170,31 @@ define([
             chooseOption: function(e){
                 var target = $(e.target);
                 var targetElement = target.parents("td");
+                this.setEditable(targetElement);
                 var tr = target.parents("tr");
                 var modelId = tr.data('id');
-                var id = target.attr("id");
-                var attr = targetElement.attr("id") || targetElement.data("content");
-                var elementType = '#' + attr;
-                var department;
+                var id = targetElement.attr("id");
+                var model = this.collection.get(modelId);
                 var changedAttr;
-
-                var element = _.find(this.responseObj[elementType], function (el) {
-                    return el._id === id;
-                });
-
-                var editModel = this.editCollection.get(modelId);
+                var bonusType;
 
                 if (!this.changedModels[modelId]) {
-                    if(!editModel.id){
-                        this.changedModels[modelId] = editModel.attributes;
+                    if(!model.id){
+                        this.changedModels[modelId] = model.attributes;
                     } else {
                         this.changedModels[modelId] = {};
                     }
                 }
 
-                changedAttr = this.changedModels[modelId];
-                if (elementType === '#department') {
-                    department = _.clone(editModel.get('department'));
-                    department._id = element._id;
-                    department.departmentName = element.departmentName;
-
-                    changedAttr.department = department;
-                }
-
                 targetElement.text(target.text());
 
-                this.setChangedValueToModel();
+                changedAttr = this.changedModels[modelId];
+                targetElement.attr('data-id', id);
+                bonusType = target.text();
+                changedAttr.bonusType = bonusType;
 
                 this.hideNewSelect();
-                this.setEditable(targetElement);
+                this.setChangedValueToModel();
 
                 return false;
             },
@@ -387,17 +377,6 @@ define([
                 }
 
                 currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
-
-                dataService.getData("/department/getForDD", null, function (departments) {
-                    departments = _.map(departments.data, function (department) {
-                        department.name = department.departmentName;
-
-
-                        return department
-                    });
-
-                    self.responseObj['#department'] = departments;
-                });
 
                 setTimeout(function () {
                     self.editCollection = new EditCollection(self.collection.toJSON());
