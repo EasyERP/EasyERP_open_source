@@ -650,8 +650,11 @@ var Invoice = function (models) {
                     ], function (err, invoice) {
                         if (err) {
                             cb(err)
+
+                        } else {
+                            cb(null, invoice)
                         }
-                        cb(null, invoice)
+
                     })
             },
             function (invoice, cb) {
@@ -662,8 +665,12 @@ var Invoice = function (models) {
                         select: 'name _id'
                     },
                     function (err, invoice) {
-                        if (err) cb(err);
+                        if (err) {
+                            return cb(err)
+
+                        }
                             cb(null, invoice)
+
                 })
             }
 

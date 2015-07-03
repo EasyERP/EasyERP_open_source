@@ -66,11 +66,14 @@ define([
             },
 
             addCondition: function () {
-                $(".filterOptions:first").clone().insertBefore('.filterActions');
-                $(".filterOptions:last").children('.chooseOption').children().remove();
-                $(".filterOptions:last").children('.chooseOption').show();
-                $(".filterOptions:last").children('.chooseDate').remove();
-                $(".filterOptions:last").removeClass('chosen');
+                var lastOpt;
+                this.$el.find(".filterOptions:first").clone().insertBefore('.filterActions');
+
+                lastOpt = this.$el.find(".filterOptions:last");
+                lastOpt.children('.chooseOption').children().remove();
+                lastOpt.children('.chooseOption').show();
+                lastOpt.children('.chooseDate').remove();
+                lastOpt.removeClass('chosen');
             },
 
             chooseOptions: function (e) {
@@ -82,9 +85,8 @@ define([
 
                 if (/date/.test(value.toLowerCase())) {
                     el.html('').hide();
-                    $('<div class=\'chooseDate\'><input id="start" type="date"/><input id="end" type="date"/><div>').insertBefore(el)
+                    $('<div class=\'chooseDate\'><input id="start" type="date"/><input id="end" type="date"/><div>').insertBefore(el);
                 } else {
-                    if ($('.chooseDate')) $('.chooseDate').remove();
                     if (optDate.length) {
                         optDate.remove();
                         el = $(e.target).next();
@@ -95,11 +97,11 @@ define([
 
                     this.customCollection[0][value].forEach(function (opt) {
                         if (opt && opt.name && opt._id) {
-                            el.append('<option value="' + opt._id + '">' + opt.fullName + '</option>')
+                            el.append('<option value="' + opt._id + '">' + opt.fullName + '</option>');
                         } else if (opt && opt.name) {
-                            el.append('<option value="' + opt.name + '">' + opt.name + '</option>')
+                            el.append('<option value="' + opt.name + '">' + opt.name + '</option>');
                         } else {
-                            el.append('<option value="' + opt + '">' + opt + '</option>')
+                            el.append('<option value="' + opt + '">' + opt + '</option>');
                         }
                     });
                 }

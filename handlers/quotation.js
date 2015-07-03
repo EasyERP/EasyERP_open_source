@@ -481,8 +481,10 @@ var Quotation = function (models) {
                     ], function (err, quot) {
                         if (err) {
                             cb(err)
+
+                        } else {
+                            cb(null, quot)
                         }
-                        cb(null, quot)
                     })
             },
             function (quot, cb) {
@@ -493,8 +495,12 @@ var Quotation = function (models) {
                         select: 'name _id'
                     },
                     function (err, quot) {
-                        if (err) cb(err);
-                        cb(null, quot)
+                        if (err) {
+                            return cb(err)
+
+                        }
+                            cb(null, quot)
+
                     })
             }
 
