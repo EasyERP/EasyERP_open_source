@@ -57,9 +57,9 @@ define([
                 self.render();
 
                 self.model.set({
-                    currentEmployee: this.currentEmployee,
-                    currentStatus: this.currentStatus,
-                    currentTime: this.currentTime,
+                    currentEmployee: self.currentEmployee,
+                    currentStatus: self.currentStatus,
+                    currentTime: self.currentTime,
                     years: years
                 });
 
@@ -71,6 +71,7 @@ define([
             var labels;
             var month;
             var data;
+            var keys;
 
             this.currentEmployee = this.$el.find("#currentEmployee option:selected").attr('id');
 
@@ -84,8 +85,14 @@ define([
             }, function (result) {
                 labels = self.model.get('labelMonth');
                 month = new MonthView();
-                data = _.groupBy(result, "month");
-                self.$el.append(month.render({labels: labels, month: this.month, attendance: data}));
+                data = _.groupBy(result, "year");
+                keys = Object.keys(data);
+
+                keys.forEach(function(key){
+                    data[key] = _.groupBy(data[key],'month');
+                });
+
+                self.$el.append(month.render({labels: labels, year: self.currentTime, attendance: data}));
             });
         },
 
@@ -102,6 +109,7 @@ define([
             var labels;
             var month;
             var data;
+            var keys;
 
             self.currentTime = this.$el.find("#currentTime option:selected").text().trim();
 
@@ -115,28 +123,15 @@ define([
             }, function (result) {
                 labels = self.model.get('labelMonth');
                 month = new MonthView();
-                data = _.groupBy(result, "month");
-                self.$el.append(month.render({labels: labels, month: this.month, attendance: data}));
-            });
-        },
+                data = _.groupBy(result, "year");
+                keys = Object.keys(data);
 
-        percentDiff: function (now, last) {
-            var numberPercent = 0;
-            var onePercent = 0;
-            if (now < last) {
-                onePercent = last / 100;
-                numberPercent = now / onePercent;
-                numberPercent = "DOWN " + Math.abs(Math.ceil(100 - numberPercent)) + "%";
-            } else {
-                if (last === 0) {
-                    numberPercent = "UP " + Math.ceil(now * 100) + "%";
-                } else {
-                    onePercent = last / 100;
-                    numberPercent = (now - last) / onePercent;
-                    numberPercent = "UP " + Math.ceil(numberPercent) + "%";
-                }
-            }
-            return numberPercent;
+                keys.forEach(function(key){
+                    data[key] = _.groupBy(data[key],'month');
+                });
+
+                self.$el.append(month.render({labels: labels, year: self.currentTime, attendance: data}));
+            });
         },
 
         render: function () {

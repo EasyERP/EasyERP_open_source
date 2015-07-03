@@ -14,12 +14,12 @@ define([
             var self = this;
             var startMonth = 0;
 
-            if (self.type === 'Line Year') {
+            if (self.year === 'Line Year') {
                 self.monthArray = new Array(13);
-                startMonth = moment().month();
+                self.startMonth = moment().month();
             } else {
                 self.monthArray = new Array(12);
-                startMonth = 0;
+                self.startMonth = 0;
             }
 
             for (var i = 0; i < self.monthArray.length; i++) {
@@ -44,6 +44,7 @@ define([
             var dayNumber;
             var startYear;
             var endYear;
+            var keys;
 
             self.weekend = 0;
             self.vacationDays = 0;
@@ -55,10 +56,9 @@ define([
                 dayNumber = 1;
 
                 if (currentInterval === 'Line Year') {
-                    if (i < (self.monthArray.length - self.startMonth - 1)) {
+                    if (i >= self.startMonth) {
                         monthYear = moment().year() - 1;
-                    }
-                    if (i >= (self.monthArray.length - self.startMonth - 1)) {
+                    } else {
                         monthYear = moment().year();
                     }
                 } else {
@@ -79,7 +79,10 @@ define([
                 dayCount = moment().set('year', monthYear).set('month', monthNumber).endOf('month').date();
                 self.workingDays += dayCount;
 
-                self.monthCur = self.days[monthNumber];
+                keys = Object.keys(self.days);
+                if (keys.length) {
+                    self.monthCur = self.days[monthYear] ? self.days[monthYear][monthNumber] : 0;
+                }
 
                 //ToDo review
 
@@ -134,7 +137,7 @@ define([
                 startYear = moment([currentInterval, 0, 1]);
                 endYear = moment([currentInterval, 11, 31]);
             } else {
-                dayCount = moment().set('year', moment().year()).set('month', moment().month()).endOf('month').dates();
+                dayCount = moment().set('year', moment().year()).set('month', moment().month()).endOf('month').date();
                 startYear = moment([moment().year() - 1, moment().month(), 1]);
                 endYear = moment([moment().year(), moment().month(), dayCount]);
             }
@@ -145,11 +148,11 @@ define([
         render: function (options) {
             var self = this;
             self.labels = options.labels;
-            self.type = options.type;
+            self.year = options.year;
             self.days = options.attendance;
 
             self.generateMonthArray();
-            self.generateMonthData('2014');
+            self.generateMonthData(self.year);
 
             self.$el.html(_.template(ListTemplate, {
                 months: this.monthArray
