@@ -1,0 +1,64 @@
+<% departments.forEach(function(department){ %>
+<tr data-id="<%= department %>" class="head-row">
+    <td>
+        <span></span>
+    </td>
+    <td colspan="17">
+        <span>
+            <%= department %>
+        </span>
+    </td>
+</tr>
+<% dashboard[department].forEach(function(employee){ %>
+<tr class="<%= department %>">
+    <td>
+        <span>
+            1
+        </span>
+    </td>
+    <td>
+        <span>
+            <%= employee.name %>
+        </span>
+    </td>
+    <td>
+        <span>
+            <%= employee.isLead %>
+        </span>
+    </td>
+    <% weeks.forEach(function(week){ %>
+    <td>
+        <span>
+            <%= employee.dashboard[week.number].hours / employee.dashboard.projects[week.number].lenght %>
+        </span>
+    </td>
+    <% }) %>
+</tr>
+<% dashboard[department].forEach(function(employee){ %>
+<tr class="<%= department employee._id%>">
+    <td>
+        <span>
+            &nbsp;
+        </span>
+    </td>
+    <td>
+        <span>
+            &nbsp;
+        </span>
+    </td>
+    <td>
+        <span>
+            &nbsp;
+        </span>
+    </td>
+    <% weeks.forEach(function(week){ %>
+    <td>
+        <span>
+            <%= employee.dashboard[week.number].hours / employee.dashboard.projects[week.number].lenght %>
+        </span>
+    </td>
+    <% }) %>
+</tr>
+<% }) %>
+<% }) %>
+<% }) %>
