@@ -74,7 +74,7 @@ module.exports = (function () {
             },
             [['name', 1]],
             {
-                paymentDate: new Date()
+                $set: {paymentDate: new Date()}
             },
             null,
             function (err) {

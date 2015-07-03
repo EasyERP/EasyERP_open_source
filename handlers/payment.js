@@ -9,6 +9,7 @@
 var mongoose = require('mongoose');
 var async = require('async');
 var WorkflowHandler = require('./workflow');
+var _ = require('lodash');
 
 var Payment = function (models) {
     var access = require("../Modules/additions/access.js")(models);
@@ -16,6 +17,7 @@ var Payment = function (models) {
     var PaymentSchema = mongoose.Schemas['Payment'];
     var InvoiceSchema = mongoose.Schemas['Invoice'];
     var DepartmentSchema = mongoose.Schemas['Department'];
+    var wTrackSchema = mongoose.Schemas['wTrack'];
     var objectId = mongoose.Types.ObjectId;
     var waterfallTasks;
 
@@ -40,8 +42,8 @@ var Payment = function (models) {
                 getPaymentFilter(req, res, next, forSale);
                 break;
             /*case "form":
-                getProductsById(req, res, next);
-                break;*/
+             getProductsById(req, res, next);
+             break;*/
         }
     };
 
@@ -139,8 +141,8 @@ var Payment = function (models) {
 
                     waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
 
-                    async.waterfall(waterfallTasks, function(err, result){
-                        if(err){
+                    async.waterfall(waterfallTasks, function (err, result) {
+                        if (err) {
                             return next(err);
                         }
                         res.status(200).send(result);
@@ -210,8 +212,8 @@ var Payment = function (models) {
                 request.query.order = 1;
             }
 
-            workflowHandler.getFirstForConvert(request, function(err, workflow){
-                if(err){
+            workflowHandler.getFirstForConvert(request, function (err, workflow) {
+                if (err) {
                     return waterfallCallback(err);
                 }
 
@@ -219,18 +221,44 @@ var Payment = function (models) {
                 invoice.paymentInfo.balance = (totalToPay - paid).toFixed(2);
                 invoice.paymentInfo.unTaxed = paid.toFixed(2);
                 invoice.payments.push(payment._id);
-                invoice.save(waterfallCallback);
+                invoice.save(function (err, invoice) {
+                    if (err) {
+                        return waterfallCallback(err);
+                    }
+
+                    waterfallCallback(null, invoice);
+                });
             });
         };
 
+        function updateWtrack(invoice, waterfallCallback) {
+            var paid = invoice.paymentInfo ? invoice.paymentInfo.unTaxed : 0;
+            var wTrackIds = _.pluck(invoice.products, 'product');
+            var wTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+
+            if (!paid) {
+                return waterfallCallback();
+            }
+
+            for (var i = wTrackIds.length - 1; i >= 0; i--) {
+
+            }
+
+
+        };
+
         waterfallTasks = [fetchInvoice, savePayment, invoiceUpdater];
+
+        if (req.session.lastDb === 'weTrack') {
+            waterfallTasks.push(updateWtrack);
+        }
 
         async.waterfall(waterfallTasks, function (err, response) {
             if (err) {
                 return next(err);
             }
 
-            res.status(201).send({success: response});
+            res.status(201).send(response);
         });
     };
 
@@ -246,7 +274,7 @@ var Payment = function (models) {
         var contentSearcher;
         var waterfallTasks;
 
-        if(forSale) {
+        if (forSale) {
             queryObject = {
                 forSale: forSale
             };

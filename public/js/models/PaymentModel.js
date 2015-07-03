@@ -25,7 +25,7 @@ define(['Validation', 'common'], function (Validation, common) {
             return "/payment";
         },
         parse: function (model) {
-            var differenceAmount = model.differenceAmount || 0;;
+            var differenceAmount = model.differenceAmount || 0;
             var paidAmount = model.paidAmount || 0;
 
             differenceAmount = (differenceAmount/ 100).toFixed(2);
