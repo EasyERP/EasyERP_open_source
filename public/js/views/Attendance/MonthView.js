@@ -8,11 +8,6 @@ define([
 ], function (ListTemplate,StatisticsView,moment) {
     var MonthView = Backbone.View.extend({
         el: '#attendanceMonth',
-        initialize: function () {
-
-        },
-
-        events: {},
 
         generateMonthArray: function () {
             var number;
@@ -49,6 +44,7 @@ define([
             var dayNumber;
             var startYear;
             var endYear;
+
             self.weekend = 0;
             self.vacationDays = 0;
             self.personalDays = 0;
@@ -84,10 +80,14 @@ define([
                 self.workingDays += dayCount;
 
                 self.monthCur = self.days[monthNumber];
+
+                //ToDo review
+
                 for (var j = 0; j < startOfMonth; j++) {
                     self.monthArray[i].daysData[j] = {};
                     self.monthArray[i].daysData[j].number = '&nbsp';
                 }
+
                 for (var j = startOfMonth; j < startOfMonth + dayCount; j++) {
                     var day = new Date(monthYear, i, j - startOfMonth + 1);
                     day = day.getDay();
@@ -98,6 +98,7 @@ define([
                     self.monthArray[i].daysData[j].number = dayNumber;
                     dayNumber++;
                 }
+
                 for (var j = startOfMonth + dayCount; j < 42; j++) {
                     self.monthArray[i].daysData[j] = {};
                     self.monthArray[i].daysData[j].number = '&nbsp';

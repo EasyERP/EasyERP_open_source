@@ -16,10 +16,6 @@ define([
 
         template: _.template(mainTemplate),
 
-        $currentEmployee: null,
-        $currentStatus: null,
-        $currentTime: null,
-
         events: {
             'change #currentEmployee': 'changeEmployee',
             'change #currentStatus': 'changeStatus',
@@ -32,12 +28,17 @@ define([
             var status;
             var years;
 
+            this.currentEmployee = null;
+            this.currentStatus = null;
+            this.currentTime = null;
+
             this.model = new AttendanceModel();
             this.listenTo(this.model, 'change:currentEmployee', this.changeEmployee);
             this.listenTo(this.model, 'change:currentStatus', this.changeStatus);
             this.listenTo(this.model, 'change:currentTime', this.changeTime);
 
             dataService.getData("/getPersonsForDd", {}, function (result) {
+                var yearToday = moment().year();
                 employees = result.data;
                 self.model.set({
                     employees: employees
@@ -45,20 +46,20 @@ define([
 
                 status = self.model.get('status');
                 years = self.model.get('years');
-                $currentEmployee = employees[0];
-                $currentStatus = status[0];
-                $currentTime = years[0];
+                self.currentEmployee = employees[0];
+                self.currentStatus = status[0];
+                self.currentTime = years[0];
 
-                while (years.indexOf(moment().year()) === -1) {
+                while (years.indexOf(yearToday) === -1) {
                     years.push(years[years.length - 1] + 1);
                 }
 
                 self.render();
 
                 self.model.set({
-                    currentEmployee: $currentEmployee,
-                    currentStatus: $currentStatus,
-                    currentTime: $currentTime,
+                    currentEmployee: this.currentEmployee,
+                    currentStatus: this.currentStatus,
+                    currentTime: this.currentTime,
                     years: years
                 });
 
@@ -71,25 +72,29 @@ define([
             var month;
             var data;
 
-            $currentEmployee = $("#currentEmployee option:selected").attr('id');
+            this.currentEmployee = this.$el.find("#currentEmployee option:selected").attr('id');
 
-            if (!$currentEmployee) {
-                $currentEmployee = self.model.get('employees')[0].id;
+            if (!self.currentEmployee) {
+                self.currentEmployee = self.model.get('employees')[0].id;
             }
 
-            dataService.getData("/vacation/attendance", {year: $currentTime, employee: $currentEmployee}, function (result) {
+            dataService.getData("/vacation/attendance", {
+                year: self.currentTime,
+                employee: self.currentEmployee
+            }, function (result) {
                 labels = self.model.get('labelMonth');
                 month = new MonthView();
                 data = _.groupBy(result, "month");
-                self.$el.append(month.render({labels: labels,month: this.month, attendance: data}));
+                self.$el.append(month.render({labels: labels, month: this.month, attendance: data}));
             });
         },
 
         changeStatus: function () {
             var self = this;
-            $currentStatus = $("#currentStatus option:selected").attr('id');
+            self.currentStatus = this.$el.find("#currentStatus option:selected").attr('id');
 
-            dataService.getData("/getPersonsForDd", {}, function (result) {});
+            dataService.getData("/getPersonsForDd", {}, function (result) {
+            });
         },
 
         changeTime: function () {
@@ -98,17 +103,20 @@ define([
             var month;
             var data;
 
-            $currentTime = $("#currentTime option:selected").text().trim();
+            self.currentTime = this.$el.find("#currentTime option:selected").text().trim();
 
-            if (!$currentTime) {
-                $currentTime = self.model.get('years')[0].id;
+            if (!self.currentTime) {
+                self.currentTime = self.model.get('years')[0].id;
             }
 
-            dataService.getData("/vacation/attendance", {year: $currentTime, employee: $currentEmployee}, function (result) {
+            dataService.getData("/vacation/attendance", {
+                year: self.currentTime,
+                employee: self.currentEmployee
+            }, function (result) {
                 labels = self.model.get('labelMonth');
                 month = new MonthView();
                 data = _.groupBy(result, "month");
-                self.$el.append(month.render({labels: labels,month: this.month, attendance: data}));
+                self.$el.append(month.render({labels: labels, month: this.month, attendance: data}));
             });
         },
 
