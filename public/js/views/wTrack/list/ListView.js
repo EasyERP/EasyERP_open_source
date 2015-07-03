@@ -264,7 +264,7 @@ define([
         },
 
         calculateCost: function (employeeId, callback) {
-
+            
         },
 
         chooseOption: function (e) {
@@ -336,8 +336,8 @@ define([
                 changedAttr.department = department;
             } else if (elementType === '#department') {
                 department = _.clone(editWtrackModel.get('department'));
-                department._id = element.department._id;
-                department.departmentName = element.department.departmentName;
+                department._id = element._id;
+                department.departmentName = element.departmentName;
 
                 changedAttr.department = department;
             }
@@ -889,10 +889,12 @@ define([
             var checked = ellement.checked;
             var targetEl = $(ellement);
             var tr = targetEl.closest('tr');
+            var wTrackId = tr.data('id');
+            var model = this.collection.get(wTrackId);
             var projectContainer = tr.find('td[data-content="project"]');
             var projectId = projectContainer.data('id');
             
-            if (!checkLength) {
+            if (!checkLength || model.get('isPaid')) {
                 this.selectedProjectId = [];
                 this.genInvoiceEl.hide();
                 

@@ -18,8 +18,8 @@ module.exports = function (models) {
             user: 'thinkmobiles@wbje9y2n5u',
             password: '1q2w3e!@#',
             server: 'wbje9y2n5u.database.windows.net',
-            database: 'ex_dev',
-            //database: 'production',
+            //database: 'ex_dev',
+            database: 'production',
 
             options: {
                 encrypt: true
@@ -65,6 +65,7 @@ module.exports = function (models) {
         var wTrackSchema = tasks[5];
         var invoiceSchema = tasks[7];
         var paymentSchema = tasks[8];
+        var bonusTypeSchema = tasks[12];
 
         var ownerId = req.session ? req.session.uId : null;
 
@@ -72,6 +73,7 @@ module.exports = function (models) {
         var projectCollection = projectSchema.collection;
         var wTrackCollection = wTrackSchema.collection;
         var paymentCollection = paymentSchema.collection;
+        var bonusTypeCollection = bonusTypeSchema.collection;
 
         var ProjectSchema = projectCollection[projectCollection];
         var CustomerSchema = mongoose.Schemas[customerCollection];
@@ -82,6 +84,7 @@ module.exports = function (models) {
         var WTrackSchema = mongoose.Schemas[wTrackCollection];
         var InvoiceSchema = mongoose.Schemas['wTrackInvoice'];
         var PaymentSchema = mongoose.Schemas[paymentCollection];
+        var BonusTypeSchema = mongoose.Schemas[bonusTypeCollection];
 
         var Project = models.get(req.session.lastDb, projectCollection, ProjectSchema);
         var Customer = models.get(req.session.lastDb, customerCollection, CustomerSchema);
@@ -92,6 +95,57 @@ module.exports = function (models) {
         var Wtrack = models.get(req.session.lastDb, wTrackCollection, WTrackSchema);
         var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', InvoiceSchema);
         var Payment = models.get(req.session.lastDb, paymentCollection, PaymentSchema);
+        var BonusType = models.get(req.session.lastDb, bonusTypeCollection, BonusTypeSchema);
+
+        function importBonusType (bonusTypeSchema, seriesCb){
+            var query = queryBuilder(bonusTypeSchema.table);
+            var waterfallTasks;
+
+            function getData(callback){
+                handler.importData(query, callback);
+            }
+
+            function saverBonusType(fetchedArray, callback){
+                var model;
+                var mongooseFields = Object.keys(bonusTypeSchema.aliases);
+
+                async.eachLimit(fetchedArray, 100, function (fetchedBonusType, cb) {
+                    var objectToSave = {};
+
+                    for (var i = mongooseFields.length - 1; i >= 0; i--){
+                        var key = mongooseFields[i];
+                        var msSqlKey = bonusTypeSchema.aliases[key];
+
+                        objectToSave[key] = fetchedBonusType[msSqlKey];
+                    }
+
+                    if (fetchedBonusType) {
+                        model = new BonusType(objectToSave);
+                        model.save(cb);
+                    }
+                }, function (err) {
+                    if (err) {
+                        return callback(err);
+                    }
+
+                    callback(null, 'Completed');
+                })
+            }
+
+            waterfallTasks = [getData, saverBonusType];
+
+            async.waterfall(waterfallTasks, function (err, result) {
+                if (err) {
+                    seriesCb(err);
+                }
+
+                seriesCb(null, 'Complete')
+            });
+        }
+
+        function bonusTypeImporter(callback) {
+            importBonusType(bonusTypeSchema, callback);
+        }
 
         function importCustomer(customerSchema, seriesCb) {
             var query = queryBuilder(customerSchema.table);
@@ -171,11 +225,11 @@ module.exports = function (models) {
 
                 seriesCb(null, 'Complete')
             });
-        };
+        }
 
         function customerImporter(callback) {
             importCustomer(customerSchema, callback);
-        };
+        }
 
         function fetchWorkflow(query, callback) {
             query = query || {
@@ -774,7 +828,7 @@ module.exports = function (models) {
             importPayment(paymentSchema, callback);
         };
 
-        return [customerImporter, projectImporter, wTrackImporter, invoiceImporter, paymentImporter];
+        return [bonusTypeImporter, customerImporter, projectImporter, wTrackImporter, invoiceImporter, paymentImporter];
     };
 
     function hrImporter(req, tasks) {
@@ -784,6 +838,8 @@ module.exports = function (models) {
         var salaryShema = tasks[6];
         var holidayShema = tasks[9];
         var vacationShema = tasks[10];
+        var monthHoursSchema = tasks[11];
+
         var ownerId = req.session ? req.session.uId : null;
 
         var jobPositionCollection = jobPositionShema.collection;
@@ -792,6 +848,7 @@ module.exports = function (models) {
         var salaryCollection = salaryShema.collection;
         var holidayCollection = holidayShema.collection;
         var vacationCollection = vacationShema.collection;
+        var monthHoursCollection = monthHoursSchema.collection;
 
         var JobPositionSchema = mongoose.Schemas[jobPositionCollection];
         var DepartmentSchema = mongoose.Schemas[departmentCollection];
@@ -800,6 +857,7 @@ module.exports = function (models) {
         var HolidaySchema = mongoose.Schemas[holidayCollection];
         var VacationSchema = mongoose.Schemas[vacationCollection];
         var WorkflowSchema = mongoose.Schemas['workflow'];
+        var MonthHoursSchema = mongoose.Schemas[monthHoursCollection];
 
         var JobPosition = models.get(req.session.lastDb, jobPositionCollection, JobPositionSchema);
         var Department = models.get(req.session.lastDb, departmentCollection, DepartmentSchema);
@@ -808,6 +866,59 @@ module.exports = function (models) {
         var Holiday = models.get(req.session.lastDb, holidayCollection, HolidaySchema);
         var Vacation = models.get(req.session.lastDb, vacationCollection, VacationSchema);
         var Workflow = models.get(req.session.lastDb, 'workflows', WorkflowSchema);
+        var MonthHours =  models.get(req.session.lastDb, monthHoursCollection, MonthHoursSchema);
+
+        function importMonthHours (monthHoursSchema, seriesCb){
+            var query = queryBuilder(monthHoursSchema.table);
+            var waterfallTasks;
+
+            function getData(callback){
+                handler.importData(query, callback);
+            }
+
+            function saverMonthHours(fetchedArray, callback){
+                var model;
+                var mongooseFields = Object.keys(monthHoursSchema.aliases);
+
+                async.eachLimit(fetchedArray, 100, function (fetchedMonthHours, cb) {
+                    var objectToSave = {};
+
+                    for (var i = mongooseFields.length - 1; i >= 0; i--){
+                        var key = mongooseFields[i];
+                        var msSqlKey = monthHoursSchema.aliases[key];
+
+                        objectToSave[key] = fetchedMonthHours[msSqlKey];
+
+                    }
+
+                    if (fetchedMonthHours) {
+                        model = new MonthHours(objectToSave);
+                        model.save(cb);
+                    }
+                }, function (err) {
+                    if (err) {
+                        return callback(err);
+                    }
+
+                    callback(null, 'Completed');
+                })
+            }
+
+            waterfallTasks = [getData, saverMonthHours];
+
+            async.waterfall(waterfallTasks, function (err, result) {
+                if (err) {
+                    seriesCb(err);
+                }
+
+                seriesCb(null, 'Complete')
+            });
+        }
+
+        function monthHoursImporter(callback) {
+            importMonthHours(monthHoursSchema, callback);
+        }
+
 
         function importDepartment(departmentShema, seriesCb) {
             var query = queryBuilder(departmentShema.table);
@@ -1322,7 +1433,7 @@ module.exports = function (models) {
             importVacation(vacationShema, callback);
         }
 
-        return [departmentImporter, jobPositionImporter, employeeImporter, salaryImporter, holidayImporter, vacationImporter];
+        return [monthHoursImporter, departmentImporter, jobPositionImporter, employeeImporter, salaryImporter, holidayImporter, vacationImporter];
     }
 
     router.post('/', function (req, res, next) {

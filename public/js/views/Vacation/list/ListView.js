@@ -10,10 +10,11 @@ define([
         'dataService',
         'constants',
         'async',
-        'moment'
+        'moment',
+        'populate'
     ],
 
-    function (listTemplate, cancelEdit, createView, listItemView, vacationModel, vacationCollection, editCollection, common, dataService, CONSTANTS, async, moment) {
+    function (listTemplate, cancelEdit, createView, listItemView, vacationModel, vacationCollection, editCollection, common, dataService, CONSTANTS, async, moment, populate) {
         var VacationListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -27,6 +28,9 @@ define([
             changedModels: {},
             holidayId: null,
             editCollection: null,
+            responseObj: {},
+            monthElement: null,
+            yearElement: null,
 
             initialize: function (options) {
                 this.startTime = options.startTime;
@@ -46,20 +50,22 @@ define([
             },
 
             events: {
-                "click .itemsNumber": "switchPageCounter",
-                "click .showPage": "showPage",
-                "change #currentShowPage": "showPage",
-                "click #previousPage": "previousPage",
-                "click #nextPage": "nextPage",
-                "click .checkbox": "checked",
+                "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
+                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
                 "click td.editable": "editRow",
-                "click #itemsButton": "itemsNumber",
-                "click .currentPageList": "itemsNumber",
-                "click": "hideItemsNumber",
-                "click #firstShowPage": "firstPage",
-                "click #lastShowPage": "lastPage",
+                "click .current-selected": "showNewCurrentSelect",
+                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
                 "click .oe_sortable": "goSort",
-                "change .editable ": "setEditable"
+                "change .editable ": "setEditable",
+                "click": "hideNewSelect"
+            },
+
+            showNewCurrentSelect: function (e, prev, next) {
+                populate.showSelect(e, prev, next, this, 12);
+            },
+
+            hideNewSelect: function () {
+                $(".newSelectList").remove();
             },
 
             savedNewModel: function (modelObject) {
@@ -160,6 +166,46 @@ define([
                 }
             },
 
+            vacationTypeForDD: function (content) {
+                var array = ['Vacation', 'Personal', 'Sick', 'Education'];
+
+                array = _.map(array, function(element) {
+                    element = {
+                        name: element
+                    };
+                    element._id = element.name.charAt(0);
+
+                    return element;
+                });
+                content.responseObj['#vacType'] = array;
+            },
+
+            monthForDD: function (content) {
+                var array = [];
+
+                for (var i=0; i<12; i++) {
+                    array.push({
+                        _id: moment().month(i).format('M'),
+                        name: moment().month(i).format('MMMM')
+                    });
+                }
+
+                content.responseObj['#monthSelect'] = array;
+
+            },
+
+            filterEmployeesForDD: function (content) {
+                dataService.getData("/employee/getForDD", null, function (employees) {
+                    employees = _.map(employees.data, function (employee) {
+                        employee.name = employee.name.first + ' ' + employee.name.last;
+
+                        return employee
+                    });
+
+                    content.responseObj['#employee'] = employees;
+                });
+            },
+
             editRow: function (e, prev, next) {
                 var self = this;
 
@@ -167,7 +213,7 @@ define([
                 var tr = $(e.target).closest('tr');
                 var holidayId = tr.data('id');
                 var colType = el.data('type');
-                var isDTPicker = colType !== 'input' && el.prop("tagName") !== 'INPUT';
+                var isSelect = colType !== 'input' && el.prop("tagName") !== 'INPUT';
                 var tempContainer;
                 var width;
 
@@ -179,15 +225,8 @@ define([
                 }
 
 
-                if (isDTPicker) {
-                    tempContainer = (el.text()).trim();
-                    el.html('<input class="editing" type="text" value="' + tempContainer + '"  maxLength="255">');
-                    $('.editing').datepicker({
-                        dateFormat: "d M, yy",
-                        changeMonth: true,
-                        changeYear: true,
-                        onChanged: self.setChangedValue()
-                    }).addClass('datepicker');
+                if (isSelect) {
+                    populate.showSelect(e, prev, next, this);
                 } else {
                     tempContainer = el.text();
                     width = el.width() - 6;
@@ -290,20 +329,11 @@ define([
                     }
                         break;
                 }
+
                 sortObject[sortBy] = sortConst;
                 this.fetchSortCollection(sortObject);
                 this.changeLocationHash(1, this.defaultItemsNumber);
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
-            },
-
-            hideItemsNumber: function (e) {
-                $(".allNumberPerPage").hide();
-                $(".newSelectList").hide();
-            },
-
-            itemsNumber: function (e) {
-                $(e.target).closest("button").next("ul").toggle();
-                return false;
             },
 
             getTotalLength: function (currentNumber, itemsNumber, filter) {
@@ -320,15 +350,12 @@ define([
                         context.fetchSortCollection(context.sort);
                         context.changeLocationHash(page, context.defaultItemsNumber, filter);
                     }
-                    context.pageElementRender(response.count, itemsNumber, page);//prototype in main.js
+                    //context.pageElementRender(response.count, itemsNumber, page);//prototype in main.js
                 }, this);
             },
 
             renderdSubHeader: function (currentEl) {
                 var subHeaderContainer;
-
-                var monthElement;
-                var yearElement;
 
                 var month;
                 var year;
@@ -341,11 +368,9 @@ define([
                 var daysNumRow = '';
 
                 subHeaderContainer = currentEl.find('.subHeaderHolder');
-                monthElement = currentEl.find('#monthSelect');
-                yearElement = currentEl.find('#yearSelect');
 
-                month = moment().month(monthElement.text()).format('MM');
-                year = moment().year(yearElement.text()).format('YYYY');
+                month = this.monthElement.attr('data-content');
+                year = this.yearElement.text();
 
                 date = moment([year, month - 1, 1]);
                 daysInMonth = date.daysInMonth();
@@ -357,35 +382,125 @@ define([
                     dateDay = date.add(1, 'd');
                 }
 
-                daysRow = '<tr>' + daysRow + '</tr>';
+                daysRow = '<tr class="subHeaderHolder">' + daysRow + '</tr>';
 
-                daysNumRow = '<tr><th class="oe_sortable" data-sort="employee.name">Employee Name</th><th>Department</th>' + daysNumRow +'<th>Total Days</th></tr>';
+                daysNumRow = '<tr class="subHeaderHolder"><th class="oe_sortable" data-sort="employee.name">Employee Name</th><th>Department</th>' + daysNumRow +'<th>Total Days</th></tr>';
 
                 this.daysCount = daysInMonth;
 
                 var columnContainer = $('#columnForDays');
                 var width = 80/daysInMonth;
 
-                columnContainer.append('<col width="8%">');
-                columnContainer.append('<col width="7%">');
+                columnContainer.html('');
 
                 for (var i=daysInMonth; i>0; i--) {
                     columnContainer.append('<col width="' + width + '%">');
                 }
 
-                $(subHeaderContainer[0]).attr('colspan', daysInMonth);
+                $(subHeaderContainer[0]).attr('colspan', daysInMonth-12);
                 $(subHeaderContainer[1]).replaceWith(daysRow);
                 $(subHeaderContainer[2]).replaceWith(daysNumRow);
             },
 
+            nextSelect: function (e) {
+                this.showNewSelect(e, false, true);
+            },
+
+            prevSelect: function (e) {
+                this.showNewSelect(e, true, false);
+            },
+
+            showNewSelect: function (e, prev, next) {
+                e.stopPropagation();
+                populate.showSelect(e, prev, next, this);
+
+                return false;
+            },
+
+            changedDataOptions: function() {
+                var month = this.monthElement.attr('data-content');
+                var year = this.yearElement.text();
+
+                var serchObject = {
+                    month: month,
+                    year: year
+                };
+                this.collection.showMore(serchObject);
+            },
+
+            chooseOption: function (e) {
+                e.preventDefault();
+                var target = $(e.target);
+                var closestTD = target.closest("td");
+                var targetElement = closestTD.length ? closestTD : target.closest("th").find('a');
+                var tr = target.closest("tr");
+                var modelId = tr.data('id');
+                var id = target.attr("id");
+                var attr = targetElement.attr("id") || targetElement.data("content");
+                var elementType = '#' + attr;
+                var element = _.find(this.responseObj[elementType], function (el) {
+                    return el._id === id;
+                });
+                var editSalaryModel;
+
+                if (modelId) {
+                    editSalaryModel = this.editCollection.get(modelId);;
+                }
+
+                if (elementType === '#monthSelect') {
+                    targetElement.attr('data-content', target.attr('id'));
+                    this.monthElement = targetElement;
+                    this.startTime = new Date();
+                    this.changedDataOptions();
+                    this.renderdSubHeader(this.$el);
+                }
+
+                if (elementType === '#employee') {
+                    tr.find('[data-content="employee"]').text(element.name);
+
+                    editSalaryModel.set({
+                        employee: {
+                            _id: element._id,
+                            name: target.text()
+                        }
+                    });
+                }
+
+                if (elementType === '#vacType') {
+                    targetElement.text(element._id);
+                    targetElement.addClass(element._id);
+
+                    editSalaryModel.set({
+                        employee: {
+                            _id: element._id,
+                            name: target.text()
+                        }
+                    });
+                }
+
+                targetElement.text(target.text());
+
+                this.hideNewSelect();
+                this.setEditable(targetElement);
+
+                return false;
+            },
 
             render: function () {
                 $('.ui-dialog ').remove();
                 var self = this;
                 var currentEl = this.$el;
 
+                var month = {};
+                month.number = this.startTime.getMonth() + 1;
+                month.name = moment(this.startTime).format('MMMM');
+                var year = this.startTime.getFullYear();
+
                 currentEl.html('');
-                currentEl.append(_.template(listTemplate));
+                currentEl.append(_.template(listTemplate, {options: {month: month, year: year}}));
+
+                this.monthElement = currentEl.find('#monthSelect');
+                this.yearElement = currentEl.find('#yearSelect');
 
                 this.renderdSubHeader(currentEl);
 
@@ -393,6 +508,10 @@ define([
                     collection: this.collection,
                     daysCount: this.daysCount
                 }).render());//added two parameters page and items number
+
+                this.filterEmployeesForDD(this);
+                this.vacationTypeForDD(this);
+                this.monthForDD(this);
 
                 setTimeout(function () {
                     self.editCollection = new editCollection(self.collection.toJSON());
@@ -402,24 +521,6 @@ define([
                     self.$listTable = $('#listTable');
                 }, 10);
 
-                $('#check_all').click(function () {
-                    $('.checkbox').prop('checked', this.checked);
-                    if ($("input.checkbox:checked").length > 0) {
-                        $("#top-bar-deleteBtn").show();
-                    }
-                    else
-                        $("#top-bar-deleteBtn").hide();
-                });
-
-                $(document).on("click", function () {
-                    self.hideItemsNumber();
-                });
-                var pagenation = this.$el.find('.pagination');
-                if (this.collection.length === 0) {
-                    pagenation.hide();
-                } else {
-                    pagenation.show();
-                }
                 currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             },
 
@@ -444,102 +545,6 @@ define([
                 }
             },
 
-            previousPage: function (event) {
-                event.preventDefault();
-                $('#check_all').prop('checked', false);
-                $("#top-bar-deleteBtn").hide();
-                this.prevP({
-                    sort: this.sort,
-                    filter: this.filter,
-                    newCollection: this.newCollection,
-                    parrentContentId: this.parrentContentId
-                });
-                dataService.getData('/salary/totalCollectionLength', {
-                    filter: this.filter,
-                    newCollection: this.newCollection,
-                    parrentContentId: this.parrentContentId,
-                    contentType: this.contentType
-                }, function (response, context) {
-                    context.listLength = response.count || 0;
-                }, this);
-            },
-
-            nextPage: function (event) {
-                event.preventDefault();
-                $('#check_all').prop('checked', false);
-                $("#top-bar-deleteBtn").hide();
-                this.nextP({
-                    sort: this.sort,
-                    filter: this.filter,
-                    newCollection: this.newCollection,
-                    parrentContentId: this.parrentContentId
-
-                });
-
-                dataService.getData('/salary/totalCollectionLength', {
-                    contentType: this.contentType,
-                    filter: this.filter,
-                    newCollection: this.newCollection,
-                    parrentContentId: this.parrentContentId
-                }, function (response, context) {
-                    context.listLength = response.count || 0;
-                }, this);
-            },
-
-            firstPage: function (event) {
-                event.preventDefault();
-                $('#check_all').prop('checked', false);
-                $("#top-bar-deleteBtn").hide();
-                this.firstP({
-                    sort: this.sort,
-                    filter: this.filter,
-                    newCollection: this.newCollection
-                });
-                dataService.getData('/salary/totalCollectionLength', {
-                    contentType: this.contentType,
-                    filter: this.filter,
-                    newCollection: this.newCollection
-                }, function (response, context) {
-                    context.listLength = response.count || 0;
-                }, this);
-            },
-
-            lastPage: function (event) {
-                event.preventDefault();
-                $('#check_all').prop('checked', false);
-                $("#top-bar-deleteBtn").hide();
-                this.lastP({
-                    sort: this.sort,
-                    filter: this.filter,
-                    newCollection: this.newCollection
-                });
-                dataService.getData('/salary/totalCollectionLength', {
-                    contentType: this.contentType,
-                    filter: this.filter,
-                    newCollection: this.newCollection
-                }, function (response, context) {
-                    context.listLength = response.count || 0;
-                }, this);
-            },  //end first last page in paginations
-
-            switchPageCounter: function (event) {
-                event.preventDefault();
-                this.startTime = new Date();
-                var itemsNumber = event.target.textContent;
-                this.defaultItemsNumber = itemsNumber;
-                this.getTotalLength(null, itemsNumber, this.filter);
-                this.collection.showMore({
-                    count: itemsNumber,
-                    page: 1,
-                    filter: this.filter,
-                    newCollection: this.newCollection
-                });
-                this.page = 1;
-                $("#top-bar-deleteBtn").hide();
-                $('#check_all').prop('checked', false);
-                this.changeLocationHash(1, itemsNumber, this.filter);
-            },
-
             showFilteredPage: function () {
                 var itemsNumber;
 
@@ -561,18 +566,12 @@ define([
                 this.getTotalLength(null, itemsNumber, this.filter);
             },
 
-            showPage: function (event) {
-                event.preventDefault();
-                this.showP(event, {filter: this.filter, newCollection: this.newCollection, sort: this.sort});
-            },
-
             showMoreContent: function (newModels) {
                 var holder = this.$el;
                 holder.find("#listTable").empty();
                 var itemView = new listItemView({
                     collection: newModels,
-                    page: holder.find("#currentShowPage").val(),
-                    itemsNumber: holder.find("span#itemsNumber").text()
+                    daysCount: this.daysCount
                 });//added two parameters page and items number
                 holder.append(itemView.render());
 
@@ -611,22 +610,6 @@ define([
                 var newRow = $('#false');
 
                 return !!newRow.length;
-            },
-
-            checked: function () {
-                if (this.editCollection.length > 0) {
-                    var checkLength = $("input.checkbox:checked").length;
-
-                    if (checkLength > 0) {
-                        $('#top-bar-deleteBtn').show();
-                        if (checkLength == this.editCollection.length) {
-                            $('#check_all').prop('checked', true);
-                        }
-                    } else {
-                        $('#top-bar-deleteBtn').hide();
-                        $('#check_all').prop('checked', false);
-                    }
-                }
             },
 
             deleteItemsRender: function (deleteCounter, deletePage) {

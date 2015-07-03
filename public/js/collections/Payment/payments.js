@@ -22,12 +22,12 @@ define([
                     }
                 });
             },
-            parse: function(model){
+            /*parse: function(model){
                 if (model.date) {
                     model.date = common.utcDateToLocaleDate(model.date);
                 }
                 return model;
-            }
+            }*/
         });
         return PaymentCollection;
     });

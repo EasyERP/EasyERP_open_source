@@ -1,18 +1,48 @@
 ﻿<div>
     <table class="vacation-list">
-        <colgroup id="columnForDays">
+
+        <colgroup class="borders">
+            <col width="10%">
+            <col width="7%">
+        </colgroup>
+
+        <colgroup id="columnForDays" class="borders">
         </colgroup>
 
         <thead>
-        <tr>
+        <tr id="caption">
             <th colspan="2" rowspan="2">
-                <a id="monthSelect" class="current-selected" href="javascript:;">May</a>
+                <a id="monthSelect" data-type="monthSelect" class="current-selected" data-content="<%=options.month.number%>" href="javascript:;"><%=options.month.name%></a>
             </th>
-            <th class="subHeaderHolder">
+            <th id="legandCaption" class="subHeaderHolder">
                 Dates Of Absence
             </th>
+            <th class="V">
+                V
+            </th>
+            <th colspan="2">
+                Vacation
+            </th>
+            <th class="P">
+                P
+            </th>
+            <th colspan="2">
+                Personal
+            </th>
+            <th class="S">
+                S
+            </th>
+            <th colspan="2">
+                Sick
+            </th>
+            <th class="E">
+                E
+            </th>
+            <th colspan="2">
+                Education
+            </th>
             <th rowspan="2">
-                <a id="yearSelect" class="current-selected" href="javascript:;">2015</a>
+                <a id="yearSelect" class="current-selected" href="javascript:;"><%=options.year%></a>
             </th>
         </tr>
         <tr class="subHeaderHolder">

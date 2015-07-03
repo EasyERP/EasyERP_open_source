@@ -42,7 +42,7 @@ define([
                 var thisEl = this.$el;
                 var name = thisEl.find('#name').val();
                 var value =  thisEl.find('#value').val();
-                var department =  thisEl.find('#department').val();
+                var bonusType =  thisEl.find('#bonusType').val();
                 var isPercent = thisEl.find('#isPercent').val();
 
                 this.model.save({

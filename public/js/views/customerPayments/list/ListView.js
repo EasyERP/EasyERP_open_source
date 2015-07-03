@@ -3,9 +3,9 @@
  */
 define([
         'text!templates/supplierPayments/list/ListHeader.html',
-        'views/supplierPayments/list/ListItemView',
-        'views/supplierPayments/list/ListTotalView',
-        'collections/supplierPayments/filterCollection',
+        'views/customerPayments/list/ListItemView',
+        'views/customerPayments/list/ListTotalView',
+        'collections/customerPayments/filterCollection',
         'dataService'
     ],
     function (listTemplate, listItemView, listTotalView, paymentCollection, dataService) {
@@ -17,7 +17,7 @@ define([
             sort: null,
             newCollection: null,
             page: null, //if reload page, and in url is valid page
-            contentType: 'supplierPayments',//needs in view.prototype.changeLocationHash
+            contentType: 'customerPayments',//needs in view.prototype.changeLocationHash
             viewType: 'list',//needs in view.prototype.changeLocationHash
 
             events: {
@@ -106,7 +106,7 @@ define([
 
                 });
 
-                dataService.getData('/supplierPayments/totalCollectionLength', {
+                dataService.getData('/payment/customers/totalCollectionLength', {
                     contentType: this.contentType,
                     filter: this.filter,
                     newCollection: this.newCollection,
@@ -125,7 +125,7 @@ define([
                     filter: this.filter,
                     newCollection: this.newCollection
                 });
-                dataService.getData('/supplierPayments/totalCollectionLength', {
+                dataService.getData('/payment/customers/totalCollectionLength', {
                     contentType: this.contentType,
                     filter: this.filter,
                     newCollection: this.newCollection
@@ -143,7 +143,7 @@ define([
                     filter: this.filter,
                     newCollection: this.newCollection
                 });
-                dataService.getData('/supplierPayments/totalCollectionLength', {
+                dataService.getData('/payment/customers/totalCollectionLength', {
                     contentType: this.contentType,
                     filter: this.filter,
                     newCollection: this.newCollection
@@ -231,7 +231,7 @@ define([
             },
 
             getTotalLength: function (currentNumber, itemsNumber,filter) {
-                dataService.getData('/payments/customers/totalCollectionLength', {
+                dataService.getData('/payment/customers/totalCollectionLength', {
                     contentType: this.contentType,
                     currentNumber: currentNumber,
                     filter: filter,
