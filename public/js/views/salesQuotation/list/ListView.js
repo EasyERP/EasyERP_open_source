@@ -232,17 +232,20 @@ define([
                 }, function (stages) {
                     self.stages = stages;
 
-                    FilterView = new filterView({ collection: stages, customCollection: []});
-                    // Filter custom event listen ------begin
-                    FilterView.bind('filter', function () {
-                        showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
-                        self.showFilteredPage(showList)
-                    });
-                    FilterView.bind('defaultFilter', function () {
-                        showList = _.pluck(stages, '_id');
-                        self.showFilteredPage(showList)
-                    });
-                    // Filter custom event listen ------end
+                    dataService.getData('/quotation/getFilterValues', null, function (values) {
+                        FilterView = new filterView({ collection: stages, customCollection: values});
+                        // Filter custom event listen ------begin
+                        FilterView.bind('filter', function () {
+                            showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
+                            self.showFilteredPage(showList)
+                        });
+                        FilterView.bind('defaultFilter', function () {
+                            showList = _.pluck(self.stages, '_id');
+                            self.showFilteredPage(showList);
+                        });
+                        // Filter custom event listen ------end
+                    })
+
                 });
                 return this
             },

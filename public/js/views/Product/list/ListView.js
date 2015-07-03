@@ -214,18 +214,17 @@ define([
                         });
                     }
                 });
-                    FilterView = new filterView({ collection: [], customCollection: []});
+                dataService.getData('/product/getFilterValues', null, function (values) {
+                    FilterView = new filterView({ collection: [], customCollection: values});
                     // Filter custom event listen ------begin
                     FilterView.bind('filter', function () {
-                        showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
-                        self.showFilteredPage(showList)
+                        self.showFilteredPage()
                     });
                     FilterView.bind('defaultFilter', function () {
-                        showList = _.pluck(stages, '_id');
-                        self.showFilteredPage(showList)
+                        self.showFilteredPage()
                     });
                     // Filter custom event listen ------end
-
+                });
 
                 var pagenation = this.$el.find('.pagination');
                 if (this.collection.length === 0) {
@@ -327,16 +326,49 @@ define([
             },
             //modified for filter Vasya
             showFilteredPage: function (e) {
+                var self = this;
+                var selectedLetter;
+                var chosen = this.$el.find('.chosen');
+                var itemsNumber = $("#itemsNumber").text();
+                var checkedElements = $('.drop-down-filter input:checkbox:checked');
+
                 this.startTime = new Date();
                 this.newCollection = false;
-
-                var selectedLetter = $(e.target).text();
-                if ($(e.target).text() == "All") {
-                    selectedLetter = "";
+                if (e && e.target) {
+                    selectedLetter = $(e.target).text();
+                    if ($(e.target).text() == "All") {
+                        selectedLetter = "";
+                    }
                 }
-                this.filter = this.filter || {};
+
+                this.filter =  {};
                 this.filter['letter'] = selectedLetter;
-                var itemsNumber = $("#itemsNumber").text();
+
+                if (chosen) {
+                    chosen.each(function (index, elem) {
+                        if (elem.children[2].attributes.class.nodeValue === 'chooseDate') {
+                            if (self.filter[elem.children[1].value]) {
+                                self.filter[elem.children[1].value].push({start: $('#start').val(), end: $('#end').val()});
+
+                            } else {
+                                self.filter[elem.children[1].value] = [];
+                                self.filter[elem.children[1].value].push({start: $('#start').val(), end: $('#end').val()});
+                            }
+                        } else {
+                            if (self.filter[elem.children[1].value]) {
+                                self.filter[elem.children[1].value].push(elem.children[2].value);
+                            } else {
+                                self.filter[elem.children[1].value] = [];
+                                self.filter[elem.children[1].value].push(elem.children[2].value);
+                            }
+                        }
+
+                    });
+                }
+
+                if (checkedElements.length && checkedElements.attr('id') === 'defaultFilter') {
+                    self.filter = {};
+                }
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);

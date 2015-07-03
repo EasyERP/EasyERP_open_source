@@ -284,6 +284,15 @@ var Quotation = function (models) {
                 if (req.query.filter.workflow) {
                     queryObject.$and.push({workflow: {$in: req.query.filter.workflow}});
                 }
+                if (req.query.filter.Reference) {
+                    queryObject.$and.push({supplierReference: {$in: req.query.filter.Reference}});
+                }
+                if (req.query.filter.supplier) {
+                    queryObject.$and.push({supplier: {$in: req.query.filter.supplier}});
+                }
+                if (req.query.filter['Order date']) {
+                    queryObject.$and.push({orderDate: {$gte: new Date(req.query.filter['Order date'][0].start), $lte: new Date(req.query.filter['Order date'][0].end)}});
+                }
             }
 
 
@@ -443,6 +452,59 @@ var Quotation = function (models) {
             }
             res.status(200).send({success: product});
         });
+    };
+
+    this.getFilterValues = function (req, res, next) {
+        var CustomersSchema = mongoose.Schemas['Customers'];
+        var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
+        var Customers = models.get(req.session.lastDb, 'Customers', CustomersSchema);
+
+
+        async.waterfall([
+            function (cb) {
+                Quotation
+                    .aggregate([
+                        {
+                            $group:{
+                                _id: null,
+                                'Reference': {
+                                    $addToSet: '$supplierReference'
+                                },
+                                'supplier': {
+                                    $addToSet: '$supplier'
+                                },
+                                'Order date': {
+                                    $addToSet: '$orderDate'
+                                }
+                            }
+                        }
+                    ], function (err, quot) {
+                        if (err) {
+                            cb(err)
+                        }
+                        cb(null, quot)
+                    })
+            },
+            function (quot, cb) {
+                Customers
+                    .populate(quot , {
+                        path: 'supplier',
+                        model: Customers,
+                        select: 'name _id'
+                    },
+                    function (err, quot) {
+                        if (err) cb(err);
+                        cb(null, quot)
+                    })
+            }
+
+        ], function (err, result) {
+            if (err) {
+                return next(err)
+            }
+            res.status(200).send(result)
+
+        })
     };
 
 };

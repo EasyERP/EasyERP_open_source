@@ -12,6 +12,7 @@ module.exports = function (models) {
 
     router.get('/', handler.getAll);
     router.get('/getProductsAlphabet', handler.getProductsAlphabet);
+    router.get('/getFilterValues', handler.getFilterValues);
     router.get('/getProductsTypeForDd', handler.getProductsTypeForDd);
     router.get('/totalCollectionLength', handler.totalCollectionLength);
     router.get('/getProductsImages', handler.getProductsImages);

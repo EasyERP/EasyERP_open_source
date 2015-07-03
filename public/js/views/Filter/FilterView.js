@@ -41,8 +41,7 @@ define([
             },
 
             showCustomFilter: function () {
-                $(".filterOptions").toggle();
-                $(".filterActions").toggle();
+                this.$el.find(".filterOptions, .filterActions").toggle();
             },
 
             removeFilter: function (e) {
@@ -59,6 +58,7 @@ define([
                     term.val($(".chooseTerm option:first").val());
                     date.remove();
                     opt.show();
+                    this.$el.find(".filterOptions, .filterActions").hide();
                     this.trigger('defaultFilter');
 
                 }
@@ -91,9 +91,12 @@ define([
                     }
 
                     el.show();
+                    el.children().remove();
 
                     this.customCollection[0][value].forEach(function (opt) {
-                        if (opt && opt.name) {
+                        if (opt && opt.name && opt._id) {
+                            el.append('<option value="' + opt._id + '">' + opt.fullName + '</option>')
+                        } else if (opt && opt.name) {
                             el.append('<option value="' + opt.name + '">' + opt.name + '</option>')
                         } else {
                             el.append('<option value="' + opt + '">' + opt + '</option>')
@@ -150,12 +153,15 @@ define([
                     filterIcons.removeClass('active');
                 }
                 if (e.target.checked) {
-                    filterValues.append('<span class=' + '"' + inputText + '">' + inputText + '</span>')
+                    filterValues.append('<span class=' + '"' + inputText + '">' + inputText + '</span>');
+
                 } else {
-                    filterValues.find('.' + inputText).remove()
+                    filterValues.find('.' + inputText).remove();
+                    label.removeClass('activeFilterItem');
                 }
 
                 if (e.target.id !== 'defaultFilter') {
+
                     defaultFilter.removeAttr('checked');
                     filterValues.find('.Default').remove();
                     this.trigger('filter');
@@ -176,17 +182,15 @@ define([
             },
 
             removeValues: function () {
-                $('.filterValues').empty();
-                $('.filter-icons').removeClass('active');
+                this.$el.find('.filterValues').empty();
+                this.$el.find('.filter-icons').removeClass('active');
+
                 $.each($('.drop-down-filter input'), function (index, value) {
                     value.checked = false
                 });
+
                 this.trigger('defaultFilter');
-
             }
-
-
-
         });
 
         return FilterView;

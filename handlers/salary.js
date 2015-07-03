@@ -437,6 +437,31 @@ var Salary = function (models) {
             res.status(200).send({count: result.length});
         });
     };
+
+    this.getFilterValues = function (req, res, next) {
+        var Salary = models.get(req.session.lastDb, 'SalaryCash', SalaryCashSchema);
+
+        Salary
+            .aggregate([
+                {
+                    $group:{
+                        _id: null,
+                        'Year': {
+                            $addToSet: '$year'
+                        },
+                        'Month': {
+                            $addToSet: '$month'
+                        }
+                    }
+                }
+            ], function (err, salary) {
+                if (err) {
+                    return next(err)
+                }
+                res.status(200).send(salary)
+            })
+
+    };
 };
 
 module.exports = Salary;

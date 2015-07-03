@@ -5,12 +5,13 @@ define([
         'models/SalaryModel',
         'collections/Salary/filterCollection',
         'collections/Salary/editCollection',
+        'views/Filter/FilterView',
         'common',
         'dataService',
         'moment'
     ],
 
-    function (listTemplate, listItemView, subSalaryView, salaryModel, contentCollection, salaryEditableCollection, common, dataService, moment) {
+    function (listTemplate, listItemView, subSalaryView, salaryModel, contentCollection, salaryEditableCollection, filterView, common, dataService, moment) {
         var SalaryListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -309,6 +310,7 @@ define([
                 $('.ui-dialog ').remove();
                 var self = this;
                 var currentEl = this.$el;
+                var FilterView;
 
                 currentEl.html('');
                 currentEl.append(_.template(listTemplate));
@@ -329,9 +331,10 @@ define([
 
                 $("#top-bar-createBtn").hide();
 
-                $(document).on("click", function () {
-                    self.hideItemsNumber();
-                });
+                /*$(document).on("click", function (e) {
+                    self.hideItemsNumber(e);
+                });*/
+
                 var pagenation = this.$el.find('.pagination');
                 if (this.collection.length === 0) {
                     pagenation.hide();
@@ -461,28 +464,6 @@ define([
                 $("#top-bar-createBtn").hide();
                 $('#check_all').prop('checked', false);
                 this.changeLocationHash(1, itemsNumber, this.filter);
-            },
-
-            showFilteredPage: function () {
-                var itemsNumber;
-
-                this.startTime = new Date();
-                this.newCollection = false;
-                var workflowIdArray = [];
-                $('.filter-check-list input:checked').each(function () {
-                    workflowIdArray.push($(this).val());
-                });
-                this.filter = this.filter || {};
-                this.filter['workflow'] = workflowIdArray;
-
-                itemsNumber = $("#itemsNumber").text();
-                $("#top-bar-deleteBtn").hide();
-                $("#top-bar-createBtn").hide();
-                $('#check_all').prop('checked', false);
-
-                this.changeLocationHash(1, itemsNumber, this.filter);
-                this.collection.showMore({count: itemsNumber, page: 1, filter: this.filter});
-                this.getTotalLength(null, itemsNumber, this.filter);
             },
 
             showPage: function (event) {
