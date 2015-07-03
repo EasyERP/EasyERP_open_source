@@ -7753,8 +7753,7 @@ textarea#editInput {
   padding: 5px;
 }
 .vacation-list thead th {
-  font-weight: bold;
-  border: 1px solid #000000;
+  border: 1px solid #d2d2d2;
 }
 .vacation-list thead th#legandCaption {
   text-align: left;
@@ -7764,7 +7763,7 @@ textarea#editInput {
 }
 .vacation-list tbody td,
 .vacation-list tfoot td {
-  border: 1px solid #000000;
+  border: 1px solid #d2d2d2;
   text-align: center;
 }
 .vacation-list tbody td.employee,
@@ -7782,5 +7781,5 @@ textarea#editInput {
 .vacation-list thead,
 .vacation-list tbody,
 .vacation-list tfoot {
-  border: 2px solid #000;
+  border: 1px solid #d2d2d2;
 }
