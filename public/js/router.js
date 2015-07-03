@@ -98,9 +98,11 @@ define([
                         self.isAuth = true;
                         renderRevenue();
                     } else {
-
+                        self.redirectTo();
                     }
                 });
+            } else {
+                renderRevenue();
             }
 
             function renderRevenue () {
@@ -120,7 +122,7 @@ define([
 
                     contentview = new contentView({startTime: startTime});
 
-                    self.changeView(contentview);
+                    self.changeView(contentview, true);
                 });
             }
         },
@@ -703,7 +705,13 @@ define([
             this.topBarView = topBarView;
         },
 
-        changeView: function (view) {
+        changeView: function (view, hideTopBar) {
+            if(hideTopBar){
+                $('#top-bar').hide();
+            } else {
+                $('#top-bar').show();
+            }
+
             if (this.view) {
                 this.view.undelegateEvents();
             }
