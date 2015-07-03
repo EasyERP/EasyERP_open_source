@@ -12,7 +12,7 @@
         <thead>
         <tr id="caption">
             <th colspan="2" rowspan="2">
-                <a id="monthSelect" class="current-selected" href="javascript:;">May</a>
+                <a id="monthSelect" data-type="monthSelect" class="current-selected" data-content="<%=options.month.number%>" href="javascript:;"><%=options.month.name%></a>
             </th>
             <th id="legandCaption" class="subHeaderHolder">
                 Dates Of Absence
@@ -42,7 +42,7 @@
                 Education
             </th>
             <th rowspan="2">
-                <a id="yearSelect" class="current-selected" href="javascript:;">2015</a>
+                <a id="yearSelect" class="current-selected" href="javascript:;"><%=options.year%></a>
             </th>
         </tr>
         <tr class="subHeaderHolder">
