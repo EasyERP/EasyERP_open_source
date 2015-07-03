@@ -29,6 +29,8 @@ define([
             holidayId: null,
             editCollection: null,
             responseObj: {},
+            monthElement: null,
+            yearElement: null,
 
             initialize: function (options) {
                 this.startTime = options.startTime;
@@ -51,10 +53,15 @@ define([
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
                 "click td.editable": "editRow",
+                "click .current-selected": "showNewCurrentSelect",
                 "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
                 "click .oe_sortable": "goSort",
                 "change .editable ": "setEditable",
                 "click": "hideNewSelect"
+            },
+
+            showNewCurrentSelect: function (e, prev, next) {
+                populate.showSelect(e, prev, next, this, 12);
             },
 
             hideNewSelect: function () {
@@ -161,7 +168,6 @@ define([
 
             vacationTypeForDD: function (content) {
                 var array = ['Vacation', 'Personal', 'Sick', 'Education'];
-                var arrayElObj = {};
 
                 array = _.map(array, function(element) {
                     element = {
@@ -174,21 +180,18 @@ define([
                 content.responseObj['#vacType'] = array;
             },
 
-            monthTypeForDD: function (content) {
-                var array;
-                var arrayElObj = {};
+            monthForDD: function (content) {
+                var array = [];
 
+                for (var i=0; i<12; i++) {
+                    array.push({
+                        _id: moment().month(i).format('M'),
+                        name: moment().month(i).format('MMMM')
+                    });
+                }
 
+                content.responseObj['#monthSelect'] = array;
 
-                array = _.map(array, function(element) {
-                    element = {
-                        name: element
-                    };
-                    element._id = element.name.charAt(0);
-
-                    return element;
-                });
-                content.responseObj['#vacType'] = array;
             },
 
             filterEmployeesForDD: function (content) {
@@ -211,7 +214,6 @@ define([
                 var holidayId = tr.data('id');
                 var colType = el.data('type');
                 var isSelect = colType !== 'input' && el.prop("tagName") !== 'INPUT';
-                var isEmployeeSelect = isSelect && colType === 'employeeSelect';
                 var tempContainer;
                 var width;
 
@@ -224,11 +226,7 @@ define([
 
 
                 if (isSelect) {
-                    if (isEmployeeSelect) {
-                        populate.showSelect(e, prev, next, this);
-                    } else {
-                        populate.showSelect(e, prev, next, this, 4);
-                    }
+                    populate.showSelect(e, prev, next, this);
                 } else {
                     tempContainer = el.text();
                     width = el.width() - 6;
@@ -331,6 +329,7 @@ define([
                     }
                         break;
                 }
+
                 sortObject[sortBy] = sortConst;
                 this.fetchSortCollection(sortObject);
                 this.changeLocationHash(1, this.defaultItemsNumber);
@@ -358,9 +357,6 @@ define([
             renderdSubHeader: function (currentEl) {
                 var subHeaderContainer;
 
-                var monthElement;
-                var yearElement;
-
                 var month;
                 var year;
 
@@ -372,11 +368,9 @@ define([
                 var daysNumRow = '';
 
                 subHeaderContainer = currentEl.find('.subHeaderHolder');
-                monthElement = currentEl.find('#monthSelect');
-                yearElement = currentEl.find('#yearSelect');
 
-                month = moment().month(monthElement.text()).format('MM');
-                year = moment().year(yearElement.text()).format('YYYY');
+                month = this.monthElement.attr('data-content');
+                year = this.yearElement.text();
 
                 date = moment([year, month - 1, 1]);
                 daysInMonth = date.daysInMonth();
@@ -388,14 +382,16 @@ define([
                     dateDay = date.add(1, 'd');
                 }
 
-                daysRow = '<tr>' + daysRow + '</tr>';
+                daysRow = '<tr class="subHeaderHolder">' + daysRow + '</tr>';
 
-                daysNumRow = '<tr><th class="oe_sortable" data-sort="employee.name">Employee Name</th><th>Department</th>' + daysNumRow +'<th>Total Days</th></tr>';
+                daysNumRow = '<tr class="subHeaderHolder"><th class="oe_sortable" data-sort="employee.name">Employee Name</th><th>Department</th>' + daysNumRow +'<th>Total Days</th></tr>';
 
                 this.daysCount = daysInMonth;
 
                 var columnContainer = $('#columnForDays');
                 var width = 80/daysInMonth;
+
+                columnContainer.html('');
 
                 for (var i=daysInMonth; i>0; i--) {
                     columnContainer.append('<col width="' + width + '%">');
@@ -421,10 +417,22 @@ define([
                 return false;
             },
 
+            changedDataOptions: function() {
+                var month = this.monthElement.attr('data-content');
+                var year = this.yearElement.text();
+
+                var serchObject = {
+                    month: month,
+                    year: year
+                };
+                this.collection.showMore(serchObject);
+            },
+
             chooseOption: function (e) {
                 e.preventDefault();
                 var target = $(e.target);
-                var targetElement = target.closest("td");
+                var closestTD = target.closest("td");
+                var targetElement = closestTD.length ? closestTD : target.closest("th").find('a');
                 var tr = target.closest("tr");
                 var modelId = tr.data('id');
                 var id = target.attr("id");
@@ -433,8 +441,19 @@ define([
                 var element = _.find(this.responseObj[elementType], function (el) {
                     return el._id === id;
                 });
+                var editSalaryModel;
 
-                var editSalaryModel = this.editCollection.get(modelId);
+                if (modelId) {
+                    editSalaryModel = this.editCollection.get(modelId);;
+                }
+
+                if (elementType === '#monthSelect') {
+                    targetElement.attr('data-content', target.attr('id'));
+                    this.monthElement = targetElement;
+                    this.startTime = new Date();
+                    this.changedDataOptions();
+                    this.renderdSubHeader(this.$el);
+                }
 
                 if (elementType === '#employee') {
                     tr.find('[data-content="employee"]').text(element.name);
@@ -472,8 +491,16 @@ define([
                 var self = this;
                 var currentEl = this.$el;
 
+                var month = {};
+                month.number = this.startTime.getMonth() + 1;
+                month.name = moment(this.startTime).format('MMMM');
+                var year = this.startTime.getFullYear();
+
                 currentEl.html('');
-                currentEl.append(_.template(listTemplate));
+                currentEl.append(_.template(listTemplate, {options: {month: month, year: year}}));
+
+                this.monthElement = currentEl.find('#monthSelect');
+                this.yearElement = currentEl.find('#yearSelect');
 
                 this.renderdSubHeader(currentEl);
 
@@ -484,6 +511,7 @@ define([
 
                 this.filterEmployeesForDD(this);
                 this.vacationTypeForDD(this);
+                this.monthForDD(this);
 
                 setTimeout(function () {
                     self.editCollection = new editCollection(self.collection.toJSON());
@@ -543,8 +571,7 @@ define([
                 holder.find("#listTable").empty();
                 var itemView = new listItemView({
                     collection: newModels,
-                    page: holder.find("#currentShowPage").val(),
-                    itemsNumber: holder.find("span#itemsNumber").text()
+                    daysCount: this.daysCount
                 });//added two parameters page and items number
                 holder.append(itemView.render());
 
