@@ -6,8 +6,6 @@ var mongoose = require('mongoose');
 var BonusType = function (models) {
     var access = require("../Modules/additions/access.js")(models);
     var bonusTypeSchema = mongoose.Schemas['bonusType'];
-    var DepartmentSchema = mongoose.Schemas['Department'];
-    var objectId = mongoose.Types.ObjectId;
     var async = require('async');
 
     this.create = function(req, res, next){
@@ -54,64 +52,88 @@ var BonusType = function (models) {
     };
 
     this.getList = function (req, res, next) {
+        //var bonusTypeModel = models.get(req.session.lastDb, 'bonusType', bonusTypeSchema);
+        //var count = req.query.count ? req.query.count : 50;
+        //var page = req.query.page;
+        //var skip = (page - 1) > 0 ? (page - 1) * count : 0;
+        //var query = req.query;
+        //var queryObject = {};
+        //var departmentSearcher;
+        //var contentIdsSearcher;
+        //var contentSearcher;
+        //var waterfallTasks;
+        //var sort = {};
+        //
+        //if (query.sort) {
+        //    sort = query.sort;
+        //} else sort = {};
+        //
+        //departmentSearcher = function (waterfallCallback) {
+        //    models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
+        //        {
+        //            $match: {
+        //                users: objectId(req.session.uId)
+        //            }
+        //        }, {
+        //            $project: {
+        //                _id: 1
+        //            }
+        //        },
+        //
+        //        waterfallCallback);
+        //};
+        //
+        //contentSearcher = function (Ids, waterfallCallback) {
+        //    var queryObject = {};
+        //
+        //    bonusTypeModel
+        //        .find(queryObject)
+        //        .limit(count)
+        //        .skip(skip)
+        //        .sort(sort)
+        //        .lean()
+        //        .exec(waterfallCallback);
+        //};
+        //
+        //waterfallTasks = [departmentSearcher,  contentSearcher];
+        //
+        //access.getEditWritAccess(req, req.session.uId, 72, function (access) {
+        //    if (!access) {
+        //        return res.status(403).send();
+        //    }
+        //
+        //    async.waterfall(waterfallTasks, function (err, result) {
+        //        if (err) {
+        //            return next(err);
+        //        }
+        //
+        //        res.status(200).send(result);
+        //    });
+        //});
+
         var bonusTypeModel = models.get(req.session.lastDb, 'bonusType', bonusTypeSchema);
+        var sort = {};
         var count = req.query.count ? req.query.count : 50;
         var page = req.query.page;
         var skip = (page - 1) > 0 ? (page - 1) * count : 0;
         var query = req.query;
-        var queryObject = {};
-        var departmentSearcher;
-        var contentIdsSearcher;
-        var contentSearcher;
-        var waterfallTasks;
-        var sort = {};
 
         if (query.sort) {
             sort = query.sort;
         } else sort = {};
 
-        departmentSearcher = function (waterfallCallback) {
-            models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
-                {
-                    $match: {
-                        users: objectId(req.session.uId)
-                    }
-                }, {
-                    $project: {
-                        _id: 1
-                    }
-                },
-
-                waterfallCallback);
-        };
-
-        contentSearcher = function (Ids, waterfallCallback) {
-            var queryObject = {};
-
-            bonusTypeModel
-                .find(queryObject)
-                .limit(count)
-                .skip(skip)
-                .sort(sort)
-                .lean()
-                .exec(waterfallCallback);
-        };
-
-        waterfallTasks = [departmentSearcher,  contentSearcher];
-
-        access.getEditWritAccess(req, req.session.uId, 72, function (access) {
-            if (!access) {
-                return res.status(403).send();
-            }
-
-            async.waterfall(waterfallTasks, function (err, result) {
+        bonusTypeModel
+            .find()
+            .limit(count)
+            .skip(skip)
+            .sort(sort)
+            .exec(function (err, data) {
                 if (err) {
                     return next(err);
+                } else {
+                    res.status(200).send(data);
                 }
-
-                res.status(200).send(result);
             });
-        });
     };
 
     this.totalCollectionLength = function(req, res, next) {

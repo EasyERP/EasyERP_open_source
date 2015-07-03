@@ -11,10 +11,7 @@ define([], function () {
         },
 
         defaults: {
-            department: {
-                departmentName: '',
-                _id: null
-            }
+            bonusType: ''
         }
     });
     return bonusTypeModel;

@@ -9,6 +9,7 @@
 var mongoose = require('mongoose');
 var async = require('async');
 var WorkflowHandler = require('./workflow');
+var _ = require('lodash');
 
 var Payment = function (models) {
     var access = require("../Modules/additions/access.js")(models);
@@ -16,6 +17,7 @@ var Payment = function (models) {
     var PaymentSchema = mongoose.Schemas['Payment'];
     var InvoiceSchema = mongoose.Schemas['Invoice'];
     var DepartmentSchema = mongoose.Schemas['Department'];
+    var wTrackSchema = mongoose.Schemas['wTrack'];
     var objectId = mongoose.Types.ObjectId;
     var waterfallTasks;
 
@@ -40,8 +42,8 @@ var Payment = function (models) {
                 getPaymentFilter(req, res, next, forSale);
                 break;
             /*case "form":
-                getProductsById(req, res, next);
-                break;*/
+             getProductsById(req, res, next);
+             break;*/
         }
     };
 
@@ -139,8 +141,8 @@ var Payment = function (models) {
 
                     waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
 
-                    async.waterfall(waterfallTasks, function(err, result){
-                        if(err){
+                    async.waterfall(waterfallTasks, function (err, result) {
+                        if (err) {
                             return next(err);
                         }
                         res.status(200).send(result);
@@ -185,7 +187,7 @@ var Payment = function (models) {
         };
 
         function invoiceUpdater(invoice, payment, waterfallCallback) {
-            var tottalToPay = (invoice.paymentInfo) ? invoice.paymentInfo.balance : 0;
+            var totalToPay = (invoice.paymentInfo) ? invoice.paymentInfo.balance : 0;
             var paid = payment.paidAmount;
             var isNotFullPaid;
             var request = {
@@ -197,10 +199,10 @@ var Payment = function (models) {
                 session: req.session
             };
 
-            tottalToPay = parseFloat(tottalToPay);
+            totalToPay = parseFloat(totalToPay);
             paid = parseFloat(paid);
 
-            isNotFullPaid = paid < tottalToPay;
+            isNotFullPaid = paid < totalToPay;
 
             if (isNotFullPaid) {
                 request.query.status = 'In Progress';
@@ -210,26 +212,107 @@ var Payment = function (models) {
                 request.query.order = 1;
             }
 
-            workflowHandler.getFirstForConvert(request, function(err, workflow){
-                if(err){
+            workflowHandler.getFirstForConvert(request, function (err, workflow) {
+                if (err) {
                     return waterfallCallback(err);
                 }
 
                 invoice.workflow = workflow._id;
-                invoice.paymentInfo.balance = (tottalToPay - paid).toFixed(2);
+                invoice.paymentInfo.balance = (totalToPay - paid);
+                invoice.paymentInfo.unTaxed += paid;
                 invoice.payments.push(payment._id);
-                invoice.save(waterfallCallback);
+                invoice.save(function (err, invoice) {
+                    if (err) {
+                        return waterfallCallback(err);
+                    }
+
+                    waterfallCallback(null, invoice, payment);
+                });
             });
         };
 
+
+        function updateWtrack(invoice, payment, waterfallCallback) {
+            var paid = payment.paidAmount || 0;
+            var wTrackIds = _.pluck(invoice.products, 'product');
+
+            function updateWtrack(id, cb) {
+                var wTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+
+                function wTrackFinder(innerWaterfallCb) {
+                    wTrack.findById(id, function (err, wTrackDoc) {
+                        if (err) {
+                            return innerWaterfallCb(err);
+                        }
+                        innerWaterfallCb(null, wTrackDoc);
+                    });
+                };
+
+                function wTrackUpdater(wTrackDoc, innerWaterfallCb) {
+                    var wTrackAmount;
+                    var revenue;
+                    var differance;
+                    var isPaid;
+                    var amount;
+
+                    if (!wTrackDoc.isPaid) {
+                        revenue = wTrackDoc.revenue;
+                        wTrackAmount = wTrackDoc.amount;
+                        differance = wTrackAmount - revenue; //differance - negative value
+
+                        if ((paid + differance) >= 0) {
+                            differance = -differance;
+                        } else {
+                            differance = paid;
+                        }
+
+                        paid -= differance;
+                        wTrackAmount += differance;
+                        isPaid = revenue === wTrackAmount;
+
+                        wTrackDoc.amount = wTrackAmount / 100;
+                        wTrackDoc.isPaid = isPaid;
+                        wTrackDoc.save(function (err, saved) {
+                            if (err) {
+                                return innerWaterfallCb(err);
+                            }
+                            innerWaterfallCb(null, payment);
+                        });
+                    } else {
+                        innerWaterfallCb(null, payment);
+                    }
+                };
+
+                async.waterfall([wTrackFinder, wTrackUpdater], cb);
+            };
+
+            if (!paid) {
+                return waterfallCallback(null, payment);
+            }
+
+            async.eachSeries(wTrackIds, updateWtrack, function (err, result) {
+                if (err) {
+                    return waterfallCallback(err);
+                }
+
+                waterfallCallback(null, payment);
+            });
+
+
+        };
+
         waterfallTasks = [fetchInvoice, savePayment, invoiceUpdater];
+
+        if (req.session.lastDb === 'weTrack') {
+            waterfallTasks.push(updateWtrack);
+        }
 
         async.waterfall(waterfallTasks, function (err, response) {
             if (err) {
                 return next(err);
             }
 
-            res.status(201).send({success: response});
+            res.status(201).send(response);
         });
     };
 
@@ -245,7 +328,7 @@ var Payment = function (models) {
         var contentSearcher;
         var waterfallTasks;
 
-        if(forSale) {
+        if (forSale) {
             queryObject = {
                 forSale: forSale
             };

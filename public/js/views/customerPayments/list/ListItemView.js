@@ -2,7 +2,7 @@
  * Created by soundstorm on 21.05.15.
  */
 define([
-        'text!templates/supplierPayments/list/ListTemplate.html'
+        'text!templates/customerPayments/list/ListTemplate.html'
     ],
 
     function (PaymentListTemplate) {

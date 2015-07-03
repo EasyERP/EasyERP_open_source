@@ -196,8 +196,10 @@ define([
                         },
                         wait: true,
                         success: function () {
+                            var redirectUrl = self.forSales ? "easyErp/salesInvoice" : "easyErp/Invoice";
+
                             self.hideDialog();
-                            Backbone.history.navigate("easyErp/Invoice", {trigger: true});
+                            Backbone.history.navigate(redirectUrl, {trigger: true});
                         },
                         error: function (model, xhr) {
                             self.errorNotification(xhr);

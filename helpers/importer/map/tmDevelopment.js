@@ -314,5 +314,30 @@ module.exports = (function () {
         }
     };
 
-    return [department, jobPosition, employee, project, customer, wTrack, salary, invoice, payment, holiday, vacation];
+    var monthHours = {
+        collection: 'MonthHours',
+        table: 'MonthlyHours',
+        aliases: {
+            ID: 'ID',
+            month: 'Month',
+            hours: 'Hours',
+            year: 'Year',
+            expenseCoefficient: 'ExpenseCoefficient',
+            fixedExpense: 'FixedExpense'
+        }
+    };
+
+    var bonusType = {
+        collection: 'bonusType',
+        table: 'BonusType',
+        aliases: {
+            ID: 'ID',
+            name: 'Name',
+            bonusType: 'Type',
+            value: 'Value',
+            isPercent: 'isPercent'
+        }
+    };
+
+    return [department, jobPosition, employee, project, customer, wTrack, salary, invoice, payment, holiday, vacation, monthHours, bonusType];
 })();

@@ -24,8 +24,11 @@ define([
                 }
                 this.responseObj = {};
                 this.model = new PaymentModel();
-                this.render();
                 this.differenceAmount = 0;
+
+                this.render();
+
+                this.forSales = App.currentDb === constants.WTRACK_DB_NAME;
             },
 
             events: {
@@ -127,8 +130,10 @@ define([
                         },
                         wait: true,
                         success: function () {
+                            var redirectUrl = self.forSales ? "easyErp/customerPayments" : "easyErp/supplierPayments";
+
                             self.hideDialog();
-                            Backbone.history.navigate("easyErp/Quotation", {trigger: true});
+                            Backbone.history.navigate(redirectUrl, {trigger: true});
                         },
                         error: function (model, xhr) {
                             self.errorNotification(xhr);

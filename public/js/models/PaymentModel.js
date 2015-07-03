@@ -25,9 +25,20 @@ define(['Validation', 'common'], function (Validation, common) {
             return "/payment";
         },
         parse: function (model) {
+            var differenceAmount = model.differenceAmount || 0;
+            var paidAmount = model.paidAmount || 0;
+
+            differenceAmount = (differenceAmount/ 100).toFixed(2);
+            paidAmount = (paidAmount/100).toFixed(2);
+
+            model.differenceAmount = differenceAmount;
+            model.paidAmount = paidAmount;
+
             if (model.date) {
                 model.date = common.utcDateToLocaleDate(model.date);
             }
+
+
             return model;
         }
     });
