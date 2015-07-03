@@ -5229,10 +5229,16 @@ textarea#editInput {
       width: 100%;
       padding-right: 140px;
       margin: 0 -140px 0 0;
+      box-sizing: border-box;
+      float: left;
     }
     .legend {
       float: left;
-      line-height: 11px;
+      line-height: 24px;
+      width: 140px;
+      input {
+        width: 50px;
+      }
     }
     &:after {
 
@@ -5276,6 +5282,9 @@ textarea#editInput {
     &.left-cell {
       width: 10%;
     }
+  }
+  .th-trend {
+    width: 7.5%;
   }
 }
 

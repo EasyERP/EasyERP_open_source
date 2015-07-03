@@ -7474,10 +7474,16 @@ textarea#editInput {
   width: 100%;
   padding-right: 140px;
   margin: 0 -140px 0 0;
+  box-sizing: border-box;
+  float: left;
 }
 .grid-conatiner.revenue .chartContainer .legend {
   float: left;
-  line-height: 11px;
+  line-height: 24px;
+  width: 140px;
+}
+.grid-conatiner.revenue .chartContainer .legend input {
+  width: 50px;
 }
 .grid-conatiner.revenue .divTable {
   padding-top: 5px;
@@ -7511,6 +7517,9 @@ textarea#editInput {
 }
 .grid-conatiner.revenue .divCell.left-cell {
   width: 10%;
+}
+.grid-conatiner.revenue .th-trend {
+  width: 7.5%;
 }
 .search-field {
   box-sizing: border-box;
@@ -7714,11 +7723,8 @@ textarea#editInput {
 }
 .removeFilter {
   position: absolute;
-  margin-left: 150px;
-}
-.removeFilter:hover {
-  font-size: 14px;
-  text-shadow: 1px 1px #030000;
+  margin-top: -25px;
+  margin-left: 8px;
 }
 .vacation-list {
   margin-top: 30px;
