@@ -218,31 +218,85 @@ var Payment = function (models) {
                 }
 
                 invoice.workflow = workflow._id;
-                invoice.paymentInfo.balance = (totalToPay - paid).toFixed(2);
-                invoice.paymentInfo.unTaxed = paid.toFixed(2);
+                invoice.paymentInfo.balance = (totalToPay - paid);
+                invoice.paymentInfo.unTaxed += paid;
                 invoice.payments.push(payment._id);
                 invoice.save(function (err, invoice) {
                     if (err) {
                         return waterfallCallback(err);
                     }
 
-                    waterfallCallback(null, invoice);
+                    waterfallCallback(null, invoice, payment);
                 });
             });
         };
 
-        function updateWtrack(invoice, waterfallCallback) {
-            var paid = invoice.paymentInfo ? invoice.paymentInfo.unTaxed : 0;
+
+        function updateWtrack(invoice, payment, waterfallCallback) {
+            var paid = payment.paidAmount || 0;
             var wTrackIds = _.pluck(invoice.products, 'product');
-            var wTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+
+            function updateWtrack(id, cb) {
+                var wTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+
+                function wTrackFinder(innerWaterfallCb) {
+                    wTrack.findById(id, function (err, wTrackDoc) {
+                        if (err) {
+                            return innerWaterfallCb(err);
+                        }
+                        innerWaterfallCb(null, wTrackDoc);
+                    });
+                };
+
+                function wTrackUpdater(wTrackDoc, innerWaterfallCb) {
+                    var wTrackAmount;
+                    var revenue;
+                    var differance;
+                    var isPaid;
+                    var amount;
+
+                    if (!wTrackDoc.isPaid) {
+                        revenue = wTrackDoc.revenue;
+                        wTrackAmount = wTrackDoc.amount;
+                        differance = wTrackAmount - revenue; //differance - negative value
+
+                        if ((paid + differance) >= 0) {
+                            differance = -differance;
+                        } else {
+                            differance = paid;
+                        }
+
+                        paid -= differance;
+                        wTrackAmount += differance;
+                        isPaid = revenue === wTrackAmount;
+
+                        wTrackDoc.amount = wTrackAmount / 100;
+                        wTrackDoc.isPaid = isPaid;
+                        wTrackDoc.save(function (err, saved) {
+                            if (err) {
+                                return innerWaterfallCb(err);
+                            }
+                            innerWaterfallCb(null, payment);
+                        });
+                    } else {
+                        innerWaterfallCb(null, payment);
+                    }
+                };
+
+                async.waterfall([wTrackFinder, wTrackUpdater], cb);
+            };
 
             if (!paid) {
-                return waterfallCallback();
+                return waterfallCallback(null, payment);
             }
 
-            for (var i = wTrackIds.length - 1; i >= 0; i--) {
+            async.eachSeries(wTrackIds, updateWtrack, function (err, result) {
+                if (err) {
+                    return waterfallCallback(err);
+                }
 
-            }
+                waterfallCallback(null, payment);
+            });
 
 
         };
