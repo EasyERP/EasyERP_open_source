@@ -204,11 +204,26 @@ var Vacation = function (models) {
                         if (options.month) {
                             res.status(200).send(result);
                         } else {
-                            result = _.groupBy(result, 'year');
+                            async.waterfall([
+                                    function (callback) {
+                                        var resultObj = _.groupBy(result, 'year');
 
-                            var stat = calculate(result[options.year-1], options.year-1);
+                                        callback(null, resultObj);
+                                    },
+                                    function (result, callback) {
+                                        var stat = calculate(result[options.year - 1], options.year - 1);
 
-                            res.status(200).send({data: result[options.year], stat: stat});
+                                        callback(null, result, stat);
+                                    }
+                                ],
+                                function (err, object, stat) {
+                                    if (err) {
+                                        return next(err);
+                                    }
+                                    res.status(200).send({data: object[options.year], stat: stat});
+
+                                }
+                            );
                         }
                     });
                 } else {
