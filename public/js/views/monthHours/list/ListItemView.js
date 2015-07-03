@@ -1,9 +1,7 @@
 /**
  * Created by Liliya on 23.06.2015.
  */
-define([
-        'text!templates/monthHours/list/listTemplate.html'
-    ], function (listTemplate) {
+define(['text!templates/monthHours/list/listTemplate.html'], function (listTemplate) {
         var monthHoursListItemView = Backbone.View.extend({
             el: '#listTable',
             newCollection: null,
@@ -22,5 +20,6 @@ define([
                 this.$el.append(_.template(listTemplate, { monthHoursCollection: collect, startNumber: this.startNumber }));
             }
         });
+
         return monthHoursListItemView;
     });

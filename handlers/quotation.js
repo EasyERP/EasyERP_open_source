@@ -276,6 +276,7 @@ var Quotation = function (models) {
         contentSearcher = function (quotationsIds, waterfallCallback) {
             var query;
             var queryObject = {$and: []};
+            
             queryObject.$and.push({_id: {$in: quotationsIds}});
             queryObject.$and.push({isOrder: isOrder});
 
@@ -286,7 +287,11 @@ var Quotation = function (models) {
             }
 
 
-            query = Quotation.find(queryObject).limit(count).skip(skip).sort(sort);
+            query = Quotation
+                .find(queryObject)
+                .limit(count)
+                .skip(skip)
+                .sort(sort);
 
             query.populate('supplier', '_id name fullName');
             query.populate('destination');

@@ -66,5 +66,6 @@ define(['./filterCollection'], function (ParentCollection) {
            }
        }
    });
+
     return EditableCollection;
 });

@@ -2,12 +2,11 @@
 <tr  data-id="<%=bonusType._id%>">
     <td class = "notForm"><input type="checkbox" value="<%=bonusType._id%>" class="checkbox" /></td>
 
-    <td data-content="number"><%=startNumber + index +1 %></td>
-    <td data-content="name"><%=bonusType.name%></td>
-    <td data-content="type"><%=bonusType.type%></td>
-    <td data-content="value"><%=bonusType.value%></td>
-    <td data-content="isPercent"><input type="checkbox" checked=provirka() id="checkbox2" /></td>
+    <td data-type="input" data-content="number"><%=startNumber + index +1 %></td>
+    <td data-type="input" data-content="name" class="editable"><%=bonusType.name%></td>
+    <td class="editable" data-content="department"><%=bonusType.department ? bonusType.department.departmentName : ''%></td>
+    <td data-type="input" data-content="value" class="editable"><%=bonusType.value%></td>
+    <td data-type="input" data-content="isPercent" class="editable" ><%=bonusType.isPercent%></td>
 </tr>
 <% }) %>
 
-<%= function(){ %>

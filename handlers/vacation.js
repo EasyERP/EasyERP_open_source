@@ -32,7 +32,7 @@ var Vacation = function (models) {
                             var date;
 
                             date = new Date();
-                            date = moment([date.getFullYear(), date.getMonth() + 1]);
+                            date = moment([date.getFullYear(), date.getMonth()]);
                             queryObject.endDate = {'$lte': date.toISOString()};
 
                             date.subtract(12, 'M');
@@ -45,7 +45,7 @@ var Vacation = function (models) {
                             {$match: queryObject},
                             {
                                 $group: {
-                                    _id: {employee: "$employee", month: "$month", year: "$year"},
+                                    _id: {employee: "$employee", department: "$department", month: "$month", year: "$year"},
                                     vacationArray: {
                                         $push: {
                                             _idVacation: "$_id",
@@ -60,6 +60,7 @@ var Vacation = function (models) {
                                 $project: {
                                     _id: 0,
                                     employee: "$_id.employee",
+                                    department: "$_id.department",
                                     month: "$_id.month",
                                     year: "$_id.year",
                                     vacationArray: 1
@@ -68,6 +69,7 @@ var Vacation = function (models) {
                         ]
                     );
 
+                    /*REMOVE*/
                     console.dir(queryObject);
 
                     query.exec(function (err, result) {

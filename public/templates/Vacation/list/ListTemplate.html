@@ -6,5 +6,8 @@
     <td class="department">
         <%=vacation.department ? vacation.department.name : ''%>
     </td>
+    <% for (var i=0; i<=vacation.vacationArrayHTML.length; i++) { %>
+        <%=vacation.vacationArrayHTML[i] ? vacation.vacationArrayHTML[i] : '<td></td>'%>
+    <% } %>
 </tr>
 <% }) %>

@@ -2,13 +2,13 @@
  * Created by Liliya_Pikiner on 7/1/2015.
  */
 var mongoose = require('mongoose');
-var async = require('async');
-
 
 var BonusType = function (models) {
-    var bonusTypeSchema = mongoose.Schemas['bonusType'];
     var access = require("../Modules/additions/access.js")(models);
-
+    var bonusTypeSchema = mongoose.Schemas['bonusType'];
+    var DepartmentSchema = mongoose.Schemas['Department'];
+    var objectId = mongoose.Types.ObjectId;
+    var async = require('async');
 
     this.create = function(req, res, next){
         var bonusTypeModel = models.get(req.session.lastDb, 'bonusType', bonusTypeSchema);
@@ -21,13 +21,12 @@ var BonusType = function (models) {
             }
             res.status(200).send(bonusType);
         });
-
     };
 
     this.patchM = function (req, res, next) {
+        var bonusTypeModel = models.get(req.session.lastDb, 'bonusType', bonusTypeSchema);
         var body = req.body;
         var uId;
-        var bonusTypeModel = models.get(req.session.lastDb, 'bonusType', bonusTypeSchema);
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             uId = req.session.uId;
@@ -35,6 +34,7 @@ var BonusType = function (models) {
                 if (access) {
                     async.each(body, function (data, cb) {
                         var id = data._id;
+
                         delete data._id;
                         bonusTypeModel.findByIdAndUpdate(id, {$set: data}, cb);
                     }, function (err) {
@@ -55,28 +55,63 @@ var BonusType = function (models) {
 
     this.getList = function (req, res, next) {
         var bonusTypeModel = models.get(req.session.lastDb, 'bonusType', bonusTypeSchema);
-        var sort = {};
         var count = req.query.count ? req.query.count : 50;
         var page = req.query.page;
         var skip = (page - 1) > 0 ? (page - 1) * count : 0;
         var query = req.query;
+        var queryObject = {};
+        var departmentSearcher;
+        var contentIdsSearcher;
+        var contentSearcher;
+        var waterfallTasks;
+        var sort = {};
 
         if (query.sort) {
             sort = query.sort;
         } else sort = {};
 
-        bonusTypeModel
-            .find()
-            .limit(count)
-            .skip(skip)
-            .sort(sort)
-            .exec(function (err, data) {
+        departmentSearcher = function (waterfallCallback) {
+            models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
+                {
+                    $match: {
+                        users: objectId(req.session.uId)
+                    }
+                }, {
+                    $project: {
+                        _id: 1
+                    }
+                },
+
+                waterfallCallback);
+        };
+
+        contentSearcher = function (Ids, waterfallCallback) {
+            var queryObject = {};
+
+            bonusTypeModel
+                .find(queryObject)
+                .limit(count)
+                .skip(skip)
+                .sort(sort)
+                .lean()
+                .exec(waterfallCallback);
+        };
+
+        waterfallTasks = [departmentSearcher,  contentSearcher];
+
+        access.getEditWritAccess(req, req.session.uId, 72, function (access) {
+            if (!access) {
+                return res.status(403).send();
+            }
+
+            async.waterfall(waterfallTasks, function (err, result) {
                 if (err) {
                     return next(err);
-                } else {
-                    res.status(200).send(data);
                 }
+
+                res.status(200).send(result);
             });
+        });
     };
 
     this.totalCollectionLength = function(req, res, next) {
