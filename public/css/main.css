@@ -7714,20 +7714,64 @@ textarea#editInput {
 }
 .removeFilter {
   position: absolute;
-  margin-left: 150px;
-}
-.removeFilter:hover {
-  font-size: 14px;
-  text-shadow: 1px 1px #030000;
+  margin-top: -25px;
+  margin-left: 8px;
 }
 .vacation-list {
-  margin-top: 30px;
+  font-family: inherit;
+  text-shadow: none;
+  margin: 30px 1%;
+  width: 98%;
 }
-.vacation-list,
-.vacation-list .subVacationHeader-list {
-  width: 100%;
+.vacation-list .V {
+  background-color: #a42a2b;
+  color: #ffffff;
 }
-.vacation-list th:not(#subHeaderHolder),
-.vacation-list .subVacationHeader-list th:not(#subHeaderHolder) {
+.vacation-list .P {
+  background-color: #fda401;
+  color: #ffffff;
+}
+.vacation-list .S {
+  background-color: #228a23;
+  color: #ffffff;
+}
+.vacation-list .E {
+  background-color: #0000fe;
+  color: #ffffff;
+}
+.vacation-list td,
+.vacation-list th {
+  padding: 5px;
+}
+.vacation-list thead th {
+  font-weight: bold;
   border: 1px solid #000000;
+}
+.vacation-list thead th#legandCaption {
+  text-align: left;
+}
+.vacation-list tfoot td {
+  font-weight: bold;
+}
+.vacation-list tbody td,
+.vacation-list tfoot td {
+  border: 1px solid #000000;
+  text-align: center;
+}
+.vacation-list tbody td.employee,
+.vacation-list tfoot td.employee,
+.vacation-list tbody td.department,
+.vacation-list tfoot td.department {
+  text-align: left;
+}
+.vacation-list tbody td.totalDays,
+.vacation-list tfoot td.totalDays {
+  font-weight: bold;
+}
+.vacation-list #caption,
+.vacation-list .borders,
+.vacation-list thead,
+.vacation-list tbody,
+.vacation-list tfoot {
+  border: 2px solid #000;
 }

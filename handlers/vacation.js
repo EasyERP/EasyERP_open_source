@@ -33,12 +33,14 @@ var Vacation = function (models) {
 
                             date = new Date();
                             date = moment([date.getFullYear(), date.getMonth()]);
-                            queryObject.endDate = {'$lte': date.toISOString()};
+                            queryObject.endDate = {'$lte': new Date(date)};
 
                             date.subtract(12, 'M');
-                            queryObject.startDate = {'$gte': date.toISOString()};
+                            queryObject.startDate = {'$gte': new Date(date)};
                         }
                     }
+
+                    console.dir(queryObject);
 
                     query = Vacation.aggregate(
                         [
