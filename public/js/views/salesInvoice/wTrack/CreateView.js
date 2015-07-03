@@ -164,14 +164,13 @@
 
                 var total = parseFloat(thisEl.find("#totalAmount").text());
                 var unTaxed = parseFloat(thisEl.find("#totalUntaxes").text());
-                var balance = parseFloat(thisEl.find("#balance").text());
 
                 var project = thisEl.find("#project").data('id');
 
                 var payments = {
                     total: total,
-                    unTaxed: unTaxed,
-                    balance: balance
+                    unTaxed: /*unTaxed*/0,
+                    balance: total
                 };
 
                 if (selectedLength) {
