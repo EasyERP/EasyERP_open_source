@@ -137,12 +137,10 @@ define([
             hideItemsNumber: function (e) {
                 var el = e.target;
 
-                $(".allNumberPerPage").hide();
-                $(".newSelectList").hide();
+                this.$el.find(".allNumberPerPage, .newSelectList").hide();
                 if (!el.closest('.search-view')) {
-                    $(".drop-down-filter").hide();
-                    $('.search-options').hide();
                     $('.search-content').removeClass('fa-caret-up');
+                    this.$el.find(".filterOptions, .filterActions, .search-options, .drop-down-filter").hide();
                 };
             },
 
@@ -361,7 +359,7 @@ define([
 
 
                 this.filter = {};
-                if (workflowIdArray.length) this.filter['workflow'] = workflowIdArray;
+                if (workflowIdArray && workflowIdArray.length) this.filter['workflow'] = workflowIdArray;
 
                 itemsNumber = $("#itemsNumber").text();
                 $("#top-bar-deleteBtn").hide();

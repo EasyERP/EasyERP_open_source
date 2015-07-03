@@ -7658,6 +7658,10 @@ textarea#editInput {
 .drop-down-filter li {
   cursor: pointer;
   margin-bottom: 5px;
+  font-size: 13px;
+}
+.drop-down-filter li:hover {
+  background-color: #f3f3f3;
 }
 .drop-down-filter li:nth-child(2n) {
   border-bottom: 1px solid #c0c0c0;

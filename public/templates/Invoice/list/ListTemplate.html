@@ -1,5 +1,5 @@
 <% invoiceCollection.forEach(function(Invoice, index){ %>
-<tr data-id="<%=Invoice._id%>"
+<tr data-id="<%=Invoice._id%>">
     <%if (Invoice.workflow && Invoice.workflow.status === 'Cancelled') { %>
     class="canceledListItem"
     <%}%>>
@@ -11,8 +11,8 @@
     <td><%=(Invoice.salesPerson)? Invoice.salesPerson.name.first+' '+Invoice.salesPerson.name.last:''%></td>
     <td><%=Invoice.dueDate%></td>
     <td><%=Invoice.paymentInfo.balance%></td>
-    <td class="unTaxed"><%=(Invoice.paymentInfo) ? Invoice.paymentInfo.unTaxed.toFixed(2) : '0.00'%></td>
-    <td class="total"><%=(Invoice.paymentInfo) ? Invoice.paymentInfo.total.toFixed(2) : '0.00'%></td>
+    <td class="unTaxed"><%=(Invoice.paymentInfo) ? parseFloat(Invoice.paymentInfo.unTaxed).toFixed(2) : '0.00'%></td>
+    <td class="total"><%=(Invoice.paymentInfo) ? parseFloat(Invoice.paymentInfo.total).toFixed(2) : '0.00'%></td>
     <td id='<%=Invoice._id%>'>
         <%if(Invoice.workflow){%>
             <%if(Invoice.workflow.status !== 'Done'){%>

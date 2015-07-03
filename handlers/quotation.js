@@ -275,7 +275,7 @@ var Quotation = function (models) {
 
         contentSearcher = function (quotationsIds, waterfallCallback) {
             var query;
-            var queryObject = {$and: []};// {_id: {$in: quotationsIds}};
+            var queryObject = {$and: []};
             queryObject.$and.push({_id: {$in: quotationsIds}});
             queryObject.$and.push({isOrder: isOrder});
 
@@ -284,10 +284,7 @@ var Quotation = function (models) {
                     queryObject.$and.push({workflow: {$in: req.query.filter.workflow}});
                 }
             }
-            //  {workflow: {$in: ['55647b9d2e4aa3804a765ec8']}}   '55647b932e4aa3804a765ec5'
-            //{$and: [{isOrder: isOrder}, {_id: {$in: quotationsIds}}]}
-                //{$and: [{isOrder: isOrder}, {_id: {$in: quotationsIds}}, {workflow: '55647b932e4aa3804a765ec5'}]}
-                //{$and: [{isOrder: isOrder}, {_id: {$in: quotationsIds}}, {workflow: {$in: ['55647b932e4aa3804a765ec5', '55647b9d2e4aa3804a765ec8']}}]}
+
 
             query = Quotation.find(queryObject).limit(count).skip(skip).sort(sort);
 

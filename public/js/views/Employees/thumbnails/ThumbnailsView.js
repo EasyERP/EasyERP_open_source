@@ -180,14 +180,11 @@
 
             hideItemsNumber: function (e) {
                 var el = e.target;
-                $(".allNumberPerPage").hide();
-                $(".newSelectList").hide();
+
+                this.$el.find(".allNumberPerPage, .newSelectList").hide();
                 if (!el.closest('.search-view')) {
-                    $(".drop-down-filter").hide();
-                    $('.search-options').hide();
-                    $('.filterActions').hide();
-                    $('.filterOptions').hide();
                     $('.search-content').removeClass('fa-caret-up');
+                    this.$el.find(".filterOptions, .filterActions, .search-options, .drop-down-filter").hide();
                 };
             },
 

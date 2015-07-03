@@ -109,10 +109,11 @@ define([
             },
 
             showSearchContent: function () {
-                var el = $('.search-content');
+                var el = this.$el.find('.search-content');
+                var searchOpt = this.$el.find('.search-options');
                 var selector = 'fa-caret-up';
 
-                $('.search-options').toggle();
+                searchOpt.toggle();
 
                 if (el.hasClass(selector)) {
                     el.removeClass(selector)
@@ -122,15 +123,18 @@ define([
             },
 
             showFilterContent: function () {
-                $('.drop-down-filter').toggle();
+                var filter = this.$el.find('.drop-down-filter');
+
+                filter.toggle();
                 return false;
             },
 
             writeValue: function (e) {
                 var inputText = e.target.nextElementSibling.textContent;
-                var filterValues = $('.filterValues');
-                var filterIcons = $('.filter-icons');
-                var input = $('.drop-down-filter input');
+                var filterValues = this.$el.find('.filterValues');
+                var filterIcons = this.$el.find('.filter-icons');
+                var input = this.$el.find('.drop-down-filter input');
+                var defaultFilter = this.$el.find('#defaultFilter');
                 var checked;
 
                 filterIcons.addClass('active');
@@ -152,7 +156,7 @@ define([
                 }
 
                 if (e.target.id !== 'defaultFilter') {
-                    $('#defaultFilter').removeAttr('checked');
+                    defaultFilter.removeAttr('checked');
                     filterValues.find('.Default').remove();
                     this.trigger('filter');
                 } else {
