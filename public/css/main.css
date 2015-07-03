@@ -7714,8 +7714,11 @@ textarea#editInput {
 }
 .removeFilter {
   position: absolute;
-  margin-top: -25px;
-  margin-left: 8px;
+  margin-left: 150px;
+}
+.removeFilter:hover {
+  font-size: 14px;
+  text-shadow: 1px 1px #030000;
 }
 .vacation-list {
   margin-top: 30px;

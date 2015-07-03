@@ -172,7 +172,7 @@ define([
                 this.newCollection = false;
                 this.filter = this.filter || {};
                 this.filter['isConverted'] = isConverted;
-                this.filter['workflow'] = workflowIdArray;
+                if (workflowIdArray && workflowIdArray.length) this.filter['workflow'] = workflowIdArray;
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);

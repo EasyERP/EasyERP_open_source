@@ -3,6 +3,7 @@
  */
 define(['models/bonusTypeModel'], function (bonusTypeModel) {
     var bonusTypeCollection = Backbone.Collection.extend({
+
         model: bonusTypeModel,
         url: '/bonusType/',
         contentType: null,
@@ -13,7 +14,7 @@ define(['models/bonusTypeModel'], function (bonusTypeModel) {
         initialize: function (options) {
             this.startTime = new Date();
             var that = this;
-            this.namberToShow = options.count;
+            this.numberToShow = options.count;
 
             if (options && options.viewType) {
                 this.viewType = options.viewType;
@@ -64,5 +65,6 @@ define(['models/bonusTypeModel'], function (bonusTypeModel) {
             });
         }
     });
+
     return bonusTypeCollection;
 });

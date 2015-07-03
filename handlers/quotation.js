@@ -274,22 +274,27 @@ var Quotation = function (models) {
         };
 
         contentSearcher = function (quotationsIds, waterfallCallback) {
-            var queryObject = {};// {_id: {$in: quotationsIds}};
             var query;
-            var workflowArray;
-            queryObject.isOrder = isOrder;
+            var queryObject = {$and: []};// {_id: {$in: quotationsIds}};
 
-            if (req.query && req.query.filter && req.query.filter.workflow) {
-                workflowArray = req.query.filter.workflow;
-                queryObject.workflow = {$in: workflowArray};
-                //  {workflow: {$in: ['55647b9d2e4aa3804a765ec8']}}   '55647b932e4aa3804a765ec5'
-            } else {
-                queryObject._id = {$in: quotationsIds};
-                //{$and: [{isOrder: isOrder}, {_id: {$in: quotationsIds}}]}
+            queryObject.$and.push({_id: {$in: quotationsIds}});
+            queryObject.$and.push({isOrder: isOrder});
+
+            if (req.query && req.query.filter) {
+                if (req.query.filter.workflow) {
+                    queryObject.$and.push({workflow: {$in: req.query.filter.workflow}});
+                }
+            }
+            //  {workflow: {$in: ['55647b9d2e4aa3804a765ec8']}}   '55647b932e4aa3804a765ec5'
+            //{$and: [{isOrder: isOrder}, {_id: {$in: quotationsIds}}]}
                 //{$and: [{isOrder: isOrder}, {_id: {$in: quotationsIds}}, {workflow: '55647b932e4aa3804a765ec5'}]}
                 //{$and: [{isOrder: isOrder}, {_id: {$in: quotationsIds}}, {workflow: {$in: ['55647b932e4aa3804a765ec5', '55647b9d2e4aa3804a765ec8']}}]}
-            }
-            query = Quotation.find(queryObject).limit(count).skip(skip).sort(sort);
+
+            query = Quotation
+                .find(queryObject)
+                .limit(count)
+                .skip(skip)
+                .sort(sort);
 
             query.populate('supplier', '_id name fullName');
             query.populate('destination');

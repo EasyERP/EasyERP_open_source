@@ -257,14 +257,26 @@ var Invoice = function (models) {
                     };
 
                     contentSearcher = function (invoicesIds, waterfallCallback) {
-                        var workflowArray;
-                        if (req.query && req.query.filter && req.query.filter.workflow) {
-                            workflowArray = req.query.filter.workflow;
-                            optionsObject.workflow = {$in: workflowArray};
-                        } else {
+                        optionsObject.$and = [];
+                        optionsObject.$and.push({_id: {$in: invoicesIds}});
+
+                        if (req.query && req.query.filter) {
+                            if (req.query.filter.workflow) {
+                                optionsObject.$and.push({workflow: {$in: req.query.filter.workflow}});
+                            }
+                            if (req.query.filter['Due date']) {
+                                optionsObject.$and.push({dueDate: {$gte: new Date(req.query.filter['Due date'][0].start), $lte: new Date(req.query.filter['Due date'][0].end)}});
+
+                            }
+                        } /*else {
                             optionsObject._id = {$in: invoicesIds};
 
-                        }
+                        }*/
+                       /* if (req.query && req.query.filter && req.query.filter['Due date']) {
+                            optionsObject.dueDate = { 'dueDate': {$gte: new Date(condition[0].start), $lte: new Date(condition[0].end)}};
+                            { 'dueDate': {$gte: new Date('2015-01-01'), $lte: new Date('2015-02-01')}}
+                            {$and: [{_id: {$in: invoicesIds}}, { 'dueDate': {$gte: new Date('2015-01-01'), $lte: new Date('2015-02-01')}}]}
+                        }*/
 
                         var query = Invoice.find(optionsObject).limit(count).skip(skip).sort(sort);
 
@@ -615,6 +627,28 @@ var Invoice = function (models) {
 
                 resultName = rate.seq + '-' + date;
                 res.status(200).send(resultName) ;
+            });
+    };
+
+    this.getFilterValues = function (req, res, next) {
+        var Invoice = models.get(req.session.lastDb, "Invoice", InvoiceSchema);
+
+        Invoice
+            .aggregate([
+                {
+                    $group:{
+                        _id: null,
+                        'Due date': {
+                            $addToSet: '$dueDate'
+                        }
+                    }
+                }
+            ], function (err, result) {
+                if (err) {
+                    return next(err);
+                }
+
+                res.status(200).send(result);
             });
     };
 

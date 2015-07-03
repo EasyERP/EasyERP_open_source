@@ -6,8 +6,8 @@ define([
         'custom',
         'common',
         'constants'
-    ],
-    function (ContentTopBarTemplate, Custom, Common, CONSTANTS) {
+    ], function (ContentTopBarTemplate, Custom, Common, CONSTANTS) {
+
         var topBarView = Backbone.View.extend({
             el: '#top-bar',
             contentType: CONSTANTS.BONUSTYPE,
@@ -61,6 +61,7 @@ define([
                 var viewType = Custom.getCurrentVT();
                 this.$el.html(this.template({ viewType: viewType, contentType: this.contentType, contentHeader:this.contentHeader}));
                 Common.displayControlBtnsByActionType('Content', viewType);
+
                 return this;
             }
         });

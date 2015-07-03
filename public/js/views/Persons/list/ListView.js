@@ -341,6 +341,7 @@ define([
                 var itemsNumber = $("#itemsNumber").text();
                 var selectedLetter;
                 var self = this;
+                var chosen = this.$el.find('.chosen');
                 var checkedElements = $('.drop-down-filter input:checkbox:checked');
 
                 $("#top-bar-deleteBtn").hide();
@@ -353,25 +354,25 @@ define([
                        selectedLetter = '';
                    }
                }
-                this.filter = /*this.filter || */{};
-                if (showList.indexOf('isCustomer') !== -1) {
+                this.filter = {};
+                if (showList && showList.indexOf('isCustomer') !== -1) {
                     this.filter['isCustomer'] = 1;
-                }else if (showList.indexOf('isSupplier') !== -1) {
+                }else if (showList && showList.indexOf('isSupplier') !== -1) {
                     this.filter['isSupplier'] = 1;
                 } else {
                     delete this.filter['isSupplier'];
                     delete this.filter['isCustomer'];
                 }
-                if (checkedElements.length && checkedElements.attr('id') === 'defaultFilter') {
+                if (checkedElements && checkedElements.length && checkedElements.attr('id') === 'defaultFilter') {
                     this.filter = {};
                 };
-                if ($('.chosen')) {
-                    $('.chosen').each(function (index, elem) {
-                        if (self.filter[elem.children[0].value]) {
-                            self.filter[elem.children[0].value].push(elem.children[1].value);
+                if (chosen) {
+                    chosen.each(function (index, elem) {
+                        if (self.filter[elem.children[1].value]) {
+                            self.filter[elem.children[1].value].push(elem.children[2].value);
                         } else {
-                            self.filter[elem.children[0].value] = [];
-                            self.filter[elem.children[0].value].push(elem.children[1].value);
+                            self.filter[elem.children[1].value] = [];
+                            self.filter[elem.children[1].value].push(elem.children[2].value);
                         }
                     });
                 };

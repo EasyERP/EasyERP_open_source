@@ -25,7 +25,7 @@ define([
             sort: null,
             newCollection: null,
             page: null,
-            contentType: constants.MONTHHOURS,
+            contentType: constants.BONUSTYPE,
             viewType: 'list',
             responseObj: {},
             modelId: null,
@@ -39,7 +39,7 @@ define([
                 this.collection = options.collection;
                 this.filter = options.filter;
                 this.sort = options.sort;
-                this.defaultItemsNumber = this.collection.namberToShow || 50;
+                this.defaultItemsNumber = this.collection.numberToShow || 50;
                 this.newCollection = options.newCollection;
                 this.deleteCounter = 0;
                 this.page = options.collection.page;
@@ -55,8 +55,6 @@ define([
                 "click #previousPage": "previousPage",
                 "click #nextPage": "nextPage",
                 "click .checkbox": "checked",
-                "click .checkbox2": "checked2",
-
                 "click .stageSelect": "showNewSelect",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
@@ -68,7 +66,8 @@ define([
                 "click #lastShowPage": "lastPage",
                 "click .oe_sortable": "goSort",
                 "change .editable ": "setEditable",
-                'keydown input.editing': 'keyDown'
+                'keydown input.editing': 'keyDown',
+                "click .newSelectList li:not(.miniStylePagination)": "chooseOption"
             },
 
             keyDown: function (e) {
@@ -84,6 +83,7 @@ define([
                 var editedElementContent;
                 var editedElementValue;
                 var editModel;
+
                 if (editedElement.length) {
                     editedCol = editedElement.closest('td');
                     editedElementRowId = editedElement.closest('tr').data('id');
@@ -123,6 +123,7 @@ define([
                 if (this.isEditRows()) {
                     this.setChangedValue();
                 }
+
                 return false;
             },
 
@@ -138,18 +139,18 @@ define([
                 $(".newSelectList").hide();
                 var el = $(e.target);
                 var tr = $(e.target).closest('tr');
-                var mothHoursId = tr.data('id');
+                var Ids = tr.data('id');
                 var colType = el.data('type');
                 var isSelect = colType !== 'input' && el.prop("tagName") !== 'INPUT';
                 var tempContainer;
                 var width;
 
-                if (mothHoursId && el.prop('tagName') !== 'INPUT') {
-                    if (this.mothHoursId) {
+                if (Ids && el.prop('tagName') !== 'INPUT') {
+                    if (this.Ids) {
                         editedElement = this.$listTable.find('.editing');
                         this.setChangedValueToModel();
                     }
-                    this.modelId = mothHoursId;
+                    this.modelId = Ids;
                     this.setChangedValueToModel();
                 }
 
@@ -160,9 +161,53 @@ define([
                     width = el.width() - 6;
                     el.html('<input class="editing" type="text" value="' + tempContainer + '"  maxLength="4" style="width:' + width + 'px">');
                 }
+
                 return false;
             },
 
+            chooseOption: function(e){
+                var target = $(e.target);
+                var targetElement = target.parents("td");
+                var tr = target.parents("tr");
+                var modelId = tr.data('id');
+                var id = target.attr("id");
+                var attr = targetElement.attr("id") || targetElement.data("content");
+                var elementType = '#' + attr;
+                var department;
+                var changedAttr;
+
+                var element = _.find(this.responseObj[elementType], function (el) {
+                    return el._id === id;
+                });
+
+                var editModel = this.editCollection.get(modelId);
+
+                if (!this.changedModels[modelId]) {
+                    if(!editModel.id){
+                        this.changedModels[modelId] = editModel.attributes;
+                    } else {
+                        this.changedModels[modelId] = {};
+                    }
+                }
+
+                changedAttr = this.changedModels[modelId];
+                if (elementType === '#department') {
+                    department = _.clone(editModel.get('department'));
+                    department._id = element._id;
+                    department.departmentName = element.departmentName;
+
+                    changedAttr.department = department;
+                }
+
+                targetElement.text(target.text());
+
+                this.setChangedValueToModel();
+
+                this.hideNewSelect();
+                this.setEditable(targetElement);
+
+                return false;
+            },
 
             saveItem: function () {
                 var model;
@@ -213,7 +258,7 @@ define([
                     page: this.page,
                     count: this.defaultItemsNumber,
                     filter: this.filter,
-                    parrentContentId: this.parrentContentId,
+                    parentContentId: this.parentContentId,
                     contentType: this.contentType,
                     newCollection: this.newCollection
                 });
@@ -226,8 +271,8 @@ define([
                     return false;
                 }
                 var target$ = $(e.target);
-                var currentParrentSortClass = target$.attr('class');
-                var sortClass = currentParrentSortClass.split(' ')[1];
+                var currentParentSortClass = target$.attr('class');
+                var sortClass = currentParentSortClass.split(' ')[1];
                 var sortConst = 1;
                 var sortBy = target$.data('sort');
                 var sortObject = {};
@@ -271,7 +316,6 @@ define([
                     $('.search-options').hide();
                     $('.search-content').removeClass('fa-caret-up')
                 }
-                ;
             },
 
             showNewSelect: function (e, prev, next) {
@@ -318,7 +362,7 @@ define([
                 currentEl.append(new listItemView({
                     collection: this.collection,
                     page: this.page,
-                    itemsNumber: this.collection.namberToShow
+                    itemsNumber: this.collection.numberToShow
                 }).render());//added two parameters page and items number
 
                 $(document).on("click", function (e) {
@@ -341,8 +385,19 @@ define([
                 } else {
                     pagenation.show();
                 }
+
                 currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
+                dataService.getData("/department/getForDD", null, function (departments) {
+                    departments = _.map(departments.data, function (department) {
+                        department.name = department.departmentName;
+
+
+                        return department
+                    });
+
+                    self.responseObj['#department'] = departments;
+                });
 
                 setTimeout(function () {
                     self.editCollection = new EditCollection(self.collection.toJSON());
@@ -399,12 +454,12 @@ define([
                     sort: this.sort,
                     filter: this.filter,
                     newCollection: this.newCollection,
-                    parrentContentId: this.parrentContentId
+                    parentContentId: this.parentContentId
                 });
                 dataService.getData(this.collectionLengthUrl, {
                     filter: this.filter,
                     newCollection: this.newCollection,
-                    parrentContentId: this.parrentContentId
+                    parentContentId: this.parentContentId
                 }, function (response, context) {
                     context.listLength = response.count || 0;
                 }, this);
@@ -418,14 +473,14 @@ define([
                     sort: this.sort,
                     filter: this.filter,
                     newCollection: this.newCollection,
-                    parrentContentId: this.parrentContentId
+                    parentContentId: this.parentContentId
 
                 });
 
                 dataService.getData(this.collectionLengthUrl, {
                     filter: this.filter,
                     newCollection: this.newCollection,
-                    parrentContentId: this.parrentContentId
+                    parentContentId: this.parentContentId
                 }, function (response, context) {
                     context.listLength = response.count || 0;
                 }, this);
@@ -463,7 +518,7 @@ define([
                 }, function (response, context) {
                     context.listLength = response.count || 0;
                 }, this);
-            },  //end first last page in paginations
+            },
 
             switchPageCounter: function (event) {
                 event.preventDefault();
@@ -485,10 +540,10 @@ define([
 
             showFilteredPage: function () {
                 var itemsNumber;
+                var workflowIdArray = [];
 
                 this.startTime = new Date();
                 this.newCollection = false;
-                var workflowIdArray = [];
 
                 $('.filter-check-list input:checked').each(function () {
                     workflowIdArray.push($(this).val());
@@ -505,6 +560,7 @@ define([
                 this.collection.showMore({count: itemsNumber, page: 1, filter: this.filter});
                 this.getTotalLength(null, itemsNumber, this.filter);
             },
+
             showPage: function (event) {
                 event.preventDefault();
                 this.showP(event, {filter: this.filter, newCollection: this.newCollection, sort: this.sort});
@@ -520,7 +576,7 @@ define([
                     collection: newModels,
                     page: holder.find("#currentShowPage").val(),
                     itemsNumber: holder.find("span#itemsNumber").text()
-                });//added two parameters page and items number
+                });
 
                 holder.append(itemView.render());
                 itemView.undelegateEvents();
@@ -604,15 +660,6 @@ define([
                 }
             },
 
-            checked2: function () {
-                if (this.collection.length > 0) {
-                    var checkLength = $("input.checkbox2:checked").length;
-
-                        $("#top-bar-deleteBtn").hide();
-                        $('#check_all').prop('checked', false);
-
-                }
-            },
 
             deleteItemsRender: function (deleteCounter, deletePage) {
                 var pagenation;
@@ -627,7 +674,7 @@ define([
                 this.deleteRender(deleteCounter, deletePage, {
                     filter: this.filter,
                     newCollection: this.newCollection,
-                    parrentContentId: this.parrentContentId
+                    parentContentId: this.parentContentId
                 });
 
                 holder = this.$el;
@@ -728,7 +775,6 @@ define([
                 var self = this;
                 var edited = this.edited;
                 var collection = this.collection;
-                var editedCollection = this.editCollection;
 
                 async.each(edited, function (el, cb) {
                     var tr = $(el).closest('tr');

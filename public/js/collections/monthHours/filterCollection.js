@@ -4,6 +4,7 @@
 define(['models/MonthHoursModel'
 ], function (MonthHoursModel) {
     var MonthHoursCollection = Backbone.Collection.extend({
+
         model: MonthHoursModel,
         url: '/monthHours/',
         contentType: null,
@@ -65,5 +66,6 @@ define(['models/MonthHoursModel'
             });
         }
     });
+
     return MonthHoursCollection;
 });
