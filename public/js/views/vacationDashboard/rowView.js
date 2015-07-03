@@ -1,14 +1,15 @@
 /**
  * Created by German on 03.07.2015.
  */
+/**
+ * Created by German on 03.07.2015.
+ */
 define([
-    'text!templates/vacationDashboard/mainTemplate.html',
+    'text!templates/vacationDashboard/rowTemplate.html',
     'models/VacationDashboardModel',
-    'views/vacationDashboard/rowView',
     'populate',
-    'moment',
-    'dataService'
-], function (mainTemplate, vacationDashboardModel, rowView, populate, moment, dataService) {
+    'moment'
+], function (mainTemplate, vacationDashboardModel, populate, moment) {
     var View = Backbone.View.extend({
         el: '#content-holder',
 

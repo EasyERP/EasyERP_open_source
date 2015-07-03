@@ -8,8 +8,7 @@ define([
     'views/Attendance/StatisticsView',
     'populate',
     'moment',
-    'dataService',
-    'async'
+    'dataService'
 ], function (mainTemplate, AttendanceModel, MonthView, StatisticsView, populate, moment, dataService) {
     var View = Backbone.View.extend({
         el: '#content-holder',
@@ -85,11 +84,12 @@ define([
             }, function (result) {
                 labels = self.model.get('labelMonth');
                 month = new MonthView();
+
                 data = _.groupBy(result, "year");
                 keys = Object.keys(data);
 
-                keys.forEach(function(key){
-                    data[key] = _.groupBy(data[key],'month');
+                keys.forEach(function (key) {
+                    data[key] = _.groupBy(data[key], 'month');
                 });
 
                 self.$el.append(month.render({labels: labels, year: self.currentTime, attendance: data}));
@@ -101,6 +101,7 @@ define([
             self.currentStatus = this.$el.find("#currentStatus option:selected").attr('id');
 
             dataService.getData("/getPersonsForDd", {}, function (result) {
+                //ToDo Hired and Not Hired
             });
         },
 
@@ -123,11 +124,12 @@ define([
             }, function (result) {
                 labels = self.model.get('labelMonth');
                 month = new MonthView();
+
                 data = _.groupBy(result, "year");
                 keys = Object.keys(data);
 
-                keys.forEach(function(key){
-                    data[key] = _.groupBy(data[key],'month');
+                keys.forEach(function (key) {
+                    data[key] = _.groupBy(data[key], 'month');
                 });
 
                 self.$el.append(month.render({labels: labels, year: self.currentTime, attendance: data}));
@@ -143,6 +145,7 @@ define([
 
             return this;
         }
+
     });
 
     return View;
