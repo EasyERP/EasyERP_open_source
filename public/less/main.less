@@ -5527,11 +5527,56 @@ textarea#editInput {
 }
 
 .vacation-list {
-  margin-top: 30px;
-  &, .subVacationHeader-list {
-    width: 100%;
-    th:not(#subHeaderHolder) {
+  font-family: inherit;
+  text-shadow: none;
+  margin: 30px 1%;
+  width: 98%;
+  .V {
+    background-color: #a42a2b;
+    color: #ffffff;
+  }
+  .P {
+    background-color: #fda401;
+    color: #ffffff;
+  }
+  .S {
+    background-color: #228a23;
+    color: #ffffff;
+  }
+  .E {
+    background-color: #0000fe;
+    color: #ffffff;
+  }
+  td, th {
+    padding: 5px;
+  }
+  thead {
+    th {
+      font-weight: bold;
       border: 1px solid #000000;
+      &#legandCaption {
+        text-align: left;
+      }
     }
+  }
+  tfoot {
+    td {
+      font-weight: bold;
+    }
+  }
+  tbody, tfoot {
+    td {
+      border: 1px solid #000000;
+      text-align: center;
+      &.employee, &.department {
+        text-align: left;
+      }
+      &.totalDays {
+        font-weight: bold;
+      }
+    }
+  }
+  #caption, .borders, thead, tbody, tfoot {
+    border: 2px solid #000;
   }
 }

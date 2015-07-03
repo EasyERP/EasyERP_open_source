@@ -10,10 +10,11 @@ define([
         'dataService',
         'constants',
         'async',
-        'moment'
+        'moment',
+        'populate'
     ],
 
-    function (listTemplate, cancelEdit, createView, listItemView, vacationModel, vacationCollection, editCollection, common, dataService, CONSTANTS, async, moment) {
+    function (listTemplate, cancelEdit, createView, listItemView, vacationModel, vacationCollection, editCollection, common, dataService, CONSTANTS, async, moment, populate) {
         var VacationListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -27,6 +28,7 @@ define([
             changedModels: {},
             holidayId: null,
             editCollection: null,
+            responseObj: {},
 
             initialize: function (options) {
                 this.startTime = options.startTime;
@@ -46,20 +48,17 @@ define([
             },
 
             events: {
-                "click .itemsNumber": "switchPageCounter",
-                "click .showPage": "showPage",
-                "change #currentShowPage": "showPage",
-                "click #previousPage": "previousPage",
-                "click #nextPage": "nextPage",
-                "click .checkbox": "checked",
+                "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
+                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
                 "click td.editable": "editRow",
-                "click #itemsButton": "itemsNumber",
-                "click .currentPageList": "itemsNumber",
-                "click": "hideItemsNumber",
-                "click #firstShowPage": "firstPage",
-                "click #lastShowPage": "lastPage",
+                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
                 "click .oe_sortable": "goSort",
-                "change .editable ": "setEditable"
+                "change .editable ": "setEditable",
+                "click": "hideNewSelect"
+            },
+
+            hideNewSelect: function () {
+                $(".newSelectList").remove();
             },
 
             savedNewModel: function (modelObject) {
@@ -160,6 +159,50 @@ define([
                 }
             },
 
+            vacationTypeForDD: function (content) {
+                var array = ['Vacation', 'Personal', 'Sick', 'Education'];
+                var arrayElObj = {};
+
+                array = _.map(array, function(element) {
+                    element = {
+                        name: element
+                    };
+                    element._id = element.name.charAt(0);
+
+                    return element;
+                });
+                content.responseObj['#vacType'] = array;
+            },
+
+            monthTypeForDD: function (content) {
+                var array;
+                var arrayElObj = {};
+
+
+
+                array = _.map(array, function(element) {
+                    element = {
+                        name: element
+                    };
+                    element._id = element.name.charAt(0);
+
+                    return element;
+                });
+                content.responseObj['#vacType'] = array;
+            },
+
+            filterEmployeesForDD: function (content) {
+                dataService.getData("/employee/getForDD", null, function (employees) {
+                    employees = _.map(employees.data, function (employee) {
+                        employee.name = employee.name.first + ' ' + employee.name.last;
+
+                        return employee
+                    });
+
+                    content.responseObj['#employee'] = employees;
+                });
+            },
+
             editRow: function (e, prev, next) {
                 var self = this;
 
@@ -167,7 +210,8 @@ define([
                 var tr = $(e.target).closest('tr');
                 var holidayId = tr.data('id');
                 var colType = el.data('type');
-                var isDTPicker = colType !== 'input' && el.prop("tagName") !== 'INPUT';
+                var isSelect = colType !== 'input' && el.prop("tagName") !== 'INPUT';
+                var isEmployeeSelect = isSelect && colType === 'employeeSelect';
                 var tempContainer;
                 var width;
 
@@ -179,15 +223,12 @@ define([
                 }
 
 
-                if (isDTPicker) {
-                    tempContainer = (el.text()).trim();
-                    el.html('<input class="editing" type="text" value="' + tempContainer + '"  maxLength="255">');
-                    $('.editing').datepicker({
-                        dateFormat: "d M, yy",
-                        changeMonth: true,
-                        changeYear: true,
-                        onChanged: self.setChangedValue()
-                    }).addClass('datepicker');
+                if (isSelect) {
+                    if (isEmployeeSelect) {
+                        populate.showSelect(e, prev, next, this);
+                    } else {
+                        populate.showSelect(e, prev, next, this, 4);
+                    }
                 } else {
                     tempContainer = el.text();
                     width = el.width() - 6;
@@ -296,16 +337,6 @@ define([
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
             },
 
-            hideItemsNumber: function (e) {
-                $(".allNumberPerPage").hide();
-                $(".newSelectList").hide();
-            },
-
-            itemsNumber: function (e) {
-                $(e.target).closest("button").next("ul").toggle();
-                return false;
-            },
-
             getTotalLength: function (currentNumber, itemsNumber, filter) {
                 dataService.getData('/holiday/totalCollectionLength', {
                     contentType: this.contentType,
@@ -320,7 +351,7 @@ define([
                         context.fetchSortCollection(context.sort);
                         context.changeLocationHash(page, context.defaultItemsNumber, filter);
                     }
-                    context.pageElementRender(response.count, itemsNumber, page);//prototype in main.js
+                    //context.pageElementRender(response.count, itemsNumber, page);//prototype in main.js
                 }, this);
             },
 
@@ -366,18 +397,75 @@ define([
                 var columnContainer = $('#columnForDays');
                 var width = 80/daysInMonth;
 
-                columnContainer.append('<col width="8%">');
-                columnContainer.append('<col width="7%">');
-
                 for (var i=daysInMonth; i>0; i--) {
                     columnContainer.append('<col width="' + width + '%">');
                 }
 
-                $(subHeaderContainer[0]).attr('colspan', daysInMonth);
+                $(subHeaderContainer[0]).attr('colspan', daysInMonth-12);
                 $(subHeaderContainer[1]).replaceWith(daysRow);
                 $(subHeaderContainer[2]).replaceWith(daysNumRow);
             },
 
+            nextSelect: function (e) {
+                this.showNewSelect(e, false, true);
+            },
+
+            prevSelect: function (e) {
+                this.showNewSelect(e, true, false);
+            },
+
+            showNewSelect: function (e, prev, next) {
+                e.stopPropagation();
+                populate.showSelect(e, prev, next, this);
+
+                return false;
+            },
+
+            chooseOption: function (e) {
+                e.preventDefault();
+                var target = $(e.target);
+                var targetElement = target.closest("td");
+                var tr = target.closest("tr");
+                var modelId = tr.data('id');
+                var id = target.attr("id");
+                var attr = targetElement.attr("id") || targetElement.data("content");
+                var elementType = '#' + attr;
+                var element = _.find(this.responseObj[elementType], function (el) {
+                    return el._id === id;
+                });
+
+                var editSalaryModel = this.editCollection.get(modelId);
+
+                if (elementType === '#employee') {
+                    tr.find('[data-content="employee"]').text(element.name);
+
+                    editSalaryModel.set({
+                        employee: {
+                            _id: element._id,
+                            name: target.text()
+                        }
+                    });
+                }
+
+                if (elementType === '#vacType') {
+                    targetElement.text(element._id);
+                    targetElement.addClass(element._id);
+
+                    editSalaryModel.set({
+                        employee: {
+                            _id: element._id,
+                            name: target.text()
+                        }
+                    });
+                }
+
+                targetElement.text(target.text());
+
+                this.hideNewSelect();
+                this.setEditable(targetElement);
+
+                return false;
+            },
 
             render: function () {
                 $('.ui-dialog ').remove();
@@ -394,6 +482,9 @@ define([
                     daysCount: this.daysCount
                 }).render());//added two parameters page and items number
 
+                this.filterEmployeesForDD(this);
+                this.vacationTypeForDD(this);
+
                 setTimeout(function () {
                     self.editCollection = new editCollection(self.collection.toJSON());
                     self.editCollection.on('saved', self.savedNewModel, self);
@@ -402,24 +493,6 @@ define([
                     self.$listTable = $('#listTable');
                 }, 10);
 
-                $('#check_all').click(function () {
-                    $('.checkbox').prop('checked', this.checked);
-                    if ($("input.checkbox:checked").length > 0) {
-                        $("#top-bar-deleteBtn").show();
-                    }
-                    else
-                        $("#top-bar-deleteBtn").hide();
-                });
-
-                $(document).on("click", function () {
-                    self.hideItemsNumber();
-                });
-                var pagenation = this.$el.find('.pagination');
-                if (this.collection.length === 0) {
-                    pagenation.hide();
-                } else {
-                    pagenation.show();
-                }
                 currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             },
 
@@ -444,102 +517,6 @@ define([
                 }
             },
 
-            previousPage: function (event) {
-                event.preventDefault();
-                $('#check_all').prop('checked', false);
-                $("#top-bar-deleteBtn").hide();
-                this.prevP({
-                    sort: this.sort,
-                    filter: this.filter,
-                    newCollection: this.newCollection,
-                    parrentContentId: this.parrentContentId
-                });
-                dataService.getData('/salary/totalCollectionLength', {
-                    filter: this.filter,
-                    newCollection: this.newCollection,
-                    parrentContentId: this.parrentContentId,
-                    contentType: this.contentType
-                }, function (response, context) {
-                    context.listLength = response.count || 0;
-                }, this);
-            },
-
-            nextPage: function (event) {
-                event.preventDefault();
-                $('#check_all').prop('checked', false);
-                $("#top-bar-deleteBtn").hide();
-                this.nextP({
-                    sort: this.sort,
-                    filter: this.filter,
-                    newCollection: this.newCollection,
-                    parrentContentId: this.parrentContentId
-
-                });
-
-                dataService.getData('/salary/totalCollectionLength', {
-                    contentType: this.contentType,
-                    filter: this.filter,
-                    newCollection: this.newCollection,
-                    parrentContentId: this.parrentContentId
-                }, function (response, context) {
-                    context.listLength = response.count || 0;
-                }, this);
-            },
-
-            firstPage: function (event) {
-                event.preventDefault();
-                $('#check_all').prop('checked', false);
-                $("#top-bar-deleteBtn").hide();
-                this.firstP({
-                    sort: this.sort,
-                    filter: this.filter,
-                    newCollection: this.newCollection
-                });
-                dataService.getData('/salary/totalCollectionLength', {
-                    contentType: this.contentType,
-                    filter: this.filter,
-                    newCollection: this.newCollection
-                }, function (response, context) {
-                    context.listLength = response.count || 0;
-                }, this);
-            },
-
-            lastPage: function (event) {
-                event.preventDefault();
-                $('#check_all').prop('checked', false);
-                $("#top-bar-deleteBtn").hide();
-                this.lastP({
-                    sort: this.sort,
-                    filter: this.filter,
-                    newCollection: this.newCollection
-                });
-                dataService.getData('/salary/totalCollectionLength', {
-                    contentType: this.contentType,
-                    filter: this.filter,
-                    newCollection: this.newCollection
-                }, function (response, context) {
-                    context.listLength = response.count || 0;
-                }, this);
-            },  //end first last page in paginations
-
-            switchPageCounter: function (event) {
-                event.preventDefault();
-                this.startTime = new Date();
-                var itemsNumber = event.target.textContent;
-                this.defaultItemsNumber = itemsNumber;
-                this.getTotalLength(null, itemsNumber, this.filter);
-                this.collection.showMore({
-                    count: itemsNumber,
-                    page: 1,
-                    filter: this.filter,
-                    newCollection: this.newCollection
-                });
-                this.page = 1;
-                $("#top-bar-deleteBtn").hide();
-                $('#check_all').prop('checked', false);
-                this.changeLocationHash(1, itemsNumber, this.filter);
-            },
-
             showFilteredPage: function () {
                 var itemsNumber;
 
@@ -559,11 +536,6 @@ define([
                 this.changeLocationHash(1, itemsNumber, this.filter);
                 this.collection.showMore({count: itemsNumber, page: 1, filter: this.filter});
                 this.getTotalLength(null, itemsNumber, this.filter);
-            },
-
-            showPage: function (event) {
-                event.preventDefault();
-                this.showP(event, {filter: this.filter, newCollection: this.newCollection, sort: this.sort});
             },
 
             showMoreContent: function (newModels) {
@@ -611,22 +583,6 @@ define([
                 var newRow = $('#false');
 
                 return !!newRow.length;
-            },
-
-            checked: function () {
-                if (this.editCollection.length > 0) {
-                    var checkLength = $("input.checkbox:checked").length;
-
-                    if (checkLength > 0) {
-                        $('#top-bar-deleteBtn').show();
-                        if (checkLength == this.editCollection.length) {
-                            $('#check_all').prop('checked', true);
-                        }
-                    } else {
-                        $('#top-bar-deleteBtn').hide();
-                        $('#check_all').prop('checked', false);
-                    }
-                }
             },
 
             deleteItemsRender: function (deleteCounter, deletePage) {
