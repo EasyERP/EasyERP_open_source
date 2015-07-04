@@ -8,9 +8,9 @@ var wTrack = function (models) {
     var _ = require('../node_modules/underscore');
     var wTrackSchema = mongoose.Schemas['wTrack'];
     var DepartmentSchema = mongoose.Schemas['Department'];
-    var CustomerSchema = mongoose.Schemas['Customer'];
+    /*var CustomerSchema = mongoose.Schemas['Customer'];
     var EmployeeSchema = mongoose.Schemas['Employee'];
-    var WorkflowSchema = mongoose.Schemas['workflow'];
+    var WorkflowSchema = mongoose.Schemas['workflow'];*/
 
     var objectId = mongoose.Types.ObjectId;
     var async = require('async');
@@ -19,7 +19,8 @@ var wTrack = function (models) {
     this.create = function (req, res, next) {
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
         var body = mapObject(req.body);
-        var wTrack = new WTrack(body);
+
+        wTrack = new WTrack(body);
 
         wTrack.save(function (err, wTrack) {
             if (err) {

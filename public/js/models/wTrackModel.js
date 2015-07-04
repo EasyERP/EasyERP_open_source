@@ -1,13 +1,13 @@
 /**
  * Created by Roman on 04.05.2015.
  */
-define(['Validation', 'common'], function (Validation, common) {
+define(['Validation', 'common', 'moment'], function (Validation, common, moment) {
     var wTrackModel = Backbone.Model.extend({
         idAttribute: "_id",
-        initialize: function () {
 
-        },
         defaults: {
+            dateByWeek: 0,
+            dateByMonth: 0,
             project: {
                 workflow: {},
                 customer: {},

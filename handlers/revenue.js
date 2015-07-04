@@ -177,7 +177,7 @@ var wTrack = function (models) {
             endDate = endYear * 100 + endMonth;
 
             match = {
-                dateByWeek: {
+                dateByMonth: {
                     $gte: startDate,
                     $lte: endDate
                 }
