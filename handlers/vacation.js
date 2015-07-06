@@ -8,7 +8,6 @@ var Vacation = function (models) {
     var access = require("../Modules/additions/access.js")(models);
     var VacationSchema = mongoose.Schemas['Vacation'];
     var async = require('async');
-    var mapObject = require('../helpers/bodyMaper');
     var _ = require('lodash');
 
     function calculate(data, year) {
@@ -28,25 +27,6 @@ var Vacation = function (models) {
         var monthArray;
         var monthYear;
         var startMonth;
-
-        function percentDiff(now, last) {
-            var numberPercent = 0;
-            var onePercent = 0;
-            if (now < last) {
-                onePercent = last / 100;
-                numberPercent = now / onePercent;
-                numberPercent = "DOWN " + Math.abs(Math.ceil(100 - numberPercent)) + "%";
-            } else {
-                if (last == 0) {
-                    numberPercent = "UP " + Math.ceil(now * 100) + "%";
-                } else {
-                    onePercent = last / 100;
-                    numberPercent = (now - last) / onePercent;
-                    numberPercent = "UP " + Math.ceil(numberPercent) + "%";
-                }
-            }
-            return numberPercent;
-        }
 
         data.forEach(function (attendance) {
             attendance.vacationArray.forEach(function (day) {
@@ -128,6 +108,29 @@ var Vacation = function (models) {
         }
     };
 
+    this.getYears = function (req, res, next) {
+        var Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
+        var query;
+
+        query = Vacation.distinct('year');
+
+        query.exec(function (err, result) {
+            if (err) {
+                return next(err);
+            }
+            result = _.map(result, function(element) {
+                var el = element;
+
+                element = {};
+                element._id = el;
+                element.name = el;
+
+                return element;
+            })
+            res.status(200).send(result);
+        });
+    };
+
     function getVacationFilter(req, res, next) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getReadAccess(req, req.session.uId, 70, function (access) {
@@ -136,6 +139,9 @@ var Vacation = function (models) {
                     var options = req.query;
                     var queryObject = {};
                     var query;
+
+                    var startDate;
+                    var endDate;
 
                     if (options) {
                         if (options.employee) {
@@ -146,14 +152,21 @@ var Vacation = function (models) {
                                 queryObject.year = options.year;
                                 queryObject.month = options.month;
                             } else {
+                                endDate = moment([options.year, 12]);
+                                startDate = moment([options.year, 1]);
+
                                 queryObject.year = {'$in': [options.year, (options.year - 1).toString()]};
                             }
                         } else if (options.year) {
-                            var date;
+                            var date = new Date();
 
-                            date = new Date();
                             date = moment([date.getFullYear(), date.getMonth()]);
-                            queryObject.endDate = {'$lte': new Date(date)};
+
+                            endDate = new Date(date);
+                            queryObject.endDate = {'$lte': endDate};
+
+                            date.subtract(12, 'M');
+                            startDate = new Date(date);
 
                             date.subtract(12, 'M');
                             queryObject.startDate = {'$gte': new Date(date)};
@@ -183,7 +196,7 @@ var Vacation = function (models) {
                             },
                             {
                                 $project: {
-                                    _id: 0,
+                                    _id: {$concat: ["$_id.month", "$_id.year", "$_id.employee.name"]},
                                     employee: "$_id.employee",
                                     department: "$_id.department",
                                     month: "$_id.month",
@@ -206,12 +219,25 @@ var Vacation = function (models) {
                         } else {
                             async.waterfall([
                                     function (callback) {
-                                        var resultObj = _.groupBy(result, 'year');
+                                        var resultObj = {
+                                            curYear: [],
+                                            preYear: []
+                                        };
+
+                                        result.forEach(function(element) {
+                                            var date = moment([element.year, element.month]);
+
+                                            if (date >= startDate && date <= endDate) {
+                                                resultObj['curYear'].push(element);
+                                            } else {
+                                                resultObj['preYear'].push(element);
+                                            }
+                                        });
 
                                         callback(null, resultObj);
                                     },
                                     function (result, callback) {
-                                        var stat = calculate(result[options.year - 1], options.year - 1);
+                                        var stat = calculate(result['preYear'], options.year - 1);
 
                                         callback(null, result, stat);
                                     }
@@ -220,7 +246,7 @@ var Vacation = function (models) {
                                     if (err) {
                                         return next(err);
                                     }
-                                    res.status(200).send({data: object[options.year], stat: stat});
+                                    res.status(200).send({data: object['curYear'], stat: stat});
 
                                 }
                             );
@@ -247,6 +273,19 @@ var Vacation = function (models) {
                 getVacationFilter(req, res, next);
                 break;
         }
+    };
+
+    this.create = function (req, res, next) {
+        var Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
+        var body = req.body;
+        var Vacation = new Vacation(body);
+
+        Vacation.save(function (err, Vacation) {
+            if (err) {
+                return next(err);
+            }
+            res.status(200).send({success: Vacation});
+        });
     };
 
 };
