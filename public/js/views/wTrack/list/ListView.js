@@ -34,6 +34,8 @@ define([
         selectedProjectId: [],
         genInvoiceEl: null,
         changedModels: {},
+        dataObject: {},
+        trackData: {},
         
         initialize: function (options) {
             this.startTime = options.startTime;
@@ -76,6 +78,7 @@ define([
         },
 
         keyDown: function(e){
+            this.calculateCost();
             if(e.which === 13){
                 this.setChangedValueToModel();
             }
@@ -263,8 +266,33 @@ define([
             return false;
         },
 
-        calculateCost: function (employeeId, callback) {
-            
+        calculateCost: function (e) {
+            var self = this;
+
+
+            //dataService.getData('monthHours/list', null, function (response, context) {
+            //    self.dataObject = response;
+            //    }, this);
+
+            dataService.getData('wTrack/getByViewType', {}, function (response, context) {
+              self.trackData = response;
+            }, this);
+
+            dataService.getData('salary/getSalaryData', {month: '8', year: '2014', _id: '55968d4d4833d5701200002f'}, function (response, context) {
+                self.dataObject = response;
+            }, this);
+
+            var baseSalary;
+            var expenseCoefficient;
+            var fixedExpense;
+            var hours;
+            var trackWeek;
+            console.log(this.dataObject);
+
+            var calc = ((((baseSalary * expenseCoefficient) + fixedExpense) / hours) * trackWeek).toFixed(2);
+
+
+            return calc;
         },
 
         chooseOption: function (e) {
@@ -537,6 +565,7 @@ define([
                 self.genInvoiceEl.hide();
             });
 
+
             dataService.getData("/project/getForWtrack", null, function (projects) {
                 projects = _.map(projects.data, function (project) {
                     project.name = project.projectName;
@@ -599,6 +628,7 @@ define([
             }, 10);
 
             this.genInvoiceEl = $('#top-bar-generateBtn');
+
 
             return this;
         },

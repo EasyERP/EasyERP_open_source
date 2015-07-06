@@ -437,6 +437,49 @@ var Salary = function (models) {
             res.status(200).send({count: result.length});
         });
     };
+
+    this.getSalaryData = function (req, res, next) {
+        var Salary = models.get(req.session.lastDb, 'Salary', SalarySchema);
+        var SalaryCash = models.get(req.session.lastDb, 'SalaryCash', SalaryCashSchema);
+        var query;
+        var queryObj = {};
+
+        var data = req.query;
+
+        if (data) {
+            if (data.month) {
+                queryObj.month = data.month;
+            }
+            if (data.year) {
+                queryObj.year = data.year;
+            }
+        }
+
+
+        query = SalaryCash.aggregate([
+            {
+                $match: queryObj
+            },
+            {
+                $unwind: '$employeesArray'
+            },
+            {
+                $match: {
+                    '$employee._id': data._id
+                }
+            }
+        ]);
+
+        query.exac(function(err, result){
+            if (err){
+                return next(err);
+            }
+
+            res.status(200).send(result);
+        });
+
+    };
 };
+
 
 module.exports = Salary;
