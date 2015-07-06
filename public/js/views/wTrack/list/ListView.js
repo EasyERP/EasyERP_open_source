@@ -287,7 +287,8 @@ define([
             var fixedExpense;
             var hours;
             var trackWeek;
-            console.log(this.dataObject);
+
+           // console.log(this.dataObject);
 
             var calc = ((((baseSalary * expenseCoefficient) + fixedExpense) / hours) * trackWeek).toFixed(2);
 
