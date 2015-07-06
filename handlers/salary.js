@@ -453,6 +453,9 @@ var Salary = function (models) {
             if (data.year) {
                 queryObj.year = data.year;
             }
+            if (data._id) {
+                queryObj._id = data._id;
+            }
         }
 
 
