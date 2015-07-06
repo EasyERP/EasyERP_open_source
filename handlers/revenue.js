@@ -177,20 +177,21 @@ var wTrack = function (models) {
             endDate = endYear * 100 + endMonth;
 
             match = {
-                dateByMonth: {
-                    $gte: startDate,
-                    $lte: endDate
-                }
+                $and: [
+                    {'project._id': {$exists: true}},
+                    {'project._id': {$ne: null}},
+                    {dateByMonth: {$gt: startDate, $lte: endDate}}
+                ]
             };
 
             groupBy = {
-                _id: {
-                    department: '$department.departmentName',
-                    _id: '$department._id',
-                    year: '$year',
-                    week: '$week'
+                _id:{
+                    assigned: '$project.projectmanager.name',
+                    month: '$month',
+                    year: '$year'
                 },
-                revenue: { $sum: { $multiply: ["$rate", { $add: ["$1", "$2", "$3", "$4", "$5", "$6", "$7"] }] } }
+                revenue: {$sum: '$amount'},
+                dateByMonth: {$addToSet: '$dateByMonth'}
             };
 
             WTrack.aggregate([{
@@ -200,16 +201,21 @@ var wTrack = function (models) {
             }, {
                 $project: {
                     year: "$_id.year",
-                    week: "$_id.week",
-                    department: "$_id.department",
+                    month: "$_id.month",
+                    employee: "$_id.assigned",
                     revenue: 1,
+                    dateByMonth: 1,
                     _id: 0
                 }
             }, {
                 $group: {
-                    _id: "$department",
+                    _id: "$employee",
                     root: { $push: "$$ROOT" },
                     total: { $sum: "$revenue" }
+                }
+            }, {
+                $sort: {
+                    dateByMonth: -1
                 }
             }], function (err, response) {
                 if (err) {

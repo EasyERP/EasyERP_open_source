@@ -468,6 +468,7 @@ module.exports = function (models) {
                             employee: employeeFinder
                         }, function (err, result) {
                             objectToSave.dateByWeek = fetchedWtrack.Week + 100 * fetchedWtrack.Year;
+                            objectToSave.dateByMonth = fetchedWtrack.Month + 100 * fetchedWtrack.Year;
 
                             if (result.department) {
                                 objectToSave.department = {};
