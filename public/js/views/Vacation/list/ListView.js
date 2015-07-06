@@ -1,7 +1,7 @@
 define([
         'text!templates/Vacation/list/ListHeader.html',
         'text!templates/Holiday/list/cancelEdit.html',
-        'views/Holiday/CreateView',
+        'views/Vacation/CreateView',
         'views/Vacation/list/ListItemView',
         'models/VacationModel',
         'collections/Vacation/filterCollection',
@@ -193,6 +193,12 @@ define([
                 content.responseObj['#monthSelect'] = array;
 
             },
+            yearForDD: function (content) {
+                dataService.getData('/vacation/getYears', {}, function (response, context) {
+                    context.responseObj['#yearSelect'] = response;
+                }, content)
+            },
+
 
             filterEmployeesForDD: function (content) {
                 dataService.getData("/employee/getForDD", null, function (employees) {
@@ -419,13 +425,13 @@ define([
 
             changedDataOptions: function() {
                 var month = this.monthElement.attr('data-content');
-                var year = this.yearElement.text();
+                var year = this.yearElement.attr('data-content');
 
-                var serchObject = {
+                var searchObject = {
                     month: month,
                     year: year
                 };
-                this.collection.showMore(serchObject);
+                this.collection.showMore(searchObject);
             },
 
             chooseOption: function (e) {
@@ -441,15 +447,23 @@ define([
                 var element = _.find(this.responseObj[elementType], function (el) {
                     return el._id === id;
                 });
-                var editSalaryModel;
+                var editVacationModel;
+                var employee;
+                var department;
+                var changedAttr;
+                var vacArray = [];
 
                 if (modelId) {
-                    editSalaryModel = this.editCollection.get(modelId);;
+                    editVacationModel = this.editCollection.get(modelId);;
                 }
 
-                if (elementType === '#monthSelect') {
+                if (elementType === '#monthSelect' || elementType === '#yearSelect') {
                     targetElement.attr('data-content', target.attr('id'));
-                    this.monthElement = targetElement;
+                    if (elementType === '#monthSelect') {
+                        this.monthElement = targetElement;
+                    } else {
+                        this.yearElement = targetElement;
+                    }
                     this.startTime = new Date();
                     this.changedDataOptions();
                     this.renderdSubHeader(this.$el);
@@ -457,28 +471,29 @@ define([
 
                 if (elementType === '#employee') {
                     tr.find('[data-content="employee"]').text(element.name);
+                    tr.find('.department').text(element.department.departmentName);
 
-                    editSalaryModel.set({
-                        employee: {
-                            _id: element._id,
-                            name: target.text()
-                        }
-                    });
+                    employee = _.clone(editVacationModel.get('employee'));
+                    department = _.clone(editVacationModel.get('department'));
+
+                    employee._id = element._id;
+                    employee.name = target.text();
+
+                    department._id = element.department._id;
+                    department.departmentName = element.department.departmentName;
+
+                    changedAttr.employee = employee;
+                    changedAttr.department = department;
                 }
 
                 if (elementType === '#vacType') {
                     targetElement.text(element._id);
                     targetElement.addClass(element._id);
 
-                    editSalaryModel.set({
-                        employee: {
-                            _id: element._id,
-                            name: target.text()
-                        }
-                    });
+                    vacArray.push
                 }
 
-                targetElement.text(target.text());
+                //targetElement.text(target.text());
 
                 this.hideNewSelect();
                 this.setEditable(targetElement);
@@ -512,6 +527,7 @@ define([
                 this.filterEmployeesForDD(this);
                 this.vacationTypeForDD(this);
                 this.monthForDD(this);
+                this.yearForDD(this);
 
                 setTimeout(function () {
                     self.editCollection = new editCollection(self.collection.toJSON());
@@ -589,12 +605,13 @@ define([
             },
 
             createItem: function () {
-                var now = new Date();
                 var startData = {
-                    date: now
+                    daysCount: this.daysCount,
+                    employee: {},
+                    department: {}
                 };
 
-                var model = new vacationModel(startData, { parse: true });
+                var model = new vacationModel(startData);
 
                 startData.cid = model.cid;
 
