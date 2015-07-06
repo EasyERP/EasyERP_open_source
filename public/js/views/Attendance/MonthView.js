@@ -5,7 +5,7 @@ define([
     'text!templates/Attendance/monthTemplate.html',
     'views/Attendance/StatisticsView',
     'moment'
-], function (ListTemplate,StatisticsView,moment) {
+], function (ListTemplate, StatisticsView, moment) {
     var MonthView = Backbone.View.extend({
         el: '#attendanceMonth',
 
@@ -81,7 +81,7 @@ define([
 
                 keys = Object.keys(self.days);
                 if (keys.length) {
-                    self.monthCur = self.days[monthYear] ? self.days[monthYear][monthNumber+1] : 0;
+                    self.monthCur = self.days[monthYear] ? self.days[monthYear][monthNumber + 1] : 0;
                 }
 
                 //ToDo review
@@ -113,7 +113,7 @@ define([
                     for (var j = 0; j < countVacation; j++) {
                         var start = moment(vacationArray[j].startDate).date();
                         var end = moment(vacationArray[j].endDate).date();
-                        for (var k = start+startOfMonth-1; k <= end+startOfMonth-1; k++) {
+                        for (var k = start + startOfMonth - 1; k <= end + startOfMonth - 1; k++) {
                             self.monthArray[i].daysData[k].type = vacationArray[j].vacationType;
                             switch (vacationArray[j].vacationType) {
                                 case 'V':
@@ -148,6 +148,7 @@ define([
         render: function (options) {
             var self = this;
             var stat = options.statistic;
+            var startTime = options.startTime;
             self.labels = options.labels;
             self.year = options.year;
             self.days = options.attendance;
@@ -174,7 +175,7 @@ define([
                 lastSick: stat.sick,
                 lastEducation: stat.education
             });
-            self.$el.html(statictics.render());
+            self.$el.html(statictics.render({startTime: startTime}));
         }
     });
 

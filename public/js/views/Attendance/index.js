@@ -66,6 +66,7 @@ define([
         },
 
         changeEmployee: function () {
+            var startTime = new Date();
             var self = this;
             var labels;
             var month;
@@ -92,7 +93,13 @@ define([
                     data[key] = _.groupBy(data[key], 'month');
                 });
 
-                self.$el.append(month.render({labels: labels, year: self.currentTime, attendance: data, statistic: result.stat}));
+                self.$el.append(month.render({
+                    labels: labels,
+                    year: self.currentTime,
+                    attendance: data,
+                    statistic: result.stat,
+                    startTime: startTime
+                }));
             });
         },
 
@@ -106,6 +113,7 @@ define([
         },
 
         changeTime: function () {
+            var startTime = new Date();
             var self = this;
             var labels;
             var month;
@@ -132,7 +140,13 @@ define([
                     data[key] = _.groupBy(data[key], 'month');
                 });
 
-                self.$el.append(month.render({labels: labels, year: self.currentTime, attendance: data, statistic: result.stat}));
+                self.$el.append(month.render({
+                    labels: labels,
+                    year: self.currentTime,
+                    attendance: data,
+                    statistic: result.stat,
+                    startTime: startTime
+                }));
             });
         },
 
