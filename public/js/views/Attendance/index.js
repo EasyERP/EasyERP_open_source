@@ -85,14 +85,14 @@ define([
                 labels = self.model.get('labelMonth');
                 month = new MonthView();
 
-                data = _.groupBy(result, "year");
+                data = _.groupBy(result.data, "year");
                 keys = Object.keys(data);
 
                 keys.forEach(function (key) {
                     data[key] = _.groupBy(data[key], 'month');
                 });
 
-                self.$el.append(month.render({labels: labels, year: self.currentTime, attendance: data}));
+                self.$el.append(month.render({labels: labels, year: self.currentTime, attendance: data, statistic: result.stat}));
             });
         },
 
@@ -125,14 +125,14 @@ define([
                 labels = self.model.get('labelMonth');
                 month = new MonthView();
 
-                data = _.groupBy(result, "year");
+                data = _.groupBy(result.data, "year");
                 keys = Object.keys(data);
 
                 keys.forEach(function (key) {
                     data[key] = _.groupBy(data[key], 'month');
                 });
 
-                self.$el.append(month.render({labels: labels, year: self.currentTime, attendance: data}));
+                self.$el.append(month.render({labels: labels, year: self.currentTime, attendance: data, statistic: result.stat}));
             });
         },
 

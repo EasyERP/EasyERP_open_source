@@ -12,7 +12,7 @@ define([
         generateMonthArray: function () {
             var number;
             var self = this;
-            var startMonth = 0;
+            self.startMonth = 0;
 
             if (self.year === 'Line Year') {
                 self.monthArray = new Array(13);
@@ -23,10 +23,10 @@ define([
             }
 
             for (var i = 0; i < self.monthArray.length; i++) {
-                if (startMonth + i > 11) {
-                    number = startMonth + i - 12;
+                if (self.startMonth + i > 11) {
+                    number = self.startMonth + i - 12;
                 } else {
-                    number = startMonth + i;
+                    number = self.startMonth + i;
                 }
                 self.monthArray[i] = {
                     label: self.labels[number],
@@ -56,7 +56,7 @@ define([
                 dayNumber = 1;
 
                 if (currentInterval === 'Line Year') {
-                    if (i >= self.startMonth) {
+                    if (i < self.startMonth) {
                         monthYear = moment().year() - 1;
                     } else {
                         monthYear = moment().year();
@@ -66,8 +66,8 @@ define([
                 }
 
                 monthNumber = moment().set('year', monthYear).set('month', self.monthArray[i].label).month();
-                if (monthNumber > 11) {
-                    monthNumber = monthNumber - 12;
+                if (monthNumber > 12) {
+                    monthNumber = monthNumber - 11;
                 }
 
                 startOfMonth = new Date(monthYear, monthNumber, 1);
@@ -81,7 +81,7 @@ define([
 
                 keys = Object.keys(self.days);
                 if (keys.length) {
-                    self.monthCur = self.days[monthYear] ? self.days[monthYear][monthNumber] : 0;
+                    self.monthCur = self.days[monthYear] ? self.days[monthYear][monthNumber+1] : 0;
                 }
 
                 //ToDo review
@@ -92,7 +92,7 @@ define([
                 }
 
                 for (var j = startOfMonth; j < startOfMonth + dayCount; j++) {
-                    var day = new Date(monthYear, i, j - startOfMonth + 1);
+                    var day = new Date(monthYear, i, j - startOfMonth);
                     day = day.getDay();
                     if (day === 0 || day === 6) {
                         self.weekend++;
@@ -147,6 +147,7 @@ define([
 
         render: function (options) {
             var self = this;
+            var stat = options.statistic;
             self.labels = options.labels;
             self.year = options.year;
             self.days = options.attendance;
@@ -166,12 +167,12 @@ define([
                 sick: self.sickDays,
                 education: self.educationDays,
 
-                lastLeave: 0,
-                lastWorkingDays: 270,
-                lastVacation: 7,
-                lastPersonal: 8,
-                lastSick: 14,
-                lastEducation: 4
+                lastLeave: stat.leaveDays,
+                lastWorkingDays: stat.workingDays,
+                lastVacation: stat.vacation,
+                lastPersonal: stat.personal,
+                lastSick: stat.sick,
+                lastEducation: stat.education
             });
             self.$el.html(statictics.render());
         }
