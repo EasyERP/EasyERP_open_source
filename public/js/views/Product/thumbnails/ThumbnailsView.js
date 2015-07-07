@@ -141,7 +141,7 @@
                 common.buildAphabeticArray(this.collection, function (arr) {
                     $(".startLetter").remove();
                     self.alphabeticArray = arr;
-                    self.$el.prepend(_.template(AphabeticTemplate, {
+                    $("#searchContainer").after(_.template(AphabeticTemplate, {
                         alphabeticArray: self.alphabeticArray,
                         selectedLetter: (self.selectedLetter == "" ? "All" : self.selectedLetter),
                         allAlphabeticArray: self.allAlphabeticArray
