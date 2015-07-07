@@ -13,7 +13,8 @@ define([], function(){
             weeksArr: [],
             bySalesData: [],
             byDepData: [],
-            paidBySales: []
+            paidBySales: [],
+            unpaidBySales: []
         }
     });
 
