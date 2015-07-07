@@ -275,8 +275,8 @@ var Quotation = function (models) {
 
         contentSearcher = function (quotationsIds, waterfallCallback) {
             var query;
-            var queryObject = {$and: []};// {_id: {$in: quotationsIds}};
-
+            var queryObject = {$and: []};
+            
             queryObject.$and.push({_id: {$in: quotationsIds}});
             queryObject.$and.push({isOrder: isOrder});
 
@@ -284,11 +284,17 @@ var Quotation = function (models) {
                 if (req.query.filter.workflow) {
                     queryObject.$and.push({workflow: {$in: req.query.filter.workflow}});
                 }
+                if (req.query.filter.Reference) {
+                    queryObject.$and.push({supplierReference: {$in: req.query.filter.Reference}});
+                }
+                if (req.query.filter.supplier) {
+                    queryObject.$and.push({supplier: {$in: req.query.filter.supplier}});
+                }
+                if (req.query.filter['Order date']) {
+                    queryObject.$and.push({orderDate: {$gte: new Date(req.query.filter['Order date'][0].start), $lte: new Date(req.query.filter['Order date'][0].end)}});
+                }
             }
-            //  {workflow: {$in: ['55647b9d2e4aa3804a765ec8']}}   '55647b932e4aa3804a765ec5'
-            //{$and: [{isOrder: isOrder}, {_id: {$in: quotationsIds}}]}
-                //{$and: [{isOrder: isOrder}, {_id: {$in: quotationsIds}}, {workflow: '55647b932e4aa3804a765ec5'}]}
-                //{$and: [{isOrder: isOrder}, {_id: {$in: quotationsIds}}, {workflow: {$in: ['55647b932e4aa3804a765ec5', '55647b9d2e4aa3804a765ec8']}}]}
+
 
             query = Quotation
                 .find(queryObject)
@@ -446,6 +452,65 @@ var Quotation = function (models) {
             }
             res.status(200).send({success: product});
         });
+    };
+
+    this.getFilterValues = function (req, res, next) {
+        var CustomersSchema = mongoose.Schemas['Customers'];
+        var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
+        var Customers = models.get(req.session.lastDb, 'Customers', CustomersSchema);
+
+
+        async.waterfall([
+            function (cb) {
+                Quotation
+                    .aggregate([
+                        {
+                            $group:{
+                                _id: null,
+                                'Reference': {
+                                    $addToSet: '$supplierReference'
+                                },
+                                'supplier': {
+                                    $addToSet: '$supplier'
+                                },
+                                'Order date': {
+                                    $addToSet: '$orderDate'
+                                }
+                            }
+                        }
+                    ], function (err, quot) {
+                        if (err) {
+                            cb(err)
+
+                        } else {
+                            cb(null, quot)
+                        }
+                    })
+            },
+            function (quot, cb) {
+                Customers
+                    .populate(quot , {
+                        path: 'supplier',
+                        model: Customers,
+                        select: 'name _id'
+                    },
+                    function (err, quot) {
+                        if (err) {
+                            return cb(err)
+
+                        }
+                            cb(null, quot)
+
+                    })
+            }
+
+        ], function (err, result) {
+            if (err) {
+                return next(err)
+            }
+            res.status(200).send(result)
+
+        })
     };
 
 };

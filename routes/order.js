@@ -9,6 +9,7 @@ module.exports = function (models) {
     var handler = new QuotationHandler(models);
 
     router.get('/totalCollectionLength', handler.totalCollectionLength);
+    router.get('/getFilterValues', handler.getFilterValues);
     router.get('/:viewType', handler.getByViewType);
     router.get('/form/:id', handler.getById);
     router.delete('/:id', handler.remove);

@@ -4,11 +4,12 @@
         'views/Product/CreateView',
         'dataService',
         'models/ProductModel',
+        'views/Filter/FilterView',
         'common',
         'text!templates/Alpabet/AphabeticTemplate.html'
     ],
 
-    function (thumbnailsItemTemplate, editView, createView, dataService, currentModel, common, AphabeticTemplate) {
+    function (thumbnailsItemTemplate, editView, createView, dataService, currentModel, filterView, common, AphabeticTemplate) {
         var ProductThumbnalView = Backbone.View.extend({
             el: '#content-holder',
             countPerPage: 0,
@@ -74,18 +75,54 @@
 
             //modified for filter Vasya
             alpabeticalRender: function (e) {
+                var target;
+                var selectedLetter;
+                var self = this;
+                var chosen = this.$el.find('.chosen');
+                var checkedElements = $('.drop-down-filter input:checkbox:checked');
+
                 this.$el.find('.thumbnailwithavatar').remove();
                 this.startTime = new Date();
                 this.newCollection = false;
-                var target = $(e.target);
-                target.parent().find(".current").removeClass("current");
-                target.addClass("current");
-                var selectedLetter = $(e.target).text();
-                if ($(e.target).text() == "All") {
-                    selectedLetter = "";
+                this.filter =  {};
+
+                if (e && e.target) {
+                    target = $(e.target);
+                    target.parent().find(".current").removeClass("current");
+                    target.addClass("current");
+                    selectedLetter = $(e.target).text();
+
+                    if (target.text() == "All") {
+                        selectedLetter = "";
+                    }
+                    this.filter['letter'] = selectedLetter;
                 }
-                this.filter = (this.filter && this.filter !== 'empty') ? this.filter : {};
-                this.filter['letter'] = selectedLetter;
+
+                if (chosen) {
+                    chosen.each(function (index, elem) {
+                        if (elem.children[2].attributes.class.nodeValue === 'chooseDate') {
+                            if (self.filter[elem.children[1].value]) {
+                                self.filter[elem.children[1].value].push({start: $('#start').val(), end: $('#end').val()});
+
+                            } else {
+                                self.filter[elem.children[1].value] = [];
+                                self.filter[elem.children[1].value].push({start: $('#start').val(), end: $('#end').val()});
+                            }
+                        } else {
+                            if (self.filter[elem.children[1].value]) {
+                                self.filter[elem.children[1].value].push(elem.children[2].value);
+                            } else {
+                                self.filter[elem.children[1].value] = [];
+                                self.filter[elem.children[1].value].push(elem.children[2].value);
+                            }
+                        }
+
+                    });
+                }
+
+                if (checkedElements.length && checkedElements.attr('id') === 'defaultFilter') {
+                    self.filter = {};
+                }
                 this.filter['canBePurchased'] = true;
                 this.defaultItemsNumber = 0;
                 this.changeLocationHash(null, this.defaultItemsNumber, this.filter);
@@ -97,12 +134,14 @@
                 var self = this;
                 var currentEl = this.$el;
                 var createdInTag = "<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>";
+                var FilterView;
+                var showList;
 
                 currentEl.html('');
                 common.buildAphabeticArray(this.collection, function (arr) {
                     $(".startLetter").remove();
                     self.alphabeticArray = arr;
-                    self.$el.prepend(_.template(AphabeticTemplate, {
+                    $("#searchContainer").after(_.template(AphabeticTemplate, {
                         alphabeticArray: self.alphabeticArray,
                         selectedLetter: (self.selectedLetter == "" ? "All" : self.selectedLetter),
                         allAlphabeticArray: self.allAlphabeticArray
@@ -124,7 +163,33 @@
                     currentEl.html('<h2>No Products found</h2>');
                 }
                 currentEl.append(createdInTag);
+
+                $(document).on("click", function (e) {
+                    self.hideItemsNumber(e);
+                });
+                dataService.getData('/product/getFilterValues', null, function (values) {
+                    FilterView = new filterView({ collection: [], customCollection: values});
+                    // Filter custom event listen ------begin
+                    FilterView.bind('filter', function () {
+                        self.alpabeticalRender()
+                    });
+                    FilterView.bind('defaultFilter', function () {
+                        self.alpabeticalRender()
+                    });
+                    // Filter custom event listen ------end
+                });
+
                 return this;
+            },
+
+            hideItemsNumber: function (e) {
+                var el = e.target;
+
+                this.$el.find(".allNumberPerPage, .newSelectList").hide();
+                if (!el.closest('.search-view')) {
+                    $('.search-content').removeClass('fa-caret-up');
+                    this.$el.find(".filterOptions, .filterActions, .search-options, .drop-down-filter").hide();
+                };
             },
 
             gotoForm: function (e) {

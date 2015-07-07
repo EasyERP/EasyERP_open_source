@@ -7673,9 +7673,17 @@ textarea#editInput {
   background-color: #f9f9f9;
   border: 1px solid #c0c0c0;
 }
+.activeFilterItem {
+  font-weight: bold;
+  font-size: 14px;
+}
 .drop-down-filter li {
   cursor: pointer;
   margin-bottom: 5px;
+  font-size: 13px;
+}
+.drop-down-filter li:hover {
+  background-color: #f3f3f3;
 }
 .drop-down-filter li:nth-child(2n) {
   border-bottom: 1px solid #c0c0c0;
@@ -7734,6 +7742,11 @@ textarea#editInput {
   position: absolute;
   margin-top: -25px;
   margin-left: 8px;
+}
+.removeValues:hover,
+.removeFilter:hover {
+  font-size: 14px;
+  text-shadow: 1px 1px #030000;
 }
 .vacation-list {
   font-family: inherit;

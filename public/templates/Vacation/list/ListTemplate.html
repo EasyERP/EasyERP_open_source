@@ -7,7 +7,7 @@
         <%=vacation.department ? vacation.department.name : ''%>
     </td>
     <% for (var i=0; i<=vacation.vacationArrayHTML.length - 1; i++) { %>
-        <%=vacation.vacationArrayHTML[i] ? vacation.vacationArrayHTML[i] : '<td class="editable" data-content="vacType"></td>'%>
+        <%=vacation.vacationArrayHTML[i] ? vacation.vacationArrayHTML[i] : '<td daya-dayID="' + (i+1) + '" class="editable" data-content="vacType"></td>'%>
     <% } %>
     <td class="totalDays">
         <%=vacation.countVacationDays%>

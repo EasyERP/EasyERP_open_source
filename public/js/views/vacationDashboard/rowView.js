@@ -1,9 +1,6 @@
 /**
  * Created by German on 03.07.2015.
  */
-/**
- * Created by German on 03.07.2015.
- */
 define([
     'text!templates/vacationDashboard/rowTemplate.html',
     'models/VacationDashboardModel',

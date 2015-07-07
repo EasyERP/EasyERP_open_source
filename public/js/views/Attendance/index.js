@@ -33,8 +33,8 @@ define([
 
             this.model = new AttendanceModel();
             this.listenTo(this.model, 'change:currentEmployee', this.changeEmployee);
-            this.listenTo(this.model, 'change:currentStatus', this.changeStatus);
-            this.listenTo(this.model, 'change:currentTime', this.changeTime);
+            //this.listenTo(this.model, 'change:currentStatus', this.changeStatus);
+            //this.listenTo(this.model, 'change:currentTime', this.changeTime);
 
             dataService.getData("/getPersonsForDd", {}, function (result) {
                 var yearToday = moment().year();
@@ -66,6 +66,7 @@ define([
         },
 
         changeEmployee: function () {
+            var startTime = new Date();
             var self = this;
             var labels;
             var month;
@@ -85,14 +86,20 @@ define([
                 labels = self.model.get('labelMonth');
                 month = new MonthView();
 
-                data = _.groupBy(result, "year");
+                data = _.groupBy(result.data, "year");
                 keys = Object.keys(data);
 
                 keys.forEach(function (key) {
                     data[key] = _.groupBy(data[key], 'month');
                 });
 
-                self.$el.append(month.render({labels: labels, year: self.currentTime, attendance: data}));
+                self.$el.append(month.render({
+                    labels: labels,
+                    year: self.currentTime,
+                    attendance: data,
+                    statistic: result.stat,
+                    startTime: startTime
+                }));
             });
         },
 
@@ -106,6 +113,7 @@ define([
         },
 
         changeTime: function () {
+            var startTime = new Date();
             var self = this;
             var labels;
             var month;
@@ -125,14 +133,20 @@ define([
                 labels = self.model.get('labelMonth');
                 month = new MonthView();
 
-                data = _.groupBy(result, "year");
+                data = _.groupBy(result.data, "year");
                 keys = Object.keys(data);
 
                 keys.forEach(function (key) {
                     data[key] = _.groupBy(data[key], 'month');
                 });
 
-                self.$el.append(month.render({labels: labels, year: self.currentTime, attendance: data}));
+                self.$el.append(month.render({
+                    labels: labels,
+                    year: self.currentTime,
+                    attendance: data,
+                    statistic: result.stat,
+                    startTime: startTime
+                }));
             });
         },
 

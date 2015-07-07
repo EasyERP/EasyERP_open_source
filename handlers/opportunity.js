@@ -15,16 +15,16 @@ var Opportunity = function (models) {
             {
                 $group:{
                     _id: null,
-                    name: {
+                    Name: {
                         $addToSet: '$name'
                     },
-                    creationDate: {
+                    'Creation date': {
                         $addToSet: '$creationDate'
                     },
-                    nextAction: {
+                    'Next action': {
                         $addToSet: '$nextAction.desc'
                     },
-                    expectedRevenue: {
+                    'Expected revenue': {
                         $addToSet: '$expectedRevenue.value'
                     }
                 }

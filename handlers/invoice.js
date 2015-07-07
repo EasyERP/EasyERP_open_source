@@ -12,6 +12,7 @@ var Invoice = function (models) {
     var wTrackInvoiceSchema = mongoose.Schemas['wTrackInvoice'];
     var OrderSchema = mongoose.Schemas['Quotation'];
     var DepartmentSchema = mongoose.Schemas['Department'];
+    var CustomerSchema = mongoose.Schemas['Customer'];
     var objectId = mongoose.Types.ObjectId;
     var async = require('async');
     var workflowHandler = new WorkflowHandler(models);
@@ -268,15 +269,10 @@ var Invoice = function (models) {
                                 optionsObject.$and.push({dueDate: {$gte: new Date(req.query.filter['Due date'][0].start), $lte: new Date(req.query.filter['Due date'][0].end)}});
 
                             }
-                        } /*else {
-                            optionsObject._id = {$in: invoicesIds};
-
-                        }*/
-                       /* if (req.query && req.query.filter && req.query.filter['Due date']) {
-                            optionsObject.dueDate = { 'dueDate': {$gte: new Date(condition[0].start), $lte: new Date(condition[0].end)}};
-                            { 'dueDate': {$gte: new Date('2015-01-01'), $lte: new Date('2015-02-01')}}
-                            {$and: [{_id: {$in: invoicesIds}}, { 'dueDate': {$gte: new Date('2015-01-01'), $lte: new Date('2015-02-01')}}]}
-                        }*/
+                            if (req.query.filter.salesPerson) {
+                                optionsObject.$and.push({salesPerson: {$in: req.query.filter.salesPerson}})
+                            }
+                        }
 
                         var query = Invoice.find(optionsObject).limit(count).skip(skip).sort(sort);
 
@@ -631,25 +627,59 @@ var Invoice = function (models) {
     };
 
     this.getFilterValues = function (req, res, next) {
-        var Invoice = models.get(req.session.lastDb, "Invoice", InvoiceSchema);
+        var EmployeeSchema = mongoose.Schemas['Employee'];
+        var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
+        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
 
-        Invoice
-            .aggregate([
-                {
-                    $group:{
-                        _id: null,
-                        'Due date': {
-                            $addToSet: '$dueDate'
+
+        async.waterfall([
+            function (cb) {
+                Invoice
+                    .aggregate([
+                        {
+                            $group:{
+                                _id: null,
+                                'Due date': {
+                                    $addToSet: '$dueDate'
+                                },
+                                'salesPerson': {
+                                    $addToSet: '$salesPerson'
+                                }
+                            }
                         }
-                    }
-                }
-            ], function (err, result) {
-                if (err) {
-                    return next(err);
-                }
+                    ], function (err, invoice) {
+                        if (err) {
+                            cb(err)
 
-                res.status(200).send(result);
-            });
+                        } else {
+                            cb(null, invoice)
+                        }
+
+                    })
+            },
+            function (invoice, cb) {
+                Employee
+                    .populate(invoice , {
+                        path: 'salesPerson',
+                        model: Employee,
+                        select: 'name _id'
+                    },
+                    function (err, invoice) {
+                        if (err) {
+                            return cb(err)
+
+                        }
+                            cb(null, invoice)
+
+                })
+            }
+
+        ], function (err, result) {
+            if (err) {
+               return next(err)
+            }
+            res.status(200).send(result)
+        })
     };
 
 };

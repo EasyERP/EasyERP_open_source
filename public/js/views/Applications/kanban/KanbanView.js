@@ -234,16 +234,13 @@
             },
 
             hideItemsNumber: function (e) {
-                $(".allNumberPerPage").hide();
-                $(".newSelectList").hide();
-                if (!$(e.target).closest(".drop-down-filter").length) {
-                    $(".allNumberPerPage").hide();
-                    if ($(".drop-down-filter").is(":visible")) {
-                        $(".drop-down-filter").hide();
-                        $('.search-options').hide();
-                        $('.search-content').removeClass('fa-caret-up');
-                    }
-                }
+                var el = e.target;
+
+                this.$el.find(".allNumberPerPage, .newSelectList").hide();
+                if (!el.closest('.search-view')) {
+                    $('.search-content').removeClass('fa-caret-up');
+                    this.$el.find(".filterOptions, .filterActions, .search-options, .drop-down-filter").hide();
+                };
             },
 
             showFiltredPage: function (workflows) {

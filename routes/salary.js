@@ -9,6 +9,7 @@ module.exports = function (models) {
     var handler = new SalaryHandler(models);
 
     router.get('/checkDataKey', handler.checkDataKey);
+    router.get('/getFilterValues', handler.getFilterValues);
     router.get('/recalculateSalaryCash', handler.recalculateCashSalary);
     router.get('/totalCollectionLength', handler.totalCollectionLength);
     router.get('/:viewType', handler.getForView);

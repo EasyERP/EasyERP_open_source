@@ -30,7 +30,7 @@
                         for (var i = endDay; i >= startDay; i--) {
                             countVacationDays++;
                             totalArray[i-1] = totalArray[i-1] ? totalArray[i-1] += 1 : 1;
-                            resultArray[i-1] = '<td data-id="' + element._idVacation + '" class="editable ' + element.vacationType + '" data-content="vacType">' + element.vacationType + '</td>';
+                            resultArray[i-1] = '<td data-id="' + element._idVacation + '" data-dayID="' + i + '" class="editable ' + element.vacationType + '" data-content="vacType">' + element.vacationType + '</td>';
                         }
                     });
 

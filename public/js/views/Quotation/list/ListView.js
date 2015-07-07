@@ -136,12 +136,11 @@ define([
 
             hideItemsNumber: function (e) {
                 var el = e.target;
-                $(".allNumberPerPage").hide();
-                $(".newSelectList").hide();
+
+                this.$el.find(".allNumberPerPage, .newSelectList").hide();
                 if (!el.closest('.search-view')) {
-                    $(".drop-down-filter").hide();
-                    $('.search-options').hide();
-                    $('.search-content').removeClass('fa-caret-up')
+                    $('.search-content').removeClass('fa-caret-up');
+                    this.$el.find(".filterOptions, .filterActions, .search-options, .drop-down-filter").hide();
                 };
             },
 
@@ -167,13 +166,37 @@ define([
             showFilteredPage: function (workflowIdArray) {
                 var isConverted = true;
                 var itemsNumber = $("#itemsNumber").text();
+                var chosen = this.$el.find('.chosen');
+                var self = this;
 
                 this.startTime = new Date();
                 this.newCollection = false;
-                this.filter = this.filter || {};
+                this.filter = {};
                 this.filter['isConverted'] = isConverted;
+
                 if (workflowIdArray && workflowIdArray.length) this.filter['workflow'] = workflowIdArray;
 
+                if (chosen) {
+                    chosen.each(function (index, elem) {
+                        if (elem.children[2].attributes.class.nodeValue === 'chooseDate') {
+                            if (self.filter[elem.children[1].value]) {
+                                self.filter[elem.children[1].value].push({start: $('#start').val(), end: $('#end').val()});
+
+                            } else {
+                                self.filter[elem.children[1].value] = [];
+                                self.filter[elem.children[1].value].push({start: $('#start').val(), end: $('#end').val()});
+                            }
+                        } else {
+                            if (self.filter[elem.children[1].value]) {
+                                self.filter[elem.children[1].value].push(elem.children[2].value);
+                            } else {
+                                self.filter[elem.children[1].value] = [];
+                                self.filter[elem.children[1].value].push(elem.children[2].value);
+                            }
+                        }
+
+                    });
+                }
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
 
@@ -244,17 +267,20 @@ define([
                     targetSource: 'quotation'
                 }, function (stages) {
                     self.stages = stages;
-                    FilterView = new filterView({ collection: stages, customCollection: []});
-                    // Filter custom event listen ------begin
-                    FilterView.bind('filter', function () {
-                        showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
-                        self.showFilteredPage(showList)
-                    });
-                    FilterView.bind('defaultFilter', function () {
-                        showList = _.pluck(self.stages, '_id');
-                        self.showFilteredPage(showList);
-                    });
-                    // Filter custom event listen ------end
+                        dataService.getData('/quotation/getFilterValues', null, function (values) {
+                            FilterView = new filterView({ collection: stages, customCollection: values});
+                            // Filter custom event listen ------begin
+                            FilterView.bind('filter', function () {
+                                showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
+                                self.showFilteredPage(showList)
+                            });
+                            FilterView.bind('defaultFilter', function () {
+                                showList = _.pluck(self.stages, '_id');
+                                self.showFilteredPage(showList);
+                            });
+                            // Filter custom event listen ------end
+                        })
+
                 });
             },
 

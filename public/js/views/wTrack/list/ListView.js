@@ -451,17 +451,15 @@ define([
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
             },
 
-            hideItemsNumber: function (e) {
-                var el = e.target;
-                $(".allNumberPerPage").hide();
-                $(".newSelectList").hide();
-                if (!el.closest('.search-view')) {
-                    $(".drop-down-filter").hide();
-                    $('.search-options').hide();
-                    $('.search-content').removeClass('fa-caret-up')
-                }
-                ;
-            },
+        hideItemsNumber: function (e) {
+            var el = e.target;
+
+            this.$el.find(".allNumberPerPage, .newSelectList").hide();
+            if (!el.closest('.search-view')) {
+                $('.search-content').removeClass('fa-caret-up');
+                this.$el.find(".filterOptions, .filterActions, .search-options, .drop-down-filter").hide();
+            };
+        },
 
             showNewSelect: function (e, prev, next) {
                 populate.showSelect(e, prev, next, this);

@@ -1,13 +1,13 @@
 ﻿define([
-    "text!templates/Employees/thumbnails/ThumbnailsItemTemplate.html",
-    'views/Employees/EditView',
-    'views/Employees/CreateView',
+        "text!templates/Employees/thumbnails/ThumbnailsItemTemplate.html",
+        'views/Employees/EditView',
+        'views/Employees/CreateView',
         'views/Filter/FilterView',
-    'dataService',
-    'models/EmployeesModel',
-    'common',
-    'text!templates/Alpabet/AphabeticTemplate.html'
-],
+        'dataService',
+        'models/EmployeesModel',
+        'common',
+        'text!templates/Alpabet/AphabeticTemplate.html'
+    ],
 
     function (thumbnailsItemTemplate, editView, createView, filterView, dataService, currentModel, common, AphabeticTemplate) {
         var EmployeesThumbnalView = Backbone.View.extend({
@@ -46,8 +46,12 @@
             },
 
             //modified for filter Vasya
-            getTotalLength: function(currentNumber,filter, newCollection) {
-                dataService.getData('/totalCollectionLength/Employees', { currentNumber: currentNumber, filter:this.filter, newCollection: this.newCollection }, function (response, context) {
+            getTotalLength: function (currentNumber, filter, newCollection) {
+                dataService.getData('/totalCollectionLength/Employees', {
+                    currentNumber: currentNumber,
+                    filter: this.filter,
+                    newCollection: this.newCollection
+                }, function (response, context) {
                     var showMore = context.$el.find('#showMoreDiv');
                     if (response.showMore) {
                         if (showMore.length === 0) {
@@ -84,7 +88,8 @@
                         selectedLetter = "";
                     }
                     this.filter['letter'] = selectedLetter;
-                };
+                }
+                ;
 
                 this.startTime = new Date();
                 this.newCollection = false;
@@ -92,7 +97,7 @@
 
                 this.defaultItemsNumber = 0;
                 this.changeLocationHash(null, this.defaultItemsNumber, this.filter);
-                this.collection.showMoreAlphabet({ count:this.defaultItemsNumber, filter: this.filter });
+                this.collection.showMoreAlphabet({count: this.defaultItemsNumber, filter: this.filter});
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
             },
 
@@ -104,13 +109,17 @@
                 var showList;
 
                 currentEl.html('');
-                common.buildAphabeticArray(this.collection,function(arr){
+                common.buildAphabeticArray(this.collection, function (arr) {
                     $(".startLetter").remove();
                     self.alphabeticArray = arr;
-                    self.$el.prepend(_.template(AphabeticTemplate, { alphabeticArray: self.alphabeticArray,selectedLetter: (self.selectedLetter==""?"All":self.selectedLetter),allAlphabeticArray:self.allAlphabeticArray}));
-                var currentLetter = (self.filter) ? self.filter.letter : null;
+                    $("#searchContainer").after(_.template(AphabeticTemplate, {
+                        alphabeticArray: self.alphabeticArray,
+                        selectedLetter: (self.selectedLetter == "" ? "All" : self.selectedLetter),
+                        allAlphabeticArray: self.allAlphabeticArray
+                    }));
+                    var currentLetter = (self.filter) ? self.filter.letter : null;
                     if (currentLetter) {
-                        $('#startLetter a').each(function() {
+                        $('#startLetter a').each(function () {
                             var target = $(this);
                             if (target.text() == currentLetter) {
                                 target.addClass("current");
@@ -120,7 +129,7 @@
                 });
 
                 if (this.collection.length > 0) {
-                    currentEl.append(this.template({ collection: this.collection.toJSON() }));
+                    currentEl.append(this.template({collection: this.collection.toJSON()}));
                 } else {
                     currentEl.html('<h2>No Employees found</h2>');
                 }
@@ -130,10 +139,12 @@
                         department.name = department.departmentName;
                     });
                     dataService.getData('/employee/getFilterValues', null, function (values) {
-                        FilterView = new filterView({ collection: departments.data, customCollection: values});
+                        FilterView = new filterView({collection: departments.data, customCollection: values});
                         // Filter custom event listen ------begin
                         FilterView.bind('filter', function () {
-                            showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
+                            showList = $('.drop-down-filter input:checkbox:checked').map(function () {
+                                return this.value;
+                            }).get();
                             self.showFilteredPage(null, showList)
                         });
                         FilterView.bind('defaultFilter', function () {
@@ -156,7 +167,7 @@
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
-                this.filter ={};
+                this.filter = {};
                 if (showList.length) this.filter['department'] = showList;
                 if (chosen) {
                     chosen.each(function (index, elem) {
@@ -174,25 +185,31 @@
                 this.$el.find('.thumbnailwithavatar').remove();
 
                 this.changeLocationHash(1, itemsNumber, this.filter);
-                this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter, newCollection:  this.newCollection });
+                this.collection.showMore({
+                    count: itemsNumber,
+                    page: 1,
+                    filter: this.filter,
+                    newCollection: this.newCollection
+                });
                 this.getTotalLength(itemsNumber, this.filter, this.newCollection);
             },
 
             hideItemsNumber: function (e) {
                 var el = e.target;
-                $(".allNumberPerPage").hide();
-                $(".newSelectList").hide();
+
+                this.$el.find(".allNumberPerPage, .newSelectList").hide();
                 if (!el.closest('.search-view')) {
-                    $(".drop-down-filter").hide();
-                    $('.search-options').hide();
-                    $('.filterActions').hide();
-                    $('.filterOptions').hide();
                     $('.search-content').removeClass('fa-caret-up');
-                };
+                    this.$el.find(".filterOptions, .filterActions, .search-options, .drop-down-filter").hide();
+                }
+                ;
             },
 
             gotoEditForm: function (e) {
-               this.$el.delegate('a', 'click', function(e){ e.stopPropagation(); e.default; });
+                this.$el.delegate('a', 'click', function (e) {
+                    e.stopPropagation();
+                    e.default;
+                });
                 var clas = $(e.target).parent().attr("class");
                 if ((clas === "dropDown") || (clas === "inner")) {
                 } else {
@@ -203,16 +220,18 @@
                     model.fetch({
                         data: {id: id},
                         success: function (model) {
-                            new editView({ model: model });
+                            new editView({model: model});
                         },
-                        error: function () { alert('Please refresh browser'); }
+                        error: function () {
+                            alert('Please refresh browser');
+                        }
                     });
                 }
             },
 
             showMore: function (event) {
                 event.preventDefault();
-                this.collection.showMore({ filter: this.filter, newCollection: this.newCollection });
+                this.collection.showMore({filter: this.filter, newCollection: this.newCollection});
             },
 
             //modified for filter Vasya
@@ -226,12 +245,12 @@
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
 
                 if (showMore.length != 0) {
-                    showMore.before(this.template({ collection: this.collection.toJSON() }));
+                    showMore.before(this.template({collection: this.collection.toJSON()}));
                     $(".filter-check-list").eq(1).remove();
 
                     showMore.after(created);
                 } else {
-                    content.html(this.template({ collection: this.collection.toJSON() }));
+                    content.html(this.template({collection: this.collection.toJSON()}));
 
                 }
                 this.asyncLoadImgs(newModels);
@@ -246,7 +265,7 @@
                 this.defaultItemsNumber += newModels.length;
                 this.changeLocationHash(null, (this.defaultItemsNumber < 50) ? 50 : this.defaultItemsNumber, this.filter);
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
-                holder.append(this.template({ collection: newModels.toJSON() }));
+                holder.append(this.template({collection: newModels.toJSON()}));
                 holder.prepend(alphaBet);
                 holder.append(created);
                 created.before(showMore);
@@ -260,7 +279,7 @@
 
             editItem: function () {
                 //create editView in dialog here
-                new editView({ collection: this.collection });
+                new editView({collection: this.collection});
             },
 
             deleteItems: function () {

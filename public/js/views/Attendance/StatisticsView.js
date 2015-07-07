@@ -43,14 +43,15 @@ define([
             return numberPercent;
         },
 
-        render: function () {
+        render: function (options) {
             var self = this;
-            var percentLeave = self.percentDiff(self.leaveDays,self.lastLeave);
-            var percentWork = self.percentDiff(self.workingDays,self.lastWorkingDays);
-            var percentVacation = self.percentDiff(self.vacation,self.lastVacation);
-            var percentPersonal = self.percentDiff(self.personal,self.lastPersonal);
-            var percentSick = self.percentDiff(self.sick,self.lastSick);
-            var percentEducation = self.percentDiff(self.education,self.lastEducation);
+            var startTime = options.startTime;
+            var percentLeave = self.percentDiff(self.leaveDays, self.lastLeave);
+            var percentWork = self.percentDiff(self.workingDays, self.lastWorkingDays);
+            var percentVacation = self.percentDiff(self.vacation, self.lastVacation);
+            var percentPersonal = self.percentDiff(self.personal, self.lastPersonal);
+            var percentSick = self.percentDiff(self.sick, self.lastSick);
+            var percentEducation = self.percentDiff(self.education, self.lastEducation);
 
             self.$el.html(_.template(statiscticsBlock, {
                 leaveDays: self.leaveDays,
@@ -74,6 +75,8 @@ define([
                 percentSick: percentSick,
                 percentEducation: percentEducation
             }));
+
+            $('#timeRecivingDataFromServer').html("Created in " + (new Date() - startTime) + " ms");
         }
     });
 

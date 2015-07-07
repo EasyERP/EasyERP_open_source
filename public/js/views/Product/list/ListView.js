@@ -6,11 +6,12 @@ define([
         'models/ProductModel',
         'text!templates/Alpabet/AphabeticTemplate.html',
         'collections/Product/filterCollection',
+        'views/Filter/FilterView',
         'common',
         'dataService'
 ],
 
-    function (listTemplate, createView, listItemView, editView, productModel, aphabeticTemplate, contentCollection, common, dataService) {
+    function (listTemplate, createView, listItemView, editView, productModel, aphabeticTemplate, contentCollection, filterView, common, dataService) {
         var ProductsListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -143,8 +144,14 @@ define([
             },
 
 
-            hideItemsNumber: function () {
-                $(".allNumberPerPage").hide();
+            hideItemsNumber: function (e) {
+                var el = e.target;
+
+                this.$el.find(".allNumberPerPage, .newSelectList").hide();
+                if (!el.closest('.search-view')) {
+                    $('.search-content').removeClass('fa-caret-up');
+                    this.$el.find(".filterOptions, .filterActions, .search-options, .drop-down-filter").hide();
+                };
             },
 
             itemsNumber: function (e) {
@@ -173,6 +180,8 @@ define([
                 $('.ui-dialog ').remove();
                 var self = this;
                 var currentEl = this.$el;
+                var FilterView;
+                var showList;
 
                 currentEl.html('');
                 currentEl.append(_.template(listTemplate));
@@ -187,8 +196,8 @@ define([
                 });
 
 
-                $(document).on("click", function () {
-                    self.hideItemsNumber();
+                $(document).on("click", function (e) {
+                    self.hideItemsNumber(e);
                 });
 
                 common.buildAphabeticArray(this.collection, function (arr) {
@@ -205,6 +214,18 @@ define([
                         });
                     }
                 });
+                dataService.getData('/product/getFilterValues', null, function (values) {
+                    FilterView = new filterView({ collection: [], customCollection: values});
+                    // Filter custom event listen ------begin
+                    FilterView.bind('filter', function () {
+                        self.showFilteredPage()
+                    });
+                    FilterView.bind('defaultFilter', function () {
+                        self.showFilteredPage()
+                    });
+                    // Filter custom event listen ------end
+                });
+
                 var pagenation = this.$el.find('.pagination');
                 if (this.collection.length === 0) {
                     pagenation.hide();
@@ -305,16 +326,49 @@ define([
             },
             //modified for filter Vasya
             showFilteredPage: function (e) {
+                var self = this;
+                var selectedLetter;
+                var chosen = this.$el.find('.chosen');
+                var itemsNumber = $("#itemsNumber").text();
+                var checkedElements = $('.drop-down-filter input:checkbox:checked');
+
                 this.startTime = new Date();
                 this.newCollection = false;
-
-                var selectedLetter = $(e.target).text();
-                if ($(e.target).text() == "All") {
-                    selectedLetter = "";
+                if (e && e.target) {
+                    selectedLetter = $(e.target).text();
+                    if ($(e.target).text() == "All") {
+                        selectedLetter = "";
+                    }
                 }
-                this.filter = this.filter || {};
+
+                this.filter =  {};
                 this.filter['letter'] = selectedLetter;
-                var itemsNumber = $("#itemsNumber").text();
+
+                if (chosen) {
+                    chosen.each(function (index, elem) {
+                        if (elem.children[2].attributes.class.nodeValue === 'chooseDate') {
+                            if (self.filter[elem.children[1].value]) {
+                                self.filter[elem.children[1].value].push({start: $('#start').val(), end: $('#end').val()});
+
+                            } else {
+                                self.filter[elem.children[1].value] = [];
+                                self.filter[elem.children[1].value].push({start: $('#start').val(), end: $('#end').val()});
+                            }
+                        } else {
+                            if (self.filter[elem.children[1].value]) {
+                                self.filter[elem.children[1].value].push(elem.children[2].value);
+                            } else {
+                                self.filter[elem.children[1].value] = [];
+                                self.filter[elem.children[1].value].push(elem.children[2].value);
+                            }
+                        }
+
+                    });
+                }
+
+                if (checkedElements.length && checkedElements.attr('id') === 'defaultFilter') {
+                    self.filter = {};
+                }
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);

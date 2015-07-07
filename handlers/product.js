@@ -228,17 +228,31 @@ var Products = function (models) {
                     var contentSearcher;
                     var waterfallTasks;
 
-                    if (query && query.filter && query.filter.canBeSold) {
-                        queryObject['canBeSold'] = true;
+                    if (query && query.filter) {
+                        if (query.filter.canBeSold) {
+                            queryObject['canBeSold'] = true;
+                        }
+                        if (query.filter.canBePurchased) {
+                            queryObject['canBePurchased'] = true;
+                        }
+                        if (query.filter.letter) {
+                            queryObject['name'] = new RegExp('^[' + query.filter.letter.toLowerCase() + query.filter.letter.toUpperCase() + '].*');
+                        }
+                        if (query.filter.Name) {
+                            queryObject['name'] = {$in: query.filter.Name};
+                        }
+                        if (query.filter['Can be sold']) {
+                            if (query.filter['Can be sold'] === 'true') {
+                                queryObject['canBeSold'] = true;
+                            }
+                            queryObject['canBeSold'] = false;
+                        }
+                        if (query.filter['Creation Date']) {
+                            queryObject['creationDate'] = {$gte: new Date(req.query.filter['creationDate'][0].start), $lte: new Date(req.query.filter['creationDate'][0].end)}
+                        }
                     }
 
-                    if (query && query.filter && query.filter.canBePurchased) {
-                        queryObject['canBePurchased'] = true;
-                    }
 
-                    if (query && query.filter && query.filter.letter) {
-                        queryObject['name'] = new RegExp('^[' + query.filter.letter.toLowerCase() + query.filter.letter.toUpperCase() + '].*');
-                    }
                     if (query && query.sort) {
                         sort = query.sort;
                     } else {
@@ -616,6 +630,33 @@ var Products = function (models) {
 
         });
     };
+
+    this.getFilterValues = function (req, res, next) {
+        var Product = models.get(req.session.lastDb, 'Product', ProductSchema);
+
+        Product
+            .aggregate([
+                {
+                    $group: {
+                        _id: null,
+                        'Can be sold': {
+                            $addToSet: '$canBeSold'
+                        },
+                        'Creation date': {
+                            $addToSet: '$creationDate'
+                        },
+                        'Name': {
+                            $addToSet: '$name'
+                        }
+                    }
+                }
+            ], function (err, prod) {
+                if (err) {
+                    return next(err)
+                }
+                res.send(prod)
+            })
+    }
 
 };
 

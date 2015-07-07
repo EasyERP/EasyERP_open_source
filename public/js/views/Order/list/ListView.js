@@ -7,11 +7,12 @@ define([
         'views/Order/EditView',
         'models/QuotationModel',
         'collections/Order/filterCollection',
+        'views/Filter/FilterView',
 	    'common',
         'dataService'
 ],
 
-function (listTemplate, stagesTamplate, createView, listItemView, listTotalView, editView, quotationModel, contentCollection, common, dataService) {
+function (listTemplate, stagesTamplate, createView, listItemView, listTotalView, editView, quotationModel, contentCollection, filterView, common, dataService) {
     var OrdersListView = Backbone.View.extend({
         el: '#content-holder',
         defaultItemsNumber: null,
@@ -131,8 +132,13 @@ function (listTemplate, stagesTamplate, createView, listItemView, listTotalView,
         },
 
         hideItemsNumber: function (e) {
-            $(".allNumberPerPage").hide();
-            $(".newSelectList").hide();
+            var el = e.target;
+
+            this.$el.find(".allNumberPerPage, .newSelectList").hide();
+            if (!el.closest('.search-view')) {
+                $('.search-content').removeClass('fa-caret-up');
+                this.$el.find(".filterOptions, .filterActions, .search-options, .drop-down-filter").hide();
+            };
         },
 
         showNewSelect: function (e) {
@@ -176,6 +182,8 @@ function (listTemplate, stagesTamplate, createView, listItemView, listTotalView,
             $('.ui-dialog ').remove();
             var self = this;
             var currentEl = this.$el;
+            var FilterView;
+            var showList;
 
             currentEl.html('');
             currentEl.append(_.template(listTemplate));
@@ -194,8 +202,8 @@ function (listTemplate, stagesTamplate, createView, listItemView, listTotalView,
                     $("#top-bar-deleteBtn").hide();
             });
 
-            $(document).on("click", function () {
-                self.hideItemsNumber();
+            $(document).on("click", function (e) {
+                self.hideItemsNumber(e);
             });
                 var pagenation = this.$el.find('.pagination');
                 if (this.collection.length === 0) {
@@ -210,15 +218,23 @@ function (listTemplate, stagesTamplate, createView, listItemView, listTotalView,
                 source: 'purchase',
                 targetSource: 'order'
             }, function (stages) {
-                //For Filter Logic
-                /*var stage = (self.filter) ? self.filter.workflow || [] : [];
-                 if (self.filter && stage) {
-                 $('.filter-check-list input').each(function () {
-                 var target = $(this);
-                 target.attr('checked', $.inArray(target.val(), stage) > -1);
-                 });
-                 }*/
                 self.stages = stages;
+
+                    dataService.getData('/quotation/getFilterValues', null, function (values) {
+
+                        FilterView = new filterView({ collection: stages, customCollection: values});
+                        // Filter custom event listen ------begin
+                        FilterView.bind('filter', function () {
+                            showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
+                            self.showFilteredPage(showList)
+                        });
+                        FilterView.bind('defaultFilter', function () {
+                            showList = _.pluck(stages, '_id');
+                            self.showFilteredPage(showList)
+                        });
+                        // Filter custom event listen ------end
+                    })
+
             });
         },
 
@@ -336,18 +352,39 @@ function (listTemplate, stagesTamplate, createView, listItemView, listTotalView,
                 this.changeLocationHash(1, itemsNumber, this.filter);
         },
 
-        showFilteredPage: function () {
+        showFilteredPage: function (workflowIdArray) {
             var itemsNumber;
+            var self = this;
+            var chosen = this.$el.find('.chosen');
 
             this.startTime = new Date();
             this.newCollection = false;
-            var workflowIdArray = [];
-            $('.filter-check-list input:checked').each(function () {
-                workflowIdArray.push($(this).val());
-            });
-            this.filter = this.filter || {};
-            this.filter['workflow'] = workflowIdArray;
 
+
+            this.filter = {};
+            if (workflowIdArray && workflowIdArray.length) this.filter['workflow'] = workflowIdArray;
+
+            if (chosen) {
+                chosen.each(function (index, elem) {
+                    if (elem.children[2].attributes.class.nodeValue === 'chooseDate') {
+                        if (self.filter[elem.children[1].value]) {
+                            self.filter[elem.children[1].value].push({start: $('#start').val(), end: $('#end').val()});
+
+                        } else {
+                            self.filter[elem.children[1].value] = [];
+                            self.filter[elem.children[1].value].push({start: $('#start').val(), end: $('#end').val()});
+                        }
+                    } else {
+                        if (self.filter[elem.children[1].value]) {
+                            self.filter[elem.children[1].value].push(elem.children[2].value);
+                        } else {
+                            self.filter[elem.children[1].value] = [];
+                            self.filter[elem.children[1].value].push(elem.children[2].value);
+                        }
+                    }
+
+                });
+            }
             itemsNumber = $("#itemsNumber").text();
             $("#top-bar-deleteBtn").hide();
             $('#check_all').prop('checked', false);
