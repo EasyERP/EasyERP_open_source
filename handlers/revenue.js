@@ -228,6 +228,79 @@ var wTrack = function (models) {
         });
     };
 
+    this.unpaidwtrack = function (req, res, next) {
+        var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+
+        access.getReadAccess(req, req.session.uId, 67, function (access) {
+            var options = req.query;
+            var startMonth = parseInt(options.month) || 7;
+            var startYear = parseInt(options.year) || 2014;
+            var endMonth = parseInt(options.endMonth) || 7;
+            var endYear = parseInt(options.endYear) || 2015;
+            var startDate;
+            var endDate;
+            var match;
+            var groupBy;
+
+            if (!access) {
+                return res.status(403).send();
+            }
+
+            startDate = options.startDate || (startYear * 100 + startMonth);
+            endDate = options.endDate || (endYear * 100 + endMonth);
+
+            match = {
+                $and: [
+                    {'project._id': {$exists: true}},
+                    {'project._id': {$ne: null}},
+                    {dateByMonth: {$gt: startDate, $lte: endDate}},
+                    {isPaid: false}
+                ]
+            };
+
+            groupBy = {
+                _id:{
+                    assigned: '$project.projectmanager._id',
+                    month: '$month',
+                    year: '$year'
+                },
+                revenue: {$sum: '$amount'},
+                dateByMonth: {$addToSet: '$dateByMonth'}
+            };
+
+            WTrack.aggregate([{
+                $match: match
+            }, {
+                $group: groupBy
+            }, {
+                $project: {
+                    year: "$_id.year",
+                    month: "$_id.month",
+                    employee: "$_id.assigned",
+                    revenue: 1,
+                    dateByMonth: 1,
+                    _id: 0
+                }
+            }, {
+                $group: {
+                    _id: "$employee",
+                    root: { $push: "$$ROOT" },
+                    total: { $sum: "$revenue" }
+                }
+            }, {
+                $sort: {
+                    dateByMonth: -1
+                }
+            }], function (err, response) {
+                if (err) {
+                    return next(err);
+                }
+
+                res.status(200).send(response);
+            });
+
+        });
+    };
 };
 
 module.exports = wTrack;
