@@ -35,7 +35,7 @@ define([
         genInvoiceEl: null,
         changedModels: {},
         dataObject: {},
-        trackData: {},
+        monthHours: {},
         
         initialize: function (options) {
             this.startTime = options.startTime;
@@ -46,12 +46,13 @@ define([
             this.newCollection = options.newCollection;
             this.deleteCounter = 0;
             this.page = options.collection.page;
-            
+
             this.render();
             
             this.getTotalLength(null, this.defaultItemsNumber, this.filter);
             this.contentCollection = contentCollection;
             this.stages = [];
+            this.calculateCost();
         },
         
         events: {
@@ -78,7 +79,7 @@ define([
         },
 
         keyDown: function(e){
-            this.calculateCost();
+        this.calculateCost();
             if(e.which === 13){
                 this.setChangedValueToModel();
             }
@@ -266,34 +267,41 @@ define([
             return false;
         },
 
-        calculateCost: function (e) {
+        calculateCost: function (employeeId, month, year) {
             var self = this;
-
-
-            //dataService.getData('monthHours/list', null, function (response, context) {
-            //    self.dataObject = response;
-            //    }, this);
-
-            dataService.getData('wTrack/getByViewType', {}, function (response, context) {
-              self.trackData = response;
-            }, this);
-
-            dataService.getData('salary/getSalaryData', {month: '8', year: '2014', _id: '55968d4d4833d5701200002f'}, function (response, context) {
-                self.dataObject = response;
-            }, this);
-
-            var baseSalary;
+            var baseSalary = {};
             var expenseCoefficient;
             var fixedExpense;
             var hours;
+            var calc;
             var trackWeek;
 
-           // console.log(this.dataObject);
+            var month = 9;
+             var year = 2014;
+            var employeeId = '559796e72b58e0a833000075';
 
-            var calc = ((((baseSalary * expenseCoefficient) + fixedExpense) / hours) * trackWeek).toFixed(2);
+
+            dataService.getData('/salary/list', {month: month, year: year, _id:  employeeId}, function (response, context) {
+                self.baseSalary = response.success;
+                }, this);
+
+            dataService.getData('/monthHours/list', {month: month, year: year}, function (response, context) {
+                self.monthHours = response;
+            }, this);
 
 
-            return calc;
+            if (this.baseSalary && this.monthHours){
+                baseSalary = Number(this.baseSalary[0].employeesArray.baseSalary);
+                expenseCoefficient = Number(this.monthHours[0].expenseCoefficient);
+                fixedExpense = Number(this.monthHours[0].fixedExpense);
+                hours = Number(this.monthHours[0].hours);
+                trackWeek = 40;
+                calc = Number(((((baseSalary * expenseCoefficient) + fixedExpense) / hours)*trackWeek).toFixed(2));
+                console.log(calc);
+            }
+
+
+           // return calc;
         },
 
         chooseOption: function (e) {

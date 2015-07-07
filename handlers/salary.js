@@ -5,6 +5,7 @@ var mongoose = require('mongoose');
 var moment = require('../public/js/libs/moment/moment');
 var Salary = function (models) {
     var access = require("../Modules/additions/access.js")(models);
+    var objectId = mongoose.Types.ObjectId;
     var SalarySchema = mongoose.Schemas['Salary'];
     var SalaryCashSchema = mongoose.Schemas['SalaryCash'];
     var async = require('async');
@@ -188,7 +189,6 @@ var Salary = function (models) {
 
                     /*contentIdsSearcher = function (deps, waterfallCallback) {
                      var arrOfObjectId = deps.objectID();
-
                      models.get(req.session.lastDb, "Product", ProductSchema).aggregate(
                      {
                      $match: {
@@ -235,13 +235,10 @@ var Salary = function (models) {
 
                     /*contentSearcher = function (productsIds, waterfallCallback) {
                      queryObject._id = {$in: productsIds};
-
                      var query = Product.find(queryObject).limit(count).skip(skip).sort(sort);
                      query.exec(waterfallCallback);
                      };
-
                      waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
-
                      async.waterfall(waterfallTasks, function(err, result){
                      if(err){
                      return next(err);
@@ -294,15 +291,21 @@ var Salary = function (models) {
 
     this.getForView = function (req, res, next) {
         var viewType = req.params.viewType;
+        var query = req.query.month;
 
-        switch (viewType) {
-            case "list":
-                getSalaryFilter(req, res, next);
-                break;
+        if (query){
+            getSalaryData(req, res, next);
+
+        } else if (viewType == 'list'){
+            getSalaryFilter(req, res, next);
+        }
+
+
+
             /*case "form":
              getProductsById(req, res, next);
              break;*/
-        }
+
     };
 
     this.getById = function (req, res, next) {
@@ -438,48 +441,117 @@ var Salary = function (models) {
         });
     };
 
-    this.getSalaryData = function (req, res, next) {
-        var Salary = models.get(req.session.lastDb, 'Salary', SalarySchema);
-        var SalaryCash = models.get(req.session.lastDb, 'SalaryCash', SalaryCashSchema);
-        var query;
-        var queryObj = {};
+     function getSalaryData (req, res, next) {
+         //if (req.session && req.session.loggedIn && req.session.lastDb) {
+         //    access.getReadAccess(req, req.session.uId, 66, function (access) {
+         //        if (access) {
+         //            var Salary = models.get(req.session.lastDb, 'SalaryCash', SalaryCashSchema);
+         //            var data = req.query;
+         //            var queryObject = {};
+         //            var sort = {};
+         //            var count = data.count ? data.count : 50;
+         //            var page = req.query.page;
+         //            var skip = (page - 1) > 0 ? (page - 1) * count : 0;
+         //
+         //            if (data && data.sort) {
+         //                sort = data.sort;
+         //            } else {
+         //                sort = {"year": -1, "month": -1};
+         //            }
+         //
+         //            if (data) {
+         //                if (data.month) {
+         //                    queryObject.month = data.month;
+         //                }
+         //                if (data.year) {
+         //                    queryObject.year = data.year;
+         //                }
+         //                if (data._id) {
+         //                    queryObject._id = data._id;
+         //                }
+         //            }
+         //            self.totalCollectionLength(req, function (err, ressult) {
+         //                if (ressult) {
+         //                    var query = Salary.find(queryObject).limit(count).skip(skip).sort(sort);
+         //                    query.exec(function (err, result) {
+         //                        if (err) {
+         //                            return next(err);
+         //                        }
+         //                        res.status(200).send({success: result});
+         //                    });
+         //                } else {
+         //                    async.series({
+         //                            first: function (callback) {
+         //                                self.recalculateCashSalary(req, callback);
+         //                            },
+         //                            second: function (callback) {
+         //                                var query = Salary.find(queryObject).limit(count).skip(skip).sort(sort);
+         //                                query.exec(function (err, result) {
+         //                                    if (err) {
+         //                                        callback(err);
+         //                                    }
+         //                                    callback(null, result);
+         //                                });
+         //                            }
+         //                        },
+         //                        function (err, results) {
+         //                            if (err) {
+         //                                return next(err);
+         //                            }
+         //                            if (results.second) {
+         //                                res.status(200).send(results.second);
+         //                            }
+         //                        });
+         //                }
+         //            })
+         //        } else {
+         //            res.send(403);
+         //        }
+         //    });
+         //
+         //} else {
+         //    res.send(401);
+         //}
+         //var Salary = models.get(req.session.lastDb, 'Salary', SalarySchema);
+         var SalaryCash = models.get(req.session.lastDb, 'SalaryCash', SalaryCashSchema);
+         var query;
+         var queryObj = {};
 
-        var data = req.query;
+         var data = req.query;
 
-        if (data) {
-            if (data.month) {
-                queryObj.month = data.month;
-            }
-            if (data.year) {
-                queryObj.year = data.year;
-            }
-            if (data._id) {
-                queryObj._id = data._id;
-            }
-        }
+         if (data) {
+             if (data.month) {
+                 queryObj.month = Number(data.month);
+             }
+             if (data.year) {
+                 queryObj.year = Number(data.year);
+             }
+         }
 
 
-        query = SalaryCash.aggregate([
-            {
-                $match: queryObj
-            },
-            {
-                $unwind: '$employeesArray'
-            },
-            {
-                $match: {
-                    '$employee._id': data._id
-                }
-            }
-        ]);
+         query = SalaryCash.aggregate([
+             {
+                 $match: queryObj
+             },
+             {
+                 $unwind: '$employeesArray'
 
-        query.exac(function(err, result){
-            if (err){
-                return next(err);
-            }
+             },
 
-            res.status(200).send(result);
-        });
+             {
+                 $match: {
+                     'employeesArray.employee._id': objectId(data._id)
+                 }
+             }
+         ]);
+
+         query.exec(function(err, result){
+             if (err){
+                 return next(err);
+             }
+
+             res.status(200).send({success: result});
+         });
 
     };
 };
