@@ -14,7 +14,8 @@ define([], function(){
             bySalesData: [],
             byDepData: [],
             paidBySales: [],
-            unpaidBySales: []
+            unpaidBySales: [],
+            cancelledBySales: []
         }
     });
 

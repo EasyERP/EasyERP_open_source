@@ -184,8 +184,7 @@ var wTrack = function (models) {
                 $and: [
                     {'project._id': {$exists: true}},
                     {'project._id': {$ne: null}},
-                    {dateByMonth: {$gte: startDate, $lte: endDate}},
-                    {isPaid: true}
+                    {dateByMonth: {$gte: startDate, $lte: endDate}}
                 ]
             };
 
@@ -258,8 +257,8 @@ var wTrack = function (models) {
                 $and: [
                     {'project._id': {$exists: true}},
                     {'project._id': {$ne: null}},
-                    {dateByMonth: {$gte: startDate, $lte: endDate}},
-                    {isPaid: false}
+                    {'project.workflow.status': {$ne: 'Cancelled'}},
+                    {dateByMonth: {$gte: startDate, $lte: endDate}}
                 ]
             };
 
@@ -269,7 +268,8 @@ var wTrack = function (models) {
                     month: '$month',
                     year: '$year'
                 },
-                revenue: {$sum: '$amount'},
+                revenue: {$sum: '$revenue'},
+                amount: {$sum: '$amount'},
                 dateByMonth: {$addToSet: '$dateByMonth'}
             };
 
@@ -282,9 +282,96 @@ var wTrack = function (models) {
                     year: "$_id.year",
                     month: "$_id.month",
                     employee: "$_id.assigned",
-                    revenue: 1,
+                    revenue: {$subtract: ["$revenue", "$amount"]},
                     dateByMonth: 1,
                     _id: 0
+                }
+            }, {
+                $match: {
+                    revenue: {$gte: 0}
+                }
+            }, {
+                $group: {
+                    _id: "$employee",
+                    root: {$push: "$$ROOT"},
+                    total: {$sum: "$revenue"}
+                }
+            }, {
+                $sort: {
+                    dateByMonth: -1
+                }
+            }], function (err, response) {
+                if (err) {
+                    return next(err);
+                }
+
+                console.log('======================================================');
+                console.log(startDate);
+                console.log('======================================================');
+
+                res.status(200).send(response);
+            });
+
+        });
+    };
+
+    this.cancelledWtrack = function (req, res, next) {
+        var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+
+        access.getReadAccess(req, req.session.uId, 67, function (access) {
+            var options = req.query;
+            var startMonth = parseInt(options.month) || 8;
+            var startYear = parseInt(options.year) || 2014;
+            var endMonth = parseInt(options.endMonth) || 7;
+            var endYear = parseInt(options.endYear) || 2015;
+            var startDate;
+            var endDate;
+            var match;
+            var groupBy;
+
+            if (!access) {
+                return res.status(403).send();
+            }
+
+            startDate = Number(options.startDate) || (startYear * 100 + startMonth);
+            endDate = Number(options.endDate) || (endYear * 100 + endMonth);
+
+            match = {
+                $and: [
+                    {'project._id': {$exists: true}},
+                    {'project._id': {$ne: null}},
+                    {'project.workflow.status': 'Cancelled'},
+                    {dateByMonth: {$gte: startDate, $lte: endDate}}
+                ]
+            };
+
+            groupBy = {
+                _id: {
+                    assigned: '$project.projectmanager._id',
+                    month: '$month',
+                    year: '$year'
+                },
+                revenue: {$sum: '$revenue'},
+                amount: {$sum: '$amount'},
+                dateByMonth: {$addToSet: '$dateByMonth'}
+            };
+
+            WTrack.aggregate([{
+                $match: match
+            }, {
+                $group: groupBy
+            }, {
+                $project: {
+                    year: "$_id.year",
+                    month: "$_id.month",
+                    employee: "$_id.assigned",
+                    revenue: {$subtract: ["$revenue", "$amount"]},
+                    dateByMonth: 1,
+                    _id: 0
+                }
+            }, {
+                $match: {
+                    revenue: {$gte: 0}
                 }
             }, {
                 $group: {

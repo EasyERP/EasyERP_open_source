@@ -18,8 +18,8 @@ module.exports = function (models) {
             user: 'thinkmobiles@wbje9y2n5u',
             password: '1q2w3e!@#',
             server: 'wbje9y2n5u.database.windows.net',
-            database: 'ex_dev',
-            //database: 'production',
+            //database: 'ex_dev',
+            database: 'production',
 
             options: {
                 encrypt: true
@@ -494,7 +494,8 @@ module.exports = function (models) {
 
                                 objectToSave.project.workflow = {
                                     _id: result.project.workflow ? result.project.workflow._id : null,
-                                    name: result.project.workflow ? result.project.workflow.name : ''
+                                    name: result.project.workflow ? result.project.workflow.name : '',
+                                    status: result.project.workflow ? result.project.workflow.status : ''
                                 };
                             }
 

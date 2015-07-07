@@ -54,6 +54,7 @@ define([
             this.listenTo(this.model, 'change:byDepData', this.changeByDepData);
             this.listenTo(this.model, 'change:paidBySales', this.changePaidBySalesData);
             this.listenTo(this.model, 'change:unpaidBySales', this.changeUnpaidBySalesData);
+            this.listenTo(this.model, 'change:cancelledBySales', this.changeCancelledBySalesData);
 
             var currentStartWeek = currentWeek - 6;
             var currentYear = moment().weekYear();
@@ -61,16 +62,22 @@ define([
 
             this.changeWeek = _.debounce(this.updateWeek, 500);
 
-            this.model.set({
+           /* this.model.set({
                 currentStartWeek: currentStartWeek,
                 currentYear: currentYear,
                 currentMonth: currentMonth
-            });
+            });*/
 
             //this.render();
 
             dataService.getData('/employee/bySales', null, function (employess) {
                 self.render(employess);
+                self.model.set({
+                    currentStartWeek: currentStartWeek,
+                    currentYear: currentYear,
+                    currentMonth: currentMonth
+                });
+                self.$currentStartWeek.val(currentStartWeek);
             });
 
             this.monthArr = [];
@@ -95,10 +102,6 @@ define([
             var newCurrMonth;
             var yearOfMonth;
 
-            //if (currentStartWeek === 0) {
-            //    currentStartWeek = 53;
-            //    currentYear -= 1;
-            //}
             if (currentStartWeek || currentStartWeek === 0) {
                 if (currentStartWeek > 53) {
                     currentStartWeek = 1;
@@ -160,6 +163,7 @@ define([
 
             this.fetchPaidBySales();
             this.fetchUnpaidBySales();
+            this.fetchCancelledBySales();
         },
 
         changeWeek: function () {
@@ -223,7 +227,6 @@ define([
 
             this.fetchBySales();
             this.fetchByDeps();
-            /* this.fetchPaidBySales();*/
 
             this.model.set('weeksArr', weeksArr);
         },
@@ -271,6 +274,16 @@ define([
             dataService.getData('/revenue/unpaidwtrack', data, function (byDepData) {
                 self.model.set('unpaidBySales', byDepData);
                 self.model.trigger('change:unpaidBySales');
+            });
+        },
+
+        fetchCancelledBySales: function () {
+            var self = this;
+            var data = this.paidUnpaidDateRange;
+
+            dataService.getData('/revenue/cancelledWtrack', data, function (byDepData) {
+                self.model.set('cancelledBySales', byDepData);
+                self.model.trigger('change:cancelledBySales');
             });
         },
 
@@ -459,6 +472,76 @@ define([
 
                 for (var i = paidBySales.length - 1; i >= 0; i--) {
                     tempPerMonth = paidBySales[i].root;
+                    tempPerMonth.forEach(function (weekResault) {
+                        if (!(weekResault.month in bySalesByDepPerWeek)) {
+                            bySalesByDepPerWeek[weekResault.month] = weekResault.revenue;
+                        } else {
+                            bySalesByDepPerWeek[weekResault.month] += weekResault.revenue;
+                        }
+                    });
+                }
+
+                targetTotal.html(self.bySalesPerMonthTemplate({
+                    monthArr: monthArr,
+                    bySalesByDepPerWeek: bySalesByDepPerWeek,
+                    globalTotal: globalTotal
+                }));
+
+                return false;
+            });
+        },
+
+        changeCancelledBySalesData: function () {
+            var self = this;
+            var unpaidBySales = this.model.get('unpaidBySales');
+            var monthArr = this.monthArr;
+            var target = self.$el.find('#tableUnpaidBySales');
+            var targetTotal;
+            var monthContainer;
+
+            var bySalesByDepPerWeek = {};
+            var tempPerMonth;
+            var globalTotal = 0;
+
+            target.html(this.unpaidBySalesTemplate({employees: this.employees}));
+            target.find('div.revenueBySales').html(this.weeksArrayTemplate({weeksArr: this.weekArr}));
+            targetTotal = $(self.$el.find('[data-content="totalUnpaidBySales"]'));
+            monthContainer = target.find('.monthContainer');
+            monthContainer.html(this.monthsArrayTemplate({monthArr: monthArr}));
+
+            async.each(this.employees, function (employee, cb) {
+                var employeeId = employee._id;
+                var employeeContainer = target.find('[data-id="' + employeeId + '"]');
+
+                var byMonthData;
+                var total;
+                var bySalesByDepPerEmployee;
+
+
+                bySalesByDepPerEmployee = _.find(unpaidBySales, function (el) {
+                    return el._id === employeeId;
+                });
+
+
+                if (bySalesByDepPerEmployee) {
+                    byMonthData = _.groupBy(bySalesByDepPerEmployee.root, 'month');
+                    total = bySalesByDepPerEmployee.total;
+                    globalTotal += total;
+                    employeeContainer.html(self.paidBySalesItemsTemplate({
+                        monthArr: monthArr,
+                        byMonthData: byMonthData,
+                        total: total
+                    }));
+                }
+                cb();
+            }, function (err) {
+
+                if (err) {
+                    alert(err);
+                }
+
+                for (var i = unpaidBySales.length - 1; i >= 0; i--) {
+                    tempPerMonth = unpaidBySales[i].root;
                     tempPerMonth.forEach(function (weekResault) {
                         if (!(weekResault.month in bySalesByDepPerWeek)) {
                             bySalesByDepPerWeek[weekResault.month] = weekResault.revenue;

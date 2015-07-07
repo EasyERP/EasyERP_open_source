@@ -20,7 +20,8 @@ module.exports = (function () {
             },
             workflow: {
                 _id: { type: ObjectId, ref: 'workflows', default: null },
-                name: String
+                name: String,
+                status: String
             },
             customer: {
                 _id: { type: ObjectId, ref: 'Customers', default: null },
