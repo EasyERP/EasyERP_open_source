@@ -186,7 +186,7 @@ var wTrack = function (models) {
 
             groupBy = {
                 _id:{
-                    assigned: '$project.projectmanager.name',
+                    assigned: '$project.projectmanager._id',
                     month: '$month',
                     year: '$year'
                 },

@@ -8,20 +8,24 @@ define([
     'text!templates/Revenue/bySalesByDep.html',
     'text!templates/Revenue/perWeek.html',
     'text!templates/Revenue/paidBySales.html',
+    'text!templates/Revenue/paidBySalesItems.html',
+    'text!templates/Revenue/monthsArray.html',
     'models/Revenue',
     'moment',
     'dataService',
     'async'
-], function (mainTemplate, weeksArray, tableByDep, bySalesByDep, perWeek, paidBySales, RevenueModel, moment, dataService, async) {
+], function (mainTemplate, weeksArray, tableByDep, bySalesByDep, perWeek, paidBySales, paidBySalesItems, monthsArray, RevenueModel, moment, dataService, async) {
     var View = Backbone.View.extend({
         el: '#content-holder',
 
         template: _.template(mainTemplate),
         weeksArrayTemplate: _.template(weeksArray),
+        monthsArrayTemplate: _.template(monthsArray),
         bySalesByDepTemplate: _.template(bySalesByDep),
         tableByDepTemplate: _.template(tableByDep),
         bySalesPerWeekTemplate: _.template(perWeek),
         paidBySalesTemplate: _.template(paidBySales),
+        paidBySalesItemsTemplate: _.template(paidBySalesItems),
 
         paidUnpaidDateRange: {},
 
@@ -145,6 +149,10 @@ define([
                     });
                 }
             }
+
+            this.monthArr = _.sortBy(this.monthArr, function(monthObject){
+                return monthObject.year*100 + monthObject.month
+            })
         },
 
         changeWeek: function () {
@@ -388,68 +396,72 @@ define([
 
         changePaidBySalesData: function () {
             var self = this;
-            var weeksArr = this.model.get('weeksArr');
             var paidBySales = this.model.get('paidBySales');
-
+            var monthArr = this.monthArr;
             var target = self.$el.find('#tablePaidBySales');
             var targetTotal;
+            var monthContainer;
 
             var bySalesByDepPerWeek = {};
-            var tempPerWeek;
+            var tempPerMonth;
             var globalTotal = 0;
 
-            //target.html(this.paidBySalesTemplate({employees: this.employees}));
+            target.html(this.paidBySalesTemplate({employees: this.employees}));
+            target.find('div.revenueBySales').html(this.weeksArrayTemplate({weeksArr: this.weekArr}));
+            targetTotal = $(self.$el.find('[data-content="totalPaidBySales"]'));
+            monthContainer =target.find('.monthContainer');
+            monthContainer.html(this.monthsArrayTemplate({monthArr: monthArr}));
 
-            /*async.each(this.employees, function (employee, cb) {
+            async.each(this.employees, function (employee, cb) {
                 var employeeId = employee._id;
-                var target = $(self.$el.find('[data-id="' + employeeId + '"]'));
+                var employeeContainer = target.find('[data-id="' + employeeId + '"]');
 
-                var byWeekData;
+                var byMonthData;
                 var total;
                 var bySalesByDepPerEmployee;
 
 
-                bySalesByDepPerEmployee = _.find(bySalesByDep, function (el) {
+                bySalesByDepPerEmployee = _.find(paidBySales, function (el) {
                     return el._id === employeeId;
                 });
 
 
                 if (bySalesByDepPerEmployee) {
-                    byWeekData = _.groupBy(bySalesByDepPerEmployee.root, 'week');
+                    byMonthData = _.groupBy(bySalesByDepPerEmployee.root, 'month');
                     total = bySalesByDepPerEmployee.total;
                     globalTotal += total;
-                    target.html(self.bySalesByDepTemplate({
-                        weeksArr: weeksArr,
-                        byWeekData: byWeekData,
-                        total: total,
-                        bySalesByDepPerWeek: bySalesByDepPerWeek
+                    employeeContainer.html(self.paidBySalesItemsTemplate({
+                        monthArr: monthArr,
+                        byMonthData: byMonthData,
+                        total: total
                     }));
                 }
                 cb();
             }, function (err) {
+
                 if (err) {
                     alert(err);
                 }
 
-                for (var i = bySalesByDep.length - 1; i >= 0; i--) {
-                    tempPerWeek = bySalesByDep[i].root;
-                    tempPerWeek.forEach(function (weekResault) {
-                        if (!(weekResault.week in bySalesByDepPerWeek)) {
-                            bySalesByDepPerWeek[weekResault.week] = weekResault.revenue;
+                for (var i = paidBySales.length - 1; i >= 0; i--) {
+                    tempPerMonth = paidBySales[i].root;
+                    tempPerMonth.forEach(function (weekResault) {
+                        if (!(weekResault.month in bySalesByDepPerWeek)) {
+                            bySalesByDepPerWeek[weekResault.month] = weekResault.revenue;
                         } else {
-                            bySalesByDepPerWeek[weekResault.week] += weekResault.revenue;
+                            bySalesByDepPerWeek[weekResault.month] += weekResault.revenue;
                         }
                     });
                 }
 
-                targetTotal.html(self.bySalesPerWeekTemplate({
-                    weeksArr: weeksArr,
+                /*targetTotal.html(self.bySalesPerWeekTemplate({
+                    monthArr: monthArr,
                     bySalesByDepPerWeek: bySalesByDepPerWeek,
                     globalTotal: globalTotal
-                }));
+                }));*/
 
                 return false;
-            });*/
+            });
         },
 
         render: function (employees) {

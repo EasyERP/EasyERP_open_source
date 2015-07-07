@@ -1,0 +1,12 @@
+<% monthArr.forEach(function(monthObject){ %>
+<div class="divCell">
+    <span>
+        <%= byMonthData[monthObject.month] ? byMonthData[monthObject.month][0].revenue : '&nbsp'%>
+    </span>
+</div>
+<% }) %>
+<div class="divCell">
+    <span>
+        <%= total ? total : '&nbsp'%>
+    </span>
+</div>
