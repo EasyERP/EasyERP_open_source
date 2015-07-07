@@ -33,8 +33,8 @@ define([
 
             this.model = new AttendanceModel();
             this.listenTo(this.model, 'change:currentEmployee', this.changeEmployee);
-            this.listenTo(this.model, 'change:currentStatus', this.changeStatus);
-            this.listenTo(this.model, 'change:currentTime', this.changeTime);
+            //this.listenTo(this.model, 'change:currentStatus', this.changeStatus);
+            //this.listenTo(this.model, 'change:currentTime', this.changeTime);
 
             dataService.getData("/getPersonsForDd", {}, function (result) {
                 var yearToday = moment().year();
