@@ -96,7 +96,7 @@ define([
                     el.children().remove();
 
                     this.customCollection[0][value].forEach(function (opt) {
-                        if (opt && opt.name && opt._id) {
+                        if (opt && opt.fullName && opt._id) {
                             el.append('<option value="' + opt._id + '">' + opt.fullName + '</option>');
                         } else if (opt && opt.name) {
                             el.append('<option value="' + opt.name + '">' + opt.name + '</option>');
@@ -159,7 +159,6 @@ define([
 
                 } else {
                     filterValues.find('.' + inputText).remove();
-                    label.removeClass('activeFilterItem');
                 }
 
                 if (e.target.id !== 'defaultFilter') {
