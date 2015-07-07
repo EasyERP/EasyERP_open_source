@@ -476,8 +476,8 @@ define([
             this.$el.html(this.template(model));
 
             this.$el.find("#currentStartWeek").spinner({
-                min: 1,
-                max: 53
+                min: 0,
+                max: 54
             });
 
             this.$currentStartWeek = thisEl.find('#currentStartWeek');
