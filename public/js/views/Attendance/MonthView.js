@@ -108,14 +108,12 @@ define([
                 }
 
                 if (self.monthCur) {
-                    var countVacation = self.monthCur[0].vacationArray.length;
-                    var vacationArray = self.monthCur[0].vacationArray;
+                    var countVacation = self.monthCur[0].vacArray.length;
+                    var vacArray = self.monthCur[0].vacArray;
                     for (var j = 0; j < countVacation; j++) {
-                        var start = moment(vacationArray[j].startDate).date();
-                        var end = moment(vacationArray[j].endDate).date();
-                        for (var k = start + startOfMonth - 1; k <= end + startOfMonth - 1; k++) {
-                            self.monthArray[i].daysData[k].type = vacationArray[j].vacationType;
-                            switch (vacationArray[j].vacationType) {
+                        for (var k = j + startOfMonth - 1; k <= j + startOfMonth - 1; k++) {
+                            self.monthArray[i].daysData[k].type = vacArray[j] ? vacArray[j] : '';
+                            switch (vacArray[j]) {
                                 case 'V':
                                     self.vacationDays++;
                                     break;
