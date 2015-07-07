@@ -413,7 +413,7 @@ define([
             var paidBySales = this.model.get('paidBySales');
             var monthArr = this.monthArr;
             var target = self.$el.find('#tablePaidBySales');
-            //var targetTotal;
+            var targetTotal;
             var monthContainer;
 
             var bySalesByDepPerWeek = {};
@@ -421,8 +421,8 @@ define([
             var globalTotal = 0;
 
             target.html(this.paidBySalesTemplate({employees: this.employees}));
-            //target.find('div.revenueBySales').html(this.weeksArrayTemplate({weeksArr: this.weekArr}));
-            //targetTotal = $(self.$el.find('[data-content="totalPaidBySales"]'));
+            target.find('div.revenueBySales').html(this.weeksArrayTemplate({weeksArr: this.weekArr}));
+            targetTotal = $(self.$el.find('[data-content="totalPaidBySales"]'));
             monthContainer = target.find('.monthContainer');
             monthContainer.html(this.monthsArrayTemplate({monthArr: monthArr}));
 
