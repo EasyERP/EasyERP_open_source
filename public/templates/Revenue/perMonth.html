@@ -1,0 +1,17 @@
+<div class="divCell left-cell">
+    <span>
+        Total Revenue
+    </span>
+</div>
+<% monthArr.forEach(function(monthObject){ %>
+<div class="divCell">
+    <span>
+        <%= bySalesByDepPerWeek[monthObject.month] ? bySalesByDepPerWeek[monthObject.month] / 100 : '&nbsp'%>
+    </span>
+</div>
+<% }) %>
+<div class="divCell">
+    <span>
+        <%= globalTotal ? globalTotal / 100 : '&nbsp'%>
+    </span>
+</div>

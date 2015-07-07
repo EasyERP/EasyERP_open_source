@@ -10,11 +10,12 @@ define([
     'text!templates/Revenue/paidBySales.html',
     'text!templates/Revenue/paidBySalesItems.html',
     'text!templates/Revenue/monthsArray.html',
+    'text!templates/Revenue/perMonth.html',
     'models/Revenue',
     'moment',
     'dataService',
     'async'
-], function (mainTemplate, weeksArray, tableByDep, bySalesByDep, perWeek, paidBySales, paidBySalesItems, monthsArray, RevenueModel, moment, dataService, async) {
+], function (mainTemplate, weeksArray, tableByDep, bySalesByDep, perWeek, paidBySales, paidBySalesItems, monthsArray, perMonth, RevenueModel, moment, dataService, async) {
     var View = Backbone.View.extend({
         el: '#content-holder',
 
@@ -24,6 +25,7 @@ define([
         bySalesByDepTemplate: _.template(bySalesByDep),
         tableByDepTemplate: _.template(tableByDep),
         bySalesPerWeekTemplate: _.template(perWeek),
+        bySalesPerMonthTemplate: _.template(perMonth),
         paidBySalesTemplate: _.template(paidBySales),
         paidBySalesItemsTemplate: _.template(paidBySalesItems),
 
@@ -452,11 +454,11 @@ define([
                     });
                 }
 
-                /*targetTotal.html(self.bySalesPerWeekTemplate({
+                targetTotal.html(self.bySalesPerMonthTemplate({
                     monthArr: monthArr,
                     bySalesByDepPerWeek: bySalesByDepPerWeek,
                     globalTotal: globalTotal
-                }));*/
+                }));
 
                 return false;
             });
