@@ -40,7 +40,7 @@ var wTrack = function (models) {
                 $and: [
                     {'project._id': {$exists: true}},
                     {'project._id': {$ne: null}},
-                    {dateByWeek: {$gte: startDate, $lte: endDate}}
+                    {dateByWeek: {$gte: startDate, $lt: endDate}}
                 ]
             };
 
@@ -57,13 +57,15 @@ var wTrack = function (models) {
                 $match: match
             }, {
                 $group: groupBy
-            }, {$project: {
-                year: "$_id.year",
-                week: "$_id.week",
-                employee: "$_id.employee",
-                revenue: 1,
-                _id: 0
-            }}, {
+            }, {
+                $project: {
+                    year: "$_id.year",
+                    week: "$_id.week",
+                    employee: "$_id.employee",
+                    revenue: 1,
+                    _id: 0
+                }
+            }, {
                 $group: {
                     _id: "$employee",
                     root: {$push: "$$ROOT"},
@@ -114,7 +116,7 @@ var wTrack = function (models) {
             match = {
                 dateByWeek: {
                     $gte: startDate,
-                    $lte: endDate
+                    $lt: endDate
                 }
             };
 
@@ -132,13 +134,15 @@ var wTrack = function (models) {
                 $match: match
             }, {
                 $group: groupBy
-            }, {$project: {
-                year: "$_id.year",
-                week: "$_id.week",
-                department: "$_id.department",
-                revenue: 1,
-                _id: 0
-            }}, {
+            }, {
+                $project: {
+                    year: "$_id.year",
+                    week: "$_id.week",
+                    department: "$_id.department",
+                    revenue: 1,
+                    _id: 0
+                }
+            }, {
                 $group: {
                     _id: "$department",
                     root: {$push: "$$ROOT"},
@@ -160,7 +164,7 @@ var wTrack = function (models) {
 
         access.getReadAccess(req, req.session.uId, 67, function (access) {
             var options = req.query;
-            var startMonth = parseInt(options.month) || 7;
+            var startMonth = parseInt(options.month) || 8;
             var startYear = parseInt(options.year) || 2014;
             var endMonth = parseInt(options.endMonth) || 7;
             var endYear = parseInt(options.endYear) || 2015;
@@ -173,19 +177,20 @@ var wTrack = function (models) {
                 return res.status(403).send();
             }
 
-            startDate = options.startDate || (startYear * 100 + startMonth);
-            endDate = options.endDate || (endYear * 100 + endMonth);
+            startDate = Number(options.startDate) || (startYear * 100 + startMonth);
+            endDate = Number(options.endDate) || (endYear * 100 + endMonth);
 
             match = {
                 $and: [
                     {'project._id': {$exists: true}},
                     {'project._id': {$ne: null}},
-                    {dateByMonth: {$gt: startDate, $lte: endDate}}
+                    {dateByMonth: {$gte: startDate, $lte: endDate}},
+                    {isPaid: true}
                 ]
             };
 
             groupBy = {
-                _id:{
+                _id: {
                     assigned: '$project.projectmanager._id',
                     month: '$month',
                     year: '$year'
@@ -210,8 +215,8 @@ var wTrack = function (models) {
             }, {
                 $group: {
                     _id: "$employee",
-                    root: { $push: "$$ROOT" },
-                    total: { $sum: "$revenue" }
+                    root: {$push: "$$ROOT"},
+                    total: {$sum: "$revenue"}
                 }
             }, {
                 $sort: {
@@ -233,7 +238,7 @@ var wTrack = function (models) {
 
         access.getReadAccess(req, req.session.uId, 67, function (access) {
             var options = req.query;
-            var startMonth = parseInt(options.month) || 7;
+            var startMonth = parseInt(options.month) || 8;
             var startYear = parseInt(options.year) || 2014;
             var endMonth = parseInt(options.endMonth) || 7;
             var endYear = parseInt(options.endYear) || 2015;
@@ -246,20 +251,20 @@ var wTrack = function (models) {
                 return res.status(403).send();
             }
 
-            startDate = options.startDate || (startYear * 100 + startMonth);
-            endDate = options.endDate || (endYear * 100 + endMonth);
+            startDate = Number(options.startDate) || (startYear * 100 + startMonth);
+            endDate = Number(options.endDate) || (endYear * 100 + endMonth);
 
             match = {
                 $and: [
                     {'project._id': {$exists: true}},
                     {'project._id': {$ne: null}},
-                    {dateByMonth: {$gt: startDate, $lte: endDate}},
+                    {dateByMonth: {$gte: startDate, $lte: endDate}},
                     {isPaid: false}
                 ]
             };
 
             groupBy = {
-                _id:{
+                _id: {
                     assigned: '$project.projectmanager._id',
                     month: '$month',
                     year: '$year'
@@ -284,8 +289,8 @@ var wTrack = function (models) {
             }, {
                 $group: {
                     _id: "$employee",
-                    root: { $push: "$$ROOT" },
-                    total: { $sum: "$revenue" }
+                    root: {$push: "$$ROOT"},
+                    total: {$sum: "$revenue"}
                 }
             }, {
                 $sort: {

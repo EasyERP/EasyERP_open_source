@@ -7503,8 +7503,11 @@ textarea#editInput {
 .grid-conatiner.revenue .divTable#tableBySales .th {
   border-bottom: 2px solid #ed9409;
 }
-.grid-conatiner.revenue .divTable#tableByDep .th-green {
-  border-bottom: 2px solid #00af00;
+.grid-conatiner.revenue .divTable#tablePaidBySales .th {
+  border-bottom: 2px solid #a2a2a3;
+}
+.grid-conatiner.revenue .divTable#tableUnpaidBySales .th {
+  border-bottom: 2px solid #fd0001;
 }
 .grid-conatiner.revenue .headRow {
   display: table-row;
@@ -7519,6 +7522,12 @@ textarea#editInput {
 .grid-conatiner.revenue .divRow.totalByDep {
   background-color: #00af00;
 }
+.grid-conatiner.revenue .divRow.totalPaid {
+  background-color: #a2a2a3;
+}
+.grid-conatiner.revenue .divRow.totalUnpaid {
+  background-color: #fd0001;
+}
 .grid-conatiner.revenue .divCell {
   float: left;
   display: table-column;
@@ -7527,8 +7536,19 @@ textarea#editInput {
 .grid-conatiner.revenue .divCell.left-cell {
   width: 10%;
 }
+.grid-conatiner.revenue #tablePaidBySales .divCell,
+.grid-conatiner.revenue #tableUnpaidBySales .divCell {
+  width: 6.41%;
+}
+.grid-conatiner.revenue #tablePaidBySales .divCell.left-cell,
+.grid-conatiner.revenue #tableUnpaidBySales .divCell.left-cell {
+  width: 10%;
+}
 .grid-conatiner.revenue .th-trend {
   width: 7.5%;
+}
+.grid-conatiner.revenue .th-green {
+  border-bottom: 2px solid #00af00;
 }
 .search-field {
   box-sizing: border-box;
@@ -7673,17 +7693,9 @@ textarea#editInput {
   background-color: #f9f9f9;
   border: 1px solid #c0c0c0;
 }
-.activeFilterItem {
-  font-weight: bold;
-  font-size: 14px;
-}
 .drop-down-filter li {
   cursor: pointer;
   margin-bottom: 5px;
-  font-size: 13px;
-}
-.drop-down-filter li:hover {
-  background-color: #f3f3f3;
 }
 .drop-down-filter li:nth-child(2n) {
   border-bottom: 1px solid #c0c0c0;
@@ -7742,11 +7754,6 @@ textarea#editInput {
   position: absolute;
   margin-top: -25px;
   margin-left: 8px;
-}
-.removeValues:hover,
-.removeFilter:hover {
-  font-size: 14px;
-  text-shadow: 1px 1px #030000;
 }
 .vacation-list {
   font-family: inherit;

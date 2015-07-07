@@ -5257,9 +5257,14 @@ textarea#editInput {
         border-bottom: 2px solid #ed9409;
       }
     }
-    &#tableByDep {
-      .th-green {
-        border-bottom: 2px solid #00af00;
+    &#tablePaidBySales {
+      .th {
+        border-bottom: 2px solid #a2a2a3;
+      }
+    }
+    &#tableUnpaidBySales {
+      .th {
+        border-bottom: 2px solid #fd0001;
       }
     }
   }
@@ -5276,6 +5281,12 @@ textarea#editInput {
     &.totalByDep {
       background-color: #00af00
     }
+    &.totalPaid {
+      background-color: #a2a2a3
+    }
+    &.totalUnpaid {
+      background-color: #fd0001
+    }
   }
 
   .divCell {
@@ -5286,8 +5297,20 @@ textarea#editInput {
       width: 10%;
     }
   }
+
+  #tablePaidBySales, #tableUnpaidBySales {
+    .divCell {
+      width: 6.41%;
+      &.left-cell {
+        width: 10%;
+      }
+    }
+  }
   .th-trend {
     width: 7.5%;
+  }
+  .th-green {
+    border-bottom: 2px solid #00af00;
   }
 }
 

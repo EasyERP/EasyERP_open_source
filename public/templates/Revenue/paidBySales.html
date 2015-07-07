@@ -1,13 +1,13 @@
 <div class="headRow">
-    <div class="divCell left-cell th-green">
+    <div class="divCell left-cell th">
         <span>Paid wTrack</span>
     </div>
     <div class="monthContainer">
 
     </div>
 
-    <div class="divCell th-green"><span>YTD</span></div>
-    <div class="divCell th-green th-trend"><span>Trend</span></div>
+    <div class="divCell th"><span>YTD</span></div>
+    <div class="divCell th th-trend"><span>Trend</span></div>
 </div>
 <% employees.forEach(function(employee){ %>
 <div id="<%= employee._id %>" class="divRow">
@@ -24,6 +24,6 @@
 
 </div>
 <% }) %>
-<div data-content="totalPaidBySales" class="divRow totalByDep">
+<div data-content="totalPaidBySales" class="divRow totalPaid">
 
 </div>
