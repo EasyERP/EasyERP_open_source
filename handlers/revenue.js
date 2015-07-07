@@ -173,8 +173,8 @@ var wTrack = function (models) {
                 return res.status(403).send();
             }
 
-            startDate = startYear * 100 + startMonth;
-            endDate = endYear * 100 + endMonth;
+            startDate = options.startDate || (startYear * 100 + startMonth);
+            endDate = options.endDate || (endYear * 100 + endMonth);
 
             match = {
                 $and: [
