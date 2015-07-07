@@ -88,6 +88,7 @@ define([
         updateWeek: function () {
             var modelData;
             var currentStartWeek = parseInt(this.$currentStartWeek.val());
+            var currentWeek = currentStartWeek + 6;
             var currentYear = this.model.get('currentYear');
             var newCurrMonth;
             var yearOfMonth;
@@ -110,7 +111,7 @@ define([
                 currentYear = 2014;
             }
 
-            newCurrMonth = parseInt(moment().week(currentStartWeek).format("MM"));
+            newCurrMonth = parseInt(moment().week(currentWeek).format("MM"));
 
             if (currentStartWeek === 1) {
                 yearOfMonth = currentYear - 1;
@@ -125,9 +126,7 @@ define([
                 newCurrMonth: newCurrMonth
             };
 
-            //this.calculateCurrentMonthArr(nowMonth, currentYear);
-
-            alert(currentStartWeek + ' ' + currentYear);
+            this.calculateCurrentMonthArr(newCurrMonth, currentYear);
 
             this.model.set(modelData);
 
@@ -277,7 +276,7 @@ define([
             var self = this;
             var weeksArr = this.model.get('weeksArr');
             var bySalesByDep = this.model.get('bySalesData');
-
+            var target = self.$el.find('#tableBySales');
             var targetTotal = self.$el.find('[data-content="totalBySales"]');
 
             var bySalesByDepPerWeek = {};
@@ -286,7 +285,7 @@ define([
 
             async.each(this.employees, function (employee, cb) {
                 var employeeId = employee._id;
-                var target = $(self.$el.find('[data-id="' + employeeId + '"]'));
+                var employeeContainer = target.find('[data-id="' + employeeId + '"]');
 
                 var byWeekData;
                 var total;
@@ -302,7 +301,7 @@ define([
                     byWeekData = _.groupBy(bySalesByDepPerEmployee.root, 'week');
                     total = bySalesByDepPerEmployee.total;
                     globalTotal += total;
-                    target.html(self.bySalesByDepTemplate({
+                    employeeContainer.html(self.bySalesByDepTemplate({
                         weeksArr: weeksArr,
                         byWeekData: byWeekData,
                         total: total,
