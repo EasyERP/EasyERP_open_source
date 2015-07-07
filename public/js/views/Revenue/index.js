@@ -23,6 +23,8 @@ define([
         bySalesPerWeekTemplate: _.template(perWeek),
         paidBySalesTemplate: _.template(paidBySales),
 
+        paidUnpaidDateRange: {},
+
         $currentStartWeek: null,
         $revenueBySales: null,
 
@@ -33,6 +35,8 @@ define([
 
         initialize: function () {
             var self = this;
+            var currentWeek = moment().week();
+            var nowMonth = parseInt(moment().week(currentWeek).format("MM"));
 
             this.model = new RevenueModel();
             this.listenTo(this.model, 'change:currentYear', this.changeYear);
@@ -42,7 +46,7 @@ define([
             this.listenTo(this.model, 'change:byDepData', this.changeByDepData);
             this.listenTo(this.model, 'change:paidBySales', this.changePaidBySalesData);
 
-            var currentStartWeek = moment().week() - 6;
+            var currentStartWeek = currentWeek - 6;
             var currentYear = moment().weekYear();
             var currentMonth = parseInt(moment().week(currentStartWeek).format("MM"));
 
@@ -59,6 +63,11 @@ define([
             dataService.getData('/employee/bySales', null, function (employess) {
                 self.render(employess);
             });
+
+            this.monthArr = [];
+            this.paidUnpaidDateRange.endDate = currentYear * 100 + nowMonth;
+
+            this.calculateCurrentMonthArr(nowMonth, currentYear);
         },
 
         getDate: function (num) {
@@ -109,9 +118,33 @@ define([
                 newCurrMonth: newCurrMonth
             };
 
+            //this.calculateCurrentMonthArr(nowMonth, currentYear);
+
+            alert(currentStartWeek + ' ' + currentYear);
+
             this.model.set(modelData);
 
             return false;
+        },
+
+        calculateCurrentMonthArr: function(nowMonth, currentYear){
+            this.monthArr = [];
+            this.paidUnpaidDateRange.endDate = currentYear * 100 + nowMonth;
+
+            for (var i = 0; i < 12; i++) {
+                if (nowMonth - i <= 0) {
+                    this.paidUnpaidDateRange.startDate = (currentYear - 1)*100 + (nowMonth - i + 12);
+                    this.monthArr.push({
+                        month: nowMonth - i + 12,
+                        year: currentYear - 1
+                    });
+                } else {
+                    this.monthArr.push({
+                        month: nowMonth - i,
+                        year: currentYear
+                    });
+                }
+            }
         },
 
         changeWeek: function () {
@@ -142,7 +175,7 @@ define([
                     self.changeWeeksArr();
                 }, 10);
             }
-            this.$revenueBySales = this.$el.find('.revenueBySales');
+            this.$revenueBySales = this.$el.find('div.revenueBySales');
             this.$revenueBySales.html(this.weeksArrayTemplate({weeksArr: this.weekArr}));
         },
 
@@ -310,7 +343,7 @@ define([
             }
 
             target.html(this.tableByDepTemplate({departments: this.departments}));
-            target.find('.revenueBySales').html(this.weeksArrayTemplate({weeksArr: this.weekArr}));
+            target.find('div.revenueBySales').html(this.weeksArrayTemplate({weeksArr: this.weekArr}));
             targetTotal = $(self.$el.find('[data-content="totalByDep"]'));
 
             async.each(this.departments, function (department, cb) {
@@ -365,7 +398,7 @@ define([
             var tempPerWeek;
             var globalTotal = 0;
 
-            target.html(this.tableByDepTemplate({departments: this.departments}));
+            //target.html(this.paidBySalesTemplate({employees: this.employees}));
 
             /*async.each(this.employees, function (employee, cb) {
                 var employeeId = employee._id;
