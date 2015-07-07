@@ -12,6 +12,7 @@
                 var self = this;
                 var model;
                 var models = [];
+                var modelsForCreate = [];
                 var modelObject;
                 var newModel;
                 var syncObject = {
@@ -49,9 +50,48 @@
                         modelObject._id = model.id;
                         models.push(modelObject);
                     } else if (model && !model.id) {
+                        var vacArray = model.changed.vacArray;
+
                         newModel = model.changed;
-                        newModel._id =  model.id;
-                        Backbone.sync("create", saveObject, options);
+
+                        if (vacArray) {
+                            var index = 0;
+                            var month = model.changed.month ? model.changed.month : model.month;
+                            var year = model.changed.year ? model.changed.year : model.year;
+                            var momentDate = moment([year, month]);
+                            var element = {};
+                            var prevElement;
+                            var startDate;
+                            var endDate;
+
+                            while(index<=vacArray.length) {
+                                if (vacArray[index]) {
+                                    element = {
+                                        index: index,
+                                        type: vacArray[index]
+                                    }
+                                    if (prevElement) {
+                                        if (element.index - 1 !== prevElement.index ) {
+                                            momentDate.date(prevElement.index + 1);
+                                            endDate = new Date(momentDate);
+
+                                            newModel.startDate = startDate;
+                                            newModel.endDate = endDate;
+
+                                            newModel._id = model.id;
+
+                                            modelsForCreate.push(modelObject);
+
+                                        }
+                                    } else {
+                                        momentDate.date(index+1);
+                                        startDate = new Date(momentDate);
+                                    }
+
+                                }
+                            }
+                            Backbone.sync("create", saveObject, options);
+                        }
                     }
                 }
 

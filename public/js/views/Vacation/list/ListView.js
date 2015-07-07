@@ -31,6 +31,7 @@ define([
             responseObj: {},
             monthElement: null,
             yearElement: null,
+            changedModels: {},
 
             initialize: function (options) {
                 this.startTime = options.startTime;
@@ -451,13 +452,24 @@ define([
                 var employee;
                 var department;
                 var changedAttr;
-                var vacArray = [];
 
                 if (modelId) {
-                    editVacationModel = this.editCollection.get(modelId);;
+                    editVacationModel = this.editCollection.get(modelId);
+
+                    if (!this.changedModels[modelId]) {
+                        if(!editVacationModel.id){
+                            this.changedModels[modelId] = editVacationModel.attributes;
+                        } else {
+                            this.changedModels[modelId] = {};
+                        }
+                    }
+
+                    changedAttr = this.changedModels[modelId];
                 }
 
                 if (elementType === '#monthSelect' || elementType === '#yearSelect') {
+                    targetElement.text(target.text());
+
                     targetElement.attr('data-content', target.attr('id'));
                     if (elementType === '#monthSelect') {
                         this.monthElement = targetElement;
@@ -487,10 +499,17 @@ define([
                 }
 
                 if (elementType === '#vacType') {
+                    var dayIndex = targetElement.attr('data-dayID');
+
                     targetElement.text(element._id);
                     targetElement.addClass(element._id);
 
-                    vacArray.push
+                    if (changedAttr && changedAttr.vacArray) {
+                        changedAttr.vacArray[dayIndex] = targetElement.text();
+                    } else {
+                        changedAttr.vacArray = new Array(this.daysCount);
+                        changedAttr.vacArray[dayIndex] = targetElement.text();
+                    }
                 }
 
                 //targetElement.text(target.text());
@@ -583,6 +602,8 @@ define([
             },
 
             showMoreContent: function (newModels) {
+                this.editCollection = new editCollection(newModels.toJSON());
+
                 var holder = this.$el;
                 holder.find("#listTable").empty();
                 var itemView = new listItemView({
