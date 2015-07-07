@@ -283,8 +283,8 @@ var Vacation = function (models) {
                                 queryObject.year = options.year;
                                 queryObject.month = options.month;
                             } else {
-                                endDate = moment([options.year, 11]);
-                                startDate = moment([options.year, 0]);
+                                endDate = moment([options.year, 12]);
+                                startDate = moment([options.year, 1]);
 
                                 queryObject.year = {'$in': [options.year, (options.year - 1).toString()]};
                             }
