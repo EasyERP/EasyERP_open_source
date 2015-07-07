@@ -290,21 +290,50 @@ var Vacation = function (models) {
                             }
                         } else if (options.year) {
                             var date = new Date();
+                            var startQuery;
+                            var endQuery;
+                            var condition1;
+                            var condition2;
+                            var employeeQuery = {};
+
+                            employeeQuery['employee._id'] = queryObject['employee._id'];
 
                             date = moment([date.getFullYear(), date.getMonth()]);
 
                             endDate = new Date(date);
-                            queryObject.endDate = {'$lte': endDate};
+
+                            condition1 = {month: {'$lte': parseInt(date.format('M'))}};
+                            condition2 = {year: {'$lte': parseInt(date.format('YYYY'))}};
+
+                            console.dir(condition1);
+                            console.dir(condition2);
+
+                            endQuery = {'$and': [condition1, condition2, employeeQuery]};
 
                             date.subtract(12, 'M');
                             startDate = new Date(date);
 
                             date.subtract(12, 'M');
-                            queryObject.startDate = {'$gte': new Date(date)};
+
+                            condition1 = {month: {'$gte': parseInt(date.format('M'))}};
+                            condition2 = {year: {'$gte': parseInt(date.format('YYYY'))}};
+
+                            console.dir(condition1);
+                            console.dir(condition2);
+
+                            startQuery = {'$and': [condition1, condition2, employeeQuery]};
+
+                            queryObject = {};
+
+                            queryObject['$or'] = [startQuery, endQuery];
                         }
                     }
 
                     query = Vacation.find(queryObject);
+
+                    console.dir(startQuery);
+                    console.dir(endQuery);
+                    console.dir(queryObject);
 
                     query.exec(function (err, result) {
                         if (err) {
