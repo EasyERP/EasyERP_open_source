@@ -16,23 +16,22 @@
             createMonthRows: function () {
                 var self = this;
                 var colObject = this.collection.toJSON();
-                var totalArray = new Array(self.daysCount);
+                var totalArray = new Array(this.daysCount);
 
                 async.each(colObject, function (document) {
-                    var array = document.vacationArray;
                     var resultArray = new Array(self.daysCount);
                     var countVacationDays = 0;
 
-                    array.forEach(function (element) {
-                        var startDay = new Date(element.startDate).getDate();
-                        var endDay = new Date(element.endDate).getDate();
-
-                        for (var i = endDay; i >= startDay; i--) {
+                    for (var i = self.daysCount; i >= 1; i--) {
+                        var element = document.vacArray[i];
+                        if (element) {
                             countVacationDays++;
-                            totalArray[i-1] = totalArray[i-1] ? totalArray[i-1] += 1 : 1;
-                            resultArray[i-1] = '<td data-id="' + element._idVacation + '" data-dayID="' + i + '" class="editable ' + element.vacationType + '" data-content="vacType">' + element.vacationType + '</td>';
+                            totalArray[i - 1] = totalArray[i - 1] ? totalArray[i - 1] += 1 : 1;
+                            resultArray[i - 1] = '<td data-dayID="' + (i - 1) + '" class="editable ' + element + '" data-content="vacType">' + element + '</td>';
+                        } else {
+                            resultArray[i - 1] = '<td data-dayID="' + (i - 1) + '" class="editable" data-content="vacType"></td>';
                         }
-                    });
+                    }
 
                     document.vacationArrayHTML = resultArray;
                     document.countVacationDays = countVacationDays;

@@ -15,11 +15,14 @@ module.exports = (function () {
             _id: {type: ObjectId, ref: 'Department', default: null},
             name: String
         },
-        startDate: Date,
-        endDate: Date,
-        month: String,
-        year: String,
-        vacationType: String
+        //startDate: Date,
+        //endDate: Date,
+        month: Number,
+        year: Number,
+        //vacationType: String,
+        vacArray: Array
+
+
     }, {collection: 'Vacation'});
 
     vacationSchema.set('toJSON', {virtuals: true});

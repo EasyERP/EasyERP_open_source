@@ -97,22 +97,22 @@ module.exports = function (models) {
         var Payment = models.get(req.session.lastDb, paymentCollection, PaymentSchema);
         var BonusType = models.get(req.session.lastDb, bonusTypeCollection, BonusTypeSchema);
 
-        function importBonusType (bonusTypeSchema, seriesCb){
+        function importBonusType(bonusTypeSchema, seriesCb) {
             var query = queryBuilder(bonusTypeSchema.table);
             var waterfallTasks;
 
-            function getData(callback){
+            function getData(callback) {
                 handler.importData(query, callback);
             }
 
-            function saverBonusType(fetchedArray, callback){
+            function saverBonusType(fetchedArray, callback) {
                 var model;
                 var mongooseFields = Object.keys(bonusTypeSchema.aliases);
 
                 async.eachLimit(fetchedArray, 100, function (fetchedBonusType, cb) {
                     var objectToSave = {};
 
-                    for (var i = mongooseFields.length - 1; i >= 0; i--){
+                    for (var i = mongooseFields.length - 1; i >= 0; i--) {
                         var key = mongooseFields[i];
                         var msSqlKey = bonusTypeSchema.aliases[key];
 
@@ -192,8 +192,8 @@ module.exports = function (models) {
 
                             objectToSave['companyInfo.industry'] = industry ? industry._id : industry;
 
-                            if(!objectToSave.type){
-                                objectToSave.type = objectToSave['companyInfo.size'] ? 'Company': 'Person';
+                            if (!objectToSave.type) {
+                                objectToSave.type = objectToSave['companyInfo.size'] ? 'Company' : 'Person';
                             }
 
                             model = new Customer(objectToSave);
@@ -233,8 +233,8 @@ module.exports = function (models) {
 
         function fetchWorkflow(query, callback) {
             query = query || {
-                    wId: 'Projects'
-                };
+                wId: 'Projects'
+            };
 
             var projectionObject = {
                 status: 1,
@@ -488,7 +488,7 @@ module.exports = function (models) {
                                 }
 
                                 objectToSave.project.customer = {
-                                    _id: result.project.customer ? result.project.customer._id: null,
+                                    _id: result.project.customer ? result.project.customer._id : null,
                                     name: result.project.customer && result.project.customer.name ? result.project.customer.name.first + ' ' + result.project.customer.name.last : ''
                                 };
 
@@ -671,8 +671,8 @@ module.exports = function (models) {
 
 
                             model = new Invoice(objectToSave);
-                            model.save(function(err, invoice){
-                                if(err){
+                            model.save(function (err, invoice) {
+                                if (err) {
                                     return cb(err);
                                 }
                                 cb();
@@ -765,8 +765,11 @@ module.exports = function (models) {
                                     if (err) {
                                         return callback(err);
                                     }
-                                    Customer.populate(invoice.project, { path: 'customer' , options: {lean: true}}, function(err, customer){
-                                        if(err){
+                                    Customer.populate(invoice.project, {
+                                        path: 'customer',
+                                        options: {lean: true}
+                                    }, function (err, customer) {
+                                        if (err) {
                                             return callback(err);
                                         }
 
@@ -787,8 +790,8 @@ module.exports = function (models) {
                             }
 
                             model = new Payment(objectToSave);
-                            model.save(function(err, result){
-                                if(err){
+                            model.save(function (err, result) {
+                                if (err) {
                                     return cb(err);
                                 }
 
@@ -796,8 +799,8 @@ module.exports = function (models) {
                                 console.log(invoiceId);
                                 console.log('======================================');
 
-                                Invoice.update({_id: invoiceId}, {$addToSet: {payments: result._id}}, function(err, invoice){
-                                    if(err){
+                                Invoice.update({_id: invoiceId}, {$addToSet: {payments: result._id}}, function (err, invoice) {
+                                    if (err) {
                                         return cb(err);
                                     }
                                     cb(null, result);
@@ -867,24 +870,24 @@ module.exports = function (models) {
         var Holiday = models.get(req.session.lastDb, holidayCollection, HolidaySchema);
         var Vacation = models.get(req.session.lastDb, vacationCollection, VacationSchema);
         var Workflow = models.get(req.session.lastDb, 'workflows', WorkflowSchema);
-        var MonthHours =  models.get(req.session.lastDb, monthHoursCollection, MonthHoursSchema);
+        var MonthHours = models.get(req.session.lastDb, monthHoursCollection, MonthHoursSchema);
 
-        function importMonthHours (monthHoursSchema, seriesCb){
+        function importMonthHours(monthHoursSchema, seriesCb) {
             var query = queryBuilder(monthHoursSchema.table);
             var waterfallTasks;
 
-            function getData(callback){
+            function getData(callback) {
                 handler.importData(query, callback);
             }
 
-            function saverMonthHours(fetchedArray, callback){
+            function saverMonthHours(fetchedArray, callback) {
                 var model;
                 var mongooseFields = Object.keys(monthHoursSchema.aliases);
 
                 async.eachLimit(fetchedArray, 100, function (fetchedMonthHours, cb) {
                     var objectToSave = {};
 
-                    for (var i = mongooseFields.length - 1; i >= 0; i--){
+                    for (var i = mongooseFields.length - 1; i >= 0; i--) {
                         var key = mongooseFields[i];
                         var msSqlKey = monthHoursSchema.aliases[key];
 
@@ -1347,7 +1350,7 @@ module.exports = function (models) {
                 var model;
                 var mongooseFields = Object.keys(vacationShema.aliases);
 
-                async.eachLimit(fetchedArray, 100, function (fetchedVacation, cb) {
+                async.eachSeries(fetchedArray, function (fetchedVacation, cb) {
                     var objectToSave = {};
                     var employeeQuery;
                     var key;
@@ -1378,8 +1381,13 @@ module.exports = function (models) {
 
                     if (fetchedVacation) {
                         var date = new Date(fetchedVacation['StartDate']);
+                        var startDay = new Date(fetchedVacation.StartDate).getDate();
+                        var endDay = new Date(fetchedVacation.EndDate).getDate();
+                        var daysCount;
+
                         objectToSave.month = date.getMonth() + 1;
                         objectToSave.year = date.getFullYear();
+                        daysCount = new Date(objectToSave.year, objectToSave.month, 0).getDate();
 
                         employeeQuery = {
                             ID: fetchedVacation['Employee']
@@ -1404,9 +1412,31 @@ module.exports = function (models) {
                                         objectToSave.department._id = employee.department._id;
                                         objectToSave.department.name = employee.department.departmentName;
                                     }
+                                    Vacation.findOne({
+                                        month: objectToSave.month,
+                                        year: objectToSave.year,
+                                        'employee._id': objectToSave.employee._id
+                                    })
+                                        .exec(function (err, result) {
+                                            if (err) {
+                                                cb(err)
+                                            }
+                                            if (result) {
+                                                for (var i = endDay; i >= startDay; i--) {
+                                                    result.vacArray[i] = fetchedVacation.AbsenceType;
+                                                }
+                                                Vacation.update({_id: result._id}, {$set: {vacArray: result.vacArray}}, cb);
+                                            } else {
+                                                objectToSave.vacArray = new Array(daysCount);
 
-                                    model = new Vacation(objectToSave);
-                                    model.save(cb);
+                                                for (var i = endDay; i >= startDay; i--) {
+                                                    objectToSave.vacArray[i] = fetchedVacation.AbsenceType;
+                                                }
+
+                                                model = new Vacation(objectToSave);
+                                                model.save(cb);
+                                            }
+                                        });
                                 }
                             });
                     }
