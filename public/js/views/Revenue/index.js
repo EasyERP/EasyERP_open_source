@@ -152,7 +152,9 @@ define([
 
             this.monthArr = _.sortBy(this.monthArr, function(monthObject){
                 return monthObject.year*100 + monthObject.month
-            })
+            });
+
+            this.fetchPaidBySales();
         },
 
         changeWeek: function () {
@@ -216,7 +218,7 @@ define([
 
             this.fetchBySales();
             this.fetchByDeps();
-            this.fetchPaidBySales();
+           /* this.fetchPaidBySales();*/
 
             this.model.set('weeksArr', weeksArr);
         },
@@ -249,10 +251,7 @@ define([
 
         fetchPaidBySales: function () {
             var self = this;
-            var data = {
-                month: this.model.get('currentMonth'),
-                year: this.model.get('currentYear')
-            };
+            var data = this.paidUnpaidDateRange;
 
             dataService.getData('/revenue/paidwtrack', data, function (byDepData) {
                 self.model.set('paidBySales', byDepData);
