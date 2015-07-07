@@ -16,7 +16,7 @@ var Holiday = function (models) {
         query.exec(function (err, result) {
             if (next) {
                 if (err) {
-                    next(err);
+                    return next(err);
                 }
 
                 res.status(200).send({count: result.length});

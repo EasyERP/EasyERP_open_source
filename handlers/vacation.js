@@ -131,7 +131,7 @@ var Vacation = function (models) {
         });
     };
 
-    function getVacationFilter(req, res, next) {
+    /*function getVacationFilter(req, res, next) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getReadAccess(req, req.session.uId, 70, function (access) {
                 if (access) {
@@ -207,8 +207,104 @@ var Vacation = function (models) {
                         ]
                     );
 
-                    /*REMOVE*/
+                    *//*REMOVE*//*
                     console.dir(queryObject);
+
+                    query.exec(function (err, result) {
+                        if (err) {
+                            return next(err);
+                        }
+                        if (options.month) {
+                            res.status(200).send(result);
+                        } else {
+                            async.waterfall([
+                                    function (callback) {
+                                        var resultObj = {
+                                            curYear: [],
+                                            preYear: []
+                                        };
+
+                                        result.forEach(function(element) {
+                                            var date = moment([element.year, element.month]);
+
+                                            if (date >= startDate && date <= endDate) {
+                                                resultObj['curYear'].push(element);
+                                            } else {
+                                                resultObj['preYear'].push(element);
+                                            }
+                                        });
+
+                                        callback(null, resultObj);
+                                    },
+                                    function (result, callback) {
+                                        var stat = calculate(result['preYear'], options.year - 1);
+
+                                        callback(null, result, stat);
+                                    }
+                                ],
+                                function (err, object, stat) {
+                                    if (err) {
+                                        return next(err);
+                                    }
+                                    res.status(200).send({data: object['curYear'], stat: stat});
+
+                                }
+                            );
+                        }
+                    });
+                } else {
+                    res.send(403);
+                }
+            });
+
+        } else {
+            res.send(401);
+        }
+    };*/
+
+    function getVacationFilter(req, res, next) {
+        if (req.session && req.session.loggedIn && req.session.lastDb) {
+            access.getReadAccess(req, req.session.uId, 70, function (access) {
+                if (access) {
+                    var Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
+                    var options = req.query;
+                    var queryObject = {};
+                    var query;
+
+                    var startDate;
+                    var endDate;
+
+                    if (options) {
+                        if (options.employee) {
+                            queryObject['employee._id'] = objectId(options.employee);
+                        }
+                        if (options.year && options.year !== 'Line Year') {
+                            if (options.month) {
+                                queryObject.year = options.year;
+                                queryObject.month = options.month;
+                            } else {
+                                endDate = moment([options.year, 11]);
+                                startDate = moment([options.year, 0]);
+
+                                queryObject.year = {'$in': [options.year, (options.year - 1).toString()]};
+                            }
+                        } else if (options.year) {
+                            var date = new Date();
+
+                            date = moment([date.getFullYear(), date.getMonth()]);
+
+                            endDate = new Date(date);
+                            queryObject.endDate = {'$lte': endDate};
+
+                            date.subtract(12, 'M');
+                            startDate = new Date(date);
+
+                            date.subtract(12, 'M');
+                            queryObject.startDate = {'$gte': new Date(date)};
+                        }
+                    }
+
+                    query = Vacation.find(queryObject);
 
                     query.exec(function (err, result) {
                         if (err) {
