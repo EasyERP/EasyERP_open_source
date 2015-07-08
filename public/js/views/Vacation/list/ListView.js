@@ -446,15 +446,14 @@ define([
             },
 
             checkEmptyArray: function (array) {
-                var result = true;
 
-                for (var i = array.length; i >= 0; i--) {
-                    if (array[i]) {
-                        result = false;
-                    }
+                array = _.compact(array);
+
+                if (array.length) {
+                    return false;
                 }
 
-                return result;
+                return true;
             },
 
             chooseOption: function (e) {
@@ -527,7 +526,7 @@ define([
                 function checkDay(element, selectedClass) {
                     var className;
                     var employeesCount = dayTotalElement.text() === '' ? 0 : parseInt(dayTotalElement.text());
-                    var vacDaysCount = parseInt(tdTotalDays.text());
+                    var vacDaysCount = tdTotalDays.text() === '' ? 0 : parseInt(tdTotalDays.text());
 
                     if (element.hasClass('V')) {
                         className = 'V';
@@ -570,8 +569,6 @@ define([
 
                     targetElement.text(element._id);
 
-                    changedAttr.vacArray = _.clone(editVacationModel.toJSON().vacArray);
-
                     if (changedAttr && changedAttr.vacArray) {
 
                         if (targetElement.text() === '') {
@@ -586,9 +583,12 @@ define([
                         }
 
                     } else {
-                        changedAttr.vacArray = new Array(this.daysCount);
+                        changedAttr.vacArray = _.clone(editVacationModel.toJSON().vacArray);
+                        if (!changedAttr.vacArray) {
+                            changedAttr.vacArray = new Array(this.daysCount);
+                        }
+                        checkDay(targetElement, element._id);
                         changedAttr.vacArray[dayIndex] = targetElement.text();
-                        targetElement.addClass(element._id);
                     }
                 }
 
