@@ -2,13 +2,13 @@
  * Created by German on 03.07.2015.
  */
 define([
-    'text!templates/vacationDashboard/rowTemplate.html',
-    'models/VacationDashboardModel',
+    'text!templates/vacationDashboard/rowTemplate.html'
+    /*'models/VacationDashboardModel',
     'populate',
-    'moment'
-], function (mainTemplate, vacationDashboardModel, populate, moment) {
+    'moment'*/
+], function (mainTemplate/*, vacationDashboardModel, populate, moment*/) {
     var View = Backbone.View.extend({
-        el: '#content-holder',
+        el: '#dashboardBody',
 
         template: _.template(mainTemplate),
 
@@ -17,13 +17,14 @@ define([
         },
 
         initialize: function () {
-
+            this.render();
         },
 
         render: function () {
             var self = this;
+            var departments = [{departmentName: 'iOs'}, {departmentName: 'Android'}];
 
-            this.$el.html(this.template(self.model.toJSON()));
+            this.$el.html(this.template({departments: departments}));
 
             this.rendered = true;
 

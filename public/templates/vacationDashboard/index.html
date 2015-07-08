@@ -6,15 +6,15 @@
                     <span>#</span>
                 </th>
                 <th>
-                    <span>#</span>
+                    <span>Employee</span>
                 </th>
                 <th>
-                    <span>#</span>
+                    <span>IsLead</span>
                 </th>
                 <% weeks.forEach(function(week){ %>
-                    <td id="<%= week.number %>">
-                        <span><%= week.date (week.number) %></span>
-                    </td>
+                    <th id="<%= week.number %>">
+                        <span><%= week.lastDate %> (<%= week.week %>)</span>
+                    </th>
                 <% }) %>
             </tr>
         </thead>

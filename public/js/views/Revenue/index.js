@@ -15,8 +15,9 @@ define([
     'models/Revenue',
     'moment',
     'dataService',
-    'async'
-], function (mainTemplate, weeksArray, tableByDep, bySalesByDep, perWeek, paidBySales, paidBySalesItems, unpaidBySales, monthsArray, perMonth, RevenueModel, moment, dataService, async) {
+    'async',
+    'custom'
+], function (mainTemplate, weeksArray, tableByDep, bySalesByDep, perWeek, paidBySales, paidBySalesItems, unpaidBySales, monthsArray, perMonth, RevenueModel, moment, dataService, async, custom) {
     var View = Backbone.View.extend({
         el: '#content-holder',
 
@@ -229,6 +230,8 @@ define([
             this.fetchByDeps();
 
             this.model.set('weeksArr', weeksArr);
+
+            custom.cashToApp('weeksArr', weeksArr);
         },
 
         fetchBySales: function () {

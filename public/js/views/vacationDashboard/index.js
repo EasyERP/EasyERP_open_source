@@ -2,13 +2,10 @@
  * Created by German on 03.07.2015.
  */
 define([
-    'text!templates/vacationDashboard/mainTemplate.html',
-    'models/VacationDashboardModel',
+    'text!templates/vacationDashboard/index.html',
     'views/vacationDashboard/rowView',
-    'populate',
-    'moment',
-    'dataService'
-], function (mainTemplate, vacationDashboardModel, rowView, populate, moment, dataService) {
+    'custom'
+], function (mainTemplate, rowView, custom) {
     var View = Backbone.View.extend({
         el: '#content-holder',
 
@@ -19,15 +16,16 @@ define([
         },
 
         initialize: function () {
-
+            this.render();
         },
 
         render: function () {
             var self = this;
+            var weeskArr = custom.retriveFromCash('weeksArr') || [];
 
-            this.$el.html(this.template(self.model.toJSON()));
+            this.$el.html(this.template({weeks: weeskArr}));
 
-            this.rendered = true;
+            new rowView();
 
             return this;
         }
