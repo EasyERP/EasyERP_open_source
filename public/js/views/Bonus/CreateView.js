@@ -1,22 +1,25 @@
 define([
-        "text!templates/Bonus/CreateBonus.html"
+        "text!templates/Bonus/CreateTemplate.html",
+        'models/BonusModel'
     ],
-    function (CreateTemplate) {
+    function (CreateTemplate, currentModel) {
 
         var CreateView = Backbone.View.extend({
             el: '#bonusTable',
             template: _.template(CreateTemplate),
 
             initialize: function (options) {
-                this.render(options);
+                var model = new currentModel();
+                model = model.toJSON();
+                model.startDate.date = options.StartDate;
+                model.endDate.date = options.EndDate;
+                this.render(model);
             },
 
-            events: {
-
-            },
+            events: {},
 
             render: function (options) {
-                this.$el.prepend(this.template({options: options}));
+                this.$el.prepend(this.template(options));
 
                 return this;
             }

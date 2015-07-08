@@ -19,11 +19,23 @@ define([
         events: {
             'click #createBonus': 'addBonus',
             'click #removeBonus': 'removeBonus',
-            'click .newSelectList': 'showSelect',
-            'click .startDate': 'selectStartDate',
-            'click .endDate': 'selectEndDate',
+            "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
+            "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
+            "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
+            'click .choseType': 'showSelect',
+            'click .choseEmployee': 'showSelect',
+            //'click .startDate': 'selectStartDate',
+            //'click .endDate': 'selectEndDate',
             'click .checkbox': 'checkBonus',
-            'click #check_all': 'checkAllBonus'
+            'click #check_all': 'checkAllBonus',
+            'click .startDate': 'showCheckbox',
+            'click .endDate': 'showCheckbox'
+        },
+
+        showCheckbox: function(e) {
+            var target = $(e.target);
+            var input = target.find('input[type=checkbox]');
+
         },
 
         checkBonus: function () {
@@ -38,19 +50,68 @@ define([
             populate.showSelect(e, prev, next, this, 12);
         },
 
+        nextSelect: function (e) {
+            this.showNewSelect(e, false, true);
+        },
+
+        prevSelect: function (e) {
+            this.showNewSelect(e, true, false);
+        },
+
+        showNewSelect: function (e, prev, next) {
+            e.stopPropagation();
+            populate.showSelect(e, prev, next, this);
+
+            return false;
+        },
+
+        chooseOption: function (e) {
+            e.preventDefault();
+            var target = $(e.target);
+            var closestTD = target.closest("td");
+            var targetElement = closestTD.length ? closestTD : target.closest("th").find('a');
+            var tr = target.closest("tr");
+            var id = target.attr("id");
+            var attr = targetElement.attr("id") || targetElement.data("content");
+            var elementType = '#' + attr;
+            var element = _.find(this.responseObj[elementType], function (el) {
+                return el._id === id;
+            });
+            var employee;
+            var bonus;
+            var model = new currentModel();
+
+            if (elementType === '#employee') {
+                tr.find('[data-content="employee"]').text(element.name);
+
+                employee = _.clone(model.get('employee'));
+
+                employee._id = element._id;
+                employee.name = target.text();
+            }
+
+            if (elementType === '#bonus') {
+                tr.find('[data-content="bonus"]').text(element.name);
+
+                bonus = _.clone(model.get('bonus'));
+
+                bonus._id = element._id;
+                bonus.name = target.text();
+            }
+
+            this.hideNewSelect();
+
+            return false;
+        },
+
+        hideNewSelect: function () {
+            $(".newSelectList").remove();
+        },
+
         addBonus: function (e) {
             e.preventDefault();
 
-            var model = new currentModel();
-
-            new createView(model.toJSON());
-
-            //if (!this.isNewRow()) {
-            //    this.showSaveCancelBtns();
-            //    this.editCollection.add(model);
-            //
-            //    new createView();
-            //}
+            new createView(this.model.toJSON());
         },
 
         removeBonus: function (e) {
@@ -76,16 +137,7 @@ define([
             });
 
             dataService.getData("/bonusType/list", null, function (bonus) {
-                var bonusList = _.map(bonus, function (item) {
-                    var newItem = {
-                        id: item._id,
-                        name: item.name
-                    };
-
-                    return newItem;
-                });
-
-                self.responseObj['#bonusType'] = bonusList;
+                self.responseObj['#bonus'] = bonus;
             });
 
             return this;

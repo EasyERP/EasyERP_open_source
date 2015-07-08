@@ -1,0 +1,29 @@
+<tr id="false" data-id="">
+    <td class="notForm"><input type="checkbox" class="checkbox" value=""/></td>
+    <td></td>
+    <td data-content="bonus" class="choseType">
+        <%=bonus ? bonus.name : ''%>
+    </td>
+    <td data-content="employee" class="choseEmployee">
+        <%=employee ? employee.name : ''%>
+    </td>
+    <td data-content="startDate" class="startDate">
+        <input type="checkbox" checked="<%=startDate.start%>">
+        <%if (startDate.start) {%>
+        <span>From Start Date</span>
+
+        <%}%>
+        <%if (!startDate.start) {%>
+        <%=startDate ? startDate.date : ''%>
+        <%}%>
+    </td>
+    <td data-content="endDate" class="endDate">
+        <input type="checkbox" checked="<%=endDate.end%>">
+        <%if (endDate.end) {%>
+            <span>To End Date</span>
+        <%}%>
+        <%if (!endDate.end) {%>
+            <%=endDate ? endDate.date : ''%>
+        <%}%>
+    </td>
+</tr>
