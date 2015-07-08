@@ -1,0 +1,39 @@
+<div id="top-bar-bonus">
+    <div id="createBtnHolder">
+        <a href="javascript;" class="icon add left" title="Create" id="createBonus">5</a>
+        <!--<a href="javascript;" class="icon edit left" title="Edit" id="editBonus">4</a>-->
+        <a href="javascript;" class="icon remove left" title="Remove"  id="removeBonus">x</a>
+    </div>
+</div>
+<table class="list task-list">
+    <thead>
+    <tr>
+        <th><input type="checkbox" id="check_all"/></th>
+        <th>N</th>
+        <th>Bonus Name</th>
+        <th>Employee</th>
+        <th>Start Date</th>
+        <th>End Date</th>
+    </tr>
+    </thead>
+    <tbody id="bonusTable">
+    <%bonus.forEach(function(bonus, index){ %>
+        <tr data-index="<%= index %>" data-id="<%=bonus._id%>">
+            <td><input type="checkbox" value="<%=bonus._id%>" class="checkbox" /></td>
+            <td><%=index + 1 %></td>
+            <td>
+                <a data-content="bonusType"></a>
+            </td>
+            <td>
+                <a data-content="employee"></a>
+            </td>
+            <td>
+                <a data-content="startDate"></a>
+            </td>
+            <td>
+                <a data-content="endDate"></a>
+            </td>
+        </tr>
+    <% }) %>
+    </tbody>
+</table>

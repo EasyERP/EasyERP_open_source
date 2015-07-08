@@ -4290,6 +4290,27 @@ table#workflows tr td.edit-status {
 #top-bar.banned {
   border-bottom: 0;
 }
+#top-bar-bonus {
+  display: block;
+  width: 100%;
+  height: 30px;
+  border-bottom: 1px solid #ababab;
+  background: #ffffff;
+  clear: both;
+  margin-top: 5px;
+}
+#top-bar-bonus h3 {
+  margin: 6px 0 0 0;
+  padding: 0 10px;
+  color: #333333 !important;
+  font-family: Title;
+  font-weight: normal;
+  float: left;
+  overflow: visible;
+}
+#top-bar-bonus.banned {
+  border-bottom: 0;
+}
 .createBtnHolder,
 #createBtnHolder {
   float: left;

@@ -3,12 +3,13 @@ define([
     'views/Notes/NoteView',
     'views/Notes/AttachView',
     'views/Assignees/AssigneesView',
+    'views/Bonus/BonusView',
     "custom",
     "common",
     "dataService",
 	"populate"
 ],
-    function (EditTemplate, noteView, attachView, AssigneesView, custom, common, dataService, populate) {
+    function (EditTemplate, noteView, attachView, AssigneesView, BonusView, custom, common, dataService, populate) {
 
         var EditView = Backbone.View.extend({
             contentType: "Projects",
@@ -282,6 +283,12 @@ define([
 				notDiv = this.$el.find('.assignees-container');
                 notDiv.append(
                     new AssigneesView({
+                        model: this.currentModel
+                    }).render().el
+                );
+                notDiv = this.$el.find('.bonus-container');
+                notDiv.append(
+                    new BonusView({
                         model: this.currentModel
                     }).render().el
                 );
