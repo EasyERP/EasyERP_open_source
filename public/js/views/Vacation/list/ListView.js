@@ -1,6 +1,7 @@
 define([
         'text!templates/Vacation/list/ListHeader.html',
-        'text!templates/Holiday/list/cancelEdit.html',
+        'text!templates/Vacation/list/cancelEdit.html',
+        'text!templates/Vacation/list/ListTotal.html',
         'views/Vacation/CreateView',
         'views/Vacation/list/ListItemView',
         'models/VacationModel',
@@ -14,7 +15,7 @@ define([
         'populate'
     ],
 
-    function (listTemplate, cancelEdit, createView, listItemView, vacationModel, vacationCollection, editCollection, common, dataService, CONSTANTS, async, moment, populate) {
+    function (listTemplate, cancelEdit, listTotal, createView, listItemView, vacationModel, vacationCollection, editCollection, common, dataService, CONSTANTS, async, moment, populate) {
         var VacationListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -72,23 +73,28 @@ define([
             savedNewModel: function (modelObject) {
                 var savedRow = this.$listTable.find('#false');
                 var modelId;
-                var checkbox = savedRow.find('input[type=checkbox]');
-                var editedEl = savedRow.find('.editing');
-                var editedCol = editedEl.closest('td');
 
                 modelObject = modelObject.success;
 
                 if (modelObject) {
                     modelId = modelObject._id;
                     savedRow.attr("data-id", modelId);
-                    checkbox.val(modelId);
                     savedRow.removeAttr('id');
                 }
 
+                this.changedModels = {};
+
                 this.hideSaveCancelBtns();
-                editedCol.text(editedEl.val());
-                editedEl.remove();
                 this.resetCollection(modelObject);
+            },
+
+            bindingEventsToEditedCollection: function (context) {
+                if (context.editCollection) {
+                    context.editCollection.unbind();
+                }
+                context.editCollection = new editCollection(context.collection.toJSON());
+                context.editCollection.on('saved', context.savedNewModel, context);
+                context.editCollection.on('updated', context.updatedOptions, context);
             },
 
             resetCollection: function (model) {
@@ -96,8 +102,9 @@ define([
                     model = new vacationModel(model);
                     this.collection.add(model);
                 } else {
-                    this.collection.set(this.editCollection.models, { remove: false });
+                    this.collection.set(this.editCollection.models, {remove: false});
                 }
+                this.bindingEventsToEditedCollection(this);
             },
 
             updatedOptions: function () {
@@ -129,6 +136,9 @@ define([
             saveItem: function () {
                 var model;
 
+                this.editCollection.on('saved', this.savedNewModel, this);
+                this.editCollection.on('updated', this.updatedOptions, this);
+
                 for (var id in this.changedModels) {
                     model = this.editCollection.get(id);
                     model.changed = this.changedModels[id];
@@ -136,7 +146,7 @@ define([
                 this.editCollection.save();
             },
 
-            setChangedValueToModel: function(){
+            setChangedValueToModel: function () {
                 var editedElement = this.$listTable.find('.editing');
                 var editedCol;
                 var editedElementRowId;
@@ -153,7 +163,7 @@ define([
                     editVacationModel = this.editCollection.get(editedElementRowId);
 
                     if (!this.changedModels[editedElementRowId]) {
-                        if(!editVacationModel.id){
+                        if (!editVacationModel.id) {
                             this.changedModels[editedElementRowId] = editVacationModel.attributes;
                         } else {
                             this.changedModels[editedElementRowId] = {};
@@ -170,7 +180,7 @@ define([
             vacationTypeForDD: function (content) {
                 var array = ['', 'Vacation', 'Personal', 'Sick', 'Education'];
 
-                array = _.map(array, function(element) {
+                array = _.map(array, function (element) {
                     element = {
                         name: element
                     };
@@ -184,7 +194,7 @@ define([
             monthForDD: function (content) {
                 var array = [];
 
-                for (var i=0; i<12; i++) {
+                for (var i = 0; i < 12; i++) {
                     array.push({
                         _id: moment().month(i).format('M'),
                         name: moment().month(i).format('MMMM')
@@ -383,7 +393,7 @@ define([
                 daysInMonth = date.daysInMonth();
                 dateDay = date;
 
-                for ( var i = 1; i <= daysInMonth; i++ ) {
+                for (var i = 1; i <= daysInMonth; i++) {
                     daysRow += '<th>' + dateDay.format('ddd') + '</th>';
                     daysNumRow += '<th>' + i + '</th>';
                     dateDay = date.add(1, 'd');
@@ -391,20 +401,20 @@ define([
 
                 daysRow = '<tr class="subHeaderHolder">' + daysRow + '</tr>';
 
-                daysNumRow = '<tr class="subHeaderHolder"><th class="oe_sortable" data-sort="employee.name">Employee Name</th><th>Department</th>' + daysNumRow +'<th>Total Days</th></tr>';
+                daysNumRow = '<tr class="subHeaderHolder"><th class="oe_sortable" data-sort="employee.name">Employee Name</th><th>Department</th>' + daysNumRow + '<th>Total Days</th></tr>';
 
                 this.daysCount = daysInMonth;
 
                 var columnContainer = $('#columnForDays');
-                var width = 80/daysInMonth;
+                var width = 80 / daysInMonth;
 
                 columnContainer.html('');
 
-                for (var i=daysInMonth; i>0; i--) {
+                for (var i = daysInMonth; i > 0; i--) {
                     columnContainer.append('<col width="' + width + '%">');
                 }
 
-                $(subHeaderContainer[0]).attr('colspan', daysInMonth-12);
+                $(subHeaderContainer[0]).attr('colspan', daysInMonth - 12);
                 $(subHeaderContainer[1]).replaceWith(daysRow);
                 $(subHeaderContainer[2]).replaceWith(daysNumRow);
             },
@@ -424,7 +434,7 @@ define([
                 return false;
             },
 
-            changedDataOptions: function() {
+            changedDataOptions: function () {
                 var month = this.monthElement.attr('data-content');
                 var year = this.yearElement.attr('data-content');
 
@@ -435,13 +445,27 @@ define([
                 this.collection.showMore(searchObject);
             },
 
+            checkEmptyArray: function (array) {
+                var result = true;
+
+                for (var i = array.length; i >= 0; i--) {
+                    if (array[i]) {
+                        result = false;
+                    }
+                }
+
+                return result;
+            },
+
             chooseOption: function (e) {
                 e.preventDefault();
+                var self = this;
                 var target = $(e.target);
                 var closestTD = target.closest("td");
                 var targetElement = closestTD.length ? closestTD : target.closest("th").find('a');
                 var tr = target.closest("tr");
-                var modelId = tr.data('id');
+                var tdTotalDays = $(tr).find('.totalDays');
+                var modelId = tr.attr('data-id');
                 var id = target.attr("id");
                 var attr = targetElement.attr("id") || targetElement.data("content");
                 var elementType = '#' + attr;
@@ -452,12 +476,14 @@ define([
                 var employee;
                 var department;
                 var changedAttr;
+                var dayIndex;
+                var dayTotalElement;
 
                 if (modelId) {
                     editVacationModel = this.editCollection.get(modelId);
 
                     if (!this.changedModels[modelId]) {
-                        if(!editVacationModel.id){
+                        if (!editVacationModel.id) {
                             this.changedModels[modelId] = editVacationModel.attributes;
                         } else {
                             this.changedModels[modelId] = {};
@@ -498,21 +524,73 @@ define([
                     changedAttr.department = department;
                 }
 
+                function checkDay(element, selectedClass) {
+                    var className;
+                    var employeesCount = dayTotalElement.text() === '' ? 0 : parseInt(dayTotalElement.text());
+                    var vacDaysCount = parseInt(tdTotalDays.text());
+
+                    if (element.hasClass('V')) {
+                        className = 'V';
+                    } else if (element.hasClass('P')) {
+                        className = 'P';
+                    } else if (element.hasClass('S')) {
+                        className = 'S';
+                    } else if (element.hasClass('E')) {
+                        className = 'E';
+                    }
+
+                    if (className) {
+                        if (className !== selectedClass) {
+                            element.toggleClass(className);
+
+                            if (selectedClass === '') {
+                                element.attr('class', 'editable');
+                                vacDaysCount -= 1;
+                                employeesCount -= 1;
+                            } else {
+                                element.toggleClass(selectedClass);
+                            }
+                        }
+                    } else {
+                        if (selectedClass !== '') {
+                            element.toggleClass(selectedClass);
+                            vacDaysCount += 1;
+                            employeesCount += 1;
+                        }
+                    }
+
+                    tdTotalDays.text(vacDaysCount);
+                    !employeesCount ? dayTotalElement.text('') : dayTotalElement.text(employeesCount);
+
+                }
+
                 if (elementType === '#vacType') {
-                    var dayIndex = targetElement.attr('data-dayID');
+                    dayIndex = targetElement.attr('data-dayID');
+                    dayTotalElement = $('#day' + dayIndex);
 
                     targetElement.text(element._id);
-                    targetElement.addClass(element._id);
+
+                    changedAttr.vacArray = _.clone(editVacationModel.toJSON().vacArray);
 
                     if (changedAttr && changedAttr.vacArray) {
-                        changedAttr.vacArray[dayIndex] = targetElement.text();
+
+                        if (targetElement.text() === '') {
+                            checkDay(targetElement, element._id);
+                            delete(changedAttr.vacArray[dayIndex]);
+                            if (this.checkEmptyArray(changedAttr.vacArray)) {
+                                this.deleteItem(modelId);
+                            }
+                        } else {
+                            checkDay(targetElement, element._id);
+                            changedAttr.vacArray[dayIndex] = targetElement.text();
+                        }
+
                     } else {
                         changedAttr.vacArray = new Array(this.daysCount);
                         changedAttr.vacArray[dayIndex] = targetElement.text();
+                        targetElement.addClass(element._id);
                     }
                 }
-
-                //targetElement.text(target.text());
 
                 this.hideNewSelect();
                 this.setEditable(targetElement);
@@ -520,15 +598,37 @@ define([
                 return false;
             },
 
+            getTotal: function (collection) {
+                var self = this;
+                var totalArray = new Array(this.daysCount);
+
+                async.each(collection, function (document) {
+
+                    for (var i = self.daysCount-1; i >= 0; i--) {
+                        if (document.vacArray[i]) {
+                            totalArray[i] = totalArray[i] ? totalArray[i] += 1 : 1;
+                        }
+                    }
+
+                });
+
+                return totalArray;
+            },
+
             render: function () {
                 $('.ui-dialog ').remove();
+
                 var self = this;
                 var currentEl = this.$el;
+                var collection;
 
+                var year = this.startTime.getFullYear();
                 var month = {};
+
+                var listTotalEl;
+
                 month.number = this.startTime.getMonth() + 1;
                 month.name = moment(this.startTime).format('MMMM');
-                var year = this.startTime.getFullYear();
 
                 currentEl.html('');
                 currentEl.append(_.template(listTemplate, {options: {month: month, year: year}}));
@@ -538,10 +638,22 @@ define([
 
                 this.renderdSubHeader(currentEl);
 
+                collection = this.collection.toJSON();
+
+                collection.forEach(function (document) {
+                    document = self.getVacDaysCount(document);
+                    return document;
+                });
+
                 currentEl.append(new listItemView({
-                    collection: this.collection,
+                    collection: collection,
                     daysCount: this.daysCount
-                }).render());//added two parameters page and items number
+                }).render());
+
+                listTotalEl = this.$el.find('#listTotal');
+
+                listTotalEl.html('');
+                listTotalEl.append(_.template(listTotal, {array: this.getTotal(collection)}));
 
                 this.filterEmployeesForDD(this);
                 this.vacationTypeForDD(this);
@@ -549,9 +661,7 @@ define([
                 this.yearForDD(this);
 
                 setTimeout(function () {
-                    self.editCollection = new editCollection(self.collection.toJSON());
-                    self.editCollection.on('saved', self.savedNewModel, self);
-                    self.editCollection.on('updated', self.updatedOptions, self);
+                    self.bindingEventsToEditedCollection(self);
 
                     self.$listTable = $('#listTable');
                 }, 10);
@@ -602,25 +712,33 @@ define([
             },
 
             showMoreContent: function (newModels) {
-                this.editCollection = new editCollection(newModels.toJSON());
-
+                var self=this;
                 var holder = this.$el;
+                var itemView;
+                var collection = newModels.toJSON();
+                var listTotalEl;
+
+                this.editCollection = new editCollection(collection);
+
+                collection.forEach(function (document) {
+                    document = self.getVacDaysCount(document);
+                    return document;
+                });
+
                 holder.find("#listTable").empty();
-                var itemView = new listItemView({
-                    collection: newModels,
-                    daysCount: this.daysCount
-                });//added two parameters page and items number
+                itemView = new listItemView({
+                    collection: collection
+                });
                 holder.append(itemView.render());
 
+                listTotalEl = holder.find('#listTotal');
+
+                listTotalEl.html('');
+                listTotalEl.append(_.template(listTotal, {array: this.getTotal(collection)}));
+
                 itemView.undelegateEvents();
-                var pagenation = holder.find('.pagination');
-                if (newModels.length !== 0) {
-                    pagenation.show();
-                } else {
-                    pagenation.hide();
-                }
-                $("#top-bar-deleteBtn").hide();
-                $('#check_all').prop('checked', false);
+                this.hideSaveCancelBtns();
+
                 holder.find('#timeRecivingDataFromServer').remove();
                 holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             },
@@ -653,19 +771,21 @@ define([
             },
 
             deleteItemsRender: function (deleteCounter, deletePage) {
-                var pagenation;
                 var holder;
 
+                var month = this.monthElement.attr('data-content');
+                var year = this.yearElement.attr('data-content');
+
                 dataService.getData(this.collectionLengthUrl, {
-                    filter: this.filter,
                     newCollection: this.newCollection
                 }, function (response, context) {
                     context.listLength = response.count || 0;
                 }, this);
                 this.deleteRender(deleteCounter, deletePage, {
-                    filter: this.filter,
                     newCollection: this.newCollection,
-                    parrentContentId: this.parrentContentId
+                    parrentContentId: this.parrentContentId,
+                    month: month,
+                    year: year
                 });
 
                 holder = this.$el;
@@ -674,122 +794,101 @@ define([
                     var created = holder.find('#timeRecivingDataFromServer');
                     created.before(new listItemView({
                         collection: this.collection,
-                        page: holder.find("#currentShowPage").val(),
-                        itemsNumber: holder.find("span#itemsNumber").text()
-                    }).render());//added two parameters page and items number
-                }
-
-                pagenation = this.$el.find('.pagination');
-
-                if (this.collection.length === 0) {
-                    pagenation.hide();
-                } else {
-                    pagenation.show();
+                        daysCount: this.daysCount
+                    }).render());
                 }
 
                 this.editCollection.reset(this.collection.models);
-            },
-
-            triggerDeleteItemsRender: function (deleteCounter) {
-                this.deleteCounter = deleteCounter;
-                this.deletePage = $("#currentShowPage").val();
-                this.deleteItemsRender(deleteCounter, this.deletePage);
+                this.hideSaveCancelBtns();
             },
 
             deleteItems: function () {
-                var currentEl = this.$el;
-                var that = this,
-                    mid = 39,
-                    model;
-                var localCounter = 0;
-                var count = $("#listTable input:checked").length;
-                this.collectionLength = this.collection.length;
-
-                if (!this.changed) {
-                    var answer = confirm("Realy DELETE items ?!");
-                    var value;
-
-                    if (answer === true) {
-                        $.each($("#listTable input:checked"), function (index, checkbox) {
-                            value = checkbox.value;
-
-                            if (value.length < 24) {
-                                that.editCollection.remove(value);
-                                that.editCollection.on('remove', function () {
-                                    this.listLength--;
-                                    localCounter++;
-
-                                    if (index === count - 1) {
-                                        that.triggerDeleteItemsRender(localCounter);
-                                    }
-
-                                }, that);
-                            } else {
-
-                                model = that.collection.get(value);
-                                model.destroy({
-                                    headers: {
-                                        mid: mid
-                                    },
-                                    wait: true,
-                                    success: function () {
-                                        that.listLength--;
-                                        localCounter++;
-
-                                        if (index === count - 1) {
-                                            that.triggerDeleteItemsRender(localCounter);
-                                        }
-                                    },
-                                    error: function (model, res) {
-                                        if (res.status === 403 && index === 0) {
-                                            alert("You do not have permission to perform this action");
-                                        }
-                                        that.listLength--;
-                                        localCounter++;
-                                        if (index == count - 1) {
-                                            if (index === count - 1) {
-                                                that.triggerDeleteItemsRender(localCounter);
-                                            }
-                                        }
-
-                                    }
-                                });
-                            }
-                        });
-                    }
-                } else {
+                if (this.changed) {
                     this.cancelChanges();
                 }
+            },
+
+            deleteItem: function (id) {
+                var self = this;
+                var model;
+                var mid = 39;
+
+                if (id.length < 24) {
+                    this.editCollection.remove(id);
+                    delete this.changedModels[id];
+                    this.editCollection.on('remove', function () {
+                        self.deleteItemsRender(1, 1);
+                    }, self);
+                } else {
+                    model = this.collection.get(id);
+                    model.destroy({
+                        headers: {
+                            mid: mid
+                        },
+                        wait: true,
+                        success: function () {
+                            self.deleteItemsRender(1, 1);
+                            delete self.changedModels[id];
+                        },
+                        error: function (model, res) {
+                            if (res.status === 403 && index === 0) {
+                                alert("You do not have permission to perform this action");
+                            }
+                            self.deleteItemsRender(1, 1);
+
+                        }
+                    });
+                }
+
+            },
+
+            getVacDaysCount: function(model) {
+                var array = _.compact(model.vacArray);
+
+                model.countVacationDays = array.length;
+                return model;
             },
 
             cancelChanges: function () {
                 var self = this;
                 var edited = this.edited;
                 var collection = this.collection;
-                var editedCollectin = this.editCollection;
+                var listTotalEl;
 
                 async.each(edited, function (el, cb) {
                     var tr = $(el).closest('tr');
-                    var rowNumber = tr.find('[data-content="number"]').text();
                     var id = tr.data('id');
                     var template = _.template(cancelEdit);
                     var model;
 
                     if (!id) {
                         return cb('Empty id');
+                    } else if (id.length < 24) {
+                        tr.remove();
+                        model = self.changedModels;
+
+                        if(model) {
+                            delete model[id];
+                        }
+
+                        return cb();
                     }
 
                     model = collection.get(id);
-                    model = model.toJSON();
-                    model.index = rowNumber;
-                    tr.replaceWith(template({ holiday: model }));
+                    model = self.getVacDaysCount(model.toJSON());
+                    tr.replaceWith(template({vacation: model}));
                     cb();
                 }, function (err) {
                     if (!err) {
-                        self.editCollection = new editCollection(collection.toJSON());
+                        self.bindingEventsToEditedCollection(self);
                         self.hideSaveCancelBtns();
                     }
                 });
+
+                listTotalEl = this.$el.find('#listTotal');
+
+                listTotalEl.html('');
+                listTotalEl.append(_.template(listTotal, {array: this.getTotal(this.collection.toJSON())}));
             }
 
         });

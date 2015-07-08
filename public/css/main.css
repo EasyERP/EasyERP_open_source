@@ -7804,6 +7804,10 @@ textarea#editInput {
   border: 1px solid #d2d2d2;
   text-align: center;
 }
+.vacation-list tbody td.editable .newSelectList,
+.vacation-list tfoot td.editable .newSelectList {
+  color: #000;
+}
 .vacation-list tbody td.employee,
 .vacation-list tfoot td.employee,
 .vacation-list tbody td.department,

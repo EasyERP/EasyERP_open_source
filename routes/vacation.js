@@ -10,9 +10,9 @@ module.exports = function (models) {
 
     router.get('/getYears', handler.getYears);
     router.get('/:viewType', handler.getForView);
-    //router.patch('/', handler.putchBulk);
-    //router.patch('/:id', handler.putchModel);
-    //router.delete('/:id', handler.remove);
+    router.patch('/', handler.putchBulk);
+    router.patch('/:id', handler.putchModel);
+    router.delete('/:id', handler.remove);
     router.post('/', handler.create);
 
     return router;
