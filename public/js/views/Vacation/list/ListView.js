@@ -168,7 +168,7 @@ define([
             },
 
             vacationTypeForDD: function (content) {
-                var array = ['Vacation', 'Personal', 'Sick', 'Education'];
+                var array = ['', 'Vacation', 'Personal', 'Sick', 'Education'];
 
                 array = _.map(array, function(element) {
                     element = {
@@ -492,7 +492,7 @@ define([
                     employee.name = target.text();
 
                     department._id = element.department._id;
-                    department.departmentName = element.department.departmentName;
+                    department.name = element.department.departmentName;
 
                     changedAttr.employee = employee;
                     changedAttr.department = department;
@@ -629,7 +629,9 @@ define([
                 var startData = {
                     daysCount: this.daysCount,
                     employee: {},
-                    department: {}
+                    department: {},
+                    month: this.monthElement.attr('data-content'),
+                    year: this.yearElement.text()
                 };
 
                 var model = new vacationModel(startData);

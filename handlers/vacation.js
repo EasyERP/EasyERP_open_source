@@ -22,32 +22,25 @@ var Vacation = function (models) {
         var endYear;
         var dayCount;
         var dayMonthCount;
-        var startType;
-        var endType;
         var monthArray;
         var monthYear;
         var startMonth;
 
         data.forEach(function (attendance) {
-            attendance.vacationArray.forEach(function (day) {
-                startType = moment(day.startDate).date();
-                endType = moment(day.endDate).date();
-
-                for (var k = startType - 1; k < endType; k++) {
-                    switch (day.vacationType) {
-                        case 'V':
-                            vacation++;
-                            break;
-                        case 'P':
-                            personal++;
-                            break;
-                        case 'S':
-                            sick++;
-                            break;
-                        case 'E':
-                            education++;
-                            break;
-                    }
+            attendance.vacArray.forEach(function (day) {
+                switch (day) {
+                    case 'V':
+                        vacation++;
+                        break;
+                    case 'P':
+                        personal++;
+                        break;
+                    case 'S':
+                        sick++;
+                        break;
+                    case 'E':
+                        education++;
+                        break;
                 }
             });
         });
@@ -118,7 +111,7 @@ var Vacation = function (models) {
             if (err) {
                 return next(err);
             }
-            result = _.map(result, function(element) {
+            result = _.map(result, function (element) {
                 var el = element;
 
                 element = {};
@@ -131,7 +124,140 @@ var Vacation = function (models) {
         });
     };
 
-    /*function getVacationFilter(req, res, next) {
+    /*function getVac   ationFilter(req, res, next) {
+     if (req.session && req.session.loggedIn && req.session.lastDb) {
+     access.getReadAccess(req, req.session.uId, 70, function (access) {
+     if (access) {
+     var Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
+     var options = req.query;
+     var queryObject = {};
+     var query;
+
+     var startDate;
+     var endDate;
+
+     if (options) {
+     if (options.employee) {
+     queryObject['employee._id'] = objectId(options.employee);
+     }
+     if (options.year && options.year !== 'Line Year') {
+     if (options.month) {
+     queryObject.year = options.year;
+     queryObject.month = options.month;
+     } else {
+     endDate = moment([options.year, 12]);
+     startDate = moment([options.year, 1]);
+
+     queryObject.year = {'$in': [options.year, (options.year - 1).toString()]};
+     }
+     } else if (options.year) {
+     var date = new Date();
+
+     date = moment([date.getFullYear(), date.getMonth()]);
+
+     endDate = new Date(date);
+     queryObject.endDate = {'$lte': endDate};
+
+     date.subtract(12, 'M');
+     startDate = new Date(date);
+
+     date.subtract(12, 'M');
+     queryObject.startDate = {'$gte': new Date(date)};
+     }
+     }
+
+     query = Vacation.aggregate(
+     [
+     {$match: queryObject},
+     {
+     $group: {
+     _id: {
+     employee: "$employee",
+     department: "$department",
+     month: "$month",
+     year: "$year"
+     },
+     vacationArray: {
+     $push: {
+     _idVacation: "$_id",
+     vacationType: "$vacationType",
+     startDate: "$startDate",
+     endDate: "$endDate"
+     }
+     }
+     }
+     },
+     {
+     $project: {
+     _id: {$concat: ["$_id.month", "$_id.year", "$_id.employee.name"]},
+     employee: "$_id.employee",
+     department: "$_id.department",
+     month: "$_id.month",
+     year: "$_id.year",
+     vacationArray: 1
+     }
+     }
+     ]
+     );
+
+     */
+    /*REMOVE*/
+    /*
+     console.dir(queryObject);
+
+     query.exec(function (err, result) {
+     if (err) {
+     return next(err);
+     }
+     if (options.month) {
+     res.status(200).send(result);
+     } else {
+     async.waterfall([
+     function (callback) {
+     var resultObj = {
+     curYear: [],
+     preYear: []
+     };
+
+     result.forEach(function(element) {
+     var date = moment([element.year, element.month]);
+
+     if (date >= startDate && date <= endDate) {
+     resultObj['curYear'].push(element);
+     } else {
+     resultObj['preYear'].push(element);
+     }
+     });
+
+     callback(null, resultObj);
+     },
+     function (result, callback) {
+     var stat = calculate(result['preYear'], options.year - 1);
+
+     callback(null, result, stat);
+     }
+     ],
+     function (err, object, stat) {
+     if (err) {
+     return next(err);
+     }
+     res.status(200).send({data: object['curYear'], stat: stat});
+
+     }
+     );
+     }
+     });
+     } else {
+     res.send(403);
+     }
+     });
+
+     } else {
+     res.send(401);
+     }
+     };*/
+
+    function getVacationFilter(req, res, next) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getReadAccess(req, req.session.uId, 70, function (access) {
                 if (access) {
@@ -159,55 +285,49 @@ var Vacation = function (models) {
                             }
                         } else if (options.year) {
                             var date = new Date();
+                            var startQuery;
+                            var endQuery;
+                            var condition1;
+                            var condition2;
+                            var employeeQuery = {};
+
+                            employeeQuery['employee._id'] = queryObject['employee._id'];
 
                             date = moment([date.getFullYear(), date.getMonth()]);
 
                             endDate = new Date(date);
-                            queryObject.endDate = {'$lte': endDate};
+
+                            condition1 = {month: {'$lte': parseInt(date.format('M'))}};
+                            condition2 = {year: {'$lte': parseInt(date.format('YYYY'))}};
+
+                            console.dir(condition1);
+                            console.dir(condition2);
+
+                            endQuery = {'$and': [condition1, condition2, employeeQuery]};
 
                             date.subtract(12, 'M');
                             startDate = new Date(date);
 
                             date.subtract(12, 'M');
-                            queryObject.startDate = {'$gte': new Date(date)};
+
+                            condition1 = {month: {'$gte': parseInt(date.format('M'))}};
+                            condition2 = {year: {'$gte': parseInt(date.format('YYYY'))}};
+
+                            console.dir(condition1);
+                            console.dir(condition2);
+
+                            startQuery = {'$and': [condition1, condition2, employeeQuery]};
+
+                            queryObject = {};
+
+                            queryObject['$or'] = [startQuery, endQuery];
                         }
                     }
 
-                    query = Vacation.aggregate(
-                        [
-                            {$match: queryObject},
-                            {
-                                $group: {
-                                    _id: {
-                                        employee: "$employee",
-                                        department: "$department",
-                                        month: "$month",
-                                        year: "$year"
-                                    },
-                                    vacationArray: {
-                                        $push: {
-                                            _idVacation: "$_id",
-                                            vacationType: "$vacationType",
-                                            startDate: "$startDate",
-                                            endDate: "$endDate"
-                                        }
-                                    }
-                                }
-                            },
-                            {
-                                $project: {
-                                    _id: {$concat: ["$_id.month", "$_id.year", "$_id.employee.name"]},
-                                    employee: "$_id.employee",
-                                    department: "$_id.department",
-                                    month: "$_id.month",
-                                    year: "$_id.year",
-                                    vacationArray: 1
-                                }
-                            }
-                        ]
-                    );
+                    query = Vacation.find(queryObject);
 
-                    *//*REMOVE*//*
+                    console.dir(startQuery);
+                    console.dir(endQuery);
                     console.dir(queryObject);
 
                     query.exec(function (err, result) {
@@ -224,7 +344,7 @@ var Vacation = function (models) {
                                             preYear: []
                                         };
 
-                                        result.forEach(function(element) {
+                                        result.forEach(function (element) {
                                             var date = moment([element.year, element.month]);
 
                                             if (date >= startDate && date <= endDate) {
@@ -237,103 +357,11 @@ var Vacation = function (models) {
                                         callback(null, resultObj);
                                     },
                                     function (result, callback) {
-                                        var stat = calculate(result['preYear'], options.year - 1);
-
-                                        callback(null, result, stat);
-                                    }
-                                ],
-                                function (err, object, stat) {
-                                    if (err) {
-                                        return next(err);
-                                    }
-                                    res.status(200).send({data: object['curYear'], stat: stat});
-
-                                }
-                            );
-                        }
-                    });
-                } else {
-                    res.send(403);
-                }
-            });
-
-        } else {
-            res.send(401);
-        }
-    };*/
-
-    function getVacationFilter(req, res, next) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, 70, function (access) {
-                if (access) {
-                    var Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
-                    var options = req.query;
-                    var queryObject = {};
-                    var query;
-
-                    var startDate;
-                    var endDate;
-
-                    if (options) {
-                        if (options.employee) {
-                            queryObject['employee._id'] = objectId(options.employee);
-                        }
-                        if (options.year && options.year !== 'Line Year') {
-                            if (options.month) {
-                                queryObject.year = options.year;
-                                queryObject.month = options.month;
-                            } else {
-                                endDate = moment([options.year, 11]);
-                                startDate = moment([options.year, 0]);
-
-                                queryObject.year = {'$in': [options.year, (options.year - 1).toString()]};
-                            }
-                        } else if (options.year) {
-                            var date = new Date();
-
-                            date = moment([date.getFullYear(), date.getMonth()]);
-
-                            endDate = new Date(date);
-                            queryObject.endDate = {'$lte': endDate};
-
-                            date.subtract(12, 'M');
-                            startDate = new Date(date);
-
-                            date.subtract(12, 'M');
-                            queryObject.startDate = {'$gte': new Date(date)};
-                        }
-                    }
-
-                    query = Vacation.find(queryObject);
-
-                    query.exec(function (err, result) {
-                        if (err) {
-                            return next(err);
-                        }
-                        if (options.month) {
-                            res.status(200).send(result);
-                        } else {
-                            async.waterfall([
-                                    function (callback) {
-                                        var resultObj = {
-                                            curYear: [],
-                                            preYear: []
-                                        };
-
-                                        result.forEach(function(element) {
-                                            var date = moment([element.year, element.month]);
-
-                                            if (date >= startDate && date <= endDate) {
-                                                resultObj['curYear'].push(element);
-                                            } else {
-                                                resultObj['preYear'].push(element);
-                                            }
-                                        });
-
-                                        callback(null, resultObj);
-                                    },
-                                    function (result, callback) {
-                                        var stat = calculate(result['preYear'], options.year - 1);
+                                        if (options.year !== 'Line Year') {
+                                            var stat = calculate(result['preYear'], options.year - 1);
+                                        } else {
+                                            var stat = calculate(result['preYear'], options.year);
+                                        }
 
                                         callback(null, result, stat);
                                     }
