@@ -11,7 +11,8 @@ module.exports = function (models) {
 
     router.get('/getFilterValues', handler.getFilterValues);
     router.get('/totalCollectionLength', handler.totalCollectionLength);
-    router.get('/:viewType', handler.getByViewType);
+    router.get('/getWTrackById', handler.getWTrackById);
+    router.get('/:viewType',handler.getByViewType);
     router.post('/', handler.create);
     router.delete('/:id', handler.remove);
     router.patch('/', handler.putchBulk);

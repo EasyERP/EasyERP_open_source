@@ -3,9 +3,9 @@
  */
 define([
         'text!templates/bonusType/list/listHeader.html',
-        'views/bonusType/createView',
-        'views/bonusType/list/listItemView',
-        'views/bonusType/editView',
+        'views/bonusType/CreateView',
+        'views/bonusType/list/ListItemView',
+        'views/bonusType/EditView',
         'models/bonusTypeModel',
         'collections/bonusType/filterCollection',
         'collections/bonusType/editCollection',

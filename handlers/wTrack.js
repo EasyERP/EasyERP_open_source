@@ -567,6 +567,30 @@ var wTrack = function (models) {
         });
     };
 
+    this.getWTrackById = function(req, res, next){
+        var data = req.query;
+        var wTrackModel = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+        var query = {} ;
+
+        if (data._id){
+            query._id = objectId(data._id);
+        }
+
+        wTrackModel
+            .aggregate([
+                {
+                    $match: query
+                }
+            ], function (err, result) {
+                if (err) {
+                    return next(err);
+                }
+
+                res.status(200).send(result);
+            });
+    };
+
+
 };
 
 module.exports = wTrack;
