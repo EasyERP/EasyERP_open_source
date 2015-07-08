@@ -9,6 +9,7 @@ var Vacation = function (models) {
     var VacationSchema = mongoose.Schemas['Vacation'];
     var async = require('async');
     var _ = require('lodash');
+    var mapObject = require('../helpers/bodyMaper');
 
     function calculate(data, year) {
         var leaveDays = 0;
@@ -131,137 +132,6 @@ var Vacation = function (models) {
         });
     };
 
-    /*function getVacationFilter(req, res, next) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, 70, function (access) {
-                if (access) {
-                    var Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
-                    var options = req.query;
-                    var queryObject = {};
-                    var query;
-
-                    var startDate;
-                    var endDate;
-
-                    if (options) {
-                        if (options.employee) {
-                            queryObject['employee._id'] = objectId(options.employee);
-                        }
-                        if (options.year && options.year !== 'Line Year') {
-                            if (options.month) {
-                                queryObject.year = options.year;
-                                queryObject.month = options.month;
-                            } else {
-                                endDate = moment([options.year, 12]);
-                                startDate = moment([options.year, 1]);
-
-                                queryObject.year = {'$in': [options.year, (options.year - 1).toString()]};
-                            }
-                        } else if (options.year) {
-                            var date = new Date();
-
-                            date = moment([date.getFullYear(), date.getMonth()]);
-
-                            endDate = new Date(date);
-                            queryObject.endDate = {'$lte': endDate};
-
-                            date.subtract(12, 'M');
-                            startDate = new Date(date);
-
-                            date.subtract(12, 'M');
-                            queryObject.startDate = {'$gte': new Date(date)};
-                        }
-                    }
-
-                    query = Vacation.aggregate(
-                        [
-                            {$match: queryObject},
-                            {
-                                $group: {
-                                    _id: {
-                                        employee: "$employee",
-                                        department: "$department",
-                                        month: "$month",
-                                        year: "$year"
-                                    },
-                                    vacationArray: {
-                                        $push: {
-                                            _idVacation: "$_id",
-                                            vacationType: "$vacationType",
-                                            startDate: "$startDate",
-                                            endDate: "$endDate"
-                                        }
-                                    }
-                                }
-                            },
-                            {
-                                $project: {
-                                    _id: {$concat: ["$_id.month", "$_id.year", "$_id.employee.name"]},
-                                    employee: "$_id.employee",
-                                    department: "$_id.department",
-                                    month: "$_id.month",
-                                    year: "$_id.year",
-                                    vacationArray: 1
-                                }
-                            }
-                        ]
-                    );
-
-                    *//*REMOVE*//*
-                    console.dir(queryObject);
-
-                    query.exec(function (err, result) {
-                        if (err) {
-                            return next(err);
-                        }
-                        if (options.month) {
-                            res.status(200).send(result);
-                        } else {
-                            async.waterfall([
-                                    function (callback) {
-                                        var resultObj = {
-                                            curYear: [],
-                                            preYear: []
-                                        };
-
-                                        result.forEach(function(element) {
-                                            var date = moment([element.year, element.month]);
-
-                                            if (date >= startDate && date <= endDate) {
-                                                resultObj['curYear'].push(element);
-                                            } else {
-                                                resultObj['preYear'].push(element);
-                                            }
-                                        });
-
-                                        callback(null, resultObj);
-                                    },
-                                    function (result, callback) {
-                                        var stat = calculate(result['preYear'], options.year - 1);
-
-                                        callback(null, result, stat);
-                                    }
-                                ],
-                                function (err, object, stat) {
-                                    if (err) {
-                                        return next(err);
-                                    }
-                                    res.status(200).send({data: object['curYear'], stat: stat});
-
-                                }
-                            );
-                        }
-                    });
-                } else {
-                    res.send(403);
-                }
-            });
-
-        } else {
-            res.send(401);
-        }
-    };*/
-
     function getVacationFilter(req, res, next) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getReadAccess(req, req.session.uId, 70, function (access) {
@@ -305,6 +175,8 @@ var Vacation = function (models) {
                             condition1 = {month: {'$lte': parseInt(date.format('M'))}};
                             condition2 = {year: {'$lte': parseInt(date.format('YYYY'))}};
 
+                            /*REMOVE*/
+
                             console.dir(condition1);
                             console.dir(condition2);
 
@@ -318,6 +190,8 @@ var Vacation = function (models) {
                             condition1 = {month: {'$gte': parseInt(date.format('M'))}};
                             condition2 = {year: {'$gte': parseInt(date.format('YYYY'))}};
 
+                            /*REMOVE*/
+
                             console.dir(condition1);
                             console.dir(condition2);
 
@@ -330,6 +204,8 @@ var Vacation = function (models) {
                     }
 
                     query = Vacation.find(queryObject);
+
+                    /*REMOVE*/
 
                     console.dir(startQuery);
                     console.dir(endQuery);
@@ -398,6 +274,80 @@ var Vacation = function (models) {
                 getVacationFilter(req, res, next);
                 break;
         }
+    };
+
+    this.putchModel = function (req, res, next) {
+        var id = req.params.id;
+        var data = req.body;
+        var Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
+
+        if (req.session && req.session.loggedIn && req.session.lastDb) {
+            access.getEditWritAccess(req, req.session.uId, 70, function (access) {
+                if (access) {
+                    data.editedBy = {
+                        user: req.session.uId,
+                        date: new Date().toISOString()
+                    };
+                    Vacation.findByIdAndUpdate(id, {$set: data}, function (err, response) {
+                        if (err) {
+                            return next(err);
+                        }
+
+                        res.status(200).send({success: 'updated'});
+                    });
+                } else {
+                    res.status(403).send();
+                }
+            });
+        } else {
+            res.status(401).send();
+        }
+    };
+
+    this.putchBulk = function (req, res, next) {
+        var body = req.body;
+        var uId;
+        var Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
+
+        if (req.session && req.session.loggedIn && req.session.lastDb) {
+            uId = req.session.uId;
+            access.getEditWritAccess(req, req.session.uId, 70, function (access) {
+                if (access) {
+                    async.each(body, function (data, cb) {
+                        var id = data._id;
+
+                        data.editedBy = {
+                            user: uId,
+                            date: new Date().toISOString()
+                        };
+                        delete data._id;
+                        Vacation.findByIdAndUpdate(id, {$set: data}, cb);
+                    }, function (err) {
+                        if (err) {
+                            return next(err);
+                        }
+
+                        res.status(200).send({success: 'updated'});
+                    });
+                } else {
+                    res.status(403).send();
+                }
+            });
+        } else {
+            res.status(401).send();
+        }
+    };
+
+    this.remove = function (req, res, next) {
+        var id = req.params.id;
+        var Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
+
+        Vacation.remove({_id: id}, function (err, vacation) {
+            if (err) {
+                return next(err);
+            }
+            res.status(200).send({success: vacation});
+        });
     };
 
     this.create = function (req, res, next) {

@@ -18,8 +18,8 @@ module.exports = function (models) {
             user: 'thinkmobiles@wbje9y2n5u',
             password: '1q2w3e!@#',
             server: 'wbje9y2n5u.database.windows.net',
-            //database: 'ex_dev',
-            database: 'production',
+            database: 'ex_dev',
+            //database: 'production',
 
             options: {
                 encrypt: true
@@ -1423,14 +1423,14 @@ module.exports = function (models) {
                                             }
                                             if (result) {
                                                 for (var i = endDay; i >= startDay; i--) {
-                                                    result.vacArray[i] = fetchedVacation.AbsenceType;
+                                                    result.vacArray[i-1] = fetchedVacation.AbsenceType;
                                                 }
                                                 Vacation.update({_id: result._id}, {$set: {vacArray: result.vacArray}}, cb);
                                             } else {
                                                 objectToSave.vacArray = new Array(daysCount);
 
                                                 for (var i = endDay; i >= startDay; i--) {
-                                                    objectToSave.vacArray[i] = fetchedVacation.AbsenceType;
+                                                    objectToSave.vacArray[i-1] = fetchedVacation.AbsenceType;
                                                 }
 
                                                 model = new Vacation(objectToSave);
