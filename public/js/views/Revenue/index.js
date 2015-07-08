@@ -9,14 +9,13 @@ define([
     'text!templates/Revenue/perWeek.html',
     'text!templates/Revenue/paidBySales.html',
     'text!templates/Revenue/paidBySalesItems.html',
-    'text!templates/Revenue/unpaidBySales.html',
     'text!templates/Revenue/monthsArray.html',
     'text!templates/Revenue/perMonth.html',
     'models/Revenue',
     'moment',
     'dataService',
     'async'
-], function (mainTemplate, weeksArray, tableByDep, bySalesByDep, perWeek, paidBySales, paidBySalesItems, unpaidBySales, monthsArray, perMonth, RevenueModel, moment, dataService, async) {
+], function (mainTemplate, weeksArray, tableByDep, bySalesByDep, perWeek, paidBySales, paidBySalesItems, monthsArray, perMonth, RevenueModel, moment, dataService, async) {
     var View = Backbone.View.extend({
         el: '#content-holder',
 
@@ -29,7 +28,6 @@ define([
         bySalesPerMonthTemplate: _.template(perMonth),
         paidBySalesTemplate: _.template(paidBySales),
         paidBySalesItemsTemplate: _.template(paidBySalesItems),
-        unpaidBySalesTemplate: _.template(unpaidBySales),
 
         paidUnpaidDateRange: {},
 
@@ -62,11 +60,11 @@ define([
 
             this.changeWeek = _.debounce(this.updateWeek, 500);
 
-           /* this.model.set({
-                currentStartWeek: currentStartWeek,
-                currentYear: currentYear,
-                currentMonth: currentMonth
-            });*/
+            /* this.model.set({
+             currentStartWeek: currentStartWeek,
+             currentYear: currentYear,
+             currentMonth: currentMonth
+             });*/
 
             //this.render();
 
@@ -433,7 +431,12 @@ define([
             var tempPerMonth;
             var globalTotal = 0;
 
-            target.html(this.paidBySalesTemplate({employees: this.employees}));
+            target.html(this.paidBySalesTemplate({
+                employees: this.employees,
+                content: 'totalPaidBySales',
+                className: 'totalPaid',
+                headName: 'Paid wTrack'
+            }));
             //target.find('div.revenueBySales').html(this.weeksArrayTemplate({weeksArr: this.weekArr}));
             targetTotal = $(self.$el.find('[data-content="totalPaidBySales"]'));
             monthContainer = target.find('.monthContainer');
@@ -504,7 +507,12 @@ define([
             var tempPerMonth;
             var globalTotal = 0;
 
-            target.html(this.unpaidBySalesTemplate({employees: this.employees,  content: 'totalCancelledBySales'}));
+            target.html(this.paidBySalesTemplate({
+                employees: this.employees,
+                content: 'totalCancelledBySales',
+                className: 'totalUnpaid',
+                headName: 'Write Off'
+            }));
             target.find('div.revenueBySales').html(this.weeksArrayTemplate({weeksArr: this.weekArr}));
             targetTotal = $(self.$el.find('[data-content="totalCancelledBySales"]'));
             monthContainer = target.find('.monthContainer');
@@ -575,8 +583,13 @@ define([
             var tempPerMonth;
             var globalTotal = 0;
 
-            target.html(this.unpaidBySalesTemplate({employees: this.employees,  content: 'totalUnPaidBySales'}));
-           /* target.find('div.revenueBySales').html(this.weeksArrayTemplate({weeksArr: this.weekArr}));*/
+            target.html(this.paidBySalesTemplate({
+                employees: this.employees,
+                content: 'totalUnPaidBySales',
+                className: 'totalUnpaid',
+                headName: 'Unpaid wTrack'
+            }));
+            /* target.find('div.revenueBySales').html(this.weeksArrayTemplate({weeksArr: this.weekArr}));*/
             targetTotal = $(self.$el.find('[data-content="totalUnPaidBySales"]'));
             monthContainer = target.find('.monthContainer');
             monthContainer.html(this.monthsArrayTemplate({monthArr: monthArr}));
