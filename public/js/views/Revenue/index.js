@@ -434,7 +434,7 @@ define([
             var globalTotal = 0;
 
             target.html(this.paidBySalesTemplate({employees: this.employees}));
-            target.find('div.revenueBySales').html(this.weeksArrayTemplate({weeksArr: this.weekArr}));
+            //target.find('div.revenueBySales').html(this.weeksArrayTemplate({weeksArr: this.weekArr}));
             targetTotal = $(self.$el.find('[data-content="totalPaidBySales"]'));
             monthContainer = target.find('.monthContainer');
             monthContainer.html(this.monthsArrayTemplate({monthArr: monthArr}));
@@ -484,7 +484,8 @@ define([
                 targetTotal.html(self.bySalesPerMonthTemplate({
                     monthArr: monthArr,
                     bySalesByDepPerWeek: bySalesByDepPerWeek,
-                    globalTotal: globalTotal
+                    globalTotal: globalTotal,
+                    totalName: 'Paid Total'
                 }));
 
                 return false;
@@ -493,9 +494,9 @@ define([
 
         changeCancelledBySalesData: function () {
             var self = this;
-            var unpaidBySales = this.model.get('unpaidBySales');
+            var unpaidBySales = this.model.get('cancelledBySales');
             var monthArr = this.monthArr;
-            var target = self.$el.find('#tableUnpaidBySales');
+            var target = self.$el.find('#tableCancelledBySales');
             var targetTotal;
             var monthContainer;
 
@@ -503,9 +504,9 @@ define([
             var tempPerMonth;
             var globalTotal = 0;
 
-            target.html(this.unpaidBySalesTemplate({employees: this.employees}));
+            target.html(this.unpaidBySalesTemplate({employees: this.employees,  content: 'totalCancelledBySales'}));
             target.find('div.revenueBySales').html(this.weeksArrayTemplate({weeksArr: this.weekArr}));
-            targetTotal = $(self.$el.find('[data-content="totalUnpaidBySales"]'));
+            targetTotal = $(self.$el.find('[data-content="totalCancelledBySales"]'));
             monthContainer = target.find('.monthContainer');
             monthContainer.html(this.monthsArrayTemplate({monthArr: monthArr}));
 
@@ -554,7 +555,8 @@ define([
                 targetTotal.html(self.bySalesPerMonthTemplate({
                     monthArr: monthArr,
                     bySalesByDepPerWeek: bySalesByDepPerWeek,
-                    globalTotal: globalTotal
+                    globalTotal: globalTotal,
+                    totalName: 'Write Off Total'
                 }));
 
                 return false;
@@ -573,9 +575,9 @@ define([
             var tempPerMonth;
             var globalTotal = 0;
 
-            target.html(this.unpaidBySalesTemplate({employees: this.employees}));
-            target.find('div.revenueBySales').html(this.weeksArrayTemplate({weeksArr: this.weekArr}));
-            targetTotal = $(self.$el.find('[data-content="totalUnpaidBySales"]'));
+            target.html(this.unpaidBySalesTemplate({employees: this.employees,  content: 'totalUnPaidBySales'}));
+           /* target.find('div.revenueBySales').html(this.weeksArrayTemplate({weeksArr: this.weekArr}));*/
+            targetTotal = $(self.$el.find('[data-content="totalUnPaidBySales"]'));
             monthContainer = target.find('.monthContainer');
             monthContainer.html(this.monthsArrayTemplate({monthArr: monthArr}));
 
@@ -624,7 +626,8 @@ define([
                 targetTotal.html(self.bySalesPerMonthTemplate({
                     monthArr: monthArr,
                     bySalesByDepPerWeek: bySalesByDepPerWeek,
-                    globalTotal: globalTotal
+                    globalTotal: globalTotal,
+                    totalName: 'UnPaid Total'
                 }));
 
                 return false;

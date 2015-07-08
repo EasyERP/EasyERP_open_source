@@ -276,6 +276,19 @@ var wTrack = function (models) {
             WTrack.aggregate([{
                 $match: match
             }, {
+                $project: {
+                    project: 1,
+                    month: 1,
+                    year: 1,
+                    revenue: 1,
+                    amount: 1,
+                    diff: {$subtract: ["$revenue", "$amount"]},
+                    dateByMonth: 1,
+                    _id: 1
+                }
+            }, {
+                $match: {diff : {$gte: 0}}
+            }, {
                 $group: groupBy
             }, {
                 $project: {
@@ -288,7 +301,7 @@ var wTrack = function (models) {
                 }
             }, {
                 $match: {
-                    revenue: {$gte: 0}
+                    revenue: {$gt: 0}
                 }
             }, {
                 $group: {
@@ -359,6 +372,19 @@ var wTrack = function (models) {
             WTrack.aggregate([{
                 $match: match
             }, {
+                $project: {
+                    project: 1,
+                    month: 1,
+                    year: 1,
+                    revenue: 1,
+                    amount: 1,
+                    diff: {$subtract: ["$revenue", "$amount"]},
+                    dateByMonth: 1,
+                    _id: 1
+                }
+            }, {
+                $match: {diff : {$gte: 0}}
+            }, {
                 $group: groupBy
             }, {
                 $project: {
@@ -371,7 +397,7 @@ var wTrack = function (models) {
                 }
             }, {
                 $match: {
-                    revenue: {$gte: 0}
+                    revenue: {$gt: 0}
                 }
             }, {
                 $group: {
