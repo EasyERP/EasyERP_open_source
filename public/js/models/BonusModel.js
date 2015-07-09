@@ -6,14 +6,8 @@ define([], function () {
         defaults: {
             employee: {},
             bonus: {},
-            startDate: {
-                start: true,
-                date: null
-            },
-            endDate: {
-                end: true,
-                date: null
-            }
+            startDate: null,
+            endDate: null
         }
     });
 

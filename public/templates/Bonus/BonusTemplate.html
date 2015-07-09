@@ -8,7 +8,7 @@
 <table class="list task-list">
     <thead>
     <tr>
-        <th><input type="checkbox" id="check_all"/></th>
+        <th><input type="checkbox" id="check_all_bonus"/></th>
         <th>N</th>
         <th>Bonus Name</th>
         <th>Employee</th>
@@ -19,19 +19,27 @@
     <tbody id="bonusTable">
     <%bonus.forEach(function(bonus, index){ %>
         <tr data-index="<%= index %>" data-id="<%=bonus._id%>">
-            <td><input type="checkbox" value="<%=bonus._id%>" class="checkbox" /></td>
+            <td><input type="checkbox" value="<%=bonus._id%>" class="bonus-checkbox" /></td>
             <td><%=index + 1 %></td>
-            <td>
-                <a data-content="bonusType"></a>
+            <td data-content="bonus" class="choseType" data-id="<%=bonus.bonusId._id%>">
+                <%=bonus.bonusId.name%>
             </td>
-            <td>
-                <a data-content="employee"></a>
+            <td data-content="employee" class="choseEmployee" data-id="<%=bonus.employeeId._id%>">
+                <%=bonus.employeeId.fullName%>
             </td>
-            <td>
-                <a data-content="startDate"></a>
+            <td data-content="startDate" class="startDate">
+                <div>
+                    <%=bonus.startDate%>
+                </div>
+
+                <input id="<%=bonus._id%>StartDate" type="text" readonly/>
             </td>
-            <td>
-                <a data-content="endDate"></a>
+            <td data-content="endDate" class="endDate">
+                <div>
+                    <%=bonus.endDate%>
+                </div>
+
+                <input id="<%=bonus._id%>EndDate" type="text" readonly/>
             </td>
         </tr>
     <% }) %>

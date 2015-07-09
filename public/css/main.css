@@ -4311,11 +4311,9 @@ table#workflows tr td.edit-status {
 #top-bar-bonus.banned {
   border-bottom: 0;
 }
-.startDate input[type=checkbox],
-.endDate input[type=checkbox],
 .startDate input,
 .endDate input {
-  height: inherit;
+  display: none;
 }
 .createBtnHolder,
 #createBtnHolder {

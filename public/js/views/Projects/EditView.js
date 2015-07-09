@@ -106,10 +106,27 @@ define([
                 var $userNodes = $("#usereditDd option:selected");
                 var startDate = $.trim(this.$el.find("#StartDate").val());
                 var users = [];
+                var bonusContainer = $('#bonusTable');
+                var bonusRow = bonusContainer.find('tr');
+                var bonus = [];
                 $userNodes.each(function (key, val) {
                     users.push({
                         id: val.value,
                         name: val.innerHTML
+                    });
+                });
+
+                bonusRow.each(function (key, val) {
+                    var employeeId = $(val).find("[data-content='employee']").attr('data-id');
+                    var bonusId = $(val).find("[data-content='bonus']").attr('data-id');
+                    var startDate = $(val).find(".startDate>div").text().trim() || $(val).find(".startDate input").val();
+                    var endDate = $(val).find(".endDate>div").text().trim() || $(val).find(".endDate input").val();
+
+                    bonus.push({
+                        employeeId: employeeId,
+                        bonusId: bonusId,
+                        startDate: startDate,
+                        endDate: endDate
                     });
                 });
 
@@ -149,7 +166,8 @@ define([
                     whoCanRW: whoCanRW,
                     health: health,
                     StartDate: startDate,
-                    TargetEndDate: TargetEndDate
+                    TargetEndDate: TargetEndDate,
+                    bonus: bonus
                 };
                 var workflowStart = this.currentModel.get('workflow');
                 this.currentModel.save(data, {
@@ -286,12 +304,9 @@ define([
                         model: this.currentModel
                     }).render().el
                 );
-                notDiv = this.$el.find('.bonus-container');
-                notDiv.append(
-                    new BonusView({
-                        model: this.currentModel
-                    }).render().el
-                );
+                new BonusView({
+                    model: this.currentModel
+                });
                 populate.get("#projectTypeDD", "/projectType", {}, "name", this, false, true);
                 populate.get2name("#projectManagerDD", "/getPersonsForDd", {}, this);
                 populate.get2name("#customerDd", "/Customer", {}, this, false, true);

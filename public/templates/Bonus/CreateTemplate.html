@@ -1,29 +1,32 @@
-<tr id="false" data-id="">
-    <td class="notForm"><input type="checkbox" class="checkbox" value=""/></td>
+<tr id="false" data-id="<%=options.bonus._id%>">
+    <td class="notForm"><input type="checkbox" class="bonus-checkbox" value="<%=options.bonus._id%>"/></td>
     <td></td>
-    <td data-content="bonus" class="choseType">
-        <%=bonus ? bonus.name : ''%>
+    <td data-content="bonus" class="choseType" data-id="<%=options.bonus ? options.bonus._id : ''%>">
+        <%=options.bonus ? options.bonus.name : ''%>
     </td>
-    <td data-content="employee" class="choseEmployee">
-        <%=employee ? employee.name : ''%>
+    <td data-content="employee" class="choseEmployee" data-id="<%=options.employee ? options.employee.name : ''%>">
+        <%=options.employee ? options.employee.name : ''%>
     </td>
     <td data-content="startDate" class="startDate">
-        <input type="checkbox" checked="<%=startDate.start%>">
-        <%if (startDate.start) {%>
-        <span>From Start Date</span>
+        <div>
+            <%if (options.startDate === startDate) {%>
+            From start of project
+            <%} else {%>
+            <%=options.startDate ? options.startDate : ''%>
+            <%}%>
+        </div>
 
-        <%}%>
-        <%if (!startDate.start) {%>
-        <%=startDate ? startDate.date : ''%>
-        <%}%>
+        <input type="text" readonly/>
     </td>
     <td data-content="endDate" class="endDate">
-        <input type="checkbox" checked="<%=endDate.end%>">
-        <%if (endDate.end) {%>
-            <span>To End Date</span>
-        <%}%>
-        <%if (!endDate.end) {%>
-            <%=endDate ? endDate.date : ''%>
-        <%}%>
+        <div>
+            <%if (options.endDate === endDate) {%>
+                To end of project
+            <%} else {%>
+                <%=options.endDate ? options.endDate : ''%>
+            <%}%>
+        </div>
+
+        <input type="text" readonly/>
     </td>
 </tr>

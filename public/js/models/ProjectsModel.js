@@ -41,7 +41,8 @@ function (Validation, common) {
                 logged: 0,
                 remaining: 0,
                 progress: 0,
-                notes: []
+                notes: [],
+                bonus: []
             },
             parse: true,
             parse: function (response) {

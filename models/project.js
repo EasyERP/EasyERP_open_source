@@ -44,7 +44,7 @@ module.exports = (function () {
         bonus: [{
             employeeId: {
                 type: ObjectId,
-                ref: 'Employee'
+                ref: 'Employees'
             },
             bonusId: {
                 type: ObjectId,
