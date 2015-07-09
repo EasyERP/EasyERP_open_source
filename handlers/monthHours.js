@@ -128,6 +128,36 @@ var MonthHours = function (models) {
             }
         });
     };
+
+    this.getData = function (req, res, next) {
+        var MonthHoursModel = models.get(req.session.lastDb, 'MonthHours', MonthHoursSchema );
+        var queryObj = {};
+
+        var query = req.query;
+
+
+        if (query.month) {
+            queryObj.month = Number(query.month);
+        }
+        if (query.year) {
+            queryObj.year = Number(query.year);
+        }
+
+
+        MonthHoursModel
+            .aggregate(
+            [{
+                $match: queryObj
+            }]
+        )
+            .exec(function (err, data) {
+                if (err) {
+                    return next(err);
+                } else {
+                    res.status(200).send(data);
+                }
+            });
+    };
 };
 
 module.exports = MonthHours;

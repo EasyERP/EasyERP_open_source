@@ -21,6 +21,8 @@ var wTrack = function (models) {
         var body = mapObject(req.body);
         var wTrack = new WTrack(body);
 
+        wTrack = new WTrack(body);
+
         wTrack.save(function (err, wTrack) {
             if (err) {
                 return next(err);

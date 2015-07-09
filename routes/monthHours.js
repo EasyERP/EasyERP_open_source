@@ -14,13 +14,12 @@ module.exports = function (models) {
     router.get('/list/totalCollectionLength', handler.totalCollectionLength);
 
     router.get('/list', function (req, res, next) {
-            if (req.query.month){
+            if (req.query.month) {
                 handler.getData(req, res, next);
             } else {
                 handler.getList(req, res);
             }
-        }
-    );
+        });
 
     router.delete('/:_id', function (req, res) {
         var id = req.param('_id');
