@@ -233,8 +233,8 @@ module.exports = function (models) {
 
         function fetchWorkflow(query, callback) {
             query = query || {
-                wId: 'Projects'
-            };
+                    wId: 'Projects'
+                };
 
             var projectionObject = {
                 status: 1,
@@ -836,6 +836,77 @@ module.exports = function (models) {
         return [bonusTypeImporter, customerImporter, projectImporter, wTrackImporter, invoiceImporter, paymentImporter];
     };
 
+    function projectsImporter(req, tasks) {
+        var bonusSchema = tasks[13];
+
+        var projectsCollection = bonusSchema.collection;
+
+        var ProjectsSchema = mongoose.Schemas[projectsCollection];
+
+        var Project = models.get(req.session.lastDb, projectsCollection, ProjectsSchema);
+
+        function importBonus(BonusSchema, seriesCb) {
+            var query = queryBuilder(BonusSchema.table);
+            var waterfallTasks;
+
+            function getData(callback) {
+                handler.importData(query, callback);
+            }
+
+            function saverBonus(fetchedArray, callback) {
+                var model;
+                var mongooseFields = Object.keys(BonusSchema.aliases);
+
+                async.eachLimit(fetchedArray, 100, function (fetchedBonus, cb) {
+                    if (fetchedBonus) {
+                        var newBonus = {
+                            employeeId: 'Employee',
+                            bonusId: 'Type',
+                            startDate: fetchedBonus.StartDate,
+                            endDate: fetchedBonus.EndDate
+                        };
+
+                        projectQuery = {
+                            ID: fetchedBonus['Project']
+                        };
+
+                        updateQuery = {
+                            $push: {items: item}
+                        };
+
+                        function projectFinder(callback) {
+                            Project.findByIdAndUpdate(projectQuery)
+                        };
+
+                        console.log(fetchedBonus);
+                    }
+                }, function (err) {
+                    if (err) {
+                        return callback(err);
+                    }
+
+                    callback(null, 'Completed');
+                });
+            }
+
+            waterfallTasks = [getData, saverBonus];
+
+            async.waterfall(waterfallTasks, function (err, result) {
+                if (err) {
+                    seriesCb(err);
+                }
+
+                seriesCb(null, 'Complete')
+            });
+        };
+
+        function bonusImporter(callback) {
+            importBonus(bonusSchema, callback);
+        };
+
+        return [bonusImporter];
+    };
+
     function hrImporter(req, tasks) {
         var departmentShema = tasks[0];
         var jobPositionShema = tasks[1];
@@ -923,7 +994,6 @@ module.exports = function (models) {
         function monthHoursImporter(callback) {
             importMonthHours(monthHoursSchema, callback);
         }
-
 
         function importDepartment(departmentShema, seriesCb) {
             var query = queryBuilder(departmentShema.table);
@@ -1471,7 +1541,9 @@ module.exports = function (models) {
     router.post('/', function (req, res, next) {
         var hrTasks = hrImporter(req, tasks);
         var salesTasks = salesImporter(req, tasks);
-        var seriesTasks = hrTasks.concat(salesTasks);
+        var projectsTasks = projectsImporter(req, tasks);
+        var tempArr = hrTasks.concat(salesTasks);
+        var seriesTasks = tempArr.concat(projectsTasks);
 
         async.series(seriesTasks, function (err) {
             if (err) {

@@ -339,5 +339,19 @@ module.exports = (function () {
         }
     };
 
-    return [department, jobPosition, employee, project, customer, wTrack, salary, invoice, payment, holiday, vacation, monthHours, bonusType];
+    var bonus = {
+        collection: 'Project',
+        table: 'Bonus',
+        aliases: {
+            ID: 'Project',
+            bonus: [{
+                'employeeId': 'Employee',
+                'bonusId': 'Type',
+                'startDate': 'StartDate',
+                'endDate': 'EndDate'
+            }]
+        }
+    };
+
+    return [department, jobPosition, employee, project, customer, wTrack, salary, invoice, payment, holiday, vacation, monthHours, bonusType, bonus];
 })();
