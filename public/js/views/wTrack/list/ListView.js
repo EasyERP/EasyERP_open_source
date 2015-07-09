@@ -35,8 +35,8 @@ define([
         genInvoiceEl: null,
         changedModels: {},
         dataObject: {},
-        monthHours: {},
-        baseSalary: {},
+        monthHours: [],
+        baseSalary: [],
         
         initialize: function (options) {
             this.startTime = options.startTime;
@@ -203,8 +203,8 @@ define([
             var wTrack = {};
 
 
-            costElement = editedElement.closest('tr').find('[data-content="calculateCost"]');
-
+            costElement = editedElement.closest('tr').find('[data-content="cost"]');
+            editedElementRowId = editedElement.closest('tr').data('id');
 
             if (/*wTrackId !== this.wTrackId &&*/ editedElement.length) {
                 editedCol = editedElement.closest('td');
@@ -215,128 +215,43 @@ define([
 
                 editWtrackModel = this.editCollection.get(editedElementRowId);
 
-
-                if (editedElementRowId.length >= 24) {
-
-
-
-                    dataService.getData('/wTrack/getWTrackByID', {_id: editedElementRowId}, function (response, context) {
-                        self.wTrack = response;
-                    }, this);
-
-                    if (this.wTrack) {
-                        var employeeId = this.wTrack[0].employee._id;
-                        var month = this.wTrack[0].month;
-                        var year = this.wTrack[0].year;
-                        var trackWeek = this.wTrack[0].worked;
-
-
-                        var value = _.bind(this.calculateCost, this);
-
-
-                      var val =  value(employeeId, month, year, trackWeek);
-                    }
-                }
-
-                   // costElement.text();
-
                 if (!this.changedModels[editedElementRowId]) {
                     this.changedModels[editedElementRowId] = {};
                 }
 
-                costElement.addClass('money');
-                costElement.text(val);
-                editWtrackModel.set('cost', val);
 
                 this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
+                //this.changedModels[editedElementRowId][costElement.data['content']] = val;
 
                 editedCol.text(editedElementValue);
                 editedElement.remove();
             }
 
+
+
+            dataService.getData('/wTrack/getWTrackByID', {_id: editedElementRowId}, function (response, context) {
+                self.wTrack = response;
+            }, this);
+
+            if (this.wTrack) {
+                var employeeId = this.wTrack[0].employee._id;
+                var month = this.wTrack[0].month;
+                var year = this.wTrack[0].year;
+                var trackWeek = this.wTrack[0].worked;
+
+
+                var value = _.bind(this.calculateCost, this);
+
+                var val =  value(employeeId, month, year, trackWeek);
+                costElement.text('');
+                costElement.addClass('money');
+                costElement.text(val);
+                editWtrackModel.set('cost', val);
+
+            }
+
         },
 
-
-
-
-        //editRow: function (e, prev, next) {
-        //    $(".newSelectList").hide();
-        //
-        //    var self = this;
-        //    var wTrack = {};
-        //
-        //    var el = $(e.target);
-        //    var tr = $(e.target).closest('tr');
-        //    var wTrackId = tr.data('id');
-        //    var colType = el.data('type');
-        //    var isSelect = colType !== 'input' && el.prop("tagName") !== 'INPUT';
-        //    var tempContainer;
-        //    var width;
-        //    var editedElement;
-        //    var editWtrackModel;
-        //
-        //    var costElement = tr.find('[data-content="calculateCost"]');
-        //
-        //
-        //
-        //    if (wTrackId && el.prop('tagName') !== 'INPUT') {
-        //        if (this.wTrackId) {
-        //            editedElement = this.$listTable.find('.editing');
-        //
-        //
-        //
-        //            dataService.getData('/wTrack/getWTrackByID', {_id: wTrackId }, function (response, context) {
-        //                self.wTrack = response;
-        //            }, this);
-        //
-        //            if (this.wTrack.length > 0){
-        //                var employeeId = this.wTrack[0].employee._id;
-        //                var month = this.wTrack[0].month;
-        //                var year = this.wTrack[0].year;
-        //                var trackWeek =  this.wTrack[0].worked;
-        //
-        //                //costElement.text(this.calculateCost(employeeId, month, year, trackWeek));
-        //                var value = this.calculateCost(employeeId, month, year, trackWeek);
-        //
-        //                editWtrackModel = this.editCollection.get(wTrackId);
-        //                costElement.addClass('money');
-        //                costElement.text(value);
-        //                editWtrackModel.set('cost', value);
-        //            }
-        //            this.setChangedValueToModel();
-        //        }
-        //        this.wTrackId = wTrackId;
-        //        dataService.getData('/wTrack/getWTrackByID', {_id: wTrackId }, function (response, context) {
-        //            self.wTrack = response;
-        //        }, this);
-        //
-        //        if (this.wTrack.length > 0){
-        //            var employeeId = this.wTrack[0].employee._id;
-        //            var month = this.wTrack[0].month;
-        //            var year = this.wTrack[0].year;
-        //            var trackWeek = + this.wTrack[0]['1'] + this.wTrack[0]['2'] + this.wTrack[0]['3'] + this.wTrack[0]['4'] + this.wTrack[0]['5'] + this.wTrack[0]['6'] + this.wTrack[0]['7'] ;
-        //
-        //            var value = this.calculateCost(employeeId, month, year, trackWeek);
-        //
-        //            editWtrackModel = this.editCollection.get(wTrackId);
-        //            costElement.addClass('money');
-        //            costElement.text(value);
-        //            editWtrackModel.set('cost', value);
-        //        }
-        //        this.setChangedValueToModel();
-        //    }
-        //
-        //
-        //    if (isSelect) {
-        //        populate.showSelect(e, prev, next, this);
-        //    } else {
-        //        tempContainer = el.text();
-        //        width = el.width() - 6;
-        //        el.html('<input class="editing" type="text" value="' + tempContainer + '"  maxLength="4" style="width:' + width + 'px">');
-        //    }
-        //
-        //    return false;
-        //},
 
         editRow: function (e, prev, next) {
             $(".newSelectList").hide();
@@ -353,10 +268,10 @@ define([
             if (wTrackId && el.prop('tagName') !== 'INPUT') {
                 if (this.wTrackId) {
                     editedElement = this.$listTable.find('.editing');
-
                     this.setChangedValueToModel();
                 }
                 this.wTrackId = wTrackId;
+               // this.setChangedValueToModel();
             }
 
 
@@ -380,9 +295,6 @@ define([
             var fixedExpense;
             var hours;
             var calc;
-            var editedElement = this.$listTable.find('.editing');
-
-
 
             dataService.getData('/salary/list', {month: month, year: year, _id:  employeeId}, function (response, context) {
                 self.baseSalary = response.success;
@@ -392,33 +304,21 @@ define([
                 self.monthHours = response;
             }, this);
 
-            if ((this.baseSalary == 'undefined') || (this.baseSalary.length === 0)){
-               return 0;
+            if ((this.baseSalary[0].employeesArray) && (this.monthHours)) {
 
-            } else {
                 baseSalary = Number(this.baseSalary[0].employeesArray.baseSalary);
-            }
-
-            if ((this.monthHours == 'undefined') || (this.monthHours.length === 0)){
-                fixedExpense = 0;
-                expenseCoefficient = 0;
-                hours = 0;
-            } else {
                 expenseCoefficient = Number(this.monthHours[0].expenseCoefficient);
                 fixedExpense = Number(this.monthHours[0].fixedExpense);
                 hours = Number(this.monthHours[0].hours);
-            }
 
-
-                //expenseCoefficient = Number(this.monthHours[0].expenseCoefficient);
-                //fixedExpense = Number(this.monthHours[0].fixedExpense);
-                //hours = Number(this.monthHours[0].hours);
-
-                calc = Number(((((baseSalary * expenseCoefficient) + fixedExpense) / hours)*Number(trackWeek)).toFixed(2));
+                calc = Number(((((baseSalary * expenseCoefficient) + fixedExpense) / hours) * Number(trackWeek)).toFixed(2));
 
                 console.log(calc);
+                return calc;
+            } else
 
-           return calc;
+                return 0;
+
         },
 
         chooseOption: function (e) {
