@@ -503,18 +503,26 @@ define([
                 var id = $(tr).data("id");
                 var subId ="subSalary-row" + id
                 var subRowCheck = $('#' + subId);
+                var icon = $(tr).find('.icon');
 
-                if (subRowCheck.length > 0) {
-                    $(tr).find('.icon').html('5');
-                    $(subRowCheck).remove();
+                if (icon.html() === '-') {
+                    icon.html('5');
+                    $(subRowCheck).hide();
                 } else {
-                    $(tr).find('.icon').html('2');
-                    $('<tr id=' + subId + ' class="subRow">' +
-                    '<td colspan="3"></td>' +
-                    '<td colspan="6" id="subSalary-holder' + id + '"></td>' +
-                    '<td colspan="2"></td>' +
-                    '</tr>').insertAfter(tr);
-                    $('#subSalary-holder' + id).append(new subSalaryView({el: '#subSalary-holder' + id, model: self.collection.get(id)}));
+                    icon.html('-');
+                    if (subRowCheck.length === 0) {
+                        $('<tr id=' + subId + ' class="subRow">' +
+                        '<td colspan="3"></td>' +
+                        '<td colspan="6" id="subSalary-holder' + id + '"></td>' +
+                        '<td colspan="2"></td>' +
+                        '</tr>').insertAfter(tr);
+                        $('#subSalary-holder' + id).append(new subSalaryView({
+                            el: '#subSalary-holder' + id,
+                            model: self.collection.get(id)
+                        }));
+                    } else {
+                        subRowCheck.show();
+                    }
                 }
 
             },

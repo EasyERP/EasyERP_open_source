@@ -10,6 +10,36 @@ define([
         viewType: null,
         contentType: null,
 
+        comparator: function (modelA, modelB) {
+            var nameA = getEmployeeName(modelA);
+            var nameB = getEmployeeName(modelB);
+
+            function getEmployeeName(model) {
+                var employeeAttr = model.get('employee');
+
+                if (employeeAttr) {
+                    return model.get('employee').name;
+                }
+
+                return false;
+            }
+
+            if (nameA && nameB) {
+                if (nameA > nameB) {
+                    return this.sortOrder;
+                } else if (nameA < nameB) {
+                    return this.sortOrder * (-1);
+                } else {
+                    return 0;
+                }
+            }
+        },
+
+        sortByOrder: function(order) {
+            this.sortOrder = order;
+            this.sort();
+        },
+
         showMore: function (options) {
             var that = this;
             var filterObject = options || {};
@@ -28,15 +58,12 @@ define([
         },
 
         initialize: function (options) {
+            this.sortOrder = 1;
             this.startTime = new Date();
             this.month = (this.startTime.getMonth() + 1).toString();
             this.year = (this.startTime.getFullYear()).toString();
-            var that = this;
-            this.namberToShow = options.count;
             this.viewType = options.viewType;
             this.contentType = options.contentType;
-            this.count = options.count;
-            this.page = options.page || 1;
             if (options && options.viewType) {
                 this.url += options.viewType;
             }
@@ -57,7 +84,6 @@ define([
                 data: options,
                 reset: true,
                 success: function () {
-                    that.page++;
                 },
                 error: function (models, xhr) {
                     if (xhr.status == 401) Backbone.history.navigate('#login', {trigger: true});

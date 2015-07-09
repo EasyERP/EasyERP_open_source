@@ -303,17 +303,6 @@ module.exports = (function () {
         }
     };
 
-    var user = {
-        collection: 'Users',
-        table: 'Users',
-        aliases: {
-            ID: 'ID',
-            login: 'Login',
-            pass: 'Password',
-            RelatedEmployee: 'Employee' /*TODO*/
-        }
-    };
-
     var monthHours = {
         collection: 'MonthHours',
         table: 'MonthlyHours',

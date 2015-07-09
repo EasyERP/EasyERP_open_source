@@ -170,11 +170,6 @@ var Vacation = function (models) {
                             condition1 = {month: {'$lte': parseInt(date.format('M'))}};
                             condition2 = {year: {'$lte': parseInt(date.format('YYYY'))}};
 
-                            /*REMOVE*/
-
-                            console.dir(condition1);
-                            console.dir(condition2);
-
                             endQuery = {'$and': [condition1, condition2, employeeQuery]};
 
                             date.subtract(12, 'M');
@@ -185,11 +180,6 @@ var Vacation = function (models) {
                             condition1 = {month: {'$gte': parseInt(date.format('M'))}};
                             condition2 = {year: {'$gte': parseInt(date.format('YYYY'))}};
 
-                            /*REMOVE*/
-
-                            console.dir(condition1);
-                            console.dir(condition2);
-
                             startQuery = {'$and': [condition1, condition2, employeeQuery]};
 
                             queryObject = {};
@@ -199,12 +189,6 @@ var Vacation = function (models) {
                     }
 
                     query = Vacation.find(queryObject);
-
-                    /*REMOVE*/
-
-                    console.dir(startQuery);
-                    console.dir(endQuery);
-                    console.dir(queryObject);
 
                     query.exec(function (err, result) {
                         if (err) {

@@ -84,6 +84,8 @@ define([
 
                 this.changedModels = {};
 
+                $(savedRow).find('.edited').removeClass('edited');
+
                 this.hideSaveCancelBtns();
                 this.resetCollection(modelObject);
             },
@@ -300,31 +302,14 @@ define([
                 return false;
             },
 
-            fetchSortCollection: function (sortObject) {
-                this.sort = sortObject;
-                this.collection = new vacationCollection({
-                    viewType: 'list',
-                    sort: sortObject,
-                    page: this.page,
-                    count: this.defaultItemsNumber,
-                    filter: this.filter,
-                    parrentContentId: this.parrentContentId,
-                    contentType: this.contentType,
-                    newCollection: this.newCollection
-                });
-                this.collection.bind('reset', this.renderContent, this);
-            },
-
             goSort: function (e) {
                 var target$ = $(e.target);
                 var currentParrentSortClass = target$.attr('class');
                 var sortClass = currentParrentSortClass.split(' ')[1];
                 var sortConst = 1;
-                var sortBy = target$.data('sort');
-                var sortObject = {};
+                var collection;
 
-                this.collection.unbind('reset');
-                this.collection.unbind('showmore');
+                collection = this.collection.toJSON();
 
                 if (!sortClass) {
                     target$.addClass('sortDn');
@@ -335,22 +320,37 @@ define([
                     {
                         target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
                         target$.removeClass('sortDn').addClass('sortUp');
-                        sortConst = 1;
+                        sortConst = -1;
                     }
                         break;
                     case "sortUp":
                     {
                         target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
                         target$.removeClass('sortUp').addClass('sortDn');
-                        sortConst = -1;
+                        sortConst = 1;
                     }
                         break;
                 }
 
-                sortObject[sortBy] = sortConst;
-                this.fetchSortCollection(sortObject);
-                this.changeLocationHash(1, this.defaultItemsNumber);
-                this.getTotalLength(null, this.defaultItemsNumber, this.filter);
+                this.collection.sortByOrder(sortConst);
+
+                this.renderTable(collection);
+            },
+
+            renderTable: function(collection) {
+                var self = this;
+                var itemView;
+
+                collection.forEach(function (document) {
+                    document = self.getVacDaysCount(document);
+                    return document;
+                });
+
+                this.$el.find("#listTable").html('');
+                itemView = new listItemView({
+                    collection: collection
+                });
+                this.$el.append(itemView.render());
             },
 
             getTotalLength: function (currentNumber, itemsNumber, filter) {
@@ -442,6 +442,9 @@ define([
                     month: month,
                     year: year
                 };
+
+                this.changedModels = {};
+
                 this.collection.showMore(searchObject);
             },
 
@@ -569,24 +572,22 @@ define([
 
                     targetElement.text(element._id);
 
-                    if (changedAttr && changedAttr.vacArray) {
+                    if (changedAttr && !changedAttr.vacArray) {
+                        changedAttr.vacArray = _.clone(editVacationModel.toJSON().vacArray);
+                        if (!changedAttr.vacArray) {
+                            changedAttr.vacArray = new Array(this.daysCount);
+                        }
+                    }
 
-                        if (targetElement.text() === '') {
+                    if (targetElement.text() === '') {
+                        if (!this.checkEmptyArray(changedAttr.vacArray)) {
                             checkDay(targetElement, element._id);
                             delete(changedAttr.vacArray[dayIndex]);
                             if (this.checkEmptyArray(changedAttr.vacArray)) {
                                 this.deleteItem(modelId);
                             }
-                        } else {
-                            checkDay(targetElement, element._id);
-                            changedAttr.vacArray[dayIndex] = targetElement.text();
                         }
-
                     } else {
-                        changedAttr.vacArray = _.clone(editVacationModel.toJSON().vacArray);
-                        if (!changedAttr.vacArray) {
-                            changedAttr.vacArray = new Array(this.daysCount);
-                        }
                         checkDay(targetElement, element._id);
                         changedAttr.vacArray[dayIndex] = targetElement.text();
                     }
@@ -640,15 +641,7 @@ define([
 
                 collection = this.collection.toJSON();
 
-                collection.forEach(function (document) {
-                    document = self.getVacDaysCount(document);
-                    return document;
-                });
-
-                currentEl.append(new listItemView({
-                    collection: collection,
-                    daysCount: this.daysCount
-                }).render());
+                this.renderTable(collection);
 
                 listTotalEl = this.$el.find('#listTotal');
 
@@ -712,31 +705,19 @@ define([
             },
 
             showMoreContent: function (newModels) {
-                var self=this;
                 var holder = this.$el;
-                var itemView;
                 var collection = newModels.toJSON();
                 var listTotalEl;
 
                 this.editCollection = new editCollection(collection);
 
-                collection.forEach(function (document) {
-                    document = self.getVacDaysCount(document);
-                    return document;
-                });
-
-                holder.find("#listTable").empty();
-                itemView = new listItemView({
-                    collection: collection
-                });
-                holder.append(itemView.render());
+                this.renderTable(collection);
 
                 listTotalEl = holder.find('#listTotal');
 
                 listTotalEl.html('');
                 listTotalEl.append(_.template(listTotal, {array: this.getTotal(collection)}));
 
-                itemView.undelegateEvents();
                 this.hideSaveCancelBtns();
 
                 holder.find('#timeRecivingDataFromServer').remove();
@@ -771,32 +752,8 @@ define([
             },
 
             deleteItemsRender: function (deleteCounter, deletePage) {
-                var holder;
 
-                var month = this.monthElement.attr('data-content');
-                var year = this.yearElement.attr('data-content');
-
-                dataService.getData(this.collectionLengthUrl, {
-                    newCollection: this.newCollection
-                }, function (response, context) {
-                    context.listLength = response.count || 0;
-                }, this);
-                this.deleteRender(deleteCounter, deletePage, {
-                    newCollection: this.newCollection,
-                    parrentContentId: this.parrentContentId,
-                    month: month,
-                    year: year
-                });
-
-                holder = this.$el;
-
-                if (deleteCounter !== this.collectionLength) {
-                    var created = holder.find('#timeRecivingDataFromServer');
-                    created.before(new listItemView({
-                        collection: this.collection,
-                        daysCount: this.daysCount
-                    }).render());
-                }
+                this.renderTable(this.collection.toJSON());
 
                 this.editCollection.reset(this.collection.models);
                 this.hideSaveCancelBtns();
@@ -813,31 +770,33 @@ define([
                 var model;
                 var mid = 39;
 
-                if (id.length < 24) {
-                    this.editCollection.remove(id);
-                    delete this.changedModels[id];
-                    this.editCollection.on('remove', function () {
-                        self.deleteItemsRender(1, 1);
-                    }, self);
-                } else {
-                    model = this.collection.get(id);
-                    model.destroy({
-                        headers: {
-                            mid: mid
-                        },
-                        wait: true,
-                        success: function () {
-                            self.deleteItemsRender(1, 1);
-                            delete self.changedModels[id];
-                        },
-                        error: function (model, res) {
-                            if (res.status === 403 && index === 0) {
-                                alert("You do not have permission to perform this action");
-                            }
-                            self.deleteItemsRender(1, 1);
+                var answer = confirm("Do You want to DELETE item ?!");
 
-                        }
-                    });
+                if (answer === true) {
+                    if (id.length < 24) {
+                        this.editCollection.remove(id);
+                        delete this.changedModels[id];
+                        self.deleteItemsRender(1, 1);
+                    } else {
+                        model = this.collection.get(id);
+                        model.destroy({
+                            headers: {
+                                mid: mid
+                            },
+                            wait: true,
+                            success: function () {
+                                delete self.changedModels[id];
+                                self.deleteItemsRender(1, 1);
+                            },
+                            error: function (model, res) {
+                                if (res.status === 403 && index === 0) {
+                                    alert("You do not have permission to perform this action");
+                                }
+                                self.deleteItemsRender(1, 1);
+
+                            }
+                        });
+                    }
                 }
 
             },
