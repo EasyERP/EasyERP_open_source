@@ -18,83 +18,114 @@ var wTrack = function (models) {
 
     this.composeForVacation = function (req, res, next) {
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var startDate = 201522;
+        var endDate = 201523;
 
-        WTrack.aggregate([
-            {
-                $match: {
-                    'department.departmentName': 'Web',
-                    dateByWeek: {$gte: 201522, $lte: 201523}
-                }
-            }, {
-                $group: {
-                    _id: {
-                        department: '$department.departmentName',
-                        employee: '$employee.name',
-                        dateByWeek: '$dateByWeek',
-                        project: '$project.projectName'
-                    },
-                    hours: {$sum: '$worked'}
-                }
-            }, {
-                $project: {
-                    department: '$_id.department',
-                    employee: '$_id.employee',
-                    dateByWeek: '$_id.dateByWeek',
-                    project: '$_id.project',
-                    hours: 1,
-                    _id: 0
-                }
-            }, {
-                $group: {
-                    _id: {
-                        department: '$department',
-                        employee: '$employee',
-                        dateByWeek: '$dateByWeek'
-                    },
-                    projectRoot: {$push: '$$ROOT'},
-                    hours: {$sum: '$hours'}
-                }
-            }, {
-                $project: {
-                    department: '$_id.department',
-                    employee: '$_id.employee',
-                    dateByWeek: '$_id.dateByWeek',
-                    projectRoot: 1,
-                    hours: 1,
-                    _id: 0
-                }
-            },  {
-                $group: {
-                    _id: {
-                        department: '$department',
-                        dateByWeek: '$dateByWeek'
-                    },
-                    employeeData: {$push: '$$ROOT'}
-                }
-            },  {
-               $project: {
-                   department: '$_id.department',
-                   dateByWeek: '$_id.dateByWeek',
-                   employeeData: 1,
-                   _id: 0
-               }
-            }, {
-                $group: {
-                    _id: {
-                        department: '$department',
-                    },
-                    root: {$push: '$$ROOT'}
-                }
-            }, {
-                $project: {
-                    department: '$_id.department',
-                    weekData: '$root',
-                    _id: 0
-                }
-            }], function (err, response) {
+        function employeeFinder(waterfallCb) {
+            Employee
+                .find({}, {_id: 1})
+                .lean()
+                .exec(function (err, employees) {
+                    if (err) {
+                        return waterfallCb(err);
+                    }
 
-            res.status(200).send(response);
-        });
+                    employees = _.pluck(employees, '_id');
+                    waterfallCb(null, employees);
+                });
+        };
+
+        function wTrackComposer(employeesArray, waterfallCb) {
+            WTrack.aggregate([
+                {
+                    $match: {
+                        'employee._id': {$in: employeesArray},
+                        dateByWeek: {$gte: startDate, $lte: endDate}
+                    }
+                }, {
+                    $group: {
+                        _id: {
+                            department: '$department.departmentName',
+                            employee: '$employee.name',
+                            dateByWeek: '$dateByWeek',
+                            project: '$project.projectName'
+                        },
+                        hours: {$sum: '$worked'}
+                    }
+                }, {
+                    $project: {
+                        department: '$_id.department',
+                        employee: '$_id.employee',
+                        dateByWeek: '$_id.dateByWeek',
+                        project: '$_id.project',
+                        hours: 1,
+                        _id: 0
+                    }
+                }, {
+                    $group: {
+                        _id: {
+                            department: '$department',
+                            employee: '$employee',
+                            dateByWeek: '$dateByWeek'
+                        },
+                        projectRoot: {$push: '$$ROOT'},
+                        hours: {$sum: '$hours'}
+                    }
+                }, {
+                    $project: {
+                        department: '$_id.department',
+                        employee: '$_id.employee',
+                        dateByWeek: '$_id.dateByWeek',
+                        projectRoot: 1,
+                        hours: 1,
+                        _id: 0
+                    }
+                }, {
+                    $group: {
+                        _id: {
+                            department: '$department',
+                            dateByWeek: '$dateByWeek'
+                        },
+                        employeeData: {$push: '$$ROOT'}
+                    }
+                }, {
+                    $project: {
+                        department: '$_id.department',
+                        dateByWeek: '$_id.dateByWeek',
+                        employeeData: 1,
+                        _id: 0
+                    }
+                }, {
+                    $group: {
+                        _id: {
+                            department: '$department'
+                        },
+                        root: {$push: '$$ROOT'}
+                    }
+                }, {
+                    $project: {
+                        department: '$_id.department',
+                        weekData: '$root',
+                        _id: 0
+                    }
+                }], function (err, response) {
+                if (err) {
+                    return waterfallCb(err);
+                }
+                waterfallCb(null, response);
+            });
+        };
+
+        function responsSender(err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send(result);
+        }
+
+        async.waterfall([employeeFinder, wTrackComposer], responsSender);
     };
 
 };
