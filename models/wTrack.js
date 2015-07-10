@@ -47,7 +47,7 @@ module.exports = (function () {
         worked: Number,
         rate: Number,
         revenue: {type: Number, /*get: getPrice,*/ set: setPrice},
-        cost: {type: Number, /*get: getPrice,*/ set: setPrice},
+        cost: {type: Number /*get: getPrice,*//* set: setPrice*/},
         amount: {type: Number, /*get: getPrice,*/ set: setPrice},
         isPaid: {type: Boolean, default: false},
         invoice: {type: ObjectId, ref: 'Invoice', default: null},

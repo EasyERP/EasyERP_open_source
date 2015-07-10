@@ -77,6 +77,8 @@ define([
 
             keyDown: function (e) {
                 if (e.which === 13) {
+                    this.autoCalc(e);
+                    this.calculateCost(e, this.wTrackId);
                     this.setChangedValueToModel();
                 }
             },
@@ -128,7 +130,6 @@ define([
             },
 
             autoCalc: function (e) {
-                var el = $(e.target);
                 var tr = $(e.target).closest('tr');
                 var input = tr.find('input.editing');
                 var days = tr.find('.autoCalc');
@@ -156,7 +157,14 @@ define([
 
                 editWtrackModel = this.editCollection.get(wTrackId);
                 workedEl.text(worked);
-                editWtrackModel.set('worked', worked);
+                // editWtrackModel.set('worked', worked);
+
+                if (!this.changedModels[wTrackId]) {
+                    this.changedModels[wTrackId] = {};
+                }
+
+                this.changedModels[wTrackId].worked = worked;
+
             },
 
             setEditable: function (td) {
@@ -224,7 +232,6 @@ define([
                 var tempContainer;
                 var width;
                 var editedElement;
-                var costElement;
 
                 if (wTrackId && el.prop('tagName') !== 'INPUT') {
                     if (this.wTrackId) {
@@ -233,6 +240,7 @@ define([
                         this.setChangedValueToModel();
                     }
                     this.wTrackId = wTrackId;
+                    this.setChangedValueToModel();
                 }
 
 
@@ -240,94 +248,67 @@ define([
                     populate.showSelect(e, prev, next, this);
 
                 } else {
-                    costElement = editedElement.closest('tr').find('[data-content="cost"]');
                     tempContainer = el.text();
                     width = el.width() - 6;
                     el.html('<input class="editing" type="text" value="' + tempContainer + '"  maxLength="4" style="width:' + width + 'px">');
+
+                    this.autoCalc(e);
+                    var value = _.bind(this.calculateCost, this);
+                    value(e, wTrackId);
                 }
-
-                if (wTrackId.length < 24){
-
-                    costElement = tr.closest('tr').find('[data-content="cost"]');
-                    var employeeId = tr.closest('tr').find('[data-content="employee"]');
-                    var month = tr.closest('tr').find('[data-content="month"]');
-                    var year = tr.closest('tr').find('[data-content="year"]');
-                    var trackWeek = tr.closest('tr').find('[data-content="worked"]');
-                } else {
-                    costElement = this.el.closest('tr').find('[data-content="cost"]');
-
-                    dataService.getData('/wTrack/getWTrackByID', {_id: wTrackId}, function (response, context) {
-                        context.wTrack = response;
-                    }, this);
-
-                    if (this.wTrack) {
-
-                        var editWtrackModel = this.editCollection.get(wTrackId);
-
-                        var employeeId = this.wTrack[0].employee._id;
-                        var month = this.wTrack[0].month;
-                        var year = this.wTrack[0].year;
-                        var trackWeek = this.wTrack[0].worked;
-                    }
-                }
-
-                var value = _.bind(this.calculateCost, this);
-
-                var val = value(employeeId, month, year, trackWeek);
-
-                if (val >= 0) {
-                    costElement.text('');
-                    costElement.addClass('money');
-                    costElement.text(val);
-                    editWtrackModel.set('cost', val);
-                }
-
 
                 return false;
             },
 
-            calculateCost: function (employeeId, month, year, trackWeek) {
+            calculateCost: function (e, wTrackId) {
                 var self = this;
-
                 var expenseCoefficient;
-                var fixedExpense;
                 var baseSalaryValue;
+                var editWtrackModel;
+                var fixedExpense;
+                var costElement;
+                var employeeId;
+                var trackWeek;
+                var month;
                 var hours;
                 var calc;
+                var year;
 
-                function getBaseSalary(callback) {
+                var tr = $(e.target).closest('tr');
 
-                    dataService.getData('/salary/list', {month: month, year: year, _id: employeeId}, function (response, context) {
+                if (!this.changedModels[wTrackId]) {
+                    this.changedModels[wTrackId] = {};
+                }
 
-                        if (response.error){
-                            return callback(response.error);
-                        }
+                costElement = $(e.target).closest('tr').find('[data-content="cost"]');
 
-                       callback(null, response);
+                if (wTrackId.length < 24) {
+                    employeeId = this.changedModels[wTrackId].employee._id;
 
-                    }, this);
+                    month = tr.find('[data-content="month"]').text();
+                    year = tr.find('[data-content="year"]').text();
+                    trackWeek = tr.find('[data-content="worked"]').text();
 
-                };
+                } else {
+                    editWtrackModel = this.editCollection.get(wTrackId);
 
-                function getMonthData(callback) {
+                    employeeId = editWtrackModel.attributes.employee._id;
+                    month = tr.find('[data-content="month"]').text();
+                    year = tr.find('[data-content="year"]').text();
+                    trackWeek = tr.find('[data-content="worked"]').text();
+                }
 
-                    dataService.getData('/monthHours/list', {month: month, year: year}, function (response, context) {
-
-                        if (response.error){
-                            return callback(response.error);
-                        }
-
-                        callback(null, response);
-
-                    }, this);
-                };
-
-                async.parallel([getBaseSalary, getMonthData], function callback (err, results){
+                async.parallel([getBaseSalary, getMonthData], function callback(err, results) {
                     var baseSalaryLength = results[0].length;
 
-                    if (err || (baseSalaryLength === 0)){
-                        console.log(0);
-                        return calc = 0;
+                    if (err || (baseSalaryLength === 0)) {
+                        costElement.text('');
+                        costElement.addClass('money');
+                        costElement.text('0.00');
+
+                        self.changedModels[wTrackId].cost = 0;
+
+                        return 0;
                     }
 
                     baseSalaryValue = Number(results[0][0].employeesArray.baseSalary);
@@ -335,12 +316,50 @@ define([
                     fixedExpense = Number(results[1][0].fixedExpense);
                     hours = Number(results[1][0].hours);
 
-                    calc = Number(((((baseSalaryValue * expenseCoefficient) + fixedExpense) / hours) * Number(trackWeek)).toFixed(2));
+                    calc = ((((baseSalaryValue * expenseCoefficient) + fixedExpense) / hours) * trackWeek).toFixed(2);
 
-                    console.log(calc);
+                    costElement.text('');
+                    costElement.addClass('money');
+                    costElement.text(calc);
 
+                    self.changedModels[wTrackId].cost = Number(calc) * 100;
+
+                    return calc;
                 });
-                return calc;
+
+                function getBaseSalary(callback) {
+
+                    dataService.getData('/salary/list', {
+                        month: month,
+                        year: year,
+                        _id: employeeId
+                    }, function (response, context) {
+
+                        if (response.error) {
+                            return callback(response.error);
+                        }
+
+                        callback(null, response);
+
+                    }, this);
+
+                }
+
+                function getMonthData(callback) {
+
+                    dataService.getData('/monthHours/list', {month: month, year: year}, function (response, context) {
+
+                        if (response.error) {
+                            return callback(response.error);
+                        }
+
+                        callback(null, response);
+
+                    }, this);
+                }
+
+
+                return false;
             },
 
 
@@ -358,6 +377,8 @@ define([
                 var employee;
                 var department;
                 var changedAttr;
+                var wTrackId = tr.data('id');
+                var value;
 
                 var element = _.find(this.responseObj[elementType], function (el) {
                     return el._id === id;
@@ -411,6 +432,10 @@ define([
 
                     changedAttr.employee = employee;
                     changedAttr.department = department;
+
+                    value = _.bind(this.calculateCost, this);
+                    value(e, wTrackId);
+
                 } else if (elementType === '#department') {
                     department = _.clone(editWtrackModel.get('department'));
                     department._id = element._id;
@@ -535,7 +560,7 @@ define([
                 if (!el.closest('.search-view')) {
                     $('.search-content').removeClass('fa-caret-up');
                     this.$el.find(".filterOptions, .filterActions, .search-options, .drop-down-filter").hide();
-                };
+                }
             },
 
             showNewSelect: function (e, prev, next) {
@@ -683,8 +708,8 @@ define([
                 return this;
             },
 
-            bindingEventsToEditedCollection: function(context){
-                if(context.editCollection){
+            bindingEventsToEditedCollection: function (context) {
+                if (context.editCollection) {
                     context.editCollection.unbind();
                 }
                 context.editCollection = new EditCollection(context.collection.toJSON());
@@ -836,8 +861,7 @@ define([
                     }).get();
 
                     this.filter['departments'] = showList;
-                }
-                ;
+                };
 
                 if (chosen) {
                     chosen.each(function (index, elem) {
@@ -848,8 +872,7 @@ define([
                             self.filter[elem.children[1].value].push(elem.children[2].value);
                         }
                     });
-                }
-                ;
+                };
                 if (checkedElements.length && checkedElements.attr('id') === 'defaultFilter') {
                     self.filter = {};
                 }
@@ -1156,7 +1179,7 @@ define([
                         tr.remove();
                         model = self.changedModels;
 
-                        if(model) {
+                        if (model) {
                             delete model[id];
                         }
 
