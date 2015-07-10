@@ -104,6 +104,10 @@ define([
                     model = new vacationModel(model);
                     this.collection.add(model);
                 } else {
+                    for (var id in this.changedModels) {
+                        model = this.editCollection.get(id);
+                        model.set(this.changedModels[id]);
+                    }
                     this.collection.set(this.editCollection.models, {remove: false});
                 }
                 this.bindingEventsToEditedCollection(this);
