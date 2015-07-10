@@ -4,9 +4,9 @@ define([
     'models/BonusModel',
     "dataService",
     'common',
-    "populate"
-
-], function (bonusTemplate, createView, currentModel, dataService, common, populate) {
+    "populate",
+    'moment'
+], function (bonusTemplate, createView, currentModel, dataService, common, populate, moment) {
     var BonusView = Backbone.View.extend({
 
         el: '.bonus-container',
@@ -28,20 +28,23 @@ define([
             "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
             'click .choseType': 'showSelect',
             'click .choseEmployee': 'showSelect',
-            //'click .startDate': 'selectStartDate',
-            //'click .endDate': 'selectEndDate',
             'click .bonus-checkbox': 'checkBonus',
             'click #check_all_bonus': 'checkAllBonus',
-            'click .startDate': 'showDatepicker',
-            'click .endDate': 'showDatepicker'
+            'click .startDate div': 'showDatepicker',
+            'click .endDate div': 'showDatepicker',
+            'click': 'hideDatepicker'
+        },
+
+        hideDatepicker: function() {
+            //ToDO Hide Datepicker
         },
 
         showDatepicker: function (e) {
             var target = $(e.target);
-            var dateLabel = target.find('>div');
-            var datePicker = target.find('input');
+            var parent = $(e.target).parent('td');
+            var datePicker = parent.find('input');
 
-            dateLabel.hide();
+            target.hide();
             datePicker.show();
         },
 
@@ -96,7 +99,7 @@ define([
         },
 
         showSelect: function (e, prev, next) {
-            populate.showSelect(e, prev, next, this, 12);
+            populate.showSelect(e, prev, next, this);
         },
 
         nextSelect: function (e) {
@@ -169,9 +172,10 @@ define([
             e.preventDefault();
 
             var self = this;
+            var element;
 
             self.selectedBonus.forEach(function (bonus) {
-                var element = $("#bonusTable").find("tr[data-id=" + bonus + "]");
+                element = $("#bonusTable").find("tr[data-id=" + bonus + "]");
                 element.remove();
             });
 
@@ -183,8 +187,6 @@ define([
             var self = this;
             var selectedStart = '#' + name + 'StartDate';
             var selectedEnd = '#' + name + 'EndDate';
-            var oldValueStart = $(selectedStart).parent('td').find('div').html().trim();
-            var oldValueEnd = $(selectedEnd).parent('td').find('div').html().trim();
 
             $(selectedStart).datepicker({
                 dateFormat: "d M, yy",
@@ -197,8 +199,7 @@ define([
 
                     startDate.setDate(startDate.getDate());
                     $(self.$el).find(selectedEnd).datepicker('option', 'minDate', startDate);
-                    parrent.find('div').html(value);
-                    parrent.find('div').show();
+                    parrent.find('div').html(value).show();
                     $(selectedStart).hide();
                 }
             });
@@ -214,18 +215,25 @@ define([
 
                     endDate.setDate(endDate.getDate());
                     $(self.$el).find(selectedStart).datepicker('option', 'maxDate', endDate);
-                    parrent.find('div').html(value);
-                    parrent.find('div').show();
+                    parrent.find('div').html(value).show();
                     $(selectedEnd).hide();
                 }
             });
+        },
+
+        formatingDate: function(oldDate) {
+            if (!oldDate) {
+                return '';
+            }
+
+            return moment(oldDate).format("D MMM, YYYY");
         },
 
         render: function () {
             var self = this;
             var bonus = this.model.get('bonus'); //ToDo
 
-            this.$el.html(this.template({bonus: bonus}));
+            this.$el.html(this.template({bonus: bonus, formatingDate: self.formatingDate}));
 
             this.$el.find('#removeBonus').hide();
 

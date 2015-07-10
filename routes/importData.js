@@ -842,8 +842,12 @@ module.exports = function (models) {
         var projectsCollection = bonusSchema.collection;
 
         var ProjectsSchema = mongoose.Schemas[projectsCollection];
+        var EmployeeSchema = mongoose.Schemas['Employees'];
+        var BonusTypeSchema = mongoose.Schemas['bonusType'];
 
         var Project = models.get(req.session.lastDb, projectsCollection, ProjectsSchema);
+        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var BonusType = models.get(req.session.lastDb, 'bonusType', BonusTypeSchema);
 
         function importBonus(BonusSchema, seriesCb) {
             var query = queryBuilder(BonusSchema.table);
@@ -854,9 +858,6 @@ module.exports = function (models) {
             }
 
             function saverBonus(fetchedArray, callback) {
-                var model;
-                var mongooseFields = Object.keys(BonusSchema.aliases);
-
                 async.eachLimit(fetchedArray, 100, function (fetchedBonus, cb) {
                     if (fetchedBonus) {
                         var newBonus = {
@@ -866,19 +867,84 @@ module.exports = function (models) {
                             endDate: fetchedBonus.EndDate
                         };
 
-                        projectQuery = {
+                        var projectQuery = {
                             ID: fetchedBonus['Project']
                         };
 
-                        updateQuery = {
-                            $push: {items: item}
+                        var employeeQuery = {
+                            ID: fetchedBonus['Employee']
+                        };
+
+                        var bonusTypeQuery = {
+                            ID: fetchedBonus['Type']
                         };
 
                         function projectFinder(callback) {
-                            Project.findByIdAndUpdate(projectQuery)
+                            Project.findOne(projectQuery, {_id: 1, StartDate: 1 ,EndDate: 1}, function (err, project) {
+                                if (err) {
+                                    return callback(err);
+                                }
+                                callback(null, project);
+                            });
                         };
 
-                        console.log(fetchedBonus);
+                        function employeFinder(callback) {
+                            Employee.findOne(employeeQuery, {_id: 1}, function (err, employee) {
+                                if (err) {
+                                    return callback(err);
+                                }
+                                callback(null, employee);
+                            });
+                        };
+
+                        function bonusTypeFinder(callback) {
+                            BonusType.findOne(bonusTypeQuery, {_id: 1}, function (err, bonusType) {
+                                if (err) {
+                                    return callback(err);
+                                }
+                                callback(null, bonusType);
+                            });
+                        };
+
+                        async.parallel({
+                            project: projectFinder,
+                            employee: employeFinder,
+                            bonusType: bonusTypeFinder
+                        }, function (err, result) {
+                            var projectId = result.project ? result.project._id : null;
+                            var employeeId = result.employee ? result.employee._id : null;
+                            var bonusId = result.bonusType ? result.bonusType._id : null;
+                            var startDate = fetchedBonus['StartDate'] || (result.project ? result.project.StartDate : null);
+                            var endDate = fetchedBonus['EndDate'] || (result.project ? result.project.EndDate : null);
+
+                            var query = {
+                                _id: projectId
+                            };
+
+                            var updatQuery = {
+                                $push: {
+                                    "bonus": {
+                                        employeeId: employeeId,
+                                        bonusId: bonusId,
+                                        startDate: startDate,
+                                        endDate: endDate
+                                    }
+                                }
+                            };
+
+                            var settings = {
+                                safe: true,
+                                upsert: true
+                            };
+
+                            Project.findByIdAndUpdate(query, updatQuery, settings, function(err, model) {
+                                if (err) {
+                                    return console.log(err);
+                                }
+
+                                console.log(model);
+                            });
+                        });
                     }
                 }, function (err) {
                     if (err) {
