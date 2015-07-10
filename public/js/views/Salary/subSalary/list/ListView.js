@@ -56,7 +56,81 @@ function (listTemplate, cancelEdit, createView, listItemView, subSalaryTotalTemp
             "click td.editable": "editRow",
             "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
             "change .autoCalc": "autoCalc",
-            "change .editable": "setEditable"
+            "change .editable": "setEditable",
+            "click .oe_sortable_sub": "goSort"
+        },
+
+        goSort: function (e) {
+            e.preventDefault();
+            var target$ = $(e.target);
+            var currentParrentSortClass = target$.attr('class');
+            var sortClass = currentParrentSortClass.split(' ')[1];
+            var sortField = target$.attr('data-sort');
+            var sortConst = 1;
+
+            if (!sortClass) {
+                target$.addClass('sortDn');
+                sortClass = "sortDn";
+            }
+            switch (sortClass) {
+                case "sortDn":
+                {
+                    target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
+                    target$.removeClass('sortDn').addClass('sortUp');
+                    sortConst = 1;
+                }
+                    break;
+                case "sortUp":
+                {
+                    target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
+                    target$.removeClass('sortUp').addClass('sortDn');
+                    sortConst = -1;
+                }
+                    break;
+            }
+
+            this.sortByOrder({orderField: sortField, order: sortConst});
+
+            this.renderTable();
+        },
+
+        sortByOrder: function(options) {
+            var collection;
+            var order = options.order || 1;
+            var orderField = options.orderField || 'employee.name';
+
+            collection = this.model.get('employeesArray');
+            collection = _.sortBy(collection, function(model) {
+                var orderField1;
+                var orderField2;
+                var fullField = orderField.split(".");
+
+                orderField1 = fullField[0];
+                orderField2 = fullField[1];
+
+                if (orderField2) {
+                    return model[orderField1][orderField2];
+                } else {
+                    return model[orderField1];
+                }
+            });
+
+            if (order < 0) {
+                collection.reverse();
+            }
+
+            this.model.set('employeesArray', collection);
+        },
+
+        renderTable: function() {
+            var itemView;
+
+            this.$el.find(this.bodyContainerId).html('');
+            itemView = new listItemView({
+                el: this.bodyContainerId,
+                model: this.model
+            });
+            $(this.bodyContainerId).append(itemView.render());
         },
 
         autoCalc: function (e) {

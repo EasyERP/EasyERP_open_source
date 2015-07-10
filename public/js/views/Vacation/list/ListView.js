@@ -180,13 +180,19 @@ define([
             },
 
             vacationTypeForDD: function (content) {
-                var array = ['', 'Vacation', 'Personal', 'Sick', 'Education'];
+                var array = ['&nbsp', 'Vacation', 'Personal', 'Sick', 'Education'];
+                var firstChar;
 
                 array = _.map(array, function (element) {
                     element = {
                         name: element
                     };
-                    element._id = element.name.charAt(0);
+                    firstChar = element.name.charAt(0);
+                    if (firstChar !== '&') {
+                        element._id = firstChar;
+                    } else {
+                        element._id = '';
+                    }
 
                     return element;
                 });
@@ -399,9 +405,9 @@ define([
                     dateDay = date.add(1, 'd');
                 }
 
-                daysRow = '<tr class="subHeaderHolder">' + daysRow + '</tr>';
+                daysRow = '<tr class="subHeaderHolder borders">' + daysRow + '</tr>';
 
-                daysNumRow = '<tr class="subHeaderHolder"><th class="oe_sortable" data-sort="employee.name">Employee Name</th><th>Department</th>' + daysNumRow + '<th>Total Days</th></tr>';
+                daysNumRow = '<tr class="subHeaderHolder borders"><th class="oe_sortable" data-sort="employee.name">Employee Name</th><th>Department</th>' + daysNumRow + '<th>Total Days</th></tr>';
 
                 this.daysCount = daysInMonth;
 
@@ -551,11 +557,13 @@ define([
                                 employeesCount -= 1;
                             } else {
                                 element.toggleClass(selectedClass);
+                                element.addClass('selectedType');
                             }
                         }
                     } else {
                         if (selectedClass !== '') {
                             element.toggleClass(selectedClass);
+                            element.addClass('selectedType');
                             vacDaysCount += 1;
                             employeesCount += 1;
                         }
@@ -658,6 +666,10 @@ define([
 
                     self.$listTable = $('#listTable');
                 }, 10);
+
+                $(document).on("click", function (e) {
+                    self.hideNewSelect();
+                });
 
                 currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             },

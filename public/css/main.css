@@ -196,6 +196,18 @@ textarea {
 .money:before {
   content: "$";
 }
+.negativeMoney {
+  color: #ff0000;
+}
+.negativeMoney:before {
+  content: "-$";
+}
+.cash {
+  background-color: #fdd766;
+}
+.card {
+  background-color: #f2af84;
+}
 input::-ms-clear {
   display: none;
 }
@@ -237,10 +249,12 @@ input::-ms-clear {
 .list2 thead th input[type="checkbox"] {
   margin-top: 2.5px;
 }
-.list2 thead th.oe_sortable {
+.list2 thead th.oe_sortable,
+.list2 thead th.oe_sortable_sub {
   cursor: pointer;
 }
-.list2 thead th.oe_sortable .arrow {
+.list2 thead th.oe_sortable .arrow,
+.list2 thead th.oe_sortable_sub .arrow {
   display: none;
   padding: 0 0 0 5px;
   margin: 0;
@@ -254,10 +268,12 @@ input::-ms-clear {
   line-height: 23px;
   background: none;
 }
-.list2 thead th.oe_sortable.sortUp .up {
+.list2 thead th.oe_sortable.sortUp .up,
+.list2 thead th.oe_sortable_sub.sortUp .up {
   display: inline-block;
 }
-.list2 thead th.oe_sortable.sortDn .down {
+.list2 thead th.oe_sortable.sortDn .down,
+.list2 thead th.oe_sortable_sub.sortDn .down {
   display: inline-block;
 }
 .list2 thead th:first-of-type {
@@ -269,6 +285,9 @@ input::-ms-clear {
 .list2 tbody tr {
   text-shadow: 0 1px 1px rgba(255, 255, 255, 0.3);
   border-top: 1px solid #ababab;
+}
+.list2 tbody tr.greenAlarm {
+  border: 2px solid #90ee90;
 }
 .list2 tbody tr.canceledListItem {
   color: grey;
@@ -360,10 +379,12 @@ input::-ms-clear {
 .list2 thead th input[type="checkbox"] {
   margin-top: 2.5px;
 }
-.list2 thead th.oe_sortable {
+.list2 thead th.oe_sortable,
+.list2 thead th.oe_sortable_sub {
   cursor: pointer;
 }
-.list2 thead th.oe_sortable .arrow {
+.list2 thead th.oe_sortable .arrow,
+.list2 thead th.oe_sortable_sub .arrow {
   display: none;
   padding: 0 0 0 5px;
   margin: 0;
@@ -377,10 +398,12 @@ input::-ms-clear {
   line-height: 23px;
   background: none;
 }
-.list2 thead th.oe_sortable.sortUp .up {
+.list2 thead th.oe_sortable.sortUp .up,
+.list2 thead th.oe_sortable_sub.sortUp .up {
   display: inline-block;
 }
-.list2 thead th.oe_sortable.sortDn .down {
+.list2 thead th.oe_sortable.sortDn .down,
+.list2 thead th.oe_sortable_sub.sortDn .down {
   display: inline-block;
 }
 .list2 thead th:first-of-type {
@@ -392,6 +415,9 @@ input::-ms-clear {
 .list2 tbody tr {
   text-shadow: 0 1px 1px rgba(255, 255, 255, 0.3);
   border-top: 1px solid #ababab;
+}
+.list2 tbody tr.greenAlarm {
+  border: 2px solid #90ee90;
 }
 .list2 tbody tr.canceledListItem {
   color: grey;
@@ -4733,10 +4759,12 @@ ul.dialog-tabs li.right button {
 .list thead th input[type="checkbox"] {
   margin-top: 2.5px;
 }
-.list thead th.oe_sortable {
+.list thead th.oe_sortable,
+.list thead th.oe_sortable_sub {
   cursor: pointer;
 }
-.list thead th.oe_sortable .arrow {
+.list thead th.oe_sortable .arrow,
+.list thead th.oe_sortable_sub .arrow {
   display: none;
   padding: 0 0 0 5px;
   margin: 0;
@@ -4750,10 +4778,12 @@ ul.dialog-tabs li.right button {
   line-height: 23px;
   background: none;
 }
-.list thead th.oe_sortable.sortUp .up {
+.list thead th.oe_sortable.sortUp .up,
+.list thead th.oe_sortable_sub.sortUp .up {
   display: inline-block;
 }
-.list thead th.oe_sortable.sortDn .down {
+.list thead th.oe_sortable.sortDn .down,
+.list thead th.oe_sortable_sub.sortDn .down {
   display: inline-block;
 }
 .list thead th:first-of-type {
@@ -4765,6 +4795,9 @@ ul.dialog-tabs li.right button {
 .list tbody tr {
   text-shadow: 0 1px 1px rgba(255, 255, 255, 0.3);
   border-top: 1px solid #ababab;
+}
+.list tbody tr.greenAlarm {
+  border: 2px solid #90ee90;
 }
 .list tbody tr.canceledListItem {
   color: grey;
@@ -7791,10 +7824,23 @@ textarea#editInput {
   padding: 5px;
 }
 .vacation-list thead th {
+  font-weight: bold;
   border: 1px solid #d2d2d2;
 }
 .vacation-list thead th#legandCaption {
   text-align: left;
+}
+.vacation-list thead th.month .newSelectList {
+  width: 100px;
+  margin-left: auto;
+  margin-right: auto;
+  left: calc(98% * 0.17 / 2 - 40px);
+}
+.vacation-list thead th.sortDn:after {
+  content: "\00a0\25BE";
+}
+.vacation-list thead th.sortUp:after {
+  content: "\00a0\25B4";
 }
 .vacation-list tfoot td {
   font-weight: bold;
@@ -7803,10 +7849,6 @@ textarea#editInput {
 .vacation-list tfoot td {
   border: 1px solid #d2d2d2;
   text-align: center;
-}
-.vacation-list tbody td.editable .newSelectList,
-.vacation-list tfoot td.editable .newSelectList {
-  color: #000;
 }
 .vacation-list tbody td.employee,
 .vacation-list tfoot td.employee,
@@ -7823,5 +7865,16 @@ textarea#editInput {
 .vacation-list thead,
 .vacation-list tbody,
 .vacation-list tfoot {
-  border: 1px solid #d2d2d2;
+  border: 0.2em solid #d2d2d2;
+}
+.vacation-list .newSelectList,
+.salary-list .newSelectList,
+.subSalary-list .newSelectList {
+  color: #000;
+}
+.vacation-list tbody tr:not(.subRow):hover td:not(.selectedType),
+.salary-list tbody tr:not(.subRow):hover td:not(.selectedType),
+.subSalary-list tbody tr:not(.subRow):hover td:not(.selectedType) {
+  background-color: #333333;
+  color: #ffffff;
 }

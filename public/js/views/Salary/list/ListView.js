@@ -473,12 +473,13 @@ define([
 
             showMoreContent: function (newModels) {
                 var holder = this.$el;
-                holder.find("#listTable").empty();
                 var itemView = new listItemView({
                     collection: newModels,
                     page: holder.find("#currentShowPage").val(),
                     itemsNumber: holder.find("span#itemsNumber").text()
-                });//added two parameters page and items number
+                });
+
+                holder.find("#listTable").html('');
                 holder.append(itemView.render());
 
                 itemView.undelegateEvents();
@@ -530,13 +531,17 @@ define([
             createItem: function () {
                 var checked = $("#listTable input.mainCB:checked");
                 var row = checked.closest('tr');
-                var id = $(row).data('id');
+                var id = $(row).attr('data-id');
                 var salaryModel = this.collection.get(id);
                 var employeesArary = salaryModel.toJSON().employeesArray;
 
                 this.editCollection = new salaryEditableCollection(employeesArary);
 
                 checked[0].checked = false;
+
+                $('#listTable').prepend('<tr data-id="false" class="copy greenAlarm">' + $(row).html() + '</tr>');
+
+                row = $("#listTable .copy");
 
                 $(row).find('.month').addClass('editable');
                 $(row).find('.month').attr('data-type', 'input');
@@ -545,8 +550,6 @@ define([
                 $(row).find('.year').attr('data-type', 'input');
                 $(row).find('.mainCB').attr('checked', 'true');
                 $(row).find('.mainCB').attr('id', 'copy');
-
-                $('#listTable').prepend('<tr data-id="false" class="copy">' + $(row).html() + '</tr>');
                 $("#top-bar-createBtn").hide();
 
                 $('#listTable').find('tr:not(.copy)').each(function (index, element) {
@@ -670,6 +673,10 @@ define([
                                 }
                             });
                         });
+                    } else {
+                        that.deletePage = $("#currentShowPage").val();
+                        dataService.getData('/salary/recalculateSalaryCash', {}, function (response, context) {}, that);
+                        that.deleteItemsRender(0, that.deletePage);
                     };
 
                 });
