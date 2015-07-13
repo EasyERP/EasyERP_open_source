@@ -7370,6 +7370,9 @@ textarea#editInput {
   display: block;
   box-sizing: border-box;
 }
+.grid tr.employeeProjects {
+  display: none;
+}
 .grid tr td.checkDashboard,
 .grid tr th.checkDashboard {
   width: 30px;
@@ -7379,6 +7382,14 @@ textarea#editInput {
 .grid tr th.employee {
   min-width: 140px;
   width: 140px;
+}
+.grid tr td.employee .icon,
+.grid tr th.employee .icon {
+  float: right;
+  width: inherit;
+  font-size: 14px;
+  line-height: 21px;
+  cursor: pointer;
 }
 .grid tr td.dayOfMonth,
 .grid tr th.dayOfMonth {

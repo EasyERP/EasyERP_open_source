@@ -5081,6 +5081,10 @@ textarea#editInput {
       box-sizing: border-box;
     }
 
+    &.employeeProjects {
+      display: none;
+    }
+
     td, th {
       &.checkDashboard {
         width: 30px;
@@ -5089,6 +5093,14 @@ textarea#editInput {
       &.employee {
         min-width: 140px;
         width: 140px;
+        
+        .icon {
+          float: right;
+          width: inherit;
+          font-size: 14px;
+          line-height: 21px;
+          cursor: pointer;
+        }
       }
       &.dayOfMonth {
         min-width: 27px;

@@ -17,7 +17,8 @@ define([
         template: _.template(mainTemplate),
 
         events: {
-
+            "click .empoyeesRow": "openEmployee",
+            "click .group": "openDepartment"
         },
 
         initialize: function () {
@@ -34,6 +35,34 @@ define([
                 custom.cashToApp('dashboardVacation', dashCollection);
             } else {
                 dashCollection.trigger('reset');
+            }
+        },
+
+        openEmployee: function(e) {
+            var self = this;
+            var target = e.target;
+            var targetEmployee = '.' + $(target).parents('tr').attr('data-id');
+            var display = self.$el.find(targetEmployee).css('display');
+
+            if (display === "none") {
+                self.$el.find(targetEmployee).show();
+            } else {
+                self.$el.find(targetEmployee).hide();
+            }
+        },
+
+        openDepartment: function(e) {
+            var self = this;
+            var target = e.target;
+            var targetDepartment = '.' + $(target).parents('tr').attr('data-id');
+            var targetProjects = '.projectsFor' + $(target).parents('tr').attr('data-id');
+            var display = self.$el.find(targetDepartment).css('display');
+
+            if (display === "none") {
+                self.$el.find(targetDepartment).show();
+            } else {
+                self.$el.find(targetDepartment).hide();
+                self.$el.find(targetProjects).hide();
             }
         },
 
