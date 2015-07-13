@@ -37,7 +37,7 @@ define([
             }
         },
 
-        leadComperator: function(isLeadNumber){
+        leadComparator: function(isLeadNumber){
             if (!isLeadNumber){
                 return '<span class="low"><span class="label label-danger">Low</span></span>'
             }
@@ -47,6 +47,27 @@ define([
             return '<span class="high"><span class="label label-success">High</span></span>'
         },
 
+        getCellClass: function(week, employeeId){
+           /* var s = "";
+            var hours = week.hours + self.isHaveHoliday(week.year, week.week) * 8 + (week.countDay || 0);
+            if (hours > 40) {
+                s += "dgreen ";
+            } else if (hours > 35) {
+                s += "green ";
+            } else if (hours > 19) {
+                s += "yellow ";
+            } else
+                s += "white ";
+            if (self.currentWeek == week.week) {
+                s += "active ";
+            }
+            if (!self.isWorking(track.ID, week)) {
+                s += "inactive ";
+            }
+            return s;*/
+            console.log('1');
+        },
+
         render: function () {
             var self = this;
             var rowItems;
@@ -54,7 +75,12 @@ define([
             var dashboardData = this.dashCollection.toJSON();
 
 
-            this.$el.html(this.template({weeks: weeskArr, dashboardData:  dashboardData, leadComperator: self.leadComperator}));
+            this.$el.html(this.template({
+                weeks: weeskArr,
+                dashboardData:  dashboardData,
+                leadComparator: self.leadComparator,
+                getCellClass: self.getCellClass
+            }));
 
 
             return this;

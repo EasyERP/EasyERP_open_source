@@ -20,7 +20,7 @@
         </thead>
         <tbody id="dashboardBody">
             <% dashboardData.forEach(function(department){ %>
-                <tr data-id="<%= department %>" class="head-row">
+                <tr data-id="<%= department.department ? department.department._id: '' %>" class="head-row" data-content="department">
                     <td>
                         <span>&nbsp</span>
                     </td>
@@ -32,7 +32,7 @@
 
                 </tr>
                 <% department.employees.forEach(function(employee, index){ %>
-                    <tr class="<%= department %>">
+                    <tr class="group" data-id="<%= employee.get('_id')%>">
                         <td>
                             <span>
                                 <%=index + 1%>
@@ -46,6 +46,15 @@
                         <td>
                             <%= leadComparator(employee.get('isLead'))%>
                         </td>
+                        <%employee.get('weekData').forEach(function(week){%>
+                            <td class="dashboardWeek withVacation" <%=getCellClass(week)%>>
+                                <span class="viewCount">1d</span>
+                                <span class="view">
+                                    <span class="vacation size8">8h</span>
+                                    <span class="vacationHours size8"><%=week.hours || 0%> / <%=week.projects || 0%> p</span>
+                                </span>
+                            </td>
+                        <%})%>
                     </tr>
 
                 <% }) %>
