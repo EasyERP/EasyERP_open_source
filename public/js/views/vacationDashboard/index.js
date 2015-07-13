@@ -62,6 +62,8 @@ define([
                 dashCollection.on('reset sort', this.render, this);
 
                 custom.cashToApp('dashboardVacation', dashCollection);
+            } else {
+                dashCollection.trigger('reset');
             }
         },
 

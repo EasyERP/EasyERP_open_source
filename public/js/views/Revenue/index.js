@@ -9,6 +9,7 @@ define([
     'text!templates/Revenue/perWeek.html',
     'text!templates/Revenue/paidBySales.html',
     'text!templates/Revenue/paidBySalesItems.html',
+    'text!templates/Revenue/unpaidBySales.html',
     'text!templates/Revenue/monthsArray.html',
     'text!templates/Revenue/perMonth.html',
     'models/Revenue',
@@ -29,6 +30,7 @@ define([
         bySalesPerMonthTemplate: _.template(perMonth),
         paidBySalesTemplate: _.template(paidBySales),
         paidBySalesItemsTemplate: _.template(paidBySalesItems),
+        unpaidBySalesTemplate: _.template(unpaidBySales),
 
         paidUnpaidDateRange: {},
 
@@ -434,12 +436,7 @@ define([
             var tempPerMonth;
             var globalTotal = 0;
 
-            target.html(this.paidBySalesTemplate({
-                employees: this.employees,
-                content: 'totalPaidBySales',
-                className: 'totalPaid',
-                headName: 'Paid wTrack'
-            }));
+            target.html(this.paidBySalesTemplate({employees: this.employees}));
             //target.find('div.revenueBySales').html(this.weeksArrayTemplate({weeksArr: this.weekArr}));
             targetTotal = $(self.$el.find('[data-content="totalPaidBySales"]'));
             monthContainer = target.find('.monthContainer');
@@ -510,12 +507,7 @@ define([
             var tempPerMonth;
             var globalTotal = 0;
 
-            target.html(this.paidBySalesTemplate({
-                employees: this.employees,
-                content: 'totalCancelledBySales',
-                className: 'totalUnpaid',
-                headName: 'Write Off'
-            }));
+            target.html(this.unpaidBySalesTemplate({employees: this.employees,  content: 'totalCancelledBySales'}));
             target.find('div.revenueBySales').html(this.weeksArrayTemplate({weeksArr: this.weekArr}));
             targetTotal = $(self.$el.find('[data-content="totalCancelledBySales"]'));
             monthContainer = target.find('.monthContainer');
@@ -586,12 +578,7 @@ define([
             var tempPerMonth;
             var globalTotal = 0;
 
-            target.html(this.paidBySalesTemplate({
-                employees: this.employees,
-                content: 'totalUnPaidBySales',
-                className: 'totalUnpaid',
-                headName: 'Unpaid wTrack'
-            }));
+            target.html(this.unpaidBySalesTemplate({employees: this.employees,  content: 'totalUnPaidBySales'}));
             /* target.find('div.revenueBySales').html(this.weeksArrayTemplate({weeksArr: this.weekArr}));*/
             targetTotal = $(self.$el.find('[data-content="totalUnPaidBySales"]'));
             monthContainer = target.find('.monthContainer');
