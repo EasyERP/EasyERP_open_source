@@ -63,9 +63,9 @@
                             <td>&nbsp;</td>
                             <%employee.get('weekData').forEach(function(week){%>
                                 <% if(week.projectRoot) {%>
-                                    <td >
-                                        <span><%=week.projectRoot[i-1] ? week.projectRoot[i-1].hours : ''%></span>
-                                        <span><%=week.projectRoot[i-1] ? week.projectRoot[i-1].project: ''%></span>
+                                    <td>
+                                        <span class="projectHours"><%=week.projectRoot[i-1] ? week.projectRoot[i-1].hours : ''%></span>
+                                        <span class="projectItem"><%=week.projectRoot[i-1] ? week.projectRoot[i-1].project: ''%></span>
                                     </td>
                                 <% } else { %>
                                     <td >
