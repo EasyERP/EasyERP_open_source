@@ -44,9 +44,7 @@
                             </span>
                         </td>
                         <td>
-                            <span>
-                                <%= employee.get('isLead') || '&nbsp' %>
-                            </span>
+                            <%= leadComparator(employee.get('isLead'))%>
                         </td>
                     </tr>
 

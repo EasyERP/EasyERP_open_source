@@ -25,36 +25,6 @@ define([
             var employeeCollection;
             var self = this;
 
-           /* function employeeComposer(parallelCb){
-                employeeCollection = this.employeeCollection = custom.retriveFromCash('employeesByDep');
-
-                if(!employeeCollection){
-                    employeeCollection = this.employeeCollection = new employeesForDashboard();
-
-                    custom.cashToApp('employeesByDep', employeeCollection);
-                }
-
-                parallelCb(null, employeeCollection);
-            };
-
-            function dashboardComposer(parallelCb){
-                dashCollection = this.dashCollection = custom.retriveFromCash('dashboardVacation');
-
-                if(!dashCollection){
-                    dashCollection = this.dashCollection = new vacationDashboard();
-
-                    custom.cashToApp('dashboardVacation', dashCollection);
-                }
-
-                parallelCb(null, dashCollection);
-            };
-
-            async.parallel([employeeComposer, dashboardComposer], function(err, result){
-                if(!err){
-                    self.render();
-                }
-            });*/
-
             dashCollection = this.dashCollection = custom.retriveFromCash('dashboardVacation');
 
             if(!dashCollection){
@@ -62,7 +32,19 @@ define([
                 dashCollection.on('reset sort', this.render, this);
 
                 custom.cashToApp('dashboardVacation', dashCollection);
+            } else {
+                dashCollection.trigger('reset');
             }
+        },
+
+        leadComperator: function(isLeadNumber){
+            if (!isLeadNumber){
+                return '<span class="low"><span class="label label-danger">Low</span></span>'
+            }
+            if (isLeadNumber == 1){
+                return '<span class="medium"><span class="label label-warning">Medium</span></span>'
+            }
+            return '<span class="high"><span class="label label-success">High</span></span>'
         },
 
         render: function () {
@@ -70,11 +52,10 @@ define([
             var rowItems;
             var weeskArr = custom.retriveFromCash('weeksArr') || [];
             var dashboardData = this.dashCollection.toJSON();
-            //var employeeCollection = this.employeeCollection.toJSON();
 
-            this.$el.html(this.template({weeks: weeskArr, dashboardData:  dashboardData}));
 
-            //rowItems = new rowView(dashboardData);
+            this.$el.html(this.template({weeks: weeskArr, dashboardData:  dashboardData, leadComperator: self.leadComperator}));
+
 
             return this;
         }
