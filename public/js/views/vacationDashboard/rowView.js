@@ -3,10 +3,7 @@
  */
 define([
     'text!templates/vacationDashboard/rowTemplate.html'
-    /*'models/VacationDashboardModel',
-    'populate',
-    'moment'*/
-], function (mainTemplate/*, vacationDashboardModel, populate, moment*/) {
+], function (mainTemplate) {
     var View = Backbone.View.extend({
         el: '#dashboardBody',
 
@@ -16,15 +13,14 @@ define([
 
         },
 
-        initialize: function () {
-            this.render();
+        initialize: function (inputData) {
+            this.render(inputData);
         },
 
-        render: function () {
+        render: function (inputData) {
             var self = this;
-            var departments = [{departmentName: 'iOs'}, {departmentName: 'Android'}];
 
-            this.$el.html(this.template({departments: departments}));
+            this.$el.html(this.template(inputData));
 
             this.rendered = true;
 

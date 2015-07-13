@@ -19,7 +19,39 @@
             </tr>
         </thead>
         <tbody id="dashboardBody">
+            <% dashboardData.forEach(function(department){ %>
+                <tr data-id="<%= department %>" class="head-row">
+                    <td>
+                        <span>&nbsp</span>
+                    </td>
+                    <td colspan="17">
+                    <span>
+                        <%= department.department ? department.department.departmentName: '&nbsp'%>
+                    </span>
+                    </td>
 
+                </tr>
+                <% department.employees.forEach(function(employee, index){ %>
+                    <tr class="<%= department %>">
+                        <td>
+                            <span>
+                                <%=index + 1%>
+                            </span>
+                        </td>
+                        <td>
+                            <span>
+                                <%= employee.get('name') || '&nbsp' %>
+                            </span>
+                        </td>
+                        <td>
+                            <span>
+                                <%= employee.get('isLead') || '&nbsp' %>
+                            </span>
+                        </td>
+                    </tr>
+
+                <% }) %>
+            <% }) %>
         </tbody>
     </table>
 </div>
