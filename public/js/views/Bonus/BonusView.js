@@ -61,7 +61,7 @@ define([
             if (checked) {
                 self.selectedBonus.push(bonusId);
             } else if (this.selectedBonus.length > 1) {
-                this.selectedBonus = _.without(this.selectedBonus, bonusId);
+                self.selectedBonus = _.without(self.selectedBonus, bonusId);
             }
 
             if (totalCount === 0) {
@@ -105,11 +105,15 @@ define([
         },
 
         nextSelect: function (e) {
-            this.showNewSelect(e, false, true);
+            var self = this;
+
+            self.showNewSelect(e, false, true);
         },
 
         prevSelect: function (e) {
-            this.showNewSelect(e, true, false);
+            var self = this;
+
+            self.showNewSelect(e, true, false);
         },
 
         showNewSelect: function (e, prev, next) {
@@ -121,6 +125,8 @@ define([
 
         chooseOption: function (e) {
             e.preventDefault();
+
+            var self = this;
             var target = $(e.target);
             var closestTD = target.closest("td");
             var targetElement = closestTD.length ? closestTD : target.closest("th").find('a');
@@ -128,7 +134,7 @@ define([
             var id = target.attr("id");
             var attr = targetElement.attr("id") || targetElement.data("content");
             var elementType = '#' + attr;
-            var element = _.find(this.responseObj[elementType], function (el) {
+            var element = _.find(self.responseObj[elementType], function (el) {
                 return el._id === id;
             });
             var employee;
@@ -155,7 +161,7 @@ define([
                 bonus.name = target.text();
             }
 
-            this.hideNewSelect();
+            self.hideNewSelect();
 
             return false;
         },
@@ -165,9 +171,10 @@ define([
         },
 
         addBonus: function (e) {
+            var self = this;
             e.preventDefault();
 
-            new createView(this.model.toJSON());
+            new createView(self.model.toJSON());
         },
 
         removeBonus: function (e) {
@@ -240,14 +247,14 @@ define([
             var startDate = this.model.get('StartDate');
             var endDate = this.model.get('EndDate');
 
-            this.$el.html(this.template({
+            self.$el.html(this.template({
                 bonus: bonus,
                 formatingDate: self.formatingDate,
                 startDate: startDate,
                 endDate: endDate
             }));
 
-            this.$el.find('#removeBonus').hide();
+            self.$el.find('#removeBonus').hide();
 
             dataService.getData("/employee/getForDD", null, function (employees) {
                 employees = _.map(employees.data, function (employee) {
