@@ -87,6 +87,8 @@ var wTrack = function (models) {
                         _employee.weekData = weeksArr;
                     }
 
+                    _employee.maxProjects = dashResultByEmployee ? dashResultByEmployee.maxProjects : 0
+
                     return _employee;
                 });
 
@@ -202,6 +204,7 @@ var wTrack = function (models) {
                                 department: '$department',
                                 employee: '$employee'
                             },
+                            maxProjects: {$max: '$projects'},
                             weekData: {$push: '$$ROOT'}
                         }
                     }, {
@@ -209,6 +212,7 @@ var wTrack = function (models) {
                             department: '$_id.department',
                             employee: '$_id.employee',
                             weekData: 1,
+                            maxProjects: 1,
                             _id: 0
                         }
                     }, {
