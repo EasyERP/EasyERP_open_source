@@ -1,5 +1,5 @@
 define([
-        "text!templates/Vacation/CreateTemplate.html",
+        "text!templates/Vacation/CreateTemplate.html"
     ],
     function (CreateTemplate) {
 
