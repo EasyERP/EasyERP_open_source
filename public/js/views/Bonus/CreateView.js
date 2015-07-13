@@ -28,44 +28,46 @@ define([
             render: function (options) {
                 var data = options.toJSON();
                 var self = this;
-                var startDate;
+                var cid = options.cid;
+                var startPicker = '#' + cid + 'StartDate';
+                var endPicker = '#' + cid + 'EndDate';
 
-                this.$el.prepend(this.template({options: data, startDate: this.startDate, endDate: this.endDate}));
+                this.$el.prepend(this.template({options: data, startDate: this.startDate, endDate: this.endDate, cid: cid}));
 
-                $('.startDate input').datepicker({
+                $(startPicker).datepicker({
                     dateFormat: "d M, yy",
                     changeMonth: true,
                     changeYear: true,
                     onSelect: function () {
-                        var startDate = $(self.$el).find('.startDate input').datepicker('getDate');
-                        var parrent = $('.startDate input').parent('td');
-                        var value = $(self.$el).find('.startDate input').val();
+                        var startDate = $(self.$el).find(startPicker).datepicker('getDate');
+                        var parrent = $(startPicker).parent('td');
+                        var value = $(self.$el).find(startPicker).val();
 
                         startDate.setDate(startDate.getDate());
-                        $(self.$el).find('.endDate input').datepicker('option', 'minDate', startDate);
+                        $(self.$el).find(endPicker).datepicker('option', 'minDate', startDate);
                         parrent.find('div').html(value).show();
-                        $('.startDate input').hide();
+                        $(startPicker).hide();
                     }
                 });
 
-                $('.endDate input').datepicker({
+                $(endPicker).datepicker({
                     dateFormat: "d M, yy",
                     changeMonth: true,
                     changeYear: true,
                     onSelect: function () {
-                        var endDate = $(self.$el).find('.endDate input').datepicker('getDate');
-                        var parrent = $('.endDate input').parent('td');
-                        var value = $(self.$el).find('.endDate input').val();
+                        var endDate = $(self.$el).find(endPicker).datepicker('getDate');
+                        var parrent = $(endPicker).parent('td');
+                        var value = $(self.$el).find(endPicker).val();
 
                         endDate.setDate(endDate.getDate());
-                        $(self.$el).find('.startDate input').datepicker('option', 'maxDate', endDate);
+                        $(self.$el).find(startPicker).datepicker('option', 'maxDate', endDate);
                         parrent.find('div').html(value).show();
-                        $('.endDate input').hide();
+                        $(endPicker).hide();
                     }
                 });
 
-                $('.startDate input').datepicker('setDate',this.startDate);
-                $('.endDate input').datepicker('setDate',this.endDate);
+                $(startPicker).datepicker('setDate',self.startDate);
+                $(endPicker).datepicker('setDate',self.endDate);
 
                 return this;
             }

@@ -1,4 +1,4 @@
-<tr id="false" data-id="<%=options.bonus._id%>">
+<tr id="false" data-id="<%=cid%>">
     <td class="notForm"><input type="checkbox" class="bonus-checkbox" value="<%=options.bonus._id%>"/></td>
     <td></td>
     <td data-content="bonus" class="choseType" data-id="<%=options.bonus ? options.bonus._id : ''%>">
@@ -16,7 +16,7 @@
             <%}%>
         </div>
 
-        <input type="text" readonly/>
+        <input id="<%=cid%>StartDate" type="text" readonly/>
     </td>
     <td data-content="endDate" class="endDate">
         <div>
@@ -27,6 +27,6 @@
             <%}%>
         </div>
 
-        <input type="text" readonly/>
+        <input id="<%=cid%>EndDate" type="text" readonly/>
     </td>
 </tr>

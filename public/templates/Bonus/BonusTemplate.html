@@ -29,14 +29,22 @@
             </td>
             <td data-content="startDate" class="startDate">
                 <div>
-                    <%=formatingDate(bonus.startDate)%>
+                    <%if (formatingDate(bonus.startDate) === startDate) {%>
+                        From start of project
+                    <%} else {%>
+                        <%=formatingDate(bonus.startDate)%>
+                    <%}%>
                 </div>
 
                 <input id="<%=bonus._id%>StartDate" type="text" readonly/>
             </td>
             <td data-content="endDate" class="endDate">
                 <div>
-                    <%=formatingDate(bonus.endDate)%>
+                    <%if (formatingDate(bonus.endDate) === endDate) {%>
+                        To end of project
+                    <%} else {%>
+                        <%=formatingDate(bonus.endDate)%>
+                    <%}%>
                 </div>
 
                 <input id="<%=bonus._id%>EndDate" type="text" readonly/>

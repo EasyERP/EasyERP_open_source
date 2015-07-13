@@ -15,6 +15,8 @@ define([
             this.model = options.model;
             this.responseObj = {};
             this.selectedBonus = [];
+            this.startDate = this.model.get('StartDate');
+            this.endDate = this.model.get('EndDate');
             this.render();
         },
 
@@ -219,6 +221,9 @@ define([
                     $(selectedEnd).hide();
                 }
             });
+
+            $(selectedStart).datepicker('setDate', self.startDate);
+            $(selectedEnd).datepicker('setDate', self.endDate);
         },
 
         formatingDate: function(oldDate) {
@@ -231,9 +236,16 @@ define([
 
         render: function () {
             var self = this;
-            var bonus = this.model.get('bonus'); //ToDo
+            var bonus = this.model.get('bonus');
+            var startDate = this.model.get('StartDate');
+            var endDate = this.model.get('EndDate');
 
-            this.$el.html(this.template({bonus: bonus, formatingDate: self.formatingDate}));
+            this.$el.html(this.template({
+                bonus: bonus,
+                formatingDate: self.formatingDate,
+                startDate: startDate,
+                endDate: endDate
+            }));
 
             this.$el.find('#removeBonus').hide();
 
