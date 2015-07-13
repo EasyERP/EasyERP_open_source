@@ -970,7 +970,7 @@ module.exports = function (models) {
 
             async.waterfall(waterfallTasks, function (err, result) {
                 if (err) {
-                    seriesCb(err);
+                    return seriesCb(err);
                 }
 
                 seriesCb(null, 'Complete')

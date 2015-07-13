@@ -2,13 +2,10 @@
  * Created by German on 03.07.2015.
  */
 define([
-    'text!templates/vacationDashboard/rowTemplate.html',
-    'models/VacationDashboardModel',
-    'populate',
-    'moment'
-], function (mainTemplate, vacationDashboardModel, populate, moment) {
+    'text!templates/vacationDashboard/rowTemplate.html'
+], function (mainTemplate) {
     var View = Backbone.View.extend({
-        el: '#content-holder',
+        el: '#dashboardBody',
 
         template: _.template(mainTemplate),
 
@@ -16,14 +13,14 @@ define([
 
         },
 
-        initialize: function () {
-
+        initialize: function (inputData) {
+            this.render(inputData);
         },
 
-        render: function () {
+        render: function (inputData) {
             var self = this;
 
-            this.$el.html(this.template(self.model.toJSON()));
+            this.$el.html(this.template(inputData));
 
             this.rendered = true;
 

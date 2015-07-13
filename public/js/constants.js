@@ -41,6 +41,7 @@ define([], function(){
         ATTENDANCE: 'Attendance',
 
         RESPONSES: {
+            BAD_RESPONSE: 'Please try again',
             CREATE_QUOTATION: 'Please check at most one supplier or create one',
             CONFIRM_ORDER: 'Please add at most one product to quotation'
         },

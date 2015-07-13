@@ -198,6 +198,16 @@ define(['libs/date.format', 'common', 'constants'], function (dateformat, common
         chartControl.showContextMenu(false);
         chartControl.showDescTask(true, 'd,s-f');
         chartControl.showDescProject(true, 'n,d');
+    };
+
+    function cashToApp(key, data){
+        App.cashedData = App.cashedData || {};
+        App.cashedData[key] = data;
+    }
+
+    function retriveFromCash(key){
+        App.cashedData = App.cashedData || {};
+        return App.cashedData[key];
     }
 
     return {
@@ -208,6 +218,8 @@ define(['libs/date.format', 'common', 'constants'], function (dateformat, common
         getCurrentVT: getCurrentVT,
         setCurrentVT: setCurrentVT,
         getCurrentCL: getCurrentCL,
-        setCurrentCL: setCurrentCL
+        setCurrentCL: setCurrentCL,
+        cashToApp: cashToApp,
+        retriveFromCash: retriveFromCash
     };
 });

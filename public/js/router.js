@@ -28,6 +28,7 @@ define([
             "easyErp/myProfile": "goToUserPages",
             "easyErp/Workflows": "goToWorkflows",
             "easyErp/Dashboard": "goToDashboard",
+            "easyErp/DashBoardVacation": "dashBoardVacation",
             "easyErp/projectDashboard": "goToProjectDashboard",
             "easyErp/:contentType": "getList",
 
@@ -79,6 +80,44 @@ define([
                     $(".list2 tbody").find("[data-id='false']").remove();
                 }
             });
+        },
+
+        dashBoardVacation: function(){
+            var self = this;
+
+            if(!this.isAuth) {
+                this.checkLogin(function (success) {
+                    if (success) {
+                        self.isAuth = true;
+                        renderDash();
+                    } else {
+                        self.redirectTo();
+                    }
+                });
+            } else {
+                renderDash();
+            }
+
+            function renderDash () {
+                var startTime = new Date();
+                var contentViewUrl = "views/vacationDashboard/index";
+
+                if (self.mainView === null) {
+                    self.main("DashBoardVacation");
+                } else {
+                    self.mainView.updateMenu("DashBoardVacation");
+                }
+
+                require([contentViewUrl], function (contentView) {
+                    var contentview;
+
+                    custom.setCurrentVT('list');
+
+                    contentview = new contentView({startTime: startTime});
+
+                    self.changeView(contentview, true);
+                });
+            }
         },
 
         redirectTo: function(){
@@ -273,6 +312,7 @@ define([
                 });
             }
         },
+
         goToProjectDashboard: function () {
             var self = this;
             this.checkLogin(function (success) {
@@ -521,21 +561,6 @@ define([
                     });
                 });
             }
-        },
-
-        convertModelDates: function (model) {
-            if (model.has('createdBy'))
-                model.get('createdBy').date = common.utcDateToLocaleDateTime(model.get('createdBy').date);
-            if (model.has('editedBy'))
-                model.get('editedBy').date = common.utcDateToLocaleDateTime(model.get('editedBy').date);
-            if (model.has('dateBirth'))
-                model.set({
-                    dateBirth: common.utcDateToLocaleDate(model.get('dateBirth'))
-                });
-            if (model.has('nextAction'))
-                model.set({
-                    nextAction: common.utcDateToLocaleDate(model.get('nextAction').date)
-                });
         },
 
         goToKanban: function (contentType, parrentContentId) {
