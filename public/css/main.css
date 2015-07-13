@@ -208,6 +208,25 @@ textarea {
 .card {
   background-color: #f2af84;
 }
+.label {
+  display: inline;
+  padding: .2em .6em .3em;
+  font-size: 75%;
+  color: #fff;
+  border-radius: .25em;
+  text-align: center;
+  font-weight: 700;
+  vertical-align: baseline;
+}
+.label-success {
+  background-color: #5cb85c;
+}
+.label-warning {
+  background-color: #f0ad4e;
+}
+.label-danger {
+  background-color: #d9534f;
+}
 input::-ms-clear {
   display: none;
 }
@@ -7341,16 +7360,167 @@ textarea#editInput {
 .grid tr td,
 .grid tr th {
   border-bottom: 1px solid #d2d2d2;
+  border-top: 1px solid #d2d2d2;
+  border-left: 1px solid #d2d2d2;
 }
 .grid tr td span {
   height: 20px;
   padding: 0 7px;
   line-height: 20px;
   display: block;
+  box-sizing: border-box;
+}
+.grid tr td.checkDashboard,
+.grid tr th.checkDashboard {
+  width: 30px;
+  min-width: 30px;
+}
+.grid tr td.employee,
+.grid tr th.employee {
+  min-width: 140px;
+  width: 140px;
 }
 .grid tr td.dayOfMonth,
-.grid tr tr th.dayOfMonth {
+.grid tr th.dayOfMonth {
   min-width: 27px;
+}
+.grid tr td.dashboardWeek {
+  width: 107px;
+  min-width: 107px;
+  background-color: #ffffff;
+}
+.grid tr td.dashboardWeek input {
+  background-color: #bdd7ee;
+}
+.grid tr td.dashboardWeek.dgreen {
+  background-color: #004600;
+  color: white;
+}
+.grid tr td.dashboardWeek.green {
+  background-color: green;
+  color: white;
+}
+.grid tr td.dashboardWeek.brown {
+  background-color: #5cb85c;
+}
+.grid tr td.dashboardWeek.yellow {
+  background-color: yellow;
+}
+.grid tr td.dashboardWeek.white {
+  background-color: #fd0001;
+  color: white;
+  border-bottom: 1px solid #d2d2d2;
+  border-left: 1px solid #d2d2d2;
+}
+.grid tr td.dashboardWeek.activeHead {
+  border: 1px solid #000;
+  border-bottom: none;
+}
+.grid tr td.dashboardWeek.active {
+  border-left: 1px solid #000 !important;
+  border-right: 1px solid #000 !important;
+}
+.grid tr td.dashboardWeek.inactive span.view {
+  background-color: silver;
+  color: silver;
+}
+.grid tr td.dashboardWeek.inactive span.view span {
+  display: none;
+}
+.grid tr td.dashboardWeek span {
+  padding: 2px 7px;
+}
+.grid tr td.dashboardWeek span .label {
+  padding: 0;
+  height: 100%;
+  line-height: 16px;
+  letter-spacing: 1px;
+  font-size: 11px;
+}
+.grid tr td.dashboardWeek span span {
+  height: 100%;
+  line-height: 16px;
+  letter-spacing: 1px;
+  font-size: 11px;
+}
+.grid tr td.withVacation span {
+  line-height: 20px !important;
+  position: relative;
+  padding: 0px;
+}
+.grid tr td.withVacation span span.vacation {
+  position: absolute;
+  float: left;
+  padding: 0;
+  padding-right: 3px;
+  background-color: #5a9ad4;
+  color: white;
+  text-align: center;
+}
+.grid tr td.withVacation span span.vacation.size40 {
+  width: 100%;
+}
+.grid tr td.withVacation span span.vacation.size8 {
+  width: 20%;
+}
+.grid tr td.withVacation span span.vacation.size16 {
+  width: 40%;
+}
+.grid tr td.withVacation span span.vacation.size24 {
+  width: 60%;
+}
+.grid tr td.withVacation span span.vacation.size32 {
+  width: 80%;
+}
+.grid tr td.withVacation span.viewCount {
+  position: relative;
+  left: 0;
+  top: 0;
+  width: 30px;
+  padding: 0;
+  text-align: center;
+  float: left;
+  background-color: #bdd7ee;
+  color: white;
+}
+.grid tr td.withVacation span.vacationHours {
+  text-align: center;
+  position: absolute;
+  display: block;
+  right: 0px;
+}
+.grid tr td.withVacation span.vacationHours.size40 {
+  width: 0%;
+}
+.grid tr td.withVacation span.vacationHours.size0,
+.grid tr td.withVacation span.vacationHours.sizeNaN {
+  width: 100%;
+}
+.grid tr td.withVacation span.vacationHours.size8 {
+  width: 80%;
+}
+.grid tr td.withVacation span.vacationHours.size16 {
+  width: 60%;
+}
+.grid tr td.withVacation span.vacationHours.size24 {
+  width: 40%;
+}
+.grid tr td.withVacation span.vacationHours.size32 {
+  width: 20%;
+}
+.grid tr td.withVacation.inactive span.viewCount {
+  background-color: silver;
+  color: silver;
+}
+.grid tr.group {
+  color: black;
+  cursor: pointer;
+}
+.grid tr.group td {
+  background-color: #bdd7ee !important;
+}
+.grid tr.group span {
+  text-align: left;
 }
 .grid.attendance {
   border-bottom: 5px solid #4c5975;

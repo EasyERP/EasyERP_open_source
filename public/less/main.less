@@ -210,6 +210,29 @@ textarea {
   background-color: #f2af84;
 }
 
+.label {
+  display: inline;
+  padding: .2em .6em .3em;
+  font-size: 75%;
+  color: #fff;
+  border-radius: .25em;
+  text-align: center;
+  font-weight: 700;
+  vertical-align: baseline;
+}
+
+.label-success {
+  background-color: #5cb85c;
+}
+
+.label-warning {
+  background-color: #f0ad4e;
+}
+
+.label-danger {
+  background-color: #d9534f;
+}
+
 input::-ms-clear {
   display: none;
 }
@@ -5046,6 +5069,8 @@ textarea#editInput {
     td,
     th {
       border-bottom: 1px solid #d2d2d2;
+      border-top: 1px solid #d2d2d2;
+      border-left: 1px solid #d2d2d2;
     }
 
     td span {
@@ -5053,10 +5078,177 @@ textarea#editInput {
       padding: 0 7px;
       line-height: 20px;
       display: block;
+      box-sizing: border-box;
     }
 
-    td.dayOfMonth, tr th.dayOfMonth {
-      min-width: 27px;
+    td, th {
+      &.checkDashboard {
+        width: 30px;
+        min-width: 30px;
+      }
+      &.employee {
+        min-width: 140px;
+        width: 140px;
+      }
+      &.dayOfMonth {
+        min-width: 27px;
+      }
+    }
+
+    td {
+      &.dashboardWeek {
+        width: 107px;
+        min-width: 107px;
+        background-color: #ffffff;
+
+        input {
+          background-color: #bdd7ee;
+        }
+
+        &.dgreen {
+          background-color: #004600;
+          color: white;
+        }
+        &.green {
+          background-color: green;
+          color: white;
+        }
+        &.brown {
+          background-color: #5cb85c;
+
+        }
+        &.yellow {
+          background-color: yellow;
+        }
+        &.white {
+          background-color: #fd0001;
+          color: white;
+          border-bottom: 1px solid #d2d2d2;
+          border-left: 1px solid #d2d2d2;
+        }
+        &.activeHead {
+          border: 1px solid #000;
+          border-bottom: none;
+        }
+        &.active {
+          border-left: 1px solid #000 !important;
+          border-right: 1px solid #000 !important;
+        }
+        &.inactive {
+          span.view {
+            background-color: silver;
+            color: silver;
+            span {
+              display: none;
+            }
+          }
+        }
+        span {
+          padding: 2px 7px;
+
+          .label {
+            padding: 0;
+            height: 100%;
+            line-height: 16px;
+            letter-spacing: 1px;
+            font-size: 11px;
+          }
+          span {
+            height: 100%;
+            line-height: 16px;
+            letter-spacing: 1px;
+            font-size: 11px;
+          }
+        }
+      }
+      &.withVacation {
+
+        span {
+          line-height: 20px !important;
+          position: relative;
+          padding: 0px;
+          span.vacation {
+            position: absolute;
+            float: left;
+            padding: 0;
+            padding-right: 3px;
+            // width: 52px;
+            background-color: #5a9ad4;
+            color: white;
+            text-align: center;
+            &.size40 {
+              width: 100%;
+            }
+            &.size8 {
+              width: 20%;
+            }
+            &.size16 {
+              width: 40%;
+            }
+            &.size24 {
+              width: 60%;
+            }
+            &.size32 {
+              width: 80%;
+            }
+          }
+          &.viewCount {
+            position: relative;
+            left: 0;
+            top: 0;
+            width: 30px;
+            padding: 0;
+            text-align: center;
+            float: left;
+            background-color: #bdd7ee;
+            color: white;
+
+          }
+          &.vacationHours {
+            text-align: center;
+            position: absolute;
+            display: block;
+            right: 0px;
+            &.size40 {
+              width: 0%;
+            }
+            &.size0, &.sizeNaN {
+              width: 100%;
+            }
+            &.size8 {
+              width: 80%;
+            }
+            &.size16 {
+              width: 60%;
+            }
+            &.size24 {
+              width: 40%;
+            }
+            &.size32 {
+              width: 20%;
+            }
+          }
+
+        }
+        &.inactive {
+          span.viewCount {
+            background-color: silver;
+            color: silver;
+          }
+        }
+
+      }
+    }
+    &.group {
+      color: black;
+
+      cursor: pointer;
+      td {
+        background-color: #bdd7ee !important;
+      }
+      span {
+        text-align: left;
+      }
     }
   }
 

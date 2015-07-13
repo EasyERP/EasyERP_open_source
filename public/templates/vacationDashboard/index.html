@@ -20,8 +20,8 @@
         </thead>
         <tbody id="dashboardBody">
             <% dashboardData.forEach(function(department){ %>
-                <tr data-id="<%= department.department ? department.department._id: '' %>" class="head-row" data-content="department">
-                    <td>
+                <tr data-id="<%= department.department ? department.department._id: '' %>" class="head-row group" data-content="department">
+                    <td class="checkDashboard">
                         <span>&nbsp</span>
                     </td>
                     <td colspan="17">
@@ -32,18 +32,18 @@
 
                 </tr>
                 <% department.employees.forEach(function(employee, index){ %>
-                    <tr class="group" data-id="<%= employee.get('_id')%>">
-                        <td>
+                    <tr data-id="<%= employee.get('_id')%>">
+                        <td class="checkDashboard">
                             <span>
                                 <%=index + 1%>
                             </span>
                         </td>
-                        <td>
+                        <td class="employee">
                             <span>
                                 <%= employee.get('name') || '&nbsp' %>
                             </span>
                         </td>
-                        <td>
+                        <td class="dashboardWeek">
                             <%= leadComparator(employee.get('isLead'))%>
                         </td>
                         <%employee.get('weekData').forEach(function(week){%>
