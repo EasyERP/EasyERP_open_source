@@ -65,7 +65,6 @@ define([
                 s += "inactive ";
             }
             return s;*/
-            console.log('1');
         },
 
         render: function () {
