@@ -936,6 +936,8 @@ define([
 
                 holder.find('#timeRecivingDataFromServer').remove();
                 holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+
+                this.editCollection.reset(this.collection.models);
             },
 
             goToEditDialog: function (e) {
