@@ -22,6 +22,8 @@ var wTrack = function (models) {
 
         wTrack = new WTrack(body);
 
+        wTrack = new WTrack(body);
+
         wTrack.save(function (err, wTrack) {
             if (err) {
                 return next(err);
@@ -567,7 +569,6 @@ var wTrack = function (models) {
             res.status(200).send(result);
         });
     };
-
 };
 
 module.exports = wTrack;

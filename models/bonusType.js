@@ -19,3 +19,5 @@ module.exports = (function () {
 
     mongoose.Schemas['bonusType'] = bonusTypeSchema;
 })();
+
+

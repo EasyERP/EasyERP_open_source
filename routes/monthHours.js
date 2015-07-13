@@ -1,5 +1,5 @@
 /**
- * Created by Лилия on 23.06.2015.
+ * Created by пїЅпїЅпїЅпїЅпїЅ on 23.06.2015.
  */
 var MonthHoursHandler = require('../handlers/monthHours');
 var express = require('express');
@@ -13,10 +13,13 @@ module.exports = function (models) {
     router.patch('/', handler.patchM);
     router.get('/list/totalCollectionLength', handler.totalCollectionLength);
 
-    router.get('/list', function (req, res) {
-            handler.getList(req, res);
-        }
-    );
+    router.get('/list', function (req, res, next) {
+            if (req.query.month) {
+                handler.getData(req, res, next);
+            } else {
+                handler.getList(req, res);
+            }
+        });
 
     router.delete('/:_id', function (req, res) {
         var id = req.param('_id');

@@ -3,7 +3,7 @@ define([
         'views/monthHours/CreateView',
         'views/monthHours/list/ListItemView',
         'views/monthHours/EditView',
-        'models/monthHoursModel',
+        'models/MonthHoursModel',
         'collections/monthHours/filterCollection',
         'collections/monthHours/editCollection',
         'common',
