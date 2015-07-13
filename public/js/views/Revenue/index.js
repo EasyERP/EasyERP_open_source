@@ -436,7 +436,12 @@ define([
             var tempPerMonth;
             var globalTotal = 0;
 
-            target.html(this.paidBySalesTemplate({employees: this.employees, content: 'totalPaidBySales', headName: 'Hello'}));
+            target.html(this.paidBySalesTemplate({
+                employees: self.employees,
+                content: 'totalPaidBySales',
+                className: 'totalPaid',
+                headName: 'Paid WTrack'
+            }));
             //target.find('div.revenueBySales').html(this.weeksArrayTemplate({weeksArr: this.weekArr}));
             targetTotal = $(self.$el.find('[data-content="totalPaidBySales"]'));
             monthContainer = target.find('.monthContainer');
@@ -507,10 +512,11 @@ define([
             var tempPerMonth;
             var globalTotal = 0;
 
-            target.html(this.unpaidBySalesTemplate({
-                employees: this.employees,
+            target.html(this.paidBySalesTemplate({
+                employees: self.employees,
                 content: 'totalCancelledBySales',
-                headName: 'Hello'
+                className: 'totalUnpaid',
+                headName: 'Write Off'
             }));
             target.find('div.revenueBySales').html(this.weeksArrayTemplate({weeksArr: this.weekArr}));
             targetTotal = $(self.$el.find('[data-content="totalCancelledBySales"]'));
@@ -582,10 +588,11 @@ define([
             var tempPerMonth;
             var globalTotal = 0;
 
-            target.html(this.unpaidBySalesTemplate({
-                employees: this.employees,
+            target.html(this.paidBySalesTemplate({
+                employees: self.employees,
                 content: 'totalUnPaidBySales',
-                headName: 'Hello'
+                className: 'totalUnpaid',
+                headName: 'Unpaid WTrack'
             }));
             /* target.find('div.revenueBySales').html(this.weeksArrayTemplate({weeksArr: this.weekArr}));*/
             targetTotal = $(self.$el.find('[data-content="totalUnPaidBySales"]'));
