@@ -8,6 +8,8 @@ var ImportHandler = require('../helpers/importer/importer');
 var mongoose = require('mongoose');
 var _ = require('lodash');
 
+var moment = require('../public/js/libs/moment/moment');
+
 var dateCalc = require('../helpers/dateManipulator');
 
 var tasks = require('../helpers/importer/map/').tmDevelopment;
@@ -18,8 +20,8 @@ module.exports = function (models) {
             user: 'thinkmobiles@wbje9y2n5u',
             password: '1q2w3e!@#',
             server: 'wbje9y2n5u.database.windows.net',
-            database: 'ex_dev',
-            //database: 'production',
+            //database: 'ex_dev',
+            database: 'production',
 
             options: {
                 encrypt: true
@@ -1312,6 +1314,8 @@ module.exports = function (models) {
                     }
 
                     if (fetchedHoliday) {
+                        objectToSave.year = moment(fetchedHoliday.Date).year();
+                        objectToSave.week = moment(fetchedHoliday.Date).isoWeek();
                         model = new Holiday(objectToSave);
                         model.save(cb);
                     }

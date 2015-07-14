@@ -9,10 +9,11 @@ define([
         'common',
         'dataService',
         'constants',
-        'async'
+        'async',
+        'moment'
     ],
 
-    function (listTemplate, cancelEdit, createView, listItemView, holidayModel, holidayCollection, editCollection, common, dataService, CONSTANTS, async) {
+    function (listTemplate, cancelEdit, createView, listItemView, holidayModel, holidayCollection, editCollection, common, dataService, CONSTANTS, async, moment) {
         var HolidayListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -118,10 +119,14 @@ define([
 
             saveItem: function () {
                 var model;
+                var modelJSON;
 
                 for (var id in this.changedModels) {
                     model = this.editCollection.get(id);
+                    modelJSON = model.toJSON();
                     model.changed = this.changedModels[id];
+                    model.changed.year = moment(modelJSON.date).year();
+                    model.changed.week = moment(modelJSON.date).isoWeek();
                 }
                 this.editCollection.save();
             },

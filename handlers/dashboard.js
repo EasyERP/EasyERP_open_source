@@ -7,24 +7,26 @@ var wTrack = function (models) {
     var access = require("../Modules/additions/access.js")(models);
     var _ = require('lodash');
     var moment = require('../public/js/libs/moment/moment');
-    var wTrackSchema = mongoose.Schemas['wTrack'];
+    var async = require('async');
+
+    var CONSTANTS = require('../constants/mainConstants');
+
     var objectId = mongoose.Types.ObjectId;
+
+    var wTrackSchema = mongoose.Schemas['wTrack'];
     var DepartmentSchema = mongoose.Schemas['Department'];
     var EmployeeSchema = mongoose.Schemas['Employee'];
-
-    var async = require('async');
+    var HolidaySchema = mongoose.Schemas['Holiday'];
 
     this.composeForVacation = function (req, res, next) {
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
-        /*var startDate = 201522;
-        var endDate = 201535;*/
         var weeksArr;
         var week;
-        var startDate /*= 201522*/;
-        var endDate /*= 201535*/;
+        var startDate;
+        var endDate;
 
-        var currentWeek = moment().week();
+        var currentWeek = moment().isoWeek();
         var currentStartWeek = currentWeek - 6;
         var currentYear = moment().weekYear();
 
@@ -48,26 +50,30 @@ var wTrack = function (models) {
         weeksArr = _.sortBy(weeksArr, function (monthObject) {
             return monthObject.dateByWeek
         });
+
         endDate = weeksArr[weeksArr.length - 1].dateByWeek;
 
-        function resultMapper(err, result){
+        function resultMapper(err, result) {
             var Department = models.get(req.session.lastDb, 'Department', DepartmentSchema);
             var employeesByDep;
             var dashBoardResult;
+            var holidays;
 
-            if(err){
+            if (err) {
                 return next(err);
             }
 
             employeesByDep = result[0];
             dashBoardResult = result[1];
+            holidays = result[2];
 
-            employeesByDep = _.map(employeesByDep, function(employee){
-                var dashDepartment = _.find(dashBoardResult, function(deps){
+
+            employeesByDep = _.map(employeesByDep, function (employee) {
+                var dashDepartment = _.find(dashBoardResult, function (deps) {
                     return deps.department.toString() === employee.department.toString();
                 });
 
-                employee.employees = _.map(employee.employees, function(_employee){
+                employee.employees = _.map(employee.employees, function (_employee) {
                     var dashResultByEmployee;
 
                     if (dashDepartment) {
@@ -76,10 +82,11 @@ var wTrack = function (models) {
                         });
                         _employee.weekData = dashResultByEmployee ? _.map(weeksArr, function (weekData) {
                             var data = _.find(dashResultByEmployee.weekData, function (d) {
-                               return parseInt(d.dateByWeek) === parseInt(weekData.dateByWeek);
+                                return parseInt(d.dateByWeek) === parseInt(weekData.dateByWeek);
                             });
                             if (data) {
                                 weekData = data;
+                                weekData.holidays = holidays[weekData.dateByWeek];
                             }
                             return weekData;
                         }) : weeksArr;
@@ -87,7 +94,7 @@ var wTrack = function (models) {
                         _employee.weekData = weeksArr;
                     }
 
-                    _employee.maxProjects = dashResultByEmployee ? dashResultByEmployee.maxProjects : 0
+                    _employee.maxProjects = dashResultByEmployee ? dashResultByEmployee.maxProjects : 0;
 
                     return _employee;
                 });
@@ -95,28 +102,71 @@ var wTrack = function (models) {
                 return employee
             });
 
-            Department.populate(employeesByDep, {path: 'department', select: 'departmentName _id'}, function(err, resp){
+            Department.populate(employeesByDep, {
+                path: 'department',
+                select: 'departmentName _id'
+            }, function (err, resp) {
                 res.status(200).send(employeesByDep);
             });
         };
 
-        function employeeByDepComposer(parallelCb){
+        function holidaysComposer(parallelCb) {
+            var Holiday = models.get(req.session.lastDb, 'Holiday', HolidaySchema);
+
+            Holiday.aggregate([{
+                $project: {
+                    dateByWeek: {$add: [{$multiply: [100, '$year']}, '$week']},
+                    day: {$dayOfWeek: '$date'},
+                    date: 1,
+                    comment: 1,
+                    ID:1,
+                    _id: 0
+                }
+            }, {
+                $match: {
+                    $and: [{dateByWeek: {$gte: startDate, $lte: endDate}}, {day: {$nin: [1, 7]}}]
+                }
+            }], /*parallelCb*/function(err, holidays){
+                var holidaysObject = {};
+                var key;
+
+                if(err){
+                    return parallelCb(err);
+                }
+
+                for (var i = holidays.length - 1; i >=0; i--) {
+                    key = holidays[i].dateByWeek;
+
+                    if (!holidaysObject[key]) {
+                        holidaysObject[key] = 1;
+                    } else {
+                        holidaysObject[key]++;
+                    }
+                }
+
+                parallelCb(null, holidaysObject);
+            });
+        };
+
+        function employeeByDepComposer(parallelCb) {
             var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
 
             Employee
                 .aggregate([{
                     $match: {
                         isEmployee: true,
-                        department: {$nin: [objectId("559fcf0b8ed45e781b000013"), objectId("559fcf0b8ed45e781b000014")]}
+                        department: {$nin: [objectId(CONSTANTS.HR_DEPARTMENT_ID), objectId(CONSTANTS.BUSINESS_DEPARTMENT_ID)]}
                     }
                 }, {
                     $group: {
                         _id: "$department",
-                        employees: {$push: {
-                            isLead: '$isLead',
-                            name: {$concat: ['$name.first', ' ', '$name.last']},
-                            _id: '$_id'
-                        }}
+                        employees: {
+                            $push: {
+                                isLead: '$isLead',
+                                name: {$concat: ['$name.first', ' ', '$name.last']},
+                                _id: '$_id'
+                            }
+                        }
                     }
                 }, {
                     $project: {
@@ -125,7 +175,7 @@ var wTrack = function (models) {
                         _id: 0
                     }
                 }], function (err, employees) {
-                    if(err){
+                    if (err) {
                         return parallelCb(err);
                     }
 
@@ -157,7 +207,7 @@ var wTrack = function (models) {
                         $match: {
                             'employee._id': {$in: employeesArray},
                             dateByWeek: {$gte: startDate, $lte: endDate},
-                            'department._id': {$nin: [objectId("559fcf0b8ed45e781b000013"), objectId("559fcf0b8ed45e781b000014")]}
+                            'department._id': {$nin: [objectId(CONSTANTS.HR_DEPARTMENT_ID), objectId(CONSTANTS.BUSINESS_DEPARTMENT_ID)]}
                         }
                     }, {
                         $group: {
@@ -247,7 +297,7 @@ var wTrack = function (models) {
             async.waterfall([employeeFinder, wTrackComposer], masterWaterfallCb);
         };
 
-        async.parallel([employeeByDepComposer, dashComposer], resultMapper);
+        async.parallel([employeeByDepComposer, dashComposer, holidaysComposer], resultMapper);
     };
 
 };
