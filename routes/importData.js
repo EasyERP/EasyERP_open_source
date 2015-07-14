@@ -1423,18 +1423,37 @@ module.exports = function (models) {
                                         'employee._id': objectToSave.employee._id
                                     })
                                         .exec(function (err, result) {
+                                            var dateValue = moment([objectToSave.year, objectToSave.month - 1]);
+                                            var weekKey;
+
                                             if (err) {
                                                 cb(err)
                                             }
                                             if (result) {
+                                                result.vacations = result.vacations ? result.vacations : {};
+
                                                 for (var i = endDay; i >= startDay; i--) {
+
+                                                    dateValue.date(i);
+                                                    weekKey = objectToSave.year * 1000 + moment(date).isoWeek();
+
+                                                    result.vacations[weekKey] ? result.vacations[weekKey] += 1 : result.vacations[weekKey] = 1;
+
                                                     result.vacArray[i-1] = fetchedVacation.AbsenceType;
                                                 }
-                                                Vacation.update({_id: result._id}, {$set: {vacArray: result.vacArray}}, cb);
+
+                                                Vacation.update({_id: result._id}, {$set: {vacArray: result.vacArray, vacations: result.vacations}}, cb);
                                             } else {
+                                                objectToSave.vacations = {}
                                                 objectToSave.vacArray = new Array(daysCount);
 
                                                 for (var i = endDay; i >= startDay; i--) {
+
+                                                    dateValue.date(i);
+                                                    weekKey = objectToSave.year * 1000 + moment(date).isoWeek();
+
+                                                    objectToSave.vacations[weekKey] ? objectToSave.vacations[weekKey] += 1 : objectToSave.vacations[weekKey] = 1;
+
                                                     objectToSave.vacArray[i-1] = fetchedVacation.AbsenceType;
                                                 }
 
