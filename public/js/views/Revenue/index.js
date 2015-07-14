@@ -9,15 +9,17 @@ define([
     'text!templates/Revenue/perWeek.html',
     'text!templates/Revenue/paidBySales.html',
     'text!templates/Revenue/paidBySalesItems.html',
+    'text!templates/Revenue/projectBySalesItems.html',
     'text!templates/Revenue/unpaidBySales.html',
     'text!templates/Revenue/monthsArray.html',
     'text!templates/Revenue/perMonth.html',
+    'text!templates/Revenue/perMonthInt.html',
     'models/Revenue',
     'moment',
     'dataService',
     'async',
     'custom'
-], function (mainTemplate, weeksArray, tableByDep, bySalesByDep, perWeek, paidBySales, paidBySalesItems, unpaidBySales, monthsArray, perMonth, RevenueModel, moment, dataService, async, custom) {
+], function (mainTemplate, weeksArray, tableByDep, bySalesByDep, perWeek, paidBySales, paidBySalesItems, projectBySalesItems, unpaidBySales, monthsArray, perMonth, perMonthInt, RevenueModel, moment, dataService, async, custom) {
     var View = Backbone.View.extend({
         el: '#content-holder',
 
@@ -28,8 +30,10 @@ define([
         tableByDepTemplate: _.template(tableByDep),
         bySalesPerWeekTemplate: _.template(perWeek),
         bySalesPerMonthTemplate: _.template(perMonth),
+        bySalesPerMonthIntTemplate: _.template(perMonthInt),
         paidBySalesTemplate: _.template(paidBySales),
         paidBySalesItemsTemplate: _.template(paidBySalesItems),
+        projectBySalesItemsTemplate: _.template(projectBySalesItems),
 
         paidUnpaidDateRange: {},
 
@@ -697,7 +701,7 @@ define([
                     byMonthData = _.groupBy(bySalesByDepPerEmployee.root, 'month');
                     total = bySalesByDepPerEmployee.total;
                     globalTotal += total;
-                    employeeContainer.html(self.paidBySalesItemsTemplate({
+                    employeeContainer.html(self.projectBySalesItemsTemplate({
                         monthArr: monthArr,
                         byMonthData: byMonthData,
                         total: total
@@ -714,14 +718,14 @@ define([
                     tempPerMonth = projectBySales[i].root;
                     tempPerMonth.forEach(function (weekResault) {
                         if (!(weekResault.month in bySalesByDepPerWeek)) {
-                            bySalesByDepPerWeek[weekResault.month] = weekResault.revenue;
+                            bySalesByDepPerWeek[weekResault.month] = weekResault.projectCount;
                         } else {
-                            bySalesByDepPerWeek[weekResault.month] += weekResault.revenue;
+                            bySalesByDepPerWeek[weekResault.month] += weekResault.projectCount;
                         }
                     });
                 }
 
-                targetTotal.html(self.bySalesPerMonthTemplate({
+                targetTotal.html(self.bySalesPerMonthIntTemplate({
                     monthArr: monthArr,
                     bySalesByDepPerWeek: bySalesByDepPerWeek,
                     globalTotal: globalTotal,
