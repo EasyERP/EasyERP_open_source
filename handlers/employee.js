@@ -8,6 +8,7 @@ var Employee = function (models) {
     var access = require("../Modules/additions/access.js")(models);
     var EmployeeSchema = mongoose.Schemas['Employee'];
     var ProjectSchema = mongoose.Schemas['Project'];
+    var objectId = mongoose.Types.ObjectId;
 
     this.getForDD = function (req, res, next) {
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
@@ -116,6 +117,24 @@ var Employee = function (models) {
                 res.status(200).send(result);
             });
     };
+
+    this.addFiredHired = function(req, res, next){
+        var body = req.body;
+        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+
+        sync.each(body, function (data, cb) {
+            var id = objectId(data._id);
+            delete data._id;
+
+            Employee.updateOnlySelectedFields( req, id, data, res);
+        }, function (err) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({success: 'updated'});
+        });
+    }
 
 };
 

@@ -18,8 +18,8 @@ module.exports = function (models) {
             user: 'thinkmobiles@wbje9y2n5u',
             password: '1q2w3e!@#',
             server: 'wbje9y2n5u.database.windows.net',
-            database: 'ex_dev',
-            //database: 'production',
+            //database: 'ex_dev',
+            database: 'production',
 
             options: {
                 encrypt: true
@@ -66,6 +66,7 @@ module.exports = function (models) {
         var invoiceSchema = tasks[7];
         var paymentSchema = tasks[8];
         var bonusTypeSchema = tasks[12];
+        var payOutSchema = tasks[13];
 
         var ownerId = req.session ? req.session.uId : null;
 
@@ -74,6 +75,7 @@ module.exports = function (models) {
         var wTrackCollection = wTrackSchema.collection;
         var paymentCollection = paymentSchema.collection;
         var bonusTypeCollection = bonusTypeSchema.collection;
+        var payOutCollection = paymentSchema.collection;
 
         var ProjectSchema = projectCollection[projectCollection];
         var CustomerSchema = mongoose.Schemas[customerCollection];
@@ -85,6 +87,7 @@ module.exports = function (models) {
         var InvoiceSchema = mongoose.Schemas['wTrackInvoice'];
         var PaymentSchema = mongoose.Schemas[paymentCollection];
         var BonusTypeSchema = mongoose.Schemas[bonusTypeCollection];
+        var PayOutSchema = mongoose.Schemas[payOutCollection];
 
         var Project = models.get(req.session.lastDb, projectCollection, ProjectSchema);
         var Customer = models.get(req.session.lastDb, customerCollection, CustomerSchema);
@@ -96,6 +99,133 @@ module.exports = function (models) {
         var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', InvoiceSchema);
         var Payment = models.get(req.session.lastDb, paymentCollection, PaymentSchema);
         var BonusType = models.get(req.session.lastDb, bonusTypeCollection, BonusTypeSchema);
+        var PayOut = models.get(req.session.lastDb, payOutCollection, PayOutSchema);
+
+        function importPayOut(payOutSchema, seriesCb) {
+            var query = queryBuilder(payOutSchema.table);
+            var waterfallTasks;
+
+            function getData(callback) {
+                handler.importData(query, callback);
+            }
+
+            function saverPayOut(fetchedArray, callback) {
+                var model;
+                var mongooseFields = Object.keys(payOutSchema.aliases);
+
+                async.eachLimit(fetchedArray, 100, function (fetchedPayOut, cb) {
+                    var objectToSave = {};
+                    var employeeQuery;
+                    var bonusTypeQuery;
+                    var key;
+                    var msSqlKey;
+
+                    for (var i = mongooseFields.length - 1; i >= 0; i--) {
+                        key = mongooseFields[i];
+                        msSqlKey = payOutSchema.aliases[key];
+
+                        if (payOutSchema.defaultValues) {
+                            for (var defKey in payOutSchema.defaultValues) {
+                                objectToSave[defKey] = payOutSchema.defaultValues[defKey];
+                            }
+                        }
+
+                        if (payOutSchema.comparator && msSqlKey in payOutSchema.comparator) {
+                            fetchedPayOut[msSqlKey] = comparator(fetchedPayOut[msSqlKey], payOutSchema.comparator[msSqlKey]) || fetchedPayOut[msSqlKey];
+                        }
+
+                        objectToSave[key] = fetchedPayOut[msSqlKey];
+                        objectToSave.createdBy = {
+                            user: ownerId
+                        };
+                        objectToSave.editedBy = {
+                            user: ownerId
+                        }
+                    }
+
+                    if (fetchedPayOut) {
+
+                        objectToSave.forSale = false;
+                        objectToSave.bonus = true;
+
+                        objectToSave.differenceAmount = fetchedPayOut['Amount'] - fetchedPayOut['Paid'];
+
+                        if (fetchedPayOut['Status'] === 1){
+                            objectToSave.workflow = 'Paid';
+                        } else {
+                            objectToSave.workflow = 'Draft';
+                        }
+
+                        employeeQuery = {
+                            ID: fetchedPayOut['EmployeeID']
+                        };
+
+                        bonusTypeQuery = {
+                            ID: fetchedPayOut['BonusID']
+                        };
+
+                        function employeeFinder(callback) {
+                            Employee.findOne(employeeQuery, {_id: 1}, function (err, employee) {
+                                if (err) {
+                                    return callback(err);
+                                }
+                                callback(null, employee);
+                            });
+                        }
+
+                        function bonusTypeFinder(callback) {
+                            BonusType.findOne(bonusTypeQuery, {_id: 1, name: 1}, function (err, bonus) {
+                                if (err) {
+                                    return callback(err);
+                                }
+                                callback(null, bonus);
+                            });
+                        }
+
+                        async.parallel({
+                            bonusTypeResult: bonusTypeFinder,
+                            employeeResult: employeeFinder
+                        }, function (err, result) {
+                            if (result.bonusTypeResult && result.bonusTypeResult.name){
+                                objectToSave.paymentRef = result.bonusTypeResult.name;
+                            }
+                            if (result.employeeResult && result.employeeResult._id) {
+                                objectToSave.supplier = result.employeeResult._id;
+                            }
+
+                            model = new PayOut(objectToSave);
+                            model.save(function (err, rez) {
+                                if (err) {
+                                    console.error(err);
+                                    return cb(err);
+                                }
+                                cb();
+                            });
+                        });
+                    }
+                }, function (err) {
+                    if (err) {
+                        return callback(err);
+                    }
+
+                    callback(null, 'Completed');
+                })
+            }
+
+            waterfallTasks = [getData, saverPayOut];
+
+            async.waterfall(waterfallTasks, function (err, result) {
+                if (err) {
+                    seriesCb(err);
+                }
+
+                seriesCb(null, 'Complete')
+            });
+        }
+
+        function payOutImporter(callback) {
+            importPayOut(payOutSchema, callback);
+        }
 
         function importBonusType(bonusTypeSchema, seriesCb) {
             var query = queryBuilder(bonusTypeSchema.table);
@@ -833,7 +963,7 @@ module.exports = function (models) {
             importPayment(paymentSchema, callback);
         };
 
-        return [bonusTypeImporter, customerImporter, projectImporter, wTrackImporter, invoiceImporter, paymentImporter];
+        return [bonusTypeImporter, customerImporter, projectImporter, wTrackImporter, invoiceImporter, paymentImporter, payOutImporter];
     };
 
     function hrImporter(req, tasks) {

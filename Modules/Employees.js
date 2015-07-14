@@ -887,6 +887,7 @@ var Employee = function (event, models) {
 
     function updateOnlySelectedFields(req, _id, data, res) {
         var fileName = data.fileName;
+        var dataObj = {};
         delete data.fileName;
 
         var updateObject = {};
@@ -982,7 +983,33 @@ var Employee = function (event, models) {
 
                     }
                     res.send(200, { success: 'Employees updated', result: result });
-                } else {
+                } else if (data.hired || data.fired){
+                    var id = data._id;
+                    var edited = data.editedBy;
+
+                    if (data.fired){
+                        dataObj.fired = new Date(data.fired);
+                    } else {
+                        dataObj.fired = null;
+                    }
+
+                    if (data.hired){
+                        dataObj.hired = new Date(data.hired);
+                    } else {
+                        dataObj.hired = null;
+                    }
+
+                    models.get(req.session.lastDb, 'Employees', employeeSchema).findByIdAndUpdate(id, {$push: dataObj, $set: {editedBy: edited}} , function (err, result) {
+                        if (!err) {
+                            res.send(200, { success: 'Employees updated'/*, fired: result.fired */});
+                        } else {
+                            res.send(500, { error: "Can't update Employees" });
+                        }
+
+                    });
+                }
+
+                else {
                     res.send(500, { error: "Can't update Employees" });
                 }
 

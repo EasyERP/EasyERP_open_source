@@ -328,5 +328,17 @@ module.exports = (function () {
         }
     };
 
-    return [department, jobPosition, employee, project, customer, wTrack, salary, invoice, payment, holiday, vacation, monthHours, bonusType];
+    var payOut = {
+        collection: 'Payment',
+        table: 'Payout',
+        aliases: {
+            ID: 'ID',
+            date: 'Date',
+            paidAmount: 'Amount',
+            month: 'Month',
+            year: 'Year'
+        }
+    };
+
+    return [department, jobPosition, employee, project, customer, wTrack, salary, invoice, payment, holiday, vacation, monthHours, bonusType, payOut];
 })();

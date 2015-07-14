@@ -12,6 +12,7 @@ module.exports = function (models) {
     router.get('/bySales', handler.getBySales);
     router.get('/getFilterValues', handler.getFilterValues);
     router.get('/byDepartment', handler.byDepartment);
+    router.patch('/addFiredHired', handler.addFiredHired);
 
     return router;
 };
