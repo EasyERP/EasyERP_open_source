@@ -110,9 +110,9 @@ define([
             return '<span class="high"><span class="label label-success">High</span></span>'
         },
 
-        getCellClass: function(week, employeeId){
-           /* var s = "";
-            var hours = week.hours + self.isHaveHoliday(week.year, week.week) * 8 + (week.countDay || 0);
+        getCellClass: function(week){
+            var s = "";
+            var hours = week.hours + week.holidays * 8 + (week.countDay || 0);
             if (hours > 40) {
                 s += "dgreen ";
             } else if (hours > 35) {
@@ -127,7 +127,7 @@ define([
             if (!self.isWorking(track.ID, week)) {
                 s += "inactive ";
             }
-            return s;*/
+            return s;
         },
 
         render: function () {
