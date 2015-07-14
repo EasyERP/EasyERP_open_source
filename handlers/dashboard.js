@@ -86,8 +86,9 @@ var wTrack = function (models) {
                             });
                             if (data) {
                                 weekData = data;
-                                weekData.holidays = holidays[weekData.dateByWeek];
                             }
+
+                            weekData.holidays = holidays[weekData.dateByWeek];
                             return weekData;
                         }) : weeksArr;
                     } else {
