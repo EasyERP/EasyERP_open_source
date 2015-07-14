@@ -7,6 +7,8 @@ module.exports = (function () {
     var holidaySchema = new mongoose.Schema({
         ID: Number,
         date: Date,
+        month: Number,
+        week: Number,
         comment: String
 
     }, {collection: 'Holiday'});

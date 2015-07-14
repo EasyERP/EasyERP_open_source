@@ -8,6 +8,8 @@ var ImportHandler = require('../helpers/importer/importer');
 var mongoose = require('mongoose');
 var _ = require('lodash');
 
+var moment = require('../public/js/libs/moment/moment');
+
 var dateCalc = require('../helpers/dateManipulator');
 
 var tasks = require('../helpers/importer/map/').tmDevelopment;
@@ -1312,6 +1314,8 @@ module.exports = function (models) {
                     }
 
                     if (fetchedHoliday) {
+                        objectToSave.month = moment(fetchedHoliday.date).month();
+                        objectToSave.week = moment(fetchedHoliday.date).week();
                         model = new Holiday(objectToSave);
                         model.save(cb);
                     }

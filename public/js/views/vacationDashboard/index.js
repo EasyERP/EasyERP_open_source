@@ -15,9 +15,11 @@ define([
         el: '#content-holder',
 
         template: _.template(mainTemplate),
+        expandAll: false,
 
         events: {
-            "click .empoyeesRow": "openEmployee",
+            "click .openAll": "openAll",
+            "click .employeesRow": "openEmployee",
             "click .group": "openDepartment"
         },
 
@@ -38,16 +40,48 @@ define([
             }
         },
 
+        openAll: function(e) {
+            var self = this;
+            var rows = self.$el.find('tr');
+            var length = rows.length;
+            var employeeRows = self.$el.find("tr[data-content='employee']");
+            var projectsRows = self.$el.find("tr[data-content='project']");
+            var countEmployees = employeeRows.length;
+            var countProjects = projectsRows.length;
+
+            if (!self.expandAll) {
+                for (var i = length; i >= 0; i--) {
+                    rows.eq(i).show();
+                }
+
+                self.$el.find('.icon').text('-');
+                self.expandAll = true;
+            } else {
+                for (var i = countEmployees; i >= 0; i--) {
+                    employeeRows.eq(i).hide();
+                }
+                for (var i = countProjects; i >= 0; i--) {
+                    projectsRows.eq(i).hide();
+                }
+
+                self.$el.find('.icon').text('5');
+                self.expandAll = false;
+            }
+        },
+
         openEmployee: function(e) {
             var self = this;
             var target = e.target;
+            var targetIcon = $(e.target);
             var targetEmployee = '.' + $(target).parents('tr').attr('data-id');
             var display = self.$el.find(targetEmployee).css('display');
 
             if (display === "none") {
                 self.$el.find(targetEmployee).show();
+                targetIcon.text('-');
             } else {
                 self.$el.find(targetEmployee).hide();
+                targetIcon.text('5');
             }
         },
 

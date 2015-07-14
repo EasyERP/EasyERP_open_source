@@ -7342,6 +7342,17 @@ textarea#editInput {
 .rowEdit {
   padding: 0 !important;
 }
+.openAll {
+  cursor: pointer;
+}
+.openAll .icon {
+  float: left;
+  display: inline-block;
+  width: 12px;
+  line-height: 18px;
+  font-size: 12px;
+  text-align: center;
+}
 .grid {
   min-width: 100%;
   font-size: 11px;
@@ -7386,10 +7397,11 @@ textarea#editInput {
 .grid tr td.employee .icon,
 .grid tr th.employee .icon {
   float: right;
-  width: inherit;
   font-size: 14px;
   line-height: 21px;
   cursor: pointer;
+  width: 12px;
+  text-align: center;
 }
 .grid tr td.dayOfMonth,
 .grid tr th.dayOfMonth {
