@@ -86,6 +86,7 @@ var wTrack = function (models) {
                             });
                             if (data) {
                                 weekData = data;
+                                weekData.holidays = holidays[weekData.dateByWeek];
                             }
                             return weekData;
                         }) : weeksArr;
@@ -93,7 +94,7 @@ var wTrack = function (models) {
                         _employee.weekData = weeksArr;
                     }
 
-                    _employee.maxProjects = dashResultByEmployee ? dashResultByEmployee.maxProjects : 0
+                    _employee.maxProjects = dashResultByEmployee ? dashResultByEmployee.maxProjects : 0;
 
                     return _employee;
                 });
@@ -114,8 +115,7 @@ var wTrack = function (models) {
 
             Holiday.aggregate([{
                 $project: {
-                    dateByWeek: {$add: [{$multiply: [100, {$year: '$date'}]}, {$week: '$date'}]},
-                    week: {$week: '$date'},
+                    dateByWeek: {$add: [{$multiply: [100, '$year']}, '$week']},
                     day: {$dayOfWeek: '$date'},
                     date: 1,
                     comment: 1,
@@ -124,9 +124,28 @@ var wTrack = function (models) {
                 }
             }, {
                 $match: {
-                    $and: [{dateByWeek: {$gte: startDate - 1, $lte: endDate + 1}}, {day: {$nin: [1, 7]}}]
+                    $and: [{dateByWeek: {$gte: startDate, $lte: endDate}}, {day: {$nin: [1, 7]}}]
                 }
-            }], parallelCb);
+            }], /*parallelCb*/function(err, holidays){
+                var holidaysObject = {};
+                var key;
+
+                if(err){
+                    return parallelCb(err);
+                }
+
+                for (var i = holidays.length - 1; i >=0; i--) {
+                    key = holidays[i].dateByWeek;
+
+                    if (!holidaysObject[key]) {
+                        holidaysObject[key] = 1;
+                    } else {
+                        holidaysObject[key]++;
+                    }
+                }
+
+                parallelCb(null, holidaysObject);
+            });
         };
 
         function employeeByDepComposer(parallelCb) {

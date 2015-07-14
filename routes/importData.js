@@ -1314,8 +1314,8 @@ module.exports = function (models) {
                     }
 
                     if (fetchedHoliday) {
-                        objectToSave.year = moment(fetchedHoliday.date).year();
-                        objectToSave.week = moment(fetchedHoliday.date).isoWeek();
+                        objectToSave.year = moment(fetchedHoliday.Date).year();
+                        objectToSave.week = moment(fetchedHoliday.Date).isoWeek();
                         model = new Holiday(objectToSave);
                         model.save(cb);
                     }
