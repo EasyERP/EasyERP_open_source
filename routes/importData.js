@@ -1440,7 +1440,7 @@ module.exports = function (models) {
 
                                                     dayNumber = moment(date).day();
 
-                                                    if (dayNumber !== 0 || dayNumber !== 6) {
+                                                    if (dayNumber !== 0 && dayNumber !== 6) {
                                                         result.vacations[weekKey] ? result.vacations[weekKey] += 1 : result.vacations[weekKey] = 1;
                                                     }
 
@@ -1459,7 +1459,7 @@ module.exports = function (models) {
 
                                                     dayNumber = moment(date).day();
 
-                                                    if (dayNumber !== 0 || dayNumber !== 6) {
+                                                    if (dayNumber !== 0 && dayNumber !== 6) {
                                                         objectToSave.vacations[weekKey] ? objectToSave.vacations[weekKey] += 1 : objectToSave.vacations[weekKey] = 1;
                                                     }
 

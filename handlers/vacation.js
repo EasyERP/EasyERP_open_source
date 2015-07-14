@@ -25,7 +25,7 @@ var Vacation = function (models) {
 
                 dayNumber = moment(dateValue).day();
 
-                if (dayNumber !== 0 || dayNumber !== 6) {
+                if (dayNumber !== 0 && dayNumber !== 6) {
                     resultObj[weekKey] ? resultObj[weekKey] += 1 : resultObj[weekKey] = 1;
                 }
 
