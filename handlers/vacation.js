@@ -20,7 +20,7 @@ var Vacation = function (models) {
             if (array[day]) {
 
                 dateValue.date(day + 1);
-                weekKey = year * 1000 + moment(dateValue).isoWeek();
+                weekKey = year * 100 + moment(dateValue).isoWeek();
 
                 resultObj[weekKey] ? resultObj[weekKey] += 1 : resultObj[weekKey] = 1;
 
