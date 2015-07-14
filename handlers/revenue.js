@@ -287,7 +287,7 @@ var wTrack = function (models) {
                     _id: 1
                 }
             }, {
-                $match: {diff : {$gte: 0}}
+                $match: {diff: {$gte: 0}}
             }, {
                 $group: groupBy
             }, {
@@ -383,7 +383,7 @@ var wTrack = function (models) {
                     _id: 1
                 }
             }, {
-                $match: {diff : {$gte: 0}}
+                $match: {diff: {$gte: 0}}
             }, {
                 $group: groupBy
             }, {
@@ -419,6 +419,88 @@ var wTrack = function (models) {
 
         });
     };
+
+    this.projectBySales = function (req, res, next) {
+        var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+
+        access.getReadAccess(req, req.session.uId, 67, function (access) {
+            var options = req.query;
+            var startMonth = parseInt(options.month) || 8;
+            var startYear = parseInt(options.year) || 2014;
+            var endMonth = parseInt(options.endMonth) || 7;
+            var endYear = parseInt(options.endYear) || 2015;
+            var startDate;
+            var endDate;
+            var match;
+            var groupBy;
+
+            if (!access) {
+                return res.status(403).send();
+            }
+
+            startDate = Number(options.startDate) || (startYear * 100 + startMonth);
+            endDate = Number(options.endDate) || (endYear * 100 + endMonth);
+
+            match = {
+                $and: [
+                    {'project._id': {$exists: true}},
+                    {'project._id': {$ne: null}},
+                    {dateByMonth: {$gte: startDate, $lte: endDate}}
+                ]
+            };
+
+            groupBy = {
+                _id: {
+                    assigned: '$project.projectmanager._id',
+                    month: '$month',
+                    year: '$year'
+                },
+                count: {$sum: 1},
+                dateByMonth: {$addToSet: '$dateByMonth'}
+            };
+
+            WTrack.aggregate([{
+                $match: match
+            }, {
+                $project: {
+                    project: 1,
+                    month: 1,
+                    year: 1,
+                    dateByMonth: 1,
+                    _id: 1
+                }
+            }, {
+                $match: {diff: {$gte: 0}}
+            }, {
+                $group: groupBy
+            }, {
+                $project: {
+                    year: "$_id.year",
+                    month: "$_id.month",
+                    employee: "$_id.assigned",
+                    dateByMonth: 1,
+                    _id: 0
+                }
+            }, {
+                $group: {
+                    _id: "$employee",
+                    root: {$push: "$$ROOT"},
+                    total: {$sum: "$revenue"}
+                }
+            }, {
+                $sort: {
+                    dateByMonth: -1
+                }
+            }], function (err, response) {
+                if (err) {
+                    return next(err);
+                }
+
+                res.status(200).send(response);
+            });
+
+        });
+    }
 };
 
 module.exports = wTrack;

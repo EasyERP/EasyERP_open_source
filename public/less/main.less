@@ -5535,6 +5535,11 @@ textarea#editInput {
         border-bottom: 2px solid #fd0001;
       }
     }
+    &#tableProjectBySales {
+      .th {
+        border-bottom: 2px solid #5a9ad4;
+      }
+    }
   }
   .headRow {
     display: table-row;
@@ -5555,6 +5560,9 @@ textarea#editInput {
     &.totalUnpaid {
       background-color: #fd0001
     }
+    &.totalProject {
+      background-color: #5a9ad4
+    }
   }
 
   .divCell {
@@ -5566,7 +5574,10 @@ textarea#editInput {
     }
   }
 
-  #tablePaidBySales, #tableUnpaidBySales, #tableCancelledBySales {
+  #tablePaidBySales,
+  #tableUnpaidBySales,
+  #tableCancelledBySales,
+  #tableProjectBySales {
     .divCell {
       width: 6.41%;
       &.left-cell {

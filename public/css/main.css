@@ -7762,6 +7762,9 @@ textarea#editInput {
 .grid-conatiner.revenue .divTable#tableCancelledBySales .th {
   border-bottom: 2px solid #fd0001;
 }
+.grid-conatiner.revenue .divTable#tableProjectBySales .th {
+  border-bottom: 2px solid #5a9ad4;
+}
 .grid-conatiner.revenue .headRow {
   display: table-row;
 }
@@ -7781,6 +7784,9 @@ textarea#editInput {
 .grid-conatiner.revenue .divRow.totalUnpaid {
   background-color: #fd0001;
 }
+.grid-conatiner.revenue .divRow.totalProject {
+  background-color: #5a9ad4;
+}
 .grid-conatiner.revenue .divCell {
   float: left;
   display: table-column;
@@ -7791,12 +7797,14 @@ textarea#editInput {
 }
 .grid-conatiner.revenue #tablePaidBySales .divCell,
 .grid-conatiner.revenue #tableUnpaidBySales .divCell,
-.grid-conatiner.revenue #tableCancelledBySales .divCell {
+.grid-conatiner.revenue #tableCancelledBySales .divCell,
+.grid-conatiner.revenue #tableProjectBySales .divCell {
   width: 6.41%;
 }
 .grid-conatiner.revenue #tablePaidBySales .divCell.left-cell,
 .grid-conatiner.revenue #tableUnpaidBySales .divCell.left-cell,
-.grid-conatiner.revenue #tableCancelledBySales .divCell.left-cell {
+.grid-conatiner.revenue #tableCancelledBySales .divCell.left-cell,
+.grid-conatiner.revenue #tableProjectBySales .divCell.left-cell {
   width: 10%;
 }
 .grid-conatiner.revenue .th-trend {
