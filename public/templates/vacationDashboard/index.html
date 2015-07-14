@@ -52,7 +52,9 @@
                         </td>
                         <%employee.get('weekData').forEach(function(week){%>
                             <td class="dashboardWeek withVacation" <%=getCellClass(week)%>>
-                                <span class="viewCount">1d</span>
+                                <%if(week.holidays){%>
+                                    <span class="viewCount"><%=week.holidays || 0%>d</span>
+                                <%}%>
                                 <span class="view">
                                     <span class="vacation size8">8h</span>
                                     <span class="vacationHours size8"><%=week.hours || 0%> / <%=week.projects || 0%> p</span>

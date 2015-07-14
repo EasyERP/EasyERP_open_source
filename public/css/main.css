@@ -7381,6 +7381,10 @@ textarea#editInput {
   display: block;
   box-sizing: border-box;
 }
+.grid tr td span.view {
+  overflow: hidden;
+  line-height: 16px;
+}
 .grid tr.employeeProjects {
   display: none;
 }
