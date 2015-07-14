@@ -9,6 +9,7 @@ define([
     'text!templates/Revenue/perWeek.html',
     'text!templates/Revenue/paidBySales.html',
     'text!templates/Revenue/paidBySalesItems.html',
+    'text!templates/Revenue/unpaidBySales.html',
     'text!templates/Revenue/monthsArray.html',
     'text!templates/Revenue/perMonth.html',
     'models/Revenue',
@@ -29,6 +30,7 @@ define([
         bySalesPerMonthTemplate: _.template(perMonth),
         paidBySalesTemplate: _.template(paidBySales),
         paidBySalesItemsTemplate: _.template(paidBySalesItems),
+        unpaidBySalesTemplate: _.template(unpaidBySales),
 
         paidUnpaidDateRange: {},
 
@@ -435,10 +437,10 @@ define([
             var globalTotal = 0;
 
             target.html(this.paidBySalesTemplate({
-                employees: this.employees,
+                employees: self.employees,
                 content: 'totalPaidBySales',
                 className: 'totalPaid',
-                headName: 'Paid wTrack'
+                headName: 'Paid WTrack'
             }));
             //target.find('div.revenueBySales').html(this.weeksArrayTemplate({weeksArr: this.weekArr}));
             targetTotal = $(self.$el.find('[data-content="totalPaidBySales"]'));
@@ -511,7 +513,7 @@ define([
             var globalTotal = 0;
 
             target.html(this.paidBySalesTemplate({
-                employees: this.employees,
+                employees: self.employees,
                 content: 'totalCancelledBySales',
                 className: 'totalUnpaid',
                 headName: 'Write Off'
@@ -587,10 +589,10 @@ define([
             var globalTotal = 0;
 
             target.html(this.paidBySalesTemplate({
-                employees: this.employees,
+                employees: self.employees,
                 content: 'totalUnPaidBySales',
                 className: 'totalUnpaid',
-                headName: 'Unpaid wTrack'
+                headName: 'Unpaid WTrack'
             }));
             /* target.find('div.revenueBySales').html(this.weeksArrayTemplate({weeksArr: this.weekArr}));*/
             targetTotal = $(self.$el.find('[data-content="totalUnPaidBySales"]'));
