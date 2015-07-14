@@ -15,6 +15,7 @@ var Vacation = function (models) {
         var dateValue = moment([year, month]);
         var resultObj = {};
         var weekKey;
+        var dayNumber;
 
         for (var day = array.length; day >= 0; day--) {
             if (array[day]) {
@@ -22,7 +23,11 @@ var Vacation = function (models) {
                 dateValue.date(day + 1);
                 weekKey = year * 100 + moment(dateValue).isoWeek();
 
-                resultObj[weekKey] ? resultObj[weekKey] += 1 : resultObj[weekKey] = 1;
+                dayNumber = moment(dateValue).day();
+
+                if (dayNumber !== 0 || dayNumber !== 6) {
+                    resultObj[weekKey] ? resultObj[weekKey] += 1 : resultObj[weekKey] = 1;
+                }
 
                 if (resultObj[weekKey] === 0) {
                     delete resultObj[weekKey];

@@ -1425,6 +1425,7 @@ module.exports = function (models) {
                                         .exec(function (err, result) {
                                             var dateValue = moment([objectToSave.year, objectToSave.month - 1]);
                                             var weekKey;
+                                            var dayNumber;
 
                                             if (err) {
                                                 cb(err)
@@ -1437,7 +1438,11 @@ module.exports = function (models) {
                                                     dateValue.date(i);
                                                     weekKey = objectToSave.year * 100 + moment(date).isoWeek();
 
-                                                    result.vacations[weekKey] ? result.vacations[weekKey] += 1 : result.vacations[weekKey] = 1;
+                                                    dayNumber = moment(date).day();
+
+                                                    if (dayNumber !== 0 || dayNumber !== 6) {
+                                                        result.vacations[weekKey] ? result.vacations[weekKey] += 1 : result.vacations[weekKey] = 1;
+                                                    }
 
                                                     result.vacArray[i-1] = fetchedVacation.AbsenceType;
                                                 }
@@ -1450,9 +1455,13 @@ module.exports = function (models) {
                                                 for (var i = endDay; i >= startDay; i--) {
 
                                                     dateValue.date(i);
-                                                    weekKey = objectToSave.year * 1000 + moment(date).isoWeek();
+                                                    weekKey = objectToSave.year * 100 + moment(date).isoWeek();
 
-                                                    objectToSave.vacations[weekKey] ? objectToSave.vacations[weekKey] += 1 : objectToSave.vacations[weekKey] = 1;
+                                                    dayNumber = moment(date).day();
+
+                                                    if (dayNumber !== 0 || dayNumber !== 6) {
+                                                        objectToSave.vacations[weekKey] ? objectToSave.vacations[weekKey] += 1 : objectToSave.vacations[weekKey] = 1;
+                                                    }
 
                                                     objectToSave.vacArray[i-1] = fetchedVacation.AbsenceType;
                                                 }
