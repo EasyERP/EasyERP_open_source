@@ -1444,13 +1444,13 @@ module.exports = function (models) {
 
                                                 Vacation.update({_id: result._id}, {$set: {vacArray: result.vacArray, vacations: result.vacations}}, cb);
                                             } else {
-                                                objectToSave.vacations = {}
+                                                objectToSave.vacations = {};
                                                 objectToSave.vacArray = new Array(daysCount);
 
                                                 for (var i = endDay; i >= startDay; i--) {
 
                                                     dateValue.date(i);
-                                                    weekKey = objectToSave.year * 1000 + moment(date).isoWeek();
+                                                    weekKey = objectToSave.year * 100 + moment(date).isoWeek();
 
                                                     objectToSave.vacations[weekKey] ? objectToSave.vacations[weekKey] += 1 : objectToSave.vacations[weekKey] = 1;
 
