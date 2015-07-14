@@ -125,8 +125,8 @@ define([
                     model = this.editCollection.get(id);
                     modelJSON = model.toJSON();
                     model.changed = this.changedModels[id];
-                    model.changed.month = moment(modelJSON.date).month();
-                    model.changed.week = moment(modelJSON.date).week();
+                    model.changed.year = moment(modelJSON.date).year();
+                    model.changed.week = moment(modelJSON.date).isoWeek();
                 }
                 this.editCollection.save();
             },
