@@ -1435,7 +1435,7 @@ module.exports = function (models) {
                                                 for (var i = endDay; i >= startDay; i--) {
 
                                                     dateValue.date(i);
-                                                    weekKey = objectToSave.year * 1000 + moment(date).isoWeek();
+                                                    weekKey = objectToSave.year * 100 + moment(date).isoWeek();
 
                                                     result.vacations[weekKey] ? result.vacations[weekKey] += 1 : result.vacations[weekKey] = 1;
 
