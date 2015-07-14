@@ -1449,7 +1449,7 @@ module.exports = function (models) {
 
                                                 Vacation.update({_id: result._id}, {$set: {vacArray: result.vacArray, vacations: result.vacations}}, cb);
                                             } else {
-                                                objectToSave.vacations = {}
+                                                objectToSave.vacations = {};
                                                 objectToSave.vacArray = new Array(daysCount);
 
                                                 for (var i = endDay; i >= startDay; i--) {

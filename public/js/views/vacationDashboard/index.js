@@ -9,8 +9,9 @@ define([
     'dataService',
     'constants',
     'async',
-    'custom'
-], function (mainTemplate, rowView, vacationDashboard, employeesForDashboard, dataService, CONSTANTS, async, custom) {
+    'custom',
+    'moment'
+], function (mainTemplate, rowView, vacationDashboard, employeesForDashboard, dataService, CONSTANTS, async, custom, moment) {
     var View = Backbone.View.extend({
         el: '#content-holder',
 
@@ -38,6 +39,8 @@ define([
             } else {
                 dashCollection.trigger('reset');
             }
+
+            this.currentWeek = moment().isoWeekYear() * 100 + moment().isoWeek();
         },
 
         openAll: function(e) {
@@ -112,21 +115,26 @@ define([
 
         getCellClass: function(week){
             var s = "";
-            var hours = week.hours + week.holidays * 8 + (week.countDay || 0);
+            var hours = week.hours || 0;
+            var holidays = week.holidays ||0;
+            var vacations = week.vacations ||0;
+            var hours = hours || + (holidays + vacations) * 8;
+
             if (hours > 40) {
                 s += "dgreen ";
             } else if (hours > 35) {
                 s += "green ";
             } else if (hours > 19) {
                 s += "yellow ";
-            } else
+            } else {
                 s += "white ";
-            if (self.currentWeek == week.week) {
+            }
+            if (this.currentWeek === week.dateByWeek) {
                 s += "active ";
             }
-            if (!self.isWorking(track.ID, week)) {
+           /* if (!self.isWorking(track.ID, week)) {
                 s += "inactive ";
-            }
+            }*/
             return s;
         },
 

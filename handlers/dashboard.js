@@ -91,7 +91,9 @@ var wTrack = function (models) {
                             return employeeData.employee.toString() === _employee._id.toString();
                         });
                         _employee.weekData = dashResultByEmployee ? _.map(weeksArr, function (weekData) {
-                            var data = _.find(dashResultByEmployee.weekData, function (d) {
+                            var data;
+
+                            data = _.find(dashResultByEmployee.weekData, function (d) {
                                 return parseInt(d.dateByWeek) === parseInt(weekData.dateByWeek);
                             });
 
@@ -100,39 +102,26 @@ var wTrack = function (models) {
                             }
 
                             _vacations =  _.find(vacations, function(vacationObject){
-                                return vacationObject.employee.toString() === _employee._id.toString();
+                                return (vacationObject.employee.toString() === _employee._id.toString());
                             });
 
                             if(_vacations){
                                 _vacations.vacations.forEach(function(vacation){
-                                    holidayCount = vacation[weekData.dateByWeek];
+                                    if(vacation.hasOwnProperty(weekData.dateByWeek)) {
+                                        holidayCount = vacation[weekData.dateByWeek];
+                                    }
                                 });
                             }
 
                             weekData.holidays = holidays[weekData.dateByWeek];
                             weekData.vacations = holidayCount || 0;
 
+                            holidayCount = 0;
+
                             return weekData;
                         }) : weeksArr;
                     } else {
-                        _tempWeekArr = _.map(weeksArr, function (weekData) {
-                            _vacations =  _.find(vacations, function(vacationObject){
-                                return vacationObject.employee.toString() === _employee._id.toString();
-                            });
-
-                            if(_vacations){
-                                _vacations.vacations.forEach(function(vacation){
-                                    holidayCount = vacation[weekData.dateByWeek];
-                                });
-                            }
-
-                            weekData.holidays = holidays[weekData.dateByWeek] || 0;
-                            weekData.vacations = holidayCount || 0;
-
-                            return weekData;
-                        });
-
-                        _employee.weekData = _tempWeekArr;
+                        _employee.weekData = weeksArr;
                     }
 
                     _employee.maxProjects = dashResultByEmployee ? dashResultByEmployee.maxProjects : 0;
