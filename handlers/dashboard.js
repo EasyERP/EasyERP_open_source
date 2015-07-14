@@ -26,7 +26,7 @@ var wTrack = function (models) {
         var startDate;
         var endDate;
 
-        var currentWeek = moment().week();
+        var currentWeek = moment().isoWeek();
         var currentStartWeek = currentWeek - 6;
         var currentYear = moment().weekYear();
 
