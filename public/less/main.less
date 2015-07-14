@@ -5540,6 +5540,11 @@ textarea#editInput {
         border-bottom: 2px solid #5a9ad4;
       }
     }
+    &#tableEmployeeBySales {
+      .th {
+        border-bottom: 2px solid #91ce50;
+      }
+    }
   }
   .headRow {
     display: table-row;
@@ -5563,21 +5568,31 @@ textarea#editInput {
     &.totalProject {
       background-color: #5a9ad4
     }
+    &.totalEmployee {
+      background-color: #91ce50
+    }
   }
 
   .divCell {
     float: left;
     display: table-column;
     width: 5.5%;
+    height: 22px;
+    padding: 0 5px;
+    box-sizing: border-box;
+    text-align: right;
+    line-height: 22px;
     &.left-cell {
       width: 10%;
+      text-align: left;
     }
   }
 
   #tablePaidBySales,
   #tableUnpaidBySales,
   #tableCancelledBySales,
-  #tableProjectBySales {
+  #tableProjectBySales,
+  #tableEmployeeBySales {
     .divCell {
       width: 6.41%;
       &.left-cell {

@@ -473,7 +473,7 @@ var wTrack = function (models) {
                     },
                     projectCount: {$sum: 1}
                 }
-            },{
+            }, {
                 $project: {
                     year: "$_id.year",
                     month: "$_id.month",
@@ -551,12 +551,13 @@ var wTrack = function (models) {
                 $group: {
                     _id: {
                         assigned: '$_id.assigned',
+                        employee: '$employee._id',
                         month: '$_id.month',
                         year: '$_id.year'
                     },
                     projectCount: {$sum: 1}
                 }
-            },{
+            }, {
                 $project: {
                     year: "$_id.year",
                     month: "$_id.month",
@@ -584,7 +585,82 @@ var wTrack = function (models) {
             });
 
         });
-    }
+    },
+
+        this.hoursBySales = function (req, res, next) {
+            var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+
+            access.getReadAccess(req, req.session.uId, 67, function (access) {
+                var options = req.query;
+                var startWeek = parseInt(options.week);
+                var startYear = parseInt(options.year);
+                var endWeek;
+                var endYear;
+                var startDate;
+                var endDate;
+                var match;
+                var groupBy;
+
+                if (!access) {
+                    return res.status(403).send();
+                }
+
+                if (startWeek >= 40) {
+                    endWeek = Number(startWeek) + 14 - 53;
+                    endYear = Number(startYear) + 1;
+                } else {
+                    endWeek = Number(startWeek) + 14;
+                    endYear = Number(startYear);
+                }
+
+                startDate = startYear * 100 + startWeek;
+                endDate = endYear * 100 + endWeek;
+
+                match = {
+                    $and: [
+                        {'department._id': {$exists: true}},
+                        {'department._id': {$ne: null}},
+                        {dateByWeek: {$gte: startDate, $lte: endDate}}
+                    ]
+                };
+
+                groupBy = {
+                    _id: {
+                        department: '$department._id',
+                        year: '$year',
+                        week: '$week'
+                    },
+                    sold: {$sum: '$worked'}
+                };
+
+                WTrack.aggregate([{
+                    $match: match
+                }, {
+                    $group: groupBy
+                }, {
+                    $project: {
+                        year: "$_id.year",
+                        week: "$_id.week",
+                        department: "$_id.department",
+                        sold: 1,
+                        _id: 0
+                    }
+                }, {
+                    $group: {
+                        _id: '$department',
+                        root: {$push: '$$ROOT'},
+                        totalSold: {$sum: '$sold'}
+                    }
+                }], function (err, response) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    res.status(200).send(response);
+                });
+
+            });
+        }
 };
 
 module.exports = wTrack;
