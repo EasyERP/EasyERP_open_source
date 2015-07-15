@@ -57,9 +57,9 @@
                                 <%}%>
                                 <span class="view">
                                     <%if(week.vacations){%>
-                                        <span class="vacation size8"><%=(week.vacations || 0) * 8%> h</span>
+                                        <span class="vacation size<%=(week.vacations || 0) * 8%>"><%=(week.vacations || 0) * 8%> h</span>
                                     <%}%>
-                                    <span class="vacationHours size8"><%=week.hours || 0%> / <%=week.projects || 0%> p</span>
+                                    <span class="vacationHours size<%=week.hours || 0%>"><%=week.hours || 0%> / <%=week.projects || 0%> p</span>
                                 </span>
                             </td>
                         <%})%>

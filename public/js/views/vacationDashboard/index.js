@@ -26,8 +26,10 @@ define([
 
         initialize: function () {
             var dashCollection;
-            var employeeCollection;
+            var startWeek;
             var self = this;
+            var year;
+            var week;
 
             dashCollection = this.dashCollection = custom.retriveFromCash('dashboardVacation');
 
@@ -40,7 +42,20 @@ define([
                 dashCollection.trigger('reset');
             }
 
-            this.currentWeek = moment().isoWeekYear() * 100 + moment().isoWeek();
+            year = moment().isoWeekYear();
+            week = moment().isoWeek();
+
+            this.dateByWeek = year * 100 + week;
+            this.week = week;
+            this.year = year;
+            startWeek = this.week - 6;
+
+            if(startWeek >= 0){
+                this.startWeek = startWeek;
+            } else {
+                this.startWeek = startWeek + 53;
+                this.year -= 1;
+            }
         },
 
         openAll: function(e) {
@@ -129,7 +144,7 @@ define([
             } else {
                 s += "white ";
             }
-            if (this.currentWeek === week.dateByWeek) {
+            if (this.dateByWeek === week.dateByWeek) {
                 s += "active ";
             }
            /* if (!self.isWorking(track.ID, week)) {
@@ -138,15 +153,42 @@ define([
             return s;
         },
 
+        getDate: function (num) {
+            return moment().day("Monday").week(num).format("DD.MM");
+        },
+
         render: function () {
             var self = this;
             var rowItems;
-            var weeskArr = custom.retriveFromCash('weeksArr') || [];
+            var weeksArr = custom.retriveFromCash('weeksArr') || [];
+            var week;
+            var startWeek = this.startWeek;
             var dashboardData = this.dashCollection.toJSON();
 
+            if(!weeksArr || !weeksArr.length){
+                for (var i = 0; i <= 13; i++) {
+                    if (startWeek + i > 53) {
+                        week = startWeek + i - 53;
+                        weeksArr.push({
+                            lastDate: this.getDate(week),
+                            week: week,
+                            year: this.year + 1
+                        });
+                    } else {
+                        week = startWeek + i;
+                        weeksArr.push({
+                            lastDate: this.getDate(week),
+                            week: week,
+                            year: this.year
+                        });
+                    }
+                }
+
+                custom.cashToApp('weeksArr', weeksArr);
+            }
 
             this.$el.html(this.template({
-                weeks: weeskArr,
+                weeks: weeksArr,
                 dashboardData:  dashboardData,
                 leadComparator: self.leadComparator,
                 getCellClass: self.getCellClass
