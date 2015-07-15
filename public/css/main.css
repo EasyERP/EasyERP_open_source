@@ -8047,6 +8047,33 @@ textarea#editInput {
 .vacation-list td,
 .vacation-list th {
   padding: 5px;
+  position: relative;
+  cursor: pointer;
+}
+.vacation-list td input,
+.vacation-list th input,
+.vacation-list td input:focus,
+.vacation-list th input:focus {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  text-align: center;
+  padding: 0;
+  border: none;
+  outline: none;
+  outline-offset: 0;
+  display: none;
+  cursor: pointer;
+}
+.vacation-list td input:focus,
+.vacation-list th input:focus {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none;
+  -moz-box-shadow: none;
+  -webkit-box-shadow: none;
 }
 .vacation-list thead th {
   font-weight: bold;

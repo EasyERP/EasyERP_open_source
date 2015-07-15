@@ -48,13 +48,15 @@ define([
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
                 this.contentCollection = vacationCollection;
                 this.daysCount;
-
             },
 
             events: {
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                "click td.editable": "editRow",
+                "click td.editable": "showInput",
+                "click td.editable input": "editRow",
+                "blur td.editable input": "hideInput",
+                //"click td.editable": "editRow",
                 "click .current-selected": "showNewCurrentSelect",
                 "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
                 "click .oe_sortable": "goSort",
@@ -237,14 +239,27 @@ define([
                 });
             },
 
+            showInput: function(e) {
+                var self = this;
+                var target = e.target;
+
+                $(target).find('input').css('display','block');
+
+            },
+
+            hideInput: function(e) {
+                var target = $(e.target);
+
+                target.hide();
+            },
+
             editRow: function (e, prev, next) {
                 var self = this;
-
                 var el = $(e.target);
                 var tr = $(e.target).closest('tr');
                 var holidayId = tr.data('id');
                 var colType = el.data('type');
-                var isSelect = colType !== 'input' && el.prop("tagName") !== 'INPUT';
+                //var isSelect = colType !== 'input' && el.prop("tagName") !== 'INPUT';
                 var tempContainer;
                 var width;
 
@@ -256,13 +271,13 @@ define([
                 }
 
 
-                if (isSelect) {
+                //if (isSelect) {
                     populate.showSelect(e, prev, next, this);
-                } else {
+                //} else {
                     tempContainer = el.text();
                     width = el.width() - 6;
                     el.html('<input class="editing" type="text" value="' + tempContainer + '"  maxLength="255" style="width:' + width + 'px">');
-                }
+                //}
 
                 return false;
             },
