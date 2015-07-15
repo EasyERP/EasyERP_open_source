@@ -45,16 +45,16 @@ define([
             year = moment().isoWeekYear();
             week = moment().isoWeek();
 
-            this.dateByWeek = year * 100 + week;
-            this.week = week;
-            this.year = year;
-            startWeek = this.week - 6;
+            self.dateByWeek = year * 100 + week;
+            self.week = week;
+            self.year = year;
+            startWeek = self.week - 6;
 
             if(startWeek >= 0){
-                this.startWeek = startWeek;
+                self.startWeek = startWeek;
             } else {
-                this.startWeek = startWeek + 53;
-                this.year -= 1;
+                self.startWeek = startWeek + 53;
+                self.year -= 1;
             }
         },
 
@@ -128,7 +128,7 @@ define([
             return '<span class="high"><span class="label label-success">High</span></span>'
         },
 
-        getCellClass: function(week){
+        getCellClass: function(week, self){
             var s = "";
             var hours = week.hours || 0;
             var holidays = week.holidays ||0;
@@ -144,12 +144,23 @@ define([
             } else {
                 s += "white ";
             }
-            if (this.dateByWeek === week.dateByWeek) {
+            if (self.dateByWeek === week.dateByWeek) {
                 s += "active ";
             }
            /* if (!self.isWorking(track.ID, week)) {
                 s += "inactive ";
             }*/
+            return s;
+        },
+
+        getHeadClass: function(week, self) {
+            var s;
+            var dateByWeek = week.year * 100 + week.week;
+
+            if (self.dateByWeek === dateByWeek) {
+                s = "activeHead";
+            }
+
             return s;
         },
 
@@ -208,12 +219,14 @@ define([
                 custom.cashToApp('weeksArr', weeksArr);
             }
 
-            this.$el.html(this.template({
+            self.$el.html(self.template({
                 weeks: weeksArr,
                 dashboardData:  dashboardData,
                 leadComparator: self.leadComparator,
                 getCellClass: self.getCellClass,
-                getCellSize: self.getCellSize
+                getCellSize: self.getCellSize,
+                getHeadClass: self.getHeadClass,
+                self: self
             }));
 
 

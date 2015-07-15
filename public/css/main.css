@@ -7411,6 +7411,12 @@ textarea#editInput {
 .grid tr th.dayOfMonth {
   min-width: 27px;
 }
+.grid tr td.activeHead,
+.grid tr th.activeHead {
+  border: 1px solid #000;
+  border-bottom: none;
+  display: table-cell;
+}
 .grid tr td.dashboardWeek {
   width: 107px;
   min-width: 107px;
@@ -7443,13 +7449,10 @@ textarea#editInput {
   border-bottom: 1px solid #d2d2d2;
   border-left: 1px solid #d2d2d2;
 }
-.grid tr td.dashboardWeek.activeHead {
-  border: 1px solid #000;
-  border-bottom: none;
-}
 .grid tr td.dashboardWeek.active {
   border-left: 1px solid #000 !important;
   border-right: 1px solid #000 !important;
+  display: table-cell;
 }
 .grid tr td.dashboardWeek.inactive span.view {
   background-color: silver;
