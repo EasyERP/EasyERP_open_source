@@ -5479,17 +5479,70 @@ textarea#editInput {
   font-size: 13px;
   font-weight: 300;
 
-  input {
-    color: #000;
-  }
+  //svg {
+  //  height: 20px !important;
+  //
+  //  rect {
+  //
+  //    &.fill1 {
+  //      fill: #eb930a;
+  //    }
+  //    &.fill2 {
+  //      fill: #729d21;
+  //    }
+  //    &.fill3 {
+  //      fill: #a2a2a3;
+  //    }
+  //    &.fill4 {
+  //      fill: #fb0002;
+  //    }
+  //    &.fill5 {
+  //      fill: #5999d3;
+  //    }
+  //    &.fill6 {
+  //      fill: #90cc50;
+  //    }
+  //    &.fill7 {
+  //      fill: #ce8d5f;
+  //    }
+  //    &.fill8 {
+  //      fill: #697d95;
+  //    }
+  //  }
+  //}
+  //
+  //.bar rect {
+  //  fill: steelblue;
+  //  shape-rendering: crispEdges;
+  //}
+  //
+  //.bar text {
+  //  fill: #fff;
+  //}
+
+  //svg {
+  //  width: 110px;
+  //  height: 20px;
+  //}
+  //
+  //
+  //.axis path, .axis line {
+  //  fill: none;
+  //  stroke: #000;
+  //  shape-rendering: crispEdges;
+  //}
+  //
+  //input {
+  //  color: #000;
+  //}
 
   .chartContainer {
     margin: 20px auto;
 
     #chart {
-      width: 100%;
-      padding-right: 140px;
-      margin: 0 -140px 0 0;
+      width: ~"calc(100% - 140px)";
+      //padding-right: 140px;
+      //margin: 0 -140px 0 0;
       box-sizing: border-box;
       float: left;
     }
@@ -5506,8 +5559,60 @@ textarea#editInput {
         width: 50px;
       }
     }
-    &:after {
 
+    .line1 {
+      fill: none;
+      stroke: black;
+    }
+
+    .line2 {
+      fill: none;
+      stroke: #94b5dc;
+
+    }
+
+    .circle2 {
+      stroke: #94b5dc;
+      fill: #94b5dc;
+    }
+
+    .line3 {
+      fill: none;
+      stroke: #4f7eac;
+
+    }
+
+    .circle3 {
+      stroke: #4f7eac;
+      fill: #4f7eac;
+    }
+
+    .line4 {
+      fill: none;
+      stroke: #a42a2b;
+
+    }
+
+    .circle4 {
+      stroke: #a42a2b;
+      fill: #a42a2b;
+    }
+
+    .line5 {
+      fill: none;
+      stroke: #fda401;
+
+    }
+
+    .circle5 {
+      stroke: #fda401;
+      fill: #fda401;
+    }
+
+    &:after {
+      clear: both;
+      content: "";
+      display: table;
     }
   }
   .divTable {
@@ -5556,7 +5661,7 @@ textarea#editInput {
     &.totalBySales {
       background-color: #ed9409
     }
-    &.totalByDep {
+    &.totalByDep, &.totalHoursByDep {
       background-color: #00af00
     }
     &.totalPaid {
@@ -5586,17 +5691,23 @@ textarea#editInput {
       width: 10%;
       text-align: left;
     }
+    &.trend {
+      width: 7.5%;
+    }
   }
 
   #tablePaidBySales,
   #tableUnpaidBySales,
   #tableCancelledBySales,
   #tableProjectBySales,
-  #tableEmployeeBySales {
+  #tableEmployeeBySales{
     .divCell {
-      width: 6.41%;
+      width: 6.34%;
       &.left-cell {
         width: 10%;
+      }
+      &.th-trend {
+        width: 7.5%;
       }
     }
   }

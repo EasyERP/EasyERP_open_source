@@ -148,6 +148,8 @@ var wTrack = function (models) {
                     root: {$push: "$$ROOT"},
                     total: {$sum: "$revenue"}
                 }
+            }, {
+                $sort: {_id: 1}
             }], function (err, response) {
                 if (err) {
                     return next(err);
@@ -587,7 +589,7 @@ var wTrack = function (models) {
         });
     },
 
-        this.hoursBySales = function (req, res, next) {
+        this.hoursByDep = function (req, res, next) {
             var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
 
             access.getReadAccess(req, req.session.uId, 67, function (access) {
@@ -617,16 +619,16 @@ var wTrack = function (models) {
                 endDate = endYear * 100 + endWeek;
 
                 match = {
-                    $and: [
-                        {'department._id': {$exists: true}},
-                        {'department._id': {$ne: null}},
-                        {dateByWeek: {$gte: startDate, $lte: endDate}}
-                    ]
+                    dateByWeek: {
+                        $gte: startDate,
+                        $lt: endDate
+                    }
                 };
 
                 groupBy = {
                     _id: {
-                        department: '$department._id',
+                        department: '$department.departmentName',
+                        _id: '$department._id',
                         year: '$year',
                         week: '$week'
                     },
@@ -651,6 +653,8 @@ var wTrack = function (models) {
                         root: {$push: '$$ROOT'},
                         totalSold: {$sum: '$sold'}
                     }
+                }, {
+                    $sort: {_id: 1}
                 }], function (err, response) {
                     if (err) {
                         return next(err);

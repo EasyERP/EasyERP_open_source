@@ -7719,16 +7719,11 @@ textarea#editInput {
   font-size: 13px;
   font-weight: 300;
 }
-.grid-conatiner.revenue input {
-  color: #000;
-}
 .grid-conatiner.revenue .chartContainer {
   margin: 20px auto;
 }
 .grid-conatiner.revenue .chartContainer #chart {
-  width: 100%;
-  padding-right: 140px;
-  margin: 0 -140px 0 0;
+  width: calc(100% - 140px);
   box-sizing: border-box;
   float: left;
 }
@@ -7743,6 +7738,47 @@ textarea#editInput {
 }
 .grid-conatiner.revenue .chartContainer .legend input {
   width: 50px;
+}
+.grid-conatiner.revenue .chartContainer .line1 {
+  fill: none;
+  stroke: black;
+}
+.grid-conatiner.revenue .chartContainer .line2 {
+  fill: none;
+  stroke: #94b5dc;
+}
+.grid-conatiner.revenue .chartContainer .circle2 {
+  stroke: #94b5dc;
+  fill: #94b5dc;
+}
+.grid-conatiner.revenue .chartContainer .line3 {
+  fill: none;
+  stroke: #4f7eac;
+}
+.grid-conatiner.revenue .chartContainer .circle3 {
+  stroke: #4f7eac;
+  fill: #4f7eac;
+}
+.grid-conatiner.revenue .chartContainer .line4 {
+  fill: none;
+  stroke: #a42a2b;
+}
+.grid-conatiner.revenue .chartContainer .circle4 {
+  stroke: #a42a2b;
+  fill: #a42a2b;
+}
+.grid-conatiner.revenue .chartContainer .line5 {
+  fill: none;
+  stroke: #fda401;
+}
+.grid-conatiner.revenue .chartContainer .circle5 {
+  stroke: #fda401;
+  fill: #fda401;
+}
+.grid-conatiner.revenue .chartContainer:after {
+  clear: both;
+  content: "";
+  display: table;
 }
 .grid-conatiner.revenue .divTable {
   padding-top: 5px;
@@ -7778,7 +7814,8 @@ textarea#editInput {
 .grid-conatiner.revenue .divRow.totalBySales {
   background-color: #ed9409;
 }
-.grid-conatiner.revenue .divRow.totalByDep {
+.grid-conatiner.revenue .divRow.totalByDep,
+.grid-conatiner.revenue .divRow.totalHoursByDep {
   background-color: #00af00;
 }
 .grid-conatiner.revenue .divRow.totalPaid {
@@ -7807,12 +7844,15 @@ textarea#editInput {
   width: 10%;
   text-align: left;
 }
+.grid-conatiner.revenue .divCell.trend {
+  width: 7.5%;
+}
 .grid-conatiner.revenue #tablePaidBySales .divCell,
 .grid-conatiner.revenue #tableUnpaidBySales .divCell,
 .grid-conatiner.revenue #tableCancelledBySales .divCell,
 .grid-conatiner.revenue #tableProjectBySales .divCell,
 .grid-conatiner.revenue #tableEmployeeBySales .divCell {
-  width: 6.41%;
+  width: 6.34%;
 }
 .grid-conatiner.revenue #tablePaidBySales .divCell.left-cell,
 .grid-conatiner.revenue #tableUnpaidBySales .divCell.left-cell,
@@ -7820,6 +7860,13 @@ textarea#editInput {
 .grid-conatiner.revenue #tableProjectBySales .divCell.left-cell,
 .grid-conatiner.revenue #tableEmployeeBySales .divCell.left-cell {
   width: 10%;
+}
+.grid-conatiner.revenue #tablePaidBySales .divCell.th-trend,
+.grid-conatiner.revenue #tableUnpaidBySales .divCell.th-trend,
+.grid-conatiner.revenue #tableCancelledBySales .divCell.th-trend,
+.grid-conatiner.revenue #tableProjectBySales .divCell.th-trend,
+.grid-conatiner.revenue #tableEmployeeBySales .divCell.th-trend {
+  width: 7.5%;
 }
 .grid-conatiner.revenue .th-trend {
   width: 7.5%;

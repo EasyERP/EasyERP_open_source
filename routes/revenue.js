@@ -18,7 +18,7 @@ module.exports = function (models) {
     router.get('/cancelledWtrack', expressSession.authenticatedUser, handler.cancelledWtrack);
     router.get('/projectBySales', expressSession.authenticatedUser, handler.projectBySales);
     router.get('/employeeBySales', expressSession.authenticatedUser, handler.employeeBySales);
-    router.get('/hoursBySales', expressSession.authenticatedUser, handler.hoursBySales);
+    router.get('/hoursByDep', expressSession.authenticatedUser, handler.hoursByDep);
 
     return router;
 };
