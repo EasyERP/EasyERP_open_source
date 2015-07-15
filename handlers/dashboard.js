@@ -65,6 +65,8 @@ var wTrack = function (models) {
             var holidays;
             var vacations;
 
+            var count = 0;
+
             if (err) {
                 return next(err);
             }
@@ -82,80 +84,94 @@ var wTrack = function (models) {
 
                 employee.employees = _.map(employee.employees, function (_employee) {
                     var dashResultByEmployee;
-                    var holidayCount;
-                    var _vacations;
-                    var _tempWeekArr;
-                    if(_employee._id.toString() === '55a501b3192d293420000047') {//remove after test
-                        if (dashDepartment) {
-                            dashResultByEmployee = _.find(dashDepartment.employeeData, function (employeeData) {
-                                return employeeData.employee.toString() === _employee._id.toString();
+
+                    if (dashDepartment) {
+                        dashResultByEmployee = _.find(dashDepartment.employeeData, function (employeeData) {
+                            return employeeData.employee.toString() === _employee._id.toString();
+                        });
+
+                        if (dashResultByEmployee) {
+                            _employee.weekData = _.map(weeksArr, function (weekData, index ) {
+                                var data;
+                                var holidayCount = 0;
+                                var _vacations;
+
+                                data = _.find(dashResultByEmployee.weekData, function (d) {
+                                    return parseInt(d.dateByWeek) === parseInt(weekData.dateByWeek);
+                                });
+
+                                if (data) {
+                                    weekData = data;
+                                }
+
+                                _vacations = _.find(vacations, function (vacationObject) {
+                                    return (vacationObject.employee.toString() === _employee._id.toString());
+                                });
+
+                                if (_vacations) {
+                                    _vacations.vacations.forEach(function (vacation) {
+                                        if (vacation.hasOwnProperty(weekData.dateByWeek)) {
+                                            //weekData.vacations = vacation[weekData.dateByWeek] || 0;
+                                            weekData.vacations = vacation[weekData.dateByWeek];
+                                            if(_employee._id.toString() === '55a5f08a6737e8881e000047'){
+                                                weekData.tempField = index;
+                                                weekData.tempField2 = index;
+                                                weekData.count = ++count;
+                                            }
+                                        }
+                                    });
+                                }
+
+                                weekData.holidays = holidays[weekData.dateByWeek];
+                                //weekData.vacations = holidayCount;
+                                weekData.vacations = weekData.vacations || 0;
+                                weekData.tempField2 = index;
+                                weekData.count = count;
+
+                                return weekData;
                             });
-
-                            if (dashResultByEmployee) {
-                                _employee.weekData = _.map(weeksArr, function (weekData) {
-                                    var data;
-
-                                    data = _.find(dashResultByEmployee.weekData, function (d) {
-                                        return parseInt(d.dateByWeek) === parseInt(weekData.dateByWeek);
-                                    });
-
-                                    if (data) {
-                                        weekData = data;
-                                    }
-
-                                    _vacations = _.find(vacations, function (vacationObject) {
-                                        return (vacationObject.employee.toString() === _employee._id.toString());
-                                    });
-
-                                    if (_vacations) {
-                                        _vacations.vacations.forEach(function (vacation) {
-                                            if (vacation.hasOwnProperty(weekData.dateByWeek)) {
-                                                holidayCount = vacation[weekData.dateByWeek];
-                                            }
-                                        });
-                                    }
-
-                                    weekData.holidays = holidays[weekData.dateByWeek];
-                                    weekData.vacations = holidayCount || 0;
-
-                                    holidayCount = 0;
-
-                                    return weekData;
-                                });
-                            } else {
-                                _employee.weekData = _.map(weeksArr, function (weekData) {
-                                    _vacations = _.find(vacations, function (vacationObject) {
-                                        return (vacationObject.employee.toString() === _employee._id.toString());
-                                    });
-
-                                    if (_vacations) {
-                                        _vacations.vacations.forEach(function (vacation) {
-                                            if (vacation.hasOwnProperty(weekData.dateByWeek) /*&& _employee._id.toString() === '55a501b3192d29342000008c'*/) {
-                                                console.log(_employee._id.toString());
-                                                holidayCount = vacation[weekData.dateByWeek];
-                                            }
-                                        });
-                                    }
-
-                                    weekData.holidays = holidays[weekData.dateByWeek] || 0;
-                                    weekData.vacations = holidayCount || 0;
-
-                                    holidayCount = 0;
-
-                                    return weekData;
-                                });
-                            }
                         } else {
+                            /*_employee.weekData = _.map(weeksArr, function (weekData) {
+                                _vacations = _.find(vacations, function (vacationObject) {
+                                    return (vacationObject.employee.toString() === _employee._id.toString());
+                                });
+
+                                if (_vacations) {
+                                    _vacations.vacations.forEach(function (vacation) {
+                                        if (vacation.hasOwnProperty(weekData.dateByWeek) /!*&& _employee._id.toString() === '55a501b3192d29342000008c'*!/) {
+                                            console.log(_employee._id.toString());
+                                            weekData.vacations = vacation[weekData.dateByWeek] || 0;
+                                        }
+                                    });
+                                }
+
+                                weekData.holidays = holidays[weekData.dateByWeek] || 0;
+
+                                holidayCount = 0;
+
+                                return weekData;
+                            });*/
                             _employee.weekData = weeksArr;
                         }
-                    }//remove after tes
+                    } else {
+                        _employee.weekData = weeksArr;
+                    }
 
                     _employee.maxProjects = dashResultByEmployee ? dashResultByEmployee.maxProjects : 0;
+
+                    if(_employee._id.toString() === '55a5f08a6737e8881e000047'){
+                        console.log('============================================================');
+                        console.log(_employee.weekData);
+                        console.log('============================================================');
+                    }
 
                     return _employee;
                 });
 
-                return employee
+                console.log(employee.employees[4]);
+
+                return employee;
+
             });
 
             Department.populate(employeesByDep, {
@@ -175,22 +191,22 @@ var wTrack = function (models) {
                     day: {$dayOfWeek: '$date'},
                     date: 1,
                     comment: 1,
-                    ID:1,
+                    ID: 1,
                     _id: 0
                 }
             }, {
                 $match: {
                     $and: [{dateByWeek: {$gte: startDate, $lte: endDate}}, {day: {$nin: [1, 7]}}]
                 }
-            }], /*parallelCb*/function(err, holidays){
+            }], /*parallelCb*/function (err, holidays) {
                 var holidaysObject = {};
                 var key;
 
-                if(err){
+                if (err) {
                     return parallelCb(err);
                 }
 
-                for (var i = holidays.length - 1; i >=0; i--) {
+                for (var i = holidays.length - 1; i >= 0; i--) {
                     key = holidays[i].dateByWeek;
 
                     if (!holidaysObject[key]) {
@@ -220,13 +236,13 @@ var wTrack = function (models) {
                     _id: {_id: '$employee._id', name: '$employee.name'},
                     vacations: {$push: '$vacations'}
                 }
-            },{
+            }, {
                 $project: {
                     employee: '$_id._id',
                     employeeName: '$_id.name',
                     vacations: 1
                 }
-            } ], parallelCb);
+            }], parallelCb);
         };
 
         function employeeByDepComposer(parallelCb) {
