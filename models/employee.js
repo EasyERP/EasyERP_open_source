@@ -90,8 +90,8 @@ module.exports = (function () {
             LI: { type: String, default: '' },
             GP: { type: String, default: '' }
         },
-        hired: {type: Array, default: []},
-        fired: {type: Array, default: []}
+        hire: {type: Array, default: []},
+        fire: {type: Array, default: []}
     }, { collection: 'Employees' });
 
     employeeSchema.virtual('fullName').get(function(){

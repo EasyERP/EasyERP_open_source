@@ -1189,17 +1189,25 @@ module.exports = function (models) {
 
             workflow = workflow ? workflow._id : null;
 
-            function getData(callback) {
-                handler.importData(query, callback);
+            function getData(resultHired, resultFired, callback) {
+
+                handler.importData(query, function (err, fetchedArray) {
+                    if (err) {
+                        return callback(err);
+                    }
+
+                    callback(null, resultHired, resultFired, fetchedArray);
+                });
             }
 
-            function saverEmployee(fetchedArray, callback) {
+            function saverEmployee(resultHired, resultFired, fetchedArray, callback) {
                 var model;
                 var mongooseFields = Object.keys(employeeShema.aliases);
 
                 async.eachLimit(fetchedArray, 100, function (fetchedEmployee, cb) {
                     var objectToSave = {};
                     var departmentQuery;
+                    var jobPositionQuery;
                     var key;
                     var msSqlKey;
 
@@ -1237,6 +1245,14 @@ module.exports = function (models) {
                     }
 
                     if (fetchedEmployee) {
+
+                        if (resultHired[fetchedEmployee['ID']]){
+                            objectToSave.hire = resultHired[fetchedEmployee['ID']];
+                        }
+                        if (resultFired[fetchedEmployee['ID']]){
+                            objectToSave.fire = resultFired[fetchedEmployee['ID']];
+                        }
+
                         departmentQuery = {
                             ID: fetchedEmployee['Department']
                         };
@@ -1252,7 +1268,7 @@ module.exports = function (models) {
                                 }
                                 callback(null, department);
                             });
-                        };
+                        }
 
                         function jobPositionFinder(callback) {
                             JobPosition.findOne(jobPositionQuery, {_id: 1}, function (err, jobPosition) {
@@ -1283,7 +1299,48 @@ module.exports = function (models) {
                 })
             }
 
-            waterfallTasks = [getData, saverEmployee];
+            function hiredFiredImporter(callback) {
+                var query = queryBuilder('HiredFired');
+
+                handler.importData(query, callback);
+            };
+
+            function groupByID(hiredFired, callback) {
+                var groupedResult = _.groupBy(hiredFired, function (hiredFired) {
+                    return hiredFired.Employee;
+                });
+
+                var resultHired = [];
+                var resultFired = [];
+                var hire;
+                var fire;
+                var length;
+
+                for (var key in groupedResult){
+                    resultHired[key] = [];
+                    resultFired[key] = [];
+                    length = groupedResult[key].length;
+
+                    for (var j = 0; j < length; j++) {
+                        if (groupedResult[key][j]) {
+                            hire = groupedResult[key][j].Date_Hire;
+                            fire = groupedResult[key][j].Date_Fire;
+                        }
+
+                        if (fire){
+                            resultFired[key].push(fire);
+                        }
+                        if (hire) {
+                            resultHired[key].push(hire);
+                        }
+
+                    }
+                }
+
+                callback(null, resultHired, resultFired);
+            };
+
+            waterfallTasks = [hiredFiredImporter, groupByID, getData, saverEmployee];
 
             async.waterfall(waterfallTasks, function (err, result) {
                 if (err) {

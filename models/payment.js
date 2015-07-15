@@ -20,8 +20,8 @@ module.exports = (function () {
         workflow: {type: String, enum: ['Draft', 'Paid'], default: 'Draft'},
         differenceAmount: {type: Number, default: 0, set: setPrice},
         whoCanRW: {type: String, enum: ['owner', 'group', 'everyOne'], default: 'everyOne'},
-        month: Number,
-        year: Number,
+        month: {type: Number},
+        year:  {type: Number},
         bonus: {type: Boolean},
 
         groups: {

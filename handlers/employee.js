@@ -118,24 +118,6 @@ var Employee = function (models) {
             });
     };
 
-    this.addFiredHired = function(req, res, next){
-        var body = req.body;
-        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
-
-        sync.each(body, function (data, cb) {
-            var id = objectId(data._id);
-            delete data._id;
-
-            Employee.updateOnlySelectedFields( req, id, data, res);
-        }, function (err) {
-            if (err) {
-                return next(err);
-            }
-
-            res.status(200).send({success: 'updated'});
-        });
-    }
-
 };
 
 module.exports = Employee;

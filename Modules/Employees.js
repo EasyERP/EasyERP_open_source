@@ -909,9 +909,18 @@ var Employee = function (event, models) {
                 event.emit('updateSequence', models.get(req.session.lastDb, 'Employees', employeeSchema), "sequence", data.sequenceStart, data.sequence, data.workflowStart, data.workflowStart, false, true, function (sequence) {
                     event.emit('updateSequence', models.get(req.session.lastDb, 'Employees', employeeSchema), "sequence", data.sequenceStart, data.sequence, data.workflow, data.workflow, true, false, function (sequence) {
                         data.sequence = sequence;
-                        if (data.workflow == data.workflowStart)
+                        if (data.workflow == data.workflowStart){
                             data.sequence -= 1;
-                        models.get(req.session.lastDb, 'Employees', employeeSchema).findByIdAndUpdate(_id, { $set: data }, function (err, result) {
+                        }
+
+                        if (data.fired) {
+                            dataObj = {'fire': new Date().toString()};
+
+                        } else if (data.hired) {
+                            dataObj = {'hire': new Date().toString()};
+                        }
+
+                        models.get(req.session.lastDb, 'Employees', employeeSchema).findByIdAndUpdate(_id, { $set: data ,$push: dataObj }, function (err, result) {
                             if (!err) {
                                 res.send(200, { success: 'Employees updated', sequence: result.sequence });
                             } else {
@@ -938,9 +947,18 @@ var Employee = function (event, models) {
                 });
             }
         } else {
-            if (updateObject.dateBirth)
+            if (updateObject.dateBirth) {
                 updateObject['age'] = getAge(updateObject.dateBirth);
-            models.get(req.session.lastDb, 'Employees', employeeSchema).findByIdAndUpdate(_id, { $set: updateObject }, function (err, result) {
+            }
+
+            if (data.fired) {
+                dataObj = {'fire': new Date().toString()};
+
+            } else if (data.hired) {
+                dataObj = {'hire': new Date().toString()};
+            }
+
+            models.get(req.session.lastDb, 'Employees', employeeSchema).findByIdAndUpdate(_id, { $set: updateObject, $push: dataObj }, function (err, result) {
                 if (!err) {
                     if (updateObject.dateBirth || updateObject.contractEnd || updateObject.hired) {
                         event.emit('recalculate', req);
@@ -983,33 +1001,7 @@ var Employee = function (event, models) {
 
                     }
                     res.send(200, { success: 'Employees updated', result: result });
-                } else if (data.hired || data.fired){
-                    var id = data._id;
-                    var edited = data.editedBy;
-
-                    if (data.fired){
-                        dataObj.fired = new Date(data.fired);
-                    } else {
-                        dataObj.fired = null;
-                    }
-
-                    if (data.hired){
-                        dataObj.hired = new Date(data.hired);
-                    } else {
-                        dataObj.hired = null;
-                    }
-
-                    models.get(req.session.lastDb, 'Employees', employeeSchema).findByIdAndUpdate(id, {$push: dataObj, $set: {editedBy: edited}} , function (err, result) {
-                        if (!err) {
-                            res.send(200, { success: 'Employees updated'/*, fired: result.fired */});
-                        } else {
-                            res.send(500, { error: "Can't update Employees" });
-                        }
-
-                    });
-                }
-
-                else {
+                }  else {
                     res.send(500, { error: "Can't update Employees" });
                 }
 

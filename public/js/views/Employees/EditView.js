@@ -75,7 +75,7 @@ define([
             endContract: function (e) {
                 var wfId = $('.endContractReasonList').attr('data-id');
                 var contractEndReason = $(e.target).text();
-                this.currentModel.set({ workflow: wfId, contractEndReason: contractEndReason});
+                this.currentModel.set({ workflow: wfId, contractEndReason: contractEndReason, fired: true});
                 this.currentModel.save(this.currentModel.changed, {
                     patch: true,
                     success: function () {
