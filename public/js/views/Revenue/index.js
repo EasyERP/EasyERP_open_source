@@ -824,6 +824,81 @@ define([
             });
         },
 
+        changeHoursBySales: function() {
+            var self = this;
+            var employeeBySales = this.model.get('hoursBySales');
+            var monthArr = this.monthArr;
+            var target = self.$el.find('#tableHoursBySales');
+            var targetTotal;
+            var monthContainer;
+
+            var bySalesByDepPerWeek = {};
+            var tempPerMonth;
+            var globalTotal = 0;
+
+            target.html(this.paidBySalesTemplate({
+                employees: self.employees,
+                content: 'totalHoursBySales',
+                className: 'totalHours',
+                headName: 'Hours Sold'
+            }));
+            targetTotal = $(self.$el.find('[data-content="totalHoursBySales"]'));
+            monthContainer = target.find('.monthContainer');
+            monthContainer.html(this.monthsArrayTemplate({monthArr: monthArr}));
+
+            async.each(self.employees, function (employee, cb) {
+                var employeeId = employee._id;
+                var employeeContainer = target.find('[data-id="' + employeeId + '"]');
+
+                var byMonthData;
+                var total;
+                var bySalesByDepPerEmployee;
+
+
+                bySalesByDepPerEmployee = _.find(employeeBySales, function (el) {
+                    return el._id === employeeId;
+                });
+
+
+                if (bySalesByDepPerEmployee) {
+                    byMonthData = _.groupBy(bySalesByDepPerEmployee.root, 'month');
+                    total = bySalesByDepPerEmployee.total;
+                    globalTotal += total;
+                    employeeContainer.html(self.projectBySalesItemsTemplate({
+                        monthArr: monthArr,
+                        byMonthData: byMonthData,
+                        total: total
+                    }));
+                }
+                cb();
+            }, function (err) {
+
+                if (err) {
+                    alert(err);
+                }
+
+                for (var i = employeeBySales.length - 1; i >= 0; i--) {
+                    tempPerMonth = employeeBySales[i].root;
+                    tempPerMonth.forEach(function (weekResault) {
+                        if (!(weekResault.month in bySalesByDepPerWeek)) {
+                            bySalesByDepPerWeek[weekResault.month] = weekResault.projectCount;
+                        } else {
+                            bySalesByDepPerWeek[weekResault.month] += weekResault.projectCount;
+                        }
+                    });
+                }
+
+                targetTotal.html(self.bySalesPerMonthIntTemplate({
+                    monthArr: monthArr,
+                    bySalesByDepPerWeek: bySalesByDepPerWeek,
+                    globalTotal: globalTotal,
+                    totalName: 'Employee Total'
+                }));
+
+                return false;
+            });
+        },
+
         render: function (employees) {
             var self = this;
             var thisEl = this.$el;
