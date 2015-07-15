@@ -153,6 +153,27 @@ define([
             return s;
         },
 
+        getCellSize: function(hours) {
+            var s = "";
+            var hours = hours || 0;
+
+            if (hours >= 40) {
+                s = "size40";
+            } else if (hours >= 32) {
+                s = "size32";
+            } else if (hours >= 24) {
+                s = "size24";
+            } else if (hours >= 16) {
+                s = "size16";
+            } else if (hours > 0) {
+                s = "size8";
+            } else {
+                s = "size0";
+            }
+
+            return s;
+        },
+
         getDate: function (num) {
             return moment().day("Monday").week(num).format("DD.MM");
         },
@@ -191,7 +212,8 @@ define([
                 weeks: weeksArr,
                 dashboardData:  dashboardData,
                 leadComparator: self.leadComparator,
-                getCellClass: self.getCellClass
+                getCellClass: self.getCellClass,
+                getCellSize: self.getCellSize
             }));
 
 

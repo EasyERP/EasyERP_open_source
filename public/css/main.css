@@ -7419,6 +7419,10 @@ textarea#editInput {
 .grid tr td.dashboardWeek input {
   background-color: #bdd7ee;
 }
+.grid tr td.dashboardWeek.isLead span {
+  line-height: 16px;
+  padding: 2px;
+}
 .grid tr td.dashboardWeek.dgreen {
   background-color: #004600;
   color: white;
@@ -7455,7 +7459,8 @@ textarea#editInput {
   display: none;
 }
 .grid tr td.dashboardWeek span {
-  padding: 2px 7px;
+  position: relative;
+  padding: 0;
 }
 .grid tr td.dashboardWeek span .label {
   padding: 0;
@@ -7466,14 +7471,32 @@ textarea#editInput {
 }
 .grid tr td.dashboardWeek span span {
   height: 100%;
-  line-height: 16px;
+  line-height: 20px;
   letter-spacing: 1px;
   font-size: 11px;
+}
+.grid tr td.dashboardWeek span.viewCount {
+  position: relative;
+  left: 0;
+  top: 0;
+  width: 30px;
+  padding: 0;
+  text-align: center;
+  float: left;
+  background-color: #bdd7ee;
+  color: white;
+}
+.grid tr td.dashboardWeek span.vacationHours {
+  text-align: center;
+  position: absolute;
+  display: block;
+  right: 0;
+  width: 100%;
 }
 .grid tr td.withVacation span {
   line-height: 20px !important;
   position: relative;
-  padding: 0px;
+  padding: 0;
 }
 .grid tr td.withVacation span span.vacation {
   position: absolute;
@@ -7485,7 +7508,7 @@ textarea#editInput {
   text-align: center;
 }
 .grid tr td.withVacation span span.vacation.size40 {
-  width: 100%;
+  width: 50%;
 }
 .grid tr td.withVacation span span.vacation.size8 {
   width: 20%;
@@ -7497,43 +7520,26 @@ textarea#editInput {
   width: 60%;
 }
 .grid tr td.withVacation span span.vacation.size32 {
-  width: 80%;
-}
-.grid tr td.withVacation span.viewCount {
-  position: relative;
-  left: 0;
-  top: 0;
-  width: 30px;
-  padding: 0;
-  text-align: center;
-  float: left;
-  background-color: #bdd7ee;
-  color: white;
-}
-.grid tr td.withVacation span.vacationHours {
-  text-align: center;
-  position: absolute;
-  display: block;
-  right: 0px;
+  width: 60%;
 }
 .grid tr td.withVacation span.vacationHours.size40 {
-  width: 0%;
+  width: 50%;
 }
 .grid tr td.withVacation span.vacationHours.size0,
 .grid tr td.withVacation span.vacationHours.sizeNaN {
-  width: 100%;
+  width: 50%;
 }
 .grid tr td.withVacation span.vacationHours.size8 {
-  width: 80%;
-}
-.grid tr td.withVacation span.vacationHours.size16 {
-  width: 60%;
-}
-.grid tr td.withVacation span.vacationHours.size24 {
   width: 40%;
 }
+.grid tr td.withVacation span.vacationHours.size16 {
+  width: 40%;
+}
+.grid tr td.withVacation span.vacationHours.size24 {
+  width: 60%;
+}
 .grid tr td.withVacation span.vacationHours.size32 {
-  width: 20%;
+  width: 80%;
 }
 .grid tr td.withVacation.inactive span.viewCount {
   background-color: silver;
