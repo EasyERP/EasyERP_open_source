@@ -5124,6 +5124,12 @@ textarea#editInput {
       &.dayOfMonth {
         min-width: 27px;
       }
+
+      &.activeHead {
+        border: 1px solid #000;
+        border-bottom: none;
+        display: table-cell;
+      }
     }
 
     td {
@@ -5134,6 +5140,11 @@ textarea#editInput {
 
         input {
           background-color: #bdd7ee;
+        }
+
+        &.isLead span {
+          line-height: 16px;
+          padding: 2px;
         }
 
         &.dgreen {
@@ -5157,13 +5168,10 @@ textarea#editInput {
           border-bottom: 1px solid #d2d2d2;
           border-left: 1px solid #d2d2d2;
         }
-        &.activeHead {
-          border: 1px solid #000;
-          border-bottom: none;
-        }
         &.active {
           border-left: 1px solid #000 !important;
           border-right: 1px solid #000 !important;
+          display: table-cell;
         }
         &.inactive {
           span.view {
@@ -5175,7 +5183,8 @@ textarea#editInput {
           }
         }
         span {
-          padding: 2px 7px;
+          position: relative;
+          padding: 0;
 
           .label {
             padding: 0;
@@ -5184,45 +5193,14 @@ textarea#editInput {
             letter-spacing: 1px;
             font-size: 11px;
           }
+
           span {
             height: 100%;
-            line-height: 16px;
+            line-height: 20px;
             letter-spacing: 1px;
             font-size: 11px;
           }
-        }
-      }
-      &.withVacation {
 
-        span {
-          line-height: 20px !important;
-          position: relative;
-          padding: 0px;
-          span.vacation {
-            position: absolute;
-            float: left;
-            padding: 0;
-            padding-right: 3px;
-            // width: 52px;
-            background-color: #5a9ad4;
-            color: white;
-            text-align: center;
-            &.size40 {
-              width: 100%;
-            }
-            &.size8 {
-              width: 20%;
-            }
-            &.size16 {
-              width: 40%;
-            }
-            &.size24 {
-              width: 60%;
-            }
-            &.size32 {
-              width: 80%;
-            }
-          }
           &.viewCount {
             position: relative;
             left: 0;
@@ -5233,33 +5211,87 @@ textarea#editInput {
             float: left;
             background-color: #bdd7ee;
             color: white;
-
           }
+
           &.vacationHours {
             text-align: center;
             position: absolute;
             display: block;
-            right: 0px;
+            right: 0;
+            width: 100%;
+
+            //&.size40 {
+            //  width: 100%;
+            //}
+            //&.size0, &.sizeNaN {
+            //  width: 100%;
+            //}
+            //&.size8 {
+            //  width: 80%;
+            //}
+            //&.size16 {
+            //  width: 60%;
+            //}
+            //&.size24 {
+            //  width: 40%;
+            //}
+            //&.size32 {
+            //  width: 20%;
+            //}
+          }
+        }
+      }
+      &.withVacation {
+        span {
+          line-height: 20px !important;
+          position: relative;
+          padding: 0;
+          span.vacation {
+            position: absolute;
+            float: left;
+            padding: 0;
+            padding-right: 3px;
+            // width: 52px;
+            background-color: #5a9ad4;
+            color: white;
+            text-align: center;
             &.size40 {
-              width: 0%;
-            }
-            &.size0, &.sizeNaN {
-              width: 100%;
+              width: 50%;
             }
             &.size8 {
-              width: 80%;
+              width: 20%;
             }
             &.size16 {
-              width: 60%;
-            }
-            &.size24 {
               width: 40%;
             }
+            &.size24 {
+              width: 60%;
+            }
             &.size32 {
-              width: 20%;
+              width: 60%;
             }
           }
 
+          &.vacationHours {
+            &.size40 {
+              width: 50%;
+            }
+            &.size0, &.sizeNaN {
+              width: 50%;
+            }
+            &.size8 {
+              width: 40%;
+            }
+            &.size16 {
+              width: 40%;
+            }
+            &.size24 {
+              width: 60%;
+            }
+            &.size32 {
+              width: 80%;
+            }
+          }
         }
         &.inactive {
           span.viewCount {
@@ -5751,6 +5783,7 @@ textarea#editInput {
 .drop-down-filter li {
   cursor: pointer;
   margin-bottom: 5px;
+  padding: 0 5px;
 }
 
 .drop-down-filter li:nth-child(2n) {
@@ -5820,9 +5853,7 @@ textarea#editInput {
 }
 
 .removeFilter {
-  position: absolute;
-  margin-top: -25px;
-  margin-left: 8px;
+  float: right;
 }
 
 .vacation-list {
