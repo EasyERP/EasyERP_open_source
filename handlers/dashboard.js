@@ -85,69 +85,70 @@ var wTrack = function (models) {
                     var holidayCount;
                     var _vacations;
                     var _tempWeekArr;
-
-                    if (dashDepartment) {
-                        dashResultByEmployee = _.find(dashDepartment.employeeData, function (employeeData) {
-                            return employeeData.employee.toString() === _employee._id.toString();
-                        });
-
-                        if(dashResultByEmployee) {
-                            _employee.weekData = _.map(weeksArr, function (weekData) {
-                                var data;
-
-                                data = _.find(dashResultByEmployee.weekData, function (d) {
-                                    return parseInt(d.dateByWeek) === parseInt(weekData.dateByWeek);
-                                });
-
-                                if (data) {
-                                    weekData = data;
-                                }
-
-                                _vacations = _.find(vacations, function (vacationObject) {
-                                    return (vacationObject.employee.toString() === _employee._id.toString());
-                                });
-
-                                if (_vacations) {
-                                    _vacations.vacations.forEach(function (vacation) {
-                                        if (vacation.hasOwnProperty(weekData.dateByWeek)) {
-                                            holidayCount = vacation[weekData.dateByWeek];
-                                        }
-                                    });
-                                }
-
-                                weekData.holidays = holidays[weekData.dateByWeek];
-                                weekData.vacations = holidayCount || 0;
-
-                                holidayCount = 0;
-
-                                return weekData;
+                    if(_employee._id.toString() === '55a501b3192d293420000047') {//remove after test
+                        if (dashDepartment) {
+                            dashResultByEmployee = _.find(dashDepartment.employeeData, function (employeeData) {
+                                return employeeData.employee.toString() === _employee._id.toString();
                             });
+
+                            if (dashResultByEmployee) {
+                                _employee.weekData = _.map(weeksArr, function (weekData) {
+                                    var data;
+
+                                    data = _.find(dashResultByEmployee.weekData, function (d) {
+                                        return parseInt(d.dateByWeek) === parseInt(weekData.dateByWeek);
+                                    });
+
+                                    if (data) {
+                                        weekData = data;
+                                    }
+
+                                    _vacations = _.find(vacations, function (vacationObject) {
+                                        return (vacationObject.employee.toString() === _employee._id.toString());
+                                    });
+
+                                    if (_vacations) {
+                                        _vacations.vacations.forEach(function (vacation) {
+                                            if (vacation.hasOwnProperty(weekData.dateByWeek)) {
+                                                holidayCount = vacation[weekData.dateByWeek];
+                                            }
+                                        });
+                                    }
+
+                                    weekData.holidays = holidays[weekData.dateByWeek];
+                                    weekData.vacations = holidayCount || 0;
+
+                                    holidayCount = 0;
+
+                                    return weekData;
+                                });
+                            } else {
+                                _employee.weekData = _.map(weeksArr, function (weekData) {
+                                    _vacations = _.find(vacations, function (vacationObject) {
+                                        return (vacationObject.employee.toString() === _employee._id.toString());
+                                    });
+
+                                    if (_vacations) {
+                                        _vacations.vacations.forEach(function (vacation) {
+                                            if (vacation.hasOwnProperty(weekData.dateByWeek) /*&& _employee._id.toString() === '55a501b3192d29342000008c'*/) {
+                                                console.log(_employee._id.toString());
+                                                holidayCount = vacation[weekData.dateByWeek];
+                                            }
+                                        });
+                                    }
+
+                                    weekData.holidays = holidays[weekData.dateByWeek] || 0;
+                                    weekData.vacations = holidayCount || 0;
+
+                                    holidayCount = 0;
+
+                                    return weekData;
+                                });
+                            }
                         } else {
-                            _employee.weekData = _.map(weeksArr, function (weekData) {
-                                _vacations = _.find(vacations, function (vacationObject) {
-                                    return (vacationObject.employee.toString() === _employee._id.toString());
-                                });
-
-                                if (_vacations) {
-                                    _vacations.vacations.forEach(function (vacation) {
-                                        if (vacation.hasOwnProperty(weekData.dateByWeek) /*&& _employee._id.toString() === '55a501b3192d29342000008c'*/) {
-                                            console.log(_employee._id.toString());
-                                            holidayCount = vacation[weekData.dateByWeek];
-                                        }
-                                    });
-                                }
-
-                                weekData.holidays = holidays[weekData.dateByWeek] || 0;
-                                weekData.vacations = holidayCount || 0;
-
-                                holidayCount = 0;
-
-                                return weekData;
-                            });
+                            _employee.weekData = weeksArr;
                         }
-                    } else {
-                        _employee.weekData = weeksArr;
-                    }
+                    }//remove after tes
 
                     _employee.maxProjects = dashResultByEmployee ? dashResultByEmployee.maxProjects : 0;
 
