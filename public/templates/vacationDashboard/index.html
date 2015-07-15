@@ -57,9 +57,9 @@
                                 <%}%>
                                 <span class="view">
                                     <%if(week.vacations){%>
-                                        <span class="vacation <%=getCellSize((week.vacations || 0) * 8)%>"><%=(week.vacations || 0) * 8%> h</span>
+                                        <span class="vacation <%=getCellSize(week, true)%>"><%=(week.vacations || 0) * 8%> h</span>
                                     <%}%>
-                                    <span class="vacationHours <%=getCellSize(40 - (week.vacations || 0) * 8)%>"><%=week.hours || 0%> / <%=week.projects || 0%> p</span>
+                                    <span class="vacationHours <%=getCellSize(week, false)%>"><%=week.hours || 0%> / <%=week.projects || 0%> p</span>
                                 </span>
                             </td>
                         <%})%>

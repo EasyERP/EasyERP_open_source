@@ -5162,6 +5162,9 @@ textarea#editInput {
         &.yellow {
           background-color: yellow;
         }
+        &.pink {
+          background-color: pink;
+        }
         &.white {
           background-color: #fd0001;
           color: white;
@@ -5270,14 +5273,20 @@ textarea#editInput {
             &.size32 {
               width: 60%;
             }
+            &.sizeFull {
+              width: 100%;
+            }
           }
 
           &.vacationHours {
             &.size40 {
               width: 50%;
             }
-            &.size0, &.sizeNaN {
+            &.sizeNaN {
               width: 50%;
+            }
+            &.size0 {
+              width: 0;
             }
             &.size8 {
               width: 40%;
@@ -5290,6 +5299,9 @@ textarea#editInput {
             }
             &.size32 {
               width: 80%;
+            }
+            &.sizeFull {
+              width: 100%;
             }
           }
         }

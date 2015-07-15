@@ -7443,6 +7443,9 @@ textarea#editInput {
 .grid tr td.dashboardWeek.yellow {
   background-color: yellow;
 }
+.grid tr td.dashboardWeek.pink {
+  background-color: pink;
+}
 .grid tr td.dashboardWeek.white {
   background-color: #fd0001;
   color: white;
@@ -7525,12 +7528,17 @@ textarea#editInput {
 .grid tr td.withVacation span span.vacation.size32 {
   width: 60%;
 }
+.grid tr td.withVacation span span.vacation.sizeFull {
+  width: 100%;
+}
 .grid tr td.withVacation span.vacationHours.size40 {
   width: 50%;
 }
-.grid tr td.withVacation span.vacationHours.size0,
 .grid tr td.withVacation span.vacationHours.sizeNaN {
   width: 50%;
+}
+.grid tr td.withVacation span.vacationHours.size0 {
+  width: 0;
 }
 .grid tr td.withVacation span.vacationHours.size8 {
   width: 40%;
@@ -7543,6 +7551,9 @@ textarea#editInput {
 }
 .grid tr td.withVacation span.vacationHours.size32 {
   width: 80%;
+}
+.grid tr td.withVacation span.vacationHours.sizeFull {
+  width: 100%;
 }
 .grid tr td.withVacation.inactive span.viewCount {
   background-color: silver;

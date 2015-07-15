@@ -33,7 +33,7 @@ define([
 
             dashCollection = this.dashCollection = custom.retriveFromCash('dashboardVacation');
 
-            if(!dashCollection){
+            if (!dashCollection) {
                 dashCollection = this.dashCollection = new vacationDashboard();
                 dashCollection.on('reset sort', this.render, this);
 
@@ -50,7 +50,7 @@ define([
             self.year = year;
             startWeek = self.week - 6;
 
-            if(startWeek >= 0){
+            if (startWeek >= 0) {
                 self.startWeek = startWeek;
             } else {
                 self.startWeek = startWeek + 53;
@@ -58,7 +58,7 @@ define([
             }
         },
 
-        openAll: function(e) {
+        openAll: function (e) {
             var self = this;
             var rows = self.$el.find('tr');
             var length = rows.length;
@@ -87,7 +87,7 @@ define([
             }
         },
 
-        openEmployee: function(e) {
+        openEmployee: function (e) {
             var self = this;
             var target = e.target;
             var targetIcon = $(e.target);
@@ -103,7 +103,7 @@ define([
             }
         },
 
-        openDepartment: function(e) {
+        openDepartment: function (e) {
             var self = this;
             var target = e.target;
             var targetDepartment = '.' + $(target).parents('tr').attr('data-id');
@@ -118,22 +118,22 @@ define([
             }
         },
 
-        leadComparator: function(isLeadNumber){
-            if (!isLeadNumber){
+        leadComparator: function (isLeadNumber) {
+            if (!isLeadNumber) {
                 return '<span class="low"><span class="label label-danger">Low</span></span>'
             }
-            if (isLeadNumber == 1){
+            if (isLeadNumber == 1) {
                 return '<span class="medium"><span class="label label-warning">Medium</span></span>'
             }
             return '<span class="high"><span class="label label-success">High</span></span>'
         },
 
-        getCellClass: function(week, self){
+        getCellClass: function (week, self) {
             var s = "";
             var hours = week.hours || 0;
-            var holidays = week.holidays ||0;
-            var vacations = week.vacations ||0;
-            var hours = hours || + (holidays + vacations) * 8;
+            var holidays = week.holidays || 0;
+            var vacations = week.vacations || 0;
+            //var hours = hours || + (holidays + vacations) * 8;
 
             if (hours > 40) {
                 s += "dgreen ";
@@ -141,19 +141,18 @@ define([
                 s += "green ";
             } else if (hours > 19) {
                 s += "yellow ";
+            } else if (hours > 8) {
+                s += "pink ";
             } else {
                 s += "white ";
             }
             if (self.dateByWeek === week.dateByWeek) {
                 s += "active ";
             }
-           /* if (!self.isWorking(track.ID, week)) {
-                s += "inactive ";
-            }*/
             return s;
         },
 
-        getHeadClass: function(week, self) {
+        getHeadClass: function (week, self) {
             var s;
             var dateByWeek = week.year * 100 + week.week;
 
@@ -164,25 +163,70 @@ define([
             return s;
         },
 
-        getCellSize: function(hours) {
-            var s = "";
-            var hours = hours || 0;
+        getCellSize: function (week, vacation) {
+            //var s = "";
+            //var hours = hours || 0;
+            //
+            //if (hours >= 40) {
+            //    s = "size40";
+            //} else if (hours >= 32) {
+            //    s = "size32";
+            //} else if (hours >= 24) {
+            //    s = "size24";
+            //} else if (hours >= 16) {
+            //    s = "size16";
+            //} else if (hours > 0) {
+            //    s = "size8";
+            //} else {
+            //    s = "size0";
+            //}
+            //
+            //return s;
 
-            if (hours >= 40) {
-                s = "size40";
-            } else if (hours >= 32) {
-                s = "size32";
-            } else if (hours >= 24) {
-                s = "size24";
-            } else if (hours >= 16) {
-                s = "size16";
-            } else if (hours > 0) {
-                s = "size8";
+            var v = '';
+            var w = '';
+            var vacationHours = (week.vacations || 0) * 8;
+            var workedHours = week.hours || 0;
+
+            if (workedHours) {
+                if (vacationHours > 16) {
+                    v = "size40";
+                    w = "size40";
+                } else if (vacationHours > 8) {
+                    v = "size16";
+                    w = "size16";
+                } else if (vacationHours > 0) {
+                    v = "size8";
+                    w = "sizeFull";
+                } else {
+                    v = "size0";
+                    w = "size0";
+                }
+
+                if (vacation && vacationHours) {
+                    return v;
+                } else {
+                    return w;
+                }
             } else {
-                s = "size0";
-            }
+                if (vacation && vacationHours) {
+                    if (vacationHours > 32) {
+                        v = "sizeFull";
+                    } else if (vacationHours > 24) {
+                        v = "size32";
+                    } else if (vacationHours > 8) {
+                        v = "size24";
+                    } else if (vacationHours > 0) {
+                        v = "size8";
+                    } else {
+                        v = "size0";
+                    }
 
-            return s;
+                    return v;
+                } else {
+                    return "size0";
+                }
+            }
         },
 
         getDate: function (num) {
@@ -197,7 +241,7 @@ define([
             var startWeek = this.startWeek;
             var dashboardData = this.dashCollection.toJSON();
 
-            if(!weeksArr || !weeksArr.length){
+            if (!weeksArr || !weeksArr.length) {
                 for (var i = 0; i <= 13; i++) {
                     if (startWeek + i > 53) {
                         week = startWeek + i - 53;
@@ -221,7 +265,7 @@ define([
 
             self.$el.html(self.template({
                 weeks: weeksArr,
-                dashboardData:  dashboardData,
+                dashboardData: dashboardData,
                 leadComparator: self.leadComparator,
                 getCellClass: self.getCellClass,
                 getCellSize: self.getCellSize,
