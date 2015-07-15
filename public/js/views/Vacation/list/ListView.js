@@ -148,6 +148,8 @@ define([
                 for (var id in this.changedModels) {
                     model = this.editCollection.get(id);
                     model.changed = this.changedModels[id];
+                    model.changed.year = this.yearElement.text();
+                    model.changed.month = this.monthElement.attr('data-content');
                 }
                 this.editCollection.save();
             },

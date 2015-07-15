@@ -11,6 +11,33 @@ var Vacation = function (models) {
     var _ = require('lodash');
     var mapObject = require('../helpers/bodyMaper');
 
+    function calculateWeeks(array, year, month) {
+        var dateValue = moment([year, month]);
+        var resultObj = {};
+        var weekKey;
+        var dayNumber;
+
+        for (var day = array.length; day >= 0; day--) {
+            if (array[day]) {
+
+                dateValue.date(day + 1);
+                weekKey = year * 100 + moment(dateValue).isoWeek();
+
+                dayNumber = moment(dateValue).day();
+
+                if (dayNumber !== 0 && dayNumber !== 6) {
+                    resultObj[weekKey] ? resultObj[weekKey] += 1 : resultObj[weekKey] = 1;
+                }
+
+                if (resultObj[weekKey] === 0) {
+                    delete resultObj[weekKey];
+                }
+            }
+        }
+
+        return resultObj;
+    };
+
     function calculate(data, year) {
         var leaveDays = 0;
         var workingDays = 0;
@@ -271,6 +298,9 @@ var Vacation = function (models) {
                         user: req.session.uId,
                         date: new Date().toISOString()
                     };
+
+                    data.vacations = calculateWeeks(data.vacArray, data.month, data.year);
+
                     Vacation.findByIdAndUpdate(id, {$set: data}, function (err, response) {
                         if (err) {
                             return next(err);
@@ -304,6 +334,11 @@ var Vacation = function (models) {
                             date: new Date().toISOString()
                         };
                         delete data._id;
+
+                        if (data.vacArray) {
+                            data.vacations = calculateWeeks(data.vacArray, data.month, data.year);
+                        }
+
                         Vacation.findByIdAndUpdate(id, {$set: data}, cb);
                     }, function (err) {
                         if (err) {
@@ -336,7 +371,11 @@ var Vacation = function (models) {
     this.create = function (req, res, next) {
         var Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
         var body = req.body;
-        var Vacation = new Vacation(body);
+        var Vacation;
+
+        body.vacations = calculateWeeks(body.vacArray, body.month, body.year);
+
+        Vacation = new Vacation(body);
 
         Vacation.save(function (err, Vacation) {
             if (err) {

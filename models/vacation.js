@@ -15,6 +15,7 @@ module.exports = (function () {
             _id: {type: ObjectId, ref: 'Department', default: null},
             name: String
         },
+        vacations: {},
         //startDate: Date,
         //endDate: Date,
         month: Number,

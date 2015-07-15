@@ -51,11 +51,15 @@
                             <%= leadComparator(employee.get('isLead'))%>
                         </td>
                         <%employee.get('weekData').forEach(function(week){%>
-                            <td class="dashboardWeek withVacation" <%=getCellClass(week)%>>
-                                <span class="viewCount"><%=week.holidays || 0%>d</span>
+                            <td class="dashboardWeek withVacation <%=getCellClass(week)%>">
+                                <%if(week.holidays){%>
+                                    <span class="viewCount"><%=week.holidays || 0%>d</span>
+                                <%}%>
                                 <span class="view">
-                                    <span class="vacation size8">8h</span>
-                                    <span class="vacationHours size8"><%=week.hours || 0%> / <%=week.projects || 0%> p</span>
+                                    <%if(week.vacations){%>
+                                        <span class="vacation size<%=(week.vacations || 0) * 8%>"><%=(week.vacations || 0) * 8%> h</span>
+                                    <%}%>
+                                    <span class="vacationHours size<%=week.hours || 0%>"><%=week.hours || 0%> / <%=week.projects || 0%> p</span>
                                 </span>
                             </td>
                         <%})%>

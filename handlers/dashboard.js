@@ -17,6 +17,7 @@ var wTrack = function (models) {
     var DepartmentSchema = mongoose.Schemas['Department'];
     var EmployeeSchema = mongoose.Schemas['Employee'];
     var HolidaySchema = mongoose.Schemas['Holiday'];
+    var VacationSchema = mongoose.Schemas['Vacation'];
 
     this.composeForVacation = function (req, res, next) {
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
@@ -37,12 +38,16 @@ var wTrack = function (models) {
             if (currentStartWeek + i > 53) {
                 week = currentStartWeek + i - 53;
                 weeksArr.push({
-                    dateByWeek: (currentYear + 1) * 100 + week
+                    dateByWeek: (currentYear + 1) * 100 + week,
+                    week: week,
+                    year: currentYear + 1
                 });
             } else {
                 week = currentStartWeek + i;
                 weeksArr.push({
-                    dateByWeek: (currentYear) * 100 + week
+                    dateByWeek: (currentYear) * 100 + week,
+                    week: week,
+                    year: currentYear
                 });
             }
         }
@@ -58,6 +63,7 @@ var wTrack = function (models) {
             var employeesByDep;
             var dashBoardResult;
             var holidays;
+            var vacations;
 
             if (err) {
                 return next(err);
@@ -66,6 +72,7 @@ var wTrack = function (models) {
             employeesByDep = result[0];
             dashBoardResult = result[1];
             holidays = result[2];
+            vacations = result[3];
 
 
             employeesByDep = _.map(employeesByDep, function (employee) {
@@ -75,21 +82,69 @@ var wTrack = function (models) {
 
                 employee.employees = _.map(employee.employees, function (_employee) {
                     var dashResultByEmployee;
+                    var holidayCount;
+                    var _vacations;
+                    var _tempWeekArr;
 
                     if (dashDepartment) {
                         dashResultByEmployee = _.find(dashDepartment.employeeData, function (employeeData) {
                             return employeeData.employee.toString() === _employee._id.toString();
                         });
-                        _employee.weekData = dashResultByEmployee ? _.map(weeksArr, function (weekData) {
-                            var data = _.find(dashResultByEmployee.weekData, function (d) {
-                                return parseInt(d.dateByWeek) === parseInt(weekData.dateByWeek);
-                            });
-                            if (data) {
-                                weekData = data;
+
+                        if(dashResultByEmployee) {
+                            _employee.weekData = _.map(weeksArr, function (weekData) {
+                                var data;
+
+                                data = _.find(dashResultByEmployee.weekData, function (d) {
+                                    return parseInt(d.dateByWeek) === parseInt(weekData.dateByWeek);
+                                });
+
+                                if (data) {
+                                    weekData = data;
+                                }
+
+                                _vacations = _.find(vacations, function (vacationObject) {
+                                    return (vacationObject.employee.toString() === _employee._id.toString());
+                                });
+
+                                if (_vacations) {
+                                    _vacations.vacations.forEach(function (vacation) {
+                                        if (vacation.hasOwnProperty(weekData.dateByWeek)) {
+                                            holidayCount = vacation[weekData.dateByWeek];
+                                        }
+                                    });
+                                }
+
                                 weekData.holidays = holidays[weekData.dateByWeek];
-                            }
-                            return weekData;
-                        }) : weeksArr;
+                                weekData.vacations = holidayCount || 0;
+
+                                holidayCount = 0;
+
+                                return weekData;
+                            });
+                        } else {
+                            _employee.weekData = _.map(weeksArr, function (weekData) {
+                                _vacations = _.find(vacations, function (vacationObject) {
+                                    return (vacationObject.employee.toString() === _employee._id.toString());
+                                });
+
+                                if (_vacations) {
+                                    _vacations.vacations.forEach(function (vacation) {
+                                        if (vacation.hasOwnProperty(weekData.dateByWeek) /*&& _employee._id.toString() === '55a501b3192d29342000008c'*/) {
+                                            console.log(_employee._id.toString());
+                                            holidayCount = vacation[weekData.dateByWeek];
+                                        }
+                                    });
+                                }
+
+                                weekData.holidays = holidays[weekData.dateByWeek] || 0;
+                                weekData.vacations = holidayCount || 0;
+
+                                holidayCount = 0;
+
+                                return weekData;
+                            });
+                        }
                     } else {
                         _employee.weekData = weeksArr;
                     }
@@ -146,6 +201,31 @@ var wTrack = function (models) {
 
                 parallelCb(null, holidaysObject);
             });
+        };
+
+        function vacationComposer(parallelCb) {
+            var Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
+            var startMonth = moment().weekYear(currentYear).week(currentStartWeek).month() + 1;
+            var endWeek = weeksArr[weeksArr.length - 1].week;
+            var endYear = weeksArr[weeksArr.length - 1].year;
+            var endMonth = moment().weekYear(currentYear).week(endWeek).month() + 1;
+
+            Vacation.aggregate([{
+                $match: {
+                    $and: [{year: {$gte: currentYear, $lte: endYear}}, {month: {$gte: startMonth, $lte: endMonth}}]
+                }
+            }, {
+                $group: {
+                    _id: {_id: '$employee._id', name: '$employee.name'},
+                    vacations: {$push: '$vacations'}
+                }
+            },{
+                $project: {
+                    employee: '$_id._id',
+                    employeeName: '$_id.name',
+                    vacations: 1
+                }
+            } ], parallelCb);
         };
 
         function employeeByDepComposer(parallelCb) {
@@ -297,7 +377,7 @@ var wTrack = function (models) {
             async.waterfall([employeeFinder, wTrackComposer], masterWaterfallCb);
         };
 
-        async.parallel([employeeByDepComposer, dashComposer, holidaysComposer], resultMapper);
+        async.parallel([employeeByDepComposer, dashComposer, holidaysComposer, vacationComposer], resultMapper);
     };
 
 };

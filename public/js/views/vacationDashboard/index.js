@@ -9,8 +9,9 @@ define([
     'dataService',
     'constants',
     'async',
-    'custom'
-], function (mainTemplate, rowView, vacationDashboard, employeesForDashboard, dataService, CONSTANTS, async, custom) {
+    'custom',
+    'moment'
+], function (mainTemplate, rowView, vacationDashboard, employeesForDashboard, dataService, CONSTANTS, async, custom, moment) {
     var View = Backbone.View.extend({
         el: '#content-holder',
 
@@ -25,8 +26,10 @@ define([
 
         initialize: function () {
             var dashCollection;
-            var employeeCollection;
+            var startWeek;
             var self = this;
+            var year;
+            var week;
 
             dashCollection = this.dashCollection = custom.retriveFromCash('dashboardVacation');
 
@@ -37,6 +40,21 @@ define([
                 custom.cashToApp('dashboardVacation', dashCollection);
             } else {
                 dashCollection.trigger('reset');
+            }
+
+            year = moment().isoWeekYear();
+            week = moment().isoWeek();
+
+            this.dateByWeek = year * 100 + week;
+            this.week = week;
+            this.year = year;
+            startWeek = this.week - 6;
+
+            if(startWeek >= 0){
+                this.startWeek = startWeek;
+            } else {
+                this.startWeek = startWeek + 53;
+                this.year -= 1;
             }
         },
 
@@ -110,35 +128,67 @@ define([
             return '<span class="high"><span class="label label-success">High</span></span>'
         },
 
-        getCellClass: function(week, employeeId){
-           /* var s = "";
-            var hours = week.hours + self.isHaveHoliday(week.year, week.week) * 8 + (week.countDay || 0);
+        getCellClass: function(week){
+            var s = "";
+            var hours = week.hours || 0;
+            var holidays = week.holidays ||0;
+            var vacations = week.vacations ||0;
+            var hours = hours || + (holidays + vacations) * 8;
+
             if (hours > 40) {
                 s += "dgreen ";
             } else if (hours > 35) {
                 s += "green ";
             } else if (hours > 19) {
                 s += "yellow ";
-            } else
+            } else {
                 s += "white ";
-            if (self.currentWeek == week.week) {
+            }
+            if (this.dateByWeek === week.dateByWeek) {
                 s += "active ";
             }
-            if (!self.isWorking(track.ID, week)) {
+           /* if (!self.isWorking(track.ID, week)) {
                 s += "inactive ";
-            }
-            return s;*/
+            }*/
+            return s;
+        },
+
+        getDate: function (num) {
+            return moment().day("Monday").week(num).format("DD.MM");
         },
 
         render: function () {
             var self = this;
             var rowItems;
-            var weeskArr = custom.retriveFromCash('weeksArr') || [];
+            var weeksArr = custom.retriveFromCash('weeksArr') || [];
+            var week;
+            var startWeek = this.startWeek;
             var dashboardData = this.dashCollection.toJSON();
 
+            if(!weeksArr || !weeksArr.length){
+                for (var i = 0; i <= 13; i++) {
+                    if (startWeek + i > 53) {
+                        week = startWeek + i - 53;
+                        weeksArr.push({
+                            lastDate: this.getDate(week),
+                            week: week,
+                            year: this.year + 1
+                        });
+                    } else {
+                        week = startWeek + i;
+                        weeksArr.push({
+                            lastDate: this.getDate(week),
+                            week: week,
+                            year: this.year
+                        });
+                    }
+                }
+
+                custom.cashToApp('weeksArr', weeksArr);
+            }
 
             this.$el.html(this.template({
-                weeks: weeskArr,
+                weeks: weeksArr,
                 dashboardData:  dashboardData,
                 leadComparator: self.leadComparator,
                 getCellClass: self.getCellClass
