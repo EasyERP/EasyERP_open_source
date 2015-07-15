@@ -8086,7 +8086,7 @@ textarea#editInput {
   width: 100px;
   margin-left: auto;
   margin-right: auto;
-  left: calc(98% * 0.17 / 2 - 40px);
+  left: calc(50% - 50px);
 }
 .vacation-list thead th.sortDn:after {
   content: "\00a0\25BE";

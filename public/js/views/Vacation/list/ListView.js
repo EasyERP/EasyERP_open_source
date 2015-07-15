@@ -53,10 +53,9 @@ define([
             events: {
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                "click td.editable": "showInput",
-                "click td.editable input": "editRow",
                 "blur td.editable input": "hideInput",
-                //"click td.editable": "editRow",
+                "click td.editable": "editRow",
+                "click td.editable input": "editRow",
                 "click .current-selected": "showNewCurrentSelect",
                 "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
                 "click .oe_sortable": "goSort",
@@ -239,14 +238,6 @@ define([
                 });
             },
 
-            showInput: function(e) {
-                var self = this;
-                var target = e.target;
-
-                $(target).find('input').css('display','block');
-
-            },
-
             hideInput: function(e) {
                 var target = $(e.target);
 
@@ -256,28 +247,27 @@ define([
             editRow: function (e, prev, next) {
                 var self = this;
                 var el = $(e.target);
+                var hasInput = el.find('input').length;
+                var isInput = el.prop("tagName") === 'INPUT';
                 var tr = $(e.target).closest('tr');
                 var holidayId = tr.data('id');
                 var colType = el.data('type');
                 //var isSelect = colType !== 'input' && el.prop("tagName") !== 'INPUT';
-                var tempContainer;
-                var width;
 
-                if (holidayId && el.prop('tagName') !== 'INPUT') {
-                    if (this.holidayId) {
-                        this.setChangedValueToModel();
-                    }
-                    this.holidayId = holidayId;
-                }
-
-
-                //if (isSelect) {
-                    populate.showSelect(e, prev, next, this);
-                //} else {
-                    tempContainer = el.text();
-                    width = el.width() - 6;
-                    el.html('<input class="editing" type="text" value="' + tempContainer + '"  maxLength="255" style="width:' + width + 'px">');
+                //if (holidayId && el.prop('tagName') !== 'INPUT') {
+                //    if (this.holidayId) {
+                //        this.setChangedValueToModel();
+                //    }
+                //    this.holidayId = holidayId;
                 //}
+
+                if (!isInput && !hasInput) {
+                    populate.showSelect(e, prev, next, this);
+                } else if (hasInput) {
+                    el.find('input').css('display','block');
+                } else {
+                    populate.showSelect(e, prev, next, this);
+                }
 
                 return false;
             },
