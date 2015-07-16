@@ -7,7 +7,7 @@
         <%=vacation.department ? vacation.department.name : ''%>
     </td>
     <% for (var i=0; i<=vacation.vacArray.length - 1; i++) { %>
-        <%=vacation.vacArray[i] ? '<td data-dayID="' + (i) + '" class="editable ' + vacation.vacArray[i] + ' selectedType" data-content="vacType">' + vacation.vacArray[i] + '</td>' : '<td data-dayID="' + (i) + '" class="editable" data-content="vacType"></td>'%>
+        <%=vacation.vacArray[i] ? '<td data-dayID="' + (i) + '" class="editable ' + vacation.vacArray[i] + ' selectedType" data-content="vacType">' + vacation.vacArray[i] + '<input type="text" readonly value="' + vacation.vacArray[i] + '"></td>' : '<td data-dayID="' + (i) + '" class="editable" data-content="vacType"><input type="text" readonly value=""></td>'%>
     <% } %>
     <td class="totalDays">
         <%=vacation.countVacationDays%>
