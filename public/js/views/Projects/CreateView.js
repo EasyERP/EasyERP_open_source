@@ -4,8 +4,9 @@ define([
 	"populate",
     'views/Notes/AttachView',
     'views/Assignees/AssigneesView',
+    'views/Bonus/BonusView'
 ],
-    function (CreateTemplate, ProjectModel, populate, attachView, AssigneesView) {
+    function (CreateTemplate, ProjectModel, populate, attachView, AssigneesView, BonusView) {
 
         var CreateView = Backbone.View.extend({
             el: "#content-holder",
@@ -197,6 +198,9 @@ define([
                         model: this.currentModel
                     }).render().el
                 );
+                new BonusView({
+                    model: new ProjectModel()
+                });
                 populate.get("#projectTypeDD", "/projectType", {}, "name", this, true, true);
                 populate.get2name("#projectManagerDD", "/getPersonsForDd", {}, this, true);
                 populate.get2name("#customerDd", "/Customer", {}, this, true, true);

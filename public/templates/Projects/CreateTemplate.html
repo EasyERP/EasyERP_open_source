@@ -1,78 +1,92 @@
 <div class="form-holder">
-  <form method="post" action="" id="createProjectForm" class="form">
-    <fieldset>
-		<div class="inner">
-          <ul class="dialog-tabs">
-			<li><a class="active" href="javascript:;">Main</a></li>
-			<li><a href="javascript:;">Assignees</a></li>
-          </ul>
-          <div class="clearfix"></div>
-          <div class="dialog-tabs-items">
-			<div class="dialog-tabs-item active">
-            <div class="half-block left projectNote">
-              <div class="inner">
-                <div class="textarea-wrapper">
-                  <textarea type="text" class="projectDescriptionCreate" name="description" placeholder="Add a Description..." id="description" maxlength="500"></textarea>
-                </div>
-              </div>
-            <div class="clearfix"></div>
-            </div>
-			  <div class="half-block left">
-				<dl class="project-edit-info">
-				  <dt><label for="projectName">Project Name </label></dt><dd><input type="text" class="title-input blueback" name="projectName" id="projectName" required maxlength="32" placeholder="Project Name"/></dd>
-				  <dt><label for="projectShortDesc">Project Short Description </label></dt><dd><input type="text" class="title-input blueback" name="projectShortDesc" id="projectShortDesc" required maxlength="32" placeholder="Project Short Description" /></dd>
-				  <dt><label for="projectManagerDD">Project Manager </label></dt>
-				  <dd>
-					<a id="projectManagerDD" class="current-selected" href="javascript:;"></a>
-				  </dd>
-				  
-				 <dt><label for="projectTypeDD">Project Type </label></dt>
-				  <dd>
-					<a id="projectTypeDD" class="current-selected" href="javascript:;"></a>
-				  </dd>
+    <form method="post" action="" id="createProjectForm" class="form">
+        <fieldset>
+            <div class="inner">
+                <ul class="dialog-tabs">
+                    <li><a class="active" href="javascript:;">Main</a></li>
+                    <li><a href="javascript:;">Assignees</a></li>
+                    <li><a href="javascript:;">Bonus</a></li>
+                </ul>
+                <div class="clearfix"></div>
+                <div class="dialog-tabs-items">
+                    <div class="dialog-tabs-item active">
+                        <div class="half-block left projectNote">
+                            <div class="inner">
+                                <div class="textarea-wrapper">
+                                    <textarea type="text" class="projectDescriptionCreate" name="description"
+                                              placeholder="Add a Description..." id="description"
+                                              maxlength="500"></textarea>
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="half-block left">
+                            <dl class="project-edit-info">
+                                <dt><label for="projectName">Project Name </label></dt>
+                                <dd><input type="text" class="title-input blueback" name="projectName" id="projectName"
+                                           required maxlength="32" placeholder="Project Name"/></dd>
+                                <dt><label for="projectShortDesc">Project Short Description </label></dt>
+                                <dd><input type="text" class="title-input blueback" name="projectShortDesc"
+                                           id="projectShortDesc" required maxlength="32"
+                                           placeholder="Project Short Description"/></dd>
+                                <dt><label for="projectManagerDD">Project Manager </label></dt>
+                                <dd>
+                                    <a id="projectManagerDD" class="current-selected" href="javascript:;"></a>
+                                </dd>
 
-				  <dt><label for="customerDd">Project Customer</label></dt><dd>
-					<a id="customerDd" class="current-selected" href="javascript:;"></a>
-				  </dd>
-				    <dt><label for="workflowsDd">Status</label></dt>
-                    <dd id="selectWorkflow">
-					  <a id="workflowsDd" class="current-selected" href="javascript:;"></a>
-				    </dd>
-                    <dt><label for="health">Health</label></dt>
-				    <dd id="health">
-				        <a href="javascript:;" data-value="1" class="health1"></a>
-				        <ul>
-				            <li>
-				                <div class="health1"></div>
-				            </li>
-				            <li>
-				                <div class="health2"></div>
-				            </li>
-				            <li>
-				                <div class="health3"></div>
-				            </li>
-				        </ul>
-				    </dd>
-                    <dt><label for="StartDate">Start Date</label></dt>
-                    <dd id="startDate">
-                        <input class="extrainfo blueback" type="text" name="StartDate" id="StartDate" value="" readonly placeholder="Start Date"/>
-                    </dd>
-                    <dt><label for="targetEndDate">Target End Date</label></dt>
-                    <dd id="targetEndDate">
-                        <input class="extrainfo blueback" type="text" name="TargetEndtDate" id="EndDateTarget" value="" readonly placeholder="Target End Date" />
-                    </dd>
-				</dl>
-			  </div>
-			  
- 					<div class="clearfix"></div>
-				  <div class="attach-container"></div>
-			</div>
-			<div class="dialog-tabs-item">
-			  <div class="assignees-container"></div>
-			</div>
-		  </div>
-		  <div class="clearfix"></div>
-		</div>
-	</fieldset>
-  </form>
+                                <dt><label for="projectTypeDD">Project Type </label></dt>
+                                <dd>
+                                    <a id="projectTypeDD" class="current-selected" href="javascript:;"></a>
+                                </dd>
+
+                                <dt><label for="customerDd">Project Customer</label></dt>
+                                <dd>
+                                    <a id="customerDd" class="current-selected" href="javascript:;"></a>
+                                </dd>
+                                <dt><label for="workflowsDd">Status</label></dt>
+                                <dd id="selectWorkflow">
+                                    <a id="workflowsDd" class="current-selected" href="javascript:;"></a>
+                                </dd>
+                                <dt><label for="health">Health</label></dt>
+                                <dd id="health">
+                                    <a href="javascript:;" data-value="1" class="health1"></a>
+                                    <ul>
+                                        <li>
+                                            <div class="health1"></div>
+                                        </li>
+                                        <li>
+                                            <div class="health2"></div>
+                                        </li>
+                                        <li>
+                                            <div class="health3"></div>
+                                        </li>
+                                    </ul>
+                                </dd>
+                                <dt><label for="StartDate">Start Date</label></dt>
+                                <dd id="startDate">
+                                    <input class="extrainfo blueback" type="text" name="StartDate" id="StartDate"
+                                           value="" readonly placeholder="Start Date"/>
+                                </dd>
+                                <dt><label for="targetEndDate">Target End Date</label></dt>
+                                <dd id="targetEndDate">
+                                    <input class="extrainfo blueback" type="text" name="TargetEndtDate"
+                                           id="EndDateTarget" value="" readonly placeholder="Target End Date"/>
+                                </dd>
+                            </dl>
+                        </div>
+
+                        <div class="clearfix"></div>
+                        <div class="attach-container"></div>
+                    </div>
+                    <div class="dialog-tabs-item">
+                        <div class="assignees-container"></div>
+                    </div>
+                    <div class="dialog-tabs-item">
+                        <div class="bonus-container"></div>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </fieldset>
+    </form>
 </div>

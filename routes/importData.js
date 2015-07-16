@@ -20,8 +20,8 @@ module.exports = function (models) {
             user: 'thinkmobiles@wbje9y2n5u',
             password: '1q2w3e!@#',
             server: 'wbje9y2n5u.database.windows.net',
-            //database: 'ex_dev',
-            database: 'production',
+            database: 'ex_dev',
+            //database: 'production',
 
             options: {
                 encrypt: true
@@ -365,8 +365,8 @@ module.exports = function (models) {
 
         function fetchWorkflow(query, callback) {
             query = query || {
-                wId: 'Projects'
-            };
+                    wId: 'Projects'
+                };
 
             var projectionObject = {
                 status: 1,
@@ -966,6 +966,143 @@ module.exports = function (models) {
         };
 
         return [bonusTypeImporter, customerImporter, projectImporter, wTrackImporter, invoiceImporter, paymentImporter, payOutImporter];
+    };
+
+    function projectsImporter(req, tasks) {
+        var bonusSchema = tasks[13];
+
+        var projectsCollection = bonusSchema.collection;
+
+        var ProjectsSchema = mongoose.Schemas[projectsCollection];
+        var EmployeeSchema = mongoose.Schemas['Employees'];
+        var BonusTypeSchema = mongoose.Schemas['bonusType'];
+
+        var Project = models.get(req.session.lastDb, projectsCollection, ProjectsSchema);
+        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var BonusType = models.get(req.session.lastDb, 'bonusType', BonusTypeSchema);
+
+        function importBonus(BonusSchema, seriesCb) {
+            var query = queryBuilder(BonusSchema.table);
+            var waterfallTasks;
+
+            function getData(callback) {
+                handler.importData(query, callback);
+            }
+
+            function saverBonus(fetchedArray, callback) {
+                async.eachLimit(fetchedArray, 100, function (fetchedBonus, cb) {
+                    if (fetchedBonus) {
+                        //var newBonus = {
+                        //    employeeId: 'Employee',
+                        //    bonusId: 'Type',
+                        //    startDate: fetchedBonus.StartDate,
+                        //    endDate: fetchedBonus.EndDate
+                        //};
+
+                        var projectQuery = {
+                            ID: fetchedBonus['Project']
+                        };
+
+                        var employeeQuery = {
+                            ID: fetchedBonus['Employee']
+                        };
+
+                        var bonusTypeQuery = {
+                            ID: fetchedBonus['Type']
+                        };
+
+                        function projectFinder(callback) {
+                            Project.findOne(projectQuery, {_id: 1, StartDate: 1, EndDate: 1}, function (err, project) {
+                                if (err) {
+                                    return callback(err);
+                                }
+                                callback(null, project);
+                            });
+                        };
+
+                        function employeFinder(callback) {
+                            Employee.findOne(employeeQuery, {_id: 1}, function (err, employee) {
+                                if (err) {
+                                    return callback(err);
+                                }
+                                callback(null, employee);
+                            });
+                        };
+
+                        function bonusTypeFinder(callback) {
+                            BonusType.findOne(bonusTypeQuery, {_id: 1}, function (err, bonusType) {
+                                if (err) {
+                                    return callback(err);
+                                }
+                                callback(null, bonusType);
+                            });
+                        };
+
+                        async.parallel({
+                            project: projectFinder,
+                            employee: employeFinder,
+                            bonusType: bonusTypeFinder
+                        }, function (err, result) {
+                            var projectId = result.project ? result.project._id : null;
+                            var employeeId = result.employee ? result.employee._id : null;
+                            var bonusId = result.bonusType ? result.bonusType._id : null;
+                            var startDate = fetchedBonus['StartDate'] || (result.project ? result.project.StartDate : null);
+                            var endDate = fetchedBonus['EndDate'] || (result.project ? result.project.EndDate : null);
+
+                            var query = {
+                                _id: projectId
+                            };
+
+                            var updatQuery = {
+                                $push: {
+                                    "bonus": {
+                                        employeeId: employeeId,
+                                        bonusId: bonusId,
+                                        startDate: startDate,
+                                        endDate: endDate
+                                    }
+                                }
+                            };
+
+                            var settings = {
+                                safe: true,
+                                upsert: true
+                            };
+
+                            Project.findByIdAndUpdate(query, updatQuery, settings, function (err, model) {
+                                if (err) {
+                                    return console.log(err);
+                                }
+
+                                console.log(model);
+                            });
+                        });
+                    }
+                }, function (err) {
+                    if (err) {
+                        return callback(err);
+                    }
+
+                    callback(null, 'Completed');
+                });
+            }
+
+            waterfallTasks = [getData, saverBonus];
+
+            async.waterfall(waterfallTasks, function (err, result) {
+                if (err) {
+                    seriesCb(err);
+                }
+
+                seriesCb(null, 'Complete')
+            });
+        };
+
+        function bonusImporter(callback) {
+            importBonus(bonusSchema, callback);
+        };
+
+        return [bonusImporter];
     };
 
     function hrImporter(req, tasks) {
@@ -1697,7 +1834,9 @@ module.exports = function (models) {
     router.post('/', function (req, res, next) {
         var hrTasks = hrImporter(req, tasks);
         var salesTasks = salesImporter(req, tasks);
-        var seriesTasks = hrTasks.concat(salesTasks);
+        var projectsTasks = projectsImporter(req, tasks);
+        var tempArr = hrTasks.concat(salesTasks);
+        var seriesTasks = tempArr.concat(projectsTasks);
 
         async.series(seriesTasks, function (err) {
             if (err) {

@@ -935,6 +935,8 @@ var Project = function (models, event) {
         query.populate('projectmanager', 'name _id');
         query.populate('customer', 'name _id');
         query.populate('workflow').
+            populate('bonus.employeeId', '_id name').
+            populate('bonus.bonusId', '_id name').
             populate('createdBy.user', '_id login').
             populate('editedBy.user', '_id login').
             populate('groups.owner', '_id name').

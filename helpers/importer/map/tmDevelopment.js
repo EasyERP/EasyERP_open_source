@@ -328,6 +328,20 @@ module.exports = (function () {
         }
     };
 
+    var bonus = {
+        collection: 'Project',
+        table: 'Bonus',
+        aliases: {
+            ID: 'Project',
+            bonus: [{
+                'employeeId': 'Employee',
+                'bonusId': 'Type',
+                'startDate': 'StartDate',
+                'endDate': 'EndDate'
+            }]
+        }
+    };
+
     var payOut = {
         collection: 'Payment',
         table: 'Payout',
@@ -340,5 +354,5 @@ module.exports = (function () {
         }
     };
 
-    return [department, jobPosition, employee, project, customer, wTrack, salary, invoice, payment, holiday, vacation, monthHours, bonusType, payOut];
+    return [department, jobPosition, employee, project, customer, wTrack, salary, invoice, payment, holiday, vacation, monthHours, bonusType, bonus, payOut];
 })();
