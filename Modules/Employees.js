@@ -888,6 +888,7 @@ var Employee = function (event, models) {
     function updateOnlySelectedFields(req, _id, data, res) {
         var fileName = data.fileName;
         var dataObj = {};
+        var query = {};
         delete data.fileName;
 
         var updateObject = {};
@@ -914,12 +915,18 @@ var Employee = function (event, models) {
                         }
 
                         if (data.fired) {
-                            dataObj = {'fire': new Date().toString()};
+                            dataObj = {'fire': new Date()};
                         } else if (data.hired) {
-                            dataObj = {'hire': new Date().toString()};
+                            dataObj = {'hire': new Date()};
                         }
 
-                        models.get(req.session.lastDb, 'Employees', employeeSchema).findByIdAndUpdate(_id, { $set: data ,$push: dataObj }, function (err, result) {
+                        if (dataObj.hire || dataObj.fire){
+                            query = { $set: updateObject, $push: dataObj };
+                        } else {
+                            query = { $set: updateObject};
+                        }
+
+                        models.get(req.session.lastDb, 'Employees', employeeSchema).findByIdAndUpdate(_id, query, function (err, result) {
                             if (!err) {
                                 res.send(200, { success: 'Employees updated', sequence: result.sequence });
                             } else {
@@ -927,7 +934,6 @@ var Employee = function (event, models) {
                             }
 
                         });
-
                     });
                 });
             } else {
@@ -951,13 +957,19 @@ var Employee = function (event, models) {
             }
 
             if (data.fired) {
-                dataObj = {'fire': new Date().toString()};
+                dataObj = {'fire': new Date()};
 
             } else if (data.hired) {
-                dataObj = {'hire': new Date().toString()};
+                dataObj = {'hire': new Date()};
             }
 
-            models.get(req.session.lastDb, 'Employees', employeeSchema).findByIdAndUpdate(_id, { $set: updateObject, $push: dataObj }, function (err, result) {
+            if (dataObj.hire || dataObj.fire){
+                query = { $set: updateObject, $push: dataObj };
+            } else {
+                query = { $set: updateObject};
+            }
+
+            models.get(req.session.lastDb, 'Employees', employeeSchema).findByIdAndUpdate(_id, query, function (err, result) {
                 if (!err) {
                     if (updateObject.dateBirth || updateObject.contractEnd || updateObject.hired) {
                         event.emit('recalculate', req);

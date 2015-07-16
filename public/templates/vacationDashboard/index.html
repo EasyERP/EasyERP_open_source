@@ -51,7 +51,7 @@
                             <%= leadComparator(employee.get('isLead'))%>
                         </td>
                         <%employee.get('weekData').forEach(function(week){%>
-                            <td class="dashboardWeek <%= week.vacations ? 'withVacation' : ''%> <%=getCellClass(week, self)%>">
+                            <td class="dashboardWeek <%= week.vacations ? 'withVacation' : ''%> <%=getCellClass(week, self, employee)%>">
                                 <%if(week.holidays){%>
                                     <span class="viewCount"><%=week.holidays || 0%>d</span>
                                 <%}%>
