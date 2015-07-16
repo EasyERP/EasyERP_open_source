@@ -5,6 +5,7 @@
 		<ul class="dialog-tabs">
 		  <li><a class="active" href="javascript:;">Main</a></li>
 		  <li><a href="javascript:;">Assignees</a></li>
+		  <li><a href="javascript:;">Bonus</a></li>
 		</ul>
 		<div class="clearfix"></div>
         <div class="dialog-tabs-items">
@@ -37,10 +38,10 @@
                 <dd>
 				  <a id="projectManagerDD" data-id="<%=model.projectmanager?model.projectmanager._id:''%>" class="current-selected" href="javascript:;"><%=model.projectmanager?(model.projectmanager.name.first+' '+model.projectmanager.name.last):'Select'%></a>
                 </dd>
-                
+
                 <dt><label for="projectTypeDD">Project Type </label></dt>
 				<dd>
-				  <a id="projectTypeDD" data-id="<%=model.projecttype?model.projecttype:''%>" class="current-selected" href="javascript:;"><%=model.projecttype?model.projecttype:'Select'%></a>			  
+				  <a id="projectTypeDD" data-id="<%=model.projecttype?model.projecttype:''%>" class="current-selected" href="javascript:;"><%=model.projecttype?model.projecttype:'Select'%></a>
 				</dd>
                 <dt><label for="StartDate">Start Date </label></dt>
                 <dd><input class="extrainfo blueback" type="text" name="StartDate" id="StartDate" value="<%=model.StartDate%>" readonly /></dd>
@@ -79,15 +80,19 @@
             </div>
             <div class="clearfix"></div>
 			<div id="divForNote">
-			  
+
 			</div>
 		  </div>
 		  <div class="clearfix"></div>
-		  
+
 
           <div class="dialog-tabs-item">
 			<div class="assignees-container"></div>
 		  </div>
+          <div class="clearfix"></div>
+          <div class="dialog-tabs-item">
+            <div class="bonus-container"></div>
+          </div>
           <div class="clearfix"></div>
         </div>
       </div>

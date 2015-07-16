@@ -20,8 +20,8 @@ module.exports = function (models) {
             user: 'thinkmobiles@wbje9y2n5u',
             password: '1q2w3e!@#',
             server: 'wbje9y2n5u.database.windows.net',
-            //database: 'ex_dev',
-            database: 'production',
+            database: 'ex_dev',
+            //database: 'production',
 
             options: {
                 encrypt: true
@@ -68,6 +68,7 @@ module.exports = function (models) {
         var invoiceSchema = tasks[7];
         var paymentSchema = tasks[8];
         var bonusTypeSchema = tasks[12];
+        var payOutSchema = tasks[14];
 
         var ownerId = req.session ? req.session.uId : null;
 
@@ -76,6 +77,7 @@ module.exports = function (models) {
         var wTrackCollection = wTrackSchema.collection;
         var paymentCollection = paymentSchema.collection;
         var bonusTypeCollection = bonusTypeSchema.collection;
+        var payOutCollection = paymentSchema.collection;
 
         var ProjectSchema = projectCollection[projectCollection];
         var CustomerSchema = mongoose.Schemas[customerCollection];
@@ -87,6 +89,7 @@ module.exports = function (models) {
         var InvoiceSchema = mongoose.Schemas['wTrackInvoice'];
         var PaymentSchema = mongoose.Schemas[paymentCollection];
         var BonusTypeSchema = mongoose.Schemas[bonusTypeCollection];
+        var PayOutSchema = mongoose.Schemas[payOutCollection];
 
         var Project = models.get(req.session.lastDb, projectCollection, ProjectSchema);
         var Customer = models.get(req.session.lastDb, customerCollection, CustomerSchema);
@@ -98,6 +101,133 @@ module.exports = function (models) {
         var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', InvoiceSchema);
         var Payment = models.get(req.session.lastDb, paymentCollection, PaymentSchema);
         var BonusType = models.get(req.session.lastDb, bonusTypeCollection, BonusTypeSchema);
+        var PayOut = models.get(req.session.lastDb, payOutCollection, PayOutSchema);
+
+        function importPayOut(payOutSchema, seriesCb) {
+            var query = queryBuilder(payOutSchema.table);
+            var waterfallTasks;
+
+            function getData(callback) {
+                handler.importData(query, callback);
+            }
+
+            function saverPayOut(fetchedArray, callback) {
+                var model;
+                var mongooseFields = Object.keys(payOutSchema.aliases);
+
+                async.eachLimit(fetchedArray, 100, function (fetchedPayOut, cb) {
+                    var objectToSave = {};
+                    var employeeQuery;
+                    var bonusTypeQuery;
+                    var key;
+                    var msSqlKey;
+
+                    for (var i = mongooseFields.length - 1; i >= 0; i--) {
+                        key = mongooseFields[i];
+                        msSqlKey = payOutSchema.aliases[key];
+
+                        if (payOutSchema.defaultValues) {
+                            for (var defKey in payOutSchema.defaultValues) {
+                                objectToSave[defKey] = payOutSchema.defaultValues[defKey];
+                            }
+                        }
+
+                        if (payOutSchema.comparator && msSqlKey in payOutSchema.comparator) {
+                            fetchedPayOut[msSqlKey] = comparator(fetchedPayOut[msSqlKey], payOutSchema.comparator[msSqlKey]) || fetchedPayOut[msSqlKey];
+                        }
+
+                        objectToSave[key] = fetchedPayOut[msSqlKey];
+                        objectToSave.createdBy = {
+                            user: ownerId
+                        };
+                        objectToSave.editedBy = {
+                            user: ownerId
+                        }
+                    }
+
+                    if (fetchedPayOut) {
+
+                        objectToSave.forSale = false;
+                        objectToSave.bonus = true;
+
+                        objectToSave.differenceAmount = fetchedPayOut['Amount'] - fetchedPayOut['Paid'];
+
+                        if (fetchedPayOut['Status'] === 1){
+                            objectToSave.workflow = 'Paid';
+                        } else {
+                            objectToSave.workflow = 'Draft';
+                        }
+
+                        employeeQuery = {
+                            ID: fetchedPayOut['EmployeeID']
+                        };
+
+                        bonusTypeQuery = {
+                            ID: fetchedPayOut['BonusID']
+                        };
+
+                        function employeeFinder(callback) {
+                            Employee.findOne(employeeQuery, {_id: 1}, function (err, employee) {
+                                if (err) {
+                                    return callback(err);
+                                }
+                                callback(null, employee);
+                            });
+                        }
+
+                        function bonusTypeFinder(callback) {
+                            BonusType.findOne(bonusTypeQuery, {_id: 1, name: 1}, function (err, bonus) {
+                                if (err) {
+                                    return callback(err);
+                                }
+                                callback(null, bonus);
+                            });
+                        }
+
+                        async.parallel({
+                            bonusTypeResult: bonusTypeFinder,
+                            employeeResult: employeeFinder
+                        }, function (err, result) {
+                            if (result.bonusTypeResult && result.bonusTypeResult.name){
+                                objectToSave.paymentRef = result.bonusTypeResult.name;
+                            }
+                            if (result.employeeResult && result.employeeResult._id) {
+                                objectToSave.supplier = result.employeeResult._id;
+                            }
+
+                            model = new PayOut(objectToSave);
+                            model.save(function (err, rez) {
+                                if (err) {
+                                    console.error(err);
+                                    return cb(err);
+                                }
+                                cb();
+                            });
+                        });
+                    }
+                }, function (err) {
+                    if (err) {
+                        return callback(err);
+                    }
+
+                    callback(null, 'Completed');
+                })
+            }
+
+            waterfallTasks = [getData, saverPayOut];
+
+            async.waterfall(waterfallTasks, function (err, result) {
+                if (err) {
+                    seriesCb(err);
+                }
+
+                seriesCb(null, 'Complete')
+            });
+        }
+
+        function payOutImporter(callback) {
+            importPayOut(payOutSchema, callback);
+        }
 
         function importBonusType(bonusTypeSchema, seriesCb) {
             var query = queryBuilder(bonusTypeSchema.table);
@@ -235,8 +365,8 @@ module.exports = function (models) {
 
         function fetchWorkflow(query, callback) {
             query = query || {
-                wId: 'Projects'
-            };
+                    wId: 'Projects'
+                };
 
             var projectionObject = {
                 status: 1,
@@ -835,13 +965,150 @@ module.exports = function (models) {
             importPayment(paymentSchema, callback);
         };
 
-        return [bonusTypeImporter, customerImporter, projectImporter, wTrackImporter, invoiceImporter, paymentImporter];
+        return [bonusTypeImporter, customerImporter, projectImporter, wTrackImporter, invoiceImporter, paymentImporter, payOutImporter];
+    };
+
+    function projectsImporter(req, tasks) {
+        var bonusSchema = tasks[13];
+
+        var projectsCollection = bonusSchema.collection;
+
+        var ProjectsSchema = mongoose.Schemas[projectsCollection];
+        var EmployeeSchema = mongoose.Schemas['Employees'];
+        var BonusTypeSchema = mongoose.Schemas['bonusType'];
+
+        var Project = models.get(req.session.lastDb, projectsCollection, ProjectsSchema);
+        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var BonusType = models.get(req.session.lastDb, 'bonusType', BonusTypeSchema);
+
+        function importBonus(BonusSchema, seriesCb) {
+            var query = queryBuilder(BonusSchema.table);
+            var waterfallTasks;
+
+            function getData(callback) {
+                handler.importData(query, callback);
+            }
+
+            function saverBonus(fetchedArray, callback) {
+                async.eachLimit(fetchedArray, 100, function (fetchedBonus, cb) {
+                    if (fetchedBonus) {
+                        //var newBonus = {
+                        //    employeeId: 'Employee',
+                        //    bonusId: 'Type',
+                        //    startDate: fetchedBonus.StartDate,
+                        //    endDate: fetchedBonus.EndDate
+                        //};
+
+                        var projectQuery = {
+                            ID: fetchedBonus['Project']
+                        };
+
+                        var employeeQuery = {
+                            ID: fetchedBonus['Employee']
+                        };
+
+                        var bonusTypeQuery = {
+                            ID: fetchedBonus['Type']
+                        };
+
+                        function projectFinder(callback) {
+                            Project.findOne(projectQuery, {_id: 1, StartDate: 1, EndDate: 1}, function (err, project) {
+                                if (err) {
+                                    return callback(err);
+                                }
+                                callback(null, project);
+                            });
+                        };
+
+                        function employeFinder(callback) {
+                            Employee.findOne(employeeQuery, {_id: 1}, function (err, employee) {
+                                if (err) {
+                                    return callback(err);
+                                }
+                                callback(null, employee);
+                            });
+                        };
+
+                        function bonusTypeFinder(callback) {
+                            BonusType.findOne(bonusTypeQuery, {_id: 1}, function (err, bonusType) {
+                                if (err) {
+                                    return callback(err);
+                                }
+                                callback(null, bonusType);
+                            });
+                        };
+
+                        async.parallel({
+                            project: projectFinder,
+                            employee: employeFinder,
+                            bonusType: bonusTypeFinder
+                        }, function (err, result) {
+                            var projectId = result.project ? result.project._id : null;
+                            var employeeId = result.employee ? result.employee._id : null;
+                            var bonusId = result.bonusType ? result.bonusType._id : null;
+                            var startDate = fetchedBonus['StartDate'] || (result.project ? result.project.StartDate : null);
+                            var endDate = fetchedBonus['EndDate'] || (result.project ? result.project.EndDate : null);
+
+                            var query = {
+                                _id: projectId
+                            };
+
+                            var updatQuery = {
+                                $push: {
+                                    "bonus": {
+                                        employeeId: employeeId,
+                                        bonusId: bonusId,
+                                        startDate: startDate,
+                                        endDate: endDate
+                                    }
+                                }
+                            };
+
+                            var settings = {
+                                safe: true,
+                                upsert: true
+                            };
+
+                            Project.findByIdAndUpdate(query, updatQuery, settings, function (err, model) {
+                                if (err) {
+                                    return console.log(err);
+                                }
+
+                                console.log(model);
+                            });
+                        });
+                    }
+                }, function (err) {
+                    if (err) {
+                        return callback(err);
+                    }
+
+                    callback(null, 'Completed');
+                });
+            }
+
+            waterfallTasks = [getData, saverBonus];
+
+            async.waterfall(waterfallTasks, function (err, result) {
+                if (err) {
+                    seriesCb(err);
+                }
+
+                seriesCb(null, 'Complete')
+            });
+        };
+
+        function bonusImporter(callback) {
+            importBonus(bonusSchema, callback);
+        };
+
+        return [bonusImporter];
     };
 
     function hrImporter(req, tasks) {
         var departmentShema = tasks[0];
         var jobPositionShema = tasks[1];
-        var employeeShema = tasks[2];
+        var employeeSchema = tasks[2];
         var salaryShema = tasks[6];
         var holidayShema = tasks[9];
         var vacationShema = tasks[10];
@@ -851,7 +1118,7 @@ module.exports = function (models) {
 
         var jobPositionCollection = jobPositionShema.collection;
         var departmentCollection = departmentShema.collection;
-        var employeeCollection = employeeShema.collection;
+        var employeeCollection = employeeSchema.collection;
         var salaryCollection = salaryShema.collection;
         var holidayCollection = holidayShema.collection;
         var vacationCollection = vacationShema.collection;
@@ -925,7 +1192,6 @@ module.exports = function (models) {
         function monthHoursImporter(callback) {
             importMonthHours(monthHoursSchema, callback);
         }
-
 
         function importDepartment(departmentShema, seriesCb) {
             var query = queryBuilder(departmentShema.table);
@@ -1055,38 +1321,46 @@ module.exports = function (models) {
             importJobPosition(jobPositionShema, callback);
         }
 
-        function importEmployee(employeeShema, workflow, seriesCb) {
-            var query = queryBuilder(employeeShema.table);
+        function importEmployee(employeeSchema, workflow, seriesCb) {
+            var query = queryBuilder(employeeSchema.table);
             var waterfallTasks;
 
             workflow = workflow ? workflow._id : null;
 
-            function getData(callback) {
-                handler.importData(query, callback);
+            function getData(hiredResult, firedResult, callback) {
+
+                handler.importData(query, function (err, fetchedArray) {
+                    if (err) {
+                        return callback(err);
+                    }
+
+                    callback(null, hiredResult, firedResult, fetchedArray);
+                });
             }
 
-            function saverEmployee(fetchedArray, callback) {
+            function saverEmployee(hiredResult, firedResult, fetchedArray, callback) {
                 var model;
-                var mongooseFields = Object.keys(employeeShema.aliases);
+                var mongooseFields = Object.keys(employeeSchema.aliases);
 
                 async.eachLimit(fetchedArray, 100, function (fetchedEmployee, cb) {
                     var objectToSave = {};
                     var departmentQuery;
+                    var jobPositionQuery;
                     var key;
                     var msSqlKey;
 
                     for (var i = mongooseFields.length - 1; i >= 0; i--) {
                         key = mongooseFields[i];
-                        msSqlKey = employeeShema.aliases[key];
+                        msSqlKey = employeeSchema.aliases[key];
 
-                        if (employeeShema.defaultValues) {
-                            for (var defKey in employeeShema.defaultValues) {
-                                objectToSave[defKey] = employeeShema.defaultValues[defKey];
+                        if (employeeSchema.defaultValues) {
+                            for (var defKey in employeeSchema.defaultValues) {
+                                objectToSave[defKey] = employeeSchema.defaultValues[defKey];
                             }
                         }
 
-                        if (employeeShema.comparator && msSqlKey in employeeShema.comparator) {
-                            fetchedEmployee[msSqlKey] = comparator(fetchedEmployee[msSqlKey], employeeShema.comparator[msSqlKey]) || fetchedEmployee[msSqlKey];
+                        if (employeeSchema.comparator && msSqlKey in employeeSchema.comparator) {
+                            fetchedEmployee[msSqlKey] = comparator(fetchedEmployee[msSqlKey], employeeSchema.comparator[msSqlKey]) || fetchedEmployee[msSqlKey];
                         }
 
                         if (key === 'dateBirth') {
@@ -1109,6 +1383,14 @@ module.exports = function (models) {
                     }
 
                     if (fetchedEmployee) {
+
+                        if (hiredResult[fetchedEmployee['ID']]){
+                            objectToSave.hire = hiredResult[fetchedEmployee['ID']];
+                        }
+                        if (firedResult[fetchedEmployee['ID']]){
+                            objectToSave.fire = firedResult[fetchedEmployee['ID']];
+                        }
+
                         departmentQuery = {
                             ID: fetchedEmployee['Department']
                         };
@@ -1124,7 +1406,7 @@ module.exports = function (models) {
                                 }
                                 callback(null, department);
                             });
-                        };
+                        }
 
                         function jobPositionFinder(callback) {
                             JobPosition.findOne(jobPositionQuery, {_id: 1}, function (err, jobPosition) {
@@ -1155,7 +1437,56 @@ module.exports = function (models) {
                 })
             }
 
-            waterfallTasks = [getData, saverEmployee];
+            function hiredFiredImporter(callback) {
+                var query = queryBuilder('HiredFired');
+
+                handler.importData(query, callback);
+            };
+
+            function groupByID(hiredFired, callback) {
+                var groupedResult = _.groupBy(hiredFired, function (hiredFired) {
+                    return hiredFired.Employee;
+                });
+
+                var hiredResult = [];
+                var firedResult = [];
+                var hire;
+                var fire;
+                var length;
+
+                var hiredImported;
+                var firedImported;
+                var hiredParsedArr;
+                var firedParsedArr;
+
+                for (var key in groupedResult){
+                    hiredResult[key] = [];
+                    firedResult[key] = [];
+                    length = groupedResult[key].length;
+
+                    for (var j = 0; j < length; j++) {
+                        if (groupedResult[key][j]) {
+                            hiredImported = groupedResult[key][j].Date_Hire;
+                            firedImported = groupedResult[key][j].Date_Fire;
+
+                            if(hiredImported){
+                                hiredParsedArr = hiredImported.split('/');
+                                hire = new Date(hiredParsedArr[2] + '-' + hiredParsedArr[1] + '-' + hiredParsedArr[0]);
+                                hiredResult[key].push(hire);
+                            }
+                            if(firedImported){
+                                hiredParsedArr = firedImported.split('/');
+                                fire = new Date(hiredParsedArr[2] + '-' + hiredParsedArr[1] + '-' + hiredParsedArr[0]);
+                                firedResult[key].push(fire);
+                            }
+                        }
+                    }
+                }
+
+                callback(null, hiredResult, firedResult);
+            };
+
+            waterfallTasks = [hiredFiredImporter, groupByID, getData, saverEmployee];
 
             async.waterfall(waterfallTasks, function (err, result) {
                 if (err) {
@@ -1178,7 +1509,7 @@ module.exports = function (models) {
                         return callback(err);
                     }
 
-                    importEmployee(employeeShema, workflow, callback);
+                    importEmployee(employeeSchema, workflow, callback);
                 });
         }
 
@@ -1503,7 +1834,9 @@ module.exports = function (models) {
     router.post('/', function (req, res, next) {
         var hrTasks = hrImporter(req, tasks);
         var salesTasks = salesImporter(req, tasks);
-        var seriesTasks = hrTasks.concat(salesTasks);
+        var projectsTasks = projectsImporter(req, tasks);
+        var tempArr = hrTasks.concat(salesTasks);
+        var seriesTasks = tempArr.concat(projectsTasks);
 
         async.series(seriesTasks, function (err) {
             if (err) {

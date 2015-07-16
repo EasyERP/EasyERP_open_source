@@ -40,7 +40,19 @@ module.exports = (function () {
             date: { type: Date }
         },
         health: { type: Number, default: 1 },
-        ID: Number
+        ID: Number,
+        bonus: [{
+            employeeId: {
+                type: ObjectId,
+                ref: 'Employees'
+            },
+            bonusId: {
+                type: ObjectId,
+                ref: 'bonusType'
+            },
+            startDate: Date,
+            endDate: Date
+        }]
     }, { collection: 'Project' });
 
     mongoose.model('Project', projectSchema);

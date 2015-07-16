@@ -89,7 +89,9 @@ module.exports = (function () {
             FB: { type: String, default: '' },
             LI: { type: String, default: '' },
             GP: { type: String, default: '' }
-        }
+        },
+        hire: {type: Array, default: []},
+        fire: {type: Array, default: []}
     }, { collection: 'Employees' });
 
     employeeSchema.virtual('fullName').get(function(){
