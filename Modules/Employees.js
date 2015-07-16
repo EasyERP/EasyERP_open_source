@@ -915,7 +915,6 @@ var Employee = function (event, models) {
 
                         if (data.fired) {
                             dataObj = {'fire': new Date().toString()};
-
                         } else if (data.hired) {
                             dataObj = {'hire': new Date().toString()};
                         }
