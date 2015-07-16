@@ -860,12 +860,12 @@ module.exports = function (models) {
             function saverBonus(fetchedArray, callback) {
                 async.eachLimit(fetchedArray, 100, function (fetchedBonus, cb) {
                     if (fetchedBonus) {
-                        var newBonus = {
-                            employeeId: 'Employee',
-                            bonusId: 'Type',
-                            startDate: fetchedBonus.StartDate,
-                            endDate: fetchedBonus.EndDate
-                        };
+                        //var newBonus = {
+                        //    employeeId: 'Employee',
+                        //    bonusId: 'Type',
+                        //    startDate: fetchedBonus.StartDate,
+                        //    endDate: fetchedBonus.EndDate
+                        //};
 
                         var projectQuery = {
                             ID: fetchedBonus['Project']
@@ -880,7 +880,7 @@ module.exports = function (models) {
                         };
 
                         function projectFinder(callback) {
-                            Project.findOne(projectQuery, {_id: 1, StartDate: 1 ,EndDate: 1}, function (err, project) {
+                            Project.findOne(projectQuery, {_id: 1, StartDate: 1, EndDate: 1}, function (err, project) {
                                 if (err) {
                                     return callback(err);
                                 }
@@ -937,7 +937,7 @@ module.exports = function (models) {
                                 upsert: true
                             };
 
-                            Project.findByIdAndUpdate(query, updatQuery, settings, function(err, model) {
+                            Project.findByIdAndUpdate(query, updatQuery, settings, function (err, model) {
                                 if (err) {
                                     return console.log(err);
                                 }
