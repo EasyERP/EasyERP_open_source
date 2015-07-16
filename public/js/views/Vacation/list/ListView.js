@@ -250,21 +250,11 @@ define([
                 var hasInput = el.find('input').length;
                 var isInput = el.prop("tagName") === 'INPUT';
                 var tr = $(e.target).closest('tr');
-                var holidayId = tr.data('id');
-                var colType = el.data('type');
-                //var isSelect = colType !== 'input' && el.prop("tagName") !== 'INPUT';
-
-                //if (holidayId && el.prop('tagName') !== 'INPUT') {
-                //    if (this.holidayId) {
-                //        this.setChangedValueToModel();
-                //    }
-                //    this.holidayId = holidayId;
-                //}
 
                 if (!isInput && !hasInput) {
                     populate.showSelect(e, prev, next, this);
                 } else if (hasInput) {
-                    el.find('input').css('display','block');
+                    el.find('input').show();
                 } else {
                     populate.showSelect(e, prev, next, this);
                 }
