@@ -715,7 +715,7 @@ define([
                 className: 'totalProject',
                 headName: 'Project by Sales'
             }));
-            /* target.find('div.revenueBySales').html(this.weeksArrayTemplate({weeksArr: this.weekArr}));*/
+
             targetTotal = $(self.$el.find('[data-content="totalProjectBySales"]'));
             monthContainer = target.find('.monthContainer');
             monthContainer.html(this.monthsArrayTemplate({monthArr: monthArr}));
