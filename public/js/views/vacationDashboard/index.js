@@ -128,12 +128,49 @@ define([
             return '<span class="high"><span class="label label-success">High</span></span>'
         },
 
-        getCellClass: function (week, self) {
+        isWorking: function (employee, week) {
+            var date;
+            var firedArr = employee.get('fired');
+            var firedLength = firedArr.length;
+            var hiredArr = employee.get('hired');
+            var year = week.dateByWeek.toString().slice(0, 4);
+            var _week = week.dateByWeek.toString().slice(4);
+
+            var _hiredDate;
+            var _firedDate;
+            var _lastHiredDate = moment(hiredArr[hiredArr.length - 1], 'YYYY-MM-DD');
+
+            date = moment().set('year', year).set('week', _week);
+
+            if (!firedLength) {
+                if (date > _lastHiredDate) {
+                    return true;
+                }
+                return false;
+            } else {
+                for (var i = firedLength - 1; i >= 0; i--) {
+                    _hiredDate = moment(hiredArr[i]).format('YYYY-MM-DD');
+                    _firedDate = moment(firedArr[i]).format('YYYY-MM-DD');
+
+                    /*if (_hiredDate < date && date < moment(_firedDate)) {
+                     return true;
+                     }*/
+                    console.log(date.isBetween(_hiredDate, _firedDate));
+                    if (date.isBetween(_hiredDate, _firedDate) || date > _lastHiredDate) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        },
+
+        getCellClass: function (week, self, employee) {
             var s = "";
             var hours = week.hours || 0;
             var holidays = week.holidays || 0;
             var vacations = week.vacations || 0;
-            var hours = hours + (holidays + vacations) * 8;
+
+            hours = hours + (holidays + vacations) * 8;
 
             if (hours > 40) {
                 s += "dgreen ";
@@ -148,6 +185,9 @@ define([
             }
             if (self.dateByWeek === week.dateByWeek) {
                 s += "active ";
+            }
+            if (!self.isWorking(employee, week)) {
+                s += "inactive ";
             }
             return s;
         },
@@ -164,25 +204,6 @@ define([
         },
 
         getCellSize: function (week, vacation) {
-            //var s = "";
-            //var hours = hours || 0;
-            //
-            //if (hours >= 40) {
-            //    s = "size40";
-            //} else if (hours >= 32) {
-            //    s = "size32";
-            //} else if (hours >= 24) {
-            //    s = "size24";
-            //} else if (hours >= 16) {
-            //    s = "size16";
-            //} else if (hours > 0) {
-            //    s = "size8";
-            //} else {
-            //    s = "size0";
-            //}
-            //
-            //return s;
-
             var v = '';
             var w = '';
             var vacationHours = (week.vacations || 0) * 8;
