@@ -10,10 +10,13 @@ define([
     'constants',
     'async',
     'custom',
-    'moment'
-], function (mainTemplate, rowView, vacationDashboard, employeesForDashboard, dataService, CONSTANTS, async, custom, moment) {
+    'moment',
+    'constants'
+], function (mainTemplate, rowView, vacationDashboard, employeesForDashboard, dataService, CONSTANTS, async, custom, moment, CONSTANTS) {
     var View = Backbone.View.extend({
         el: '#content-holder',
+
+        contentType: CONSTANTS.DASHBOARD_VACATION,
 
         template: _.template(mainTemplate),
         expandAll: false,
@@ -255,8 +258,9 @@ define([
         },
 
         render: function () {
+            $('title').text(this.contentType);
+
             var self = this;
-            var rowItems;
             var weeksArr = custom.retriveFromCash('weeksArr') || [];
             var week;
             var startWeek = this.startWeek;

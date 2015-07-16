@@ -22,10 +22,13 @@ define([
     'dataService',
     'async',
     'custom',
-    'd3'
-], function (mainTemplate, weeksArray, tableByDep, bySalesByDep, perWeek, paidBySales, paidBySalesItems, projectBySalesItems, unpaidBySales, monthsArray, perMonth, perMonthInt, tableSold, hoursByDepItem, hoursByDepTotal, RevenueModel, moment, dataService, async, custom, d3) {
+    'd3',
+    'constants'
+], function (mainTemplate, weeksArray, tableByDep, bySalesByDep, perWeek, paidBySales, paidBySalesItems, projectBySalesItems, unpaidBySales, monthsArray, perMonth, perMonthInt, tableSold, hoursByDepItem, hoursByDepTotal, RevenueModel, moment, dataService, async, custom, d3, CONSTANTS) {
     var View = Backbone.View.extend({
         el: '#content-holder',
+
+        contentType: CONSTANTS.REVENUE,
 
         template: _.template(mainTemplate),
         weeksArrayTemplate: _.template(weeksArray),
@@ -1102,6 +1105,8 @@ define([
         },
 
         render: function (employees) {
+            $('title').text(this.contentType);
+
             var self = this;
             var thisEl = this.$el;
             var model = this.model.toJSON();
