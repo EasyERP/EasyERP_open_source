@@ -116,12 +116,31 @@ var wTrack = function (models) {
                                     });
                                 }
 
-                                weekData.holidays = holidays[weekData.dateByWeek];
+                                weekData.holidays = holidays[weekData.dateByWeek] || 0;
                                 weekData.vacations = holidayCount || 0;
                                 return weekData;
                             });
                         } else {
-                            _employee.weekData = tempWeekArr;
+                            _employee.weekData = _.map(tempWeekArr, function (weekData) {
+                                var holidayCount;
+                                var _vacations;
+
+                                _vacations = _.find(vacations, function (vacationObject) {
+                                    return (vacationObject.employee.toString() === _employee._id.toString());
+                                });
+
+                                if (_vacations) {
+                                    _vacations.vacations.forEach(function (vacation) {
+                                        if (vacation.hasOwnProperty(weekData.dateByWeek)) {
+                                            holidayCount = vacation[weekData.dateByWeek];
+                                        }
+                                    });
+                                }
+
+                                weekData.holidays = holidays[weekData.dateByWeek] || 0;
+                                weekData.vacations = holidayCount || 0;
+                                return weekData;
+                            });
                         }
                     } else {
                         _employee.weekData = weeksArr;
@@ -230,7 +249,7 @@ var wTrack = function (models) {
                 .aggregate([{
                     $match: {
                         isEmployee: true,
-                        department: {$nin: [objectId(CONSTANTS.HR_DEPARTMENT_ID), objectId(CONSTANTS.BUSINESS_DEPARTMENT_ID)]}
+                        department: {$nin: [objectId(CONSTANTS.HR_DEPARTMENT_ID), objectId(CONSTANTS.BUSINESS_DEPARTMENT_ID), objectId(CONSTANTS.MARKETING_DEPARTMENT_ID)]}
                     }
                 }, {
                     $group: {
@@ -238,6 +257,8 @@ var wTrack = function (models) {
                         employees: {
                             $push: {
                                 isLead: '$isLead',
+                                fired: '$fire',
+                                hired: '$hire',
                                 name: {$concat: ['$name.first', ' ', '$name.last']},
                                 _id: '$_id'
                             }
@@ -282,7 +303,7 @@ var wTrack = function (models) {
                         $match: {
                             'employee._id': {$in: employeesArray},
                             dateByWeek: {$gte: startDate, $lte: endDate},
-                            'department._id': {$nin: [objectId(CONSTANTS.HR_DEPARTMENT_ID), objectId(CONSTANTS.BUSINESS_DEPARTMENT_ID)]}
+                            'department._id': {$nin: [objectId(CONSTANTS.HR_DEPARTMENT_ID), objectId(CONSTANTS.BUSINESS_DEPARTMENT_ID), objectId(CONSTANTS.MARKETING_DEPARTMENT_ID)]}
                         }
                     }, {
                         $group: {
