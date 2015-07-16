@@ -175,16 +175,14 @@
                     </div>
 
                 <div class="half-block left withPaddingLeft">
-                <% var i = model.hire.length-1;
-                _.each(model.hire, function(hire, key){ %>
-                <dt><label>Hired</label></dt><dd><input  type="text"  name="hire" value="<%=model.hire[i]%>" required readonly /></dd>
+                <%_.each(model.hire, function(hire, key){ %>
+                <dt><label>Hired</label></dt><dd><input  type="text"  name="hire" value="<%=model.hire[key]%>" required readonly /></dd>
                 <% }); %>
 
                 </div>
                 <div class="half-block right withPaddingLeft">
-                <% var i = model.fire.length-1;
-                _.each(model.fire, function(fire, key){ %>
-                <dt><label>Fired</label></dt><dd><input  type="text"  name="fire" value="<%=model.fire[i]%>"  required readonly /></dd>
+                <%_.each(model.fire, function(fire, key){ %>
+                <dt><label>Fired</label></dt><dd><input  type="text"  name="fire" value="<%=model.fire[key]%>"  required readonly /></dd>
                 <% }); %>
                     </div>
 
