@@ -7442,6 +7442,10 @@ textarea#editInput {
   border-bottom: none;
   display: table-cell;
 }
+.grid tr:hover td {
+  background: #000 !important;
+  color: #ffffff;
+}
 .grid tr td.dashboardWeek {
   width: 107px;
   min-width: 107px;
@@ -7455,21 +7459,21 @@ textarea#editInput {
   padding: 2px;
 }
 .grid tr td.dashboardWeek.dgreen {
-  background-color: #004600;
+  background: #004600;
   color: white;
 }
 .grid tr td.dashboardWeek.green {
-  background-color: green;
+  background: green;
   color: white;
 }
 .grid tr td.dashboardWeek.brown {
-  background-color: #5cb85c;
+  background: #5cb85c;
 }
 .grid tr td.dashboardWeek.yellow {
-  background-color: yellow;
+  background: yellow;
 }
 .grid tr td.dashboardWeek.pink {
-  background-color: pink;
+  background: pink;
 }
 .grid tr td.dashboardWeek.white {
   background-color: #fd0001;

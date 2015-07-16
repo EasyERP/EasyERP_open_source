@@ -179,7 +179,7 @@ define([
             } else if (hours > 19) {
                 s += "yellow ";
             } else if (hours > 8) {
-                s += "pink ";
+                s += week.hours ? "pink " : "white";
             } else {
                 s += "white ";
             }
@@ -209,44 +209,24 @@ define([
             var vacationHours = (week.vacations || 0) * 8;
             var workedHours = week.hours || 0;
 
-            if (workedHours) {
-                if (vacationHours > 16) {
-                    v = "size40";
-                    w = "size40";
-                } else if (vacationHours > 8) {
-                    v = "size16";
-                    w = "size16";
-                } else if (vacationHours > 0) {
-                    v = "size8";
-                    w = "sizeFull";
-                } else {
-                    v = "size0";
-                    w = "size0";
-                }
-
-                if (vacation && vacationHours) {
-                    return v;
-                } else {
-                    return w;
-                }
+            if (vacationHours > 16) {
+                v = workedHours ? "size40" : "sizeFull";
+                w = workedHours ? "size40" : "size0";
+            } else if (vacationHours > 8) {
+                v = workedHours ? "size16" : "size40";
+                w = workedHours ? "size24" : "size40";
+            } else if (vacationHours > 0) {
+                v = workedHours ? "size8" : "size8";
+                w = "sizeFull";
             } else {
-                if (vacation && vacationHours) {
-                    if (vacationHours > 32) {
-                        v = "sizeFull";
-                    } else if (vacationHours > 24) {
-                        v = "size32";
-                    } else if (vacationHours > 8) {
-                        v = "size24";
-                    } else if (vacationHours > 0) {
-                        v = "size8";
-                    } else {
-                        v = "size0";
-                    }
+                v = "size0";
+                w = "sizeFull";
+            }
 
-                    return v;
-                } else {
-                    return "size0";
-                }
+            if (vacation && vacationHours) {
+                return v;
+            } else {
+                return w;
             }
         },
 
