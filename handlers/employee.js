@@ -8,6 +8,7 @@ var Employee = function (models) {
     var access = require("../Modules/additions/access.js")(models);
     var EmployeeSchema = mongoose.Schemas['Employee'];
     var ProjectSchema = mongoose.Schemas['Project'];
+    var objectId = mongoose.Types.ObjectId;
 
     this.getForDD = function (req, res, next) {
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);

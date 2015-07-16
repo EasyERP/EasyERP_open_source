@@ -46,6 +46,7 @@
                    e.preventDefault();
                    var self = this;
                    var workflowStart = this.currentModel.get("workflow")&&this.currentModel.get("workflow")._id?this.currentModel.get("workflow")._id:this.currentModel.get("workflow");
+
                    this.currentModel.save({
                        workflow: self.refuseId
                    }, {
