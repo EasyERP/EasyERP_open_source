@@ -171,23 +171,25 @@
                 <div class="clearfix"></div>
                 <div class="formTitle">
                     <h3 class="left">HiredFired</h3>
+
                     <div class="clearfix"></div>
-                    </div>
+                </div>
 
                 <div class="half-block left withPaddingLeft">
-                <%_.each(model.hire, function(hire, key){ %>
-                <dt><label>Hired</label></dt><dd><input  type="text"  name="hire" value="<%=model.hire[key]%>" required readonly /></dd>
-                <% }); %>
-
+                    <%_.each(model.hire, function(hire, key){ %>
+                    <dt><label>Hired</label></dt>
+                    <dd><input type="text" name="hire" value="<%=model.hire[key]%>" required readonly/></dd>
+                    <% }); %>
                 </div>
                 <div class="half-block right withPaddingLeft">
-                <%_.each(model.fire, function(fire, key){ %>
-                <dt><label>Fired</label></dt><dd><input  type="text"  name="fire" value="<%=model.fire[key]%>"  required readonly /></dd>
-                <% }); %>
-                    </div>
+                    <%_.each(model.fire, function(fire, key){ %>
+                    <dt><label>Fired</label></dt>
+                    <dd><input type="text" name="fire" value="<%=model.fire[key]%>" required readonly/></dd>
+                    <% }); %>
+                </div>
 
                 <div class="clearfix"></div>
-              <div class="formTitle">
+                <div class="formTitle">
 				<h3 class="left">Resume</h3>
 				<div class="clearfix"></div>
               </div>
