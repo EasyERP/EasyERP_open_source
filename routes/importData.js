@@ -20,8 +20,8 @@ module.exports = function (models) {
             user: 'thinkmobiles@wbje9y2n5u',
             password: '1q2w3e!@#',
             server: 'wbje9y2n5u.database.windows.net',
-            database: 'ex_dev',
-            //database: 'production',
+            //database: 'ex_dev',
+            database: 'production',
 
             options: {
                 encrypt: true
@@ -218,7 +218,7 @@ module.exports = function (models) {
 
             async.waterfall(waterfallTasks, function (err, result) {
                 if (err) {
-                    seriesCb(err);
+                    return seriesCb(err);
                 }
 
                 seriesCb(null, 'Complete')
@@ -268,7 +268,7 @@ module.exports = function (models) {
 
             async.waterfall(waterfallTasks, function (err, result) {
                 if (err) {
-                    seriesCb(err);
+                    return seriesCb(err);
                 }
 
                 seriesCb(null, 'Complete')
@@ -352,7 +352,7 @@ module.exports = function (models) {
 
             async.waterfall(waterfallTasks, function (err, result) {
                 if (err) {
-                    seriesCb(err);
+                    return seriesCb(err);
                 }
 
                 seriesCb(null, 'Complete')
@@ -489,7 +489,7 @@ module.exports = function (models) {
 
             async.waterfall(waterfallTasks, function (err, result) {
                 if (err) {
-                    seriesCb(err);
+                    return seriesCb(err);
                 }
 
                 seriesCb(null, 'Complete')
@@ -658,7 +658,7 @@ module.exports = function (models) {
 
             async.waterfall(waterfallTasks, function (err, result) {
                 if (err) {
-                    seriesCb(err);
+                    return seriesCb(err);
                 }
 
                 seriesCb(null, 'Complete')
@@ -954,7 +954,7 @@ module.exports = function (models) {
 
             async.waterfall(waterfallTasks, function (err, result) {
                 if (err) {
-                    seriesCb(err);
+                    return seriesCb(err);
                 }
 
                 seriesCb(null, 'Complete')
@@ -992,12 +992,6 @@ module.exports = function (models) {
             function saverBonus(fetchedArray, callback) {
                 async.eachLimit(fetchedArray, 100, function (fetchedBonus, cb) {
                     if (fetchedBonus) {
-                        //var newBonus = {
-                        //    employeeId: 'Employee',
-                        //    bonusId: 'Type',
-                        //    startDate: fetchedBonus.StartDate,
-                        //    endDate: fetchedBonus.EndDate
-                        //};
 
                         var projectQuery = {
                             ID: fetchedBonus['Project']
@@ -1071,10 +1065,10 @@ module.exports = function (models) {
 
                             Project.findByIdAndUpdate(query, updatQuery, settings, function (err, model) {
                                 if (err) {
-                                    return console.log(err);
+                                    return cb(err);
                                 }
 
-                                console.log(model);
+                                cb(null, model);
                             });
                         });
                     }
@@ -1091,7 +1085,7 @@ module.exports = function (models) {
 
             async.waterfall(waterfallTasks, function (err, result) {
                 if (err) {
-                    seriesCb(err);
+                    return seriesCb(err);
                 }
 
                 seriesCb(null, 'Complete')
