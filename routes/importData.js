@@ -1056,7 +1056,6 @@ module.exports = function (models) {
             importMonthHours(monthHoursSchema, callback);
         }
 
-
         function importDepartment(departmentShema, seriesCb) {
             var query = queryBuilder(departmentShema.table);
             var waterfallTasks;
@@ -1318,6 +1317,11 @@ module.exports = function (models) {
                 var fire;
                 var length;
 
+                var hiredImported;
+                var firedImported;
+                var hiredParsedArr;
+                var firedParsedArr;
+
                 for (var key in groupedResult){
                     hiredResult[key] = [];
                     firedResult[key] = [];
@@ -1325,15 +1329,19 @@ module.exports = function (models) {
 
                     for (var j = 0; j < length; j++) {
                         if (groupedResult[key][j]) {
-                            hire = groupedResult[key][j].Date_Hire;
-                            fire = groupedResult[key][j].Date_Fire;
-                        }
+                            hiredImported = groupedResult[key][j].Date_Hire;
+                            firedImported = groupedResult[key][j].Date_Fire;
 
-                        if (fire){
-                            firedResult[key].push(fire);
-                        }
-                        if (hire) {
-                            hiredResult[key].push(hire);
+                            if(hiredImported){
+                                hiredParsedArr = hiredImported.split('/');
+                                hire = new Date(hiredParsedArr[2] + '-' + hiredParsedArr[1] + '-' + hiredParsedArr[0]);
+                                hiredResult[key].push(hire);
+                            }
+                            if(firedImported){
+                                hiredParsedArr = firedImported.split('/');
+                                fire = new Date(hiredParsedArr[2] + '-' + hiredParsedArr[1] + '-' + hiredParsedArr[0]);
+                                firedResult[key].push(fire);
+                            }
                         }
                     }
                 }
