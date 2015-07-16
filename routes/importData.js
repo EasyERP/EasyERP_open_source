@@ -68,7 +68,7 @@ module.exports = function (models) {
         var invoiceSchema = tasks[7];
         var paymentSchema = tasks[8];
         var bonusTypeSchema = tasks[12];
-        var payOutSchema = tasks[13];
+        var payOutSchema = tasks[14];
 
         var ownerId = req.session ? req.session.uId : null;
 
