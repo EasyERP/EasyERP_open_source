@@ -969,7 +969,7 @@ module.exports = function (models) {
     function hrImporter(req, tasks) {
         var departmentShema = tasks[0];
         var jobPositionShema = tasks[1];
-        var employeeShema = tasks[2];
+        var employeeSchema = tasks[2];
         var salaryShema = tasks[6];
         var holidayShema = tasks[9];
         var vacationShema = tasks[10];
@@ -979,7 +979,7 @@ module.exports = function (models) {
 
         var jobPositionCollection = jobPositionShema.collection;
         var departmentCollection = departmentShema.collection;
-        var employeeCollection = employeeShema.collection;
+        var employeeCollection = employeeSchema.collection;
         var salaryCollection = salaryShema.collection;
         var holidayCollection = holidayShema.collection;
         var vacationCollection = vacationShema.collection;
@@ -1183,26 +1183,26 @@ module.exports = function (models) {
             importJobPosition(jobPositionShema, callback);
         }
 
-        function importEmployee(employeeShema, workflow, seriesCb) {
-            var query = queryBuilder(employeeShema.table);
+        function importEmployee(employeeSchema, workflow, seriesCb) {
+            var query = queryBuilder(employeeSchema.table);
             var waterfallTasks;
 
             workflow = workflow ? workflow._id : null;
 
-            function getData(resultHired, resultFired, callback) {
+            function getData(hiredResult, firedResult, callback) {
 
                 handler.importData(query, function (err, fetchedArray) {
                     if (err) {
                         return callback(err);
                     }
 
-                    callback(null, resultHired, resultFired, fetchedArray);
+                    callback(null, hiredResult, firedResult, fetchedArray);
                 });
             }
 
-            function saverEmployee(resultHired, resultFired, fetchedArray, callback) {
+            function saverEmployee(hiredResult, firedResult, fetchedArray, callback) {
                 var model;
-                var mongooseFields = Object.keys(employeeShema.aliases);
+                var mongooseFields = Object.keys(employeeSchema.aliases);
 
                 async.eachLimit(fetchedArray, 100, function (fetchedEmployee, cb) {
                     var objectToSave = {};
@@ -1213,16 +1213,16 @@ module.exports = function (models) {
 
                     for (var i = mongooseFields.length - 1; i >= 0; i--) {
                         key = mongooseFields[i];
-                        msSqlKey = employeeShema.aliases[key];
+                        msSqlKey = employeeSchema.aliases[key];
 
-                        if (employeeShema.defaultValues) {
-                            for (var defKey in employeeShema.defaultValues) {
-                                objectToSave[defKey] = employeeShema.defaultValues[defKey];
+                        if (employeeSchema.defaultValues) {
+                            for (var defKey in employeeSchema.defaultValues) {
+                                objectToSave[defKey] = employeeSchema.defaultValues[defKey];
                             }
                         }
 
-                        if (employeeShema.comparator && msSqlKey in employeeShema.comparator) {
-                            fetchedEmployee[msSqlKey] = comparator(fetchedEmployee[msSqlKey], employeeShema.comparator[msSqlKey]) || fetchedEmployee[msSqlKey];
+                        if (employeeSchema.comparator && msSqlKey in employeeSchema.comparator) {
+                            fetchedEmployee[msSqlKey] = comparator(fetchedEmployee[msSqlKey], employeeSchema.comparator[msSqlKey]) || fetchedEmployee[msSqlKey];
                         }
 
                         if (key === 'dateBirth') {
@@ -1246,11 +1246,11 @@ module.exports = function (models) {
 
                     if (fetchedEmployee) {
 
-                        if (resultHired[fetchedEmployee['ID']]){
-                            objectToSave.hire = resultHired[fetchedEmployee['ID']];
+                        if (hiredResult[fetchedEmployee['ID']]){
+                            objectToSave.hire = hiredResult[fetchedEmployee['ID']];
                         }
-                        if (resultFired[fetchedEmployee['ID']]){
-                            objectToSave.fire = resultFired[fetchedEmployee['ID']];
+                        if (firedResult[fetchedEmployee['ID']]){
+                            objectToSave.fire = firedResult[fetchedEmployee['ID']];
                         }
 
                         departmentQuery = {
@@ -1310,15 +1310,15 @@ module.exports = function (models) {
                     return hiredFired.Employee;
                 });
 
-                var resultHired = [];
-                var resultFired = [];
+                var hiredResult = [];
+                var firedResult = [];
                 var hire;
                 var fire;
                 var length;
 
                 for (var key in groupedResult){
-                    resultHired[key] = [];
-                    resultFired[key] = [];
+                    hiredResult[key] = [];
+                    firedResult[key] = [];
                     length = groupedResult[key].length;
 
                     for (var j = 0; j < length; j++) {
@@ -1328,16 +1328,15 @@ module.exports = function (models) {
                         }
 
                         if (fire){
-                            resultFired[key].push(fire);
+                            firedResult[key].push(fire);
                         }
                         if (hire) {
-                            resultHired[key].push(hire);
+                            hiredResult[key].push(hire);
                         }
-
                     }
                 }
 
-                callback(null, resultHired, resultFired);
+                callback(null, hiredResult, firedResult);
             };
 
             waterfallTasks = [hiredFiredImporter, groupByID, getData, saverEmployee];
@@ -1363,7 +1362,7 @@ module.exports = function (models) {
                         return callback(err);
                     }
 
-                    importEmployee(employeeShema, workflow, callback);
+                    importEmployee(employeeSchema, workflow, callback);
                 });
         }
 
