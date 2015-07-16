@@ -168,7 +168,26 @@
                   </dt>
 				</dl>
               </div>
-              <div class="clearfix"></div>
+                <div class="clearfix"></div>
+                <div class="formTitle">
+                    <h3 class="left">HireFire</h3>
+                    <div class="clearfix"></div>
+                    </div>
+                <div class="half-block left withPaddingLeft">
+                <% var i = model.hire.length-1;
+                _.each(model.hire, function(hire, key){ %>
+                <dt><label>Hired</label></dt><dd><input type="text"  name="hire" value="<%=model.hire[i]%>" /></dd>
+                <% }); %>
+
+                </div>
+                <div class="half-block right withPaddingLeft">
+                <% var i = model.fire.length-1;
+                _.each(model.fire, function(fire, key){ %>
+                <dt><label>Fired</label></dt><dd><input type="text"  name="fire" value="<%=model.fire[i]%>" /></dd>
+                <% }); %>
+                    </div>
+
+                <div class="clearfix"></div>
               <div class="formTitle">
 				<h3 class="left">Resume</h3>
 				<div class="clearfix"></div>
