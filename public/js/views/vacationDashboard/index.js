@@ -133,7 +133,7 @@ define([
             var hours = week.hours || 0;
             var holidays = week.holidays || 0;
             var vacations = week.vacations || 0;
-            //var hours = hours || + (holidays + vacations) * 8;
+            var hours = hours + (holidays + vacations) * 8;
 
             if (hours > 40) {
                 s += "dgreen ";
