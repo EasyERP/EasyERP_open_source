@@ -5111,7 +5111,7 @@ textarea#editInput {
       &.employee {
         min-width: 140px;
         width: 140px;
-        
+
         .icon {
           float: right;
           font-size: 14px;
@@ -5314,16 +5314,16 @@ textarea#editInput {
 
       }
 
-      span.projectItem{
+      span.projectItem {
         padding-left: 30px;
         text-align: center;
-        width:105px;
+        width: 105px;
         padding-right: 0px;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
       }
-      span.projectHours{
+      span.projectHours {
         display: block;
         position: absolute;
         width: 30px;
@@ -5891,6 +5891,31 @@ textarea#editInput {
   }
   td, th {
     padding: 5px;
+    position: relative;
+    cursor: pointer;
+
+    input, input:focus {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      text-align: center;
+      padding: 0;
+      border: none;
+      outline: none;
+      outline-offset: 0;
+      display: none;
+      cursor: pointer;
+    }
+
+    input:focus {
+      border: none !important;
+      outline: none !important;
+      box-shadow: none;
+      -moz-box-shadow: none;
+      -webkit-box-shadow: none;
+    }
   }
   thead {
     th {
@@ -5903,7 +5928,7 @@ textarea#editInput {
         width: 100px;
         margin-left: auto;
         margin-right: auto;
-        left: ~"calc(98% * 0.17 / 2 - 40px)";
+        left: ~"calc(50% - 50px)";
       }
       &.sortDn:after {
         content: "\00a0\25BE";
