@@ -253,7 +253,7 @@ var wTrack = function (models) {
                             fire: 1,
                             hire: 1,
                             name: 1,
-                            /*firedCount: {$size: '$fire'}*/
+                            /*firedCount: {$size: '$fire'},*/
                             lastFire: 1
                         }
                     },
@@ -264,7 +264,12 @@ var wTrack = function (models) {
                                 {
                                     isEmployee: true
                                 }, {
-                                    $and: [{isEmployee: false}, {lastFire: {$ne: null, $gte: startDate}}]
+                                    $and: [{isEmployee: false}, {
+                                        lastFire: {
+                                            $ne: null,
+                                            $gte: startDate
+                                        }
+                                    } /*{firedCount: {$gt: 0}}*/]
                                 }
                             ],
                             department: {$nin: [objectId(CONSTANTS.HR_DEPARTMENT_ID), objectId(CONSTANTS.BUSINESS_DEPARTMENT_ID), objectId(CONSTANTS.MARKETING_DEPARTMENT_ID)]}
@@ -299,50 +304,72 @@ var wTrack = function (models) {
 
         function dashComposer(parallelCb) {
             function employeeFinder(waterfallCb) {
-                /*var query = {isEmployee: true};
-                var projection = {_id: 1};
-
-                Employee
-                 .find(query, projection)
-                 .lean()
-                 .exec(function (err, employees) {
-                 if (err) {
-                 return waterfallCb(err);
-                 }
-
-                 employees = _.pluck(employees, '_id');
-                 waterfallCb(null, employees);
-                 });*/
-                Employee
-                    .aggregate([
-                        {
-                            $project: {
-                                isEmployee: 1,
-                                department: 1,
-                                fire: 1,
-                                firedCount: {$size: '$fire'}
+                function findEmployee(_employeesIds, inerWaterfallCb) {
+                    Employee
+                        .aggregate([
+                            {
+                                $project: {
+                                    isEmployee: 1,
+                                    department: 1,
+                                    fire: 1,
+                                    firedCount: {$size: '$fire'}
+                                }
+                            },
+                            {
+                                $match: {
+                                    /*isEmployee: true,*/
+                                    $or: [
+                                        {
+                                            isEmployee: true
+                                        }, {
+                                            $and: [{isEmployee: false}, {firedCount: {$gt: 0}}, {_id: {$in: _employeesIds}}]
+                                        }
+                                    ],
+                                    department: {$nin: [objectId(CONSTANTS.HR_DEPARTMENT_ID), objectId(CONSTANTS.BUSINESS_DEPARTMENT_ID), objectId(CONSTANTS.MARKETING_DEPARTMENT_ID)]}
+                                }
+                            }], function (err, employees) {
+                            if (err) {
+                                return inerWaterfallCb(err);
+                                //return waterfallCb(err);
                             }
-                        },
-                        {
-                            $match: {
-                                /*isEmployee: true,*/
-                                $or: [
-                                    {
-                                        isEmployee: true
-                                    }, {
-                                        $and: [{isEmployee: false}, {firedCount: {$gt: 0}}]
-                                    }
-                                ],
-                                department: {$nin: [objectId(CONSTANTS.HR_DEPARTMENT_ID), objectId(CONSTANTS.BUSINESS_DEPARTMENT_ID), objectId(CONSTANTS.MARKETING_DEPARTMENT_ID)]}
-                            }
-                        }], function (err, employees) {
-                        if (err) {
-                            return waterfallCb(err);
+
+                            employees = _.pluck(employees, '_id');
+                            //waterfallCb(null, employees);
+                            inerWaterfallCb(null, employees);
+                        });
+                };
+
+                function groupWtrackByEmployee(inerWaterfallCb) {
+                    WTrack.aggregate([{
+                        $group: {
+                            _id: '$employee._id',
+                            hours: {$sum: '$worked'}
+                        }
+                    }, {
+                        $match: {
+                            hours: {$gt: 0}
+                        }
+                    }, {
+                        $project: {
+                            _id: 1
+                        }
+                    }], function(err, employees){
+                        if(err){
+                            return inerWaterfallCb(err);
                         }
 
                         employees = _.pluck(employees, '_id');
-                        waterfallCb(null, employees);
+                        inerWaterfallCb(null, employees);
                     });
+                }
+
+                async.waterfall([groupWtrackByEmployee, findEmployee], function (err, result) {
+                    if (err) {
+                        return waterfallCb(err);
+                    }
+
+                    waterfallCb(null, result);
+                });
             };
 
             function wTrackComposer(employeesArray, waterfallCb) {

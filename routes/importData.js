@@ -22,7 +22,7 @@ module.exports = function (models) {
             server: 'wbje9y2n5u.database.windows.net',
             //database: 'ex_dev',
             database: 'production',
-
+            requestTimeout: 150000,
             options: {
                 encrypt: true
             }
@@ -1368,6 +1368,13 @@ module.exports = function (models) {
                         }
 
                         objectToSave[key] = fetchedEmployee[msSqlKey];
+
+                        if (key === 'personalEmail') {
+                            if (fetchedEmployee[msSqlKey] === 'null') {
+                                delete objectToSave[key];
+                            }
+                        }
+
                         objectToSave.createdBy = {
                             user: ownerId
                         };
@@ -1453,12 +1460,11 @@ module.exports = function (models) {
                 var firedImported;
                 var hiredParsedArr;
                 var firedParsedArr;
-                var lastFire;
+                var lastFire = {};
                 var _fire;
                 var dateString;
 
                 for (var key in groupedResult) {
-                    lastFire = {};
 
                     hiredResult[key] = [];
                     firedResult[key] = [];
