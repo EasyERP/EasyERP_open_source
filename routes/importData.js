@@ -152,7 +152,7 @@ module.exports = function (models) {
 
                         objectToSave.differenceAmount = fetchedPayOut['Amount'] - fetchedPayOut['Paid'];
 
-                        if (fetchedPayOut['Status'] === 1){
+                        if (fetchedPayOut['Status'] === 1) {
                             objectToSave.workflow = 'Paid';
                         } else {
                             objectToSave.workflow = 'Draft';
@@ -188,7 +188,7 @@ module.exports = function (models) {
                             bonusTypeResult: bonusTypeFinder,
                             employeeResult: employeeFinder
                         }, function (err, result) {
-                            if (result.bonusTypeResult && result.bonusTypeResult.name){
+                            if (result.bonusTypeResult && result.bonusTypeResult.name) {
                                 objectToSave.paymentRef = result.bonusTypeResult.name;
                             }
                             if (result.employeeResult && result.employeeResult._id) {
@@ -1321,18 +1321,18 @@ module.exports = function (models) {
 
             workflow = workflow ? workflow._id : null;
 
-            function getData(hiredResult, firedResult, callback) {
+            function getData(hiredResult, firedResult, lastFire, callback) {
 
                 handler.importData(query, function (err, fetchedArray) {
                     if (err) {
                         return callback(err);
                     }
 
-                    callback(null, hiredResult, firedResult, fetchedArray);
+                    callback(null, hiredResult, firedResult, lastFire, fetchedArray);
                 });
             }
 
-            function saverEmployee(hiredResult, firedResult, fetchedArray, callback) {
+            function saverEmployee(hiredResult, firedResult, lastFire, fetchedArray, callback) {
                 var model;
                 var mongooseFields = Object.keys(employeeSchema.aliases);
 
@@ -1373,15 +1373,16 @@ module.exports = function (models) {
                         };
                         objectToSave.editedBy = {
                             user: ownerId
-                        }
+                        };
+                        objectToSave.lastFire = lastFire[fetchedEmployee['ID']];
                     }
 
                     if (fetchedEmployee) {
 
-                        if (hiredResult[fetchedEmployee['ID']]){
+                        if (hiredResult[fetchedEmployee['ID']]) {
                             objectToSave.hire = hiredResult[fetchedEmployee['ID']];
                         }
-                        if (firedResult[fetchedEmployee['ID']]){
+                        if (firedResult[fetchedEmployee['ID']]) {
                             objectToSave.fire = firedResult[fetchedEmployee['ID']];
                         }
 
@@ -1452,8 +1453,13 @@ module.exports = function (models) {
                 var firedImported;
                 var hiredParsedArr;
                 var firedParsedArr;
+                var lastFire;
+                var _fire;
+                var dateString;
 
-                for (var key in groupedResult){
+                for (var key in groupedResult) {
+                    lastFire = {};
+
                     hiredResult[key] = [];
                     firedResult[key] = [];
                     length = groupedResult[key].length;
@@ -1463,21 +1469,30 @@ module.exports = function (models) {
                             hiredImported = groupedResult[key][j].Date_Hire;
                             firedImported = groupedResult[key][j].Date_Fire;
 
-                            if(hiredImported){
+                            if (hiredImported) {
                                 hiredParsedArr = hiredImported.split('/');
                                 hire = new Date(hiredParsedArr[2] + '-' + hiredParsedArr[1] + '-' + hiredParsedArr[0]);
                                 hiredResult[key].push(hire);
                             }
-                            if(firedImported){
-                                hiredParsedArr = firedImported.split('/');
-                                fire = new Date(hiredParsedArr[2] + '-' + hiredParsedArr[1] + '-' + hiredParsedArr[0]);
+                            if (firedImported) {
+                                firedParsedArr = firedImported.split('/');
+                                dateString = firedParsedArr[2] + '-' + firedParsedArr[1] + '-' + firedParsedArr[0];
+                                fire = new Date(dateString);
+                                _fire = moment(dateString).year() * 100 + moment(dateString).isoWeek();
+
+                                if (!lastFire[key]) {
+                                    lastFire[key] = _fire;
+                                } else if (lastFire[key] < _fire) {
+                                    lastFire[key] = _fire;
+                                }
+
                                 firedResult[key].push(fire);
                             }
                         }
                     }
                 }
 
-                callback(null, hiredResult, firedResult);
+                callback(null, hiredResult, firedResult, lastFire);
             };
 
             waterfallTasks = [hiredFiredImporter, groupByID, getData, saverEmployee];
@@ -1769,10 +1784,15 @@ module.exports = function (models) {
                                                         result.vacations[weekKey] ? result.vacations[weekKey] += 1 : result.vacations[weekKey] = 1;
                                                     }
 
-                                                    result.vacArray[i-1] = fetchedVacation.AbsenceType;
+                                                    result.vacArray[i - 1] = fetchedVacation.AbsenceType;
                                                 }
 
-                                                Vacation.update({_id: result._id}, {$set: {vacArray: result.vacArray, vacations: result.vacations}}, cb);
+                                                Vacation.update({_id: result._id}, {
+                                                    $set: {
+                                                        vacArray: result.vacArray,
+                                                        vacations: result.vacations
+                                                    }
+                                                }, cb);
                                             } else {
                                                 objectToSave.vacations = {};
                                                 objectToSave.vacArray = new Array(daysCount);
@@ -1788,7 +1808,7 @@ module.exports = function (models) {
                                                         objectToSave.vacations[weekKey] ? objectToSave.vacations[weekKey] += 1 : objectToSave.vacations[weekKey] = 1;
                                                     }
 
-                                                    objectToSave.vacArray[i-1] = fetchedVacation.AbsenceType;
+                                                    objectToSave.vacArray[i - 1] = fetchedVacation.AbsenceType;
                                                 }
 
                                                 model = new Vacation(objectToSave);

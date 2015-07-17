@@ -65,8 +65,6 @@ var wTrack = function (models) {
             var holidays;
             var vacations;
 
-            var count = 0;
-
             if (err) {
                 return next(err);
             }
@@ -149,7 +147,7 @@ var wTrack = function (models) {
                     _employee.maxProjects = dashResultByEmployee ? dashResultByEmployee.maxProjects : 0;
 
                     employeeCb();
-                }, function(){
+                }, function () {
                     departmentCb();
                 });
             };
@@ -165,12 +163,12 @@ var wTrack = function (models) {
 
             async.each(employeesByDep, departmentMapper, sendResponse);
 
-            function deepCloner(targetArrayOfObjects){
+            function deepCloner(targetArrayOfObjects) {
                 var result = [];
                 var resObject;
                 var length = targetArrayOfObjects.length;
 
-                for (var i = 0; i < length; i++){
+                for (var i = 0; i < length; i++) {
                     resObject = _.clone(targetArrayOfObjects[i]);
                     result.push(resObject);
                 }
@@ -246,31 +244,51 @@ var wTrack = function (models) {
             var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
 
             Employee
-                .aggregate([{
-                    $match: {
-                        isEmployee: true,
-                        department: {$nin: [objectId(CONSTANTS.HR_DEPARTMENT_ID), objectId(CONSTANTS.BUSINESS_DEPARTMENT_ID), objectId(CONSTANTS.MARKETING_DEPARTMENT_ID)]}
-                    }
-                }, {
-                    $group: {
-                        _id: "$department",
-                        employees: {
-                            $push: {
-                                isLead: '$isLead',
-                                fired: '$fire',
-                                hired: '$hire',
-                                name: {$concat: ['$name.first', ' ', '$name.last']},
-                                _id: '$_id'
+                .aggregate([
+                    {
+                        $project: {
+                            isEmployee: 1,
+                            department: 1,
+                            isLead: 1,
+                            fire: 1,
+                            hire: 1,
+                            name: 1,
+                            /*firedCount: {$size: '$fire'}*/
+                            lastFire: 1
+                        }
+                    },
+                    {
+                        $match: {
+                            /*isEmployee: true,*/
+                            $or: [
+                                {
+                                    isEmployee: true
+                                }, {
+                                    $and: [{isEmployee: false}, {lastFire: {$ne: null, $gte: startDate}}]
+                                }
+                            ],
+                            department: {$nin: [objectId(CONSTANTS.HR_DEPARTMENT_ID), objectId(CONSTANTS.BUSINESS_DEPARTMENT_ID), objectId(CONSTANTS.MARKETING_DEPARTMENT_ID)]}
+                        }
+                    }, {
+                        $group: {
+                            _id: "$department",
+                            employees: {
+                                $push: {
+                                    isLead: '$isLead',
+                                    fired: '$fire',
+                                    hired: '$hire',
+                                    name: {$concat: ['$name.first', ' ', '$name.last']},
+                                    _id: '$_id'
+                                }
                             }
                         }
-                    }
-                }, {
-                    $project: {
-                        department: '$_id',
-                        employees: 1,
-                        _id: 0
-                    }
-                }], function (err, employees) {
+                    }, {
+                        $project: {
+                            department: '$_id',
+                            employees: 1,
+                            _id: 0
+                        }
+                    }], function (err, employees) {
                     if (err) {
                         return parallelCb(err);
                     }
@@ -281,13 +299,43 @@ var wTrack = function (models) {
 
         function dashComposer(parallelCb) {
             function employeeFinder(waterfallCb) {
-                var query = {isEmployee: true};
+                /*var query = {isEmployee: true};
                 var projection = {_id: 1};
 
                 Employee
-                    .find(query, projection)
-                    .lean()
-                    .exec(function (err, employees) {
+                 .find(query, projection)
+                 .lean()
+                 .exec(function (err, employees) {
+                 if (err) {
+                 return waterfallCb(err);
+                 }
+
+                 employees = _.pluck(employees, '_id');
+                 waterfallCb(null, employees);
+                 });*/
+                Employee
+                    .aggregate([
+                        {
+                            $project: {
+                                isEmployee: 1,
+                                department: 1,
+                                fire: 1,
+                                firedCount: {$size: '$fire'}
+                            }
+                        },
+                        {
+                            $match: {
+                                /*isEmployee: true,*/
+                                $or: [
+                                    {
+                                        isEmployee: true
+                                    }, {
+                                        $and: [{isEmployee: false}, {firedCount: {$gt: 0}}]
+                                    }
+                                ],
+                                department: {$nin: [objectId(CONSTANTS.HR_DEPARTMENT_ID), objectId(CONSTANTS.BUSINESS_DEPARTMENT_ID), objectId(CONSTANTS.MARKETING_DEPARTMENT_ID)]}
+                            }
+                        }], function (err, employees) {
                         if (err) {
                             return waterfallCb(err);
                         }

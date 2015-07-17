@@ -91,7 +91,8 @@ module.exports = (function () {
             GP: { type: String, default: '' }
         },
         hire: {type: Array, default: []},
-        fire: {type: Array, default: []}
+        fire: {type: Array, default: []},
+        lastFire: {type: Number, default: null}
     }, { collection: 'Employees' });
 
     employeeSchema.virtual('fullName').get(function(){
