@@ -179,9 +179,9 @@ define([
             } else if (hours > 19) {
                 s += "yellow ";
             } else if (hours > 8) {
-                s += week.hours ? "pink " : "white";
-            } else {
-                s += "white ";
+                s += week.hours ? "pink " : ((self.dateByWeek >= week.dateByWeek) ? "red" : "");
+            } else if (self.dateByWeek >= week.dateByWeek){
+                s += "red ";
             }
             if (self.dateByWeek === week.dateByWeek) {
                 s += "active ";
