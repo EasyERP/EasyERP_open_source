@@ -4,17 +4,18 @@
 define([
         'text!templates/supplierPayments/list/ListHeader.html',
         'text!templates/customerPayments/forWTrack/ListHeader.html',
+        'text!templates/customerPayments/forWTrack/CancelEdit.html',
         'views/customerPayments/list/ListItemView',
         'views/customerPayments/list/ListTotalView',
-        'views/customerPayments/EditView',
-        'views/customerPayments/CreateView',
+       // 'views/customerPayments/CreateView',
         'collections/customerPayments/filterCollection',
         'collections/customerPayments/editCollection',
         'models/PaymentModel',
         'dataService',
-        'populate'
+        'populate',
+        'async'
     ],
-    function (listTemplate, ListHeaderForWTrack, listItemView, listTotalView, EditView, CreateView, paymentCollection, editCollection, currentModel, dataService, populate) {
+    function (listTemplate, ListHeaderForWTrack, cancelEdit, listItemView, listTotalView, /*CreateView*/ paymentCollection, editCollection, currentModel, dataService, populate, async) {
         var PaymentListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -28,6 +29,7 @@ define([
             modelId: null,
             $listTable: null,
             editCollection: null,
+            collectionLengthUrl: '/payment/customers/totalCollectionLength',
             changedModels: {},
 
             events: {
@@ -37,19 +39,14 @@ define([
                 "click #previousPage": "previousPage",
                 "click #nextPage": "nextPage",
                 "click .checkbox": "checked",
-                "click .stageSelect": "showNewSelect",
-                "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                "click #itemsButton": "itemsNumber",
+                "click td.editable": "editRow",
+                 "click #itemsButton": "itemsNumber",
                 "click .currentPageList": "itemsNumber",
                 "click": "hideItemsNumber",
                 "click #firstShowPage": "firstPage",
                 "click #lastShowPage": "lastPage",
                 "click .oe_sortable": "goSort",
-                'click .data div': 'showDatepicker',
-                'click .editable': 'showDatepicker',
-                'keydown input.editing': 'keyDown',
-                'onSelect .data div': 'onSelect',
+                "change .editable ": "setEditable"
             },
 
             initialize: function (options) {
@@ -66,17 +63,30 @@ define([
                 this.contentCollection = paymentCollection;
             },
 
-            showDatepicker: function (e) {
-                var target = $(e.target);
-                var parent = $(e.target).parent('td');
-                var datePicker = parent.find('input');
+            setEditable: function (td) {
+                var tr;
 
-                target.hide();
-                datePicker.show();
+                if (!td.parents) {
+                    td = $(td.target).closest('td');
+                }
 
-                this.showSaveCancelBtns();
+                tr = td.parents('tr');
+
+                td.addClass('edited');
+
+                if (this.isEditRows()) {
+                    this.setChangedValue();
+                }
+
+                return false;
             },
 
+            setChangedValue: function () {
+                if (!this.changed) {
+                    this.changed = true;
+                    this.showSaveCancelBtns()
+                }
+            },
 
             isEditRows: function () {
                 var edited = this.$listTable.find('.edited');
@@ -86,6 +96,43 @@ define([
                 return !!edited.length;
             },
 
+            editRow: function (e, prev, next) {
+                var self = this;
+
+                var el = $(e.target);
+                var tr = $(e.target).closest('tr');
+                var modelId = tr.data('id');
+                var colType = el.data('type');
+                var isDTPicker = colType !== 'input' && el.prop("tagName") !== 'INPUT';
+                var tempContainer;
+                var width;
+
+                if (modelId && el.prop('tagName') !== 'INPUT') {
+                    if (this.modelId) {
+                        this.setChangedValueToModel();
+                    }
+                    this.modelId = modelId;
+                }
+
+
+                if (isDTPicker) {
+                    tempContainer = (el.text()).trim();
+                    el.html('<input class="editing" type="text" value="' + tempContainer + '"  maxLength="255">');
+                    $('.editing').datepicker({
+                        dateFormat: "d M, yy",
+                        changeMonth: true,
+                        changeYear: true,
+                        onChanged: self.setChangedValue()
+                    }).addClass('datepicker');
+                } else {
+                    tempContainer = el.text();
+                    width = el.width() - 6;
+                    el.html('<input class="editing" type="text" value="' + tempContainer + '"  maxLength="255" style="width:' + width + 'px">');
+                }
+
+                return false;
+            },
+
             keyDown: function (e) {
                 if (e.which === 13) {
                     this.setChangedValueToModel();
@@ -93,12 +140,12 @@ define([
             },
 
             setChangedValueToModel: function () {
-                var editedElement = this.$listTable.find('.editable');
+                var editedElement = this.$listTable.find('.editing');
                 var editedCol;
                 var editedElementRowId;
                 var editedElementContent;
                 var editedElementValue;
-                var editModel;
+                var editHolidayModel;
 
                 if (editedElement.length) {
                     editedCol = editedElement.closest('td');
@@ -106,50 +153,46 @@ define([
                     editedElementContent = editedCol.data('content');
                     editedElementValue = editedElement.val();
 
-                    editModel = this.editCollection.get(editedElementRowId);
+                    editHolidayModel = this.editCollection.get(editedElementRowId);
 
                     if (!this.changedModels[editedElementRowId]) {
-                        this.changedModels[editedElementRowId] = {};
+                        if (!editHolidayModel.id) {
+                            this.changedModels[editedElementRowId] = editHolidayModel.attributes;
+                        } else {
+                            this.changedModels[editedElementRowId] = {};
+                        }
                     }
+
                     this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
+
                     editedCol.text(editedElementValue);
-                    //editedElement.remove();
+                    editedElement.remove();
                 }
-            },
-
-
-            setDatepicker: function (id) {
-                var self = this;
-                var date  = '#' + id + 'date';
-
-                $(date).datepicker({
-                    dateFormat: "d M, yy",
-                    changeMonth: true,
-                    changeYear: true,
-                    onSelect: function () {
-                        var startDate = $(self.$el).find(date).datepicker('getDate');
-                        var parrent = $(date).parent('td');
-                        var value = $(self.$el).find(date).val();
-
-                        parrent.find('div').html(value).show();
-                        $(date).hide();
-                }
-                });
             },
 
             saveItem: function () {
                 var model;
+                var modelJSON;
 
                 this.setChangedValueToModel();
+
                 for (var id in this.changedModels) {
                     model = this.editCollection.get(id);
+                    modelJSON = model.toJSON();
                     model.changed = this.changedModels[id];
                 }
                 this.editCollection.save();
             },
 
             updatedOptions: function () {
+                var savedRow = this.$listTable.find('#false');
+                var editedEl = savedRow.find('.editing');
+                var editedCol = editedEl.closest('td');
                 this.hideSaveCancelBtns();
+
+                editedCol.text(editedEl.val());
+                editedEl.remove();
+
                 this.resetCollection();
             },
 
@@ -185,15 +228,21 @@ define([
                 var savedRow = this.$listTable.find('#false');
                 var modelId;
                 var checkbox = savedRow.find('input[type=checkbox]');
+                var editedEl = savedRow.find('.editing');
+                var editedCol = editedEl.closest('td');
 
                 modelObject = modelObject.success;
+
                 if (modelObject) {
                     modelId = modelObject._id;
                     savedRow.attr("data-id", modelId);
                     checkbox.val(modelId);
                     savedRow.removeAttr('id');
                 }
+
                 this.hideSaveCancelBtns();
+                editedCol.text(editedEl.val());
+                editedEl.remove();
                 this.resetCollection(modelObject);
             },
 
@@ -206,22 +255,26 @@ define([
                 }
             },
 
-            createItem: function () {
-                var startData = {};
+            //createItem: function () {
+            //    var startData = {};
+            //
+            //    var model = new currentModel(startData);
+            //
+            //    startData.cid = model.cid;
+            //
+            //    if (!this.isNewRow()) {
+            //        this.showSaveCancelBtns();
+            //        this.editCollection.add(model);
+            //
+            //        new CreateView(startData);
+            //    }
+            //},
 
-                var model = new currentModel(startData);
+            isNewRow: function () {
+                var newRow = $('#false');
 
-                startData.cid = model.cid;
-
-                if (!this.isNewRow()) {
-                    this.showSaveCancelBtns();
-                    this.editCollection.add(model);
-
-                    new createView(startData);
-                }
+                return !!newRow.length;
             },
-
-
 
             template: _.template(listTemplate),
 
@@ -300,7 +353,7 @@ define([
 
                 });
 
-                dataService.getData('/payment/customers/totalCollectionLength', {
+                dataService.getData(this.collectionLengthUrl, {
                     contentType: this.contentType,
                     filter: this.filter,
                     newCollection: this.newCollection,
@@ -319,7 +372,7 @@ define([
                     filter: this.filter,
                     newCollection: this.newCollection
                 });
-                dataService.getData('/payment/customers/totalCollectionLength', {
+                dataService.getData(this.collectionLengthUrl, {
                     contentType: this.contentType,
                     filter: this.filter,
                     newCollection: this.newCollection
@@ -337,7 +390,7 @@ define([
                     filter: this.filter,
                     newCollection: this.newCollection
                 });
-                dataService.getData('/payment/customers/totalCollectionLength', {
+                dataService.getData(this.collectionLengthUrl, {
                     contentType: this.contentType,
                     filter: this.filter,
                     newCollection: this.newCollection
@@ -425,7 +478,7 @@ define([
             },
 
             getTotalLength: function (currentNumber, itemsNumber,filter) {
-                dataService.getData('/payment/customers/totalCollectionLength', {
+                dataService.getData(this.collectionLengthUrl, {
                     contentType: this.contentType,
                     currentNumber: currentNumber,
                     filter: filter,
@@ -545,7 +598,6 @@ define([
                 } else {
                     pagenation.show();
                 }
-                currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
                 setTimeout(function () {
                     self.editCollection = new editCollection(self.collection.toJSON());
@@ -557,11 +609,151 @@ define([
 
                 this.$listTable = $('#listTable');
 
-                this.collection.forEach(function(payment){
-                    self.setDatepicker(payment.id);
-                });
+                currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+
                 return this;
+            },
+
+            deleteItemsRender: function (deleteCounter, deletePage) {
+                var pagenation;
+                var holder;
+
+                dataService.getData(this.collectionLengthUrl, {
+                    filter: this.filter,
+                    newCollection: this.newCollection
+                }, function (response, context) {
+                    context.listLength = response.count || 0;
+                }, this);
+                this.deleteRender(deleteCounter, deletePage, {
+                    filter: this.filter,
+                    newCollection: this.newCollection,
+                    parrentContentId: this.parrentContentId
+                });
+
+                holder = this.$el;
+
+                if (deleteCounter !== this.collectionLength) {
+                    var created = holder.find('#timeRecivingDataFromServer');
+                    created.before(new listItemView({
+                        collection: this.collection,
+                        page: holder.find("#currentShowPage").val(),
+                        itemsNumber: holder.find("span#itemsNumber").text()
+                    }).render());//added two parameters page and items number
+                }
+
+                pagenation = this.$el.find('.pagination');
+
+                if (this.collection.length === 0) {
+                    pagenation.hide();
+                } else {
+                    pagenation.show();
+                }
+
+                this.editCollection.reset(this.collection.models);
+            },
+
+            triggerDeleteItemsRender: function (deleteCounter) {
+                this.deleteCounter = deleteCounter;
+                this.deletePage = $("#currentShowPage").val();
+                this.deleteItemsRender(deleteCounter, this.deletePage);
+            },
+
+            deleteItems: function () {
+                var currentEl = this.$el;
+                var that = this,
+                    mid = 60,
+                    model;
+                var localCounter = 0;
+                var count = $("#listTable input:checked").length;
+                this.collectionLength = this.collection.length;
+
+                if (!this.changed) {
+                    var answer = confirm("Realy DELETE items ?!");
+                    var value;
+
+                    if (answer === true) {
+                        $.each($("#listTable input:checked"), function (index, checkbox) {
+                            value = checkbox.value;
+
+                            if (value.length < 24) {
+                                that.editCollection.remove(value);
+                                that.editCollection.on('remove', function () {
+                                    this.listLength--;
+                                    localCounter++;
+
+                                    if (index === count - 1) {
+                                        that.triggerDeleteItemsRender(localCounter);
+                                    }
+
+                                }, that);
+                            } else {
+
+                                model = that.collection.get(value);
+                                model.destroy({
+                                    headers: {
+                                        mid: mid
+                                    },
+                                    wait: true,
+                                    success: function () {
+                                        that.listLength--;
+                                        localCounter++;
+
+                                        if (index === count - 1) {
+                                            that.triggerDeleteItemsRender(localCounter);
+                                        }
+                                    },
+                                    error: function (model, res) {
+                                        if (res.status === 403 && index === 0) {
+                                            alert("You do not have permission to perform this action");
+                                        }
+                                        that.listLength--;
+                                        localCounter++;
+                                        if (index == count - 1) {
+                                            if (index === count - 1) {
+                                                that.triggerDeleteItemsRender(localCounter);
+                                            }
+                                        }
+
+                                    }
+                                });
+                            }
+                        });
+                    }
+                } else {
+                    this.cancelChanges();
+                }
+            },
+
+            cancelChanges: function () {
+                var self = this;
+                var edited = this.edited;
+                var collection = this.collection;
+                var editedCollectin = this.editCollection;
+
+                async.each(edited, function (el, cb) {
+                    var tr = $(el).closest('tr');
+                    var rowNumber = tr.find('[data-content="number"]').text();
+                    var id = tr.data('id');
+                    var template = _.template(cancelEdit);
+                    var model;
+
+                    if (!id) {
+                        return cb('Empty id');
+                    }
+
+                    model = collection.get(id);
+                    model = model.toJSON();
+                    model.index = rowNumber;
+                    tr.replaceWith(template({ payment: model }));
+                    cb();
+                }, function (err) {
+                    if (!err) {
+                        self.editCollection = new editCollection(collection.toJSON());
+                        self.hideSaveCancelBtns();
+                    }
+                });
             }
+
         });
 
         return PaymentListView;
