@@ -730,8 +730,12 @@ input::-ms-clear {
       line-height: 18px;
       .bold;
       font-size: @font-size;
-      text-align: left;
+      text-align: right;
       text-shadow: 0 1px 1px rgba(222, 222, 222, 0.5);
+
+      &:nth-child(1),&:nth-child(2) {
+        text-align: center;
+      }
 
       input[type="checkbox"] {
         margin-top: 2.5px;
@@ -803,13 +807,13 @@ input::-ms-clear {
         padding: 4px 5px;
         line-height: 17px;
         font-size: @font-size - 2;
-        text-align: left;
+        text-align: right;
         &.red-border {
           color: red;
         }
 
-        &:nth-child(2) {
-          text-align: left;
+        &:nth-child(1),&:nth-child(2) {
+          text-align: center;
         }
 
         &.withSelect {
@@ -2589,6 +2593,7 @@ input::-ms-clear {
     &.active {
       border: @thin-border #ddd;
       border-right: none;
+      display: list-item;
 
       &.first {
         border-top-color: rgba(0, 0, 0, 0);
@@ -4063,8 +4068,16 @@ table#workflows {
 }
 
 .startDate, .endDate {
+  position: relative;
+  width: 150px;
+
   input {
     display: none;
+    position: absolute;
+    top: 5px;
+    left: 0;
+    margin: 0;
+    max-width: 100%;
   }
 }
 
@@ -6099,7 +6112,7 @@ textarea#editInput {
       border: 1px solid #d2d2d2;
       text-align: center;
       &.employee, &.department {
-        text-align: left;
+        text-align: right;
       }
       &.totalDays {
         font-weight: bold;
