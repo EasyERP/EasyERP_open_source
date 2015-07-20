@@ -6,10 +6,15 @@ define([
         'text!templates/customerPayments/forWTrack/ListHeader.html',
         'views/customerPayments/list/ListItemView',
         'views/customerPayments/list/ListTotalView',
+        'views/customerPayments/EditView',
+        'views/customerPayments/CreateView',
         'collections/customerPayments/filterCollection',
-        'dataService'
+        'collections/customerPayments/editCollection',
+        'models/PaymentModel',
+        'dataService',
+        'populate'
     ],
-    function (listTemplate, ListHeaderForWTrack, listItemView, listTotalView, paymentCollection, dataService) {
+    function (listTemplate, ListHeaderForWTrack, listItemView, listTotalView, EditView, CreateView, paymentCollection, editCollection, currentModel, dataService, populate) {
         var PaymentListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -20,6 +25,10 @@ define([
             page: null, //if reload page, and in url is valid page
             contentType: 'customerPayments',//needs in view.prototype.changeLocationHash
             viewType: 'list',//needs in view.prototype.changeLocationHash
+            modelId: null,
+            $listTable: null,
+            editCollection: null,
+            changedModels: {},
 
             events: {
                 "click .itemsNumber": "switchPageCounter",
@@ -28,12 +37,19 @@ define([
                 "click #previousPage": "previousPage",
                 "click #nextPage": "nextPage",
                 "click .checkbox": "checked",
+                "click .stageSelect": "showNewSelect",
+                "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
+                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
                 "click #itemsButton": "itemsNumber",
                 "click .currentPageList": "itemsNumber",
                 "click": "hideItemsNumber",
                 "click #firstShowPage": "firstPage",
                 "click #lastShowPage": "lastPage",
-                "click .oe_sortable": "goSort"
+                "click .oe_sortable": "goSort",
+                'click .data div': 'showDatepicker',
+                'click .editable': 'showDatepicker',
+                'keydown input.editing': 'keyDown',
+                'onSelect .data div': 'onSelect',
             },
 
             initialize: function (options) {
@@ -50,7 +66,184 @@ define([
                 this.contentCollection = paymentCollection;
             },
 
+            showDatepicker: function (e) {
+                var target = $(e.target);
+                var parent = $(e.target).parent('td');
+                var datePicker = parent.find('input');
+
+                target.hide();
+                datePicker.show();
+
+                this.showSaveCancelBtns();
+            },
+
+
+            isEditRows: function () {
+                var edited = this.$listTable.find('.edited');
+
+                this.edited = edited;
+
+                return !!edited.length;
+            },
+
+            keyDown: function (e) {
+                if (e.which === 13) {
+                    this.setChangedValueToModel();
+                }
+            },
+
+            setChangedValueToModel: function () {
+                var editedElement = this.$listTable.find('.editable');
+                var editedCol;
+                var editedElementRowId;
+                var editedElementContent;
+                var editedElementValue;
+                var editModel;
+
+                if (editedElement.length) {
+                    editedCol = editedElement.closest('td');
+                    editedElementRowId = editedElement.closest('tr').data('id');
+                    editedElementContent = editedCol.data('content');
+                    editedElementValue = editedElement.val();
+
+                    editModel = this.editCollection.get(editedElementRowId);
+
+                    if (!this.changedModels[editedElementRowId]) {
+                        this.changedModels[editedElementRowId] = {};
+                    }
+                    this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
+                    editedCol.text(editedElementValue);
+                    //editedElement.remove();
+                }
+            },
+
+
+            setDatepicker: function (id) {
+                var self = this;
+                var date  = '#' + id + 'date';
+
+                $(date).datepicker({
+                    dateFormat: "d M, yy",
+                    changeMonth: true,
+                    changeYear: true,
+                    onSelect: function () {
+                        var startDate = $(self.$el).find(date).datepicker('getDate');
+                        var parrent = $(date).parent('td');
+                        var value = $(self.$el).find(date).val();
+
+                        parrent.find('div').html(value).show();
+                        $(date).hide();
+                }
+                });
+            },
+
+            saveItem: function () {
+                var model;
+
+                this.setChangedValueToModel();
+                for (var id in this.changedModels) {
+                    model = this.editCollection.get(id);
+                    model.changed = this.changedModels[id];
+                }
+                this.editCollection.save();
+            },
+
+            updatedOptions: function () {
+                this.hideSaveCancelBtns();
+                this.resetCollection();
+            },
+
+            showSaveCancelBtns: function () {
+                var createBtnEl = $('#top-bar-createBtn');
+                var saveBtnEl = $('#top-bar-saveBtn');
+                var cancelBtnEl = $('#top-bar-deleteBtn');
+
+                if (!this.changed) {
+                    createBtnEl.hide();
+                }
+                saveBtnEl.show();
+                cancelBtnEl.show();
+
+                return false;
+            },
+
+            hideSaveCancelBtns: function () {
+                var createBtnEl = $('#top-bar-createBtn');
+                var saveBtnEl = $('#top-bar-saveBtn');
+                var cancelBtnEl = $('#top-bar-deleteBtn');
+
+                this.changed = false;
+
+                saveBtnEl.hide();
+                cancelBtnEl.hide();
+                createBtnEl.show();
+
+                return false;
+            },
+
+            savedNewModel: function (modelObject) {
+                var savedRow = this.$listTable.find('#false');
+                var modelId;
+                var checkbox = savedRow.find('input[type=checkbox]');
+
+                modelObject = modelObject.success;
+                if (modelObject) {
+                    modelId = modelObject._id;
+                    savedRow.attr("data-id", modelId);
+                    checkbox.val(modelId);
+                    savedRow.removeAttr('id');
+                }
+                this.hideSaveCancelBtns();
+                this.resetCollection(modelObject);
+            },
+
+            resetCollection: function (model) {
+                if (model && model._id) {
+                    model = new currentModel(model);
+                    this.collection.add(model);
+                } else {
+                    this.collection.set(this.editCollection.models, {remove: false});
+                }
+            },
+
+            createItem: function () {
+                var startData = {};
+
+                var model = new currentModel(startData);
+
+                startData.cid = model.cid;
+
+                if (!this.isNewRow()) {
+                    this.showSaveCancelBtns();
+                    this.editCollection.add(model);
+
+                    new createView(startData);
+                }
+            },
+
+
+
             template: _.template(listTemplate),
+
+            showNewSelect: function (e, prev, next) {
+                populate.showSelect(e, prev, next, this);
+                return false;
+            },
+
+
+            nextSelect: function (e) {
+                this.showNewSelect(e, false, true);
+            },
+
+            prevSelect: function (e) {
+                this.showNewSelect(e, true, false);
+            },
+
+
+            hideNewSelect: function (e) {
+                $(".newSelectList").remove();
+            },
+
 
             showPage: function (event) {
                 event.preventDefault();
@@ -313,6 +506,7 @@ define([
 
                 var self = this;
                 var currentEl = this.$el;
+
                 if (App.currentDb === 'weTrack'){
                     currentEl.html('');
                     currentEl.append(_.template(ListHeaderForWTrack));
@@ -353,6 +547,19 @@ define([
                 }
                 currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
+                setTimeout(function () {
+                    self.editCollection = new editCollection(self.collection.toJSON());
+                    self.editCollection.on('saved', self.savedNewModel, self);
+                    self.editCollection.on('updated', self.updatedOptions, self);
+
+                    self.$listTable = $('#listTable');
+                }, 10);
+
+                this.$listTable = $('#listTable');
+
+                this.collection.forEach(function(payment){
+                    self.setDatepicker(payment.id);
+                });
                 return this;
             }
         });

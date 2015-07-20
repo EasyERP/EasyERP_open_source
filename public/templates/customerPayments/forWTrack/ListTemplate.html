@@ -1,14 +1,19 @@
 <% paymentCollection.forEach(function(payment, index) {%>
 <tr data-id="<%=payment._id%>">
     <td class = "notForm"><input type="checkbox" value="<%=payment._id%>" class="checkbox" /></td>
-    <td><%=startNumber + index + 1%></td>
-    <td><%=payment.invoice.salesPerson || payment.invoice.salesPerson.name%></td>
-    <td><%=payment.supplier.fullName%></td>
-    <td><%=payment.invoice.name%></td>
-    <td><%=payment.date%></td>
-    <td><%=payment.paymentMethod || payment.paymentMethod.name%></td>
+    <td data-type="input"><%=startNumber + index + 1%></td>
+    <td data-type="input"><%=payment.invoice.salesPerson || payment.invoice.salesPerson.name%></td>
+    <td data-type="input"><%=payment.supplier.fullName%></td>
+    <td data-type="input"><%=payment.invoice.name%></td>
+    <td data-content="date" class="editable">
+        <div>
+
+    </div>
+        <input id="<%=payment._id%>date" type="text" class="date" value="<%=payment.date %>" />
+    </td>
+    <td data-type="input"><%=payment.paymentMethod || payment.paymentMethod.name%></td>
     <td class="total"><%=(Number(payment.paidAmount) + Number(payment.differenceAmount)).toString() + '.00'%></td>
-    <td><%=payment.paidAmount%></td>
-    <td><%=payment.workflow%></td>
+    <td data-type="input"><%=payment.paidAmount%></td>
+    <td data-type="input"><%=payment.workflow%></td>
 </tr>
 <%})%>
