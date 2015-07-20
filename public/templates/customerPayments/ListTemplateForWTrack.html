@@ -6,7 +6,7 @@
     <td><%=payment.supplier.fullName%></td>
     <td><%=payment.invoice.name%></td>
     <td><%=payment.date%></td>
-    <td><%=payment.paymentMethod.name || payment.paymentMethod%></td>
+    <td><%=payment.paymentMethod || payment.paymentMethod.name%></td>
     <td class="total"><%=(Number(payment.paidAmount) + Number(payment.differenceAmount)).toString() + '.00'%></td>
     <td><%=payment.paidAmount%></td>
     <td><%=payment.workflow%></td>

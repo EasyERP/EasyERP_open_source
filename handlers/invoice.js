@@ -150,7 +150,7 @@ var Invoice = function (models) {
         } else {
             res.status(401).send();
         }
-    }
+    };
 
     this.getAll = function (req, res, next) {
         var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
