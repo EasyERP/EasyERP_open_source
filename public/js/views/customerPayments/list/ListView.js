@@ -6,9 +6,10 @@ define([
         'views/customerPayments/list/ListItemView',
         'views/customerPayments/list/ListTotalView',
         'collections/customerPayments/filterCollection',
-        'dataService'
+        'dataService',
+        'text!templates/customerPayments/ListHeader.html'
     ],
-    function (listTemplate, listItemView, listTotalView, paymentCollection, dataService) {
+    function (listTemplate, listItemView, listTotalView, paymentCollection, dataService, ListHeaderTemplate) {
         var PaymentListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -312,14 +313,24 @@ define([
 
                 var self = this;
                 var currentEl = this.$el;
+                if (App.currentDb === 'weTrack'){
+                    currentEl.html('');
+                    currentEl.append(_.template(ListHeaderTemplate));
+                    currentEl.append(new listItemView({
+                        collection: this.collection,
+                        page: this.page,
+                        itemsNumber: this.collection.namberToShow
+                    }).render());
+                } else {
+                    currentEl.html('');
+                    currentEl.append(_.template(listTemplate));
+                    currentEl.append(new listItemView({
+                        collection: this.collection,
+                        page: this.page,
+                        itemsNumber: this.collection.namberToShow
+                    }).render());
+                }
 
-                currentEl.html('');
-                currentEl.append(_.template(listTemplate));
-                currentEl.append(new listItemView({
-                    collection: this.collection,
-                    page: this.page,
-                    itemsNumber: this.collection.namberToShow
-                }).render());
                 currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 7}).render());
 
                 $('#check_all').click(function () {
