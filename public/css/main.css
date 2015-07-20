@@ -1229,10 +1229,10 @@ input::-ms-clear {
 }
 .workflow-list li a,
 .workflow-sub-list li a {
-  padding-bottom: 10px;
-  padding-left: 15px;
-  padding-right: 15px;
-  padding-top: 10px;
+  padding: 10px 15px;
+  display: inline-block;
+  width: 100%;
+  box-sizing: border-box;
 }
 .workflow-list li .edit-holder a,
 .workflow-sub-list li .edit-holder a {
