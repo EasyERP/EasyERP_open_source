@@ -134,7 +134,9 @@ var Payment = function (models) {
                         optionsObject._id = {$in: paymentsIds};
                         var query = Payment.find(optionsObject).limit(count).skip(skip).sort(sort);
 
-                        query.populate('supplier', '_id name fullName');
+                        query.populate('supplier', '_id name fullName')
+                            .populate('invoice', '_id name salesPerson');
+                            //.populate('paymentMethod', '_id' /*neme*/);
 
                         query.exec(waterfallCallback);
                     };

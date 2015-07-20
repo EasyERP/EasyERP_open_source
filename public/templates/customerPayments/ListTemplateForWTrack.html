@@ -1,0 +1,14 @@
+<% paymentCollection.forEach(function(payment, index) {%>
+<tr data-id="<%=payment._id%>">
+    <td class = "notForm"><input type="checkbox" value="<%=payment._id%>" class="checkbox" /></td>
+    <td><%=startNumber + index + 1%></td>
+    <td><%=payment.invoice.salesPerson || payment.invoice.salesPerson.name%></td>
+    <td><%=payment.supplier.fullName%></td>
+    <td><%=payment.invoice.name%></td>
+    <td><%=payment.date%></td>
+    <td><%=payment.paymentMethod || payment.paymentMethod.name%></td>
+    <td class="total"><%=(Number(payment.paidAmount) + Number(payment.differenceAmount)).toString() + '.00'%></td>
+    <td><%=payment.paidAmount%></td>
+    <td><%=payment.workflow%></td>
+</tr>
+<%})%>

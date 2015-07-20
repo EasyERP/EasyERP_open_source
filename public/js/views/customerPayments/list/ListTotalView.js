@@ -13,8 +13,8 @@ define([
                 var result = {total: 0, cellSpan: this.cellSpan};
                 this.element.find(".total").each(function() {
                     result.total += parseFloat($(this).text());
-                })
-                return result
+                });
+                return result;
             },
 
             initialize: function(options) {
