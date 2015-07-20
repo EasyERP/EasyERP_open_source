@@ -3,13 +3,13 @@
  */
 define([
         'text!templates/supplierPayments/list/ListHeader.html',
+        'text!templates/customerPayments/forWTrack/ListHeader.html',
         'views/customerPayments/list/ListItemView',
         'views/customerPayments/list/ListTotalView',
         'collections/customerPayments/filterCollection',
-        'dataService',
-        'text!templates/customerPayments/ListHeader.html'
+        'dataService'
     ],
-    function (listTemplate, listItemView, listTotalView, paymentCollection, dataService, ListHeaderTemplate) {
+    function (listTemplate, ListHeaderForWTrack, listItemView, listTotalView, paymentCollection, dataService) {
         var PaymentListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -315,7 +315,7 @@ define([
                 var currentEl = this.$el;
                 if (App.currentDb === 'weTrack'){
                     currentEl.html('');
-                    currentEl.append(_.template(ListHeaderTemplate));
+                    currentEl.append(_.template(ListHeaderForWTrack));
                     currentEl.append(new listItemView({
                         collection: this.collection,
                         page: this.page,

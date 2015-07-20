@@ -3,7 +3,7 @@
  */
 define([
         'text!templates/customerPayments/list/ListTemplate.html',
-        'text!templates/customerPayments/ListTemplateForWTrack.html'
+        'text!templates/customerPayments/forWTrack/ListTemplate.html'
     ],
 
     function (PaymentListTemplate, ListTemplateForWTrack) {
