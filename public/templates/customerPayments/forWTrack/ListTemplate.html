@@ -2,15 +2,15 @@
 <tr data-id="<%=payment._id%>">
     <td class = "notForm"><input type="checkbox" value="<%=payment._id%>" class="checkbox" /></td>
     <td data-type="input"><%=startNumber + index + 1%></td>
-    <td data-type="input"><%=payment.invoice.salesPerson || payment.invoice.salesPerson.name%></td>
-    <td data-type="input"><%=payment.supplier.fullName%></td>
+    <td data-type="input" data-content="salesPerson"><%=payment.invoice.salesPerson%></td>
+    <td data-content="supplier"><%=payment.supplier.fullName%></td>
     <td data-type="input"><%=payment.invoice.name%></td>
     <td data-type="dtPicker" class="editable date" data-content="date">
         <%=payment.date%>
     </td>
-    <td data-type="input"><%=payment.paymentMethod || payment.paymentMethod.name%></td>
-    <td class="total"><%=(Number(payment.paidAmount) + Number(payment.differenceAmount)).toString() + '.00'%></td>
+    <td  data-content="paymentMethod"><%=payment.paymentMethod%></td>
+    <td class="total"><%=(parseInt(payment.paidAmount) + parseInt(payment.differenceAmount)).toString() + '.00'%></td>
     <td data-type="input"><%=payment.paidAmount%></td>
-    <td data-type="input"><%=payment.workflow%></td>
+    <td data-content="workflow" class="editable" data-id="workflow"><%=payment.workflow%></td>
 </tr>
 <%})%>

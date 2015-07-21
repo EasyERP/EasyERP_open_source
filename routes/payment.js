@@ -12,7 +12,6 @@ module.exports = function (models) {
     router.get('/:byType/totalCollectionLength', handler.totalCollectionLength);
     router.get('/:byType/:viewType', handler.getForView);
     router.post('/', handler.create);
-    router.patch('/customers/', handler.putchBulk);
 
     return router;
 };
