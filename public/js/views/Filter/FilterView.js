@@ -42,15 +42,23 @@ define([
             },
 
             saveFilter: function () {
+                var menu = $('#mainmenu-holder').find('li.selected').text();
+                var subMenu = $('#submenu-holder').find('li.selected').text();
+                var key = menu.trim() + subMenu.trim();
+                var showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
+
+                var obj = {};
+                obj[key] = showList;
+
                 $.ajax({
                     url: "/currentUser",
-                    data: {savedFilters: '3'},
+                    data: obj,
                     type: 'POST',
                     success: function (response) {
-                        callback(null, response)
+                        console.log(response);
                     },
                     error: function (jxhr) {
-                        callback(jxhr)
+                        console.log(jxhr);
                     }
                 });
             },

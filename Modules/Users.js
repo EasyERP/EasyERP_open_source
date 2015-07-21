@@ -299,7 +299,15 @@ var Users = function (mainDb, models) {
                 });
             } else updateUser();
             function updateUser() {
-                models.get(req.session.lastDb, 'Users', userSchema).findByIdAndUpdate(_id, { $set: data }, function (err, result) {
+                var query = {};
+                var savedFilters = data;
+
+                if (savedFilters){
+                    query = { $push:{savedFilters: savedFilters}};
+                } else {
+                    query = { $set: data};
+                }
+                models.get(req.session.lastDb, 'Users', userSchema).findByIdAndUpdate(_id, query, function (err, result) {
                     if (err) {
                         logWriter.log("User.js update profile.update" + err);
                         res.send(500, { error: 'User.update DB error' });
