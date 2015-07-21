@@ -258,7 +258,7 @@ input::-ms-clear {
   vertical-align: top;
 }
 .list2 thead th {
-  padding: 3px 6px;
+  padding: 3px 8px;
   line-height: 18px;
   font-weight: bold;
   font-size: 13px;
@@ -332,7 +332,7 @@ input::-ms-clear {
   white-space: nowrap;
   text-overflow: ellipsis;
   cursor: pointer;
-  padding: 4px 5px;
+  padding: 4px 8px;
   line-height: 17px;
   font-size: 11px;
   text-align: right;
@@ -393,7 +393,7 @@ input::-ms-clear {
   vertical-align: top;
 }
 .list2 thead th {
-  padding: 3px 6px;
+  padding: 3px 8px;
   line-height: 18px;
   font-weight: bold;
   font-size: 13px;
@@ -467,7 +467,7 @@ input::-ms-clear {
   white-space: nowrap;
   text-overflow: ellipsis;
   cursor: pointer;
-  padding: 4px 5px;
+  padding: 4px 8px;
   line-height: 17px;
   font-size: 11px;
   text-align: right;
@@ -4814,7 +4814,7 @@ ul.dialog-tabs li.right button {
   vertical-align: top;
 }
 .list thead th {
-  padding: 3px 6px;
+  padding: 3px 8px;
   line-height: 18px;
   font-weight: bold;
   font-size: 13px;
@@ -4888,7 +4888,7 @@ ul.dialog-tabs li.right button {
   white-space: nowrap;
   text-overflow: ellipsis;
   cursor: pointer;
-  padding: 4px 5px;
+  padding: 4px 8px;
   line-height: 17px;
   font-size: 11px;
   text-align: right;
