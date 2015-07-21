@@ -1,6 +1,8 @@
 /**
  * Created by Roman on 27.05.2015.
  */
+var CONSTANTS = require('../../../constants/mainConstants');
+
 module.exports = (function () {
     var vacation = {
         collection: 'Vacation',
@@ -288,15 +290,15 @@ module.exports = (function () {
             'PaymentWay': [{
                 value: '1',
                 field: 'paymentMethod',
-                fieldValue: '5589888738a5416cab8bdc5d'
+                fieldValue: CONSTANTS.PAYONEER
             }, {
                 value: '2',
                 field: 'paymentMethod',
-                fieldValue: '5589888738a5416cab8bdc5e'
+                fieldValue: CONSTANTS.UKR_SIB_BANK
             }, {
                 value: '3',
                 field: 'paymentMethod',
-                fieldValue: '5589888738a5416cab8bdc5f'
+                fieldValue: CONSTANTS.PRIMARY
             }]
         },
         aliases: {

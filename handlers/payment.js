@@ -14,15 +14,26 @@ var _ = require('lodash');
 var Payment = function (models) {
     var access = require("../Modules/additions/access.js")(models);
 
+    var EmployeeSchema = mongoose.Schemas['Employee'];
     var PaymentSchema = mongoose.Schemas['Payment'];
+    var wTrackPaymentSchema = mongoose.Schemas['wTrackPayment'];
     var InvoiceSchema = mongoose.Schemas['Invoice'];
     var DepartmentSchema = mongoose.Schemas['Department'];
     var wTrackSchema = mongoose.Schemas['wTrack'];
+
     var objectId = mongoose.Types.ObjectId;
     var waterfallTasks;
 
     this.getAll = function (req, res, next) {
-        var Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
+        var isWtrack = req.session.lastDb === 'weTrack';
+        var Payment;
+
+        if(isWtrack){
+            Payment = models.get(req.session.lastDb, 'wTrackPayment', wTrackPaymentSchema);
+        } else {
+            Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
+        }
+
         var query = {};
 
         Payment.find(query, function (err, payments) {
@@ -41,17 +52,24 @@ var Payment = function (models) {
             case "list":
                 getPaymentFilter(req, res, next, forSale);
                 break;
-            /*case "form":
-             getProductsById(req, res, next);
-             break;*/
         }
     };
 
     function getPaymentFilter(req, res, next, forSale) {
+        var isWtrack = req.session.lastDb === 'weTrack';
+        var Payment;
+
+        if(isWtrack){
+            Payment = models.get(req.session.lastDb, 'wTrackPayment', wTrackPaymentSchema);
+        } else {
+            Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
+        }
+
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getReadAccess(req, req.session.uId, 60, function (access) {
                 if (access) {
-                    var Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
+                    var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+
                     var optionsObject = {forSale: forSale};
                     var sort = {};
                     var count = req.query.count ? req.query.count : 50;
@@ -66,7 +84,7 @@ var Payment = function (models) {
                     if (req.query.sort) {
                         sort = req.query.sort;
                     } else {
-                        sort = {"name": 1};
+                        sort = {"date": -1};
                     }
 
                     departmentSearcher = function (waterfallCallback) {
@@ -134,11 +152,19 @@ var Payment = function (models) {
                         optionsObject._id = {$in: paymentsIds};
                         var query = Payment.find(optionsObject).limit(count).skip(skip).sort(sort);
 
-                        query.populate('supplier', '_id name fullName')
-                            .populate('invoice', '_id name salesPerson');
-                            //.populate('paymentMethod', '_id' /*neme*/);
+                        query
+                            .populate('invoice._id', '_id name');
+                            /*.populate('paymentMethod', '_id name');*/
 
-                        query.exec(waterfallCallback);
+                        query.exec(function(err, result){
+                            if(err){
+                                return waterfallCallback(err);
+                            }
+
+                            Employee.populate(result, {path: 'invoice.salesPerson', select: '_id name', options: {lean: true}}, function(){
+                                waterfallCallback(null, result);
+                            });
+                        });
                     };
 
                     waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
@@ -161,10 +187,18 @@ var Payment = function (models) {
 
     this.create = function (req, res, next) {
         var body = req.body;
-        var Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
         var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
         var workflowHandler = new WorkflowHandler(models);
         var invoiceId = body.invoice;
+
+        var isWtrack = req.session.lastDb === 'weTrack';
+        var Payment;
+
+        if(isWtrack){
+            Payment = models.get(req.session.lastDb, 'wTrackPayment', wTrackPaymentSchema);
+        } else {
+            Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
+        }
 
         function fetchInvoice(waterfallCallback) {
             Invoice.findById(invoiceId, waterfallCallback);
@@ -319,7 +353,6 @@ var Payment = function (models) {
     };
 
     this.totalCollectionLength = function (req, res, next) {
-        var Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
         var forSale = req.params.byType === 'customers';
 
         var queryObject;
@@ -329,6 +362,15 @@ var Payment = function (models) {
 
         var contentSearcher;
         var waterfallTasks;
+
+        var isWtrack = req.session.lastDb === 'weTrack';
+        var Payment;
+
+        if(isWtrack){
+            Payment = models.get(req.session.lastDb, 'wTrackPayment', wTrackPaymentSchema);
+        } else {
+            Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
+        }
 
         if (forSale) {
             queryObject = {

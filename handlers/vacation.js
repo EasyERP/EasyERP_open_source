@@ -9,7 +9,6 @@ var Vacation = function (models) {
     var VacationSchema = mongoose.Schemas['Vacation'];
     var async = require('async');
     var _ = require('lodash');
-    var mapObject = require('../helpers/bodyMaper');
 
     function calculateWeeks(array, year, month) {
         var dateValue = moment([year, month]);

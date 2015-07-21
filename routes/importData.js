@@ -7,6 +7,7 @@ var router = express.Router();
 var ImportHandler = require('../helpers/importer/importer');
 var mongoose = require('mongoose');
 var _ = require('lodash');
+var CONSTANTS = require('../constants/mainConstants');
 
 var moment = require('../public/js/libs/moment/moment');
 
@@ -87,7 +88,7 @@ module.exports = function (models) {
         var WorkflowSchema = mongoose.Schemas['workflow'];
         var WTrackSchema = mongoose.Schemas[wTrackCollection];
         var InvoiceSchema = mongoose.Schemas['wTrackInvoice'];
-        var PaymentSchema = mongoose.Schemas[paymentCollection];
+        var PaymentSchema = mongoose.Schemas['wTrackPayment'];
         var BonusTypeSchema = mongoose.Schemas[bonusTypeCollection];
         var PayOutSchema = mongoose.Schemas[payOutCollection];
 
@@ -99,7 +100,7 @@ module.exports = function (models) {
         var Workflow = models.get(req.session.lastDb, 'workflows', WorkflowSchema);
         var Wtrack = models.get(req.session.lastDb, wTrackCollection, WTrackSchema);
         var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', InvoiceSchema);
-        var Payment = models.get(req.session.lastDb, paymentCollection, PaymentSchema);
+        var Payment = models.get(req.session.lastDb, 'wTrackPayment', PaymentSchema);
         var BonusType = models.get(req.session.lastDb, bonusTypeCollection, BonusTypeSchema);
         var PayOut = models.get(req.session.lastDb, payOutCollection, PayOutSchema);
 
@@ -876,7 +877,39 @@ module.exports = function (models) {
                             fetchedPayment[msSqlKey] = comparator(fetchedPayment[msSqlKey], _comparator[msSqlKey]) || fetchedPayment[msSqlKey];
                         }
 
-                        objectToSave[key] = fetchedPayment[msSqlKey];
+                        if (key === 'paymentMethod') {
+                            switch (fetchedPayment[msSqlKey]) {
+                                case CONSTANTS.PAYONEER:
+                                {
+                                    objectToSave['paymentMethod'] = {
+                                        _id: fetchedPayment[msSqlKey],
+                                        name: 'Payoneer'
+                                    };
+                                }
+                                    break;
+
+                                case CONSTANTS.UKR_SIB_BANK:
+                                {
+                                    objectToSave['paymentMethod'] = {
+                                        _id: fetchedPayment[msSqlKey],
+                                        name: 'UkrSibBank'
+                                    };
+                                }
+                                    break;
+
+                                case CONSTANTS.PRIMARY:
+                                {
+                                    objectToSave['paymentMethod'] = {
+                                        _id: fetchedPayment[msSqlKey],
+                                        name: 'Primary'
+                                    };
+                                }
+                                    break;
+                            }
+                        } else {
+                            objectToSave[key] = fetchedPayment[msSqlKey];
+                        }
+
                         objectToSave.createdBy = {
                             user: ownerId
                         };
@@ -894,6 +927,7 @@ module.exports = function (models) {
                             Invoice
                                 .findOne(invoiceQuery)
                                 .populate('project')
+                                .populate('salesPerson', '_id name')
                                 .exec(function (err, invoice) {
                                     if (err) {
                                         return callback(err);
@@ -918,8 +952,18 @@ module.exports = function (models) {
 
                             if (result.invoce) {
                                 invoiceId = result.invoce._id;
-                                objectToSave.invoice = invoiceId;
-                                objectToSave.supplier = result.invoce.project.customer._id;
+                                objectToSave.invoice = {
+                                    _id: invoiceId,
+                                    name: result.invoce.name,
+                                    assigned: {
+                                        _id: result.invoce.salesPerson ? result.invoce.salesPerson._id : '',
+                                        name: result.invoce.salesPerson && result.invoce.salesPerson.name ? result.invoce.salesPerson.name.first + ' ' + result.invoce.salesPerson.name.last : ''
+                                    }
+                                };
+                                objectToSave.supplier = {
+                                    _id: result.invoce.project.customer._id,
+                                    fullName: result.invoce.project.customer && result.invoce.project.customer.name ? result.invoce.project.customer.name.first + ' ' + result.invoce.project.customer.name.last : ''
+                                };
                             }
 
                             model = new Payment(objectToSave);
@@ -927,10 +971,6 @@ module.exports = function (models) {
                                 if (err) {
                                     return cb(err);
                                 }
-
-                                console.log('============== invoiceId =============');
-                                console.log(invoiceId);
-                                console.log('======================================');
 
                                 Invoice.update({_id: invoiceId}, {$addToSet: {payments: result._id}}, function (err, invoice) {
                                     if (err) {

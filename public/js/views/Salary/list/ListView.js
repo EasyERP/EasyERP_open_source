@@ -78,13 +78,14 @@ define([
                 momentMonth = moment().month(month - 1).format('MMM');
                 dataKey = momentMonth + "/" + momentYear;
 
-                function save () {
+                function save() {
                     self.newCollection = new salaryEditableCollection();
 
                     self.newCollection.on('saved', self.savedNewModel, self);
 
                     self.editCollection.each(function (model, index) {
                         modelJSON = model.toJSON();
+
                         delete modelJSON._id;
                         modelJSON['month'] = month;
                         modelJSON['year'] = year;
@@ -100,12 +101,12 @@ define([
                     if (!response.count) {
                         save();
                     } else {
-                        alert ('This month already exists!');
+                        alert('This month already exists!');
                     }
                 });
             },
 
-            savedNewModel: function(modelObject){
+            savedNewModel: function (modelObject) {
                 var savedRow = $("#listTable").find('tr[data-id="false"]');
                 var modelId;
                 var checkbox = savedRow.find('input.mainCB');
@@ -114,7 +115,7 @@ define([
 
                 modelObject = modelObject.success;
 
-                if(modelObject) {
+                if (modelObject) {
                     this.collection.add(modelObject);
                     modelId = modelObject._id
                     savedRow.attr("data-id", modelId);
@@ -127,7 +128,6 @@ define([
                 savedRow.find('.year').removeClass('editable');
                 savedRow.find('.year').attr('data-type', '');
 
-
                 savedRow.find('.mainCB').attr('checked', false);
 
                 savedRow.removeClass('copy');
@@ -136,7 +136,9 @@ define([
                     $(element).removeClass('disabled');
                     $(element).find('.mainCB').attr("disabled", false);
                 })
+
                 this.hideSaveCancelBtns();
+
                 editedCol.text(editedEl.val());
                 editedEl.remove();
             },
@@ -156,7 +158,7 @@ define([
             setEditable: function (td) {
                 var tr;
 
-                if(!td.parents) {
+                if (!td.parents) {
                     td = $(td.target).closest('td');
                 }
 
@@ -306,6 +308,10 @@ define([
                 }, this);
             },
 
+            hideNewSelect: function () {
+                $(".newSelectList").remove();
+            },
+
             render: function () {
                 $('.ui-dialog ').remove();
                 var self = this;
@@ -318,7 +324,7 @@ define([
                     collection: this.collection,
                     page: this.page,
                     itemsNumber: this.collection.namberToShow
-                }).render());//added two parameters page and items number
+                }).render());
 
                 $('#check_all').click(function () {
                     $('.mainCB').prop('checked', this.checked);
@@ -331,9 +337,10 @@ define([
 
                 $("#top-bar-createBtn").hide();
 
-                /*$(document).on("click", function (e) {
+                $(document).on("click", function (e) {
                     self.hideItemsNumber(e);
-                });*/
+                    self.hideNewSelect();
+                 });
 
                 var pagenation = this.$el.find('.pagination');
                 if (this.collection.length === 0) {
@@ -502,7 +509,7 @@ define([
 
                 var tr = $(e.target).closest('tr');
                 var id = $(tr).data("id");
-                var subId ="subSalary-row" + id
+                var subId = "subSalary-row" + id
                 var subRowCheck = $('#' + subId);
                 var icon = $(tr).find('.icon');
 
@@ -598,90 +605,84 @@ define([
                     parrentContentId: this.parrentContentId
                 });
 
-                var pagenation = this.$el.find('.pagination');
+                var pagination = this.$el.find('.pagination');
                 if (this.collection.length === 0) {
-                    pagenation.hide();
+                    pagination.hide();
                 } else {
-                    pagenation.show();
+                    pagination.show();
                 }
             },
 
+            triggerDeleteItemsRender: function (deleteCounter) {
+                var self = this;
+
+                this.deleteCounter = deleteCounter;
+                this.deletePage = $("#currentShowPage").val();
+                self.deleteItemsRender(deleteCounter, self.deletePage);
+            },
+
             deleteItems: function () {
-                var currentEl = this.$el;
                 var that = this;
                 var mid = 39;
-                var salaryModel;
                 var localCounter = 0;
-                var count;
                 this.collectionLength = this.collection.length;
                 var checkedCB = $("#listTable input.mainCB:checked");
                 var checkCount = checkedCB.length;
-                var employeesArary;
+
+                var value;
+                var model;
 
                 $("#top-bar-saveBtn").hide();
 
                 $.each(checkedCB, function (index, checkbox) {
-                    salaryModel = that.collection.get(checkbox.value);
-                    employeesArary = salaryModel.toJSON().employeesArray;
-                    that.editCollection = new salaryEditableCollection(employeesArary);
-                    count = that.editCollection.length;
                     if ($(checkbox).attr("id") !== 'copy') {
-                        checkCount--;
-                        localCounter++;
-                        that.listLength--;
+                        value = checkbox.value;
 
-                        that.editCollection.each(function (model) {
-                            model.destroy({
-                                headers: {
-                                    mid: mid
-                                },
-                                wait: true,
-                                success: function () {
-                                    count--;
-                                    if (count === 0) {
-                                        salaryModel.destroy({
-                                            headers: {
-                                                mid: mid
-                                            },
-                                            wait: true,
-                                            success: function () {
-                                                if (checkCount === 0) {
-                                                    that.deleteCounter = localCounter;
-                                                    that.deletePage = $("#currentShowPage").val();
+                        model = that.collection.get(value);
 
-                                                    dataService.getData('/salary/recalculateSalaryCash', {}, function (response, context) {}, that);
+                        model.destroy({
+                            headers: {
+                                mid: mid,
+                                month: model.get('month'),
+                                year: model.get('year')
+                            },
+                            wait: true,
+                            success: function () {
+                                that.listLength--;
+                                localCounter++;
 
-                                                    that.deleteItemsRender(that.deleteCounter, that.deletePage);
-                                                }
-                                            }
-                                        });
-                                    }
-                                },
-                                error: function (model, res) {
-                                    if (res.status === 403 && index === 0) {
-                                        alert("You do not have permission to perform this action");
-                                    }
-                                    that.listLength--;
-                                    localCounter++;
-                                    if (index == count - 1) {
-                                        that.deleteCounter = localCounter;
-                                        that.deletePage = $("#currentShowPage").val();
-                                        that.deleteItemsRender(that.deleteCounter, that.deletePage);
+                                $('#listTable').find(checkbox)
+                                    .closest('row')
+                                    .html('');
 
-                                    }
-
+                                if (index === checkCount - 1) {
+                                    that.triggerDeleteItemsRender(localCounter);
                                 }
-                            });
+                            },
+                            error: function (model, res) {
+                                if (res.status === 403 && index === 0) {
+                                    alert("You do not have permission to perform this action");
+                                }
+                                that.listLength--;
+                                localCounter++;
+                                if (index == checkCount - 1) {
+                                    if (index === checkCount - 1) {
+                                        that.triggerDeleteItemsRender(localCounter);
+                                    }
+                                }
+                            }
                         });
                     } else {
-                        that.deletePage = $("#currentShowPage").val();
-                        dataService.getData('/salary/recalculateSalaryCash', {}, function (response, context) {}, that);
-                        that.deleteItemsRender(0, that.deletePage);
+                        $('#listTable').find('.copy')
+                            .html('');
+                        that.hideSaveCancelBtns();
+                        $('#listTable').find('tr:not(.copy)').each(function (index, element) {
+                            $(element).removeClass('disabled');
+                            $(element).find('.mainCB').attr("disabled", false);
+                        })
                     };
-
                 });
             }
-
         });
 
         return SalaryListView;
