@@ -59,6 +59,7 @@ define([
                 this.newCollection = options.newCollection;
                 this.deleteCounter = 0;
                 this.page = options.collection.page;
+
                 this.render();
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
                 this.contentCollection = paymentCollection;
@@ -100,6 +101,7 @@ define([
             editRow: function (e, prev, next) {
                 var self = this;
 
+                var ul;
                 var el = $(e.target);
                 var tr = $(e.target).closest('tr');
                 var modelId = tr.data('id');
@@ -119,18 +121,17 @@ define([
 
                 if (isDTPicker) {
                     tempContainer = (el.text()).trim();
-                    el.html('<input class="editing" type="text" value="' + tempContainer + '"  maxLength="255">');
-                    $('.editing').datepicker({
+                    el.html('<input class="editing" type="text" value="' + tempContainer + '">');
+                    el.find('.editing').datepicker({
                         dateFormat: "d M, yy",
                         changeMonth: true,
                         changeYear: true,
                         onChanged: self.setChangedValue()
                     }).addClass('datepicker');
-                } else if (isSelect){
-                    var ul= "<ul class='newSelectList'>" + "<li data-id='Paid'>Paid</li>" + "<li data-id='Draft'>Draft</li></ul>";
+                } else if (isSelect) {
+                    ul = "<ul class='newSelectList'>" + "<li data-id='Paid'>Paid</li>" + "<li data-id='Draft'>Draft</li></ul>";
                     el.html(ul);
-                } else
-                {
+                } else {
                     tempContainer = el.text();
                     width = el.width() - 6;
                     el.html('<input class="editing" type="text" value="' + tempContainer + '"  maxLength="255" style="width:' + width + 'px">');
@@ -213,7 +214,7 @@ define([
             },
 
 
-    saveItem: function () {
+            saveItem: function () {
                 var model;
                 var modelJSON;
 
@@ -589,6 +590,7 @@ define([
             render: function (options) {
                 $('.ui-dialog ').remove();
 
+                var pagenation;
                 var self = this;
                 var currentEl = this.$el;
 
@@ -624,7 +626,8 @@ define([
                     self.hideItemsNumber();
                 });
 
-                var pagenation = this.$el.find('.pagination');
+                pagenation = this.$el.find('.pagination');
+
                 if (this.collection.length === 0) {
                     pagenation.hide();
                 } else {
