@@ -84,7 +84,7 @@ var Payment = function (models) {
                     if (req.query.sort) {
                         sort = req.query.sort;
                     } else {
-                        sort = {"name": 1};
+                        sort = {"date": -1};
                     }
 
                     departmentSearcher = function (waterfallCallback) {
