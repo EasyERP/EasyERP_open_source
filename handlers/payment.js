@@ -458,6 +458,40 @@ var Payment = function (models) {
             res.status(200).send({count: result});
         });
     };
+
+    this.putchBulk = function (req, res, next) {
+        var body = req.body;
+        var uId;
+        var Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
+        if (req.session && req.session.loggedIn && req.session.lastDb) {
+            uId = req.session.uId;
+            access.getEditWritAccess(req, req.session.uId, 60, function (access) {
+                if (access) {
+                    async.each(body, function (data, cb) {
+                        var id = data._id;
+
+                        data.editedBy = {
+                            user: uId,
+                            date: new Date().toISOString()
+                        };
+                        delete data._id;
+                        Payment.findByIdAndUpdate(id, {$set: data}, cb);
+                    }, function (err) {
+                        if (err) {
+                            return next(err);
+                        }
+
+                        res.status(200).send({success: 'updated'});
+                    });
+                } else {
+                    res.status(403).send();
+                }
+            });
+        } else {
+            res.status(401).send();
+        }
+    };
+
 };
 
 module.exports = Payment;
