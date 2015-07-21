@@ -10,7 +10,7 @@
     </td>
     <td><%=(payment.paymentMethod) ? payment.paymentMethod.name : ''%></td>
     <td class="total"><%=(Number(payment.paidAmount) + Number(payment.differenceAmount)).toString() + '.00'%></td>
-    <td><%=payment.paidAmount%></td>
+    <td class="totalPaidAmount"><%=payment.paidAmount%></td>
     <td><%=payment.workflow%></td>
 </tr>
 <%})%>
