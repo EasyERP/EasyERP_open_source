@@ -1,9 +1,10 @@
 define([
         'text!templates/Filter/FilterTemplate.html',
         'custom',
-        'common'
+        'common',
+        'dataService'
     ],
-    function (ContentFilterTemplate, Custom, Common) {
+    function (ContentFilterTemplate, Custom, Common, dataService) {
         var FilterView;
         FilterView = Backbone.View.extend({
             el: '#searchContainer',
@@ -20,20 +21,38 @@ define([
                 'click .addCondition': 'addCondition',
                 'click .removeFilter': 'removeFilter',
                 'click .customFilter': 'showCustomFilter',
-                'click .applyFilter': 'applyFilter'
+                'click .applyFilter': 'applyFilter',
+                'click .saveBtn':'saveFilter'
             },
 
 
             initialize: function (options) {
                 this.render(options);
+                this.currentModel =  options.model;
             },
 
             render: function (options) {
                 this.customCollection =  options.customCollection;
 
                 this.$el.html(this.template({collection: this.collection, customCollection: options.customCollection}));
+                this.$el.append("<button class='saveBtn'>Save Filter</button>");
+                this.$el.find('.saveBtn').hide();
 
                 return this;
+            },
+
+            saveFilter: function () {
+                $.ajax({
+                    url: "/currentUser",
+                    data: {savedFilters: '3'},
+                    type: 'POST',
+                    success: function (response) {
+                        callback(null, response)
+                    },
+                    error: function (jxhr) {
+                        callback(jxhr)
+                    }
+                });
             },
 
             applyFilter: function () {
@@ -62,6 +81,7 @@ define([
                     this.trigger('defaultFilter');
 
                 }
+                this.$el.find('.saveBtn').hide();
                 e.stopPropagation();
             },
 
@@ -74,6 +94,8 @@ define([
                 lastOpt.children('.chooseOption').show();
                 lastOpt.children('.chooseDate').remove();
                 lastOpt.removeClass('chosen');
+                this.$el.find('.saveBtn').show();
+
             },
 
             chooseOptions: function (e) {
@@ -179,6 +201,7 @@ define([
                 if ($('.drop-down-filter input:checkbox:checked').length === 0) {
                     this.trigger('defaultFilter');
                 }
+                this.$el.find('.saveBtn').show();
 
             },
 
@@ -191,6 +214,8 @@ define([
                 });
 
                 this.trigger('defaultFilter');
+                this.$el.find('.saveBtn').hide();
+
             }
         });
 
