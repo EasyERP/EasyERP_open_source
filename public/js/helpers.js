@@ -10,7 +10,12 @@ define([], function(){
         return new Date(Math.min.apply(null, arrayOfDates));
     };
 
+    function currencySplitter(currency){
+        return currency.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1 ");
+    }
+
     return {
-        minFromDates: minFromDates
+        minFromDates: minFromDates,
+        currencySplitter: currencySplitter
     };
 });

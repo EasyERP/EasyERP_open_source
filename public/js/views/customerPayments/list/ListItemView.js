@@ -3,10 +3,11 @@
  */
 define([
         'text!templates/customerPayments/list/ListTemplate.html',
-        'text!templates/customerPayments/forWTrack/ListTemplate.html'
+        'text!templates/customerPayments/forWTrack/ListTemplate.html',
+        'helpers'
     ],
 
-    function (PaymentListTemplate, ListTemplateForWTrack) {
+    function (PaymentListTemplate, ListTemplateForWTrack, helpers) {
         var PaymentListItemView = Backbone.View.extend({
             el: '#listTable',
 
@@ -18,7 +19,8 @@ define([
                 if (App.currentDb === 'weTrack') {
                     this.$el.append(_.template(ListTemplateForWTrack, {
                         paymentCollection: this.collection.toJSON(),
-                        startNumber: this.startNumber
+                        startNumber: this.startNumber,
+                        currencySplitter: helpers.currencySplitter
                     }));
                 } else {
                     this.$el.append(_.template(PaymentListTemplate, {
