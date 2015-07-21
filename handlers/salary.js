@@ -14,16 +14,41 @@ var Salary = function (models) {
     var objectId = mongoose.Types.ObjectId;
 
     this.remove = function (req, res, next) {
-        var self = this;
         var id = req.params.id;
+        var data = req.headers;
         var Salary = models.get(req.session.lastDb, 'Salary', SalarySchema);
+        var SalaryCash = models.get(req.session.lastDb, 'SalaryCash', SalaryCashSchema);
+        var queryObject = {};
 
-        Salary.remove({_id: id}, function (err, salary) {
-            if (err) {
-                return next(err);
+        if (data) {
+            if (data.month) {
+                queryObject.month = data.month;
             }
-            res.status(200).send({success: salary});
-        });
+            if (data.year) {
+                queryObject.year = data.year;
+            }
+        }
+
+        if (queryObject.month && queryObject.year) {
+            Salary.remove(queryObject, function (err, salary) {
+                if (err) {
+                    return next(err);
+                }
+                SalaryCash.remove({_id: id}, function (err, salaryCash) {
+                    if (err) {
+                        return next(err);
+                    }
+                    res.status(200).send({success: salaryCash});
+                })
+            });
+        } else {
+            Salary.remove({_id: id}, function (err, salary) {
+                if (err) {
+                    return next(err);
+                }
+                res.status(200).send({success: salary});
+            });
+        }
     };
 
     this.putchModel = function (req, res, next) {
@@ -42,6 +67,8 @@ var Salary = function (models) {
                         if (err) {
                             return next(err);
                         }
+                        self.recalculateCashSalary(req, function () {
+                        });
                         res.status(200).send({success: 'updated'});
                     });
                 } else {
@@ -76,6 +103,9 @@ var Salary = function (models) {
                         if (err) {
                             return next(err);
                         }
+
+                        self.recalculateCashSalary(req, function () {
+                        });
                         res.status(200).send({success: 'updated'});
                     });
                 } else {
@@ -294,19 +324,6 @@ var Salary = function (models) {
         }
     };
 
-    //this.getForView = function (req, res, next) {
-    //    var viewType = req.params.viewType;
-    //
-    //    switch (viewType) {
-    //        case "list":
-    //            getSalaryFilter(req, res, next);
-    //            break;
-    //        /*case "form":
-    //         getProductsById(req, res, next);
-    //         break;*/
-    //    }
-    //};
-
     this.getForView = function (req, res, next) {
         var viewType = req.params.viewType;
         var query = req.query.month;
@@ -320,7 +337,7 @@ var Salary = function (models) {
     };
 
 
-        this.getById = function (req, res, next) {
+    this.getById = function (req, res, next) {
         var id = req.params.id;
         var Salary = models.get(req.session.lastDb, 'SalaryCash', SalaryCashSchema);
 
@@ -456,29 +473,28 @@ var Salary = function (models) {
     this.getFilterValues = function (req, res, next) {
         var Salary = models.get(req.session.lastDb, 'SalaryCash', SalaryCashSchema);
 
-        Salary
-            .aggregate([
-                {
-                    $group:{
-                        _id: null,
-                        'Year': {
-                            $addToSet: '$year'
-                        },
-                        'Month': {
-                            $addToSet: '$month'
-                        }
+        Salary.aggregate([
+            {
+                $group: {
+                    _id: null,
+                    'Year': {
+                        $addToSet: '$year'
+                    },
+                    'Month': {
+                        $addToSet: '$month'
                     }
                 }
-            ], function (err, salary) {
-                if (err) {
-                    return next(err)
-                }
-                res.status(200).send(salary)
-            })
+            }
+        ], function (err, salary) {
+            if (err) {
+                return next(err)
+            }
+            res.status(200).send(salary)
+        })
 
     };
 
-    function getSalaryData (req, res, next) {
+    function getSalaryData(req, res, next) {
         var SalaryCash = models.get(req.session.lastDb, 'SalaryCash', SalaryCashSchema);
         var query;
         var queryObj = {};
@@ -501,7 +517,6 @@ var Salary = function (models) {
             },
             {
                 $unwind: '$employeesArray'
-
             },
 
             {
@@ -511,39 +526,14 @@ var Salary = function (models) {
             }
         ]);
 
-        query.exec(function(err, result){
-            if (err){
+        query.exec(function (err, result) {
+            if (err) {
                 return next(err);
             }
 
-                res.status(200).send(result);
+            res.status(200).send(result);
 
         });
-
-    };
-
-    this.getFilterValues = function (req, res, next) {
-        var Salary = models.get(req.session.lastDb, 'SalaryCash', SalaryCashSchema);
-
-        Salary
-            .aggregate([
-                {
-                    $group:{
-                        _id: null,
-                        'Year': {
-                            $addToSet: '$year'
-                        },
-                        'Month': {
-                            $addToSet: '$month'
-                        }
-                    }
-                }
-            ], function (err, salary) {
-                if (err) {
-                    return next(err)
-                }
-                res.status(200).send(salary)
-            })
 
     };
 };

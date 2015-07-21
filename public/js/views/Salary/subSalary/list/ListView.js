@@ -153,6 +153,9 @@ function (listTemplate, cancelEdit, createView, listItemView, subSalaryTotalTemp
             var calc;
             var diffObj;
 
+            var diffOnCardRealValue;
+            var diffOnCashRealValue;
+
             if ($(td).hasClass('cash')) {
                 calcKey = 'onCash';
                 tdForUpdate = diffOnCash;
@@ -171,10 +174,17 @@ function (listTemplate, cancelEdit, createView, listItemView, subSalaryTotalTemp
                 calc = calc ? parseInt(calc) : input.val();
 
                 value = paid - calc;
-                tdForUpdate.text(value);
 
-                totalValue = parseInt(diffOnCash.text()) + parseInt(diffOnCard.text());
-                diffTotal.text(totalValue);
+                tdForUpdate.text(this.checkMoneyTd(tdForUpdate, value));
+
+                diffOnCashRealValue = diffOnCash.attr('data-value');
+                diffOnCashRealValue = diffOnCashRealValue ? diffOnCashRealValue : diffOnCash.text();
+
+                diffOnCardRealValue = diffOnCard.attr('data-value');
+                diffOnCardRealValue = diffOnCardRealValue ? diffOnCardRealValue : diffOnCard.text();
+
+                totalValue = parseInt(diffOnCashRealValue) + parseInt(diffOnCardRealValue);
+                diffTotal.text(this.checkMoneyTd(diffTotal, totalValue));
 
                 diffObj = _.clone(editEmployeeModel.get('diff'));
                 diffObj['total'] = totalValue;
@@ -184,6 +194,26 @@ function (listTemplate, cancelEdit, createView, listItemView, subSalaryTotalTemp
             }
 
             this.getTotal(td);
+        },
+
+        checkMoneyTd: function(td, value) {
+            var moneyClassCheck = $(td).hasClass('money');
+            var negativeMoneyClass = $(td).hasClass('negativeMoney');
+
+            if (value < 0) {
+                if (moneyClassCheck) {
+                    $(td).removeClass('money');
+                }
+                $(td).addClass('negativeMoney');
+                $(td).attr('data-value', value);
+                value *= -1;
+            } else {
+                if (negativeMoneyClass) {
+                    $(td).removeClass('negativeMoney');
+                }
+                $(td).addClass('money');
+            }
+            return value;
         },
 
         getTotal: function (td) {
@@ -208,9 +238,12 @@ function (listTemplate, cancelEdit, createView, listItemView, subSalaryTotalTemp
                 var diffOnCash;
                 var diffOnCard;
 
+                var diffByNameElement;
+
                 self.bodyContainer.find('.' + className + '[data-content="' + name +'"]').each(function() {
                     input = $(this).find('input.editing');
-                    tdVal = $(this).text();
+                    tdVal = $(this).attr('data-value');
+                    tdVal = tdVal ? tdVal : $(this).text();
                     addVal = tdVal ? parseInt(tdVal) :  parseInt(input.val());
                     calcVal += addVal;
                 });
@@ -218,13 +251,12 @@ function (listTemplate, cancelEdit, createView, listItemView, subSalaryTotalTemp
                 $('#subSalary-listTotal' + self.id).find('.total_' + className + '_' + name).text(calcVal);
                 $('tr[data-id="' + self.id + '"]').find('.total_' + className + '_' + name).text(calcVal);
 
-                if ( name==='onCard' || name==='onCash' ) {
+                if ( name === 'onCard' || name === 'onCash' ) {
+                    diffByNameElement = $('#subSalary-listTotal' + self.id).find('.total_diff_' + name);
 
-                    self.bodyContainer.find('.diff[data-content="' + name + '"]').each(function () {
-                        diffNameVal += parseInt($(this).text());
-                    });
+                    diffNameVal = $('#subSalary-listTotal' + self.id).find('.total_calc_' + name).text() - $('#subSalary-listTotal' + self.id).find('.total_paid_' + name).text();
 
-                    $('#subSalary-listTotal' + self.id).find('.total_diff_' + name).text(diffNameVal);
+                    diffByNameElement.text(self.checkMoneyTd(diffByNameElement, diffNameVal));
                     $('tr[data-id="' + self.id + '"]').find('.total_diff_' + name).text(diffNameVal);
 
                     diffOnCash = $('#subSalary-listTotal' + self.id).find('.total_diff_onCash').text();
@@ -555,9 +587,9 @@ function (listTemplate, cancelEdit, createView, listItemView, subSalaryTotalTemp
                         paid = _.clone(editEmployeeModel.get('paid'));
 
                         if (editedCol.hasClass('calc')) {
-                            //if (editedCol.data('content') === 'salary') {
-                                //this.whatToSet['baseSalary'] = editedElementValue;
-                            //} else {
+                            if (editedCol.data('content') === 'salary') {
+                                this.whatToSet['baseSalary'] = editedElementValue;
+                            }// else {
                                 calc[editedElementContent] = editedElementValue;
                                 this.whatToSet['calc'] = calc;
                             //}
