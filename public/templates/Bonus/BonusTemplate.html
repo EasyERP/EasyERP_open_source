@@ -31,7 +31,7 @@
                     <%if (formatingDate(bonus.startDate) === startDate) {%>
                         From start of project
                     <%} else {%>
-                        <%=formatingDate(bonus.startDate)%>
+                        <%=formatingDate(bonus.startDate) || '&nbsp;'%>
                     <%}%>
                 </div>
 
@@ -42,7 +42,7 @@
                     <%if (formatingDate(bonus.endDate) === endDate) {%>
                         To end of project
                     <%} else {%>
-                        <%=formatingDate(bonus.endDate)%>
+                        <%=formatingDate(bonus.endDate) || '&nbsp;'%>
                     <%}%>
                 </div>
 

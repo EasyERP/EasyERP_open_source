@@ -112,7 +112,7 @@ define([
                     var vacArray = self.monthCur[0].vacArray;
                     for (var j = 0; j < countVacation; j++) {
                         for (var k = j + startOfMonth - 1; k <= j + startOfMonth - 1; k++) {
-                            self.monthArray[i].daysData[k].type = vacArray[j] ? vacArray[j] : '';
+                            self.monthArray[i].daysData[k+1].type = vacArray[j] ? vacArray[j] : '';
                             switch (vacArray[j]) {
                                 case 'V':
                                     self.vacationDays++;

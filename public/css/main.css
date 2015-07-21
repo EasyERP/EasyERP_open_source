@@ -262,8 +262,12 @@ input::-ms-clear {
   line-height: 18px;
   font-weight: bold;
   font-size: 13px;
-  text-align: left;
+  text-align: right;
   text-shadow: 0 1px 1px rgba(222, 222, 222, 0.5);
+}
+.list2 thead th:nth-child(1),
+.list2 thead th:nth-child(2) {
+  text-align: center;
 }
 .list2 thead th input[type="checkbox"] {
   margin-top: 2.5px;
@@ -331,13 +335,14 @@ input::-ms-clear {
   padding: 4px 5px;
   line-height: 17px;
   font-size: 11px;
-  text-align: left;
+  text-align: right;
 }
 .list2 tbody tr td.red-border {
   color: red;
 }
+.list2 tbody tr td:nth-child(1),
 .list2 tbody tr td:nth-child(2) {
-  text-align: left;
+  text-align: center;
 }
 .list2 tbody tr td.withSelect {
   position: relative;
@@ -392,8 +397,12 @@ input::-ms-clear {
   line-height: 18px;
   font-weight: bold;
   font-size: 13px;
-  text-align: left;
+  text-align: right;
   text-shadow: 0 1px 1px rgba(222, 222, 222, 0.5);
+}
+.list2 thead th:nth-child(1),
+.list2 thead th:nth-child(2) {
+  text-align: center;
 }
 .list2 thead th input[type="checkbox"] {
   margin-top: 2.5px;
@@ -461,13 +470,14 @@ input::-ms-clear {
   padding: 4px 5px;
   line-height: 17px;
   font-size: 11px;
-  text-align: left;
+  text-align: right;
 }
 .list2 tbody tr td.red-border {
   color: red;
 }
+.list2 tbody tr td:nth-child(1),
 .list2 tbody tr td:nth-child(2) {
-  text-align: left;
+  text-align: center;
 }
 .list2 tbody tr td.withSelect {
   position: relative;
@@ -1203,6 +1213,7 @@ input::-ms-clear {
 .workflow-sub-list li.active {
   border: 1px solid #dddddd;
   border-right: none;
+  display: list-item;
 }
 .workflow-list li.active.first,
 .workflow-sub-list li.active.first {
@@ -1218,10 +1229,10 @@ input::-ms-clear {
 }
 .workflow-list li a,
 .workflow-sub-list li a {
-  padding-bottom: 10px;
-  padding-left: 15px;
-  padding-right: 15px;
-  padding-top: 10px;
+  padding: 10px 15px;
+  display: inline-block;
+  width: 100%;
+  box-sizing: border-box;
 }
 .workflow-list li .edit-holder a,
 .workflow-sub-list li .edit-holder a {
@@ -4356,9 +4367,19 @@ table#workflows tr td.edit-status {
 #top-bar-bonus.banned {
   border-bottom: 0;
 }
+.startDate,
+.endDate {
+  position: relative;
+  width: 150px;
+}
 .startDate input,
 .endDate input {
   display: none;
+  position: absolute;
+  top: 5px;
+  left: 0;
+  margin: 0;
+  max-width: 100%;
 }
 .createBtnHolder,
 #createBtnHolder {
@@ -4797,8 +4818,12 @@ ul.dialog-tabs li.right button {
   line-height: 18px;
   font-weight: bold;
   font-size: 13px;
-  text-align: left;
+  text-align: right;
   text-shadow: 0 1px 1px rgba(222, 222, 222, 0.5);
+}
+.list thead th:nth-child(1),
+.list thead th:nth-child(2) {
+  text-align: center;
 }
 .list thead th input[type="checkbox"] {
   margin-top: 2.5px;
@@ -4866,13 +4891,14 @@ ul.dialog-tabs li.right button {
   padding: 4px 5px;
   line-height: 17px;
   font-size: 11px;
-  text-align: left;
+  text-align: right;
 }
 .list tbody tr td.red-border {
   color: red;
 }
+.list tbody tr td:nth-child(1),
 .list tbody tr td:nth-child(2) {
-  text-align: left;
+  text-align: center;
 }
 .list tbody tr td.withSelect {
   position: relative;
@@ -8215,7 +8241,7 @@ textarea#editInput {
 .vacation-list tfoot td.employee,
 .vacation-list tbody td.department,
 .vacation-list tfoot td.department {
-  text-align: left;
+  text-align: right;
 }
 .vacation-list tbody td.totalDays,
 .vacation-list tfoot td.totalDays {

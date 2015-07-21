@@ -1,6 +1,6 @@
 <% vacationCollection.forEach(function(vacation, index){ %>
 <tr data-id="<%=vacation._id%>">
-    <td class="editable" data-content="employee" data-type="employeeSelect">
+    <td class="editable employee" data-content="employee" data-type="employeeSelect">
         <%=vacation.employee ? vacation.employee.name : ''%>
     </td>
     <td class="department">
