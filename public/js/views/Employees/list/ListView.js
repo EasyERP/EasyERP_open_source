@@ -34,12 +34,12 @@ define([
                 _.bind(this.collection.showMoreAlphabet, this.collection);
                 this.allAlphabeticArray = common.buildAllAphabeticArray();
 
-                if (App.currentUser.savedFilters[key]){
-                    this.filter = App.currentUser.savedFilters[key];
-                    this.getTotalLength(null, this.defaultItemsNumber, this.filter);
-                    this.showFilteredPage(null, this.filter);
-                } else {
-                    this.filter = options.filter;
+                //if (App.currentUser.savedFilters[key]){
+                //    this.filter = App.currentUser.savedFilters[key];
+                //    this.getTotalLength(null, this.defaultItemsNumber, this.filter);
+                //    this.showFilteredPage(null, this.filter);
+                //} else {
+                    this.filter = options.filter; //App.currentUser.savedFilters['HR/Employees'];
                     this.defaultItemsNumber = this.collection.namberToShow || 50;
                     this.newCollection = options.newCollection;
                     this.deleteCounter = 0;
@@ -47,7 +47,7 @@ define([
                     this.render();
                     this.getTotalLength(null, this.defaultItemsNumber, this.filter);
                     this.contentCollection = contentCollection;
-                }
+              //  }
             },
 
             events: {
