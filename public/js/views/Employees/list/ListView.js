@@ -336,14 +336,18 @@ define([
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
+
                 this.filter ={};
+
                 if (e && e.target) {
                     selectedLetter = $(e.target).text();
                     if ($(e.target).text() == "All") {
                         selectedLetter = "";
                     }
                 }
-                if (showList.length) this.filter['department'] = showList;
+                if (showList.length) {
+                    this.filter['department'] = showList;
+                }
                 if (chosen) {
                     chosen.each(function (index, elem) {
                         if (self.filter[elem.children[1].value]) {

@@ -21,14 +21,14 @@ define([
                 'click .addCondition': 'addCondition',
                 'click .removeFilter': 'removeFilter',
                 'click .customFilter': 'showCustomFilter',
-                'click .applyFilter': 'applyFilter',
-                'click .saveBtn':'saveFilter'
+                'click .applyFilter': 'applyFilter'
             },
 
 
             initialize: function (options) {
                 this.render(options);
                 this.currentModel =  options.model;
+                this.filter = options.filter;
             },
 
             render: function (options) {
@@ -39,28 +39,6 @@ define([
                 this.$el.find('.saveBtn').hide();
 
                 return this;
-            },
-
-            saveFilter: function () {
-                var menu = $('#mainmenu-holder').find('li.selected').text();
-                var subMenu = $('#submenu-holder').find('li.selected').text();
-                var key = menu.trim() + subMenu.trim();
-                var showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
-
-                var obj = {};
-                obj[key] = showList;
-
-                $.ajax({
-                    url: "/currentUser",
-                    data: obj,
-                    type: 'POST',
-                    success: function (response) {
-                        console.log(response);
-                    },
-                    error: function (jxhr) {
-                        console.log(jxhr);
-                    }
-                });
             },
 
             applyFilter: function () {

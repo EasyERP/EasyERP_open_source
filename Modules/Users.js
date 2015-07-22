@@ -300,13 +300,13 @@ var Users = function (mainDb, models) {
             } else updateUser();
             function updateUser() {
                 var query = {};
-                var savedFilters = data;
 
-                if (savedFilters){
-                    query = { $push:{savedFilters: savedFilters}};
-                } else {
+                if (data.changePass) {
                     query = { $set: data};
+                } else if (data) {
+                    query = { $push:{savedFilters: data}};
                 }
+
                 models.get(req.session.lastDb, 'Users', userSchema).findByIdAndUpdate(_id, query, function (err, result) {
                     if (err) {
                         logWriter.log("User.js update profile.update" + err);

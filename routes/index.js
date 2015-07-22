@@ -536,7 +536,15 @@ module.exports = function (app, mainDb) {
         if (req.body.oldpass && req.body.pass) {
             data.changePass = true;
         }
-        data.savedFilters = req.body;
+        requestHandler.updateCurrentUser(req, res, data);
+    });
+
+    app.patch('/currentUser', function (req, res) {
+        var data = {};
+        if (req.body){
+            data.savedFilters = req.body;
+        }
+
         requestHandler.updateCurrentUser(req, res, data);
     });
 
