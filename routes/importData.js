@@ -708,6 +708,7 @@ module.exports = function (models) {
                         var invoiceAmmount = 0;
                         var invoicePaid = 0;
                         var balance = 0;
+                        var paidByInvoice = 0;
                         var wTrackInvoice;
 
                         if (_comparator && msSqlKey in _comparator) {
@@ -729,14 +730,17 @@ module.exports = function (models) {
                     }
 
                     if (fetchedInvoice) {
+
                         wTrackInvoice = groupedInvoices[fetchedInvoice['ID']];
+
+                        paidByInvoice = fetchedInvoice.Paid;
 
                         for (var i = wTrackInvoice.length - 1; i >= 0; i--) {
                             invoiceAmmount += groupedInvoices[fetchedInvoice['ID']][i].Amount;
                             invoicePaid += groupedInvoices[fetchedInvoice['ID']][i].Paid;
                         }
 
-                        balance = invoiceAmmount - invoicePaid;
+                        balance = /*invoiceAmmount - invoicePaid*/(paidByInvoice > invoicePaid) ? invoicePaid - paidByInvoice :  invoiceAmmount - invoicePaid;
 
                         wTrackQueryQuery = {
                             ID: {$in: _.pluck(groupedInvoices[fetchedInvoice['ID']], 'wTrackID')}
@@ -746,6 +750,9 @@ module.exports = function (models) {
                             ID: fetchedInvoice['Project']
                         };
 
+                        if(fetchedInvoice['ID'] === 233){
+                            console.log(balance);
+                        }
 
                         function wTrackFinder(callback) {
                             Wtrack
@@ -781,7 +788,7 @@ module.exports = function (models) {
                             objectToSave.paymentInfo = {
                                 //total: invoiceAmmount,
                                 balance: balance,
-                                unTaxed: invoiceAmmount,
+                                unTaxed: /*invoiceAmmount*/paidByInvoice,
                                 taxes: 0
                             };
 
@@ -949,21 +956,24 @@ module.exports = function (models) {
                             invoce: invoiceFinder
                         }, function (err, result) {
                             var invoiceId;
+                            var _invoice = result.invoce;
 
-                            if (result.invoce) {
-                                invoiceId = result.invoce._id;
+                            if (_invoice) {
+                                invoiceId = _invoice._id;
                                 objectToSave.invoice = {
                                     _id: invoiceId,
-                                    name: result.invoce.name,
+                                    name: _invoice.name,
                                     assigned: {
-                                        _id: result.invoce.salesPerson ? result.invoce.salesPerson._id : '',
-                                        name: result.invoce.salesPerson && result.invoce.salesPerson.name ? result.invoce.salesPerson.name.first + ' ' + result.invoce.salesPerson.name.last : ''
+                                        _id: _invoice.salesPerson ? _invoice.salesPerson._id : '',
+                                        name: _invoice.salesPerson && _invoice.salesPerson.name ? _invoice.salesPerson.name.first + ' ' + _invoice.salesPerson.name.last : ''
                                     }
                                 };
                                 objectToSave.supplier = {
-                                    _id: result.invoce.project.customer._id,
-                                    fullName: result.invoce.project.customer && result.invoce.project.customer.name ? result.invoce.project.customer.name.first + ' ' + result.invoce.project.customer.name.last : ''
+                                    _id: _invoice.project.customer._id,
+                                    fullName: _invoice.project.customer && _invoice.project.customer.name ? _invoice.project.customer.name.first + ' ' + _invoice.project.customer.name.last : ''
                                 };
+
+                                objectToSave.differenceAmount = _invoice.paymentInfo.balance / 100;
                             }
 
                             model = new Payment(objectToSave);
