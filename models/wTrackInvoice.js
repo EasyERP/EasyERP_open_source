@@ -72,7 +72,7 @@ module.exports = (function () {
 
     function setPrice(num) {
         return num * 100;
-    }
+    };
 
     invoiceSchema.set('toJSON', {getters: true});
 

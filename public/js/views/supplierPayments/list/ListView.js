@@ -19,6 +19,7 @@ define([
             page: null, //if reload page, and in url is valid page
             contentType: 'supplierPayments',//needs in view.prototype.changeLocationHash
             viewType: 'list',//needs in view.prototype.changeLocationHash
+            collectionLengthUrl: '/payment/suppliers/totalCollectionLength',
 
             events: {
                 "click .itemsNumber": "switchPageCounter",
@@ -53,7 +54,7 @@ define([
 
             showPage: function (event) {
                 event.preventDefault();
-                this.showP(event,{filter: this.filter, newCollection: this.newCollection,sort: this.sort});
+                this.showP(event, {filter: this.filter, newCollection: this.newCollection, sort: this.sort});
             },
 
             switchPageCounter: function (event) {
@@ -230,21 +231,27 @@ define([
                 this.collection.bind('reset', this.renderContent, this);
             },
 
-            getTotalLength: function (currentNumber, itemsNumber,filter) {
-                dataService.getData('/supplierPayments/totalCollectionLength', {
+            getTotalLength: function (currentNumber, itemsNumber, filter) {
+                dataService.getData(this.collectionLengthUrl, {
                     contentType: this.contentType,
                     currentNumber: currentNumber,
                     filter: filter,
                     newCollection: this.newCollection
                 }, function (response, context) {
-                    var page = context.page || 1;
-                    var length = context.listLength = response.count || 0;
-                    if (itemsNumber * (page - 1) > length) {
-                        context.page = page = Math.ceil(length / itemsNumber);
-                        context.fetchSortCollection(context.sort);
-                        context.changeLocationHash(page, context.defaultItemsNumber, filter);
+                    var page;
+                    var length;
+
+                    if (!response.error) {
+                        page = context.page || 1;
+                        length = context.listLength = response.count || 0;
+
+                        if (itemsNumber * (page - 1) > length) {
+                            context.page = page = Math.ceil(length / itemsNumber);
+                            context.fetchSortCollection(context.sort);
+                            context.changeLocationHash(page, context.defaultItemsNumber, filter);
+                        }
+                        context.pageElementRender(response.count, itemsNumber, page);//prototype in main.js
                     }
-                    context.pageElementRender(response.count, itemsNumber, page);//prototype in main.js
                 }, this);
             },
 
@@ -262,7 +269,7 @@ define([
 
                 holder.append(itemView.render());
 
-                holder.append(new listTotalView({element: holder.find("#listTable"), cellSpan:7}).render());
+                holder.append(new listTotalView({element: holder.find("#listTable"), cellSpan: 7}).render());
 
                 itemView.undelegateEvents();
 
@@ -287,10 +294,14 @@ define([
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
                 tBody.empty();
-                var itemView = new listItemView({ collection: this.collection,page: currentEl.find("#currentShowPage").val(), itemsNumber: currentEl.find("span#itemsNumber").text() });
+                var itemView = new listItemView({
+                    collection: this.collection,
+                    page: currentEl.find("#currentShowPage").val(),
+                    itemsNumber: currentEl.find("span#itemsNumber").text()
+                });
                 tBody.append(itemView.render());
 
-                currentEl.append(new listTotalView({element: tBody, cellSpan:7}).render());
+                currentEl.append(new listTotalView({element: tBody, cellSpan: 7}).render());
 
                 var pagenation = this.$el.find('.pagination');
                 if (this.collection.length === 0) {
