@@ -4,7 +4,6 @@
 define([
         'text!templates/supplierPayments/list/ListHeader.html',
         'text!templates/customerPayments/forWTrack/ListHeader.html',
-        'text!templates/customerPayments/forWTrack/CancelEdit.html',
         'views/customerPayments/list/ListItemView',
         'views/customerPayments/list/ListTotalView',
         'collections/customerPayments/filterCollection',
@@ -13,7 +12,7 @@ define([
         'dataService',
         'populate'
     ],
-    function (listTemplate, ListHeaderForWTrack, cancelEdit, listItemView, listTotalView, paymentCollection, editCollection, currentModel, dataService, populate) {
+    function (listTemplate, ListHeaderForWTrack, listItemView, listTotalView, paymentCollection, editCollection, currentModel, dataService, populate) {
         var PaymentListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
