@@ -4,16 +4,16 @@
 define([
         'text!templates/supplierPayments/list/ListHeader.html',
         'text!templates/customerPayments/forWTrack/ListHeader.html',
+        'text!templates/customerPayments/forWTrack/CancelEdit.html',
         'views/customerPayments/list/ListItemView',
         'views/customerPayments/list/ListTotalView',
         'collections/customerPayments/filterCollection',
         'collections/customerPayments/editCollection',
         'models/PaymentModel',
         'dataService',
-        'populate',
-        'async'
+        'populate'
     ],
-    function (listTemplate, ListHeaderForWTrack, listItemView, listTotalView, paymentCollection, editCollection, currentModel, dataService, populate, async) {
+    function (listTemplate, ListHeaderForWTrack, cancelEdit, listItemView, listTotalView, paymentCollection, editCollection, currentModel, dataService, populate) {
         var PaymentListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -31,8 +31,11 @@ define([
             changedModels: {},
             responseObj: {},
 
+            template: _.template(listTemplate),
+
             events: {
                 "click .itemsNumber": "switchPageCounter",
+                "click .currentSelected": "showNewSelect",
                 "click .showPage": "showPage",
                 "change #currentShowPage": "showPage",
                 "click #previousPage": "previousPage",
@@ -62,6 +65,20 @@ define([
                 this.render();
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
                 this.contentCollection = paymentCollection;
+
+                this.responseObj['#workflow'] = [{
+                    _id: 'done',
+                    name: 'Paid'
+                }, {
+                    _id: 'new',
+                    name: 'Draft'
+                }];
+            },
+
+            showNewSelect: function (e, prev, next) {
+                populate.showSelect(e, prev, next, this);
+
+                return false;
             },
 
             setEditable: function (td) {
@@ -173,16 +190,14 @@ define([
             chooseOption: function (e) {
                 var target = $(e.target);
                 var targetElement = target.parents("td");
+                var targetA = targetElement.find('a');
                 var tr = target.parents("tr");
                 var modelId = tr.data('id');
                 var id = target.attr("id");
                 var attr = targetElement.attr("id") || targetElement.data("content");
                 var elementType = '#' + attr;
-                var paymentMethod;
                 var changedAttr;
                 var workflow;
-                var supplier;
-                var assignedContainer;
 
                 var element = _.find(this.responseObj[elementType], function (el) {
                     return el._id === id;
@@ -201,17 +216,22 @@ define([
                 changedAttr = this.changedModels[modelId];
 
                 if (elementType === '#workflow') {
-
+                    changedAttr.workflow = target.text();
                 }
-                targetElement.text(target.text());
+
+                targetA.text(target.text());
 
                 this.hideNewSelect();
                 this.setEditable(targetElement);
-
+                this.chooseOptClassManipulator(targetA, id);
 
                 return false;
             },
 
+            chooseOptClassManipulator: function(el, cls){
+                el.removeClass();
+                el.addClass('currentSelected ' + cls);
+            },
 
             saveItem: function () {
                 var model;
@@ -224,6 +244,7 @@ define([
                     modelJSON = model.toJSON();
                     model.changed = this.changedModels[id];
                 }
+
                 this.editCollection.save();
             },
 
@@ -240,13 +261,13 @@ define([
             },
 
             showSaveCancelBtns: function () {
-                var createBtnEl = $('#top-bar-createBtn');
+               /* var createBtnEl = $('#top-bar-createBtn');*/
                 var saveBtnEl = $('#top-bar-saveBtn');
                 var cancelBtnEl = $('#top-bar-deleteBtn');
 
-                if (!this.changed) {
+                /*if (!this.changed) {
                     createBtnEl.hide();
-                }
+                }*/
                 saveBtnEl.show();
                 cancelBtnEl.show();
 
@@ -303,8 +324,6 @@ define([
 
                 return !!newRow.length;
             },
-
-            template: _.template(listTemplate),
 
             showNewSelect: function (e, prev, next) {
                 populate.showSelect(e, prev, next, this);
@@ -566,14 +585,18 @@ define([
             renderContent: function () {
                 var currentEl = this.$el;
                 var tBody = currentEl.find('#listTable');
+
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
+
                 tBody.empty();
+
                 var itemView = new listItemView({
                     collection: this.collection,
                     page: currentEl.find("#currentShowPage").val(),
                     itemsNumber: currentEl.find("span#itemsNumber").text()
                 });
+
                 tBody.append(itemView.render());
 
                 currentEl.append(new listTotalView({element: tBody, cellSpan: 7}).render());

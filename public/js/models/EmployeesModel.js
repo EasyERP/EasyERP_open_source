@@ -11,7 +11,6 @@
                 }
             });
         },
-        parse: true,
         parse: function (response) {
             if (!response.data) {
                 if (response.createdBy)
