@@ -503,8 +503,10 @@ define([
                         break;
                 }
                 sortObject[sortBy] = sortConst;
+
                 this.fetchSortCollection(sortObject);
                 this.changeLocationHash(1, this.defaultItemsNumber);
+
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
             },
 
@@ -521,6 +523,7 @@ define([
                     newCollection: this.newCollection
                 });
                 this.collection.bind('reset', this.renderContent, this);
+                this.collection.bind('showmore', this.showMoreContent, this);
             },
 
             getTotalLength: function (currentNumber, itemsNumber, filter) {
