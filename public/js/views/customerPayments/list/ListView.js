@@ -31,6 +31,8 @@ define([
             changedModels: {},
             responseObj: {},
 
+            template: _.template(listTemplate),
+
             events: {
                 "click .itemsNumber": "switchPageCounter",
                 "click .currentSelected": "showNewSelect",
@@ -213,6 +215,10 @@ define([
 
                 changedAttr = this.changedModels[modelId];
 
+                if (elementType === '#workflow') {
+                    changedAttr.workflow = target.text();
+                }
+
                 targetA.text(target.text());
 
                 this.hideNewSelect();
@@ -238,6 +244,7 @@ define([
                     modelJSON = model.toJSON();
                     model.changed = this.changedModels[id];
                 }
+
                 this.editCollection.save();
             },
 
@@ -317,8 +324,6 @@ define([
 
                 return !!newRow.length;
             },
-
-            template: _.template(listTemplate),
 
             showNewSelect: function (e, prev, next) {
                 populate.showSelect(e, prev, next, this);
@@ -580,14 +585,18 @@ define([
             renderContent: function () {
                 var currentEl = this.$el;
                 var tBody = currentEl.find('#listTable');
+
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
+
                 tBody.empty();
+
                 var itemView = new listItemView({
                     collection: this.collection,
                     page: currentEl.find("#currentShowPage").val(),
                     itemsNumber: currentEl.find("span#itemsNumber").text()
                 });
+
                 tBody.append(itemView.render());
 
                 currentEl.append(new listTotalView({element: tBody, cellSpan: 7}).render());

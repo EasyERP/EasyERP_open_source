@@ -11,6 +11,8 @@ var async = require('async');
 var WorkflowHandler = require('./workflow');
 var _ = require('lodash');
 
+var CONSTANTS = require('../constants/modules');
+
 var Payment = function (models) {
     var access = require("../Modules/additions/access.js")(models);
 
@@ -66,7 +68,7 @@ var Payment = function (models) {
         }
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, 60, function (access) {
+            access.getReadAccess(req, req.session.uId, CONSTANTS.CUSTOMER_PAYMENTS, function (access) {
                 if (access) {
                     var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
 
@@ -463,9 +465,10 @@ var Payment = function (models) {
         var body = req.body;
         var uId;
         var Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
+
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             uId = req.session.uId;
-            access.getEditWritAccess(req, req.session.uId, 60, function (access) {
+            access.getEditWritAccess(req, req.session.uId, CONSTANTS.CUSTOMER_PAYMENTS, function (access) {
                 if (access) {
                     async.each(body, function (data, cb) {
                         var id = data._id;
@@ -474,6 +477,7 @@ var Payment = function (models) {
                             user: uId,
                             date: new Date().toISOString()
                         };
+
                         delete data._id;
                         Payment.findByIdAndUpdate(id, {$set: data}, cb);
                     }, function (err) {

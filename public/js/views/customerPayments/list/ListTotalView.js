@@ -42,12 +42,18 @@ define([
             },
 
             render: function() {
+                var totalObject;
+
                 if (this.$el.find("tr").length>0){
-                    this.$el.find("#total").text(this.getTotal().total.toFixed(2));
-                    this.$el.find("#totalPaidAmount").text(this.getTotal().totalPaidAmount.toFixed(2));
+                    totalObject = this.getTotal();
+
+                    this.$el.find("#total").text(helpers.currencySplitter(totalObject.total));
+                    this.$el.find("#totalPaidAmount").text(helpers.currencySplitter(totalObject.totalPaidAmount));
                 } else {
                     this.$el.append(_.template(listTemplate, this.getTotal()));
                 }
+
+                return this;
             }
         });
 
