@@ -664,7 +664,7 @@ var wTrack = function (models) {
             });
 
         });
-    }
+    };
 };
 
 module.exports = wTrack;

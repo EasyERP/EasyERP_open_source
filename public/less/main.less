@@ -713,7 +713,7 @@ input::-ms-clear {
       line-height: 18px;
       .bold;
       font-size: @font-size;
-      text-align: left;
+      text-align: right;
       text-shadow: 0 1px 1px rgba(222, 222, 222, 0.5);
     }
   }
@@ -818,6 +818,17 @@ input::-ms-clear {
 
         &.withSelect {
           position: relative;
+        }
+
+        &[data-content="workflow"] {
+          position: relative;
+          padding: 4px 15px;
+          overflow: visible;
+          
+          .newSelectList {
+            top: 5px;
+            right: 15px;
+          }
         }
 
         progress {
