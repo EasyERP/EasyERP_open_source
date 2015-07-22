@@ -414,6 +414,10 @@ define([
             this.checkLogin(function (success) {
                 if (success) {
                     if (!App || !App.currentDb) {
+                        dataService.getData('/currentUser', null, function (response) {
+                            App.currentUser = response;
+                        });
+
                         dataService.getData('/currentDb', null, function (response) {
                             if (response && !response.error) {
                                 App.currentDb = response;

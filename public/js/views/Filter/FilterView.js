@@ -1,10 +1,9 @@
 define([
         'text!templates/Filter/FilterTemplate.html',
         'custom',
-        'common',
-        'dataService'
+        'common'
     ],
-    function (ContentFilterTemplate, Custom, Common, dataService) {
+    function (ContentFilterTemplate, Custom, Common) {
         var FilterView;
         FilterView = Backbone.View.extend({
             el: '#searchContainer',
@@ -27,16 +26,12 @@ define([
 
             initialize: function (options) {
                 this.render(options);
-                this.currentModel =  options.model;
-                this.filter = options.filter;
             },
 
             render: function (options) {
                 this.customCollection =  options.customCollection;
 
                 this.$el.html(this.template({collection: this.collection, customCollection: options.customCollection}));
-                this.$el.append("<button class='saveBtn'>Save Filter</button>");
-                this.$el.find('.saveBtn').hide();
 
                 return this;
             },
@@ -67,7 +62,6 @@ define([
                     this.trigger('defaultFilter');
 
                 }
-                this.$el.find('.saveBtn').hide();
                 e.stopPropagation();
             },
 
@@ -80,8 +74,6 @@ define([
                 lastOpt.children('.chooseOption').show();
                 lastOpt.children('.chooseDate').remove();
                 lastOpt.removeClass('chosen');
-                this.$el.find('.saveBtn').show();
-
             },
 
             chooseOptions: function (e) {
@@ -187,7 +179,6 @@ define([
                 if ($('.drop-down-filter input:checkbox:checked').length === 0) {
                     this.trigger('defaultFilter');
                 }
-                this.$el.find('.saveBtn').show();
 
             },
 
@@ -200,8 +191,6 @@ define([
                 });
 
                 this.trigger('defaultFilter');
-                this.$el.find('.saveBtn').hide();
-
             }
         });
 

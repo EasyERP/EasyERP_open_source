@@ -86,6 +86,7 @@ define([
                 type: "POST",
                 data: data,
                 success: function () {
+                    App.currentUser = data.login;
                     Custom.runApplication(true);
                 },
                 error: function () {

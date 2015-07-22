@@ -1,15 +1,16 @@
 define([
-    'text!templates/Employees/list/ListHeader.html',
-    'views/Employees/CreateView',
-    'views/Employees/list/ListItemView',
-    'text!templates/Alpabet/AphabeticTemplate.html',
-    'collections/Employees/filterCollection',
+        'text!templates/Employees/list/ListHeader.html',
+        'views/Employees/CreateView',
+        'views/Employees/list/ListItemView',
         'views/Filter/FilterView',
-    'common',
-    'dataService'
-],
+        'text!templates/Alpabet/AphabeticTemplate.html',
+        'collections/Employees/filterCollection',
+        'collections/Users/editCollection',
+        'common',
+        'dataService'
+    ],
 
-    function (listTemplate, createView, listItemView, aphabeticTemplate, contentCollection, filterView, common, dataService) {
+    function (listTemplate, createView, listItemView, filterView, aphabeticTemplate, contentCollection, userCollection, common, dataService) {
         var EmployeesListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -19,22 +20,34 @@ define([
             newCollection: null,
             page: null, //if reload page, and in url is valid page
             contentType: 'Employees',//needs in view.prototype.changeLocationHash
-            viewType: 'list',//needs in view.prototype.changeLocationHash
+            viewType: 'list',
+            currentUser: null,//needs in view.prototype.changeLocationHash
 
             initialize: function (options) {
+                var main = $('#mainmenu-holder').find('li.selected').text();
+                var submenu = $('#submenu-holder').find('li.selected').text();
+                var key = main.trim() + '/' + submenu.trim();
+
                 this.startTime = options.startTime;
                 this.collection = options.collection;
                 _.bind(this.collection.showMore, this.collection);
                 _.bind(this.collection.showMoreAlphabet, this.collection);
                 this.allAlphabeticArray = common.buildAllAphabeticArray();
-                this.filter = options.filter;
-                this.defaultItemsNumber = this.collection.namberToShow || 50;
-                this.newCollection = options.newCollection;
-                this.deleteCounter = 0;
-                this.page = options.collection.page;
-                this.render();
-                this.getTotalLength(null, this.defaultItemsNumber, this.filter);
-                this.contentCollection = contentCollection;
+
+                if (App.currentUser.savedFilters[key]){
+                    this.filter = App.currentUser.savedFilters[key];
+                    this.getTotalLength(null, this.defaultItemsNumber, this.filter);
+                    this.showFilteredPage(null, this.filter);
+                } else {
+                    this.filter = options.filter;
+                    this.defaultItemsNumber = this.collection.namberToShow || 50;
+                    this.newCollection = options.newCollection;
+                    this.deleteCounter = 0;
+                    this.page = options.collection.page;
+                    this.render();
+                    this.getTotalLength(null, this.defaultItemsNumber, this.filter);
+                    this.contentCollection = contentCollection;
+                }
             },
 
             events: {
@@ -51,7 +64,8 @@ define([
                 "click .letter:not(.empty)": "alpabeticalRender",
                 "click #firstShowPage": "firstPage",
                 "click #lastShowPage": "lastPage",
-                "click .oe_sortable": "goSort"
+                "click .oe_sortable": "goSort",
+                "click .saveFilterButton": "saveFilter"
             },
 
             renderContent: function () {
@@ -179,6 +193,7 @@ define([
                 var showList;
 
                 currentEl.html('');
+                currentEl.prepend('<button id="saveFilterButton" class="saveFilterButton">Save Filter</button>');
                 currentEl.append(_.template(listTemplate));
                 currentEl.append(new listItemView({ collection: this.collection, page: this.page, itemsNumber: this.collection.namberToShow }).render());
 
@@ -189,6 +204,8 @@ define([
                     else
                         $("#top-bar-deleteBtn").hide();
                 });
+
+                $("#saveFilterButton").hide();
 
 
                 $(document).on("click", function (e) {
@@ -209,6 +226,7 @@ define([
                         });
                     }
                 });
+
                 dataService.getData('/department/getForDD', null, function (departments) {
                     departments.data.forEach(function (department) {
                         department.name = department.departmentName;
@@ -345,7 +363,9 @@ define([
                         selectedLetter = "";
                     }
                 }
-                if (showList.length) {
+                if (showList.length && showList['department']) {
+                    this.filter = showList;
+                } else {
                     this.filter['department'] = showList;
                 }
                 if (chosen) {
@@ -365,6 +385,27 @@ define([
                 this.changeLocationHash(1, itemsNumber, this.filter);
                 this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter });
                 this.getTotalLength(null, itemsNumber, this.filter);
+
+                $(".saveFilterButton").show();
+            },
+
+            saveFilter: function () {
+                var currentUser = new userCollection();
+                var main = $('#mainmenu-holder').find('li.selected').text();
+                var submenu = $('#submenu-holder').find('li.selected').text();
+                var key;
+                var obj = {};
+
+                key =  main.trim() + '/' + submenu.trim();
+                obj[key] = this.filter;
+
+                currentUser.changed = obj;
+                currentUser.save(currentUser.changed, {
+                    data: obj,
+                    patch: true
+                });
+
+                $(".saveFilterButton").hide();
             },
 
             showPage: function (event) {

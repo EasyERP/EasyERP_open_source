@@ -304,7 +304,7 @@ var Users = function (mainDb, models) {
                 if (data.changePass) {
                     query = { $set: data};
                 } else if (data) {
-                    query = { $push:{savedFilters: data}};
+                    query = { $set: {savedFilters: data}};
                 }
 
                 models.get(req.session.lastDb, 'Users', userSchema).findByIdAndUpdate(_id, query, function (err, result) {

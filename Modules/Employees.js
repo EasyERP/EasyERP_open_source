@@ -28,6 +28,12 @@ var Employee = function (event, models) {
             optionsObject['workflow'] = { $in: data.filter.workflow.objectID() };
         } else if (data && !data.newCollection) {
             optionsObject['workflow'] = { $in: [] };
+        } else if (data.filter && data.filter.department) {
+            data.filter.department = data.filter.department.map(function (item) {
+                return item === "null" ? null : item;
+            });
+
+            optionsObject['department'] = {$in: data.filter.department.objectID()};
         }
 
         switch (contentType) {
