@@ -8,7 +8,7 @@ module.exports = (function () {
 
     var payments = {
         _id: false,
-        payments: [{ type: ObjectId, ref: 'Payment', default: null }],
+        //payments: [{ type: ObjectId, ref: 'Payment', default: null }],
         total: {type: Number, default: 0, set: setPrice},
         balance: {type: Number, default: 0, set: setPrice},
         unTaxed: {type: Number, default: 0, set: setPrice},

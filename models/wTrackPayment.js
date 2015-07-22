@@ -8,6 +8,7 @@ module.exports = (function () {
 
 
     var paymentSchema = new Schema({
+        ID: Number,
         forSale:{type: Boolean, default: true},
         invoice: {
             _id: {type: ObjectId, ref: 'Invoice', default: null},
