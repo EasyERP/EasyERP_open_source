@@ -7,11 +7,38 @@ var JobPosition = function (models) {
 
     var jobPositionSchema = mongoose.Schemas['JobPosition'];
 
-    function getTotalCount (req, response) {
+    function getTotalCount(req, response) {
         var res = {};
         var data = {};
         for (var i in req.query) {
             data[i] = req.query[i];
+        }
+        var filter = data.filter;
+        var optionObj = {};
+        optionObj['$and'] = [];
+
+        if (data && filter) {
+
+            for (var key in filter) {
+                switch (key) {
+                    case 'workflow':
+                        optionObj['$and'].push({'workflow': {'$in': filter.workflow.objectID()}});
+                        break;
+                    case 'Job name':
+                        optionObj['$and'].push({'name': {'$in': filter['Job name']}});
+                        break;
+                    case 'Total forecasted employees':
+                        optionObj['$and'].push({'totalForecastedEmployees': {'$in': filter['Total forecasted employees']}});
+                        break;
+                    case 'Current number of employees':
+                        optionObj['$and'].push({'numberOfEmployees': {'$in': filter['Current number of employees']}});
+                        break;
+                    case 'Expected in recruitment':
+                        optionObj['$and'].push({'expectedRecruitment': {'$in': filter['Expected in recruitment']}});
+                        break;
+
+                }
+            }
         }
 
         models.get(req.session.lastDb, "Department", department).aggregate(
@@ -31,7 +58,7 @@ var JobPosition = function (models) {
                         {
                             $match: {
                                 $and: [
-                                    {},
+                                    optionObj,
                                     {
                                         $or: [
                                             {
@@ -82,7 +109,7 @@ var JobPosition = function (models) {
             });
     };
 
-    function create (req, data, res) {
+    function create(req, data, res) {
         try {
             if (!data) {
                 logWriter.log('JobPosition.create Incorrect Incoming Data');
@@ -105,7 +132,7 @@ var JobPosition = function (models) {
                     }
                 });
             }
-            function savetoDb (data) {
+            function savetoDb(data) {
                 try {
                     _job = new models.get(req.session.lastDb, 'JobPosition', jobPositionSchema)();
                     if (data.uId) {
@@ -169,7 +196,7 @@ var JobPosition = function (models) {
         }
     };//End create
 
-    function getJobPositionById (req, id, res) {
+    function getJobPositionById(req, id, res) {
         var query = models.get(req.session.lastDb, 'JobPosition', jobPositionSchema).findById(id);
         query.populate("department", "departmentName _id");
         query.populate("workflow", "name _id").
@@ -206,7 +233,7 @@ var JobPosition = function (models) {
         });
     }
 
-    function getJobPositionForDd (req, response) {
+    function getJobPositionForDd(req, response) {
         var res = {};
         res['data'] = [];
         var query = models.get(req.session.lastDb, 'JobPosition', jobPositionSchema).find({});
@@ -223,7 +250,7 @@ var JobPosition = function (models) {
         });
     };
 
-    function get (req, response) {
+    function get(req, response) {
         var res = {};
         res['data'] = [];
         var query = models.get(req.session.lastDb, 'JobPosition', jobPositionSchema).find({});
@@ -244,8 +271,31 @@ var JobPosition = function (models) {
         });
     }; //end get
 
+    function caseFilter(queryObj, filter) {
+        for (var key in filter) {
+            switch (key) {
+                case 'workflow':
+                    queryObj.where('workflow').in(filter.workflow);
+                    break;
+                case 'Job name':
+                    queryObj.where('name').in(filter['Job name']);
+                    break;
+                case 'Total forecasted employees':
+                    queryObj.where('totalForecastedEmployees').in(filter['Total forecasted employees']);
+                    break;
+                case 'Current number of employees':
+                    queryObj.where('numberOfEmployees').in(filter['Current number of employees']);
+                    break;
+                case 'Expected in recruitment':
+                    queryObj.where('expectedRecruitment').in(filter['Expected in recruitment']);
+                    break;
 
-    function getFilter (req, response) {
+            }
+        }
+    };
+
+
+    function getFilter(req, response) {
         var res = {};
         res['data'] = [];
 
@@ -311,26 +361,8 @@ var JobPosition = function (models) {
                                     query.sort({"editedBy.date": -1});
                                 }
                                 if (data && data.filter) {
-                                    for (var key in data.filter) {
-                                        switch (key) {
-                                            case 'workflow':
-                                                query.where('workflow').in(data.filter.workflow);
-                                                break;
-                                            case 'Job name':
-                                                query.where('name').in(data.filter['Job name']);
-                                                break;
-                                            case 'Total forecasted employees':
-                                                query.where('totalForecastedEmployees').in(data.filter['Total forecasted employees']);
-                                                break;
-                                            case 'Current number of employees':
-                                                query.where('numberOfEmployees').in(data.filter['Current number of employees']);
-                                                break;
-                                            case 'Expected in recruitment':
-                                                query.where('expectedRecruitment').in(data.filter['Expected in recruitment']);
-                                                break;
 
-                                        }
-                                    }
+                                    caseFilter(query, data.filter);
 
                                 } else if (data && (!data.newCollection || data.newCollection === 'false')) {
                                     query.where('workflow').in([]);
@@ -431,7 +463,7 @@ var JobPosition = function (models) {
             });
     }
 
-    function update (req, _id, data, res) {
+    function update(req, _id, data, res) {
         try {
             delete data._id;
             delete data.createdBy;
@@ -466,7 +498,7 @@ var JobPosition = function (models) {
         }
     };// end update
 
-    function remove (req, _id, res) {
+    function remove(req, _id, res) {
         models.get(req.session.lastDb, 'JobPosition', jobPositionSchema).remove({_id: _id}, function (err, result) {
             if (err) {
                 console.log(err);

@@ -6,6 +6,7 @@ module.exports = function (models) {
     var handler = new opportunityHandler(models);
 
     router.get('/getFilterValues', handler.getFilterValues);
+    router.get('/:viewType', handler.getByViewType);
 
     return router;
 };

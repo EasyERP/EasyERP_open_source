@@ -587,6 +587,28 @@ var Project = function (models, event) {
             });
     };
 
+    function caseFilter (filter, content) {
+        for (var key in filter) {
+            switch (key) {
+                case 'workflow':
+                    filter.workflow = filter.workflow.map(function (item) {
+                        return item === "null" ? null : item;
+                    });
+                    content.where('workflow').in(filter.workflow);
+                    break;
+                case 'project':
+                    content.where('projectName').in(filter.project);
+                    break;
+                case 'startDate':
+                    content.where('StartDate').in(filter.startDate);
+                    break;
+                case 'endDate':
+                    content.where('EndDate').in(filter.endDate);
+                    break;
+            }
+        }
+    };
+
     function getProjectsForList(req, data, response) {
         var res = {};
         res['data'] = [];
@@ -652,7 +674,8 @@ var Project = function (models, event) {
 
                                 } */
                             if (data && data.filter) {
-                                for (var key in data.filter) {
+                                caseFilter(data.filter, query);
+                                /*for (var key in data.filter) {
                                     switch (key) {
                                         case 'workflow':
                                             data.filter.workflow = data.filter.workflow.map(function (item) {
@@ -670,7 +693,7 @@ var Project = function (models, event) {
                                             query.where('EndDate').in(data.filter.endDate);
                                             break;
                                     }
-                                }
+                                }*/
                             } else if (data && (!data.newCollection || data.newCollection === 'false')) {
                                     query.where('workflow').in([]);
                                 }
@@ -965,11 +988,34 @@ var Project = function (models, event) {
         if (data && data.parrentContentId) {
             addObj['_id'] = objectId(data.parrentContentId);
         }
-        if (data && data.type !== 'Tasks' && data.filter && data.filter.workflow) {
-            data.filter.workflow = data.filter.workflow.map(function (item) {
+        if (data && data.type !== 'Tasks' && data.filter) {
+
+            for (var key in data.filter) {
+                var condition = data.filter[key];
+
+                switch (key) {
+                    case 'workflow':
+                        condition = condition.map(function (item) {
+                            return item === "null" ? null : item;
+                        });
+                        addObj['workflow'] = {$in: condition.objectID()};
+                        break;
+                    case 'project':
+                        addObj['projectName'] = {$in: condition};
+                        break;
+                    case 'startDate':
+                        addObj['StartDate'] = {$in: condition};
+                        break;
+                    case 'endDate':
+                        addObj['EndDate'] = {$in: condition};
+                        break;
+                }
+            }
+
+           /* data.filter.workflow = data.filter.workflow.map(function (item) {
                 return item === "null" ? null : item;
             });
-            addObj['workflow'] = {$in: data.filter.workflow.objectID()};
+            addObj['workflow'] = {$in: data.filter.workflow.objectID()};*/
         } else if (data && data.type !== 'Tasks' && data.newCollection === 'false') {
             addObj['workflow'] = {$in: []};
         }

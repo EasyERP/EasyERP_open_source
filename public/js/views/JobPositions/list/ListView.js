@@ -186,9 +186,10 @@ define([
                 return false;
             },
 
-            getTotalLength: function (currentNumber, itemsNumber) {
+            getTotalLength: function (currentNumber, itemsNumber, filter) {
                 dataService.getData('/totalCollectionLength/JobPositions', {
                     currentNumber: currentNumber,
+                    filter: filter,
                     newCollection: this.newCollection
                 }, function (response, context) {
                     var page = context.page || 1;
@@ -351,7 +352,7 @@ define([
                 this.startTime = new Date();
                 var itemsNumber = event.target.textContent;
                 this.defaultItemsNumber = itemsNumber;
-                this.getTotalLength(null, itemsNumber);
+                this.getTotalLength(null, itemsNumber, this.filter);
                 this.collection.showMore({
                     count: itemsNumber,
                     page: 1,

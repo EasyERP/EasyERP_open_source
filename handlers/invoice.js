@@ -577,8 +577,25 @@ var Invoice = function (models) {
         };
 
         contentSearcher = function (invoicesIds, waterfallCallback) {
-            optionsObject._id = {$in: invoicesIds};
-            var query = Invoice.find(optionsObject);
+            var query;
+
+            optionsObject.$and = [];
+            optionsObject.$and.push({_id: {$in: invoicesIds}});
+
+            if (req.query && req.query.filter) {
+                if (req.query.filter.workflow) {
+                    optionsObject.$and.push({workflow: {$in: req.query.filter.workflow}});
+                }
+                if (req.query.filter['Due date']) {
+                    optionsObject.$and.push({dueDate: {$gte: new Date(req.query.filter['Due date'][0].start), $lte: new Date(req.query.filter['Due date'][0].end)}});
+
+                }
+                if (req.query.filter.salesPerson) {
+                    optionsObject.$and.push({salesPerson: {$in: req.query.filter.salesPerson}})
+                }
+            }
+
+            query = Invoice.find(optionsObject);
             query.exec(waterfallCallback);
         };
 

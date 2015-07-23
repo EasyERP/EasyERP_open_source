@@ -19,33 +19,7 @@
             var contentType = req.params.contentType;
             var optionsObject = {};
 
-            switch (contentType) {
-                case ('Persons'):
-                {
-                    optionsObject['type'] = 'Person';
-
-                    if (data.filter && data.filter.letter) {
-                        optionsObject['name.last'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
-                    }
-                }
-                    break;
-                case ('Companies'):
-                {
-                    optionsObject['type'] = 'Company';
-                    if (data.filter && data.filter.letter)
-                        optionsObject['name.first'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
-                }
-                    break;
-                case ('ownCompanies'):
-                {
-                    optionsObject['type'] = 'Company';
-                    optionsObject['isOwn'] = true;
-                    if (data.letter)
-                        optionsObject['name.first'] = new RegExp('^[' + data.letter.toLowerCase() + data.letter.toUpperCase() + '].*');
-                }
-                    break;
-            }
-
+            this.caseFilter(contentType, optionsObject, data);
 
             models.get(req.session.lastDb, "Department", department).aggregate(
                 {
@@ -624,15 +598,7 @@
 
         },
 
-        getFilterCustomers: function (req, response) {
-            var data = req.query;
-            var viewType = data.viewType;
-            var contentType = data.contentType;
-            var res = {
-                data: []
-            };
-            var optionsObject = {};
-
+        caseFilter: function (contentType, optionsObject, data) {
             switch (contentType) {
                 case ('Persons'):
                 {
@@ -683,6 +649,18 @@
                 }
                     break;
             }
+        },
+
+        getFilterCustomers: function (req, response) {
+            var data = req.query;
+            var viewType = data.viewType;
+            var contentType = data.contentType;
+            var res = {
+                data: []
+            };
+            var optionsObject = {};
+
+            this.caseFilter(contentType, optionsObject, data);
 
             models.get(req.session.lastDb, "Department", department).aggregate(
                 {

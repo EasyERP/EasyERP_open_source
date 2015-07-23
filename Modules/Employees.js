@@ -10,6 +10,8 @@ var Employee = function (event, models) {
     function getTotalCount(req, response) {
         var res = {};
         var data = {};
+        var or;
+
         for (var i in req.query) {
             data[i] = req.query[i];
         }
@@ -32,11 +34,58 @@ var Employee = function (event, models) {
 
         switch (contentType) {
             case ('Employees'): {
-                optionsObject['isEmployee'] = true;
+                optionsObject['$and'] = [];
+                optionsObject['$and'].push({'isEmployee': true});
+
+                if (data && data.filter) {
+                    optionsObject['$and'].push({$or: []});
+                    or = optionsObject['$and'][1]['$or'];
+
+                    if (data.filter.department) {
+                        var arrOfObjectId = data.filter.department.objectID();
+                        or.push({ 'department': {$in: arrOfObjectId}});
+                    }
+                    if (data.filter.Name) {
+                        or.push({ 'name.last': {$in: data.filter.Name}});
+                    }
+                    if (data.filter.Email) {
+                        or.push({ 'workEmail': {$in: data.filter.Email}});
+                    }
+
+                    if (!or.length) {
+                        optionsObject['$and'].pop();
+                    }
+
+
+                }
             }
                 break;
             case ('Applications'): {
-                optionsObject['isEmployee'] = false;
+                optionsObject['$and'] = [];
+                optionsObject['$and'].push({'isEmployee': false});
+
+                if (data && data.filter) {
+                    filterObj = {};
+                    optionsObject['$and'].push(filterObj);
+                    filterObj['$or'] = [];
+                    or = filterObj['$or'];
+
+                    for (var key in data.filter) {
+
+                        switch (key) {
+                            case 'Name':
+                                or.push({ 'name.last': {$in: data.filter.Name}});
+                                break;
+                            case 'Email':
+                                or.push({ 'workEmail': {$in: data.filter.Email}});
+                                break;
+
+                        }
+                    }
+                    if (!or.length) {
+                        optionsObject['$and'].pop();
+                    }
+                }
             }
                 break;
         }

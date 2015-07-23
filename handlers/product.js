@@ -9,6 +9,7 @@ var Products = function (models) {
     var DepartmentSchema = mongoose.Schemas['Department'];
     var objectId = mongoose.Types.ObjectId;
     var async = require('async');
+    var _ = require('lodash');
 
     var fs = require("fs");
 
@@ -200,7 +201,7 @@ var Products = function (models) {
         if (query && query.canBeSold) {
             queryObject.canBeSold = true;
         } else {
-            queryObject.canBePurchased =true;
+            queryObject.canBePurchased = true;
         }
 
         Product.find(queryObject, function (err, products) {
@@ -209,6 +210,36 @@ var Products = function (models) {
             }
             res.status(200).send({success: products});
         });
+    };
+
+    function caseFilter(queryObj, filter) {
+        if (filter.canBeSold) {
+            queryObj['canBeSold'] = true;
+        }
+        if (filter.canBePurchased) {
+            queryObj['canBePurchased'] = true;
+        }
+        if (filter.letter) {
+            queryObj['name'] = new RegExp('^[' + filter.letter.toLowerCase() + filter.letter.toUpperCase() + '].*');
+        }
+        if (filter.Name) {
+            queryObj['name'] = {$in: filter.Name};
+        }
+        if (filter['Can be sold']) {
+            filter['Can be sold'] = _.map(filter['Can be sold'], function (element) {
+                if (element === 'true') {
+                    return true;
+                }
+                return false;
+            });
+            queryObj['canBeSold'] = {$in: filter['Can be sold']}
+        }
+        if (filter['Creation Date']) {
+            queryObj['creationDate'] = {
+                $gte: new Date(filter['creationDate'][0].start),
+                $lte: new Date(filter['creationDate'][0].end)
+            }
+        }
     };
 
     function getProductsFilter(req, res, next) {
@@ -229,29 +260,8 @@ var Products = function (models) {
                     var waterfallTasks;
 
                     if (query && query.filter) {
-                        if (query.filter.canBeSold) {
-                            queryObject['canBeSold'] = true;
-                        }
-                        if (query.filter.canBePurchased) {
-                            queryObject['canBePurchased'] = true;
-                        }
-                        if (query.filter.letter) {
-                            queryObject['name'] = new RegExp('^[' + query.filter.letter.toLowerCase() + query.filter.letter.toUpperCase() + '].*');
-                        }
-                        if (query.filter.Name) {
-                            queryObject['name'] = {$in: query.filter.Name};
-                        }
-                        if (query.filter['Can be sold']) {
-                            if (query.filter['Can be sold'] === 'true') {
-                                queryObject['canBeSold'] = true;
-                            }
-                            queryObject['canBeSold'] = false;
-                        }
-                        if (query.filter['Creation Date']) {
-                            queryObject['creationDate'] = {$gte: new Date(req.query.filter['creationDate'][0].start), $lte: new Date(req.query.filter['creationDate'][0].end)}
-                        }
+                        caseFilter(queryObject, query.filter);
                     }
-
 
                     if (query && query.sort) {
                         sort = query.sort;
@@ -329,8 +339,8 @@ var Products = function (models) {
 
                     waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
 
-                    async.waterfall(waterfallTasks, function(err, result){
-                        if(err){
+                    async.waterfall(waterfallTasks, function (err, result) {
+                        if (err) {
                             return next(err);
                         }
                         res.status(200).send({success: result});
@@ -534,17 +544,19 @@ var Products = function (models) {
         var contentSearcher;
         var waterfallTasks;
 
-        if (data && data.filter && data.filter.canBeSold) {
-            optionsObject['canBeSold'] = true;
-        }
+        /*if (data && data.filter && data.filter.canBeSold) {
+         optionsObject['canBeSold'] = true;
+         }
 
-        if (data && data.filter && data.filter.canBePurchased) {
-            optionsObject['canBePurchased'] = true;
-        }
+         if (data && data.filter && data.filter.canBePurchased) {
+         optionsObject['canBePurchased'] = true;
+         }
 
-        if (data.filter && data.filter.letter) {
-            optionsObject['name'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
-        }
+         if (data.filter && data.filter.letter) {
+         optionsObject['name'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
+         }*/
+
+        caseFilter(optionsObject, data.filter);
 
         departmentSearcher = function (waterfallCallback) {
             models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(

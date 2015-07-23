@@ -10,13 +10,22 @@ var Opportunities = function (models, event) {
 
     function getTotalCount (req, response) {
         var res = {};
-        var data = {};
-        for (var i in req.query) {
-            data[i] = req.query[i];
-        }
+        var data = req.query;
+        var filterObj = {};
+        var or;
+        var filter = data.filter ? data.filter : {};
 
         var contentType = req.params.contentType;
         var optionsObject = {};
+
+        if (filter && typeof filter === 'object') {
+            optionsObject['$and'] = [];
+            filterObj['$or'] = [];
+            or = filterObj['$or'];
+
+            caseFilterOpp(filter, or);
+        }
+
         if (data.filter && data.filter.workflow) {
             data.filter.workflow = data.filter.workflow.map(function (item) {
                 return item === "null" ? null : item;
@@ -28,18 +37,22 @@ var Opportunities = function (models, event) {
         }
         switch (contentType) {
             case ('Opportunities'):
-            {
-                optionsObject['isOpportunitie'] = true;
-            }
+                optionsObject['$and'].push({'isOpportunitie': true});
+
+                if (data && data.filter) {
+                    optionsObject['$and'].push(filterObj);
+                }
                 break;
             case ('Leads'):
-            {
-                optionsObject['isOpportunitie'] = false;
+                optionsObject['$and'].push({'isOpportunitie': false});
+
                 if (data.filter.isConverted) {
                     optionsObject['isConverted'] = true;
                     optionsObject['isOpportunitie'] = true;
                 }
-            }
+                if (data && data.filter) {
+                    optionsObject['$and'].push(filterObj);
+                }
                 break;
         }
 
@@ -472,9 +485,49 @@ var Opportunities = function (models, event) {
         });
     };
 
+    function ConvertType(array, type) {
+        if (type === 'integer') {
+            for (var i = array.length - 1; i >= 0; i--) {
+                array[i] = parseInt(array[i]);
+            }
+        }
+    };
+
+    function caseFilterOpp(filter, content) {
+        var condition;
+
+        for (var key in filter) {
+            condition = filter[key];
+
+            switch (key) {
+                case 'Name':
+                    content.push({'name': {$in: condition}});
+                    break;
+                case 'workflow':
+                    content.push({ 'workflow': {$in: condition.objectID()}});
+                    break;
+                case 'Creation date':
+                    content.push({
+                        'creationDate': {
+                            $gte: new Date(condition[0].start),
+                            $lte: new Date(condition[0].end)
+                        }
+                    });
+                    break;
+                case 'Next action':
+                    if (!condition.length) condition = [''];
+                    content.push({'nextAction.desc': {$in: condition}});
+                    break;
+                case 'Expected revenue':
+                    ConvertType(condition, 'integer');
+                    content.push({'expectedRevenue.value': {$in: condition}});
+                    break;
+            }
+        }
+    };
+
     function getFilter (req, response) {
         var res = {};
-        var condition;
         var or;
         var filterObj;
         var optionsObject = {};
@@ -484,15 +537,6 @@ var Opportunities = function (models, event) {
         for (var i in req.query) {
             data[i] = req.query[i];
         }
-
-        function ConvertType(array, type) {
-            if (type === 'integer') {
-                for (var i = array.length - 1; i >= 0; i--) {
-                    array[i] = parseInt(array[i]);
-                }
-            }
-
-        };
 
         switch (data.contentType) {
             case ('Opportunities'):
@@ -506,7 +550,9 @@ var Opportunities = function (models, event) {
                     filterObj['$or'] = [];
                     or = filterObj['$or'];
 
-                    for (var key in data.filter) {
+                    caseFilterOpp(data.filter, or);
+
+                    /*for (var key in data.filter) {
                         condition = data.filter[key];
 
                         switch (key) {
@@ -524,9 +570,8 @@ var Opportunities = function (models, event) {
                                 ConvertType(condition, 'integer');
                                 or.push({ 'expectedRevenue.value': {$in: condition}});
                                 break;
-
                         }
-                    }
+                    }*/
                     if (!or.length) {
                         delete filterObj['$or']
                     }
@@ -547,7 +592,9 @@ var Opportunities = function (models, event) {
                     filterObj['$or'] = [];
                     or = filterObj['$or'];
 
-                    for (var key in data.filter) {
+                    caseFilterOpp(data.filter, or);
+
+                    /*for (var key in data.filter) {
                         condition = data.filter[key];
 
                         switch (key) {
@@ -567,7 +614,7 @@ var Opportunities = function (models, event) {
                                 break;
 
                         }
-                    }
+                    }*/
                     if (!or.length) {
                         delete filterObj['$or']
                     }

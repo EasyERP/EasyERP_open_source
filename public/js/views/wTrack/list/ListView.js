@@ -618,7 +618,6 @@ define([
                 var filteredStatuses = [];
                 var pagenation;
                 var FilterView;
-                var showList;
 
                 currentEl.html('');
                 currentEl.append(_.template(listTemplate));
@@ -697,14 +696,10 @@ define([
 
                     // Filter custom event listen ------begin
                     FilterView.bind('filter', function () {
-                        showList = $('.drop-down-filter input:checkbox:checked').map(function () {
-                            return this.id;
-                        }).get();
-                        self.showFilteredPage(showList)
+                        self.showFilteredPage()
                     });
                     FilterView.bind('defaultFilter', function () {
-                        showList = _.pluck(values[0].departments, 'name');
-                        self.showFilteredPage(showList)
+                        self.showFilteredPage()
                     });
                     // Filter custom event listen ------end
                 });
@@ -858,7 +853,7 @@ define([
                 this.changeLocationHash(1, itemsNumber, this.filter);
             },
 
-            showFilteredPage: function (depIdArray) {
+            showFilteredPage: function () {
                 var itemsNumber;
                 var showList;
                 var self = this;
@@ -898,7 +893,11 @@ define([
                 $('#check_all').prop('checked', false);
 
                 this.changeLocationHash(1, itemsNumber, this.filter);
-                this.collection.showMore({count: itemsNumber, page: 1, filter: this.filter});
+                this.collection.showMore({
+                    count: itemsNumber,
+                    page: 1,
+                    filter: this.filter
+                });
                 this.getTotalLength(null, itemsNumber, this.filter);
             },
 
@@ -912,13 +911,13 @@ define([
                 var itemView;
                 var pagenation;
 
-                holder.find("#listTable").empty();
                 itemView = new listItemView({
                     collection: newModels,
                     page: holder.find("#currentShowPage").val(),
                     itemsNumber: holder.find("span#itemsNumber").text()
                 });//added two parameters page and items number
 
+                holder.find("#listTable").html('');
                 holder.append(itemView.render());
 
                 itemView.undelegateEvents();
