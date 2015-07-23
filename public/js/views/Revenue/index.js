@@ -17,6 +17,7 @@ define([
     'text!templates/Revenue/tableSold.html',
     'text!templates/Revenue/hoursByDepItem.html',
     'text!templates/Revenue/hoursByDepTotal.html',
+    'text!templates/Revenue/bonusBySales.html',
     'models/Revenue',
     'moment',
     'dataService',
@@ -24,7 +25,7 @@ define([
     'custom',
     'd3',
     'constants'
-], function (mainTemplate, weeksArray, tableByDep, bySalesByDep, perWeek, paidBySales, paidBySalesItems, projectBySalesItems, unpaidBySales, monthsArray, perMonth, perMonthInt, tableSold, hoursByDepItem, hoursByDepTotal, RevenueModel, moment, dataService, async, custom, d3, CONSTANTS) {
+], function (mainTemplate, weeksArray, tableByDep, bySalesByDep, perWeek, paidBySales, paidBySalesItems, projectBySalesItems, unpaidBySales, monthsArray, perMonth, perMonthInt, tableSold, hoursByDepItem, hoursByDepTotal, bonusBySales, RevenueModel, moment, dataService, async, custom, d3, CONSTANTS) {
     var View = Backbone.View.extend({
         el: '#content-holder',
 
@@ -44,6 +45,7 @@ define([
         tableSoldTemplate: _.template(tableSold),
         hoursByDepTemplate: _.template(hoursByDepItem),
         hoursByDepTotalTemplate: _.template(hoursByDepTotal),
+        bonusBySalesTemplate: _.template(bonusBySales),
 
         paidUnpaidDateRange: {},
 
@@ -916,6 +918,81 @@ define([
                     weeksArr: weeksArr,
                     bySalesByDepPerWeek: hoursByDepPerWeek,
                     globalTotal: globalTotal
+                }));
+
+                return false;
+            });
+        },
+
+        changeAllBonus: function () {
+            var self = this;
+            var allBonus = this.model.get('allBonus');
+            var monthArr = this.monthArr;
+            var target = self.$el.find('#tableAllBonus');
+            var targetTotal;
+            var monthContainer;
+
+            var bySalesPerMonth = {};
+            var tempPerMonth;
+            var globalTotal = 0;
+
+            target.html(this.bonusBySalesTemplate({
+                employees: self.employees,
+                content: 'totalAllBonus',
+                className: 'totalBonus',
+                headName: 'All Bonus'
+            }));
+            targetTotal = $(self.$el.find('[data-content="totalAllBonus"]'));
+            monthContainer = target.find('.monthContainer');
+            monthContainer.html(this.monthsArrayTemplate({monthArr: monthArr}));
+
+            async.each(self.employees, function (employee, cb) {
+                var employeeId = employee._id;
+                var employeeContainer = target.find('[data-id="' + employeeId + '"]');
+
+                var byMonthData;
+                var total;
+                var allBonusBySales;
+
+
+                allBonusBySales = _.find(allBonus, function (el) {
+                    return el._id === employeeId;
+                });
+
+
+                if (allBonusBySales) {
+                    byMonthData = _.groupBy(allBonusBySales.root, 'month');
+                    total = allBonusBySales.total;
+                    globalTotal += total;
+                    employeeContainer.html(self.projectBySalesItemsTemplate({
+                        monthArr: monthArr,
+                        byMonthData: byMonthData,
+                        total: total
+                    }));
+                }
+                cb();
+            }, function (err) {
+
+                if (err) {
+                    alert(err);
+                }
+
+                for (var i = allBonusBySales.length - 1; i >= 0; i--) {
+                    tempPerMonth = allBonusBySales[i].root;
+                    tempPerMonth.forEach(function (monthResult) {
+                        if (!(monthResult.month in bySalesPerMonth)) {
+                            bySalesPerMonth[monthResult.month] = monthResult.projectCount;
+                        } else {
+                            bySalesPerMonth[monthResult.month] += monthResult.projectCount;
+                        }
+                    });
+                }
+
+                targetTotal.html(self.bySalesPerMonthIntTemplate({
+                    monthArr: monthArr,
+                    bySalesByDepPerWeek: bySalesPerMonth,
+                    globalTotal: globalTotal,
+                    totalName: 'Employee Total'
                 }));
 
                 return false;
