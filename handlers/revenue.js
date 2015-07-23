@@ -2,6 +2,7 @@
  * Created by Roman on 04.05.2015.
  */
 var async = require('async');
+var lodash = require('lodash');
 var mongoose = require('mongoose');
 var wTrack = function (models) {
     var access = require("../Modules/additions/access.js")(models);
@@ -681,8 +682,6 @@ var wTrack = function (models) {
             var endYear = parseInt(options.endYear) || 2015;
             var startDate;
             var endDate;
-            var match;
-            var groupBy;
 
             if (!access) {
                 return res.status(403).send();
@@ -691,63 +690,32 @@ var wTrack = function (models) {
             startDate = parseInt(options.startDate) || (startYear * 100 + startMonth);
             endDate = parseInt(options.endDate) || (endYear * 100 + endMonth);
 
-            match = {
-                $and: [
-                    {'project._id': {$exists: true}},
-                    {'project._id': {$ne: null}},
-                    {dateByMonth: {$gte: startDate, $lte: endDate}}
-                ]
+            var idForProjects = function(callback) {
+                Project.aggregate([{
+                    $project: {
+                        _id: '$_id',
+                        bonusCount: {$size: '$bonus'}
+                    }
+                },{
+                    $match: {
+                        bonusCount: {$gt: 0}
+                    }
+                }, {
+                    $project: {
+                        _id: 1
+                    }
+                }], function (err, response) {
+                    if (err) {
+                        callback(err);
+                    }
+
+                    response = lodash.pluck(response, '_id');
+
+                    callback(response);
+                });
             };
 
-            groupBy = {
-                _id: {
-                    project: '$project._id',
-                    assigned: '$project.projectmanager._id',
-                    employee: '$employee._id',
-                    month: '$month',
-                    year: '$year'
-                },
-                dateByMonth: {$addToSet: '$dateByMonth'}
-            };
-
-            WTrack.aggregate([{
-                $match: match
-            }, {
-                $group: groupBy
-            }, {
-                $group: {
-                    _id: {
-                        assigned: '$_id.assigned',
-                        employee: '$employee._id',
-                        month: '$_id.month',
-                        year: '$_id.year'
-                    },
-                    projectCount: {$sum: 1}
-                }
-            }, {
-                $project: {
-                    year: "$_id.year",
-                    month: "$_id.month",
-                    employee: "$_id.assigned",
-                    dateByMonth: 1,
-                    projectCount: 1,
-                    _id: 0
-                }
-            }, {
-                $group: {
-                    _id: '$employee',
-                    root: {$push: '$$ROOT'},
-                    total: {$sum: '$projectCount'}
-                }
-            }, {
-                $sort: {
-                    month: -1
-                }
-            }], function (err, response) {
-                if (err) {
-                    return next(err);
-                }
-
+            idForProjects(function(response){
                 res.status(200).send(response);
             });
 
