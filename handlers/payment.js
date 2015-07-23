@@ -357,7 +357,7 @@ var Payment = function (models) {
     this.totalCollectionLength = function (req, res, next) {
         var forSale = req.params.byType === 'customers';
 
-        var queryObject;
+        var queryObject = {};
 
         var departmentSearcher;
         var contentIdsSearcher;
@@ -374,11 +374,9 @@ var Payment = function (models) {
             Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
         }
 
-        if (forSale) {
-            queryObject = {
-                forSale: forSale
-            };
-        }
+        queryObject = {
+            forSale: forSale
+        };
 
         departmentSearcher = function (waterfallCallback) {
             models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
@@ -494,6 +492,33 @@ var Payment = function (models) {
         } else {
             res.status(401).send();
         }
+    };
+
+    this.remove = function (req, res, next) {
+        var id = req.params.id;
+        var isWtrack = req.session.lastDb === 'weTrack';
+        var Payment;
+
+        if(isWtrack){
+            Payment = models.get(req.session.lastDb, 'wTrackPayment', wTrackPaymentSchema);
+        } else {
+            Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
+        }
+
+        access.getDeleteAccess(req, req.session.uId, CONSTANTS.CUSTOMER_PAYMENTS, function (access) {
+            if (access) {
+                Payment.remove({_id: id}, function (err, removed) {
+                    if (err) {
+                        return next(err);
+                    }
+                    res.status(200).send({success: removed});
+                });
+            } else {
+                res.send(403);
+            }
+        });
+
+
     };
 
 };
