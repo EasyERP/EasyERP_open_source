@@ -684,6 +684,25 @@ var wTrack = function (models) {
             var match;
             var groupBy;
 
+            function getWTracksByProjects (_ids, callback) {
+                var queryObject = {};
+
+                queryObject['$and'] = [];
+
+                queryObject['$and'].push({'dateByMonth': {'$gte': startDate}});
+                queryObject['$and'].push({'dateByMonth': {'$gte': endDate}});
+                queryObject['$and'].push({'project._id': {'$in': _ids}})
+
+                WTrack.find(queryObject)
+                    .lean()
+                    .exec(function (err, result) {
+                        if (err) {
+                            return callback(err);
+                        }
+                        callback(null, result);
+                    })
+            };
+
             if (!access) {
                 return res.status(403).send();
             }
