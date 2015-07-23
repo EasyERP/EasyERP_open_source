@@ -6,6 +6,8 @@ var mongoose = require('mongoose');
 var wTrack = function (models) {
     var access = require("../Modules/additions/access.js")(models);
     var wTrackSchema = mongoose.Schemas['wTrack'];
+    var ProjectSchema = mongoose.Schemas['Project'];
+    var BonusTypeSchema = mongoose.Schemas['bonusType'];
 
     this.bySales = function (req, res, next) {
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
@@ -655,6 +657,92 @@ var wTrack = function (models) {
                 }
             }, {
                 $sort: {_id: 1}
+            }], function (err, response) {
+                if (err) {
+                    return next(err);
+                }
+
+                res.status(200).send(response);
+            });
+
+        });
+    };
+
+    this.allBonus = function (req, res, next) {
+        var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+        var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
+        var BonusType = models.get(req.session.lastDb, 'bonusType', BonusTypeSchema);
+
+        access.getReadAccess(req, req.session.uId, 67, function (access) {
+            var options = req.query;
+            var startMonth = parseInt(options.month) || 8;
+            var startYear = parseInt(options.year) || 2014;
+            var endMonth = parseInt(options.endMonth) || 7;
+            var endYear = parseInt(options.endYear) || 2015;
+            var startDate;
+            var endDate;
+            var match;
+            var groupBy;
+
+            if (!access) {
+                return res.status(403).send();
+            }
+
+            startDate = parseInt(options.startDate) || (startYear * 100 + startMonth);
+            endDate = parseInt(options.endDate) || (endYear * 100 + endMonth);
+
+            match = {
+                $and: [
+                    {'project._id': {$exists: true}},
+                    {'project._id': {$ne: null}},
+                    {dateByMonth: {$gte: startDate, $lte: endDate}}
+                ]
+            };
+
+            groupBy = {
+                _id: {
+                    project: '$project._id',
+                    assigned: '$project.projectmanager._id',
+                    employee: '$employee._id',
+                    month: '$month',
+                    year: '$year'
+                },
+                dateByMonth: {$addToSet: '$dateByMonth'}
+            };
+
+            WTrack.aggregate([{
+                $match: match
+            }, {
+                $group: groupBy
+            }, {
+                $group: {
+                    _id: {
+                        assigned: '$_id.assigned',
+                        employee: '$employee._id',
+                        month: '$_id.month',
+                        year: '$_id.year'
+                    },
+                    projectCount: {$sum: 1}
+                }
+            }, {
+                $project: {
+                    year: "$_id.year",
+                    month: "$_id.month",
+                    employee: "$_id.assigned",
+                    dateByMonth: 1,
+                    projectCount: 1,
+                    _id: 0
+                }
+            }, {
+                $group: {
+                    _id: '$employee',
+                    root: {$push: '$$ROOT'},
+                    total: {$sum: '$projectCount'}
+                }
+            }, {
+                $sort: {
+                    month: -1
+                }
             }], function (err, response) {
                 if (err) {
                     return next(err);

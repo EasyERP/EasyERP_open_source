@@ -20,5 +20,11 @@ module.exports = function (models) {
     router.get('/employeeBySales', expressSession.authenticatedUser, handler.employeeBySales);
     router.get('/hoursByDep', expressSession.authenticatedUser, handler.hoursByDep);
 
+    router.get('/allBonus', expressSession.authenticatedUser, handler.allBonus);
+/*    router.get('/uncalcBonus', expressSession.authenticatedUser, handler.uncalcBonus);
+    router.get('/calcBonus', expressSession.authenticatedUser, handler.calcBonus);
+    router.get('/paidBonus', expressSession.authenticatedUser, handler.paidBonus);
+    router.get('/balanceBonus', expressSession.authenticatedUser, handler.balanceBonus);*/
+
     return router;
 };
