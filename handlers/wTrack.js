@@ -9,8 +9,8 @@ var wTrack = function (models) {
     var wTrackSchema = mongoose.Schemas['wTrack'];
     var DepartmentSchema = mongoose.Schemas['Department'];
     /*var CustomerSchema = mongoose.Schemas['Customer'];
-    var EmployeeSchema = mongoose.Schemas['Employee'];
-    var WorkflowSchema = mongoose.Schemas['workflow'];*/
+     var EmployeeSchema = mongoose.Schemas['Employee'];
+     var WorkflowSchema = mongoose.Schemas['workflow'];*/
 
     var objectId = mongoose.Types.ObjectId;
     var async = require('async');
@@ -94,6 +94,73 @@ var wTrack = function (models) {
         }
     };
 
+    function ConvertType(array, type) {
+        if (type === 'integer') {
+            for (var i = array.length - 1; i >= 0; i--) {
+                array[i] = parseInt(array[i]);
+            }
+        } else  if (type === 'boolean') {
+            for (var i = array.length - 1; i >= 0; i--) {
+                if (array[i] === 'true') {
+                    array[i] = true;
+                } else if (array[i] === 'false') {
+                    array[i] = false;
+                } else {
+                    array[i] = null;
+                }
+            }
+        }
+    };
+
+    function caseFilter(filter, content) {
+        var condition;
+
+        for (var key in filter){
+            condition = filter[key];
+
+            switch (key) {
+                case 'projectmanagers':
+                    content.push({ 'project.projectmanager.name': {$in: condition}});
+                    break;
+                case 'projectsname':
+                    content.push({ 'project.projectName': {$in: condition}});
+                    break;
+                case 'workflows':
+                    content.push({ 'project.workflow': {$in: condition.objectID()}});
+                    break;
+                case 'customers':
+                    content.push({ 'project.customer': {$in: condition}});
+                    break;
+                case 'employees':
+                    content.push({ 'employee.name': {$in: condition}});
+                    break;
+                case 'departments':
+                    content.push({ 'department.departmentName': {$in: condition}});
+                    break;
+                case 'years':
+                    ConvertType(condition, 'integer');
+
+                    content.push({ 'year': {$in: condition}});
+                    break;
+                case 'months':
+                    ConvertType(condition, 'integer');
+
+                    content.push({ 'month': {$in: condition}});
+                    break;
+                case 'weeks':
+                    ConvertType(condition, 'integer');
+
+                    content.push({ 'week': {$in: condition}});
+                    break;
+                case 'isPaid':
+                    ConvertType(condition, 'boolean');
+
+                    content.push({ 'isPaid': {$in: condition}});
+                    break;
+            }
+        };
+    };
+
     this.totalCollectionLength = function (req, res, next) {
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
         var departmentSearcher;
@@ -102,9 +169,13 @@ var wTrack = function (models) {
         var query = req.query;
         var queryObject = {};
         var filter = query.filter;
+        var or;
 
         if (filter && typeof filter === 'object') {
-            queryObject = query.filter;
+            queryObject['$or'] = [];
+            or = queryObject['$or'];
+
+            caseFilter(filter, or);
         }
         var waterfallTasks;
 
@@ -208,79 +279,16 @@ var wTrack = function (models) {
         var contentIdsSearcher;
         var contentSearcher;
         var waterfallTasks;
-        var condition;
         var or;
 
         var sort = {};
-
-        function ConvertType(array, type) {
-            if (type === 'integer') {
-                for (var i = array.length - 1; i >= 0; i--) {
-                    array[i] = parseInt(array[i]);
-                }
-            } else  if (type === 'boolean') {
-                for (var i = array.length - 1; i >= 0; i--) {
-                    if (condition[i] === 'true') {
-                        condition[i] = true;
-                    } else if (condition[i] === 'false') {
-                        condition[i] = false;
-                    } else {
-                        condition[i] = null;
-                    }
-                }
-            }
-
-        };
 
         if (filter && typeof filter === 'object') {
             queryObject['$or'] = [];
             or = queryObject['$or'];
 
-            for (var key in filter){
-                condition = filter[key];
-
-                switch (key) {
-                    case 'projectmanagers':
-                        or.push({ 'project.projectmanager.name': {$in: condition}});
-                        break;
-                    case 'projectsname':
-                       or.push({ 'project.projectName': {$in: condition}});
-                        break;
-                    case 'workflows':
-                        or.push({ 'project.workflow': {$in: condition}});
-                        break;
-                    case 'customers':
-                        or.push({ 'project.customer': {$in: condition}});
-                        break;
-                    case 'employees':
-                        or.push({ 'employee.name': {$in: condition}});
-                        break;
-                    case 'departments':
-                        or.push({ 'department.departmentName': {$in: condition}});
-                        break;
-                    case 'years':
-                        ConvertType(condition, 'integer');
-
-                        or.push({ 'year': {$in: condition}});
-                        break;
-                    case 'months':
-                        ConvertType(condition, 'integer');
-
-                        or.push({ 'month': {$in: condition}});
-                        break;
-                    case 'weeks':
-                        ConvertType(condition, 'integer');
-
-                        or.push({ 'week': {$in: condition}});
-                        break;
-                    case 'isPaid':
-                        ConvertType(condition, 'boolean');
-
-                        or.push({ 'isPaid': {$in: condition}});
-                        break;
-                }
-            };
-       }
+            caseFilter(filter, or);
+        }
 
         var count = query.count ? query.count : 50;
         var page = query.page;

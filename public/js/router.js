@@ -414,9 +414,6 @@ define([
             this.checkLogin(function (success) {
                 if (success) {
                     if (!App || !App.currentDb) {
-                        dataService.getData('/currentUser', null, function (response) {
-                            App.currentUser = response;
-                        });
                         dataService.getData('/currentDb', null, function (response) {
                             if (response && !response.error) {
                                 App.currentDb = response;
@@ -459,7 +456,7 @@ define([
                     filter = JSON.parse(filter);
                 }
 
-                if (App.currentUser.savedFilters){
+                if (App.currentUser.savedFilters[contentType]){
                     savedFilter = App.currentUser.savedFilters[contentType];
                 } else {
                     savedFilter = filter;
@@ -490,7 +487,7 @@ define([
                         var contentview = new contentView({
                             collection: collection,
                             startTime: startTime,
-                            filter: filter,
+                            filter: savedFilter,
                             newCollection: newCollection
                         });
 
@@ -637,6 +634,9 @@ define([
 
         goToThumbnails: function (contentType, countPerPage, filter) {
             var self = this;
+            dataService.getData('/currentUser', null, function (response) {
+                App.currentUser = response;
+            });
             this.checkLogin(function (success) {
                 if (success) {
                     goThumbnails(self);
@@ -665,7 +665,7 @@ define([
                 } else if (filter) {
                     filter = JSON.parse(filter);
                 }
-                if (App.currentUser.savedFilters){
+                if (App.currentUser.savedFilters[contentType]){
                     savedFilter = App.currentUser.savedFilters[contentType];
                 } else {
                     savedFilter = filter;

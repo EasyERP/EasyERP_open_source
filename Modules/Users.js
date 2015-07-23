@@ -299,12 +299,15 @@ var Users = function (mainDb, models) {
                 });
             } else updateUser();
             function updateUser() {
+                var setObject = {};
                 var query = {};
+                var key = data.key;
 
                 if (data.changePass) {
                     query = { $set: data};
-                } else if (data) {
-                    query = { $set: {savedFilters: data}};
+                } else if (data.filter && data.key) {
+                    setObject[key] = data.filter;
+                    query = { $set:{savedFilters: setObject}};
                 }
 
                 models.get(req.session.lastDb, 'Users', userSchema).findByIdAndUpdate(_id, query, function (err, result) {

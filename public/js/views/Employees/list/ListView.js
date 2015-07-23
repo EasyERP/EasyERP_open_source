@@ -185,7 +185,7 @@ define([
                 var showList;
 
                 currentEl.html('');
-                if (App.currentUser.savedFilters){
+                if (App.currentUser.savedFilters['Employees']){
                     currentEl.prepend('<button id="savedFilterButton" class="savedFilterButton">My Filter</button>');
                     currentEl.prepend('<button id="deleteFilterButton" class="deleteFilterButton">DefaultFilter</button>');
                 }
@@ -397,7 +397,8 @@ define([
                 var obj = {};
 
                 key = submenu.trim();
-                obj[key] = this.filter;
+                obj['filter'] = this.filter;
+                obj['key'] = key;
 
                     currentUser.changed = obj;
                     currentUser.save(currentUser.changed, {
