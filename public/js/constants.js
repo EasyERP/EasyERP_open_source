@@ -40,6 +40,7 @@ define([], function(){
         VACATION: 'Vacation',
         ATTENDANCE: 'Attendance',
         DASHBOARD_VACATION: 'DashboardVacation',
+        DASHBOARD_HR: 'HrDashboard',
 
         RESPONSES: {
             BAD_RESPONSE: 'Please try again',

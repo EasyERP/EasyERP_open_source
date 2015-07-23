@@ -33,7 +33,6 @@ node_modules
 .idea
 log.txt
 add_menus.js
-menu_HR_salary.js
 menu_Sales_\[quotation|order|Invoice|Product\].js
 public/js/libs/async
 public/js/libs/backbone.memento
