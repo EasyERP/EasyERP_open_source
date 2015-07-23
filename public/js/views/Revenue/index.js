@@ -75,6 +75,12 @@ define([
             this.listenTo(this.model, 'change:employeeBySales', this.changeEmployeeBySales);
             this.listenTo(this.model, 'change:hoursByDep', this.changeHoursByDep);
 
+            this.listenTo(this.model, 'change:allBonus', this.changeAllBonus);
+/*            this.listenTo(this.model, 'change:uncalcBonus', this.changeHoursByDep);
+            this.listenTo(this.model, 'change:calcBonus', this.changeHoursByDep);
+            this.listenTo(this.model, 'change:paidBonus', this.changeHoursByDep);
+            this.listenTo(this.model, 'change:balanceBonus', this.changeHoursByDep);*/
+
             var currentStartWeek = currentWeek - 6;
             var currentYear = moment().weekYear();
             var currentMonth = parseInt(moment().week(currentStartWeek).format("MM"));
@@ -177,6 +183,11 @@ define([
             this.fetchCancelledBySales();
             this.fetchProjectBySales();
             this.fetchEmployeeBySales();
+            this.fetchAllBonus();
+/*            this.fetchUncalcBonus();
+            this.fetchCalcBonus();
+            this.fetchPaidBonus();
+            this.fetchBalanceBonus();*/
         },
 
         changeWeek: function () {
@@ -337,6 +348,61 @@ define([
                 self.model.trigger('change:hoursByDep');
             });
         },
+
+        fetchAllBonus: function () {
+            var self = this;
+            var data = this.paidUnpaidDateRange;
+
+            //ToDo Request
+            dataService.getData('/revenue/allBonus', data, function (allBonus) {
+                self.model.set('allBonus', allBonus);
+                self.model.trigger('change:allBonus');
+            });
+        },
+
+/*        fetchUncalcBonus: function () {
+            var self = this;
+            var data = this.paidUnpaidDateRange;
+
+            //ToDo Request
+            dataService.getData('/revenue/uncalcBonus', data, function (uncalcBonus) {
+                self.model.set('uncalcBonus', uncalcBonus);
+                self.model.trigger('change:uncalcBonus');
+            });
+        },
+
+        fetchCalcBonus: function () {
+            var self = this;
+            var data = this.paidUnpaidDateRange;
+
+            //ToDo Request
+            dataService.getData('/revenue/calcBonus', data, function (calcBonus) {
+                self.model.set('calcBonus', calcBonus);
+                self.model.trigger('change:calcBonus');
+            });
+        },
+
+        fetchPaidBonus: function () {
+            var self = this;
+            var data = this.paidUnpaidDateRange;
+
+            //ToDo Request
+            dataService.getData('/revenue/paidBonus', data, function (paidBonus) {
+                self.model.set('paidBonus', paidBonus);
+                self.model.trigger('change:paidBonus');
+            });
+        },
+
+        fetchBalanceBonus: function () {
+            var self = this;
+            var data = this.paidUnpaidDateRange;
+
+            //ToDo Request
+            dataService.getData('/revenue/balanceBonus', data, function (balanceBonus) {
+                self.model.set('balanceBonus', balanceBonus);
+                self.model.trigger('change:balanceBonus');
+            });
+        },*/
 
         changeBySalesData: function () {
             var self = this;
