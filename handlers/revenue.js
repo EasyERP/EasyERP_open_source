@@ -1,7 +1,7 @@
 /**
  * Created by Roman on 04.05.2015.
  */
-
+var async = require('async');
 var mongoose = require('mongoose');
 var wTrack = function (models) {
     var access = require("../Modules/additions/access.js")(models);
