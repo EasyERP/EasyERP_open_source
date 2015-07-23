@@ -417,7 +417,6 @@ define([
                         dataService.getData('/currentUser', null, function (response) {
                             App.currentUser = response;
                         });
-
                         dataService.getData('/currentDb', null, function (response) {
                             if (response && !response.error) {
                                 App.currentDb = response;
@@ -452,6 +451,7 @@ define([
                 var collectionUrl = context.buildCollectionRoute(contentType);
                 var navigatePage = (page) ? parseInt(page) : 1;
                 var count = (countPerPage) ? parseInt(countPerPage) || 50 : 50;
+                var savedFilter = App.currentUser.savedFilters['HR/Employees'];
 
                 if (filter === 'empty') {
                     newCollection = false;
@@ -468,7 +468,7 @@ define([
                         viewType: 'list',
                         page: navigatePage,
                         count: count,
-                        filter: filter,
+                        filter: savedFilter,
                         parrentContentId: parrentContentId,
                         contentType: contentType,
                         newCollection: newCollection

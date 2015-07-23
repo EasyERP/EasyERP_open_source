@@ -65,26 +65,53 @@ define([
         },
         render: function () {
             var self = this;
-            dataService.getData('/currentUser', null, function (response, context) {
-                if (response && response.profile && response.profile.profileName == 'baned') {
-                    $('title').text("EasyERP");
-                    context.$el.find("li#userpage").remove();
-                    context.$el.find("#top-bar").addClass("banned");
-                    context.$el.find("#content-holder").append("<div id = 'banned'><div class='icon-banned'></div><div class='text-banned'><h1>Sorry, this user is banned!</h1><p>Please contact the administrator.</p></div></div>");
-                }
-                if (response.RelatedEmployee) {
-                    $("#loginPanel .iconEmployee").attr("src", response.RelatedEmployee.imageSrc);
-                    if (response.RelatedEmployee.name) {
-                        $("#loginPanel  #userName").text(response.RelatedEmployee.name.first + " " + response.RelatedEmployee.name.last);
-                    } else {
-                        $("#loginPanel  #userName").text(response.login);
-                    }
+                if (!App.currentUser) {
+                    dataService.getData('/currentUser', null, function (response, context) {
+                        App.currentUser = response;
+                        if (response && response.profile && response.profile.profileName == 'baned') {
+                            $('title').text("EasyERP");
+                            context.$el.find("li#userpage").remove();
+                            context.$el.find("#top-bar").addClass("banned");
+                            context.$el.find("#content-holder").append("<div id = 'banned'><div class='icon-banned'></div><div class='text-banned'><h1>Sorry, this user is banned!</h1><p>Please contact the administrator.</p></div></div>");
+                        }
+                        if (response.RelatedEmployee) {
+                            $("#loginPanel .iconEmployee").attr("src", response.RelatedEmployee.imageSrc);
+                            if (response.RelatedEmployee.name) {
+                                $("#loginPanel  #userName").text(response.RelatedEmployee.name.first + " " + response.RelatedEmployee.name.last);
+                            } else {
+                                $("#loginPanel  #userName").text(response.login);
+                            }
+                        } else {
+                            $("#loginPanel .iconEmployee").attr("src", response.imageSrc);
+                            $("#loginPanel  #userName").text(response.login);
+                        }
+                    }, this);
+                    this.$el.html(_.template(MainTemplate));
                 } else {
-                    $("#loginPanel .iconEmployee").attr("src", response.imageSrc);
-                    $("#loginPanel  #userName").text(response.login);
+                    this.$el.html(_.template(MainTemplate));
+
+                    var icon =  $("#loginPanel .iconEmployee");
+                    var log =  $("#loginPanel  #userName");
+
+                    if (App.currentUser && App.currentUser.profile && App.currentUser.profile.profileName == 'baned') {
+                        $('title').text("EasyERP");
+                        this.$el.find("li#userpage").remove();
+                        this.$el.find("#top-bar").addClass("banned");
+                        this.$el.find("#content-holder").append("<div id = 'banned'><div class='icon-banned'></div><div class='text-banned'><h1>Sorry, this user is banned!</h1><p>Please contact the administrator.</p></div></div>");
+                    }
+                    if (App.currentUser.RelatedEmployee) {
+                        $("#loginPanel .iconEmployee").attr("src", App.currentUser.RelatedEmployee.imageSrc);
+                        if (App.currentUser.RelatedEmployee.name) {
+                            $("#loginPanel  #userName").text(App.currentUser.RelatedEmployee.name.first + " " + App.currentUser.RelatedEmployee.name.last);
+                        } else {
+                            $("#loginPanel  #userName").text(App.currentUser.login);
+                        }
+                    } else {
+                        icon.attr("src", App.currentUser.imageSrc);
+                        log.text(App.currentUser.login);
+                    }
                 }
-            }, this);
-            this.$el.html(_.template(MainTemplate));
+
             return this;
         }
     });

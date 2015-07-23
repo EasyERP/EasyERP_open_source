@@ -21,33 +21,24 @@ define([
             page: null, //if reload page, and in url is valid page
             contentType: 'Employees',//needs in view.prototype.changeLocationHash
             viewType: 'list',
-            currentUser: null,//needs in view.prototype.changeLocationHash
+            currentUser: null,
+            defaultFilter: null,//needs in view.prototype.changeLocationHash
 
             initialize: function (options) {
-                var main = $('#mainmenu-holder').find('li.selected').text();
-                var submenu = $('#submenu-holder').find('li.selected').text();
-                var key = main.trim() + '/' + submenu.trim();
-
                 this.startTime = options.startTime;
                 this.collection = options.collection;
                 _.bind(this.collection.showMore, this.collection);
                 _.bind(this.collection.showMoreAlphabet, this.collection);
                 this.allAlphabeticArray = common.buildAllAphabeticArray();
-
-                //if (App.currentUser.savedFilters[key]){
-                //    this.filter = App.currentUser.savedFilters[key];
-                //    this.getTotalLength(null, this.defaultItemsNumber, this.filter);
-                //    this.showFilteredPage(null, this.filter);
-                //} else {
-                    this.filter = options.filter; //App.currentUser.savedFilters['HR/Employees'];
-                    this.defaultItemsNumber = this.collection.namberToShow || 50;
-                    this.newCollection = options.newCollection;
-                    this.deleteCounter = 0;
-                    this.page = options.collection.page;
-                    this.render();
-                    this.getTotalLength(null, this.defaultItemsNumber, this.filter);
-                    this.contentCollection = contentCollection;
-              //  }
+                this.filter = options.filter;
+                this.defaultItemsNumber = this.collection.namberToShow || 50;
+                this.newCollection = options.newCollection;
+                this.deleteCounter = 0;
+                this.page = options.collection.page;
+                this.render();
+                this.pageElementRender(this.collection.length, 50, 1);
+               // this.getTotalLength(null, this.defaultItemsNumber, this.filter);
+                this.contentCollection = contentCollection;
             },
 
             events: {
@@ -65,7 +56,8 @@ define([
                 "click #firstShowPage": "firstPage",
                 "click #lastShowPage": "lastPage",
                 "click .oe_sortable": "goSort",
-                "click .saveFilterButton": "saveFilter"
+                "click .saveFilterButton": "saveFilter",
+                "click .defaultFilterButton": "defaultFilter"
             },
 
             renderContent: function () {
@@ -194,6 +186,7 @@ define([
 
                 currentEl.html('');
                 currentEl.prepend('<button id="saveFilterButton" class="saveFilterButton">Save Filter</button>');
+                currentEl.prepend('<button id="defaultFilterButton" class="defaultFilterButton">Default Filter</button>');
                 currentEl.append(_.template(listTemplate));
                 currentEl.append(new listItemView({ collection: this.collection, page: this.page, itemsNumber: this.collection.namberToShow }).render());
 
@@ -231,6 +224,9 @@ define([
                     departments.data.forEach(function (department) {
                         department.name = department.departmentName;
                     });
+
+                    self.defaultFilter = _.pluck(departments.data, '_id');
+
                     dataService.getData('/employee/getFilterValues', null, function (values) {
                         FilterView = new filterView({ collection: departments.data, customCollection: values});
                         // Filter custom event listen ------begin
@@ -240,7 +236,7 @@ define([
                         });
                         FilterView.bind('defaultFilter', function () {
                             showList = _.pluck(departments.data, '_id');
-                            self.showFilteredPage(null, showList)
+                            self.showFilteredPage(null, showList);
                         });
                         // Filter custom event listen ------end
                     });
@@ -363,29 +359,31 @@ define([
                         selectedLetter = "";
                     }
                 }
-                if (showList.length && showList['department']) {
+                if (showList && showList.length && showList['department']) {
                     this.filter = showList;
                 } else {
                     this.filter['department'] = showList;
-                }
-                if (chosen) {
-                    chosen.each(function (index, elem) {
-                        if (self.filter[elem.children[1].value]) {
-                            self.filter[elem.children[1].value].push(elem.children[2].value);
-                        } else {
-                            self.filter[elem.children[1].value] = [];
-                            self.filter[elem.children[1].value].push(elem.children[2].value);
-                        }
-                    });
-                }
-                this.startTime = new Date();
-                this.newCollection = false;
 
-                this.filter['letter'] = selectedLetter;
-                this.changeLocationHash(1, itemsNumber, this.filter);
-                this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter });
-                this.getTotalLength(null, itemsNumber, this.filter);
+                    if (chosen) {
+                        chosen.each(function (index, elem) {
+                            if (self.filter[elem.children[1].value]) {
+                                self.filter[elem.children[1].value].push(elem.children[2].value);
+                            } else {
+                                self.filter[elem.children[1].value] = [];
+                                self.filter[elem.children[1].value].push(elem.children[2].value);
+                            }
+                        });
+                    }
+                    this.startTime = new Date();
+                    this.newCollection = false;
 
+                    this.filter['letter'] = selectedLetter;
+
+                    this.changeLocationHash(1, itemsNumber, this.filter);
+                    this.collection.showMore({count: itemsNumber, page: 1, filter: this.filter});
+                    this.getTotalLength(null, itemsNumber, this.filter);
+
+                }
                 $(".saveFilterButton").show();
             },
 
@@ -406,6 +404,12 @@ define([
                 });
 
                 $(".saveFilterButton").hide();
+            },
+
+            defaultFilter: function () {
+
+                this.showFilteredPage(null, this.defaultFilter);
+
             },
 
             showPage: function (event) {
