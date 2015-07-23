@@ -21,7 +21,6 @@ define([
             page: null, //if reload page, and in url is valid page
             contentType: 'Employees',//needs in view.prototype.changeLocationHash
             viewType: 'list',
-            currentUser: null,
             defaultFilter: null,//needs in view.prototype.changeLocationHash
 
             initialize: function (options) {
@@ -36,7 +35,7 @@ define([
                 this.deleteCounter = 0;
                 this.page = options.collection.page;
                 this.render();
-                this.pageElementRender(this.collection.length, 50, 1);
+                this.pageElementRender(this.collection.length, this.defaultItemsNumber, this.page);
                // this.getTotalLength(null, this.defaultItemsNumber, this.filter);
                 this.contentCollection = contentCollection;
             },
@@ -57,7 +56,8 @@ define([
                 "click #lastShowPage": "lastPage",
                 "click .oe_sortable": "goSort",
                 "click .saveFilterButton": "saveFilter",
-                "click .defaultFilterButton": "defaultFilter"
+                "click .savedFilterButton": "savedFilter",
+                "click .deleteFilterButton": "deleteFilter"
             },
 
             renderContent: function () {
@@ -185,8 +185,10 @@ define([
                 var showList;
 
                 currentEl.html('');
-                currentEl.prepend('<button id="saveFilterButton" class="saveFilterButton">Save Filter</button>');
-                currentEl.prepend('<button id="defaultFilterButton" class="defaultFilterButton">Default Filter</button>');
+                if (App.currentUser.savedFilters){
+                    currentEl.prepend('<button id="savedFilterButton" class="savedFilterButton">My Filter</button>');
+                    currentEl.prepend('<button id="deleteFilterButton" class="deleteFilterButton">DefaultFilter</button>');
+                }
                 currentEl.append(_.template(listTemplate));
                 currentEl.append(new listItemView({ collection: this.collection, page: this.page, itemsNumber: this.collection.namberToShow }).render());
 
@@ -198,6 +200,7 @@ define([
                         $("#top-bar-deleteBtn").hide();
                 });
 
+                currentEl.prepend('<button id="saveFilterButton" class="saveFilterButton">Save Filter</button>');
                 $("#saveFilterButton").hide();
 
 
@@ -389,27 +392,30 @@ define([
 
             saveFilter: function () {
                 var currentUser = new userCollection();
-                var main = $('#mainmenu-holder').find('li.selected').text();
                 var submenu = $('#submenu-holder').find('li.selected').text();
                 var key;
                 var obj = {};
 
-                key =  main.trim() + '/' + submenu.trim();
+                key = submenu.trim();
                 obj[key] = this.filter;
 
-                currentUser.changed = obj;
-                currentUser.save(currentUser.changed, {
-                    data: obj,
-                    patch: true
-                });
+                    currentUser.changed = obj;
+                    currentUser.save(currentUser.changed, {
+                        data: obj,
+                        patch: true
+                    });
+
+                App.currentUser.savedFilters = obj;
 
                 $(".saveFilterButton").hide();
             },
 
-            defaultFilter: function () {
+            savedFilter: function () {
+                this.showFilteredPage(null, App.currentUser.savedFilters['Employees']['department']);
+            },
 
+            deleteFilter: function () {
                 this.showFilteredPage(null, this.defaultFilter);
-
             },
 
             showPage: function (event) {

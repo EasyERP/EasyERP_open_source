@@ -445,19 +445,26 @@ define([
                 }
                 var newCollection = true;
                 var self = context;
+                var savedFilter;
                 var startTime = new Date();
                 var contentViewUrl = "views/" + contentType + "/list/ListView";
                 var topBarViewUrl = "views/" + contentType + "/TopBarView";
                 var collectionUrl = context.buildCollectionRoute(contentType);
                 var navigatePage = (page) ? parseInt(page) : 1;
                 var count = (countPerPage) ? parseInt(countPerPage) || 50 : 50;
-                var savedFilter = App.currentUser.savedFilters['HR/Employees'];
 
                 if (filter === 'empty') {
                     newCollection = false;
                 } else if (filter) {
                     filter = JSON.parse(filter);
                 }
+
+                if (App.currentUser.savedFilters){
+                    savedFilter = App.currentUser.savedFilters[contentType];
+                } else {
+                    savedFilter = filter;
+                }
+
                 if (context.mainView === null) {
                     context.main(contentType);
                 } else {
@@ -651,12 +658,19 @@ define([
                 var contentViewUrl;
                 var topBarViewUrl = "views/" + contentType + "/TopBarView";
                 var collectionUrl;
+                var savedFilter;
                 var count = (countPerPage) ? parseInt(countPerPage) || 50 : 50;
                 if (filter === 'empty') {
                     newCollection = false;
                 } else if (filter) {
                     filter = JSON.parse(filter);
                 }
+                if (App.currentUser.savedFilters){
+                    savedFilter = App.currentUser.savedFilters[contentType];
+                } else {
+                    savedFilter = filter;
+                }
+
                 if (context.mainView === null) {
                     context.main(contentType);
                 } else {
@@ -671,7 +685,7 @@ define([
                         viewType: 'thumbnails',
                         //page: 1,
                         count: count,
-                        filter: filter,
+                        filter: savedFilter,
                         contentType: contentType,
                         newCollection: newCollection
                     })
@@ -685,7 +699,7 @@ define([
                         var contentview = new contentView({
                             collection: collection,
                             startTime: startTime,
-                            filter: filter,
+                            filter: savedFilter,
                             newCollection: newCollection
                         });
                         var topbarView = new topBarView({actionType: "Content", collection: collection});

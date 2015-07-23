@@ -10,6 +10,8 @@ var Employee = function (event, models) {
     function getTotalCount(req, response) {
         var res = {};
         var data = {};
+        var or;
+
         for (var i in req.query) {
             data[i] = req.query[i];
         }
@@ -32,11 +34,58 @@ var Employee = function (event, models) {
 
         switch (contentType) {
             case ('Employees'): {
-                optionsObject['isEmployee'] = true;
+                optionsObject['$and'] = [];
+                optionsObject['$and'].push({'isEmployee': true});
+
+                if (data && data.filter) {
+                    optionsObject['$and'].push({$or: []});
+                    or = optionsObject['$and'][1]['$or'];
+
+                    if (data.filter.department) {
+                        var arrOfObjectId = data.filter.department.objectID();
+                        or.push({ 'department': {$in: arrOfObjectId}});
+                    }
+                    if (data.filter.Name) {
+                        or.push({ 'name.last': {$in: data.filter.Name}});
+                    }
+                    if (data.filter.Email) {
+                        or.push({ 'workEmail': {$in: data.filter.Email}});
+                    }
+
+                    if (!or.length) {
+                        optionsObject['$and'].pop();
+                    }
+
+
+                }
             }
                 break;
             case ('Applications'): {
-                optionsObject['isEmployee'] = false;
+                optionsObject['$and'] = [];
+                optionsObject['$and'].push({'isEmployee': false});
+
+                if (data && data.filter) {
+                    filterObj = {};
+                    optionsObject['$and'].push(filterObj);
+                    filterObj['$or'] = [];
+                    or = filterObj['$or'];
+
+                    for (var key in data.filter) {
+
+                        switch (key) {
+                            case 'Name':
+                                or.push({ 'name.last': {$in: data.filter.Name}});
+                                break;
+                            case 'Email':
+                                or.push({ 'workEmail': {$in: data.filter.Email}});
+                                break;
+
+                        }
+                    }
+                    if (!or.length) {
+                        optionsObject['$and'].pop();
+                    }
+                }
             }
                 break;
         }
@@ -346,7 +395,7 @@ var Employee = function (event, models) {
         var query = models.get(req.session.lastDb, "Employees", employeeSchema).find();
         query.where('isEmployee', true);
         query.select('_id name').
-        sort({ 'name.first': 1 });
+            sort({ 'name.first': 1 });
         query.exec(function (err, result) {
             if (err) {
                 console.log(err);
@@ -488,8 +537,8 @@ var Employee = function (event, models) {
                         or.push({ 'department': {$in: arrOfObjectId}});
                     }
                     if (data.filter.Name) {
-                     or.push({ 'name.last': {$in: data.filter.Name}});
-                     }
+                        or.push({ 'name.last': {$in: data.filter.Name}});
+                    }
                     if (data.filter.Email) {
                         or.push({ 'workEmail': {$in: data.filter.Email}});
                     }
@@ -779,7 +828,7 @@ var Employee = function (event, models) {
                         or .push({ 'workEmail': {$in: data.filter.Email}});
                     }
                     if (!filterObj['$and'][2]['$or'].length) {
-                       filterObj['$and'].pop();
+                        filterObj['$and'].pop();
                     }
 
                     models.get(req.session.lastDb, "Employees", employeeSchema).aggregate(
@@ -868,7 +917,7 @@ var Employee = function (event, models) {
         query.populate('relatedUser', 'login _id');
         query.populate('jobPosition', 'name _id');
         query.populate('workflow').
-			populate('createdBy.user').
+            populate('createdBy.user').
             populate('editedBy.user').
             populate('groups.users').
             populate('groups.group').
@@ -981,24 +1030,24 @@ var Employee = function (event, models) {
                         var dir;
                         switch (osType) {
                             case "Windows":
-                                {
-                                    var newDirname = __dirname.replace("\\Modules", "");
-                                    while (newDirname.indexOf("\\") !== -1) {
-                                        newDirname = newDirname.replace("\\", "\/");
-                                    }
-                                    path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
-                                    dir = newDirname + "\/uploads\/" + _id;
+                            {
+                                var newDirname = __dirname.replace("\\Modules", "");
+                                while (newDirname.indexOf("\\") !== -1) {
+                                    newDirname = newDirname.replace("\\", "\/");
                                 }
+                                path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
+                                dir = newDirname + "\/uploads\/" + _id;
+                            }
                                 break;
                             case "Linux":
-                                {
-                                    var newDirname = __dirname.replace("/Modules", "");
-                                    while (newDirname.indexOf("\\") !== -1) {
-                                        newDirname = newDirname.replace("\\", "\/");
-                                    }
-                                    path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
-                                    dir = newDirname + "\/uploads\/" + _id;
+                            {
+                                var newDirname = __dirname.replace("/Modules", "");
+                                while (newDirname.indexOf("\\") !== -1) {
+                                    newDirname = newDirname.replace("\\", "\/");
                                 }
+                                path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
+                                dir = newDirname + "\/uploads\/" + _id;
+                            }
                         }
 
                         fs.unlink(path, function (err) {
@@ -1061,7 +1110,7 @@ var Employee = function (event, models) {
     function getEmployeesImages(req, data, res) {
         var query = models.get(req.session.lastDb, "Employees", employeeSchema).find({ isEmployee: true });
         query.where('_id').in(data.ids).
-			select('_id imageSrc').
+            select('_id imageSrc').
             exec(function (error, response) {
                 if (error) {
                     console.log(error);

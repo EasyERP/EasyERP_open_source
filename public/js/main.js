@@ -8,7 +8,7 @@ var App = App ||
     Calendar: {
         currentCalendarId: ""
     },
-    currentUser: {savedFilters: 'empty'}
+    currentUser: {savedFilters: ''}
 };
 
 require.config({

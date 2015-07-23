@@ -8,6 +8,7 @@ define([
         'models/wTrackModel',
         'collections/wTrack/filterCollection',
         'collections/wTrack/editCollection',
+        'collections/Users/editCollection',
         'views/Filter/FilterView',
         'common',
         'dataService',
@@ -15,7 +16,7 @@ define([
         'async'
     ],
 
-    function (listTemplate, cancelEdit, createView, listItemView, editView, wTrackCreateView, currentModel, contentCollection, EditCollection, filterView, common, dataService, populate, async) {
+    function (listTemplate, cancelEdit, createView, listItemView, editView, wTrackCreateView, currentModel, contentCollection, EditCollection, userCollection, filterView, common, dataService, populate, async) {
         var wTrackListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -34,6 +35,7 @@ define([
             selectedProjectId: [],
             genInvoiceEl: null,
             changedModels: {},
+            defaultFilter: null,
 
             initialize: function (options) {
                 this.startTime = options.startTime;
@@ -47,7 +49,9 @@ define([
 
                 this.render();
 
-                this.getTotalLength(null, this.defaultItemsNumber, this.filter);
+                this.pageElementRender(this.collection.length, this.defaultItemsNumber, this.page);
+
+                //this.getTotalLength(null, this.defaultItemsNumber, this.filter);
                 this.contentCollection = contentCollection;
                 this.stages = [];
             },
@@ -72,7 +76,10 @@ define([
                 "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
                 "change .autoCalc": "autoCalc",
                 "change .editable ": "setEditable",
-                "keydown input.editing ": "keyDown"
+                "keydown input.editing ": "keyDown",
+                "click .saveFilterButton": "saveFilter",
+                "click .savedFilterButton": "savedFilter",
+                "click .deleteFilterButton": "deleteFilter"
             },
 
             keyDown: function (e) {
@@ -621,12 +628,19 @@ define([
                 var showList;
 
                 currentEl.html('');
+                if (App.currentUser.savedFilters){
+                    currentEl.prepend('<button id="savedFilterButton" class="savedFilterButton">My Filter</button>');
+                    currentEl.prepend('<button id="deleteFilterButton" class="deleteFilterButton">DefaultFilter</button>');
+                }
                 currentEl.append(_.template(listTemplate));
                 currentEl.append(new listItemView({
                     collection: this.collection,
                     page: this.page,
                     itemsNumber: this.collection.namberToShow
                 }).render());//added two parameters page and items number
+
+                currentEl.prepend('<button id="saveFilterButton" class="saveFilterButton">Save Filter</button>');
+                $("#saveFilterButton").hide();
 
                 $(document).on("click", function (e) {
                     self.hideItemsNumber(e);
@@ -678,7 +692,7 @@ define([
 
                         return department
                     });
-
+                    self.defaultFilter = _.pluck(departments.data, '_id');
                     self.responseObj['#department'] = departments;
                 });
 
@@ -858,7 +872,7 @@ define([
                 this.changeLocationHash(1, itemsNumber, this.filter);
             },
 
-            showFilteredPage: function (depIdArray) {
+            showFilteredPage: function (showFilterList) {
                 var itemsNumber;
                 var showList;
                 var self = this;
@@ -868,6 +882,7 @@ define([
                 this.startTime = new Date();
                 this.newCollection = false;
                 this.filter = {};
+                this.filter['departments'] = showFilterList;
 
                 if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
                     showList = checkedElements.map(function () {
@@ -900,6 +915,36 @@ define([
                 this.changeLocationHash(1, itemsNumber, this.filter);
                 this.collection.showMore({count: itemsNumber, page: 1, filter: this.filter});
                 this.getTotalLength(null, itemsNumber, this.filter);
+
+                $(".saveFilterButton").show();
+            },
+
+            saveFilter: function () {
+                var currentUser = new userCollection();
+                var submenu = $('#submenu-holder').find('li.selected').text();
+                var key;
+                var obj = {};
+
+                key = submenu.trim();
+                obj[key] = this.filter;
+
+                currentUser.changed = obj;
+                currentUser.save(currentUser.changed, {
+                    data: obj,
+                    patch: true
+                });
+
+                App.currentUser.savedFilters = obj;
+
+                $(".saveFilterButton").hide();
+            },
+
+            savedFilter: function () {
+                this.showFilteredPage(App.currentUser.savedFilters['wTrack']['departments']);
+            },
+
+            deleteFilter: function () {
+                this.showFilteredPage(this.defaultFilter);
             },
 
             showPage: function (event) {
