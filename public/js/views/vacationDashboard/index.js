@@ -5,14 +5,13 @@ define([
     'text!templates/vacationDashboard/index.html',
     'views/vacationDashboard/rowView',
     'collections/Dashboard/vacationDashboard',
-    'collections/Dashboard/employeesForDashboard',
     'dataService',
     'constants',
     'async',
     'custom',
     'moment',
     'constants'
-], function (mainTemplate, rowView, vacationDashboard, employeesForDashboard, dataService, CONSTANTS, async, custom, moment, CONSTANTS) {
+], function (mainTemplate, rowView, vacationDashboard, dataService, CONSTANTS, async, custom, moment, CONSTANTS) {
     var View = Backbone.View.extend({
         el: '#content-holder',
 

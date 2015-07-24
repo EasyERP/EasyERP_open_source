@@ -18,11 +18,11 @@ MongoClient.connect(url, function (err, db) {
 
     function childModule(callback) {
         var module = {
-            _id: 67,
-            mname: 'Revenue',
-            href: 'Revenue',
-            sequence: 67,
-            parrent: 19,
+            _id: 74,
+            mname: 'HrDashboard',
+            href: 'HrDashboard',
+            sequence: 74,
+            parrent: 9,
             link: true,
             visible: true
         };
@@ -62,9 +62,9 @@ MongoClient.connect(url, function (err, db) {
 
         q.drain = function () {
             callback(null, 'done');
-        };
+        }
 
-        var cursor = profiles.find()
+        var cursor = profiles.find();
 
 
         cursor.each(function (err, profile) {
