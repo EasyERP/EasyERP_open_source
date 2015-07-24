@@ -477,14 +477,22 @@ var wTrack = function (models) {
             var startDate;
             var endDate;
 
-            startDate = new Date('2014-08-01');
-            endDate = new Date('2015-07-31');
+            var endMonth = moment().month() + 1;
+            var endYear = moment().isoWeekYear();
+            var start = moment().subtract(11, 'month').date(1);
+            var startMonth = start.month() + 1;
+            var startYear = start.isoWeekYear();
+
+            startDate = new Date(startYear + '-' + startMonth + '-01');
+            endDate = new Date(endYear + '-' + endMonth + '-31');
 
             function resultMapper(err, result) {
                 var hiredArr;
                 var firedArr;
-                var maxHired;
-                var maxFired;
+                var month;
+                var year;
+                var arrOfDates;
+                var finalResult;
 
                 if (err) {
                     return next(err);
@@ -493,21 +501,32 @@ var wTrack = function (models) {
                 hiredArr = result[0];
                 firedArr = result[1];
 
-                maxHired = _.max(hiredArr, function (chr) {
-                    return chr.hiredCount;
-                });
+               /* for (var i = 0; i < 12; i++) {
+                    month = startMonth + i;
 
-                maxFired = _.max(firedArr, function (chr) {
-                    return chr.firedCount;
-                });
-
-                result.push({
-                        maxHired: maxHired.hiredCount,
-                        maxFired: maxFired.firedCount
+                    if (month > 12) {
+                        year = startYear + 1;
+                        month -= 12;
+                    } else {
+                        year = startYear;
                     }
-                );
 
-                res.status(200).send(result);
+                    arrOfDates.push({
+                        month: month,
+                        year: year,
+                        dateByMonth: year * 100 + month
+                    });
+                }*/
+
+                finalResult = [{
+                    _id: 'hired',
+                    data: hiredArr
+                }, {
+                    _id: 'fired',
+                    data: firedArr
+                }];
+
+                res.status(200).send(finalResult);
             };
 
             function hiredEmployees(parallelCb) {

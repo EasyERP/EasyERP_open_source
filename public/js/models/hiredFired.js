@@ -1,7 +1,7 @@
 
 define([], function () {
     var EmployeeForDashboard = Backbone.Model.extend({
-        idAttribute: "employee"
+        idAttribute: "_id"
         /*urlRoot: function () {
             return "/Vacation";
         }*/

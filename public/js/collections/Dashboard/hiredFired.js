@@ -1,5 +1,5 @@
 ﻿define([
-        'models/EmployeeDashboardItem'
+        'models/hiredFired'
     ],
     function (Model) {
         var Colection = Backbone.Collection.extend({
@@ -8,7 +8,7 @@
             initialize: function(){
 
             },
-            comparator: 'name'
+            /*comparator: 'name'*/
 
         });
 
