@@ -1,5 +1,5 @@
 <div class="grid-conatiner">
-    <table class="grid" cellspacing="0" cellpadding="0">
+    <table class="grid hrTop" cellspacing="0" cellpadding="0">
         <thead>
             <tr>
                 <th>
@@ -104,7 +104,9 @@
                     <%}%>
             </tr>
             <tr class="double">
-                <td>Hired Total</td>
+                <td>
+                    <span>Hired Total</span>
+                </td>
                 <% arrOfDates.forEach(function(dateObject){%>
                     <td>
                         <span id="total_<%=dateObject.dateByMonth%>"></span>

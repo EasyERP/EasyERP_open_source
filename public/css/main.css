@@ -8009,6 +8009,55 @@ textarea#editInput {
 .grid-conatiner.revenue .th-green {
   border-bottom: 2px solid #00af00;
 }
+.hrTop tr td {
+  vertical-align: top;
+}
+.hrTop tr td.vcenter {
+  vertical-align: middle;
+}
+.hrTop tr.double td span {
+  padding: 5px 8px 5px 8px;
+  height: 40px;
+  line-height: 15px;
+  border-bottom: 1px solid #d2d2d2;
+  position: relative;
+}
+.hrTop tr.double td span.large {
+  line-height: 29px;
+}
+.hrTop tr.double td span.top,
+.hrTop tr.double td span.bottom {
+  padding: 0 3px!important;
+  height: 19px;
+  line-height: 19px;
+  border-bottom: none;
+  position: absolute;
+  left: 0px;
+  width: 30px;
+  text-align: right;
+  border-right: 1px solid #7f7f80;
+}
+.hrTop tr.double td span.top {
+  top: 0px;
+  border-bottom: 1px solid #7f7f80;
+}
+.hrTop tr.double td span.bottom {
+  top: 20px;
+}
+.hrTop tr.double td span:last-child {
+  padding: 5px 8px 5px 8px;
+  border-bottom: none;
+}
+.hrTop tr.double td:first-child span {
+  border-bottom: none;
+  background-color: inherit;
+}
+.grid-conatiner.darkTheme .grid.hrTop.alternating tr td:first-child {
+  background-color: inherit;
+}
+.grid-conatiner.darkTheme .grid.hrTop.alternating tr:nth-child(2n+1) td {
+  background-color: inherit;
+}
 .search-field {
   box-sizing: border-box;
   display: block;
