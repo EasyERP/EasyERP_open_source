@@ -2,7 +2,7 @@
  * Created by Roman on 04.05.2015.
  */
 var async = require('async');
-var lodash = require('lodash');
+var _ = require('lodash');
 var mongoose = require('mongoose');
 var wTrack = function (models) {
     var access = require("../Modules/additions/access.js")(models);
@@ -682,15 +682,44 @@ var wTrack = function (models) {
             var endYear = parseInt(options.endYear) || 2015;
             var startDate;
             var endDate;
+            var waterfallTasks;
 
-            function getWTracksByProjects (_ids, callback) {
+            startDate = parseInt(options.startDate) || (startYear * 100 + startMonth);
+            endDate = parseInt(options.endDate) || (endYear * 100 + endMonth);
+
+            var idForProjects = function (callback) {
+                Project.aggregate([{
+                    $project: {
+                        _id: '$_id',
+                        bonusCount: {$size: '$bonus'}
+                    }
+                }, {
+                    $match: {
+                        bonusCount: {$gt: 0}
+                    }
+                }, {
+                    $project: {
+                        _id: 1
+                    }
+                }], function (err, response) {
+                    if (err) {
+                        return callback(err);
+                    }
+
+                    response = _.pluck(response, '_id');
+
+                    callback(null, response);
+                });
+            };
+
+            function getWTracksByProjects(_ids, callback) {
                 var queryObject = {};
 
-                queryObject['$and'] = [];
-
-                queryObject['$and'].push({'dateByMonth': {'$gte': startDate}});
-                queryObject['$and'].push({'dateByMonth': {'$gte': endDate}});
-                queryObject['$and'].push({'project._id': {'$in': _ids}})
+                queryObject['$and'] = [
+                    {'dateByMonth': {'$gte': startDate}},
+                    {'dateByMonth': {'$lte': endDate}},
+                    {'project._id': {'$in': _ids}}
+                ];
 
                 WTrack.find(queryObject)
                     .lean()
@@ -702,40 +731,49 @@ var wTrack = function (models) {
                     })
             };
 
+            function getProjectsByIds(wTracks, callback) {
+                var _ids = _.pluck(wTracks, 'project._id');
+
+                Project.aggregate([
+                    {
+                        $match: {
+                            _id: {'$in': _ids}
+                        }
+                    },
+                    {
+                        $unwind: '$bonus'
+                    },
+                    {
+                        $group: {
+                            _id: {employeeId: '$bonus.employeeId', bonusId: '$bonus.bonusId'},
+                            dateArray: {
+                                $push: {
+                                    startDate: '$bonus.startDate',
+                                    endDate: '$bonus.endDate',
+                                    projectId: '$_id'
+                                }
+                            }
+
+                        }
+                    }
+                ], callback);
+            };
+
+
             if (!access) {
                 return res.status(403).send();
             }
 
-            startDate = parseInt(options.startDate) || (startYear * 100 + startMonth);
-            endDate = parseInt(options.endDate) || (endYear * 100 + endMonth);
+            waterfallTasks = [idForProjects, getWTracksByProjects, getProjectsByIds];
 
-            var idForProjects = function(callback) {
-                Project.aggregate([{
-                    $project: {
-                        _id: '$_id',
-                        bonusCount: {$size: '$bonus'}
-                    }
-                },{
-                    $match: {
-                        bonusCount: {$gt: 0}
-                    }
-                }, {
-                    $project: {
-                        _id: 1
-                    }
-                }], function (err, response) {
-                    if (err) {
-                        callback(err);
-                    }
+            async.waterfall(waterfallTasks, function (err, result) {
+                if (err) {
+                    return next(err);
+                }
 
-                    response = lodash.pluck(response, '_id');
+                result = _.sortBy(result, '_id.employeeId');
 
-                    callback(response);
-                });
-            };
-
-            idForProjects(function(response){
-                res.status(200).send(response);
+                res.status(200).send(result);
             });
 
         });
