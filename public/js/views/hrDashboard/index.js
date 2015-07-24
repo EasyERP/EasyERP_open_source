@@ -21,8 +21,10 @@ define([
 
         },
 
-        initialize: function () {
+        initialize: function (options) {
             var dashCollection = this.dashCollection = custom.retriveFromCash('hrDashboard');
+
+            this.startTime = options.startTime;
 
             if (!dashCollection) {
                 dashCollection = this.dashCollection = new hrDashboard();
@@ -30,16 +32,13 @@ define([
 
                 custom.cashToApp('hrDashboard', dashCollection);
             } else {
-                dashCollection.trigger('reset');
+                this.render();
             }
         },
 
-        square: function(val){
-
-        },
-
         render: function () {
-            var self = this;
+            var self = this
+            var currentEl = this.$el;
 
             var start = moment().subtract(11, 'month').date(1);
             var startMonth = start.month() + 1;
@@ -72,7 +71,7 @@ define([
                 custom.cashToApp('arrOfDates', arrOfDates);
             }
 
-            this.$el.html(this.template({arrOfDates: arrOfDates, hired: hired, fired: fired}));
+            currentEl.html(this.template({arrOfDates: arrOfDates, hired: hired, fired: fired}));
 
             arrOfDates.forEach(function(dateObject){
                 var totalContainer = self.$el.find('#total_' + dateObject.dateByMonth);
@@ -82,7 +81,7 @@ define([
                 totalContainer.text(parseInt(hiredContainer.text()) - parseInt(firedContainer.text()));
             });
 
-
+            currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             return this;
         }
     });
