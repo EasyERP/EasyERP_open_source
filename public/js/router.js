@@ -456,7 +456,7 @@ define([
                     filter = JSON.parse(filter);
                 }
 
-                if (App.currentUser.savedFilters[contentType]){
+                if (App.currentUser.savedFilters && App.currentUser.savedFilters[contentType]){
                     savedFilter = App.currentUser.savedFilters[contentType];
                 } else {
                     savedFilter = filter;
@@ -634,9 +634,6 @@ define([
 
         goToThumbnails: function (contentType, countPerPage, filter) {
             var self = this;
-            dataService.getData('/currentUser', null, function (response) {
-                App.currentUser = response;
-            });
             this.checkLogin(function (success) {
                 if (success) {
                     goThumbnails(self);
@@ -665,7 +662,7 @@ define([
                 } else if (filter) {
                     filter = JSON.parse(filter);
                 }
-                if (App.currentUser.savedFilters[contentType]){
+                if (App.currentUser.savedFilters && App.currentUser.savedFilters[contentType]){
                     savedFilter = App.currentUser.savedFilters[contentType];
                 } else {
                     savedFilter = filter;
@@ -727,7 +724,11 @@ define([
         },
 
         getList: function (contentType) {
-
+            dataService.getData('/currentUser', null, function (response) {
+                if (response && !response.error) {
+                    App.currentUser = response;
+                }
+            });
             this.contentType = contentType;
             contentType = this.testContent(contentType);
             var viewType = custom.getCurrentVT({contentType: contentType});

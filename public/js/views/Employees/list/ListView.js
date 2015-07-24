@@ -34,9 +34,10 @@ define([
                 this.newCollection = options.newCollection;
                 this.deleteCounter = 0;
                 this.page = options.collection.page;
+
                 this.render();
-                this.pageElementRender(this.collection.length, this.defaultItemsNumber, this.page);
-               // this.getTotalLength(null, this.defaultItemsNumber, this.filter);
+
+                this.getTotalLength(null, this.defaultItemsNumber, this.filter);
                 this.contentCollection = contentCollection;
             },
 
@@ -57,7 +58,7 @@ define([
                 "click .oe_sortable": "goSort",
                 "click .saveFilterButton": "saveFilter",
                 "click .savedFilterButton": "savedFilter",
-                "click .deleteFilterButton": "deleteFilter"
+                "click .clearFilterButton": "clearFilter"
             },
 
             renderContent: function () {
@@ -185,10 +186,6 @@ define([
                 var showList;
 
                 currentEl.html('');
-                if (App.currentUser.savedFilters['Employees']){
-                    currentEl.prepend('<button id="savedFilterButton" class="savedFilterButton">My Filter</button>');
-                    currentEl.prepend('<button id="deleteFilterButton" class="deleteFilterButton">DefaultFilter</button>');
-                }
                 currentEl.append(_.template(listTemplate));
                 currentEl.append(new listItemView({ collection: this.collection, page: this.page, itemsNumber: this.collection.namberToShow }).render());
 
@@ -201,8 +198,15 @@ define([
                 });
 
                 currentEl.prepend('<button id="saveFilterButton" class="saveFilterButton">Save Filter</button>');
+                currentEl.prepend('<button id="savedFilterButton" class="savedFilterButton">My Filter</button>');
+                currentEl.prepend('<button id="clearFilterButton" class="clearFilterButton">Clear Filter</button>');
+                $("#clearFilterButton").hide();
                 $("#saveFilterButton").hide();
-
+                $("#savedFilterButton").hide();
+                if (App.currentUser.savedFilters && App.currentUser.savedFilters['Employees']){
+                    $("#clearFilterButton").show();
+                    $("#savedFilterButton").hide();
+                }
 
                 $(document).on("click", function (e) {
                     self.hideItemsNumber(e);
@@ -388,6 +392,7 @@ define([
 
                 }
                 $(".saveFilterButton").show();
+                $(".clearFilterButton").show();
             },
 
             saveFilter: function () {
@@ -397,28 +402,41 @@ define([
                 var obj = {};
 
                 key = submenu.trim();
-                obj['filter'] = this.filter;
+                obj['filter'] = {};
+                obj['filter']['department'] = this.filter.department;
                 obj['key'] = key;
 
-                    currentUser.changed = obj;
-                    currentUser.save(currentUser.changed, {
-                        data: obj,
-                        patch: true
-                    });
+                currentUser.changed = obj;
+                currentUser.save(currentUser.changed, {
+                    data: obj,
+                    patch: true
+                });
+                App.currentUser.savedFilters = {};
+                App.currentUser.savedFilters['Employees'] = obj.filter;
 
-                App.currentUser.savedFilters = obj;
+                this.$el.find('.filterValues').empty();
+                this.$el.find('.filter-icons').removeClass('active');
+
+                $.each($('.drop-down-filter input'), function (index, value) {
+                    value.checked = false
+                });
 
                 $(".saveFilterButton").hide();
+                $(".savedFilterButton").hide();
+                $(".clearFilterButton").show();
+
             },
 
             savedFilter: function () {
                 this.showFilteredPage(null, App.currentUser.savedFilters['Employees']['department']);
+                $(".saveFilterButton").hide();
             },
 
-            deleteFilter: function () {
+            clearFilter: function () {
                 this.showFilteredPage(null, this.defaultFilter);
+                $(".saveFilterButton").hide();
+                $(".savedFilterButton").show();
             },
-
             showPage: function (event) {
                 event.preventDefault();
                 this.showP(event, { filter: this.filter, newCollection: this.newCollection, sort: this.sort });

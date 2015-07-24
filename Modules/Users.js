@@ -302,12 +302,17 @@ var Users = function (mainDb, models) {
                 var setObject = {};
                 var query = {};
                 var key = data.key;
+                var filter = data.filter;
 
-                if (data.changePass) {
+                if (data.changePass && (data.filter || data.key)) {
+                    delete data.filter;
+                    delete data.key;
                     query = { $set: data};
+                } else if (data.changePass) {
+                    query = {$set: data};
                 } else if (data.filter && data.key) {
                     setObject[key] = data.filter;
-                    query = { $set:{savedFilters: setObject}};
+                    query = { $set: {savedFilters: setObject}};
                 }
 
                 models.get(req.session.lastDb, 'Users', userSchema).findByIdAndUpdate(_id, query, function (err, result) {

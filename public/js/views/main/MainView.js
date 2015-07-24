@@ -65,7 +65,7 @@ define([
         },
         render: function () {
             var self = this;
-                if (!App.currentUser) {
+                if (!App.currentUser.login) {
                     dataService.getData('/currentUser', null, function (response, context) {
                         App.currentUser = response;
                         if (response && response.profile && response.profile.profileName == 'baned') {

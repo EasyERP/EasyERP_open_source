@@ -49,9 +49,7 @@ define([
 
                 this.render();
 
-                this.pageElementRender(this.collection.length, this.defaultItemsNumber, this.page);
-
-                //this.getTotalLength(null, this.defaultItemsNumber, this.filter);
+                this.getTotalLength(null, this.defaultItemsNumber, this.filter);
                 this.contentCollection = contentCollection;
                 this.stages = [];
             },
@@ -79,7 +77,7 @@ define([
                 "keydown input.editing ": "keyDown",
                 "click .saveFilterButton": "saveFilter",
                 "click .savedFilterButton": "savedFilter",
-                "click .deleteFilterButton": "deleteFilter"
+                "click .clearFilterButton": "clearFilter"
             },
 
             keyDown: function (e) {
@@ -628,10 +626,6 @@ define([
                 var showList;
 
                 currentEl.html('');
-                if (App.currentUser.savedFilters['wTrack']){
-                    currentEl.prepend('<button id="savedFilterButton" class="savedFilterButton">My Filter</button>');
-                    currentEl.prepend('<button id="deleteFilterButton" class="deleteFilterButton">DefaultFilter</button>');
-                }
                 currentEl.append(_.template(listTemplate));
                 currentEl.append(new listItemView({
                     collection: this.collection,
@@ -640,7 +634,15 @@ define([
                 }).render());//added two parameters page and items number
 
                 currentEl.prepend('<button id="saveFilterButton" class="saveFilterButton">Save Filter</button>');
+                currentEl.prepend('<button id="savedFilterButton" class="savedFilterButton">My Filter</button>');
+                currentEl.prepend('<button id="clearFilterButton" class="clearFilterButton">Clear Filter</button>');
+                $("#clearFilterButton").hide();
                 $("#saveFilterButton").hide();
+                $("#savedFilterButton").hide();
+                if (App.currentUser.savedFilters && App.currentUser.savedFilters['wTrack']){
+                    $("#clearFilterButton").show();
+                    $("#savedFilterButton").hide();
+                }
 
                 $(document).on("click", function (e) {
                     self.hideItemsNumber(e);
@@ -882,7 +884,9 @@ define([
                 this.startTime = new Date();
                 this.newCollection = false;
                 this.filter = {};
-                this.filter['departments'] = showFilterList;
+                if (showFilterList) {
+                    this.filter['departments'] = showFilterList;
+                }
 
                 if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
                     showList = checkedElements.map(function () {
@@ -917,6 +921,7 @@ define([
                 this.getTotalLength(null, itemsNumber, this.filter);
 
                 $(".saveFilterButton").show();
+                $(".clearFilterButton").show();
             },
 
             saveFilter: function () {
@@ -926,7 +931,8 @@ define([
                 var obj = {};
 
                 key = submenu.trim();
-                obj['filter'] = this.filter;
+                obj['filter'] = {};
+                obj['filter']['departments'] = this.filter.departments;
                 obj['key'] = key;
 
                 currentUser.changed = obj;
@@ -934,18 +940,31 @@ define([
                     data: obj,
                     patch: true
                 });
+                App.currentUser.savedFilters = {};
+                App.currentUser.savedFilters['wTrack'] = obj.filter;
 
-                App.currentUser.savedFilters = obj;
+                this.$el.find('.filterValues').empty();
+                this.$el.find('.filter-icons').removeClass('active');
+
+                $.each($('.drop-down-filter input'), function (index, value) {
+                    value.checked = false
+                });
 
                 $(".saveFilterButton").hide();
+                $(".savedFilterButton").hide();
+                $(".clearFilterButton").show();
+
             },
 
             savedFilter: function () {
                 this.showFilteredPage(App.currentUser.savedFilters['wTrack']['departments']);
+                $(".saveFilterButton").hide();
             },
 
-            deleteFilter: function () {
-                this.showFilteredPage(this.defaultFilter);
+            clearFilter: function () {
+                this.showFilteredPage();
+                $(".saveFilterButton").hide();
+                $(".savedFilterButton").show();
             },
 
             showPage: function (event) {
