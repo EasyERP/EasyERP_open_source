@@ -884,8 +884,12 @@ define([
                 this.startTime = new Date();
                 this.newCollection = false;
                 this.filter = {};
-                if (showFilterList) {
-                    this.filter['departments'] = showFilterList;
+                if (showFilterList && showFilterList.departments) {
+                    this.filter = showFilterList;
+                }
+
+                if (showFilterList && !showFilterList.departments) {
+                    this.filter = {};
                 }
 
                 if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
@@ -894,8 +898,7 @@ define([
                     }).get();
 
                     this.filter['departments'] = showList;
-                }
-                ;
+                };
 
                 if (chosen) {
                     chosen.each(function (index, elem) {
@@ -932,7 +935,7 @@ define([
 
                 key = submenu.trim();
                 obj['filter'] = {};
-                obj['filter']['departments'] = this.filter.departments;
+                obj['filter'] = this.filter;
                 obj['key'] = key;
 
                 currentUser.changed = obj;
@@ -957,12 +960,22 @@ define([
             },
 
             savedFilter: function () {
-                this.showFilteredPage(App.currentUser.savedFilters['wTrack']['departments']);
+                this.showFilteredPage(App.currentUser.savedFilters['wTrack']);
                 $(".saveFilterButton").hide();
             },
 
             clearFilter: function () {
+                this.$el.find('.filterValues').empty();
+                this.$el.find('.filter-icons').removeClass('active');
+
+                $.each($('.drop-down-filter input'), function (index, value) {
+                    value.checked = false
+                });
+
+
                 this.showFilteredPage();
+
+                $(".clearFilterButton").hide();
                 $(".saveFilterButton").hide();
                 $(".savedFilterButton").show();
             },
