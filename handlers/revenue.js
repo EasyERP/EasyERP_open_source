@@ -764,14 +764,14 @@ var wTrack = function (models) {
                 return res.status(403).send();
             }
 
-            waterfallTasks = [idForProjects, getWTracksByProjects, getProjectsByIds];
+            waterfallTasks = [idForProjects/*, getWTracksByProjects, getProjectsByIds*/];
 
             async.waterfall(waterfallTasks, function (err, result) {
                 if (err) {
                     return next(err);
                 }
 
-                result = _.sortBy(result, '_id.employeeId');
+                //result = _.sortBy(result, '_id.employeeId');
 
                 res.status(200).send(result);
             });
