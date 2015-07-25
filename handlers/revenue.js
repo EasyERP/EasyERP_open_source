@@ -690,7 +690,7 @@ var wTrack = function (models) {
             var idForProjects = function (callback) {
                 Project.aggregate([{
                     $project: {
-                        _id: '$_id',
+                        _id: 1,
                         bonusCount: {$size: '$bonus'}
                     }
                 }, {
