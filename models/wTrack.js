@@ -26,7 +26,23 @@ module.exports = (function () {
             customer: {
                 _id: { type: ObjectId, ref: 'Customers', default: null },
                 name: String
-            }
+            },
+            bonus: [{
+                employeeId: {
+                    type: ObjectId,
+                    ref: 'Employees'
+                },
+                bonusId: {
+                    type: ObjectId,
+                    ref: 'bonusType'
+                },
+                startDate: Date,
+                startWeek: Number,
+                startYear: Number,
+                endDate: Date,
+                endWeek: Number,
+                endYear: Number
+            }]
         },
         employee: {
             _id: {type: ObjectId, ref: 'Employees', default: null},

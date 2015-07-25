@@ -51,7 +51,11 @@ module.exports = (function () {
                 ref: 'bonusType'
             },
             startDate: Date,
-            endDate: Date
+            startWeek: Number,
+            startYear: Number,
+            endDate: Date,
+            endWeek: Number,
+            endYear: Number
         }]
     }, { collection: 'Project' });
 

@@ -4,6 +4,9 @@
 var async = require('async');
 var _ = require('lodash');
 var mongoose = require('mongoose');
+
+var moment = require('../public/js/libs/moment/moment');
+
 var wTrack = function (models) {
     var access = require("../Modules/additions/access.js")(models);
     var wTrackSchema = mongoose.Schemas['wTrack'];
@@ -684,18 +687,41 @@ var wTrack = function (models) {
             var endDate;
             var waterfallTasks;
 
+            var startWeek = moment().isoWeekYear(startYear).month(startMonth - 1).isoWeek();
+            var endWeek = moment().isoWeekYear(endYear).month(endMonth - 1).isoWeek();
+
             startDate = parseInt(options.startDate) || (startYear * 100 + startMonth);
             endDate = parseInt(options.endDate) || (endYear * 100 + endMonth);
+
+            console.log(startWeek, startYear, endWeek, endYear);
 
             var idForProjects = function (callback) {
                 Project.aggregate([{
                     $project: {
                         _id: 1,
+                        bonus: 1,
                         bonusCount: {$size: '$bonus'}
                     }
                 }, {
                     $match: {
-                        bonusCount: {$gt: 0}
+                        $and: [{
+                            bonusCount: {$gt: 0}}, {
+                            $or: [{
+                                $or: [{
+                                    'bonus.startDate': null
+                                }, {
+                                    'bonus.endDate': null
+                                }]
+                            }, {
+                                $or: [{
+                                    'bonus.startWeek': {$gte: startWeek},
+                                    'bonus.startYear': {$gte: startWeek}
+                                }, {
+                                    'bonus.endWeek': {$lte: endWeek},
+                                    'bonus.endYear': {$lte: endWeek}
+                                }]
+                            }]
+                        }]
                     }
                 }, {
                     $project: {
