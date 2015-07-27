@@ -724,14 +724,16 @@ define([
         },
 
         getList: function (contentType) {
+            var viewType;
+
             dataService.getData('/currentUser', null, function (response) {
                 if (response && !response.error) {
                     App.currentUser = response;
                 }
             });
+
             this.contentType = contentType;
             contentType = this.testContent(contentType);
-            var viewType = custom.getCurrentVT({contentType: contentType});
             Backbone.history.navigate('#easyErp/' + contentType + '/' + viewType, {trigger: true, replace: true});
         },
 

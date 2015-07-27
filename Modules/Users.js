@@ -297,7 +297,10 @@ var Users = function (mainDb, models) {
                         }
                     }
                 });
-            } else updateUser();
+            } else {
+                updateUser();
+            }
+
             function updateUser() {
                 var setObject = {};
                 var query = {};
@@ -308,6 +311,7 @@ var Users = function (mainDb, models) {
                 if (data.changePass && (data.filter || data.key)) {
                     delete data.filter;
                     delete data.key;
+
                     query = { $set: data};
                 } else if (data.changePass) {
                     query = {$set: data};
