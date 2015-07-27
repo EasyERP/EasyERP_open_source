@@ -200,9 +200,11 @@ define([
                 currentEl.prepend('<div><button id="saveFilterButton" class="saveFilterButton">Save Filter</button>' +
                     '<button id="savedFilterButton" class="savedFilterButton">My Filter</button>' +
                     '<button id="clearFilterButton" class="clearFilterButton">Clear Filter</button></div>');
+
                 $("#clearFilterButton").hide();
                 $("#saveFilterButton").hide();
                 $("#savedFilterButton").hide();
+
                 if (App.currentUser.savedFilters && App.currentUser.savedFilters['Employees']){
                     $("#clearFilterButton").show();
                     $("#savedFilterButton").hide();
