@@ -305,15 +305,14 @@ var Users = function (mainDb, models) {
                 var filter = data.filter;
                 var _key = 'savedFilters.' + key;
 
-                if (data.changePass && (data.filter || data.key)) {
-                    delete data.filter;
-                    delete data.key;
+                if (data.changePass) {
                     query = { $set: data};
-                } else if (data.changePass) {
-                    query = {$set: data};
                 } else if (data.filter && data.key) {
                     setObject[_key] = filter;
                     query = { $set: setObject};
+                } else if (data.key && !data.filter) {
+                    setObject[_key] = '';
+                    query = { $unset: setObject};
                 }
 
                 models.get(req.session.lastDb, 'Users', userSchema).findByIdAndUpdate(_id, query, function (err, result) {

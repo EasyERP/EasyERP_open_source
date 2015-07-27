@@ -5,11 +5,12 @@
         'views/Filter/FilterView',
         'dataService',
         'models/EmployeesModel',
+        'collections/Users/editCollection',
         'common',
         'text!templates/Alpabet/AphabeticTemplate.html'
     ],
 
-    function (thumbnailsItemTemplate, editView, createView, filterView, dataService, currentModel, common, AphabeticTemplate) {
+    function (thumbnailsItemTemplate, editView, createView, filterView, dataService, currentModel, userCollection, common, AphabeticTemplate) {
         var EmployeesThumbnalView = Backbone.View.extend({
             el: '#content-holder',
             countPerPage: 0,
@@ -35,7 +36,9 @@
                 this.newCollection = options.newCollection;
                 this.deleteCounter = 0;
                 this.page = options.collection.page;
+
                 this.render();
+
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
                 this.asyncLoadImgs(this.collection);
             },
@@ -45,7 +48,7 @@
                 "click .thumbnailwithavatar": "gotoEditForm",
                 "click .letter:not(.empty)": "alpabeticalRender",
                 "click .saveFilterButton": "saveFilter",
-                "click .savedFilterButton": "savedFilter",
+                "click .removeFilterButton": "removeFilter",
                 "click .clearFilterButton": "clearFilter"
             },
 
@@ -133,16 +136,16 @@
                 });
 
                 currentEl.prepend('<div class="filtersActive"><button id="saveFilterButton" class="saveFilterButton">Save Filter</button>' +
-                    '<button id="savedFilterButton" class="savedFilterButton">My Filter</button>' +
+                    '<button id="removeFilterButton" class="removeFilterButton">Remove Filter</button>' +
                     '<button id="clearFilterButton" class="clearFilterButton">Clear Filter</button></div>');
 
                 $("#clearFilterButton").hide();
                 $("#saveFilterButton").hide();
-                $("#savedFilterButton").hide();
+                $("#removeFilterButton").hide();
 
                 if (App.currentUser.savedFilters && App.currentUser.savedFilters['Employees']){
-                    $("#clearFilterButton").hide();
-                    $("#savedFilterButton").hide();
+                    $("#clearFilterButton").show();
+                    $("#removeFilterButton").show();
                 }
 
                 if (this.collection.length > 0) {
@@ -213,26 +216,30 @@
                     newCollection: this.newCollection
                 });
                 this.getTotalLength(itemsNumber, this.filter, this.newCollection);
+
+                $(".saveFilterButton").show();
+                $(".clearFilterButton").show();
+                $(".removeFilterButton").show();
             },
 
             saveFilter: function () {
                 var currentUser = new userCollection();
-                var submenu = $('#submenu-holder').find('li.selected').text();
+                var subMenu = $('#submenu-holder').find('li.selected').text();
                 var key;
-                var obj = {};
+                var filterObj = {};
 
-                key = submenu.trim();
-                obj['filter'] = {};
-                obj['filter'] = this.filter;
-                obj['key'] = key;
+                key = subMenu.trim();
+                filterObj['filter'] = {};
+                filterObj['filter'] = this.filter;
+                filterObj['key'] = key;
 
-                currentUser.changed = obj;
+                currentUser.changed = filterObj;
                 currentUser.save(currentUser.changed, {
-                    data: obj,
+                    data: filterObj,
                     patch: true
                 });
                 App.currentUser.savedFilters = {};
-                App.currentUser.savedFilters['Employees'] = obj.filter;
+                App.currentUser.savedFilters['Employees'] = filterObj.filter;
 
                 this.$el.find('.filterValues').empty();
                 this.$el.find('.filter-icons').removeClass('active');
@@ -243,18 +250,48 @@
                 });
 
                 $(".saveFilterButton").hide();
-                $(".savedFilterButton").hide();
-                $(".clearFilterButton").hide();
+                $(".removeFilterButton").show();
+                $(".clearFilterButton").show();
 
             },
 
-            savedFilter: function () {
-                this.showFilteredPage(null, App.currentUser.savedFilters['Employees']);
+            removeFilter: function () {
+                var currentUser = new userCollection();
+                var subMenu = $('#submenu-holder').find('li.selected').text();
+                var key;
+                var filterObj = {};
+
+                this.clearFilter();
+
+                key = subMenu.trim();
+                filterObj['key'] = key;
+
+                currentUser.changed = filterObj;
+                currentUser.save(currentUser.changed, {
+                    data: filterObj,
+                    patch: true
+                });
+
+                delete App.currentUser.savedFilters['Employees'];
+
                 $(".saveFilterButton").hide();
+                $(".removeFilterButton").hide();
+                $(".clearFilterButton").hide();
             },
 
             clearFilter: function () {
-                this.showFilteredPage(null, this.defaultFilter);
+                this.filter = {};
+                this.filter['letter'] = '';
+
+                this.startTime = new Date();
+                this.newCollection = false;
+                this.$el.find('.thumbnailwithavatar').remove();
+
+                this.defaultItemsNumber = 0;
+                this.changeLocationHash(null, this.defaultItemsNumber, this.filter);
+                this.collection.showMoreAlphabet({count: this.defaultItemsNumber, filter: this.filter});
+                this.getTotalLength(this.defaultItemsNumber, this.filter);
+
 
                 this.$el.find('.filterValues').empty();
                 this.$el.find('.filter-icons').removeClass('active');
@@ -265,10 +302,9 @@
                 });
 
                 $(".clearFilterButton").hide();
+                $(".removeFilterButton").show();
                 $(".saveFilterButton").hide();
-                $(".savedFilterButton").show();
             },
-
             hideItemsNumber: function (e) {
                 var el = e.target;
 
@@ -341,7 +377,7 @@
                 this.changeLocationHash(null, (this.defaultItemsNumber < 50) ? 50 : this.defaultItemsNumber, this.filter);
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
                 holder.append(this.template({collection: newModels.toJSON()}));
-                holder.prepend(alphaBet);
+               // holder.prepend(alphaBet);
                 holder.append(created);
                 created.before(showMore);
                 this.asyncLoadImgs(newModels);
