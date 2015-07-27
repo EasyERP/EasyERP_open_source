@@ -451,6 +451,7 @@ define([
                 $(".saveFilterButton").hide();
                 $(".savedFilterButton").show();
             },
+
             showPage: function (event) {
                 event.preventDefault();
                 this.showP(event, { filter: this.filter, newCollection: this.newCollection, sort: this.sort });

@@ -21,6 +21,7 @@
             //page: null, //if reload page, and in url is valid page
             contentType: 'Employees',//needs in view.prototype.changeLocationHash
             viewType: 'thumbnails',//needs in view.prototype.changeLocationHash
+            defaultFilter:null,
 
             initialize: function (options) {
                 this.asyncLoadImgs(this.collection);
@@ -42,7 +43,10 @@
             events: {
                 "click #showMore": "showMore",
                 "click .thumbnailwithavatar": "gotoEditForm",
-                "click .letter:not(.empty)": "alpabeticalRender"
+                "click .letter:not(.empty)": "alpabeticalRender",
+                "click .saveFilterButton": "saveFilter",
+                "click .savedFilterButton": "savedFilter",
+                "click .clearFilterButton": "clearFilter"
             },
 
             //modified for filter Vasya
@@ -128,6 +132,19 @@
                     }
                 });
 
+                currentEl.prepend('<div class="filtersActive"><button id="saveFilterButton" class="saveFilterButton">Save Filter</button>' +
+                    '<button id="savedFilterButton" class="savedFilterButton">My Filter</button>' +
+                    '<button id="clearFilterButton" class="clearFilterButton">Clear Filter</button></div>');
+
+                $("#clearFilterButton").hide();
+                $("#saveFilterButton").hide();
+                $("#savedFilterButton").hide();
+
+                if (App.currentUser.savedFilters && App.currentUser.savedFilters['Employees']){
+                    $("#clearFilterButton").hide();
+                    $("#savedFilterButton").hide();
+                }
+
                 if (this.collection.length > 0) {
                     currentEl.append(this.template({collection: this.collection.toJSON()}));
                 } else {
@@ -138,6 +155,9 @@
                     departments.data.forEach(function (department) {
                         department.name = department.departmentName;
                     });
+
+                    self.defaultFilter = _.pluck(departments.data, '_id');
+
                     dataService.getData('/employee/getFilterValues', null, function (values) {
                         FilterView = new filterView({collection: departments.data, customCollection: values});
                         // Filter custom event listen ------begin
@@ -168,6 +188,7 @@
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
                 this.filter = {};
+
                 if (showList.length) this.filter['department'] = showList;
                 if (chosen) {
                     chosen.each(function (index, elem) {
@@ -192,6 +213,60 @@
                     newCollection: this.newCollection
                 });
                 this.getTotalLength(itemsNumber, this.filter, this.newCollection);
+            },
+
+            saveFilter: function () {
+                var currentUser = new userCollection();
+                var submenu = $('#submenu-holder').find('li.selected').text();
+                var key;
+                var obj = {};
+
+                key = submenu.trim();
+                obj['filter'] = {};
+                obj['filter'] = this.filter;
+                obj['key'] = key;
+
+                currentUser.changed = obj;
+                currentUser.save(currentUser.changed, {
+                    data: obj,
+                    patch: true
+                });
+                App.currentUser.savedFilters = {};
+                App.currentUser.savedFilters['Employees'] = obj.filter;
+
+                this.$el.find('.filterValues').empty();
+                this.$el.find('.filter-icons').removeClass('active');
+                this.$el.find('.chooseOption').children().remove();
+
+                $.each($('.drop-down-filter input'), function (index, value) {
+                    value.checked = false
+                });
+
+                $(".saveFilterButton").hide();
+                $(".savedFilterButton").hide();
+                $(".clearFilterButton").hide();
+
+            },
+
+            savedFilter: function () {
+                this.showFilteredPage(null, App.currentUser.savedFilters['Employees']);
+                $(".saveFilterButton").hide();
+            },
+
+            clearFilter: function () {
+                this.showFilteredPage(null, this.defaultFilter);
+
+                this.$el.find('.filterValues').empty();
+                this.$el.find('.filter-icons').removeClass('active');
+                this.$el.find('.chooseOption').children().remove();
+
+                $.each($('.drop-down-filter input'), function (index, value) {
+                    value.checked = false
+                });
+
+                $(".clearFilterButton").hide();
+                $(".saveFilterButton").hide();
+                $(".savedFilterButton").show();
             },
 
             hideItemsNumber: function (e) {

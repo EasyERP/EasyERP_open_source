@@ -633,7 +633,7 @@ define([
                     itemsNumber: this.collection.namberToShow
                 }).render());//added two parameters page and items number
 
-                currentEl.prepend('<div><button id="saveFilterButton" class="saveFilterButton">Save Filter</button>' +
+                currentEl.prepend('<div class="filtersActive"><button id="saveFilterButton" class="saveFilterButton">Save Filter</button>' +
                     '<button id="savedFilterButton" class="savedFilterButton">My Filter</button>' +
                     '<button id="clearFilterButton" class="clearFilterButton">Clear Filter</button></div>');
 
