@@ -633,9 +633,9 @@ define([
                     itemsNumber: this.collection.namberToShow
                 }).render());//added two parameters page and items number
 
-                currentEl.prepend('<button id="saveFilterButton" class="saveFilterButton">Save Filter</button>');
-                currentEl.prepend('<button id="savedFilterButton" class="savedFilterButton">My Filter</button>');
-                currentEl.prepend('<button id="clearFilterButton" class="clearFilterButton">Clear Filter</button>');
+                currentEl.prepend('<div><button id="saveFilterButton" class="saveFilterButton">Save Filter</button>' +
+                    '<button id="savedFilterButton" class="savedFilterButton">My Filter</button>' +
+                    '<button id="clearFilterButton" class="clearFilterButton">Clear Filter</button></div>');
                 $("#clearFilterButton").hide();
                 $("#saveFilterButton").hide();
                 $("#savedFilterButton").hide();
@@ -948,6 +948,7 @@ define([
 
                 this.$el.find('.filterValues').empty();
                 this.$el.find('.filter-icons').removeClass('active');
+                this.$el.find('.chooseOption').children().remove();
 
                 $.each($('.drop-down-filter input'), function (index, value) {
                     value.checked = false
@@ -967,6 +968,7 @@ define([
             clearFilter: function () {
                 this.$el.find('.filterValues').empty();
                 this.$el.find('.filter-icons').removeClass('active');
+                this.$el.find('.chooseOption').children().remove();
 
                 $.each($('.drop-down-filter input'), function (index, value) {
                     value.checked = false
