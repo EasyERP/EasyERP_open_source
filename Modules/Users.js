@@ -297,7 +297,10 @@ var Users = function (mainDb, models) {
                         }
                     }
                 });
-            } else updateUser();
+            } else {
+                updateUser();
+            }
+
             function updateUser() {
                 var setObject = {};
                 var query = {};
