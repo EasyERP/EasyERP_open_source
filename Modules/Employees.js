@@ -513,13 +513,16 @@ var Employee = function (event, models) {
         var optionsObject = {};
         var or;
         var filterObj;
-        for (var i in req.query) {
-            data[i] = req.query[i];
-        }
 
         var viewType = data.viewType;
         var contentType = data.contentType;
         var res = {};
+
+        for (var i in req.query) {
+            data[i] = req.query[i];
+        }
+
+
         res['data'] = [];
 
         switch (contentType) {
