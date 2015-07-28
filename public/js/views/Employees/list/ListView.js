@@ -252,14 +252,11 @@ define([
                         FilterView = new filterView({collection: departments.data, customCollection: values});
                         // Filter custom event listen ------begin
                         FilterView.bind('filter', function () {
-                            showList = $('.drop-down-filter input:checkbox:checked').map(function () {
-                                return this.value;
-                            }).get();
-                            self.showFilteredPage(null, showList)
+
+                            self.showFilteredPage(null)
                         });
                         FilterView.bind('defaultFilter', function () {
-                            showList = _.pluck(departments.data, '_id');
-                            self.showFilteredPage(null, showList);
+                            self.showFilteredPage(null);
                         });
                         // Filter custom event listen ------end
                     });
@@ -365,20 +362,18 @@ define([
                 this.changeLocationHash(1, itemsNumber, this.filter);
             },
             //modified for filter Vasya
-            showFilteredPage: function (e, showList) {
+            showFilteredPage: function (e) {
                 var itemsNumber = $("#itemsNumber").text();
                 var selectedLetter;
                 var self = this;
                 var chosen = this.$el.find('.chosen');
+                var checkedElements = $('.drop-down-filter input:checkbox:checked');
+                var showList;
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
 
                 this.filter = {};
-
-                if (!showList || !showList.department) {
-                    this.filter = {};
-                }
 
                 if (e && e.target) {
                     selectedLetter = $(e.target).text();
@@ -386,14 +381,18 @@ define([
                         selectedLetter = "";
                     }
                 }
-                if (showList && showList['department']) {
-                    this.filter = showList;
-                } else if (showList && !showList['department']) {
+
+                if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
+                    showList = $('.drop-down-filter input:checkbox:checked').map(function() {
+                        return this.value
+                    }).get();
+
                     this.filter['department'] = showList;
-                } else if (!showList){
-                    this.filter = 'empty';
                 }
 
+                if (checkedElements.length && checkedElements.attr('id') === 'defaultFilter') {
+                    self.filter = 'empty';
+                }
 
                 if (chosen) {
                     chosen.each(function (index, elem) {
@@ -405,6 +404,11 @@ define([
                         }
                     });
                 }
+
+                if (!chosen.length && !showList) {
+                    self.filter = 'empty';
+                }
+
                 this.startTime = new Date();
                 this.newCollection = false;
 

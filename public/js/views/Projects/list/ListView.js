@@ -237,12 +237,11 @@ define([
                     }).get();
 
                     this.filter['workflow'] = showList;
-                };
+                }
 
                 if (checkedElements.length && checkedElements.attr('id') === 'defaultFilter') {
                     self.filter = 'empty';
                 }
-
 
                 if (chosen) {
                     chosen.each(function (index, elem) {

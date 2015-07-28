@@ -182,16 +182,29 @@
                 return this;
             },
 
-            showFilteredPage: function (e, showList) {
+            showFilteredPage: function () {
                 var itemsNumber = $("#itemsNumber").text();
                 var self = this;
                 var chosen = this.$el.find('.chosen');
+                var checkedElements = $('.drop-down-filter input:checkbox:checked');
+                var showList;
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
                 this.filter = {};
 
-                if (showList.length) this.filter['department'] = showList;
+                if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
+                    showList = $('.drop-down-filter input:checkbox:checked').map(function() {
+                        return this.value
+                    }).get();
+
+                    this.filter['department'] = showList;
+                };
+
+                if (checkedElements.length && checkedElements.attr('id') === 'defaultFilter') {
+                    self.filter = 'empty';
+                }
+
                 if (chosen) {
                     chosen.each(function (index, elem) {
                         if (self.filter[elem.children[1].value]) {
@@ -201,6 +214,10 @@
                             self.filter[elem.children[1].value].push(elem.children[2].value);
                         }
                     });
+                }
+
+                if (!chosen.length && !showList) {
+                    self.filter = 'empty';
                 }
 
                 this.startTime = new Date();

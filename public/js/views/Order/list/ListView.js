@@ -225,12 +225,10 @@ function (listTemplate, stagesTamplate, createView, listItemView, listTotalView,
                         FilterView = new filterView({ collection: stages, customCollection: values});
                         // Filter custom event listen ------begin
                         FilterView.bind('filter', function () {
-                            showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
-                            self.showFilteredPage(showList)
+                            self.showFilteredPage()
                         });
                         FilterView.bind('defaultFilter', function () {
-                            showList = _.pluck(stages, '_id');
-                            self.showFilteredPage(showList)
+                            self.showFilteredPage()
                         });
                         // Filter custom event listen ------end
                     })
@@ -352,18 +350,30 @@ function (listTemplate, stagesTamplate, createView, listItemView, listTotalView,
                 this.changeLocationHash(1, itemsNumber, this.filter);
         },
 
-        showFilteredPage: function (workflowIdArray) {
+        showFilteredPage: function () {
             var itemsNumber;
             var self = this;
             var chosen = this.$el.find('.chosen');
+            var checkedElements = $('.drop-down-filter input:checkbox:checked');
+            var showList;
 
             this.startTime = new Date();
             this.newCollection = false;
 
 
             this.filter = {};
-            if (workflowIdArray && workflowIdArray.length) this.filter['workflow'] = workflowIdArray;
 
+            if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
+                showList = $('.drop-down-filter input:checkbox:checked').map(function() {
+                    return this.value
+                }).get();
+
+                this.filter['workflow'] = showList;
+            }
+
+            if (checkedElements.length && checkedElements.attr('id') === 'defaultFilter') {
+                self.filter = 'empty';
+            }
             if (chosen) {
                 chosen.each(function (index, elem) {
                     if (elem.children[2].attributes.class.nodeValue === 'chooseDate') {
@@ -385,6 +395,11 @@ function (listTemplate, stagesTamplate, createView, listItemView, listTotalView,
 
                 });
             }
+
+            if (!chosen.length && !showList) {
+                self.filter = 'empty';
+            }
+
             itemsNumber = $("#itemsNumber").text();
             $("#top-bar-deleteBtn").hide();
             $('#check_all').prop('checked', false);

@@ -37,7 +37,9 @@ define([
                 this.deleteCounter = 0;
                 this.page = options.collection.page;
                 this.sartNumber = (this.page - 1) * this.defaultItemsNumber;
+
                 this.render();
+
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
                 this.contentCollection = contentCollection;
             },
@@ -162,13 +164,13 @@ define([
                 }
             },
             //modified for filter Vasya
-            showFilteredPage: function (workflowIdArray) {
+            showFilteredPage: function () {
                 var itemsNumber = $("#itemsNumber").text();
                 var isConverted = null;
                 var self = this;
                 var chosen = this.$el.find('.chosen');
                 var checkedElements = $('.drop-down-filter input:checkbox:checked');
-
+                var showList;
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
@@ -178,8 +180,16 @@ define([
                 this.filter = /*this.filter || */{};
                 this.filter['isConverted'] = isConverted;
 
-                if (workflowIdArray.length) {
-                    this.filter['workflow'] = workflowIdArray;
+                if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
+                    showList = $('.drop-down-filter input:checkbox:checked').map(function() {
+                        return this.value
+                    }).get();
+
+                    this.filter['workflow'] = showList;
+                }
+
+                if (checkedElements.length && checkedElements.attr('id') === 'defaultFilter') {
+                    self.filter = 'empty';
                 }
 
                 if (chosen) {
@@ -191,18 +201,6 @@ define([
                             self.filter[elem.children[1].value].push(elem.children[2].value);
                         }
                     });
-                }
-
-                if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
-                    showList = checkedElements.map(function () {
-                        return this.id;
-                    }).get();
-
-                    this.filter['departments'] = showList;
-                };
-
-                if (checkedElements.length && checkedElements.attr('id') === 'defaultFilter') {
-                    self.filter = 'empty';
                 }
 
                 if (!chosen.length && !showList) {
@@ -279,12 +277,10 @@ define([
                         FilterView = new filterView({ collection: stages, customCollection: values});
                         // Filter custom event listen ------begin
                         FilterView.bind('filter', function () {
-                            showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
-                            self.showFilteredPage(showList)
+                            self.showFilteredPage()
                         });
                         FilterView.bind('defaultFilter', function () {
-                            showList = _.pluck(self.stages, '_id');
-                            self.showFilteredPage(showList)
+                            self.showFilteredPage()
                         });
                         // Filter custom event listen ------end
 
