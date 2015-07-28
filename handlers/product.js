@@ -167,7 +167,7 @@ var Products = function (models) {
         }
     };
 
-    function remove(req, res, next, _id) {
+    function remove(req, res, next) {
         models.get(req.session.lastDb, "Products", ProductSchema).remove({_id: _id}, function (err, product) {
             if (err) {
                 return next(err);
