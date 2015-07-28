@@ -725,13 +725,6 @@ define([
         },
 
         getList: function (contentType) {
-            if (!App || !App.currentUser) {
-                dataService.getData('/currentUser', null, function (response) {
-                    if (response && !response.error) {
-                        App.currentUser = response;
-                    }
-                });
-            }
             this.contentType = contentType;
 
             contentType = this.testContent(contentType);
