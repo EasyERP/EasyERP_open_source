@@ -34,7 +34,9 @@
                 this.defaultItemsNumber = this.collection.namberToShow || 50;
                 this.newCollection = options.newCollection;
                 this.deleteCounter = 0;
+
                 this.render();
+
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
             },
 
@@ -132,16 +134,29 @@
 
             },
 
-            showFilteredPage: function (workflowIdArray) {
+            showFilteredPage: function () {
                 var chosen = this.$el.find('.chosen');
                 var self = this;
+                var checkedElements = $('.drop-down-filter input:checkbox:checked');
+                var showList;
 
                 this.$el.find('.thumbnail').remove();
                 this.startTime = new Date();
                 this.newCollection = false;
                 this.filter =  {};
-                if (workflowIdArray && workflowIdArray.length) this.filter['workflow'] = workflowIdArray;
                 this.defaultItemsNumber = 0;
+
+                if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
+                    showList = $('.drop-down-filter input:checkbox:checked').map(function() {
+                        return this.value
+                    }).get();
+
+                    this.filter['workflow'] = showList;
+                };
+
+                if (checkedElements.length && checkedElements.attr('id') === 'defaultFilter') {
+                    self.filter = 'empty';
+                }
 
                 if (chosen) {
                     chosen.each(function (index, elem) {
@@ -164,6 +179,11 @@
 
                     });
                 }
+
+                if (!chosen.length && !showList) {
+                    self.filter = 'empty';
+                }
+
                 this.changeLocationHash(null, this.defaultItemsNumber, this.filter);
                 this.collection.showMore({ count: this.defaultItemsNumber, page: 1, filter: this.filter });
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
@@ -239,12 +259,10 @@
                         FilterView = new filterView({ collection: stages, customCollection: values});
                         // Filter custom event listen ------begin
                         FilterView.bind('filter', function () {
-                            showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
-                            self.showFilteredPage(showList)
+                            self.showFilteredPage()
                         });
                         FilterView.bind('defaultFilter', function () {
-                            showList = _.pluck(self.stages, '_id');
-                            self.showFilteredPage(showList)
+                            self.showFilteredPage()
                         });
                         // Filter custom event listen ------end
 

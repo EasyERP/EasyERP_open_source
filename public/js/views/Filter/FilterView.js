@@ -171,7 +171,7 @@ define([
                         if (value.id !== 'defaultFilter') value.checked = false
                     });
                     $.each($('.filterValues span'), function (index, item) {
-                        if (item.className !== 'Default') item.remove();
+                        if (item.className !== 'Clear') item.remove();
                     });
                     this.trigger('defaultFilter');
                 }
