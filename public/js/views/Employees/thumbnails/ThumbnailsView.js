@@ -5,12 +5,12 @@
         'views/Filter/FilterView',
         'dataService',
         'models/EmployeesModel',
-        'collections/Users/editCollection',
+        'models/UsersModel',
         'common',
         'text!templates/Alpabet/AphabeticTemplate.html'
     ],
 
-    function (thumbnailsItemTemplate, editView, createView, filterView, dataService, currentModel, userCollection, common, AphabeticTemplate) {
+    function (thumbnailsItemTemplate, editView, createView, filterView, dataService, currentModel, usersModel, common, AphabeticTemplate) {
         var EmployeesThumbnalView = Backbone.View.extend({
             el: '#content-holder',
             countPerPage: 0,
@@ -222,21 +222,38 @@
             },
 
             saveFilter: function () {
-                var currentUser = new userCollection();
+                var currentUser = new usersModel(App.currentUser);
                 var subMenu = $('#submenu-holder').find('li.selected').text();
                 var key;
                 var filterObj = {};
+                var mid = 39;
 
                 key = subMenu.trim();
+
                 filterObj['filter'] = {};
                 filterObj['filter'] = this.filter;
                 filterObj['key'] = key;
 
                 currentUser.changed = filterObj;
-                currentUser.save(currentUser.changed, {
-                    data: filterObj,
-                    patch: true
-                });
+                currentUser.save(
+                    filterObj,
+                    {
+                        headers: {
+                            mid: mid
+                        },
+                        wait: true,
+                        patch:true,
+                        validate: false,
+                        success: function (model) {
+                            console.log('Filter was saved to db');
+                        },
+                        error: function (model,xhr) {
+                            console.error(xhr);
+                        },
+                        editMode: false
+                    }
+                );
+
                 App.currentUser.savedFilters = {};
                 App.currentUser.savedFilters['Employees'] = filterObj.filter;
 
@@ -255,10 +272,11 @@
             },
 
             removeFilter: function () {
-                var currentUser = new userCollection();
+                var currentUser = new usersModel(App.currentUser);
                 var subMenu = $('#submenu-holder').find('li.selected').text();
                 var key;
                 var filterObj = {};
+                var mid = 39;
 
                 this.clearFilter();
 
@@ -266,10 +284,25 @@
                 filterObj['key'] = key;
 
                 currentUser.changed = filterObj;
-                currentUser.save(currentUser.changed, {
-                    data: filterObj,
-                    patch: true
-                });
+
+                currentUser.save(
+                    filterObj,
+                    {
+                        headers: {
+                            mid: mid
+                        },
+                        wait: true,
+                        patch:true,
+                        validate: false,
+                        success: function (model) {
+                            console.log('Filter was remover from db');
+                        },
+                        error: function (model,xhr) {
+                            console.error(xhr);
+                        },
+                        editMode: false
+                    }
+                );
 
                 delete App.currentUser.savedFilters['Employees'];
 
