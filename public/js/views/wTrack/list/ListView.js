@@ -870,8 +870,7 @@ define([
                     }).get();
 
                     this.filter['departments'] = showList;
-                }
-                ;
+                };
 
                 if (chosen) {
                     chosen.each(function (index, elem) {
@@ -882,8 +881,8 @@ define([
                             self.filter[elem.children[1].value].push(elem.children[2].value);
                         }
                     });
-                }
-                ;
+                };
+
                 if (checkedElements.length && checkedElements.attr('id') === 'defaultFilter') {
                     self.filter = {};
                 }

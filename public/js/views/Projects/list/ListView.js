@@ -219,15 +219,28 @@ define([
                 return false;
             },
 
-            showFilteredPage: function (workflowIdArray) {
+            showFilteredPage: function () {
                 var itemsNumber = $("#itemsNumber").text();
                 var self = this;
                 var chosen = this.$el.find('.chosen');
+                var checkedElements = $('.drop-down-filter input:checkbox:checked');
+                var showList;
 
                 this.startTime = new Date();
                 this.newCollection = false;
                 this.filter = {};
-                if (workflowIdArray && workflowIdArray.length) this.filter['workflow'] = workflowIdArray;
+
+                if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
+                    showList = $('.drop-down-filter input:checkbox:checked').map(function() {
+                        return this.value
+                    }).get();
+
+                    this.filter['workflow'] = showList;
+                };
+
+                if (checkedElements.length && checkedElements.attr('id') === 'defaultFilter') {
+                    self.filter = 'empty';
+                }
 
                 if (chosen) {
                     chosen.each(function (index, elem) {
@@ -249,6 +262,10 @@ define([
                         }
 
                     });
+                }
+
+                if (!chosen.length && !showList) {
+                    self.filter = 'empty';
                 }
 
                 $("#top-bar-deleteBtn").hide();
@@ -413,12 +430,10 @@ define([
                         itemView.trigger('incomingStages', stages);
                         // Filter custom event listen ------begin
                         FilterView.bind('filter', function () {
-                            showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
-                            self.showFilteredPage(showList)
+                            self.showFilteredPage()
                         });
                         FilterView.bind('defaultFilter', function () {
-                            showList = _.pluck(self.stages, '_id');
-                            self.showFilteredPage(showList)
+                            self.showFilteredPage()
                         });
                         // Filter custom event listen ------end
 

@@ -203,10 +203,12 @@ define([
                 }, this);
             },
 
-            showFilteredPage: function (workflowIdArray) {
+            showFilteredPage: function () {
                 var itemsNumber = $("#itemsNumber").text();
                 var self = this;
                 var chosen = this.$el.find('.chosen');
+                var checkedElements = $('.drop-down-filter input:checkbox:checked');
+                var showList;
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
@@ -214,7 +216,18 @@ define([
                 this.startTime = new Date();
                 this.newCollection = false;
                 this.filter = {};
-                if (workflowIdArray.length) this.filter['workflow'] = workflowIdArray;
+
+                if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
+                    showList = $('.drop-down-filter input:checkbox:checked').map(function() {
+                        return this.value
+                    }).get();
+
+                    this.filter['workflow'] = showList;
+                };
+
+                if (checkedElements.length && checkedElements.attr('id') === 'defaultFilter') {
+                    self.filter = 'empty';
+                }
 
                 if (chosen) {
                     chosen.each(function (index, elem) {
@@ -225,6 +238,10 @@ define([
                             self.filter[elem.children[1].value].push(elem.children[2].value);
                         }
                     });
+                }
+
+                if (!chosen.length && !showList) {
+                    self.filter = 'empty';
                 }
 
                 this.changeLocationHash(1, itemsNumber, this.filter);
@@ -261,12 +278,10 @@ define([
                         FilterView = new filterView({ collection: stages, customCollection: values});
                         // Filter custom event listen ------begin
                         FilterView.bind('filter', function () {
-                            showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
-                            self.showFilteredPage(showList)
+                            self.showFilteredPage()
                         });
                         FilterView.bind('defaultFilter', function () {
-                            showList = _.pluck(self.stages, '_id');
-                            self.showFilteredPage(showList)
+                            self.showFilteredPage()
                         });
                         // Filter custom event listen ------end
                     });
