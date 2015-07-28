@@ -167,6 +167,8 @@ define([
                 var isConverted = null;
                 var self = this;
                 var chosen = this.$el.find('.chosen');
+                var checkedElements = $('.drop-down-filter input:checkbox:checked');
+
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
@@ -175,7 +177,10 @@ define([
                 this.newCollection = false;
                 this.filter = /*this.filter || */{};
                 this.filter['isConverted'] = isConverted;
-                if (workflowIdArray.length) this.filter['workflow'] = workflowIdArray;
+
+                if (workflowIdArray.length) {
+                    this.filter['workflow'] = workflowIdArray;
+                }
 
                 if (chosen) {
                     chosen.each(function (index, elem) {
@@ -186,6 +191,22 @@ define([
                             self.filter[elem.children[1].value].push(elem.children[2].value);
                         }
                     });
+                }
+
+                if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
+                    showList = checkedElements.map(function () {
+                        return this.id;
+                    }).get();
+
+                    this.filter['departments'] = showList;
+                };
+
+                if (checkedElements.length && checkedElements.attr('id') === 'defaultFilter') {
+                    self.filter = 'empty';
+                }
+
+                if (!chosen.length && !showList) {
+                    self.filter = 'empty';
                 }
 
                 this.changeLocationHash(1, itemsNumber, this.filter);

@@ -901,8 +901,7 @@ define([
                     }).get();
 
                     this.filter['departments'] = showList;
-                }
-                ;
+                };
 
                 if (chosen) {
                     chosen.each(function (index, elem) {

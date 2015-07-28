@@ -35,7 +35,7 @@ var Opportunities = function (models, event) {
             case ('Leads'):
             {
                 optionsObject['isOpportunitie'] = false;
-                if (data.filter.isConverted) {
+                if (data.filter && data.filter.isConverted) {
                     optionsObject['isConverted'] = true;
                     optionsObject['isOpportunitie'] = true;
                 }
@@ -537,7 +537,7 @@ var Opportunities = function (models, event) {
             {
                 optionsObject['$and'] = [];
                 optionsObject['$and'].push({'isOpportunitie': false});
-                if (data.filter.isConverted) {
+                if (data.filter && data.filter.isConverted) {
                     optionsObject['isConverted'] = true;
                     optionsObject['isOpportunitie'] = true;
                 }
@@ -663,6 +663,8 @@ var Opportunities = function (models, event) {
                                     {
                                         if (data && data.filter && data.filter.workflow) {
                                             query.where('workflow').in(data.filter.workflow);
+                                        } else if (data.filter === 'empty'){
+                                            query;
                                         } else if (data && (!data.newCollection || data.newCollection === 'false')) {
                                             query.where('workflow').in([]);
                                         }
