@@ -22,7 +22,6 @@
             //page: null, //if reload page, and in url is valid page
             contentType: 'Employees',//needs in view.prototype.changeLocationHash
             viewType: 'thumbnails',//needs in view.prototype.changeLocationHash
-            defaultFilter:null,
 
             initialize: function (options) {
                 this.asyncLoadImgs(this.collection);
@@ -160,7 +159,6 @@
                         department.name = department.departmentName;
                     });
 
-                    self.defaultFilter = _.pluck(departments.data, '_id');
 
                     dataService.getData('/employee/getFilterValues', null, function (values) {
                         FilterView = new filterView({collection: departments.data, customCollection: values});

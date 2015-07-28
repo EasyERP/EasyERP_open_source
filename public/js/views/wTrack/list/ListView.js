@@ -35,7 +35,6 @@ define([
             selectedProjectId: [],
             genInvoiceEl: null,
             changedModels: {},
-            defaultFilter: null,
 
             initialize: function (options) {
                 this.startTime = options.startTime;
@@ -698,7 +697,7 @@ define([
 
                         return department
                     });
-                    self.defaultFilter = _.pluck(departments.data, '_id');
+
                     self.responseObj['#department'] = departments;
                 });
 

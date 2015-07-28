@@ -20,8 +20,7 @@ define([
             newCollection: null,
             page: null, //if reload page, and in url is valid page
             contentType: 'Employees',//needs in view.prototype.changeLocationHash
-            viewType: 'list',
-            defaultFilter: null,//needs in view.prototype.changeLocationHash
+            viewType: 'list',//needs in view.prototype.changeLocationHash
 
             initialize: function (options) {
                 this.startTime = options.startTime;
@@ -249,8 +248,6 @@ define([
                         department.name = department.departmentName;
                     });
 
-                    self.defaultFilter = _.pluck(departments.data, '_id');
-
                     dataService.getData('/employee/getFilterValues', null, function (values) {
                         FilterView = new filterView({collection: departments.data, customCollection: values});
                         // Filter custom event listen ------begin
@@ -379,6 +376,10 @@ define([
 
                 this.filter = {};
 
+                if (!showList || !showList.department) {
+                    this.filter = {};
+                }
+
                 if (e && e.target) {
                     selectedLetter = $(e.target).text();
                     if ($(e.target).text() == "All") {
@@ -387,9 +388,12 @@ define([
                 }
                 if (showList && showList['department']) {
                     this.filter = showList;
-                } else {
+                } else if (showList && !showList['department']) {
                     this.filter['department'] = showList;
+                } else if (!showList){
+                    this.filter = 'empty';
                 }
+
 
                 if (chosen) {
                     chosen.each(function (index, elem) {
@@ -404,7 +408,6 @@ define([
                 this.startTime = new Date();
                 this.newCollection = false;
 
-                this.filter['letter'] = selectedLetter;
 
                 this.changeLocationHash(1, itemsNumber, this.filter);
                 this.collection.showMore({count: itemsNumber, page: 1, filter: this.filter});
@@ -473,7 +476,6 @@ define([
             },
 
             clearFilter: function () {
-                this.showFilteredPage(null, this.defaultFilter);
 
                 this.$el.find('.filterValues').empty();
                 this.$el.find('.filter-icons').removeClass('active');
@@ -482,6 +484,8 @@ define([
                 $.each($('.drop-down-filter input'), function (index, value) {
                     value.checked = false
                 });
+
+                this.showFilteredPage();
 
                 $(".clearFilterButton").hide();
                 $(".removeFilterButton").show();
