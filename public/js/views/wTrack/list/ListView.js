@@ -8,6 +8,7 @@ define([
         'models/wTrackModel',
         'collections/wTrack/filterCollection',
         'collections/wTrack/editCollection',
+        'collections/Users/editCollection',
         'views/Filter/FilterView',
         'common',
         'dataService',
@@ -15,7 +16,7 @@ define([
         'async'
     ],
 
-    function (listTemplate, cancelEdit, createView, listItemView, editView, wTrackCreateView, currentModel, contentCollection, EditCollection, filterView, common, dataService, populate, async) {
+    function (listTemplate, cancelEdit, createView, listItemView, editView, wTrackCreateView, currentModel, contentCollection, EditCollection, userCollection, filterView, common, dataService, populate, async) {
         var wTrackListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -72,7 +73,10 @@ define([
                 "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
                 "change .autoCalc": "autoCalc",
                 "change .editable ": "setEditable",
-                "keydown input.editing ": "keyDown"
+                "keydown input.editing ": "keyDown",
+                "click .saveFilterButton": "saveFilter",
+                "click .removeFilterButton": "removeFilter",
+                "click .clearFilterButton": "clearFilter"
             },
 
             keyDown: function (e) {
@@ -567,15 +571,16 @@ define([
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
             },
 
-        hideItemsNumber: function (e) {
-            var el = e.target;
+            hideItemsNumber: function (e) {
+                var el = e.target;
 
-            this.$el.find(".allNumberPerPage, .newSelectList").hide();
-            if (!el.closest('.search-view')) {
-                $('.search-content').removeClass('fa-caret-up');
-                this.$el.find(".filterOptions, .filterActions, .search-options, .drop-down-filter").hide();
-            };
-        },
+                this.$el.find(".allNumberPerPage, .newSelectList").hide();
+                if (!el.closest('.search-view')) {
+                    $('.search-content').removeClass('fa-caret-up');
+                    this.$el.find(".filterOptions, .filterActions, .search-options, .drop-down-filter").hide();
+                }
+                ;
+            },
 
             showNewSelect: function (e, prev, next) {
                 populate.showSelect(e, prev, next, this);
@@ -626,6 +631,20 @@ define([
                     page: this.page,
                     itemsNumber: this.collection.namberToShow
                 }).render());//added two parameters page and items number
+
+                currentEl.prepend('<div class="filtersActive"><button id="saveFilterButton" class="saveFilterButton">Save Filter</button>' +
+                    '<button id="clearFilterButton" class="clearFilterButton">Clear Filter</button>' +
+                    '<button id="removeFilterButton" class="removeFilterButton">Remove Filter</button></div>'
+                );
+
+                $("#clearFilterButton").hide();
+                $("#saveFilterButton").hide();
+                $("#removeFilterButton").hide();
+
+                if (App.currentUser.savedFilters && App.currentUser.savedFilters['wTrack']) {
+                    $("#clearFilterButton").show();
+                    $("#removeFilterButton").show();
+                }
 
                 $(document).on("click", function (e) {
                     self.hideItemsNumber(e);
@@ -706,8 +725,8 @@ define([
 
                 setTimeout(function () {
                     /*self.editCollection = new EditCollection(self.collection.toJSON());
-                    self.editCollection.on('saved', self.savedNewModel, self);
-                    self.editCollection.on('updated', self.updatedOptions, self);*/
+                     self.editCollection.on('saved', self.savedNewModel, self);
+                     self.editCollection.on('updated', self.updatedOptions, self);*/
                     self.bindingEventsToEditedCollection(self);
                     self.$listTable = $('#listTable');
                 }, 10);
@@ -717,8 +736,8 @@ define([
                 return this;
             },
 
-            bindingEventsToEditedCollection: function(context){
-                if(context.editCollection){
+            bindingEventsToEditedCollection: function (context) {
+                if (context.editCollection) {
                     context.editCollection.unbind();
                 }
                 context.editCollection = new EditCollection(context.collection.toJSON());
@@ -863,6 +882,13 @@ define([
                 this.startTime = new Date();
                 this.newCollection = false;
                 this.filter = {};
+                if (showFilterList && showFilterList.departments) {
+                    this.filter = showFilterList;
+                }
+
+                if (showFilterList && !showFilterList.departments) {
+                    this.filter = {};
+                }
 
                 if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
                     showList = checkedElements.map(function () {
@@ -870,8 +896,7 @@ define([
                     }).get();
 
                     this.filter['departments'] = showList;
-                }
-                ;
+                };
 
                 if (chosen) {
                     chosen.each(function (index, elem) {
@@ -899,6 +924,83 @@ define([
                     filter: this.filter
                 });
                 this.getTotalLength(null, itemsNumber, this.filter);
+
+                $(".saveFilterButton").show();
+                $(".clearFilterButton").show();
+                $(".removeFilterButton").show();
+            },
+
+            saveFilter: function () {
+                var currentUser = new userCollection();
+                var subMenu = $('#submenu-holder').find('li.selected').text();
+                var key;
+                var filterObj = {};
+
+                key = subMenu.trim();
+                filterObj['filter'] = {};
+                filterObj['filter'] = this.filter;
+                filterObj['key'] = key;
+
+                currentUser.changed = filterObj;
+                currentUser.save(currentUser.changed, {
+                    data: filterObj,
+                    patch: true
+                });
+                App.currentUser.savedFilters = {};
+                App.currentUser.savedFilters['wTrack'] = filterObj.filter;
+
+                this.$el.find('.filterValues').empty();
+                this.$el.find('.filter-icons').removeClass('active');
+                this.$el.find('.chooseOption').children().remove();
+
+                $.each($('.drop-down-filter input'), function (index, value) {
+                    value.checked = false
+                });
+
+                $(".saveFilterButton").hide();
+                $(".removeFilterButton").show();
+                $(".clearFilterButton").show();
+
+            },
+
+            removeFilter: function () {
+                var currentUser = new userCollection();
+                var subMenu = $('#submenu-holder').find('li.selected').text();
+                var key;
+                var filterObj = {};
+
+                this.clearFilter();
+
+                key = subMenu.trim();
+                filterObj['key'] = key;
+
+                currentUser.changed = filterObj;
+                currentUser.save(currentUser.changed, {
+                    data: filterObj,
+                    patch: true
+                });
+
+                delete App.currentUser.savedFilters['wTrack'];
+
+                $(".saveFilterButton").hide();
+                $(".removeFilterButton").hide();
+                $(".clearFilterButton").hide();
+            },
+
+            clearFilter: function () {
+                this.$el.find('.filterValues').empty();
+                this.$el.find('.filter-icons').removeClass('active');
+                this.$el.find('.chooseOption').children().remove();
+
+                $.each($('.drop-down-filter input'), function (index, value) {
+                    value.checked = false
+                });
+
+                this.showFilteredPage();
+
+                $(".clearFilterButton").hide();
+                $(".removeFilterButton").show();
+                $(".saveFilterButton").hide();
             },
 
             showPage: function (event) {
@@ -1196,7 +1298,7 @@ define([
                         tr.remove();
                         model = self.changedModels;
 
-                        if(model) {
+                        if (model) {
                             delete model[id];
                         }
 

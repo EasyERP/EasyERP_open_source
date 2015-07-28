@@ -191,7 +191,7 @@ define(['libs/date.format', 'common', 'constants'], function (dateformat, common
     };
 
 
-    function applyDefaultSettings (chartControl) {
+    function applyDefaultSettings(chartControl) {
         chartControl.setImagePath("/crm_backbone_repo/images/");
         chartControl.setEditable(false);
         chartControl.showTreePanel(false);
@@ -200,15 +200,27 @@ define(['libs/date.format', 'common', 'constants'], function (dateformat, common
         chartControl.showDescProject(true, 'n,d');
     };
 
-    function cashToApp(key, data){
+    function cashToApp(key, data) {
         App.cashedData = App.cashedData || {};
         App.cashedData[key] = data;
     }
 
-    function retriveFromCash(key){
+    function retriveFromCash(key) {
         App.cashedData = App.cashedData || {};
         return App.cashedData[key];
     }
+
+    var savedFilters = function (contentType, filter) {
+        var savedFilter;
+
+        if (App.currentUser && App.currentUser.savedFilters && App.currentUser.savedFilters[contentType]) {
+            savedFilter = App.currentUser.savedFilters[contentType];
+        } else {
+            savedFilter = filter;
+        }
+
+        return savedFilter;
+    };
 
     return {
         runApplication: runApplication,
@@ -220,6 +232,7 @@ define(['libs/date.format', 'common', 'constants'], function (dateformat, common
         getCurrentCL: getCurrentCL,
         setCurrentCL: setCurrentCL,
         cashToApp: cashToApp,
-        retriveFromCash: retriveFromCash
+        retriveFromCash: retriveFromCash,
+        savedFilters: savedFilters
     };
 });

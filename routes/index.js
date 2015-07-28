@@ -515,6 +515,12 @@ module.exports = function (app, mainDb) {
         requestHandler.createUser(req, res, data);
     });
 
+    app.patch('/Users', function (req, res) {
+        var data = {};
+        data = req.body;
+        requestHandler.updateCurrentUser(req, res, data);
+    });
+
     app.get('/UserWithProfile', function (req, res) {
         var id = req.param('_id');
         requestHandler.getAllUserWithProfile(req, id, res);
@@ -536,6 +542,15 @@ module.exports = function (app, mainDb) {
         if (req.body.oldpass && req.body.pass) {
             data.changePass = true;
         }
+        requestHandler.updateCurrentUser(req, res, data);
+    });
+
+    app.patch('/currentUser', function (req, res) {
+        var data = {};
+        if (req.body){
+            data.savedFilters = req.body;
+        }
+
         requestHandler.updateCurrentUser(req, res, data);
     });
 
