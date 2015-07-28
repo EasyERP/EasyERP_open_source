@@ -183,7 +183,7 @@ var Products = function (models) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getDeleteAccess(req, req.session.uId, 58, function (access) {
                 if (access) {
-                    remove(req, id, res, next);
+                    remove(req, res, next, id);
                 } else {
                     res.status(403).send();
                 }
