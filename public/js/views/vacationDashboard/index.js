@@ -251,6 +251,7 @@ define([
 
         render: function () {
             $('title').text(this.contentType);
+            this.dashCollection.unbind();
 
             var currentEl = this.$el;
             var self = this;
