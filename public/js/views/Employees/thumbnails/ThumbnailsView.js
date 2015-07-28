@@ -136,8 +136,9 @@
                 });
 
                 currentEl.prepend('<div class="filtersActive"><button id="saveFilterButton" class="saveFilterButton">Save Filter</button>' +
-                    '<button id="removeFilterButton" class="removeFilterButton">Remove Filter</button>' +
-                    '<button id="clearFilterButton" class="clearFilterButton">Clear Filter</button></div>');
+                    '<button id="clearFilterButton" class="clearFilterButton">Clear Filter</button>' +
+                    '<button id="removeFilterButton" class="removeFilterButton">Remove Filter</button></div>'
+                );
 
                 $("#clearFilterButton").hide();
                 $("#saveFilterButton").hide();
