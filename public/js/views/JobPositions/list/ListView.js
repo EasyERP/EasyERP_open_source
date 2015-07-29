@@ -32,7 +32,9 @@ define([
                 this.newCollection = options.newCollection;
                 this.page = options.collection.page;
                 this.filter = options.filter;
+
                 this.render();
+
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
                 this.contentCollection = contentCollection;
             },
