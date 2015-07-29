@@ -1083,17 +1083,17 @@ define([
                 var projectContainer = tr.find('td[data-content="project"]');
                 var projectId = projectContainer.data('id');
 
+                if(checkLength === 1){
+                    this.copyEl.show();
+                } else {
+                    this.copyEl.hide();
+                }
+
                 if (!checkLength || !model || model.get('isPaid')) {
                     this.selectedProjectId = [];
                     this.genInvoiceEl.hide();
 
                     return false;
-                }
-
-                if(checkLength === 1){
-                    this.copyEl.show();
-                } else {
-                    this.copyEl.hide();
                 }
 
                 if (checked) {
