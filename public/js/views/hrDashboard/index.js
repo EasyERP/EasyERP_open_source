@@ -37,7 +37,7 @@ define([
         },
 
         render: function () {
-            var self = this
+            var self = this;
             var currentEl = this.$el;
 
             var start = moment().subtract(11, 'month').date(1);

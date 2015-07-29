@@ -202,7 +202,7 @@ var Employee = function (event, models) {
             }
 
             function savetoDb(data) {
-                _employee = new models.get(req.session.lastDb, "Employees", employeeSchema)();
+                var _employee = new models.get(req.session.lastDb, "Employees", employeeSchema)();
                 if (data.uId) {
                     _employee.createdBy.user = data.uId;
                     //uId for edited by field on creation
