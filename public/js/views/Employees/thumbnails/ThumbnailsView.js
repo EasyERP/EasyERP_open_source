@@ -233,9 +233,15 @@
                 });
                 this.getTotalLength(itemsNumber, this.filter, this.newCollection);
 
-                $(".saveFilterButton").show();
-                $(".clearFilterButton").show();
-                $(".removeFilterButton").show();
+                if (checkedElements.attr('id') === 'defaultFilter'){
+                    $(".saveFilterButton").hide();
+                    $(".clearFilterButton").hide();
+                    $(".removeFilterButton").show();
+                } else {
+                    $(".saveFilterButton").show();
+                    $(".clearFilterButton").show();
+                    $(".removeFilterButton").show();
+                }
             },
 
             saveFilter: function () {
@@ -271,7 +277,6 @@
                     }
                 );
 
-                App.currentUser.savedFilters = {};
                 App.currentUser.savedFilters['Employees'] = filterObj.filter;
 
                 this.$el.find('.filterValues').empty();
@@ -354,6 +359,7 @@
                 $(".removeFilterButton").show();
                 $(".saveFilterButton").hide();
             },
+
             hideItemsNumber: function (e) {
                 var el = e.target;
 

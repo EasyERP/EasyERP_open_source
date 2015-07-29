@@ -716,14 +716,11 @@ define([
 
                     // Filter custom event listen ------begin
                     FilterView.bind('filter', function () {
-                        showList = $('.drop-down-filter input:checkbox:checked').map(function () {
-                            return this.id;
-                        }).get();
-                        self.showFilteredPage(showList)
+
+                        self.showFilteredPage()
                     });
                     FilterView.bind('defaultFilter', function () {
-                        showList = _.pluck(values[0].departments, 'name');
-                        self.showFilteredPage(showList)
+                        self.showFilteredPage()
                     });
                     // Filter custom event listen ------end
                 });
@@ -926,9 +923,15 @@ define([
                 this.collection.showMore({count: itemsNumber, page: 1, filter: this.filter});
                 this.getTotalLength(null, itemsNumber, this.filter);
 
-                $(".saveFilterButton").show();
-                $(".clearFilterButton").show();
-                $(".removeFilterButton").show();
+                if (checkedElements.attr('id') === 'defaultFilter'){
+                    $(".saveFilterButton").hide();
+                    $(".clearFilterButton").hide();
+                    $(".removeFilterButton").show();
+                } else {
+                    $(".saveFilterButton").show();
+                    $(".clearFilterButton").show();
+                    $(".removeFilterButton").show();
+                }
             },
 
             saveFilter: function () {

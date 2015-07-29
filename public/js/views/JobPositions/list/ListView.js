@@ -4,6 +4,7 @@ define([
         'views/JobPositions/list/ListItemView',
         'collections/JobPositions/filterCollection',
         'models/JobPositionsModel',
+        'models/UsersModel',
         'views/JobPositions/EditView',
         'views/Filter/FilterView',
         'common',
@@ -11,7 +12,7 @@ define([
         'text!templates/stages.html'
     ],
 
-    function (listTemplate, createView, listItemView, contentCollection, currentModel, editView, filterView, common, dataService, stagesTamplate) {
+    function (listTemplate, createView, listItemView, contentCollection, currentModel, usersModel, editView, filterView, common, dataService, stagesTamplate) {
         var JobPositionsListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -54,7 +55,10 @@ define([
                 "click .stageSelect": "showNewSelect",
                 "click .newSelectList li": "chooseOption",
                 "click #firstShowPage": "firstPage",
-                "click #lastShowPage": "lastPage"
+                "click #lastShowPage": "lastPage",
+                "click .saveFilterButton": "saveFilter",
+                "click .removeFilterButton": "removeFilter",
+                "click .clearFilterButton": "clearFilter"
 
             },
 
@@ -250,6 +254,123 @@ define([
                 this.changeLocationHash(1, itemsNumber, this.filter);
                 this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter, parrentContentId: this.parrentContentId });
                 this.getTotalLength(null, itemsNumber, this.filter);
+
+                if (checkedElements.attr('id') === 'defaultFilter'){
+                    $(".saveFilterButton").hide();
+                    $(".clearFilterButton").hide();
+                    $(".removeFilterButton").show();
+                } else {
+                    $(".saveFilterButton").show();
+                    $(".clearFilterButton").show();
+                    $(".removeFilterButton").show();
+                }
+            },
+
+            saveFilter: function () {
+                var currentUser = new usersModel(App.currentUser);
+                var subMenu = $('#submenu-holder').find('li.selected').text();
+                var key;
+                var filterObj = {};
+                var mid = 39;
+
+                key = subMenu.trim();
+
+                filterObj['filter'] = {};
+                filterObj['filter'] = this.filter;
+                filterObj['key'] = key;
+
+                currentUser.changed = filterObj;
+
+                currentUser.save(
+                    filterObj,
+                    {
+                        headers: {
+                            mid: mid
+                        },
+                        wait: true,
+                        patch:true,
+                        validate: false,
+                        success: function (model) {
+                            console.log('Filter was saved to db');
+                        },
+                        error: function (model,xhr) {
+                            console.error(xhr);
+                        },
+                        editMode: false
+                    }
+                );
+
+                App.currentUser.savedFilters['JobPositions'] = filterObj.filter;
+
+                this.$el.find('.filterValues').empty();
+                this.$el.find('.filter-icons').removeClass('active');
+                this.$el.find('.chooseOption').children().remove();
+
+                $.each($('.drop-down-filter input'), function (index, value) {
+                    value.checked = false
+                });
+
+                $(".saveFilterButton").hide();
+                $(".removeFilterButton").show();
+                $(".clearFilterButton").show();
+
+            },
+
+            removeFilter: function () {
+                var currentUser = new usersModel(App.currentUser);
+                var subMenu = $('#submenu-holder').find('li.selected').text();
+                var key;
+                var filterObj = {};
+                var mid = 39;
+
+                this.clearFilter();
+
+                key = subMenu.trim();
+                filterObj['key'] = key;
+
+                currentUser.changed = filterObj;
+
+                currentUser.save(
+                    filterObj,
+                    {
+                        headers: {
+                            mid: mid
+                        },
+                        wait: true,
+                        patch:true,
+                        validate: false,
+                        success: function (model) {
+                            console.log('Filter was remover from db');
+                        },
+                        error: function (model,xhr) {
+                            console.error(xhr);
+                        },
+                        editMode: false
+                    }
+                );
+
+                delete App.currentUser.savedFilters['JobPositions'];
+
+                $(".saveFilterButton").hide();
+                $(".removeFilterButton").hide();
+                $(".clearFilterButton").hide();
+            },
+
+            clearFilter: function () {
+
+                this.$el.find('.filterValues').empty();
+                this.$el.find('.filter-icons').removeClass('active');
+                this.$el.find('.chooseOption').children().remove();
+
+                $.each($('.drop-down-filter input'), function (index, value) {
+                    value.checked = false
+                });
+
+                this.showFilteredPage();
+
+                $(".clearFilterButton").hide();
+                $(".removeFilterButton").show();
+                $(".saveFilterButton").hide();
             },
 
             render: function () {
@@ -263,6 +384,7 @@ define([
                 var itemView = new listItemView({ collection: this.collection, page: this.page, itemsNumber: this.collection.namberToShow });
                 currentEl.append(itemView.render());
                 itemView.bind('incomingStages', itemView.pushStages, itemView);
+
                 $('#check_all').click(function () {
                     $(':checkbox').prop('checked', this.checked);
                     if ($("input.checkbox:checked").length > 0)
@@ -270,6 +392,20 @@ define([
                     else
                         $("#top-bar-deleteBtn").hide();
                 });
+
+                currentEl.prepend('<div class="filtersActive"><button id="saveFilterButton" class="saveFilterButton">Save Filter</button>' +
+                    '<button id="clearFilterButton" class="clearFilterButton">Clear Filter</button>' +
+                    '<button id="removeFilterButton" class="removeFilterButton">Remove Filter</button></div>'
+                );
+
+                $("#clearFilterButton").hide();
+                $("#saveFilterButton").hide();
+                $("#removeFilterButton").hide();
+
+                if (App.currentUser.savedFilters && App.currentUser.savedFilters['JobPositions']) {
+                    $("#clearFilterButton").show();
+                    $("#removeFilterButton").show();
+                }
 
                 common.populateWorkflowsList("Job positions", null, null, "/Workflows", null, function (stages) {
                     self.stages = stages;

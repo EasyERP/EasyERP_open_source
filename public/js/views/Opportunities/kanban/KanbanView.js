@@ -28,7 +28,9 @@ function (WorkflowsTemplate, kanbanSettingsTemplate, WorkflowsCollection, Kanban
             this.buildTime = 0;
             this.workflowsCollection = options.workflowCollection;
 			this.foldWorkflows = [];
+
             this.render();
+
             this.asyncFetc(options.workflowCollection);
             this.getCollectionLengthByWorkflows(this);
         },
@@ -62,7 +64,7 @@ function (WorkflowsTemplate, kanbanSettingsTemplate, WorkflowsCollection, Kanban
 				k=-k;
 				el.find(".columnName .text").css({"left":k+"px","top":Math.abs(w/2+47)+"px" });
 				this.foldWorkflows.push(el.attr("data-id"));
-			}else{
+			} else {
 				var idx = this.foldWorkflows.indexOf(el.attr("data-id"));
 				if (idx!==-1){
 					this.foldWorkflows.splice(idx,1);
@@ -321,6 +323,7 @@ function (WorkflowsTemplate, kanbanSettingsTemplate, WorkflowsCollection, Kanban
                 k=-k;
                 el.find(".columnName .text").css({"left":k+"px","top":Math.abs(w/2+47)+"px" });
             });
+
             showList.forEach(function (id) {
                 el = $("td.column[data-id='"+id+"']");
                 el.removeClass("fold");

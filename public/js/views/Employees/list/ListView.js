@@ -187,7 +187,6 @@ define([
                 var self = this;
                 var currentEl = this.$el;
                 var FilterView;
-                var showList;
 
                 currentEl.html('');
                 currentEl.append(_.template(listTemplate));
@@ -417,9 +416,15 @@ define([
                 this.collection.showMore({count: itemsNumber, page: 1, filter: this.filter});
                 this.getTotalLength(null, itemsNumber, this.filter);
 
-                $(".saveFilterButton").show();
-                $(".clearFilterButton").show();
-                $(".removeFilterButton").show();
+                if (checkedElements.attr('id') === 'defaultFilter'){
+                    $(".saveFilterButton").hide();
+                    $(".clearFilterButton").hide();
+                    $(".removeFilterButton").show();
+                } else {
+                    $(".saveFilterButton").show();
+                    $(".clearFilterButton").show();
+                    $(".removeFilterButton").show();
+                }
             },
 
             saveFilter: function () {
