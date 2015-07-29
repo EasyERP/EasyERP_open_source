@@ -16,18 +16,6 @@ var wTrack = function (models) {
     var async = require('async');
     var mapObject = require('../helpers/bodyMaper');
 
-    function BubbleSort(A) {
-        var t;
-        var n = A.length;
-        for (var i = n; i--;) {
-            for (var j = n-1; j--;) {
-                if (A[j+1] < A[j]) {
-                    t = A[j+1]; A[j+1] = A[j]; A[j] = t;
-                }
-            }
-        }
-        return A;
-    };
 
     this.create = function (req, res, next) {
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
@@ -596,16 +584,16 @@ var wTrack = function (models) {
                         result[0][key] = _.sortBy(value, 'name');
                         break;
                     case 'projectsname':
-                        result[0][key] = BubbleSort(value);
+                        result[0][key] = _.sortBy(value, function (num) { return num});
                         break;
                     case 'months':
-                        result[0][key] = BubbleSort(value);
+                        result[0][key] = _.sortBy(value, function (num) { return num});
                         break;
                     case 'years':
-                        result[0][key] = BubbleSort(value);
+                        result[0][key] = _.sortBy(value, function (num) { return num});
                         break;
                     case 'weeks':
-                        result[0][key] = BubbleSort(value);
+                        result[0][key] = _.sortBy(value, function (num) { return num});
                         break;
                     case 'departments':
                         result[0][key] = _.sortBy(value, 'departmentName');

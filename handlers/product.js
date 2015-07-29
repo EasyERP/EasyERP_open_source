@@ -10,21 +10,9 @@ var Products = function (models) {
     var objectId = mongoose.Types.ObjectId;
     var async = require('async');
     var _ = require('lodash');
+    var underscore = require('../node_modules/underscore');
 
     var fs = require("fs");
-
-    function BubbleSort(A) {
-        var t;
-        var n = A.length;
-        for (var i = n; i--;) {
-            for (var j = n-1; j--;) {
-                if (A[j+1] < A[j]) {
-                    t = A[j+1]; A[j+1] = A[j]; A[j] = t;
-                }
-            }
-        }
-        return A;
-    };
 
     this.create = function (req, res, next) {
         var Product = models.get(req.session.lastDb, 'Product', ProductSchema);
@@ -679,7 +667,7 @@ var Products = function (models) {
                 if (err) {
                     return next(err)
                 }
-                prod[0]['Name'] = BubbleSort(prod[0]['Name']);
+                prod[0]['Name'] = underscore.sortBy(value, function (num) { return num});
 
                 res.send(prod)
             })

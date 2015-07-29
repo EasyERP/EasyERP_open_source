@@ -86,12 +86,37 @@
                 var self = this;
                 var chosen = this.$el.find('.chosen');
                 var checkedElements = $('.drop-down-filter input:checkbox:checked');
-                var showList;
 
                 this.$el.find('.thumbnailwithavatar').remove();
                 this.startTime = new Date();
-                this.newCollection = false;
+                this.newCollection = true;
                 this.filter =  {};
+                this.filter['canBePurchased'] = true;
+
+                if (chosen) {
+                    chosen.each(function (index, elem) {
+                        if (elem.children[2].attributes.class.nodeValue === 'chooseDate') {
+                            if (self.filter[elem.children[1].value]) {
+                                self.filter[elem.children[1].value].push({start: $('#start').val(), end: $('#end').val()});
+
+                            } else {
+                                self.filter[elem.children[1].value] = [];
+                                self.filter[elem.children[1].value].push({start: $('#start').val(), end: $('#end').val()});
+                            }
+                        } else {
+                            self.filter[elem.children[1].value] = [];
+                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+                                self.filter[elem.children[1].value].push($(element).next().text());
+                            })
+                        }
+
+                    });
+                }
+
+                if (checkedElements.length && checkedElements.attr('id') === 'defaultFilter' || !chosen.length) {
+                    self.filter = {};
+                    this.filter['canBePurchased'] = true;
+                }
 
                 if (e && e.target) {
                     target = $(e.target);
@@ -105,40 +130,9 @@
                     this.filter['letter'] = selectedLetter;
                 }
 
-                if (chosen) {
-                    chosen.each(function (index, elem) {
-                        if (elem.children[2].attributes.class.nodeValue === 'chooseDate') {
-                            if (self.filter[elem.children[1].value]) {
-                                self.filter[elem.children[1].value].push({start: $('#start').val(), end: $('#end').val()});
-
-                            } else {
-                                self.filter[elem.children[1].value] = [];
-                                self.filter[elem.children[1].value].push({start: $('#start').val(), end: $('#end').val()});
-                            }
-                        } else {
-                            if (self.filter[elem.children[1].value]) {
-                                self.filter[elem.children[1].value].push(elem.children[2].value);
-                            } else {
-                                self.filter[elem.children[1].value] = [];
-                                self.filter[elem.children[1].value].push(elem.children[2].value);
-                            }
-                        }
-
-                    });
-                }
-
-                if (checkedElements.length && checkedElements.attr('id') === 'defaultFilter') {
-                    self.filter = 'empty';
-                }
-                this.filter['canBePurchased'] = true;
                 this.defaultItemsNumber = 0;
-
-                if (!chosen.length && !showList) {
-                    self.filter = 'empty';
-                }
-
                 this.changeLocationHash(null, this.defaultItemsNumber, this.filter);
-                this.collection.showMoreAlphabet({count: this.defaultItemsNumber, filter: this.filter});
+                this.collection.showMoreAlphabet({count: this.defaultItemsNumber, page: 1, filter: this.filter});
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
 
                 if (checkedElements.attr('id') === 'defaultFilter'){
@@ -263,6 +257,7 @@
                 var currentEl = this.$el;
                 var createdInTag = "<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>";
                 var FilterView;
+                var showList;
 
                 currentEl.html('');
                 common.buildAphabeticArray(this.collection, function (arr) {
@@ -273,7 +268,7 @@
                         selectedLetter: (self.selectedLetter == "" ? "All" : self.selectedLetter),
                         allAlphabeticArray: self.allAlphabeticArray
                     }));
-                    var currentLetter = (self.filter) ? self.filter.letter : null
+                    var currentLetter = (self.filter) ? self.filter.letter : null;
                     if (currentLetter) {
                         $('#startLetter a').each(function () {
                             var target = $(this);
@@ -311,11 +306,12 @@
                 dataService.getData('/product/getFilterValues', null, function (values) {
                     FilterView = new filterView({ collection: [], customCollection: values});
                     // Filter custom event listen ------begin
+                    FilterView.unbind();
                     FilterView.bind('filter', function () {
                         self.alpabeticalRender()
                     });
                     FilterView.bind('defaultFilter', function () {
-                        self.alpabeticalRender()
+                        self.alpabeticalRender();
                     });
                     // Filter custom event listen ------end
                 });

@@ -316,15 +316,15 @@ function (WorkflowsTemplate, kanbanSettingsTemplate, WorkflowsCollection, Kanban
             showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
             foldList = _.difference(list_id, showList);
 
-            if ((checkedElements.length && checkedElements.attr('id') === 'defaultFilter') || (!chosen.length && !showList)) {
+            if ((checkedElements.length && checkedElements.attr('id') === 'defaultFilter') || (!chosen.length)) {
                 self.filter = {};
 
                 _.each(workflows, function (wfModel) {
                     $('.column').children('.item').remove();
-                    dataService.getData('/Applications/kanban', { workflowId: wfModel._id, filter: this.filter }, this.asyncRender, this);
+                    dataService.getData('/Opportunities/kanban', { workflowId: wfModel._id, filter: this.filter }, this.asyncRender, this);
                 }, this);
-                showList = _.pluck(workflows, '_id');
-                foldList = [];
+
+                return false
             };
 
             foldList.forEach(function (id) {

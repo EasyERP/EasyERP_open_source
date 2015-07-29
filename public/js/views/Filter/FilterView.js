@@ -11,7 +11,7 @@ define([
             template: _.template(ContentFilterTemplate),
 
             events: {
-                "click .search-content": 'showSearchContent',
+                "mouseover .search-content": 'showSearchContent',
                 "click .filter": 'showFilterContent',
                 "click .drop-down-filter > input[type='checkbox']": "writeValue",
                 "click #defaultFilter": "writeValue",
@@ -66,10 +66,12 @@ define([
                     date.remove();
                     opt.removeClass('activated').show();
                     this.$el.find(".filterOptions, .filterActions").hide();
-                    this.trigger('defaultFilter');
+                    if (e && e.target) {
+                        this.trigger('defaultFilter');
+                        e.stopPropagation();
+                    }
 
                 }
-                e.stopPropagation();
             },
 
             addCondition: function () {
@@ -133,6 +135,8 @@ define([
                 } else {
                     el.addClass(selector)
                 }
+                this.showFilterContent();
+                this.showCustomFilter();
             },
 
             showFilterContent: function () {
@@ -158,7 +162,7 @@ define([
                     }
                 });
                 if (!checked) {
-                    this.trigger('defaultFilter');
+                    //this.trigger('defaultFilter');
                     filterValues.empty();
                     filterIcons.removeClass('active');
                 }
@@ -182,13 +186,13 @@ define([
                         if (item.className !== 'Clear') item.remove();
                     });
                     this.trigger('defaultFilter');
-                    this.$el.find('.removeFilter').trigger('click');
+                    this.removeFilter()
                 }
 
-                if ($('.drop-down-filter input:checkbox:checked').length === 0) {
+               /* if ($('.drop-down-filter input:checkbox:checked').length === 0) {
                     this.trigger('defaultFilter');
-                    this.$el.find('.removeFilter').trigger('click')
-                }
+                    //this.$el.find('.removeFilter').trigger('click')
+                }*/
 
             },
 
@@ -201,7 +205,7 @@ define([
                 });
 
                 this.trigger('defaultFilter');
-                this.$el.find('.removeFilter').trigger('click')
+                this.removeFilter()
             }
         });
 

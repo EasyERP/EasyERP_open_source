@@ -297,7 +297,7 @@
 
                 foldList = _.difference(list_id, showList);
 
-                if ((checkedElements.length && checkedElements.attr('id') === 'defaultFilter') || (!chosen.length && !showList)) {
+                if ((checkedElements.length && checkedElements.attr('id') === 'defaultFilter') || !chosen.length) {
                     self.filter = {};
 
                     _.each(workflows, function (wfModel) {
