@@ -663,10 +663,10 @@ var Products = function (models) {
             .aggregate([
                 {
                     $group: {
-                        _id: null,
+                        _id: null,/*
                         'Can be sold': {
                             $addToSet: '$canBeSold'
-                        },
+                        },*/
                         'Creation date': {
                             $addToSet: '$creationDate'
                         },
