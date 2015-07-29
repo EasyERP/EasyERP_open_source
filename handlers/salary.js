@@ -20,35 +20,44 @@ var Salary = function (models) {
         var SalaryCash = models.get(req.session.lastDb, 'SalaryCash', SalaryCashSchema);
         var queryObject = {};
 
-        if (data) {
-            if (data.month) {
-                queryObject.month = data.month;
-            }
-            if (data.year) {
-                queryObject.year = data.year;
-            }
-        }
+        access.getDeleteAccess(req, req.session.uId, 66, function (access) {
+            if (access) {
 
-        if (queryObject.month && queryObject.year) {
-            Salary.remove(queryObject, function (err, salary) {
-                if (err) {
-                    return next(err);
-                }
-                SalaryCash.remove({_id: id}, function (err, salaryCash) {
-                    if (err) {
-                        return next(err);
+
+                if (data) {
+                    if (data.month) {
+                        queryObject.month = data.month;
                     }
-                    res.status(200).send({success: salaryCash});
-                });
-            });
-        } else {
-            Salary.remove({_id: id}, function (err, salary) {
-                if (err) {
-                    return next(err);
+                    if (data.year) {
+                        queryObject.year = data.year;
+                    }
                 }
-                res.status(200).send({success: salary});
-            });
-        }
+
+                if (queryObject.month && queryObject.year) {
+                    Salary.remove(queryObject, function (err, salary) {
+                        if (err) {
+                            return next(err);
+                        }
+                        SalaryCash.remove({_id: id}, function (err, salaryCash) {
+                            if (err) {
+                                return next(err);
+                            }
+                            res.status(200).send({success: salaryCash});
+                        });
+                    });
+                } else {
+                    Salary.remove({_id: id}, function (err, salary) {
+                        if (err) {
+                            return next(err);
+                        }
+                        res.status(200).send({success: salary});
+                    });
+                }
+
+            } else {
+                res.status(403).send();
+            }
+        });
     };
 
     this.putchModel = function (req, res, next) {
@@ -193,10 +202,10 @@ var Salary = function (models) {
                     var page = req.query.page;
                     var skip = (page - 1) > 0 ? (page - 1) * count : 0;
 
-                    //var departmentSearcher;
-                    //var contentIdsSearcher;
-                    //var contentSearcher;
-                    //var waterfallTasks;
+                    var departmentSearcher;
+                    var contentIdsSearcher;
+                    var contentSearcher;
+                    var waterfallTasks;
 
                     if (query && query.sort) {
                         sort = query.sort;
@@ -204,97 +213,93 @@ var Salary = function (models) {
                         sort = {"year": -1, "month": -1};
                     }
 
-                    /*departmentSearcher = function (waterfallCallback) {
-                     models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
-                     {
-                     $match: {
-                     users: objectId(req.session.uId)
-                     }
-                     }, {
-                     $project: {
-                     _id: 1
-                     }
-                     },
-                     waterfallCallback);
-                     };*/
-
-                    /*contentIdsSearcher = function (deps, waterfallCallback) {
-                     var arrOfObjectId = deps.objectID();
-
-                     models.get(req.session.lastDb, "Product", ProductSchema).aggregate(
-                     {
-                     $match: {
-                     $and: [
-                     queryObject,
-                     {
-                     $or: [
-                     {
-                     $or: [
-                     {
-                     $and: [
-                     {whoCanRW: 'group'},
-                     {'groups.users': objectId(req.session.uId)}
-                     ]
-                     },
-                     {
-                     $and: [
-                     {whoCanRW: 'group'},
-                     {'groups.group': {$in: arrOfObjectId}}
-                     ]
-                     }
-                     ]
-                     },
-                     {
-                     $and: [
-                     {whoCanRW: 'owner'},
-                     {'groups.owner': objectId(req.session.uId)}
-                     ]
-                     },
-                     {whoCanRW: "everyOne"}
-                     ]
-                     }
-                     ]
-                     }
-                     },
-                     {
-                     $project: {
-                     _id: 1
-                     }
-                     },
-                     waterfallCallback
-                     );
-                     };*/
-
-                    /*contentSearcher = function (productsIds, waterfallCallback) {
-                     queryObject._id = {$in: productsIds};
-
-                     var query = Product.find(queryObject).limit(count).skip(skip).sort(sort);
-                     query.exec(waterfallCallback);
-                     };
-
-                     waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
-
-                     async.waterfall(waterfallTasks, function(err, result){
-                     if(err){
-                     return next(err);
-                     }
-                     res.status(200).send({success: result});
-                     });*/
-                    self.totalCollectionLength(req, function (err, ressult) {
-                        if (ressult) {
-                            var query = Salary.find(queryObject)
-                                .limit(count)
-                                .skip(skip)
-                                .lean()
-                                .sort(sort);
-                            query.exec(function (err, result) {
-                                if (err) {
-                                    return next(err);
+                    departmentSearcher = function (waterfallCallback) {
+                        models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
+                            {
+                                $match: {
+                                    users: objectId(req.session.uId)
                                 }
-                                res.status(200).send({success: result});
-                            });
-                        } else {
-                            async.series({
+                            }, {
+                                $project: {
+                                    _id: 1
+                                }
+                            },
+                            waterfallCallback);
+                    };
+
+                    contentIdsSearcher = function (deps, waterfallCallback) {
+                        var arrOfObjectId = deps.objectID();
+
+                        var userId = req.session.uId;
+                        var everyOne = {
+                            whoCanRW: "everyOne"
+                        };
+                        var owner = {
+                            $and: [
+                                {
+                                    whoCanRW: 'owner'
+                                },
+                                {
+                                    'groups.owner': objectId(userId)
+                                }
+                            ]
+                        };
+                        var group = {
+                            $or: [
+                                {
+                                    $and: [
+                                        {whoCanRW: 'group'},
+                                        {'groups.users': objectId(userId)}
+                                    ]
+                                },
+                                {
+                                    $and: [
+                                        {whoCanRW: 'group'},
+                                        {'groups.group': {$in: arrOfObjectId}}
+                                    ]
+                                }
+                            ]
+                        };
+
+                        var whoCanRw = [everyOne, owner, group];
+                        var matchQuery = {
+                            $and: [
+                                queryObject,
+                                {
+                                    $or: whoCanRw
+                                }
+                            ]
+                        };
+
+                        Salary.aggregate(
+                            {
+                                $match: matchQuery
+                            },
+                            {
+                                $project: {
+                                    _id: 1
+                                }
+                            },
+                            waterfallCallback
+                        );
+                    };
+
+                    contentSearcher = function (productsIds, waterfallCallback) {
+                        queryObject._id = {$in: productsIds};
+
+                        var query = Product.find(queryObject).limit(count).skip(skip).sort(sort);
+                        query.exec(waterfallCallback);
+
+                        self.totalCollectionLength(req, function (err, ressult) {
+                            if (ressult) {
+                                var query = Salary.find(queryObject)
+                                    .limit(count)
+                                    .skip(skip)
+                                    .lean()
+                                    .sort(sort);
+                                query.exec(waterfallCallback);
+                            } else {
+                                async.series({
                                     first: function (callback) {
                                         self.recalculateCashSalary(req, callback);
                                     },
@@ -311,17 +316,22 @@ var Salary = function (models) {
                                             callback(null, result);
                                         });
                                     }
-                                },
-                                function (err, results) {
-                                    if (err) {
-                                        return next(err);
-                                    }
-                                    if (results.second) {
-                                        res.status(200).send({success: results.second});
-                                    }
-                                });
+                                }, waterfallCallback);
+                            }
+                        })
+
+                    };
+
+                    waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
+
+                    async.waterfall(waterfallTasks, function (err, result) {
+                        if (err) {
+                            return next(err);
                         }
-                    })
+
+                        res.status(200).send(result);
+                    });
+
                 } else {
                     res.send(403);
                 }
