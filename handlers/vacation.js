@@ -359,11 +359,20 @@ var Vacation = function (models) {
         var id = req.params.id;
         var Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
 
-        Vacation.remove({_id: id}, function (err, vacation) {
-            if (err) {
-                return next(err);
+
+        access.getDeleteAccess(req, req.session.uId, 72, function (access) {
+            if (access) {
+
+
+                Vacation.remove({_id: id}, function (err, vacation) {
+                    if (err) {
+                        return next(err);
+                    }
+                    res.status(200).send({success: vacation});
+                });
+            } else {
+                res.status(403).send();
             }
-            res.status(200).send({success: vacation});
         });
     };
 
