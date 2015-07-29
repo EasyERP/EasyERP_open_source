@@ -319,10 +319,10 @@ function (WorkflowsTemplate, kanbanSettingsTemplate, WorkflowsCollection, Kanban
 
                 _.each(workflows, function (wfModel) {
                     $('.column').children('.item').remove();
-                    dataService.getData('/Applications/kanban', { workflowId: wfModel._id, filter: this.filter }, this.asyncRender, this);
+                    dataService.getData('/Opportunities/kanban', { workflowId: wfModel._id, filter: this.filter }, this.asyncRender, this);
                 }, this);
-                showList = _.pluck(workflows, '_id');
-                foldList = [];
+
+                return false
             };
 
             foldList.forEach(function (id) {
