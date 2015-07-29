@@ -30,7 +30,11 @@ define([
                 this.collection = options.collection;
                 _.bind(this.collection.showMore, this.collection);
                 this.parrentContentId = options.collection.parrentContentId;
-                this.filter = options.filter;
+                if (options.filter['forSales'] === true){
+                    this.filter = {};
+                } else {
+                    this.filter = options.filter;
+                }
                 this.sort = options.sort;
                 this.defaultItemsNumber = this.collection.namberToShow || 50;
                 this.newCollection = options.newCollection;
@@ -214,7 +218,7 @@ define([
                 $("#saveFilterButton").hide();
                 $("#removeFilterButton").hide();
 
-                if (App.currentUser.savedFilters && App.currentUser.savedFilters['Invoice'] && App.currentUser.savedFilters['Invoice']['forSales'] != true) {
+                if (App.currentUser.savedFilters && App.currentUser.savedFilters['Invoice'] && App.currentUser.savedFilters['Invoice']['forSales'] === false) {
                     $("#clearFilterButton").show();
                     $("#removeFilterButton").show();
                 }
@@ -382,6 +386,7 @@ define([
 
 
                 this.filter = {};
+                this.filter['forSales'] = false;
 
                 if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
                     showList = checkedElements.map(function() {
@@ -405,12 +410,12 @@ define([
                         } else {
                             if (self.filter[elem.children[1].value]) {
                                 $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
-                                    self.filter[elem.children[1].value].push($(element).next().text());
+                                    self.filter[elem.children[1].value].push($(element).val());
                                 })
                             } else {
                                 self.filter[elem.children[1].value] = [];
                                 $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
-                                    self.filter[elem.children[1].value].push($(element).next().text());
+                                    self.filter[elem.children[1].value].push($(element).val());
                                 })
                             }
                         }
@@ -423,7 +428,8 @@ define([
                 $('#check_all').prop('checked', false);
 
                 if ((checkedElements.length && checkedElements.attr('id') === 'defaultFilter') || (!chosen.length && !showList)) {
-                    self.filter = 'empty';
+                    self.filter = {};
+                    this.filter['forSales'] = false;
                 };
 
                 this.changeLocationHash(1, itemsNumber, this.filter);
@@ -439,7 +445,6 @@ define([
                     $(".clearFilterButton").show();
                     $(".removeFilterButton").show();
                 }
-
             },
 
             saveFilter: function () {

@@ -128,7 +128,7 @@
                 }
 
                 if (checkedElements.length && checkedElements.attr('id') === 'defaultFilter') {
-                    self.filter = {};
+                    self.filter = 'empty';
                 }
                 this.filter['canBePurchased'] = true;
                 this.defaultItemsNumber = 0;

@@ -72,7 +72,7 @@
                 common.getImages(ids, "/getCustomersImages");
             },
             //modified for filter Vasya
-            alpabeticalRender: function (e) {
+            alpabeticalRender: function (e, showList) {
                 var selectedLetter;
                 var target;
                 var checkedElements = $('.drop-down-filter > input:checkbox:checked');
@@ -274,6 +274,7 @@
                 var currentEl = this.$el;
                 var filterObject;
                 var FilterView;
+                var showList;
 
                 currentEl.html('');
                 if (this.collection.length > 0) {
@@ -329,10 +330,12 @@
                     FilterView = new filterView({ collection: filterObject, customCollection: values});
                     // Filter custom event listen ------begin
                     FilterView.bind('filter', function () {
-                        self.alpabeticalRender(null)
+                        showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
+                        self.alpabeticalRender(null, showList)
                     });
                     FilterView.bind('defaultFilter', function () {
-                        self.alpabeticalRender(null)
+                        showList = [];
+                        self.alpabeticalRender(null, showList)
                     });
                     // Filter custom event listen ------end
 

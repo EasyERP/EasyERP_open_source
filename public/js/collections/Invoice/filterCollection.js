@@ -19,15 +19,21 @@
                 this.contentType = options.contentType;
                 this.page = options.page || 1;
 
-                if (options && options.contentType && !(options.filter))
+                this.filter = options.filter;
+
+                if (options && options.contentType )
                 {
                     options.filter = {};
                     if (regex.test(this.contentType)) {
                         options.filter.forSales = true;
                     }
+
+                    if (!(options.filter)){
+                        this.filter = options.filter;
+                    }
                 }
 
-                this.filter = options.filter;
+
 
                 if (options && options.viewType) {
                     this.url += options.viewType;

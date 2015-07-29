@@ -344,13 +344,78 @@ define([
                 this.changeLocationHash(1, itemsNumber, this.filter);
             },
             //modified for filter Vasya
+            //showFilteredPage: function (e) {
+            //    var self = this;
+            //    var selectedLetter;
+            //    var chosen = this.$el.find('.chosen');
+            //    var itemsNumber = $("#itemsNumber").text();
+            //    var checkedElements = $('.drop-down-filter input:checkbox:checked');
+            //
+            //    this.startTime = new Date();
+            //    this.newCollection = false;
+            //    if (e && e.target) {
+            //        selectedLetter = $(e.target).text();
+            //        if ($(e.target).text() == "All") {
+            //            selectedLetter = "";
+            //        }
+            //    }
+            //
+            //    this.filter =  {};
+            //    this.filter['letter'] = selectedLetter;
+            //
+            //    if (chosen) {
+            //        chosen.each(function (index, elem) {
+            //            if (elem.children[2].attributes.class.nodeValue === 'chooseDate') {
+            //                if (self.filter[elem.children[1].value]) {
+            //                    self.filter[elem.children[1].value].push({start: $('#start').val(), end: $('#end').val()});
+            //
+            //                } else {
+            //                    self.filter[elem.children[1].value] = [];
+            //                    self.filter[elem.children[1].value].push({start: $('#start').val(), end: $('#end').val()});
+            //                }
+            //            } else {
+            //                if (self.filter[elem.children[1].value]) {
+            //                    $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+            //                        self.filter[elem.children[1].value].push($(element).next().text());
+            //                    })
+            //                } else {
+            //                    self.filter[elem.children[1].value] = [];
+            //                    $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+            //                        self.filter[elem.children[1].value].push($(element).next().text());
+            //                    })
+            //                }
+            //            }
+            //
+            //        });
+            //    }
+            //
+            //    if (checkedElements.length && checkedElements.attr('id') === 'defaultFilter') {
+            //        self.filter = 'empty';
+            //    };
+            //
+            //    $("#top-bar-deleteBtn").hide();
+            //    $('#check_all').prop('checked', false);
+            //
+            //    this.changeLocationHash(1, itemsNumber, this.filter);
+            //    this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter });
+            //    this.getTotalLength(null, itemsNumber, this.filter);
+            //
+            //    if (checkedElements.attr('id') === 'defaultFilter'){
+            //        $(".saveFilterButton").hide();
+            //        $(".clearFilterButton").hide();
+            //        $(".removeFilterButton").show();
+            //    } else {
+            //        $(".saveFilterButton").show();
+            //        $(".clearFilterButton").show();
+            //        $(".removeFilterButton").show();
+            //    }
+            //},
             showFilteredPage: function (e) {
                 var self = this;
                 var selectedLetter;
                 var chosen = this.$el.find('.chosen');
                 var itemsNumber = $("#itemsNumber").text();
                 var checkedElements = $('.drop-down-filter input:checkbox:checked');
-                var showList;
 
                 this.startTime = new Date();
                 this.newCollection = false;
@@ -396,20 +461,9 @@ define([
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
-
                 this.changeLocationHash(1, itemsNumber, this.filter);
                 this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter });
                 this.getTotalLength(null, itemsNumber, this.filter);
-
-                if (checkedElements.attr('id') === 'defaultFilter'){
-                    $(".saveFilterButton").hide();
-                    $(".clearFilterButton").hide();
-                    $(".removeFilterButton").show();
-                } else {
-                    $(".saveFilterButton").show();
-                    $(".clearFilterButton").show();
-                    $(".removeFilterButton").show();
-                }
             },
 
             saveFilter: function () {
@@ -503,6 +557,7 @@ define([
             },
 
             clearFilter: function () {
+                this.filter = 'empty';
 
                 this.$el.find('.filterValues').empty();
                 this.$el.find('.filter-icons').removeClass('active');
@@ -512,7 +567,7 @@ define([
                     value.checked = false
                 });
 
-                this.showFilteredPage();
+                this.showFilteredPage(null);
 
                 $(".clearFilterButton").hide();
                 $(".removeFilterButton").show();

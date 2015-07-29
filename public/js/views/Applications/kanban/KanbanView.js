@@ -37,9 +37,9 @@
 
                 if (App.currentUser.savedFilters && App.currentUser.savedFilters['Applications']){
                     this.filter = App.currentUser.savedFilters['Applications'];
-
+                    this.showFiltredPage(this.workflowsCollection.toJSON(), this.filter);
                 }
-                this.showFiltredPage(this.workflowsCollection.toJSON(), this.filter);
+
 
             },
 
@@ -289,7 +289,12 @@
                 }
 
                 list_id = _.pluck(workflows, '_id');
-                showList = checkedElements.map(function() {return this.value;}).get();
+                if (savedFilter){
+                    showList = savedFilter['workflow'];
+                } else {
+                    showList = checkedElements.map(function() {return this.value;}).get();
+                }
+
                 foldList = _.difference(list_id, showList);
 
                 if ((checkedElements.length && checkedElements.attr('id') === 'defaultFilter') || (!chosen.length && !showList)) {
@@ -323,13 +328,11 @@
                     el.removeClass("fold");
                 });
 
-
+                $(".saveFilterButton").show();
+                $(".clearFilterButton").show();
+                $(".removeFilterButton").show();
                 if (savedFilter){
                     $(".saveFilterButton").hide();
-                    $(".clearFilterButton").show();
-                    $(".removeFilterButton").show();
-                } else {
-                    $(".saveFilterButton").show();
                     $(".clearFilterButton").show();
                     $(".removeFilterButton").show();
                 }

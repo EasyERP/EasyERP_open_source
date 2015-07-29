@@ -274,7 +274,7 @@ define([
                 var filterObj = {};
                 var mid = 39;
 
-                key = subMenu.trim();
+                key = 'JobPositions';
 
                 filterObj['filter'] = {};
                 filterObj['filter'] = this.filter;
@@ -358,6 +358,8 @@ define([
             },
 
             clearFilter: function () {
+
+                this.filter = 'empty';
 
                 this.$el.find('.filterValues').empty();
                 this.$el.find('.filter-icons').removeClass('active');

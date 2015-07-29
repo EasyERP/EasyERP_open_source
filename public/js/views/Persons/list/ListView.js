@@ -169,6 +169,7 @@ define([
                 var currentEl = this.$el;
                 var FilterView;
                 var filterObject;
+                var showList;
 
                 currentEl.html('');
                 currentEl.append(_.template(listTemplate));
@@ -196,10 +197,12 @@ define([
                     FilterView = new filterView({ collection: filterObject, customCollection: values});
                     // Filter custom event listen ------begin
                     FilterView.bind('filter', function () {
-                        self.showFilteredPage(null)
+                        showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
+                        self.showFilteredPage(null, showList)
                     });
                     FilterView.bind('defaultFilter', function () {
-                        self.showFilteredPage(null)
+                        showList = [];
+                        self.showFilteredPage(null, showList)
                     });
                     // Filter custom event listen ------end
 
@@ -278,7 +281,7 @@ define([
                         editMode: false
                     }
                 );
-
+                App.currentUser.savedFilters = {};
                 App.currentUser.savedFilters['Persons'] = filterObj.filter;
 
                 this.$el.find('.filterValues').empty();
@@ -460,7 +463,7 @@ define([
                 this.changeLocationHash(1, itemsNumber, this.filter);
             },
 
-            showFilteredPage: function (e) {
+            showFilteredPage: function (e, showList) {
                 var itemsNumber = $("#itemsNumber").text();
                 var selectedLetter;
                 var self = this;

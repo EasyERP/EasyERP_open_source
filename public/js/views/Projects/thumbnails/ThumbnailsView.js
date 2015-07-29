@@ -409,6 +409,7 @@
                 this.newCollection = false;
 
                 this.defaultItemsNumber = 0;
+
                 this.changeLocationHash(null, this.defaultItemsNumber, this.filter);
                 this.collection.showMore({ count: this.defaultItemsNumber, page: 1, filter: this.filter })
                 this.getTotalLength(this.defaultItemsNumber, this.filter);

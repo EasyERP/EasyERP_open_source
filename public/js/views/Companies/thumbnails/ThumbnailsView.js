@@ -123,7 +123,7 @@
                 if (selectedLetter || selectedLetter === '') this.filter['letter'] = selectedLetter;
 
                 if ((checkedElements.length && checkedElements.attr('id') === 'defaultFilter') || (!chosen.length && !showList)) {
-                    self.filter = 'empty';
+                    self.filter = {'forSales': true};
                 };
 
                 this.defaultItemsNumber = 0;

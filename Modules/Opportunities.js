@@ -1437,5 +1437,5 @@ var Opportunities = function (models, event) {
         updateOnlySelectedFields: updateOnlySelectedFields,
         remove: remove
     }
-}
+};
 module.exports = Opportunities;
