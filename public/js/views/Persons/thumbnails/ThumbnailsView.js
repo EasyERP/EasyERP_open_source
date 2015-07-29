@@ -191,6 +191,7 @@
                 dataService.getData('/supplier/getFilterValues', null, function (values) {
                     FilterView = new filterView({ collection: filterObject, customCollection: values});
                     // Filter custom event listen ------begin
+                    FilterView.unbind();
                     FilterView.bind('filter', function () {
                         showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
                         self.alpabeticalRender(null, showList)

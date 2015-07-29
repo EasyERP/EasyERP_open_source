@@ -479,9 +479,9 @@ var Quotation = function (models) {
                         {
                             $group:{
                                 _id: null,
-                                'Reference': {
+                                /*'Reference': {
                                     $addToSet: '$supplierReference'
-                                },
+                                },*/
                                 'Order date': {
                                     $addToSet: '$orderDate'
                                 }

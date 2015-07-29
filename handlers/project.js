@@ -7,19 +7,6 @@ var Project = function (models) {
     var ProjectSchema = mongoose.Schemas['Project'];
     var _ = require('../node_modules/underscore');
 
-    function BubbleSort(A) {
-        var t;
-        var n = A.length;
-        for (var i = n; i--;) {
-            for (var j = n-1; j--;) {
-                if (A[j+1] < A[j]) {
-                    t = A[j+1]; A[j+1] = A[j]; A[j] = t;
-                }
-            }
-        }
-        return A;
-    };
-
     this.getForWtrack = function (req, res, next) {
         var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
 
@@ -64,7 +51,7 @@ var Project = function (models) {
             _.map(result[0], function(value, key) {
                 switch (key) {
                     case 'project':
-                        result[0][key] = BubbleSort(value);
+                        result[0][key] = _.sortBy(value, function (num) { return num});
                         break;
 
                 }
