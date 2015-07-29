@@ -13,6 +13,21 @@ var _ = require('lodash');
 
 var CONSTANTS = require('../constants/modules');
 
+function returnModuleId(req){
+    var body = req.body;
+    var moduleId;
+
+    var isWtrack = req.session.lastDb === 'weTrack';
+
+    if(isWtrack){
+        moduleId = 61;
+    } else {
+        moduleId = !!body.forSales ? 61 : 60
+    }
+
+    return moduleId;
+}
+
 var Payment = function (models) {
     var access = require("../Modules/additions/access.js")(models);
 
@@ -27,6 +42,7 @@ var Payment = function (models) {
     var waterfallTasks;
 
     this.getAll = function (req, res, next) {
+        //this temporary unused
         var isWtrack = req.session.lastDb === 'weTrack';
         var Payment;
 
@@ -61,6 +77,8 @@ var Payment = function (models) {
         var isWtrack = req.session.lastDb === 'weTrack';
         var Payment;
 
+        var moduleId = returnModuleId(req);
+
         if(isWtrack){
             Payment = models.get(req.session.lastDb, 'wTrackPayment', wTrackPaymentSchema);
         } else {
@@ -68,7 +86,7 @@ var Payment = function (models) {
         }
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, CONSTANTS.CUSTOMER_PAYMENTS, function (access) {
+            access.getReadAccess(req, req.session.uId, moduleId, function (access) {
                 if (access) {
                     var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
 
@@ -192,6 +210,8 @@ var Payment = function (models) {
         var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
         var workflowHandler = new WorkflowHandler(models);
         var invoiceId = body.invoice;
+
+        var moduleId = returnModuleId(req);
 
         var isWtrack = req.session.lastDb === 'weTrack';
         var Payment;
@@ -345,12 +365,18 @@ var Payment = function (models) {
             waterfallTasks.push(updateWtrack);
         }
 
-        async.waterfall(waterfallTasks, function (err, response) {
-            if (err) {
-                return next(err);
-            }
+        access.getEditWritAccess(req, req.session.uId, moduleId, function (access) {
+            if (access) {
+                async.waterfall(waterfallTasks, function (err, response) {
+                    if (err) {
+                        return next(err);
+                    }
 
-            res.status(201).send(response);
+                    res.status(201).send(response);
+                });
+            } else {
+                res.status(403).send();
+            }
         });
     };
 
@@ -464,9 +490,11 @@ var Payment = function (models) {
         var uId;
         var Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
 
+        var moduleId = returnModuleId(req);
+
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             uId = req.session.uId;
-            access.getEditWritAccess(req, req.session.uId, CONSTANTS.CUSTOMER_PAYMENTS, function (access) {
+            access.getEditWritAccess(req, req.session.uId, moduleId, function (access) {
                 if (access) {
                     async.each(body, function (data, cb) {
                         var id = data._id;
@@ -499,13 +527,15 @@ var Payment = function (models) {
         var isWtrack = req.session.lastDb === 'weTrack';
         var Payment;
 
+        var moduleId = req.headers.mId || returnModuleId(req);
+
         if(isWtrack){
             Payment = models.get(req.session.lastDb, 'wTrackPayment', wTrackPaymentSchema);
         } else {
             Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
         }
 
-        access.getDeleteAccess(req, req.session.uId, CONSTANTS.CUSTOMER_PAYMENTS, function (access) {
+        access.getDeleteAccess(req, req.session.uId, moduleId, function (access) {
             if (access) {
                 Payment.remove({_id: id}, function (err, removed) {
                     if (err) {
