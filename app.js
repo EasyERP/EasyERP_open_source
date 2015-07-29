@@ -17,7 +17,6 @@ module.exports = function (mainDb, dbsNames) {
     var app = express();
     var dbsObject = mainDb.dbsObject;
 
-
     var logWriter = require('./helpers/logWriter');
 
     var MemoryStore = require('connect-mongo')(session);

@@ -5,12 +5,12 @@
         'views/Filter/FilterView',
         'dataService',
         'models/EmployeesModel',
-        'collections/Users/editCollection',
+        'models/UsersModel',
         'common',
         'text!templates/Alpabet/AphabeticTemplate.html'
     ],
 
-    function (thumbnailsItemTemplate, editView, createView, filterView, dataService, currentModel, userCollection, common, AphabeticTemplate) {
+    function (thumbnailsItemTemplate, editView, createView, filterView, dataService, currentModel, usersModel, common, AphabeticTemplate) {
         var EmployeesThumbnalView = Backbone.View.extend({
             el: '#content-holder',
             countPerPage: 0,
@@ -164,14 +164,10 @@
                         FilterView = new filterView({collection: departments.data, customCollection: values});
                         // Filter custom event listen ------begin
                         FilterView.bind('filter', function () {
-                            showList = $('.drop-down-filter input:checkbox:checked').map(function () {
-                                return this.value;
-                            }).get();
-                            self.showFilteredPage(null, showList)
+                            self.showFilteredPage()
                         });
                         FilterView.bind('defaultFilter', function () {
-                            showList = _.pluck(departments.data, '_id');
-                            self.showFilteredPage(null, showList)
+                            self.showFilteredPage()
                         });
                         // Filter custom event listen ------end
                     });
@@ -186,19 +182,34 @@
                 var itemsNumber = $("#itemsNumber").text();
                 var self = this;
                 var chosen = this.$el.find('.chosen');
+                var checkedElements = $('.drop-down-filter > input:checkbox:checked');
+                var showList;
+
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
                 this.filter = {};
 
-                if (showList.length) this.filter['department'] = showList;
+                if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
+                    showList = $('.drop-down-filter > input:checkbox:checked').map(function() {
+                        return this.value
+                    }).get();
+
+                    this.filter['department'] = showList;
+                };
+
+
                 if (chosen) {
                     chosen.each(function (index, elem) {
                         if (self.filter[elem.children[1].value]) {
-                            self.filter[elem.children[1].value].push(elem.children[2].value);
+                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+                                self.filter[elem.children[1].value].push(element.value);
+                            })
                         } else {
                             self.filter[elem.children[1].value] = [];
-                            self.filter[elem.children[1].value].push(elem.children[2].value);
+                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+                                self.filter[elem.children[1].value].push(element.value);
+                            })
                         }
                     });
                 }
@@ -206,6 +217,10 @@
                 this.startTime = new Date();
                 this.newCollection = true;
                 this.$el.find('.thumbnailwithavatar').remove();
+
+                if ((checkedElements.length && checkedElements.attr('id') === 'defaultFilter') || (!chosen.length && !showList)) {
+                    self.filter = 'empty';
+                };
 
                 this.changeLocationHash(1, itemsNumber, this.filter);
                 this.collection.showMore({
@@ -216,28 +231,50 @@
                 });
                 this.getTotalLength(itemsNumber, this.filter, this.newCollection);
 
-                $(".saveFilterButton").show();
-                $(".clearFilterButton").show();
-                $(".removeFilterButton").show();
+                if (checkedElements.attr('id') === 'defaultFilter'){
+                    $(".saveFilterButton").hide();
+                    $(".clearFilterButton").hide();
+                    $(".removeFilterButton").show();
+                } else {
+                    $(".saveFilterButton").show();
+                    $(".clearFilterButton").show();
+                    $(".removeFilterButton").show();
+                }
             },
 
             saveFilter: function () {
-                var currentUser = new userCollection();
+                var currentUser = new usersModel(App.currentUser);
                 var subMenu = $('#submenu-holder').find('li.selected').text();
                 var key;
                 var filterObj = {};
+                var mid = 39;
 
                 key = subMenu.trim();
+
                 filterObj['filter'] = {};
                 filterObj['filter'] = this.filter;
                 filterObj['key'] = key;
 
                 currentUser.changed = filterObj;
-                currentUser.save(currentUser.changed, {
-                    data: filterObj,
-                    patch: true
-                });
-                App.currentUser.savedFilters = {};
+                currentUser.save(
+                    filterObj,
+                    {
+                        headers: {
+                            mid: mid
+                        },
+                        wait: true,
+                        patch:true,
+                        validate: false,
+                        success: function (model) {
+                            console.log('Filter was saved to db');
+                        },
+                        error: function (model,xhr) {
+                            console.error(xhr);
+                        },
+                        editMode: false
+                    }
+                );
+
                 App.currentUser.savedFilters['Employees'] = filterObj.filter;
 
                 this.$el.find('.filterValues').empty();
@@ -255,10 +292,11 @@
             },
 
             removeFilter: function () {
-                var currentUser = new userCollection();
+                var currentUser = new usersModel(App.currentUser);
                 var subMenu = $('#submenu-holder').find('li.selected').text();
                 var key;
                 var filterObj = {};
+                var mid = 39;
 
                 this.clearFilter();
 
@@ -266,10 +304,25 @@
                 filterObj['key'] = key;
 
                 currentUser.changed = filterObj;
-                currentUser.save(currentUser.changed, {
-                    data: filterObj,
-                    patch: true
-                });
+
+                currentUser.save(
+                    filterObj,
+                    {
+                        headers: {
+                            mid: mid
+                        },
+                        wait: true,
+                        patch:true,
+                        validate: false,
+                        success: function (model) {
+                            console.log('Filter was remover from db');
+                        },
+                        error: function (model,xhr) {
+                            console.error(xhr);
+                        },
+                        editMode: false
+                    }
+                );
 
                 delete App.currentUser.savedFilters['Employees'];
 
@@ -304,6 +357,7 @@
                 $(".removeFilterButton").show();
                 $(".saveFilterButton").hide();
             },
+
             hideItemsNumber: function (e) {
                 var el = e.target;
 

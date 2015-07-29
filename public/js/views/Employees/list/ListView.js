@@ -5,12 +5,12 @@ define([
         'views/Filter/FilterView',
         'text!templates/Alpabet/AphabeticTemplate.html',
         'collections/Employees/filterCollection',
-        'collections/Users/editCollection',
+        'models/UsersModel',
         'common',
         'dataService'
     ],
 
-    function (listTemplate, createView, listItemView, filterView, aphabeticTemplate, contentCollection, userCollection, common, dataService) {
+    function (listTemplate, createView, listItemView, filterView, aphabeticTemplate, contentCollection, usersModel, common, dataService) {
         var EmployeesListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -187,7 +187,6 @@ define([
                 var self = this;
                 var currentEl = this.$el;
                 var FilterView;
-                var showList;
 
                 currentEl.html('');
                 currentEl.append(_.template(listTemplate));
@@ -252,14 +251,10 @@ define([
                         FilterView = new filterView({collection: departments.data, customCollection: values});
                         // Filter custom event listen ------begin
                         FilterView.bind('filter', function () {
-                            showList = $('.drop-down-filter input:checkbox:checked').map(function () {
-                                return this.value;
-                            }).get();
-                            self.showFilteredPage(null, showList)
+                            self.showFilteredPage()
                         });
                         FilterView.bind('defaultFilter', function () {
-                            showList = _.pluck(departments.data, '_id');
-                            self.showFilteredPage(null, showList);
+                            self.showFilteredPage()
                         });
                         // Filter custom event listen ------end
                     });
@@ -365,20 +360,17 @@ define([
                 this.changeLocationHash(1, itemsNumber, this.filter);
             },
             //modified for filter Vasya
-            showFilteredPage: function (e, showList) {
+            showFilteredPage: function (e) {
                 var itemsNumber = $("#itemsNumber").text();
                 var selectedLetter;
                 var self = this;
                 var chosen = this.$el.find('.chosen');
+                var checkedElements = $('.drop-down-filter > input:checkbox:checked');
+                var showList;
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
-
-                this.filter = {};
-
-                if (!showList || !showList.department) {
-                    this.filter = {};
-                }
+                this.filter ={};
 
                 if (e && e.target) {
                     selectedLetter = $(e.target).text();
@@ -386,55 +378,85 @@ define([
                         selectedLetter = "";
                     }
                 }
-                if (showList && showList['department']) {
-                    this.filter = showList;
-                } else if (showList && !showList['department']) {
-                    this.filter['department'] = showList;
-                } else if (!showList){
-                    this.filter = 'empty';
-                }
+                if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
+                    showList = checkedElements.map(function() {
+                        return this.value
+                    }).get();
 
+                    this.filter['department'] = showList;
+                };
 
                 if (chosen) {
                     chosen.each(function (index, elem) {
                         if (self.filter[elem.children[1].value]) {
-                            self.filter[elem.children[1].value].push(elem.children[2].value);
+                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+                                self.filter[elem.children[1].value].push(element.value);
+                            })
                         } else {
                             self.filter[elem.children[1].value] = [];
-                            self.filter[elem.children[1].value].push(elem.children[2].value);
+                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+                                self.filter[elem.children[1].value].push(element.value);
+                            })
                         }
                     });
                 }
                 this.startTime = new Date();
                 this.newCollection = false;
 
+                if ((checkedElements.length && checkedElements.attr('id') === 'defaultFilter') || (!chosen.length && !showList)) {
+                    self.filter = 'empty';
+                };
 
+                this.filter['letter'] = selectedLetter;
                 this.changeLocationHash(1, itemsNumber, this.filter);
-                this.collection.showMore({count: itemsNumber, page: 1, filter: this.filter});
+                this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter });
                 this.getTotalLength(null, itemsNumber, this.filter);
 
-                $(".saveFilterButton").show();
-                $(".clearFilterButton").show();
-                $(".removeFilterButton").show();
+                if (checkedElements.attr('id') === 'defaultFilter'){
+                    $(".saveFilterButton").hide();
+                    $(".clearFilterButton").hide();
+                    $(".removeFilterButton").show();
+                } else {
+                    $(".saveFilterButton").show();
+                    $(".clearFilterButton").show();
+                    $(".removeFilterButton").show();
+                }
             },
 
             saveFilter: function () {
-                var currentUser = new userCollection();
+                var currentUser = new usersModel(App.currentUser);
                 var subMenu = $('#submenu-holder').find('li.selected').text();
                 var key;
                 var filterObj = {};
+                var mid = 39;
 
                 key = subMenu.trim();
+
                 filterObj['filter'] = {};
                 filterObj['filter'] = this.filter;
                 filterObj['key'] = key;
 
                 currentUser.changed = filterObj;
-                currentUser.save(currentUser.changed, {
-                    data: filterObj,
-                    patch: true
-                });
-                App.currentUser.savedFilters = {};
+
+                currentUser.save(
+                    filterObj,
+                    {
+                        headers: {
+                            mid: mid
+                        },
+                        wait: true,
+                        patch:true,
+                        validate: false,
+                        success: function (model) {
+                            console.log('Filter was saved to db');
+                        },
+                        error: function (model,xhr) {
+                            console.error(xhr);
+                        },
+                        editMode: false
+                    }
+                );
+
                 App.currentUser.savedFilters['Employees'] = filterObj.filter;
 
                 this.$el.find('.filterValues').empty();
@@ -452,10 +474,11 @@ define([
             },
 
             removeFilter: function () {
-                var currentUser = new userCollection();
+                var currentUser = new usersModel(App.currentUser);
                 var subMenu = $('#submenu-holder').find('li.selected').text();
                 var key;
                 var filterObj = {};
+                var mid = 39;
 
                 this.clearFilter();
 
@@ -463,10 +486,25 @@ define([
                 filterObj['key'] = key;
 
                 currentUser.changed = filterObj;
-                currentUser.save(currentUser.changed, {
-                    data: filterObj,
-                    patch: true
-                });
+
+                currentUser.save(
+                    filterObj,
+                    {
+                        headers: {
+                            mid: mid
+                        },
+                        wait: true,
+                        patch:true,
+                        validate: false,
+                        success: function (model) {
+                            console.log('Filter was remover from db');
+                        },
+                        error: function (model,xhr) {
+                            console.error(xhr);
+                        },
+                        editMode: false
+                    }
+                );
 
                 delete App.currentUser.savedFilters['Employees'];
 

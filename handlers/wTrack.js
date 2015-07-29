@@ -16,6 +16,7 @@ var wTrack = function (models) {
     var async = require('async');
     var mapObject = require('../helpers/bodyMaper');
 
+
     this.create = function (req, res, next) {
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
         var body = mapObject(req.body);
@@ -288,7 +289,7 @@ var wTrack = function (models) {
             or = queryObject['$or'];
 
             caseFilter(filter, or);
-        }
+       }
 
         var count = query.count ? query.count : 50;
         var page = query.page;
@@ -543,9 +544,6 @@ var wTrack = function (models) {
                     projectsname: {
                         $addToSet: '$project.projectName'
                     },
-                    workflows: {
-                        $addToSet: '$project.workflow'
-                    },
                     customers: {
                         $addToSet: '$project.customer'
                     },
@@ -573,6 +571,35 @@ var wTrack = function (models) {
             if (err) {
                 return next(err);
             }
+
+            _.map(result[0], function(value, key) {
+                switch (key) {
+                    case 'projectmanagers':
+                        result[0][key] = _.sortBy(value, 'name');
+                        break;
+                    case  'employees':
+                        result[0][key] = _.sortBy(value, 'name');
+                        break;
+                    case 'customers':
+                        result[0][key] = _.sortBy(value, 'name');
+                        break;
+                    case 'projectsname':
+                        result[0][key] = _.sortBy(value, function (num) { return num});
+                        break;
+                    case 'months':
+                        result[0][key] = _.sortBy(value, function (num) { return num});
+                        break;
+                    case 'years':
+                        result[0][key] = _.sortBy(value, function (num) { return num});
+                        break;
+                    case 'weeks':
+                        result[0][key] = _.sortBy(value, function (num) { return num});
+                        break;
+                    case 'departments':
+                        result[0][key] = _.sortBy(value, 'departmentName');
+                        break;
+                }
+            });
 
             res.status(200).send(result);
         });

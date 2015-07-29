@@ -8,10 +8,10 @@ module.exports = (function () {
 
     var payments = {
         _id: false,
-        total: {type: Number, default: 0},
-        balance: {type: Number, default: 0},
-        unTaxed: {type: Number, default: 0},
-        taxes: {type: Number, default: 0}
+        total: {type: Number, default: 0, set: setPrice},
+        balance: {type: Number, default: 0, set: setPrice},
+        unTaxed: {type: Number, default: 0, set: setPrice},
+        taxes: {type: Number, default: 0, set: setPrice}
     };
 
     var products = {
@@ -71,6 +71,10 @@ module.exports = (function () {
 
     if(!mongoose.Schemas) {
         mongoose.Schemas = {};
+    }
+
+    function setPrice(num) {
+        return num * 100;
     }
 
     mongoose.Schemas['Invoice'] = invoiceSchema;

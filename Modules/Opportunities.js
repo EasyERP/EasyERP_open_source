@@ -10,13 +10,26 @@ var Opportunities = function (models, event) {
 
     function getTotalCount (req, response) {
         var res = {};
-        var data = {};
-        for (var i in req.query) {
-            data[i] = req.query[i];
+        var data = req.query;
+        var filterObj = {};
+        var or;
+        var filter = data.filter ? data.filter : {};
+
+        if (filter === 'empty') {
+            filter = {};
         }
 
         var contentType = req.params.contentType;
         var optionsObject = {};
+
+        if (filter && typeof filter === 'object' && filter != 'empty') {
+            optionsObject['$and'] = [];
+            filterObj['$or'] = [];
+            or = filterObj['$or'];
+
+            caseFilterOpp(filter, or);
+        }
+
         if (data.filter && data.filter.workflow) {
             data.filter.workflow = data.filter.workflow.map(function (item) {
                 return item === "null" ? null : item;
@@ -28,18 +41,22 @@ var Opportunities = function (models, event) {
         }
         switch (contentType) {
             case ('Opportunities'):
-            {
-                optionsObject['isOpportunitie'] = true;
-            }
+                optionsObject['$and'].push({'isOpportunitie': true});
+
+                if (data && data.filter) {
+                    optionsObject['$and'].push(filterObj);
+                }
                 break;
             case ('Leads'):
-            {
-                optionsObject['isOpportunitie'] = false;
-                if (data.filter && data.filter.isConverted) {
+                optionsObject['$and'].push({'isOpportunitie': false});
+
+                if (data.filter.isConverted) {
                     optionsObject['isConverted'] = true;
                     optionsObject['isOpportunitie'] = true;
                 }
-            }
+                if (data && data.filter && data.filter != 'empty') {
+                    optionsObject['$and'].push(filterObj);
+                }
                 break;
         }
 
@@ -472,9 +489,49 @@ var Opportunities = function (models, event) {
         });
     };
 
+    function ConvertType(array, type) {
+        if (type === 'integer') {
+            for (var i = array.length - 1; i >= 0; i--) {
+                array[i] = parseInt(array[i]);
+            }
+        }
+    };
+
+    function caseFilterOpp(filter, content) {
+        var condition;
+
+        for (var key in filter) {
+            condition = filter[key];
+
+            switch (key) {
+                case 'Name':
+                    content.push({'name': {$in: condition}});
+                    break;
+                case 'workflow':
+                    content.push({ 'workflow': {$in: condition.objectID()}});
+                    break;
+                case 'Creation date':
+                    content.push({
+                        'creationDate': {
+                            $gte: new Date(condition[0].start),
+                            $lte: new Date(condition[0].end)
+                        }
+                    });
+                    break;
+                case 'Next action':
+                    if (!condition.length) condition = [''];
+                    content.push({'nextAction.desc': {$in: condition}});
+                    break;
+                case 'Expected revenue':
+                    ConvertType(condition, 'integer');
+                    content.push({'expectedRevenue.value': {$in: condition}});
+                    break;
+            }
+        }
+    };
+
     function getFilter (req, response) {
         var res = {};
-        var condition;
         var or;
         var filterObj;
         var optionsObject = {};
@@ -484,15 +541,6 @@ var Opportunities = function (models, event) {
         for (var i in req.query) {
             data[i] = req.query[i];
         }
-
-        function ConvertType(array, type) {
-            if (type === 'integer') {
-                for (var i = array.length - 1; i >= 0; i--) {
-                    array[i] = parseInt(array[i]);
-                }
-            }
-
-        };
 
         switch (data.contentType) {
             case ('Opportunities'):
@@ -506,27 +554,27 @@ var Opportunities = function (models, event) {
                     filterObj['$or'] = [];
                     or = filterObj['$or'];
 
-                    for (var key in data.filter) {
-                        condition = data.filter[key];
+                    caseFilterOpp(data.filter, or);
 
-                        switch (key) {
-                            case 'Name':
-                                or.push({ 'name': {$in: condition}});
-                                break;
-                            case 'Creation date':
-                                or.push({ 'creationDate': {$gte: new Date(condition[0].start), $lte: new Date(condition[0].end)}});
-                                break;
-                            case 'Next action':
-                                if (!condition.length) condition = [''];
-                                or.push({ 'nextAction.desc': {$in: condition}});
-                                break;
-                            case 'Expected revenue':
-                                ConvertType(condition, 'integer');
-                                or.push({ 'expectedRevenue.value': {$in: condition}});
-                                break;
-
-                        }
-                    }
+                    /*for (var key in data.filter) {
+                     condition = data.filter[key];
+                     switch (key) {
+                     case 'Name':
+                     or.push({ 'name': {$in: condition}});
+                     break;
+                     case 'Creation date':
+                     or.push({ 'creationDate': {$gte: new Date(condition[0].start), $lte: new Date(condition[0].end)}});
+                     break;
+                     case 'Next action':
+                     if (!condition.length) condition = [''];
+                     or.push({ 'nextAction.desc': {$in: condition}});
+                     break;
+                     case 'Expected revenue':
+                     ConvertType(condition, 'integer');
+                     or.push({ 'expectedRevenue.value': {$in: condition}});
+                     break;
+                     }
+                     }*/
                     if (!or.length) {
                         delete filterObj['$or']
                     }
@@ -537,7 +585,7 @@ var Opportunities = function (models, event) {
             {
                 optionsObject['$and'] = [];
                 optionsObject['$and'].push({'isOpportunitie': false});
-                if (data.filter && data.filter.isConverted) {
+                if (data.filter.isConverted) {
                     optionsObject['isConverted'] = true;
                     optionsObject['isOpportunitie'] = true;
                 }
@@ -547,27 +595,27 @@ var Opportunities = function (models, event) {
                     filterObj['$or'] = [];
                     or = filterObj['$or'];
 
-                    for (var key in data.filter) {
-                        condition = data.filter[key];
+                    caseFilterOpp(data.filter, or);
 
-                        switch (key) {
-                            case 'name':
-                                or.push({ 'name': {$in: condition}});
-                                break;
-                            case 'creationDate':
-                                or.push({ 'creationDate': {$gte: new Date(condition[0].start), $lte: new Date(condition[0].end)}});
-                                break;
-                            case 'nextAction':
-                                if (!condition.length) condition = [''];
-                                or.push({ 'nextAction.desc': {$in: condition}});
-                                break;
-                            case 'expectedRevenue':
-                                ConvertType(condition, 'integer');
-                                or.push({ 'expectedRevenue.value': {$in: condition}});
-                                break;
-
-                        }
-                    }
+                    /*for (var key in data.filter) {
+                     condition = data.filter[key];
+                     switch (key) {
+                     case 'name':
+                     or.push({ 'name': {$in: condition}});
+                     break;
+                     case 'creationDate':
+                     or.push({ 'creationDate': {$gte: new Date(condition[0].start), $lte: new Date(condition[0].end)}});
+                     break;
+                     case 'nextAction':
+                     if (!condition.length) condition = [''];
+                     or.push({ 'nextAction.desc': {$in: condition}});
+                     break;
+                     case 'expectedRevenue':
+                     ConvertType(condition, 'integer');
+                     or.push({ 'expectedRevenue.value': {$in: condition}});
+                     break;
+                     }
+                     }*/
                     if (!or.length) {
                         delete filterObj['$or']
                     }
@@ -663,7 +711,7 @@ var Opportunities = function (models, event) {
                                     {
                                         if (data && data.filter && data.filter.workflow) {
                                             query.where('workflow').in(data.filter.workflow);
-                                        } else if (data.filter === 'empty'){
+                                        } else if (data && data.filter === 'empty') {
                                             query;
                                         } else if (data && (!data.newCollection || data.newCollection === 'false')) {
                                             query.where('workflow').in([]);
@@ -1172,17 +1220,17 @@ var Opportunities = function (models, event) {
                             condition = data.filter[key];
 
                             switch (key) {
-                                case 'name':
+                                case 'Name':
                                     or.push({ 'name': {$in: condition}});
                                     break;
-                                case 'creationDate':
+                                case 'CreationDate':
                                     or.push({ 'creationDate': {$gte: new Date(condition[0].start), $lte: new Date(condition[0].end)}});
                                     break;
-                                case 'nextAction':
+                                case 'NextAction':
                                     if (!condition.length) condition = [''];
                                     or.push({ 'nextAction.desc': {$in: condition}});
                                     break;
-                                case 'expectedRevenue':
+                                case 'ExpectedRevenue':
                                     ConvertType(condition, 'integer');
                                     or.push({ 'expectedRevenue.value': {$in: condition}});
                                     break;

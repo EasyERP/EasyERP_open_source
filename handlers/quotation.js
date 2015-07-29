@@ -161,12 +161,17 @@ var Quotation = function (models) {
         };
 
         contentSearcher = function (quotationsIds, waterfallCallback) {
-            var queryObject = {_id: {$in: quotationsIds}};
+            var data = req.query;
             var query;
+            var queryObject = {};
+            queryObject['$and'] = [];
 
-            queryObject.isOrder = isOrder;
+            queryObject.$and.push({_id: {$in: quotationsIds}});
+            queryObject.$and.push({isOrder: isOrder});
+
+            caseFilter(queryObject, data);
+
             query = Quotation.count(queryObject);
-
             query.count(waterfallCallback);
         };
 
@@ -179,6 +184,25 @@ var Quotation = function (models) {
 
             res.status(200).send({count: result});
         });
+    };
+
+    function caseFilter (queryObject, data) {
+        var filter = data.filter;
+
+        if (data && filter) {
+            if (filter.workflow) {
+                queryObject.$and.push({workflow: {$in: filter.workflow.objectID()}});
+            }
+            if (filter.Reference) {
+                queryObject.$and.push({supplierReference: {$in: filter.Reference}});
+            }
+            if (filter.supplier) {
+                queryObject.$and.push({supplier: {$in: filter.supplier}});
+            }
+            if (filter['Order date']) {
+                queryObject.$and.push({orderDate: {$gte: new Date(filter['Order date'][0].start), $lte: new Date(filter['Order date'][0].end)}});
+            }
+        }
     };
 
     this.getByViewType = function (req, res, next) {
@@ -274,27 +298,15 @@ var Quotation = function (models) {
         };
 
         contentSearcher = function (quotationsIds, waterfallCallback) {
+            var data = req.query;
             var query;
-            var queryObject = {$and: []};
-            
+            var queryObject = {};
+            queryObject['$and'] = [];
+
             queryObject.$and.push({_id: {$in: quotationsIds}});
             queryObject.$and.push({isOrder: isOrder});
 
-            if (req.query && req.query.filter) {
-                if (req.query.filter.workflow) {
-                    queryObject.$and.push({workflow: {$in: req.query.filter.workflow}});
-                }
-                if (req.query.filter.Reference) {
-                    queryObject.$and.push({supplierReference: {$in: req.query.filter.Reference}});
-                }
-                if (req.query.filter.supplier) {
-                    queryObject.$and.push({supplier: {$in: req.query.filter.supplier}});
-                }
-                if (req.query.filter['Order date']) {
-                    queryObject.$and.push({orderDate: {$gte: new Date(req.query.filter['Order date'][0].start), $lte: new Date(req.query.filter['Order date'][0].end)}});
-                }
-            }
-
+            caseFilter(queryObject, data);
 
             query = Quotation
                 .find(queryObject)
@@ -467,12 +479,9 @@ var Quotation = function (models) {
                         {
                             $group:{
                                 _id: null,
-                                'Reference': {
+                                /*'Reference': {
                                     $addToSet: '$supplierReference'
-                                },
-                                'supplier': {
-                                    $addToSet: '$supplier'
-                                },
+                                },*/
                                 'Order date': {
                                     $addToSet: '$orderDate'
                                 }

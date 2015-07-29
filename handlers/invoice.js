@@ -17,6 +17,7 @@ var Invoice = function (models) {
     var async = require('async');
     var workflowHandler = new WorkflowHandler(models);
     var moment = require('../public/js/libs/moment/moment');
+    var _ = require('../node_modules/underscore');
 
     this.create = function (req, res, next) {
         var isWtrack = req.session.lastDb === 'weTrack';
@@ -577,8 +578,25 @@ var Invoice = function (models) {
         };
 
         contentSearcher = function (invoicesIds, waterfallCallback) {
-            optionsObject._id = {$in: invoicesIds};
-            var query = Invoice.find(optionsObject);
+            var query;
+
+            optionsObject.$and = [];
+            optionsObject.$and.push({_id: {$in: invoicesIds}});
+
+            if (req.query && req.query.filter) {
+                if (req.query.filter.workflow) {
+                    optionsObject.$and.push({workflow: {$in: req.query.filter.workflow}});
+                }
+                if (req.query.filter['Due date']) {
+                    optionsObject.$and.push({dueDate: {$gte: new Date(req.query.filter['Due date'][0].start), $lte: new Date(req.query.filter['Due date'][0].end)}});
+
+                }
+                if (req.query.filter.salesPerson) {
+                    optionsObject.$and.push({salesPerson: {$in: req.query.filter.salesPerson}})
+                }
+            }
+
+            query = Invoice.find(optionsObject);
             query.exec(waterfallCallback);
         };
 
@@ -678,6 +696,15 @@ var Invoice = function (models) {
             if (err) {
                return next(err)
             }
+
+            _.map(result[0], function(value, key) {
+                switch (key) {
+                    case 'salesPerson':
+                        result[0][key] = _.sortBy(value, 'name');
+                        break;;
+
+                }
+            });
             res.status(200).send(result)
         })
     };

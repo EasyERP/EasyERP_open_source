@@ -5,6 +5,7 @@ var mongoose = require('mongoose');
 var Project = function (models) {
     var access = require("../Modules/additions/access.js")(models);
     var ProjectSchema = mongoose.Schemas['Project'];
+    var _ = require('../node_modules/underscore');
 
     this.getForWtrack = function (req, res, next) {
         var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
@@ -46,6 +47,15 @@ var Project = function (models) {
             if (err) {
                 return next(err);
             }
+
+            _.map(result[0], function(value, key) {
+                switch (key) {
+                    case 'project':
+                        result[0][key] = _.sortBy(value, function (num) { return num});
+                        break;
+
+                }
+            });
 
             res.status(200).send(result);
         });

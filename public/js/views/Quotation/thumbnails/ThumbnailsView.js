@@ -42,7 +42,7 @@ function (common, editView, createView, AphabeticTemplate, ThumbnailsItemTemplat
             "click .company": "gotoCompanyForm"
         },
 //modified for filter Vasya
-        getTotalLength: function(currentNumber,filter, newCollection) {
+        getTotalLength: function(currentNumber, filter, newCollection) {
             dataService.getData('/totalCollectionLength/Persons', { currentNumber: currentNumber, filter:this.filter, newCollection: this.newCollection }, function (response, context) {
                 var showMore = context.$el.find('#showMoreDiv');
                 if (response.showMore) {
@@ -168,7 +168,6 @@ function (common, editView, createView, AphabeticTemplate, ThumbnailsItemTemplat
             holder.prepend(alphaBet);
             holder.append(created);
             created.before(showMore);
-            this.asyncLoadImgs(newModels);
             this.asyncLoadImgs(newModels);
         },
 

@@ -5,14 +5,13 @@ define([
     'text!templates/vacationDashboard/index.html',
     'views/vacationDashboard/rowView',
     'collections/Dashboard/vacationDashboard',
-    'collections/Dashboard/employeesForDashboard',
     'dataService',
     'constants',
     'async',
     'custom',
     'moment',
     'constants'
-], function (mainTemplate, rowView, vacationDashboard, employeesForDashboard, dataService, CONSTANTS, async, custom, moment, CONSTANTS) {
+], function (mainTemplate, rowView, vacationDashboard, dataService, CONSTANTS, async, custom, moment, CONSTANTS) {
     var View = Backbone.View.extend({
         el: '#content-holder',
 
@@ -27,12 +26,29 @@ define([
             "click .group": "openDepartment"
         },
 
-        initialize: function () {
+        initialize: function (options) {
             var dashCollection;
             var startWeek;
             var self = this;
             var year;
             var week;
+
+            this.startTime = options.startTime;
+
+            year = moment().isoWeekYear();
+            week = moment().isoWeek();
+
+            this.dateByWeek = year * 100 + week;
+            this.week = week;
+            this.year = year;
+            startWeek = self.week - 6;
+
+            if (startWeek >= 0) {
+                this.startWeek = startWeek;
+            } else {
+                this.startWeek = startWeek + 53;
+                this.year -= 1;
+            }
 
             dashCollection = this.dashCollection = custom.retriveFromCash('dashboardVacation');
 
@@ -42,7 +58,7 @@ define([
 
                 custom.cashToApp('dashboardVacation', dashCollection);
             } else {
-                dashCollection.trigger('reset');
+                this.render();
             }
 
             year = moment().isoWeekYear();
@@ -155,10 +171,6 @@ define([
                     _hiredDate = moment(hiredArr[i]).format('YYYY-MM-DD');
                     _firedDate = moment(firedArr[i]).format('YYYY-MM-DD');
 
-                    /*if (_hiredDate < date && date < moment(_firedDate)) {
-                     return true;
-                     }*/
-                    console.log(date.isBetween(_hiredDate, _firedDate));
                     if (date.isBetween(_hiredDate, _firedDate) || date > _lastHiredDate) {
                         return true;
                     }
@@ -239,7 +251,9 @@ define([
 
         render: function () {
             $('title').text(this.contentType);
+            this.dashCollection.unbind();
 
+            var currentEl = this.$el;
             var self = this;
             var weeksArr = custom.retriveFromCash('weeksArr') || [];
             var week;
@@ -268,7 +282,7 @@ define([
                 custom.cashToApp('weeksArr', weeksArr);
             }
 
-            self.$el.html(self.template({
+            currentEl.html(self.template({
                 weeks: weeksArr,
                 dashboardData: dashboardData,
                 leadComparator: self.leadComparator,
@@ -278,6 +292,7 @@ define([
                 self: self
             }));
 
+            currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
             return this;
         }

@@ -4,7 +4,7 @@
 define([
     "text!templates/Payment/list/ListHeaderInvoice.html",
     "text!templates/Payment/list/ListTemplateInvoice.html",
-    'collections/Payment/payments',
+    'collections/Payment/payments'
 ], function (listHeaderTemplate, listTemplate, paymentCollection) {
     var PaymentItemsTemplate = Backbone.View.extend({
         el: '#payments-container',

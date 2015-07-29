@@ -934,6 +934,13 @@ define([
             var dataByDep = _.groupBy(self.model.get('byDepData'),'_id');
             var keys = Object.keys(dataByDep);
             var keysLength = keys.length - 1;
+            var height = 150;
+            var width = $('.chartContainer').width() - 140;
+            var chart;
+            var x;
+            var y;
+            var yAxis;
+            var line;
 
             for (var i = keysLength; i >= 0; i--) {
                 dataByDep[keys[i]] = _.groupBy(dataByDep[keys[i]][0].root,'week');
@@ -985,28 +992,30 @@ define([
                     week: weeksArr[j].week
                 });
             }
-            var height = 144;
-            var widthChartConteiner = $('.chartContainer').width();
-            var width = widthChartConteiner - 150;
-            $('#chart').empty();
-            var chart = d3.select("#chart")
-                .attr("width", width)
-                .attr("height", height)
-                .append("g")
-                .attr("transform", "translate(45,0)");
-            var x = d3.scale.ordinal().rangeRoundBands([0, width], 0.3);
 
-            var y = d3.scale.linear().range([height, 0]);
+            $('#chart').empty();
+            chart = d3.select("#chart")
+                .attr("width", width)
+                .attr("height", height + 12)
+                .append("g")
+                .attr("transform", "translate(60,0)");
+
+            x = d3.scale.ordinal().rangeRoundBands([0, width], 0.2);
             x.domain(data.map(function (d) {
                 return d.week;
             }));
+
+            y = d3.scale.linear().range([height, 0]);
             y.domain([0, maxdata + 0.1 * maxdata]);
-            var line = d3.svg.line().x(function (d) {
+
+            line = d3.svg.line().x(function (d) {
                 return x(d.week) + x.rangeBand() / 2;
             }).y(function (d) {
                 return y(d.Revenue);
             });
-            var yAxis = d3.svg.axis().scale(y).orient("left").tickFormat(d3.format("d")).ticks(4).tickFormat(d3.format("m"));
+
+            yAxis = d3.svg.axis().scale(y).orient("left").tickFormat(d3.format("d")).ticks(4).tickFormat(d3.format("m"));
+
             chart.append("g").attr("class", "y axis").call(yAxis);
             chart.select(".y.axis").selectAll(".tick").selectAll("line").attr("x1", 1300);
             chart.select(".y.axis").selectAll(".tick").selectAll("text").text(function (d) {
@@ -1016,7 +1025,7 @@ define([
             chart.append("path")
                 .datum(data)
                 .attr("class", "line2")
-                .attr("transform", "translate(-45,0)")
+                .attr("transform", "translate(-60,0)")
                 .attr("d", line);
 
             chart.selectAll(".circle2")
@@ -1024,7 +1033,7 @@ define([
                 .enter()
                 .append("circle")
                 .attr("class", "circle2")
-                .attr("transform", "translate(-45,0)")
+                .attr("transform", "translate(-60,0)")
                 .attr("cx", function (d) {
                     return x(d.week) + x.rangeBand() / 2;
                 })
@@ -1039,14 +1048,14 @@ define([
             chart.append("path")
                 .datum(data2)
                 .attr("class", "line3")
-                .attr("transform", "translate(-45,0)")
+                .attr("transform", "translate(-60,0)")
                 .attr("d", line);
             chart.selectAll(".circle3")
                 .data(data2)
                 .enter()
                 .append("circle")
                 .attr("class", "circle3")
-                .attr("transform", "translate(-45,0)")
+                .attr("transform", "translate(-60,0)")
                 .attr("cx", function (d) {
                     return x(d.week) + x.rangeBand() / 2;
                 })
@@ -1061,14 +1070,14 @@ define([
             chart.append("path")
                 .datum(data3)
                 .attr("class", "line4")
-                .attr("transform", "translate(-45,0)")
+                .attr("transform", "translate(-60,0)")
                 .attr("d", line);
             chart.selectAll(".circle4")
                 .data(data3)
                 .enter()
                 .append("circle")
                 .attr("class", "circle4")
-                .attr("transform", "translate(-45,0)")
+                .attr("transform", "translate(-60,0)")
                 .attr("cx", function (d) {
                     return x(d.week) + x.rangeBand() / 2;
                 })
@@ -1084,14 +1093,14 @@ define([
             chart.append("path")
                 .datum(data4)
                 .attr("class", "line5")
-                .attr("transform", "translate(-45,0)")
+                .attr("transform", "translate(-60,0)")
                 .attr("d", line);
             chart.selectAll(".circle5")
                 .data(data4)
                 .enter()
                 .append("circle")
                 .attr("class", "circle5")
-                .attr("transform", "translate(-45,0)")
+                .attr("transform", "translate(-60,0)")
                 .attr("cx", function (d) {
                     return x(d.week) + x.rangeBand() / 2;
                 })

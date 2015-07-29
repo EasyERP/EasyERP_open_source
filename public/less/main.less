@@ -195,6 +195,10 @@ textarea {
   content: "$";
 }
 
+.red {
+  color: #ff0000;
+}
+
 .negativeMoney {
   color: #ff0000;
   &:before {
@@ -713,7 +717,7 @@ input::-ms-clear {
       line-height: 18px;
       .bold;
       font-size: @font-size;
-      text-align: left;
+      text-align: right;
       text-shadow: 0 1px 1px rgba(222, 222, 222, 0.5);
     }
   }
@@ -726,7 +730,7 @@ input::-ms-clear {
     }
 
     th {
-      padding: 3px 6px;
+      padding: 3px 8px;
       line-height: 18px;
       .bold;
       font-size: @font-size;
@@ -804,7 +808,7 @@ input::-ms-clear {
       td {
         .text-overflow;
         cursor: pointer;
-        padding: 4px 5px;
+        padding: 4px 8px;
         line-height: 17px;
         font-size: @font-size - 2;
         text-align: right;
@@ -820,12 +824,26 @@ input::-ms-clear {
           position: relative;
         }
 
+        &[data-content="workflow"] {
+          position: relative;
+          padding: 4px 15px;
+          overflow: visible;
+          
+          .newSelectList {
+            top: 5px;
+            right: 15px;
+          }
+        }
+
         progress {
           width: 100%;
         }
 
         a {
           color: #1E8FC6 !important;
+        }
+        a.done {
+          color: #00c60b !important;
         }
 
         progress {
@@ -874,6 +892,14 @@ input::-ms-clear {
 
   .datepicker.notVisible {
     display: none;
+  }
+
+
+}
+
+.ui-dialog {
+  .list2 thead th, .list2 tbody tr td, .list2 tfoot tr td {
+    text-align: left;
   }
 }
 
@@ -5685,6 +5711,21 @@ textarea#editInput {
       fill: #fda401;
     }
 
+    .y.axis .tick line {
+      stroke-width: 0;
+      stroke: transparent;
+    }
+
+    .y.axis .tick text {
+      font-size: 11px;
+      fill: #fff;
+    }
+
+    .domain {
+      fill: transparent;
+      stroke: transparent;
+    }
+
     &:after {
       clear: both;
       content: "";
@@ -5795,6 +5836,51 @@ textarea#editInput {
   }
 }
 
+.hrTop tr td{
+  vertical-align: top;
+  text-align: right;
+}
+.hrTop tr td.vcenter{
+  vertical-align: middle;
+}
+.hrTop tr.double td span{
+  padding: 5px 8px 5px 8px;
+  height: 40px;
+  line-height: 15px;
+  border-bottom: 1px solid #d2d2d2;
+  position: relative;
+  &.large{
+    line-height: 29px;
+  }
+  &.top, &.bottom{
+    padding: 0 3px!important;
+    height: 19px;
+    line-height: 19px;
+    border-bottom: none;
+    position: absolute;
+    left:0px;
+    width: 30px;
+
+    text-align: right;
+    border-right: 1px solid #7f7f80;
+  }
+  &.top{
+    top:0px;
+    border-bottom: 1px solid #7f7f80;
+
+  }
+  &.bottom{
+    top:20px;
+  }
+}
+.hrTop tr.double td span:last-child {
+  padding: 5px 8px 5px 8px;
+  border-bottom: none;
+}
+.hrTop tr.double td:first-child span {
+  border-bottom: none;
+  background-color: inherit;
+}
 .search-field {
   box-sizing: border-box;
   display: block;
@@ -5961,15 +6047,13 @@ textarea#editInput {
   margin-bottom: 5px;
   padding: 0 5px;
 }
-
-.drop-down-filter li:nth-child(2n) {
-  border-bottom: 1px solid #c0c0c0;
-  padding-bottom: 5px;
+.drop-down-filter li:first-child {
+  padding-bottom:5px;
+  padding-top:5px
 }
 
-.drop-down-filter li:last-child {
-  border-bottom: none;
-  padding-bottom: 0;
+.drop-down-filter li label{
+  margin-left:5px
 }
 
 .filter-icons {
@@ -6142,7 +6226,7 @@ textarea#editInput {
   float: right;
   position: relative;
   margin-top: -26px;
-  margin-right: 580px;
+  margin-right: 500px;
 
   button {
     display: inline-block;
@@ -6150,4 +6234,13 @@ textarea#editInput {
     background: #eeeeee;
     padding: 6px 6px 5px 6px;
   }
+}
+.activated {
+  max-height: 250px;
+  width: 100%;
+  overflow-y: scroll;
+}
+.filter {
+  margin-right: 20px;
+
 }

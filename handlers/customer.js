@@ -9,8 +9,9 @@
 var mongoose = require('mongoose');
 var Customers = function (models) {
     var access = require("../Modules/additions/access.js")(models);
-
     var CustomerSchema = mongoose.Schemas['Customer'];
+
+    var _ = require('../node_modules/underscore');
 
     this.getSuppliersForDD = function (req, res, next) {
         var query = models.get(req.session.lastDb, 'Customers', CustomerSchema).find();
@@ -46,6 +47,17 @@ var Customers = function (models) {
             if (err) {
                 return next(err);
             }
+            _.map(result[0], function(value, key) {
+                switch (key) {
+                    case 'name':
+                        result[0][key] = _.sortBy(value, function (num) { return num});
+                        break;
+                    case  'country':
+                        result[0][key] = _.sortBy(value, function (num) { return num});
+                        break;
+
+                }
+            });
 
             res.status(200).send(result);
         });

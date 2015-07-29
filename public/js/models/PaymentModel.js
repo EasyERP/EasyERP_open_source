@@ -4,7 +4,7 @@
 /**
  * Created by Roman on 04.05.2015.
  */
-define(['Validation', 'common'], function (Validation, common) {
+define(['Validation', 'common'], function (Validation, common, helpers) {
     var PaymentModel = Backbone.Model.extend({
         idAttribute: "_id",
         initialize: function () {
@@ -19,7 +19,8 @@ define(['Validation', 'common'], function (Validation, common) {
             period: null,
             paymentRef: null,
             differenceAmount: 0,
-            invoice: null
+            invoice: null,
+            invoiced: 0
         },
         urlRoot: function () {
             return "/payment";
@@ -27,12 +28,19 @@ define(['Validation', 'common'], function (Validation, common) {
         parse: function (model) {
             var differenceAmount = model.differenceAmount || 0;
             var paidAmount = model.paidAmount || 0;
+            var invoiced;
 
-            differenceAmount = (differenceAmount/ 100).toFixed(2);
-            paidAmount = (paidAmount/100).toFixed(2);
+            differenceAmount = differenceAmount/ 100;
+            paidAmount = paidAmount/100;
+            invoiced = paidAmount + differenceAmount;
+
+            differenceAmount = differenceAmount.toFixed(2);
+            paidAmount = paidAmount.toFixed(2);
+            invoiced = invoiced.toFixed(2);
 
             model.differenceAmount = differenceAmount;
             model.paidAmount = paidAmount;
+            model.invoiced = invoiced;
 
             if (model.date) {
                 model.date = common.utcDateToLocaleDate(model.date);

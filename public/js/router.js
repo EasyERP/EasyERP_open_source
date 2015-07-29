@@ -29,6 +29,7 @@ define([
             "easyErp/Workflows": "goToWorkflows",
             "easyErp/Dashboard": "goToDashboard",
             "easyErp/DashBoardVacation": "dashBoardVacation",
+            "easyErp/HrDashboard": "hrDashboard",
             "easyErp/projectDashboard": "goToProjectDashboard",
             "easyErp/:contentType": "getList",
 
@@ -114,6 +115,44 @@ define([
                     self.main("DashBoardVacation");
                 } else {
                     self.mainView.updateMenu("DashBoardVacation");
+                }
+
+                require([contentViewUrl], function (contentView) {
+                    var contentview;
+
+                    custom.setCurrentVT('list');
+
+                    contentview = new contentView({startTime: startTime});
+
+                    self.changeView(contentview, true);
+                });
+            }
+        },
+
+        hrDashboard: function(){
+            var self = this;
+
+            if(!this.isAuth) {
+                this.checkLogin(function (success) {
+                    if (success) {
+                        self.isAuth = true;
+                        renderDash();
+                    } else {
+                        self.redirectTo();
+                    }
+                });
+            } else {
+                renderDash();
+            }
+
+            function renderDash () {
+                var startTime = new Date();
+                var contentViewUrl = "views/hrDashboard/index";
+
+                if (self.mainView === null) {
+                    self.main("HrDashboard");
+                } else {
+                    self.mainView.updateMenu("HrDashboard");
                 }
 
                 require([contentViewUrl], function (contentView) {

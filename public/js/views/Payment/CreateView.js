@@ -18,7 +18,7 @@ define([
 
             initialize: function (options) {
                 if (options) {
-                    this.forSale = options.forSale;
+                    this.forSale = !!options.forSale;
                     this.invoiceModel = options.model;
                     this.totalAmount = this.invoiceModel.get('paymentInfo').balance || 0;
                 }

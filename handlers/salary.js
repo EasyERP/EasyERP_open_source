@@ -39,7 +39,7 @@ var Salary = function (models) {
                         return next(err);
                     }
                     res.status(200).send({success: salaryCash});
-                })
+                });
             });
         } else {
             Salary.remove({_id: id}, function (err, salary) {
@@ -282,7 +282,11 @@ var Salary = function (models) {
                      });*/
                     self.totalCollectionLength(req, function (err, ressult) {
                         if (ressult) {
-                            var query = Salary.find(queryObject).limit(count).skip(skip).sort(sort);
+                            var query = Salary.find(queryObject)
+                                .limit(count)
+                                .skip(skip)
+                                .lean()
+                                .sort(sort);
                             query.exec(function (err, result) {
                                 if (err) {
                                     return next(err);
@@ -295,7 +299,11 @@ var Salary = function (models) {
                                         self.recalculateCashSalary(req, callback);
                                     },
                                     second: function (callback) {
-                                        var query = Salary.find(queryObject).limit(count).skip(skip).sort(sort);
+                                        var query = Salary.find(queryObject)
+                                            .limit(count)
+                                            .skip(skip)
+                                            .lean()
+                                            .sort(sort);
                                         query.exec(function (err, result) {
                                             if (err) {
                                                 callback(err);

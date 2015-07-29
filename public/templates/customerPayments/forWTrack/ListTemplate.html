@@ -9,8 +9,8 @@
         <%=payment.date%>
     </td>
     <td><%=(payment.paymentMethod) ? payment.paymentMethod.name : ''%></td>
-    <td class="total"><%=(Number(payment.paidAmount) + Number(payment.differenceAmount)).toString() + '.00'%></td>
-    <td class="totalPaidAmount"><%=payment.paidAmount%></td>
-    <td><a href="javascript:;"><%=payment.workflow%></a></td>
+    <td class="total money <%= payment.paidAmount != payment.invoiced ? 'red' :''%>"><%=currencySplitter(payment.invoiced)%></td>
+    <td class="totalPaidAmount money <%= payment.paidAmount != payment.invoiced ? 'red' :''%>"><%=currencySplitter(payment.paidAmount)%></td>
+    <td data-content="workflow"><a href="javascript:;" class="currentSelected <%= payment.workflow === 'Paid' ? 'done' : 'new'%>"><%=payment.workflow%></a></td>
 </tr>
 <%})%>
