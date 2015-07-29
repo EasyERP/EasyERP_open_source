@@ -7,10 +7,11 @@
         'views/Applications/CreateView',
         'collections/Applications/ApplicationsCollection',
         'models/ApplicationsModel',
+        'models/UsersModel',
         'views/Filter/FilterView',
         'dataService'
     ],
-    function (WorkflowsTemplate, kanbanSettingsTemplate, WorkflowsCollection, KanbanItemView, EditView, CreateView, ApplicationsCollection, CurrentModel, filterView, dataService) {
+    function (WorkflowsTemplate, kanbanSettingsTemplate, WorkflowsCollection, KanbanItemView, EditView, CreateView, ApplicationsCollection, CurrentModel, usersModel, filterView, dataService) {
         var collection = new ApplicationsCollection();
         var ApplicationsKanbanView = Backbone.View.extend({
             el: '#content-holder',
@@ -19,6 +20,9 @@
                 "click .item": "selectItem",
                 "click .column.fold": "foldUnfoldKanban",
                 "click .fold-unfold": "foldUnfoldKanban",
+                "click .saveFilterButton": "saveFilter",
+                "click .removeFilterButton": "removeFilter",
+                "click .clearFilterButton": "clearFilter"
             },
 
             columnTotalLength: null,
@@ -27,8 +31,16 @@
                 this.workflowsCollection = options.workflowCollection;
                 this.foldWorkflows = [];
                 this.render();
+
                 this.asyncFetc(options.workflowCollection);
                 this.getCollectionLengthByWorkflows(this);
+
+                if (App.currentUser.savedFilters && App.currentUser.savedFilters['Applications']){
+                    this.filter = App.currentUser.savedFilters['Applications'];
+                    this.showFiltredPage(this.workflowsCollection.toJSON(), this.filter);
+                }
+
+
             },
 
             updateFoldWorkflow: function () {
@@ -243,37 +255,58 @@
                 };
             },
 
-            showFiltredPage: function (workflows) {
+            showFiltredPage: function (workflows, savedFilter) {
                 var list_id;
                 var foldList;
                 var showList;
                 var el;
                 var self = this;
                 var chosen = this.$el.find('.chosen');
+                var checkedElements = $('.drop-down-filter > input:checkbox:checked');
 
                 this.filter = {};
 
                 if (chosen.length) {
                     chosen.each(function (index, elem) {
                         if (self.filter[elem.children[1].value]) {
-                            self.filter[elem.children[1].value].push(elem.children[2].value);
+                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+                                self.filter[elem.children[1].value].push(element.value);
+                            })
                         } else {
                             self.filter[elem.children[1].value] = [];
-                            self.filter[elem.children[1].value].push(elem.children[2].value);
+                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+                                self.filter[elem.children[1].value].push(element.value);
+                            })
                         }
                     });
+
                     _.each(workflows, function (wfModel) {
                         $('.column').children('.item').remove();
                         dataService.getData('/Applications/kanban', { workflowId: wfModel._id, filter: this.filter }, this.asyncRender, this);
                     }, this);
 
-
                     return false
                 }
 
                 list_id = _.pluck(workflows, '_id');
-                showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
+                if (savedFilter){
+                    showList = savedFilter['workflow'];
+                } else {
+                    showList = checkedElements.map(function() {return this.value;}).get();
+                }
+
                 foldList = _.difference(list_id, showList);
+
+                if ((checkedElements.length && checkedElements.attr('id') === 'defaultFilter') || !chosen.length) {
+                    self.filter = {};
+
+                    _.each(workflows, function (wfModel) {
+                        $('.column').children('.item').remove();
+                        dataService.getData('/Applications/kanban', { workflowId: wfModel._id, filter: this.filter }, this.asyncRender, this);
+                    }, this);
+                    showList = _.pluck(workflows, '_id');
+                    foldList = [];
+                };
 
                 foldList.forEach(function (id) {
                     var w;
@@ -289,11 +322,208 @@
                     k=-k;
                     el.find(".columnName .text").css({"left":k+"px","top":Math.abs(w/2+47)+"px" });
                 });
+
                 showList.forEach(function (id) {
                     el = $("td.column[data-id='"+id+"']");
                     el.removeClass("fold");
                 });
+
+                $(".saveFilterButton").show();
+                $(".clearFilterButton").show();
+                $(".removeFilterButton").show();
+                if (savedFilter){
+                    $(".saveFilterButton").hide();
+                    $(".clearFilterButton").show();
+                    $(".removeFilterButton").show();
+                }
+
             },
+
+            //showFiltredPage: function (workflows) {
+            //    var list_id;
+            //    var foldList;
+            //    var showList;
+            //    var el;
+            //    var self = this;
+            //    var chosen = this.$el.find('.chosen');
+            //    var checkedElements = $('.drop-down-filter input:checkbox:checked');
+            //
+            //    this.filter = {};
+            //
+            //    if (chosen.length) {
+            //        chosen.each(function (index, elem) {
+            //            if (self.filter[elem.children[1].value]) {
+            //                $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+            //                    self.filter[elem.children[1].value].push(element.value);
+            //                })
+            //            } else {
+            //                self.filter[elem.children[1].value] = [];
+            //                $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+            //                    self.filter[elem.children[1].value].push(element.value);
+            //                })
+            //            }
+            //        });
+            //
+            //        _.each(workflows, function (wfModel) {
+            //            $('.column').children('.item').remove();
+            //            dataService.getData('/Applications/kanban', { workflowId: wfModel._id, filter: this.filter }, this.asyncRender, this);
+            //        }, this);
+            //
+            //        return false
+            //    }
+            //
+            //    list_id = _.pluck(workflows, '_id');
+            //    showList = checkedElements.map(function() {return this.value;}).get();
+            //    foldList = _.difference(list_id, showList);
+            //
+            //    if ((checkedElements.length && checkedElements.attr('id') === 'defaultFilter') || (!chosen.length && !showList)) {
+            //        self.filter = {};
+            //
+            //        _.each(workflows, function (wfModel) {
+            //            $('.column').children('.item').remove();
+            //            dataService.getData('/Applications/kanban', { workflowId: wfModel._id, filter: this.filter }, this.asyncRender, this);
+            //        }, this);
+            //        showList = _.pluck(workflows, '_id');
+            //        foldList = [];
+            //    };
+            //
+            //    foldList.forEach(function (id) {
+            //        var w;
+            //        var k;
+            //
+            //        el = $("td.column[data-id='"+id+"']");
+            //        el.addClass("fold");
+            //        w = el.find(".columnName .text").width();
+            //        k = w/2-20;
+            //        if (k<=0){
+            //            k= 20-w/2;
+            //        }
+            //        k=-k;
+            //        el.find(".columnName .text").css({"left":k+"px","top":Math.abs(w/2+47)+"px" });
+            //    });
+            //    showList.forEach(function (id) {
+            //        el = $("td.column[data-id='"+id+"']");
+            //        el.removeClass("fold");
+            //    });
+            //
+            //},
+
+            saveFilter: function () {
+                var currentUser = new usersModel(App.currentUser);
+                var subMenu = $('#submenu-holder').find('li.selected').text();
+                var key;
+                var filterObj = {};
+                var mid = 39;
+                var showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
+
+                key = subMenu.trim();
+
+                filterObj['filter'] = {};
+                filterObj['filter']['workflow'] = showList;
+                filterObj['key'] = key;
+
+                currentUser.changed = filterObj;
+
+                currentUser.save(
+                    filterObj,
+                    {
+                        headers: {
+                            mid: mid
+                        },
+                        wait: true,
+                        patch:true,
+                        validate: false,
+                        success: function (model) {
+                            console.log('Filter was saved to db');
+                        },
+                        error: function (model,xhr) {
+                            console.error(xhr);
+                        },
+                        editMode: false
+                    }
+                );
+
+                App.currentUser.savedFilters['Applications'] = filterObj.filter;
+
+                this.$el.find('.filterValues').empty();
+                this.$el.find('.filter-icons').removeClass('active');
+                this.$el.find('.chooseOption').children().remove();
+
+                $.each($('.drop-down-filter input'), function (index, value) {
+                    value.checked = false
+                });
+
+                $(".saveFilterButton").hide();
+                $(".removeFilterButton").show();
+                $(".clearFilterButton").show();
+
+            },
+
+            removeFilter: function () {
+                var currentUser = new usersModel(App.currentUser);
+                var subMenu = $('#submenu-holder').find('li.selected').text();
+                var key;
+                var filterObj = {};
+                var mid = 39;
+
+                this.clearFilter();
+
+                key = subMenu.trim();
+                filterObj['key'] = key;
+
+                currentUser.changed = filterObj;
+
+                currentUser.save(
+                    filterObj,
+                    {
+                        headers: {
+                            mid: mid
+                        },
+                        wait: true,
+                        patch:true,
+                        validate: false,
+                        success: function (model) {
+                            console.log('Filter was remover from db');
+                        },
+                        error: function (model,xhr) {
+                            console.error(xhr);
+                        },
+                        editMode: false
+                    }
+                );
+
+                delete App.currentUser.savedFilters['Applications'];
+
+                $(".saveFilterButton").hide();
+                $(".removeFilterButton").hide();
+                $(".clearFilterButton").hide();
+            },
+
+            clearFilter: function () {
+                var showList;
+                var workflows = this.workflowsCollection.toJSON();
+                var el;
+
+                this.$el.find('.filterValues').empty();
+                this.$el.find('.filter-icons').removeClass('active');
+                this.$el.find('.chooseOption').children().remove();
+
+                $.each($('.drop-down-filter input'), function (index, value) {
+                    value.checked = false
+                });
+
+                showList = _.pluck(workflows, '_id');
+
+                showList.forEach(function (id) {
+                    el = $("td.column[data-id='"+id+"']");
+                    el.removeClass("fold");
+                });
+
+                $(".clearFilterButton").hide();
+                $(".removeFilterButton").show();
+                $(".saveFilterButton").hide();
+            },
+
 
             render: function () {
                 var self = this;
@@ -302,9 +532,12 @@
                 var showList;
                 var el;
 
+
+
                 this.$el.html(_.template(WorkflowsTemplate, { workflowsCollection: workflows }));
                 $(".column").last().addClass("lastColumn");
                 var itemCount;
+
                 _.each(workflows, function (workflow, i) {
                     itemCount = 0;
                     var column = this.$(".column").eq(i);
@@ -359,19 +592,34 @@
                     self.hideItemsNumber(e);
                 });
 
+                this.$el.prepend('<div class="filtersActive"><button id="saveFilterButton" class="saveFilterButton">Save Filter</button>' +
+                    '<button id="clearFilterButton" class="clearFilterButton">Clear Filter</button>' +
+                    '<button id="removeFilterButton" class="removeFilterButton">Remove Filter</button></div>'
+                );
+
+                $("#clearFilterButton").hide();
+                $("#saveFilterButton").hide();
+                $("#removeFilterButton").hide();
+
+                if (App.currentUser.savedFilters && App.currentUser.savedFilters['Applications']) {
+                    $("#clearFilterButton").show();
+                    $("#removeFilterButton").show();
+                }
+
                 dataService.getData('/employee/getFilterValues', null, function (values) {
                     FilterView = new filterView({ collection: workflows, customCollection: values});
                     // Filter custom event listen ------begin
                     FilterView.bind('filter', function () {
-                        self.showFiltredPage(workflows)
+                        self.showFiltredPage(workflows, this.filter)
                     });
                     FilterView.on('defaultFilter', function () {
-                        showList = _.pluck(workflows, '_id');
+                        self.showFiltredPage(workflows)
+                        /*showList = _.pluck(workflows, '_id');
 
                         showList.forEach(function (id) {
                             el = $("td.column[data-id='"+id+"']");
                             el.removeClass("fold");
-                        });
+                        });*/
                     });
                     // Filter custom event listen ------end
                 });

@@ -15,10 +15,14 @@ var Opportunities = function (models, event) {
         var or;
         var filter = data.filter ? data.filter : {};
 
+        if (filter === 'empty') {
+            filter = {};
+        }
+
         var contentType = req.params.contentType;
         var optionsObject = {};
 
-        if (filter && typeof filter === 'object') {
+        if (filter && typeof filter === 'object' && filter != 'empty') {
             optionsObject['$and'] = [];
             filterObj['$or'] = [];
             or = filterObj['$or'];
@@ -50,7 +54,7 @@ var Opportunities = function (models, event) {
                     optionsObject['isConverted'] = true;
                     optionsObject['isOpportunitie'] = true;
                 }
-                if (data && data.filter) {
+                if (data && data.filter && data.filter != 'empty') {
                     optionsObject['$and'].push(filterObj);
                 }
                 break;
@@ -553,25 +557,24 @@ var Opportunities = function (models, event) {
                     caseFilterOpp(data.filter, or);
 
                     /*for (var key in data.filter) {
-                        condition = data.filter[key];
-
-                        switch (key) {
-                            case 'Name':
-                                or.push({ 'name': {$in: condition}});
-                                break;
-                            case 'Creation date':
-                                or.push({ 'creationDate': {$gte: new Date(condition[0].start), $lte: new Date(condition[0].end)}});
-                                break;
-                            case 'Next action':
-                                if (!condition.length) condition = [''];
-                                or.push({ 'nextAction.desc': {$in: condition}});
-                                break;
-                            case 'Expected revenue':
-                                ConvertType(condition, 'integer');
-                                or.push({ 'expectedRevenue.value': {$in: condition}});
-                                break;
-                        }
-                    }*/
+                     condition = data.filter[key];
+                     switch (key) {
+                     case 'Name':
+                     or.push({ 'name': {$in: condition}});
+                     break;
+                     case 'Creation date':
+                     or.push({ 'creationDate': {$gte: new Date(condition[0].start), $lte: new Date(condition[0].end)}});
+                     break;
+                     case 'Next action':
+                     if (!condition.length) condition = [''];
+                     or.push({ 'nextAction.desc': {$in: condition}});
+                     break;
+                     case 'Expected revenue':
+                     ConvertType(condition, 'integer');
+                     or.push({ 'expectedRevenue.value': {$in: condition}});
+                     break;
+                     }
+                     }*/
                     if (!or.length) {
                         delete filterObj['$or']
                     }
@@ -595,26 +598,24 @@ var Opportunities = function (models, event) {
                     caseFilterOpp(data.filter, or);
 
                     /*for (var key in data.filter) {
-                        condition = data.filter[key];
-
-                        switch (key) {
-                            case 'name':
-                                or.push({ 'name': {$in: condition}});
-                                break;
-                            case 'creationDate':
-                                or.push({ 'creationDate': {$gte: new Date(condition[0].start), $lte: new Date(condition[0].end)}});
-                                break;
-                            case 'nextAction':
-                                if (!condition.length) condition = [''];
-                                or.push({ 'nextAction.desc': {$in: condition}});
-                                break;
-                            case 'expectedRevenue':
-                                ConvertType(condition, 'integer');
-                                or.push({ 'expectedRevenue.value': {$in: condition}});
-                                break;
-
-                        }
-                    }*/
+                     condition = data.filter[key];
+                     switch (key) {
+                     case 'name':
+                     or.push({ 'name': {$in: condition}});
+                     break;
+                     case 'creationDate':
+                     or.push({ 'creationDate': {$gte: new Date(condition[0].start), $lte: new Date(condition[0].end)}});
+                     break;
+                     case 'nextAction':
+                     if (!condition.length) condition = [''];
+                     or.push({ 'nextAction.desc': {$in: condition}});
+                     break;
+                     case 'expectedRevenue':
+                     ConvertType(condition, 'integer');
+                     or.push({ 'expectedRevenue.value': {$in: condition}});
+                     break;
+                     }
+                     }*/
                     if (!or.length) {
                         delete filterObj['$or']
                     }
@@ -710,6 +711,8 @@ var Opportunities = function (models, event) {
                                     {
                                         if (data && data.filter && data.filter.workflow) {
                                             query.where('workflow').in(data.filter.workflow);
+                                        } else if (data && data.filter === 'empty') {
+                                            query;
                                         } else if (data && (!data.newCollection || data.newCollection === 'false')) {
                                             query.where('workflow').in([]);
                                         }
@@ -1217,17 +1220,17 @@ var Opportunities = function (models, event) {
                             condition = data.filter[key];
 
                             switch (key) {
-                                case 'name':
+                                case 'Name':
                                     or.push({ 'name': {$in: condition}});
                                     break;
-                                case 'creationDate':
+                                case 'CreationDate':
                                     or.push({ 'creationDate': {$gte: new Date(condition[0].start), $lte: new Date(condition[0].end)}});
                                     break;
-                                case 'nextAction':
+                                case 'NextAction':
                                     if (!condition.length) condition = [''];
                                     or.push({ 'nextAction.desc': {$in: condition}});
                                     break;
-                                case 'expectedRevenue':
+                                case 'ExpectedRevenue':
                                     ConvertType(condition, 'integer');
                                     or.push({ 'expectedRevenue.value': {$in: condition}});
                                     break;

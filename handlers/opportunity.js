@@ -272,6 +272,21 @@ var Opportunity = function (models) {
                 return next(err);
             }
 
+            _.map(result[0], function(value, key) {
+                switch (key) {
+                    case 'Name':
+                        result[0][key] = _.sortBy(value, function (num) { return num});
+                        break;
+                    case  'Expected revenue':
+                        result[0][key] = _.sortBy(value, function (num) { return num});
+                        break;
+                    case  'Next action':
+                        result[0][key] = _.sortBy(value, function (num) { return num});
+                        break;
+
+                }
+            });
+
             res.status(200).send(result);
         });
     };

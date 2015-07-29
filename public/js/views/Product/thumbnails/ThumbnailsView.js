@@ -4,12 +4,13 @@
         'views/Product/CreateView',
         'dataService',
         'models/ProductModel',
+        'models/UsersModel',
         'views/Filter/FilterView',
         'common',
         'text!templates/Alpabet/AphabeticTemplate.html'
     ],
 
-    function (thumbnailsItemTemplate, editView, createView, dataService, currentModel, filterView, common, AphabeticTemplate) {
+    function (thumbnailsItemTemplate, editView, createView, dataService, currentModel, usersModel, filterView, common, AphabeticTemplate) {
         var ProductThumbnalView = Backbone.View.extend({
             el: '#content-holder',
             countPerPage: 0,
@@ -33,7 +34,9 @@
                 this.newCollection = options.newCollection;
                 this.deleteCounter = 0;
                 this.page = options.collection.page;
+
                 this.render();
+
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
                 this.asyncLoadImgs(this.collection);
             },
@@ -42,7 +45,10 @@
                 "click #showMore": "showMore",
                 /*"click .thumbnailwithavatar": "gotoForm",*/
                 "click .thumbnailwithavatar": "gotoEditForm",
-                "click .letter:not(.empty)": "alpabeticalRender"
+                "click .letter:not(.empty)": "alpabeticalRender",
+                "click .saveFilterButton": "saveFilter",
+                "click .removeFilterButton": "removeFilter",
+                "click .clearFilterButton": "clearFilter"
             },
 
             //modified for filter Vasya
@@ -83,8 +89,34 @@
 
                 this.$el.find('.thumbnailwithavatar').remove();
                 this.startTime = new Date();
-                this.newCollection = false;
+                this.newCollection = true;
                 this.filter =  {};
+                this.filter['canBePurchased'] = true;
+
+                if (chosen) {
+                    chosen.each(function (index, elem) {
+                        if (elem.children[2].attributes.class.nodeValue === 'chooseDate') {
+                            if (self.filter[elem.children[1].value]) {
+                                self.filter[elem.children[1].value].push({start: $('#start').val(), end: $('#end').val()});
+
+                            } else {
+                                self.filter[elem.children[1].value] = [];
+                                self.filter[elem.children[1].value].push({start: $('#start').val(), end: $('#end').val()});
+                            }
+                        } else {
+                            self.filter[elem.children[1].value] = [];
+                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+                                self.filter[elem.children[1].value].push($(element).next().text());
+                            })
+                        }
+
+                    });
+                }
+
+                if (checkedElements.length && checkedElements.attr('id') === 'defaultFilter' || !chosen.length) {
+                    self.filter = {};
+                    this.filter['canBePurchased'] = true;
+                }
 
                 if (e && e.target) {
                     target = $(e.target);
@@ -98,36 +130,126 @@
                     this.filter['letter'] = selectedLetter;
                 }
 
-                if (chosen) {
-                    chosen.each(function (index, elem) {
-                        if (elem.children[2].attributes.class.nodeValue === 'chooseDate') {
-                            if (self.filter[elem.children[1].value]) {
-                                self.filter[elem.children[1].value].push({start: $('#start').val(), end: $('#end').val()});
-
-                            } else {
-                                self.filter[elem.children[1].value] = [];
-                                self.filter[elem.children[1].value].push({start: $('#start').val(), end: $('#end').val()});
-                            }
-                        } else {
-                            if (self.filter[elem.children[1].value]) {
-                                self.filter[elem.children[1].value].push(elem.children[2].value);
-                            } else {
-                                self.filter[elem.children[1].value] = [];
-                                self.filter[elem.children[1].value].push(elem.children[2].value);
-                            }
-                        }
-
-                    });
-                }
-
-                if (checkedElements.length && checkedElements.attr('id') === 'defaultFilter') {
-                    self.filter = {};
-                }
-                this.filter['canBePurchased'] = true;
                 this.defaultItemsNumber = 0;
                 this.changeLocationHash(null, this.defaultItemsNumber, this.filter);
-                this.collection.showMoreAlphabet({count: this.defaultItemsNumber, filter: this.filter});
+                this.collection.showMoreAlphabet({count: this.defaultItemsNumber, page: 1, filter: this.filter});
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
+
+                if (checkedElements.attr('id') === 'defaultFilter'){
+                    $(".saveFilterButton").hide();
+                    $(".clearFilterButton").hide();
+                    $(".removeFilterButton").show();
+                } else {
+                    $(".saveFilterButton").show();
+                    $(".clearFilterButton").show();
+                    $(".removeFilterButton").show();
+                }
+            },
+
+            saveFilter: function () {
+                var currentUser = new usersModel(App.currentUser);
+                var subMenu = $('#submenu-holder').find('li.selected').text();
+                var key;
+                var filterObj = {};
+                var mid = 39;
+
+                key = subMenu.trim();
+
+                filterObj['filter'] = {};
+                filterObj['filter'] = this.filter;
+                filterObj['key'] = key;
+
+                currentUser.changed = filterObj;
+
+                currentUser.save(
+                    filterObj,
+                    {
+                        headers: {
+                            mid: mid
+                        },
+                        wait: true,
+                        patch:true,
+                        validate: false,
+                        success: function (model) {
+                            console.log('Filter was saved to db');
+                        },
+                        error: function (model,xhr) {
+                            console.error(xhr);
+                        },
+                        editMode: false
+                    }
+                );
+
+                App.currentUser.savedFilters['Product'] = filterObj.filter;
+
+                this.$el.find('.filterValues').empty();
+                this.$el.find('.filter-icons').removeClass('active');
+                this.$el.find('.chooseOption').children().remove();
+
+                $.each($('.drop-down-filter input'), function (index, value) {
+                    value.checked = false
+                });
+
+                $(".saveFilterButton").hide();
+                $(".removeFilterButton").show();
+                $(".clearFilterButton").show();
+
+            },
+
+            removeFilter: function () {
+                var currentUser = new usersModel(App.currentUser);
+                var subMenu = $('#submenu-holder').find('li.selected').text();
+                var key;
+                var filterObj = {};
+                var mid = 39;
+
+                this.clearFilter();
+
+                key = subMenu.trim();
+                filterObj['key'] = key;
+
+                currentUser.changed = filterObj;
+
+                currentUser.save(
+                    filterObj,
+                    {
+                        headers: {
+                            mid: mid
+                        },
+                        wait: true,
+                        patch:true,
+                        validate: false,
+                        success: function (model) {
+                            console.log('Filter was remover from db');
+                        },
+                        error: function (model,xhr) {
+                            console.error(xhr);
+                        },
+                        editMode: false
+                    }
+                );
+
+                delete App.currentUser.savedFilters['Product'];
+
+                $(".saveFilterButton").hide();
+                $(".removeFilterButton").hide();
+                $(".clearFilterButton").hide();
+            },
+
+            clearFilter: function () {
+                this.$el.find('.filterValues').empty();
+                this.$el.find('.filter-icons').removeClass('active');
+                this.$el.find('.chooseOption').children().remove();
+
+                $.each($('.drop-down-filter input'), function (index, value) {
+                    value.checked = false
+                });
+
+                this.alpabeticalRender(null);
+
+                $(".clearFilterButton").hide();
+                $(".removeFilterButton").show();
+                $(".saveFilterButton").hide();
             },
 
             render: function () {
@@ -146,7 +268,7 @@
                         selectedLetter: (self.selectedLetter == "" ? "All" : self.selectedLetter),
                         allAlphabeticArray: self.allAlphabeticArray
                     }));
-                    var currentLetter = (self.filter) ? self.filter.letter : null
+                    var currentLetter = (self.filter) ? self.filter.letter : null;
                     if (currentLetter) {
                         $('#startLetter a').each(function () {
                             var target = $(this);
@@ -164,17 +286,32 @@
                 }
                 currentEl.append(createdInTag);
 
+                currentEl.prepend('<div class="filtersActive"><button id="saveFilterButton" class="saveFilterButton">Save Filter</button>' +
+                    '<button id="clearFilterButton" class="clearFilterButton">Clear Filter</button>' +
+                    '<button id="removeFilterButton" class="removeFilterButton">Remove Filter</button></div>'
+                );
+
+                $("#clearFilterButton").hide();
+                $("#saveFilterButton").hide();
+                $("#removeFilterButton").hide();
+
+                if (App.currentUser.savedFilters && App.currentUser.savedFilters['Product']) {
+                    $("#clearFilterButton").show();
+                    $("#removeFilterButton").show();
+                }
+
                 $(document).on("click", function (e) {
                     self.hideItemsNumber(e);
                 });
                 dataService.getData('/product/getFilterValues', null, function (values) {
                     FilterView = new filterView({ collection: [], customCollection: values});
                     // Filter custom event listen ------begin
+                    FilterView.unbind();
                     FilterView.bind('filter', function () {
                         self.alpabeticalRender()
                     });
                     FilterView.bind('defaultFilter', function () {
-                        self.alpabeticalRender()
+                        self.alpabeticalRender();
                     });
                     // Filter custom event listen ------end
                 });

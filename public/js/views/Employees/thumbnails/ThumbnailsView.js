@@ -5,11 +5,12 @@
         'views/Filter/FilterView',
         'dataService',
         'models/EmployeesModel',
+        'models/UsersModel',
         'common',
         'text!templates/Alpabet/AphabeticTemplate.html'
     ],
 
-    function (thumbnailsItemTemplate, editView, createView, filterView, dataService, currentModel, common, AphabeticTemplate) {
+    function (thumbnailsItemTemplate, editView, createView, filterView, dataService, currentModel, usersModel, common, AphabeticTemplate) {
         var EmployeesThumbnalView = Backbone.View.extend({
             el: '#content-holder',
             countPerPage: 0,
@@ -34,7 +35,9 @@
                 this.newCollection = options.newCollection;
                 this.deleteCounter = 0;
                 this.page = options.collection.page;
+
                 this.render();
+
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
                 this.asyncLoadImgs(this.collection);
             },
@@ -42,7 +45,10 @@
             events: {
                 "click #showMore": "showMore",
                 "click .thumbnailwithavatar": "gotoEditForm",
-                "click .letter:not(.empty)": "alpabeticalRender"
+                "click .letter:not(.empty)": "alpabeticalRender",
+                "click .saveFilterButton": "saveFilter",
+                "click .removeFilterButton": "removeFilter",
+                "click .clearFilterButton": "clearFilter"
             },
 
             //modified for filter Vasya
@@ -128,6 +134,20 @@
                     }
                 });
 
+                currentEl.prepend('<div class="filtersActive"><button id="saveFilterButton" class="saveFilterButton">Save Filter</button>' +
+                    '<button id="clearFilterButton" class="clearFilterButton">Clear Filter</button>' +
+                    '<button id="removeFilterButton" class="removeFilterButton">Remove Filter</button></div>'
+                );
+
+                $("#clearFilterButton").hide();
+                $("#saveFilterButton").hide();
+                $("#removeFilterButton").hide();
+
+                if (App.currentUser.savedFilters && App.currentUser.savedFilters['Employees']){
+                    $("#clearFilterButton").show();
+                    $("#removeFilterButton").show();
+                }
+
                 if (this.collection.length > 0) {
                     currentEl.append(this.template({collection: this.collection.toJSON()}));
                 } else {
@@ -138,18 +158,16 @@
                     departments.data.forEach(function (department) {
                         department.name = department.departmentName;
                     });
+
+
                     dataService.getData('/employee/getFilterValues', null, function (values) {
                         FilterView = new filterView({collection: departments.data, customCollection: values});
                         // Filter custom event listen ------begin
                         FilterView.bind('filter', function () {
-                            showList = $('.drop-down-filter input:checkbox:checked').map(function () {
-                                return this.value;
-                            }).get();
-                            self.showFilteredPage(null, showList)
+                            self.showFilteredPage()
                         });
                         FilterView.bind('defaultFilter', function () {
-                            showList = _.pluck(departments.data, '_id');
-                            self.showFilteredPage(null, showList)
+                            self.showFilteredPage()
                         });
                         // Filter custom event listen ------end
                     });
@@ -164,18 +182,34 @@
                 var itemsNumber = $("#itemsNumber").text();
                 var self = this;
                 var chosen = this.$el.find('.chosen');
+                var checkedElements = $('.drop-down-filter > input:checkbox:checked');
+                var showList;
+
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
                 this.filter = {};
-                if (showList.length) this.filter['department'] = showList;
+
+                if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
+                    showList = $('.drop-down-filter > input:checkbox:checked').map(function() {
+                        return this.value
+                    }).get();
+
+                    this.filter['department'] = showList;
+                };
+
+
                 if (chosen) {
                     chosen.each(function (index, elem) {
                         if (self.filter[elem.children[1].value]) {
-                            self.filter[elem.children[1].value].push(elem.children[2].value);
+                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+                                self.filter[elem.children[1].value].push(element.value);
+                            })
                         } else {
                             self.filter[elem.children[1].value] = [];
-                            self.filter[elem.children[1].value].push(elem.children[2].value);
+                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+                                self.filter[elem.children[1].value].push(element.value);
+                            })
                         }
                     });
                 }
@@ -183,6 +217,10 @@
                 this.startTime = new Date();
                 this.newCollection = true;
                 this.$el.find('.thumbnailwithavatar').remove();
+
+                if ((checkedElements.length && checkedElements.attr('id') === 'defaultFilter') || (!chosen.length && !showList)) {
+                    self.filter = 'empty';
+                };
 
                 this.changeLocationHash(1, itemsNumber, this.filter);
                 this.collection.showMore({
@@ -192,6 +230,132 @@
                     newCollection: this.newCollection
                 });
                 this.getTotalLength(itemsNumber, this.filter, this.newCollection);
+
+                if (checkedElements.attr('id') === 'defaultFilter'){
+                    $(".saveFilterButton").hide();
+                    $(".clearFilterButton").hide();
+                    $(".removeFilterButton").show();
+                } else {
+                    $(".saveFilterButton").show();
+                    $(".clearFilterButton").show();
+                    $(".removeFilterButton").show();
+                }
+            },
+
+            saveFilter: function () {
+                var currentUser = new usersModel(App.currentUser);
+                var subMenu = $('#submenu-holder').find('li.selected').text();
+                var key;
+                var filterObj = {};
+                var mid = 39;
+
+                key = subMenu.trim();
+
+                filterObj['filter'] = {};
+                filterObj['filter'] = this.filter;
+                filterObj['key'] = key;
+
+                currentUser.changed = filterObj;
+                currentUser.save(
+                    filterObj,
+                    {
+                        headers: {
+                            mid: mid
+                        },
+                        wait: true,
+                        patch:true,
+                        validate: false,
+                        success: function (model) {
+                            console.log('Filter was saved to db');
+                        },
+                        error: function (model,xhr) {
+                            console.error(xhr);
+                        },
+                        editMode: false
+                    }
+                );
+
+                App.currentUser.savedFilters['Employees'] = filterObj.filter;
+
+                this.$el.find('.filterValues').empty();
+                this.$el.find('.filter-icons').removeClass('active');
+                this.$el.find('.chooseOption').children().remove();
+
+                $.each($('.drop-down-filter input'), function (index, value) {
+                    value.checked = false
+                });
+
+                $(".saveFilterButton").hide();
+                $(".removeFilterButton").show();
+                $(".clearFilterButton").show();
+
+            },
+
+            removeFilter: function () {
+                var currentUser = new usersModel(App.currentUser);
+                var subMenu = $('#submenu-holder').find('li.selected').text();
+                var key;
+                var filterObj = {};
+                var mid = 39;
+
+                this.clearFilter();
+
+                key = subMenu.trim();
+                filterObj['key'] = key;
+
+                currentUser.changed = filterObj;
+
+                currentUser.save(
+                    filterObj,
+                    {
+                        headers: {
+                            mid: mid
+                        },
+                        wait: true,
+                        patch:true,
+                        validate: false,
+                        success: function (model) {
+                            console.log('Filter was remover from db');
+                        },
+                        error: function (model,xhr) {
+                            console.error(xhr);
+                        },
+                        editMode: false
+                    }
+                );
+
+                delete App.currentUser.savedFilters['Employees'];
+
+                $(".saveFilterButton").hide();
+                $(".removeFilterButton").hide();
+                $(".clearFilterButton").hide();
+            },
+
+            clearFilter: function () {
+                this.filter = {};
+                this.filter['letter'] = '';
+
+                this.startTime = new Date();
+                this.newCollection = false;
+                this.$el.find('.thumbnailwithavatar').remove();
+
+                this.defaultItemsNumber = 0;
+                this.changeLocationHash(null, this.defaultItemsNumber, this.filter);
+                this.collection.showMoreAlphabet({count: this.defaultItemsNumber, filter: this.filter});
+                this.getTotalLength(this.defaultItemsNumber, this.filter);
+
+
+                this.$el.find('.filterValues').empty();
+                this.$el.find('.filter-icons').removeClass('active');
+                this.$el.find('.chooseOption').children().remove();
+
+                $.each($('.drop-down-filter input'), function (index, value) {
+                    value.checked = false
+                });
+
+                $(".clearFilterButton").hide();
+                $(".removeFilterButton").show();
+                $(".saveFilterButton").hide();
             },
 
             hideItemsNumber: function (e) {
@@ -266,7 +430,7 @@
                 this.changeLocationHash(null, (this.defaultItemsNumber < 50) ? 50 : this.defaultItemsNumber, this.filter);
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
                 holder.append(this.template({collection: newModels.toJSON()}));
-                holder.prepend(alphaBet);
+               // holder.prepend(alphaBet);
                 holder.append(created);
                 created.before(showMore);
                 this.asyncLoadImgs(newModels);

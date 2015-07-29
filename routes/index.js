@@ -539,6 +539,15 @@ module.exports = function (app, mainDb) {
         requestHandler.updateCurrentUser(req, res, data);
     });
 
+    app.patch('/currentUser', function (req, res) {
+        var data = {};
+        if (req.body){
+            data.savedFilters = req.body;
+        }
+
+        requestHandler.updateCurrentUser(req, res, data);
+    });
+
     app.patch('/currentUser/:_id', function (req, res) {
         var data = {};
         if (req.body.oldpass && req.body.pass) {

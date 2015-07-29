@@ -10,6 +10,7 @@ var Products = function (models) {
     var objectId = mongoose.Types.ObjectId;
     var async = require('async');
     var _ = require('lodash');
+    var underscore = require('../node_modules/underscore');
 
     var fs = require("fs");
 
@@ -168,7 +169,7 @@ var Products = function (models) {
         }
     };
 
-    function remove(req, res, next, _id) {
+    function remove(req, res, next) {
         models.get(req.session.lastDb, "Products", ProductSchema).remove({_id: _id}, function (err, product) {
             if (err) {
                 return next(err);
@@ -650,10 +651,10 @@ var Products = function (models) {
             .aggregate([
                 {
                     $group: {
-                        _id: null,
+                        _id: null,/*
                         'Can be sold': {
                             $addToSet: '$canBeSold'
-                        },
+                        },*/
                         'Creation date': {
                             $addToSet: '$creationDate'
                         },
@@ -666,6 +667,17 @@ var Products = function (models) {
                 if (err) {
                     return next(err)
                 }
+               // prod[0]['Name'] = underscore.sortBy(value, function (num) { return num});
+
+                _.map(prod[0], function(value, key) {
+                    switch (key) {
+                        case 'Name':
+                            prod[0][key] = _.sortBy(value, function (num) { return num});
+                            break;
+
+                    }
+                });
+
                 res.send(prod)
             })
     }

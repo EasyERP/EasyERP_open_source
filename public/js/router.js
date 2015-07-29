@@ -37,7 +37,6 @@ define([
         },
 
 
-
         initialize: function () {
             this.on('all', function () {
                 $(".ui-dialog").remove();
@@ -81,6 +80,15 @@ define([
                     $(".list2 tbody").find("[data-id='false']").remove();
                 }
             });
+            if (!App || !App.currentUser) {
+                dataService.getData('/currentUser', null, function (response) {
+                    if (response && !response.error) {
+                        App.currentUser = response;
+                    } else {
+                        console.log('can\'t fetch currentUser');
+                    }
+                });
+            }
         },
 
         dashBoardVacation: function(){
@@ -481,6 +489,7 @@ define([
                 }
                 var newCollection = true;
                 var self = context;
+                var savedFilter;
                 var startTime = new Date();
                 var contentViewUrl = "views/" + contentType + "/list/ListView";
                 var topBarViewUrl = "views/" + contentType + "/TopBarView";
@@ -493,6 +502,9 @@ define([
                 } else if (filter) {
                     filter = JSON.parse(filter);
                 }
+
+                savedFilter = custom.savedFilters(contentType, filter);
+
                 if (context.mainView === null) {
                     context.main(contentType);
                 } else {
@@ -503,7 +515,7 @@ define([
                         viewType: 'list',
                         page: navigatePage,
                         count: count,
-                        filter: filter,
+                        filter: savedFilter,
                         parrentContentId: parrentContentId,
                         contentType: contentType,
                         newCollection: newCollection
@@ -518,7 +530,7 @@ define([
                         var contentview = new contentView({
                             collection: collection,
                             startTime: startTime,
-                            filter: filter,
+                            filter: savedFilter,
                             newCollection: newCollection
                         });
 
@@ -687,12 +699,16 @@ define([
                 var contentViewUrl;
                 var topBarViewUrl = "views/" + contentType + "/TopBarView";
                 var collectionUrl;
+                var savedFilter;
                 var count = (countPerPage) ? parseInt(countPerPage) || 50 : 50;
                 if (filter === 'empty') {
                     newCollection = false;
                 } else if (filter) {
                     filter = JSON.parse(filter);
                 }
+
+                savedFilter = custom.savedFilters(contentType, filter);
+
                 if (context.mainView === null) {
                     context.main(contentType);
                 } else {
@@ -707,7 +723,7 @@ define([
                         viewType: 'thumbnails',
                         //page: 1,
                         count: count,
-                        filter: filter,
+                        filter: savedFilter,
                         contentType: contentType,
                         newCollection: newCollection
                     })
@@ -721,7 +737,7 @@ define([
                         var contentview = new contentView({
                             collection: collection,
                             startTime: startTime,
-                            filter: filter,
+                            filter: savedFilter,
                             newCollection: newCollection
                         });
                         var topbarView = new topBarView({actionType: "Content", collection: collection});
@@ -749,8 +765,8 @@ define([
         },
 
         getList: function (contentType) {
-
             this.contentType = contentType;
+
             contentType = this.testContent(contentType);
             var viewType = custom.getCurrentVT({contentType: contentType});
             Backbone.history.navigate('#easyErp/' + contentType + '/' + viewType, {trigger: true, replace: true});

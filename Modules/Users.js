@@ -280,9 +280,28 @@ var Users = function (mainDb, models) {
                         }
                     }
                 });
-            } else updateUser();
+            } else {
+                updateUser();
+            }
+
             function updateUser() {
-                models.get(req.session.lastDb, 'Users', userSchema).findByIdAndUpdate(_id, { $set: data }, function (err, result) {
+                var setObject = {};
+                var query = {};
+                var key = data.key;
+                var filter = data.filter;
+                var _key = 'savedFilters.' + key;
+
+                if (data.changePass) {
+                    query = { $set: data};
+                } else if (data.filter && data.key) {
+                    setObject[_key] = filter;
+                    query = { $set: setObject};
+                } else if (data.key && !data.filter) {
+                    setObject[_key] = '';
+                    query = { $unset: setObject};
+                }
+
+                models.get(req.session.lastDb, 'Users', userSchema).findByIdAndUpdate(_id, query, function (err, result) {
                     if (err) {
                         logWriter.log("User.js update profile.update" + err);
                         res.send(500, { error: 'User.update DB error' });

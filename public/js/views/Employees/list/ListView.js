@@ -1,15 +1,16 @@
 define([
-    'text!templates/Employees/list/ListHeader.html',
-    'views/Employees/CreateView',
-    'views/Employees/list/ListItemView',
-    'text!templates/Alpabet/AphabeticTemplate.html',
-    'collections/Employees/filterCollection',
+        'text!templates/Employees/list/ListHeader.html',
+        'views/Employees/CreateView',
+        'views/Employees/list/ListItemView',
         'views/Filter/FilterView',
-    'common',
-    'dataService'
-],
+        'text!templates/Alpabet/AphabeticTemplate.html',
+        'collections/Employees/filterCollection',
+        'models/UsersModel',
+        'common',
+        'dataService'
+    ],
 
-    function (listTemplate, createView, listItemView, aphabeticTemplate, contentCollection, filterView, common, dataService) {
+    function (listTemplate, createView, listItemView, filterView, aphabeticTemplate, contentCollection, usersModel, common, dataService) {
         var EmployeesListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -32,7 +33,9 @@ define([
                 this.newCollection = options.newCollection;
                 this.deleteCounter = 0;
                 this.page = options.collection.page;
+
                 this.render();
+
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
                 this.contentCollection = contentCollection;
             },
@@ -51,14 +54,21 @@ define([
                 "click .letter:not(.empty)": "alpabeticalRender",
                 "click #firstShowPage": "firstPage",
                 "click #lastShowPage": "lastPage",
-                "click .oe_sortable": "goSort"
+                "click .oe_sortable": "goSort",
+                "click .saveFilterButton": "saveFilter",
+                "click .removeFilterButton": "removeFilter",
+                "click .clearFilterButton": "clearFilter"
             },
 
             renderContent: function () {
                 var currentEl = this.$el;
                 var tBody = currentEl.find('#listTable');
                 tBody.empty();
-                var itemView = new listItemView({ collection: this.collection, page: currentEl.find("#currentShowPage").val(), itemsNumber: currentEl.find("span#itemsNumber").text() });
+                var itemView = new listItemView({
+                    collection: this.collection,
+                    page: currentEl.find("#currentShowPage").val(),
+                    itemsNumber: currentEl.find("span#itemsNumber").text()
+                });
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
                 tBody.append(itemView.render());
@@ -84,7 +94,7 @@ define([
                 this.filter['letter'] = selectedLetter;
                 var itemsNumber = $("#itemsNumber").text();
                 this.changeLocationHash(1, itemsNumber, this.filter);
-                this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter });
+                this.collection.showMore({count: itemsNumber, page: 1, filter: this.filter});
                 this.getTotalLength(null, itemsNumber, this.filter);
             },
 
@@ -103,18 +113,18 @@ define([
                 }
                 switch (sortClass) {
                     case "sortDn":
-                        {
-                            target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
-                            target$.removeClass('sortDn').addClass('sortUp');
-                            sortConst = 1;
-                        }
+                    {
+                        target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
+                        target$.removeClass('sortDn').addClass('sortUp');
+                        sortConst = 1;
+                    }
                         break;
                     case "sortUp":
-                        {
-                            target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
-                            target$.removeClass('sortUp').addClass('sortDn');
-                            sortConst = -1;
-                        }
+                    {
+                        target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
+                        target$.removeClass('sortUp').addClass('sortDn');
+                        sortConst = -1;
+                    }
                         break;
                 }
                 sortObject[sortBy] = sortConst;
@@ -122,7 +132,7 @@ define([
                 this.changeLocationHash(1, this.defaultItemsNumber);
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
             },
-            
+
             fetchSortCollection: function (sortObject) {
                 this.sort = sortObject;
                 this.collection = new contentCollection({
@@ -146,7 +156,8 @@ define([
                 if (!el.closest('.search-view')) {
                     $('.search-content').removeClass('fa-caret-up');
                     this.$el.find(".filterOptions, .filterActions, .search-options, .drop-down-filter").hide();
-                };
+                }
+                ;
             },
 
             itemsNumber: function (e) {
@@ -176,11 +187,14 @@ define([
                 var self = this;
                 var currentEl = this.$el;
                 var FilterView;
-                var showList;
 
                 currentEl.html('');
                 currentEl.append(_.template(listTemplate));
-                currentEl.append(new listItemView({ collection: this.collection, page: this.page, itemsNumber: this.collection.namberToShow }).render());
+                currentEl.append(new listItemView({
+                    collection: this.collection,
+                    page: this.page,
+                    itemsNumber: this.collection.namberToShow
+                }).render());
 
                 $('#check_all').click(function () {
                     $(':checkbox').prop('checked', this.checked);
@@ -190,6 +204,19 @@ define([
                         $("#top-bar-deleteBtn").hide();
                 });
 
+                currentEl.prepend('<div class="filtersActive"><button id="saveFilterButton" class="saveFilterButton">Save Filter</button>' +
+                    '<button id="clearFilterButton" class="clearFilterButton">Clear Filter</button>' +
+                    '<button id="removeFilterButton" class="removeFilterButton">Remove Filter</button></div>'
+                );
+
+                $("#clearFilterButton").hide();
+                $("#saveFilterButton").hide();
+                $("#removeFilterButton").hide();
+
+                if (App.currentUser.savedFilters && App.currentUser.savedFilters['Employees']) {
+                    $("#clearFilterButton").show();
+                    $("#removeFilterButton").show();
+                }
 
                 $(document).on("click", function (e) {
                     self.hideItemsNumber(e);
@@ -198,7 +225,12 @@ define([
                 common.buildAphabeticArray(this.collection, function (arr) {
                     $("#startLetter").remove();
                     self.alphabeticArray = arr;
-                    currentEl.prepend(_.template(aphabeticTemplate, { alphabeticArray: self.alphabeticArray, selectedLetter: (self.selectedLetter == "" ? "All" : self.selectedLetter), allAlphabeticArray: self.allAlphabeticArray }));
+                    //currentEl.prepend(_.template(aphabeticTemplate, { alphabeticArray: self.alphabeticArray, selectedLetter: (self.selectedLetter == "" ? "All" : self.selectedLetter), allAlphabeticArray: self.allAlphabeticArray }));
+                    $('#searchContainer').after(_.template(aphabeticTemplate, {
+                        alphabeticArray: self.alphabeticArray,
+                        selectedLetter: (self.selectedLetter == "" ? "All" : self.selectedLetter),
+                        allAlphabeticArray: self.allAlphabeticArray
+                    }));
                     var currentLetter = (self.filter) ? self.filter.letter : null;
                     if (currentLetter) {
                         $('#startLetter a').each(function () {
@@ -209,20 +241,20 @@ define([
                         });
                     }
                 });
+
                 dataService.getData('/department/getForDD', null, function (departments) {
                     departments.data.forEach(function (department) {
                         department.name = department.departmentName;
                     });
+
                     dataService.getData('/employee/getFilterValues', null, function (values) {
-                        FilterView = new filterView({ collection: departments.data, customCollection: values});
+                        FilterView = new filterView({collection: departments.data, customCollection: values});
                         // Filter custom event listen ------begin
                         FilterView.bind('filter', function () {
-                            showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
-                            self.showFilteredPage(null, showList)
+                            self.showFilteredPage()
                         });
                         FilterView.bind('defaultFilter', function () {
-                            showList = _.pluck(departments.data, '_id');
-                            self.showFilteredPage(null, showList)
+                            self.showFilteredPage()
                         });
                         // Filter custom event listen ------end
                     });
@@ -328,50 +360,189 @@ define([
                 this.changeLocationHash(1, itemsNumber, this.filter);
             },
             //modified for filter Vasya
-            showFilteredPage: function (e, showList) {
+            showFilteredPage: function (e) {
                 var itemsNumber = $("#itemsNumber").text();
                 var selectedLetter;
                 var self = this;
                 var chosen = this.$el.find('.chosen');
+                var checkedElements = $('.drop-down-filter > input:checkbox:checked');
+                var showList;
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
                 this.filter ={};
+
                 if (e && e.target) {
                     selectedLetter = $(e.target).text();
                     if ($(e.target).text() == "All") {
                         selectedLetter = "";
                     }
                 }
-                if (showList.length) this.filter['department'] = showList;
+                if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
+                    showList = checkedElements.map(function() {
+                        return this.value
+                    }).get();
+
+                    this.filter['department'] = showList;
+                };
+
                 if (chosen) {
                     chosen.each(function (index, elem) {
                         if (self.filter[elem.children[1].value]) {
-                            self.filter[elem.children[1].value].push(elem.children[2].value);
+                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+                                self.filter[elem.children[1].value].push(element.value);
+                            })
                         } else {
                             self.filter[elem.children[1].value] = [];
-                            self.filter[elem.children[1].value].push(elem.children[2].value);
+                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+                                self.filter[elem.children[1].value].push(element.value);
+                            })
                         }
                     });
                 }
                 this.startTime = new Date();
                 this.newCollection = false;
 
+                if ((checkedElements.length && checkedElements.attr('id') === 'defaultFilter') || (!chosen.length && !showList)) {
+                    self.filter = 'empty';
+                };
+
                 this.filter['letter'] = selectedLetter;
                 this.changeLocationHash(1, itemsNumber, this.filter);
                 this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter });
                 this.getTotalLength(null, itemsNumber, this.filter);
+
+                if (checkedElements.attr('id') === 'defaultFilter'){
+                    $(".saveFilterButton").hide();
+                    $(".clearFilterButton").hide();
+                    $(".removeFilterButton").show();
+                } else {
+                    $(".saveFilterButton").show();
+                    $(".clearFilterButton").show();
+                    $(".removeFilterButton").show();
+                }
+            },
+
+            saveFilter: function () {
+                var currentUser = new usersModel(App.currentUser);
+                var subMenu = $('#submenu-holder').find('li.selected').text();
+                var key;
+                var filterObj = {};
+                var mid = 39;
+
+                key = subMenu.trim();
+
+                filterObj['filter'] = {};
+                filterObj['filter'] = this.filter;
+                filterObj['key'] = key;
+
+                currentUser.changed = filterObj;
+
+                currentUser.save(
+                    filterObj,
+                    {
+                        headers: {
+                            mid: mid
+                        },
+                        wait: true,
+                        patch:true,
+                        validate: false,
+                        success: function (model) {
+                            console.log('Filter was saved to db');
+                        },
+                        error: function (model,xhr) {
+                            console.error(xhr);
+                        },
+                        editMode: false
+                    }
+                );
+
+                App.currentUser.savedFilters['Employees'] = filterObj.filter;
+
+                this.$el.find('.filterValues').empty();
+                this.$el.find('.filter-icons').removeClass('active');
+                this.$el.find('.chooseOption').children().remove();
+
+                $.each($('.drop-down-filter input'), function (index, value) {
+                    value.checked = false
+                });
+
+                $(".saveFilterButton").hide();
+                $(".removeFilterButton").show();
+                $(".clearFilterButton").show();
+
+            },
+
+            removeFilter: function () {
+                var currentUser = new usersModel(App.currentUser);
+                var subMenu = $('#submenu-holder').find('li.selected').text();
+                var key;
+                var filterObj = {};
+                var mid = 39;
+
+                this.clearFilter();
+
+                key = subMenu.trim();
+                filterObj['key'] = key;
+
+                currentUser.changed = filterObj;
+
+                currentUser.save(
+                    filterObj,
+                    {
+                        headers: {
+                            mid: mid
+                        },
+                        wait: true,
+                        patch:true,
+                        validate: false,
+                        success: function (model) {
+                            console.log('Filter was remover from db');
+                        },
+                        error: function (model,xhr) {
+                            console.error(xhr);
+                        },
+                        editMode: false
+                    }
+                );
+
+                delete App.currentUser.savedFilters['Employees'];
+
+                $(".saveFilterButton").hide();
+                $(".removeFilterButton").hide();
+                $(".clearFilterButton").hide();
+            },
+
+            clearFilter: function () {
+
+                this.$el.find('.filterValues').empty();
+                this.$el.find('.filter-icons').removeClass('active');
+                this.$el.find('.chooseOption').children().remove();
+
+                $.each($('.drop-down-filter input'), function (index, value) {
+                    value.checked = false
+                });
+
+                this.showFilteredPage();
+
+                $(".clearFilterButton").hide();
+                $(".removeFilterButton").show();
+                $(".saveFilterButton").hide();
             },
 
             showPage: function (event) {
                 event.preventDefault();
-                this.showP(event, { filter: this.filter, newCollection: this.newCollection, sort: this.sort });
+                this.showP(event, {filter: this.filter, newCollection: this.newCollection, sort: this.sort});
             },
             //modified for filter Vasya
             showMoreContent: function (newModels) {
                 var holder = this.$el;
                 holder.find("#listTable").empty();
-                var itemView = new listItemView({ collection: newModels, page: holder.find("#currentShowPage").val(), itemsNumber: holder.find("span#itemsNumber").text() });
+                var itemView = new listItemView({
+                    collection: newModels,
+                    page: holder.find("#currentShowPage").val(),
+                    itemsNumber: holder.find("span#itemsNumber").text()
+                });
                 holder.append(itemView.render());
                 itemView.undelegateEvents();
                 var pagenation = holder.find('.pagination');
@@ -391,7 +562,11 @@ define([
                 var alphaBet = holder.find('#startLetter');
                 var created = holder.find('#timeRecivingDataFromServer');
                 content.remove();
-                holder.append(this.template({ collection: newModels.toJSON(), page: holder.find("#currentShowPage").val(), itemsNumber: holder.find("span#itemsNumber").text() }));
+                holder.append(this.template({
+                    collection: newModels.toJSON(),
+                    page: holder.find("#currentShowPage").val(),
+                    itemsNumber: holder.find("span#itemsNumber").text()
+                }));
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
                 this.getTotalLength(null, itemsNumber, this.filter);
@@ -434,13 +609,13 @@ define([
                 }, function (response, context) {
                     context.listLength = response.count || 0;
                 }, this);
-                
+
                 this.deleteRender(deleteCounter, deletePage, {
                     filter: this.filter,
                     newCollection: this.newCollection,
                     parrentContentId: this.parrentContentId
                 });
-                
+
                 var pagenation = this.$el.find('.pagination');
                 if (this.collection.length === 0) {
                     pagenation.hide();
@@ -469,21 +644,25 @@ define([
                             localCounter++;
                             count--;
                             if (count === 0) {
-								common.buildAphabeticArray(that.collection, function (arr) {
+                                common.buildAphabeticArray(that.collection, function (arr) {
 
-									$("#startLetter").remove();
-									that.alphabeticArray = arr;
-									currentEl.prepend(_.template(aphabeticTemplate, { alphabeticArray: that.alphabeticArray, selectedLetter: (that.selectedLetter == "" ? "All" : that.selectedLetter), allAlphabeticArray: that.allAlphabeticArray }));
-									var currentLetter = (that.filter) ? that.filter.letter : null
-									if (currentLetter) {
-										$('#startLetter a').each(function() {
-											var target = $(this);
-											if (target.text() == currentLetter) {
-												target.addClass("current");
-											}
-										});
-									}
-								});
+                                    $("#startLetter").remove();
+                                    that.alphabeticArray = arr;
+                                    currentEl.prepend(_.template(aphabeticTemplate, {
+                                        alphabeticArray: that.alphabeticArray,
+                                        selectedLetter: (that.selectedLetter == "" ? "All" : that.selectedLetter),
+                                        allAlphabeticArray: that.allAlphabeticArray
+                                    }));
+                                    var currentLetter = (that.filter) ? that.filter.letter : null
+                                    if (currentLetter) {
+                                        $('#startLetter a').each(function () {
+                                            var target = $(this);
+                                            if (target.text() == currentLetter) {
+                                                target.addClass("current");
+                                            }
+                                        });
+                                    }
+                                });
 
                                 that.deleteCounter = localCounter;
                                 that.deletePage = $("#currentShowPage").val();

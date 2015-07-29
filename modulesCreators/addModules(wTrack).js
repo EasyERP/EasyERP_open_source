@@ -18,11 +18,11 @@ MongoClient.connect(url, function (err, db) {
 
     function childModule(callback) {
         var module = {
-            _id: 65,
+            _id: 75,
             mname: 'wTrack',
             href: 'wTrack',
-            sequence: 65,
-            parrent: 19,
+            sequence: 1000,
+            parrent: 36,
             link: true,
             visible: true
         };
