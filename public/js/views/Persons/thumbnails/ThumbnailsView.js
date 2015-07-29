@@ -75,23 +75,14 @@
             alpabeticalRender: function (e) {
                 var selectedLetter;
                 var target;
-                var checkedElements = $('.drop-down-filter input:checkbox:checked');
+                var checkedElements = $('.drop-down-filter > input:checkbox:checked');
                 var chosen = this.$el.find('.chosen');
                 var self = this;
-                var showList;
 
                 this.$el.find('.thumbnailwithavatar').remove();
                 this.startTime = new Date();
                 this.newCollection = false;
                 this.filter = {};
-
-                if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
-                    showList = $('.drop-down-filter input:checkbox:checked').map(function() {
-                        return this.value
-                    }).get();
-
-                    this.filter = showList;
-                }
 
                 if (e && e.target) {
                     selectedLetter = $(e.target).text();
@@ -103,17 +94,18 @@
                     target.addClass("current");
                 }
 
-                if (checkedElements && checkedElements.length && checkedElements.attr('id') === 'defaultFilter') {
-                    this.filter = {};
-                };
 
                 if (chosen) {
                     chosen.each(function (index, elem) {
                         if (self.filter[elem.children[1].value]) {
-                            self.filter[elem.children[1].value].push(elem.children[2].value);
+                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+                                self.filter[elem.children[1].value].push($(element).next().text());
+                            })
                         } else {
                             self.filter[elem.children[1].value] = [];
-                            self.filter[elem.children[1].value].push(elem.children[2].value);
+                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+                                self.filter[elem.children[1].value].push($(element).next().text());
+                            })
                         }
                     });
                 };
@@ -135,9 +127,10 @@
 
                 if (selectedLetter || selectedLetter === '') this.filter['letter'] = selectedLetter;
 
-                if (!chosen.length && !showList) {
-                    this.filter = 'empty';
-                }
+                if ((checkedElements.length && checkedElements.attr('id') === 'defaultFilter') || (!chosen.length && !showList)) {
+                    self.filter = 'empty';
+                };
+
 
                 this.defaultItemsNumber = 0;
 

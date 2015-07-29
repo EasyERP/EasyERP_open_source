@@ -364,18 +364,6 @@ define([
                 this.filter =  {};
                 this.filter['letter'] = selectedLetter;
 
-                if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
-                    showList = $('.drop-down-filter input:checkbox:checked').map(function() {
-                        return this.value
-                    }).get();
-
-                    this.filter = showList;
-                }
-
-                if (checkedElements.length && checkedElements.attr('id') === 'defaultFilter') {
-                    self.filter = 'empty';
-                }
-
                 if (chosen) {
                     chosen.each(function (index, elem) {
                         if (elem.children[2].attributes.class.nodeValue === 'chooseDate') {
@@ -388,19 +376,23 @@ define([
                             }
                         } else {
                             if (self.filter[elem.children[1].value]) {
-                                self.filter[elem.children[1].value].push(elem.children[2].value);
+                                $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+                                    self.filter[elem.children[1].value].push($(element).next().text());
+                                })
                             } else {
                                 self.filter[elem.children[1].value] = [];
-                                self.filter[elem.children[1].value].push(elem.children[2].value);
+                                $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+                                    self.filter[elem.children[1].value].push($(element).next().text());
+                                })
                             }
                         }
 
                     });
                 }
 
-                if (!chosen.length && !showList) {
-                    this.filter = 'empty';
-                }
+                if (checkedElements.length && checkedElements.attr('id') === 'defaultFilter') {
+                    self.filter = 'empty';
+                };
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);

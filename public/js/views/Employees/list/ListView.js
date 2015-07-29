@@ -251,11 +251,10 @@ define([
                         FilterView = new filterView({collection: departments.data, customCollection: values});
                         // Filter custom event listen ------begin
                         FilterView.bind('filter', function () {
-
-                            self.showFilteredPage(null)
+                            self.showFilteredPage()
                         });
                         FilterView.bind('defaultFilter', function () {
-                            self.showFilteredPage(null);
+                            self.showFilteredPage()
                         });
                         // Filter custom event listen ------end
                     });
@@ -366,13 +365,12 @@ define([
                 var selectedLetter;
                 var self = this;
                 var chosen = this.$el.find('.chosen');
-                var checkedElements = $('.drop-down-filter input:checkbox:checked');
+                var checkedElements = $('.drop-down-filter > input:checkbox:checked');
                 var showList;
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
-
-                this.filter = {};
+                this.filter ={};
 
                 if (e && e.target) {
                     selectedLetter = $(e.target).text();
@@ -380,40 +378,38 @@ define([
                         selectedLetter = "";
                     }
                 }
-
                 if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
-                    showList = $('.drop-down-filter input:checkbox:checked').map(function() {
+                    showList = checkedElements.map(function() {
                         return this.value
                     }).get();
 
                     this.filter['department'] = showList;
-                }
-
-                if (checkedElements.length && checkedElements.attr('id') === 'defaultFilter') {
-                    self.filter = 'empty';
-                }
+                };
 
                 if (chosen) {
                     chosen.each(function (index, elem) {
                         if (self.filter[elem.children[1].value]) {
-                            self.filter[elem.children[1].value].push(elem.children[2].value);
+                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+                                self.filter[elem.children[1].value].push(element.value);
+                            })
                         } else {
                             self.filter[elem.children[1].value] = [];
-                            self.filter[elem.children[1].value].push(elem.children[2].value);
+                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+                                self.filter[elem.children[1].value].push(element.value);
+                            })
                         }
                     });
                 }
-
-                if (!chosen.length && !showList) {
-                    self.filter = 'empty';
-                }
-
                 this.startTime = new Date();
                 this.newCollection = false;
 
+                if ((checkedElements.length && checkedElements.attr('id') === 'defaultFilter') || (!chosen.length && !showList)) {
+                    self.filter = 'empty';
+                };
 
+                this.filter['letter'] = selectedLetter;
                 this.changeLocationHash(1, itemsNumber, this.filter);
-                this.collection.showMore({count: itemsNumber, page: 1, filter: this.filter});
+                this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter });
                 this.getTotalLength(null, itemsNumber, this.filter);
 
                 if (checkedElements.attr('id') === 'defaultFilter'){

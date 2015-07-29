@@ -329,7 +329,7 @@ define([
                 var itemsNumber = $("#itemsNumber").text();
                 var selectedLetter;
                 var self = this;
-                var checkedElements = $('.drop-down-filter input:checkbox:checked');
+                var checkedElements = $('.drop-down-filter > input:checkbox:checked');
                 var chosen = this.$el.find('.chosen');
 
                 $("#top-bar-deleteBtn").hide();
@@ -355,19 +355,26 @@ define([
                     delete this.filter['isSupplier'];
                     delete this.filter['isCustomer'];
                 };
-                if (checkedElements.length && checkedElements.attr('id') === 'defaultFilter') {
-                    this.filter = {};
-                };
+
                 if (chosen) {
                     chosen.each(function (index, elem) {
                         if (self.filter[elem.children[1].value]) {
-                            self.filter[elem.children[1].value].push(elem.children[2].value);
+                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+                                self.filter[elem.children[1].value].push($(element).next().text());
+                            })
                         } else {
                             self.filter[elem.children[1].value] = [];
-                            self.filter[elem.children[1].value].push(elem.children[2].value);
+                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+                                self.filter[elem.children[1].value].push($(element).next().text());
+                            })
                         }
                     });
                 };
+
+                if ((checkedElements.length && checkedElements.attr('id') === 'defaultFilter') || (!chosen.length && !showList)) {
+                    self.filter = 'empty';
+                };
+
                 this.startTime = new Date();
                 this.newCollection = false;
                 this.filter['letter'] = selectedLetter;

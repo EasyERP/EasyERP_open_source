@@ -9,6 +9,20 @@ var Employee = function (models) {
     var EmployeeSchema = mongoose.Schemas['Employee'];
     var ProjectSchema = mongoose.Schemas['Project'];
     var objectId = mongoose.Types.ObjectId;
+    var _ = require('../node_modules/underscore');
+
+    function BubbleSort(A) {
+        var t;
+        var n = A.length;
+        for (var i = n; i--;) {
+            for (var j = n-1; j--;) {
+                if (A[j+1] < A[j]) {
+                    t = A[j+1]; A[j+1] = A[j]; A[j] = t;
+                }
+            }
+        }
+        return A;
+    };
 
     this.getForDD = function (req, res, next) {
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
@@ -113,6 +127,18 @@ var Employee = function (models) {
                 if (err) {
                     return next(err);
                 }
+
+                _.map(result[0], function(value, key) {
+                    switch (key) {
+                        case 'Name':
+                            result[0][key] = BubbleSort(value);
+                            break;
+                        case  'Email':
+                            result[0][key] = BubbleSort(value);
+                            break;
+
+                    }
+                });
 
                 res.status(200).send(result);
             });

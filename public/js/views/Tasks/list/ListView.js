@@ -280,7 +280,7 @@ define([
                 var itemsNumber = $("#itemsNumber").text();
                 var self = this;
                 var choosen = this.$el.find('.chosen');
-                var checkedElements = $('.drop-down-filter input:checkbox:checked');
+                var checkedElements = $('.drop-down-filter > input:checkbox:checked');
                 var showList;
 
                 $("#top-bar-deleteBtn").hide();
@@ -288,7 +288,7 @@ define([
 
                 this.startTime = new Date();
                 this.newCollection = false;
-                this.filter = /*(this.filter && this.filter !== 'empty') ? this.filter :*/ {};
+                this.filter = {};
 
                 if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
                     showList = $('.drop-down-filter input:checkbox:checked').map(function() {
@@ -304,11 +304,15 @@ define([
 
                 if (choosen) {
                     choosen.each(function (index, elem) {
-                        if (self.filter[elem.children[0].value]) {
-                            self.filter[elem.children[0].value].push(elem.children[1].value);
+                        if (self.filter[elem.children[1].value]) {
+                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+                                self.filter[elem.children[1].value].push(element.value);
+                            })
                         } else {
-                            self.filter[elem.children[0].value] = [];
-                            self.filter[elem.children[0].value].push(elem.children[1].value);
+                            self.filter[elem.children[1].value] = [];
+                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+                                self.filter[elem.children[1].value].push(element.value);
+                            })
                         }
                     });
                 }
@@ -520,9 +524,11 @@ define([
                         itemView.trigger('incomingStages', stages);
                         // Filter custom event listen ------begin
                         FilterView.bind('filter', function () {
+                            //showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
                             self.showFilteredPage()
                         });
                         FilterView.bind('defaultFilter', function () {
+                            //showList = _.pluck(self.stages, '_id');
                             self.showFilteredPage()
                         });
                         // Filter custom event listen ------end

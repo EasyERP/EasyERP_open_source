@@ -5,6 +5,20 @@ var mongoose = require('mongoose');
 var Project = function (models) {
     var access = require("../Modules/additions/access.js")(models);
     var ProjectSchema = mongoose.Schemas['Project'];
+    var _ = require('../node_modules/underscore');
+
+    function BubbleSort(A) {
+        var t;
+        var n = A.length;
+        for (var i = n; i--;) {
+            for (var j = n-1; j--;) {
+                if (A[j+1] < A[j]) {
+                    t = A[j+1]; A[j+1] = A[j]; A[j] = t;
+                }
+            }
+        }
+        return A;
+    };
 
     this.getForWtrack = function (req, res, next) {
         var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
@@ -46,6 +60,15 @@ var Project = function (models) {
             if (err) {
                 return next(err);
             }
+
+            _.map(result[0], function(value, key) {
+                switch (key) {
+                    case 'project':
+                        result[0][key] = BubbleSort(value);
+                        break;
+
+                }
+            });
 
             res.status(200).send(result);
         });

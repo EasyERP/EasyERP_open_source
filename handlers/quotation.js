@@ -482,9 +482,6 @@ var Quotation = function (models) {
                                 'Reference': {
                                     $addToSet: '$supplierReference'
                                 },
-                                'supplier': {
-                                    $addToSet: '$supplier'
-                                },
                                 'Order date': {
                                     $addToSet: '$orderDate'
                                 }

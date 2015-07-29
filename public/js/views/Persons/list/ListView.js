@@ -465,8 +465,7 @@ define([
                 var selectedLetter;
                 var self = this;
                 var chosen = this.$el.find('.chosen');
-                var checkedElements = $('.drop-down-filter input:checkbox:checked');
-                var showList;
+                var checkedElements = $('.drop-down-filter > input:checkbox:checked');
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
@@ -480,15 +479,6 @@ define([
                }
                 this.filter = {};
 
-
-                if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
-                    showList = $('.drop-down-filter input:checkbox:checked').map(function() {
-                        return this.value
-                    }).get();
-
-                    this.filter = showList;
-                }
-
                 if (showList && showList.indexOf('isCustomer') !== -1) {
                     this.filter['isCustomer'] = 1;
                 }else if (showList && showList.indexOf('isSupplier') !== -1) {
@@ -497,18 +487,20 @@ define([
                     delete this.filter['isSupplier'];
                     delete this.filter['isCustomer'];
                 }
-
-
-                if (checkedElements.length && checkedElements.attr('id') === 'defaultFilter') {
-                    self.filter = 'empty';
-                }
+                if (checkedElements && checkedElements.length && checkedElements.attr('id') === 'defaultFilter') {
+                    this.filter = {};
+                };
                 if (chosen) {
                     chosen.each(function (index, elem) {
                         if (self.filter[elem.children[1].value]) {
-                            self.filter[elem.children[1].value].push(elem.children[2].value);
+                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+                                self.filter[elem.children[1].value].push($(element).next().text());
+                            })
                         } else {
                             self.filter[elem.children[1].value] = [];
-                            self.filter[elem.children[1].value].push(elem.children[2].value);
+                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+                                self.filter[elem.children[1].value].push($(element).next().text());
+                            })
                         }
                     });
                 };

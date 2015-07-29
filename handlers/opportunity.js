@@ -17,6 +17,19 @@ var Opportunity = function (models) {
         }
     };
 
+    function BubbleSort(A) {
+        var t;
+        var n = A.length;
+        for (var i = n; i--;) {
+            for (var j = n-1; j--;) {
+                if (A[j+1] < A[j]) {
+                    t = A[j+1]; A[j+1] = A[j]; A[j] = t;
+                }
+            }
+        }
+        return A;
+    };
+
     function caseFilter(filter, content) {
         var condition;
 
@@ -271,6 +284,21 @@ var Opportunity = function (models) {
             if (err) {
                 return next(err);
             }
+
+            _.map(result[0], function(value, key) {
+                switch (key) {
+                    case 'Name':
+                        result[0][key] = BubbleSort(value);
+                        break;
+                    case  'Expected revenue':
+                        result[0][key] = BubbleSort(value);
+                        break;
+                    case  'Next action':
+                        result[0][key] = BubbleSort(value);
+                        break;
+
+                }
+            });
 
             res.status(200).send(result);
         });

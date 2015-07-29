@@ -46,6 +46,7 @@ var Users = function (mainDb, models) {
             if (!data) {
                 logWriter.log('Person.create Incorrect Incoming Data');
                 result.send(400, { error: 'User.create Incorrect Incoming Data' });
+                return;
             } else {
                 models.get(req.session.lastDb, 'Users', userSchema).find({ login: data.login }, function (error, doc) {
                     try {
@@ -58,7 +59,8 @@ var Users = function (mainDb, models) {
                                 result.send(400, { error: "An user with the same Login already exists" });
                             }
                         }
-                        else if (doc.length === 0) {
+                        else
+                        if (doc.length === 0) {
                             savetoBd(data);
                         }
                     }
@@ -71,55 +73,36 @@ var Users = function (mainDb, models) {
             }
             function savetoBd(data) {
                 try {
-                    Saas.findOne({ 'users.user': data.email/*, DBname: req.session.lastDb*/ }, function (err, saasDbUser) {
+                    var _user = new models.get(req.session.lastDb, 'Users', userSchema)();
+
+                    if (data.profile) {
+                        _user.profile = data.profile;
+                    }
+                    if (data.login) {
+                        _user.login = data.login;
+                    }
+                    if (data.pass) {
+                        shaSum.update(data.pass);
+                        _user.pass = shaSum.digest('hex');
+                    }
+
+                    if (data.email) {
+                        _user.email = data.email;
+                    }
+
+                    if (data.imageSrc) {
+                        _user.imageSrc = data.imageSrc;
+                    }
+
+                    _user.save(function (err, result1) {
                         if (err) {
-                            new Error(err);
+                            logWriter.log("User.js create savetoBd _user.save " + err);
+                            result.send(500, { error: 'User.create save error' });
+                        } else {
+                            result.send(201, { success: 'A new User crate success', id: result1._id });
                         }
-                        if (saasDbUser && saasDbUser._id) {
-                            new Error('email already used');
-                        }
-
-                        _user = new models.get(req.session.lastDb, 'Users', userSchema)();
-                        if (data.profile) {
-                            _user.profile = data.profile;
-                        }
-                        if (data.login) {
-                            _user.login = data.login;
-                        }
-                        if (data.pass) {
-                            shaSum.update(data.pass);
-                            _user.pass = shaSum.digest('hex');
-                        }
-
-                        if (data.email) {
-                            _user.email = data.email;
-                        }
-
-                        if (data.imageSrc) {
-                            _user.imageSrc = data.imageSrc;
-                        }
-
-                        _user.save(function (err, result1) {
-                            if (err) {
-                                logWriter.log("User.js create savetoBd _user.save " + err);
-                                result.send(500, { error: 'User.create save error' });
-                            } else {
-                                Saas.findOneAndUpdate({ DBname: req.session.lastDb }, {
-                                    $push: {
-                                        users: {
-                                            user: data.email,
-                                            pass: _user.pass
-                                        }
-                                    }
-                                }, function (err, res) {
-                                    if (err) {
-                                        return result.status(500).send({ error: err.message });
-                                    }
-                                    result.send(201, { success: 'A new User crate success', id: result1._id });
-                                });
-                            }
-                        });
                     });
+
                 }
                 catch (error) {
                     logWriter.log("User.js create savetoBd" + error);
