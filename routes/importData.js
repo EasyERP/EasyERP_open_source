@@ -750,8 +750,8 @@ module.exports = function (models) {
                             ID: fetchedInvoice['Project']
                         };
 
-                        if(fetchedInvoice['ID'] === 233){
-                            console.log(balance);
+                        if(fetchedInvoice['ID'] === 3364){
+                            balance = 0;
                         }
 
                         function wTrackFinder(callback) {
