@@ -386,12 +386,12 @@ define([
                         } else {
                             if (self.filter[elem.children[1].value]) {
                                 $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
-                                    self.filter[elem.children[1].value].push($(element).next().text());
+                                    self.filter[elem.children[1].value].push($(element).val());
                                 })
                             } else {
                                 self.filter[elem.children[1].value] = [];
                                 $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
-                                    self.filter[elem.children[1].value].push($(element).next().text());
+                                    self.filter[elem.children[1].value].push($(element).val());
                                 })
                             }
                         }

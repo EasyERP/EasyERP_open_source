@@ -174,7 +174,7 @@ define([
                 $('#check_all').prop('checked', false);
 
                 this.startTime = new Date();
-                this.newCollection = true;
+                this.newCollection = false;
                 this.filter = {};
                 this.filter['isConverted'] = isConverted;
 
@@ -204,10 +204,13 @@ define([
                 if ((checkedElements.length && checkedElements.attr('id') === 'defaultFilter') || (!chosen.length && !showList)) {
                     self.filter = 'empty';
                 };
-
-                this.changeLocationHash(1, itemsNumber, this.filter);
-                this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter, newCollection: this.newCollection });
-                this.getTotalLength(null, itemsNumber, this.filter);
+                this.defaultItemsNumber = 0;
+                this.changeLocationHash(null, this.defaultItemsNumber, this.filter);
+                this.collection.showMore({ count: this.defaultItemsNumber, page: 1, filter: this.filter });
+                this.getTotalLength(this.defaultItemsNumber, this.filter)
+                //this.changeLocationHash(1, itemsNumber, this.filter);
+                //this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter, parrentContentId: this.parrentContentId });
+                //this.getTotalLength(null, itemsNumber, this.filter);
             },
 
             hideItemsNumber: function (e) {
