@@ -165,10 +165,17 @@ var Invoice = function (models) {
     };
 
     this.getForView = function (req, res, next) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, 56, function (access) {
+        var db = req.session.lastDb;
+        var moduleId = 56;
+
+        if (db === 'weTrack'){
+            moduleId = 64
+        }
+
+        if (req.session && req.session.loggedIn && db) {
+            access.getReadAccess(req, req.session.uId, moduleId, function (access) {
                 if (access) {
-                    var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
+                    var Invoice = models.get(db, 'Invoice', InvoiceSchema);
 
                     var query = req.query;
                     var queryObject = {};
@@ -309,9 +316,14 @@ var Invoice = function (models) {
 
     this.getInvoiceById = function (req, res, next) {
         var isWtrack = req.session.lastDb === 'weTrack';
+        var moduleId = 56;
+
+        if (isWtrack){
+            moduleId = 64
+        }
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, 56, function (access) {
+            access.getReadAccess(req, req.session.uId, moduleId, function (access) {
                 if (access) {
                     var Invoice;
                     var optionsObject = {};
@@ -436,11 +448,18 @@ var Invoice = function (models) {
     };
 
     this.removeInvoice = function (req, res, id, next) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, 56, function (access) {
+        var db = req.session.lastDb;
+        var moduleId = 56;
+
+        if (db === 'weTrack'){
+            moduleId = 64
+        }
+
+        if (req.session && req.session.loggedIn && db) {
+            access.getDeleteAccess(req, req.session.uId, moduleId, function (access) {
                 if (access) {
 
-                    models.get(req.session.lastDb, "Invoice", InvoiceSchema).findByIdAndRemove(id, function (err, result) {
+                    models.get(db, "Invoice", InvoiceSchema).findByIdAndRemove(id, function (err, result) {
                         if (err) {
                             next(err);
                         } else {
@@ -460,10 +479,17 @@ var Invoice = function (models) {
     };
 
     this.updateInvoice = function (req, res, _id, data, next) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, 56, function (access) {
+        var db = req.session.lastDb;
+        var moduleId = 56;
+
+        if (db === 'weTrack'){
+            moduleId = 64
+        }
+
+        if (req.session && req.session.loggedIn && db) {
+            access.getEditWritAccess(req, req.session.uId, moduleId, function (access) {
                 if (access) {
-                    var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
+                    var Invoice = models.get(db, 'Invoice', InvoiceSchema);
                     //data.editedBy = {
                     //    user: req.session.uId,
                     //    date: new Date().toISOString()
