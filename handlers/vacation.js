@@ -153,9 +153,9 @@ var Vacation = function (models) {
         });
     };
 
-    function getVacationFilter(req, res, next) {
+    function getVacationFilter(modelId, req, res, next) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, 70, function (access) {
+            access.getReadAccess(req, req.session.uId, modelId, function (access) {
                 if (access) {
                     var Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
                     var options = req.query;
@@ -277,10 +277,10 @@ var Vacation = function (models) {
 
         switch (viewType) {
             case "list":
-                getVacationFilter(req, res, next);
+                getVacationFilter(70, req, res, next);
                 break;
             case "attendance":
-                getVacationFilter(req, res, next);
+                getVacationFilter(71, req, res, next);
                 break;
         }
     };
