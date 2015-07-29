@@ -139,11 +139,17 @@ var Holiday = function (models) {
         var id = req.params.id;
         var Holiday = models.get(req.session.lastDb, 'Holiday', HolidaySchema);
 
-        Holiday.remove({_id: id}, function (err, holiday) {
-            if (err) {
-                return next(err);
+        access.getDeleteAccess(req, req.session.uId, 69, function (access) {
+            if (access) {
+                Holiday.remove({_id: id}, function (err, holiday) {
+                    if (err) {
+                        return next(err);
+                    }
+                    res.status(200).send({success: holiday});
+                });
+            } else {
+                res.status(403).send();
             }
-            res.status(200).send({success: holiday});
         });
     };
 
@@ -151,12 +157,17 @@ var Holiday = function (models) {
         var Holiday = models.get(req.session.lastDb, 'Holiday', HolidaySchema);
         var body = mapObject(req.body);
         var Holiday = new Holiday(body);
-
-        Holiday.save(function (err, Holiday) {
-            if (err) {
-                return next(err);
+        access.getEditWritAccess(req, req.session.uId, 69, function (access) {
+            if (access) {
+                Holiday.save(function (err, Holiday) {
+                    if (err) {
+                        return next(err);
+                    }
+                    res.status(200).send({success: Holiday});
+                });
+            } else {
+                res.status(403).send();
             }
-            res.status(200).send({success: Holiday});
         });
     };
 

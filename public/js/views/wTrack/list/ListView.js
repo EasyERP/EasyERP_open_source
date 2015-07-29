@@ -34,6 +34,7 @@ define([
             editCollection: null,
             selectedProjectId: [],
             genInvoiceEl: null,
+            copyEl: null,
             changedModels: {},
 
             initialize: function (options) {
@@ -124,6 +125,46 @@ define([
                         });
                     }
                 });
+            },
+
+            copyRow: function (e) {
+                $('#top-bar-generateBtn').hide();
+                $('#top-bar-copyBtn').hide();
+
+                this.changed = true;
+                this.createdCopied = true;
+
+                var selectedWtrack = this.$el.find('input:checked:not(#check_all)')[0];
+                var self = this;
+                var target =  $(selectedWtrack);
+                var id = target.val();
+                var row = target.closest('tr');
+                var model = self.collection.get(id);
+                var _model;
+                var tdsArr;
+                var cid;
+
+                $(selectedWtrack).attr('checked', false);
+
+                model = model.toJSON();
+                delete model._id;
+                _model = new currentModel(model);
+
+                this.showSaveCancelBtns();
+                this.editCollection.add(_model);
+
+                cid = _model.cid;
+
+                if (!this.changedModels[cid]) {
+                    this.changedModels[cid] = model;
+                }
+
+                this.$el.find('#listTable').prepend('<tr id="false" data-id="'+ cid +'">' + row.html() + '</tr>');
+                row = this.$el.find('#false');
+
+                tdsArr = row.find('td');
+                $(tdsArr[0]).find('input').val(cid);
+                $(tdsArr[1]).text(cid);
             },
 
             nextSelect: function (e) {
@@ -416,6 +457,7 @@ define([
                 changedAttr = this.changedModels[modelId];
 
                 if (elementType === '#project') {
+
                     projectManager = element.projectmanager.name.first + ' ' + element.projectmanager.name.last;
                     assignedContainer = tr.find('[data-content="assigned"]');
                     assignedContainer.text(projectManager);
@@ -454,6 +496,8 @@ define([
 
                     value = _.bind(this.calculateCost, this);
                     value(e, wTrackId);
+
+                    tr.find('[data-content="department"]').removeClass('errorContent');
                 } else if (elementType === '#department') {
                     department = _.clone(editWtrackModel.get('department'));
                     department._id = element._id;
@@ -461,6 +505,8 @@ define([
 
                     changedAttr.department = department;
                 }
+
+                targetElement.removeClass('errorContent');
 
                 targetElement.text(target.text());
 
@@ -473,11 +519,16 @@ define([
             saveItem: function () {
                 var model;
 
+                var errors= this.$el.find('.errorContent');
+
                 for (var id in this.changedModels) {
                     model = this.editCollection.get(id);
                     model.changed = this.changedModels[id];
                 }
 
+                if(errors.length){
+                    return
+                }
                 this.editCollection.save();
             },
 
@@ -669,6 +720,7 @@ define([
                     }
 
                     self.genInvoiceEl.hide();
+                    self.copyEl.hide();
                 });
 
                 dataService.getData("/project/getForWtrack", null, function (projects) {
@@ -737,6 +789,7 @@ define([
                 }, 10);
 
                 this.genInvoiceEl = $('#top-bar-generateBtn');
+                this.copyEl = $('#top-bar-copyBtn');
 
                 return this;
             },
@@ -1121,6 +1174,9 @@ define([
 
                     new createView(startData);
                 }
+
+                this.createdCopied = true;
+                this.changed = true;
             },
 
             showSaveCancelBtns: function () {
@@ -1167,6 +1223,12 @@ define([
                     this.genInvoiceEl.hide();
 
                     return false;
+                }
+
+                if(checkLength === 1){
+                    this.copyEl.show();
+                } else {
+                    this.copyEl.hide();
                 }
 
                 if (checked) {
@@ -1318,6 +1380,8 @@ define([
                 var edited = this.edited;
                 var collection = this.collection;
                 var editedCollectin = this.editCollection;
+                var copiedCreated;
+                var dataId;
 
                 async.each(edited, function (el, cb) {
                     var tr = $(el).closest('tr');
@@ -1351,6 +1415,16 @@ define([
                         self.hideSaveCancelBtns();
                     }
                 });
+
+                if(this.createdCopied){
+                    copiedCreated = this.$el.find('#false');
+                    dataId = copiedCreated.data('id');
+                    this.editCollection.remove(dataId);
+                    delete this.changedModels[dataId];
+                    copiedCreated.remove();
+
+                    this.createdCopied = false;
+                }
             }
         });
 

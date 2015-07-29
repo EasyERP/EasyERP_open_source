@@ -17,18 +17,23 @@ var wTrack = function (models) {
     var mapObject = require('../helpers/bodyMaper');
 
     this.create = function (req, res, next) {
-        var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
-        var body = mapObject(req.body);
+        access.getEditWritAccess(req, req.session.uId, 75, function (access) {
+            if (access) {
 
-        wTrack = new WTrack(body);
+                var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+                var body = mapObject(req.body);
 
-        wTrack = new WTrack(body);
+                wTrack = new WTrack(body);
 
-        wTrack.save(function (err, wTrack) {
-            if (err) {
-                return next(err);
+                wTrack.save(function (err, wTrack) {
+                    if (err) {
+                        return next(err);
+                    }
+                    res.status(200).send({success: wTrack});
+                });
+            } else {
+                res.status(403).send();
             }
-            res.status(200).send({success: wTrack});
         });
     };
 
@@ -38,7 +43,7 @@ var wTrack = function (models) {
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getEditWritAccess(req, req.session.uId, 65, function (access) {
+            access.getEditWritAccess(req, req.session.uId, 75, function (access) {
                 if (access) {
                     data.editedBy = {
                         user: req.session.uId,
@@ -67,7 +72,7 @@ var wTrack = function (models) {
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             uId = req.session.uId;
-            access.getEditWritAccess(req, req.session.uId, 65, function (access) {
+            access.getEditWritAccess(req, req.session.uId, 75, function (access) {
                 if (access) {
                     async.each(body, function (data, cb) {
                         var id = data._id;
@@ -385,7 +390,7 @@ var wTrack = function (models) {
 
         waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
 
-        access.getEditWritAccess(req, req.session.uId, 65, function (access) {
+        access.getReadAccess(req, req.session.uId, 75, function (access) {
             if (!access) {
                 return res.status(403).send();
             }
@@ -509,12 +514,18 @@ var wTrack = function (models) {
 
         waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
 
-        async.waterfall(waterfallTasks, function (err, result) {
-            if (err) {
-                return next(err);
+        access.getReadAccess(req, req.session.uId, 75, function (access) {
+            if (!access) {
+                return res.status(403).send();
             }
 
-            res.status(200).send(result);
+            async.waterfall(waterfallTasks, function (err, result) {
+                if (err) {
+                    return next(err);
+                }
+
+                res.status(200).send(result);
+            });
         });
     };
 
@@ -522,11 +533,17 @@ var wTrack = function (models) {
         var id = req.params.id;
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
 
-        WTrack.remove({_id: id}, function (err, product) {
-            if (err) {
-                return next(err);
+        access.getDeleteAccess(req, req.session.uId, 72, function (access) {
+            if (access) {
+                WTrack.remove({_id: id}, function (err, product) {
+                    if (err) {
+                        return next(err);
+                    }
+                    res.status(200).send({success: product});
+                });
+            } else {
+                res.status(403).send();
             }
-            res.status(200).send({success: product});
         });
     };
 

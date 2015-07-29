@@ -539,6 +539,7 @@ define([
                         topbarView.bind('saveEvent', contentview.saveItem, contentview);
                         topbarView.bind('deleteEvent', contentview.deleteItems, contentview);
                         topbarView.bind('generateInvoice', contentview.generateInvoice, contentview);
+                        topbarView.bind('copyRow', contentview.copyRow, contentview);
 
                         collection.bind('showmore', contentview.showMoreContent, contentview);
                         context.changeView(contentview);

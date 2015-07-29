@@ -86,7 +86,7 @@ MongoClient.connect(url, function (err, db) {
         var q = async.queue(function (profile, callback) {
             if (profile) {
                 console.log('profile = ' + profile._id);
-                profiles.findOneAndUpdate({ _id: profile._id }, { $push: { profileAccess: { $each: [parrentInsert, childInsert/*, childInsert2, childInsert3, childInsert4*/] } } }, callback);
+                profiles.findOneAndUpdate({ _id: profile._id }, { $push: { profileAccess: { $each: [/*parrentInsert,*/ childInsert/*, childInsert2, childInsert3, childInsert4*/] } } }, callback);
             }
         }, 1000);
 

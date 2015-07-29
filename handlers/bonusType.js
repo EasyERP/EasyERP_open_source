@@ -12,12 +12,17 @@ var BonusType = function (models) {
         var bonusTypeModel = models.get(req.session.lastDb, 'bonusType', bonusTypeSchema);
         var body = req.body;
         var bonusType = new  bonusTypeModel(body);
-
-        bonusType.save(function(err, bonusType){
-            if (err){
-                return next(err);
+        access.getEditWritAccess(req, req.session.uId, moduleId, function (access) {
+            if (access) {
+                bonusType.save(function (err, bonusType) {
+                    if (err) {
+                        return next(err);
+                    }
+                    res.status(200).send(bonusType);
+                });
+            } else {
+                res.status(403).send();
             }
-            res.status(200).send(bonusType);
         });
     };
 
@@ -62,19 +67,24 @@ var BonusType = function (models) {
         if (query.sort) {
             sort = query.sort;
         } else sort = {};
-
-        bonusTypeModel
-            .find()
-            .limit(count)
-            .skip(skip)
-            .sort(sort)
-            .exec(function (err, data) {
-                if (err) {
-                    return next(err);
-                } else {
-                    res.status(200).send(data);
-                }
-            });
+        access.getReadAccess(req, req.session.uId, 72, function (access) {
+            if (access) {
+                bonusTypeModel
+                    .find()
+                    .limit(count)
+                    .skip(skip)
+                    .sort(sort)
+                    .exec(function (err, data) {
+                        if (err) {
+                            return next(err);
+                        } else {
+                            res.status(200).send(data);
+                        }
+                    });
+            } else {
+                res.status(403).send();
+            }
+        });
     };
 
     this.totalCollectionLength = function(req, res, next) {
@@ -92,12 +102,17 @@ var BonusType = function (models) {
 
     this.remove = function(req, res, id, next) {
         var bonusTypeModel = models.get(req.session.lastDb, 'bonusType', bonusTypeSchema);
-
-        bonusTypeModel.findByIdAndRemove(id, function (err, result) {
-            if (err) {
-                next(err);
+        access.getDeleteAccess(req, req.session.uId, 72, function (access) {
+            if (access) {
+                bonusTypeModel.findByIdAndRemove(id, function (err, result) {
+                    if (err) {
+                        next(err);
+                    } else {
+                        res.status(200).send({success: result});
+                    }
+                });
             } else {
-                res.status(200).send({success: result});
+                res.status(403).send();
             }
         });
     };
