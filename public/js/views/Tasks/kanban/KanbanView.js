@@ -335,13 +335,18 @@
                 var self = this;
 
                 this.filter = {};
+
                 if (choosen.length) {
                     choosen.each(function (index, elem) {
-                        if (self.filter[elem.children[0].value]) {
-                            self.filter[elem.children[0].value].push(elem.children[1].value);
+                        if (self.filter[elem.children[1].value]) {
+                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+                                self.filter[elem.children[1].value].push(element.value);
+                            })
                         } else {
-                            self.filter[elem.children[0].value] = [];
-                            self.filter[elem.children[0].value].push(elem.children[1].value);
+                            self.filter[elem.children[1].value] = [];
+                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+                                self.filter[elem.children[1].value].push(element.value);
+                            })
                         }
                     });
                     _.each(workflows, function (wfModel) {

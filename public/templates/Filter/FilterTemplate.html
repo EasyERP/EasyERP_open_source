@@ -19,12 +19,12 @@
                     <span class="caret"></span>
                 </button>
                 <ul class="drop-down-filter"><!--drop-down-filter-->
-                    <% collection.forEach(function(model, index){ %>
+                   <!-- <% collection.forEach(function(model, index){ %>
                     <li>
                         <input type="checkbox" id="<%=model.name%>" value="<%=(model._id) ? model._id : ''%>">
                         <label for="<%=model.name%>"><%=(model.name) ? model.name : 'Undefinded'%></label>
                     </li>
-                    <%}) %>
+                    <%}) %>-->
 
                     <%
                     var totalVal = [];
@@ -49,9 +49,9 @@
                             <option value="<%=key%>"><%= key %></option>
                             <% }) %>
                         </select>
-                        <select class="chooseOption">
+                        <ul class="chooseOption">
 
-                        </select>
+                        </ul>
 
                     </li>
                     <li class="filterActions">

@@ -330,7 +330,7 @@ define([
                 var selectedLetter;
                 var chosen = this.$el.find('.chosen');
                 var itemsNumber = $("#itemsNumber").text();
-                var checkedElements = $('.drop-down-filter input:checkbox:checked');
+                var checkedElements = $('.drop-down-filter > input:checkbox:checked');
 
                 this.startTime = new Date();
                 this.newCollection = false;
@@ -356,10 +356,14 @@ define([
                             }
                         } else {
                             if (self.filter[elem.children[1].value]) {
-                                self.filter[elem.children[1].value].push(elem.children[2].value);
+                                $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+                                    self.filter[elem.children[1].value].push($(element).next().text());
+                                })
                             } else {
                                 self.filter[elem.children[1].value] = [];
-                                self.filter[elem.children[1].value].push(elem.children[2].value);
+                                $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+                                    self.filter[elem.children[1].value].push($(element).next().text());
+                                })
                             }
                         }
 
@@ -367,8 +371,8 @@ define([
                 }
 
                 if (checkedElements.length && checkedElements.attr('id') === 'defaultFilter') {
-                    self.filter = {};
-                }
+                    self.filter = 'empty';
+                };
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);

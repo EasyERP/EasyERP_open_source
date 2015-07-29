@@ -132,10 +132,10 @@
 
             },
 
-            showFilteredPage: function (workflowIdArray) {
+            showFilteredPage: function () {
                 var chosen = this.$el.find('.chosen');
                 var self = this;
-                var checkedElements = $('.drop-down-filter input:checkbox:checked');
+                var checkedElements = $('.drop-down-filter > input:checkbox:checked');
                 var showList;
 
                 this.$el.find('.thumbnail').remove();
@@ -152,14 +152,9 @@
                     this.filter['workflow'] = showList;
                 };
 
-                if (checkedElements.length && checkedElements.attr('id') === 'defaultFilter') {
-                    self.filter = 'empty';
-                }
-
-
                 if (chosen) {
                     chosen.each(function (index, elem) {
-                        if (elem.children[1].attributes.class.nodeValue === 'chooseDate') {
+                        if (elem.children[2].attributes.class.nodeValue === 'chooseDate') {
                             if (self.filter[elem.children[1].value]) {
                                 self.filter[elem.children[1].value].push({start: $('#start').val(), end: $('#end').val()});
 
@@ -169,17 +164,21 @@
                             }
                         } else {
                             if (self.filter[elem.children[1].value]) {
-                                self.filter[elem.children[1].value].push(elem.children[2].value);
+                                $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+                                    self.filter[elem.children[1].value].push(element.value);
+                                })
                             } else {
                                 self.filter[elem.children[1].value] = [];
-                                self.filter[elem.children[1].value].push(elem.children[2].value);
+                                $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+                                    self.filter[elem.children[1].value].push(element.value);
+                                })
                             }
                         }
 
                     });
                 };
 
-                if (!chosen.length && !showList) {
+                if ((checkedElements.length && checkedElements.attr('id') === 'defaultFilter') || (!chosen.length && !showList)) {
                     self.filter = 'empty';
                 };
 

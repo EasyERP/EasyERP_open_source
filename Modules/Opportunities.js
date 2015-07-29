@@ -1217,17 +1217,17 @@ var Opportunities = function (models, event) {
                             condition = data.filter[key];
 
                             switch (key) {
-                                case 'name':
+                                case 'Name':
                                     or.push({ 'name': {$in: condition}});
                                     break;
-                                case 'creationDate':
+                                case 'CreationDate':
                                     or.push({ 'creationDate': {$gte: new Date(condition[0].start), $lte: new Date(condition[0].end)}});
                                     break;
-                                case 'nextAction':
+                                case 'NextAction':
                                     if (!condition.length) condition = [''];
                                     or.push({ 'nextAction.desc': {$in: condition}});
                                     break;
-                                case 'expectedRevenue':
+                                case 'ExpectedRevenue':
                                     ConvertType(condition, 'integer');
                                     or.push({ 'expectedRevenue.value': {$in: condition}});
                                     break;

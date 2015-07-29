@@ -270,11 +270,11 @@ define([
                 return false;
             },
 
-            showFilteredPage: function (workflowIdArray) {
+            showFilteredPage: function () {
                 var itemsNumber = $("#itemsNumber").text();
                 var self = this;
                 var choosen = this.$el.find('.chosen');
-                var checkedElements = $('.drop-down-filter input:checkbox:checked');
+                var checkedElements = $('.drop-down-filter > input:checkbox:checked');
                 var showList;
 
                 $("#top-bar-deleteBtn").hide();
@@ -298,11 +298,15 @@ define([
 
                 if (choosen) {
                     choosen.each(function (index, elem) {
-                        if (self.filter[elem.children[0].value]) {
-                            self.filter[elem.children[0].value].push(elem.children[1].value);
+                        if (self.filter[elem.children[1].value]) {
+                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+                                self.filter[elem.children[1].value].push(element.value);
+                            })
                         } else {
-                            self.filter[elem.children[0].value] = [];
-                            self.filter[elem.children[0].value].push(elem.children[1].value);
+                            self.filter[elem.children[1].value] = [];
+                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+                                self.filter[elem.children[1].value].push(element.value);
+                            })
                         }
                     });
                 }

@@ -16,6 +16,19 @@ var wTrack = function (models) {
     var async = require('async');
     var mapObject = require('../helpers/bodyMaper');
 
+    function BubbleSort(A) {
+        var t;
+        var n = A.length;
+        for (var i = n; i--;) {
+            for (var j = n-1; j--;) {
+                if (A[j+1] < A[j]) {
+                    t = A[j+1]; A[j+1] = A[j]; A[j] = t;
+                }
+            }
+        }
+        return A;
+    };
+
     this.create = function (req, res, next) {
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
         var body = mapObject(req.body);
@@ -543,9 +556,6 @@ var wTrack = function (models) {
                     projectsname: {
                         $addToSet: '$project.projectName'
                     },
-                    workflows: {
-                        $addToSet: '$project.workflow'
-                    },
                     customers: {
                         $addToSet: '$project.customer'
                     },
@@ -573,6 +583,35 @@ var wTrack = function (models) {
             if (err) {
                 return next(err);
             }
+
+            _.map(result[0], function(value, key) {
+                switch (key) {
+                    case 'projectmanagers':
+                        result[0][key] = _.sortBy(value, 'name');
+                        break;
+                    case  'employees':
+                        result[0][key] = _.sortBy(value, 'name');
+                        break;
+                    case 'customers':
+                        result[0][key] = _.sortBy(value, 'name');
+                        break;
+                    case 'projectsname':
+                        result[0][key] = BubbleSort(value);
+                        break;
+                    case 'months':
+                        result[0][key] = BubbleSort(value);
+                        break;
+                    case 'years':
+                        result[0][key] = BubbleSort(value);
+                        break;
+                    case 'weeks':
+                        result[0][key] = BubbleSort(value);
+                        break;
+                    case 'departments':
+                        result[0][key] = _.sortBy(value, 'departmentName');
+                        break;
+                }
+            });
 
             res.status(200).send(result);
         });

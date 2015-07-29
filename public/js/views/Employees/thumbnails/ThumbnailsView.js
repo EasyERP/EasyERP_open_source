@@ -160,7 +160,7 @@
                 var itemsNumber = $("#itemsNumber").text();
                 var self = this;
                 var chosen = this.$el.find('.chosen');
-                var checkedElements = $('.drop-down-filter input:checkbox:checked');
+                var checkedElements = $('.drop-down-filter > input:checkbox:checked');
                 var showList;
 
 
@@ -169,24 +169,25 @@
                 this.filter = {};
 
                 if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
-                    showList = $('.drop-down-filter input:checkbox:checked').map(function() {
+                    showList = $('.drop-down-filter > input:checkbox:checked').map(function() {
                         return this.value
                     }).get();
 
                     this.filter['department'] = showList;
                 };
 
-                if (checkedElements.length && checkedElements.attr('id') === 'defaultFilter') {
-                    self.filter = 'empty';
-                }
 
                 if (chosen) {
                     chosen.each(function (index, elem) {
                         if (self.filter[elem.children[1].value]) {
-                            self.filter[elem.children[1].value].push(elem.children[2].value);
+                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+                                self.filter[elem.children[1].value].push(element.value);
+                            })
                         } else {
                             self.filter[elem.children[1].value] = [];
-                            self.filter[elem.children[1].value].push(elem.children[2].value);
+                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+                                self.filter[elem.children[1].value].push(element.value);
+                            })
                         }
                     });
                 }
@@ -195,9 +196,9 @@
                 this.newCollection = true;
                 this.$el.find('.thumbnailwithavatar').remove();
 
-                if (!chosen.length && !showList) {
+                if ((checkedElements.length && checkedElements.attr('id') === 'defaultFilter') || (!chosen.length && !showList)) {
                     self.filter = 'empty';
-                }
+                };
 
                 this.changeLocationHash(1, itemsNumber, this.filter);
                 this.collection.showMore({

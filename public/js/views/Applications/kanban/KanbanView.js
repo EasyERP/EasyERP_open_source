@@ -250,30 +250,46 @@
                 var el;
                 var self = this;
                 var chosen = this.$el.find('.chosen');
+                var checkedElements = $('.drop-down-filter > input:checkbox:checked');
 
                 this.filter = {};
 
                 if (chosen.length) {
                     chosen.each(function (index, elem) {
                         if (self.filter[elem.children[1].value]) {
-                            self.filter[elem.children[1].value].push(elem.children[2].value);
+                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+                                self.filter[elem.children[1].value].push(element.value);
+                            })
                         } else {
                             self.filter[elem.children[1].value] = [];
-                            self.filter[elem.children[1].value].push(elem.children[2].value);
+                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+                                self.filter[elem.children[1].value].push(element.value);
+                            })
                         }
                     });
+
                     _.each(workflows, function (wfModel) {
                         $('.column').children('.item').remove();
                         dataService.getData('/Applications/kanban', { workflowId: wfModel._id, filter: this.filter }, this.asyncRender, this);
                     }, this);
 
-
                     return false
                 }
 
                 list_id = _.pluck(workflows, '_id');
-                showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
+                showList = checkedElements.map(function() {return this.value;}).get();
                 foldList = _.difference(list_id, showList);
+
+                if ((checkedElements.length && checkedElements.attr('id') === 'defaultFilter') || (!chosen.length && !showList)) {
+                    self.filter = {};
+
+                    _.each(workflows, function (wfModel) {
+                        $('.column').children('.item').remove();
+                        dataService.getData('/Applications/kanban', { workflowId: wfModel._id, filter: this.filter }, this.asyncRender, this);
+                    }, this);
+                    showList = _.pluck(workflows, '_id');
+                    foldList = [];
+                };
 
                 foldList.forEach(function (id) {
                     var w;
@@ -366,12 +382,13 @@
                         self.showFiltredPage(workflows)
                     });
                     FilterView.on('defaultFilter', function () {
-                        showList = _.pluck(workflows, '_id');
+                        self.showFiltredPage(workflows)
+                        /*showList = _.pluck(workflows, '_id');
 
                         showList.forEach(function (id) {
                             el = $("td.column[data-id='"+id+"']");
                             el.removeClass("fold");
-                        });
+                        });*/
                     });
                     // Filter custom event listen ------end
                 });

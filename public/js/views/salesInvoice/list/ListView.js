@@ -374,13 +374,14 @@ define([
 
             showFilteredPage: function () {
                 var itemsNumber = $("#itemsNumber").text();
-                var checkedElements = $('.drop-down-filter input:checkbox:checked');
+                var checkedElements = $('.drop-down-filter > input:checkbox:checked');
                 var chosen = this.$el.find('.chosen');
                 var self = this;
                 var showList;
 
                 this.startTime = new Date();
                 this.newCollection = false;
+
 
                 if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
                     showList = checkedElements.map(function () {
@@ -400,18 +401,28 @@ define([
                                 self.filter[elem.children[1].value].push({start: $('#start').val(), end: $('#end').val()});
                             }
                         } else {
-                            if (self.filter[elem.children[1].value]) {
-                                self.filter[elem.children[1].value].push(elem.children[2].value);
+                            self.filter[elem.children[1].value] = [];
+                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+                                self.filter[elem.children[1].value].push(element.value);
+                            })
+                           /* if (self.filter[elem.children[1].value]) {
+                                $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+                                    self.filter[elem.children[1].value].push(element.value);
+                                })
                             } else {
                                 self.filter[elem.children[1].value] = [];
-                                self.filter[elem.children[1].value].push(elem.children[2].value);
-                            }
+                                $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+                                    self.filter[elem.children[1].value].push(element.value);
+                                })
+                            }*/
                         }
 
                     });
-                } else {
-                    this.filter['workflow'] = _.pluck(this.stages, '_id');
                 }
+
+                if ((checkedElements.length && checkedElements.attr('id') === 'defaultFilter') || (!chosen.length && !showList)) {
+                    self.filter = {forSales: true};
+                };
 
 
                 $("#top-bar-deleteBtn").hide();
