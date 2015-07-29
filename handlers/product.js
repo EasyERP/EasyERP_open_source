@@ -667,7 +667,16 @@ var Products = function (models) {
                 if (err) {
                     return next(err)
                 }
-                prod[0]['Name'] = underscore.sortBy(value, function (num) { return num});
+               // prod[0]['Name'] = underscore.sortBy(value, function (num) { return num});
+
+                _.map(prod[0], function(value, key) {
+                    switch (key) {
+                        case 'Name':
+                            prod[0][key] = _.sortBy(value, function (num) { return num});
+                            break;
+
+                    }
+                });
 
                 res.send(prod)
             })
