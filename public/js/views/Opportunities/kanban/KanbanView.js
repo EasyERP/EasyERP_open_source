@@ -274,10 +274,15 @@ function (WorkflowsTemplate, kanbanSettingsTemplate, WorkflowsCollection, Kanban
             var self = this;
             var itemsNumber = $("#itemsNumber").text();
             var checkedElements = $('.drop-down-filter input:checkbox:checked');
+            var condition = this.$el.find('.conditionAND > input')[0];
             var chosen = this.$el.find('.chosen');
 
             this.filter = {};
+            this.filter['condition'] = 'and';
 
+            if  (!condition.checked) {
+                self.filter['condition'] = 'or';
+            }
             if (chosen.length) {
                 chosen.each(function (index, elem) {
                     if (elem.children[2].attributes.class.nodeValue === 'chooseDate') {

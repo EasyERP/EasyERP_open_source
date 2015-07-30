@@ -173,6 +173,7 @@ define([
                 var isConverted = null;
                 var self = this;
                 var checkedElements = $('.drop-down-filter input:checkbox:checked');
+                var condition = this.$el.find('.conditionAND > input')[0];
                 var chosen = this.$el.find('.chosen');
                 var showList;
 
@@ -183,14 +184,18 @@ define([
                 this.newCollection = false;
                 this.filter = {};
                 this.filter['isConverted'] = isConverted;
+                this.filter['condition'] = 'and';
 
-                //if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
-                //    showList = $('.drop-down-filter input:checkbox:checked').map(function() {
-                //        return this.value
-                //    }).get();
-                //
-                //    this.filter['workflow'] = showList;
-                //};
+                if  (!condition.checked) {
+                    self.filter['condition'] = 'or';
+                }
+                /*if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
+                    showList = $('.drop-down-filter input:checkbox:checked').map(function() {
+                        return this.value
+                    }).get();
+
+                    this.filter['workflow'] = showList;
+                };*/
 
                 if (chosen) {
                     chosen.each(function (index, elem) {
@@ -422,10 +427,7 @@ define([
                         });
                         FilterView.bind('defaultFilter', function () {
                             showList = _.pluck(self.stages, '_id');
-                            self.showFilteredPage(showList);
-                            $(".saveFilterButton").hide();
-                            $(".clearFilterButton").hide();
-                            $(".removeFilterButton").show();
+                            self.showFilteredPage(showList)
                         });
                         // Filter custom event listen ------end
 

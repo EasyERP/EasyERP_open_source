@@ -143,12 +143,14 @@
                 var self = this;
                 var checkedElements = $('.drop-down-filter input:checkbox:checked');
                 var showList;
+                var condition = this.$el.find('.conditionAND > input')[0];
 
                 this.$el.find('.thumbnail').remove();
                 this.startTime = new Date();
                 this.newCollection = false;
                 this.filter =  {};
                 this.defaultItemsNumber = 0;
+                this.filter['condition'] = 'and';
 
                 /*if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
                     showList = $('.drop-down-filter input:checkbox:checked').map(function() {
@@ -157,6 +159,10 @@
 
                     this.filter['workflow'] = showList;
                 };*/
+
+                if  (!condition.checked) {
+                    self.filter['condition'] = 'or';
+                }
 
                 if (chosen) {
                     chosen.each(function (index, elem) {
