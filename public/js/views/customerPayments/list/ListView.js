@@ -130,7 +130,7 @@ define([
                     }).addClass('datepicker');
                 } else if (isSelect) {
                     ul = "<ul class='newSelectList'>" + "<li data-id='Paid'>Paid</li>" + "<li data-id='Draft'>Draft</li></ul>";
-                    el.html(ul);
+                    el.append(ul);
                 } else {
                     tempContainer = el.text();
                     width = el.width() - 6;
@@ -174,6 +174,7 @@ define([
             chooseOption: function (e) {
                 var target = $(e.target);
                 var targetElement = target.parents("td");
+                var targetW = targetElement.find("a");
                 var tr = target.parents("tr");
                 var modelId = tr.data('id');
                 var id = target.attr("id");
@@ -195,16 +196,21 @@ define([
                 changedAttr = this.changedModels[modelId];
 
                 if (elementType === '#workflow') {
+                    targetW.attr("class", "currentSelected");
                     changedAttr.workflow = target.text();
+                    if (target.attr('data-id') === 'Paid') {
+                        targetW.addClass('done');
+                    } else {
+                        targetW.addClass('new');
+                    }
                 }
-                targetElement.text(target.text());
+                targetW.text(target.text());
 
                 this.hideNewSelect();
                 this.setEditable(targetElement);
 
                 return false;
             },
-
 
             saveItem: function () {
                 var model;
