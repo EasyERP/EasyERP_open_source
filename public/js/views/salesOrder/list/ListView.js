@@ -374,6 +374,7 @@ define([
             showFilteredPage: function () {
                 var itemsNumber;
                 var checkedElements = $('.drop-down-filter input:checkbox:checked');
+                var condition = this.$el.find('.conditionAND > input')[0];
                 var showList;
 
                 this.startTime = new Date();
@@ -381,14 +382,19 @@ define([
 
                 this.filter = {};
                 this.filter['forSales'] = true;
+                this.filter['condition'] = 'and';
 
-                if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
+                if  (!condition.checked) {
+                    self.filter['condition'] = 'or';
+                }
+
+                /*if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
                     showList = $('.drop-down-filter input:checkbox:checked').map(function() {
                         return this.value
                     }).get();
 
                     this.filter['workflow'] = showList;
-                }
+                }*/
 
                 if (checkedElements.length && checkedElements.attr('id') === 'defaultFilter') {
                     self.filter = 'empty';

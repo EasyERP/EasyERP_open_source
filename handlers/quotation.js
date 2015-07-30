@@ -190,17 +190,25 @@ var Quotation = function (models) {
         var filter = data.filter;
 
         if (data && filter) {
+            if (filter.condition === 'or') {
+                queryObject['$or'] = []
+            }
             if (filter.workflow) {
                 queryObject.$and.push({workflow: {$in: filter.workflow.objectID()}});
             }
-            if (filter.Reference) {
+            /*if (filter.Reference) {
                 queryObject.$and.push({supplierReference: {$in: filter.Reference}});
-            }
+            }*/
             if (filter.supplier) {
                 queryObject.$and.push({supplier: {$in: filter.supplier}});
             }
             if (filter['Order date']) {
-                queryObject.$and.push({orderDate: {$gte: new Date(filter['Order date'][0].start), $lte: new Date(filter['Order date'][0].end)}});
+                if (filter.condition === 'or') {
+                    queryObject.$or.push({orderDate: {$gte: new Date(filter['Order date'][0].start), $lte: new Date(filter['Order date'][0].end)}});
+                } else {
+                    queryObject.$and.push({orderDate: {$gte: new Date(filter['Order date'][0].start), $lte: new Date(filter['Order date'][0].end)}});
+                }
+
             }
         }
     };

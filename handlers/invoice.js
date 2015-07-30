@@ -270,15 +270,26 @@ var Invoice = function (models) {
                         optionsObject.$and.push({_id: {$in: invoicesIds}});
 
                         if (req.query && req.query.filter) {
-                            if (req.query.filter.workflow) {
-                                optionsObject.$and.push({workflow: {$in: req.query.filter.workflow}});
+                            if (req.query.filter.condition === 'or') {
+                                optionsObject.$or = [];
                             }
+                            /*if (req.query.filter.workflow) {
+                                optionsObject.$and.push({workflow: {$in: req.query.filter.workflow}});
+                            }*/
                             if (req.query.filter['Due date']) {
-                                optionsObject.$and.push({dueDate: {$gte: new Date(req.query.filter['Due date'][0].start), $lte: new Date(req.query.filter['Due date'][0].end)}});
+                                if (req.query.filter.condition === 'or') {
+                                    optionsObject.$or.push({dueDate: {$gte: new Date(req.query.filter['Due date'][0].start), $lte: new Date(req.query.filter['Due date'][0].end)}});
+                                } else {
+                                    optionsObject.$and.push({dueDate: {$gte: new Date(req.query.filter['Due date'][0].start), $lte: new Date(req.query.filter['Due date'][0].end)}});
+                                }
 
                             }
                             if (req.query.filter.salesPerson) {
-                                optionsObject.$and.push({salesPerson: {$in: req.query.filter.salesPerson}})
+                                if (req.query.filter.condition === 'or') {
+                                    optionsObject.$or.push({salesPerson: {$in: req.query.filter.salesPerson}})
+                                } else {
+                                    optionsObject.$and.push({salesPerson: {$in: req.query.filter.salesPerson}})
+                                }
                             }
                         }
 
@@ -685,10 +696,10 @@ var Invoice = function (models) {
                                 _id: null,
                                 'Due date': {
                                     $addToSet: '$dueDate'
-                                },
+                                }/*,
                                 'salesPerson': {
                                     $addToSet: '$salesPerson'
-                                }
+                                }*/
                             }
                         }
                     ], function (err, invoice) {
@@ -700,7 +711,7 @@ var Invoice = function (models) {
                         }
 
                     })
-            },
+            }/*,
             function (invoice, cb) {
                 Employee
                     .populate(invoice , {
@@ -716,7 +727,7 @@ var Invoice = function (models) {
                             cb(null, invoice)
 
                 })
-            }
+            }*/
 
         ], function (err, result) {
             if (err) {

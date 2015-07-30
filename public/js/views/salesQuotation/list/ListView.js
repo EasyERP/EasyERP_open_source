@@ -236,12 +236,12 @@ define([
                         FilterView = new filterView({ collection: stages, customCollection: values});
                         // Filter custom event listen ------begin
                         FilterView.bind('filter', function () {
-                            showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
-                            self.showFilteredPage(showList)
+                            //showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
+                            self.showFilteredPage()
                         });
                         FilterView.bind('defaultFilter', function () {
-                            showList = _.pluck(self.stages, '_id');
-                            self.showFilteredPage(showList);
+                            //showList = _.pluck(self.stages, '_id');
+                            self.showFilteredPage();
                         });
                         // Filter custom event listen ------end
                     })
@@ -371,19 +371,59 @@ define([
                 this.changeLocationHash(1, itemsNumber, this.filter);
             },
 
-            showFilteredPage: function (workflowIdArray) {
-                var itemsNumber;
+            showFilteredPage: function () {
+                var isConverted = true;
+                var itemsNumber = $("#itemsNumber").text();
+                var chosen = this.$el.find('.chosen');
+                var self = this;
+                var checkedElements = $('.drop-down-filter input:checkbox:checked');
+                var condition = this.$el.find('.conditionAND > input')[0];
+                var showList;
+
+                this.startTime = new Date();
+                this.newCollection = false;
+                this.filter = {};
+                this.filter['isConverted'] = isConverted;
+                this.filter['condition'] = 'and';
+
+                if  (!condition.checked) {
+                    self.filter['condition'] = 'or';
+                }
 
                 this.startTime = new Date();
                 this.newCollection = false;
 
+                if (chosen) {
+                    chosen.each(function (index, elem) {
+                        if (elem.children[2].attributes.class.nodeValue === 'chooseDate') {
+                            if (self.filter[elem.children[1].value]) {
+                                self.filter[elem.children[1].value].push({start: $('#start').val(), end: $('#end').val()});
 
-                this.filter = {};
-                if (workflowIdArray.length) this.filter['workflow'] = workflowIdArray;
+                            } else {
+                                self.filter[elem.children[1].value] = [];
+                                self.filter[elem.children[1].value].push({start: $('#start').val(), end: $('#end').val()});
+                            }
+                        } else {
+                            if (self.filter[elem.children[1].value]) {
+                                $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+                                    self.filter[elem.children[1].value].push($(element).next().text());
+                                })
+                            } else {
+                                self.filter[elem.children[1].value] = [];
+                                $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+                                    self.filter[elem.children[1].value].push($(element).next().text());
+                                })
+                            }
+                        }
 
-                itemsNumber = $("#itemsNumber").text();
+                    });
+                }
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
+
+                if ((checkedElements.length && checkedElements.attr('id') === 'defaultFilter') || (!chosen.length && !showList)) {
+                    self.filter = 'empty';
+                };
 
                 this.changeLocationHash(1, itemsNumber, this.filter);
                 this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter });

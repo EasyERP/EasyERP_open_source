@@ -395,12 +395,18 @@ define([
                 var itemsNumber = $("#itemsNumber").text();
                 var checkedElements = $('.drop-down-filter input:checkbox:checked');
                 var chosen = this.$el.find('.chosen');
+                var condition = this.$el.find('.conditionAND > input')[0];
                 var self = this;
                 var showList;
 
                 this.startTime = new Date();
                 this.newCollection = false;
+                this.filter = {};
+                this.filter['condition'] = 'and';
 
+                if  (!condition.checked) {
+                    self.filter['condition'] = 'or';
+                }
 
                 //if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
                 //    showList = checkedElements.map(function () {
