@@ -192,7 +192,7 @@ var Invoice = function (models) {
                     var contentSearcher;
                     var waterfallTasks;
 
-                    if (query && query.filter && query.filter.forSales) {
+                    if (query && query.filter && query.filter.forSales === 'true') {
                         queryObject['forSales'] = true;
                     } else {
                         queryObject['forSales'] = false;

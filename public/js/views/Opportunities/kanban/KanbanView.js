@@ -273,7 +273,7 @@ function (WorkflowsTemplate, kanbanSettingsTemplate, WorkflowsCollection, Kanban
             var el;
             var self = this;
             var itemsNumber = $("#itemsNumber").text();
-            var checkedElements = $('.drop-down-filter > input:checkbox:checked');
+            var checkedElements = $('.drop-down-filter input:checkbox:checked');
             var chosen = this.$el.find('.chosen');
 
             this.filter = {};

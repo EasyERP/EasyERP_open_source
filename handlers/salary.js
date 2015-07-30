@@ -230,52 +230,10 @@ var Salary = function (models) {
                     };
 
                     contentIdsSearcher = function (deps, waterfallCallback) {
-                        var arrOfObjectId = deps.objectID();
-
-                        var userId = req.session.uId;
-                        var everyOne = {
-                            whoCanRW: "everyOne"
-                        };
-                        var owner = {
-                            $and: [
-                                {
-                                    whoCanRW: 'owner'
-                                },
-                                {
-                                    'groups.owner': objectId(userId)
-                                }
-                            ]
-                        };
-                        var group = {
-                            $or: [
-                                {
-                                    $and: [
-                                        {whoCanRW: 'group'},
-                                        {'groups.users': objectId(userId)}
-                                    ]
-                                },
-                                {
-                                    $and: [
-                                        {whoCanRW: 'group'},
-                                        {'groups.group': {$in: arrOfObjectId}}
-                                    ]
-                                }
-                            ]
-                        };
-
-                        var whoCanRw = [everyOne, owner, group];
-                        var matchQuery = {
-                            $and: [
-                                queryObject,
-                                {
-                                    $or: whoCanRw
-                                }
-                            ]
-                        };
 
                         Salary.aggregate(
                             {
-                                $match: matchQuery
+                                $match: {}
                             },
                             {
                                 $project: {
@@ -286,15 +244,13 @@ var Salary = function (models) {
                         );
                     };
 
-                    contentSearcher = function (productsIds, waterfallCallback) {
-                        queryObject._id = {$in: productsIds};
-
-/*                        var query = Product.find(queryObject).limit(count).skip(skip).sort(sort);
-                        query.exec(waterfallCallback);*/
+                    contentSearcher = function (salaryIds, waterfallCallback) {
+                        var query;
+                        queryObject._id = {$in: salaryIds};
 
                         self.totalCollectionLength(req, function (err, ressult) {
                             if (ressult) {
-                                var query = Salary.find(queryObject)
+                                query = Salary.find(queryObject)
                                     .limit(count)
                                     .skip(skip)
                                     .lean()
@@ -306,7 +262,7 @@ var Salary = function (models) {
                                         self.recalculateCashSalary(req, callback);
                                     },
                                     second: function (callback) {
-                                        var query = Salary.find(queryObject)
+                                        query = Salary.find(queryObject)
                                             .limit(count)
                                             .skip(skip)
                                             .lean()
@@ -412,7 +368,7 @@ var Salary = function (models) {
                             diffOnCash: {$sum: "$diff.onCash"},
                             diffOnCard: {$sum: "$diff.onCard"},
                             diffTotal: {$sum: "$diff.total"},
-                            employeesArray: {$push: "$$ROOT"}
+                            employeesArray: {$push: "$$ROOT"},
                         }
                     }
                 ], callback

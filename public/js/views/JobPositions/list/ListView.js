@@ -214,7 +214,7 @@ define([
                 var itemsNumber = $("#itemsNumber").text();
                 var self = this;
                 var chosen = this.$el.find('.chosen');
-                var checkedElements = $('.drop-down-filter > input:checkbox:checked');
+                var checkedElements = $('.drop-down-filter input:checkbox:checked');
                 var showList;
 
                 $("#top-bar-deleteBtn").hide();
@@ -300,7 +300,9 @@ define([
                         editMode: false
                     }
                 );
-
+                if (!App.currentUser.savedFilters){
+                    App.currentUser.savedFilters = {};
+                }
                 App.currentUser.savedFilters['JobPositions'] = filterObj.filter;
 
                 this.$el.find('.filterValues').empty();

@@ -172,7 +172,7 @@ define([
                 var itemsNumber = $("#itemsNumber").text();
                 var isConverted = null;
                 var self = this;
-                var checkedElements = $('.drop-down-filter > input:checkbox:checked');
+                var checkedElements = $('.drop-down-filter input:checkbox:checked');
                 var chosen = this.$el.find('.chosen');
                 var showList;
 
@@ -262,7 +262,9 @@ define([
                         editMode: false
                     }
                 );
-
+                if (!App.currentUser.savedFilters){
+                    App.currentUser.savedFilters = {};
+                }
                 App.currentUser.savedFilters['Leads'] = filterObj.filter;
 
                 this.$el.find('.filterValues').empty();

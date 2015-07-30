@@ -75,7 +75,7 @@
             alpabeticalRender: function (e, showList) {
                 var selectedLetter;
                 var target;
-                var checkedElements = $('.drop-down-filter > input:checkbox:checked');
+                var checkedElements = $('.drop-down-filter input:checkbox:checked');
                 var chosen = this.$el.find('.chosen');
                 var self = this;
 
@@ -131,7 +131,6 @@
                     self.filter = 'empty';
                 };
 
-
                 this.defaultItemsNumber = 0;
 
                 this.changeLocationHash(null, this.defaultItemsNumber, this.filter);
@@ -182,7 +181,9 @@
                         editMode: false
                     }
                 );
-
+                if (!App.currentUser.savedFilters){
+                    App.currentUser.savedFilters = {};
+                }
                 App.currentUser.savedFilters['Persons'] = filterObj.filter;
 
                 this.$el.find('.filterValues').empty();

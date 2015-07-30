@@ -931,7 +931,7 @@ define([
                 var itemsNumber;
                 var showList;
                 var self = this;
-                var checkedElements = $('.drop-down-filter > input:checkbox:checked');
+                var checkedElements = $('.drop-down-filter  input:checkbox:checked');
                 var chosen = this.$el.find('.chosen');
 
                 this.startTime = new Date();
@@ -944,14 +944,6 @@ define([
                 if (showFilterList && !showFilterList.departments) {
                     this.filter = {};
                 }
-
-                if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
-                    showList = checkedElements.map(function () {
-                        return this.id;
-                    }).get();
-
-                    this.filter['departments'] = showList;
-                };
 
                 if (chosen) {
                     chosen.each(function (index, elem) {
@@ -1024,7 +1016,9 @@ define([
                         editMode: false
                     }
                 );
-
+                if (!App.currentUser.savedFilters){
+                    App.currentUser.savedFilters = {};
+                }
                 App.currentUser.savedFilters['wTrack'] = filterObj.filter;
 
                 this.$el.find('.filterValues').empty();

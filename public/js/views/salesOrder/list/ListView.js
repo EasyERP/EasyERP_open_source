@@ -446,7 +446,9 @@ define([
                         editMode: false
                     }
                 );
-
+                if (!App.currentUser.savedFilters){
+                    App.currentUser.savedFilters = {};
+                }
                 App.currentUser.savedFilters['Order'] = filterObj.filter;
 
                 this.$el.find('.filterValues').empty();
