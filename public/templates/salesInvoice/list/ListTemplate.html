@@ -10,9 +10,9 @@ class="canceledListItem"
 <td><%=invoice.paymentDate%></td>
 <td><%=(invoice.salesPerson)? invoice.salesPerson.name.first+' '+invoice.salesPerson.name.last:''%></td>
 <td><%=invoice.dueDate%></td>
-<td class="currency"><%=invoice.paymentInfo.balance%></td>
-<td class="unTaxed currency"><%=(invoice.paymentInfo) ? invoice.paymentInfo.unTaxed : '0.00'%></td>
-<td class="total currency"><%=(invoice.paymentInfo) ? invoice.paymentInfo.total : '0.00'%></td>
+<td class="money"><%=currencySplitter(invoice.paymentInfo.balance)%></td>
+<td class="unTaxed money"><%=(invoice.paymentInfo) ? currencySplitter(invoice.paymentInfo.unTaxed) : '0.00'%></td>
+<td class="total money"><%=(invoice.paymentInfo) ? currencySplitter(invoice.paymentInfo.total) : '0.00'%></td>
 <td id='<%=invoice._id%>'>
     <%if(invoice.workflow){%>
     <%if(invoice.workflow.status !== 'Done'){%>
