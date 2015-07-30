@@ -184,13 +184,13 @@ define([
                 this.filter = {};
                 this.filter['isConverted'] = isConverted;
 
-                if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
-                    showList = $('.drop-down-filter input:checkbox:checked').map(function() {
-                        return this.value
-                    }).get();
-
-                    this.filter['workflow'] = showList;
-                };
+                //if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
+                //    showList = $('.drop-down-filter input:checkbox:checked').map(function() {
+                //        return this.value
+                //    }).get();
+                //
+                //    this.filter['workflow'] = showList;
+                //};
 
                 if (chosen) {
                     chosen.each(function (index, elem) {
@@ -212,7 +212,7 @@ define([
                 };
                 this.defaultItemsNumber = 0;
                 this.changeLocationHash(null, this.defaultItemsNumber, this.filter);
-                this.collection.showMore({ count: this.defaultItemsNumber, page: 1, filter: this.filter });
+                this.collection.showMore({ count: this.defaultItemsNumber, page: 1, filter: this.filter, newCollection: true });
                 this.getTotalLength(this.defaultItemsNumber, this.filter)
                 //this.changeLocationHash(1, itemsNumber, this.filter);
                 //this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter, parrentContentId: this.parrentContentId });
@@ -326,6 +326,7 @@ define([
                 this.$el.find('.filterValues').empty();
                 this.$el.find('.filter-icons').removeClass('active');
                 this.$el.find('.chooseOption').children().remove();
+                this.$el.find('.filterOptions').removeClass('chosen');
 
                 $.each($('.drop-down-filter input'), function (index, value) {
                     value.checked = false
@@ -421,7 +422,10 @@ define([
                         });
                         FilterView.bind('defaultFilter', function () {
                             showList = _.pluck(self.stages, '_id');
-                            self.showFilteredPage(showList)
+                            self.showFilteredPage(showList);
+                            $(".saveFilterButton").hide();
+                            $(".clearFilterButton").hide();
+                            $(".removeFilterButton").show();
                         });
                         // Filter custom event listen ------end
 

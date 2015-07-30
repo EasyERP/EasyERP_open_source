@@ -251,7 +251,10 @@ define([
                                 self.showFilteredPage()
                             });
                             FilterView.bind('defaultFilter', function () {
-                                self.showFilteredPage()
+                                self.showFilteredPage();
+                                $(".saveFilterButton").hide();
+                                $(".clearFilterButton").hide();
+                                $(".removeFilterButton").show();
                             });
                             // Filter custom event listen ------end
                         })
@@ -389,15 +392,6 @@ define([
 
                 this.filter = {};
                 this.filter['forSales'] = false;
-
-                //if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
-                //    showList = checkedElements.map(function() {
-                //        return this.value
-                //    }).get();
-                //
-                //    this.filter['workflow'] = showList;
-                //};
-
 
                 if (chosen) {
                     chosen.each(function (index, elem) {
@@ -545,6 +539,7 @@ define([
                 this.$el.find('.filterValues').empty();
                 this.$el.find('.filter-icons').removeClass('active');
                 this.$el.find('.chooseOption').children().remove();
+                this.$el.find('.filterOptions').removeClass('chosen');
 
                 $.each($('.drop-down-filter input'), function (index, value) {
                     value.checked = false

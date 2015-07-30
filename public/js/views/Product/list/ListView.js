@@ -240,7 +240,10 @@ define([
                         self.showFilteredPage()
                     });
                     FilterView.bind('defaultFilter', function () {
-                        self.showFilteredPage()
+                        self.showFilteredPage();
+                        $(".saveFilterButton").hide();
+                        $(".clearFilterButton").hide();
+                        $(".removeFilterButton").show();
                     });
                     // Filter custom event listen ------end
                 });
@@ -499,6 +502,7 @@ define([
                 this.$el.find('.filterValues').empty();
                 this.$el.find('.filter-icons').removeClass('active');
                 this.$el.find('.chooseOption').children().remove();
+                this.$el.find('.filterOptions').removeClass('chosen');
 
                 $.each($('.drop-down-filter input'), function (index, value) {
                     value.checked = false
