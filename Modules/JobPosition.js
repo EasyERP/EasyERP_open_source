@@ -242,6 +242,7 @@ var JobPosition = function (models) {
         res['data'] = [];
         var query = models.get(req.session.lastDb, 'JobPosition', jobPositionSchema).find({});
         query.select('_id name');
+        query.sort({'name': 1});
         query.exec(function (err, result) {
             if (err) {
                 console.log(err);

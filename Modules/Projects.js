@@ -568,6 +568,7 @@ var Project = function (models, event) {
                                 var query = models.get(req.session.lastDb, "Project", projectSchema).find().where('_id').in(result);
                                 query.select("_id projectName projectShortDesc")
                                     .lean()
+                                    .sort({'projectName': 1})
                                     .exec(function (error, _res) {
                                         if (!error) {
                                             res['data'] = _res;

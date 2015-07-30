@@ -134,7 +134,7 @@ define([
                 this.changed = true;
                 this.createdCopied = true;
 
-                var selectedWtrack = this.$el.find('input:checked:not(#check_all)')[0];
+                var selectedWtrack = this.$el.find('input.listCB:checked:not(#check_all)')[0];
                 var self = this;
                 var target =  $(selectedWtrack);
                 var id = target.val();
@@ -185,6 +185,10 @@ define([
                 var calcEl;
                 var editWtrackModel;
                 var workedEl = tr.find('[data-content="worked"]');
+                var revenueEl = tr.find('[data-content="revenue"]');
+                var rateEl = tr.find('[data-content="rate"]');
+                var rateVal;
+                var revenueVal;
 
                 for (var i = days.length - 1; i >= 0; i--) {
                     calcEl = $(days[i]);
@@ -201,6 +205,11 @@ define([
                     worked += parseInt(value);
                 }
 
+                rateVal = parseInt(rateEl.text());
+                revenueVal = parseFloat(worked * rateVal).toFixed(2);
+
+                revenueEl.text(revenueVal);
+
                 editWtrackModel = this.editCollection.get(wTrackId);
                 workedEl.text(worked);
                 //editWtrackModel.set('worked', worked);
@@ -210,6 +219,7 @@ define([
                 }
 
                 this.changedModels[wTrackId].worked = worked;
+                this.changedModels[wTrackId].revenue = revenueVal * 100;
             },
 
             setEditable: function (td) {

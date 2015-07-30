@@ -7,6 +7,7 @@
         var res = {};
         res['data'] = [];
         var query = models.get(req.session.lastDb, 'jobType', jobTypeSchema).find({});
+        query.sort({'name': 1});
         query.exec(function (err, jobType) {
             if (err) {
                 console.log(err);
