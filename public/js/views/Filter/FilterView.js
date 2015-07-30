@@ -66,10 +66,10 @@ define([
                     date.remove();
                     opt.removeClass('activated').show();
                     this.$el.find(".filterOptions, .filterActions").hide();
-                    if (e && e.target) {
+                   /* if (e && e.target) {
                         this.trigger('defaultFilter');
                         e.stopPropagation();
-                    }
+                    }*/
 
                 }
             },
