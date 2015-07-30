@@ -174,7 +174,7 @@ define([
                 var itemsNumber = $("#itemsNumber").text();
                 var chosen = this.$el.find('.chosen');
                 var self = this;
-                var checkedElements = $('.drop-down-filter > input:checkbox:checked');
+                var checkedElements = $('.drop-down-filter input:checkbox:checked');
                 var showList;
 
                 this.startTime = new Date();
@@ -270,8 +270,10 @@ define([
                         editMode: false
                     }
                 );
-
-                App.currentUser.savedFilters['Employees'] = filterObj.filter;
+                if (!App.currentUser.savedFilters){
+                    App.currentUser.savedFilters = {};
+                }
+                App.currentUser.savedFilters['Quotation'] = filterObj.filter;
 
                 this.$el.find('.filterValues').empty();
                 this.$el.find('.filter-icons').removeClass('active');
@@ -320,7 +322,7 @@ define([
                     }
                 );
 
-                delete App.currentUser.savedFilters['Employees'];
+                delete App.currentUser.savedFilters['Quotation'];
 
                 $(".saveFilterButton").hide();
                 $(".removeFilterButton").hide();

@@ -9,9 +9,10 @@ define([
         "custom",
         "dataService",
         "populate",
-        'constants'
+        'constants',
+        'helpers'
     ],
-    function (EditTemplate, AssigneesView, InvoiceItemView, wTrackRows, PaymentCreateView, listHederInvoice, common, Custom, dataService, populate, CONSTANTS) {
+    function (EditTemplate, AssigneesView, InvoiceItemView, wTrackRows, PaymentCreateView, listHederInvoice, common, Custom, dataService, populate, CONSTANTS, helpers) {
 
         var EditView = Backbone.View.extend({
             contentType: "Invoice",
@@ -360,7 +361,8 @@ define([
                     project: project,
                     assigned: assigned,
                     customer: customer,
-                    total: total
+                    total: total,
+                    currencySplitter: helpers.currencySplitter
                 });
 
                 if(this.isWtrack){
@@ -402,7 +404,7 @@ define([
                     resizable: true,
                     dialogClass: "edit-invoice-dialog",
                     title: "Edit Invoice",
-                    width: self.isWtrack ? '1000': '900',
+                    width: self.isWtrack ? '1200': '900',
                     position: {my: "center bottom", at: "center", of: window},
                     buttons: buttons
 

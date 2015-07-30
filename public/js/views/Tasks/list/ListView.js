@@ -369,7 +369,9 @@ define([
                         editMode: false
                     }
                 );
-
+                if (!App.currentUser.savedFilters){
+                    App.currentUser.savedFilters = {};
+                }
                 App.currentUser.savedFilters['Tasks'] = filterObj.filter;
 
                 this.$el.find('.filterValues').empty();
@@ -524,11 +526,9 @@ define([
                         itemView.trigger('incomingStages', stages);
                         // Filter custom event listen ------begin
                         FilterView.bind('filter', function () {
-                            //showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
                             self.showFilteredPage()
                         });
                         FilterView.bind('defaultFilter', function () {
-                            //showList = _.pluck(self.stages, '_id');
                             self.showFilteredPage()
                         });
                         // Filter custom event listen ------end

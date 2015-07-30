@@ -5,10 +5,11 @@
         'text!templates/Alpabet/AphabeticTemplate.html',
         "text!templates/Companies/thumbnails/ThumbnailsItemTemplate.html",
         'dataService',
-        'views/Filter/FilterView'
+        'views/Filter/FilterView',
+        'models/UsersModel'
     ],
 
-    function (common, editView, createView, AphabeticTemplate, ThumbnailsItemTemplate, dataService, filterView) {
+    function (common, editView, createView, AphabeticTemplate, ThumbnailsItemTemplate, dataService, filterView, usersModel) {
         var CompaniesThumbnalView = Backbone.View.extend({
             el: '#content-holder',
             countPerPage: 0,
@@ -41,7 +42,10 @@
             events: {
                 "click #showMore": "showMore",
                 "click .letter:not(.empty)": "alpabeticalRender",
-                "click .gotoForm": "gotoForm"
+                "click .gotoForm": "gotoForm",
+                "click .saveFilterButton": "saveFilter",
+                "click .removeFilterButton": "removeFilter",
+                "click .clearFilterButton": "clearFilter"
             },
 
             asyncLoadImgs: function (collection) {
@@ -70,9 +74,15 @@
             alpabeticalRender: function (e, showList) {
                 var selectedLetter;
                 var target;
-                var checkedElements = $('.drop-down-filter > input:checkbox:checked');
+                var checkedElements = $('.drop-down-filter input:checkbox:checked');
                 var chosen = this.$el.find('.chosen');
                 var self = this;
+
+                this.$el.find('.thumbnailwithavatar').remove();
+                this.startTime = new Date();
+                this.newCollection = false;
+
+                this.filter =  {};
 
                 if (e && e.target) {
                     selectedLetter = $(e.target).text();
@@ -82,27 +92,6 @@
                     }
                     target.parent().find(".current").removeClass("current");
                     target.addClass("current");
-                }
-
-
-                this.$el.find('.thumbnailwithavatar').remove();
-                this.startTime = new Date();
-                this.newCollection = false;
-                this.filter =  {};
-
-                if (showList) {
-                    if (showList.indexOf('isCustomer') !== -1) {
-                        this.filter['isCustomer'] = 1;
-                    }else if (showList.indexOf('isSupplier') !== -1) {
-                        this.filter['isSupplier'] = 1;
-                    } else {
-                        delete this.filter['isSupplier'];
-                        delete this.filter['isCustomer'];
-                    }
-                    if (this.filter['isSupplier'] && this.filter['isCustomer']) {
-                        delete this.filter['isSupplier'];
-                        delete this.filter['isCustomer'];
-                    }
                 }
 
                 if (chosen) {
@@ -120,17 +109,153 @@
                     });
                 };
 
+                if (showList) {
+                    if (showList.indexOf('isCustomer') !== -1) {
+                        this.filter['isCustomer'] = 1;
+                    }else if (showList.indexOf('isSupplier') !== -1) {
+                        this.filter['isSupplier'] = 1;
+                    } else {
+                        delete this.filter['isSupplier'];
+                        delete this.filter['isCustomer'];
+                    }
+                    if (this.filter['isSupplier'] && this.filter['isCustomer']) {
+                        delete this.filter['isSupplier'];
+                        delete this.filter['isCustomer'];
+                    }
+                }
+
+
+
                 if (selectedLetter || selectedLetter === '') this.filter['letter'] = selectedLetter;
 
                 if ((checkedElements.length && checkedElements.attr('id') === 'defaultFilter') || (!chosen.length && !showList)) {
-                    self.filter = {'forSales': true};
+                    self.filter = 'empty';
                 };
 
                 this.defaultItemsNumber = 0;
                 this.changeLocationHash(null, this.defaultItemsNumber, this.filter);
                 this.collection.showMoreAlphabet({ count: this.defaultItemsNumber, page: 1, filter: this.filter });
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
+
+                if (checkedElements.attr('id') === 'defaultFilter'){
+                    $(".saveFilterButton").hide();
+                    $(".clearFilterButton").hide();
+                    $(".removeFilterButton").show();
+                } else {
+                    $(".saveFilterButton").show();
+                    $(".clearFilterButton").show();
+                    $(".removeFilterButton").show();
+                }
             },
+
+            saveFilter: function () {
+                var currentUser = new usersModel(App.currentUser);
+                var subMenu = $('#submenu-holder').find('li.selected').text();
+                var key;
+                var filterObj = {};
+                var mid = 39;
+
+                key = subMenu.trim();
+
+                filterObj['filter'] = {};
+                filterObj['filter'] = this.filter;
+                filterObj['key'] = key;
+
+                currentUser.changed = filterObj;
+
+                currentUser.save(
+                    filterObj,
+                    {
+                        headers: {
+                            mid: mid
+                        },
+                        wait: true,
+                        patch:true,
+                        validate: false,
+                        success: function (model) {
+                            console.log('Filter was saved to db');
+                        },
+                        error: function (model,xhr) {
+                            console.error(xhr);
+                        },
+                        editMode: false
+                    }
+                );
+                if (!App.currentUser.savedFilters){
+                    App.currentUser.savedFilters = {};
+                }
+                App.currentUser.savedFilters['Companies'] = filterObj.filter;
+
+                this.$el.find('.filterValues').empty();
+                this.$el.find('.filter-icons').removeClass('active');
+                this.$el.find('.chooseOption').children().remove();
+
+                $.each($('.drop-down-filter input'), function (index, value) {
+                    value.checked = false
+                });
+
+                $(".saveFilterButton").hide();
+                $(".removeFilterButton").show();
+                $(".clearFilterButton").show();
+
+            },
+
+            removeFilter: function () {
+                var currentUser = new usersModel(App.currentUser);
+                var subMenu = $('#submenu-holder').find('li.selected').text();
+                var key;
+                var filterObj = {};
+                var mid = 39;
+
+                this.clearFilter();
+
+                key = subMenu.trim();
+                filterObj['key'] = key;
+
+                currentUser.changed = filterObj;
+
+                currentUser.save(
+                    filterObj,
+                    {
+                        headers: {
+                            mid: mid
+                        },
+                        wait: true,
+                        patch:true,
+                        validate: false,
+                        success: function (model) {
+                            console.log('Filter was remover from db');
+                        },
+                        error: function (model,xhr) {
+                            console.error(xhr);
+                        },
+                        editMode: false
+                    }
+                );
+
+                delete App.currentUser.savedFilters['Companies'];
+
+                $(".saveFilterButton").hide();
+                $(".removeFilterButton").hide();
+                $(".clearFilterButton").hide();
+            },
+
+            clearFilter: function () {
+                this.$el.find('.filterValues').empty();
+                this.$el.find('.filter-icons').removeClass('active');
+                this.$el.find('.chooseOption').children().remove();
+
+                $.each($('.drop-down-filter input'), function (index, value) {
+                    value.checked = false
+                });
+
+                this.alpabeticalRender(null);
+
+                $(".clearFilterButton").hide();
+                $(".removeFilterButton").show();
+                $(".saveFilterButton").hide();
+            },
+
 
             gotoForm: function (e) {
                 e.preventDefault();
@@ -183,6 +308,21 @@
                         _id: 'isSupplier'
                     }
                 ];
+
+                currentEl.prepend('<div class="filtersActive"><button id="saveFilterButton" class="saveFilterButton">Save Filter</button>' +
+                    '<button id="clearFilterButton" class="clearFilterButton">Clear Filter</button>' +
+                    '<button id="removeFilterButton" class="removeFilterButton">Remove Filter</button></div>'
+                );
+
+                $("#clearFilterButton").hide();
+                $("#saveFilterButton").hide();
+                $("#removeFilterButton").hide();
+
+                if (App.currentUser.savedFilters && App.currentUser.savedFilters['Companies']) {
+                    $("#clearFilterButton").show();
+                    $("#removeFilterButton").show();
+                }
+
                 dataService.getData('/supplier/getFilterValues', null, function (values) {
                     FilterView = new filterView({ collection: filterObject, customCollection: values});
                     // Filter custom event listen ------begin

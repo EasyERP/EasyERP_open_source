@@ -229,9 +229,9 @@
                                             </td>
                                             <td>
                                                     <span>
-                                                        <span id="totalUntaxes" class="currency">
+                                                        <span id="totalUntaxes" class="money">
                                                             <%if (total) {%>
-                                                            <%= total%>
+                                                            <%= currencySplitter(total)%>
                                                             <%} else {%>
                                                             0.00
                                                             <%}%>
@@ -245,7 +245,7 @@
                                             </td>
                                             <td>
                                                     <span>
-                                                        <span id="taxes" class="currency">
+                                                        <span id="taxes" class="money">
                                                             0.00
                                                         </span>
                                                     </span>
@@ -257,9 +257,9 @@
                                             </td>
                                             <td>
                                                     <span class="">
-                                                        <span id="totalAmount" class="currency">
+                                                        <span id="totalAmount" class="money">
                                                             <%if (total) {%>
-                                                            <%=total%>
+                                                            <%=currencySplitter(total)%>
                                                             <%} else {%>
                                                             0.00
                                                             <%}%>
