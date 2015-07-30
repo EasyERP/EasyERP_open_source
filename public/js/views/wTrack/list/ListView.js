@@ -931,7 +931,7 @@ define([
                 var itemsNumber;
                 var showList;
                 var self = this;
-                var checkedElements = $('.drop-down-filter > input:checkbox:checked');
+                var checkedElements = $('.drop-down-filter  input:checkbox:checked');
                 var chosen = this.$el.find('.chosen');
 
                 this.startTime = new Date();
@@ -1024,7 +1024,9 @@ define([
                         editMode: false
                     }
                 );
-
+                if (!App.currentUser.savedFilters){
+                    App.currentUser.savedFilters = {};
+                }
                 App.currentUser.savedFilters['wTrack'] = filterObj.filter;
 
                 this.$el.find('.filterValues').empty();

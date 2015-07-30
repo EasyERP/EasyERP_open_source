@@ -179,7 +179,9 @@
                         editMode: false
                     }
                 );
-
+                if (!App.currentUser.savedFilters){
+                    App.currentUser.savedFilters = {};
+                }
                 App.currentUser.savedFilters['Product'] = filterObj.filter;
 
                 this.$el.find('.filterValues').empty();

@@ -285,11 +285,9 @@
                         FilterView = new filterView({ collection: stages, customCollection: values});
                         // Filter custom event listen ------begin
                         FilterView.bind('filter', function () {
-                            //showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
                             self.showFilteredPage()
                         });
                         FilterView.bind('defaultFilter', function () {
-                            //showList = _.pluck(self.stages, '_id');
                             self.showFilteredPage()
                         });
                         // Filter custom event listen ------end
@@ -345,7 +343,9 @@
                         editMode: false
                     }
                 );
-
+                if (!App.currentUser.savedFilters){
+                    App.currentUser.savedFilters = {};
+                }
                 App.currentUser.savedFilters['Projects'] = filterObj.filter;
 
                 this.$el.find('.filterValues').empty();

@@ -182,7 +182,9 @@
                         editMode: false
                     }
                 );
-
+                if (!App.currentUser.savedFilters){
+                    App.currentUser.savedFilters = {};
+                }
                 App.currentUser.savedFilters['Persons'] = filterObj.filter;
 
                 this.$el.find('.filterValues').empty();

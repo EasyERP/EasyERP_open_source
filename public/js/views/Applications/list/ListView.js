@@ -250,8 +250,10 @@ define([
                         editMode: false
                     }
                 );
-
-                App.currentUser.savedFilters['Employees'] = filterObj.filter;
+                if (!App.currentUser.savedFilters){
+                    App.currentUser.savedFilters = {};
+                }
+                App.currentUser.savedFilters['Applications'] = filterObj.filter;
 
                 this.$el.find('.filterValues').empty();
                 this.$el.find('.filter-icons').removeClass('active');
@@ -300,7 +302,7 @@ define([
                     }
                 );
 
-                delete App.currentUser.savedFilters['Employees'];
+                delete App.currentUser.savedFilters['Applications'];
 
                 $(".saveFilterButton").hide();
                 $(".removeFilterButton").hide();

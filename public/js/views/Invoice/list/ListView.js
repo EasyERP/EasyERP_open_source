@@ -480,7 +480,9 @@ define([
                         editMode: false
                     }
                 );
-
+                if (!App.currentUser.savedFilters){
+                    App.currentUser.savedFilters = {};
+                }
                 App.currentUser.savedFilters['Invoice'] = filterObj.filter;
 
                 this.$el.find('.filterValues').empty();
