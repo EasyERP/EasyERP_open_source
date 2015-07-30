@@ -67,7 +67,7 @@ define([
                 if (filter.length > 1 && e && e.target) {
                     if ( e && e.target) {
                         $(e.target).closest('.filterOptions').remove();
-                    } 
+                    }
                 } else {
                     filter.removeClass('chosen');
                     opt.children().remove();
