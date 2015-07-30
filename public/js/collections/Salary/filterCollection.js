@@ -59,7 +59,7 @@ define([
 
             parse: true,
             parse: function (response) {
-            return response.success;
+            return response;
         }
         });
         return SalaryCollection;
