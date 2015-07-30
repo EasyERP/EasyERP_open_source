@@ -8,6 +8,8 @@ var Salary = function (models) {
     var access = require("../Modules/additions/access.js")(models);
     var SalarySchema = mongoose.Schemas['Salary'];
     var SalaryCashSchema = mongoose.Schemas['SalaryCash'];
+    var DepartmentSchema = mongoose.Schemas['Department'];
+
     var async = require('async');
     var mapObject = require('../helpers/bodyMaper');
     var self = this;
@@ -287,8 +289,8 @@ var Salary = function (models) {
                     contentSearcher = function (productsIds, waterfallCallback) {
                         queryObject._id = {$in: productsIds};
 
-                        var query = Product.find(queryObject).limit(count).skip(skip).sort(sort);
-                        query.exec(waterfallCallback);
+/*                        var query = Product.find(queryObject).limit(count).skip(skip).sort(sort);
+                        query.exec(waterfallCallback);*/
 
                         self.totalCollectionLength(req, function (err, ressult) {
                             if (ressult) {
