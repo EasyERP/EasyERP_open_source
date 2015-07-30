@@ -231,7 +231,7 @@
                                                     <span>
                                                         <span id="totalUntaxes" class="money">
                                                             <%if (total) {%>
-                                                            <%= total%>
+                                                            <%= currencySplitter(total)%>
                                                             <%} else {%>
                                                             0.00
                                                             <%}%>
@@ -259,7 +259,7 @@
                                                     <span class="">
                                                         <span id="totalAmount" class="money">
                                                             <%if (total) {%>
-                                                            <%=total%>
+                                                            <%=currencySplitter(total)%>
                                                             <%} else {%>
                                                             0.00
                                                             <%}%>

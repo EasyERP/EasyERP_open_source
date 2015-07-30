@@ -404,7 +404,7 @@ define([
                     resizable: true,
                     dialogClass: "edit-invoice-dialog",
                     title: "Edit Invoice",
-                    width: self.isWtrack ? '1000': '900',
+                    width: self.isWtrack ? '1200': '900',
                     position: {my: "center bottom", at: "center", of: window},
                     buttons: buttons
 

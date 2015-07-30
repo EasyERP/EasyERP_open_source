@@ -4,7 +4,7 @@
 define([
     'text!templates/Invoice/InvoiceProductItems.html',
     'text!templates/Invoice/InvoiceProductInputContent.html',
-    'text!templates/Invoice/EditInvoiceProductInputContent.html',//   <-------
+    'text!templates/Invoice/EditInvoiceProductInputContent.html',
     'text!templates/Product/InvoiceOrder/TotalAmount.html',
     'collections/Product/products',
     'populate',
@@ -294,7 +294,7 @@ define([
                 if(products) {
                     productsContainer = thisEl.find('#productList');
                     productsContainer.prepend(_.template(ProductItemsEditList, {products: products}));
-                    this.recalculateTaxes(this.$el.find('.listTable'))
+                    this.recalculateTaxes(this.$el.find('.listTable'));
                     totalAmountContainer = thisEl.find('#totalAmountContainer');
                     totalAmountContainer.append(_.template(totalAmount, {model: options.model, balanceVisible: this.visible}));
                 }
