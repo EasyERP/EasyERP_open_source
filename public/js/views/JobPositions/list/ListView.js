@@ -214,7 +214,7 @@ define([
                 var itemsNumber = $("#itemsNumber").text();
                 var self = this;
                 var chosen = this.$el.find('.chosen');
-                var checkedElements = $('.drop-down-filter > input:checkbox:checked');
+                var checkedElements = $('.drop-down-filter input:checkbox:checked');
                 var showList;
 
                 $("#top-bar-deleteBtn").hide();
@@ -224,13 +224,13 @@ define([
                 this.newCollection = false;
                 this.filter = {};
 
-                if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
+                /*if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
                     showList = checkedElements.map(function() {
                         return this.value
                     }).get();
 
                     this.filter['workflow'] = showList;
-                };
+                };*/
 
 
                 if (chosen) {

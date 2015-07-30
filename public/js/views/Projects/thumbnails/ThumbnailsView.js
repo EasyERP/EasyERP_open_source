@@ -141,7 +141,7 @@
             showFilteredPage: function () {
                 var chosen = this.$el.find('.chosen');
                 var self = this;
-                var checkedElements = $('.drop-down-filter > input:checkbox:checked');
+                var checkedElements = $('.drop-down-filter  input:checkbox:checked');
                 var showList;
 
                 this.$el.find('.thumbnail').remove();
@@ -150,13 +150,13 @@
                 this.filter =  {};
                 this.defaultItemsNumber = 0;
 
-                if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
+                /*if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
                     showList = $('.drop-down-filter input:checkbox:checked').map(function() {
                         return this.value
                     }).get();
 
                     this.filter['workflow'] = showList;
-                };
+                };*/
 
                 if (chosen) {
                     chosen.each(function (index, elem) {
