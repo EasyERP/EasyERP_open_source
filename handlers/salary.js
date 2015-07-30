@@ -248,9 +248,6 @@ var Salary = function (models) {
                         var query;
                         queryObject._id = {$in: salaryIds};
 
-/*                        var query = Product.find(queryObject).limit(count).skip(skip).sort(sort);
-                        query.exec(waterfallCallback);*/
-
                         self.totalCollectionLength(req, function (err, ressult) {
                             if (ressult) {
                                 query = Salary.find(queryObject)
