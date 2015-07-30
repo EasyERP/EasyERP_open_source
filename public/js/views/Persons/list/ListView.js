@@ -471,6 +471,7 @@ define([
                 var self = this;
                 var chosen = this.$el.find('.chosen');
                 var checkedElements = $('.drop-down-filter input:checkbox:checked');
+                var condition = this.$el.find('.conditionAND > input')[0];
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
@@ -483,6 +484,11 @@ define([
                    }
                }
                 this.filter = {};
+                this.filter['condition'] = 'and';
+
+                if  (!condition.checked) {
+                    self.filter['condition'] = 'or';
+                }
 
                 if (showList && showList.indexOf('isCustomer') !== -1) {
                     this.filter['isCustomer'] = 1;

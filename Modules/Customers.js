@@ -602,6 +602,9 @@
             switch (contentType) {
                 case ('Persons'):
                 {
+                    if (data && data.filter && data.filter.condition === 'or') {
+                        optionsObject['$or'] = [];
+                    }
                     optionsObject['type'] = 'Person';
                     if (data && data.filter && data.filter.letter) {
                         optionsObject['name.last'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
@@ -613,16 +616,31 @@
                         optionsObject['salesPurchases.isSupplier'] = true;
                     }
                     if (data && data.filter && data.filter.name) {
-                        optionsObject['name.first'] = {$in: data.filter.name};
+                        if (data.filter.condition === 'or') {
+                            optionsObject['$or'].push({'name.first': {$in: data.filter.name} })
+                        } else {
+                            optionsObject['name.first'] = {$in: data.filter.name};
+                        }
+
                     }
                     if (data && data.filter && data.filter.country) {
-                        optionsObject['address.country'] = {$in: data.filter.country};
+                        if (data.filter.condition === 'or') {
+                            optionsObject['$or'].push({'address.country': {$in: data.filter.country} })
+                        } else {
+                            optionsObject['address.country'] = {$in: data.filter.country};
+                        }
+
                     }
                 }
                     break;
                 case ('Companies'):
                 {
                     optionsObject['type'] = 'Company';
+
+                    if (data && data.filter && data.filter.condition === 'or') {
+                        optionsObject['$or'] = [];
+                    }
+
                     if (data && data.filter && data.filter.letter) {
                         optionsObject['name.first'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
                     }
@@ -633,10 +651,18 @@
                         optionsObject['salesPurchases.isSupplier'] = true;
                     }
                     if (data && data.filter && data.filter.name) {
-                        optionsObject['name.first'] = {$in: data.filter.name};
+                        if (data.filter.condition === 'or') {
+                            optionsObject['$or'].push({'name.first': {$in: data.filter.name} })
+                        } else {
+                            optionsObject['name.first'] = {$in: data.filter.name};
+                        }
                     }
                     if (data && data.filter && data.filter.country) {
-                        optionsObject['address.country'] = {$in: data.filter.country};
+                        if (data.filter.condition === 'or') {
+                            optionsObject['$or'].push({'address.country': {$in: data.filter.country} })
+                        } else {
+                            optionsObject['address.country'] = {$in: data.filter.country};
+                        }
                     }
                 }
                     break;
@@ -659,6 +685,7 @@
                 data: []
             };
             var optionsObject = {};
+
 
             this.caseFilter(contentType, optionsObject, data);
 
