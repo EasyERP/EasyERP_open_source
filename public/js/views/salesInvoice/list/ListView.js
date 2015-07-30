@@ -22,7 +22,7 @@ define([
             sort: null,
             newCollection: null,
             page: null, //if reload page, and in url is valid page
-            contentType: 'Invoice',//needs in view.prototype.changeLocationHash
+            contentType:'salesInvoice', //'Invoice',//needs in view.prototype.changeLocationHash
             viewType: 'list',//needs in view.prototype.changeLocationHash
 
             initialize: function (options) {
