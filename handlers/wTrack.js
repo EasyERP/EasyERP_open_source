@@ -285,15 +285,21 @@ var wTrack = function (models) {
         var contentIdsSearcher;
         var contentSearcher;
         var waterfallTasks;
-        var or;
+        var condition;
 
         var sort = {};
 
         if (filter && typeof filter === 'object') {
-            queryObject['$or'] = [];
-            or = queryObject['$or'];
 
-            caseFilter(filter, or);
+            if (filter.condition === 'or') {
+                queryObject['$or'] = [];
+                condition = queryObject['$or'];
+            } else {
+                queryObject['$and'] = [];
+                condition = queryObject['$and'];
+            }
+
+            caseFilter(filter, condition);
        }
 
         var count = query.count ? query.count : 50;

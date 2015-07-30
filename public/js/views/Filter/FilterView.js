@@ -21,7 +21,8 @@ define([
                 'click .addCondition': 'addCondition',
                 'click .removeFilter': 'removeFilter',
                 'click .customFilter': 'showCustomFilter',
-                'click .applyFilter': 'applyFilter'
+                'click .applyFilter': 'applyFilter',
+                'click .condition li': 'conditionClick'
             },
 
 
@@ -45,6 +46,12 @@ define([
                     this.$el.find('#defaultFilter').removeAttr("checked");
                 }
                 this.trigger('filter');
+            },
+
+            conditionClick: function (e) {
+                if (e.target.localName === 'li') {
+                    $(e.target.children[0]).trigger('click');
+                }
             },
 
             showCustomFilter: function () {
