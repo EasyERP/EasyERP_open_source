@@ -8393,7 +8393,7 @@ textarea#editInput {
   background-color: #f9f9f9;
   border: 1px solid #c0c0c0;
   right: 0;
-  top: calc(100% - 1px);
+  top: calc(99%);
 }
 .condition li {
   margin: 5px;

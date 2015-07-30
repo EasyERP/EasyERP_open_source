@@ -30,13 +30,7 @@ define([
                 this.collection = options.collection;
                 _.bind(this.collection.showMore, this.collection);
                 this.parrentContentId = options.collection.parrentContentId;
-                //if (options.filter && options.filter['forSales'] === true){
-                //    this.filter = {};
-                //} else {
-                //    this.filter = options.filter;
-                //}
                 this.filter = options.filter ? options.filter : {};
-               // this.filter.forSales = false;
                 this.sort = options.sort;
                 this.defaultItemsNumber = this.collection.namberToShow || 50;
                 this.newCollection = options.newCollection;
@@ -220,7 +214,7 @@ define([
                 $("#saveFilterButton").hide();
                 $("#removeFilterButton").hide();
 
-                if (App.currentUser.savedFilters && App.currentUser.savedFilters['Invoice'] && App.currentUser.savedFilters['Invoice']['forSales'] === false) {
+                if (App.currentUser.savedFilters && App.currentUser.savedFilters['Invoice']) {
                     $("#clearFilterButton").show();
                     $("#removeFilterButton").show();
                 }

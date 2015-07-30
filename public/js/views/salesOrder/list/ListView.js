@@ -385,13 +385,13 @@ define([
                 this.filter = {};
                 this.filter['forSales'] = true;
 
-                if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
-                    showList = $('.drop-down-filter input:checkbox:checked').map(function() {
-                        return this.value
-                    }).get();
-
-                    this.filter['workflow'] = showList;
-                }
+                //if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
+                //    showList = $('.drop-down-filter input:checkbox:checked').map(function() {
+                //        return this.value
+                //    }).get();
+                //
+                //    this.filter['workflow'] = showList;
+                //}
 
                 if (checkedElements.length && checkedElements.attr('id') === 'defaultFilter') {
                     self.filter = 'empty';

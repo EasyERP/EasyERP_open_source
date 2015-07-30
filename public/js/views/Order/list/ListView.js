@@ -384,13 +384,13 @@ function (listTemplate, stagesTamplate, createView, listItemView, listTotalView,
 
             this.filter = {};
 
-            if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
-                showList = checkedElements.map(function() {
-                    return this.value
-                }).get();
-
-                this.filter['workflow'] = showList;
-            };
+            //if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
+            //    showList = checkedElements.map(function() {
+            //        return this.value
+            //    }).get();
+            //
+            //    this.filter['workflow'] = showList;
+            //};
 
 
             if (chosen) {

@@ -176,13 +176,13 @@ define([
                 this.newCollection = true;
                 this.filter = {};
 
-                if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
-                    showList = checkedElements.map(function () {
-                        return this.value;
-                    }).get();
-
-                    this.filter['workflow'] = showList;
-                };
+                //if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
+                //    showList = checkedElements.map(function () {
+                //        return this.value;
+                //    }).get();
+                //
+                //    this.filter['workflow'] = showList;
+                //};
 
                 if (chosen) {
                     chosen.each(function (index, elem) {
