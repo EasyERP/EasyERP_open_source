@@ -248,7 +248,10 @@ define([
                     });
                     FilterView.bind('defaultFilter', function () {
                         showList = [];
-                        self.showFilteredPage(null, showList)
+                        self.showFilteredPage(null, showList);
+                        $(".saveFilterButton").hide();
+                        $(".clearFilterButton").hide();
+                        $(".removeFilterButton").show();
                     });
                     // Filter custom event listen ------end
 
@@ -350,6 +353,7 @@ define([
                 var self = this;
                 var checkedElements = $('.drop-down-filter input:checkbox:checked');
                 var chosen = this.$el.find('.chosen');
+                var condition = this.$el.find('.conditionAND > input')[0];
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
@@ -362,6 +366,11 @@ define([
                     }
                 }
                 this.filter = {};
+                this.filter['condition'] = 'and';
+
+                if  (!condition.checked) {
+                    self.filter['condition'] = 'or';
+                }
                 if (showList && showList.indexOf('isCustomer') !== -1) {
                     this.filter['isCustomer'] = 1;
                 }else if (showList && showList.indexOf('isSupplier') !== -1) {
@@ -508,6 +517,7 @@ define([
                 this.$el.find('.filterValues').empty();
                 this.$el.find('.filter-icons').removeClass('active');
                 this.$el.find('.chooseOption').children().remove();
+                this.$el.find('.filterOptions').removeClass('chosen');
 
                 $.each($('.drop-down-filter input'), function (index, value) {
                     value.checked = false

@@ -242,6 +242,9 @@ define([
                         FilterView.bind('defaultFilter', function () {
                             showList = _.pluck(self.stages, '_id');
                             self.showFilteredPage(showList);
+                            $(".saveFilterButton").hide();
+                            $(".clearFilterButton").hide();
+                            $(".removeFilterButton").show();
                         });
                         // Filter custom event listen ------end
                     })

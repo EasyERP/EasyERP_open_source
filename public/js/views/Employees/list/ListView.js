@@ -254,7 +254,10 @@ define([
                             self.showFilteredPage()
                         });
                         FilterView.bind('defaultFilter', function () {
-                            self.showFilteredPage()
+                            self.showFilteredPage();
+                            $(".saveFilterButton").hide();
+                            $(".clearFilterButton").hide();
+                            $(".removeFilterButton").show();
                         });
                         // Filter custom event listen ------end
                     });
@@ -378,13 +381,20 @@ define([
                         selectedLetter = "";
                     }
                 }
-                if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
+                //if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
+                //    showList = checkedElements.map(function() {
+                //        return this.value
+                //    }).get();
+                //
+                //    this.filter['department'] = showList;
+                //};
+               /* if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
                     showList = checkedElements.map(function() {
                         return this.value
                     }).get();
 
                     this.filter['department'] = showList;
-                };
+                };*/
 
                 if (chosen) {
                     chosen.each(function (index, elem) {
@@ -520,6 +530,7 @@ define([
                 this.$el.find('.filterValues').empty();
                 this.$el.find('.filter-icons').removeClass('active');
                 this.$el.find('.chooseOption').children().remove();
+                this.$el.find('.filterOptions').removeClass('chosen');
 
                 $.each($('.drop-down-filter input'), function (index, value) {
                     value.checked = false

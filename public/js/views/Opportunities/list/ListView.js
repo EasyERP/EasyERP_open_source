@@ -166,6 +166,7 @@ define([
                 var itemsNumber = $("#itemsNumber").text();
                 var checkedElements = $('.drop-down-filter input:checkbox:checked');
                 var chosen = this.$el.find('.chosen');
+                var condition = this.$el.find('.conditionAND > input')[0];
                 var showList;
 
 
@@ -175,14 +176,19 @@ define([
                 this.startTime = new Date();
                 this.newCollection = true;
                 this.filter = {};
+                this.filter['isConverted'] = isConverted;
+                this.filter['condition'] = 'and';
 
-                if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
+                if  (!condition.checked) {
+                    self.filter['condition'] = 'or';
+                }
+                /*if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
                     showList = checkedElements.map(function () {
                         return this.value;
                     }).get();
 
                     this.filter['workflow'] = showList;
-                };
+                };*/
 
                 if (chosen) {
                     chosen.each(function (index, elem) {
@@ -326,6 +332,7 @@ define([
                 this.$el.find('.filterValues').empty();
                 this.$el.find('.filter-icons').removeClass('active');
                 this.$el.find('.chooseOption').children().remove();
+                this.$el.find('.filterOptions').removeClass('chosen');
 
                 $.each($('.drop-down-filter input'), function (index, value) {
                     value.checked = false
@@ -420,7 +427,10 @@ define([
                             self.showFilteredPage()
                         });
                         FilterView.bind('defaultFilter', function () {
-                            self.showFilteredPage()
+                            self.showFilteredPage();
+                            $(".saveFilterButton").hide();
+                            $(".clearFilterButton").hide();
+                            $(".removeFilterButton").show();
                         });
                         // Filter custom event listen ------end
 

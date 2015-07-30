@@ -259,9 +259,9 @@ var Opportunity = function (models) {
                     'Creation date': {
                         $addToSet: '$creationDate'
                     },
-                    'Next action': {
+                   /* 'Next action': {
                         $addToSet: '$nextAction.desc'
-                    },
+                    },*/
                     'Expected revenue': {
                         $addToSet: '$expectedRevenue.value'
                     }

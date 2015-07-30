@@ -143,20 +143,26 @@
                 var self = this;
                 var checkedElements = $('.drop-down-filter input:checkbox:checked');
                 var showList;
+                var condition = this.$el.find('.conditionAND > input')[0];
 
                 this.$el.find('.thumbnail').remove();
                 this.startTime = new Date();
                 this.newCollection = false;
                 this.filter =  {};
                 this.defaultItemsNumber = 0;
+                this.filter['condition'] = 'and';
 
-                if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
+                /*if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
                     showList = $('.drop-down-filter input:checkbox:checked').map(function() {
                         return this.value
                     }).get();
 
                     this.filter['workflow'] = showList;
-                };
+                };*/
+
+                if  (!condition.checked) {
+                    self.filter['condition'] = 'or';
+                }
 
                 if (chosen) {
                     chosen.each(function (index, elem) {
@@ -288,7 +294,10 @@
                             self.showFilteredPage()
                         });
                         FilterView.bind('defaultFilter', function () {
-                            self.showFilteredPage()
+                            self.showFilteredPage();
+                            $(".saveFilterButton").hide();
+                            $(".clearFilterButton").hide();
+                            $(".removeFilterButton").show();
                         });
                         // Filter custom event listen ------end
 
@@ -418,6 +427,7 @@
                 this.$el.find('.filterValues').empty();
                 this.$el.find('.filter-icons').removeClass('active');
                 this.$el.find('.chooseOption').children().remove();
+                this.$el.find('.filterOptions').removeClass('chosen');
 
                 $.each($('.drop-down-filter input'), function (index, value) {
                     value.checked = false

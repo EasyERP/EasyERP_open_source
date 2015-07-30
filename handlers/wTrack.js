@@ -175,13 +175,18 @@ var wTrack = function (models) {
         var query = req.query;
         var queryObject = {};
         var filter = query.filter;
-        var or;
+        var condition;
 
         if (filter && typeof filter === 'object') {
-            queryObject['$or'] = [];
-            or = queryObject['$or'];
+            if (filter.condition === 'or') {
+                queryObject['$or'] = [];
+                condition = queryObject['$or'];
+            } else {
+                queryObject['$and'] = [];
+                condition = queryObject['$and'];
+            }
 
-            caseFilter(filter, or);
+            caseFilter(filter, condition);
         }
         var waterfallTasks;
 
@@ -285,15 +290,21 @@ var wTrack = function (models) {
         var contentIdsSearcher;
         var contentSearcher;
         var waterfallTasks;
-        var or;
+        var condition;
 
         var sort = {};
 
         if (filter && typeof filter === 'object') {
-            queryObject['$or'] = [];
-            or = queryObject['$or'];
 
-            caseFilter(filter, or);
+            if (filter.condition === 'or') {
+                queryObject['$or'] = [];
+                condition = queryObject['$or'];
+            } else {
+                queryObject['$and'] = [];
+                condition = queryObject['$and'];
+            }
+
+            caseFilter(filter, condition);
        }
 
         var count = query.count ? query.count : 50;
@@ -597,9 +608,9 @@ var wTrack = function (models) {
                     case  'employees':
                         result[0][key] = _.sortBy(value, 'name');
                         break;
-                    case 'customers':
+                    /*case 'customers':
                         result[0][key] = _.sortBy(value, 'name');
-                        break;
+                        break;*/
                     case 'projectsname':
                         result[0][key] = _.sortBy(value, function (num) { return num});
                         break;

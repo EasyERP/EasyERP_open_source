@@ -280,7 +280,7 @@ define([
                 var itemsNumber = $("#itemsNumber").text();
                 var self = this;
                 var choosen = this.$el.find('.chosen');
-                var checkedElements = $('.drop-down-filter > input:checkbox:checked');
+                var checkedElements = $('.drop-down-filter input:checkbox:checked');
                 var showList;
 
                 $("#top-bar-deleteBtn").hide();
@@ -290,13 +290,13 @@ define([
                 this.newCollection = false;
                 this.filter = {};
 
-                if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
+                /*if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
                     showList = $('.drop-down-filter input:checkbox:checked').map(function() {
                         return this.value
                     }).get();
 
                     this.filter['workflow'] = showList;
-                };
+                };*/
 
                 if (checkedElements.length && checkedElements.attr('id') === 'defaultFilter') {
                     self.filter = 'empty';
@@ -432,6 +432,7 @@ define([
                 this.$el.find('.filterValues').empty();
                 this.$el.find('.filter-icons').removeClass('active');
                 this.$el.find('.chooseOption').children().remove();
+                this.$el.find('.filterOptions').removeClass('chosen');
 
                 $.each($('.drop-down-filter input'), function (index, value) {
                     value.checked = false
@@ -529,7 +530,10 @@ define([
                             self.showFilteredPage()
                         });
                         FilterView.bind('defaultFilter', function () {
-                            self.showFilteredPage()
+                            self.showFilteredPage();
+                            $(".saveFilterButton").hide();
+                            $(".clearFilterButton").hide();
+                            $(".removeFilterButton").show();
                         });
                         // Filter custom event listen ------end
                     });

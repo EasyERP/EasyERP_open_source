@@ -247,7 +247,10 @@ function (listTemplate, stagesTamplate, createView, listItemView, listTotalView,
                             self.showFilteredPage()
                         });
                         FilterView.bind('defaultFilter', function () {
-                            self.showFilteredPage()
+                            self.showFilteredPage();
+                            $(".saveFilterButton").hide();
+                            $(".clearFilterButton").hide();
+                            $(".removeFilterButton").show();
                         });
                         // Filter custom event listen ------end
                     })
@@ -381,13 +384,13 @@ function (listTemplate, stagesTamplate, createView, listItemView, listTotalView,
 
             this.filter = {};
 
-            if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
-                showList = checkedElements.map(function() {
-                    return this.value
-                }).get();
-
-                this.filter['workflow'] = showList;
-            };
+            //if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
+            //    showList = checkedElements.map(function() {
+            //        return this.value
+            //    }).get();
+            //
+            //    this.filter['workflow'] = showList;
+            //};
 
 
             if (chosen) {
@@ -535,6 +538,7 @@ function (listTemplate, stagesTamplate, createView, listItemView, listTotalView,
             this.$el.find('.filterValues').empty();
             this.$el.find('.filter-icons').removeClass('active');
             this.$el.find('.chooseOption').children().remove();
+            this.$el.find('.filterOptions').removeClass('chosen');
 
             $.each($('.drop-down-filter input'), function (index, value) {
                 value.checked = false

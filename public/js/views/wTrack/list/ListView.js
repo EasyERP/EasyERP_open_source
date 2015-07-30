@@ -671,10 +671,8 @@ define([
 
                 var self = this;
                 var currentEl = this.$el;
-                var filteredStatuses = [];
                 var pagenation;
                 var FilterView;
-                var showList;
 
                 currentEl.html('');
                 currentEl.append(_.template(listTemplate));
@@ -772,7 +770,10 @@ define([
                         self.showFilteredPage()
                     });
                     FilterView.bind('defaultFilter', function () {
-                        self.showFilteredPage()
+                        self.showFilteredPage();
+                        $(".saveFilterButton").hide();
+                        $(".clearFilterButton").hide();
+                        $(".removeFilterButton").show();
                     });
                     // Filter custom event listen ------end
                 });
@@ -933,17 +934,33 @@ define([
                 var self = this;
                 var checkedElements = $('.drop-down-filter  input:checkbox:checked');
                 var chosen = this.$el.find('.chosen');
+                var condition = this.$el.find('.conditionAND > input')[0];
 
                 this.startTime = new Date();
                 this.newCollection = false;
                 this.filter = {};
-                if (showFilterList && showFilterList.departments) {
+                this.filter['condition'] = 'and';
+
+               /* if (showFilterList && showFilterList.departments) {
                     this.filter = showFilterList;
                 }
 
                 if (showFilterList && !showFilterList.departments) {
                     this.filter = {};
                 }
+
+                if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
+                    showList = checkedElements.map(function () {
+                        return this.id;
+                    }).get();
+
+                    this.filter['departments'] = showList;
+                };*/
+
+                if  (!condition.checked) {
+                    self.filter['condition'] = 'or';
+                }
+
 
                 if (chosen) {
                     chosen.each(function (index, elem) {
@@ -1079,6 +1096,7 @@ define([
                 this.$el.find('.filterValues').empty();
                 this.$el.find('.filter-icons').removeClass('active');
                 this.$el.find('.chooseOption').children().remove();
+                this.$el.find('.filterOptions').removeClass('chosen');
 
                 $.each($('.drop-down-filter input'), function (index, value) {
                     value.checked = false

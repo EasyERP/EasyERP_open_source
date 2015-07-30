@@ -236,16 +236,6 @@ define([
                 this.newCollection = false;
                 this.filter = {};
 
-                if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
-                    showList = $('.drop-down-filter input:checkbox:checked').map(function() {
-                        return this.value
-                    }).get();
-
-                    this.filter['workflow'] = showList;
-                };
-
-
-
                 if (chosen) {
                     chosen.each(function (index, elem) {
                         if (elem.children[1].attributes.class.nodeValue === 'chooseDate') {
@@ -390,6 +380,7 @@ define([
                 this.$el.find('.filterValues').empty();
                 this.$el.find('.filter-icons').removeClass('active');
                 this.$el.find('.chooseOption').children().remove();
+                this.$el.find('.filterOptions').removeClass('chosen');
 
                 $.each($('.drop-down-filter input'), function (index, value) {
                     value.checked = false
@@ -573,7 +564,10 @@ define([
                             self.showFilteredPage()
                         });
                         FilterView.bind('defaultFilter', function () {
-                            self.showFilteredPage()
+                            self.showFilteredPage();
+                            $(".saveFilterButton").hide();
+                            $(".clearFilterButton").hide();
+                            $(".removeFilterButton").show();
                         });
                         // Filter custom event listen ------end
 

@@ -77,12 +77,14 @@
                 var checkedElements = $('.drop-down-filter input:checkbox:checked');
                 var chosen = this.$el.find('.chosen');
                 var self = this;
+                var condition = this.$el.find('.conditionAND > input')[0];
 
                 this.$el.find('.thumbnailwithavatar').remove();
                 this.startTime = new Date();
                 this.newCollection = false;
 
                 this.filter =  {};
+                this.filter['condition'] = 'and';
 
                 if (e && e.target) {
                     selectedLetter = $(e.target).text();
@@ -92,6 +94,10 @@
                     }
                     target.parent().find(".current").removeClass("current");
                     target.addClass("current");
+                }
+
+                if  (!condition.checked) {
+                    self.filter['condition'] = 'or';
                 }
 
                 if (chosen) {
@@ -109,7 +115,7 @@
                     });
                 };
 
-                if (showList) {
+               /* if (showList) {
                     if (showList.indexOf('isCustomer') !== -1) {
                         this.filter['isCustomer'] = 1;
                     }else if (showList.indexOf('isSupplier') !== -1) {
@@ -122,13 +128,13 @@
                         delete this.filter['isSupplier'];
                         delete this.filter['isCustomer'];
                     }
-                }
+                }*/
 
 
 
                 if (selectedLetter || selectedLetter === '') this.filter['letter'] = selectedLetter;
 
-                if ((checkedElements.length && checkedElements.attr('id') === 'defaultFilter') || (!chosen.length && !showList)) {
+                if ((checkedElements.length && checkedElements.attr('id') === 'defaultFilter') || !chosen.length) {
                     self.filter = 'empty';
                 };
 
@@ -244,6 +250,7 @@
                 this.$el.find('.filterValues').empty();
                 this.$el.find('.filter-icons').removeClass('active');
                 this.$el.find('.chooseOption').children().remove();
+                this.$el.find('.filterOptions').removeClass('chosen');
 
                 $.each($('.drop-down-filter input'), function (index, value) {
                     value.checked = false
@@ -333,7 +340,10 @@
                     });
                     FilterView.bind('defaultFilter', function () {
                         showList = [];
-                        self.alpabeticalRender(null, showList)
+                        self.alpabeticalRender(null, showList);
+                        $(".saveFilterButton").hide();
+                        $(".clearFilterButton").hide();
+                        $(".removeFilterButton").show();
                     });
                     // Filter custom event listen ------end
 
