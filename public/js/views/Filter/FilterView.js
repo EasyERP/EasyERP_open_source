@@ -11,10 +11,11 @@ define([
             template: _.template(ContentFilterTemplate),
 
             events: {
-                "click .search-content": 'showSearchContent',
+                "mouseover .search-content": 'showSearchContent',
                 "click .filter": 'showFilterContent',
-                "click .drop-down-filter input[type='checkbox']": "writeValue",
-                "click .drop-down-filter li": "triggerClick",
+                "click .drop-down-filter > input[type='checkbox']": "writeValue",
+                "click #defaultFilter": "writeValue",
+                "click .drop-down-filter > li": "triggerClick",
                 "click .removeValues": "removeValues",
                 'change .chooseTerm': 'chooseOptions',
                 'click .addCondition': 'addCondition',
@@ -37,6 +38,12 @@ define([
             },
 
             applyFilter: function () {
+
+                if (this.$el.find('.filterValues').children()[0] && this.$el.find('.filterValues').children()[0].className === 'Clear') {
+                    this.$el.find('.filterValues').empty();
+                    this.$el.find('.filter-icons').removeClass('active');
+                    this.$el.find('#defaultFilter').removeAttr("checked");
+                }
                 this.trigger('filter');
             },
 
@@ -57,12 +64,14 @@ define([
                     opt.children().remove();
                     term.val($(".chooseTerm option:first").val());
                     date.remove();
-                    opt.show();
+                    opt.removeClass('activated').show();
                     this.$el.find(".filterOptions, .filterActions").hide();
-                    this.trigger('defaultFilter');
+                    if (e && e.target) {
+                        this.trigger('defaultFilter');
+                        e.stopPropagation();
+                    }
 
                 }
-                e.stopPropagation();
             },
 
             addCondition: function () {
@@ -71,7 +80,7 @@ define([
 
                 lastOpt = this.$el.find(".filterOptions:last");
                 lastOpt.children('.chooseOption').children().remove();
-                lastOpt.children('.chooseOption').show();
+                lastOpt.children('.chooseOption').show().removeClass('activated');
                 lastOpt.children('.chooseDate').remove();
                 lastOpt.removeClass('chosen');
             },
@@ -96,12 +105,13 @@ define([
                     el.children().remove();
 
                     this.customCollection[0][value].forEach(function (opt) {
+                        el.addClass('activated')
                         if (opt && opt.fullName && opt._id) {
-                            el.append('<option value="' + opt._id + '">' + opt.fullName + '</option>');
+                            el.append('<li><input type="checkbox" id=' + opt.fullName + ' value=' + opt._id + '><label for=' + opt.fullName + '>' + opt.fullName  + '</label></li>');
                         } else if (opt && opt.name) {
-                            el.append('<option value="' + opt.name + '">' + opt.name + '</option>');
+                            el.append('<li><input type="checkbox" id=' + opt.name + ' value=' + opt.name + '><label for=' + opt.name + '>' + opt.name  + '</label></li>');
                         } else {
-                            el.append('<option value="' + opt + '">' + opt + '</option>');
+                            el.append('<li><input type="checkbox" id=' + opt + ' value=' + opt + '><label for=' + opt + '>' + opt  + '</label></li>');
                         }
                     });
                 }
@@ -125,6 +135,8 @@ define([
                 } else {
                     el.addClass(selector)
                 }
+                this.showFilterContent();
+                this.showCustomFilter();
             },
 
             showFilterContent: function () {
@@ -150,7 +162,7 @@ define([
                     }
                 });
                 if (!checked) {
-                    this.trigger('defaultFilter');
+                    //this.trigger('defaultFilter');
                     filterValues.empty();
                     filterIcons.removeClass('active');
                 }
@@ -174,11 +186,13 @@ define([
                         if (item.className !== 'Clear') item.remove();
                     });
                     this.trigger('defaultFilter');
+                    this.removeFilter()
                 }
 
-                if ($('.drop-down-filter input:checkbox:checked').length === 0) {
+               /* if ($('.drop-down-filter input:checkbox:checked').length === 0) {
                     this.trigger('defaultFilter');
-                }
+                    //this.$el.find('.removeFilter').trigger('click')
+                }*/
 
             },
 
@@ -191,6 +205,7 @@ define([
                 });
 
                 this.trigger('defaultFilter');
+                this.removeFilter()
             }
         });
 

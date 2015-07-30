@@ -768,14 +768,11 @@ define([
 
                     // Filter custom event listen ------begin
                     FilterView.bind('filter', function () {
-                        showList = $('.drop-down-filter input:checkbox:checked').map(function () {
-                            return this.id;
-                        }).get();
-                        self.showFilteredPage(showList)
+
+                        self.showFilteredPage()
                     });
                     FilterView.bind('defaultFilter', function () {
-                        showList = _.pluck(values[0].departments, 'name');
-                        self.showFilteredPage(showList)
+                        self.showFilteredPage()
                     });
                     // Filter custom event listen ------end
                 });
@@ -934,7 +931,7 @@ define([
                 var itemsNumber;
                 var showList;
                 var self = this;
-                var checkedElements = $('.drop-down-filter input:checkbox:checked');
+                var checkedElements = $('.drop-down-filter > input:checkbox:checked');
                 var chosen = this.$el.find('.chosen');
 
                 this.startTime = new Date();
@@ -959,17 +956,21 @@ define([
                 if (chosen) {
                     chosen.each(function (index, elem) {
                         if (self.filter[elem.children[1].value]) {
-                            self.filter[elem.children[1].value].push(elem.children[2].value);
+                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+                                self.filter[elem.children[1].value].push($(element).next().text());
+                            })
                         } else {
                             self.filter[elem.children[1].value] = [];
-                            self.filter[elem.children[1].value].push(elem.children[2].value);
+                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+                                self.filter[elem.children[1].value].push($(element).next().text());
+                            })
                         }
                     });
-                }
-                ;
-                if (checkedElements.length && checkedElements.attr('id') === 'defaultFilter') {
-                    self.filter = {};
-                }
+                };
+
+                if ((checkedElements.length && checkedElements.attr('id') === 'defaultFilter') || (!chosen.length && !showList)) {
+                    self.filter = 'empty';
+                };
 
                 itemsNumber = $("#itemsNumber").text();
                 $("#top-bar-deleteBtn").hide();
@@ -979,9 +980,15 @@ define([
                 this.collection.showMore({count: itemsNumber, page: 1, filter: this.filter});
                 this.getTotalLength(null, itemsNumber, this.filter);
 
-                $(".saveFilterButton").show();
-                $(".clearFilterButton").show();
-                $(".removeFilterButton").show();
+                if (checkedElements.attr('id') === 'defaultFilter'){
+                    $(".saveFilterButton").hide();
+                    $(".clearFilterButton").hide();
+                    $(".removeFilterButton").show();
+                } else {
+                    $(".saveFilterButton").show();
+                    $(".clearFilterButton").show();
+                    $(".removeFilterButton").show();
+                }
             },
 
             saveFilter: function () {
@@ -1218,17 +1225,17 @@ define([
                 var projectContainer = tr.find('td[data-content="project"]');
                 var projectId = projectContainer.data('id');
 
+                if(checkLength === 1){
+                    this.copyEl.show();
+                } else {
+                    this.copyEl.hide();
+                }
+
                 if (!checkLength || !model || model.get('isPaid')) {
                     this.selectedProjectId = [];
                     this.genInvoiceEl.hide();
 
                     return false;
-                }
-
-                if(checkLength === 1){
-                    this.copyEl.show();
-                } else {
-                    this.copyEl.hide();
                 }
 
                 if (checked) {

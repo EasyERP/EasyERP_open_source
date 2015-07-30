@@ -299,6 +299,19 @@ module.exports = (function () {
                 value: '3',
                 field: 'paymentMethod',
                 fieldValue: CONSTANTS.PRIMARY
+            }],
+            'Status': [{
+                value: '1',
+                field: 'workflow',
+                fieldValue: 'Paid'
+            }, {
+                value: '2',
+                field: 'workflow',
+                fieldValue: 'Draft'
+            }, {
+                value: '0',
+                field: 'workflow',
+                fieldValue: 'Draft'
             }]
         },
         aliases: {
@@ -310,7 +323,7 @@ module.exports = (function () {
             paidAmount: 'Amount',
             paymentDate: 'PaymentDate',
             'paymentInfo.total': 'Amount',
-            workflow: 'PaymentStatus'
+            workflow: 'Status'
         }
     };
 

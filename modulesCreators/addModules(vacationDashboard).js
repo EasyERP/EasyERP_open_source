@@ -21,7 +21,7 @@ MongoClient.connect(url, function (err, db) {
             _id: 73,
             mname: 'DashBoardVacation',
             href: 'DashBoardVacation',
-            sequence: 73,
+            sequence: 1,
             parrent: 19,
             link: true,
             visible: true
@@ -64,7 +64,7 @@ MongoClient.connect(url, function (err, db) {
             callback(null, 'done');
         }
 
-        var cursor = profiles.find()
+        var cursor = profiles.find();
 
 
         cursor.each(function (err, profile) {

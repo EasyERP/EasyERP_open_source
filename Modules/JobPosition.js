@@ -14,11 +14,15 @@ var JobPosition = function (models) {
             data[i] = req.query[i];
         }
         var filter = data.filter;
+
+        if (filter === 'empty' || (filter === '')){
+            filter = 'empty';
+        }
+
         var optionObj = {};
-        optionObj['$and'] = [];
 
-        if (data && filter) {
-
+        if (data && filter && filter != 'empty') {
+            optionObj['$and'] = [];
             for (var key in filter) {
                 switch (key) {
                     case 'workflow':
