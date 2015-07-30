@@ -496,6 +496,7 @@ define([
                     newCollection: this.newCollection
                 });
                 this.collection.bind('reset', this.renderContent, this);
+                this.collection.bind('showmore', this.showMoreContent, this);
             },
 
             getTotalLength: function (currentNumber, itemsNumber, filter) {
