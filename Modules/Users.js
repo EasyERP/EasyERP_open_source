@@ -299,8 +299,9 @@ var Users = function (mainDb, models) {
                 } else if (data.key && !data.filter) {
                     setObject[_key] = '';
                     query = { $unset: setObject};
+                } else {
+                    query = { $set: data};
                 }
-
                 models.get(req.session.lastDb, 'Users', userSchema).findByIdAndUpdate(_id, query, function (err, result) {
                     if (err) {
                         logWriter.log("User.js update profile.update" + err);
