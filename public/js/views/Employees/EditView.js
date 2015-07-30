@@ -170,6 +170,15 @@ define([
                 // date parse 
                 var dateBirthSt = $.trim(this.$el.find("#dateBirth").val());
 
+                var hireArray = this.currentModel.get('hire');
+                var newHireArray = [];
+
+                _.each(hireArray, function(hire, key) {
+
+                    newHireArray.push($.trim(self.$el.find("#hire" + key).val()));
+                    return newHireArray;
+                });
+
                 var active = (this.$el.find("#active").is(":checked")) ? true : false;
                 var sourceId = $("#sourceDd").data("id");
 
@@ -230,7 +239,8 @@ define([
                         users: usersId,
                         group: groupsId
                     },
-                    whoCanRW: whoCanRW
+                    whoCanRW: whoCanRW,
+                    hire: newHireArray
                 };
                 this.currentModel.set(data);
                 this.currentModel.save(this.currentModel.changed, {
@@ -272,6 +282,9 @@ define([
             },
 
             render: function () {
+                var hireArray = this.currentModel.get('hire');
+                var fireArray = this.currentModel.get('fire');
+
                 if (this.currentModel.get('dateBirth')) {
                     this.currentModel.set({
                         dateBirth: this.currentModel.get('dateBirth').split('T')[0].replace(/-/g, '/')
@@ -279,6 +292,30 @@ define([
                         silent: true
                     });
                 }
+                if (hireArray) {
+                    _.map(hireArray, function (hire) {
+                        hire = hire.split('T')[0].replace(/-/g, '/');
+                        return hire;
+                    });
+                }
+                this.currentModel.set({
+                    hire: hireArray
+                }, {
+                    silent: true
+                });
+                if (fireArray) {
+                    _.map(fireArray, function (fire) {
+                        fire = fire.split('T')[0].replace(/-/g, '/');
+                        return fire;
+                    });
+                }
+                this.currentModel.set({
+                    fire: fireArray
+                }, {
+                    silent: true
+                });
+
+
                 var formString = this.template({
                     model: this.currentModel.toJSON()
                 });
@@ -342,6 +379,22 @@ define([
                     //    target.val(day + '/' + month + '/' + year);
                     //}
                 });
+                _.each(hireArray, function(hire, key) {
+                    $('#hire' + key).datepicker({
+                        dateFormat: "d M, yy",
+                        changeMonth: true,
+                        changeYear: true
+                    });
+                });
+
+                _.each(fireArray, function(fire, key) {
+                    $('#fire' + key).datepicker({
+                        dateFormat: "d M, yy",
+                        changeMonth : true,
+                        changeYear : true
+                    });
+                });
+
                 var model = this.currentModel.toJSON();
                 if (model.groups)
                     if (model.groups.users.length>0||model.groups.group.length){
