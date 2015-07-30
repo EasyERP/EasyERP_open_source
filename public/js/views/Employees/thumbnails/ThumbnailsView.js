@@ -182,7 +182,7 @@
                 var itemsNumber = $("#itemsNumber").text();
                 var self = this;
                 var chosen = this.$el.find('.chosen');
-                var checkedElements = $('.drop-down-filter > input:checkbox:checked');
+                var checkedElements = $('.drop-down-filter  input:checkbox:checked');
                 var showList;
 
 
@@ -191,7 +191,7 @@
                 this.filter = {};
 
                 if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
-                    showList = $('.drop-down-filter > input:checkbox:checked').map(function() {
+                    showList = $('.drop-down-filter  input:checkbox:checked').map(function() {
                         return this.value
                     }).get();
 

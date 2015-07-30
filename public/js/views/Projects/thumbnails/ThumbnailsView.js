@@ -141,7 +141,7 @@
             showFilteredPage: function () {
                 var chosen = this.$el.find('.chosen');
                 var self = this;
-                var checkedElements = $('.drop-down-filter > input:checkbox:checked');
+                var checkedElements = $('.drop-down-filter input:checkbox:checked');
                 var showList;
 
                 this.$el.find('.thumbnail').remove();

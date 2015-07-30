@@ -164,7 +164,7 @@ define([
                 var self = this;
                 var isConverted = true;
                 var itemsNumber = $("#itemsNumber").text();
-                var checkedElements = $('.drop-down-filter > input:checkbox:checked');
+                var checkedElements = $('.drop-down-filter input:checkbox:checked');
                 var chosen = this.$el.find('.chosen');
                 var showList;
 

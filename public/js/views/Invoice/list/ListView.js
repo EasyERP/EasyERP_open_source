@@ -30,11 +30,13 @@ define([
                 this.collection = options.collection;
                 _.bind(this.collection.showMore, this.collection);
                 this.parrentContentId = options.collection.parrentContentId;
-                if (options.filter['forSales'] === true){
-                    this.filter = {};
-                } else {
-                    this.filter = options.filter;
-                }
+                //if (options.filter && options.filter['forSales'] === true){
+                //    this.filter = {};
+                //} else {
+                //    this.filter = options.filter;
+                //}
+                this.filter = options.filter ? options.filter : {};
+               // this.filter.forSales = false;
                 this.sort = options.sort;
                 this.defaultItemsNumber = this.collection.namberToShow || 50;
                 this.newCollection = options.newCollection;
@@ -378,7 +380,7 @@ define([
                 var itemsNumber;
                 var self = this;
                 var chosen = this.$el.find('.chosen');
-                var checkedElements = $('.drop-down-filter > input:checkbox:checked');
+                var checkedElements = $('.drop-down-filter input:checkbox:checked');
                 var showList;
 
                 this.startTime = new Date();
@@ -388,13 +390,13 @@ define([
                 this.filter = {};
                 this.filter['forSales'] = false;
 
-                if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
-                    showList = checkedElements.map(function() {
-                        return this.value
-                    }).get();
-
-                    this.filter['workflow'] = showList;
-                };
+                //if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
+                //    showList = checkedElements.map(function() {
+                //        return this.value
+                //    }).get();
+                //
+                //    this.filter['workflow'] = showList;
+                //};
 
 
                 if (chosen) {

@@ -21,15 +21,11 @@
 
                 this.filter = options.filter;
 
-                if (options && options.contentType )
+                if (options && options.contentType && !(options.filter))
                 {
                     options.filter = {};
                     if (regex.test(this.contentType)) {
                         options.filter.forSales = true;
-                    }
-
-                    if (!(options.filter)){
-                        this.filter = options.filter;
                     }
                 }
 

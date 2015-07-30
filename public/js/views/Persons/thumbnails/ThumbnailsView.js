@@ -75,7 +75,7 @@
             alpabeticalRender: function (e, showList) {
                 var selectedLetter;
                 var target;
-                var checkedElements = $('.drop-down-filter > input:checkbox:checked');
+                var checkedElements = $('.drop-down-filter input:checkbox:checked');
                 var chosen = this.$el.find('.chosen');
                 var self = this;
 
@@ -130,7 +130,6 @@
                 if ((checkedElements.length && checkedElements.attr('id') === 'defaultFilter') || (!chosen.length && !showList)) {
                     self.filter = 'empty';
                 };
-
 
                 this.defaultItemsNumber = 0;
 

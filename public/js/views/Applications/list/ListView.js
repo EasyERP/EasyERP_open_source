@@ -165,7 +165,7 @@ define([
                 var self = this;
                 var itemsNumber = $("#itemsNumber").text();
                 var chosen = this.$el.find('.chosen');
-                var checkedElements = $('.drop-down-filter > input:checkbox:checked');
+                var checkedElements = $('.drop-down-filter input:checkbox:checked');
                 var showList;
 
                 this.startTime = new Date();

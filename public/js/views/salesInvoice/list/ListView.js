@@ -31,7 +31,7 @@ define([
                 _.bind(this.collection.showMore, this.collection);
                 this.parrentContentId = options.collection.parrentContentId;
                 this.filter = options.filter ? options.filter : {};
-                this.filter.forSales = true;
+                //this.filter.forSales = true;
                 this.sort = options.sort;
                 this.defaultItemsNumber = this.collection.namberToShow || 50;
                 this.newCollection = options.newCollection;
@@ -203,7 +203,7 @@ define([
                 $("#saveFilterButton").hide();
                 $("#removeFilterButton").hide();
 
-                if (App.currentUser.savedFilters && App.currentUser.savedFilters['Invoice']) {
+                if (App.currentUser.savedFilters && App.currentUser.savedFilters['salesInvoice']) {
                     $("#clearFilterButton").show();
                     $("#removeFilterButton").show();
                 }
@@ -393,7 +393,7 @@ define([
 
             showFilteredPage: function () {
                 var itemsNumber = $("#itemsNumber").text();
-                var checkedElements = $('.drop-down-filter > input:checkbox:checked');
+                var checkedElements = $('.drop-down-filter input:checkbox:checked');
                 var chosen = this.$el.find('.chosen');
                 var self = this;
                 var showList;
@@ -402,14 +402,16 @@ define([
                 this.newCollection = false;
 
 
-                if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
-                    showList = checkedElements.map(function () {
-                        return this.value;
-                    }).get();
-
-                    this.filter['workflow'] = showList;
-
-                } else  if (chosen && chosen.length) {
+                //if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
+                //    showList = checkedElements.map(function () {
+                //        return this.value;
+                //    }).get();
+                //
+                //    this.filter['workflow'] = showList;
+                //
+                //} else
+                //
+                if (chosen && chosen.length) {
                     chosen.each(function (index, elem) {
                         if (elem.children[2].attributes.class.nodeValue === 'chooseDate') {
                             if (self.filter[elem.children[1].value]) {
@@ -472,7 +474,7 @@ define([
 
                 filterObj['filter'] = {};
                 filterObj['filter'] = this.filter;
-                filterObj['key'] = key;
+                filterObj['key'] = 'salesInvoice';
 
                 currentUser.changed = filterObj;
 
@@ -497,7 +499,7 @@ define([
                 if (!App.currentUser.savedFilters){
                     App.currentUser.savedFilters = {};
                 }
-                App.currentUser.savedFilters['Invoice'] = filterObj.filter;
+                App.currentUser.savedFilters['salesInvoice'] = filterObj.filter;
 
                 this.$el.find('.filterValues').empty();
                 this.$el.find('.filter-icons').removeClass('active');
@@ -546,7 +548,7 @@ define([
                     }
                 );
 
-                delete App.currentUser.savedFilters['Invoice'];
+                delete App.currentUser.savedFilters['salesInvoice'];
 
                 $(".saveFilterButton").hide();
                 $(".removeFilterButton").hide();
