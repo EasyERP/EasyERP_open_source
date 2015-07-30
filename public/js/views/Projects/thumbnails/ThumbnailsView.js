@@ -150,6 +150,14 @@
                 this.filter =  {};
                 this.defaultItemsNumber = 0;
 
+                /*if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
+                    showList = $('.drop-down-filter input:checkbox:checked').map(function() {
+                        return this.value
+                    }).get();
+
+                    this.filter['workflow'] = showList;
+                };*/
+
                 if (chosen) {
                     chosen.each(function (index, elem) {
                         if (elem.children[2].attributes.class.nodeValue === 'chooseDate') {

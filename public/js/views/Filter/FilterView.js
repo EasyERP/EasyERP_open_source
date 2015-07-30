@@ -21,7 +21,8 @@ define([
                 'click .addCondition': 'addCondition',
                 'click .removeFilter': 'removeFilter',
                 'click .customFilter': 'showCustomFilter',
-                'click .applyFilter': 'applyFilter'
+                'click .applyFilter': 'applyFilter',
+                'click .condition li': 'conditionClick'
             },
 
 
@@ -47,6 +48,12 @@ define([
                 this.trigger('filter');
             },
 
+            conditionClick: function (e) {
+                if (e.target.localName === 'li') {
+                    $(e.target.children[0]).trigger('click');
+                }
+            },
+
             showCustomFilter: function () {
                 this.$el.find(".filterOptions, .filterActions").toggle();
             },
@@ -57,8 +64,10 @@ define([
                 var term = this.$el.find('.chooseTerm');
                 var date = this.$el.find('.chooseDate');
 
-                if (filter.length > 1) {
-                    $(e.target).closest('.filterOptions').remove();
+                if (filter.length > 1 && e && e.target) {
+                    if ( e && e.target) {
+                        $(e.target).closest('.filterOptions').remove();
+                    }
                 } else {
                     filter.removeClass('chosen');
                     opt.children().remove();
@@ -66,10 +75,10 @@ define([
                     date.remove();
                     opt.removeClass('activated').show();
                     this.$el.find(".filterOptions, .filterActions").hide();
-                    if (e && e.target) {
+                   /* if (e && e.target) {
                         this.trigger('defaultFilter');
                         e.stopPropagation();
-                    }
+                    }*/
 
                 }
             },
@@ -185,8 +194,8 @@ define([
                     $.each($('.filterValues span'), function (index, item) {
                         if (item.className !== 'Clear') item.remove();
                     });
-                    this.trigger('defaultFilter');
                     this.removeFilter()
+                    this.trigger('defaultFilter');
                 }
 
                /* if ($('.drop-down-filter input:checkbox:checked').length === 0) {
@@ -204,8 +213,8 @@ define([
                     value.checked = false
                 });
 
-                this.trigger('defaultFilter');
                 this.removeFilter()
+                this.trigger('defaultFilter');
             }
         });
 

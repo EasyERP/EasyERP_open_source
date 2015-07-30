@@ -232,6 +232,7 @@ define([
                 //    this.filter['workflow'] = showList;
                 //};
 
+                
 
                 if (chosen) {
                     chosen.each(function (index, elem) {

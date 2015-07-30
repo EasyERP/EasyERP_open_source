@@ -388,6 +388,13 @@ define([
                 //
                 //    this.filter['department'] = showList;
                 //};
+               /* if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
+                    showList = checkedElements.map(function() {
+                        return this.value
+                    }).get();
+
+                    this.filter['department'] = showList;
+                };*/
 
                 if (chosen) {
                     chosen.each(function (index, elem) {

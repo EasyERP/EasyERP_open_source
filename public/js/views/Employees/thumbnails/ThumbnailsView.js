@@ -193,13 +193,13 @@
                 $('#check_all').prop('checked', false);
                 this.filter = {};
 
-                //if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
-                //    showList = $('.drop-down-filter  input:checkbox:checked').map(function() {
-                //        return this.value
-                //    }).get();
-                //
-                //    this.filter['department'] = showList;
-                //};
+                /*if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
+                    showList = $('.drop-down-filter > input:checkbox:checked').map(function() {
+                        return this.value
+                    }).get();
+
+                    this.filter['department'] = showList;
+                };*/
 
 
                 if (chosen) {

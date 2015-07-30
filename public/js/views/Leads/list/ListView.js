@@ -213,7 +213,7 @@ define([
                 this.defaultItemsNumber = 0;
                 this.changeLocationHash(null, this.defaultItemsNumber, this.filter);
                 this.collection.showMore({ count: this.defaultItemsNumber, page: 1, filter: this.filter, newCollection: true });
-                this.getTotalLength(this.defaultItemsNumber, this.filter)
+                this.getTotalLength(this.defaultItemsNumber, this.filter);
                 //this.changeLocationHash(1, itemsNumber, this.filter);
                 //this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter, parrentContentId: this.parrentContentId });
                 //this.getTotalLength(null, itemsNumber, this.filter);
