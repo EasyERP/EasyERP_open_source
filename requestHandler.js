@@ -888,13 +888,13 @@ var requestHandler = function (event, mainDb) {
 
     function getWorkflow(req, res, data) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, 44, function (access) {
-                if (access) {
+            /*access.getReadAccess(req, req.session.uId, 44, function (access) {
+                if (access) {*/
                     workflow.get(req, data, res);
-                } else {
+               /* } else {
                     res.send(403);
                 }
-            });
+            });*/
         } else {
             res.send(401);
         }

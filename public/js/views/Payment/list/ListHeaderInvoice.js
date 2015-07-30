@@ -35,6 +35,7 @@ define([
                 currencySplitter: helpers.currencySplitter
             }));
 
+
             return this;
         }
     });
