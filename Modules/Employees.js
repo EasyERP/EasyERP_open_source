@@ -366,7 +366,7 @@ var Employee = function (event, models) {
                     _employee.nationality = data.nationality;
                 }
                 if (data.hire) {
-                    _employee.hire = data.hire;
+                    _employee.hire = getDate(data.hire);
                 }
                 ///////////////////////////////////////////////////
                 event.emit('updateSequence', models.get(req.session.lastDb, "Employees", employeeSchema), "sequence", 0, 0, _employee.workflow, _employee.workflow, true, false, function (sequence) {

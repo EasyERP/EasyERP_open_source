@@ -144,10 +144,25 @@
               <dd><span><%=marital%></span></dd>
 			</dl>
 		  </div>
-		  <div class="half-block left withPaddingLeft">
+		  <div class="formTitle">
+			  <h3 class="left">HiredFired</h3>
+			  <div class="clearfix"></div>
+
+			  <div class="half-block left withPaddingLeft">
+				  <%_.each(hire, function(hire, key){ %>
+				  <dt><label>Hired</label></dt>
+				  <dd><%=hire%></dd>
+				  <% }); %>
+			  </div>
+			  <div class="half-block right withPaddingLeft">
+				  <%_.each(fire, function(fire, key){ %>
+				  <dt><label>Fired</label></dt>
+				  <dd><%=fire%></dd>
+				  <% }); %>
+			  </div>
 		  </div>
 
-		  <div class="clearfix"></div>
+			<div class="clearfix"></div>
 	      <div class="formTitle">
 			<h3 class="left"><legend>Resume</legend></h3>
 			<div class="clearfix"></div>

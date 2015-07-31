@@ -1403,13 +1403,13 @@ var requestHandler = function (event, mainDb) {
 
     function getEmployeesImages(req, res, data) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
-            //access.getReadAccess(req, req.session.uId, 43, function (access) {
-            //    if (access) {
+            access.getReadAccess(req, req.session.uId, 42, function (access) {
+                if (access) {
                     employee.getEmployeesImages(req, data, res);
-            //    } else {
-            //        res.send(403);
-            //    }
-            //});
+                } else {
+                    res.send(403);
+                }
+            });
 
         } else {
             res.send(401);
