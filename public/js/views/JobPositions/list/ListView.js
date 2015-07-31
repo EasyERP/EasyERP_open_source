@@ -222,23 +222,13 @@ define([
                 $('#check_all').prop('checked', false);
 
                 this.startTime = new Date();
-                this.newCollection = false;
+               // this.newCollection = false;
                 this.filter = {};
                 this.filter['condition'] = 'and';
 
                 if  (!condition.checked) {
                     self.filter['condition'] = 'or';
                 }
-
-                //if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
-                //    showList = checkedElements.map(function() {
-                //        return this.value
-                //    }).get();
-                //
-                //    this.filter['workflow'] = showList;
-                //};
-
-                
 
                 if (chosen) {
                     chosen.each(function (index, elem) {
@@ -276,7 +266,6 @@ define([
 
             saveFilter: function () {
                 var currentUser = new usersModel(App.currentUser);
-                var subMenu = $('#submenu-holder').find('li.selected').text();
                 var key;
                 var filterObj = {};
                 var mid = 39;
@@ -474,7 +463,7 @@ define([
                 $('#check_all').prop('checked', false);
                 this.nextP({
                     sort: this.sort,
-                    newCollection: this.newCollection,
+                    newCollection: this.newCollection
                 });
                 dataService.getData('/totalCollectionLength/JobPositions', {
                     newCollection: this.newCollection

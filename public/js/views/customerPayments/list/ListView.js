@@ -154,7 +154,7 @@ define([
                     editedElementContent = editedCol.data('content');
                     editedElementValue = editedElement.val();
 
-                    editHolidayModel = this.editCollection.get(editedElementRowId);
+                    editHolidayModel = this.collection.get(editedElementRowId);
 
                     if (!this.changedModels[editedElementRowId]) {
                         if (!editHolidayModel.id) {
@@ -183,7 +183,7 @@ define([
                 var workflow;
                 var changedAttr;
 
-                var editModel = this.editCollection.get(modelId);
+                var editModel = this.collection.get(modelId);
 
                 if (!this.changedModels[modelId]) {
                     if (!editModel.id) {
@@ -358,7 +358,7 @@ define([
                     newCollection: this.newCollection,
                     parrentContentId: this.parrentContentId
                 });
-                dataService.getData('/supplierPayments/totalCollectionLength', {
+                dataService.getData(this.collectionLengthUrl, {
                     filter: this.filter,
                     newCollection: this.newCollection,
                     parrentContentId: this.parrentContentId,
