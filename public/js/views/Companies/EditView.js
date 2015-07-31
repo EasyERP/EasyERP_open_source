@@ -168,6 +168,10 @@ define([
                         last: ''
                     },
                     imageSrc: this.imageSrc,
+                    social: {
+                        LI: $.trim(thisEl.find('#social_LI').val()),
+                        FB: $.trim(thisEl.find('#social_FB').val())
+                    },
                     email: this.$el.find("#email").val(),
                     phones: {
                         phone: this.$el.find("#phone").val(),
