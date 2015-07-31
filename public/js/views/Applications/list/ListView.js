@@ -174,7 +174,7 @@ define([
                 this.filter = {};
                 this.filter['condition'] = 'and';
 
-                if  (!condition.checked) {
+                if  (condition && !condition.checked) {
                     self.filter['condition'] = 'or';
                 }
 

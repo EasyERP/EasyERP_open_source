@@ -186,7 +186,7 @@ define([
                 this.filter['isConverted'] = isConverted;
                 this.filter['condition'] = 'and';
 
-                if  (!condition.checked) {
+                if  (condition && !condition.checked) {
                     self.filter['condition'] = 'or';
                 }
                 /*if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
