@@ -86,12 +86,18 @@
                 var self = this;
                 var chosen = this.$el.find('.chosen');
                 var checkedElements = $('.drop-down-filter input:checkbox:checked');
+                var condition = this.$el.find('.conditionAND > input')[0];
 
                 this.$el.find('.thumbnailwithavatar').remove();
                 this.startTime = new Date();
                 this.newCollection = true;
                 this.filter =  {};
                 this.filter['canBePurchased'] = true;
+                this.filter['condition'] = 'and';
+
+                if  (!condition.checked) {
+                    self.filter['condition'] = 'or';
+                }
 
                 if (chosen) {
                     chosen.each(function (index, elem) {

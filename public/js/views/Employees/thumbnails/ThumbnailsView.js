@@ -183,12 +183,18 @@
                 var self = this;
                 var chosen = this.$el.find('.chosen');
                 var checkedElements = $('.drop-down-filter  input:checkbox:checked');
+                var condition = this.$el.find('.conditionAND > input')[0];
                 var showList;
 
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
                 this.filter = {};
+                this.filter['condition'] = 'and';
+
+                if  (!condition.checked) {
+                    self.filter['condition'] = 'or';
+                }
 
                 /*if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
                     showList = $('.drop-down-filter > input:checkbox:checked').map(function() {

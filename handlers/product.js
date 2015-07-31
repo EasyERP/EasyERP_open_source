@@ -214,6 +214,9 @@ var Products = function (models) {
     };
 
     function caseFilter(queryObj, filter) {
+        if (filter.condition === 'or') {
+            queryObj['$or'] = []
+        }
         if (filter.canBeSold) {
             queryObj['canBeSold'] = true;
         }
@@ -224,7 +227,11 @@ var Products = function (models) {
             queryObj['name'] = new RegExp('^[' + filter.letter.toLowerCase() + filter.letter.toUpperCase() + '].*');
         }
         if (filter.Name) {
-            queryObj['name'] = {$in: filter.Name};
+            if (filter.condition === 'or') {
+                queryObj.$or.push({name: {$in: filter.Name}});
+            } else {
+                queryObj['name'] = {$in: filter.Name};
+            }
         }
         if (filter['Can be sold']) {
             filter['Can be sold'] = _.map(filter['Can be sold'], function (element) {
@@ -236,10 +243,15 @@ var Products = function (models) {
             queryObj['canBeSold'] = {$in: filter['Can be sold']}
         }
         if (filter['Creation Date']) {
-            queryObj['creationDate'] = {
-                $gte: new Date(filter['creationDate'][0].start),
-                $lte: new Date(filter['creationDate'][0].end)
+            if (filter.condition === 'or') {
+                queryObj.$or.push({creationDate: {$gte: new Date(filter['creationDate'][0].start), $lte: new Date(filter['creationDate'][0].end)}});
+            } else {
+                queryObj['creationDate'] = {
+                    $gte: new Date(filter['creationDate'][0].start),
+                    $lte: new Date(filter['creationDate'][0].end)
+                }
             }
+
         }
     };
 

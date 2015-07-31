@@ -10,7 +10,8 @@ var Employee = function (event, models) {
     function getTotalCount(req, response) {
         var res = {};
         var data = {};
-        var or;
+        var condition;
+
 
         for (var i in req.query) {
             data[i] = req.query[i];
@@ -37,22 +38,28 @@ var Employee = function (event, models) {
                 optionsObject['$and'] = [];
                 optionsObject['$and'].push({'isEmployee': true});
 
+
                 if (data && data.filter) {
-                    optionsObject['$and'].push({$or: []});
-                    or = optionsObject['$and'][1]['$or'];
+                    if (data.filter.condition === 'or') {
+                        optionsObject['$and'].push({$or: []});
+                        condition = optionsObject['$and'][1]['$or'];
+                    } else {
+                        optionsObject['$and'].push({$and: []});
+                        condition = optionsObject['$and'][1]['$and'];
+                    }
 
                     if (data.filter.department) {
                         var arrOfObjectId = data.filter.department.objectID();
-                        or.push({ 'department': {$in: arrOfObjectId}});
+                        condition.push({ 'department': {$in: arrOfObjectId}});
                     }
                     if (data.filter.Name) {
-                        or.push({ 'name.last': {$in: data.filter.Name}});
+                        condition.push({ 'name.last': {$in: data.filter.Name}});
                     }
                     if (data.filter.Email) {
-                        or.push({ 'workEmail': {$in: data.filter.Email}});
+                        condition.push({ 'workEmail': {$in: data.filter.Email}});
                     }
 
-                    if (!or.length) {
+                    if (!condition.length) {
                         optionsObject['$and'].pop();
                     }
 
@@ -65,24 +72,27 @@ var Employee = function (event, models) {
                 optionsObject['$and'].push({'isEmployee': false});
 
                 if (data && data.filter) {
-                    filterObj = {};
-                    optionsObject['$and'].push(filterObj);
-                    filterObj['$or'] = [];
-                    or = filterObj['$or'];
 
+                    if (data.filter.condition === 'or') {
+                        optionsObject['$and'].push({$or: []});
+                        condition = optionsObject['$and'][1]['$or'];
+                    } else {
+                        optionsObject['$and'].push({$and: []});
+                        condition = optionsObject['$and'][1]['$and'];
+                    }
                     for (var key in data.filter) {
 
                         switch (key) {
                             case 'Name':
-                                or.push({ 'name.last': {$in: data.filter.Name}});
+                                condition.push({ 'name.last': {$in: data.filter.Name}});
                                 break;
                             case 'Email':
-                                or.push({ 'workEmail': {$in: data.filter.Email}});
+                                condition.push({ 'workEmail': {$in: data.filter.Email}});
                                 break;
 
                         }
                     }
-                    if (!or.length) {
+                    if (!condition.length) {
                         optionsObject['$and'].pop();
                     }
                 }
@@ -511,7 +521,7 @@ var Employee = function (event, models) {
     function getFilter(req, response) {
         var data = {};
         var optionsObject = {};
-        var or;
+        var condition;
         var filterObj;
 
         var viewType;
@@ -533,22 +543,29 @@ var Employee = function (event, models) {
                 optionsObject['$and'] = [];
                 optionsObject['$and'].push({'isEmployee': true});
 
+
                 if (data && data.filter) {
-                    optionsObject['$and'].push({$or: []});
-                    or = optionsObject['$and'][1]['$or'];
+
+                    if (data.filter.condition === 'or') {
+                        optionsObject['$and'].push({$or: []});
+                        condition = optionsObject['$and'][1]['$or'];
+                    } else {
+                        optionsObject['$and'].push({$and: []})
+                        condition = optionsObject['$and'][1]['$and'];
+                    }
 
                     if (data.filter.department) {
                         var arrOfObjectId = data.filter.department.objectID();
-                        or.push({ 'department': {$in: arrOfObjectId}});
+                        condition.push({ 'department': {$in: arrOfObjectId}});
                     }
                     if (data.filter.Name) {
-                        or.push({ 'name.last': {$in: data.filter.Name}});
+                        condition.push({ 'name.last': {$in: data.filter.Name}});
                     }
                     if (data.filter.Email) {
-                        or.push({ 'workEmail': {$in: data.filter.Email}});
+                        condition.push({ 'workEmail': {$in: data.filter.Email}});
                     }
 
-                    if (!or.length) {
+                    if (!condition.length) {
                         optionsObject['$and'].pop();
                     }
 
@@ -566,24 +583,27 @@ var Employee = function (event, models) {
                 optionsObject['$and'].push({'isEmployee': false});
 
                 if (data && data.filter) {
-                    filterObj = {};
-                    optionsObject['$and'].push(filterObj);
-                    filterObj['$or'] = [];
-                    or = filterObj['$or'];
+                    if (data.filter.condition === 'or') {
+                        optionsObject['$and'].push({$or: []});
+                        condition = optionsObject['$and'][1]['$or'];
+                    } else {
+                        optionsObject['$and'].push({$and: []});
+                        condition = optionsObject['$and'][1]['$and'];
+                    }
 
                     for (var key in data.filter) {
 
                         switch (key) {
                             case 'Name':
-                                or.push({ 'name.last': {$in: data.filter.Name}});
+                                condition.push({ 'name.last': {$in: data.filter.Name}});
                                 break;
                             case 'Email':
-                                or.push({ 'workEmail': {$in: data.filter.Email}});
+                                condition.push({ 'workEmail': {$in: data.filter.Email}});
                                 break;
 
                         }
                     }
-                    if (!or.length) {
+                    if (!condition.length) {
                         optionsObject['$and'].pop();
                     }
                 }
@@ -802,7 +822,7 @@ var Employee = function (event, models) {
         var res = {};
         var startTime = new Date();
         var filterObj = {};
-        var or;
+        var condition;
 
         res['data'] = [];
         res['workflowId'] = data.workflowId;
@@ -822,20 +842,28 @@ var Employee = function (event, models) {
                     filterObj['$and'] = [];
                     filterObj['$and'].push({isEmployee: false});
                     filterObj['$and'].push({workflow: objectId(data.workflowId)});
-                    filterObj['$and'].push({$or: []});
-                    or = filterObj['$and'][2]['$or'];
+                    /*filterObj['$and'].push({$or: []});
+                    or = filterObj['$and'][2]['$or'];*/
 
+                    if (data && data.filter) {
+                        if (data.filter.condition === 'or') {
+                            filterObj['$and'].push({$or: []});
+                            condition = filterObj['$and'][2]['$or'];
+                        } else {
+                            filterObj['$and'].push({$and: []});
+                            condition = filterObj['$and'][2]['$and'];
+                        }
 
-                    if ( data.filter && data.filter.Name) {
-                        or .push({ 'name.last': {$in: data.filter.Name}});
+                        if (data.filter && data.filter.Name) {
+                            condition.push({'name.last': {$in: data.filter.Name}});
+                        }
+                        if (data.filter && data.filter.Email) {
+                            condition.push({'workEmail': {$in: data.filter.Email}});
+                        }
+                        if (!condition.length) {
+                            filterObj['$and'].pop();
+                        }
                     }
-                    if ( data.filter && data.filter.Email) {
-                        or .push({ 'workEmail': {$in: data.filter.Email}});
-                    }
-                    if (!filterObj['$and'][2]['$or'].length) {
-                        filterObj['$and'].pop();
-                    }
-
                     models.get(req.session.lastDb, "Employees", employeeSchema).aggregate(
                         {
                             $match: {

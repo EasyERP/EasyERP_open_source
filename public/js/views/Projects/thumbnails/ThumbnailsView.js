@@ -152,6 +152,10 @@
                 this.defaultItemsNumber = 0;
                 this.filter['condition'] = 'and';
 
+                if  (!condition.checked) {
+                    self.filter['condition'] = 'or';
+                }
+
                 /*if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
                     showList = $('.drop-down-filter input:checkbox:checked').map(function() {
                         return this.value
@@ -160,9 +164,7 @@
                     this.filter['workflow'] = showList;
                 };*/
 
-                if  (!condition.checked) {
-                    self.filter['condition'] = 'or';
-                }
+
 
                 if (chosen) {
                     chosen.each(function (index, elem) {
@@ -195,7 +197,7 @@
                 };
 
                 this.changeLocationHash(null, this.defaultItemsNumber, this.filter);
-                this.collection.showMore({ count: this.defaultItemsNumber, page: 1, filter: this.filter });
+                this.collection.showMore({ count: this.defaultItemsNumber, page: 1, filter: this.filter, newCollection: true });
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
                
                 if (checkedElements.attr('id') === 'defaultFilter'){

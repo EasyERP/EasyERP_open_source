@@ -902,29 +902,41 @@ var Project = function (models, event) {
                         function (err, result) {
                             if (!err) {
 
-                                var query = models.get(req.session.lastDb, "Project", projectSchema).find().where('_id').in(result);
+                                var qObj = {$and:[{_id: {$in: result}}]};
+                                var condition;
 
                                 if (data && data.filter) {
+                                    if (data.filter.condition === 'or') {
+                                        qObj['$and'].push({$or: []});
+                                        condition = qObj['$and'][1]['$or'];
+                                    } else {
+                                        condition = qObj['$and'];
+                                    }
                                     for (var key in data.filter) {
                                         switch (key) {
                                             case 'workflow':
                                                 data.filter.workflow = data.filter.workflow.map(function (item) {
                                                     return item === "null" ? null : item;
                                                 });
-                                                query.where('workflow').in(data.filter.workflow);
+                                                condition.push({workflow: {$in: data.filter.workflow}});
                                                 break;
                                             case 'project':
-                                                query.where('projectName').in(data.filter.project);
+                                                condition.push({projectName: {$in: data.filter.project}});
                                                 break;
                                             case 'startDate':
-                                                query.where('StartDate', {$gte: new Date(data.filter.startDate[0].start), $lte: new Date(data.filter.startDate[0].end)});
+                                                condition.push({StartDate: {$gte: new Date(data.filter.startDate[0].start), $lte: new Date(data.filter.startDate[0].end)}});
+
                                                 break;
                                             case 'endDate':
-                                                query.where('EndDate', {$gte: new Date(data.filter.endDate[0].start), $lte: new Date(data.filter.endDate[0].end)});
+                                                condition.push({EndDate: {$gte: new Date(data.filter.endDate[0].start), $lte: new Date(data.filter.endDate[0].end)}});
+
                                                 break;
                                         }
                                     }
-                                } else if (data && (!data.newCollection || data.newCollection === 'false')) {
+                                }
+                                var query = models.get(req.session.lastDb, "Project", projectSchema).find(qObj);
+
+                                if (data && (!data.newCollection || data.newCollection === 'false')) {
                                     query.where('workflow').in([]);
                                 }
                                 query.select("_id projectName task workflow projectmanager customer health").

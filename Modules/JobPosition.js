@@ -10,6 +10,7 @@ var JobPosition = function (models) {
     function getTotalCount(req, response) {
         var res = {};
         var data = {};
+        var condition;
         for (var i in req.query) {
             data[i] = req.query[i];
         }
@@ -22,23 +23,30 @@ var JobPosition = function (models) {
         var optionObj = {};
 
         if (data && filter && filter != 'empty') {
-            optionObj['$and'] = [];
+
+            if (data.filter.condition === 'or') {
+                optionObj['$or'] = [];
+                condition = optionObj['$or'];
+            } else {
+                optionObj['$and'] = [];
+                condition = optionObj['$and'];
+            }
             for (var key in filter) {
                 switch (key) {
                     case 'workflow':
-                        optionObj['$and'].push({'workflow': {'$in': filter.workflow.objectID()}});
+                        condition.push({'workflow': {'$in': filter.workflow.objectID()}});
                         break;
                     case 'Job name':
-                        optionObj['$and'].push({'name': {'$in': filter['Job name']}});
+                        condition.push({'name': {'$in': filter['Job name']}});
                         break;
                     case 'Total forecasted employees':
-                        optionObj['$and'].push({'totalForecastedEmployees': {'$in': filter['Total forecasted employees']}});
+                        condition.push({'totalForecastedEmployees': {'$in': filter['Total forecasted employees']}});
                         break;
                     case 'Current number of employees':
-                        optionObj['$and'].push({'numberOfEmployees': {'$in': filter['Current number of employees']}});
+                        condition.push({'numberOfEmployees': {'$in': filter['Current number of employees']}});
                         break;
                     case 'Expected in recruitment':
-                        optionObj['$and'].push({'expectedRecruitment': {'$in': filter['Expected in recruitment']}});
+                        condition.push({'expectedRecruitment': {'$in': filter['Expected in recruitment']}});
                         break;
 
                 }
@@ -278,20 +286,21 @@ var JobPosition = function (models) {
     function caseFilter(queryObj, filter) {
         for (var key in filter) {
             switch (key) {
-                case 'workflow':
+                /*case 'workflow':
                     queryObj.where('workflow').in(filter.workflow);
-                    break;
+                    break;*/
                 case 'Job name':
-                    queryObj.where('name').in(filter['Job name']);
+                    queryObj.push({'name': {$in: filter['Job name']}});
                     break;
                 case 'Total forecasted employees':
-                    queryObj.where('totalForecastedEmployees').in(filter['Total forecasted employees']);
+                    queryObj.push({'Total forecasted employees': {$in: filter['Total forecasted employees']}});
                     break;
                 case 'Current number of employees':
-                    queryObj.where('numberOfEmployees').in(filter['Current number of employees']);
+                    queryObj.push({'numberOfEmployees': {$in: filter['Current number of employees']}});
+
                     break;
                 case 'Expected in recruitment':
-                    queryObj.where('expectedRecruitment').in(filter['Expected in recruitment']);
+                    queryObj.push({'expectedRecruitment': {$in: filter['Expected in recruitment']}});
                     break;
 
             }
@@ -302,6 +311,8 @@ var JobPosition = function (models) {
     function getFilter(req, response) {
         var res = {};
         res['data'] = [];
+        var filterObj;
+        var condition;
 
         var data = {};
         for (var i in req.query) {
@@ -358,17 +369,29 @@ var JobPosition = function (models) {
                         },
                         function (err, result) {
                             if (!err) {
-                                var query = models.get(req.session.lastDb, "JobPosition", jobPositionSchema).find().where('_id').in(result);
+                                filterObj = {$and: [{_id: {$in: result}}]};
+
+                                if (data && data.filter) {
+                                    if (data.filter.condition === 'or') {
+                                        filterObj['$and'].push({$or: []});
+                                        condition = filterObj['$and'][1]['$or'];
+                                        caseFilter(condition, data.filter);
+                                    } else {
+
+                                        condition = filterObj['$and'];
+                                        caseFilter(condition, data.filter);
+                                    }
+
+
+                                }
+
+                                var query = models.get(req.session.lastDb, "JobPosition", jobPositionSchema).find(filterObj);
                                 if (data.sort && (!data.sort.totalForecastedEmployees && !data.sort.numberOfEmployees)) {
                                     query.sort(data.sort);
                                 } else {
                                     query.sort({"editedBy.date": -1});
                                 }
-                                if (data && data.filter) {
-
-                                    caseFilter(query, data.filter);
-
-                                } else if (data && (!data.newCollection || data.newCollection === 'false')) {
+                                if (data && (!data.newCollection || data.newCollection === 'false')) {
                                     query.where('workflow').in([]);
                                 }
                                 query.select("_id createdBy editedBy name department totalForecastedEmployees numberOfEmployees expectedRecruitment workflow").

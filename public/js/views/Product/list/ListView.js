@@ -350,6 +350,7 @@ define([
                 var chosen = this.$el.find('.chosen');
                 var itemsNumber = $("#itemsNumber").text();
                 var checkedElements = $('.drop-down-filter input:checkbox:checked');
+                var condition = this.$el.find('.conditionAND > input')[0];
 
                 this.startTime = new Date();
                 this.newCollection = false;
@@ -362,6 +363,11 @@ define([
 
                 this.filter =  {};
                 this.filter['letter'] = selectedLetter;
+                this.filter['condition'] = 'and';
+
+                if  (!condition.checked) {
+                    self.filter['condition'] = 'or';
+                }
 
                 if (chosen) {
                     chosen.each(function (index, elem) {
