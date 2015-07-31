@@ -14,10 +14,10 @@ var Opportunities = function (models, event) {
         var filterObj = {};
         var or;
         var filter = data.filter ? data.filter : {};
-
-        if (filter === 'empty') {
-            filter = {};
-        }
+        //
+        //if (filter === 'empty') {
+        //    filter = {};
+        //}
 
         var contentType = req.params.contentType;
         var optionsObject = {};

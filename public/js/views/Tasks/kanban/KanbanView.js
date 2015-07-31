@@ -486,7 +486,10 @@
                         self.foldUnfiltredItems(workflows)
                     });
                     FilterView.bind('defaultFilter', function () {
-                        self.showDefaultFilter(workflows)
+                        self.showDefaultFilter(workflows);
+                        $(".saveFilterButton").hide();
+                        $(".clearFilterButton").hide();
+                        $(".removeFilterButton").show();
                     });
                     // Filter custom event listen ------end
                 });

@@ -334,15 +334,15 @@
                     el = $("td.column[data-id='"+id+"']");
                     el.removeClass("fold");
                 });
-
-                $(".saveFilterButton").show();
-                $(".clearFilterButton").show();
-                $(".removeFilterButton").show();
-                if (savedFilter){
-                    $(".saveFilterButton").hide();
-                    $(".clearFilterButton").show();
-                    $(".removeFilterButton").show();
-                }
+                //
+                //$(".saveFilterButton").show();
+                //$(".clearFilterButton").show();
+                //$(".removeFilterButton").show();
+                //if (savedFilter){
+                //    $(".saveFilterButton").hide();
+                //    $(".clearFilterButton").show();
+                //    $(".removeFilterButton").show();
+                //}
 
             },
 
@@ -446,6 +446,7 @@
 
                 this.$el.find('.filterValues').empty();
                 this.$el.find('.filter-icons').removeClass('active');
+                this.$el.find('.filterOptions').removeClass('chosen');
                 this.$el.find('.chooseOption').children().remove();
 
                 $.each($('.drop-down-filter input'), function (index, value) {
@@ -532,19 +533,19 @@
                     self.hideItemsNumber(e);
                 });
 
-                this.$el.prepend('<div class="filtersActive"><button id="saveFilterButton" class="saveFilterButton">Save Filter</button>' +
-                    '<button id="clearFilterButton" class="clearFilterButton">Clear Filter</button>' +
-                    '<button id="removeFilterButton" class="removeFilterButton">Remove Filter</button></div>'
-                );
-
-                $("#clearFilterButton").hide();
-                $("#saveFilterButton").hide();
-                $("#removeFilterButton").hide();
-
-                if (App.currentUser.savedFilters && App.currentUser.savedFilters['Applications']) {
-                    $("#clearFilterButton").show();
-                    $("#removeFilterButton").show();
-                }
+                //this.$el.prepend('<div class="filtersActive"><button id="saveFilterButton" class="saveFilterButton">Save Filter</button>' +
+                //    '<button id="clearFilterButton" class="clearFilterButton">Clear Filter</button>' +
+                //    '<button id="removeFilterButton" class="removeFilterButton">Remove Filter</button></div>'
+                //);
+                //
+                //$("#clearFilterButton").hide();
+                //$("#saveFilterButton").hide();
+                //$("#removeFilterButton").hide();
+                //
+                //if (App.currentUser.savedFilters && App.currentUser.savedFilters['Applications']) {
+                //    $("#clearFilterButton").show();
+                //    $("#removeFilterButton").show();
+                //}
 
                 dataService.getData('/employee/getFilterValues', null, function (values) {
                     FilterView = new filterView({ collection: workflows, customCollection: values});

@@ -103,12 +103,13 @@ define([
                 var ul;
                 var el = $(e.target);
                 var tr = $(e.target).closest('tr');
+                var td = $(e.target).closest('td');
                 var modelId = tr.data('id');
                 var colType = el.data('type');
                 var isDTPicker = colType !== 'input' && el.prop("tagName") !== 'INPUT' && el.data('content') === 'date';
                 var tempContainer;
                 var width;
-                var isSelect = colType !== 'input' && el.prop("tagName") !== 'INPUT' && el.data('content') === 'workflow';
+                var isSelect = td.data('content') === 'workflow';
 
                 if (modelId && el.prop('tagName') !== 'INPUT') {
                     if (this.modelId) {
@@ -129,7 +130,7 @@ define([
                     }).addClass('datepicker');
                 } else if (isSelect) {
                     ul = "<ul class='newSelectList'>" + "<li data-id='Paid'>Paid</li>" + "<li data-id='Draft'>Draft</li></ul>";
-                    el.html(ul);
+                    el.append(ul);
                 } else {
                     tempContainer = el.text();
                     width = el.width() - 6;
@@ -173,20 +174,14 @@ define([
             chooseOption: function (e) {
                 var target = $(e.target);
                 var targetElement = target.parents("td");
+                var targetW = targetElement.find("a");
                 var tr = target.parents("tr");
                 var modelId = tr.data('id');
                 var id = target.attr("id");
                 var attr = targetElement.attr("id") || targetElement.data("content");
                 var elementType = '#' + attr;
-                var paymentMethod;
-                var changedAttr;
                 var workflow;
-                var supplier;
-                var assignedContainer;
-
-                var element = _.find(this.responseObj[elementType], function (el) {
-                    return el._id === id;
-                });
+                var changedAttr;
 
                 var editModel = this.editCollection.get(modelId);
 
@@ -201,17 +196,21 @@ define([
                 changedAttr = this.changedModels[modelId];
 
                 if (elementType === '#workflow') {
-
+                    targetW.attr("class", "currentSelected");
+                    changedAttr.workflow = target.text();
+                    if (target.attr('data-id') === 'Paid') {
+                        targetW.addClass('done');
+                    } else {
+                        targetW.addClass('new');
+                    }
                 }
-                targetElement.text(target.text());
+                targetW.text(target.text());
 
                 this.hideNewSelect();
                 this.setEditable(targetElement);
 
-
                 return false;
             },
-
 
             saveItem: function () {
                 var model;

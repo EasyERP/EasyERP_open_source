@@ -30,13 +30,7 @@ define([
                 this.collection = options.collection;
                 _.bind(this.collection.showMore, this.collection);
                 this.parrentContentId = options.collection.parrentContentId;
-                //if (options.filter && options.filter['forSales'] === true){
-                //    this.filter = {};
-                //} else {
-                //    this.filter = options.filter;
-                //}
                 this.filter = options.filter ? options.filter : {};
-               // this.filter.forSales = false;
                 this.sort = options.sort;
                 this.defaultItemsNumber = this.collection.namberToShow || 50;
                 this.newCollection = options.newCollection;
@@ -220,7 +214,7 @@ define([
                 $("#saveFilterButton").hide();
                 $("#removeFilterButton").hide();
 
-                if (App.currentUser.savedFilters && App.currentUser.savedFilters['Invoice'] && App.currentUser.savedFilters['Invoice']['forSales'] === false) {
+                if (App.currentUser.savedFilters && App.currentUser.savedFilters['Invoice']) {
                     $("#clearFilterButton").show();
                     $("#removeFilterButton").show();
                 }
@@ -251,7 +245,10 @@ define([
                                 self.showFilteredPage()
                             });
                             FilterView.bind('defaultFilter', function () {
-                                self.showFilteredPage()
+                                self.showFilteredPage();
+                                $(".saveFilterButton").hide();
+                                $(".clearFilterButton").hide();
+                                $(".removeFilterButton").show();
                             });
                             // Filter custom event listen ------end
                         })
@@ -395,15 +392,6 @@ define([
                 if  (!condition.checked) {
                     self.filter['condition'] = 'or';
                 }
-
-                //if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
-                //    showList = checkedElements.map(function() {
-                //        return this.value
-                //    }).get();
-                //
-                //    this.filter['workflow'] = showList;
-                //};
-
 
                 if (chosen) {
                     chosen.each(function (index, elem) {
@@ -551,6 +539,7 @@ define([
                 this.$el.find('.filterValues').empty();
                 this.$el.find('.filter-icons').removeClass('active');
                 this.$el.find('.chooseOption').children().remove();
+                this.$el.find('.filterOptions').removeClass('chosen');
 
                 $.each($('.drop-down-filter input'), function (index, value) {
                     value.checked = false
