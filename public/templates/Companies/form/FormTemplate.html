@@ -16,8 +16,8 @@
                         <img alt="" src="<%=imageSrc%>" />
                     </div>
                     <div class="social">
-                        <% if (social.FB){%><a class="facebook" href="https://www.facebook.com/profile.php?id=<%=social.FB%>"></a><%}%>
-                        <% if (social.LI){%><a class="linkedin" href="https://www.linkedin.com/profile/view?id=<%=social.LI%>"></a><%}%>
+                        <% if (social.FB){%><a class="facebook" href="<%=social.FB%>"></a><%}%>
+                        <% if (social.LI){%><a class="linkedin" href="<%=social.LI%>"></a><%}%>
                         <% if (skype){%><a class="skype" href="skype:<%=skype%>?call"></a><%}%>
                         <div class="clearfix"></div>
                     </div>
@@ -30,9 +30,9 @@
                             <dt>Website</dt>
                             <dd id="website" class="editable" title="<%=website%>"><a class="no-long" href="http://<%=website%>"><%=website%></a></dd>
                             <dt><span>LinkedIn</span></dt>
-                            <dd id="social_LI" class="editable" title="<%=social.LI%>"><a class="no-long" id="socialLi" data-maxlength="50" href="https://www.linkedin.com/profile/view?id=<%=social.LI%>"><%=social.LI%></a></dd>
+                            <dd id="social_LI" class="editable" title="<%=social.LI%>"><a class="no-long" id="socialLi" data-maxlength="50" href="<%=social.LI%>"><%=social.LI%></a></dd>
                             <dt><span>Facebook</span></dt>
-                            <dd id="social_FB" class="editable" title="<%=social.Fb%>"><a class="no-long" id="socialFb" data-maxlength="50" href="https://www.facebook.com/profile.php?id=<%=social.FB%>"><%=social.FB%></a></dd>
+                            <dd id="social_FB" class="editable" title="<%=social.Fb%>"><a class="no-long" id="socialFb" data-maxlength="50" href="<%=social.FB%>"><%=social.FB%></a></dd>
                             <dt>Phone</dt>
                             <dd id="phones_phone" class="editable" data-maxlength="20" title="<%=phones.phone%>"><a id="phones_phone" href="skype:<%=phones.phone%>?call"  class="no-long"><%=phones.phone%></a></dd>
                             <dt>Mobile</dt>
