@@ -98,6 +98,7 @@ function (listTemplate, stagesTamplate, createView, listItemView, listTotalView,
                     newCollection: this.newCollection
                 });
                 this.collection.bind('reset', this.renderContent, this);
+                this.collection.bind('showmore', this.showMoreContent, this);
         },
 
         goSort: function (e) {

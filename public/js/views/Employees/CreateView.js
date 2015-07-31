@@ -202,6 +202,7 @@ define([
                 });
                 // date parse 
                 var dateBirthSt = $.trim(this.$el.find("#dateBirth").val());
+                var hire = $.trim(this.$el.find("#hire").val());
                
                 var active = ($("#active").is(":checked")) ? true : false;
                 var sourceId = $("#sourceDd").data("id");
@@ -248,7 +249,8 @@ define([
                         users: usersId,
                         group: groupsId
                     },
-                    whoCanRW: whoCanRW
+                    whoCanRW: whoCanRW,
+                        hire: hire
                 },
                 {
                     headers: {
@@ -318,6 +320,12 @@ define([
                     changeYear: true,
                     yearRange: '-100y:c+nn',
                     maxDate: '-18y'
+                });
+
+                $('#hire').datepicker({
+                    dateFormat: "d M, yy",
+                    changeMonth: true,
+                    changeYear: true
                 });
 
                 this.delegateEvents(this.events);
