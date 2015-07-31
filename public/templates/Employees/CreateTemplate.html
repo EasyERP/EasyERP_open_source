@@ -130,21 +130,6 @@
                   </dd>
                 </dt>
               </dl>
-
-			</div>
-              <div class="clearfix"></div>
-              <div class="formTitle">
-                <h3 class="left">HiredFired</h3>
-
-                <div class="clearfix"></div>
-              </div>
-
-              <div class="half-block left withPaddingLeft">
-                <%_.each(model.hire, function(hire, key){ %>
-                <dt><label>Hired</label></dt>
-                <dd><input type="text" name="hire" id="hire<%=key%>" value="<%=model.hire[key]%>" required readonly/></dd>
-                <% }); %>
-              </div>
             <div class="half-block left withPaddingLeft">
               <dl class="edit-employee-info">
                 <dt><label for="maritalDd">Marital status</label>
@@ -158,7 +143,18 @@
                 </dt>
               </dl>
             </div>
+            </div>
+              <div class="clearfix"></div>
+              <div class="formTitle">
+                <h3 class="left">Hire</h3>
 
+                <div class="clearfix"></div>
+              </div>
+
+              <div class="half-block left withPaddingLeft">
+                <dt><label>Hire</label></dt>
+                <dd><input type="text" name="hire" id="hire" value="" required readonly/></dd>
+              </div>
             <div class="clearfix"></div>
             <div class="formTitle">
                 <h3 class="left"><legend>Resume</legend></h3>

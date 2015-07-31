@@ -284,8 +284,6 @@ define([
             render: function () {
                 var hireArray = this.currentModel.get('hire');
                 var fireArray = this.currentModel.get('fire');
-                var newHire;
-                var newFire;
 
                 if (this.currentModel.get('dateBirth')) {
                     this.currentModel.set({
@@ -294,30 +292,20 @@ define([
                         silent: true
                     });
                 }
-
-                //if (hireArray) {
-                //    newHire = _.map(hireArray, function (hire) {
-                //        newHire = hire.split('T')[0].replace(/-/g, '/');
-                //        return newHire;
-                //    });
-                //}
-                this.currentModel.set({
-                    hire: hireArray
-                }, {
-                    silent: true
-                });
-                //if (fireArray) {
-                //    newFire = _.map(fireArray, function (fire) {
-                //        newFire = hire.split('T')[0].replace(/-/g, '/');
-                //        return newFire;
-                //    });
-                //}
-                this.currentModel.set({
-                    fire: fireArray
-                }, {
-                    silent: true
-                });
-
+                if (hireArray){
+                    this.currentModel.set({
+                        hire: hireArray
+                    }, {
+                        silent: true
+                    });
+                }
+                if (fireArray){
+                    this.currentModel.set({
+                        fire: fireArray
+                    }, {
+                        silent: true
+                    });
+                }
 
                 var formString = this.template({
                     model: this.currentModel.toJSON()
