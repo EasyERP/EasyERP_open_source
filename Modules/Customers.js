@@ -187,6 +187,14 @@
                                 _customer.phones.fax = data.phones.fax;
                             }
                         }
+                        if (data.social) {
+                            if (data.social.LI) {
+                                _customer.social.LI = data.social.LI;
+                            }
+                            if (data.social.FB) {
+                                _customer.social.FB = data.social.FB;
+                            }
+                        }
                         if (data.contacts) {
                             _customer.contacts = data.contacts;
                         }

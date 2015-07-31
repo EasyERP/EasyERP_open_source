@@ -195,6 +195,9 @@ define([
                 var passportNo = $.trim($("#passportNo").val());
                 var bankAccountNo = $.trim($("#bankAccountNo").val());
                 var otherId = $.trim($("#otherId").val());
+                var LI = $.trim(this.$el.find('#LI').val());
+                var FB = $.trim(this.$el.find('#FB').val());
+
                 var homeAddress = {};
                 $("dd").find(".homeAddress").each(function () {
                     var el = $(this);
@@ -244,6 +247,10 @@ define([
                     active: active,
                     source:sourceId,
 					nationality:nationality,
+                        social: {
+                            LI: LI,
+                            FB: FB
+                        },
                     groups: {
 						owner: $("#allUsersSelect").data("id"),
                         users: usersId,

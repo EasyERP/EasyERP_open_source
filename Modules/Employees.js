@@ -275,6 +275,14 @@ var Employee = function (event, models) {
                         _employee.workPhones.mobile = data.workPhones.mobile;
                     }
                 }
+                if (data.social) {
+                    if (data.social.LI) {
+                        _employee.social.LI = data.social.LI;
+                    }
+                    if (data.social.FB) {
+                        _employee.social.FB = data.social.FB;
+                    }
+                }
                 if (data.officeLocation) {
                     _employee.officeLocation = data.officeLocation;
                 }

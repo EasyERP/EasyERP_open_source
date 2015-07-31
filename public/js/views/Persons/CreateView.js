@@ -138,6 +138,10 @@ define([
                     website: $.trim($('#websiteInput').val()),
                     jobPosition: $.trim($('#jobPositionInput').val()),
                     skype: $.trim($('#skype').val()),
+                    social: {
+                        LI: $.trim(thisEl.find('#LI').val()),
+                        FB: $.trim(thisEl.find('#FB').val())
+                    },
                     phones: {
                         phone: $.trim($('#phoneInput').val()),
                         mobile: $.trim($('#mobileInput').val()),

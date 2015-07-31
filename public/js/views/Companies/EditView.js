@@ -169,8 +169,8 @@ define([
                     },
                     imageSrc: this.imageSrc,
                     social: {
-                        LI: $.trim(thisEl.find('#social_LI').val()),
-                        FB: $.trim(thisEl.find('#social_FB').val())
+                        LI: $.trim(thisEl.find('#LI').val()),
+                        FB: $.trim(thisEl.find('#FB').val())
                     },
                     email: this.$el.find("#email").val(),
                     phones: {

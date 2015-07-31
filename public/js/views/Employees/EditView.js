@@ -211,8 +211,8 @@ define([
                         country: $.trim(this.$el.find('#country').val())
                     },
                     social: {
-                        LI: $.trim(this.$el.find('#social_LI').val()),
-                        FB: $.trim(this.$el.find('#social_FB').val())
+                        LI: $.trim(this.$el.find('#LI').val()),
+                        FB: $.trim(this.$el.find('#FB').val())
                     },
                     tags: $.trim(this.$el.find("#tags").val()).split(','),
                     workEmail: $.trim(this.$el.find("#workEmail").val()),
