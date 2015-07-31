@@ -26,13 +26,13 @@
                     });
                 }
                 if (response.hire) {
-                    _.map(response.hire, function (hire) {
+                    response.hire = _.map(response.hire, function (hire) {
                         hire = common.utcDateToLocaleDate(hire);
                         return hire;
                     });
                 }
                 if (response.fire) {
-                    _.map(response.fire, function (fire) {
+                    response.fire = _.map(response.fire, function (fire) {
                         fire = common.utcDateToLocaleDate(fire);
                         return fire;
                     });
