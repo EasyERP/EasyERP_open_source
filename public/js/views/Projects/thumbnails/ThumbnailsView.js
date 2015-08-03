@@ -156,16 +156,6 @@
                     self.filter['condition'] = 'or';
                 }
 
-                /*if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
-                    showList = $('.drop-down-filter input:checkbox:checked').map(function() {
-                        return this.value
-                    }).get();
-
-                    this.filter['workflow'] = showList;
-                };*/
-
-
-
                 if (chosen) {
                     chosen.each(function (index, elem) {
                         if (elem.children[2].attributes.class.nodeValue === 'chooseDate') {
@@ -414,16 +404,16 @@
             },
 
             clearFilter: function () {
-                this.filter = 'empty';
-
-                this.startTime = new Date();
-                this.newCollection = false;
-
-                this.defaultItemsNumber = 0;
-
-                this.changeLocationHash(null, this.defaultItemsNumber, this.filter);
-                this.collection.showMore({ count: this.defaultItemsNumber, page: 1, filter: this.filter })
-                this.getTotalLength(this.defaultItemsNumber, this.filter);
+                //this.filter = 'empty';
+                //
+                //this.startTime = new Date();
+                //this.newCollection = false;
+                //
+                //this.defaultItemsNumber = 0;
+                //
+                //this.changeLocationHash(null, this.defaultItemsNumber, this.filter);
+                //this.collection.showMore({ count: this.defaultItemsNumber, page: 1, filter: this.filter });
+                //this.getTotalLength(this.defaultItemsNumber, this.filter);
 
 
                 this.$el.find('.filterValues').empty();
@@ -434,6 +424,8 @@
                 $.each($('.drop-down-filter input'), function (index, value) {
                     value.checked = false
                 });
+
+                this.showFilteredPage();
 
                 $(".clearFilterButton").hide();
                 $(".removeFilterButton").show();
