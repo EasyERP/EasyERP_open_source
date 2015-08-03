@@ -157,7 +157,7 @@ define([
                 if (isSelect) {
                     var ul= "<ul class='newSelectList'>" + "<li data-id='HR'>HR</li>" + "<li data-id='Sales'>Sales</li>" +
                         "<li data-id='PM'>PM</li>" + "<li data-id='Developer'>Developer</li></ul>";
-                    el.html(ul);
+                    el.append(ul);
                 } else {
                     tempContainer = el.text();
                     width = el.width() - 6;
@@ -194,7 +194,8 @@ define([
                 changedAttr.bonusType = bonusType;
 
                 this.hideNewSelect();
-                this.setChangedValueToModel();
+               // this.setChangedValueToModel();
+                this.setEditable(targetElement);
 
                 return false;
             },
