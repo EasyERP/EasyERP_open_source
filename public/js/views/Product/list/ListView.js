@@ -222,7 +222,7 @@ define([
                 common.buildAphabeticArray(this.collection, function (arr) {
                     $("#startLetter").remove();
                     self.alphabeticArray = arr;
-                    currentEl.prepend(_.template(aphabeticTemplate, { alphabeticArray: self.alphabeticArray, selectedLetter: (self.selectedLetter == "" ? "All" : self.selectedLetter), allAlphabeticArray: self.allAlphabeticArray }));
+                    $('#searchContainer').after(_.template(aphabeticTemplate, { alphabeticArray: self.alphabeticArray, selectedLetter: (self.selectedLetter == "" ? "All" : self.selectedLetter), allAlphabeticArray: self.allAlphabeticArray }));
                     var currentLetter = (self.filter) ? self.filter.letter : null;
                     if (currentLetter) {
                         $('#startLetter a').each(function () {
@@ -404,9 +404,20 @@ define([
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
+
                 this.changeLocationHash(1, itemsNumber, this.filter);
                 this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter });
                 this.getTotalLength(null, itemsNumber, this.filter);
+
+                if (checkedElements.attr('id') === 'defaultFilter'){
+                    $(".saveFilterButton").hide();
+                    $(".clearFilterButton").hide();
+                    $(".removeFilterButton").show();
+                } else {
+                    $(".saveFilterButton").show();
+                    $(".clearFilterButton").show();
+                    $(".removeFilterButton").show();
+                }
             },
 
 

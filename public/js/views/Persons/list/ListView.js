@@ -231,7 +231,8 @@ define([
                 common.buildAphabeticArray(this.collection, function (arr) {
                     $("#startLetter").remove();
                     self.alphabeticArray = arr;
-                    currentEl.prepend(_.template(aphabeticTemplate, { alphabeticArray: self.alphabeticArray, selectedLetter: (self.selectedLetter == "" ? "All" : self.selectedLetter), allAlphabeticArray: self.allAlphabeticArray }));
+                    //currentEl.prepend(_.template(aphabeticTemplate, { alphabeticArray: self.alphabeticArray, selectedLetter: (self.selectedLetter == "" ? "All" : self.selectedLetter), allAlphabeticArray: self.allAlphabeticArray }));
+                    $("#searchContainer").after(_.template(aphabeticTemplate, { alphabeticArray: self.alphabeticArray, selectedLetter: (self.selectedLetter == "" ? "All" : self.selectedLetter), allAlphabeticArray: self.allAlphabeticArray }));
                     var currentLetter = (self.filter) ? self.filter.letter : null;
                     if (currentLetter) {
                         $('#startLetter a').each(function () {
@@ -659,7 +660,7 @@ define([
 
                                     $("#startLetter").remove();
                                     that.alphabeticArray = arr;
-                                    currentEl.prepend(_.template(aphabeticTemplate, { alphabeticArray: that.alphabeticArray, selectedLetter: (that.selectedLetter == "" ? "All" : that.selectedLetter), allAlphabeticArray: that.allAlphabeticArray }));
+                                    $('#searchContainer').after(_.template(aphabeticTemplate, { alphabeticArray: that.alphabeticArray, selectedLetter: (that.selectedLetter == "" ? "All" : that.selectedLetter), allAlphabeticArray: that.allAlphabeticArray }));
                                     var currentLetter = (that.filter) ? that.filter.letter : null
                                     if (currentLetter) {
                                         $('#startLetter a').each(function () {

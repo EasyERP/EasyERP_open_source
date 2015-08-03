@@ -3,10 +3,11 @@
  */
 define([
         'text!templates/customerPayments/list/ListTotal.html',
+        'text!templates/customerPayments/forWTrack/ListTotal.html',
         'helpers'
     ],
 
-    function (listTemplate, helpers) {
+    function (listTemplate, listforWTrack, helpers) {
         var supplierPaymentsListTotalView = Backbone.View.extend({
             el: '#listTotal',
 
@@ -50,7 +51,11 @@ define([
                     this.$el.find("#total").text(helpers.currencySplitter(totalObject.total));
                     this.$el.find("#totalPaidAmount").text(helpers.currencySplitter(totalObject.totalPaidAmount));
                 } else {
-                    this.$el.append(_.template(listTemplate, this.getTotal()));
+                    if (App.currentDb === 'weTrack'){
+                        this.$el.append(_.template(listforWTrack, this.getTotal()));
+                    } else {
+                        this.$el.append(_.template(listTemplate, this.getTotal()));
+                    }
                 }
 
                 return this;

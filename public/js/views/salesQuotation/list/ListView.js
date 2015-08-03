@@ -6,6 +6,7 @@ define([
         'views/supplierPayments/list/ListTotalView',
         'views/salesQuotation/EditView',
         'models/QuotationModel',
+        'models/UsersModel',
         'collections/salesQuotation/filterCollection',
         'views/Filter/FilterView',
         'common',
@@ -13,7 +14,7 @@ define([
         'constants'
     ],
 
-    function (listTemplate, stagesTemplate, createView, listItemView, listTotalView, editView, currentModel, contentCollection, filterView, common, dataService, CONSTANTS) {
+    function (listTemplate, stagesTemplate, createView, listItemView, listTotalView, editView, currentModel, usersModel, contentCollection, filterView, common, dataService, CONSTANTS) {
         var QuotationListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -38,7 +39,9 @@ define([
                 this.newCollection = options.newCollection;
                 this.deleteCounter = 0;
                 this.page = options.collection.page;
+
                 this.render();
+
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
                 this.contentCollection = contentCollection;
                 this.stages = [];
@@ -59,7 +62,10 @@ define([
                 "click #firstShowPage": "firstPage",
                 "click #lastShowPage": "lastPage",
                 "click .oe_sortable": "goSort",
-                "click .newSelectList li": "chooseOption"
+                "click .newSelectList li": "chooseOption",
+                "click .saveFilterButton": "saveFilter",
+                "click .removeFilterButton": "removeFilter",
+                "click .clearFilterButton": "clearFilter"
             },
 
             chooseOption: function (e) {
@@ -204,6 +210,20 @@ define([
                 }).render());//added two parameters page and items number
 
                 currentEl.append(new listTotalView({element: currentEl.find("#listTable"), cellSpan:6}).render());
+
+                currentEl.prepend('<div class="filtersActive"><button id="saveFilterButton" class="saveFilterButton">Save Filter</button>' +
+                    '<button id="clearFilterButton" class="clearFilterButton">Clear Filter</button>' +
+                    '<button id="removeFilterButton" class="removeFilterButton">Remove Filter</button></div>'
+                );
+
+                $("#clearFilterButton").hide();
+                $("#saveFilterButton").hide();
+                $("#removeFilterButton").hide();
+
+                if (App.currentUser.savedFilters && App.currentUser.savedFilters['Quotation']) {
+                    $("#clearFilterButton").show();
+                    $("#removeFilterButton").show();
+                }
 
                 $('#check_all').click(function () {
                     $(':checkbox').prop('checked', this.checked);
@@ -432,7 +452,120 @@ define([
                 this.changeLocationHash(1, itemsNumber, this.filter);
                 this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter });
                 this.getTotalLength(null, itemsNumber, this.filter);
+
+                if (checkedElements.attr('id') === 'defaultFilter'){
+                    $(".saveFilterButton").hide();
+                    $(".clearFilterButton").hide();
+                    $(".removeFilterButton").show();
+                } else {
+                    $(".saveFilterButton").show();
+                    $(".clearFilterButton").show();
+                    $(".removeFilterButton").show();
+                }
             },
+
+            saveFilter: function () {
+                var currentUser = new usersModel(App.currentUser);
+                var filterObj = {};
+                var mid = 39;
+
+                filterObj['filter'] = {};
+                filterObj['filter'] = this.filter;
+                filterObj['key'] = 'salesQuotation';
+
+                currentUser.changed = filterObj;
+
+                currentUser.save(
+                    filterObj,
+                    {
+                        headers: {
+                            mid: mid
+                        },
+                        wait: true,
+                        patch:true,
+                        validate: false,
+                        success: function (model) {
+                            console.log('Filter was saved to db');
+                        },
+                        error: function (model,xhr) {
+                            console.error(xhr);
+                        },
+                        editMode: false
+                    }
+                );
+                if (!App.currentUser.savedFilters){
+                    App.currentUser.savedFilters = {};
+                }
+                App.currentUser.savedFilters['salesQuotation'] = filterObj.filter;
+
+                this.$el.find('.filterValues').empty();
+                this.$el.find('.filter-icons').removeClass('active');
+                this.$el.find('.chooseOption').children().remove();
+
+                $.each($('.drop-down-filter input'), function (index, value) {
+                    value.checked = false
+                });
+
+                $(".saveFilterButton").hide();
+                $(".removeFilterButton").show();
+                $(".clearFilterButton").show();
+
+            },
+
+            removeFilter: function () {
+                var currentUser = new usersModel(App.currentUser);
+                var filterObj = {};
+                var mid = 39;
+
+                this.clearFilter();
+
+                filterObj['key'] = 'salesQuotation';
+
+                currentUser.changed = filterObj;
+
+                currentUser.save(
+                    filterObj,
+                    {
+                        headers: {
+                            mid: mid
+                        },
+                        wait: true,
+                        patch:true,
+                        validate: false,
+                        success: function (model) {
+                            console.log('Filter was remover from db');
+                        },
+                        error: function (model,xhr) {
+                            console.error(xhr);
+                        },
+                        editMode: false
+                    }
+                );
+
+                delete App.currentUser.savedFilters['salesQuotation'];
+
+                $(".saveFilterButton").hide();
+                $(".removeFilterButton").hide();
+                $(".clearFilterButton").hide();
+            },
+
+            clearFilter: function () {
+                this.$el.find('.filterValues').empty();
+                this.$el.find('.filter-icons').removeClass('active');
+                this.$el.find('.chooseOption').children().remove();
+                this.$el.find('.filterOptions').removeClass('chosen');
+
+                $.each($('.drop-down-filter input'), function (index, value) {
+                    value.checked = false
+                });
+
+                this.showFilteredPage();
+
+                $(".clearFilterButton").hide();
+                $(".removeFilterButton").show();
+                $(".saveFilterButton").hide();
+            },
+
             showPage: function (event) {
                 event.preventDefault();
                 this.showP(event, {filter: this.filter, newCollection: this.newCollection, sort: this.sort});

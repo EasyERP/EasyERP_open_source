@@ -422,7 +422,7 @@
                 this.changeLocationHash(null, (this.defaultItemsNumber < 50) ? 50 : this.defaultItemsNumber, this.filter);
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
                 holder.append(this.template({ collection: newModels.toJSON() }));
-                holder.prepend(alphaBet);
+               // holder.prepend(alphaBet);
                 holder.append(created);
                 created.before(showMore);
                 this.asyncLoadImgs(newModels);

@@ -667,7 +667,7 @@ define([
 
                                     $("#startLetter").remove();
                                     that.alphabeticArray = arr;
-                                    currentEl.prepend(_.template(aphabeticTemplate, {
+                                    $('#searchContainer').after(_.template(aphabeticTemplate, {
                                         alphabeticArray: that.alphabeticArray,
                                         selectedLetter: (that.selectedLetter == "" ? "All" : that.selectedLetter),
                                         allAlphabeticArray: that.allAlphabeticArray

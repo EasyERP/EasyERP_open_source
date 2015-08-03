@@ -201,7 +201,7 @@ define([
                 common.buildAphabeticArray(this.collection, function (arr) {
                     $("#startLetter").remove();
                     self.alphabeticArray = arr;
-                    currentEl.prepend(_.template(aphabeticTemplate, { alphabeticArray: self.alphabeticArray, selectedLetter: (self.selectedLetter == "" ? "All" : self.selectedLetter), allAlphabeticArray: self.allAlphabeticArray }));
+                    $('#searchContainer').after(_.template(aphabeticTemplate, { alphabeticArray: self.alphabeticArray, selectedLetter: (self.selectedLetter == "" ? "All" : self.selectedLetter), allAlphabeticArray: self.allAlphabeticArray }));
                     var currentLetter = (self.filter) ? self.filter.letter : null;
                     if (currentLetter) {
                         $('#startLetter a').each(function () {
