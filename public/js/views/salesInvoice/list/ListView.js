@@ -527,15 +527,12 @@ define([
 
             removeFilter: function () {
                 var currentUser = new usersModel(App.currentUser);
-                var subMenu = $('#submenu-holder').find('li.selected').text();
-                var key;
                 var filterObj = {};
                 var mid = 39;
 
                 this.clearFilter();
 
-                key = subMenu.trim();
-                filterObj['key'] = key;
+                filterObj['key'] = 'salesInvoice';
 
                 currentUser.changed = filterObj;
 
