@@ -89,7 +89,7 @@ define([
             },
 
             generateInvoice: function (e) {
-                var selectedWtracks = this.$el.find('input:checked');
+                var selectedWtracks = this.$el.find('input.listCB:checked');
                 var wTracks = [];
                 var self = this;
                 var project;
