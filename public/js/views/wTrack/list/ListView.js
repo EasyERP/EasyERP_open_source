@@ -951,6 +951,10 @@ define([
                 this.filter = {};
                 this.filter['condition'] = 'and';
 
+                var filterKey;
+                var checkedValues;
+                var deffaultFilterStatus = $('.drop-down-filter #defaultFilter').is("checked");
+
                /* if (showFilterList && showFilterList.departments) {
                     this.filter = showFilterList;
                 }
@@ -974,20 +978,22 @@ define([
 
                 if (chosen) {
                     chosen.each(function (index, elem) {
-                        if (self.filter[elem.children[1].value]) {
-                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
-                                self.filter[elem.children[1].value].push($(element).next().text());
-                            })
-                        } else {
-                            self.filter[elem.children[1].value] = [];
-                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
-                                self.filter[elem.children[1].value].push($(element).next().text());
+                        filterKey = $(elem).find('.chooseTerm').val();
+                        checkedValues = $(elem).find('input:checked');
+
+                        if (checkedValues.length > 0) {
+                            if (!self.filter[filterKey]) {
+                                self.filter[filterKey] = [];
+                            }
+
+                            checkedValues.each(function (index, element) {
+                                self.filter[filterKey].push($(element).val());
                             })
                         }
                     });
                 };
 
-                if ((checkedElements.length && checkedElements.attr('id') === 'defaultFilter') || (!chosen.length && !showList)) {
+                if (deffaultFilterStatus || (Object.keys(self.filter).length === 1)) {
                     self.filter = 'empty';
                 };
 

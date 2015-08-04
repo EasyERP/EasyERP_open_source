@@ -98,6 +98,7 @@ define([
                 var el = $(e.target.nextElementSibling);
                 var value  = e.target.value;
                 var optDate = this.$el.find('.chooseDate');
+                var liText;
 
                 $(e.target).closest('.filterOptions').addClass('chosen');
 
@@ -114,11 +115,11 @@ define([
                     el.children().remove();
 
                     this.customCollection[0][value].forEach(function (opt) {
+                        liText = opt.fullName ? opt.fullName : (opt.projectName ? opt.projectName : opt.name);
                         el.addClass('activated')
-                        if (opt && opt.fullName && opt._id) {
-                            el.append('<li><input type="checkbox" id=' + opt.fullName + ' value=' + opt._id + '><label for=' + opt.fullName + '>' + opt.fullName  + '</label></li>');
-                        } else if (opt && opt.name) {
-                            el.append('<li><input type="checkbox" id=' + opt.name + ' value=' + opt.name + '><label for=' + opt.name + '>' + opt.name  + '</label></li>');
+
+                        if (opt && liText) {
+                            el.append('<li><input type="checkbox" id=' + opt._id + ' value=' + opt._id + '><label for=' + opt._id + '>' + liText  + '</label></li>');
                         } else {
                             el.append('<li><input type="checkbox" id=' + opt + ' value=' + opt + '><label for=' + opt + '>' + opt  + '</label></li>');
                         }

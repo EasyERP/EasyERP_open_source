@@ -126,7 +126,7 @@ var wTrack = function (models) {
 
             switch (key) {
                 case 'projectmanagers':
-                    content.push({ 'project.projectmanager.name': {$in: condition}});
+                    content.push({ 'project.projectmanager._id': {$in: condition.objectID()}});
                     break;
                 case 'projectsname':
                     content.push({ 'project.projectName': {$in: condition}});
@@ -570,7 +570,7 @@ var wTrack = function (models) {
                         $addToSet: '$project.projectmanager'
                     },
                     projectsname: {
-                        $addToSet: '$project.projectName'
+                        $addToSet: '$project'
                     },
                     customers: {
                         $addToSet: '$project.customer'
@@ -612,7 +612,7 @@ var wTrack = function (models) {
                         result[0][key] = _.sortBy(value, 'name');
                         break;*/
                     case 'projectsname':
-                        result[0][key] = _.sortBy(value, function (num) { return num});
+                        result[0][key] = _.sortBy(value, 'projectName');
                         break;
                     case 'months':
                         result[0][key] = _.sortBy(value, function (num) { return num});
