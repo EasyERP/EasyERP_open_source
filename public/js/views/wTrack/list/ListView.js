@@ -955,40 +955,25 @@ define([
                 var checkedValues;
                 var deffaultFilterStatus = $('.drop-down-filter #defaultFilter').is("checked");
 
-               /* if (showFilterList && showFilterList.departments) {
-                    this.filter = showFilterList;
-                }
-
-                if (showFilterList && !showFilterList.departments) {
-                    this.filter = {};
-                }
-
-                if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
-                    showList = checkedElements.map(function () {
-                        return this.id;
-                    }).get();
-
-                    this.filter['departments'] = showList;
-                };*/
 
                 if  (condition && !condition.checked) {
                     self.filter['condition'] = 'or';
                 }
 
 
-                if (chosen) {
+                if (chosen.length) {
                     chosen.each(function (index, elem) {
                         filterKey = $(elem).find('.chooseTerm').val();
                         checkedValues = $(elem).find('input:checked');
 
-                        if (checkedValues.length > 0) {
+                        if (checkedValues.length) {
                             if (!self.filter[filterKey]) {
                                 self.filter[filterKey] = [];
                             }
 
                             checkedValues.each(function (index, element) {
                                 self.filter[filterKey].push($(element).val());
-                            })
+                            });
                         }
                     });
                 };
@@ -998,6 +983,7 @@ define([
                 };
 
                 itemsNumber = $("#itemsNumber").text();
+
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
 
