@@ -135,7 +135,7 @@ var wTrack = function (models) {
                     content.push({ 'project.workflow': {$in: condition.objectID()}});
                     break;
                 case 'customers':
-                    content.push({ 'project.customer': {$in: condition}});
+                    content.push({ 'project.customer.name': {$in: condition}});
                     break;
                 case 'employees':
                     content.push({ 'employee.name': {$in: condition}});
@@ -608,9 +608,9 @@ var wTrack = function (models) {
                     case  'employees':
                         result[0][key] = _.sortBy(value, 'name');
                         break;
-                    /*case 'customers':
+                    case 'customers':
                         result[0][key] = _.sortBy(value, 'name');
-                        break;*/
+                        break;
                     case 'projectsname':
                         result[0][key] = _.sortBy(value, function (num) { return num});
                         break;
