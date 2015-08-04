@@ -52,8 +52,7 @@
                 "click": "hideHealth",
                 "click .filter-check-list li": "checkCheckbox",
                 "click .saveFilterButton": "saveFilter",
-                "click .removeFilterButton": "removeFilter",
-                "click .clearFilterButton": "clearFilter"
+                "click .removeFilterButton": "removeFilter"
             },
             checkCheckbox: function (e) {
                 var target$ = $(e.target);
@@ -189,16 +188,6 @@
                 this.changeLocationHash(null, this.defaultItemsNumber, this.filter);
                 this.collection.showMore({ count: this.defaultItemsNumber, page: 1, filter: this.filter, newCollection: true });
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
-               
-                if (checkedElements.attr('id') === 'defaultFilter'){
-                    $(".saveFilterButton").hide();
-                    $(".clearFilterButton").hide();
-                    $(".removeFilterButton").show();
-                } else {
-                    $(".saveFilterButton").show();
-                    $(".clearFilterButton").show();
-                    $(".removeFilterButton").show();
-                }
             },
 
             getTotalLength: function (currentNumber, filter, newCollection) {
@@ -262,20 +251,6 @@
                 }
                 this.bind('incomingStages', this.pushStages, this);
 
-                currentEl.prepend('<div class="filtersActive"><button id="saveFilterButton" class="saveFilterButton">Save Filter</button>' +
-                    '<button id="clearFilterButton" class="clearFilterButton">Clear Filter</button>' +
-                    '<button id="removeFilterButton" class="removeFilterButton">Remove Filter</button></div>'
-                );
-
-                $("#clearFilterButton").hide();
-                $("#saveFilterButton").hide();
-                $("#removeFilterButton").hide();
-
-                if (App.currentUser.savedFilters && App.currentUser.savedFilters['Projects']){
-                    $("#clearFilterButton").show();
-                    $("#removeFilterButton").show();
-                }
-
                 common.populateWorkflowsList("Projects", ".filter-check-list", "", "/Workflows", null, function (stages) {
                     var stage = (self.filter) ? self.filter.workflow || [] : [];
                     self.trigger('incomingStages', stages);
@@ -287,9 +262,6 @@
                         });
                         FilterView.bind('defaultFilter', function () {
                             self.showFilteredPage();
-                            $(".saveFilterButton").hide();
-                            $(".clearFilterButton").hide();
-                            $(".removeFilterButton").show();
                         });
                         // Filter custom event listen ------end
 
@@ -348,19 +320,6 @@
                     App.currentUser.savedFilters = {};
                 }
                 App.currentUser.savedFilters['Projects'] = filterObj.filter;
-
-                this.$el.find('.filterValues').empty();
-                this.$el.find('.filter-icons').removeClass('active');
-                this.$el.find('.chooseOption').children().remove();
-
-                $.each($('.drop-down-filter input'), function (index, value) {
-                    value.checked = false
-                });
-
-                $(".saveFilterButton").hide();
-                $(".removeFilterButton").show();
-                $(".clearFilterButton").show();
-
             },
 
             removeFilter: function () {
@@ -397,25 +356,9 @@
                 );
 
                 delete App.currentUser.savedFilters['Projects'];
-
-                $(".saveFilterButton").hide();
-                $(".removeFilterButton").hide();
-                $(".clearFilterButton").hide();
             },
 
             clearFilter: function () {
-                //this.filter = 'empty';
-                //
-                //this.startTime = new Date();
-                //this.newCollection = false;
-                //
-                //this.defaultItemsNumber = 0;
-                //
-                //this.changeLocationHash(null, this.defaultItemsNumber, this.filter);
-                //this.collection.showMore({ count: this.defaultItemsNumber, page: 1, filter: this.filter });
-                //this.getTotalLength(this.defaultItemsNumber, this.filter);
-
-
                 this.$el.find('.filterValues').empty();
                 this.$el.find('.filter-icons').removeClass('active');
                 this.$el.find('.chooseOption').children().remove();
@@ -426,10 +369,6 @@
                 });
 
                 this.showFilteredPage();
-
-                $(".clearFilterButton").hide();
-                $(".removeFilterButton").show();
-                $(".saveFilterButton").hide();
             },
 
             gotoEditForm: function (e) {

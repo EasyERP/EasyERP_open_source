@@ -65,8 +65,7 @@ define([
                 "click #firstShowPage": "firstPage",
                 "click #lastShowPage": "lastPage",
                 "click .saveFilterButton": "saveFilter",
-                "click .removeFilterButton": "removeFilter",
-                "click .clearFilterButton": "clearFilter"
+                "click .removeFilterButton": "removeFilter"
             },
 
             fetchSortCollection: function (sortObject) {
@@ -268,19 +267,10 @@ define([
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
+
                 this.changeLocationHash(1, itemsNumber, this.filter);
                 this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter });
                 this.getTotalLength(null, itemsNumber, this.filter);
-
-                if (checkedElements.attr('id') === 'defaultFilter'){
-                    $(".saveFilterButton").hide();
-                    $(".clearFilterButton").hide();
-                    $(".removeFilterButton").show();
-                } else {
-                    $(".saveFilterButton").show();
-                    $(".clearFilterButton").show();
-                    $(".removeFilterButton").show();
-                }
             },
 
             saveFilter: function () {
@@ -320,19 +310,6 @@ define([
                     App.currentUser.savedFilters = {};
                 }
                 App.currentUser.savedFilters['Projects'] = filterObj.filter;
-
-                this.$el.find('.filterValues').empty();
-                this.$el.find('.filter-icons').removeClass('active');
-                this.$el.find('.chooseOption').children().remove();
-
-                $.each($('.drop-down-filter input'), function (index, value) {
-                    value.checked = false
-                });
-
-                $(".saveFilterButton").hide();
-                $(".removeFilterButton").show();
-                $(".clearFilterButton").show();
-
             },
 
             removeFilter: function () {
@@ -369,10 +346,6 @@ define([
                 );
 
                 delete App.currentUser.savedFilters['Projects'];
-
-                $(".saveFilterButton").hide();
-                $(".removeFilterButton").hide();
-                $(".clearFilterButton").hide();
             },
 
             clearFilter: function () {
@@ -387,10 +360,6 @@ define([
                 });
 
                 this.showFilteredPage();
-
-                $(".clearFilterButton").hide();
-                $(".removeFilterButton").show();
-                $(".saveFilterButton").hide();
             },
 
             showfilter: function (e) {
@@ -539,20 +508,6 @@ define([
                         $("#top-bar-deleteBtn").hide();
                 });
 
-                currentEl.prepend('<div class="filtersActive"><button id="saveFilterButton" class="saveFilterButton">Save Filter</button>' +
-                    '<button id="clearFilterButton" class="clearFilterButton">Clear Filter</button>' +
-                    '<button id="removeFilterButton" class="removeFilterButton">Remove Filter</button></div>'
-                );
-
-                $("#clearFilterButton").hide();
-                $("#saveFilterButton").hide();
-                $("#removeFilterButton").hide();
-
-                if (App.currentUser.savedFilters && App.currentUser.savedFilters['Projects']) {
-                    $("#clearFilterButton").show();
-                    $("#removeFilterButton").show();
-                }
-
                 common.populateWorkflowsList("Projects", ".filter-check-list", "", "/Workflows", null, function (stages) {
                     var stage = (self.filter) ? self.filter.workflow || [] : [];
                     itemView.trigger('incomingStages', stages);
@@ -565,9 +520,6 @@ define([
                         });
                         FilterView.bind('defaultFilter', function () {
                             self.showFilteredPage();
-                            $(".saveFilterButton").hide();
-                            $(".clearFilterButton").hide();
-                            $(".removeFilterButton").show();
                         });
                         // Filter custom event listen ------end
 

@@ -64,8 +64,7 @@ define([
                 "click .oe_sortable": "goSort",
                 "click .newSelectList li": "chooseOption",
                 "click .saveFilterButton": "saveFilter",
-                "click .removeFilterButton": "removeFilter",
-                "click .clearFilterButton": "clearFilter"
+                "click .removeFilterButton": "removeFilter"
             },
 
             chooseOption: function (e) {
@@ -211,20 +210,6 @@ define([
 
                 currentEl.append(new listTotalView({element: currentEl.find("#listTable"), cellSpan:6}).render());
 
-                currentEl.prepend('<div class="filtersActive"><button id="saveFilterButton" class="saveFilterButton">Save Filter</button>' +
-                    '<button id="clearFilterButton" class="clearFilterButton">Clear Filter</button>' +
-                    '<button id="removeFilterButton" class="removeFilterButton">Remove Filter</button></div>'
-                );
-
-                $("#clearFilterButton").hide();
-                $("#saveFilterButton").hide();
-                $("#removeFilterButton").hide();
-
-                if (App.currentUser.savedFilters && App.currentUser.savedFilters['Quotation']) {
-                    $("#clearFilterButton").show();
-                    $("#removeFilterButton").show();
-                }
-
                 $('#check_all').click(function () {
                     $(':checkbox').prop('checked', this.checked);
                     if ($("input.checkbox:checked").length > 0)
@@ -263,9 +248,6 @@ define([
                         FilterView.bind('defaultFilter', function () {
                             showList = _.pluck(self.stages, '_id');
                             self.showFilteredPage(showList);
-                            $(".saveFilterButton").hide();
-                            $(".clearFilterButton").hide();
-                            $(".removeFilterButton").show();
                         });
                         // Filter custom event listen ------end
                     })
@@ -452,16 +434,6 @@ define([
                 this.changeLocationHash(1, itemsNumber, this.filter);
                 this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter });
                 this.getTotalLength(null, itemsNumber, this.filter);
-
-                if (checkedElements.attr('id') === 'defaultFilter'){
-                    $(".saveFilterButton").hide();
-                    $(".clearFilterButton").hide();
-                    $(".removeFilterButton").show();
-                } else {
-                    $(".saveFilterButton").show();
-                    $(".clearFilterButton").show();
-                    $(".removeFilterButton").show();
-                }
             },
 
             saveFilter: function () {
@@ -497,19 +469,6 @@ define([
                     App.currentUser.savedFilters = {};
                 }
                 App.currentUser.savedFilters['salesQuotation'] = filterObj.filter;
-
-                this.$el.find('.filterValues').empty();
-                this.$el.find('.filter-icons').removeClass('active');
-                this.$el.find('.chooseOption').children().remove();
-
-                $.each($('.drop-down-filter input'), function (index, value) {
-                    value.checked = false
-                });
-
-                $(".saveFilterButton").hide();
-                $(".removeFilterButton").show();
-                $(".clearFilterButton").show();
-
             },
 
             removeFilter: function () {
@@ -543,10 +502,6 @@ define([
                 );
 
                 delete App.currentUser.savedFilters['salesQuotation'];
-
-                $(".saveFilterButton").hide();
-                $(".removeFilterButton").hide();
-                $(".clearFilterButton").hide();
             },
 
             clearFilter: function () {
@@ -560,10 +515,6 @@ define([
                 });
 
                 this.showFilteredPage();
-
-                $(".clearFilterButton").hide();
-                $(".removeFilterButton").show();
-                $(".saveFilterButton").hide();
             },
 
             showPage: function (event) {

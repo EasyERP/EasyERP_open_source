@@ -21,8 +21,7 @@
                 "click .column.fold": "foldUnfoldKanban",
                 "click .fold-unfold": "foldUnfoldKanban",
                 "click .saveFilterButton": "saveFilter",
-                "click .removeFilterButton": "removeFilter",
-                "click .clearFilterButton": "clearFilter"
+                "click .removeFilterButton": "removeFilter"
             },
 
             columnTotalLength: null,
@@ -334,15 +333,6 @@
                     el = $("td.column[data-id='"+id+"']");
                     el.removeClass("fold");
                 });
-                //
-                //$(".saveFilterButton").show();
-                //$(".clearFilterButton").show();
-                //$(".removeFilterButton").show();
-                //if (savedFilter){
-                //    $(".saveFilterButton").hide();
-                //    $(".clearFilterButton").show();
-                //    $(".removeFilterButton").show();
-                //}
 
             },
 
@@ -384,19 +374,6 @@
                     App.currentUser.savedFilters = {};
                 }
                 App.currentUser.savedFilters['Applications'] = filterObj.filter;
-
-                this.$el.find('.filterValues').empty();
-                this.$el.find('.filter-icons').removeClass('active');
-                this.$el.find('.chooseOption').children().remove();
-
-                $.each($('.drop-down-filter input'), function (index, value) {
-                    value.checked = false
-                });
-
-                $(".saveFilterButton").hide();
-                $(".removeFilterButton").show();
-                $(".clearFilterButton").show();
-
             },
 
             removeFilter: function () {
@@ -433,10 +410,6 @@
                 );
 
                 delete App.currentUser.savedFilters['Applications'];
-
-                $(".saveFilterButton").hide();
-                $(".removeFilterButton").hide();
-                $(".clearFilterButton").hide();
             },
 
             clearFilter: function () {
@@ -460,9 +433,6 @@
                     el.removeClass("fold");
                 });
 
-                $(".clearFilterButton").hide();
-                $(".removeFilterButton").show();
-                $(".saveFilterButton").hide();
             },
 
 
@@ -533,20 +503,6 @@
                     self.hideItemsNumber(e);
                 });
 
-                //this.$el.prepend('<div class="filtersActive"><button id="saveFilterButton" class="saveFilterButton">Save Filter</button>' +
-                //    '<button id="clearFilterButton" class="clearFilterButton">Clear Filter</button>' +
-                //    '<button id="removeFilterButton" class="removeFilterButton">Remove Filter</button></div>'
-                //);
-                //
-                //$("#clearFilterButton").hide();
-                //$("#saveFilterButton").hide();
-                //$("#removeFilterButton").hide();
-                //
-                //if (App.currentUser.savedFilters && App.currentUser.savedFilters['Applications']) {
-                //    $("#clearFilterButton").show();
-                //    $("#removeFilterButton").show();
-                //}
-
                 dataService.getData('/employee/getFilterValues', null, function (values) {
                     FilterView = new filterView({ collection: workflows, customCollection: values});
                     // Filter custom event listen ------begin
@@ -555,12 +511,6 @@
                     });
                     FilterView.on('defaultFilter', function () {
                         self.showFiltredPage(workflows)
-                        /*showList = _.pluck(workflows, '_id');
-
-                        showList.forEach(function (id) {
-                            el = $("td.column[data-id='"+id+"']");
-                            el.removeClass("fold");
-                        });*/
                     });
                     // Filter custom event listen ------end
                 });

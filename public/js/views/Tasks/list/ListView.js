@@ -67,8 +67,7 @@ define([
                 "click #lastShowPage": "lastPage",
                 "click .oe_sortable": "goSort",
                 "click .saveFilterButton": "saveFilter",
-                "click .removeFilterButton": "removeFilter",
-                "click .clearFilterButton": "clearFilter"
+                "click .removeFilterButton": "removeFilter"
             },
 
             fetchSortCollection: function (sortObject) {
@@ -296,14 +295,6 @@ define([
                     self.filter['condition'] = 'or';
                 }
 
-                /*if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
-                    showList = $('.drop-down-filter input:checkbox:checked').map(function() {
-                        return this.value
-                    }).get();
-
-                    this.filter['workflow'] = showList;
-                };*/
-
                 if (checkedElements.length && checkedElements.attr('id') === 'defaultFilter') {
                     self.filter = 'empty';
                 }
@@ -330,16 +321,6 @@ define([
                 this.changeLocationHash(1, itemsNumber, this.filter);
                 this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter, parrentContentId: this.parrentContentId });
                 this.getTotalLength(null, itemsNumber, this.filter);
-
-                if (checkedElements.attr('id') === 'defaultFilter'){
-                    $(".saveFilterButton").hide();
-                    $(".clearFilterButton").hide();
-                    $(".removeFilterButton").show();
-                } else {
-                    $(".saveFilterButton").show();
-                    $(".clearFilterButton").show();
-                    $(".removeFilterButton").show();
-                }
             },
 
             saveFilter: function () {
@@ -379,19 +360,6 @@ define([
                     App.currentUser.savedFilters = {};
                 }
                 App.currentUser.savedFilters['Tasks'] = filterObj.filter;
-
-                this.$el.find('.filterValues').empty();
-                this.$el.find('.filter-icons').removeClass('active');
-                this.$el.find('.chooseOption').children().remove();
-
-                $.each($('.drop-down-filter input'), function (index, value) {
-                    value.checked = false
-                });
-
-                $(".saveFilterButton").hide();
-                $(".removeFilterButton").show();
-                $(".clearFilterButton").show();
-
             },
 
             removeFilter: function () {
@@ -428,10 +396,6 @@ define([
                 );
 
                 delete App.currentUser.savedFilters['Tasks'];
-
-                $(".saveFilterButton").hide();
-                $(".removeFilterButton").hide();
-                $(".clearFilterButton").hide();
             },
 
             clearFilter: function () {
@@ -445,10 +409,6 @@ define([
                 });
 
                 this.showFilteredPage();
-
-                $(".clearFilterButton").hide();
-                $(".removeFilterButton").show();
-                $(".saveFilterButton").hide();
             },
 
             hideItemsNumber: function (e) {
@@ -511,20 +471,6 @@ define([
                         $("#top-bar-deleteBtn").hide();
                 });
 
-                currentEl.prepend('<div class="filtersActive"><button id="saveFilterButton" class="saveFilterButton">Save Filter</button>' +
-                    '<button id="clearFilterButton" class="clearFilterButton">Clear Filter</button>' +
-                    '<button id="removeFilterButton" class="removeFilterButton">Remove Filter</button></div>'
-                );
-
-                $("#clearFilterButton").hide();
-                $("#saveFilterButton").hide();
-                $("#removeFilterButton").hide();
-
-                if (App.currentUser.savedFilters && App.currentUser.savedFilters['Tasks']) {
-                    $("#clearFilterButton").show();
-                    $("#removeFilterButton").show();
-                }
-
                 common.populateWorkflowsList("Tasks", ".filter-check-list", "#workflowNamesDd", "/Workflows", null, function (stages) {
                     var stage = (self.filter) ? self.filter.workflow || [] : [];
                     itemView.trigger('incomingStages', stages);
@@ -537,9 +483,6 @@ define([
                         });
                         FilterView.bind('defaultFilter', function () {
                             self.showFilteredPage();
-                            $(".saveFilterButton").hide();
-                            $(".clearFilterButton").hide();
-                            $(".removeFilterButton").show();
                         });
                         // Filter custom event listen ------end
                     });

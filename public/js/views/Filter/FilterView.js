@@ -158,12 +158,12 @@ define([
             writeValue: function (e) {
                 var inputText = e.target.nextElementSibling.textContent;
                 var filterValues = this.$el.find('.filterValues');
-                var filterIcons = this.$el.find('.filter-icons');
+               // var filterIcons = this.$el.find('.filter-icons');
                 var input = this.$el.find('.drop-down-filter input');
                 var defaultFilter = this.$el.find('#defaultFilter');
                 var checked;
 
-                filterIcons.addClass('active');
+                //filterIcons.addClass('active');
 
                 $.each(input, function (index, value) {
                     if (value.checked) {
@@ -173,7 +173,7 @@ define([
                 if (!checked) {
                     //this.trigger('defaultFilter');
                     filterValues.empty();
-                    filterIcons.removeClass('active');
+                    //filterIcons.removeClass('active');
                 }
                 if (e.target.checked) {
                     filterValues.append('<span class=' + '"' + inputText + '">' + inputText + '</span>');

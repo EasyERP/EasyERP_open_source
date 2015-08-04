@@ -76,8 +76,7 @@ define([
                 "change .editable ": "setEditable",
                 "keydown input.editing ": "keyDown",
                 "click .saveFilterButton": "saveFilter",
-                "click .removeFilterButton": "removeFilter",
-                "click .clearFilterButton": "clearFilter"
+                "click .removeFilterButton": "removeFilter"
             },
 
             keyDown: function (e) {
@@ -291,24 +290,6 @@ define([
                 if (wTrackId && el.prop('tagName') !== 'INPUT') {
                     if (this.wTrackId) {
                         editedElement = this.$listTable.find('.editing');
-
-                        /*if (/!*wTrackId !== this.wTrackId &&*!/ editedElement.length) {
-                         editedCol = editedElement.closest('td');
-                         editedElementRowId = editedElement.closest('tr').data('id');
-                         editedElementContent = editedCol.data('content');
-                         editedElementValue = editedElement.val();
-
-                         editWtrackModel = this.editCollection.get(editedElementRowId);
-
-                         if (!this.changedModels[editedElementRowId]) {
-                         this.changedModels[editedElementRowId] = {};
-                         }
-
-                         this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
-
-                         editedCol.text(editedElementValue);
-                         editedElement.remove();
-                         }*/
                         this.setChangedValueToModel();
                     }
                     this.wTrackId = wTrackId;
@@ -692,20 +673,6 @@ define([
                     itemsNumber: this.collection.namberToShow
                 }).render());//added two parameters page and items number
 
-                currentEl.prepend('<div class="filtersActive"><button id="saveFilterButton" class="saveFilterButton">Save Filter</button>' +
-                    '<button id="clearFilterButton" class="clearFilterButton">Clear Filter</button>' +
-                    '<button id="removeFilterButton" class="removeFilterButton">Remove Filter</button></div>'
-                );
-
-                $("#clearFilterButton").hide();
-                $("#saveFilterButton").hide();
-                $("#removeFilterButton").hide();
-
-                if (App.currentUser.savedFilters && App.currentUser.savedFilters['wTrack']) {
-                    $("#clearFilterButton").show();
-                    $("#removeFilterButton").show();
-                }
-
                 $(document).on("click", function (e) {
                     self.hideItemsNumber(e);
                 });
@@ -781,9 +748,6 @@ define([
                     });
                     FilterView.bind('defaultFilter', function () {
                         self.showFilteredPage();
-                        $(".saveFilterButton").hide();
-                        $(".clearFilterButton").hide();
-                        $(".removeFilterButton").show();
                     });
                     // Filter custom event listen ------end
                 });
@@ -951,26 +915,9 @@ define([
                 this.filter = {};
                 this.filter['condition'] = 'and';
 
-               /* if (showFilterList && showFilterList.departments) {
-                    this.filter = showFilterList;
-                }
-
-                if (showFilterList && !showFilterList.departments) {
-                    this.filter = {};
-                }
-
-                if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
-                    showList = checkedElements.map(function () {
-                        return this.id;
-                    }).get();
-
-                    this.filter['departments'] = showList;
-                };*/
-
                 if  (condition && !condition.checked) {
                     self.filter['condition'] = 'or';
                 }
-
 
                 if (chosen) {
                     chosen.each(function (index, elem) {
@@ -998,16 +945,6 @@ define([
                 this.changeLocationHash(1, itemsNumber, this.filter);
                 this.collection.showMore({count: itemsNumber, page: 1, filter: this.filter});
                 this.getTotalLength(null, itemsNumber, this.filter);
-
-                if (checkedElements.attr('id') === 'defaultFilter'){
-                    $(".saveFilterButton").hide();
-                    $(".clearFilterButton").hide();
-                    $(".removeFilterButton").show();
-                } else {
-                    $(".saveFilterButton").show();
-                    $(".clearFilterButton").show();
-                    $(".removeFilterButton").show();
-                }
             },
 
             saveFilter: function () {
@@ -1048,18 +985,6 @@ define([
                 }
                 App.currentUser.savedFilters['wTrack'] = filterObj.filter;
 
-                this.$el.find('.filterValues').empty();
-                this.$el.find('.filter-icons').removeClass('active');
-                this.$el.find('.chooseOption').children().remove();
-
-                $.each($('.drop-down-filter input'), function (index, value) {
-                    value.checked = false
-                });
-
-                $(".saveFilterButton").hide();
-                $(".removeFilterButton").show();
-                $(".clearFilterButton").show();
-
             },
 
             removeFilter: function () {
@@ -1068,8 +993,6 @@ define([
                 var key;
                 var filterObj = {};
                 var mid = 39;
-
-                this.clearFilter();
 
                 key = subMenu.trim();
                 filterObj['key'] = key;
@@ -1095,11 +1018,11 @@ define([
                     }
                 );
 
-                delete App.currentUser.savedFilters['wTrack'];
+                this.clearFilter();
 
-                $(".saveFilterButton").hide();
-                $(".removeFilterButton").hide();
-                $(".clearFilterButton").hide();
+                if (App.currentUser.savedFilters['wTrack']){
+                    delete App.currentUser.savedFilters['wTrack'];
+                }
             },
 
             clearFilter: function () {
@@ -1107,16 +1030,13 @@ define([
                 this.$el.find('.filter-icons').removeClass('active');
                 this.$el.find('.chooseOption').children().remove();
                 this.$el.find('.filterOptions').removeClass('chosen');
+                this.$el.find(".filterOptions, .filterActions").hide();
 
                 $.each($('.drop-down-filter input'), function (index, value) {
                     value.checked = false
                 });
 
                 this.showFilteredPage();
-
-                $(".clearFilterButton").hide();
-                $(".removeFilterButton").show();
-                $(".saveFilterButton").hide();
             },
 
             showPage: function (event) {
