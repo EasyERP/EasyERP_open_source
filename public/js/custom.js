@@ -222,6 +222,37 @@ define(['libs/date.format', 'common', 'constants'], function (dateformat, common
         return savedFilter;
     };
 
+    var getFiltersValues = function (chosen, defaultFilterStatus, logicAndStatus) {
+        var filterKey;
+        var checkedValues;
+        var filter = {};
+
+        filter['condition'] = logicAndStatus ? 'and' : 'or';
+
+        if (chosen.length) {
+            chosen.each(function (index, elem) {
+                filterKey = $(elem).find('.chooseTerm').val();
+                checkedValues = $(elem).find('input:checked');
+
+                if (checkedValues.length) {
+                    if (!filter[filterKey]) {
+                        filter[filterKey] = [];
+                    }
+
+                    checkedValues.each(function (index, element) {
+                        filter[filterKey].push($(element).val());
+                    });
+                }
+            });
+        };
+
+        if (defaultFilterStatus || (Object.keys(filter).length === 1)) {
+            filter = 'empty';
+        };
+
+        return filter;
+    };
+
     return {
         runApplication: runApplication,
         changeContentViewType: changeContentViewType,
@@ -233,6 +264,7 @@ define(['libs/date.format', 'common', 'constants'], function (dateformat, common
         setCurrentCL: setCurrentCL,
         cashToApp: cashToApp,
         retriveFromCash: retriveFromCash,
-        savedFilters: savedFilters
+        savedFilters: savedFilters,
+        getFiltersValues: getFiltersValues
     };
 });

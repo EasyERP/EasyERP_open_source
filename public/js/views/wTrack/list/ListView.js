@@ -13,10 +13,11 @@ define([
         'common',
         'dataService',
         'populate',
-        'async'
+        'async',
+        'custom'
     ],
 
-    function (listTemplate, cancelEdit, createView, listItemView, editView, wTrackCreateView, currentModel, usersModel, contentCollection, EditCollection, filterView, common, dataService, populate, async) {
+    function (listTemplate, cancelEdit, createView, listItemView, editView, wTrackCreateView, currentModel, usersModel, contentCollection, EditCollection, filterView, common, dataService, populate, async, custom) {
         var wTrackListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -938,49 +939,17 @@ define([
                 this.changeLocationHash(1, itemsNumber, this.filter);
             },
 
-            showFilteredPage: function (showFilterList) {
+            showFilteredPage: function () {
                 var itemsNumber;
-                var showList;
-                var self = this;
                 var checkedElements = $('.drop-down-filter  input:checkbox:checked');
                 var chosen = this.$el.find('.chosen');
-                var condition = this.$el.find('.conditionAND > input')[0];
+
+                var logicAndStatus = this.$el.find('#logicCondition')[0].checked;
+                var defaultFilterStatus = this.$el.find('#defaultFilter')[0].checked;
 
                 this.startTime = new Date();
                 this.newCollection = false;
-                this.filter = {};
-                this.filter['condition'] = 'and';
-
-                var filterKey;
-                var checkedValues;
-                var deffaultFilterStatus = $('.drop-down-filter #defaultFilter').is("checked");
-
-
-                if  (condition && !condition.checked) {
-                    self.filter['condition'] = 'or';
-                }
-
-
-                if (chosen.length) {
-                    chosen.each(function (index, elem) {
-                        filterKey = $(elem).find('.chooseTerm').val();
-                        checkedValues = $(elem).find('input:checked');
-
-                        if (checkedValues.length) {
-                            if (!self.filter[filterKey]) {
-                                self.filter[filterKey] = [];
-                            }
-
-                            checkedValues.each(function (index, element) {
-                                self.filter[filterKey].push($(element).val());
-                            });
-                        }
-                    });
-                };
-
-                if (deffaultFilterStatus || (Object.keys(self.filter).length === 1)) {
-                    self.filter = 'empty';
-                };
+                this.filter = custom.getFiltersValues(chosen, defaultFilterStatus, logicAndStatus);
 
                 itemsNumber = $("#itemsNumber").text();
 

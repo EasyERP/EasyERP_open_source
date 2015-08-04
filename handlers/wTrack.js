@@ -118,53 +118,56 @@ var wTrack = function (models) {
         }
     };
 
-    function caseFilter(filter, content) {
+    function caseFilter(filter) {
         var condition;
+        var resArray = [];
 
         for (var key in filter){
             condition = filter[key];
 
             switch (key) {
                 case 'projectmanagers':
-                    content.push({ 'project.projectmanager._id': {$in: condition.objectID()}});
+                    resArray.push({ 'project.projectmanager._id': {$in: condition.objectID()}});
                     break;
                 case 'projectsname':
-                    content.push({ 'project.projectName': {$in: condition}});
+                    resArray.push({ 'project.projectName': {$in: condition}});
                     break;
                 case 'workflows':
-                    content.push({ 'project.workflow': {$in: condition.objectID()}});
+                    resArray.push({ 'project.workflow': {$in: condition.objectID()}});
                     break;
                 case 'customers':
-                    content.push({ 'project.customer': {$in: condition}});
+                    resArray.push({ 'project.customer': {$in: condition}});
                     break;
                 case 'employees':
-                    content.push({ 'employee.name': {$in: condition}});
+                    resArray.push({ 'employee.name': {$in: condition}});
                     break;
                 case 'departments':
-                    content.push({ 'department.departmentName': {$in: condition}});
+                    resArray.push({ 'department.departmentName': {$in: condition}});
                     break;
                 case 'years':
                     ConvertType(condition, 'integer');
 
-                    content.push({ 'year': {$in: condition}});
+                    resArray.push({ 'year': {$in: condition}});
                     break;
                 case 'months':
                     ConvertType(condition, 'integer');
 
-                    content.push({ 'month': {$in: condition}});
+                    resArray.push({ 'month': {$in: condition}});
                     break;
                 case 'weeks':
                     ConvertType(condition, 'integer');
 
-                    content.push({ 'week': {$in: condition}});
+                    resArray.push({ 'week': {$in: condition}});
                     break;
                 case 'isPaid':
                     ConvertType(condition, 'boolean');
 
-                    content.push({ 'isPaid': {$in: condition}});
+                    resArray.push({ 'isPaid': {$in: condition}});
                     break;
             }
         };
+
+        return resArray;
     };
 
     this.totalCollectionLength = function (req, res, next) {
@@ -175,18 +178,13 @@ var wTrack = function (models) {
         var query = req.query;
         var queryObject = {};
         var filter = query.filter;
-        var condition;
 
         if (filter && typeof filter === 'object') {
             if (filter.condition === 'or') {
-                queryObject['$or'] = [];
-                condition = queryObject['$or'];
+                queryObject['$or'] = caseFilter(filter);
             } else {
-                queryObject['$and'] = [];
-                condition = queryObject['$and'];
+                queryObject['$and'] = caseFilter(filter);
             }
-
-            caseFilter(filter, condition);
         }
         var waterfallTasks;
 
@@ -290,21 +288,15 @@ var wTrack = function (models) {
         var contentIdsSearcher;
         var contentSearcher;
         var waterfallTasks;
-        var condition;
 
         var sort = {};
 
         if (filter && typeof filter === 'object') {
-
             if (filter.condition === 'or') {
-                queryObject['$or'] = [];
-                condition = queryObject['$or'];
+                queryObject['$or'] = caseFilter(filter);
             } else {
-                queryObject['$and'] = [];
-                condition = queryObject['$and'];
+                queryObject['$and'] = caseFilter(filter);
             }
-
-            caseFilter(filter, condition);
        }
 
         var count = query.count ? query.count : 50;
