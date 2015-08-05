@@ -36,7 +36,10 @@ var Customers = function (models) {
                 $group:{
                     _id: null,
                     name: {
-                        $addToSet: '$name.first'
+                        $addToSet: {
+                            name: '$name.first',
+                            _id: '$_id'
+                        }
                     },
                     country: {
                         $addToSet: '$address.country'
@@ -50,14 +53,24 @@ var Customers = function (models) {
             _.map(result[0], function(value, key) {
                 switch (key) {
                     case 'name':
-                        result[0][key] = _.sortBy(value, function (num) { return num});
+                        result[0][key] = {
+                            displayName: 'Name',
+                            values: _.sortBy(value, 'name')
+                        };
                         break;
                     case  'country':
-                        result[0][key] = _.sortBy(value, function (num) { return num});
+                        result[0][key] = {
+                            displayName: 'Country',
+                            values: _.sortBy(value, function (num) { return num})
+                        };
                         break;
-
                 }
             });
+
+            result[0]['services'] = {
+                displayName: 'Services',
+                values: [{displayName: 'Supplier', _id: 'isSupplier'}, {displayName: 'Customer', _id: 'isCustomer'}]
+            };
 
             res.status(200).send(result);
         });

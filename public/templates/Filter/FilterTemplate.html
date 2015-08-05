@@ -26,20 +26,9 @@
                     </li>
                 </ul>
                 <ul class="drop-down-filter"><!--drop-down-filter-->
-                   <!-- <% collection.forEach(function(model, index){ %>
-                    <li>
-                        <input type="checkbox" id="<%=model.name%>" value="<%=(model._id) ? model._id : ''%>">
-                        <label for="<%=model.name%>"><%=(model.name) ? model.name : 'Undefinded'%></label>
-                    </li>
-                    <%}) %>-->
 
-                    <%
-                    var totalVal = [];
-                    collection.forEach(function(model, index){
-                    if (model._id) totalVal.push(model._id)
-                    }) %>
                     <li>
-                        <input type="checkbox" id="defaultFilter" value="<%=totalVal%>">
+                        <input type="checkbox" id="defaultFilter" value="empty">
                         <label for="defaultFilter">Clear</label>
                     </li>
 
@@ -53,7 +42,7 @@
                             <% var keys = _.keys(customCollection[0]);
                             keys.shift();
                             keys.forEach(function(key, index){ %>
-                            <option value="<%=key%>"><%= key %></option>
+                            <option value="<%=key%>"><%= customCollection[0][key]['displayName'] ? customCollection[0][key]['displayName'] : key %></option>
                             <% }) %>
                         </select>
                         <ul class="chooseOption">

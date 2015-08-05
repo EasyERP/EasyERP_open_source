@@ -220,7 +220,7 @@ define([
                 }
 
                 this.changedModels[wTrackId].worked = worked;
-                this.changedModels[wTrackId].revenue = revenueVal * 100;
+                this.changedModels[wTrackId].revenue = revenueVal;
             },
 
             setEditable: function (td) {
@@ -383,10 +383,10 @@ define([
                         return 0;
                     }
 
-                    baseSalaryValue = Number(results[0][0].employeesArray.baseSalary);
-                    expenseCoefficient = Number(results[1][0].expenseCoefficient);
-                    fixedExpense = Number(results[1][0].fixedExpense);
-                    hours = Number(results[1][0].hours);
+                    baseSalaryValue = parseFloat(results[0][0].employeesArray.baseSalary);
+                    expenseCoefficient = parseFloat(results[1][0].expenseCoefficient);
+                    fixedExpense = parseInt(results[1][0].fixedExpense);
+                    hours = parseInt(results[1][0].hours);
 
                     calc = ((((baseSalaryValue * expenseCoefficient) + fixedExpense) / hours) * trackWeek).toFixed(2);
 
@@ -394,7 +394,7 @@ define([
                     costElement.addClass('money');
                     costElement.text(calc);
 
-                    self.changedModels[wTrackId].cost = Number(calc) * 100;
+                    self.changedModels[wTrackId].cost = parseFloat(calc) * 100;
 
                     return calc;
                 });
@@ -844,6 +844,7 @@ define([
                     pagenation.hide();
                 } else {
                     pagenation.show();
+                    this.editCollection.reset(this.collection.models);
                 }
             },
 
@@ -940,8 +941,8 @@ define([
             },
 
             showFilteredPage: function () {
-                var itemsNumber;
-                var checkedElements = $('.drop-down-filter  input:checkbox:checked');
+                var itemsNumber = $("#itemsNumber").text();;
+                var checkedElements = this.$el.find('input:checkbox:checked');
                 var chosen = this.$el.find('.chosen');
 
                 var logicAndStatus = this.$el.find('#logicCondition')[0].checked;
@@ -950,8 +951,6 @@ define([
                 this.startTime = new Date();
                 this.newCollection = false;
                 this.filter = custom.getFiltersValues(chosen, defaultFilterStatus, logicAndStatus);
-
-                itemsNumber = $("#itemsNumber").text();
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);

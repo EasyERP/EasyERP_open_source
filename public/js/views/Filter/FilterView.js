@@ -99,6 +99,7 @@ define([
                 var value  = e.target.value;
                 var optDate = this.$el.find('.chooseDate');
                 var liText;
+                var values = this.customCollection[0][value]['values'] ? this.customCollection[0][value]['values'] : this.customCollection[0][value];
 
                 $(e.target).closest('.filterOptions').addClass('chosen');
 
@@ -114,8 +115,14 @@ define([
                     el.show();
                     el.children().remove();
 
-                    this.customCollection[0][value].forEach(function (opt) {
-                        liText = opt.fullName ? opt.fullName : (opt.projectName ? opt.projectName : opt.name);
+                    values.forEach(function (opt) {
+                        if (opt) {
+                            if (opt.displayName) {
+                                liText = opt.displayName;
+                            } else {
+                                liText = opt.fullName ? opt.fullName : (opt.projectName ? opt.projectName : opt.name);
+                            }
+                        }
                         el.addClass('activated')
 
                         if (opt && liText) {

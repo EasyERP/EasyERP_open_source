@@ -7,10 +7,11 @@ define([
         'views/Filter/FilterView',
         'common',
         'dataService',
-        'models/UsersModel'
+        'models/UsersModel',
+        'custom'
     ],
 
-    function (listTemplate, createView, listItemView, aphabeticTemplate, contentCollection, filterView, common, dataService, usersModel) {
+    function (listTemplate, createView, listItemView, aphabeticTemplate, contentCollection, filterView, common, dataService, usersModel, custom) {
         var PersonsListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -168,8 +169,6 @@ define([
                 var self = this;
                 var currentEl = this.$el;
                 var FilterView;
-                var filterObject;
-                var showList;
 
                 currentEl.html('');
                 currentEl.append(_.template(listTemplate));
@@ -183,26 +182,16 @@ define([
                         $("#top-bar-deleteBtn").hide();
                 });
 
-                filterObject = [
-                     {
-                        name: 'isCustomer',
-                        _id: 'isCustomer'
-                    },
-                     {
-                        name: 'isSupplier',
-                        _id: 'isSupplier'
-                    }
-                ];
                 dataService.getData('/supplier/getFilterValues', null, function (values) {
-                    FilterView = new filterView({ collection: filterObject, customCollection: values});
+                    FilterView = new filterView({ collection: null, customCollection: values});
                     // Filter custom event listen ------begin
                     FilterView.bind('filter', function () {
-                        showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
-                        self.showFilteredPage(null, showList)
+                        //showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
+                        self.showFilteredPage()
                     });
                     FilterView.bind('defaultFilter', function () {
-                        showList = [];
-                        self.showFilteredPage(null, showList);
+                        //showList = [];
+                        self.showFilteredPage();
                         $(".saveFilterButton").hide();
                         $(".clearFilterButton").hide();
                         $(".removeFilterButton").show();
@@ -470,65 +459,32 @@ define([
                 this.changeLocationHash(1, itemsNumber, this.filter);
             },
 
-            showFilteredPage: function (e, showList) {
+            showFilteredPage: function () {
                 var itemsNumber = $("#itemsNumber").text();
-                var selectedLetter;
+                var alphaBet = this.$el.find('#startLetter');
+                var selectedLetter = $(alphaBet).find('.current').length ? $(alphaBet).find('.current')[0].text : '';
                 var self = this;
+
+                var checkedElements = this.$el.find('input:checkbox:checked');
                 var chosen = this.$el.find('.chosen');
-                var checkedElements = $('.drop-down-filter input:checkbox:checked');
-                var condition = this.$el.find('.conditionAND > input')[0];
+
+                var logicAndStatus = this.$el.find('#logicCondition')[0].checked;
+                var defaultFilterStatus = this.$el.find('#defaultFilter')[0].checked;
+
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
 
-               if (e && e.target) {
-                   selectedLetter = $(e.target).text();
-
-                   if ($(e.target).text() == "All") {
-                       selectedLetter = '';
-                   }
-               }
-                this.filter = {};
-                this.filter['condition'] = 'and';
-
-                if  (condition && !condition.checked) {
-                    self.filter['condition'] = 'or';
+                if (selectedLetter === "All") {
+                    selectedLetter = '';
                 }
 
-                if (showList && showList.indexOf('isCustomer') !== -1) {
-                    this.filter['isCustomer'] = 1;
-                }else if (showList && showList.indexOf('isSupplier') !== -1) {
-                    this.filter['isSupplier'] = 1;
-                } else {
-                    delete this.filter['isSupplier'];
-                    delete this.filter['isCustomer'];
-                }
-                if (checkedElements && checkedElements.length && checkedElements.attr('id') === 'defaultFilter') {
-                    this.filter = {};
-                };
-                if (chosen) {
-                    chosen.each(function (index, elem) {
-                        if (self.filter[elem.children[1].value]) {
-                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
-                                self.filter[elem.children[1].value].push($(element).next().text());
-                            })
-                        } else {
-                            self.filter[elem.children[1].value] = [];
-                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
-                                self.filter[elem.children[1].value].push($(element).next().text());
-                            })
-                        }
-                    });
-                };
+                this.filter = custom.getFiltersValues(chosen, defaultFilterStatus, logicAndStatus);
 
                 this.startTime = new Date();
                 this.newCollection = false;
 
                 this.filter['letter'] = selectedLetter;
-
-                if (!chosen.length && !showList) {
-                    this.filter = 'empty';
-                }
 
                 this.changeLocationHash(1, itemsNumber, this.filter);
                 this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter});

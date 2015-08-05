@@ -50,6 +50,11 @@ var wTrack = function (models) {
                         user: req.session.uId,
                         date: new Date().toISOString()
                     };
+
+                    if (data && data.revenue) {
+                        data.revenue *= 100;
+                    }
+
                     WTrack.findByIdAndUpdate(id, {$set: data}, function (err, response) {
                         if (err) {
                             return next(err);
@@ -76,7 +81,11 @@ var wTrack = function (models) {
             access.getEditWritAccess(req, req.session.uId, 75, function (access) {
                 if (access) {
                     async.each(body, function (data, cb) {
-                        var id = data._id;
+                        var id = data._id
+
+                        if (data && data.revenue) {
+                            data.revenue *= 100;
+                        }
 
                         data.editedBy = {
                             user: uId,
