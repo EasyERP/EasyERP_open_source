@@ -39,10 +39,13 @@ define([
             },
 
             applyFilter: function () {
+                this.$el.find('.filterValues').empty();
+                this.$el.find('.filter-icons').removeClass('active');
+
                 var values  = this.$el.find('.chooseTerm');
                 var filterIcons = this.$el.find('.filter-icons');
 
-               // filterIcons.addClass('active');
+
 
                 var filterContainer = this.$el.find('.search-field');
 
@@ -51,10 +54,11 @@ define([
                     //filterContainer.append('<span class="filterValues">' + '<span class="Clear">' + ($(element).val()).trim() + '</span>' + '<span class="removeValues">x </span>' + '</span>');
                     //filterContainer.append();
                     filterContainer.append('<div class="filter-icons active"> <span class="fa fa-filter funnelIcon"></span>'+
-                    '<span class="filterValues"> <span class="Clear">' +  $(element).val() + '</span> </span> <span class="removeValues">x </span> </div>');
+                    '<span class="filterValues"> <span class="Clear" data-id="' + $(element).val() +
+                        '">' +  $(element).val() + '</span> </span> <span class="removeValues" data-id="' + $(element).val() + '">' +  'x </span> </div>');
                 });
 
-
+               // filterIcons.addClass('active');
 
                 //if (this.$el.find('.filterValues').children()[0] && this.$el.find('.filterValues').children()[0].className === 'Clear') {
                 //    this.$el.find('.filterValues').empty();
@@ -108,6 +112,7 @@ define([
                 lastOpt.children('.chooseOption').show().removeClass('activated');
                 lastOpt.children('.chooseDate').remove();
                 lastOpt.removeClass('chosen');
+                lastOpt.remove();
             },
 
             chooseOptions: function (e) {
@@ -116,6 +121,7 @@ define([
                 var optDate = this.$el.find('.chooseDate');
 
                 $(e.target).closest('.filterOptions').addClass('chosen');
+                $('.chooseTerm:last').removeClass().addClass('chooseTerm ' + value);
 
                 if (/date/.test(value.toLowerCase())) {
                     el.html('').hide();
@@ -174,12 +180,12 @@ define([
             writeValue: function (e) {
                 var inputText = e.target.nextElementSibling.textContent;
                 var filterValues = this.$el.find('.filterValues');
-               // var filterIcons = this.$el.find('.filter-icons');
+                var filterIcons = this.$el.find('.filter-icons');
                 var input = this.$el.find('.drop-down-filter input');
                 var defaultFilter = this.$el.find('#defaultFilter');
                 var checked;
 
-                //filterIcons.addClass('active');
+                filterIcons.addClass('active');
 
                 $.each(input, function (index, value) {
                     if (value.checked) {
@@ -221,16 +227,23 @@ define([
 
             },
 
-            removeValues: function () {
-                this.$el.find('.filterValues').empty();
-                this.$el.find('.filter-icons').removeClass('active');
+            removeValues: function (e) {
+                //this.$el.find('.filterValues').empty();
+               // this.$el.find('.filter-icons').removeClass('active');
 
-                $.each($('.drop-down-filter input'), function (index, value) {
-                    value.checked = false
+                //
+                var el =$(e.target).data('id');
+
+                var arr = this.$el.find('.chooseTerm');
+
+                $.each(arr, function (index, value) {
+                    if ($(value).val() === el){
+                        $('select.chooseTerm.' + el).remove()
+                    }
                 });
 
-                this.removeFilter()
-                this.trigger('defaultFilter');
+               // this.removeFilter()
+                this.trigger('filter');
             }
         });
 
