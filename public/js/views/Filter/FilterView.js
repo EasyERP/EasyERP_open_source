@@ -32,24 +32,35 @@ define([
 
             render: function (options) {
                 this.customCollection =  options.customCollection;
-                var contentType =
 
                 this.$el.html(this.template({collection: this.collection, customCollection: options.customCollection}));
-                if (!App.currentUser.savedFilters[contentType]){
-                    this.$el.find('.saveFilterButton').hide();
-                    this.$el.find('.removeFilterButton').hide();
-                }
 
                 return this;
             },
 
             applyFilter: function () {
+                var values  = this.$el.find('.chooseTerm');
+                var filterIcons = this.$el.find('.filter-icons');
 
-                if (this.$el.find('.filterValues').children()[0] && this.$el.find('.filterValues').children()[0].className === 'Clear') {
-                    this.$el.find('.filterValues').empty();
-                    this.$el.find('.filter-icons').removeClass('active');
-                    this.$el.find('#defaultFilter').removeAttr("checked");
-                }
+               // filterIcons.addClass('active');
+
+                var filterContainer = this.$el.find('.search-field');
+
+                values.each(function (index, element) {
+                    //filterContainer.append('<span class="fa fa-filter funnelIcon">::before </span>');
+                    //filterContainer.append('<span class="filterValues">' + '<span class="Clear">' + ($(element).val()).trim() + '</span>' + '<span class="removeValues">x </span>' + '</span>');
+                    //filterContainer.append();
+                    filterContainer.append('<div class="filter-icons active"> <span class="fa fa-filter funnelIcon"></span>'+
+                    '<span class="filterValues"> <span class="Clear">' +  $(element).val() + '</span> </span> <span class="removeValues">x </span> </div>');
+                });
+
+
+
+                //if (this.$el.find('.filterValues').children()[0] && this.$el.find('.filterValues').children()[0].className === 'Clear') {
+                //    this.$el.find('.filterValues').empty();
+                //    this.$el.find('.filter-icons').removeClass('active');
+                //    this.$el.find('#defaultFilter').removeAttr("checked");
+                //}
                 this.trigger('filter');
             },
 
