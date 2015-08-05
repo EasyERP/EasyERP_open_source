@@ -276,7 +276,7 @@
                     resizable: true,
                     dialogClass: "edit-dialog",
                     title: "Create Invoice",
-                    width: '1000',
+                    width: '1200',
                     //width: 'auto',
                     position: {within: $("#wrapper")},
                     buttons: [
