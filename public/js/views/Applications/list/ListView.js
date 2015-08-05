@@ -275,8 +275,9 @@ define([
                         editMode: false
                     }
                 );
-
-                delete App.currentUser.savedFilters['Applications'];
+                if (App.currentUser.savedFilters['Applications']){
+                    delete App.currentUser.savedFilters['Applications'];
+                }
             },
 
             clearFilter: function () {

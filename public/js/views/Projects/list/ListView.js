@@ -345,7 +345,9 @@ define([
                     }
                 );
 
-                delete App.currentUser.savedFilters['Projects'];
+                if (App.currentUser.savedFilters['Projects']){
+                    delete App.currentUser.savedFilters['Projects'];
+                }
             },
 
             clearFilter: function () {

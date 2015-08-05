@@ -204,7 +204,7 @@ define([
                     worked += parseInt(value);
                 }
 
-                rateVal = parseInt(rateEl.text());
+                rateVal = parseFloat(rateEl.text());
                 revenueVal = parseFloat(worked * rateVal).toFixed(2);
 
                 revenueEl.text(revenueVal);

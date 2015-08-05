@@ -32,8 +32,13 @@ define([
 
             render: function (options) {
                 this.customCollection =  options.customCollection;
+                var contentType =
 
                 this.$el.html(this.template({collection: this.collection, customCollection: options.customCollection}));
+                if (!App.currentUser.savedFilters[contentType]){
+                    this.$el.find('.saveFilterButton').hide();
+                    this.$el.find('.removeFilterButton').hide();
+                }
 
                 return this;
             },

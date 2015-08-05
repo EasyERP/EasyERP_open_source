@@ -297,7 +297,9 @@ define([
                     }
                 );
 
-                delete App.currentUser.savedFilters['Quotation'];
+                if (App.currentUser.savedFilters['Quotation']){
+                    delete App.currentUser.savedFilters['Quotation'];
+                }
             },
 
             clearFilter: function () {

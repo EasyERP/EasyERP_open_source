@@ -502,7 +502,9 @@ function (listTemplate, stagesTamplate, createView, listItemView, listTotalView,
                 }
             );
 
-            delete App.currentUser.savedFilters['Order'];
+            if (App.currentUser.savedFilters['Order']){
+                delete App.currentUser.savedFilters['Order'];
+            }
         },
 
         clearFilter: function () {

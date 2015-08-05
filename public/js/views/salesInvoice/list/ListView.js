@@ -495,7 +495,9 @@ define([
                     }
                 );
 
-                delete App.currentUser.savedFilters['salesInvoice'];
+                if (App.currentUser.savedFilters['salesInvoice']){
+                    delete App.currentUser.savedFilters['salesInvoice'];
+                }
             },
 
             clearFilter: function () {

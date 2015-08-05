@@ -501,7 +501,9 @@ define([
                     }
                 );
 
-                delete App.currentUser.savedFilters['salesQuotation'];
+                if (App.currentUser.savedFilters['salesQuotation']){
+                    delete App.currentUser.savedFilters['salesQuotation'];
+                }
             },
 
             clearFilter: function () {

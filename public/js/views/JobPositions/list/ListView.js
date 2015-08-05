@@ -326,8 +326,9 @@ define([
                     }
                 );
 
-                delete App.currentUser.savedFilters['JobPositions'];
-
+                if (App.currentUser.savedFilters['JobPositions']){
+                    delete App.currentUser.savedFilters['JobPositions'];
+                }
             },
 
             clearFilter: function () {

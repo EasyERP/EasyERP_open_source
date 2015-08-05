@@ -288,8 +288,9 @@ define([
                     }
                 );
 
-                delete App.currentUser.savedFilters['Leads'];
-
+                if (App.currentUser.savedFilters['Leads']){
+                    delete App.currentUser.savedFilters['Leads'];
+                }
             },
 
             clearFilter: function () {

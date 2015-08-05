@@ -472,7 +472,9 @@ define([
                     }
                 );
 
-                delete App.currentUser.savedFilters['Employees'];
+                if (App.currentUser.savedFilters['Employees']){
+                    delete App.currentUser.savedFilters['Employees'];
+                }
             },
 
             clearFilter: function () {

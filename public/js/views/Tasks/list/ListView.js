@@ -395,7 +395,9 @@ define([
                     }
                 );
 
-                delete App.currentUser.savedFilters['Tasks'];
+                if (App.currentUser.savedFilters['Tasks']){
+                    delete App.currentUser.savedFilters['Tasks'];
+                }
             },
 
             clearFilter: function () {

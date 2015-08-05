@@ -488,7 +488,9 @@ define([
                     }
                 );
 
-                delete App.currentUser.savedFilters['Invoice'];
+                if (App.currentUser.savedFilters['Invoice']){
+                    delete App.currentUser.savedFilters['Invoice'];
+                }
             },
 
             clearFilter: function () {

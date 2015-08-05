@@ -201,7 +201,9 @@
                     }
                 );
 
-                delete App.currentUser.savedFilters['Companies'];
+                if (App.currentUser.savedFilters['Companies']){
+                    delete App.currentUser.savedFilters['Companies'];
+                }
             },
 
             clearFilter: function () {
