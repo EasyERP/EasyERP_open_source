@@ -31,7 +31,7 @@ define([
             },
 
             render: function (options) {
-                this.customCollection =  options.customCollection;
+                this.customCollection = options.customCollection;
 
                 this.$el.html(this.template({collection: this.collection, customCollection: options.customCollection}));
 
@@ -42,29 +42,15 @@ define([
                 this.$el.find('.filterValues').empty();
                 this.$el.find('.filter-icons').removeClass('active');
 
-                var values  = this.$el.find('.chooseTerm');
-                var filterIcons = this.$el.find('.filter-icons');
-
-
-
+                var values = this.$el.find('.chooseTerm');
                 var filterContainer = this.$el.find('.search-field');
 
                 values.each(function (index, element) {
-                    //filterContainer.append('<span class="fa fa-filter funnelIcon">::before </span>');
-                    //filterContainer.append('<span class="filterValues">' + '<span class="Clear">' + ($(element).val()).trim() + '</span>' + '<span class="removeValues">x </span>' + '</span>');
-                    //filterContainer.append();
-                    filterContainer.append('<div class="filter-icons active"> <span class="fa fa-filter funnelIcon"></span>'+
-                    '<span class="filterValues"> <span class="Clear" data-id="' + $(element).val() +
-                        '">' +  $(element).val() + '</span> </span> <span class="removeValues" data-id="' + $(element).val() + '">' +  'x </span> </div>');
+                    filterContainer.append('<div class="filter-icons active" data-id=' + $(element).val() + '> <span class="fa fa-filter funnelIcon"></span>' +
+                        '<span class="filterValues"> <span class="Clear" data-id="' + $(element).val() +
+                        '">' + $(element).val() + '</span> </span> <span class="removeValues" data-id="' + $(element).val() + '">' + 'x </span> </div>');
                 });
 
-               // filterIcons.addClass('active');
-
-                //if (this.$el.find('.filterValues').children()[0] && this.$el.find('.filterValues').children()[0].className === 'Clear') {
-                //    this.$el.find('.filterValues').empty();
-                //    this.$el.find('.filter-icons').removeClass('active');
-                //    this.$el.find('#defaultFilter').removeAttr("checked");
-                //}
                 this.trigger('filter');
             },
 
@@ -85,7 +71,7 @@ define([
                 var date = this.$el.find('.chooseDate');
 
                 if (filter.length > 1 && e && e.target) {
-                    if ( e && e.target) {
+                    if (e && e.target) {
                         $(e.target).closest('.filterOptions').remove();
                     }
                 } else {
@@ -95,10 +81,10 @@ define([
                     date.remove();
                     opt.removeClass('activated').show();
                     this.$el.find(".filterOptions, .filterActions").hide();
-                   /* if (e && e.target) {
-                        this.trigger('defaultFilter');
-                        e.stopPropagation();
-                    }*/
+                    /* if (e && e.target) {
+                     this.trigger('defaultFilter');
+                     e.stopPropagation();
+                     }*/
 
                 }
             },
@@ -108,6 +94,7 @@ define([
                 this.$el.find(".filterOptions:first").clone().insertBefore('.filterActions');
 
                 lastOpt = this.$el.find(".filterOptions:last");
+                this.$el.find(".filterOptions:last").hide();
                 lastOpt.children('.chooseOption').children().remove();
                 lastOpt.children('.chooseOption').show().removeClass('activated');
                 lastOpt.children('.chooseDate').remove();
@@ -121,7 +108,8 @@ define([
                 var optDate = this.$el.find('.chooseDate');
 
                 $(e.target).closest('.filterOptions').addClass('chosen');
-                $('.chooseTerm:last').removeClass().addClass('chooseTerm ' + value);
+                this.$el.find('.chooseTerm:last').addClass(value);
+                $('.chooseOption:last').removeClass().addClass('chooseOption ' + value);
 
                 if (/date/.test(value.toLowerCase())) {
                     el.html('').hide();
@@ -136,7 +124,7 @@ define([
                     el.children().remove();
 
                     this.customCollection[0][value].forEach(function (opt) {
-                        el.addClass('activated')
+                        el.addClass('activated');
                         if (opt && opt.fullName && opt._id) {
                             el.append('<li><input type="checkbox" id=' + opt.fullName + ' value=' + opt._id + '><label for=' + opt.fullName + '>' + opt.fullName  + '</label></li>');
                         } else if (opt && opt.name) {
@@ -216,7 +204,7 @@ define([
                     $.each($('.filterValues span'), function (index, item) {
                         if (item.className !== 'Clear') item.remove();
                     });
-                    this.removeFilter()
+                    this.removeFilter();
                     this.trigger('defaultFilter');
                 }
 
@@ -228,21 +216,21 @@ define([
             },
 
             removeValues: function (e) {
-                //this.$el.find('.filterValues').empty();
-               // this.$el.find('.filter-icons').removeClass('active');
+                var element = $(e.target).closest('.filter-icons');
+                var dataId = element.attr('data-id');
+                var filterOpt = this.$el.find(".filterOptions");
+                var clearElement = this.$el.find('.drop-down-filter .filterOptions');
+                var closestEl = clearElement.find('.' + dataId);
+                var cl = $(closestEl).closest('.filterOptions');
 
-                //
-                var el =$(e.target).data('id');
+                if (filterOpt.length === 1){
+                    $(closestEl).prev().click();
+                } else {
+                    cl.remove();
+                }
 
-                var arr = this.$el.find('.chooseTerm');
+                element.remove();
 
-                $.each(arr, function (index, value) {
-                    if ($(value).val() === el){
-                        $('select.chooseTerm.' + el).remove()
-                    }
-                });
-
-               // this.removeFilter()
                 this.trigger('filter');
             }
         });
