@@ -46,8 +46,7 @@
                 "click .gotoForm": "gotoForm",
                 "click .company": "gotoCompanyForm",
                 "click .saveFilterButton": "saveFilter",
-                "click .removeFilterButton": "removeFilter",
-                "click .clearFilterButton": "clearFilter"
+                "click .removeFilterButton": "removeFilter"
             },
 //modified for filter Vasya
             getTotalLength: function (currentNumber, filter, newCollection) {
@@ -142,19 +141,6 @@
                     App.currentUser.savedFilters = {};
                 }
                 App.currentUser.savedFilters['Persons'] = filterObj.filter;
-
-                this.$el.find('.filterValues').empty();
-                this.$el.find('.filter-icons').removeClass('active');
-                this.$el.find('.chooseOption').children().remove();
-
-                $.each($('.drop-down-filter input'), function (index, value) {
-                    value.checked = false
-                });
-
-                $(".saveFilterButton").hide();
-                $(".removeFilterButton").show();
-                $(".clearFilterButton").show();
-
             },
 
             removeFilter: function () {
@@ -189,12 +175,9 @@
                         editMode: false
                     }
                 );
-
-                delete App.currentUser.savedFilters['Persons'];
-
-                $(".saveFilterButton").hide();
-                $(".removeFilterButton").hide();
-                $(".clearFilterButton").hide();
+                if (App.currentUser.savedFilters['Persons']){
+                    delete App.currentUser.savedFilters['Persons'];
+                }
             },
 
             clearFilter: function () {
@@ -208,10 +191,6 @@
                 });
 
                 this.alpabeticalRender(null);
-
-                $(".clearFilterButton").hide();
-                $(".removeFilterButton").show();
-                $(".saveFilterButton").hide();
             },
 
             gotoForm: function (e) {
@@ -306,20 +285,6 @@
                         });
                     }
                 });
-
-                currentEl.prepend('<div class="filtersActive"><button id="saveFilterButton" class="saveFilterButton">Save Filter</button>' +
-                    '<button id="clearFilterButton" class="clearFilterButton">Clear Filter</button>' +
-                    '<button id="removeFilterButton" class="removeFilterButton">Remove Filter</button></div>'
-                );
-
-                $("#clearFilterButton").hide();
-                $("#saveFilterButton").hide();
-                $("#removeFilterButton").hide();
-
-                if (App.currentUser.savedFilters && App.currentUser.savedFilters['Persons']) {
-                    $("#clearFilterButton").show();
-                    $("#removeFilterButton").show();
-                }
 
                 filterObject = [
                     {

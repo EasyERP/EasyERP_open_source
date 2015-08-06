@@ -47,8 +47,7 @@
                 "click .thumbnailwithavatar": "gotoEditForm",
                 "click .letter:not(.empty)": "alpabeticalRender",
                 "click .saveFilterButton": "saveFilter",
-                "click .removeFilterButton": "removeFilter",
-                "click .clearFilterButton": "clearFilter"
+                "click .removeFilterButton": "removeFilter"
             },
 
             //modified for filter Vasya
@@ -94,8 +93,7 @@
                         selectedLetter = "";
                     }
                     this.filter['letter'] = selectedLetter;
-                }
-                ;
+                };
 
                 this.startTime = new Date();
                 this.newCollection = false;
@@ -112,7 +110,6 @@
                 var currentEl = this.$el;
                 var createdInTag = "<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>";
                 var FilterView;
-                var showList;
 
                 currentEl.html('');
                 common.buildAphabeticArray(this.collection, function (arr) {
@@ -134,20 +131,6 @@
                     }
                 });
 
-                currentEl.prepend('<div class="filtersActive"><button id="saveFilterButton" class="saveFilterButton">Save Filter</button>' +
-                    '<button id="clearFilterButton" class="clearFilterButton">Clear Filter</button>' +
-                    '<button id="removeFilterButton" class="removeFilterButton">Remove Filter</button></div>'
-                );
-
-                $("#clearFilterButton").hide();
-                $("#saveFilterButton").hide();
-                $("#removeFilterButton").hide();
-
-                if (App.currentUser.savedFilters && App.currentUser.savedFilters['Employees']){
-                    $("#clearFilterButton").show();
-                    $("#removeFilterButton").show();
-                }
-
                 if (this.collection.length > 0) {
                     currentEl.append(this.template({collection: this.collection.toJSON()}));
                 } else {
@@ -168,9 +151,6 @@
                         });
                         FilterView.bind('defaultFilter', function () {
                             self.showFilteredPage();
-                            $(".saveFilterButton").hide();
-                            $(".clearFilterButton").hide();
-                            $(".removeFilterButton").show();
                         });
                         // Filter custom event listen ------end
                     });
@@ -198,15 +178,6 @@
                 if  (condition && !condition.checked) {
                     self.filter['condition'] = 'or';
                 }
-
-                /*if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
-                    showList = $('.drop-down-filter > input:checkbox:checked').map(function() {
-                        return this.value
-                    }).get();
-
-                    this.filter['department'] = showList;
-                };*/
-
 
                 if (chosen) {
                     chosen.each(function (index, elem) {
@@ -240,15 +211,6 @@
                 });
                 this.getTotalLength(itemsNumber, this.filter, this.newCollection);
 
-                if (checkedElements.attr('id') === 'defaultFilter'){
-                    $(".saveFilterButton").hide();
-                    $(".clearFilterButton").hide();
-                    $(".removeFilterButton").show();
-                } else {
-                    $(".saveFilterButton").show();
-                    $(".clearFilterButton").show();
-                    $(".removeFilterButton").show();
-                }
             },
 
             saveFilter: function () {
@@ -287,19 +249,6 @@
                     App.currentUser.savedFilters = {};
                 }
                 App.currentUser.savedFilters['Employees'] = filterObj.filter;
-
-                this.$el.find('.filterValues').empty();
-                this.$el.find('.filter-icons').removeClass('active');
-                this.$el.find('.chooseOption').children().remove();
-
-                $.each($('.drop-down-filter input'), function (index, value) {
-                    value.checked = false
-                });
-
-                $(".saveFilterButton").hide();
-                $(".removeFilterButton").show();
-                $(".clearFilterButton").show();
-
             },
 
             removeFilter: function () {
@@ -335,11 +284,9 @@
                     }
                 );
 
-                delete App.currentUser.savedFilters['Employees'];
-
-                $(".saveFilterButton").hide();
-                $(".removeFilterButton").hide();
-                $(".clearFilterButton").hide();
+                if (App.currentUser.savedFilters['Employees']){
+                    delete App.currentUser.savedFilters['Employees'];
+                }
             },
 
             clearFilter: function () {
@@ -351,23 +298,11 @@
                 this.$el.find('.thumbnailwithavatar').remove();
 
                 this.defaultItemsNumber = 0;
+
                 this.changeLocationHash(null, this.defaultItemsNumber, this.filter);
                 this.collection.showMoreAlphabet({count: this.defaultItemsNumber, filter: this.filter});
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
 
-
-                this.$el.find('.filterValues').empty();
-                this.$el.find('.filter-icons').removeClass('active');
-                this.$el.find('.chooseOption').children().remove();
-                this.$el.find('.filterOptions').removeClass('chosen');
-
-                $.each($('.drop-down-filter input'), function (index, value) {
-                    value.checked = false
-                });
-
-                $(".clearFilterButton").hide();
-                $(".removeFilterButton").show();
-                $(".saveFilterButton").hide();
             },
 
             hideItemsNumber: function (e) {

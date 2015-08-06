@@ -35,7 +35,9 @@
                 this.newCollection = options.newCollection;
                 this.deleteCounter = 0;
                 this.page = options.collection.page;
+
                 this.render();
+
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
                 this.asyncLoadImgs(this.collection);
             },
@@ -45,8 +47,7 @@
                 "click .letter:not(.empty)": "alpabeticalRender",
                 "click .gotoForm": "gotoForm",
                 "click .saveFilterButton": "saveFilter",
-                "click .removeFilterButton": "removeFilter",
-                "click .clearFilterButton": "clearFilter"
+                "click .removeFilterButton": "removeFilter"
             },
 
             asyncLoadImgs: function (collection) {
@@ -98,6 +99,7 @@
                 }
 
                 this.defaultItemsNumber = 0;
+
                 this.changeLocationHash(null, this.defaultItemsNumber, this.filter);
                 this.collection.showMoreAlphabet({ count: this.defaultItemsNumber, page: 1, filter: this.filter });
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
@@ -140,19 +142,6 @@
                     App.currentUser.savedFilters = {};
                 }
                 App.currentUser.savedFilters['Companies'] = filterObj.filter;
-
-                this.$el.find('.filterValues').empty();
-                this.$el.find('.filter-icons').removeClass('active');
-                this.$el.find('.chooseOption').children().remove();
-
-                $.each($('.drop-down-filter input'), function (index, value) {
-                    value.checked = false
-                });
-
-                $(".saveFilterButton").hide();
-                $(".removeFilterButton").show();
-                $(".clearFilterButton").show();
-
             },
 
             removeFilter: function () {
@@ -188,11 +177,9 @@
                     }
                 );
 
-                delete App.currentUser.savedFilters['Companies'];
-
-                $(".saveFilterButton").hide();
-                $(".removeFilterButton").hide();
-                $(".clearFilterButton").hide();
+                if (App.currentUser.savedFilters['Companies']){
+                    delete App.currentUser.savedFilters['Companies'];
+                }
             },
 
             clearFilter: function () {
@@ -206,10 +193,6 @@
                 });
 
                 this.alpabeticalRender(null);
-
-                $(".clearFilterButton").hide();
-                $(".removeFilterButton").show();
-                $(".saveFilterButton").hide();
             },
 
 
@@ -265,20 +248,6 @@
                     }
                 ];
 
-                currentEl.prepend('<div class="filtersActive"><button id="saveFilterButton" class="saveFilterButton">Save Filter</button>' +
-                    '<button id="clearFilterButton" class="clearFilterButton">Clear Filter</button>' +
-                    '<button id="removeFilterButton" class="removeFilterButton">Remove Filter</button></div>'
-                );
-
-                $("#clearFilterButton").hide();
-                $("#saveFilterButton").hide();
-                $("#removeFilterButton").hide();
-
-                if (App.currentUser.savedFilters && App.currentUser.savedFilters['Companies']) {
-                    $("#clearFilterButton").show();
-                    $("#removeFilterButton").show();
-                }
-
                 dataService.getData('/supplier/getFilterValues', null, function (values) {
                     FilterView = new filterView({ collection: filterObject, customCollection: values});
                     // Filter custom event listen ------begin
@@ -288,11 +257,10 @@
                         self.showFilteredPage()
                     });
                     FilterView.bind('defaultFilter', function () {
+                        showList = [];
+                        self.alpabeticalRender(null, showList);
                         //showList = [];
                         self.showFilteredPage();
-                        $(".saveFilterButton").hide();
-                        $(".clearFilterButton").hide();
-                        $(".removeFilterButton").show();
                     });
                     // Filter custom event listen ------end
 

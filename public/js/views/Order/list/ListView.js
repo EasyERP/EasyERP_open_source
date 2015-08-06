@@ -58,8 +58,7 @@ function (listTemplate, stagesTamplate, createView, listItemView, listTotalView,
             "click .oe_sortable": "goSort",
             "click .newSelectList li": "chooseOption",
             "click .saveFilterButton": "saveFilter",
-            "click .removeFilterButton": "removeFilter",
-            "click .clearFilterButton": "clearFilter"
+            "click .removeFilterButton": "removeFilter"
         },
 
         chooseOption: function (e) {
@@ -208,20 +207,6 @@ function (listTemplate, stagesTamplate, createView, listItemView, listTotalView,
                     $("#top-bar-deleteBtn").hide();
             });
 
-            currentEl.prepend('<div class="filtersActive"><button id="saveFilterButton" class="saveFilterButton">Save Filter</button>' +
-                '<button id="clearFilterButton" class="clearFilterButton">Clear Filter</button>' +
-                '<button id="removeFilterButton" class="removeFilterButton">Remove Filter</button></div>'
-            );
-
-            $("#clearFilterButton").hide();
-            $("#saveFilterButton").hide();
-            $("#removeFilterButton").hide();
-
-            if (App.currentUser.savedFilters && App.currentUser.savedFilters['Order'] && App.currentUser.savedFilters['Order']['forSales'] != true) {
-                $("#clearFilterButton").show();
-                $("#removeFilterButton").show();
-            }
-
             $(document).on("click", function (e) {
                 self.hideItemsNumber(e);
             });
@@ -249,9 +234,6 @@ function (listTemplate, stagesTamplate, createView, listItemView, listTotalView,
                         });
                         FilterView.bind('defaultFilter', function () {
                             self.showFilteredPage();
-                            $(".saveFilterButton").hide();
-                            $(".clearFilterButton").hide();
-                            $(".removeFilterButton").show();
                         });
                         // Filter custom event listen ------end
                     })
@@ -485,19 +467,6 @@ function (listTemplate, stagesTamplate, createView, listItemView, listTotalView,
                 App.currentUser.savedFilters = {};
             }
             App.currentUser.savedFilters['Order'] = filterObj.filter;
-
-            this.$el.find('.filterValues').empty();
-            this.$el.find('.filter-icons').removeClass('active');
-            this.$el.find('.chooseOption').children().remove();
-
-            $.each($('.drop-down-filter input'), function (index, value) {
-                value.checked = false
-            });
-
-            $(".saveFilterButton").hide();
-            $(".removeFilterButton").show();
-            $(".clearFilterButton").show();
-
         },
 
         removeFilter: function () {
@@ -533,11 +502,9 @@ function (listTemplate, stagesTamplate, createView, listItemView, listTotalView,
                 }
             );
 
-            delete App.currentUser.savedFilters['Order'];
-
-            $(".saveFilterButton").hide();
-            $(".removeFilterButton").hide();
-            $(".clearFilterButton").hide();
+            if (App.currentUser.savedFilters['Order']){
+                delete App.currentUser.savedFilters['Order'];
+            }
         },
 
         clearFilter: function () {
@@ -552,10 +519,6 @@ function (listTemplate, stagesTamplate, createView, listItemView, listTotalView,
             });
 
             this.showFilteredPage();
-
-            $(".clearFilterButton").hide();
-            $(".removeFilterButton").show();
-            $(".saveFilterButton").hide();
         },
 
 
