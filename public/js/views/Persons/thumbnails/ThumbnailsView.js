@@ -190,7 +190,7 @@
                     value.checked = false
                 });
 
-                this.alpabeticalRender(null);
+                this.showFilteredPage();
             },
 
             gotoForm: function (e) {

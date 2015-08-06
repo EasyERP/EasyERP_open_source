@@ -192,7 +192,7 @@
                     value.checked = false
                 });
 
-                this.alpabeticalRender(null);
+                this.showFilteredPage();
             },
 
 

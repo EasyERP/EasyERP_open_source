@@ -43,7 +43,7 @@ define([
                 this.$el.find('.filter-icons').removeClass('active');
 
                 var values = this.$el.find('.chooseTerm');
-                var filterContainer = this.$el.find('.search-field');
+                var filterContainer = this.$el.find('.oe_searchview_input');
 
                 values.each(function (index, element) {
                     filterContainer.append('<div class="filter-icons active" data-id=' + $(element).val() + '> <span class="fa fa-filter funnelIcon"></span>' +
@@ -138,7 +138,7 @@ define([
                         if (opt && liText) {
                             el.append('<li><input type="checkbox" id="filter' + opt._id + '" value=' + opt._id + '><label for="filter' + opt._id + '">' + liText  + '</label></li>');
                         } else {
-                            el.append('<li><input type="checkbox" id="filter' + opt + '" value=' + opt + '><label for="filter' + opt + '"                            el.append('<li><input type="checkbox" id="filter' + opt + '" value=' + opt + '><label for="filter' + opt + '">' + opt  + '</label></li>');
+                            el.append('<li><input type="checkbox" id="filter' + opt + '" value=' + opt + '><label for="filter' + opt + '">' + opt  + '</label></li>');
                         }
                     });
                 }
