@@ -571,7 +571,10 @@ var wTrack = function (models) {
                         $addToSet: '$project.projectmanager'
                     },
                     projectsname: {
-                        $addToSet: '$project'
+                        $addToSet: {
+                            _id: '$project._id',
+                            projectName: '$project.projectName'
+                        }
                     },
                     customers: {
                         $addToSet: '$project.customer'
