@@ -80,7 +80,8 @@
                 this.$el.find('.thumbnailwithavatar').remove();
                 this.startTime = new Date();
                 this.newCollection = false;
-                this.filter = {};
+
+                this.filter = this.filter ? this.filter : {};
 
                 if (e && e.target) {
                     selectedLetter = $(e.target).text();
@@ -91,7 +92,11 @@
                     target.parent().find(".current").removeClass("current");
                     target.addClass("current");
                 }
-                if (selectedLetter || selectedLetter === '') this.filter['letter'] = selectedLetter;
+
+                if (selectedLetter || selectedLetter === '') {
+                    delete this.filter['name'];
+                    this.filter['letter'] = selectedLetter;
+                }
 
                 this.defaultItemsNumber = 0;
 
@@ -247,7 +252,9 @@
                 this.startTime = new Date();
                 this.newCollection = false;
 
-                this.filter['letter'] = selectedLetter;
+                if (!this.filter.name) {
+                    this.filter['letter'] = selectedLetter;
+                }
 
                 this.$el.find('.thumbnailwithavatar').remove();
 
@@ -401,7 +408,6 @@
                 //holder.prepend(alphaBet);
                 holder.append(created);
                 created.before(showMore);
-                this.asyncLoadImgs(newModels);
                 this.asyncLoadImgs(newModels);
             },
 

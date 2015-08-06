@@ -126,9 +126,9 @@ define([
                         el.addClass('activated')
 
                         if (opt && liText) {
-                            el.append('<li><input type="checkbox" id=' + opt._id + ' value=' + opt._id + '><label for=' + opt._id + '>' + liText  + '</label></li>');
+                            el.append('<li><input type="checkbox" id="filter' + opt._id + '" value=' + opt._id + '><label for="filter' + opt._id + '">' + liText  + '</label></li>');
                         } else {
-                            el.append('<li><input type="checkbox" id=' + opt + ' value=' + opt + '><label for=' + opt + '>' + opt  + '</label></li>');
+                            el.append('<li><input type="checkbox" id="filter' + opt + '" value=' + opt + '><label for="filter' + opt + '">' + opt  + '</label></li>');
                         }
                     });
                 }
