@@ -45,11 +45,16 @@ define([
                 var values = this.$el.find('.chooseTerm');
                 var filterContainer = this.$el.find('.oe_searchview_input');
 
+
                 values.each(function (index, element) {
-                    filterContainer.append('<div class="filter-icons active" data-id=' + $(element).val() + '> <span class="fa fa-filter funnelIcon"></span>' +
-                        '<span class="filterValues"> <span class="Clear" data-id="' + $(element).val() +
-                        '">' + $(element).val() + '</span> </span> <span class="removeValues" data-id="' + $(element).val() + '">' + 'x </span> </div>');
+                    if ($(element).val()) {
+                        filterContainer.append('<div class="filter-icons active" data-id=' + $(element).val() + '> <span class="fa fa-filter funnelIcon"></span>' +
+                            '<span class="filterValues"> <span class="Clear" data-id="' + $(element).val() +
+                            '">' + $(element).val() + '</span> </span> <span class="removeValues" data-id="' + $(element).val() + '">' + 'x </span> </div>');
+
+                    }
                 });
+
 
                 this.trigger('filter');
             },
@@ -104,7 +109,7 @@ define([
 
             chooseOptions: function (e) {
                 var el = $(e.target.nextElementSibling);
-                var value  = e.target.value;
+                var value = e.target.value;
                 var optDate = this.$el.find('.chooseDate');
                 var liText;
                 var values = this.customCollection[0][value]['values'] ? this.customCollection[0][value]['values'] : this.customCollection[0][value];
@@ -136,9 +141,9 @@ define([
                         el.addClass('activated')
 
                         if (opt && liText) {
-                            el.append('<li><input type="checkbox" id="filter' + opt._id + '" value=' + opt._id + '><label for="filter' + opt._id + '">' + liText  + '</label></li>');
+                            el.append('<li><input type="checkbox" id="filter' + opt._id + '" value=' + opt._id + '><label for="filter' + opt._id + '">' + liText + '</label></li>');
                         } else {
-                            el.append('<li><input type="checkbox" id="filter' + opt + '" value=' + opt + '><label for="filter' + opt + '">' + opt  + '</label></li>');
+                            el.append('<li><input type="checkbox" id="filter' + opt + '" value=' + opt + '><label for="filter' + opt + '">' + opt + '</label></li>');
                         }
                     });
                 }
@@ -216,10 +221,10 @@ define([
                     this.trigger('defaultFilter');
                 }
 
-               /* if ($('.drop-down-filter input:checkbox:checked').length === 0) {
-                    this.trigger('defaultFilter');
-                    //this.$el.find('.removeFilter').trigger('click')
-                }*/
+                /* if ($('.drop-down-filter input:checkbox:checked').length === 0) {
+                 this.trigger('defaultFilter');
+                 //this.$el.find('.removeFilter').trigger('click')
+                 }*/
 
             },
 
@@ -231,7 +236,7 @@ define([
                 var closestEl = clearElement.find('.' + dataId);
                 var cl = $(closestEl).closest('.filterOptions');
 
-                if (filterOpt.length === 1){
+                if (filterOpt.length === 1) {
                     $(closestEl).prev().click();
                 } else {
                     cl.remove();
