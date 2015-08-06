@@ -139,19 +139,19 @@ var wTrack = function (models) {
                     resArray.push({ 'project.projectmanager._id': {$in: condition.objectID()}});
                     break;
                 case 'projectsname':
-                    resArray.push({ 'project.projectName': {$in: condition}});
+                    resArray.push({ 'project._id': {$in: condition.objectID()}});
                     break;
                 case 'workflows':
                     resArray.push({ 'project.workflow': {$in: condition.objectID()}});
                     break;
                 case 'customers':
-                    resArray.push({ 'project.customer': {$in: condition}});
+                    resArray.push({ 'project.customer._id': {$in: condition.objectID()}});
                     break;
                 case 'employees':
-                    resArray.push({ 'employee.name': {$in: condition}});
+                    resArray.push({ 'employee._id': {$in: condition.objectID()}});
                     break;
                 case 'departments':
-                    resArray.push({ 'department.departmentName': {$in: condition}});
+                    resArray.push({ 'department._id': {$in: condition.objectID()}});
                     break;
                 case 'years':
                     ConvertType(condition, 'integer');
@@ -590,10 +590,10 @@ var wTrack = function (models) {
                     },
                     weeks: {
                         $addToSet: '$week'
-                    },
+                    }/*,
                     isPaid: {
                         $addToSet: '$isPaid'
-                    }
+                    }*/
                 }
             }
         ], function (err, result) {
@@ -604,31 +604,60 @@ var wTrack = function (models) {
             _.map(result[0], function(value, key) {
                 switch (key) {
                     case 'projectmanagers':
-                        result[0][key] = _.sortBy(value, 'name');
+                        result[0][key] = {
+                            displayName: 'Assigned',
+                            values: _.sortBy(value, 'name')
+                        };
                         break;
                     case  'employees':
-                        result[0][key] = _.sortBy(value, 'name');
+                        result[0][key] = {
+                            displayName: 'Employee',
+                            values: _.sortBy(value, 'name')
+                        };
                         break;
-                    /*case 'customers':
-                        result[0][key] = _.sortBy(value, 'name');
-                        break;*/
+                    case 'customers':
+                        result[0][key] = {
+                            displayName: 'Customer',
+                            values: _.sortBy(value, 'name')
+                        };
+                        break;
                     case 'projectsname':
-                        result[0][key] = _.sortBy(value, 'projectName');
+                        result[0][key] = {
+                            displayName: 'Project Name',
+                            values: _.sortBy(value, 'projectName')
+                        };
                         break;
                     case 'months':
-                        result[0][key] = _.sortBy(value, function (num) { return num});
+                        result[0][key] = {
+                            displayName: 'Months',
+                            values: _.sortBy(value, function (num) { return num})
+                        };
                         break;
                     case 'years':
-                        result[0][key] = _.sortBy(value, function (num) { return num});
+                        result[0][key] = {
+                            displayName: 'Years',
+                            values: _.sortBy(value, function (num) { return num})
+                        };
                         break;
                     case 'weeks':
-                        result[0][key] = _.sortBy(value, function (num) { return num});
+                        result[0][key] = {
+                            displayName: 'Weeks',
+                            values: _.sortBy(value, function (num) { return num})
+                        };
                         break;
                     case 'departments':
-                        result[0][key] = _.sortBy(value, 'departmentName');
+                        result[0][key] = {
+                            displayName: 'Department',
+                            values: _.sortBy(value, 'departmentName')
+                        };
                         break;
                 }
             });
+
+            result[0]['isPaid'] = {
+                displayName: 'Status',
+                values: [{displayName: 'Paid', _id: true}, {displayName: 'Unpaid', _id: false}]
+            };
 
             res.status(200).send(result);
         });

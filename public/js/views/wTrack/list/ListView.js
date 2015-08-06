@@ -763,14 +763,14 @@ define([
                 });
 
                 dataService.getData('/wTrack/getFilterValues', null, function (values) {
-                    values[0].departments = _.map(values[0].departments, function (department) {
+                    /*values[0].departments = _.map(values[0].departments, function (department) {
                         department.name = department.departmentName;
 
                         return department
-                    });
+                    });*/
 
                     FilterView = new filterView({
-                        collection: values[0].departments,
+                        //collection: values[0].departments,
                         customCollection: values,
                         wTrack: true
                     });

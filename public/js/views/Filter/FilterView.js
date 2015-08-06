@@ -120,7 +120,7 @@ define([
                             if (opt.displayName) {
                                 liText = opt.displayName;
                             } else {
-                                liText = opt.fullName ? opt.fullName : (opt.projectName ? opt.projectName : opt.name);
+                                liText = opt.fullName || opt.fullName || opt.projectName || opt.departmentName || opt.name;
                             }
                         }
                         el.addClass('activated')
