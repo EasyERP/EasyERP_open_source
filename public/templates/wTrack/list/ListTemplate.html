@@ -22,8 +22,8 @@
     <td data-type="input" class="editable autoCalc" data-content="7"><%=wTrack['7'] ? wTrack['7'] : '0'%></td>
     <td><span class="<%=wTrack.isPaid ? 'done' : ''%>"><%=wTrack.isPaid ? 'Paid' : 'Unpaid'%></span></td>
     <td data-content="revenue" class="money"><%=wTrack.revenue%></td>
-    <td data-content="cost"><%='$' + wTrack.cost%></td>
-    <td><%='$' + wTrack.profit%></td>
-    <td><%=wTrack.amount ? '$' + wTrack.amount : ''%></td>
+    <td data-content="cost" class="money"><%=wTrack.cost%></td>
+    <td data-content="profit" class="money"><%=wTrack.profit%></td>
+    <td data-content="amount" class="money"><%=wTrack.amount ? wTrack.amount : ''%></td>
 </tr>
 <% }) %>
