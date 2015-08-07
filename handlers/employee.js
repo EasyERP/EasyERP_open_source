@@ -34,7 +34,7 @@ var Employee = function (models) {
 
         function assigneFinder(cb) {
             var match = {
-                projectmanager: {$ne: null}
+                'projectmanager': {$ne: null}
             };
 
             Project.aggregate([{
@@ -73,7 +73,7 @@ var Employee = function (models) {
                 $match: {isEmployee: true}
             }, {
                 $group: {
-                    _id: "$department",
+                    _id: "$department._id",
                     employees: {$push: {
                         name: {$concat: ['$name.first', ' ', '$name.last']},
                         _id: '$_id'
@@ -103,11 +103,14 @@ var Employee = function (models) {
                     $group: {
                         _id: null,
                         'Name': {
-                            $addToSet: '$name.last'
-                        },
+                            $addToSet: {
+                                _id: '$_id',
+                                name: '$name.last'
+                            }
+                        }/*,
                         'Email': {
                             $addToSet: '$workEmail'
-                        }
+                        }*/
                     }
                 }
             ], function (err, result) {
@@ -118,11 +121,11 @@ var Employee = function (models) {
                 _.map(result[0], function(value, key) {
                     switch (key) {
                         case 'Name':
-                            result[0][key] = _.sortBy(value, function (num) { return num});
-                            break;
+                            result[0][key] = _.sortBy(value, 'name');
+                            break;/*
                         case  'Email':
                             result[0][key] = _.sortBy(value, function (num) { return num});
-                            break;
+                            break;*/
 
                     }
                 });

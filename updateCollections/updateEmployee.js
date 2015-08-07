@@ -148,8 +148,8 @@ query.exec(function (error, _res) {
         if (emp) {
             objectToSave = {
                 manager: {
-                    _id: emp.manager._id,
-                    name: emp.manager.name
+                    _id: emp.manager ? emp.manager._id : null,
+                    name: emp.manager ? (emp.manager.name.first + ' ' +  emp.manager.name.last) : null
                 },
                 jobPosition: {
                     _id: emp.jobPosition._id,

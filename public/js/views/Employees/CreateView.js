@@ -186,9 +186,18 @@ define([
                 var marital = $("#maritalDd").data("id");
                 var officeLocation = $.trim($("#officeLocation").val());
                 var relatedUser = $("#relatedUsersDd").data("id");
-                var department = $("#departmentsDd").data("id");
-                var jobPosition = $("#jobPositionDd").data("id");
-                var manager = $("#projectManagerDD").data("id");
+                var department = {
+                    _id: $("#departmentsDd").data("id"),
+                    name: $("#departmentsDd").text()
+                };
+                var jobPosition = {
+                    _id: $("#jobPositionDd").data("id"),
+                    name: $("#jobPositionDd").text()
+                };
+                var manager = {
+                    _id: $("#projectManagerDD").data("id"),
+                    name: $("#projectManagerDD").text()
+                };
                 var coach = $("#coachDd").data("id");
                 var identNo = $.trim($("#identNo").val());
 				var nationality =  $("#nationality").data("id");
