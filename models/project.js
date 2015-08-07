@@ -12,12 +12,12 @@ module.exports = (function () {
         //customer: { type: ObjectId, ref: 'Customers', default: null },
         customer: {
             _id: {type: ObjectId, ref: 'Customers', default: null},
-            name: {}
+            name: String
         },
         //projectmanager: { type: ObjectId, ref: 'Employees', default: null },
         projectmanager: {
             _id: {type: ObjectId, ref: 'Employees', default: null},
-            name: {}
+            name: String
         },
         description: String,
         whoCanRW: { type: String, enum: ['owner', 'group', 'everyOne'], default: 'everyOne' },

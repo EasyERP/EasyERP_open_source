@@ -82,8 +82,8 @@ var Project = dbObject.model("Project", ProjectSchema);
 var ProjectOld = dbObject.model("ProjectNew", ProjectSchemaOld);
 
 var query = ProjectOld.find()
-    .populate('customer', '_id name')
-    .populate('projectmanager', '_id name')
+    .populate('customer', '_id name.first name.last')
+    .populate('projectmanager', '_id name name.first name.last')
     .populate('workflow', '_id name')
     .lean();
 
@@ -99,11 +99,11 @@ query.exec(function (error, _res) {
             objectToSave = {
                 customer: {
                     _id: proj.customer._id,
-                    name: proj.customer.name
+                    name: proj.customer.name.first + ' ' + proj.customer.name.last
                 },
                 projectmanager: {
                     _id: proj.projectmanager._id,
-                    name: proj.projectmanager.name
+                    name: proj.projectmanager.name.first + ' ' + proj.projectmanager.name
                 },
                 workflow: {
                     _id: proj.workflow._id,

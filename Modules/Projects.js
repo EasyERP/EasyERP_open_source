@@ -281,13 +281,16 @@ var Project = function (models, event) {
                         _project.projecttype = data.projecttype;
                     }
                     if (data.workflow) {
-                        _project.workflow = data.workflow;
+                        _project.workflow._id = data.workflow._id;
+                        _project.workflow.name = data.workflow.name;
                     }
                     if (data.customer) {
-                        _project.customer = data.customer;
+                        _project.customer._id = data.customer._id;
+                        _project.customer.name = data.customer.name;
                     }
                     if (data.projectmanager) {
-                        _project.projectmanager = data.projectmanager;
+                        _project.projectmanager._id = data.projectmanager._id;
+                        _project.projectmanager.name = data.projectmanager.name;
                     }
 
                     if (data.notes) {
@@ -352,7 +355,7 @@ var Project = function (models, event) {
                                 {
                                     $match: {
                                         $and: [
-                                            {workflow: objectId(res._id.toString())},
+                                            {'workflow._id': objectId(res._id.toString())},
                                             {
                                                 $or: [
                                                     {
@@ -391,8 +394,8 @@ var Project = function (models, event) {
                                 function (err, result) {
                                     if (!err) {
                                         var query = models.get(req.session.lastDb, "Project", projectSchema).find().where('_id').in(result);
-                                        query.select("projectName projectmanager _id health").
-                                            populate('projectmanager', 'name _id').
+                                        query.select("projectName projectmanager _id health workflow").
+                                            populate('projectmanager._id', 'name _id').
                                             exec(function (error, _res) {
                                                 if (!error) {
                                                     res = {}
@@ -707,8 +710,8 @@ var Project = function (models, event) {
                                     populate('createdBy.user', 'login').
                                     populate('editedBy.user', 'login').
                                     populate('projectmanager', 'name').
-                                    populate('customer', 'name').
-                                    populate('workflow').
+                                   // populate('customer', 'name').
+                                    //populate('workflow', 'status').
                                     skip((data.page - 1) * data.count).
                                     limit(data.count).
                                     exec(function (error, _res) {
@@ -941,9 +944,9 @@ var Project = function (models, event) {
                                     query.where('workflow').in([]);
                                 }
                                 query.select("_id projectName task workflow projectmanager customer health").
-                                    populate('workflow', 'name').
-                                    populate('projectmanager', 'name').
-                                    populate('customer', 'name').
+                                    //populate('workflow._id', 'name').
+                                    //populate('projectmanager._id', 'name _id').
+                                    //populate('customer._id', 'name').
                                     skip((data.page - 1) * data.count).
                                     limit(data.count).
                                     exec(function (error, _res) {
@@ -968,9 +971,9 @@ var Project = function (models, event) {
 
     function getById(req, data, response) {
         var query = models.get(req.session.lastDb, 'Project', projectSchema).findById(data.id);
-        query.populate('projectmanager', 'name _id');
-        query.populate('customer', 'name _id');
-        query.populate('workflow').
+        query.//populate('projectmanager', 'name _id');
+        //query.populate('customer', 'name _id');
+       // query.populate('workflow').
             populate('bonus.employeeId', '_id name').
             populate('bonus.bonusId', '_id name').
             populate('createdBy.user', '_id login').
@@ -1349,10 +1352,10 @@ var Project = function (models, event) {
     };
 
     function taskUpdateOnlySelectedFields(req, _id, data, res) {
-        delete data._id;
-        delete data.createdBy;
+        //delete data._id;
+        //delete data.createdBy;
         var fileName = data.fileName;
-        delete data.fileName;
+       // delete data.fileName;
         if (data.notes && data.notes.length != 0) {
             var obj = data.notes[data.notes.length - 1];
             if (!obj._id)
@@ -1521,6 +1524,7 @@ var Project = function (models, event) {
                     }
                     if (data.assignedTo) {
                         _task.assignedTo = data.assignedTo;
+                        _task.assignedTo = data.assignedTo;
                     }
                     if (data.type) {
                         _task.type = data.type;
@@ -1591,7 +1595,7 @@ var Project = function (models, event) {
                         _task.EndDate = calculateTaskEndDate(StartDate, data.estimated);
                         _task.duration = returnDuration(StartDate, _task.EndDate);
                     }
-                    event.emit('updateSequence', models.get(req.session.lastDb, 'Tasks', tasksSchema), "sequence", 0, 0, _task.workflow, _task.workflow, true, false, function (sequence) {
+                    event.emit('updateSequence', models.get(req.session.lastDb, 'Tasks', tasksSchema), "sequence", 0, 0, _task.workflow._id, _task.workflow._id, true, false, function (sequence) {
                         _task.sequence = sequence;
                         _task.save(function (err, _task) {
                             if (err) {
