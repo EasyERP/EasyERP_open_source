@@ -2440,7 +2440,15 @@ input::-ms-clear {
 
   .pageList {
     position: relative;
-
+    .icons {
+      margin: 1px 0 0;
+      height: 16px;
+      border-left: none;
+      width: 20px;
+    }
+    .iconsNum {
+      margin-right: 0;
+    }
     button {
       background-color: white;
       background-image: none;
@@ -2460,10 +2468,9 @@ input::-ms-clear {
       border: @thin-border rgba(0, 0, 0, 0.4);
       position: absolute;
       bottom: 15px;
-      left: 5px;
+      left: -7px;
       display: none;
       font-size: 12px;
-
       li {
         a {
           display: block;
