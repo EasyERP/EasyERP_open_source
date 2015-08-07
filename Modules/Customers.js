@@ -625,9 +625,9 @@
                     }
                     if (data && data.filter && data.filter.name) {
                         if (data.filter.condition === 'or') {
-                            optionsObject['$or'].push({'name.first': {$in: data.filter.name} })
+                            optionsObject['$or'].push({'_id': {$in: data.filter.name.objectID()} })
                         } else {
-                            optionsObject['name.first'] = {$in: data.filter.name};
+                            optionsObject['_id'] = {$in: data.filter.name.objectID()};
                         }
 
                     }
@@ -660,9 +660,9 @@
                     }
                     if (data && data.filter && data.filter.name) {
                         if (data.filter.condition === 'or') {
-                            optionsObject['$or'].push({'name.first': {$in: data.filter.name} })
+                            optionsObject['$or'].push({'_id': {$in: data.filter.name.objectID()} })
                         } else {
-                            optionsObject['name.first'] = {$in: data.filter.name};
+                            optionsObject['_id'] = {$in: data.filter.name.objectID()};
                         }
                     }
                     if (data && data.filter && data.filter.country) {

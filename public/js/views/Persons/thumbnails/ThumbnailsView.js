@@ -6,10 +6,11 @@
         "text!templates/Persons/thumbnails/ThumbnailsItemTemplate.html",
         'dataService',
         'views/Filter/FilterView',
-        'models/UsersModel'
+        'models/UsersModel',
+        'custom'
     ],
 
-    function (common, editView, createView, AphabeticTemplate, ThumbnailsItemTemplate, dataService, filterView, usersModel) {
+    function (common, editView, createView, AphabeticTemplate, ThumbnailsItemTemplate, dataService, filterView, usersModel, custom) {
         var PersonsThumbnalView = Backbone.View.extend({
             el: '#content-holder',
             countPerPage: 0,
@@ -45,8 +46,7 @@
                 "click .gotoForm": "gotoForm",
                 "click .company": "gotoCompanyForm",
                 "click .saveFilterButton": "saveFilter",
-                "click .removeFilterButton": "removeFilter",
-                "click .clearFilterButton": "clearFilter"
+                "click .removeFilterButton": "removeFilter"
             },
 //modified for filter Vasya
             getTotalLength: function (currentNumber, filter, newCollection) {
@@ -72,19 +72,15 @@
                 common.getImages(ids, "/getCustomersImages");
             },
             //modified for filter Vasya
-            alpabeticalRender: function (e, showList) {
+            alpabeticalRender: function (e) {
                 var selectedLetter;
                 var target;
-                var checkedElements = $('.drop-down-filter input:checkbox:checked');
-                var chosen = this.$el.find('.chosen');
-                var self = this;
-                var condition = this.$el.find('.conditionAND > input')[0];
 
                 this.$el.find('.thumbnailwithavatar').remove();
                 this.startTime = new Date();
                 this.newCollection = false;
-                this.filter = {};
-                this.filter['condition'] = 'and';
+
+                this.filter = this.filter ? this.filter : {};
 
                 if (e && e.target) {
                     selectedLetter = $(e.target).text();
@@ -96,61 +92,16 @@
                     target.addClass("current");
                 }
 
-                if  (condition && !condition.checked) {
-                    self.filter['condition'] = 'or';
+                if (selectedLetter || selectedLetter === '') {
+                    delete this.filter['name'];
+                    this.filter['letter'] = selectedLetter;
                 }
-
-                if (chosen) {
-                    chosen.each(function (index, elem) {
-                        if (self.filter[elem.children[1].value]) {
-                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
-                                self.filter[elem.children[1].value].push($(element).next().text());
-                            })
-                        } else {
-                            self.filter[elem.children[1].value] = [];
-                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
-                                self.filter[elem.children[1].value].push($(element).next().text());
-                            })
-                        }
-                    });
-                };
-
-                if (showList) {
-                    if (showList.indexOf('isCustomer') !== -1) {
-                        this.filter['isCustomer'] = 1;
-                    }else if (showList.indexOf('isSupplier') !== -1) {
-                        this.filter['isSupplier'] = 1;
-                    } else {
-                        delete this.filter['isSupplier'];
-                        delete this.filter['isCustomer'];
-                    }
-                    if (this.filter['isSupplier'] && this.filter['isCustomer']) {
-                        delete this.filter['isSupplier'];
-                        delete this.filter['isCustomer'];
-                    }
-                }
-
-                if (selectedLetter || selectedLetter === '') this.filter['letter'] = selectedLetter;
-
-                if ((!!checkedElements.length && checkedElements.attr('id') === 'defaultFilter') || (!chosen.length && !showList)) {
-                    self.filter = 'empty';
-                };
 
                 this.defaultItemsNumber = 0;
 
                 this.changeLocationHash(null, this.defaultItemsNumber, this.filter);
                 this.collection.showMoreAlphabet({ count: this.defaultItemsNumber, page: 1, filter: this.filter });
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
-
-                if (checkedElements.attr('id') === 'defaultFilter'){
-                    $(".saveFilterButton").hide();
-                    $(".clearFilterButton").hide();
-                    $(".removeFilterButton").show();
-                } else {
-                    $(".saveFilterButton").show();
-                    $(".clearFilterButton").show();
-                    $(".removeFilterButton").show();
-                }
             },
 
             saveFilter: function () {
@@ -190,19 +141,6 @@
                     App.currentUser.savedFilters = {};
                 }
                 App.currentUser.savedFilters['Persons'] = filterObj.filter;
-
-                this.$el.find('.filterValues').empty();
-                this.$el.find('.filter-icons').removeClass('active');
-                this.$el.find('.chooseOption').children().remove();
-
-                $.each($('.drop-down-filter input'), function (index, value) {
-                    value.checked = false
-                });
-
-                $(".saveFilterButton").hide();
-                $(".removeFilterButton").show();
-                $(".clearFilterButton").show();
-
             },
 
             removeFilter: function () {
@@ -237,12 +175,9 @@
                         editMode: false
                     }
                 );
-
-                delete App.currentUser.savedFilters['Persons'];
-
-                $(".saveFilterButton").hide();
-                $(".removeFilterButton").hide();
-                $(".clearFilterButton").hide();
+                if (App.currentUser.savedFilters['Persons']){
+                    delete App.currentUser.savedFilters['Persons'];
+                }
             },
 
             clearFilter: function () {
@@ -255,11 +190,7 @@
                     value.checked = false
                 });
 
-                this.alpabeticalRender(null);
-
-                $(".clearFilterButton").hide();
-                $(".removeFilterButton").show();
-                $(".saveFilterButton").hide();
+                this.showFilteredPage();
             },
 
             gotoForm: function (e) {
@@ -273,6 +204,52 @@
                 e.preventDefault();
                 var id = $(e.target).closest("a").data("id");
                 window.location.hash = "#easyErp/Companies/form/" + id;
+            },
+
+            showFilteredPage: function () {
+                var itemsNumber = $("#itemsNumber").text();
+                var alphaBet = this.$el.find('#startLetter');
+                var selectedLetter = $(alphaBet).find('.current').length ? $(alphaBet).find('.current')[0].text : '';
+                var self = this;
+
+                var checkedElements = this.$el.find('input:checkbox:checked');
+                var chosen = this.$el.find('.chosen');
+
+                var logicAndStatus = this.$el.find('#logicCondition')[0].checked;
+                var defaultFilterStatus = this.$el.find('#defaultFilter')[0].checked;
+
+
+                $("#top-bar-deleteBtn").hide();
+                $('#check_all').prop('checked', false);
+
+                if (selectedLetter === "All") {
+                    selectedLetter = '';
+                }
+
+                this.filter = custom.getFiltersValues(chosen, defaultFilterStatus, logicAndStatus);
+
+                this.startTime = new Date();
+                this.newCollection = false;
+
+                if (!this.filter.name) {
+                    this.filter['letter'] = selectedLetter;
+                }
+
+                this.$el.find('.thumbnailwithavatar').remove();
+
+                this.changeLocationHash(null, this.defaultItemsNumber, this.filter);
+                this.collection.showMoreAlphabet({ count: this.defaultItemsNumber, page: 1, filter: this.filter });
+                this.getTotalLength(this.defaultItemsNumber, this.filter);
+
+                if (checkedElements.attr('id') === 'defaultFilter'){
+                    $(".saveFilterButton").hide();
+                    $(".clearFilterButton").hide();
+                    $(".removeFilterButton").show();
+                } else {
+                    $(".saveFilterButton").show();
+                    $(".clearFilterButton").show();
+                    $(".removeFilterButton").show();
+                }
             },
 
             render: function () {
@@ -309,20 +286,6 @@
                     }
                 });
 
-                currentEl.prepend('<div class="filtersActive"><button id="saveFilterButton" class="saveFilterButton">Save Filter</button>' +
-                    '<button id="clearFilterButton" class="clearFilterButton">Clear Filter</button>' +
-                    '<button id="removeFilterButton" class="removeFilterButton">Remove Filter</button></div>'
-                );
-
-                $("#clearFilterButton").hide();
-                $("#saveFilterButton").hide();
-                $("#removeFilterButton").hide();
-
-                if (App.currentUser.savedFilters && App.currentUser.savedFilters['Persons']) {
-                    $("#clearFilterButton").show();
-                    $("#removeFilterButton").show();
-                }
-
                 filterObject = [
                     {
                         name: 'isCustomer',
@@ -338,12 +301,14 @@
                     // Filter custom event listen ------begin
                     FilterView.unbind();
                     FilterView.bind('filter', function () {
-                        showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
-                        self.alpabeticalRender(null, showList)
+                        //showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
+                        //self.alpabeticalRender(null, showList)
+                        self.showFilteredPage()
                     });
                     FilterView.bind('defaultFilter', function () {
-                        showList = [];
-                        self.alpabeticalRender(null, showList);
+                        //showList = [];
+                        //self.alpabeticalRender(null, showList);
+                        self.showFilteredPage()
                         $(".saveFilterButton").hide();
                         $(".clearFilterButton").hide();
                         $(".removeFilterButton").show();
@@ -408,7 +373,6 @@
                 //holder.prepend(alphaBet);
                 holder.append(created);
                 created.before(showMore);
-                this.asyncLoadImgs(newModels);
                 this.asyncLoadImgs(newModels);
             },
 
