@@ -147,6 +147,14 @@ query.exec(function (error, _res) {
 
         if (emp) {
             objectToSave = {
+                manager: {
+                    _id: emp.manager._id,
+                    name: emp.manager.name
+                },
+                jobPosition: {
+                    _id: emp.jobPosition._id,
+                    name: emp.jobPosition.name
+                },
                 department: {
                     _id: emp.department._id,
                     name: emp.department.departmentName
