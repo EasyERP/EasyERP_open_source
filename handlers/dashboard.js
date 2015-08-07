@@ -153,12 +153,12 @@ var wTrack = function (models) {
                 };
 
                 function sendResponse() {
-                    Department.populate(employeesByDep, {
-                        path: 'department',
-                        select: 'departmentName _id'
-                    }, function () {
+                    //Department.populate(employeesByDep, {
+                    //    path: 'department',
+                    //    select: 'departmentName _id'
+                    //}, function () {
                         res.status(200).send(employeesByDep);
-                    });
+                    //});
                 };
 
                 async.each(employeesByDep, departmentMapper, sendResponse);
@@ -445,7 +445,7 @@ var wTrack = function (models) {
                             }
                         }, {
                             $project: {
-                                department: '$_id.department',
+                                'department._id': '$_id.department',
                                 employeeData: '$root',
                                 _id: 0
                             }

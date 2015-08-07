@@ -34,14 +34,14 @@ var Employee = function (models) {
 
         function assigneFinder(cb) {
             var match = {
-                projectmanager: {$ne: null}
+                'projectmanager._id': {$ne: null}
             };
 
             Project.aggregate([{
                 $match: match
             }, {
                 $group: {
-                    _id: "$projectmanager"
+                    _id: "$projectmanager._id"
                 }
             }], cb);
         };
@@ -73,7 +73,7 @@ var Employee = function (models) {
                 $match: {isEmployee: true}
             }, {
                 $group: {
-                    _id: "$department",
+                    _id: "$department._id",
                     employees: {$push: {
                         name: {$concat: ['$name.first', ' ', '$name.last']},
                         _id: '$_id'
