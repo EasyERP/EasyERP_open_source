@@ -153,12 +153,12 @@ var wTrack = function (models) {
                 };
 
                 function sendResponse() {
-                    //Department.populate(employeesByDep, {
-                    //    path: 'department',
-                    //    select: 'departmentName _id'
-                    //}, function () {
+                    Department.populate(employeesByDep, {
+                        path: 'department._id',
+                        select: 'departmentName _id'
+                    }, function () {
                         res.status(200).send(employeesByDep);
-                    //});
+                    });
                 };
 
                 async.each(employeesByDep, departmentMapper, sendResponse);
