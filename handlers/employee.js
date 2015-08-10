@@ -17,7 +17,6 @@ var Employee = function (models) {
         Employee
             .find()
             .select('_id name department')
-            .populate('department', '_id departmentName')
             .sort({'name.first': 1})
             .lean()
             .exec(function (err, employees) {
@@ -107,10 +106,25 @@ var Employee = function (models) {
                                 _id: '$_id',
                                 name: '$name.last'
                             }
-                        }/*,
-                        'Email': {
-                            $addToSet: '$workEmail'
-                        }*/
+                        },
+                        'Department': {
+                            $addToSet: {
+                                _id: '$department._id',
+                                name: '$department.name'
+                            }
+                        },
+                        jobPosition: {
+                            $addToSet: {
+                                _id: '$jobPosition._id',
+                                name: '$jobPosition.name'
+                            }
+                        },
+                        manager: {
+                            $addToSet: {
+                                _id: '$manager._id',
+                                name: '$manager.name'
+                            }
+                        }
                     }
                 }
             ], function (err, result) {
@@ -122,10 +136,24 @@ var Employee = function (models) {
                     switch (key) {
                         case 'Name':
                             result[0][key] = _.sortBy(value, 'name');
-                            break;/*
-                        case  'Email':
-                            result[0][key] = _.sortBy(value, function (num) { return num});
-                            break;*/
+                            break;
+                        case 'Department':
+                            result[0][key] = _.sortBy(value, 'name');
+                            break;
+                        case 'jobPosition':
+                            result[0][key] = {
+                                displayName: 'Job Position',
+                                values: _.sortBy(value, 'name')
+                            };
+                            break;
+                        case 'manager':
+                            result[0][key] = {
+                                displayName: 'Manager',
+                                values: _.filter(value, function(num) {
+                                    return num._id !== undefined;
+                                })
+                            };
+                            break;
 
                     }
                 });

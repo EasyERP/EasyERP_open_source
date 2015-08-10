@@ -102,7 +102,8 @@ var wTrack = function (models) {
                                         weekData = data;
                                     }
 
-                                    _vacations = _.find(vacations, function (vacationObject) {
+                                    _vacations = _.find(vacations, function (vacationObject, index) {
+                                        console.log(index);
                                         return (vacationObject.employee.toString() === _employee._id.toString());
                                     });
 
@@ -272,11 +273,11 @@ var wTrack = function (models) {
                                         } /*{firedCount: {$gt: 0}}*/]
                                     }
                                 ],
-                                department: {$nin: [objectId(CONSTANTS.HR_DEPARTMENT_ID), objectId(CONSTANTS.BUSINESS_DEPARTMENT_ID), objectId(CONSTANTS.MARKETING_DEPARTMENT_ID)]}
+                                'department._id': {$nin: [objectId(CONSTANTS.HR_DEPARTMENT_ID), objectId(CONSTANTS.BUSINESS_DEPARTMENT_ID), objectId(CONSTANTS.MARKETING_DEPARTMENT_ID)]}
                             }
                         }, {
                             $group: {
-                                _id: "$department",
+                                _id: "$department._id",
                                 employees: {
                                     $push: {
                                         isLead: '$isLead',
@@ -325,7 +326,7 @@ var wTrack = function (models) {
                                                 $and: [{isEmployee: false}, {firedCount: {$gt: 0}}, {_id: {$in: _employeesIds}}]
                                             }
                                         ],
-                                        department: {$nin: [objectId(CONSTANTS.HR_DEPARTMENT_ID), objectId(CONSTANTS.BUSINESS_DEPARTMENT_ID), objectId(CONSTANTS.MARKETING_DEPARTMENT_ID)]}
+                                        'department._id': {$nin: [objectId(CONSTANTS.HR_DEPARTMENT_ID), objectId(CONSTANTS.BUSINESS_DEPARTMENT_ID), objectId(CONSTANTS.MARKETING_DEPARTMENT_ID)]}
                                     }
                                 }], function (err, employees) {
                                 if (err) {

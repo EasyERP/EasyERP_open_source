@@ -140,8 +140,14 @@ define([
                 var nextAction = $.trim($("#nextAction").val());
                 var sourceId = $("#sourceDd").data("id");
                 var referredBy = $.trim($("#referredBy").val());
-                var departmentId = $("#departmentDd").data("id");
-                var jobPositionId = $("#jobPositionDd").data("id");
+                var departmentId = {
+                    _id: $("#departmentsDd").data("id"),
+                    name: $("#departmentsDd").text()
+                };
+                var jobPositionId = {
+                    _id: $("#jobPositionDd").data("id"),
+                    name: $("#jobPositionDd").text()
+                };
                 var jobType = this.$el.find("#jobTypeDd").data("id");
                 var expectedSalary = $.trim($("#expectedSalary").val())
                 var proposedSalary = $.trim($("#proposedSalary").val());
