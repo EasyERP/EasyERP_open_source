@@ -487,7 +487,7 @@ define([
                     changedAttr.project = project;
 
                 } else if (elementType === '#employee') {
-                    tr.find('[data-content="department"]').text(element.department.departmentName);
+                    tr.find('[data-content="department"]').text(element.department.name);
 
                     employee = _.clone(editWtrackModel.get('employee'));
                     department = _.clone(editWtrackModel.get('department'));
@@ -496,7 +496,7 @@ define([
                     employee.name = target.text();
 
                     department._id = element.department._id;
-                    department.departmentName = element.department.departmentName;
+                    department.departmentName = element.department.name;
 
                     changedAttr.employee = employee;
                     changedAttr.department = department;
@@ -710,27 +710,12 @@ define([
                     checkedInputs = $("input.listCB:checked");
 
                     if (checkedInputs.length > 0) {
-                        self.allTotalVals = {
-                            hours: 0,
-                            monHours: 0,
-                            tueHours: 0,
-                            wedHours: 0,
-                            thuHours: 0,
-                            friHours: 0,
-                            satHours: 0,
-                            sunHours: 0,
-                            revenue: 0,
-                            cost: 0,
-                            profit: 0,
-                            amount: 0
-                        };
-
                         $("#top-bar-deleteBtn").show();
                     } else {
                         $("#top-bar-deleteBtn").hide();
                     }
 
-                    allInputs.trigger("change");
+                    self.setAllTotalVals();
 
                     self.genInvoiceEl.hide();
                     self.copyEl.hide();
@@ -1210,63 +1195,43 @@ define([
                 }
             },
 
-            getAutoCalcField: function (e, idTotal, dataRow, operation, money) {
-
-                var row = e.closest('tr');
+            getAutoCalcField: function (idTotal, dataRow, money) {
                 var footerRow = this.$el.find('#listFooter');
 
+                var checkboxes = this.$el.find('#listTable .listCB:checked');
+
                 var totalTd = $(footerRow).find('#' + idTotal);
-                var rowTd = $(row).find('[data-content="' + dataRow + '"]');
-                var rowTdVal = parseFloat(rowTd.text());
+                var rowTdVal = 0;
+                var row;
+                var rowTd;
 
-                var result;
+                $(checkboxes).each(function (index, element) {
+                    row = $(element).closest('tr');
+                    rowTd = row.find('[data-content="' + dataRow + '"]')
 
-                if (operation) {
-                    result = this.allTotalVals[idTotal] + rowTdVal * 100;
-                } else {
-                    result = this.allTotalVals[idTotal] - rowTdVal * 100;
-                }
-
-                this.allTotalVals[idTotal] = result;
+                    rowTdVal += parseFloat(rowTd.html()) * 100;
+                })
 
                 if (money) {
-                    totalTd.text((result / 100).toFixed(2));
+                    totalTd.text((rowTdVal / 100).toFixed(2));
                 } else {
-                    totalTd.text(result / 100);
+                    totalTd.text(rowTdVal / 100);
                 }
             },
 
-            setAllTotalVals: function (e) {
-                e = e.target;
-                var status = e.checked;
-
-                if (status) {
-                    this.getAutoCalcField(e, 'hours', 'worked', true);
-                    this.getAutoCalcField(e, 'monHours', '1', true);
-                    this.getAutoCalcField(e, 'tueHours', '2', true);
-                    this.getAutoCalcField(e, 'wedHours', '3', true);
-                    this.getAutoCalcField(e, 'thuHours', '4', true);
-                    this.getAutoCalcField(e, 'friHours', '5', true);
-                    this.getAutoCalcField(e, 'satHours', '6', true);
-                    this.getAutoCalcField(e, 'sunHours', '7', true);
-                    this.getAutoCalcField(e, 'revenue', 'revenue', true, true);
-                    this.getAutoCalcField(e, 'cost', 'cost', true, true);
-                    this.getAutoCalcField(e, 'profit', 'profit', true, true);
-                    this.getAutoCalcField(e, 'amount', 'amount', true, true);
-                } else {
-                    this.getAutoCalcField(e, 'hours', 'worked');
-                    this.getAutoCalcField(e, 'monHours', '1');
-                    this.getAutoCalcField(e, 'tueHours', '2');
-                    this.getAutoCalcField(e, 'wedHours', '3');
-                    this.getAutoCalcField(e, 'thuHours', '4');
-                    this.getAutoCalcField(e, 'friHours', '5');
-                    this.getAutoCalcField(e, 'satHours', '6');
-                    this.getAutoCalcField(e, 'sunHours', '7');
-                    this.getAutoCalcField(e, 'revenue', 'revenue', false, true);
-                    this.getAutoCalcField(e, 'cost', 'cost', false, true);
-                    this.getAutoCalcField(e, 'profit', 'profit', false, true);
-                    this.getAutoCalcField(e, 'amount', 'amount', false, true);
-                }
+            setAllTotalVals: function () {
+                this.getAutoCalcField('hours', 'worked');
+                this.getAutoCalcField('monHours', '1');
+                this.getAutoCalcField('tueHours', '2');
+                this.getAutoCalcField('wedHours', '3');
+                this.getAutoCalcField('thuHours', '4');
+                this.getAutoCalcField('friHours', '5');
+                this.getAutoCalcField('satHours', '6');
+                this.getAutoCalcField('sunHours', '7');
+                this.getAutoCalcField('revenue', 'revenue', true);
+                this.getAutoCalcField('cost', 'cost', true);
+                this.getAutoCalcField('profit', 'profit', true);
+                this.getAutoCalcField('amount', 'amount', true);
             },
 
             checked: function (e) {
