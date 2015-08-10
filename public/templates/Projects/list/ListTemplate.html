@@ -1,5 +1,5 @@
 <% projectsCollection.forEach(function(project, index){ %>
-<tr data-index="<%= index %>" data-id="<%=project._id%>" class="stage-<%=(project.workflow) ? project.workflow : ''%>">
+<tr data-index="<%= index %>" data-id="<%=project._id%>" class="stage-<%=(project.workflow) ? project.workflow._id : ''%>">
   <td><input type="checkbox" value="<%=project._id%>" class="checkbox" /></td>
   <td><%=startNumber + index + 1 %></td>
   <td><%=project.projectName%></td>

@@ -395,7 +395,7 @@ var Project = function (models, event) {
                                     if (!err) {
                                         var query = models.get(req.session.lastDb, "Project", projectSchema).find().where('_id').in(result);
                                         query.select("projectName projectmanager _id health workflow").
-                                            populate('projectmanager._id', 'name _id').
+                                           // populate('projectmanager._id', 'name _id').
                                             exec(function (error, _res) {
                                                 if (!error) {
                                                     res = {}
@@ -709,9 +709,9 @@ var Project = function (models, event) {
                                 query.select("_id createdBy editedBy workflow projectName health customer progress StartDate EndDate TargetEndDate").
                                     populate('createdBy.user', 'login').
                                     populate('editedBy.user', 'login').
-                                    populate('projectmanager', 'name').
+                                    //populate('projectmanager', 'name').
                                    // populate('customer', 'name').
-                                    //populate('workflow', 'status').
+                                   // populate('workflow._id', 'status').
                                     skip((data.page - 1) * data.count).
                                     limit(data.count).
                                     exec(function (error, _res) {
@@ -804,7 +804,7 @@ var Project = function (models, event) {
                             if (!err) {
                                 var query = models.get(req.session.lastDb, "Project", projectSchema).find().where('_id').in(result);
                                 query.select("_id TargetEndDate projectmanager projectName health").
-                                    populate('projectmanager', 'name _id').
+                                   // populate('projectmanager', 'name _id').
                                     exec(function (error, _res) {
                                         if (!error) {
                                             var endThisWeek = new Date();
@@ -944,7 +944,7 @@ var Project = function (models, event) {
                                     query.where('workflow').in([]);
                                 }
                                 query.select("_id projectName task workflow projectmanager customer health").
-                                    //populate('workflow._id', 'name').
+                                   // populate('workflow._id', 'name').
                                     //populate('projectmanager._id', 'name _id').
                                     //populate('customer._id', 'name').
                                     skip((data.page - 1) * data.count).
@@ -971,17 +971,17 @@ var Project = function (models, event) {
 
     function getById(req, data, response) {
         var query = models.get(req.session.lastDb, 'Project', projectSchema).findById(data.id);
-        query.//populate('projectmanager', 'name _id');
+        //query.//populate('projectmanager', 'name _id');
         //query.populate('customer', 'name _id');
-       // query.populate('workflow').
-            populate('bonus.employeeId', '_id name').
-            populate('bonus.bonusId', '_id name').
-            populate('createdBy.user', '_id login').
-            populate('editedBy.user', '_id login').
-            populate('groups.owner', '_id name').
-            populate('groups.users', '_id login').
-            populate('groups.group', '_id departmentName').
-            populate('groups.owner', '_id login');
+        //query.//populate('workflow').
+        //    populate('bonus.employeeId', '_id name').
+        //    populate('bonus.bonusId', '_id name').
+        //    populate('createdBy.user', '_id login').
+        //    populate('editedBy.user', '_id login').
+        //    populate('groups.owner', '_id name').
+        //    populate('groups.users', '_id login').
+        //    populate('groups.group', '_id departmentName').
+        //    populate('groups.owner', '_id login');
         query.exec(function (err, project) {
             if (err) {
                 logWriter.log("Project.js getProjectById project.find " + err);
@@ -1260,12 +1260,14 @@ var Project = function (models, event) {
             }
         }
         if (data.workflow && data.workflow._id) {
-            data.workflow = data.workflow._id;
+            data.workflow._id = data.workflow._id;
+            data.workflow.name = data.workflow.name;
         }
         if (data.workflowForList || data.workflowForKanban) {//may be for delete
             data = {
                 $set: {
-                    workflow: data.workflow
+                    'workflow._id': data.workflow._id,
+                    'workflow.name': data.workflow.name
                 }
             };
         }
@@ -1684,7 +1686,7 @@ var Project = function (models, event) {
             populate('editedBy.user').
             populate('groups.users').
             populate('groups.group').
-            populate('workflow').
+            //populate('workflow._id').
             exec(function (err, task) {
                 if (err) {
                     console.log(err);
@@ -1774,7 +1776,7 @@ var Project = function (models, event) {
                                 query.select("_id assignedTo workflow editedBy.date project taskCount summary type remaining priority sequence").
                                     populate('assignedTo', 'name').
                                     populate('project', 'projectShortDesc').
-                                    populate('workflow', '_id').
+                                   // populate('workflow._id', '_id').
                                     sort({'sequence': -1}).
                                     limit(req.session.kanbanSettings.tasks.countPerPage).
                                     exec(function (err, result) {
@@ -1897,7 +1899,7 @@ var Project = function (models, event) {
                                     populate('assignedTo', 'name').
                                     populate('editedBy.user', 'login').
                                     populate('createdBy.user', 'login').
-                                    populate('workflow', 'name _id status').
+                                    //populate('workflow._id', 'name _id status').
                                     skip((data.page - 1) * data.count).
                                     limit(data.count).
                                     exec(function (err, result) {

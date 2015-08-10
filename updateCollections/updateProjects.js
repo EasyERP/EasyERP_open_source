@@ -103,7 +103,7 @@ query.exec(function (error, _res) {
                 },
                 projectmanager: {
                     _id: proj.projectmanager._id,
-                    name: proj.projectmanager.name.first + ' ' + proj.projectmanager.name
+                    name: proj.projectmanager.name.first + ' ' + proj.projectmanager.name.last
                 },
                 workflow: {
                     _id: proj.workflow._id,

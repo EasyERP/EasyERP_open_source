@@ -214,7 +214,7 @@ define([
                             if (projectmanager)
                                 common.getImagesPM([projectmanager], "/getEmployeesImages", "#" + self.currentModel.toJSON()._id);
                         }
-                        if (data.workflow != workflowStart) {
+                        if (data.workflow._id != workflowStart._id) {
                             var filter = window.location.hash.split('filter=')[1];
                             var url = "#easyErp/Projects/thumbnails";
                             if (filter)
@@ -322,19 +322,19 @@ define([
                 populate.get2name("#customerDd", "/Customer", {}, this, false, true);
                 populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/WorkflowsForDd", { id: "Projects" }, "name", this);
                 var model = this.currentModel.toJSON();
-                if (model.groups)
-                    if (model.groups.users.length > 0 || model.groups.group.length) {
-                        $(".groupsAndUser").show();
-                        model.groups.group.forEach(function (item) {
-                            $(".groupsAndUser").append("<tr data-type='targetGroups' data-id='" + item._id + "'><td>" + item.departmentName + "</td><td class='text-right'></td></tr>");
-                            $("#targetGroups").append("<li id='" + item._id + "'>" + item.departmentName + "</li>");
-                        });
-                        model.groups.users.forEach(function (item) {
-                            $(".groupsAndUser").append("<tr data-type='targetUsers' data-id='" + item._id + "'><td>" + item.login + "</td><td class='text-right'></td></tr>");
-                            $("#targetUsers").append("<li id='" + item._id + "'>" + item.login + "</li>");
-                        });
-
-                    }
+                //if (model.groups)
+                //    if (model.groups.users.length > 0 || model.groups.group.length) {
+                //        $(".groupsAndUser").show();
+                //        model.groups.group.forEach(function (item) {
+                //            $(".groupsAndUser").append("<tr data-type='targetGroups' data-id='" + item._id + "'><td>" + item.departmentName + "</td><td class='text-right'></td></tr>");
+                //            $("#targetGroups").append("<li id='" + item._id + "'>" + item.departmentName + "</li>");
+                //        });
+                //        model.groups.users.forEach(function (item) {
+                //            $(".groupsAndUser").append("<tr data-type='targetUsers' data-id='" + item._id + "'><td>" + item.login + "</td><td class='text-right'></td></tr>");
+                //            $("#targetUsers").append("<li id='" + item._id + "'>" + item.login + "</li>");
+                //        });
+                //
+                //    }
                 $('#StartDate').datepicker({
                     dateFormat: "d M, yy",
                     changeMonth: true,
