@@ -53,6 +53,20 @@ define([
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
                 this.contentCollection = contentCollection;
                 this.stages = [];
+                this.allTotalVals = {
+                    hours: 0,
+                    monHours: 0,
+                    tueHours: 0,
+                    wedHours: 0,
+                    thuHours: 0,
+                    friHours: 0,
+                    satHours: 0,
+                    sunHours: 0,
+                    revenue: 0,
+                    cost: 0,
+                    profit: 0,
+                    amount: 0
+                }
             },
 
             events: {
@@ -77,7 +91,8 @@ define([
                 "change .editable ": "setEditable",
                 "keydown input.editing ": "keyDown",
                 "click .saveFilterButton": "saveFilter",
-                "click .removeFilterButton": "removeFilter"
+                "click .removeFilterButton": "removeFilter",
+                "change .listCB": "setAllTotalVals"
             },
 
             keyDown: function (e) {
@@ -136,7 +151,7 @@ define([
 
                 var selectedWtrack = this.$el.find('input.listCB:checked:not(#check_all)')[0];
                 var self = this;
-                var target =  $(selectedWtrack);
+                var target = $(selectedWtrack);
                 var id = target.val();
                 var row = target.closest('tr');
                 var model = self.collection.get(id);
@@ -159,7 +174,7 @@ define([
                     this.changedModels[cid] = model;
                 }
 
-                this.$el.find('#listTable').prepend('<tr id="false" data-id="'+ cid +'">' + row.html() + '</tr>');
+                this.$el.find('#listTable').prepend('<tr id="false" data-id="' + cid + '">' + row.html() + '</tr>');
                 row = this.$el.find('#false');
 
                 tdsArr = row.find('td');
@@ -511,14 +526,14 @@ define([
             saveItem: function () {
                 var model;
 
-                var errors= this.$el.find('.errorContent');
+                var errors = this.$el.find('.errorContent');
 
                 for (var id in this.changedModels) {
                     model = this.editCollection.get(id);
                     model.changed = this.changedModels[id];
                 }
 
-                if(errors.length){
+                if (errors.length) {
                     return
                 }
                 this.editCollection.save();
@@ -665,6 +680,8 @@ define([
                 var currentEl = this.$el;
                 var pagenation;
                 var FilterView;
+                var checkedInputs;
+                var allInputs;
 
                 currentEl.html('');
                 currentEl.append(_.template(listTemplate));
@@ -688,12 +705,32 @@ define([
                 currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
                 $('#check_all').click(function () {
-                    $(':checkbox').prop('checked', this.checked);
-                    if ($("input.checkbox:checked").length > 0) {
+                    allInputs = $('.listCB');
+                    allInputs.prop('checked', this.checked);
+                    checkedInputs = $("input.listCB:checked");
+
+                    if (checkedInputs.length > 0) {
+                        self.allTotalVals = {
+                            hours: 0,
+                            monHours: 0,
+                            tueHours: 0,
+                            wedHours: 0,
+                            thuHours: 0,
+                            friHours: 0,
+                            satHours: 0,
+                            sunHours: 0,
+                            revenue: 0,
+                            cost: 0,
+                            profit: 0,
+                            amount: 0
+                        };
+
                         $("#top-bar-deleteBtn").show();
                     } else {
                         $("#top-bar-deleteBtn").hide();
                     }
+
+                    allInputs.trigger("change");
 
                     self.genInvoiceEl.hide();
                     self.copyEl.hide();
@@ -731,10 +768,10 @@ define([
 
                 dataService.getData('/wTrack/getFilterValues', null, function (values) {
                     /*values[0].departments = _.map(values[0].departments, function (department) {
-                        department.name = department.departmentName;
+                     department.name = department.departmentName;
 
-                        return department
-                    });*/
+                     return department
+                     });*/
 
                     FilterView = new filterView({
                         //collection: values[0].departments,
@@ -905,7 +942,8 @@ define([
             },
 
             showFilteredPage: function () {
-                var itemsNumber = $("#itemsNumber").text();;
+                var itemsNumber = $("#itemsNumber").text();
+                ;
                 var checkedElements = this.$el.find('input:checkbox:checked');
                 var chosen = this.$el.find('.chosen');
 
@@ -946,18 +984,18 @@ define([
                             mid: mid
                         },
                         wait: true,
-                        patch:true,
+                        patch: true,
                         validate: false,
                         success: function (model) {
                             console.log('Filter was saved to db');
                         },
-                        error: function (model,xhr) {
+                        error: function (model, xhr) {
                             console.error(xhr);
                         },
                         editMode: false
                     }
                 );
-                if (!App.currentUser.savedFilters){
+                if (!App.currentUser.savedFilters) {
                     App.currentUser.savedFilters = {};
                 }
                 App.currentUser.savedFilters['wTrack'] = filterObj.filter;
@@ -983,12 +1021,12 @@ define([
                             mid: mid
                         },
                         wait: true,
-                        patch:true,
+                        patch: true,
                         validate: false,
                         success: function (model) {
                             console.log('Filter was remover from db');
                         },
-                        error: function (model,xhr) {
+                        error: function (model, xhr) {
                             console.error(xhr);
                         },
                         editMode: false
@@ -997,7 +1035,7 @@ define([
 
                 this.clearFilter();
 
-                if (App.currentUser.savedFilters['wTrack']){
+                if (App.currentUser.savedFilters['wTrack']) {
                     delete App.currentUser.savedFilters['wTrack'];
                 }
             },
@@ -1144,7 +1182,7 @@ define([
                 var projectContainer = tr.find('td[data-content="project"]');
                 var projectId = projectContainer.data('id');
 
-                if(checkLength === 1){
+                if (checkLength === 1) {
                     this.copyEl.show();
                 } else {
                     this.copyEl.hide();
@@ -1172,14 +1210,73 @@ define([
                 }
             },
 
+            getAutoCalcField: function (e, idTotal, dataRow, operation, money) {
+
+                var row = e.closest('tr');
+                var footerRow = this.$el.find('#listFooter');
+
+                var totalTd = $(footerRow).find('#' + idTotal);
+                var rowTd = $(row).find('[data-content="' + dataRow + '"]');
+                var rowTdVal = parseFloat(rowTd.text());
+
+                var result;
+
+                if (operation) {
+                    result = this.allTotalVals[idTotal] + rowTdVal * 100;
+                } else {
+                    result = this.allTotalVals[idTotal] - rowTdVal * 100;
+                }
+
+                this.allTotalVals[idTotal] = result;
+
+                if (money) {
+                    totalTd.text((result / 100).toFixed(2));
+                } else {
+                    totalTd.text(result / 100);
+                }
+            },
+
+            setAllTotalVals: function (e) {
+                e = e.target;
+                var status = e.checked;
+
+                if (status) {
+                    this.getAutoCalcField(e, 'hours', 'worked', true);
+                    this.getAutoCalcField(e, 'monHours', '1', true);
+                    this.getAutoCalcField(e, 'tueHours', '2', true);
+                    this.getAutoCalcField(e, 'wedHours', '3', true);
+                    this.getAutoCalcField(e, 'thuHours', '4', true);
+                    this.getAutoCalcField(e, 'friHours', '5', true);
+                    this.getAutoCalcField(e, 'satHours', '6', true);
+                    this.getAutoCalcField(e, 'sunHours', '7', true);
+                    this.getAutoCalcField(e, 'revenue', 'revenue', true, true);
+                    this.getAutoCalcField(e, 'cost', 'cost', true, true);
+                    this.getAutoCalcField(e, 'profit', 'profit', true, true);
+                    this.getAutoCalcField(e, 'amount', 'amount', true, true);
+                } else {
+                    this.getAutoCalcField(e, 'hours', 'worked');
+                    this.getAutoCalcField(e, 'monHours', '1');
+                    this.getAutoCalcField(e, 'tueHours', '2');
+                    this.getAutoCalcField(e, 'wedHours', '3');
+                    this.getAutoCalcField(e, 'thuHours', '4');
+                    this.getAutoCalcField(e, 'friHours', '5');
+                    this.getAutoCalcField(e, 'satHours', '6');
+                    this.getAutoCalcField(e, 'sunHours', '7');
+                    this.getAutoCalcField(e, 'revenue', 'revenue', false, true);
+                    this.getAutoCalcField(e, 'cost', 'cost', false, true);
+                    this.getAutoCalcField(e, 'profit', 'profit', false, true);
+                    this.getAutoCalcField(e, 'amount', 'amount', false, true);
+                }
+            },
+
             checked: function (e) {
 
                 if (this.collection.length > 0) {
-                    var checkLength = $("input.checkbox:checked").length;
+                    var checkLength = $("input.listCB:checked").length;
 
                     this.checkProjectId(e, checkLength);
 
-                    if ($("input.checkbox:checked").length > 0) {
+                    if (checkLength > 0) {
                         $("#top-bar-deleteBtn").show();
                         if (checkLength === this.collection.length) {
                             $('#check_all').prop('checked', true);
@@ -1342,7 +1439,7 @@ define([
                     }
                 });
 
-                if(this.createdCopied){
+                if (this.createdCopied) {
                     copiedCreated = this.$el.find('#false');
                     dataId = copiedCreated.data('id');
                     this.editCollection.remove(dataId);

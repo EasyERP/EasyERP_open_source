@@ -150,14 +150,20 @@ define([
                 var relatedUser = this.$el.find("#relatedUsersDd").data("id");
                 relatedUser = relatedUser ? relatedUser : null;
 
-                var department = this.$el.find("#departmentsDd").data("id");
-                department = department ? department : null;
+                var department = {
+                    _id: this.$el.find("#departmentsDd").data("id") ? this.$el.find("#departmentsDd").data("id") : null,
+                    name: this.$el.find("#departmentsDd").text() ? this.$el.find("#departmentsDd").text() : null
+                };
 
-                var jobPosition = this.$el.find("#jobPositionDd").data("id");
-                jobPosition = jobPosition ? jobPosition : null;
+                var jobPosition = {
+                    _id: this.$el.find("#jobPositionDd").data("id") ? this.$el.find("#jobPositionDd").data("id") : null,
+                    name: this.$el.find("#jobPositionDd").text() ? this.$el.find("#jobPositionDd").text() : null
+                };
 
-                var manager = this.$el.find("#projectManagerDD").data("id");
-                manager = manager ? manager : null;
+                var manager = {
+                    _id: this.$el.find("#projectManagerDD").data("id") ? this.$el.find("#projectManagerDD").data("id") : null,
+                    name: this.$el.find("#projectManagerDD").text() ? this.$el.find("#projectManagerDD").text() : null
+                };
 
                 var coach = $.trim(this.$el.find("#coachDd").data("id"));
                 coach = coach ? coach : null;

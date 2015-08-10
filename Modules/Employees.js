@@ -50,7 +50,7 @@ var Employee = function (event, models) {
 
                     if (data.filter.department) {
                         var arrOfObjectId = data.filter.department.objectID();
-                        condition.push({ 'department': {$in: arrOfObjectId}});
+                        condition.push({ 'department._id': {$in: arrOfObjectId}});
                     }
                     if (data.filter.Name) {
                         condition.push({ 'name.last': {$in: data.filter.Name}});
@@ -565,16 +565,23 @@ var Employee = function (event, models) {
                         condition = optionsObject['$and'][1]['$and'];
                     }
 
-                    if (data.filter.department) {
+                    if (data.filter.Department) {
                         var arrOfObjectId = data.filter.department.objectID();
-                        condition.push({ 'department': {$in: arrOfObjectId}});
+                        condition.push({ 'department._id': {$in: arrOfObjectId}});
                     }
+
                     if (data.filter.Name) {
-                        condition.push({ 'name.last': {$in: data.filter.Name}});
+                        condition.push({ '_id': {$in: data.filter.Name.objectID()}});
                     }
-                    if (data.filter.Email) {
-                        condition.push({ 'workEmail': {$in: data.filter.Email}});
+
+                    if (data.filter.jobPosition) {
+                        condition.push({ 'jobPosition._id': {$in: data.filter.jobPosition.objectID()}});
                     }
+
+                    if (data.filter.manager) {
+                        condition.push({ 'manager._id': {$in: data.filter.manager.objectID()}});
+                    }
+
 
                     if (!condition.length) {
                         optionsObject['$and'].pop();
@@ -691,17 +698,13 @@ var Employee = function (event, models) {
                                                 }
 
                                                 query.select('_id name createdBy editedBy department jobPosition manager dateBirth skype workEmail workPhones jobType').
-                                                    populate('manager', 'name').
-                                                    populate('jobPosition', 'name').
                                                     populate('createdBy.user', 'login').
-                                                    populate('department', 'departmentName').
                                                     populate('editedBy.user', 'login');
                                             }
                                                 break;
                                             case ('thumbnails'): {
                                                 query.select('_id name dateBirth age jobPosition relatedUser workPhones.mobile').
-                                                    populate('relatedUser', 'login').
-                                                    populate('jobPosition', 'name');
+                                                    populate('relatedUser', 'login')
                                             }
                                                 break;
 
@@ -725,10 +728,7 @@ var Employee = function (event, models) {
                                                     query.sort({ "editedBy.date": -1 });
                                                 }
                                                 query.select('_id name createdBy editedBy jobPosition manager workEmail workPhones creationDate workflow personalEmail department jobType sequence').
-                                                    populate('manager', 'name').
-                                                    populate('jobPosition', 'name').
                                                     populate('createdBy.user', 'login').
-                                                    populate('department', 'departmentName').
                                                     populate('editedBy.user', 'login').
                                                     populate('workflow', 'name status');
                                             }
@@ -920,7 +920,6 @@ var Employee = function (event, models) {
                                 models.get(req.session.lastDb, "Employees", employeeSchema).
                                     where('_id').in(responseOpportunities).
                                     select("_id name proposedSalary jobPosition nextAction workflow editedBy.date sequence").
-                                    populate('jobPosition', 'name').
                                     populate('workflow', '_id').
                                     sort({ 'sequence': -1 }).
                                     limit(req.session.kanbanSettings.applications.countPerPage).
@@ -955,11 +954,8 @@ var Employee = function (event, models) {
             data[i] = req.query[i];
         }
         var query = models.get(req.session.lastDb, "Employees", employeeSchema).findById(data.id);
-        query.populate('manager', 'name _id');
-        query.populate('department', 'departmentName _id');
         query.populate('coach', 'name _id');
         query.populate('relatedUser', 'login _id');
-        query.populate('jobPosition', 'name _id');
         query.populate('workflow').
             populate('createdBy.user').
             populate('editedBy.user').

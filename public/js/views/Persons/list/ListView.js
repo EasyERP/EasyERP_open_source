@@ -426,9 +426,6 @@ define([
                 var itemsNumber = $("#itemsNumber").text();
                 var alphaBet = this.$el.find('#startLetter');
                 var selectedLetter = $(alphaBet).find('.current').length ? $(alphaBet).find('.current')[0].text : '';
-                var self = this;
-
-                var checkedElements = this.$el.find('input:checkbox:checked');
                 var chosen = this.$el.find('.chosen');
 
                 var logicAndStatus = this.$el.find('#logicCondition')[0].checked;

@@ -103,10 +103,28 @@ var Employee = function (models) {
                     $group: {
                         _id: null,
                         'Name': {
-                            $addToSet: '$name.last'
+                            $addToSet: {
+                                _id: '$_id',
+                                name: '$name.last'
+                            }
                         },
-                        'Email': {
-                            $addToSet: '$workEmail'
+                        'Department': {
+                            $addToSet: {
+                                _id: '$department._id',
+                                name: '$department.name'
+                            }
+                        },
+                        jobPosition: {
+                            $addToSet: {
+                                _id: '$jobPosition._id',
+                                name: '$jobPosition.name'
+                            }
+                        },
+                        manager: {
+                            $addToSet: {
+                                _id: '$manager._id',
+                                name: '$manager.name'
+                            }
                         }
                     }
                 }
@@ -118,10 +136,24 @@ var Employee = function (models) {
                 _.map(result[0], function(value, key) {
                     switch (key) {
                         case 'Name':
-                            result[0][key] = _.sortBy(value, function (num) { return num});
+                            result[0][key] = _.sortBy(value, 'name');
                             break;
-                        case  'Email':
-                            result[0][key] = _.sortBy(value, function (num) { return num});
+                        case 'Department':
+                            result[0][key] = _.sortBy(value, 'name');
+                            break;
+                        case 'jobPosition':
+                            result[0][key] = {
+                                displayName: 'Job Position',
+                                values: _.sortBy(value, 'name')
+                            };
+                            break;
+                        case 'manager':
+                            result[0][key] = {
+                                displayName: 'Manager',
+                                values: _.filter(value, function(num) {
+                                    return num._id !== undefined;
+                                })
+                            };
                             break;
 
                     }

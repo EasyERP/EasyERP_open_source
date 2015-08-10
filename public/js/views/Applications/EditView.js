@@ -173,11 +173,16 @@
                    var viewType = custom.getCurrentVT();
                    var relatedUser = this.$el.find("#relatedUsersDd option:selected").val();
                    relatedUser = relatedUser ? relatedUser : null;
-                   var department = this.$el.find("#departmentDd").data("id");
-                   department = department ? department : null;
+                   var department = {
+                       _id: this.$el.find("#departmentsDd").data("id") ? this.$el.find("#departmentsDd").data("id") : null,
+                       name: this.$el.find("#departmentsDd").text() ? this.$el.find("#departmentsDd").text() : null
+                   };
                    var dateBirthSt = $.trim(this.$el.find("#dateBirth").val());
                    var nextAction = $.trim(this.$el.find("#nextAction").val());
-                   var jobPositionId = this.$el.find("#jobPositionDd").data("id") ? this.$el.find("#jobPositionDd").data("id") : null;
+                   var jobPositionId = {
+                       _id: this.$el.find("#jobPositionDd").data("id") ? this.$el.find("#jobPositionDd").data("id") : null,
+                       name: this.$el.find("#jobPositionDd").text() ? this.$el.find("#jobPositionDd").text() : null
+                   };
                    var usersId = [];
                    var groupsId = [];
                    $(".groupsAndUser tr").each(function () {

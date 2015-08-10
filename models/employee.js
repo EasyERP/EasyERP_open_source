@@ -35,8 +35,14 @@ module.exports = (function () {
             _id: {type: ObjectId, ref: 'Department', default: null},
             name: String
         },
-        jobPosition: { type: ObjectId, ref: 'JobPosition', default: null },
-        manager: { type: ObjectId, ref: 'Employees', default: null },
+        jobPosition: {
+            _id: {type: ObjectId, ref: 'JobPosition', default: null},
+            name: String
+        },
+        manager: {
+            _id: {type: ObjectId, ref: 'Employees', default: null},
+            name: String
+        },
         coach: { type: ObjectId, ref: 'Employees', default: null },
         nationality: { type: String, default: '' },
         identNo: String,

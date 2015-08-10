@@ -155,8 +155,8 @@
                     var query = models.get(req.session.lastDb, "Employees", employeeSchema).find();
                     query.where('_id').in(res).
 	                    select('_id name dateBirth age jobPosition workPhones.mobile department').
-	                	populate('jobPosition', 'name').
-						populate('department', 'departmentName').
+	                	//populate('jobPosition', 'name').
+						//populate('department', 'departmentName').
                         exec(function (error, ress) {
                             if (error) {
                                 console.log(error);

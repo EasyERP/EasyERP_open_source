@@ -7,10 +7,11 @@ define([
         'collections/Employees/filterCollection',
         'models/UsersModel',
         'common',
-        'dataService'
+        'dataService',
+        'custom'
     ],
 
-    function (listTemplate, createView, listItemView, filterView, aphabeticTemplate, contentCollection, usersModel, common, dataService) {
+    function (listTemplate, createView, listItemView, filterView, aphabeticTemplate, contentCollection, usersModel, common, dataService, custom) {
         var EmployeesListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -350,51 +351,28 @@ define([
             //modified for filter Vasya
             showFilteredPage: function (e) {
                 var itemsNumber = $("#itemsNumber").text();
-                var selectedLetter;
-                var self = this;
+                var alphaBet = this.$el.find('#startLetter');
+                var selectedLetter = $(alphaBet).find('.current').length ? $(alphaBet).find('.current')[0].text : '';
                 var chosen = this.$el.find('.chosen');
-                var checkedElements = $('.drop-down-filter input:checkbox:checked');
-                var condition = this.$el.find('.conditionAND > input')[0];
-                var showList;
+
+                var logicAndStatus = this.$el.find('#logicCondition')[0].checked;
+                var defaultFilterStatus = this.$el.find('#defaultFilter')[0].checked;
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
-                this.filter ={};
-                this.filter['condition'] = 'and';
 
-                if  (condition && !condition.checked) {
-                    self.filter['condition'] = 'or';
+                if (selectedLetter === "All") {
+                    selectedLetter = '';
                 }
 
-                if (e && e.target) {
-                    selectedLetter = $(e.target).text();
-                    if ($(e.target).text() == "All") {
-                        selectedLetter = "";
-                    }
-                }
+                this.filter = custom.getFiltersValues(chosen, defaultFilterStatus, logicAndStatus);
 
-                if (chosen) {
-                    chosen.each(function (index, elem) {
-                        if (self.filter[elem.children[1].value]) {
-                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
-                                self.filter[elem.children[1].value].push(element.value);
-                            })
-                        } else {
-                            self.filter[elem.children[1].value] = [];
-                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
-                                self.filter[elem.children[1].value].push(element.value);
-                            })
-                        }
-                    });
-                }
+
                 this.startTime = new Date();
                 this.newCollection = false;
 
-                if ((checkedElements.length && checkedElements.attr('id') === 'defaultFilter') || (!chosen.length && !showList)) {
-                    self.filter = 'empty';
-                };
-
                 this.filter['letter'] = selectedLetter;
+
                 this.changeLocationHash(1, itemsNumber, this.filter);
                 this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter });
                 this.getTotalLength(null, itemsNumber, this.filter);
