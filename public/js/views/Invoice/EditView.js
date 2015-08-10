@@ -10,9 +10,10 @@ define([
         "dataService",
         "populate",
         'constants',
-        'helpers'
+        'helpers',
+        'async'
     ],
-    function (EditTemplate, AssigneesView, InvoiceItemView, wTrackRows, PaymentCreateView, listHederInvoice, common, Custom, dataService, populate, CONSTANTS, helpers) {
+    function (EditTemplate, AssigneesView, InvoiceItemView, wTrackRows, PaymentCreateView, listHederInvoice, common, Custom, dataService, populate, CONSTANTS, helpers, async) {
 
         var EditView = Backbone.View.extend({
             contentType: "Invoice",
@@ -43,7 +44,7 @@ define([
                     this.render();
                 }
 
-               /* this.render();*/
+                /* this.render();*/
             },
 
             events: {
@@ -305,24 +306,116 @@ define([
                 holder.text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
             },
 
+            updateAfterDelete: function () {
+
+
+            },
+
+            updatePayment: function () {
+                var paymentId = this.currentModel.attributes.payments[0]['_id'];
+                var data = {};
+                data._id = paymentId;
+                data.paidAmount = self.currentModel.attributes.payments[0]['paidAmount'];
+
+                $.ajax({
+                    url: 'payment/updatePayment',
+                    data: data,
+                    type: 'PATCH',
+                    success: function (response) {
+                        console.log('updated')
+                    },
+                    error: function (jxhr) {
+                        console.log(jxhr)
+                    }
+                });
+            },
+
+            updateWTrack: function () {
+                var wTrackArray;
+                wTrackArray = this.currentModel.attributes.products;
+
+                $.ajax({
+                    url: 'wTrack/updateWTrack',
+                    data: wTrackArray,
+                    type: 'PATCH',
+                    success: function (response) {
+                        console.log('wTrack updated')
+                    },
+                    error: function (jxhr) {
+                        console.log(jxhr)
+                    }
+                });
+
+            },
+
 
             deleteItem: function (event) {
 
                 event.preventDefault();
                 var self = this;
                 var answer = confirm("Realy DELETE items ?!");
-                if (answer == true) {
-                    this.currentModel.destroy({
-                        success: function () {
-                            $('.edit-invoice-dialog').remove();
-                            Backbone.history.navigate("easyErp/" + self.contentType, {trigger: true});
-                        },
-                        error: function (model, err) {
-                            if (err.status === 403) {
-                                alert("You do not have permission to perform this action");
-                            }
+                if (answer === true) {
+                    function updatePayment() {
+                        var paymentId = self.currentModel.attributes.payments[0]['_id'];
+                        var data = {};
+                        data._id = paymentId;
+                        data.paidAmount = self.currentModel.attributes.payments[0]['paidAmount'];
+
+                        //$.ajax({
+                        //    url: 'payment/updatePayment',
+                        //    data: data,
+                        //    type: 'PATCH',
+                        //    success: function (response) {
+                        //        console.log('updated')
+                        //    },
+                        //    error: function (jxhr) {
+                        //        console.log(jxhr)
+                        //    }
+                        //});
+                    };
+
+                    function updateWTrack() {
+                        var wTrackArray;
+                        wTrackArray = self.currentModel.attributes.products;
+                        async.each(wTrackArray, function (wTrack) {
+                            var wTrackId = wTrack.product._id;
+                            var data = {};
+                            data._id = wTrackId;
+                            //$.ajax({
+                            //    url: 'wTrack/updateWTrack',
+                            //    data: data,
+                            //    type: 'PATCH',
+                            //    success: function (response) {
+                            //        console.log('wTrack updated')
+                            //    },
+                            //    error: function (jxhr) {
+                            //        console.log(jxhr)
+                            //    }
+                            //})
+                        })
+                    };
+                    async.parallel([updatePayment, updateWTrack], function (err, result) {
+                        if (err) {
+                            return console.log(err);
                         }
+
+                        console.log('success')
                     });
+
+
+                    //this.currentModel.destroy({
+                    //    success: function () {
+                    //        $('.edit-invoice-dialog').remove();
+                    //        Backbone.history.navigate("easyErp/" + self.contentType, {trigger: true});
+                    //
+                    //
+                    //    },
+                    //    error: function (model, err) {
+                    //        if (err.status === 403) {
+                    //            alert("You do not have permission to perform this action");
+                    //        }
+                    //    }
+                    //});
                 }
 
             },
@@ -365,7 +458,7 @@ define([
                     currencySplitter: helpers.currencySplitter
                 });
 
-                if(this.isWtrack){
+                if (this.isWtrack) {
                     buttons = [
                         {
                             text: "Cancel",
@@ -404,7 +497,7 @@ define([
                     resizable: true,
                     dialogClass: "edit-invoice-dialog",
                     title: "Edit Invoice",
-                    width: self.isWtrack ? '1200': '900',
+                    width: self.isWtrack ? '1200' : '900',
                     position: {my: "center bottom", at: "center", of: window},
                     buttons: buttons
 

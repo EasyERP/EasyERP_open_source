@@ -551,6 +551,52 @@ var Payment = function (models) {
 
     };
 
+    this.updatePayment = function (req, res, next) {
+        var body = req.body;
+        var uId;
+        var Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
+        var data = {};
+
+        var moduleId = returnModuleId(req);
+
+        if (req.session && req.session.loggedIn && req.session.lastDb) {
+            uId = req.session.uId;
+            access.getEditWritAccess(req, req.session.uId, moduleId, function (access) {
+                if (access) {
+                        var id = body._id;
+
+                        data.editedBy = {
+                            user: uId,
+                            date: new Date().toISOString()
+                        };
+
+
+                        Payment.find({_id: id}, function (err, result) {
+                        if (err) {
+                            return next(err);
+                        }
+                            var paidAmount = result[0].paidAmount;
+
+                            if (paidAmount === parseInt(body.paidAmount)){
+                                data['workflow'] = 'Draft';
+                                Payment.findByIdAndUpdate(id, {$set: data}, function (err, result){
+                                    if (err) {
+                                        return next(err);
+                                    }
+
+                                    res.status(200).send({success: 'updated as Unpaid'});
+                                });
+                            }
+                    });
+                } else {
+                    res.status(403).send();
+                }
+            });
+        } else {
+            res.status(401).send();
+        }
+    };
+
 };
 
 module.exports = Payment;

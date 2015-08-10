@@ -114,7 +114,7 @@ var wTrack = function (models) {
             for (var i = array.length - 1; i >= 0; i--) {
                 array[i] = parseInt(array[i]);
             }
-        } else  if (type === 'boolean') {
+        } else if (type === 'boolean') {
             for (var i = array.length - 1; i >= 0; i--) {
                 if (array[i] === 'true') {
                     array[i] = true;
@@ -131,50 +131,51 @@ var wTrack = function (models) {
         var condition;
         var resArray = [];
 
-        for (var key in filter){
+        for (var key in filter) {
             condition = filter[key];
 
             switch (key) {
                 case 'projectmanagers':
-                    resArray.push({ 'project.projectmanager._id': {$in: condition.objectID()}});
+                    resArray.push({'project.projectmanager._id': {$in: condition.objectID()}});
                     break;
                 case 'projectsname':
-                    resArray.push({ 'project._id': {$in: condition.objectID()}});
+                    resArray.push({'project._id': {$in: condition.objectID()}});
                     break;
                 case 'workflows':
-                    resArray.push({ 'project.workflow': {$in: condition.objectID()}});
+                    resArray.push({'project.workflow': {$in: condition.objectID()}});
                     break;
                 case 'customers':
-                    resArray.push({ 'project.customer._id': {$in: condition.objectID()}});
+                    resArray.push({'project.customer._id': {$in: condition.objectID()}});
                     break;
                 case 'employees':
-                    resArray.push({ 'employee._id': {$in: condition.objectID()}});
+                    resArray.push({'employee._id': {$in: condition.objectID()}});
                     break;
                 case 'departments':
-                    resArray.push({ 'department._id': {$in: condition.objectID()}});
+                    resArray.push({'department._id': {$in: condition.objectID()}});
                     break;
                 case 'years':
                     ConvertType(condition, 'integer');
 
-                    resArray.push({ 'year': {$in: condition}});
+                    resArray.push({'year': {$in: condition}});
                     break;
                 case 'months':
                     ConvertType(condition, 'integer');
 
-                    resArray.push({ 'month': {$in: condition}});
+                    resArray.push({'month': {$in: condition}});
                     break;
                 case 'weeks':
                     ConvertType(condition, 'integer');
 
-                    resArray.push({ 'week': {$in: condition}});
+                    resArray.push({'week': {$in: condition}});
                     break;
                 case 'isPaid':
                     ConvertType(condition, 'boolean');
 
-                    resArray.push({ 'isPaid': {$in: condition}});
+                    resArray.push({'isPaid': {$in: condition}});
                     break;
             }
-        };
+        }
+        ;
 
         return resArray;
     };
@@ -306,7 +307,7 @@ var wTrack = function (models) {
             } else {
                 queryObject['$and'] = caseFilter(filter);
             }
-       }
+        }
 
         var count = query.count ? query.count : 50;
         var page = query.page;
@@ -565,7 +566,7 @@ var wTrack = function (models) {
 
         WTrack.aggregate([
             {
-                $group:{
+                $group: {
                     _id: null,
                     projectmanagers: {
                         $addToSet: '$project.projectmanager'
@@ -594,9 +595,9 @@ var wTrack = function (models) {
                     weeks: {
                         $addToSet: '$week'
                     }/*,
-                    isPaid: {
-                        $addToSet: '$isPaid'
-                    }*/
+                     isPaid: {
+                     $addToSet: '$isPaid'
+                     }*/
                 }
             }
         ], function (err, result) {
@@ -604,7 +605,7 @@ var wTrack = function (models) {
                 return next(err);
             }
 
-            _.map(result[0], function(value, key) {
+            _.map(result[0], function (value, key) {
                 switch (key) {
                     case 'projectmanagers':
                         result[0][key] = {
@@ -633,19 +634,25 @@ var wTrack = function (models) {
                     case 'months':
                         result[0][key] = {
                             displayName: 'Months',
-                            values: _.sortBy(value, function (num) { return num})
+                            values: _.sortBy(value, function (num) {
+                                return num
+                            })
                         };
                         break;
                     case 'years':
                         result[0][key] = {
                             displayName: 'Years',
-                            values: _.sortBy(value, function (num) { return num})
+                            values: _.sortBy(value, function (num) {
+                                return num
+                            })
                         };
                         break;
                     case 'weeks':
                         result[0][key] = {
                             displayName: 'Weeks',
-                            values: _.sortBy(value, function (num) { return num})
+                            values: _.sortBy(value, function (num) {
+                                return num
+                            })
                         };
                         break;
                     case 'departments':
@@ -665,6 +672,39 @@ var wTrack = function (models) {
             res.status(200).send(result);
         });
     };
+
+    this.updateWTrack = function (req, res, next) {
+        var body = req.body;
+        var uId;
+        var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+        var setData = {};
+
+        if (req.session && req.session.loggedIn && req.session.lastDb) {
+            uId = req.session.uId;
+            access.getEditWritAccess(req, req.session.uId, 75, function (access) {
+                if (access) {
+                    var id = body._id;
+
+                    setData.editedBy = {
+                        user: uId,
+                        date: new Date().toISOString()
+                    };
+
+                    setData.isPaid = false;
+
+                    WTrack.findByIdAndUpdate(id, {$set: setData}, function (err) {
+                        if (err) {
+                            return next(err);
+                        }
+
+                        res.status(200).send({success: 'updated'});
+                    });
+                } else {
+                    res.status(401).send();
+                }
+            });
+        }
+    }
 };
 
 module.exports = wTrack;
