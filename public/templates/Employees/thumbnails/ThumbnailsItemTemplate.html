@@ -10,17 +10,19 @@
         </div>
         <div class="info">
           <div><h4>
-           <!-- <a class = "gotoForm title" href="#easyErp/Employees/form/<%=employee._id%>" title="<%=employee.name.first%> <%=employee.name.last%>">--> <%=employee.name.first%> <%=employee.name.last%> <% if(employee.relatedUser) { %>
-               <span>(<%= employee.relatedUser.login %>)</span>
+           <!-- <a class = "gotoForm title" href="#easyErp/Employees/form/<%=employee._id%>" title="<%=employee.name.first%> <%=employee.name.last%>">-->
+              <span class="fullName"><%=employee.name.first%> <%=employee.name.last%></span>
+              <% if(employee.relatedUser) { %>
+               <span class="relUser">(<%= employee.relatedUser.login %>)</span>
                 <% } else { %>
-                <span></span></h4>
+                <span class="relUser"></span></h4>
                 <% } %><!--</a>-->
           </div>
-            <p><%=(employee.jobPosition) ? employee.jobPosition.name : ''%></p>
-            <p><label>Age: </label><%=employee.age%>
-                <span>(<%= employee.dateBirth %>)</span>
+            <p class="jobPos"><%=(employee.jobPosition) ? employee.jobPosition.name : ''%></p>
+            <p><label>Age: </label><span class="age"><%=employee.age%></span>
+                <span class="empDateBirth">(<%= employee.dateBirth %>)</span>
             </p>
-            <p><label>Tel: </label><a href="skype:<%=employee.workPhones.mobile%>?call"><%=employee.workPhones.mobile%></a></p>
+            <p class="telephone"><label>Tel: </label><a href="skype:<%=employee.workPhones.mobile%>?call"><%=employee.workPhones.mobile%></a></p>
         </div>
     </div>
     <% }) %>
