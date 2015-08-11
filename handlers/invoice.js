@@ -13,6 +13,8 @@ var Invoice = function (models) {
     var OrderSchema = mongoose.Schemas['Quotation'];
     var DepartmentSchema = mongoose.Schemas['Department'];
     var CustomerSchema = mongoose.Schemas['Customer'];
+    var PaymentSchema = mongoose.Schemas['Payment'];
+    var wTrackSchema = mongoose.Schemas['wTrack'];
     var objectId = mongoose.Types.ObjectId;
     var async = require('async');
     var workflowHandler = new WorkflowHandler(models);
@@ -462,6 +464,8 @@ var Invoice = function (models) {
     this.removeInvoice = function (req, res, id, next) {
         var db = req.session.lastDb;
         var moduleId = 56;
+        var paymentIds = [];
+        var wTrackIds  = [];
 
         if (db === 'weTrack'){
             moduleId = 64
@@ -473,10 +477,56 @@ var Invoice = function (models) {
 
                     models.get(db, "Invoice", InvoiceSchema).findByIdAndRemove(id, function (err, result) {
                         if (err) {
-                            next(err);
-                        } else {
-                            res.status(200).send(result);
+                           return next(err);
                         }
+
+                        //async.each(result.products, function (product) {
+                        //    wTrackIds.push(product.product);
+                        //});
+                        //async.each(result.payments, function (payment) {
+                        //    paymentIds.push(payment);
+                        //});
+                        //
+                        //function paymentsRemove (){
+                        //    async.each(paymentIds, function (id) {
+                        //        models.get(db, "Payment", PaymentSchema).findByIdAndRemove(id, function (err, result) {
+                        //            if (err) {
+                        //                return console.log(err);
+                        //            }
+                        //            console.log('success');
+                        //        });
+                        //    });
+                        //};
+                        //
+                        //function wTrackUpdate (){
+                        //    var setData = {};
+                        //
+                        //    async.each(wTrackIds, function (id) {
+                        //        setData.editedBy = {
+                        //            user: uId,
+                        //            date: new Date().toISOString()
+                        //        };
+                        //
+                        //        setData.isPaid = false;
+                        //        models.get(db, "wTrack", wTrackSchema).findByIdAndUpdate(id, setData, function (err, result) {
+                        //            if (err) {
+                        //                return console.log(err);
+                        //            }
+                        //            console.log('success');
+                        //        });
+                        //    });
+                        //};
+                        //
+                        //async.parallel([paymentsRemove, wTrackUpdate], function (err, result) {
+                        //    if (err){
+                        //        next(err)
+                        //    }
+                        //
+                        //    console.log('success');
+                        //
+                        //});
+
+                        res.status(200).send(result);
                     });
 
                 } else {

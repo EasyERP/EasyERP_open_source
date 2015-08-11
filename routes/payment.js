@@ -14,7 +14,6 @@ module.exports = function (models) {
     router.post('/', handler.create);
     router.delete('/:id', handler.remove);
     router.patch('/customers', handler.putchBulk);
-    router.patch('/updatePayment', handler.updatePayment);
 
     return router;
 };

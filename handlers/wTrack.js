@@ -672,39 +672,6 @@ var wTrack = function (models) {
             res.status(200).send(result);
         });
     };
-
-    this.updateWTrack = function (req, res, next) {
-        var body = req.body;
-        var uId;
-        var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
-        var setData = {};
-
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            uId = req.session.uId;
-            access.getEditWritAccess(req, req.session.uId, 75, function (access) {
-                if (access) {
-                    var id = body._id;
-
-                    setData.editedBy = {
-                        user: uId,
-                        date: new Date().toISOString()
-                    };
-
-                    setData.isPaid = false;
-
-                    WTrack.findByIdAndUpdate(id, {$set: setData}, function (err) {
-                        if (err) {
-                            return next(err);
-                        }
-
-                        res.status(200).send({success: 'updated'});
-                    });
-                } else {
-                    res.status(401).send();
-                }
-            });
-        }
-    }
 };
 
 module.exports = wTrack;
