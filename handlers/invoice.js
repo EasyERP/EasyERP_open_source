@@ -305,6 +305,7 @@ var Invoice = function (models) {
                             populate('groups.users').
                             populate('groups.group').
                             populate('groups.owner', '_id login').
+                            populate('project', '_id projectName').
                             populate('workflow', '-sequence');
 
                         query.lean().exec(waterfallCallback);
