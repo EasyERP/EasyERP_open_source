@@ -314,7 +314,7 @@ define([
                     this.currentModel.destroy({
                         success: function () {
                             $('.edit-invoice-dialog').remove();
-                            Backbone.history.navigate("easyErp/" + self.contentType, {trigger: true});
+                           // Backbone.history.navigate("easyErp/" + self.contentType, {trigger: true});
                         },
                         error: function (model, err) {
                             if (err.status === 403) {

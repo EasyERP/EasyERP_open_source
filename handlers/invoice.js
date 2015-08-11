@@ -466,6 +466,9 @@ var Invoice = function (models) {
         var moduleId = 56;
         var paymentIds = [];
         var wTrackIds  = [];
+        var invoiceDeleted;
+        var Payment = models.get(db, "Payment", PaymentSchema);
+        var wTrack = models.get(db, "wTrack", wTrackSchema);
 
         if (db === 'weTrack'){
             moduleId = 64
@@ -480,51 +483,53 @@ var Invoice = function (models) {
                            return next(err);
                         }
 
-                        //async.each(result.products, function (product) {
-                        //    wTrackIds.push(product.product);
-                        //});
-                        //async.each(result.payments, function (payment) {
-                        //    paymentIds.push(payment);
-                        //});
-                        //
-                        //function paymentsRemove (){
-                        //    async.each(paymentIds, function (id) {
-                        //        models.get(db, "Payment", PaymentSchema).findByIdAndRemove(id, function (err, result) {
-                        //            if (err) {
-                        //                return console.log(err);
-                        //            }
-                        //            console.log('success');
-                        //        });
-                        //    });
-                        //};
-                        //
-                        //function wTrackUpdate (){
-                        //    var setData = {};
-                        //
-                        //    async.each(wTrackIds, function (id) {
-                        //        setData.editedBy = {
-                        //            user: uId,
-                        //            date: new Date().toISOString()
-                        //        };
-                        //
-                        //        setData.isPaid = false;
-                        //        models.get(db, "wTrack", wTrackSchema).findByIdAndUpdate(id, setData, function (err, result) {
-                        //            if (err) {
-                        //                return console.log(err);
-                        //            }
-                        //            console.log('success');
-                        //        });
-                        //    });
-                        //};
-                        //
-                        //async.parallel([paymentsRemove, wTrackUpdate], function (err, result) {
-                        //    if (err){
-                        //        next(err)
-                        //    }
-                        //
-                        //    console.log('success');
-                        //
-                        //});
+                        invoiceDeleted = result.toJSON();
+
+                        async.each(invoiceDeleted.products, function (product) {
+                            wTrackIds.push(product.product);
+                        });
+                        async.each(invoiceDeleted.payments, function (payment) {
+                            paymentIds.push(payment);
+                        });
+
+                        function paymentsRemove (){
+                            async.each(paymentIds, function (id) {
+                                Payment.findByIdAndRemove(id, function (err, result) {
+                                    if (err) {
+                                        return console.log(err);
+                                    }
+                                    console.log('success');
+                                });
+                            });
+                        };
+
+                        function wTrackUpdate (){
+                            var setData = {};
+
+                            async.each(wTrackIds, function (id) {
+                                setData.editedBy = {
+                                    user: req.session.uId,
+                                    date: new Date().toISOString()
+                                };
+
+                                setData.isPaid = false;
+                                wTrack.findByIdAndUpdate(id, setData, function (err, result) {
+                                    if (err) {
+                                        return console.log(err);
+                                    }
+                                    console.log('success');
+                                });
+                            });
+                        };
+
+                        async.parallel([paymentsRemove, wTrackUpdate], function (err, result) {
+                            if (err){
+                                next(err)
+                            }
+
+                            console.log('success');
+
+                        });
 
                         res.status(200).send(result);
                     });
