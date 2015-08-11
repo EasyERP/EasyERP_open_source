@@ -485,7 +485,7 @@ var Project = function (models, event) {
                                             },
                                             {
                                                 $group: {
-                                                    _id: "$workflow",
+                                                    _id: "$workflow._id",
                                                     count: {$sum: 1}
 
                                                 }
@@ -699,7 +699,7 @@ var Project = function (models, event) {
                                     }
                                 }*/
                             } else if (data && (!data.newCollection || data.newCollection === 'false')) {
-                                    query.where('workflow').in([]);
+                                    query.where('workflow._id').in([]);
                                 }
                                 if (data.sort) {
                                     query.sort(data.sort);
@@ -973,15 +973,15 @@ var Project = function (models, event) {
         var query = models.get(req.session.lastDb, 'Project', projectSchema).findById(data.id);
         //query.//populate('projectmanager', 'name _id');
         //query.populate('customer', 'name _id');
-        //query.//populate('workflow').
-        //    populate('bonus.employeeId', '_id name').
-        //    populate('bonus.bonusId', '_id name').
-        //    populate('createdBy.user', '_id login').
-        //    populate('editedBy.user', '_id login').
-        //    populate('groups.owner', '_id name').
-        //    populate('groups.users', '_id login').
-        //    populate('groups.group', '_id departmentName').
-        //    populate('groups.owner', '_id login');
+        query.//populate('workflow._id').
+            populate('bonus.employeeId', '_id name').
+            populate('bonus.bonusId', '_id name').
+            populate('createdBy.user', '_id login').
+            populate('editedBy.user', '_id login').
+            populate('groups.owner', '_id name').
+            populate('groups.users', '_id login').
+            populate('groups.group', '_id departmentName').
+            populate('groups.owner', '_id login');
         query.exec(function (err, project) {
             if (err) {
                 logWriter.log("Project.js getProjectById project.find " + err);
@@ -1263,14 +1263,14 @@ var Project = function (models, event) {
             data.workflow._id = data.workflow._id;
             data.workflow.name = data.workflow.name;
         }
-        if (data.workflowForList || data.workflowForKanban) {//may be for delete
-            data = {
-                $set: {
-                    'workflow._id': data.workflow._id,
-                    'workflow.name': data.workflow.name
-                }
-            };
-        }
+        //if (data.workflowForList || data.workflowForKanban) {//may be for delete
+        //    data = {
+        //        $set: {
+        //            'workflow._id': data.workflow._id,
+        //            'workflow.name': data.workflow.name
+        //        }
+        //    };
+        //}
         if (data.notes && data.notes.length != 0 && !remove) {
             var obj = data.notes[data.notes.length - 1];
             obj._id = mongoose.Types.ObjectId();
