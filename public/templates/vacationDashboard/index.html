@@ -21,21 +21,19 @@
         </thead>
         <tbody id="dashboardBody">
         <% dashboardData.forEach(function(department){ %>
-        <tr data-id="<%= department.department ? department.department._id._id: '' %>" class="head-row group"
-            data-content="department">
+        <tr data-id="<%= department.department ? department.department._id: '' %>" class="head-row group" data-content="department">
             <td class="checkDashboard">
                 <span>&nbsp</span>
             </td>
             <td colspan="17">
                     <span>
-                        <%= department.department ? department.department.name: '&nbsp'%>
+                        <%= department.department ? department.department.departmentName: '&nbsp'%>
                     </span>
             </td>
 
         </tr>
         <% department.employees.forEach(function(employee, index){ %>
-        <tr class="<%= department.department ? department.department._id._id: '' %>" data-id="<%= employee.get('_id')%>"
-            data-content="employee">
+        <tr class="<%= department.department ? department.department._id: '' %>" data-id="<%= employee.get('_id')%>" data-content="employee">
             <td class="checkDashboard">
                             <span>
                                 <%=index + 1%>
@@ -67,8 +65,7 @@
             <%})%>
         </tr>
         <% for(var i = employee.get('maxProjects'); i > 0; i-- ){%>
-        <tr class="projectsFor<%= department.department ? department.department._id._id: '' %> employeeProjects <%= employee.get('_id')%>"
-            data-content="project">
+        <tr class="projectsFor<%= department.department ? department.department._id: '' %> employeeProjects <%= employee.get('_id')%>" data-content="project">
             <td>&nbsp;</td>
             <td>&nbsp;</td>
             <td>&nbsp;</td>
@@ -79,7 +76,7 @@
                 <span class="projectItem"><%=week.projectRoot[i-1] ? week.projectRoot[i-1].project: ''%></span>
             </td>
             <% } else { %>
-            <td>
+            <td >
                 &nbsp
             </td>
             <% } %>

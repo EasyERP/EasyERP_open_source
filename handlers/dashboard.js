@@ -153,7 +153,7 @@ var wTrack = function (models) {
 
                 function sendResponse() {
                     Department.populate(employeesByDep, {
-                        path: 'department._id',
+                        path: 'department',
                         select: 'departmentName _id'
                     }, function () {
                         res.status(200).send(employeesByDep);
@@ -444,7 +444,7 @@ var wTrack = function (models) {
                             }
                         }, {
                             $project: {
-                                'department._id': '$_id.department',
+                                department: '$_id.department',
                                 employeeData: '$root',
                                 _id: 0
                             }
@@ -500,22 +500,20 @@ var wTrack = function (models) {
                 hiredArr = result[0];
                 firedArr = result[1];
 
-               /* for (var i = 0; i < 12; i++) {
-                    month = startMonth + i;
-
-                    if (month > 12) {
-                        year = startYear + 1;
-                        month -= 12;
-                    } else {
-                        year = startYear;
-                    }
-
-                    arrOfDates.push({
-                        month: month,
-                        year: year,
-                        dateByMonth: year * 100 + month
-                    });
-                }*/
+                /* for (var i = 0; i < 12; i++) {
+                 month = startMonth + i;
+                 if (month > 12) {
+                 year = startYear + 1;
+                 month -= 12;
+                 } else {
+                 year = startYear;
+                 }
+                 arrOfDates.push({
+                 month: month,
+                 year: year,
+                 dateByMonth: year * 100 + month
+                 });
+                 }*/
 
                 finalResult = [{
                     _id: 'hired',

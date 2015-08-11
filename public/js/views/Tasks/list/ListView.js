@@ -234,7 +234,6 @@ define([
                 var id;
                 if (selectType == 'stages') {
                     if ($(target).attr('data-status') === 'done'){
-                        //$('progress').val(100);
                         id = targetParrentElement.attr("id").replace("stages_", "");
                         model = this.collection.get(id);
                         model.urlRoot = '/Tasks';
