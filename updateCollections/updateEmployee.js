@@ -146,20 +146,28 @@ query.exec(function (error, _res) {
         var objectToSave = {};
 
         if (emp) {
-            console.dir(emp);
             objectToSave = {
                 manager: emp.manager ? {
                     _id: emp.manager._id,
                     name: (emp.manager.name.first + ' ' +  emp.manager.name.last)
-                } : null,
+                } : {
+                    _id: null,
+                    name: null
+                },
                 jobPosition: emp.jobPosition ? {
                     _id: emp.jobPosition._id,
                     name: emp.jobPosition.name
-                } : null,
+                } : {
+                    _id: null,
+                    name: null
+                },
                 department: emp.department ? {
                     _id: emp.department._id,
                     name: emp.department.departmentName
-                } : null
+                } : {
+                    _id: null,
+                    name: null
+                }
             };
         }
 

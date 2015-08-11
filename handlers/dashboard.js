@@ -101,9 +101,7 @@ var wTrack = function (models) {
                                     if (data) {
                                         weekData = data;
                                     }
-
-                                    _vacations = _.find(vacations, function (vacationObject, index) {
-                                        console.log(index);
+                                    _vacations = _.find(vacations, function (vacationObject) {
                                         return (vacationObject.employee.toString() === _employee._id.toString());
                                     });
 

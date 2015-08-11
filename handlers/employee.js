@@ -111,19 +111,19 @@ var Employee = function (models) {
                         'Department': {
                             $addToSet: {
                                 _id: '$department._id',
-                                name: '$department.name'
+                                name: {'$ifNull': ['$department.name', 'None']}
                             }
                         },
                         jobPosition: {
                             $addToSet: {
                                 _id: '$jobPosition._id',
-                                name: '$jobPosition.name'
+                                name: {'$ifNull': ['$jobPosition.name', 'None']}
                             }
                         },
                         manager: {
                             $addToSet: {
                                 _id: '$manager._id',
-                                name: '$manager.name'
+                                name: {'$ifNull': ['$manager.name', 'None']}
                             }
                         }
                     }
@@ -150,9 +150,7 @@ var Employee = function (models) {
                         case 'manager':
                             result[0][key] = {
                                 displayName: 'Manager',
-                                values: _.filter(value, function(num) {
-                                    return num._id !== undefined;
-                                })
+                                values: _.sortBy(value, 'name')
                             };
                             break;
 

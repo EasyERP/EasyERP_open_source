@@ -48,15 +48,21 @@ var Employee = function (event, models) {
                         condition = optionsObject['$and'][1]['$and'];
                     }
 
-                    if (data.filter.department) {
-                        var arrOfObjectId = data.filter.department.objectID();
+                    if (data.filter.Department) {
+                        var arrOfObjectId = data.filter.Department.objectID();
                         condition.push({ 'department._id': {$in: arrOfObjectId}});
                     }
+
                     if (data.filter.Name) {
-                        condition.push({ 'name.last': {$in: data.filter.Name}});
+                        condition.push({ '_id': {$in: data.filter.Name.objectID()}});
                     }
-                    if (data.filter.Email) {
-                        condition.push({ 'workEmail': {$in: data.filter.Email}});
+
+                    if (data.filter.jobPosition) {
+                        condition.push({ 'jobPosition._id': {$in: data.filter.jobPosition.objectID()}});
+                    }
+
+                    if (data.filter.manager) {
+                        condition.push({ 'manager._id': {$in: data.filter.manager.objectID()}});
                     }
 
                     if (!condition.length) {
@@ -80,18 +86,24 @@ var Employee = function (event, models) {
                         optionsObject['$and'].push({$and: []});
                         condition = optionsObject['$and'][1]['$and'];
                     }
-                    for (var key in data.filter) {
 
-                        switch (key) {
-                            case 'Name':
-                                condition.push({ 'name.last': {$in: data.filter.Name}});
-                                break;
-                            case 'Email':
-                                condition.push({ 'workEmail': {$in: data.filter.Email}});
-                                break;
-
-                        }
+                    if (data.filter.Department) {
+                        var arrOfObjectId = data.filter.Department.objectID();
+                        condition.push({ 'department._id': {$in: arrOfObjectId}});
                     }
+
+                    if (data.filter.Name) {
+                        condition.push({ '_id': {$in: data.filter.Name.objectID()}});
+                    }
+
+                    if (data.filter.jobPosition) {
+                        condition.push({ 'jobPosition._id': {$in: data.filter.jobPosition.objectID()}});
+                    }
+
+                    if (data.filter.manager) {
+                        condition.push({ 'manager._id': {$in: data.filter.manager.objectID()}});
+                    }
+
                     if (!condition.length) {
                         optionsObject['$and'].pop();
                     }
@@ -566,7 +578,7 @@ var Employee = function (event, models) {
                     }
 
                     if (data.filter.Department) {
-                        var arrOfObjectId = data.filter.department.objectID();
+                        var arrOfObjectId = data.filter.Department.objectID();
                         condition.push({ 'department._id': {$in: arrOfObjectId}});
                     }
 
@@ -609,18 +621,23 @@ var Employee = function (event, models) {
                         condition = optionsObject['$and'][1]['$and'];
                     }
 
-                    for (var key in data.filter) {
-
-                        switch (key) {
-                            case 'Name':
-                                condition.push({ 'name.last': {$in: data.filter.Name}});
-                                break;
-                            case 'Email':
-                                condition.push({ 'workEmail': {$in: data.filter.Email}});
-                                break;
-
-                        }
+                    if (data.filter.Department) {
+                        var arrOfObjectId = data.filter.Department.objectID();
+                        condition.push({ 'department._id': {$in: arrOfObjectId}});
                     }
+
+                    if (data.filter.Name) {
+                        condition.push({ '_id': {$in: data.filter.Name.objectID()}});
+                    }
+
+                    if (data.filter.jobPosition) {
+                        condition.push({ 'jobPosition._id': {$in: data.filter.jobPosition.objectID()}});
+                    }
+
+                    if (data.filter.manager) {
+                        condition.push({ 'manager._id': {$in: data.filter.manager.objectID()}});
+                    }
+
                     if (!condition.length) {
                         optionsObject['$and'].pop();
                     }
