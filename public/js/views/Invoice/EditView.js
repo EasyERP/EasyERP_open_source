@@ -10,10 +10,9 @@ define([
         "dataService",
         "populate",
         'constants',
-        'helpers',
-        'async'
+        'helpers'
     ],
-    function (EditTemplate, AssigneesView, InvoiceItemView, wTrackRows, PaymentCreateView, listHederInvoice, common, Custom, dataService, populate, CONSTANTS, helpers, async) {
+    function (EditTemplate, AssigneesView, InvoiceItemView, wTrackRows, PaymentCreateView, listHederInvoice, common, Custom, dataService, populate, CONSTANTS, helpers) {
 
         var EditView = Backbone.View.extend({
             contentType: "Invoice",
@@ -305,44 +304,6 @@ define([
                 var holder = $(e.target).parents("dd").find(".current-selected");
                 holder.text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
             },
-
-            updatePayment: function () {
-                var paymentId = this.currentModel.attributes.payments[0]['_id'];
-                var data = {};
-                data._id = paymentId;
-                data.paidAmount = self.currentModel.attributes.payments[0]['paidAmount'];
-
-                $.ajax({
-                    url: 'payment/updatePayment',
-                    data: data,
-                    type: 'PATCH',
-                    success: function (response) {
-                        console.log('updated')
-                    },
-                    error: function (jxhr) {
-                        console.log(jxhr)
-                    }
-                });
-            },
-
-            updateWTrack: function () {
-                var wTrackArray;
-                wTrackArray = this.currentModel.attributes.products;
-
-                $.ajax({
-                    url: 'wTrack/updateWTrack',
-                    data: wTrackArray,
-                    type: 'PATCH',
-                    success: function (response) {
-                        console.log('wTrack updated')
-                    },
-                    error: function (jxhr) {
-                        console.log(jxhr)
-                    }
-                });
-
-            },
-
 
             deleteItem: function (event) {
 
