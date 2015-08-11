@@ -233,25 +233,51 @@ define([
                 var model;
                 var id;
                 if (selectType == 'stages') {
-                    id = targetParrentElement.attr("id").replace("stages_", "");
-                    model = this.collection.get(id);
-                    model.urlRoot = '/Tasks';
-                    model.save({
-                            workflow: target.attr("id"),
-                            sequence: -1,
-                            sequenceStart: model.toJSON().sequence,
-                            workflowStart: model.toJSON().workflow ? model.toJSON().workflow._id : null
-                        },
-                        {
-                            headers: {
-                                mid: 39
+                    if ($(target).attr('data-status') === 'done'){
+                        //$('progress').val(100);
+                        id = targetParrentElement.attr("id").replace("stages_", "");
+                        model = this.collection.get(id);
+                        model.urlRoot = '/Tasks';
+                        model.save({
+                                workflow: target.attr("id"),
+                                sequence: -1,
+                                sequenceStart: model.toJSON().sequence,
+                                workflowStart: model.toJSON().workflow ? model.toJSON().workflow._id : null,
+                                progress: 100
                             },
-                            patch: true,
-                            validate: false,
-                            success: function () {
-                                that.showFilteredPage();
-                            }
-                        });
+                            {
+                                headers: {
+                                    mid: 39
+                                },
+                                patch: true,
+                                validate: false,
+                                success: function () {
+                                    that.showFilteredPage();
+                                }
+                            });
+                    } else {
+                        id = targetParrentElement.attr("id").replace("stages_", "");
+                        model = this.collection.get(id);
+                        model.urlRoot = '/Tasks';
+                        model.save({
+                                workflow: target.attr("id"),
+                                sequence: -1,
+                                sequenceStart: model.toJSON().sequence,
+                                workflowStart: model.toJSON().workflow ? model.toJSON().workflow._id : null,
+                                estimated: model.toJSON().estimated,
+                                logged: model.toJSON().logged
+                            },
+                            {
+                                headers: {
+                                    mid: 39
+                                },
+                                patch: true,
+                                validate: false,
+                                success: function () {
+                                    that.showFilteredPage();
+                                }
+                            });
+                    }
                 } else if (selectType == 'type') {
                     id = targetParrentElement.attr("id").replace("type_", "");
                     model = this.collection.get(id);

@@ -1354,10 +1354,11 @@ var Project = function (models, event) {
     };
 
     function taskUpdateOnlySelectedFields(req, _id, data, res) {
-        //delete data._id;
-        //delete data.createdBy;
+        delete data._id;
+        delete data.createdBy;
         var fileName = data.fileName;
-       // delete data.fileName;
+        var progress
+         delete data.fileName;
         if (data.notes && data.notes.length != 0) {
             var obj = data.notes[data.notes.length - 1];
             if (!obj._id)
@@ -1372,13 +1373,18 @@ var Project = function (models, event) {
         if (data && data.EndDate)
             data.duration = returnDuration(data.StartDate, data.EndDate);
         if (data.estimated && data.estimated != 0) {
-            data.progress = Math.round((data.logged / data.estimated) * 100);
-            var StartDate = (data.StartDate) ? new Date(data.StartDate) : new Date();
-            data.EndDate = calculateTaskEndDate(StartDate, data.estimated);
-            data.duration = returnDuration(data.StartDate, data.EndDate);
+            if (data.progress === 100){
+                data.progress = 100;
+            } else {
+                data.progress = Math.round((data.logged / data.estimated) * 100);
+                var StartDate = (data.StartDate) ? new Date(data.StartDate) : new Date();
+                data.EndDate = calculateTaskEndDate(StartDate, data.estimated);
+                data.duration = returnDuration(data.StartDate, data.EndDate);
+            }
         } else if (!data.estimated && data.logged) {
             data.progress = 0;
         }
+
         if (data.assignedTo && typeof (data.assignedTo) == 'object') {
             data.assignedTo = data.assignedTo._id;
         }
@@ -1686,7 +1692,7 @@ var Project = function (models, event) {
             populate('editedBy.user').
             populate('groups.users').
             populate('groups.group').
-            //populate('workflow._id').
+            populate('workflow').
             exec(function (err, task) {
                 if (err) {
                     console.log(err);
@@ -1899,7 +1905,7 @@ var Project = function (models, event) {
                                     populate('assignedTo', 'name').
                                     populate('editedBy.user', 'login').
                                     populate('createdBy.user', 'login').
-                                    //populate('workflow._id', 'name _id status').
+                                    populate('workflow', 'name _id status').
                                     skip((data.page - 1) * data.count).
                                     limit(data.count).
                                     exec(function (err, result) {

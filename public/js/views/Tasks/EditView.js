@@ -127,6 +127,10 @@
                       data['project'] = project;
                   };
 
+                  if (holder.find("#workflowsDd").text() === 'Done'){
+                      data['progress'] = 100;
+                  }
+
                   this.currentModel.save(data, {
                       headers: {
                           mid: mid
