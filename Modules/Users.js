@@ -4,6 +4,7 @@ var Users = function (mainDb, models) {
     var logWriter = require('../helpers/logWriter.js');
     var crypto = require('crypto');
     var userSchema = mongoose.Schemas['User'];
+    var savedFiltersSchema =  mongoose.Schemas['savedFilters'];
     var dbsObject = mainDb.dbsObject;
     var RESPONSES = require('../constants/responses');
 
@@ -290,20 +291,33 @@ var Users = function (mainDb, models) {
                 var query = {};
                 var key = data.key;
                 var filter = data.filter;
-                var _key = 'savedFilters.' + key;
+                var deleteId = data.deleteId;
+                var _id;
+                var filterModel = new models.get(req.session.lastDb, 'savedFilters', savedFiltersSchema)();
+
+                filterModel.contentView = key;
+                filterModel.filter = filter;
+
+                _id = filterModel.save(function (err, result) {
+                    if (err) {
+                       return console.log('ERROR SAVE FILTERMODEL');
+                    }
+                    return  result.toJSON()._id;
+                });
+
+
+               // var _key = 'savedFilters.' + key;
                 var keyForDelete;
-                if (data.filterName){
-                    keyForDelete = _key + '.' + data.filterName;
-                }
+                //if (data.filterName){
+                //    keyForDelete = _key + '.' + data.filterName;
+                //}
 
                 if (data.changePass) {
                     query = { $set: data};
                 } else if (data.filter && data.key) {
-                    setObject[_key] = filter;
-                    query = { $push: setObject};
-                } else if (data.key && !data.filter) {
-                    setObject[keyForDelete] = {};
-                    query = { $unset: setObject};
+                    query = { $push: {'savedFilters': _id}};
+                } else if (data.deleteId) {
+                    query = { $pull: {'savedFilters': deleteId}};
                 } else {
                     query = { $set: data};
                 }

@@ -212,16 +212,59 @@ define(['libs/date.format', 'common', 'constants'], function (dateformat, common
 
     var savedFilters = function (contentType, filter) {
         var savedFilter;
+        var length;
+        var filtersForContent;
+        var lastFilterName;
+        var filterName;
 
-        if (App.currentUser && App.currentUser.savedFilters && App.currentUser.savedFilters[contentType]) {
-            var length = App.currentUser.savedFilters[contentType].length;
-            var filterKey = Object.keys(App.currentUser.savedFilters[contentType][length - 1])[0];
-            savedFilter = App.currentUser.savedFilters[contentType][length - 1][filterKey];
+        if (App.currentUser && App.currentUser.savedFilters) {
+            length = App.currentUser.savedFilters.length;
+            filtersForContent = getFiltersForContentType(contentType);
+            for (var i = length - 1; i >= 0; i--){
+                lastFilterName = filtersForContent[filtersForContent.length - 1];
+                filterName = Object.keys(lastFilterName['value']);
+                savedFilter = lastFilterName['value'][filterName];
+           }
+
         } else {
             savedFilter = filter;
         }
 
         return savedFilter;
+    };
+
+    var getFilterById = function (savedFilters, id) {
+        var filter;
+        var length = savedFilters.length;
+        var keys;
+
+        for (var i = length - 1; i >= 0; i--){
+            if (savedFilters[i]['_id'] === id){
+                keys = Object.keys(savedFilters[i]['value']);
+                filter = savedFilters[i]['value'][keys[0]];
+            }
+        }
+
+        return filter;
+    };
+
+    var getFiltersForContentType = function (contentType) {
+        var length = App.currentUser.savedFilters.length;
+        var filtersForContent = [];
+        var filterObj = {};
+        var savedFiltersArray = App.currentUser.savedFilters;
+
+        for (var i = length - 1; i >= 0; i--) {
+            if (savedFiltersArray[i]['contentView'] === contentType) {
+                filterObj = {};
+                filterObj._id = savedFiltersArray[i]['_id'];
+                filterObj.value = savedFiltersArray[i]['filter'][0];
+                filtersForContent.push(filterObj);
+            }
+        }
+
+        App.savedFilters[contentType] = filtersForContent;
+        return filtersForContent;
     };
 
     var getFiltersValues = function (chosen, defaultFilterStatus, logicAndStatus) {
@@ -267,6 +310,8 @@ define(['libs/date.format', 'common', 'constants'], function (dateformat, common
         cashToApp: cashToApp,
         retriveFromCash: retriveFromCash,
         savedFilters: savedFilters,
-        getFiltersValues: getFiltersValues
+        getFiltersValues: getFiltersValues,
+        getFiltersForContentType: getFiltersForContentType,
+        getFilterById: getFilterById
     };
 });

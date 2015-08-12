@@ -37,6 +37,7 @@ define([
             genInvoiceEl: null,
             copyEl: null,
             changedModels: {},
+            savedFilters: null,
 
             initialize: function (options) {
                 this.startTime = options.startTime;
@@ -683,6 +684,7 @@ define([
                 var FilterView;
                 var checkedInputs;
                 var allInputs;
+                var filterContainer;
 
                 currentEl.html('');
                 currentEl.append(_.template(listTemplate));
@@ -775,15 +777,6 @@ define([
                     });
                     // Filter custom event listen ------end
 
-                    if (App.currentUser.savedFilters && App.currentUser.savedFilters['wTrack']){
-                        var savedFilters = App.currentUser.savedFilters['wTrack'];
-                        for (var j = savedFilters.length - 1; j >= 0; j--) {
-                            var keys = Object.keys(savedFilters[j]);
-                            for (var i = keys.length - 1; i >= 0; i--) {
-                                currentEl.find('#savedFilters').append('<a class="filters"  id ="' + keys[i] + '">' + keys[i] + '</a>');
-                            }
-                        }
-                    }
                 });
 
                 setTimeout(function () {
@@ -792,10 +785,41 @@ define([
                      self.editCollection.on('updated', self.updatedOptions, self);*/
                     self.bindingEventsToEditedCollection(self);
                     self.$listTable = $('#listTable');
+
                 }, 10);
 
                 this.genInvoiceEl = $('#top-bar-generateBtn');
                 this.copyEl = $('#top-bar-copyBtn');
+
+                function getFilters() {
+
+                }
+
+
+                if (App.currentUser.savedFilters) {
+                    if (App.savedFilters['wTrack']) {
+                        self.savedFilters = App.savedFilters['wTrack'];
+
+                        for (var j = self.savedFilters.length - 1; j >= 0; j--) {
+
+                            var keys = Object.keys(self.savedFilters[j]['value']);
+                            for (var i = keys.length - 1; i >= 0; i--) {
+                                currentEl.find('#savedFilters').append('<a class="filters"  id ="' + self.savedFilters[j]['_id'] + '">' + keys[i] + '</a>');
+                            }
+                        }
+                    }
+                }
+
+                if (this.filter) {
+                    filterContainer = $(currentEl).find('.oe_searchview_input');
+                    var filterKeys = Object.keys(this.filter);
+                    filterKeys.pop();
+
+                    filterKeys.forEach(function (key) {
+                        filterContainer.append('<div class="filter-icons active" > <span class="fa fa-filter funnelIcon"></span>' +
+                            '<span class="filterValues"> <span class="Clear" >' + key + '</span> </span> <span class="removeValues" >' + 'x </span> </div>');
+                    });
+                }
 
                 return this;
             },
@@ -960,10 +984,28 @@ define([
 
             useFilter: function (e) {
                 var target = $(e.target);
+                var filterContainer = this.$el.find('.oe_searchview_input');
+
+                this.$el.find('.filters').removeClass('current');
+
+                $(e.target).addClass('current');
+
+                filterContainer.append('<div class="filter-icons active" > <span class="fa fa-filter funnelIcon"></span>' +
+                    '<span class="filterValues"> <span class="Clear" >' + 'Filter' + '</span> </span> <span class="removeValues" >' + 'x </span> </div>');
+
+
                 var targetId = target.attr('id');
                 var itemsNumber = $("#itemsNumber").text();
+                var savedFilters = this.savedFilters;
 
-                var filter = App.currentUser.savedFilters['wTrack'][0][targetId];
+                var filter = custom.getFilterById(savedFilters, targetId);
+                var filterKeys = Object.keys(filter);
+                filterKeys.pop();
+
+                filterKeys.forEach(function (key) {
+                    filterContainer.append('<div class="filter-icons active" > <span class="fa fa-filter funnelIcon"></span>' +
+                        '<span class="filterValues"> <span class="Clear" >' + key + '</span> </span> <span class="removeValues" >' + 'x </span> </div>');
+                });
 
                 this.changeLocationHash(1, itemsNumber, filter);
                 this.collection.showMore({count: itemsNumber, page: 1, filter: filter});
@@ -979,51 +1021,37 @@ define([
                 var filterName = this.$el.find('#forFilterName').val();
                 var sameFilterName;
 
-                if (App.currentUser.savedFilters && App.currentUser.savedFilters['wTrack']){
-                    var keys = Object.keys(App.currentUser.savedFilters['wTrack']);
+                key = subMenu.trim();
 
-                    for (var i = keys.length - 1; i >= 0; i--){
-                        if (keys[i] === filterName){
-                             alert('Please, change filter name!');
-                            sameFilterName = true;
-                        }
-                    }
+                filterObj['filter'] = {};
+                filterObj['filter'][filterName] = {};
+                filterObj['filter'][filterName] = this.filter;
+                filterObj['key'] = key;
+
+                currentUser.changed = filterObj;
+
+                currentUser.save(
+                    filterObj,
+                    {
+                        headers: {
+                            mid: mid
+                        },
+                        wait: true,
+                        patch: true,
+                        validate: false,
+                        success: function (model) {
+                            console.log('Filter was saved to db');
+                        },
+                        error: function (model, xhr) {
+                            console.error(xhr);
+                        },
+                        editMode: false
+                    })
+                if (!App.currentUser.savedFilters) {
+                    App.currentUser.savedFilters = {};
                 }
+                App.savedFilters['wTrack'].push(filterObj.filter);
 
-
-                if (!sameFilterName){
-                    key = subMenu.trim();
-
-                    filterObj['filter'] = {};
-                    filterObj['filter'][filterName] = {};
-                    filterObj['filter'][filterName] = this.filter;
-                    filterObj['key'] = key;
-
-                    currentUser.changed = filterObj;
-
-                    currentUser.save(
-                        filterObj,
-                        {
-                            headers: {
-                                mid: mid
-                            },
-                            wait: true,
-                            patch: true,
-                            validate: false,
-                            success: function (model) {
-                                console.log('Filter was saved to db');
-                            },
-                            error: function (model, xhr) {
-                                console.error(xhr);
-                            },
-                            editMode: false
-                        }
-                    );
-                    if (!App.currentUser.savedFilters) {
-                        App.currentUser.savedFilters = {};
-                    }
-                    App.currentUser.savedFilters['wTrack'] = filterObj.filter;
-                }
             },
 
             removeFilter: function () {
@@ -1035,8 +1063,7 @@ define([
                 var filterName = 'academicas'; //chosen filter name
 
                 key = subMenu.trim();
-                filterObj['key'] = key;
-                filterObj['filterName'] = filterName;
+                filterObj['deleteId'] = 'fdf';
 
                 currentUser.changed = filterObj;
 

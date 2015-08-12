@@ -4,8 +4,8 @@
 module.exports = (function () {
     var mongoose = require('mongoose');
     var savedFiltersSchema = mongoose.Schema({
-        _id: String,
-       filter: JSON
+        contentView: String,
+        filter: [JSON]
 
 }, {collection: 'savedFilters'});
 
