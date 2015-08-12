@@ -216,8 +216,9 @@ var Users = function (mainDb, models) {
 
     function getUserById(req, id, response) {
         var query = models.get(req.session.lastDb, 'Users', userSchema).findById(id);
-        query.populate('profile');
-        query.populate('RelatedEmployee', 'imageSrc name');
+        query.populate('profile')
+            .populate('RelatedEmployee', 'imageSrc name')
+            .populate('savedFilters');
 
         query.exec(function (err, result) {
             if (err) {

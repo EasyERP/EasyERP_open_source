@@ -1,17 +1,15 @@
 /**
  * Created by liliya on 8/12/15.
  */
-/**
- * Created by Roman on 04.04.2015.
- */
 module.exports = (function () {
     var mongoose = require('mongoose');
     var savedFiltersSchema = mongoose.Schema({
-       savedFilters:  [{type: ObjectId, ref: 'wTrack', default: null}]
+        _id: String,
+       filter: JSON
 
 }, {collection: 'savedFilters'});
 
-mongoose.model('savedFiltersModel', savedFiltersSchema);
+mongoose.model('savedFilters', savedFiltersSchema);
 
 if (!mongoose.Schemas) {
     mongoose.Schemas = {};
