@@ -214,7 +214,9 @@ define(['libs/date.format', 'common', 'constants'], function (dateformat, common
         var savedFilter;
 
         if (App.currentUser && App.currentUser.savedFilters && App.currentUser.savedFilters[contentType]) {
-            savedFilter = App.currentUser.savedFilters[contentType];
+            var length = App.currentUser.savedFilters[contentType].length;
+            var filterKey = Object.keys(App.currentUser.savedFilters[contentType][length - 1])[0];
+            savedFilter = App.currentUser.savedFilters[contentType][length - 1][filterKey];
         } else {
             savedFilter = filter;
         }

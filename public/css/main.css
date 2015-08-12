@@ -8211,6 +8211,16 @@ textarea#editInput {
   right: 0;
   top: calc(100% - 1px);
 }
+.drop-down-favourites {
+  display: block;
+  z-index: 10;
+  width: 165px;
+  height: 115px;
+  background-color: #f9f9f9;
+  border: 1px solid #c0c0c0;
+  right: 0;
+  top: calc(100% - 1px);
+}
 .drop-down-filter li {
   cursor: pointer;
   margin-bottom: 5px;

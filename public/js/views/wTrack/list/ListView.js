@@ -92,7 +92,8 @@ define([
                 "keydown input.editing ": "keyDown",
                 "click .saveFilterButton": "saveFilter",
                 "click .removeFilterButton": "removeFilter",
-                "change .listCB": "setAllTotalVals"
+                "change .listCB": "setAllTotalVals",
+                "click .filters": "useFilter"
             },
 
             keyDown: function (e) {
@@ -773,6 +774,16 @@ define([
                         self.showFilteredPage();
                     });
                     // Filter custom event listen ------end
+
+                    if (App.currentUser.savedFilters && App.currentUser.savedFilters['wTrack']){
+                        var savedFilters = App.currentUser.savedFilters['wTrack'];
+                        for (var j = savedFilters.length - 1; j >= 0; j--) {
+                            var keys = Object.keys(savedFilters[j]);
+                            for (var i = keys.length - 1; i >= 0; i--) {
+                                currentEl.find('#savedFilters').append('<a class="filters"  id ="' + keys[i] + '">' + keys[i] + '</a>');
+                            }
+                        }
+                    }
                 });
 
                 setTimeout(function () {
@@ -928,7 +939,7 @@ define([
 
             showFilteredPage: function () {
                 var itemsNumber = $("#itemsNumber").text();
-                ;
+
                 var checkedElements = this.$el.find('input:checkbox:checked');
                 var chosen = this.$el.find('.chosen');
 
@@ -947,44 +958,72 @@ define([
                 this.getTotalLength(null, itemsNumber, this.filter);
             },
 
+            useFilter: function (e) {
+                var target = $(e.target);
+                var targetId = target.attr('id');
+                var itemsNumber = $("#itemsNumber").text();
+
+                var filter = App.currentUser.savedFilters['wTrack'][0][targetId];
+
+                this.changeLocationHash(1, itemsNumber, filter);
+                this.collection.showMore({count: itemsNumber, page: 1, filter: filter});
+                this.getTotalLength(null, itemsNumber, filter);
+            },
+
             saveFilter: function () {
                 var currentUser = new usersModel(App.currentUser);
                 var subMenu = $('#submenu-holder').find('li.selected').text();
                 var key;
                 var filterObj = {};
                 var mid = 39;
+                var filterName = this.$el.find('#forFilterName').val();
+                var sameFilterName;
 
-                key = subMenu.trim();
+                if (App.currentUser.savedFilters && App.currentUser.savedFilters['wTrack']){
+                    var keys = Object.keys(App.currentUser.savedFilters['wTrack']);
 
-                filterObj['filter'] = {};
-                filterObj['filter'] = this.filter;
-                filterObj['key'] = key;
-
-                currentUser.changed = filterObj;
-
-                currentUser.save(
-                    filterObj,
-                    {
-                        headers: {
-                            mid: mid
-                        },
-                        wait: true,
-                        patch: true,
-                        validate: false,
-                        success: function (model) {
-                            console.log('Filter was saved to db');
-                        },
-                        error: function (model, xhr) {
-                            console.error(xhr);
-                        },
-                        editMode: false
+                    for (var i = keys.length - 1; i >= 0; i--){
+                        if (keys[i] === filterName){
+                             alert('Please, change filter name!');
+                            sameFilterName = true;
+                        }
                     }
-                );
-                if (!App.currentUser.savedFilters) {
-                    App.currentUser.savedFilters = {};
                 }
-                App.currentUser.savedFilters['wTrack'] = filterObj.filter;
 
+
+                if (!sameFilterName){
+                    key = subMenu.trim();
+
+                    filterObj['filter'] = {};
+                    filterObj['filter'][filterName] = {};
+                    filterObj['filter'][filterName] = this.filter;
+                    filterObj['key'] = key;
+
+                    currentUser.changed = filterObj;
+
+                    currentUser.save(
+                        filterObj,
+                        {
+                            headers: {
+                                mid: mid
+                            },
+                            wait: true,
+                            patch: true,
+                            validate: false,
+                            success: function (model) {
+                                console.log('Filter was saved to db');
+                            },
+                            error: function (model, xhr) {
+                                console.error(xhr);
+                            },
+                            editMode: false
+                        }
+                    );
+                    if (!App.currentUser.savedFilters) {
+                        App.currentUser.savedFilters = {};
+                    }
+                    App.currentUser.savedFilters['wTrack'] = filterObj.filter;
+                }
             },
 
             removeFilter: function () {
@@ -993,9 +1032,11 @@ define([
                 var key;
                 var filterObj = {};
                 var mid = 39;
+                var filterName = 'academicas'; //chosen filter name
 
                 key = subMenu.trim();
                 filterObj['key'] = key;
+                filterObj['filterName'] = filterName;
 
                 currentUser.changed = filterObj;
 
@@ -1021,7 +1062,7 @@ define([
                 this.clearFilter();
 
                 if (App.currentUser.savedFilters['wTrack']) {
-                    delete App.currentUser.savedFilters['wTrack'];
+                    delete App.currentUser.savedFilters['wTrack'][filterName];
                 }
             },
 

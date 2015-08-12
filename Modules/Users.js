@@ -290,14 +290,18 @@ var Users = function (mainDb, models) {
                 var key = data.key;
                 var filter = data.filter;
                 var _key = 'savedFilters.' + key;
+                var keyForDelete;
+                if (data.filterName){
+                    keyForDelete = _key + '.' + data.filterName;
+                }
 
                 if (data.changePass) {
                     query = { $set: data};
                 } else if (data.filter && data.key) {
                     setObject[_key] = filter;
-                    query = { $set: setObject};
+                    query = { $push: setObject};
                 } else if (data.key && !data.filter) {
-                    setObject[_key] = '';
+                    setObject[keyForDelete] = {};
                     query = { $unset: setObject};
                 } else {
                     query = { $set: data};

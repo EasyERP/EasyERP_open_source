@@ -53,10 +53,10 @@
                         <button class="pull-left group btn btn-default applyFilter">Apply</button>
                         <button class="group btn btn-default addCondition">Add a condition</button>
                     </li>
-                    <li class="filterActions">
+                    <!--<li class="filterActions">
                         <button class="saveFilterButton">Save</button>
                         <button class="removeFilterButton">Remove</button>
-                    </li>
+                    </li>-->
                 </ul>
             </div>
             <!--<div class="btn-group">
@@ -66,13 +66,20 @@
                     <span class="caret"></span>
                 </button>
             </div>-->
-            <!--<div class="btn-group">-->
-            <!--<button class="btn btn-default">-->
-            <!--<span class="fa fa-star"></span>-->
-            <!--Favorites-->
-            <!--<span class="caret"></span>-->
-            <!--</button>-->
-            <!--</div>-->
+            <div class="btn-group">
+            <div class="btn-group">
+            <button class="btn btn-default">
+            <span class="fa fa-star"></span>
+            Favorites
+           <span class="caret"></span>
+            </button>
+                <ul class="drop-down-favourites">
+                    <div id="savedFilters"></div>
+                    <input id="forFilterName"/>
+                    <button class="saveFilterButton"> Save Filter</button>
+                    <button class="removeFilterButton">x</button>
+                </ul>
+            </div>
         </div>
     </div>
 </div>
