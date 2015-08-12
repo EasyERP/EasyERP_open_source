@@ -210,24 +210,22 @@ define(['libs/date.format', 'common', 'constants'], function (dateformat, common
         return App.cashedData[key];
     }
 
-    var savedFilters = function (contentType, filter) {
+    var savedFilters = function (contentType, uIFilter) {
         var savedFilter;
         var length;
         var filtersForContent;
-        var lastFilterName;
-        var filterName;
+        var key;
+        var filter;
 
-        if (App.currentUser && App.currentUser.savedFilters) {
-            length = App.currentUser.savedFilters.length;
-            filtersForContent = getFiltersForContentType(contentType);
-            for (var i = length - 1; i >= 0; i--){
-                lastFilterName = filtersForContent[filtersForContent.length - 1];
-                filterName = Object.keys(lastFilterName['value']);
-                savedFilter = lastFilterName['value'][filterName];
-           }
+        if (App && App.savedFilters && App.savedFilters[contentType]) {
+            filtersForContent = App.savedFilters[contentType];
+            length = filtersForContent.length;
+            filter = filtersForContent[length - 1]['filter'];
+            key =  Object.keys(filter)[0];
 
+            savedFilter = filter[key];
         } else {
-            savedFilter = filter;
+            savedFilter = uIFilter;
         }
 
         return savedFilter;
@@ -240,8 +238,8 @@ define(['libs/date.format', 'common', 'constants'], function (dateformat, common
 
         for (var i = length - 1; i >= 0; i--){
             if (savedFilters[i]['_id'] === id){
-                keys = Object.keys(savedFilters[i]['value']);
-                filter = savedFilters[i]['value'][keys[0]];
+                keys = Object.keys(savedFilters[i]['filter']);
+                filter = savedFilters[i]['filter'][keys[0]];
             }
         }
 

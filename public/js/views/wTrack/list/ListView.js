@@ -791,24 +791,18 @@ define([
                 this.genInvoiceEl = $('#top-bar-generateBtn');
                 this.copyEl = $('#top-bar-copyBtn');
 
-                function getFilters() {
 
-                }
+                if (App.savedFilters['wTrack']) {
+                    this.savedFilters = App.savedFilters['wTrack'];
 
-
-                if (App.currentUser.savedFilters) {
-                    if (App.savedFilters['wTrack']) {
-                        self.savedFilters = App.savedFilters['wTrack'];
-
-                        for (var j = self.savedFilters.length - 1; j >= 0; j--) {
-
-                            var keys = Object.keys(self.savedFilters[j]['value']);
+                        for (var j = this.savedFilters.length - 1; j >= 0; j--) {
+                            var keys = Object.keys(this.savedFilters[j]['filter']);
                             for (var i = keys.length - 1; i >= 0; i--) {
-                                currentEl.find('#savedFilters').append('<a class="filters"  id ="' + self.savedFilters[j]['_id'] + '">' + keys[i] + '</a>');
+                                currentEl.find('#savedFilters').append('<a class="filters"  id ="' + this.savedFilters[j]['_id'] + '">' + keys[i] + '</a>');
                             }
                         }
                     }
-                }
+
 
                 if (this.filter) {
                     filterContainer = $(currentEl).find('.oe_searchview_input');
@@ -984,6 +978,8 @@ define([
 
             useFilter: function (e) {
                 var target = $(e.target);
+                this.$el.find('.filterValues').empty();
+                this.$el.find('.filter-icons').removeClass('active');
                 var filterContainer = this.$el.find('.oe_searchview_input');
 
                 this.$el.find('.filters').removeClass('current');

@@ -7,6 +7,7 @@ var Users = function (mainDb, models) {
     var savedFiltersSchema =  mongoose.Schemas['savedFilters'];
     var dbsObject = mainDb.dbsObject;
     var RESPONSES = require('../constants/responses');
+    var _ = require('lodash');
 
     function getAllUserWithProfile(req, id, response) {
         var res = {};
@@ -217,6 +218,10 @@ var Users = function (mainDb, models) {
 
     function getUserById(req, id, response) {
         var query = models.get(req.session.lastDb, 'Users', userSchema).findById(id);
+        var key;
+        var newUserResult = {};
+        var savedFilters;
+
         query.populate('profile')
             .populate('RelatedEmployee', 'imageSrc name')
             .populate('savedFilters');
@@ -226,7 +231,11 @@ var Users = function (mainDb, models) {
                 logWriter.log("Users.js get User.find " + err);
                 response.send(500, { error: 'User get DB error' });
             } else {
-                response.send(result);
+                if (result.toJSON().savedFilters){
+                    savedFilters = result.toJSON().savedFilters;
+                    newUserResult = _.groupBy (savedFilters, 'contentView');
+                    }
+                response.send({user : result, savedFilters : newUserResult});
             }
         });
     }
@@ -292,47 +301,49 @@ var Users = function (mainDb, models) {
                 var key = data.key;
                 var filter = data.filter;
                 var deleteId = data.deleteId;
-                var _id;
                 var filterModel = new models.get(req.session.lastDb, 'savedFilters', savedFiltersSchema)();
-
-                filterModel.contentView = key;
-                filterModel.filter = filter;
-
-                _id = filterModel.save(function (err, result) {
-                    if (err) {
-                       return console.log('ERROR SAVE FILTERMODEL');
-                    }
-                    return  result.toJSON()._id;
-                });
-
-
-               // var _key = 'savedFilters.' + key;
-                var keyForDelete;
-                //if (data.filterName){
-                //    keyForDelete = _key + '.' + data.filterName;
-                //}
 
                 if (data.changePass) {
                     query = { $set: data};
                 } else if (data.filter && data.key) {
-                    query = { $push: {'savedFilters': _id}};
+
+                    function filterModelSave(cb){
+                        filterModel.contentView = key;
+                        filterModel.filter = filter;
+
+                        filterModel.save(function (err, result) {
+                            if (err) {
+                                return console.log('ERROR SAVE FILTERMODEL');
+                            }
+                            return  cb();
+                        });
+                    };
+
+                    function userUpdate(id, cb){
+                        query = { $push: {'savedFilters': id}};
+
+                        models.get(req.session.lastDb, 'Users', userSchema).findByIdAndUpdate(_id, query, function (err, result) {
+                            if (err) {
+                                return console.log(err);
+                            }
+                            cb();
+                        });
+                    };
+
+                    async.waterfall([filterModelSave, userUpdate], function (err, result) {
+                        if (err){
+                            console.log(err);
+                        }
+                        cb(null, 'sucess');
+                    })
+
+
                 } else if (data.deleteId) {
                     query = { $pull: {'savedFilters': deleteId}};
                 } else {
                     query = { $set: data};
                 }
-                models.get(req.session.lastDb, 'Users', userSchema).findByIdAndUpdate(_id, query, function (err, result) {
-                    if (err) {
-                        logWriter.log("User.js update profile.update" + err);
-                        res.send(500, { error: 'User.update DB error' });
-                    } else {
-                        req.session.kanbanSettings = result.kanbanSettings;
-                        if (data.profile && (result._id == req.session.uId))
-                            res.send(200, { success: 'User updated success', logout: true });
-                        else
-                            res.send(200, { success: 'User updated success' });
-                    }
-                });
+
             }
         }
         catch (exception) {

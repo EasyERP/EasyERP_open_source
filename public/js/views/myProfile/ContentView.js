@@ -93,7 +93,7 @@ define([
                     confirmPass = $.trim(this.$el.find('#confirm_new_password').val());
 
                 dataService.getData('/currentUser', null, function (response, context) {
-                    context.UsersModel = new UsersModel(response);
+                    context.UsersModel = new UsersModel(response.user);
                     context.UsersModel.urlRoot = '/currentUser';
 
                     var mid = 39;
@@ -127,7 +127,7 @@ define([
                 var RelatedEmployee = $("input[type='radio']:checked").attr("data-id");
                 dataService.getData('/currentUser', null, function (response, context) {
 
-                    context.UsersModel = new UsersModel(response);
+                    context.UsersModel = new UsersModel(response.user);
                     context.UsersModel.urlRoot = '/currentUser';
                     var self = this;
                     var mid = 39;
@@ -197,7 +197,7 @@ define([
                             var timezone = ("UTC +" + (minutes / 60)*(-1));
                         else
                             var timezone = ("UTC -" + (minutes / 60)*(-1));
-                        var model = response;
+                        var model = response.user;
                         context.$el.html(_.template(UsersPagesTemplate,
 	                            {
 	                                model: model,
@@ -206,8 +206,8 @@ define([
 	                            }));
                         common.canvasDraw({ model: model }, this);
 
-                        if (response.RelatedEmployee) {
-                            $("input[type='radio'][value=" + response.RelatedEmployee._id + "]").attr("checked", true);
+                        if (response.user.RelatedEmployee) {
+                            $("input[type='radio'][value=" + response.user.RelatedEmployee._id + "]").attr("checked", true);
                         }
                         else {
                             $("input[type='radio']:first").attr("checked", true);
