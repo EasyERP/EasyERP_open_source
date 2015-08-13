@@ -16,7 +16,7 @@ define([
             el: '#content-holder',
             defaultItemsNumber: null,
             listLength: null,
-            filter: null,
+            filter: {},
             sort: null,
             newCollection: null,
             page: null, //if reload page, and in url is valid page
@@ -430,14 +430,16 @@ define([
                     selectedLetter = '';
                 }
 
-                this.startTime = new Date();
-                this.newCollection = false;
+                context.startTime = new Date();
+                context.newCollection = false;
 
-                filter['letter'] = selectedLetter;
+                if (selectedLetter !== '') {
+                    filter['letter'] = selectedLetter;
+                }
 
-                this.changeLocationHash(1, itemsNumber, filter);
-                this.collection.showMore({ count: itemsNumber, page: 1, filter: filter});
-                this.getTotalLength(null, itemsNumber, filter);
+                context.changeLocationHash(1, itemsNumber, filter);
+                context.collection.showMore({ count: itemsNumber, page: 1, filter: filter});
+                context.getTotalLength(null, itemsNumber, filter);
             },
 
             showPage: function (event) {

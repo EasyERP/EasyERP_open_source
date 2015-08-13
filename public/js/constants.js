@@ -44,7 +44,7 @@ define([], function () {
         Persons: {
             'Full Name': {
                 view: 'name',
-                backend: 'full name'
+                backend: '_id'
             },
             'Country': {
                 view: 'country',

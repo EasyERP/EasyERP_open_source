@@ -629,7 +629,7 @@
                                 resArray.push(filtrElement);
                                 break;
                             case 'letter':
-                                filtrElement[name.last] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
+                                filtrElement['name.last'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
                                 resArray.push(filtrElement);
                                 break;
                             case 'services':

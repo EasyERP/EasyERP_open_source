@@ -75,7 +75,7 @@ define([
 
                     groupNameElement.addClass('checkedGroup');
                 } else {
-                    var index = this.filter[groupType]['value'].indexOf(currentValue);
+                    var index = this.filter[filterObjectName]['value'].indexOf(currentValue);
                     if (index >= 0) {
                         this.filter[filterObjectName]['value'].splice( index, 1 );
                         collectionElement.set({status: false});
