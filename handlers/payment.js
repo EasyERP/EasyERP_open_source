@@ -312,6 +312,13 @@ var Payment = function (models) {
                     var differance;
                     var isPaid;
                     var amount;
+                    var err;
+
+                    if(!wTrackDoc){
+                        err = new Error('wTracks are missing');
+
+                        return innerWaterfallCb(err);
+                    }
 
                     if (!wTrackDoc.isPaid) {
                         revenue = wTrackDoc.revenue;

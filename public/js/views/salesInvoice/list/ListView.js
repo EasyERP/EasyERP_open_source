@@ -2,7 +2,7 @@ define([
         'text!templates/salesInvoice/list/ListHeader.html',
         'text!templates/stages.html',
         'views/salesInvoice/CreateView',
-        'views/Invoice/EditView',
+        'views/salesInvoice/EditView',
         'models/InvoiceModel',
         'models/UsersModel',
         'views/salesInvoice/list/ListItemView',
@@ -561,6 +561,7 @@ define([
                     },
                     success: function (model) {
                         var isWtrack = App.currentDb === CONSTANTS.WTRACK_DB_NAME;
+
                         new editView({model: model, isWtrack: isWtrack});
                     },
                     error: function () {

@@ -18,7 +18,7 @@ define([
 
             initialize: function (options) {
                 if (options) {
-                    this.forSale = !!options.forSale;
+                    this.forSales = !!options.forSales;
                     this.invoiceModel = options.model;
                     this.totalAmount = this.invoiceModel.get('paymentInfo').balance || 0;
                 }
@@ -28,7 +28,9 @@ define([
 
                 this.render();
 
-                this.forSales = App.currentDb === constants.WTRACK_DB_NAME;
+                if(!this.forSales) {
+                    this.forSales = App.currentDb === constants.WTRACK_DB_NAME;
+                }
             },
 
             events: {
