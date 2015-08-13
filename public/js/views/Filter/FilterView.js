@@ -1,17 +1,17 @@
 define([
         'text!templates/Filter/FilterTemplate.html',
         'views/Filter/FilterValuesView',
-        'collections/Filter/filterCollection',
         'views/Filter/savedFiltersView',
+        'collections/Filter/filterCollection',
         'custom',
-        'common'
+        'common',
+        'constants'
     ],
-    function (ContentFilterTemplate, valuesView, filterValuesCollection, savedFiltersView, Custom, Common, CONSTANTS) {
+    function (ContentFilterTemplate, valuesView, savedFiltersView, filterValuesCollection, Custom, Common, CONSTANTS) {
         var FilterView;
         FilterView = Backbone.View.extend({
             el: '#searchContainer',
             contentType: "Filter",
-            savedFilters: null,
             template: _.template(ContentFilterTemplate),
 
             events: {
@@ -53,13 +53,6 @@ define([
                 var collectionElement;
 
                 currentElement.toggleClass('checkedValue');
-                this.contentType = 'wTrack';//options.contentType;//ToDo contentType
-
-                this.$el.html(this.template({collection: this.collection, customCollection: options.customCollection}));
-                var savedFiltersView = new savedFiltersView({
-                    contentType: this.contentType,
-                    filter: this.filter
-                });
 
                 if (currentElement.hasClass('checkedValue')) {
 
@@ -95,10 +88,8 @@ define([
 
             render: function () {
                 var filtersGroupContainer;
-
                 var self = this;
                 var keys = Object.keys(this.constantsObject);
-                //var currentCollection;
                 var filterKey;
                 var filterBackend;
                 var itemView;
@@ -121,7 +112,7 @@ define([
                             groupName: key,
                             currentCollection: self.currentCollection[filterKey],
                             backendString: filterBackend
-                        })
+                        });
 
                         filtersGroupContainer.append(itemView);
                     });
@@ -132,20 +123,16 @@ define([
 
             applyFilter: function () {
                 /*this.$el.find('.filterValues').empty();
-                this.$el.find('.filter-icons').removeClass('active');
-
-                var values = this.$el.find('.chooseTerm');
-                var filterContainer = this.$el.find('.oe_searchview_input');
-
-
-                values.each(function (index, element) {
-                    if ($(element).val()) {
-                        filterContainer.append('<div class="filter-icons active" data-id=' + $(element).val() + '> <span class="fa fa-filter funnelIcon"></span>' +
-                            '<span class="filterValues"> <span class="Clear" data-id="' + $(element).val() +
-                            '">' + $(element).val() + '</span> </span> <span class="removeValues" data-id="' + $(element).val() + '">' + 'x </span> </div>');
-
-                    }
-                });*/
+                 this.$el.find('.filter-icons').removeClass('active');
+                 var values = this.$el.find('.chooseTerm');
+                 var filterContainer = this.$el.find('.oe_searchview_input');
+                 values.each(function (index, element) {
+                 if ($(element).val()) {
+                 filterContainer.append('<div class="filter-icons active" data-id=' + $(element).val() + '> <span class="fa fa-filter funnelIcon"></span>' +
+                 '<span class="filterValues"> <span class="Clear" data-id="' + $(element).val() +
+                 '">' + $(element).val() + '</span> </span> <span class="removeValues" data-id="' + $(element).val() + '">' + 'x </span> </div>');
+                 }
+                 });*/
 
                 this.trigger('filter', this.filter);
             },
@@ -253,11 +240,18 @@ define([
 
             showFilterContent: function (e) {
                 var currentValue = $(e.target).attr('data-value');
+                var savedContentView;
 
                 this.$el.find(currentValue)
                     .removeClass('hidden')
                     .siblings()
                     .addClass('hidden');
+
+                savedContentView = new savedFiltersView({
+                    contentType: this.parentContentType,
+                    filter: this.filter
+                });
+                $(this.el).find('#favoritesContent').append(savedContentView);
             },
 
             writeValue: function (e) {

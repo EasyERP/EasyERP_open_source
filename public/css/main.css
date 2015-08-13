@@ -8041,7 +8041,7 @@ textarea#editInput {
 }
 .hrTop tr.double td span.top,
 .hrTop tr.double td span.bottom {
-  padding: 0 3px!important;
+  padding: 0 3px !important;
   height: 19px;
   line-height: 19px;
   border-bottom: none;
@@ -8184,9 +8184,26 @@ textarea#editInput {
   height: 30px;
   display: none;
   position: absolute;
+  width: 70%;
   top: calc(100% - 1px);
   right: 0;
   z-index: 500;
+}
+.search-options .filter-dialog-tabs {
+  box-sizing: border-box;
+  border: 1px solid #c0c0c0;
+  position: relative;
+  float: left;
+  display: flex;
+  width: 100%;
+}
+.search-options .filter-dialog-tabs li {
+  width: 100%;
+  border-radius: 0px;
+  border: none;
+}
+.search-options .filter-dialog-tabs li:nth-child(2) {
+  border-left: 1px solid #c0c0c0;
 }
 .search-options .filter-check-list {
   right: auto;
@@ -8202,14 +8219,101 @@ textarea#editInput {
   float: left;
 }
 .drop-down-filter {
-  display: none;
+  box-sizing: content-box;
+  font-family: "Lucida Grande", Helvetica, Verdana, Arial, sans-serif;
+  padding: 5px 10px;
   position: absolute;
   z-index: 10;
-  width: 165px;
+  width: calc(100% - 22px);
   background-color: #f9f9f9;
   border: 1px solid #c0c0c0;
   right: 0;
-  top: calc(100% - 1px);
+  top: calc(100% - 3px);
+}
+.drop-down-filter #applyFilter {
+  font-weight: bold;
+  text-align: center;
+  width: calc(100% - 30px);
+  margin: 10px 5px 5px 5px;
+  color: white;
+  background-color: #4d5a75;
+  padding: 10px;
+  border-radius: 5px;
+}
+.drop-down-filter li {
+  cursor: pointer;
+  font-size: 12px;
+  padding: 5px 10px;
+}
+.drop-down-filter #filtersContent .filterGroup {
+  overflow: hidden;
+  text-align: center;
+  border: 1px solid #e2e2e2;
+  background-color: white;
+  border-radius: 5px;
+  margin: 5px;
+  /*&:not(.activeGroup) .groupName {
+        &.checkedGroup{
+          color: white;
+          background-color: @lightgrey;
+          span:before {
+            text-align: center;
+            height: 10px;
+            width: 10px;
+            border-radius: 50%;
+            background-color: @birthdayColor;
+          }
+        };
+      }*/
+}
+.drop-down-filter #filtersContent .filterGroup li.miniStylePagination {
+  background-color: #c8c8d3;
+}
+.drop-down-filter #filtersContent .filterGroup li.miniStylePagination .prev.disabled,
+.drop-down-filter #filtersContent .filterGroup li.miniStylePagination .next.disabled {
+  display: none;
+}
+.drop-down-filter #filtersContent .filterGroup li.miniStylePagination .prev {
+  float: left;
+}
+.drop-down-filter #filtersContent .filterGroup li.miniStylePagination .next {
+  float: right;
+}
+.drop-down-filter #filtersContent .filterGroup li:not(.miniStylePagination):before {
+  content: '\2713';
+}
+.drop-down-filter #filtersContent .filterGroup li:not(.checkedValue):hover:before {
+  color: #36a9e1;
+}
+.drop-down-filter #filtersContent .filterGroup li:not(.checkedValue):before,
+.drop-down-filter #filtersContent .filterGroup li.checkedValue:before,
+.drop-down-filter #filtersContent .filterGroup li.checkedValue:hover:before {
+  color: white;
+}
+.drop-down-filter #filtersContent .filterGroup li:hover,
+.drop-down-filter #filtersContent .filterGroup li.checkedValue {
+  background-color: #36a9e1;
+  color: white;
+}
+.drop-down-filter #filtersContent .filterGroup .filterValues {
+  width: 100%;
+}
+.drop-down-filter #filtersContent .filterGroup.activeGroup .groupName:after {
+  content: ' ';
+}
+.drop-down-filter #filtersContent .filterGroup.activeGroup .groupName,
+.drop-down-filter #filtersContent .filterGroup .groupName:hover {
+  color: white;
+  background-color: #4d5a75;
+}
+.drop-down-filter #filtersContent .filterGroup .groupName {
+  cursor: pointer;
+  font-weight: bolder;
+  font-size: 13px;
+  padding: 10px;
+}
+.drop-down-filter #filtersContent .filterGroup .groupName:after {
+  content: '\2335';
 }
 .drop-down-favourites {
   display: block;

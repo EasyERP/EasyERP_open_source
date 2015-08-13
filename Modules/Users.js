@@ -321,7 +321,7 @@ var Users = function (mainDb, models) {
                 } else if (data.filter && data.key) {
 
                     filterModel.contentView = key;
-                    filterModel.filter = filter;
+                    filterModel.filter = data.filter;
 
                     filterModel.save(function (err, result) {
                         if (err) {

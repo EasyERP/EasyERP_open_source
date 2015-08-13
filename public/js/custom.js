@@ -216,6 +216,8 @@ define(['libs/date.format', 'common', 'constants'], function (dateformat, common
         var filtersForContent;
         var key;
         var filter;
+        var beName;
+        var beNamesNaw;
 
         if (App && App.savedFilters && App.savedFilters[contentType]) {
             filtersForContent = App.savedFilters[contentType];

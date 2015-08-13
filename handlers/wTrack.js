@@ -114,7 +114,7 @@ var wTrack = function (models) {
             for (var i = array.length - 1; i >= 0; i--) {
                 array[i] = parseInt(array[i]);
             }
-        } else if (type === 'boolean') {
+        } else  if (type === 'boolean') {
             for (var i = array.length - 1; i >= 0; i--) {
                 if (array[i] === 'true') {
                     array[i] = true;
@@ -132,7 +132,7 @@ var wTrack = function (models) {
         var resArray = [];
         var filtrElement = {};
 
-        for (var key in filter) {
+        for (var key in filter){
             condition = filter[key];
 
             if (key.indexOf('._id') !== -1) {
@@ -152,45 +152,41 @@ var wTrack = function (models) {
             }
 
             /*switch (key) {
-                case 'projectmanagers':
-                    resArray.push({ 'project.projectmanager._id': {$in: condition.objectID()}});
-                    break;
-                case 'projectsname':
-                    resArray.push({ 'project._id': {$in: condition.objectID()}});
-                    break;
-                case 'workflows':
-                    resArray.push({ 'project.workflow': {$in: condition.objectID()}});
-                    break;
-                case 'customers':
-                    resArray.push({ 'project.customer._id': {$in: condition.objectID()}});
-                    break;
-                case 'employees':
-                    resArray.push({ 'employee._id': {$in: condition.objectID()}});
-                    break;
-                case 'departments':
-                    resArray.push({ 'department._id': {$in: condition.objectID()}});
-                    break;
-                case 'years':
-                    ConvertType(condition, 'integer');
-
-                    resArray.push({ 'year': {$in: condition}});
-                    break;
-                case 'months':
-                    ConvertType(condition, 'integer');
-
-                    resArray.push({ 'month': {$in: condition}});
-                    break;
-                case 'weeks':
-                    ConvertType(condition, 'integer');
-
-                    resArray.push({ 'week': {$in: condition}});
-                    break;
-                case 'isPaid':
-                    ConvertType(condition, 'boolean');
-
-                    resArray.push({ 'isPaid': {$in: condition}});
-                    break;
-            }*/
+             case 'projectmanagers':
+             resArray.push({ 'project.projectmanager._id': {$in: condition.objectID()}});
+             break;
+             case 'projectsname':
+             resArray.push({ 'project._id': {$in: condition.objectID()}});
+             break;
+             case 'workflows':
+             resArray.push({ 'project.workflow': {$in: condition.objectID()}});
+             break;
+             case 'customers':
+             resArray.push({ 'project.customer._id': {$in: condition.objectID()}});
+             break;
+             case 'employees':
+             resArray.push({ 'employee._id': {$in: condition.objectID()}});
+             break;
+             case 'departments':
+             resArray.push({ 'department._id': {$in: condition.objectID()}});
+             break;
+             case 'years':
+             ConvertType(condition, 'integer');
+             resArray.push({ 'year': {$in: condition}});
+             break;
+             case 'months':
+             ConvertType(condition, 'integer');
+             resArray.push({ 'month': {$in: condition}});
+             break;
+             case 'weeks':
+             ConvertType(condition, 'integer');
+             resArray.push({ 'week': {$in: condition}});
+             break;
+             case 'isPaid':
+             ConvertType(condition, 'boolean');
+             resArray.push({ 'isPaid': {$in: condition}});
+             break;
+             }*/
         };
 
         return resArray;
@@ -324,7 +320,7 @@ var wTrack = function (models) {
             } else {
                 queryObject['$and'] = caseFilter(filter);
             }
-       }
+        }
 
         var count = query.count ? query.count : 50;
         var page = query.page;
@@ -440,7 +436,6 @@ var wTrack = function (models) {
         var id = req.params.id;
         var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
         /* var queryParams = {};
-
          for (var i in req.query) {
          queryParams[i] = req.query[i];
          }*/
@@ -454,7 +449,6 @@ var wTrack = function (models) {
         var isOrder = !!(contentType === 'Order');
 
         /* var data = {};
-
          for (var i in req.query) {
          data[i] = req.query[i];
          }*/
