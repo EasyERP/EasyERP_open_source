@@ -64,25 +64,28 @@ define([
             }
         },
         render: function () {
+            var currentUser;
             if (!App || !App.currentUser || !App.currentUser.login) {
                 dataService.getData('/currentUser', null, function (response, context) {
-                    App.currentUser = response;
-                    if (response && response.profile && response.profile.profileName == 'baned') {
+                    currentUser = response.user;
+                    App.currentUser = currentUser;
+
+                    if (response && currentUser.profile && currentUser.profile.profileName == 'baned') {
                         $('title').text("EasyERP");
                         context.$el.find("li#userpage").remove();
                         context.$el.find("#top-bar").addClass("banned");
                         context.$el.find("#content-holder").append("<div id = 'banned'><div class='icon-banned'></div><div class='text-banned'><h1>Sorry, this user is banned!</h1><p>Please contact the administrator.</p></div></div>");
                     }
-                    if (response.RelatedEmployee) {
-                        $("#loginPanel .iconEmployee").attr("src", response.RelatedEmployee.imageSrc);
+                    if (currentUser.RelatedEmployee) {
+                        $("#loginPanel .iconEmployee").attr("src", currentUser.RelatedEmployee.imageSrc);
                         if (response.RelatedEmployee.name) {
-                            $("#loginPanel  #userName").text(response.RelatedEmployee.name.first + " " + response.RelatedEmployee.name.last);
+                            $("#loginPanel  #userName").text(currentUser.RelatedEmployee.name.first + " " + currentUser.RelatedEmployee.name.last);
                         } else {
-                            $("#loginPanel  #userName").text(response.login);
+                            $("#loginPanel  #userName").text(currentUser.login);
                         }
                     } else {
-                        $("#loginPanel .iconEmployee").attr("src", response.imageSrc);
-                        $("#loginPanel  #userName").text(response.login);
+                        $("#loginPanel .iconEmployee").attr("src", currentUser.imageSrc);
+                        $("#loginPanel  #userName").text(currentUser.login);
                     }
                 }, this);
                 this.$el.html(_.template(MainTemplate));

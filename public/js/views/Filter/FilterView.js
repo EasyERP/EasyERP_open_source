@@ -2,15 +2,16 @@ define([
         'text!templates/Filter/FilterTemplate.html',
         'views/Filter/FilterValuesView',
         'collections/Filter/filterCollection',
+        'views/Filter/savedFiltersView',
         'custom',
-        'common',
-        'constants'
+        'common'
     ],
-    function (ContentFilterTemplate, valuesView, filterValuesCollection, Custom, Common, CONSTANTS) {
+    function (ContentFilterTemplate, valuesView, filterValuesCollection, savedFiltersView, Custom, Common, CONSTANTS) {
         var FilterView;
         FilterView = Backbone.View.extend({
             el: '#searchContainer',
             contentType: "Filter",
+            savedFilters: null,
             template: _.template(ContentFilterTemplate),
 
             events: {
@@ -52,6 +53,13 @@ define([
                 var collectionElement;
 
                 currentElement.toggleClass('checkedValue');
+                this.contentType = 'wTrack';//options.contentType;//ToDo contentType
+
+                this.$el.html(this.template({collection: this.collection, customCollection: options.customCollection}));
+                var savedFiltersView = new savedFiltersView({
+                    contentType: this.contentType,
+                    filter: this.filter
+                });
 
                 if (currentElement.hasClass('checkedValue')) {
 

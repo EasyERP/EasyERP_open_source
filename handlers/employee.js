@@ -17,6 +17,7 @@ var Employee = function (models) {
         Employee
             .find()
             .select('_id name department')
+            .populate('department._id', '_id departmentName')
             .sort({'name.first': 1})
             .lean()
             .exec(function (err, employees) {
@@ -33,14 +34,14 @@ var Employee = function (models) {
 
         function assigneFinder(cb) {
             var match = {
-                'projectmanager': {$ne: null}
+                'projectmanager._id': {$ne: null}
             };
 
             Project.aggregate([{
                 $match: match
             }, {
                 $group: {
-                    _id: "$projectmanager"
+                    _id: "$projectmanager._id"
                 }
             }], cb);
         };

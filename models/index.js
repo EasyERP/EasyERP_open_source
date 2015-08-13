@@ -46,4 +46,5 @@ module.exports = (function () {
     require('./holiday.js');
     require('./vacation.js');
     require('./bonusType.js');
+    require('./savedFilters.js');
 })();

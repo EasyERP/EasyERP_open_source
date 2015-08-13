@@ -500,22 +500,20 @@ var wTrack = function (models) {
                 hiredArr = result[0];
                 firedArr = result[1];
 
-               /* for (var i = 0; i < 12; i++) {
-                    month = startMonth + i;
-
-                    if (month > 12) {
-                        year = startYear + 1;
-                        month -= 12;
-                    } else {
-                        year = startYear;
-                    }
-
-                    arrOfDates.push({
-                        month: month,
-                        year: year,
-                        dateByMonth: year * 100 + month
-                    });
-                }*/
+                /* for (var i = 0; i < 12; i++) {
+                 month = startMonth + i;
+                 if (month > 12) {
+                 year = startYear + 1;
+                 month -= 12;
+                 } else {
+                 year = startYear;
+                 }
+                 arrOfDates.push({
+                 month: month,
+                 year: year,
+                 dateByMonth: year * 100 + month
+                 });
+                 }*/
 
                 finalResult = [{
                     _id: 'hired',

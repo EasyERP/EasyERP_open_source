@@ -114,7 +114,7 @@ function (WorkflowsTemplate, kanbanSettingsTemplate, WorkflowsCollection, Kanban
         editKanban: function(e){
 			var self = this;
             dataService.getData('/currentUser', null, function (user, context) {
-                var tempDom = _.template(kanbanSettingsTemplate, { opportunities: user.kanbanSettings.opportunities });
+                var tempDom = _.template(kanbanSettingsTemplate, { opportunities: user.user.kanbanSettings.opportunities });
 				var self = context;
                 context.$el = $(tempDom).dialog({
                     dialogClass: "edit-dialog",

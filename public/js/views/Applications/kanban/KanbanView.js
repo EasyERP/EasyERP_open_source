@@ -114,7 +114,7 @@
 
             editKanban: function (e) {
                 dataService.getData('/currentUser', null, function (user, context) {
-                    var tempDom = _.template(kanbanSettingsTemplate, { applications: user.kanbanSettings.applications });
+                    var tempDom = _.template(kanbanSettingsTemplate, { applications: user.user.kanbanSettings.applications });
                     context.$el = $(tempDom).dialog({
                         dialogClass: "edit-dialog",
                         width: "400",

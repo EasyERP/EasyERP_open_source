@@ -83,7 +83,8 @@ define([
             if (!App || !App.currentUser) {
                 dataService.getData('/currentUser', null, function (response) {
                     if (response && !response.error) {
-                        App.currentUser = response;
+                        App.currentUser = response.user;
+                        App.savedFilters = response.savedFilters;
                     } else {
                         console.log('can\'t fetch currentUser');
                     }

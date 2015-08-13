@@ -7,7 +7,8 @@ var App = App ||
     requestedURL: null,
     Calendar: {
         currentCalendarId: ""
-    }
+    },
+    savedFilters: {}
 };
 
 require.config({

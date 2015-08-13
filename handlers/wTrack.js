@@ -114,7 +114,7 @@ var wTrack = function (models) {
             for (var i = array.length - 1; i >= 0; i--) {
                 array[i] = parseInt(array[i]);
             }
-        } else  if (type === 'boolean') {
+        } else if (type === 'boolean') {
             for (var i = array.length - 1; i >= 0; i--) {
                 if (array[i] === 'true') {
                     array[i] = true;
@@ -132,7 +132,7 @@ var wTrack = function (models) {
         var resArray = [];
         var filtrElement = {};
 
-        for (var key in filter){
+        for (var key in filter) {
             condition = filter[key];
 
             if (key.indexOf('._id') !== -1) {
