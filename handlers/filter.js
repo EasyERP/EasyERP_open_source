@@ -16,7 +16,7 @@ var Filters = function (models) {
 
         async.parallel({
                 wTrack: getWtrackFiltersValues,
-                //Person: getCustomerFiltersValues,
+                Persons: getCustomerFiltersValues,
                 //Companies: getCustomerFiltersValues
             },
             function (err, result) {
@@ -99,81 +99,48 @@ var Filters = function (models) {
 
                 callback(null, result);
             });
-        }
-    };
-    function getCustomerFiltersValues(callback) {
-        Customer.aggregate([
-            {
-                $group: {
-                    _id: null,
-                    'Full Name': {
-                        $addToSet: {
-                            _id: '$',
-                            name: '$project.projectmanager.name'
-                        }
-                    },
-                    'projectName': {
-                        $addToSet: {
-                            _id: '$project._id',
-                            name: '$project.projectName'
-                        }
-                    },
-                    'customer': {
-                        $addToSet: {
-                            _id: '$project.customer._id',
-                            name: '$project.customer.name'
-                        }
-                    },
-                    'employee': {
-                        $addToSet: '$employee'
-                    },
-                    'department': {
-                        $addToSet: {
-                            _id: '$department._id',
-                            name: '$department.departmentName'
-                        }
-                    },
-                    'year': {
-                        $addToSet: {
-                            _id: '$year',
-                            name: '$year'
-                        }
-                    },
-                    'month': {
-                        $addToSet: {
-                            _id: '$month',
-                            name: '$month'
-                        }
-                    },
-                    'week': {
-                        $addToSet: {
-                            _id: '$week',
-                            name: '$week'
+        };
+        function getCustomerFiltersValues(callback) {
+            Customer.aggregate([
+                {
+                    $group: {
+                        _id: null,
+                        'name': {
+                            $addToSet: {
+                                _id: '$_id',
+                                name: {$concat: ['$name.first', ' ', '$name.last']}
+                            }
+                        },
+                        'country': {
+                            $addToSet: {
+                                _id: '$address.country',
+                                name: {'$ifNull': ['$address.country', 'None']}
+                            }
                         }
                     }
                 }
-            }
-        ], function (err, result) {
-            if (err) {
-                callback(err);
-            }
-
-            result = result[0];
-
-            result['isPaid'] = [
-                {
-                    _id: 'true',
-                    name: 'Paid'
-                },
-                {
-                    _id: 'false',
-                    name: 'Unpaid'
+            ], function (err, result) {
+                if (err) {
+                    callback(err);
                 }
-            ]
 
-            callback(null, result);
-        });
-    }
+                result = result[0];
+
+                result['services'] = [
+                    {
+                        _id: 'isSupplier',
+                        name: 'Supplier'
+                    },
+                    {
+                        _id: 'isCustomer',
+                        name: 'Customer'
+                    }
+                ]
+
+                callback(null, result);
+            });
+        };
+    };
 
 };
 

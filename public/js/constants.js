@@ -52,7 +52,7 @@ define([], function () {
             },
             'Services': {
                 view: 'services',
-                backend: null
+                backend: 'services'
             }
         },
     };

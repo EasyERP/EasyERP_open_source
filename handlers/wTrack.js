@@ -137,43 +137,6 @@ var wTrack = function (models) {
             condition = filter[filterName]['value'];
             key = filter[filterName]['key'];
 
-            /*switch (condition[type]) {
-                case 'ObjectID':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'integer':
-                    ConvertType(condition, 'integer');
-                    filtrElement[key] = {$in: condition};
-                    resArray.push(filtrElement);
-                    break;
-                case 'boolean':
-                    ConvertType(condition, 'boolean');
-                    filtrElement[key] = {$in: condition};
-                    resArray.push(filtrElement);
-                    break;
-                default :
-                    filtrElement[key] = {$in: condition};
-                    resArray.push(filtrElement);
-                    break;
-            }*/
-
-            /*if (key.indexOf('._id') !== -1) {
-                filtrElement[key] = {$in: condition.objectID()};
-                resArray.push(filtrElement);
-            } else if (key.indexOf('year') !== -1 || key.indexOf('month') !== -1 || key.indexOf('week') !== -1) {
-                ConvertType(condition, 'integer');
-                filtrElement[key] = {$in: condition};
-                resArray.push(filtrElement);
-            } else if (key.indexOf('isPaid') !== -1) {
-                ConvertType(condition, 'boolean');
-                filtrElement[key] = {$in: condition};
-                resArray.push(filtrElement);
-            } else {
-                filtrElement[key] = {$in: condition};
-                resArray.push(filtrElement);
-            }*/
-
             switch (filterName) {
                 case 'projectManager':
                     filtrElement[key] = {$in: condition.objectID()};
