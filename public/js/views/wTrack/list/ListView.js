@@ -14,10 +14,11 @@ define([
         'dataService',
         'populate',
         'async',
-        'custom'
+        'custom',
+        'moment'
     ],
 
-    function (listTemplate, cancelEdit, createView, listItemView, editView, wTrackCreateView, currentModel, usersModel, contentCollection, EditCollection, filterView, common, dataService, populate, async, custom) {
+    function (listTemplate, cancelEdit, createView, listItemView, editView, wTrackCreateView, currentModel, usersModel, contentCollection, EditCollection, filterView, common, dataService, populate, async, custom, moment) {
         var wTrackListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
