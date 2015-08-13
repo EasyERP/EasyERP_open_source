@@ -75,12 +75,12 @@ define([
 
                     groupNameElement.addClass('checkedGroup');
                 } else {
-                    var index = this.filter[groupType].indexOf(currentValue);
+                    var index = this.filter[groupType]['value'].indexOf(currentValue);
                     if (index >= 0) {
-                        this.filter[filterObjectName][value].splice( index, 1 );
+                        this.filter[filterObjectName]['value'].splice( index, 1 );
                         collectionElement.set({status: false});
 
-                        if (this.filter[filterObjectName][value].length === 0) {
+                        if (this.filter[filterObjectName]['value'].length === 0) {
                             delete this.filter[filterObjectName];
                             groupNameElement.removeClass('checkedGroup');
                         }
