@@ -6019,7 +6019,6 @@ textarea#editInput {
 
 .search-options {
   height: 30px;
-  display: none;
   position: absolute;
   width: 70%;
   top: ~"calc(100% - 1px)";
@@ -6096,6 +6095,7 @@ textarea#editInput {
       margin: 5px;
       li {
         &.miniStylePagination {
+          list-style: none;
           background-color: @lightgrey;
           .prev.disabled,
           .next.disabled {
@@ -6132,10 +6132,10 @@ textarea#editInput {
           content: ' ';
         }
       }
-      /*&:not(.activeGroup) .groupName {
+      &:not(.activeGroup) .groupName {
         &.checkedGroup{
           color: white;
-          background-color: @lightgrey;
+          background-color: @lightmagenta;
           span:before {
             text-align: center;
             height: 10px;
@@ -6144,7 +6144,7 @@ textarea#editInput {
             background-color: @birthdayColor;
           }
         };
-      }*/
+      }
       &.activeGroup .groupName,
       & .groupName:hover {
         color: white;

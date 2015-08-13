@@ -131,11 +131,34 @@ var wTrack = function (models) {
         var condition;
         var resArray = [];
         var filtrElement = {};
+        var key;
 
-        for (var key in filter){
-            condition = filter[key];
+        for (var filterName in filter){
+            condition = filter[filterName]['value'];
+            key = filter[filterName]['key'];
 
-            if (key.indexOf('._id') !== -1) {
+            /*switch (condition[type]) {
+                case 'ObjectID':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'integer':
+                    ConvertType(condition, 'integer');
+                    filtrElement[key] = {$in: condition};
+                    resArray.push(filtrElement);
+                    break;
+                case 'boolean':
+                    ConvertType(condition, 'boolean');
+                    filtrElement[key] = {$in: condition};
+                    resArray.push(filtrElement);
+                    break;
+                default :
+                    filtrElement[key] = {$in: condition};
+                    resArray.push(filtrElement);
+                    break;
+            }*/
+
+            /*if (key.indexOf('._id') !== -1) {
                 filtrElement[key] = {$in: condition.objectID()};
                 resArray.push(filtrElement);
             } else if (key.indexOf('year') !== -1 || key.indexOf('month') !== -1 || key.indexOf('week') !== -1) {
@@ -149,48 +172,50 @@ var wTrack = function (models) {
             } else {
                 filtrElement[key] = {$in: condition};
                 resArray.push(filtrElement);
-            }
+            }*/
 
-            /*switch (key) {
-                case 'projectmanagers':
-                    resArray.push({ 'project.projectmanager._id': {$in: condition.objectID()}});
+            switch (filterName) {
+                case 'projectManager':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
                     break;
-                case 'projectsname':
-                    resArray.push({ 'project._id': {$in: condition.objectID()}});
+                case 'projectName':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
                     break;
-                case 'workflows':
-                    resArray.push({ 'project.workflow': {$in: condition.objectID()}});
+                case 'customer':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
                     break;
-                case 'customers':
-                    resArray.push({ 'project.customer._id': {$in: condition.objectID()}});
+                case 'employee':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
                     break;
-                case 'employees':
-                    resArray.push({ 'employee._id': {$in: condition.objectID()}});
+                case 'department':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
                     break;
-                case 'departments':
-                    resArray.push({ 'department._id': {$in: condition.objectID()}});
-                    break;
-                case 'years':
+                case 'year':
                     ConvertType(condition, 'integer');
-
-                    resArray.push({ 'year': {$in: condition}});
+                    filtrElement[key] = {$in: condition};
+                    resArray.push(filtrElement);
                     break;
-                case 'months':
+                case 'month':
                     ConvertType(condition, 'integer');
-
-                    resArray.push({ 'month': {$in: condition}});
+                    filtrElement[key] = {$in: condition};
+                    resArray.push(filtrElement);
                     break;
-                case 'weeks':
+                case 'week':
                     ConvertType(condition, 'integer');
-
-                    resArray.push({ 'week': {$in: condition}});
+                    filtrElement[key] = {$in: condition};
+                    resArray.push(filtrElement);
                     break;
                 case 'isPaid':
                     ConvertType(condition, 'boolean');
-
-                    resArray.push({ 'isPaid': {$in: condition}});
+                    filtrElement[key] = {$in: condition};
+                    resArray.push(filtrElement);
                     break;
-            }*/
+            }
         };
 
         return resArray;

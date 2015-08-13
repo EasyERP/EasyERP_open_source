@@ -62,6 +62,8 @@ define([
                     if (element) {
                         if (element.status) {
                             status = ' class="checkedValue"';
+                        } else {
+                            status = '';
                         }
 
                         if (element._id) {

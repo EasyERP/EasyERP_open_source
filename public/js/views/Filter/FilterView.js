@@ -16,13 +16,13 @@ define([
             events: {
                 "mouseover .search-content": 'showSearchContent',
                 "click .filter-dialog-tabs .btn": 'showFilterContent',
-                "click .drop-down-filter > input[type='checkbox']": "writeValue",
-                "click #defaultFilter": "writeValue",
-                "click .drop-down-filter > li": "triggerClick",
-                "click .removeValues": "removeValues",
-                'change .chooseTerm': 'chooseOptions',
-                'click .addCondition': 'addCondition',
-                'click .removeFilter': 'removeFilter',
+                //"click .drop-down-filter > input[type='checkbox']": "writeValue",
+                //"click #defaultFilter": "writeValue",
+                //"click .drop-down-filter > li": "triggerClick",
+                //"click .removeValues": "removeValues",
+                //'change .chooseTerm': 'chooseOptions',
+                //'click .addCondition': 'addCondition',
+                //'click .removeFilter': 'removeFilter',
                 //'click .customFilter': 'showCustomFilter',
                 'click #applyFilter': 'applyFilter',
                 'click .condition li': 'conditionClick',
@@ -50,27 +50,38 @@ define([
                 var filterObjectName = this.constantsObject[constantsName].view;
                 var currentCollection = this.currentCollection[filterObjectName];
                 var collectionElement;
+                var intVal;
 
                 currentElement.toggleClass('checkedValue');
 
+                intVal = parseInt(currentValue);
+
+                currentValue = (isNaN(intVal) || currentValue.length >=24) ? currentValue : intVal;
+
+                collectionElement = currentCollection.findWhere({_id: currentValue});
+
                 if (currentElement.hasClass('checkedValue')) {
 
-                    if (!this.filter[groupType]) {
-                        this.filter[groupType] = [];
+                    if (!this.filter[filterObjectName]) {
+                        this.filter[filterObjectName] = {
+                            key: groupType,
+                            value: []
+                        };
                     }
 
-                    this.filter[groupType].push(currentValue);
-
-                    collectionElement = currentCollection.findWhere({_id: currentValue});
+                    this.filter[filterObjectName]['value'].push(currentValue);
                     collectionElement.set({status: true});
 
                     groupNameElement.addClass('checkedGroup');
                 } else {
                     var index = this.filter[groupType].indexOf(currentValue);
                     if (index >= 0) {
-                        this.filter[groupType].splice( index, 1 );
-                        if (this.filter[groupType].length === 0) {
-                            delete this.filter[groupType];
+                        this.filter[filterObjectName][value].splice( index, 1 );
+                        collectionElement.set({status: false});
+
+                        if (this.filter[filterObjectName][value].length === 0) {
+                            delete this.filter[filterObjectName];
+                            groupNameElement.removeClass('checkedGroup');
                         }
                     };
                 }
@@ -149,7 +160,7 @@ define([
             },
 
             showCustomFilter: function () {
-                this.$el.find(".filterOptions, .filterActions").toggle();
+                //this.$el.find(".filterOptions, .filterActions").toggle();
             },
 
             removeFilter: function (e) {
@@ -234,7 +245,7 @@ define([
                 var searchOpt = this.$el.find('.search-options');
                 var selector = 'fa-caret-up';
 
-                searchOpt.toggle();
+                searchOpt.removeClass('hidden');
 
                 if (el.hasClass(selector)) {
                     el.removeClass(selector)
