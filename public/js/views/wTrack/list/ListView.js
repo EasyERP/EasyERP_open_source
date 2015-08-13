@@ -367,9 +367,12 @@ define([
                 }
 
                 async.parallel([getBaseSalary, getMonthData], function callback(err, results) {
-                    var baseSalaryLength = results[0].length;
+                    var baseSalary = results[0];
+                    var coefficients = results[1];
+                    var baseSalaryLength = baseSalary.length;
+                    var coeficientsLength = coefficients.length;
 
-                    if (err || (baseSalaryLength === 0)) {
+                    if (err || (baseSalaryLength === 0) || (coeficientsLength === 0)) {
                         costElement.text('');
                         costElement.addClass('money');
                         costElement.text('0.00');
@@ -379,10 +382,10 @@ define([
                         return 0;
                     }
 
-                    baseSalaryValue = parseFloat(results[0][0].employeesArray.baseSalary);
-                    expenseCoefficient = parseFloat(results[1][0].expenseCoefficient);
-                    fixedExpense = parseInt(results[1][0].fixedExpense);
-                    hours = parseInt(results[1][0].hours);
+                    baseSalaryValue = parseFloat(baseSalary[0].employeesArray.baseSalary);
+                    expenseCoefficient = parseFloat(coefficients[0].expenseCoefficient);
+                    fixedExpense = parseInt(coefficients[0].fixedExpense);
+                    hours = parseInt(coefficients[0].hours);
 
                     calc = ((((baseSalaryValue * expenseCoefficient) + fixedExpense) / hours) * trackWeek).toFixed(2);
 
