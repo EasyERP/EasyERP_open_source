@@ -90,7 +90,7 @@ define([
                                 App.savedFilters[self.contentType].push(lastFilter);
                                 self.savedFilters = filterObj.filter;
 
-                                self.$el.append('<li class="filters"  id ="' + id + '">' +filterName + '</li><li class="removeSavedFilter" id="' + id + '">' + 'x'+ '</li><br/>');
+                                self.$el.append('<li class="filters"  id ="' + id + '">' +filterName + '</li><span class="removeSavedFilter" id="' + id + '">' + 'x'+ '</span><br/>');
                                 self.$el.find('#forFilterName').val('');
                             },
                             error: function (model, xhr) {
