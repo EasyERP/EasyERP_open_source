@@ -741,7 +741,7 @@ input::-ms-clear {
       text-align: right;
       text-shadow: 0 1px 1px rgba(222, 222, 222, 0.5);
 
-      &:nth-child(1),&:nth-child(2) {
+      &:nth-child(1), &:nth-child(2) {
         text-align: center;
       }
 
@@ -820,7 +820,7 @@ input::-ms-clear {
           color: red;
         }
 
-        &:nth-child(1),&:nth-child(2) {
+        &:nth-child(1), &:nth-child(2) {
           text-align: center;
         }
 
@@ -832,7 +832,7 @@ input::-ms-clear {
           position: relative;
           padding: 4px 15px;
           overflow: visible;
-          
+
           .newSelectList {
             top: 5px;
             right: 15px;
@@ -897,7 +897,6 @@ input::-ms-clear {
   .datepicker.notVisible {
     display: none;
   }
-
 
 }
 
@@ -5186,7 +5185,7 @@ textarea#editInput {
       }
     }
 
-    &:hover td{
+    &:hover td {
       background: #000 !important;
       color: #ffffff;
     }
@@ -5822,7 +5821,7 @@ textarea#editInput {
   #tableUnpaidBySales,
   #tableCancelledBySales,
   #tableProjectBySales,
-  #tableEmployeeBySales{
+  #tableEmployeeBySales {
     .divCell {
       width: 6.34%;
       &.left-cell {
@@ -5841,51 +5840,56 @@ textarea#editInput {
   }
 }
 
-.hrTop tr td{
+.hrTop tr td {
   vertical-align: top;
   text-align: right;
 }
-.hrTop tr td.vcenter{
+
+.hrTop tr td.vcenter {
   vertical-align: middle;
 }
-.hrTop tr.double td span{
+
+.hrTop tr.double td span {
   padding: 5px 8px 5px 8px;
   height: 40px;
   line-height: 15px;
   border-bottom: 1px solid #d2d2d2;
   position: relative;
-  &.large{
+  &.large {
     line-height: 29px;
   }
-  &.top, &.bottom{
-    padding: 0 3px!important;
+  &.top, &.bottom {
+    padding: 0 3px !important;
     height: 19px;
     line-height: 19px;
     border-bottom: none;
     position: absolute;
-    left:0px;
+    left: 0px;
     width: 30px;
 
     text-align: right;
     border-right: 1px solid #7f7f80;
   }
-  &.top{
-    top:0px;
+  &.top {
+    top: 0px;
     border-bottom: 1px solid #7f7f80;
 
   }
-  &.bottom{
-    top:20px;
+  &.bottom {
+    top: 20px;
   }
 }
+
 .hrTop tr.double td span:last-child {
   padding: 5px 8px 5px 8px;
   border-bottom: none;
 }
+
 .hrTop tr.double td:first-child span {
   border-bottom: none;
   background-color: inherit;
 }
+
 .search-field {
   box-sizing: border-box;
   display: block;
@@ -6017,9 +6021,27 @@ textarea#editInput {
   height: 30px;
   display: none;
   position: absolute;
+  width: 70%;
   top: ~"calc(100% - 1px)";
   right: 0;
   z-index: 500;
+
+  .filter-dialog-tabs {
+    box-sizing: border-box;
+    border: 1px solid #c0c0c0;
+    position: relative;
+    float: left;
+    display: flex;
+    width: 100%;
+    li {
+      width: 100%;
+      border-radius: 0px;
+      border: none;
+      &:nth-child(2) {
+        border-left: 1px solid #c0c0c0;
+      }
+    }
+  }
 
   .filter-check-list {
     right: auto;
@@ -6039,28 +6061,106 @@ textarea#editInput {
 }
 
 .drop-down-filter {
-  display: none;
+  box-sizing: content-box;
+  font-family: @lucida-font;
+  padding: 5px 10px;
   position: absolute;
   z-index: 10;
-  width: 165px;
+  width: ~"calc(100% - 22px)";
   background-color: #f9f9f9;
   border: 1px solid #c0c0c0;
   right: 0;
-  top: ~"calc(100% - 1px)";
-}
-
-.drop-down-filter li {
-  cursor: pointer;
-  margin-bottom: 5px;
-  padding: 0 5px;
-}
-.drop-down-filter li:first-child {
-  padding-bottom:5px;
-  padding-top:5px
-}
-
-.drop-down-filter li label{
-  margin-left:5px
+  top: ~"calc(100% - 3px)";
+  #applyFilter {
+    font-weight: bold;
+    text-align: center;
+    width: ~"calc(100% - 30px)";
+    margin: 10px 5px 5px 5px;
+    color: white;
+    background-color: @blue;
+    padding: 10px;
+    border-radius: 5px;
+  }
+  li {
+    cursor: pointer;
+    font-size: 12px;
+    padding: 5px 10px;
+  }
+  #filtersContent {
+    .filterGroup {
+      overflow: hidden;
+      text-align: center;
+      border: 1px solid #e2e2e2;
+      background-color: white;
+      border-radius: 5px;
+      margin: 5px;
+      li {
+        &.miniStylePagination {
+          background-color: @lightgrey;
+          .prev.disabled,
+          .next.disabled {
+            display: none;
+          }
+          .prev {
+            float: left;
+          }
+          .next {
+            float: right;
+          }
+        }
+        &:not(.miniStylePagination):before {
+          content: '\2713';
+        }
+        &:not(.checkedValue):hover:before {
+          color: @tilte-color;
+        }
+        &:not(.checkedValue):before,
+        &.checkedValue:before,
+        &.checkedValue:hover:before {
+          color: white;
+        }
+        &:hover, &.checkedValue {
+          background-color: @tilte-color;
+          color: white;
+        }
+      }
+      .filterValues {
+        width: 100%;
+      }
+      &.activeGroup .groupName {
+        &:after {
+          content: ' ';
+        }
+      }
+      /*&:not(.activeGroup) .groupName {
+        &.checkedGroup{
+          color: white;
+          background-color: @lightgrey;
+          span:before {
+            text-align: center;
+            height: 10px;
+            width: 10px;
+            border-radius: 50%;
+            background-color: @birthdayColor;
+          }
+        };
+      }*/
+      &.activeGroup .groupName,
+      & .groupName:hover {
+        color: white;
+        background-color: @blue;
+      }
+      .groupName {
+        cursor: pointer;
+        font-weight: bolder;
+        font-size: 13px;
+        padding: 10px;
+        &:after {
+          content: '\2335';
+        }
+      }
+    }
+  }
 }
 
 .filter-icons {
@@ -6242,14 +6342,17 @@ textarea#editInput {
     padding: 6px 6px 5px 6px;
   }
 }
+
 .activated {
   max-height: 250px;
   width: 100%;
   overflow-y: scroll;
 }
+
 .filter {
   //margin-right: 20px;
 }
+
 .condition {
   z-index: 10;
   width: 165px;
@@ -6258,9 +6361,11 @@ textarea#editInput {
   right: 0;
   top: calc(100% - 1px);
 }
+
 .condition li {
   margin: 5px;
 }
+
 .CondParagraph {
   font-size: 14px;
   margin-left: 50px;

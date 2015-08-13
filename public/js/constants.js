@@ -1,7 +1,48 @@
 /**
  * Created by Roman on 23.04.2015.
  */
-define([], function(){
+define([], function () {
+    var filters = {
+        wTrack: {
+            'Assigned': {
+                view: 'projectManager',
+                backend: 'project.projectmanager._id'
+            },
+            'Employee': {
+                view: 'employee',
+                backend: 'employee._id'
+            },
+            'Customer': {
+                view: 'customer',
+                backend: 'project.customer._id'
+            },
+            'Project Name': {
+                view: 'projectName',
+                backend: 'project._id'
+            },
+            'Month': {
+                view: 'month',
+                backend: 'month'
+            },
+            'Year': {
+                view: 'year',
+                backend: 'year'
+            },
+            'Week': {
+                view: 'week',
+                backend: 'week'
+            },
+            'Department': {
+                view: 'department',
+                backend: 'department._id'
+            },
+            'Status': {
+                view: 'isPaid',
+                backend: 'isPaid'
+            }
+        }
+    };
+
     return {
         PERSONS: 'Persons',
         COMPANIES: 'Companies',
@@ -48,6 +89,8 @@ define([], function(){
             CONFIRM_ORDER: 'Please add at most one product to quotation'
         },
 
-        WTRACK_DB_NAME: 'weTrack'
+        WTRACK_DB_NAME: 'weTrack',
+        FILTERS: filters,
+        FILTERVALUESCOUNT: 7
     }
 });

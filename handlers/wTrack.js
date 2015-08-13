@@ -130,11 +130,28 @@ var wTrack = function (models) {
     function caseFilter(filter) {
         var condition;
         var resArray = [];
+        var filtrElement = {};
 
         for (var key in filter){
             condition = filter[key];
 
-            switch (key) {
+            if (key.indexOf('._id') !== -1) {
+                filtrElement[key] = {$in: condition.objectID()};
+                resArray.push(filtrElement);
+            } else if (key.indexOf('year') !== -1 || key.indexOf('month') !== -1 || key.indexOf('week') !== -1) {
+                ConvertType(condition, 'integer');
+                filtrElement[key] = {$in: condition};
+                resArray.push(filtrElement);
+            } else if (key.indexOf('isPaid') !== -1) {
+                ConvertType(condition, 'boolean');
+                filtrElement[key] = {$in: condition};
+                resArray.push(filtrElement);
+            } else {
+                filtrElement[key] = {$in: condition};
+                resArray.push(filtrElement);
+            }
+
+            /*switch (key) {
                 case 'projectmanagers':
                     resArray.push({ 'project.projectmanager._id': {$in: condition.objectID()}});
                     break;
@@ -173,7 +190,7 @@ var wTrack = function (models) {
 
                     resArray.push({ 'isPaid': {$in: condition}});
                     break;
-            }
+            }*/
         };
 
         return resArray;
@@ -299,6 +316,7 @@ var wTrack = function (models) {
         var waterfallTasks;
 
         var sort = {};
+
 
         if (filter && typeof filter === 'object') {
             if (filter.condition === 'or') {
@@ -557,112 +575,6 @@ var wTrack = function (models) {
             } else {
                 res.status(403).send();
             }
-        });
-    };
-
-    this.getFilterValues = function (req, res, next) {
-        var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
-
-        WTrack.aggregate([
-            {
-                $group:{
-                    _id: null,
-                    projectmanagers: {
-                        $addToSet: '$project.projectmanager'
-                    },
-                    projectsname: {
-                        $addToSet: {
-                            _id: '$project._id',
-                            projectName: '$project.projectName'
-                        }
-                    },
-                    customers: {
-                        $addToSet: '$project.customer'
-                    },
-                    employees: {
-                        $addToSet: '$employee'
-                    },
-                    departments: {
-                        $addToSet: '$department'
-                    },
-                    years: {
-                        $addToSet: '$year'
-                    },
-                    months: {
-                        $addToSet: '$month'
-                    },
-                    weeks: {
-                        $addToSet: '$week'
-                    }/*,
-                    isPaid: {
-                        $addToSet: '$isPaid'
-                    }*/
-                }
-            }
-        ], function (err, result) {
-            if (err) {
-                return next(err);
-            }
-
-            _.map(result[0], function(value, key) {
-                switch (key) {
-                    case 'projectmanagers':
-                        result[0][key] = {
-                            displayName: 'Assigned',
-                            values: _.sortBy(value, 'name')
-                        };
-                        break;
-                    case  'employees':
-                        result[0][key] = {
-                            displayName: 'Employee',
-                            values: _.sortBy(value, 'name')
-                        };
-                        break;
-                    case 'customers':
-                        result[0][key] = {
-                            displayName: 'Customer',
-                            values: _.sortBy(value, 'name')
-                        };
-                        break;
-                    case 'projectsname':
-                        result[0][key] = {
-                            displayName: 'Project Name',
-                            values: _.sortBy(value, 'projectName')
-                        };
-                        break;
-                    case 'months':
-                        result[0][key] = {
-                            displayName: 'Months',
-                            values: _.sortBy(value, function (num) { return num})
-                        };
-                        break;
-                    case 'years':
-                        result[0][key] = {
-                            displayName: 'Years',
-                            values: _.sortBy(value, function (num) { return num})
-                        };
-                        break;
-                    case 'weeks':
-                        result[0][key] = {
-                            displayName: 'Weeks',
-                            values: _.sortBy(value, function (num) { return num})
-                        };
-                        break;
-                    case 'departments':
-                        result[0][key] = {
-                            displayName: 'Department',
-                            values: _.sortBy(value, 'departmentName')
-                        };
-                        break;
-                }
-            });
-
-            result[0]['isPaid'] = {
-                displayName: 'Status',
-                values: [{displayName: 'Paid', _id: true}, {displayName: 'Unpaid', _id: false}]
-            };
-
-            res.status(200).send(result);
         });
     };
 };

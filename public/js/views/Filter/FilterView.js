@@ -1,9 +1,12 @@
 define([
         'text!templates/Filter/FilterTemplate.html',
+        'views/Filter/FilterValuesView',
+        'collections/Filter/filterCollection',
         'custom',
-        'common'
+        'common',
+        'constants'
     ],
-    function (ContentFilterTemplate, Custom, Common) {
+    function (ContentFilterTemplate, valuesView, filterValuesCollection, Custom, Common, CONSTANTS) {
         var FilterView;
         FilterView = Backbone.View.extend({
             el: '#searchContainer',
@@ -12,7 +15,7 @@ define([
 
             events: {
                 "mouseover .search-content": 'showSearchContent',
-                "click .filter": 'showFilterContent',
+                "click .filter-dialog-tabs .btn": 'showFilterContent',
                 "click .drop-down-filter > input[type='checkbox']": "writeValue",
                 "click #defaultFilter": "writeValue",
                 "click .drop-down-filter > li": "triggerClick",
@@ -20,26 +23,107 @@ define([
                 'change .chooseTerm': 'chooseOptions',
                 'click .addCondition': 'addCondition',
                 'click .removeFilter': 'removeFilter',
-                'click .customFilter': 'showCustomFilter',
-                'click .applyFilter': 'applyFilter',
-                'click .condition li': 'conditionClick'
+                //'click .customFilter': 'showCustomFilter',
+                'click #applyFilter': 'applyFilter',
+                'click .condition li': 'conditionClick',
+                'click .groupName': 'showHideValues',
+                "click .filterValues li": "selectValue"
             },
-
 
             initialize: function (options) {
-                this.render(options);
+                this.parentContentType = options.contentType;
+                this.constantsObject = CONSTANTS.FILTERS[this.parentContentType];
+                this.filterObject = App.filtersValues[this.parentContentType];
+                this.filter = {};
+                this.currentCollection = {};
+
+                this.render();
             },
 
-            render: function (options) {
-                this.customCollection = options.customCollection;
+            selectValue: function(e) {
+                var currentElement = $(e.target);
+                var currentValue = currentElement.attr('data-value');
+                var filterGroupElement = currentElement.closest('.filterGroup');
+                var groupType = filterGroupElement.attr('data-value');
+                var groupNameElement = filterGroupElement.find('.groupName')
+                var constantsName = $.trim(groupNameElement.text());
+                var filterObjectName = this.constantsObject[constantsName].view;
+                var currentCollection = this.currentCollection[filterObjectName];
+                var collectionElement;
 
-                this.$el.html(this.template({collection: this.collection, customCollection: options.customCollection}));
+                currentElement.toggleClass('checkedValue');
+
+                if (currentElement.hasClass('checkedValue')) {
+
+                    if (!this.filter[groupType]) {
+                        this.filter[groupType] = [];
+                    }
+
+                    this.filter[groupType].push(currentValue);
+
+                    collectionElement = currentCollection.findWhere({_id: currentValue});
+                    collectionElement.set({status: true});
+
+                    groupNameElement.addClass('checkedGroup');
+                } else {
+                    var index = this.filter[groupType].indexOf(currentValue);
+                    if (index >= 0) {
+                        this.filter[groupType].splice( index, 1 );
+                        if (this.filter[groupType].length === 0) {
+                            delete this.filter[groupType];
+                        }
+                    };
+                }
+
+                this.trigger('filter', this.filter);
+            },
+
+            showHideValues: function (e) {
+                var filterGroupContainer = $(e.target).closest('.filterGroup');
+
+                filterGroupContainer.find('.ulContent').toggleClass('hidden');
+                filterGroupContainer.toggleClass('activeGroup');
+            },
+
+            render: function () {
+                var filtersGroupContainer;
+
+                var self = this;
+                var keys = Object.keys(this.constantsObject);
+                //var currentCollection;
+                var filterKey;
+                var filterBackend;
+                var itemView;
+
+                this.$el.html(this.template({filterCollection: this.constantsObject}));
+
+                filtersGroupContainer = $(this.el).find('#filtersContent');
+
+                filtersGroupContainer.html('');
+                if (keys.length) {
+                    keys.forEach(function (key) {
+                        filterKey = self.constantsObject[key].view;
+                        filterBackend = self.constantsObject[key].backend;
+                        self.currentCollection[filterKey] = new filterValuesCollection(self.filterObject[filterKey]);
+                        //currentCollection = currentCollection.toJSON();
+
+                        //this.collection[]
+
+                        itemView = new valuesView({
+                            groupName: key,
+                            currentCollection: self.currentCollection[filterKey],
+                            backendString: filterBackend
+                        })
+
+                        filtersGroupContainer.append(itemView);
+                    });
+                };
 
                 return this;
             },
 
             applyFilter: function () {
-                this.$el.find('.filterValues').empty();
+                /*this.$el.find('.filterValues').empty();
                 this.$el.find('.filter-icons').removeClass('active');
 
                 var values = this.$el.find('.chooseTerm');
@@ -53,10 +137,9 @@ define([
                             '">' + $(element).val() + '</span> </span> <span class="removeValues" data-id="' + $(element).val() + '">' + 'x </span> </div>');
 
                     }
-                });
+                });*/
 
-
-                this.trigger('filter');
+                this.trigger('filter', this.filter);
             },
 
             conditionClick: function (e) {
@@ -112,7 +195,7 @@ define([
                 var value = e.target.value;
                 var optDate = this.$el.find('.chooseDate');
                 var liText;
-                var values = this.customCollection[0][value]['values'] ? this.customCollection[0][value]['values'] : this.customCollection[0][value];
+                var values = new filterValuesCollection(App.filtersValues[this.parentContentType][value]);
 
                 $(e.target).closest('.filterOptions').addClass('chosen');
                 this.$el.find('.chooseTerm:last').addClass(value);
@@ -131,19 +214,10 @@ define([
                     el.children().remove();
 
                     values.forEach(function (opt) {
-                        if (opt) {
-                            if (opt.displayName) {
-                                liText = opt.displayName;
-                            } else {
-                                liText = opt.fullName || opt.fullName || opt.projectName || opt.departmentName || opt.name;
-                            }
-                        }
                         el.addClass('activated')
 
-                        if (opt && liText) {
-                            el.append('<li><input type="checkbox" id="filter' + opt._id + '" value=' + opt._id + '><label for="filter' + opt._id + '">' + liText + '</label></li>');
-                        } else {
-                            el.append('<li><input type="checkbox" id="filter' + opt + '" value=' + opt + '><label for="filter' + opt + '">' + opt + '</label></li>');
+                        if (opt && opt.name && opt._id) {
+                            el.append('<li><input type="checkbox" id="filter' + opt._id + '" value=' + opt._id + '><label for="filter' + opt._id + '">' + opt.name + '</label></li>');
                         }
                     });
                 }
@@ -167,15 +241,15 @@ define([
                 } else {
                     el.addClass(selector)
                 }
-                this.showFilterContent();
-                this.showCustomFilter();
             },
 
-            showFilterContent: function () {
-                var filter = this.$el.find('.drop-down-filter');
+            showFilterContent: function (e) {
+                var currentValue = $(e.target).attr('data-value');
 
-                filter.toggle();
-                return false;
+                this.$el.find(currentValue)
+                    .removeClass('hidden')
+                    .siblings()
+                    .addClass('hidden');
             },
 
             writeValue: function (e) {

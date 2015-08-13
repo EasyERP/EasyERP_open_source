@@ -53,20 +53,6 @@ define([
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
                 this.contentCollection = contentCollection;
                 this.stages = [];
-                this.allTotalVals = {
-                    hours: 0,
-                    monHours: 0,
-                    tueHours: 0,
-                    wedHours: 0,
-                    thuHours: 0,
-                    friHours: 0,
-                    satHours: 0,
-                    sunHours: 0,
-                    revenue: 0,
-                    cost: 0,
-                    profit: 0,
-                    amount: 0
-                }
             },
 
             events: {
@@ -751,28 +737,16 @@ define([
                     self.responseObj['#department'] = departments;
                 });
 
-                dataService.getData('/wTrack/getFilterValues', null, function (values) {
-                    /*values[0].departments = _.map(values[0].departments, function (department) {
-                     department.name = department.departmentName;
+                FilterView = new filterView({
+                    contentType: self.contentType
+                });
 
-                     return department
-                     });*/
-
-                    FilterView = new filterView({
-                        //collection: values[0].departments,
-                        customCollection: values,
-                        wTrack: true
-                    });
-
-                    // Filter custom event listen ------begin
-                    FilterView.bind('filter', function () {
-
-                        self.showFilteredPage()
-                    });
-                    FilterView.bind('defaultFilter', function () {
-                        self.showFilteredPage();
-                    });
-                    // Filter custom event listen ------end
+                // Filter custom event listen ------begin
+                FilterView.bind('filter', function(filter) {
+                    self.showFilteredPage(filter, self);
+                });
+                FilterView.bind('defaultFilter', function () {
+                    self.showFilteredPage({}, self);
                 });
 
                 setTimeout(function () {
@@ -926,25 +900,19 @@ define([
                 this.changeLocationHash(1, itemsNumber, this.filter);
             },
 
-            showFilteredPage: function () {
+            showFilteredPage: function (filter, context) {
                 var itemsNumber = $("#itemsNumber").text();
-                ;
-                var checkedElements = this.$el.find('input:checkbox:checked');
-                var chosen = this.$el.find('.chosen');
 
-                var logicAndStatus = this.$el.find('#logicCondition')[0].checked;
-                var defaultFilterStatus = this.$el.find('#defaultFilter')[0].checked;
-
-                this.startTime = new Date();
-                this.newCollection = false;
-                this.filter = custom.getFiltersValues(chosen, defaultFilterStatus, logicAndStatus);
+                context.startTime = new Date();
+                context.newCollection = false;
+                //this.filter = custom.getFiltersValues(chosen, defaultFilterStatus, logicAndStatus);
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
 
-                this.changeLocationHash(1, itemsNumber, this.filter);
-                this.collection.showMore({count: itemsNumber, page: 1, filter: this.filter});
-                this.getTotalLength(null, itemsNumber, this.filter);
+                context.changeLocationHash(1, itemsNumber, filter);
+                context.collection.showMore({count: itemsNumber, page: 1, filter: filter});
+                context.getTotalLength(null, itemsNumber, filter);
             },
 
             saveFilter: function () {

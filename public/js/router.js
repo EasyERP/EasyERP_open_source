@@ -88,6 +88,15 @@ define([
                         console.log('can\'t fetch currentUser');
                     }
                 });
+            };
+            if (!App || !App.filtersValues) {
+                dataService.getData('/filter/getFiltersValues', null, function (response) {
+                    if (response && !response.error) {
+                        App.filtersValues = response;
+                    } else {
+                        console.log('can\'t fetch filtersValues');
+                    }
+                });
             }
         },
 

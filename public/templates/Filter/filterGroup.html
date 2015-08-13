@@ -1,0 +1,16 @@
+<div data-value="<%=backendString%>" class="filterGroup">
+    <div class="groupName">
+        <span><%=groupName%></span>
+    </div>
+    <div id="<%=groupName%>Container"class="ulContent hidden">
+        <ul id="<%=groupName%>" class="filterValues">
+        </ul>
+        <% if (paginationBool){%>
+            <li class="miniStylePagination">
+                <a class="prev" href="javascript:;">&lt;Prev</a>
+                <span class="counter"></span>
+                <a class="next" href="javascript:;">Next&gt;</a>
+            </li>
+        <%}%>
+    </div>
+</div>
