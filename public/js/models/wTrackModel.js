@@ -21,6 +21,8 @@ define(['Validation', 'common', 'moment'], function (Validation, common, moment)
             3: 8,
             4: 8,
             5: 8,
+            6: 0,
+            7: 0,
             revenue: 120,
             cost: 0,
             amount: 0
