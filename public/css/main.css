@@ -8267,6 +8267,9 @@ textarea#editInput {
 #searchContainer .filter-check-list {
   margin-top: -1px;
 }
+#savedFilters {
+  cursor: pointer;
+}
 .removeValues {
   cursor: pointer;
 }

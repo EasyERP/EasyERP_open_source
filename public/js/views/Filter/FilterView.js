@@ -1,9 +1,10 @@
 define([
         'text!templates/Filter/FilterTemplate.html',
+        'views/Filter/savedFiltersView',
         'custom',
-        'common'
+        'common',
     ],
-    function (ContentFilterTemplate, Custom, Common) {
+    function (ContentFilterTemplate, savedFiltersView, Custom, Common) {
         var FilterView;
         FilterView = Backbone.View.extend({
             el: '#searchContainer',
@@ -35,7 +36,13 @@ define([
             render: function (options) {
                 this.customCollection = options.customCollection;
 
+                this.contentType = 'wTrack';//options.contentType;//ToDo contentType
+
                 this.$el.html(this.template({collection: this.collection, customCollection: options.customCollection}));
+                savedFiltersView = new savedFiltersView({
+                    contentType: this.contentType,
+                    filter: this.filter
+                });
 
                 return this;
             },
