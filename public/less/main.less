@@ -2439,15 +2439,7 @@ input::-ms-clear {
 
   .pageList {
     position: relative;
-    .icons {
-      margin: 1px 0 0;
-      height: 16px;
-      border-left: none;
-      width: 20px;
-    }
-    .iconsNum {
-      margin-right: 0;
-    }
+
     button {
       background-color: white;
       background-image: none;
@@ -2467,9 +2459,10 @@ input::-ms-clear {
       border: @thin-border rgba(0, 0, 0, 0.4);
       position: absolute;
       bottom: 15px;
-      left: -7px;
+      left: 5px;
       display: none;
       font-size: 12px;
+
       li {
         a {
           display: block;
@@ -6170,31 +6163,6 @@ textarea#editInput {
   }
 }
 
-.drop-down-favourites {
-  display: block;
-  z-index: 10;
-  width: 165px;
-  height: 115px;
-  background-color: #f9f9f9;
-  border: 1px solid #c0c0c0;
-  right: 0;
-  top: ~"calc(100% - 1px)";
-}
-
-.drop-down-filter li {
-  cursor: pointer;
-  margin-bottom: 5px;
-  padding: 0 5px;
-}
-.drop-down-filter li:first-child {
-  padding-bottom:5px;
-  padding-top:5px
-}
-
-.drop-down-filter li label{
-  margin-left:5px
-}
-
 .filter-icons {
   display: none;
   border: 1px solid #ababab;
@@ -6237,10 +6205,6 @@ textarea#editInput {
   .filter-check-list {
     margin-top: -1px;
   }
-}
-
-#savedFilters {
-  cursor: pointer;
 }
 
 .removeValues {

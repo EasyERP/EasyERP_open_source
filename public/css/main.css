@@ -1120,15 +1120,6 @@ input::-ms-clear {
 .pagination .pageList {
   position: relative;
 }
-.pagination .pageList .icons {
-  margin: 1px 0 0;
-  height: 16px;
-  border-left: none;
-  width: 20px;
-}
-.pagination .pageList .iconsNum {
-  margin-right: 0;
-}
 .pagination .pageList button {
   background-color: white;
   background-image: none;
@@ -1146,7 +1137,7 @@ input::-ms-clear {
   border: 1px solid rgba(0, 0, 0, 0.4);
   position: absolute;
   bottom: 15px;
-  left: -7px;
+  left: 5px;
   display: none;
   font-size: 12px;
 }
