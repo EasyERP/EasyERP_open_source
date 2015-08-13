@@ -312,7 +312,7 @@ var wTrack = function (models) {
             } else {
                 queryObject['$and'] = caseFilter(filter);
             }
-        }
+       }
 
         var count = query.count ? query.count : 50;
         var page = query.page;
@@ -428,7 +428,6 @@ var wTrack = function (models) {
         var id = req.params.id;
         var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
         /* var queryParams = {};
-
          for (var i in req.query) {
          queryParams[i] = req.query[i];
          }*/
@@ -442,7 +441,6 @@ var wTrack = function (models) {
         var isOrder = !!(contentType === 'Order');
 
         /* var data = {};
-
          for (var i in req.query) {
          data[i] = req.query[i];
          }*/

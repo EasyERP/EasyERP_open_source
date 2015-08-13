@@ -6170,6 +6170,31 @@ textarea#editInput {
   }
 }
 
+.drop-down-favourites {
+  display: block;
+  z-index: 10;
+  width: 165px;
+  height: 115px;
+  background-color: #f9f9f9;
+  border: 1px solid #c0c0c0;
+  right: 0;
+  top: ~"calc(100% - 1px)";
+}
+
+.drop-down-filter li {
+  cursor: pointer;
+  margin-bottom: 5px;
+  padding: 0 5px;
+}
+.drop-down-filter li:first-child {
+  padding-bottom:5px;
+  padding-top:5px
+}
+
+.drop-down-filter li label{
+  margin-left:5px
+}
+
 .filter-icons {
   display: none;
   border: 1px solid #ababab;
@@ -6212,6 +6237,10 @@ textarea#editInput {
   .filter-check-list {
     margin-top: -1px;
   }
+}
+
+#savedFilters {
+  cursor: pointer;
 }
 
 .removeValues {

@@ -53,6 +53,20 @@ define([
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
                 this.contentCollection = contentCollection;
                 this.stages = [];
+                this.allTotalVals = {
+                    hours: 0,
+                    monHours: 0,
+                    tueHours: 0,
+                    wedHours: 0,
+                    thuHours: 0,
+                    friHours: 0,
+                    satHours: 0,
+                    sunHours: 0,
+                    revenue: 0,
+                    cost: 0,
+                    profit: 0,
+                    amount: 0
+                }
             },
 
             events: {
@@ -77,8 +91,9 @@ define([
                 "change .editable ": "setEditable",
                 "keydown input.editing ": "keyDown",
                 "click .saveFilterButton": "saveFilter",
-                "click .removeFilterButton": "removeFilter",
-                "change .listCB": "setAllTotalVals"
+                "click .removeSavedFilter": "removeFilter",
+                "change .listCB": "setAllTotalVals",
+                "click .filters": "useFilter"
             },
 
             keyDown: function (e) {
@@ -915,97 +930,129 @@ define([
                 context.getTotalLength(null, itemsNumber, filter);
             },
 
-            saveFilter: function () {
-                var currentUser = new usersModel(App.currentUser);
-                var subMenu = $('#submenu-holder').find('li.selected').text();
-                var key;
-                var filterObj = {};
-                var mid = 39;
+            //useFilter: function (e) {
+            //    var target = $(e.target);
+            //    this.$el.find('.filterValues').empty();
+            //    this.$el.find('.filter-icons').removeClass('active');
+            //    var filterContainer = this.$el.find('.oe_searchview_input');
+            //
+            //    this.$el.find('.filters').removeClass('current');
+            //
+            //    $(e.target).addClass('current');
+            //
+            //    filterContainer.append('<div class="filter-icons active" > <span class="fa fa-filter funnelIcon"></span>' +
+            //        '<span class="filterValues"> <span class="Clear" >' + 'Filter' + '</span> </span> <span class="removeValues" >' + 'x </span> </div>');
+            //
+            //
+            //    var targetId = target.attr('id');
+            //    var itemsNumber = $("#itemsNumber").text();
+            //    var savedFilters = this.savedFilters;
+            //
+            //    var filter = custom.getFilterById(savedFilters, targetId);
+            //    var filterKeys = Object.keys(filter);
+            //    filterKeys.pop();
+            //
+            //    filterKeys.forEach(function (key) {
+            //        filterContainer.append('<div class="filter-icons active" > <span class="fa fa-filter funnelIcon"></span>' +
+            //            '<span class="filterValues"> <span class="Clear" >' + 'Filter' + '</span> </span> <span class="removeValues" >' + 'x </span> </div>');
+            //    });
+            //
+            //    this.changeLocationHash(1, itemsNumber, filter);
+            //    this.collection.showMore({count: itemsNumber, page: 1, filter: filter});
+            //    this.getTotalLength(null, itemsNumber, filter);
+            //},
 
-                key = subMenu.trim();
+            //saveFilter: function () {
+            //    var currentUser = new usersModel(App.currentUser);
+            //    var subMenu = $('#submenu-holder').find('li.selected').text();
+            //    var key;
+            //    var filterObj = {};
+            //    var mid = 39;
+            //    var filterName = this.$el.find('#forFilterName').val();
+            //    var sameFilterName;
+            //
+            //    key = subMenu.trim();
+            //
+            //    filterObj['filter'] = {};
+            //    filterObj['filter'][filterName] = {};
+            //    filterObj['filter'][filterName] = this.filter;
+            //    filterObj['key'] = key;
+            //
+            //    currentUser.changed = filterObj;
+            //
+            //    currentUser.save(
+            //        filterObj,
+            //        {
+            //            headers: {
+            //                mid: mid
+            //            },
+            //            wait: true,
+            //            patch: true,
+            //            validate: false,
+            //            success: function (model) {
+            //                console.log('Filter was saved to db');
+            //            },
+            //            error: function (model, xhr) {
+            //                console.error(xhr);
+            //            },
+            //            editMode: false
+            //        });
+            //    if (!App.savedFilters['wTrack']) {
+            //        App.savedFilters['wTrack'] = {};
+            //    }
+            //    App.savedFilters['wTrack'].push(filterObj.filter);
+            //
+            //},
 
-                filterObj['filter'] = {};
-                filterObj['filter'] = this.filter;
-                filterObj['key'] = key;
+            //removeFilter: function (e) {
+            //    var currentUser = new usersModel(App.currentUser);
+            //    var filterObj = {};
+            //    var mid = 39;
+            //    var filterID = $(e.target).attr('id'); //this.$el.find('.current').attr('id'); //chosen current filter name
+            //
+            //    filterObj['deleteId'] = filterID;
+            //
+            //    currentUser.changed = filterObj;
+            //
+            //    currentUser.save(
+            //        filterObj,
+            //        {
+            //            headers: {
+            //                mid: mid
+            //            },
+            //            wait: true,
+            //            patch: true,
+            //            validate: false,
+            //            success: function (model) {
+            //                console.log('Filter was remover from db');
+            //            },
+            //            error: function (model, xhr) {
+            //                console.error(xhr);
+            //            },
+            //            editMode: false
+            //        }
+            //    );
+            //
+            //    this.clearFilter();
+            //
+            //    if (App.currentUser.savedFilters['wTrack']) {
+            //        delete App.currentUser.savedFilters['wTrack'][filterName];
+            //    }
+            //},
 
-                currentUser.changed = filterObj;
-
-                currentUser.save(
-                    filterObj,
-                    {
-                        headers: {
-                            mid: mid
-                        },
-                        wait: true,
-                        patch: true,
-                        validate: false,
-                        success: function (model) {
-                            console.log('Filter was saved to db');
-                        },
-                        error: function (model, xhr) {
-                            console.error(xhr);
-                        },
-                        editMode: false
-                    }
-                );
-                if (!App.currentUser.savedFilters) {
-                    App.currentUser.savedFilters = {};
-                }
-                App.currentUser.savedFilters['wTrack'] = filterObj.filter;
-
-            },
-
-            removeFilter: function () {
-                var currentUser = new usersModel(App.currentUser);
-                var subMenu = $('#submenu-holder').find('li.selected').text();
-                var key;
-                var filterObj = {};
-                var mid = 39;
-
-                key = subMenu.trim();
-                filterObj['key'] = key;
-
-                currentUser.changed = filterObj;
-
-                currentUser.save(
-                    filterObj,
-                    {
-                        headers: {
-                            mid: mid
-                        },
-                        wait: true,
-                        patch: true,
-                        validate: false,
-                        success: function (model) {
-                            console.log('Filter was remover from db');
-                        },
-                        error: function (model, xhr) {
-                            console.error(xhr);
-                        },
-                        editMode: false
-                    }
-                );
-
-                this.clearFilter();
-
-                if (App.currentUser.savedFilters['wTrack']) {
-                    delete App.currentUser.savedFilters['wTrack'];
-                }
-            },
-
-            clearFilter: function () {
-                this.$el.find('.filterValues').empty();
-                this.$el.find('.filter-icons').removeClass('active');
-                this.$el.find('.chooseOption').children().remove();
-                this.$el.find('.filterOptions').removeClass('chosen');
-                this.$el.find(".filterOptions, .filterActions").hide();
-
-                $.each($('.drop-down-filter input'), function (index, value) {
-                    value.checked = false
-                });
-
-                this.showFilteredPage();
-            },
+            //clearFilter: function () {
+            //    this.$el.find('.filterValues').empty();
+            //    this.$el.find('.filter-icons').removeClass('active');
+            //    this.$el.find('.chooseOption').children().remove();
+            //    this.$el.find('.filterOptions').removeClass('chosen');
+            //    this.$el.find(".filterOptions, .filterActions").hide();
+            //
+            //    $.each($('.drop-down-filter input'), function (index, value) {
+            //        value.checked = false
+            //    });
+            //
+            //    this.showFilteredPage();
+            //},
 
             showPage: function (event) {
                 event.preventDefault();
