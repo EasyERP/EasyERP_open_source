@@ -8274,6 +8274,7 @@ textarea#editInput {
   color: white;
 }
 .drop-down-filter #filtersContent .filterGroup .filterValues {
+  text-align: left;
   width: 100%;
 }
 .drop-down-filter #filtersContent .filterGroup.activeGroup .groupName:after {
