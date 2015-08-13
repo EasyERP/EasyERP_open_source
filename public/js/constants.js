@@ -55,10 +55,24 @@ define([], function () {
                 backend: 'services'
             }
         },
-        Employees: {
-            'Name':{
+        Companies: {
+            'Name': {
                 view: 'name',
-                backend: 'fullName'
+                backend: 'name.first'
+            },
+            'Country': {
+                view: 'country',
+                backend: 'address.country'
+            },
+            'Services': {
+                view: 'services',
+                backend: 'services'
+            }
+        },
+        Employees: {
+            'Full Name':{
+                view: 'name',
+                backend: '_id'
             },
             'Department': {
                 view: 'department',

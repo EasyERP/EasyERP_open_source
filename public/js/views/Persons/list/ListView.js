@@ -433,8 +433,10 @@ define([
                 context.startTime = new Date();
                 context.newCollection = false;
 
-                if (selectedLetter !== '') {
-                    filter['letter'] = selectedLetter;
+                if (!filter.name) {
+                    if (selectedLetter !== '') {
+                        filter['letter'] = selectedLetter;
+                    }
                 }
 
                 context.changeLocationHash(1, itemsNumber, filter);
