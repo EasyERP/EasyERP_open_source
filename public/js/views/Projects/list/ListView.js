@@ -209,7 +209,7 @@ define([
                 var id = targetElement.attr("id");
                 var model = this.collection.get(id);
 
-                model.save({ workflow: target$.attr("id") }, {
+                model.save({ 'workflow._id': target$.attr("id"), 'workflow.name': target$.html() }, {
                     headers: {
                         mid: 39
                     },
@@ -511,7 +511,7 @@ define([
                 });
 
                 common.populateWorkflowsList("Projects", ".filter-check-list", "", "/Workflows", null, function (stages) {
-                    var stage = (self.filter) ? self.filter.workflow || [] : [];
+                    var stage = (self.filter) ? self.filter.workflow._id || [] : [];
                     itemView.trigger('incomingStages', stages);
                     dataService.getData('/project/getFilterValues', null, function (values) {
                         FilterView = new filterView({ collection: stages, customCollection: values});

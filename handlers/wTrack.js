@@ -114,7 +114,7 @@ var wTrack = function (models) {
             for (var i = array.length - 1; i >= 0; i--) {
                 array[i] = parseInt(array[i]);
             }
-        } else  if (type === 'boolean') {
+        } else if (type === 'boolean') {
             for (var i = array.length - 1; i >= 0; i--) {
                 if (array[i] === 'true') {
                     array[i] = true;
@@ -312,7 +312,7 @@ var wTrack = function (models) {
             } else {
                 queryObject['$and'] = caseFilter(filter);
             }
-       }
+        }
 
         var count = query.count ? query.count : 50;
         var page = query.page;
@@ -564,7 +564,7 @@ var wTrack = function (models) {
                 res.status(403).send();
             }
         });
-    };
+    };    
 };
 
 module.exports = wTrack;

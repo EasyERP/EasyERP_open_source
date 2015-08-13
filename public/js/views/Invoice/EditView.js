@@ -43,7 +43,7 @@ define([
                     this.render();
                 }
 
-               /* this.render();*/
+                /* this.render();*/
             },
 
             events: {
@@ -305,7 +305,6 @@ define([
                 holder.text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
             },
 
-
             deleteItem: function (event) {
 
                 event.preventDefault();
@@ -365,7 +364,7 @@ define([
                     currencySplitter: helpers.currencySplitter
                 });
 
-                if(this.isWtrack){
+                if (this.isWtrack) {
                     buttons = [
                         {
                             text: "Cancel",
@@ -404,7 +403,7 @@ define([
                     resizable: true,
                     dialogClass: "edit-invoice-dialog",
                     title: "Edit Invoice",
-                    width: self.isWtrack ? '1200': '900',
+                    width: self.isWtrack ? '1200' : '900',
                     position: {my: "center bottom", at: "center", of: window},
                     buttons: buttons
 

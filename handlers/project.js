@@ -12,9 +12,9 @@ var Project = function (models) {
 
         Project
             .find()
-            .populate('customer', '_id name')
-            .populate('projectmanager', '_id name')
-            .populate('workflow', '_id name')
+            //.populate('customer._id', '_id name')
+            //.populate('projectmanager._id', '_id name')
+            //.populate('workflow._id', '_id name')
             .sort({projectName: 1})
             .lean()
             .exec(function (err, projects) {

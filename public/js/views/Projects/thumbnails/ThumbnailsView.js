@@ -76,7 +76,7 @@
                 var targetElement = $(e.target).parents(".thumbnail");
                 var id = targetElement.attr("id");
                 var model = this.collection.get(id);
-                model.save({ workflow: $(e.target).attr("id") }, {
+                model.save({ 'workflow._id': $(e.target).attr("id"), 'workflow.name': $(e.target).text() }, {
                     headers: {
                         mid: 39
                     },
