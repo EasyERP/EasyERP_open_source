@@ -3,21 +3,19 @@
  */
 define([
         'text!templates/Filter/filterFavourites.html',
-        'models/UsersModel',
-        'custom'
+        'models/UsersModel'
     ],
-    function (ContentFilterTemplate, usersModel, custom) {
+    function (ContentFilterTemplate, usersModel) {
         var FilterView;
         FilterView = Backbone.View.extend({
             el: '#favoritesContent',
             contentType: null,
-            savedFilters: null,
+            savedFilters: {},
             filter: null,
 
             events: {
                 "click #saveFilterButton": "saveFilter",
-                "click .removeSavedFilter": "removeFilter",
-                "click .filters": "useFilter"
+                "click .removeSavedFilter": "removeFilter"
             },
 
             initialize: function (options) {
@@ -36,7 +34,7 @@ define([
                         for (var j = this.savedFilters.length - 1; j >= 0; j--) {
                             var keys = Object.keys(this.savedFilters[j]['filter']);
                             for (var i = keys.length - 1; i >= 0; i--) {
-                                this.$el.append('<li class="filters"  id ="' + this.savedFilters[j]['_id'] + '">' + keys[i] + '</li><span class="removeSavedFilter" data-id="' + this.savedFilters[j]['_id'] + '">' + 'x'+ '</span><br/>');
+                                this.$el.append('<li class="filters"  id ="' + this.savedFilters[j]['_id'] + '">' + keys[i] + '</li><li class="removeSavedFilter" id="' + this.savedFilters[j]['_id'] + '">' + 'x'+ '</li><br/>');
                             }
                         }
                     }
@@ -46,10 +44,15 @@ define([
                 var currentUser = new usersModel(App.currentUser);
                 var subMenu = $('#submenu-holder').find('li.selected').text();
                 var key;
+                var id;
                 var filterObj = {};
                 var mid = 39;
                 var filterName = this.$el.find('#forFilterName').val();
                 var bool = true;
+                var self = this;
+                var length;
+                var filters;
+                var lastFilter;
 
                 key = subMenu.trim();
 
@@ -77,6 +80,18 @@ define([
                             validate: false,
                             success: function (model) {
                                 console.log('Filter was saved to db');
+                                id = model.get('_id');
+                                if (!App.savedFilters['wTrack']) {
+                                    App.savedFilters['wTrack'] = [];
+                                }
+                                length = model.get('savedFilters').length;
+                                filters = model.get('savedFilters');
+                                lastFilter = filters[length - 1];
+                                App.savedFilters['wTrack'].push(lastFilter);
+                                self.savedFilters = filterObj.filter;
+
+                                self.$el.append('<li class="filters"  id ="' + id + '">' +filterName + '</li><li class="removeSavedFilter" id="' + id + '">' + 'x'+ '</li><br/>');
+                                self.$el.find('#forFilterName').val('');
                             },
                             error: function (model, xhr) {
                                 console.error(xhr);
@@ -84,11 +99,6 @@ define([
                             editMode: false
                         });
 
-                    if (!App.savedFilters['wTrack']) {
-                        App.savedFilters['wTrack'] = [];
-                    }
-                    App.savedFilters['wTrack'].push(filterObj.filter);
-                    this.savedFilters.push(filterObj.filter);
                 }
             },
 
@@ -122,28 +132,16 @@ define([
                     }
                 );
 
-                this.clearFilter();
+                $.find('#' + filterID)[0].remove();
+                $.find('#' + filterID)[0].remove();
 
-                if (App.currentUser.savedFilters['wTrack']) {
-                    delete App.currentUser.savedFilters['wTrack'][filterName];
+                var filters = App.savedFilters[this.contentType];
+                for (var i = filters.length - 1; i >= 0; i--){
+                    if (filters[i]['_id'] === filterID){
+                        filters.splice(i , 1);
+                    }
+
                 }
-            },
-
-            clearFilter: function () {
-                this.trigger('filter', {});
-            },
-
-            useFilter: function (e) {
-                var target = $(e.target);
-
-                this.$el.find('.filters').removeClass('current');
-                $(e.target).addClass('current');
-
-                var targetId = target.attr('id');
-                var savedFilters = this.savedFilters;
-                var filter = custom.getFilterById(savedFilters, targetId);
-
-                this.trigger('filter', filter);
             }
 
         });

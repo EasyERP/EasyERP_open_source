@@ -306,6 +306,7 @@ var Users = function (mainDb, models) {
 
                 if (data.changePass) {
                     query = {$set: data};
+                    query = {$set: data};
                     updateThisUser(_id, query);
                 } else if (data.deleteId) {
                     filterM.findByIdAndRemove(deleteId, function (err, result) {

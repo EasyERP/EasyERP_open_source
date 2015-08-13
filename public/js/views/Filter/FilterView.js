@@ -12,23 +12,17 @@ define([
         FilterView = Backbone.View.extend({
             el: '#searchContainer',
             contentType: "Filter",
+            savedFilters: {},
             template: _.template(ContentFilterTemplate),
 
             events: {
                 "mouseover .search-content": 'showSearchContent',
                 "click .filter-dialog-tabs .btn": 'showFilterContent',
-                //"click .drop-down-filter > input[type='checkbox']": "writeValue",
-                //"click #defaultFilter": "writeValue",
-                //"click .drop-down-filter > li": "triggerClick",
-                //"click .removeValues": "removeValues",
-                //'change .chooseTerm': 'chooseOptions',
-                //'click .addCondition': 'addCondition',
-                //'click .removeFilter': 'removeFilter',
-                //'click .customFilter': 'showCustomFilter',
                 'click #applyFilter': 'applyFilter',
                 'click .condition li': 'conditionClick',
                 'click .groupName': 'showHideValues',
-                "click .filterValues li": "selectValue"
+                "click .filterValues li": "selectValue",
+                "click .filters": "useFilter"
             },
 
             initialize: function (options) {
@@ -37,8 +31,24 @@ define([
                 this.filterObject = App.filtersValues[this.parentContentType];
                 this.filter = {};
                 this.currentCollection = {};
+                if (App.savedFilters[this.parentContentType]) {
+                    this.savedFilters = App.savedFilters[this.parentContentType];
+                }
 
                 this.render();
+            },
+
+            useFilter: function (e) {
+                var target = $(e.target);
+
+                this.$el.find('.filters').removeClass('current');
+                $(e.target).addClass('current');
+
+                var targetId = target.attr('id');
+                var savedFilters = this.savedFilters;
+                var filter = Custom.getFilterById(savedFilters, targetId);
+
+                this.trigger('filter', filter);
             },
 
             selectValue: function(e) {
@@ -104,6 +114,7 @@ define([
                 var filterKey;
                 var filterBackend;
                 var itemView;
+                var savedContentView;
 
                 this.$el.html(this.template({filterCollection: this.constantsObject}));
 
@@ -128,6 +139,11 @@ define([
                         filtersGroupContainer.append(itemView);
                     });
                 };
+                savedContentView = new savedFiltersView({
+                    contentType: this.parentContentType,
+                    filter: this.filter
+                });
+                $(this.el).find('#favoritesContent').append(savedContentView);
 
                 return this;
             },
@@ -251,18 +267,12 @@ define([
 
             showFilterContent: function (e) {
                 var currentValue = $(e.target).attr('data-value');
-                var savedContentView;
 
                 this.$el.find(currentValue)
                     .removeClass('hidden')
                     .siblings()
                     .addClass('hidden');
 
-                savedContentView = new savedFiltersView({
-                    contentType: this.parentContentType,
-                    filter: this.filter
-                });
-                $(this.el).find('#favoritesContent').append(savedContentView);
             },
 
             writeValue: function (e) {
