@@ -16,8 +16,8 @@ var Filters = function (models) {
 
         async.parallel({
                 wTrack: getWtrackFiltersValues,
-                Persons: getCustomerFiltersValues,
-                //Companies: getCustomerFiltersValues
+                Persons: getPersonFiltersValues,
+                Companies: getCompaniesFiltersValues,
             },
             function (err, result) {
                 if (err) {
@@ -100,8 +100,54 @@ var Filters = function (models) {
                 callback(null, result);
             });
         };
-        function getCustomerFiltersValues(callback) {
+        function getPersonFiltersValues(callback) {
             Customer.aggregate([
+                {
+                    $match: {type: 'Person'}
+                },
+                {
+                    $group: {
+                        _id: null,
+                        'name': {
+                            $addToSet: {
+                                _id: '$_id',
+                                name: {$concat: ['$name.first', ' ', '$name.last']}
+                            }
+                        },
+                        'country': {
+                            $addToSet: {
+                                _id: '$address.country',
+                                name: {'$ifNull': ['$address.country', 'None']}
+                            }
+                        }
+                    }
+                }
+            ], function (err, result) {
+                if (err) {
+                    callback(err);
+                }
+
+                result = result[0];
+
+                result['services'] = [
+                    {
+                        _id: 'isSupplier',
+                        name: 'Supplier'
+                    },
+                    {
+                        _id: 'isCustomer',
+                        name: 'Customer'
+                    }
+                ]
+
+                callback(null, result);
+            });
+        };
+        function getCompaniesFiltersValues(callback) {
+            Customer.aggregate([
+                {
+                    $match: {type: 'Company'}
+                },
                 {
                     $group: {
                         _id: null,

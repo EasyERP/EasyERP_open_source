@@ -44,7 +44,21 @@ define([], function () {
         Persons: {
             'Full Name': {
                 view: 'name',
-                backend: 'full name'
+                backend: '_id'
+            },
+            'Country': {
+                view: 'country',
+                backend: 'address.country'
+            },
+            'Services': {
+                view: 'services',
+                backend: 'services'
+            }
+        },
+        Companies: {
+            'Name': {
+                view: 'name',
+                backend: 'name.first'
             },
             'Country': {
                 view: 'country',
@@ -56,9 +70,9 @@ define([], function () {
             }
         },
         Employees: {
-            'Name':{
+            'Full Name':{
                 view: 'name',
-                backend: 'fullName'
+                backend: '_id'
             },
             'Department': {
                 view: 'department',

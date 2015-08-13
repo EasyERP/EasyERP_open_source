@@ -114,40 +114,29 @@
                 window.location.hash = "#easyErp/Companies/form/" + id;
             },
 
-            showFilteredPage: function () {
+            showFilteredPage: function (filter, context) {
                 var itemsNumber = $("#itemsNumber").text();
+
                 var alphaBet = this.$el.find('#startLetter');
                 var selectedLetter = $(alphaBet).find('.current').length ? $(alphaBet).find('.current')[0].text : '';
-                var self = this;
-
-                var checkedElements = this.$el.find('input:checkbox:checked');
-                var chosen = this.$el.find('.chosen');
-
-                var logicAndStatus = this.$el.find('#logicCondition')[0].checked;
-                var defaultFilterStatus = this.$el.find('#defaultFilter')[0].checked;
-
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
 
-                if (selectedLetter === "All") {
-                    selectedLetter = '';
+                context.startTime = new Date();
+                context.newCollection = false;
+
+                if (!filter.name) {
+                    if (selectedLetter !== '') {
+                        filter['letter'] = selectedLetter;
+                    }
                 }
 
-                this.filter = custom.getFiltersValues(chosen, defaultFilterStatus, logicAndStatus);
+                context.$el.find('.thumbnailwithavatar').remove();
 
-                this.startTime = new Date();
-                this.newCollection = false;
-
-                if (!this.filter.name) {
-                    this.filter['letter'] = selectedLetter;
-                }
-
-                this.$el.find('.thumbnailwithavatar').remove();
-
-                this.changeLocationHash(null, this.defaultItemsNumber, this.filter);
-                this.collection.showMoreAlphabet({ count: this.defaultItemsNumber, page: 1, filter: this.filter });
-                this.getTotalLength(this.defaultItemsNumber, this.filter);
+                context.changeLocationHash(null, context.defaultItemsNumber, filter);
+                context.collection.showMoreAlphabet({ count: context.defaultItemsNumber, page: 1, filter: filter });
+                context.getTotalLength(this.defaultItemsNumber, filter);
             },
 
             render: function () {
@@ -193,23 +182,16 @@
                         _id: 'isSupplier'
                     }
                 ];
-                dataService.getData('/supplier/getFilterValues', null, function (values) {
-                    FilterView = new filterView({ collection: filterObject, customCollection: values});
-                    // Filter custom event listen ------begin
-                    FilterView.unbind();
-                    FilterView.bind('filter', function () {
-                        //showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
-                        //self.alpabeticalRender(null, showList)
-                        self.showFilteredPage()
-                    });
-                    FilterView.bind('defaultFilter', function () {
-                        //showList = [];
-                        //self.alpabeticalRender(null, showList);
-                        self.showFilteredPage();
-                    });
-                    // Filter custom event listen ------end
 
+                FilterView = new filterView({ contentType: self.contentType });
+
+                FilterView.bind('filter', function (filter) {
+                    self.showFilteredPage(filter, self)
                 });
+                FilterView.bind('defaultFilter', function () {
+                    self.showFilteredPage({}, self);
+                });
+                    // Filter custom event listen ------end
                 $(document).on("click", function (e) {
                     self.hideItemsNumber(e);
                 });

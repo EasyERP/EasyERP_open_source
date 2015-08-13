@@ -629,7 +629,7 @@
                                 resArray.push(filtrElement);
                                 break;
                             case 'letter':
-                                filtrElement[name.last] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
+                                filtrElement['name.last'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
                                 resArray.push(filtrElement);
                                 break;
                             case 'services':
@@ -659,33 +659,49 @@
                     break;
                 case ('Companies'):
                 {
-                    optionsObject['type'] = 'Company';
+                    var condition;
+                    var resArray = [];
+                    var filtrElement = {};
+                    var key;
 
-                    if (data && data.filter && data.filter.condition === 'or') {
-                        optionsObject['$or'] = [];
-                    }
+                    for (var filterName in data.filter) {
+                        condition = data.filter[filterName]['value'];
+                        key = data.filter[filterName]['key'];
 
-                    if (data && data.filter && data.filter.letter) {
-                        optionsObject['name.first'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
-                    }
-                    if (data && data.filter && data.filter.isCustomer) {
-                        optionsObject['salesPurchases.isCustomer'] = true;
-                    }
-                    if (data && data.filter && data.filter.isSupplier) {
-                        optionsObject['salesPurchases.isSupplier'] = true;
-                    }
-                    if (data && data.filter && data.filter.name) {
-                        if (data.filter.condition === 'or') {
-                            optionsObject['$or'].push({'_id': {$in: data.filter.name.objectID()}})
-                        } else {
-                            optionsObject['_id'] = {$in: data.filter.name.objectID()};
+                        switch (filterName) {
+                            case 'country':
+                                filtrElement[key] = {$in: condition};
+                                resArray.push(filtrElement);
+                                break;
+                            case 'name':
+                                filtrElement[key] = {$in: condition.objectID()};
+                                resArray.push(filtrElement);
+                                break;
+                            case 'letter':
+                                filtrElement['name.last'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
+                                resArray.push(filtrElement);
+                                break;
+                            case 'services':
+                                if (condition.indexOf('isCustomer') !== -1) {
+                                    filtrElement['salesPurchases.isCustomer'] = true;
+                                    resArray.push(filtrElement);
+                                }
+                                if (condition.indexOf('isSupplier') !== -1) {
+                                    filtrElement['salesPurchases.isSupplier'] = true;
+                                    resArray.push(filtrElement);
+                                }
+                                break;
                         }
-                    }
-                    if (data && data.filter && data.filter.country) {
-                        if (data.filter.condition === 'or') {
-                            optionsObject['$or'].push({'address.country': {$in: data.filter.country}})
+                    };
+
+                    resArray.push[{'type': 'Companies'}];
+
+                    if (resArray.length) {
+
+                        if (data && data.filter && data.filter.condition === 'or') {
+                            optionsObject['$or'] = resArray;
                         } else {
-                            optionsObject['address.country'] = {$in: data.filter.country};
+                            optionsObject['$and'] = resArray;
                         }
                     }
                 }
