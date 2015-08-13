@@ -218,17 +218,19 @@ define(['libs/date.format', 'common', 'constants'], function (dateformat, common
         var filter;
         var beName;
         var beNamesNaw;
+        var filterWithName;
 
-        if (App && App.savedFilters && App.savedFilters[contentType]) {
-            filtersForContent = App.savedFilters[contentType];
-            length = filtersForContent.length;
-            filter = filtersForContent[length - 1]['filter'];
-            key =  Object.keys(filter)[0];
-
-            savedFilter = filter[key];
-        } else {
+        //if (App && App.savedFilters && App.savedFilters[contentType]) {
+        //    filtersForContent = App.savedFilters[contentType];
+        //    length = filtersForContent.length;
+        //    filter = filtersForContent[length - 1];
+        //    filterWithName =  filter['filter'];
+        //    var key = Object.keys(filterWithName)[0];
+        //
+        //    savedFilter = filter[key];
+        //} else {
             savedFilter = uIFilter;
-        }
+       // }
 
         return savedFilter;
     };
