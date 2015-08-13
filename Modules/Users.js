@@ -330,6 +330,7 @@ var Users = function (mainDb, models) {
                         };
 
                         id = result.get('_id');
+                        //App.savedFilters[key].push(result.toJSON());
                         query = {$push: {'savedFilters': id}};
 
                         updateThisUser(_id, query);
