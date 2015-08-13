@@ -45,7 +45,7 @@ define([
                 $(e.target).addClass('current');
 
                 var targetId = target.attr('id');
-                var savedFilters = this.savedFilters;
+                var savedFilters = App.savedFilters[this.parentContentType];
                 var filter = Custom.getFilterById(savedFilters, targetId);
 
                 this.trigger('filter', filter);

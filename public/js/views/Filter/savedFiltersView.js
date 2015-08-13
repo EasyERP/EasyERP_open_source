@@ -81,13 +81,13 @@ define([
                             success: function (model) {
                                 console.log('Filter was saved to db');
                                 id = model.get('_id');
-                                if (!App.savedFilters['wTrack']) {
-                                    App.savedFilters['wTrack'] = [];
+                                if (!App.savedFilters[self.contentType]) {
+                                    App.savedFilters[self.contentType] = [];
                                 }
                                 length = model.get('savedFilters').length;
                                 filters = model.get('savedFilters');
                                 lastFilter = filters[length - 1];
-                                App.savedFilters['wTrack'].push(lastFilter);
+                                App.savedFilters[self.contentType].push(lastFilter);
                                 self.savedFilters = filterObj.filter;
 
                                 self.$el.append('<li class="filters"  id ="' + id + '">' +filterName + '</li><li class="removeSavedFilter" id="' + id + '">' + 'x'+ '</li><br/>');
