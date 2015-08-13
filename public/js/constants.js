@@ -20,6 +20,10 @@ define([], function () {
                 view: 'projectName',
                 backend: 'project._id'
             },
+            'Department': {
+                view: 'department',
+                backend: 'department._id'
+            },
             'Month': {
                 view: 'month',
                 backend: 'month'
@@ -32,15 +36,25 @@ define([], function () {
                 view: 'week',
                 backend: 'week'
             },
-            'Department': {
-                view: 'department',
-                backend: 'department._id'
-            },
             'Status': {
                 view: 'isPaid',
                 backend: 'isPaid'
             }
-        }
+        },
+        Persons: {
+            'Full Name': {
+                view: 'name',
+                backend: 'full name'
+            },
+            'Country': {
+                view: 'country',
+                backend: 'address.country'
+            },
+            'Services': {
+                view: 'services',
+                backend: null
+            }
+        },
     };
 
     return {
