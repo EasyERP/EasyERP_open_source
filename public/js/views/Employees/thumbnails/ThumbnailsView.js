@@ -5,12 +5,11 @@
         'views/Filter/FilterView',
         'dataService',
         'models/EmployeesModel',
-        'models/UsersModel',
         'common',
         'text!templates/Alpabet/AphabeticTemplate.html'
     ],
 
-    function (thumbnailsItemTemplate, editView, createView, filterView, dataService, currentModel, usersModel, common, AphabeticTemplate) {
+    function (thumbnailsItemTemplate, editView, createView, filterView, dataService, currentModel, common, AphabeticTemplate) {
         var EmployeesThumbnalView = Backbone.View.extend({
             el: '#content-holder',
             countPerPage: 0,
@@ -210,98 +209,6 @@
                     newCollection: this.newCollection
                 });
                 this.getTotalLength(itemsNumber, this.filter, this.newCollection);
-
-            },
-
-            saveFilter: function () {
-                var currentUser = new usersModel(App.currentUser);
-                var subMenu = $('#submenu-holder').find('li.selected').text();
-                var key;
-                var filterObj = {};
-                var mid = 39;
-
-                key = subMenu.trim();
-
-                filterObj['filter'] = {};
-                filterObj['filter'] = this.filter;
-                filterObj['key'] = key;
-
-                currentUser.changed = filterObj;
-                currentUser.save(
-                    filterObj,
-                    {
-                        headers: {
-                            mid: mid
-                        },
-                        wait: true,
-                        patch:true,
-                        validate: false,
-                        success: function (model) {
-                            console.log('Filter was saved to db');
-                        },
-                        error: function (model,xhr) {
-                            console.error(xhr);
-                        },
-                        editMode: false
-                    }
-                );
-                if (!App.currentUser.savedFilters){
-                    App.currentUser.savedFilters = {};
-                }
-                App.currentUser.savedFilters['Employees'] = filterObj.filter;
-            },
-
-            removeFilter: function () {
-                var currentUser = new usersModel(App.currentUser);
-                var subMenu = $('#submenu-holder').find('li.selected').text();
-                var key;
-                var filterObj = {};
-                var mid = 39;
-
-                this.clearFilter();
-
-                key = subMenu.trim();
-                filterObj['key'] = key;
-
-                currentUser.changed = filterObj;
-
-                currentUser.save(
-                    filterObj,
-                    {
-                        headers: {
-                            mid: mid
-                        },
-                        wait: true,
-                        patch:true,
-                        validate: false,
-                        success: function (model) {
-                            console.log('Filter was remover from db');
-                        },
-                        error: function (model,xhr) {
-                            console.error(xhr);
-                        },
-                        editMode: false
-                    }
-                );
-
-                if (App.currentUser.savedFilters['Employees']){
-                    delete App.currentUser.savedFilters['Employees'];
-                }
-            },
-
-            clearFilter: function () {
-                this.filter = {};
-                this.filter['letter'] = '';
-
-                this.startTime = new Date();
-                this.newCollection = false;
-                this.$el.find('.thumbnailwithavatar').remove();
-
-                this.defaultItemsNumber = 0;
-
-                this.changeLocationHash(null, this.defaultItemsNumber, this.filter);
-                this.collection.showMoreAlphabet({count: this.defaultItemsNumber, filter: this.filter});
-                this.getTotalLength(this.defaultItemsNumber, this.filter);
 
             },
 

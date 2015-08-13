@@ -7,11 +7,10 @@
         'views/Applications/CreateView',
         'collections/Applications/ApplicationsCollection',
         'models/ApplicationsModel',
-        'models/UsersModel',
         'views/Filter/FilterView',
         'dataService'
     ],
-    function (WorkflowsTemplate, kanbanSettingsTemplate, WorkflowsCollection, KanbanItemView, EditView, CreateView, ApplicationsCollection, CurrentModel, usersModel, filterView, dataService) {
+    function (WorkflowsTemplate, kanbanSettingsTemplate, WorkflowsCollection, KanbanItemView, EditView, CreateView, ApplicationsCollection, CurrentModel, filterView, dataService) {
         var collection = new ApplicationsCollection();
         var ApplicationsKanbanView = Backbone.View.extend({
             el: '#content-holder',
@@ -19,9 +18,7 @@
                 "dblclick .item": "gotoEditForm",
                 "click .item": "selectItem",
                 "click .column.fold": "foldUnfoldKanban",
-                "click .fold-unfold": "foldUnfoldKanban",
-                "click .saveFilterButton": "saveFilter",
-                "click .removeFilterButton": "removeFilter"
+                "click .fold-unfold": "foldUnfoldKanban"
             },
 
             columnTotalLength: null,
@@ -29,16 +26,11 @@
                 this.startTime = options.startTime;
                 this.workflowsCollection = options.workflowCollection;
                 this.foldWorkflows = [];
+
                 this.render();
 
                 this.asyncFetc(options.workflowCollection);
                 this.getCollectionLengthByWorkflows(this);
-
-                if (App.currentUser.savedFilters && App.currentUser.savedFilters['Applications']){
-                    this.filter = App.currentUser.savedFilters['Applications'];
-                    this.showFiltredPage(this.workflowsCollection.toJSON(), this.filter);
-                }
-
 
             },
 
@@ -336,115 +328,10 @@
 
             },
 
-            saveFilter: function () {
-                var currentUser = new usersModel(App.currentUser);
-                var subMenu = $('#submenu-holder').find('li.selected').text();
-                var key;
-                var filterObj = {};
-                var mid = 39;
-                var showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
-
-                key = subMenu.trim();
-
-                filterObj['filter'] = {};
-                filterObj['filter']['workflow'] = showList;
-                filterObj['key'] = key;
-
-                currentUser.changed = filterObj;
-
-                currentUser.save(
-                    filterObj,
-                    {
-                        headers: {
-                            mid: mid
-                        },
-                        wait: true,
-                        patch:true,
-                        validate: false,
-                        success: function (model) {
-                            console.log('Filter was saved to db');
-                        },
-                        error: function (model,xhr) {
-                            console.error(xhr);
-                        },
-                        editMode: false
-                    }
-                );
-                if (!App.currentUser.savedFilters){
-                    App.currentUser.savedFilters = {};
-                }
-                App.currentUser.savedFilters['Applications'] = filterObj.filter;
-            },
-
-            removeFilter: function () {
-                var currentUser = new usersModel(App.currentUser);
-                var subMenu = $('#submenu-holder').find('li.selected').text();
-                var key;
-                var filterObj = {};
-                var mid = 39;
-
-                this.clearFilter();
-
-                key = subMenu.trim();
-                filterObj['key'] = key;
-
-                currentUser.changed = filterObj;
-
-                currentUser.save(
-                    filterObj,
-                    {
-                        headers: {
-                            mid: mid
-                        },
-                        wait: true,
-                        patch:true,
-                        validate: false,
-                        success: function (model) {
-                            console.log('Filter was remover from db');
-                        },
-                        error: function (model,xhr) {
-                            console.error(xhr);
-                        },
-                        editMode: false
-                    }
-                );
-                if (App.currentUser.savedFilters['Applications']){
-                    delete App.currentUser.savedFilters['Applications'];
-                }
-            },
-
-            clearFilter: function () {
-                var showList;
-                var workflows = this.workflowsCollection.toJSON();
-                var el;
-
-                this.$el.find('.filterValues').empty();
-                this.$el.find('.filter-icons').removeClass('active');
-                this.$el.find('.filterOptions').removeClass('chosen');
-                this.$el.find('.chooseOption').children().remove();
-
-                $.each($('.drop-down-filter input'), function (index, value) {
-                    value.checked = false
-                });
-
-                showList = _.pluck(workflows, '_id');
-
-                showList.forEach(function (id) {
-                    el = $("td.column[data-id='"+id+"']");
-                    el.removeClass("fold");
-                });
-
-            },
-
-
             render: function () {
                 var self = this;
                 var FilterView;
                 var workflows = this.workflowsCollection.toJSON();
-                var showList;
-                var el;
-
-
 
                 this.$el.html(_.template(WorkflowsTemplate, { workflowsCollection: workflows }));
                 $(".column").last().addClass("lastColumn");

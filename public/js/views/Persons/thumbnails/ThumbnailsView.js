@@ -6,11 +6,10 @@
         "text!templates/Persons/thumbnails/ThumbnailsItemTemplate.html",
         'dataService',
         'views/Filter/FilterView',
-        'models/UsersModel',
         'custom'
     ],
 
-    function (common, editView, createView, AphabeticTemplate, ThumbnailsItemTemplate, dataService, filterView, usersModel, custom) {
+    function (common, editView, createView, AphabeticTemplate, ThumbnailsItemTemplate, dataService, filterView, custom) {
         var PersonsThumbnalView = Backbone.View.extend({
             el: '#content-holder',
             countPerPage: 0,
@@ -44,9 +43,7 @@
                 "click #showMore": "showMore",
                 "click .letter:not(.empty)": "alpabeticalRender",
                 "click .gotoForm": "gotoForm",
-                "click .company": "gotoCompanyForm",
-                "click .saveFilterButton": "saveFilter",
-                "click .removeFilterButton": "removeFilter"
+                "click .company": "gotoCompanyForm"
             },
 //modified for filter Vasya
             getTotalLength: function (currentNumber, filter, newCollection) {
@@ -104,95 +101,6 @@
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
             },
 
-            saveFilter: function () {
-                var currentUser = new usersModel(App.currentUser);
-                var subMenu = $('#submenu-holder').find('li.selected').text();
-                var key;
-                var filterObj = {};
-                var mid = 39;
-
-                key = subMenu.trim();
-
-                filterObj['filter'] = {};
-                filterObj['filter'] = this.filter;
-                filterObj['key'] = key;
-
-                currentUser.changed = filterObj;
-
-                currentUser.save(
-                    filterObj,
-                    {
-                        headers: {
-                            mid: mid
-                        },
-                        wait: true,
-                        patch:true,
-                        validate: false,
-                        success: function (model) {
-                            console.log('Filter was saved to db');
-                        },
-                        error: function (model,xhr) {
-                            console.error(xhr);
-                        },
-                        editMode: false
-                    }
-                );
-                if (!App.currentUser.savedFilters){
-                    App.currentUser.savedFilters = {};
-                }
-                App.currentUser.savedFilters['Persons'] = filterObj.filter;
-            },
-
-            removeFilter: function () {
-                var currentUser = new usersModel(App.currentUser);
-                var subMenu = $('#submenu-holder').find('li.selected').text();
-                var key;
-                var filterObj = {};
-                var mid = 39;
-
-                this.clearFilter();
-
-                key = subMenu.trim();
-                filterObj['key'] = key;
-
-                currentUser.changed = filterObj;
-
-                currentUser.save(
-                    filterObj,
-                    {
-                        headers: {
-                            mid: mid
-                        },
-                        wait: true,
-                        patch:true,
-                        validate: false,
-                        success: function (model) {
-                            console.log('Filter was remover from db');
-                        },
-                        error: function (model,xhr) {
-                            console.error(xhr);
-                        },
-                        editMode: false
-                    }
-                );
-                if (App.currentUser.savedFilters['Persons']){
-                    delete App.currentUser.savedFilters['Persons'];
-                }
-            },
-
-            clearFilter: function () {
-                this.$el.find('.filterValues').empty();
-                this.$el.find('.filter-icons').removeClass('active');
-                this.$el.find('.chooseOption').children().remove();
-                this.$el.find('.filterOptions').removeClass('chosen');
-
-                $.each($('.drop-down-filter input'), function (index, value) {
-                    value.checked = false
-                });
-
-                this.showFilteredPage();
-            },
-
             gotoForm: function (e) {
                 e.preventDefault();
                 App.ownContentType = true;
@@ -240,16 +148,6 @@
                 this.changeLocationHash(null, this.defaultItemsNumber, this.filter);
                 this.collection.showMoreAlphabet({ count: this.defaultItemsNumber, page: 1, filter: this.filter });
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
-
-                if (checkedElements.attr('id') === 'defaultFilter'){
-                    $(".saveFilterButton").hide();
-                    $(".clearFilterButton").hide();
-                    $(".removeFilterButton").show();
-                } else {
-                    $(".saveFilterButton").show();
-                    $(".clearFilterButton").show();
-                    $(".removeFilterButton").show();
-                }
             },
 
             render: function () {
@@ -258,7 +156,6 @@
                 var currentEl = this.$el;
                 var filterObject;
                 var FilterView;
-                var showList;
 
                 currentEl.html('');
                 if (this.collection.length > 0) {
@@ -308,10 +205,7 @@
                     FilterView.bind('defaultFilter', function () {
                         //showList = [];
                         //self.alpabeticalRender(null, showList);
-                        self.showFilteredPage()
-                        $(".saveFilterButton").hide();
-                        $(".clearFilterButton").hide();
-                        $(".removeFilterButton").show();
+                        self.showFilteredPage();
                     });
                     // Filter custom event listen ------end
 

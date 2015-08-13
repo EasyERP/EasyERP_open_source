@@ -4,7 +4,6 @@ define([
         'views/JobPositions/list/ListItemView',
         'collections/JobPositions/filterCollection',
         'models/JobPositionsModel',
-        'models/UsersModel',
         'views/JobPositions/EditView',
         'views/Filter/FilterView',
         'common',
@@ -12,7 +11,7 @@ define([
         'text!templates/stages.html'
     ],
 
-    function (listTemplate, createView, listItemView, contentCollection, currentModel, usersModel, editView, filterView, common, dataService, stagesTamplate) {
+    function (listTemplate, createView, listItemView, contentCollection, currentModel, editView, filterView, common, dataService, stagesTamplate) {
         var JobPositionsListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -251,100 +250,6 @@ define([
                 this.changeLocationHash(1, itemsNumber, this.filter);
                 this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter, newCollection: true });
                 this.getTotalLength(null, itemsNumber, this.filter);
-
-            },
-
-            saveFilter: function () {
-                var currentUser = new usersModel(App.currentUser);
-                var key;
-                var filterObj = {};
-                var mid = 39;
-
-                key = 'JobPositions';
-
-                filterObj['filter'] = {};
-                filterObj['filter'] = this.filter;
-                filterObj['key'] = key;
-
-                currentUser.changed = filterObj;
-
-                currentUser.save(
-                    filterObj,
-                    {
-                        headers: {
-                            mid: mid
-                        },
-                        wait: true,
-                        patch:true,
-                        validate: false,
-                        success: function (model) {
-                            console.log('Filter was saved to db');
-                        },
-                        error: function (model,xhr) {
-                            console.error(xhr);
-                        },
-                        editMode: false
-                    }
-                );
-                if (!App.currentUser.savedFilters){
-                    App.currentUser.savedFilters = {};
-                }
-                App.currentUser.savedFilters['JobPositions'] = filterObj.filter;
-
-            },
-
-            removeFilter: function () {
-                var currentUser = new usersModel(App.currentUser);
-                var subMenu = $('#submenu-holder').find('li.selected').text();
-                var key;
-                var filterObj = {};
-                var mid = 39;
-
-                this.clearFilter();
-
-                key = subMenu.trim();
-                filterObj['key'] = key;
-
-                currentUser.changed = filterObj;
-
-                currentUser.save(
-                    filterObj,
-                    {
-                        headers: {
-                            mid: mid
-                        },
-                        wait: true,
-                        patch:true,
-                        validate: false,
-                        success: function (model) {
-                            console.log('Filter was remover from db');
-                        },
-                        error: function (model,xhr) {
-                            console.error(xhr);
-                        },
-                        editMode: false
-                    }
-                );
-
-                if (App.currentUser.savedFilters['JobPositions']){
-                    delete App.currentUser.savedFilters['JobPositions'];
-                }
-            },
-
-            clearFilter: function () {
-
-                this.filter = 'empty';
-
-                this.$el.find('.filterValues').empty();
-                this.$el.find('.filter-icons').removeClass('active');
-                this.$el.find('.filterOptions').removeClass('chosen');
-                this.$el.find('.chooseOption').children().remove();
-
-                $.each($('.drop-down-filter input'), function (index, value) {
-                    value.checked = false
-                });
-
-                this.showFilteredPage();
 
             },
 

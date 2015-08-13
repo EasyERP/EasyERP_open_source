@@ -4,7 +4,6 @@ define([
         'views/salesInvoice/CreateView',
         'views/Invoice/EditView',
         'models/InvoiceModel',
-        'models/UsersModel',
         'views/salesInvoice/list/ListItemView',
         'collections/salesInvoice/filterCollection',
         'views/Filter/FilterView',
@@ -13,7 +12,7 @@ define([
         'constants'
     ],
 
-    function (listTemplate, stagesTemplate, createView, editView, invoiceModel, usersModel, listItemView, contentCollection, filterView, common, dataService, CONSTANTS) {
+    function (listTemplate, stagesTemplate, createView, editView, invoiceModel, listItemView, contentCollection, filterView, common, dataService, CONSTANTS) {
         var InvoiceListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -61,9 +60,7 @@ define([
                 "click #firstShowPage": "firstPage",
                 "click #lastShowPage": "lastPage",
                 "click .oe_sortable": "goSort",
-                "click .newSelectList li": "chooseOption",
-                "click .saveFilterButton": "saveFilter",
-                "click .removeFilterButton": "removeFilter"
+                "click .newSelectList li": "chooseOption"
             },
 
             fetchSortCollection: function (sortObject) {
@@ -424,93 +421,6 @@ define([
                 this.changeLocationHash(1, itemsNumber, this.filter);
                 this.collection.showMore({count: itemsNumber, page: 1, filter: this.filter});
                 this.getTotalLength(null, itemsNumber, this.filter);
-            },
-
-            saveFilter: function () {
-                var currentUser = new usersModel(App.currentUser);
-                var subMenu = $('#submenu-holder').find('li.selected').text();
-                var key;
-                var filterObj = {};
-                var mid = 39;
-
-                key = subMenu.trim();
-
-                filterObj['filter'] = {};
-                filterObj['filter'] = this.filter;
-                filterObj['key'] = 'salesInvoice';
-
-                currentUser.changed = filterObj;
-
-                currentUser.save(
-                    filterObj,
-                    {
-                        headers: {
-                            mid: mid
-                        },
-                        wait: true,
-                        patch:true,
-                        validate: false,
-                        success: function (model) {
-                            console.log('Filter was saved to db');
-                        },
-                        error: function (model,xhr) {
-                            console.error(xhr);
-                        },
-                        editMode: false
-                    }
-                );
-                if (!App.currentUser.savedFilters){
-                    App.currentUser.savedFilters = {};
-                }
-                App.currentUser.savedFilters['salesInvoice'] = filterObj.filter;
-            },
-
-            removeFilter: function () {
-                var currentUser = new usersModel(App.currentUser);
-                var filterObj = {};
-                var mid = 39;
-
-                this.clearFilter();
-
-                filterObj['key'] = 'salesInvoice';
-
-                currentUser.changed = filterObj;
-
-                currentUser.save(
-                    filterObj,
-                    {
-                        headers: {
-                            mid: mid
-                        },
-                        wait: true,
-                        patch:true,
-                        validate: false,
-                        success: function (model) {
-                            console.log('Filter was remover from db');
-                        },
-                        error: function (model,xhr) {
-                            console.error(xhr);
-                        },
-                        editMode: false
-                    }
-                );
-
-                if (App.currentUser.savedFilters['salesInvoice']){
-                    delete App.currentUser.savedFilters['salesInvoice'];
-                }
-            },
-
-            clearFilter: function () {
-                this.$el.find('.filterValues').empty();
-                this.$el.find('.filter-icons').removeClass('active');
-                this.$el.find('.chooseOption').children().remove();
-                this.$el.find('.filterOptions').removeClass('chosen');
-
-                $.each($('.drop-down-filter input'), function (index, value) {
-                    value.checked = false
-                });
-
-                this.showFilteredPage();
             },
 
             showPage: function (event) {
