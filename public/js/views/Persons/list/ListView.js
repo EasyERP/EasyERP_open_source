@@ -137,7 +137,7 @@ define([
                 this.$el.find(".allNumberPerPage, .newSelectList").hide();
                 if (!el.closest('.search-view')) {
                     $('.search-content').removeClass('fa-caret-up');
-                    this.$el.find(".filterOptions, .filterActions, .search-options, .drop-down-filter").hide();
+                    this.$el.find('.search-options').addClass('hidden');
                 };
             },
 
@@ -181,20 +181,15 @@ define([
                         $("#top-bar-deleteBtn").hide();
                 });
 
-                dataService.getData('/supplier/getFilterValues', null, function (values) {
-                    FilterView = new filterView({ collection: null, customCollection: values});
-                    // Filter custom event listen ------begin
-                    FilterView.bind('filter', function () {
-                        //showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
-                        self.showFilteredPage()
-                    });
-                    FilterView.bind('defaultFilter', function () {
-                        //showList = [];
-                        self.showFilteredPage();
-                    });
-                    // Filter custom event listen ------end
+                FilterView = new filterView({ contentType: self.contentType });
 
+                FilterView.bind('filter', function (filter) {
+                    self.showFilteredPage(filter, self)
                 });
+                FilterView.bind('defaultFilter', function () {
+                    self.showFilteredPage({}, self);
+                });
+
 
                 $(document).on("click", function (e) {
                     self.hideItemsNumber(e);
@@ -422,15 +417,11 @@ define([
                 this.changeLocationHash(1, itemsNumber, this.filter);
             },
 
-            showFilteredPage: function () {
+            showFilteredPage: function (filter, context) {
                 var itemsNumber = $("#itemsNumber").text();
+
                 var alphaBet = this.$el.find('#startLetter');
                 var selectedLetter = $(alphaBet).find('.current').length ? $(alphaBet).find('.current')[0].text : '';
-                var chosen = this.$el.find('.chosen');
-
-                var logicAndStatus = this.$el.find('#logicCondition')[0].checked;
-                var defaultFilterStatus = this.$el.find('#defaultFilter')[0].checked;
-
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
@@ -439,16 +430,14 @@ define([
                     selectedLetter = '';
                 }
 
-                this.filter = custom.getFiltersValues(chosen, defaultFilterStatus, logicAndStatus);
-
                 this.startTime = new Date();
                 this.newCollection = false;
 
-                this.filter['letter'] = selectedLetter;
+                filter['letter'] = selectedLetter;
 
-                this.changeLocationHash(1, itemsNumber, this.filter);
-                this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter});
-                this.getTotalLength(null, itemsNumber, this.filter);
+                this.changeLocationHash(1, itemsNumber, filter);
+                this.collection.showMore({ count: itemsNumber, page: 1, filter: filter});
+                this.getTotalLength(null, itemsNumber, filter);
             },
 
             showPage: function (event) {

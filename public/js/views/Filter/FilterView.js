@@ -67,7 +67,7 @@ define([
 
                 intVal = parseInt(currentValue);
 
-                currentValue = (isNaN(intVal) || currentValue.length >=24) ? currentValue : intVal;
+                currentValue = (isNaN(intVal) || currentValue.length === 24) ? currentValue : intVal;
 
                 collectionElement = currentCollection.findWhere({_id: currentValue});
 

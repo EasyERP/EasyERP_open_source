@@ -114,7 +114,7 @@ var wTrack = function (models) {
             for (var i = array.length - 1; i >= 0; i--) {
                 array[i] = parseInt(array[i]);
             }
-        } else  if (type === 'boolean') {
+        } else if (type === 'boolean') {
             for (var i = array.length - 1; i >= 0; i--) {
                 if (array[i] === 'true') {
                     array[i] = true;
@@ -137,83 +137,48 @@ var wTrack = function (models) {
             condition = filter[filterName]['value'];
             key = filter[filterName]['key'];
 
-            /*switch (condition[type]) {
-                case 'ObjectID':
+            switch (filterName) {
+                case 'projectManager':
                     filtrElement[key] = {$in: condition.objectID()};
                     resArray.push(filtrElement);
                     break;
-                case 'integer':
+                case 'projectName':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'customer':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'employee':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'department':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'year':
                     ConvertType(condition, 'integer');
                     filtrElement[key] = {$in: condition};
                     resArray.push(filtrElement);
                     break;
-                case 'boolean':
-                    ConvertType(condition, 'boolean');
+                case 'month':
+                    ConvertType(condition, 'integer');
                     filtrElement[key] = {$in: condition};
                     resArray.push(filtrElement);
                     break;
-                default :
+                case 'week':
+                    ConvertType(condition, 'integer');
                     filtrElement[key] = {$in: condition};
                     resArray.push(filtrElement);
-                    break;
-            }*/
-
-            /*if (key.indexOf('._id') !== -1) {
-                filtrElement[key] = {$in: condition.objectID()};
-                resArray.push(filtrElement);
-            } else if (key.indexOf('year') !== -1 || key.indexOf('month') !== -1 || key.indexOf('week') !== -1) {
-                ConvertType(condition, 'integer');
-                filtrElement[key] = {$in: condition};
-                resArray.push(filtrElement);
-            } else if (key.indexOf('isPaid') !== -1) {
-                ConvertType(condition, 'boolean');
-                filtrElement[key] = {$in: condition};
-                resArray.push(filtrElement);
-            } else {
-                filtrElement[key] = {$in: condition};
-                resArray.push(filtrElement);
-            }*/
-
-            /*switch (key) {
-                case 'projectmanagers':
-                    resArray.push({ 'project.projectmanager._id': {$in: condition.objectID()}});
-                    break;
-                case 'projectsname':
-                    resArray.push({ 'project._id': {$in: condition.objectID()}});
-                    break;
-                case 'workflows':
-                    resArray.push({ 'project.workflow': {$in: condition.objectID()}});
-                    break;
-                case 'customers':
-                    resArray.push({ 'project.customer._id': {$in: condition.objectID()}});
-                    break;
-                case 'employees':
-                    resArray.push({ 'employee._id': {$in: condition.objectID()}});
-                    break;
-                case 'departments':
-                    resArray.push({ 'department._id': {$in: condition.objectID()}});
-                    break;
-                case 'years':
-                    ConvertType(condition, 'integer');
-
-                    resArray.push({ 'year': {$in: condition}});
-                    break;
-                case 'months':
-                    ConvertType(condition, 'integer');
-
-                    resArray.push({ 'month': {$in: condition}});
-                    break;
-                case 'weeks':
-                    ConvertType(condition, 'integer');
-
-                    resArray.push({ 'week': {$in: condition}});
                     break;
                 case 'isPaid':
                     ConvertType(condition, 'boolean');
-
-                    resArray.push({ 'isPaid': {$in: condition}});
+                    filtrElement[key] = {$in: condition};
+                    resArray.push(filtrElement);
                     break;
-            }*/
+            }
         };
 
         return resArray;
@@ -597,7 +562,7 @@ var wTrack = function (models) {
                 res.status(403).send();
             }
         });
-    };
+    };    
 };
 
 module.exports = wTrack;

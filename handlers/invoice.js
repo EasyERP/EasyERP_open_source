@@ -514,6 +514,8 @@ var Invoice = function (models) {
                                 };
 
                                 setData.isPaid = false;
+                                setData.amount = 0;
+
                                 wTrack.findByIdAndUpdate(id, setData, function (err, result) {
                                     if (err) {
                                         return console.log(err);
