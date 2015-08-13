@@ -1,4 +1,5 @@
 define([
+        'text!templates/Pagination/PaginationTemplate.html',
         'text!templates/JobPositions/list/ListHeader.html',
         'views/JobPositions/CreateView',
         'views/JobPositions/list/ListItemView',
@@ -11,7 +12,7 @@ define([
         'text!templates/stages.html'
     ],
 
-    function (listTemplate, createView, listItemView, contentCollection, currentModel, editView, filterView, common, dataService, stagesTamplate) {
+    function (paginationTemplate, listTemplate, createView, listItemView, contentCollection, currentModel, editView, filterView, common, dataService, stagesTamplate) {
         var JobPositionsListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -47,8 +48,7 @@ define([
                 "click #nextPage": "nextPage",
                 "click .checkbox": "checked",
                 "click  .list td:not(.notForm)": "goToEditDialog",
-                "click #itemsButton": "itemsNumber",
-                "click .currentPageList": "itemsNumber",
+                "mouseover .currentPageList": "itemsNumber",
                 "click": "hideItemsNumber",
                 "click .oe_sortable": "goSort",
                 "click .stageSelect": "showNewSelect",
@@ -294,7 +294,11 @@ define([
                 $(document).on("click", function (e) {
                     self.hideItemsNumber(e);
                 });
+
+                currentEl.append(_.template(paginationTemplate));
+
                 var pagenation = this.$el.find('.pagination');
+
                 if (this.collection.length === 0) {
                     pagenation.hide();
                 } else {

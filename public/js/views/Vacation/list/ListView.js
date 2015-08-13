@@ -32,7 +32,6 @@ define([
             responseObj: {},
             monthElement: null,
             yearElement: null,
-            changedModels: {},
 
             initialize: function (options) {
                 this.startTime = options.startTime;
@@ -689,6 +688,7 @@ define([
                 tBody.append(itemView.render());
 
                 var pagenation = this.$el.find('.pagination');
+
                 if (this.collection.length === 0) {
                     pagenation.hide();
                 } else {

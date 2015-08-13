@@ -1,4 +1,5 @@
 define([
+        'text!templates/Pagination/PaginationTemplate.html',
         'text!templates/Employees/list/ListHeader.html',
         'views/Employees/CreateView',
         'views/Employees/list/ListItemView',
@@ -10,7 +11,7 @@ define([
         'custom'
     ],
 
-    function (listTemplate, createView, listItemView, filterView, aphabeticTemplate, contentCollection, common, dataService, custom) {
+    function (paginationTemplate, listTemplate, createView, listItemView, filterView, aphabeticTemplate, contentCollection, common, dataService, custom) {
         var EmployeesListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -48,8 +49,7 @@ define([
                 "click #nextPage": "nextPage",
                 "click .checkbox": "checked",
                 "click  .list td:not(.notForm)": "gotoForm",
-                "click #itemsButton": "itemsNumber",
-                "click .currentPageList": "itemsNumber",
+                "mouseover .currentPageList": "itemsNumber",
                 "click": "hideItemsNumber",
                 "click .letter:not(.empty)": "alpabeticalRender",
                 "click #firstShowPage": "firstPage",
@@ -245,7 +245,10 @@ define([
                     });
                 });
 
+                currentEl.append(_.template(paginationTemplate));
+
                 var pagenation = this.$el.find('.pagination');
+
                 if (this.collection.length === 0) {
                     pagenation.hide();
                 } else {

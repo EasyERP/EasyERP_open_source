@@ -1,4 +1,5 @@
 define([
+        'text!templates/Pagination/PaginationTemplate.html',
         'text!templates/Companies/list/ListHeader.html',
         'views/Companies/CreateView',
         'views/Companies/list/ListItemView',
@@ -6,10 +7,10 @@ define([
         'collections/Companies/filterCollection',
         'views/Filter/FilterView',
         'common',
-        'dataService',
+        'dataService'
     ],
 
-    function (listTemplate, createView, listItemView, aphabeticTemplate, contentCollection, filterView, common, dataService) {
+    function (paginationTemplate, listTemplate, createView, listItemView, aphabeticTemplate, contentCollection, filterView, common, dataService) {
         var CompaniesListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -46,8 +47,7 @@ define([
                 "click #nextPage": "nextPage",
                 "click .checkbox": "checked",
                 "click  .list td:not(.notForm)": "gotoForm",
-                "click #itemsButton": "itemsNumber",
-                "click .currentPageList": "itemsNumber",
+                "mouseover .currentPageList": "itemsNumber",
                 "click": "hideItemsNumber",
                 "click .letter:not(.empty)": "alpabeticalRender",
                 "click #firstShowPage": "firstPage",
@@ -209,13 +209,17 @@ define([
                     }
                 });
 
+                currentEl.append(_.template(paginationTemplate));
+
                 var pagenation = this.$el.find('.pagination');
+
                 if (this.collection.length === 0) {
                     pagenation.hide();
                 } else {
                     pagenation.show();
                 }
                 currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+
                 filterObject = [
                     {
                         name: 'isCustomer',

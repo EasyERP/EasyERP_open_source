@@ -2,6 +2,7 @@
  * Created by Liliya_Pikiner on 7/1/2015.
  */
 define([
+        'text!templates/Pagination/PaginationTemplate.html',
         'text!templates/bonusType/list/listHeader.html',
         'views/bonusType/CreateView',
         'views/bonusType/list/ListItemView',
@@ -16,7 +17,7 @@ define([
         'constants'
     ],
 
-    function (listTemplate, createView, listItemView, editView, currentModel, contentCollection, EditCollection, common, dataService, populate, async, constants) {
+    function (paginationTemplate, listTemplate, createView, listItemView, editView, currentModel, contentCollection, EditCollection, common, dataService, populate, async, constants) {
         var bonusTypeListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -59,8 +60,7 @@ define([
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
                 "click td.editable": "editRow",
-                "click #itemsButton": "itemsNumber",
-                "click .currentPageList": "itemsNumber",
+                "mouseover .currentPageList": "itemsNumber",
                 "click": "hideItemsNumber",
                 "click #firstShowPage": "firstPage",
                 "click #lastShowPage": "lastPage",
@@ -367,6 +367,8 @@ define([
                         $("#top-bar-deleteBtn").hide();
                     }
                 });
+
+                currentEl.append(_.template(paginationTemplate));
 
                 pagenation = this.$el.find('.pagination');
 

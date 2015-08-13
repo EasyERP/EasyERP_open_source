@@ -1,4 +1,5 @@
 define([
+        'text!templates/Pagination/PaginationTemplate.html',
         'text!templates/Tasks/list/ListHeader.html',
         'text!templates/stages.html',
         'views/Tasks/CreateView',
@@ -13,7 +14,7 @@ define([
         'dataService'
     ],
 
-    function (listTemplate, stagesTamplate, createView, listItemView, editView, currentModel, projectEditView, projectModel, contentCollection, filterView, common, dataService) {
+    function (paginationTemplate, listTemplate, stagesTamplate, createView, listItemView, editView, currentModel, projectEditView, projectModel, contentCollection, filterView, common, dataService) {
         var TasksListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -54,8 +55,7 @@ define([
                 "click .checkbox": "checked",
                 "click td:not(:has('input[type='checkbox']'))": "goToEditDialog",
                 "click .project": "goToProject",
-                "click #itemsButton": "itemsNumber",
-                "click .currentPageList": "itemsNumber",
+                "mouseover .currentPageList": "itemsNumber",
                 "click": "hideItemsNumber",
                 "click .stageSelect": "showNewSelect",
                 "click .stageSelectType": "showNewSelectType",
@@ -426,6 +426,7 @@ define([
                 $(document).on("click", function (e) {
                     self.hideItemsNumber(e);
                 });
+                currentEl.append(_.template(paginationTemplate));
 
                 currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
                 var pagenation = this.$el.find('.pagination');

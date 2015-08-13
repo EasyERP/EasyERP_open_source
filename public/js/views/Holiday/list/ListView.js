@@ -1,4 +1,5 @@
 define([
+        'text!templates/Pagination/PaginationTemplate.html',
         'text!templates/Holiday/list/ListHeader.html',
         'text!templates/Holiday/list/cancelEdit.html',
         'views/Holiday/CreateView',
@@ -13,7 +14,7 @@ define([
         'moment'
     ],
 
-    function (listTemplate, cancelEdit, createView, listItemView, holidayModel, holidayCollection, editCollection, common, dataService, CONSTANTS, async, moment) {
+    function (paginationTemplate, listTemplate, cancelEdit, createView, listItemView, holidayModel, holidayCollection, editCollection, common, dataService, CONSTANTS, async, moment) {
         var HolidayListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -51,8 +52,7 @@ define([
                 "click #nextPage": "nextPage",
                 "click .checkbox": "checked",
                 "click td.editable": "editRow",
-                "click #itemsButton": "itemsNumber",
-                "click .currentPageList": "itemsNumber",
+                "mouseover .currentPageList": "itemsNumber",
                 "click": "hideItemsNumber",
                 "click #firstShowPage": "firstPage",
                 "click #lastShowPage": "lastPage",
@@ -360,7 +360,11 @@ define([
                 $(document).on("click", function () {
                     self.hideItemsNumber();
                 });
+
+                currentEl.append(_.template(paginationTemplate));
+
                 var pagenation = this.$el.find('.pagination');
+
                 if (this.collection.length === 0) {
                     pagenation.hide();
                 } else {

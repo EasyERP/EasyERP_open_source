@@ -1,4 +1,5 @@
 define([
+        'text!templates/Pagination/PaginationTemplate.html',
         'text!templates/wTrack/list/ListHeader.html',
         'text!templates/wTrack/list/cancelEdit.html',
         'views/wTrack/CreateView',
@@ -16,7 +17,7 @@ define([
         'custom'
     ],
 
-    function (listTemplate, cancelEdit, createView, listItemView, editView, wTrackCreateView, currentModel, contentCollection, EditCollection, filterView, common, dataService, populate, async, custom) {
+    function (paginationTemplate, listTemplate, cancelEdit, createView, listItemView, editView, wTrackCreateView, currentModel, contentCollection, EditCollection, filterView, common, dataService, populate, async, custom) {
         var wTrackListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -79,7 +80,6 @@ define([
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
                 "click td.editable": "editRow",
-                //"mouseover #itemsButton": "itemsNumber",
                 "mouseover .currentPageList": "itemsNumber",
                 "click": "hideItemsNumber",
                 "click #firstShowPage": "firstPage",
@@ -633,8 +633,7 @@ define([
                 if (!el.closest('.search-view')) {
                     $('.search-content').removeClass('fa-caret-up');
                     this.$el.find('.search-options').addClass('hidden');
-                }
-                ;
+                };
             },
 
             showNewSelect: function (e, prev, next) {
@@ -672,7 +671,6 @@ define([
             },
 
             render: function () {
-
                 var self = this;
                 var currentEl = this.$el;
                 var pagenation;
@@ -691,6 +689,8 @@ define([
                 $(document).on("click", function (e) {
                     self.hideItemsNumber(e);
                 });
+
+                currentEl.append(_.template(paginationTemplate));
 
                 pagenation = this.$el.find('.pagination');
 

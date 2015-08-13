@@ -1,4 +1,5 @@
 define([
+        'text!templates/Pagination/PaginationTemplate.html',
         'text!templates/Invoice/list/ListHeader.html',
         'text!templates/stages.html',
         'views/Invoice/CreateView',
@@ -12,7 +13,7 @@ define([
         'dataService'
     ],
 
-    function (listTemplate, stagesTemplate, createView, editView, invoiceModel, listItemView, listTotalView, contentCollection, filterView, common, dataService) {
+    function (paginationTemplate, listTemplate, stagesTemplate, createView, editView, invoiceModel, listItemView, listTotalView, contentCollection, filterView, common, dataService) {
         var InvoiceListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -53,8 +54,7 @@ define([
                 "click .stageSelect": "showNewSelect",
                 //"click  .list td:not(.notForm)": "gotoForm",
                 "click  .list td:not(.notForm)": "goToEditDialog",
-                "click #itemsButton": "itemsNumber",
-                "click .currentPageList": "itemsNumber",
+                "mouseover .currentPageList": "itemsNumber",
                 "click": "hideItemsNumber",
                 "click #firstShowPage": "firstPage",
                 "click #lastShowPage": "lastPage",
@@ -207,7 +207,10 @@ define([
                     self.hideItemsNumber(e);
                 });
 
+                currentEl.append(_.template(paginationTemplate));
+
                 var pagenation = this.$el.find('.pagination');
+
                 if (this.collection.length === 0) {
                     pagenation.hide();
                 } else {

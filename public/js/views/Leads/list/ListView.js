@@ -1,4 +1,5 @@
 define([
+        'text!templates/Pagination/PaginationTemplate.html',
         'text!templates/Leads/list/ListHeader.html',
         'text!templates/stages.html',
         'views/Leads/CreateView',
@@ -11,7 +12,7 @@ define([
         'dataService'
     ],
 
-    function (listTemplate, stagesTamplate, createView, listItemView, editView, currentModel, contentCollection, filterView, common, dataService) {
+    function (paginationTemplate, listTemplate, stagesTamplate, createView, listItemView, editView, currentModel, contentCollection, filterView, common, dataService) {
         var LeadsListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -54,10 +55,7 @@ define([
                 "click #lastShowPage": "lastPage",
                 "click .checkbox": "checked",
                 "click .list td:not(.notForm)": "goToEditDialog",
-                "click #itemsButton": "itemsNumber",
-                "click .currentPageList": "itemsNumber",
-                //"click .filterButton": "showfilter",
-                //"click .filter-check-list li": "checkCheckbox",
+                "mouseover .currentPageList": "itemsNumber",
                 "click #convertToOpportunity": "openDialog",
                 "click .stageSelect": "showNewSelect",
                 "click .newSelectList li": "chooseOption",
@@ -294,7 +292,10 @@ define([
                     self.hideItemsNumber(e);
                 });
 
+                currentEl.append(_.template(paginationTemplate));
+
                 pagenation = this.$el.find('.pagination');
+
                 if (this.collection.length === 0) {
                     pagenation.hide();
                 } else {

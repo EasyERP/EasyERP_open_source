@@ -1,4 +1,5 @@
 define([
+        'text!templates/Pagination/PaginationTemplate.html',
         'text!templates/salesQuotation/list/ListHeader.html',
         'text!templates/stages.html',
         'views/salesQuotation/CreateView',
@@ -13,7 +14,7 @@ define([
         'constants'
     ],
 
-    function (listTemplate, stagesTemplate, createView, listItemView, listTotalView, editView, currentModel, contentCollection, filterView, common, dataService, CONSTANTS) {
+    function (paginationTemplate, listTemplate, stagesTemplate, createView, listItemView, listTotalView, editView, currentModel, contentCollection, filterView, common, dataService, CONSTANTS) {
         var QuotationListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -55,8 +56,7 @@ define([
                 "click .checkbox": "checked",
                 "click .stageSelect": "showNewSelect",
                 "click  .list tbody td:not(.notForm)": "goToEditDialog",
-                "click #itemsButton": "itemsNumber",
-                "click .currentPageList": "itemsNumber",
+                "mouseover .currentPageList": "itemsNumber",
                 "click": "hideItemsNumber",
                 "click #firstShowPage": "firstPage",
                 "click #lastShowPage": "lastPage",
@@ -218,6 +218,8 @@ define([
                 $(document).on("click", function (e) {
                     self.hideItemsNumber(e);
                 });
+
+                currentEl.append(_.template(paginationTemplate));
 
                 var pagenation = this.$el.find('.pagination');
 

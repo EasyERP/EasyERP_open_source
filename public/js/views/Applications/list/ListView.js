@@ -1,4 +1,5 @@
 define([
+        'text!templates/Pagination/PaginationTemplate.html',
         'text!templates/Applications/list/ListHeader.html',
         'views/Applications/CreateView',
         'views/Applications/list/ListItemView',
@@ -10,7 +11,7 @@ define([
         'dataService',
         'text!templates/stages.html'
     ],
-    function (listTemplate, createView, listItemView, editView, currentModel, contentCollection, filterView, common, dataService, stagesTamplate) {
+    function (paginationTemplate, listTemplate, createView, listItemView, editView, currentModel, contentCollection, filterView, common, dataService, stagesTamplate) {
         var ApplicationsListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -50,8 +51,7 @@ define([
                 "click #nextPage": "nextPage",
                 "click .checkbox": "checked",
                 "click .list td:not(.notForm)": "goToEditDialog",
-                "click #itemsButton": "itemsNumber",
-                "click .currentPageList": "itemsNumber",
+                "mouseover .currentPageList": "itemsNumber",
                 "click .filterButton": "showfilter",
                 "click .filter-check-list li": "checkCheckbox",
                 "click #firstShowPage": "firstPage",
@@ -245,6 +245,7 @@ define([
                 var self = this;
                 var currentEl = this.$el;
                 var FilterView;
+                var pagenation;
 
                 currentEl.html('');
                 currentEl.append(_.template(listTemplate));
@@ -282,7 +283,10 @@ define([
                         // Filter custom event listen ------end
                     });
                 });
-                var pagenation = this.$el.find('.pagination');
+
+                currentEl.append(_.template(paginationTemplate));
+
+                pagenation = this.$el.find('.pagination');
                 if (this.collection.length === 0) {
                     pagenation.hide();
                 } else {

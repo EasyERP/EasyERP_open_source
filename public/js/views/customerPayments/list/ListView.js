@@ -2,6 +2,7 @@
  * Created by soundstorm on 21.05.15.
  */
 define([
+        'text!templates/Pagination/PaginationTemplate.html',
         'text!templates/supplierPayments/list/ListHeader.html',
         'text!templates/customerPayments/forWTrack/ListHeader.html',
         'views/customerPayments/list/ListItemView',
@@ -13,7 +14,7 @@ define([
         'populate',
         'async'
     ],
-    function (listTemplate, ListHeaderForWTrack, listItemView, listTotalView, paymentCollection, editCollection, currentModel, dataService, populate, async) {
+    function (paginationTemplate, listTemplate, ListHeaderForWTrack, listItemView, listTotalView, paymentCollection, editCollection, currentModel, dataService, populate, async) {
         var PaymentListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -39,8 +40,7 @@ define([
                 "click #nextPage": "nextPage",
                 "click .checkbox": "checked",
                 "click td.editable": "editRow",
-                "click #itemsButton": "itemsNumber",
-                "click .currentPageList": "itemsNumber",
+                "mouseover .currentPageList": "itemsNumber",
                 "click": "hideItemsNumber",
                 "click #firstShowPage": "firstPage",
                 "click #lastShowPage": "lastPage",
@@ -60,6 +60,7 @@ define([
                 this.page = options.collection.page;
 
                 this.render();
+
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
                 this.contentCollection = paymentCollection;
             },
@@ -624,6 +625,8 @@ define([
                 $(document).on("click", function () {
                     self.hideItemsNumber();
                 });
+
+                currentEl.append(_.template(paginationTemplate));
 
                 pagenation = this.$el.find('.pagination');
 
