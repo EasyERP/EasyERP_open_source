@@ -205,22 +205,29 @@ define([
                 var rateVal;
                 var revenueVal;
 
-                for (var i = days.length - 1; i >= 0; i--) {
-                    calcEl = $(days[i]);
-                    value = calcEl.text();
+                function eplyDefaultValue(el){
+                    var value = el.text();
 
                     if (value === '') {
-                        if (calcEl.children('input').length) {
+                        if (el.children('input').length) {
                             value = input.val();
                         } else {
                             value = '0';
                         }
                     }
 
+                    return value;
+                };
+
+                for (var i = days.length - 1; i >= 0; i--) {
+                    calcEl = $(days[i]);
+
+                    value = eplyDefaultValue(calcEl);
+
                     worked += parseInt(value);
                 }
 
-                rateVal = parseFloat(rateEl.text());
+                rateVal = parseFloat(eplyDefaultValue(rateEl));
                 revenueVal = parseFloat(worked * rateVal).toFixed(2);
 
                 revenueEl.text(revenueVal);
@@ -298,10 +305,12 @@ define([
                 var tr = $(e.target).closest('tr');
                 var wTrackId = tr.data('id');
                 var colType = el.data('type');
+                var content = el.data('content');
                 var isSelect = colType !== 'input' && el.prop("tagName") !== 'INPUT';
                 var tempContainer;
                 var width;
                 var editedElement;
+                var value;
 
                 if (wTrackId && el.prop('tagName') !== 'INPUT') {
                     if (this.wTrackId) {
@@ -321,7 +330,8 @@ define([
                     el.html('<input class="editing" type="text" value="' + tempContainer + '"  maxLength="4" style="width:' + width + 'px">');
 
                     this.autoCalc(e);
-                    var value = _.bind(this.calculateCost, this);
+
+                    value = _.bind(this.calculateCost, this);
                     value(e, wTrackId);
                 }
 
