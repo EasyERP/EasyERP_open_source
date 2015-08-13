@@ -39,7 +39,7 @@ define([
                 this.contentType = 'wTrack';//options.contentType;//ToDo contentType
 
                 this.$el.html(this.template({collection: this.collection, customCollection: options.customCollection}));
-                savedFiltersView = new savedFiltersView({
+                var savedFiltersView = new savedFiltersView({
                     contentType: this.contentType,
                     filter: this.filter
                 });

@@ -91,7 +91,7 @@ define([
                         editMode: false
                     });
                 if (!App.savedFilters['wTrack']) {
-                    App.savedFilters['wTrack'] = {};
+                    App.savedFilters['wTrack'] = [];
                 }
                 App.savedFilters['wTrack'].push(filterObj.filter);
 

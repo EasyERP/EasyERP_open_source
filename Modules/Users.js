@@ -230,7 +230,7 @@ var Users = function (mainDb, models) {
                 logWriter.log("Users.js get User.find " + err);
                 response.send(500, {error: 'User get DB error'});
             } else {
-                if (result.toJSON().savedFilters) {
+                if (result && result.toJSON().savedFilters) {
                     savedFilters = result.toJSON().savedFilters;
                     newUserResult = _.groupBy(savedFilters, 'contentView');
                 }
