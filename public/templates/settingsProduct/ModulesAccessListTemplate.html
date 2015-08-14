@@ -1,0 +1,23 @@
+
+    <table class="list" id="modulesAccessTable">
+        <thead>
+        <tr>
+            <td>Module Name</td>
+            <td>View <input type="checkbox" class="viewAll" /> </td>
+            <td>Write/Edit <input type="checkbox" class="writeAll"/></td>
+            <td>Delete <input type="checkbox" class="deleteAll"/></td>
+        </tr>
+        </thead>
+        <tbody>
+        <% if(profile){ %>
+            <% profile.profileAccess.forEach(function(item){ %>
+                <tr>
+                    <td class="mname"> <%=item.module.mname %> </td>
+                    <td><input type="checkbox" class="read" <% if(item.access[0]) { %> checked="checked" <% } %>  /></td>
+                    <td><input type="checkbox" class="write" <% if(item.access[1]) { %> checked="checked" <% } %> /></td>
+                    <td><input type="checkbox" class="delete" <% if(item.access[2]) { %> checked="checked" <% } %> /></td>
+                </tr>
+            <% }) %>
+        <% } %>
+        </tbody>
+    </table>

@@ -67,12 +67,22 @@ define([
 
             changeTab: function (e) {
                 var holder = $(e.target);
-                holder.closest(".dialog-tabs").find("a.active").removeClass("active");
+                var n;
+                var dialog_holder;
+                var closestEl = holder.closest('.dialog-tabs');
+                var dataClass = closestEl.data('class');
+                var selector = '.dialog-tabs-items.' + dataClass;
+                var itemActiveSelector = '.dialog-tabs-item.' + dataClass + '.active';
+                var itemSelector = '.dialog-tabs-item.' + dataClass;
+
+                closestEl.find("a.active").removeClass("active");
                 holder.addClass("active");
-                var n = holder.parents(".dialog-tabs").find("li").index(holder.parent());
-                var dialog_holder = $(".dialog-tabs-items");
-                dialog_holder.find(".dialog-tabs-item.active").removeClass("active");
-                dialog_holder.find(".dialog-tabs-item").eq(n).addClass("active");
+
+                n = holder.parents(".dialog-tabs").find("li").index(holder.parent());
+                dialog_holder = $(selector);
+
+                dialog_holder.find(itemActiveSelector).removeClass("active");
+                dialog_holder.find(itemSelector).eq(n).addClass("active");
             },
 
             chooseUser: function (e) {
@@ -125,6 +135,11 @@ define([
                 var barcode = $.trim(this.$el.find("#barcode").val());
                 var isActive = this.$el.find('#active').prop('checked');
                 var productType = this.$el.find("#productType").data("id");
+                var categoryEl = currEl.find('#productCategory');
+                var category = {
+                    _id: categoryEl.data('id'),
+                    name: categoryEl.text()
+                };
                 var data = {
                     canBeSold: canBeSold,
                     canBeExpensed: canBeExpensed,
@@ -138,6 +153,9 @@ define([
                         isActive: isActive,
                         barcode: barcode,
                         description: description
+                    },
+                    accounting: {
+                        category: category
                     },
                     groups: {
                         owner: $("#allUsersSelect").data("id"),
@@ -249,8 +267,11 @@ define([
                     }).render().el
                 );
                 populate.get("#productType", "/product/getProductsTypeForDd", {}, 'name', this);
+                populate.get("#productCategory", "/category", {}, 'name', this);
                 common.canvasDraw({model: this.model.toJSON()}, this);
+
                 this.delegateEvents(this.events);
+
                 if (model.groups)
                     if (model.groups.users.length > 0 || model.groups.group.length) {
                         $(".groupsAndUser").show();

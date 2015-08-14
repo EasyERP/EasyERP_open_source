@@ -1,22 +1,23 @@
 <div class="form-holder">
-    <form method="post" action="" id="createProductForm" class="form">
+    <form method="post" action="" id="createEmployeeForm" class="form">
         <fieldset>
             <div class="inner">
-                <ul class="dialog-tabs">
+                <ul class="dialog-tabs" data-class="mainTabs">
                     <li><a class="active" href="javascript:;">Main</a></li>
                     <li><a href="javascript:;">Assignees</a></li>
                 </ul>
                 <div class="clearfix"></div>
-                <div class="dialog-tabs-items">
-                    <div class="dialog-tabs-item active">
-                        <div class="avatar left">
+                <div class="dialog-tabs-items mainTabs">
+                    <div class="dialog-tabs-item mainTabs active">
+                        <div class="avatar">
                             <div class="upload">Edit<input type="file" value="Edit" id="inputImg"></div>
-                            <canvas id="avatar" width="140" height="140"><input type="file" value="Edit" id="File1">
+                            <canvas id="avatar" width="140" height="140">
+                                <input type="file" value="Edit" id="File1">
                             </canvas>
                         </div>
-                        <div class="avatarInfoContainer product">
+                        <div class="avatarInfoContainer">
                             <div class="half-block left">
-                                <dl class="create-product-info">
+                                <dl class="product-info">
                                     <dt><label for="product">Product Name</label></dt>
                                     <dd><input type="text" id="product" required maxlength="32"
                                                value="<%=model.name%>"/></dd>
@@ -28,68 +29,107 @@
                                     <dd><input type="checkbox" id="expensed" class="checkbox left" <%
                                         if(model.canBeExpensed) { %> checked <% } %>/>
                                     </dd>
-                                    <!--<dt><label for="subscription">Event Subscription</label></dt><dd><input type="checkbox" id="subscription" required class="checkbox left" <% if(model.eventSubscription) { %> checked <% } %>/></dd>-->
                                     <dt><label for="purchased">Can be Purchased</label></dt>
                                     <dd><input type="checkbox" id="purchased" class="checkbox left" <%
                                         if(model.canBePurchased) { %> checked <% } %>/>
                                     </dd>
+                                </dl>
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                        <ul class="dialog-tabs" data-class="childTabs">
+                            <li><a class="active" href="javascript:;">Information</a></li>
+                            <li><a href="javascript:;">Accounting</a></li>
+                        </ul>
+                        <div class="dialog-tabs-items childTabs">
+                            <div class="dialog-tabs-item childTabs active">
+                                <div class="clearfix"></div>
+                                <div class="half-block left">
+                                    <dl class="product-info">
+                                        <dt><label for="productType">Product Type</label></dt>
+                                        <dd><a id="productType"
+                                               data-id="<%=(model.info.productType)?model.info.productType._id:''%>"
+                                               class="current-selected" href="javascript:;"><%=(model.info.productType)?(model.info.productType.name):"Select"%></a>
+                                        </dd>
+                                        <dt><label for="salePrice">Sale Price</label></dt>
+                                        <dd><input type="text" id="salePrice" class="extra-info" maxlength="10"
+                                                   value="<%=model.info.salePrice%>"/></dd>
+                                    </dl>
+                                </div>
+                                <div class="half-block left">
                                     <dt><label for="active">Active</label></dt>
                                     <dd><input type="checkbox" id="active" class="checkbox left" <%
                                         if(model.info.isActive) { %> checked <% } %>/>
                                     </dd>
-                                </dl>
-                            </div>
-                            <div class="half-block left">
-                                <dl class="create-product-info">
-                                    <dt><label for="productType">Product Type</label></dt>
-                                    <dd><a id="productType"
-                                           data-id="<%=(model.info.productType)?model.info.productType._id:''%>"
-                                           class="current-selected" href="javascript:;"><%=(model.info.productType)?(model.info.productType.name):"Select"%></a>
-                                    </dd>
-                                    <!--                            <dl id="typeOfEvent" class="hidden">
-                                                                    <dt><label for="eventType">Type of Event</label></dt><dd><a id="eventType" class="current-selected" href="javascript:;">Select</a></dd>
-                                                                </dl>-->
-                                    <dt><label for="salePrice">Sale Price</label></dt>
-                                    <dd><input type="text" id="salePrice" class="extra-info" maxlength="10"
-                                               value="<%=model.info.salePrice%>"/></dd>
                                     <dt><label for="barcode">Barcode</label></dt>
                                     <dd><input type="text" id="barcode" class="extra-info" maxlength="20"
                                                value="<%=model.info.barcode%>"/></dd>
                                     <dt></dt><dd><div id="bcTarget"></div></dd>
-                                </dl>
-                            </div>
-                            <div class="clearfix"></div>
-                            <div class="full-width left">
-                                <div class="inner">
-                                    <div class="textarea-wrapper">
+                                </div>
+                                <div class="clearfix"></div>
+                                <div class="full-width left">
+                                    <div class="inner">
+                                        <div class="textarea-wrapper">
                                         <textarea type="text" class="full-width productDescriptionCreate"
                                                   name="description" id="description" maxlength="500"><%=model.info.description%></textarea>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+
+                            <div class="dialog-tabs-item childTabs">
+                                <div class="clearfix"></div>
+                                <div class="full-width left">
+                                    <dl class="product-info">
+                                        <dt><label for="productCategory">Product Category</label></dt>
+                                        <dd><a id="productCategory" class="current-selected" href="javascript:;">All</a></dd>
+                                        <dt><label for="assetType">Asset Type</label></dt>
+                                        <dd><a id="assetType" class="current-selected" href="javascript:;">Select</a></dd>
+                                        <dt><label for="deferredRevenueType">Deferred Revenue Type</label></dt>
+                                        <dd><a id="deferredRevenueType" class="current-selected" href="javascript:;">Select</a></dd>
+                                    </dl>
+                                </div>
+                                <div class="clearfix"></div>
+                                <div class="bottomLine">
+                                    <div class="half-block left">
+                                        <dt><label for="incomeAccount">Income Account</label></dt>
+                                        <dd><a id="incomeAccount" class="current-selected" href="javascript:;">Select</a></dd>
+                                        <dt><label for="customerTaxes">Customer Taxes</label></dt>
+                                        <dd><a id="customerTaxes" class="current-selected" href="javascript:;">Select</a></dd>
+                                    </div>
+                                    <div class="half-block left">
+                                        <dt><label for="expenseAccount">Expense Account</label></dt>
+                                        <dd><a id="expenseAccount" class="current-selected" href="javascript:;">Select</a></dd>
+                                        <dt><label for="supplierTaxes">Supplier Taxes</label></dt>
+                                        <dd><a id="supplierTaxes" class="current-selected" href="javascript:;">Select</a></dd>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                        <div class="clearfix">
                             <div class="cropImages form" style="display:none;">
                                 <div class="formTitle">
                                     <h3 class="left">Crop Images</h3>
 
                                     <div class="clearfix"></div>
                                 </div>
-                                <br/>
+                                <br />
 
                                 <div class="image_input" style="float: left;margin-right: 20px;"></div>
-                                <img class="image_output"/>
+                                <img class="image_output" />
 
                                 <div class="clearfix"></div>
                             </div>
-                            <div class="clearfix"></div>
                         </div>
+                        <div class="clearfix"></div>
                     </div>
-                    <div class="dialog-tabs-item">
+                    <div class="dialog-tabs-item mainTabs">
                         <div class="assignees-container"></div>
                     </div>
-                    <div class="clearfix"></div>
                 </div>
+                <div class="clearfix"></div>
             </div>
         </fieldset>
     </form>
 </div>
-
