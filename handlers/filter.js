@@ -20,7 +20,7 @@ var Filters = function (models) {
                 wTrack: getWtrackFiltersValues,
                 Persons: getPersonFiltersValues,
                 Companies: getCompaniesFiltersValues,
-                Employee: getEmployeeFiltersValues,
+                Employees: getEmployeeFiltersValues,
             },
             function (err, result) {
                 if (err) {

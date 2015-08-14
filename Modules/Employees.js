@@ -10,7 +10,11 @@ var Employee = function (event, models) {
     function getTotalCount(req, response) {
         var res = {};
         var data = {};
+
         var condition;
+        var resArray = [];
+        var filtrElement = {};
+        var key;
 
 
         for (var i in req.query) {
@@ -33,79 +37,87 @@ var Employee = function (event, models) {
             optionsObject['workflow'] = { $in: [] };
         }
 
+
         switch (contentType) {
             case ('Employees'): {
-                optionsObject['$and'] = [];
-                optionsObject['$and'].push({'isEmployee': true});
 
+                for (var filterName in data.filter) {
+                    condition = data.filter[filterName]['value'];
+                    key = data.filter[filterName]['key'];
 
-                if (data && data.filter) {
-                    if (data.filter.condition === 'or') {
-                        optionsObject['$and'].push({$or: []});
-                        condition = optionsObject['$and'][1]['$or'];
+                    switch (filterName) {
+                        case 'name':
+                            filtrElement[key] = {$in: condition.objectID()};
+                            resArray.push(filtrElement);
+                            break;
+                        case 'letter':
+                            filtrElement['name.last'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
+                            resArray.push(filtrElement);
+                            break;
+                        case 'department':
+                            filtrElement[key] = {$in: condition.objectID()};
+                            resArray.push(filtrElement);
+                            break;
+                        case 'manager':
+                            filtrElement[key] = {$in: condition.objectID()};
+                            resArray.push(filtrElement);
+                            break;
+                        case 'jobPosition':
+                            filtrElement[key] = {$in: condition.objectID()};
+                            resArray.push(filtrElement);
+                            break;
+                    }
+                };
+
+                resArray.push[{'isEmployee': 'true'}];
+
+                if (resArray.length) {
+
+                    if (data && data.filter && data.filter.condition === 'or') {
+                        optionsObject['$or'] = resArray;
                     } else {
-                        optionsObject['$and'].push({$and: []});
-                        condition = optionsObject['$and'][1]['$and'];
+                        optionsObject['$and'] = resArray;
                     }
-
-                    if (data.filter.Department) {
-                        var arrOfObjectId = data.filter.Department.objectID();
-                        condition.push({ 'department._id': {$in: arrOfObjectId}});
-                    }
-
-                    if (data.filter.Name) {
-                        condition.push({ '_id': {$in: data.filter.Name.objectID()}});
-                    }
-
-                    if (data.filter.jobPosition) {
-                        condition.push({ 'jobPosition._id': {$in: data.filter.jobPosition.objectID()}});
-                    }
-
-                    if (data.filter.manager) {
-                        condition.push({ 'manager._id': {$in: data.filter.manager.objectID()}});
-                    }
-
-                    if (!condition.length) {
-                        optionsObject['$and'].pop();
-                    }
-
-
                 }
             }
                 break;
             case ('Applications'): {
-                optionsObject['$and'] = [];
-                optionsObject['$and'].push({'isEmployee': false});
+                for (var filterName in data.filter) {
+                    condition = data.filter[filterName]['value'];
+                    key = data.filter[filterName]['key'];
 
-                if (data && data.filter) {
+                    switch (filterName) {
+                        case 'name':
+                            filtrElement[key] = {$in: condition.objectID()};
+                            resArray.push(filtrElement);
+                            break;
+                        case 'letter':
+                            filtrElement['name.last'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
+                            resArray.push(filtrElement);
+                            break;
+                        case 'department':
+                            filtrElement[key] = {$in: condition.objectID()};
+                            resArray.push(filtrElement);
+                            break;
+                        case 'manager':
+                            filtrElement[key] = {$in: condition.objectID()};
+                            resArray.push(filtrElement);
+                            break;
+                        case 'jobPosition':
+                            filtrElement[key] = {$in: condition.objectID()};
+                            resArray.push(filtrElement);
+                            break;
+                    }
+                };
 
-                    if (data.filter.condition === 'or') {
-                        optionsObject['$and'].push({$or: []});
-                        condition = optionsObject['$and'][1]['$or'];
+                resArray.push[{'isEmployee': 'false'}];
+
+                if (resArray.length) {
+
+                    if (data && data.filter && data.filter.condition === 'or') {
+                        optionsObject['$or'] = resArray;
                     } else {
-                        optionsObject['$and'].push({$and: []});
-                        condition = optionsObject['$and'][1]['$and'];
-                    }
-
-                    if (data.filter.Department) {
-                        var arrOfObjectId = data.filter.Department.objectID();
-                        condition.push({ 'department._id': {$in: arrOfObjectId}});
-                    }
-
-                    if (data.filter.Name) {
-                        condition.push({ '_id': {$in: data.filter.Name.objectID()}});
-                    }
-
-                    if (data.filter.jobPosition) {
-                        condition.push({ 'jobPosition._id': {$in: data.filter.jobPosition.objectID()}});
-                    }
-
-                    if (data.filter.manager) {
-                        condition.push({ 'manager._id': {$in: data.filter.manager.objectID()}});
-                    }
-
-                    if (!condition.length) {
-                        optionsObject['$and'].pop();
+                        optionsObject['$and'] = resArray;
                     }
                 }
             }
@@ -544,12 +556,15 @@ var Employee = function (event, models) {
     function getFilter(req, response) {
         var data = {};
         var optionsObject = {};
-        var condition;
-        var filterObj;
 
         var viewType;
         var contentType;
         var res = {};
+
+        var condition;
+        var resArray = [];
+        var filtrElement = {};
+        var key;
 
         for (var i in req.query) {
             data[i] = req.query[i];
@@ -562,87 +577,86 @@ var Employee = function (event, models) {
 
         switch (contentType) {
             case ('Employees'): {
-                //----------------------
-                optionsObject['$and'] = [];
-                optionsObject['$and'].push({'isEmployee': true});
 
+                for (var filterName in data.filter) {
+                    condition = data.filter[filterName]['value'];
+                    key = data.filter[filterName]['key'];
 
-                if (data && data.filter) {
+                    switch (filterName) {
+                        case 'name':
+                            filtrElement[key] = {$in: condition.objectID()};
+                            resArray.push(filtrElement);
+                            break;
+                        case 'letter':
+                            filtrElement['name.last'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
+                            resArray.push(filtrElement);
+                            break;
+                        case 'department':
+                            filtrElement[key] = {$in: condition.objectID()};
+                            resArray.push(filtrElement);
+                            break;
+                        case 'manager':
+                            filtrElement[key] = {$in: condition.objectID()};
+                            resArray.push(filtrElement);
+                            break;
+                        case 'jobPosition':
+                            filtrElement[key] = {$in: condition.objectID()};
+                            resArray.push(filtrElement);
+                            break;
+                    }
+                };
 
-                    if (data.filter.condition === 'or') {
-                        optionsObject['$and'].push({$or: []});
-                        condition = optionsObject['$and'][1]['$or'];
+                resArray.push[{'isEmployee': 'true'}];
+
+                if (resArray.length) {
+
+                    if (data && data.filter && data.filter.condition === 'or') {
+                        optionsObject['$or'] = resArray;
                     } else {
-                        optionsObject['$and'].push({$and: []})
-                        condition = optionsObject['$and'][1]['$and'];
+                        optionsObject['$and'] = resArray;
                     }
-
-                    if (data.filter.Department) {
-                        var arrOfObjectId = data.filter.Department.objectID();
-                        condition.push({ 'department._id': {$in: arrOfObjectId}});
-                    }
-
-                    if (data.filter.Name) {
-                        condition.push({ '_id': {$in: data.filter.Name.objectID()}});
-                    }
-
-                    if (data.filter.jobPosition) {
-                        condition.push({ 'jobPosition._id': {$in: data.filter.jobPosition.objectID()}});
-                    }
-
-                    if (data.filter.manager) {
-                        condition.push({ 'manager._id': {$in: data.filter.manager.objectID()}});
-                    }
-
-
-                    if (!condition.length) {
-                        optionsObject['$and'].pop();
-                    }
-
-
-                }
-
-                if (data.filter.letter) {
-                    optionsObject['name.last'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
-
                 }
             }
                 break;
             case ('Applications'): {
-                optionsObject['$and'] = [];
-                optionsObject['$and'].push({'isEmployee': false});
+                for (var filterName in data.filter) {
+                    condition = data.filter[filterName]['value'];
+                    key = data.filter[filterName]['key'];
 
-                if (data && data.filter) {
-                    if (data.filter.condition === 'or') {
-                        optionsObject['$and'].push({$or: []});
-                        condition = optionsObject['$and'][1]['$or'];
+                    switch (filterName) {
+                        case 'name':
+                            filtrElement[key] = {$in: condition.objectID()};
+                            resArray.push(filtrElement);
+                            break;
+                        case 'letter':
+                            filtrElement['name.last'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
+                            resArray.push(filtrElement);
+                            break;
+                        case 'department':
+                            filtrElement[key] = {$in: condition.objectID()};
+                            resArray.push(filtrElement);
+                            break;
+                        case 'manager':
+                            filtrElement[key] = {$in: condition.objectID()};
+                            resArray.push(filtrElement);
+                            break;
+                        case 'jobPosition':
+                            filtrElement[key] = {$in: condition.objectID()};
+                            resArray.push(filtrElement);
+                            break;
+                    }
+                };
+
+                resArray.push[{'isEmployee': 'false'}];
+
+                if (resArray.length) {
+
+                    if (data && data.filter && data.filter.condition === 'or') {
+                        optionsObject['$or'] = resArray;
                     } else {
-                        optionsObject['$and'].push({$and: []});
-                        condition = optionsObject['$and'][1]['$and'];
-                    }
-
-                    if (data.filter.Department) {
-                        var arrOfObjectId = data.filter.Department.objectID();
-                        condition.push({ 'department._id': {$in: arrOfObjectId}});
-                    }
-
-                    if (data.filter.Name) {
-                        condition.push({ '_id': {$in: data.filter.Name.objectID()}});
-                    }
-
-                    if (data.filter.jobPosition) {
-                        condition.push({ 'jobPosition._id': {$in: data.filter.jobPosition.objectID()}});
-                    }
-
-                    if (data.filter.manager) {
-                        condition.push({ 'manager._id': {$in: data.filter.manager.objectID()}});
-                    }
-
-                    if (!condition.length) {
-                        optionsObject['$and'].pop();
+                        optionsObject['$and'] = resArray;
                     }
                 }
-
             }
                 break;
         }

@@ -8,7 +8,6 @@ var Employee = function (models) {
     var access = require("../Modules/additions/access.js")(models);
     var EmployeeSchema = mongoose.Schemas['Employee'];
     var ProjectSchema = mongoose.Schemas['Project'];
-    var objectId = mongoose.Types.ObjectId;
     var _ = require('../node_modules/underscore');
 
     this.getForDD = function (req, res, next) {
@@ -91,73 +90,6 @@ var Employee = function (models) {
                 }
 
                 res.status(200).send(employees);
-            });
-    };
-
-    this.getFilterValues = function (req, res, next) {
-        var Employee = models.get(req.session.lastDb, 'Employee', EmployeeSchema);
-
-        Employee
-            .aggregate([
-                {
-                    $group: {
-                        _id: null,
-                        'Name': {
-                            $addToSet: {
-                                _id: '$_id',
-                                name: '$name.last'
-                            }
-                        },
-                        'Department': {
-                            $addToSet: {
-                                _id: '$department._id',
-                                name: {'$ifNull': ['$department.name', 'None']}
-                            }
-                        },
-                        jobPosition: {
-                            $addToSet: {
-                                _id: '$jobPosition._id',
-                                name: {'$ifNull': ['$jobPosition.name', 'None']}
-                            }
-                        },
-                        manager: {
-                            $addToSet: {
-                                _id: '$manager._id',
-                                name: {'$ifNull': ['$manager.name', 'None']}
-                            }
-                        }
-                    }
-                }
-            ], function (err, result) {
-                if (err) {
-                    return next(err);
-                }
-
-                _.map(result[0], function(value, key) {
-                    switch (key) {
-                        case 'Name':
-                            result[0][key] = _.sortBy(value, 'name');
-                            break;
-                        case 'Department':
-                            result[0][key] = _.sortBy(value, 'name');
-                            break;
-                        case 'jobPosition':
-                            result[0][key] = {
-                                displayName: 'Job Position',
-                                values: _.sortBy(value, 'name')
-                            };
-                            break;
-                        case 'manager':
-                            result[0][key] = {
-                                displayName: 'Manager',
-                                values: _.sortBy(value, 'name')
-                            };
-                            break;
-
-                    }
-                });
-
-                res.status(200).send(result);
             });
     };
 

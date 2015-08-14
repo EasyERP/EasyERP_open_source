@@ -607,14 +607,14 @@
         },
 
         caseFilter: function (contentType, optionsObject, data) {
+            var condition;
+            var resArray = [];
+            var filtrElement = {};
+            var key;
+
             switch (contentType) {
                 case ('Persons'):
                 {
-                    var condition;
-                    var resArray = [];
-                    var filtrElement = {};
-                    var key;
-
                     for (var filterName in data.filter) {
                         condition = data.filter[filterName]['value'];
                         key = data.filter[filterName]['key'];
@@ -659,10 +659,6 @@
                     break;
                 case ('Companies'):
                 {
-                    var condition;
-                    var resArray = [];
-                    var filtrElement = {};
-                    var key;
 
                     for (var filterName in data.filter) {
                         condition = data.filter[filterName]['value'];
