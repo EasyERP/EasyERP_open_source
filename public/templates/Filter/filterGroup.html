@@ -1,8 +1,8 @@
 <div class="groupName <%=status ? 'checkedGroup' : ''%>">
-    <span id="<%=constants[groupName].view%>"><%=groupName%></span>
+    <span id="<%=groupViewName%>"><%=groupName%></span>
 </div>
-<div id="<%=groupName%>Container" class="ulContent hidden">
-    <ul id="<%=groupName%>" class="filterValues">
+<div id="<%=groupViewName%>Container" class="ulContent<%=groupStatus ? ' hidden' : ''%>">
+    <ul id="<%=groupViewName%>Ul" class="filterValues">
     </ul>
     <% if (paginationBool){%>
     <li class="miniStylePagination">
