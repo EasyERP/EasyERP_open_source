@@ -47,8 +47,8 @@ define([
             useFilter: function (e) {
                 var target = $(e.target);
 
-                this.$el.find('.filters').removeClass('current');
-                $(e.target).addClass('current');
+                //this.$el.find('.filters').removeClass('current');
+               // $(e.target).addClass('current');
 
                 var targetId = target.attr('id');
                 var savedFilters = App.savedFilters[this.parentContentType];
@@ -267,7 +267,7 @@ define([
                 }
                 delete this.filter[filterView];
 
-                this.renderGroup(groupName, true);
+                this.renderGroup(groupName);
                 $(e.target).closest('div').remove();
 
                 this.renderFilterContent();
