@@ -291,9 +291,6 @@ define(['libs/date.format', 'common', 'constants'], function (dateformat, common
             });
         };
 
-        if (defaultFilterStatus || (Object.keys(filter).length === 1)) {
-            filter = 'empty';
-        };
 
         return filter;
     };

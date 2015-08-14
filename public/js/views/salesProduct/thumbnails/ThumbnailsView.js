@@ -84,7 +84,7 @@
                 if ($(e.target).text() == "All") {
                     selectedLetter = "";
                 }
-                this.filter = (this.filter && this.filter !== 'empty') ? this.filter : {};
+                this.filter = (this.filter) ? this.filter : {};
                 this.filter['letter'] = selectedLetter;
                 this.filter['canBeSold'] = true;
                 this.defaultItemsNumber = 0;

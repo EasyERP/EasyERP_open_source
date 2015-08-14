@@ -76,7 +76,7 @@ function (common, editView, createView, AphabeticTemplate, ThumbnailsItemTemplat
                 if ($(e.target).text() == "All") {
                     selectedLetter = "";
                 }
-                this.filter = (this.filter && this.filter !== 'empty') ? this.filter : {};
+                this.filter = (this.filter) ? this.filter : {};
                 this.filter['letter'] = selectedLetter;
                 this.defaultItemsNumber = 0;
                 this.changeLocationHash(null, this.defaultItemsNumber, this.filter);

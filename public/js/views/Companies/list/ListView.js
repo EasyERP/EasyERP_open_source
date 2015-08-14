@@ -132,7 +132,7 @@ define([
                 if ($(e.target).text() == "All") {
                     selectedLetter = "";
                 }
-                this.filter = (this.filter && this.filter !== 'empty') ? this.filter : {};
+                this.filter = (this.filter) ? this.filter : {};
                 this.filter['letter'] = selectedLetter;
                 var itemsNumber = $("#itemsNumber").text();
                 $("#top-bar-deleteBtn").hide();
@@ -385,10 +385,6 @@ define([
                             })
                         }
                     });
-                };
-
-                if ((checkedElements.length && checkedElements.attr('id') === 'defaultFilter') || (!chosen.length && !showList)) {
-                    self.filter = 'empty';
                 };
 
                 this.startTime = new Date();

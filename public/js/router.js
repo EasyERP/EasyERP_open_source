@@ -507,7 +507,8 @@ define([
                 var navigatePage = (page) ? parseInt(page) : 1;
                 var count = (countPerPage) ? parseInt(countPerPage) || 50 : 50;
 
-                if (filter === 'empty') {
+               // if (filter === 'empty') {
+                if (!filter) {
                     newCollection = false;
                 } else if (filter) {
                     filter = JSON.parse(filter);
@@ -711,7 +712,8 @@ define([
                 var collectionUrl;
                 var savedFilter;
                 var count = (countPerPage) ? parseInt(countPerPage) || 50 : 50;
-                if (filter === 'empty') {
+                //if (filter === 'empty') {
+                if (!filter) {
                     newCollection = false;
                 } else if (filter) {
                     filter = JSON.parse(filter);

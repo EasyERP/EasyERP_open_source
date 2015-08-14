@@ -178,10 +178,6 @@
                     });
                 };
 
-                if ((checkedElements.length && checkedElements.attr('id') === 'defaultFilter') || (!chosen.length && !showList)) {
-                    self.filter = 'empty';
-                };
-
                 this.changeLocationHash(null, this.defaultItemsNumber, this.filter);
                 this.collection.showMore({ count: this.defaultItemsNumber, page: 1, filter: this.filter, newCollection: true });
                 this.getTotalLength(this.defaultItemsNumber, this.filter);

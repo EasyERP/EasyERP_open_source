@@ -85,7 +85,7 @@ define([
                 if ($(e.target).text() == "All") {
                     selectedLetter = "";
                 }
-                this.filter = (this.filter && this.filter !== 'empty') ? this.filter : {};
+                this.filter = (this.filter) ? this.filter : {};
                 this.filter['letter'] = selectedLetter;
                 this.filter['canBePurchased'] = true;
                 var itemsNumber = $("#itemsNumber").text();
@@ -378,10 +378,6 @@ define([
 
                     });
                 }
-
-                if (checkedElements.length && checkedElements.attr('id') === 'defaultFilter') {
-                    self.filter = 'empty';
-                };
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);

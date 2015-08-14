@@ -197,10 +197,6 @@
                 this.newCollection = true;
                 this.$el.find('.thumbnailwithavatar').remove();
 
-                if ((checkedElements.length && checkedElements.attr('id') === 'defaultFilter') || (!chosen.length && !showList)) {
-                    self.filter = 'empty';
-                };
-
                 this.changeLocationHash(1, itemsNumber, this.filter);
                 this.collection.showMore({
                     count: itemsNumber,

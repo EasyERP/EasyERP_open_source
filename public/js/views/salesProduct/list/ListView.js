@@ -83,7 +83,7 @@ define([
                 if ($(e.target).text() == "All") {
                     selectedLetter = "";
                 }
-                this.filter = (this.filter && this.filter !== 'empty') ? this.filter : {};
+                this.filter = (this.filter) ? this.filter : {};
                 this.filter['letter'] = selectedLetter;
                 this.filter['canBeSold'] = true;
                 var itemsNumber = $("#itemsNumber").text();
