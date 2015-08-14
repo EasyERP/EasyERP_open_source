@@ -262,7 +262,29 @@ define([
                 });
                 $(this.el).find('#favoritesContent').append(savedContentView);
 
+                this.parseFilter();
+
                 return this;
+            },
+
+            parseFilter: function () {
+                var browserString = window.location.hash;
+                var result = {};
+                var filterIndex;
+                var browserStrLength;
+
+                browserStrLength = browserString.length
+                filterIndex = browserString.indexOf('filter');
+
+                if (filterIndex) {
+                    browserString = browserString.substring(filterIndex, browserStrLength);
+
+                    browserString.split("%").forEach(function (part) {
+                        var item = part.split("=");
+                        result[item[0]] = decodeURIComponent(item[1]);
+                    });
+                }
+                console.dir(decodeURIComponent(browserString));
             },
 
             applyFilter: function () {
