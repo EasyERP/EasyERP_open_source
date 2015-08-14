@@ -100,7 +100,7 @@ define([
                     bool = false;
                 }
 
-                if (bool && filterName) {
+                if (bool && filterName.length > 0) {
                     filterObj['filter'] = {};
                     filterObj['filter'][filterName] = {};
                     filterObj['filter'][filterName] = this.filter;
@@ -130,7 +130,7 @@ define([
                                         filter: filterForSave
                                     }
                                 );
-                                favouritesContent.append('<li class="filters"  id ="' + id + '">' + filterName + '</li><span class="removeSavedFilter" id="' + id + '">' + 'x' + '</span>');
+                                favouritesContent.append('<li class="filters"  id ="' + id + '">' + filterName + '</li><button class="removeSavedFilter" id="' + id + '">' + 'x' + '</button>');
 
                             },
                             error: function (model, xhr) {
