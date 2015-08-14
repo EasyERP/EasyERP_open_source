@@ -117,18 +117,18 @@ define([
                             patch: true,
                             validate: false,
                             success: function (model) {
-                                updatedInfo = model.get('success');
-                                filters = updatedInfo['savedFilters'];
-                                length = filters.length;
-                                id = filters[length - 1];
-                                App.savedFilters[self.parentContentType].push(
-                                    {
-                                        _id: id,
-                                        contentView: key,
-                                        filter: filterForSave
-                                    }
-                                );
-                                favouritesContent.append('<li class="filters"  id ="' + id + '">' + filterName + '</li><button class="removeSavedFilter" id="' + id + '">' + 'x' + '</button>');
+                                //updatedInfo = model.get('success');
+                                //filters = updatedInfo['savedFilters'];
+                                //length = filters.length;
+                                //id = filters[length - 1];
+                                //App.savedFilters[self.parentContentType].push(
+                                //    {
+                                //        _id: id,
+                                //        contentView: key,
+                                //        filter: filterForSave
+                                //    }
+                                //);
+                                //favouritesContent.append('<li class="filters"  id ="' + id + '">' + filterName + '</li><button class="removeSavedFilter" id="' + id + '">' + 'x' + '</button>');
 
                             },
                             error: function (model, xhr) {
@@ -136,6 +136,20 @@ define([
                             },
                             editMode: false
                         });
+                    dataService.getData('/currentUser', null, function (response) {
+                        if (response && !response.error) {
+                            App.currentUser = response.user;
+                            App.savedFilters = response.savedFilters;
+                        } else {
+                            console.log('can\'t fetch currentUser');
+                        }
+                    });
+
+                    var keys = Object.keys(App.savedFilters).length;
+                    id = App.savedFilters[this.parentContentType][keys - 1]['_id'];
+
+                    favouritesContent.append('<li class="filters"  id ="' + id + '">' + filterName + '</li><button class="removeSavedFilter" id="' + id + '">' + 'x' + '</button>');
+
 
                     this.$el.find('#forFilterName').val('');
                 }
