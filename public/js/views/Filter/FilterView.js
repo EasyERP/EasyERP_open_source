@@ -73,6 +73,14 @@ define([
                 var favouritesContent = this.$el.find('#favoritesContent');
                 var filterForSave = {};
                 var updatedInfo = {};
+                var allFilterNames = this.$el.find('.filters');
+                var allowName = true;
+
+                _.forEach(allFilterNames, function(filter){
+                    if (filter.innerHTML === filterName){
+                        return allowName = false;
+                    }
+                });
 
                 key = subMenu.trim();
                 filterForSave[filterName] = this.filter;
@@ -81,8 +89,13 @@ define([
                     App.savedFilters[self.parentContentType] = [];
                 }
 
-                if (!filterName) {
-                    alert('Please, enter filter name!');
+                if (!allowName) {
+                    alert('Filter with same name already exists! Please, change filter name.');
+                    bool = false;
+                }
+
+                if ((Object.keys(this.filter)).length === 0) {
+                    alert('Please, use some filter!');
                     bool = false;
                 }
 
@@ -219,25 +232,25 @@ define([
                 }
 
                 this.trigger('filter', this.filter);
-                //this.showFilterIcons(this.filter);
+                this.showFilterIcons(this.filter);
             },
 
             showFilterIcons: function (filter) {
-                var filterIc = $(this.$el).find('.filter-icons');
-                var filterValues = $(this.$el).find('.search-field .oe_searchview_input');
+                var filterIc = this.$el.find('.filter-icons');
+                var filterValues = this.$el.find('.search-field .oe_searchview_input');
                 var filter = Object.keys(filter);
                 var self = this;
                 var groupName;
 
-
                 filterValues.empty();
                 _.forEach(filter, function (key, value) {
 
-                    groupName = $(self.$el.find('#' + key)).text();
-
+                    groupName = self.$el.find('#' + key).text();
                     filterIc.addClass('active');
-                   filterValues.append('<div><span class="fa fa-filter funnelIcon"></span><span class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
+                   filterValues.append('<div class="forFilterIcons"><span class="fa fa-filter funnelIcon"></span><span class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
                 });
+
+
             },
 
             removeFilter: function (e) {

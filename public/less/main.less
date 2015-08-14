@@ -3303,6 +3303,7 @@ dl {
   line-height: 18px !important;
   width: 15px;
   text-align: center;
+  margin-right: 3px;
 }
 
 .filterValues {
@@ -6048,7 +6049,7 @@ textarea#editInput {
     top: calc(100% - 1px);
   }
 }
-
+/**- **/
 .btn-filter {
   position: relative;
   float: left;
@@ -6058,7 +6059,7 @@ textarea#editInput {
   position: relative;
   float: left;
 }
-
+/**-**/
 .drop-down-filter {
   box-sizing: content-box;
   font-family: @lucida-font;
@@ -6370,4 +6371,60 @@ textarea#editInput {
 .CondParagraph {
   font-size: 14px;
   margin-left: 50px;
+}
+
+
+#favoritesContent {
+  padding-top: 5px;
+  #forFilterName {
+    height: 22px;
+    width: 84%;
+    border-bottom-left-radius: 5px;
+    border-top-left-radius: 5px;
+  }
+  #saveFilterButton {
+    border: 1px solid #cccccc;
+    border-left: 0;
+    margin-left: -7px;
+    box-sizing: border-box;
+    border-radius: 0 5px 5px 0;
+    height: 28px;
+  }
+  .removeSavedFilter {
+    float: right;
+    border: 1px solid #cccccc;
+    height: 21px;
+  }
+  .line {
+    height: 1px;
+    width: 100%;
+    background-color: #e6e6e6;
+    margin: 9px 0;
+  }
+  li {
+    list-style: none;
+  }
+  .filters {
+    float: left;
+    width: 88%;
+    padding-left: 6px;
+    font-size: 12px;
+      &:hover {
+        color: white;
+        background-color: @tilte-color;
+      }
+
+  }
+  .checkedValue {
+    color: white;
+    background-color: @tilte-color;
+  }
+}
+
+.forFilterIcons {
+  float: left;
+  position: relative;
+  display: inline-block;
+  padding-right: 17px;
+  margin-right: 3px;
 }
