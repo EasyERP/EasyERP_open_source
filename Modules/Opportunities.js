@@ -14,15 +14,11 @@ var Opportunities = function (models, event) {
         var filterObj = {};
         var or;
         var filter = data.filter ? data.filter : {};
-        //
-        //if (filter === 'empty') {
-        //    filter = {};
-        //}
 
         var contentType = req.params.contentType;
         var optionsObject = {};
 
-        if (filter && typeof filter === 'object' && filter != 'empty') {
+        if (filter && typeof filter === 'object' ) {
             optionsObject['$and'] = [];
             filterObj['$or'] = [];
             or = filterObj['$or'];
@@ -54,7 +50,7 @@ var Opportunities = function (models, event) {
                     optionsObject['isConverted'] = true;
                     optionsObject['isOpportunitie'] = true;
                 }
-                if (data && data.filter && data.filter != 'empty') {
+                if (data && data.filter ) {
                     optionsObject['$and'].push(filterObj);
                 }
                 break;
@@ -722,7 +718,7 @@ var Opportunities = function (models, event) {
                                     {
                                         if (data && data.filter && data.filter.workflow) {
                                             query.where('workflow').in(data.filter.workflow);
-                                        } else if (data && data.filter === 'empty') {
+                                        } else if (data && data.filter) {
                                             query;
                                         } else if (data && (!data.newCollection || data.newCollection === 'false')) {
                                             query.where('workflow').in([]);

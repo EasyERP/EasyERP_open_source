@@ -16,13 +16,9 @@ var JobPosition = function (models) {
         }
         var filter = data.filter;
 
-        if (filter === 'empty' || (filter === '')){
-            filter = 'empty';
-        }
-
         var optionObj = {};
 
-        if (data && filter && filter != 'empty') {
+        if (data && filter ) {
 
             if (data.filter.condition === 'or') {
                 optionObj['$or'] = [];

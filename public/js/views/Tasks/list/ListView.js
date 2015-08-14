@@ -317,10 +317,6 @@ define([
                     self.filter['condition'] = 'or';
                 }
 
-                if (checkedElements.length && checkedElements.attr('id') === 'defaultFilter') {
-                    self.filter = 'empty';
-                }
-
                 if (choosen) {
                     choosen.each(function (index, elem) {
                         if (self.filter[elem.children[1].value]) {
@@ -334,10 +330,6 @@ define([
                             })
                         }
                     });
-                }
-
-                if (!choosen.length && !showList) {
-                    self.filter = 'empty';
                 }
 
                 this.changeLocationHash(1, itemsNumber, this.filter);

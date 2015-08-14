@@ -201,9 +201,6 @@ define([
                     });
                 }
 
-                if ((checkedElements.length && checkedElements.attr('id') === 'defaultFilter') || (!chosen.length && !showList)) {
-                    self.filter = 'empty';
-                };
                 this.defaultItemsNumber = 0;
 
                 this.changeLocationHash(null, this.defaultItemsNumber, this.filter);

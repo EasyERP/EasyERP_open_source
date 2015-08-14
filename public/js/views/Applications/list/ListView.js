@@ -191,10 +191,6 @@ define([
                     });
                 }
 
-                if ((checkedElements.length && checkedElements.attr('id') === 'defaultFilter') || (!chosen.length && !showList)) {
-                    self.filter = 'empty';
-                };
-
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
 

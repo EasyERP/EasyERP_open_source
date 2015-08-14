@@ -188,7 +188,7 @@ require(['app'], function (app) {
             }
             if (notEmptyFilter) {
                 url += '/filter=' + encodeURIComponent(JSON.stringify(filter));
-            } else url += '/filter=empty';
+            } else url += '';
         }
 
         Backbone.history.navigate(url);
