@@ -267,13 +267,13 @@ var requestHandler = function (event, mainDb) {
 
     function updateCurrentUser(req, res, data) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getEditWritAccess(req, req.session.uId, 7, function (access) {
-                if (access) {
+           /* access.getEditWritAccess(req, req.session.uId, 7, function (access) {
+                if (access) {*/
                     users.updateUser(req, req.session.uId, req.body, res, data);
-                } else {
+               /* } else {
                     res.send(403);
                 }
-            });
+            });*/
         } else {
             res.send(401);
         }
