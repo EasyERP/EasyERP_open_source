@@ -69,70 +69,70 @@ define([], function () {
                 backend: 'services'
             }
         },
-        //Employees: {
-        //    'Full Name':{
-        //        view: 'name',
-        //        backend: '_id'
-        //    },
-        //    'Department': {
-        //        view: 'department',
-        //        backend: 'department._id'
-        //    },
-        //    'Manager': {
-        //        view: 'manager',
-        //        backend: 'manager._id'
-        //    },
-        //    'Job Position': {
-        //        view: 'jobPosition',
-        //        backend: 'jobPosition._id'
-        //    }
-        //},
-        //JobPositions: {
-        //    'Name': {
-        //        view: 'name',
-        //        backend: 'name'
-        //    },
-        //    'Status': {
-        //        view: 'workflow',
-        //        backend: 'workflow'
-        //    },
-        //    'Department': {
-        //        view: 'department',
-        //        backend: 'department'
-        //    }
-        //},
-        //salesInvoice: {
-        //    'Customer': {
-        //        view: 'customer',
-        //        backend: 'customer'
-        //    },
-        //    'Assigned': {
-        //        view: 'salesPerson',
-        //        backend: 'salesPerson'
-        //    },
-        //    'Status': {
-        //        view: 'workflow',
-        //        backend: 'workflow'
-        //    }
-        //},
-        //Projects: {
-        //    'Project Name': {
-        //        view: 'projectName',
-        //        backend: 'projectName'
-        //    },
-        //    'Contact': {
-        //        view: 'customer',
-        //        backend: 'customer._id'
-        //    },
-        //    'Status': {
-        //        view: 'workflow',
-        //        backend: 'workflow._id'
-        //    },
-        //    'Project Manager': {
-        //        view: 'projectmanager',
-        //        backend: 'projectmanager._id'
-        //    }
-        //}
+        Employees: {
+            'Full Name':{
+                view: 'name',
+                backend: '_id'
+            },
+            'Department': {
+                view: 'department',
+                backend: 'department._id'
+            },
+            'Manager': {
+                view: 'manager',
+                backend: 'manager._id'
+            },
+            'Job Position': {
+                view: 'jobPosition',
+                backend: 'jobPosition._id'
+            }
+        },
+        JobPositions: {
+            'Name': {
+                view: 'name',
+                backend: 'name'
+            },
+            'Status': {
+                view: 'workflow',
+                backend: 'workflow'
+            },
+            'Department': {
+                view: 'department',
+                backend: 'department'
+            }
+        },
+        salesInvoice: {
+            'Customer': {
+                view: 'customer',
+                backend: 'customer'
+            },
+            'Assigned': {
+                view: 'salesPerson',
+                backend: 'salesPerson'
+            },
+            'Status': {
+                view: 'workflow',
+                backend: 'workflow'
+            }
+        },
+        Projects: {
+            'Project Name': {
+                view: 'projectName',
+                backend: 'projectName'
+            },
+            'Contact': {
+                view: 'customer',
+                backend: 'customer._id'
+            },
+            'Status': {
+                view: 'workflow',
+                backend: 'workflow._id'
+            },
+            'Project Manager': {
+                view: 'projectmanager',
+                backend: 'projectmanager._id'
+            }
+        }
 
     };
 

@@ -9,6 +9,7 @@ define([
     function (valuesTemplate, filterCollection, CONSTANTS) {
         var filterValuesView = Backbone.View.extend({
             initialize: function (options) {
+                this.contentType = options.parentContentType;
                 this.status = options.status;
                 this.currentPage = 1;
                 this.groupName = options.groupName;
@@ -93,6 +94,7 @@ define([
                 var self = this;
 
                 $(this.el).append(_.template(valuesTemplate, {
+                    constants:  CONSTANTS.FILTERS[this.contentType],
                     status: this.status,
                     groupName: this.groupName,
                     paginationBool: this.paginationBool
@@ -104,7 +106,7 @@ define([
                     self.paginationChange(e, self);
                 });
             }
-        })
+        });
 
         return filterValuesView;
     }

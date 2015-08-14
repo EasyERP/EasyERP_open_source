@@ -38,11 +38,11 @@ define([
                 this.filterObject = App.filtersValues[this.parentContentType];
                 this.filter = {};
                 this.currentCollection = {};
-
                 if (App.savedFilters[this.parentContentType]) {
                     this.savedFilters = App.savedFilters[this.parentContentType];
                 }
-                this.browserFilterObject = {};
+                this.parseFilter();
+               // this.browserFilterObject = {};
             },
 
             useFilter: function (e) {
@@ -57,6 +57,7 @@ define([
                 this.filter = Custom.getFilterById(savedFilters, targetId);
 
                 this.trigger('filter', this.filter);
+                this.showFilterIcons(this.filter);
             },
 
             saveFilter: function () {
@@ -77,16 +78,16 @@ define([
                 key = subMenu.trim();
                 filterForSave[filterName] = this.filter;
 
-                if (!App.savedFilters[this.parentContentType]){
+                if (!App.savedFilters[this.parentContentType]) {
                     App.savedFilters[self.parentContentType] = [];
                 }
 
-                if (!filterName){
+                if (!filterName) {
                     alert('Please, enter filter name!');
                     bool = false;
                 }
 
-                if (bool && filterName){
+                if (bool && filterName) {
                     filterObj['filter'] = {};
                     filterObj['filter'][filterName] = {};
                     filterObj['filter'][filterName] = this.filter;
@@ -116,7 +117,7 @@ define([
                                         filter: filterForSave
                                     }
                                 );
-                                favouritesContent.append('<li class="filters"  id ="' + id + '">' + filterName + '</li><button class="removeSavedFilter" id="' + id + '">' + 'x' + '</button>');
+                                favouritesContent.append('<li class="filters"  id ="' + id + '">' + filterName + '</li><span class="removeSavedFilter" id="' + id + '">' + 'x' + '</span>');
 
                             },
                             error: function (model, xhr) {
@@ -169,13 +170,12 @@ define([
 
                 }
             },
-
             selectValue: function (e) {
                 var currentElement = $(e.target);
                 var currentValue = currentElement.attr('data-value');
                 var filterGroupElement = currentElement.closest('.filterGroup');
                 var groupType = filterGroupElement.attr('data-value');
-                var groupNameElement = filterGroupElement.find('.groupName');
+                var groupNameElement = filterGroupElement.find('.groupName')
                 var constantsName = $.trim(groupNameElement.text());
                 var filterObjectName = this.constantsObject[constantsName].view;
                 var currentCollection = this.currentCollection[filterObjectName];
@@ -204,9 +204,7 @@ define([
                     collectionElement.set({status: true});
 
                     groupNameElement.addClass('checkedGroup');
-                    if (!this.filterIcons[constantsName]){
-                        this.filterIcons[constantsName] = constantsName;
-                    }
+
                 } else {
                     index = this.filter[filterObjectName]['value'].indexOf(currentValue);
 
@@ -217,25 +215,29 @@ define([
                         if (this.filter[filterObjectName]['value'].length === 0) {
                             delete this.filter[filterObjectName];
                             groupNameElement.removeClass('checkedGroup');
-                            if (this.filterIcons[constantsName]){
-                                delete this.filterIcons[constantsName];
-                            }
                         }
                     };
                 }
 
                 this.trigger('filter', this.filter);
-                this.showFilterIcons();
+                this.showFilterIcons(this.filter);
             },
 
-            showFilterIcons: function () {
-                var filterIcons = this.filterIcons;
+            showFilterIcons: function (filter) {
                 var filterIc = $(this.$el).find('.filter-icons');
                 var filterValues = $(this.$el).find('.search-field .oe_searchview_input');
+                var filter = Object.keys(filter);
+                var self = this;
+                var groupName;
+
+
                 filterValues.empty();
-                _.forEach(filterIcons, function (key, value) {
+                _.forEach(filter, function (key, value) {
+
+                    groupName = $(self.$el.find('#' + key)).text();
+
                     filterIc.addClass('active');
-                    filterValues.append('<div><span class="fa fa-filter funnelIcon"></span><span class="filterValues">' + key + '</span><span class="removeValues">x</span></div>');
+                   filterValues.append('<div><span class="fa fa-filter funnelIcon"></span><span class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
                 });
             },
 
@@ -243,7 +245,11 @@ define([
                 var target = $(e.target);
                 var groupName = target.prev().text();
 
-                this.CLEARONEGROUP(groupName);
+                this.renderGroup(groupName, true);
+                $(e.target).closest('div').remove();
+
+               this.renderFilterContent();
+                this.trigger('filter', this.filter);
             },
 
             showHideValues: function (e) {
@@ -262,7 +268,7 @@ define([
 
                 filtersGroupContainer = $(this.el).find('#filtersContent');
 
-                this.parseFilter();
+                //this.parseFilter();
 
                 filtersGroupContainer.html('');
 
@@ -278,27 +284,42 @@ define([
                         self.renderGroup(key);
                     });
                 };
+                this.showFilterIcons(this.filter);
             },
 
-            renderGroup: function(key) {
+            renderGroup: function (key, forUncheck) {
                 var itemView;
                 var idString = '#' + key + 'FullContainer';
                 var container = $(this.el).find(idString);
                 var filterKey;
                 var status;
+                var valuesArray;
+                var collectionElement;
 
                 filterKey = this.constantsObject[key].view;
 
                 this.currentCollection[filterKey] = new filterValuesCollection(this.filterObject[filterKey]);
 
-                if (this.browserFilterObject[filterKey]) {
+                if (this.filter[filterKey]) {
                     this.setStatus(filterKey);
                     status = true;
                 } else {
                     status = false;
                 }
 
+                if (forUncheck){
+                    valuesArray = this.filter[filterKey]['value'];
+
+                    for (var i = valuesArray.length - 1; i >= 0; i--) {
+                        collectionElement = this.currentCollection[filterKey].findWhere({_id: valuesArray[i]});
+                        collectionElement.set({status: false});
+                    }
+                    status = false;
+                    delete this.filter[filterKey];
+                }
+
                 itemView = new valuesView({
+                    parentContentType: this.parentContentType,
                     element: idString,
                     status: status,
                     groupName: key,
@@ -316,7 +337,6 @@ define([
 
                 this.renderFilterContent();
 
-
                 savedContentView = new savedFiltersView({
                     contentType: this.parentContentType,
                     filter: this.filter
@@ -331,14 +351,14 @@ define([
                 var browserString = window.location.hash;
                 var browserFilter = browserString.split('/filter=')[1];
 
-                this.browserFilterObject = (browserFilter) ? JSON.parse(decodeURIComponent(browserFilter)) : {};
+                this.filter = (browserFilter) ? JSON.parse(decodeURIComponent(browserFilter)) : {};
             },
 
             setStatus: function (filterKey) {
                 var valuesArray;
                 var collectionElement;
 
-                valuesArray = this.browserFilterObject[filterKey]['value'];
+                valuesArray = this.filter[filterKey]['value'];
 
                 for (var i = valuesArray.length - 1; i >= 0; i--) {
                     collectionElement = this.currentCollection[filterKey].findWhere({_id: valuesArray[i]});
@@ -362,11 +382,11 @@ define([
                 this.trigger('filter', this.filter);
             },
 
-            conditionClick: function (e) {
-                if (e.target.localName === 'li') {
-                    $(e.target.children[0]).trigger('click');
-                }
-            },
+            //conditionClick: function (e) {
+            //    if (e.target.localName === 'li') {
+            //        $(e.target.children[0]).trigger('click');
+            //    }
+            //},
 
             //removeFilter: function (e) {
             //    var filter = this.$el.find('.filterOptions');
@@ -392,6 +412,21 @@ define([
             //
             //    }
             //},
+
+            //addCondition: function () {
+            //    var lastOpt;
+            //    this.$el.find(".filterOptions:first").clone().insertBefore('.filterActions');
+            //
+            //    lastOpt = this.$el.find(".filterOptions:last");
+            //    this.$el.find(".filterOptions:last").hide();
+            //    lastOpt.children('.chooseOption').children().remove();
+            //    lastOpt.children('.chooseOption').show().removeClass('activated');
+            //    lastOpt.children('.chooseDate').remove();
+            //    lastOpt.removeClass('chosen');
+            //    lastOpt.remove();
+            //},
+
+
             showSearchContent: function () {
                 var el = this.$el.find('.search-content');
                 var searchOpt = this.$el.find('.search-options');
@@ -414,129 +449,77 @@ define([
                     .siblings()
                     .addClass('hidden');
 
-            }
-            //addCondition: function () {
-            //    var lastOpt;
-            //    this.$el.find(".filterOptions:first").clone().insertBefore('.filterActions');
-            //
-            //    lastOpt = this.$el.find(".filterOptions:last");
-            //    this.$el.find(".filterOptions:last").hide();
-            //    lastOpt.children('.chooseOption').children().remove();
-            //    lastOpt.children('.chooseOption').show().removeClass('activated');
-            //    lastOpt.children('.chooseDate').remove();
-            //    lastOpt.removeClass('chosen');
-            //    lastOpt.remove();
-            //},
-            //
-            //chooseOptions: function (e) {
-            //    var el = $(e.target.nextElementSibling);
-            //    var value = e.target.value;
-            //    var optDate = this.$el.find('.chooseDate');
-            //    var liText;
-            //    var values = new filterValuesCollection(App.filtersValues[this.parentContentType][value]);
-            //
-            //    $(e.target).closest('.filterOptions').addClass('chosen');
-            //    this.$el.find('.chooseTerm:last').addClass(value);
-            //    $('.chooseOption:last').removeClass().addClass('chooseOption ' + value);
-            //
-            //    if (/date/.test(value.toLowerCase())) {
-            //        el.html('').hide();
-            //        $('<div class=\'chooseDate\'><input id="start" type="date"/><input id="end" type="date"/><div>').insertBefore(el);
-            //    } else {
-            //        if (optDate.length) {
-            //            optDate.remove();
-            //            el = $(e.target).next();
-            //        }
-            //
-            //        el.show();
-            //        el.children().remove();
-            //
-            //        values.forEach(function (opt) {
-            //            el.addClass('activated')
-            //
-            //            if (opt && opt.name && opt._id) {
-            //                el.append('<li><input type="checkbox" id="filter' + opt._id + '" value=' + opt._id + '><label for="filter' + opt._id + '">' + opt.name + '</label></li>');
-            //            }
-            //        });
-            //    }
-            //},
-            //
-            //triggerClick: function (e) {
-            //    if (e.target.localName === 'li') {
-            //        $(e.target.children[0]).trigger('click');
-            //    }
-            //},
-            //
-            //
-            //
-            //writeValue: function (e) {
-            //    var inputText = e.target.nextElementSibling.textContent;
-            //    var filterValues = this.$el.find('.filterValues');
-            //    var filterIcons = this.$el.find('.filter-icons');
-            //    var input = this.$el.find('.drop-down-filter input');
-            //    var defaultFilter = this.$el.find('#defaultFilter');
-            //    var checked;
-            //
-            //    filterIcons.addClass('active');
-            //
-            //    $.each(input, function (index, value) {
-            //        if (value.checked) {
-            //            return checked = true
-            //        }
-            //    });
-            //    if (!checked) {
-            //        //this.trigger('defaultFilter');
-            //        filterValues.empty();
-            //        //filterIcons.removeClass('active');
-            //    }
-            //    if (e.target.checked) {
-            //        filterValues.append('<span class=' + '"' + inputText + '">' + inputText + '</span>');
-            //
-            //    } else {
-            //        filterValues.find('.' + inputText).remove();
-            //    }
-            //
-            //    if (e.target.id !== 'defaultFilter') {
-            //
-            //        defaultFilter.removeAttr('checked');
-            //        filterValues.find('.Default').remove();
-            //        this.trigger('filter');
-            //    } else {
-            //        $.each(input, function (index, value) {
-            //            if (value.id !== 'defaultFilter') value.checked = false
-            //        });
-            //        $.each($('.filterValues span'), function (index, item) {
-            //            if (item.className !== 'Clear') item.remove();
-            //        });
-            //        this.removeFilter();
-            //        this.trigger('defaultFilter');
-            //    }
-            //
-            //    /* if ($('.drop-down-filter input:checkbox:checked').length === 0) {
-            //     this.trigger('defaultFilter');
-            //     //this.$el.find('.removeFilter').trigger('click')
-            //     }*/
-            //
-            //},
-            //
-            //removeValues: function (e) {
-            //    var element = $(e.target).closest('.filter-icons');
-            //    var dataId = element.attr('data-id');
-            //    var filterOpt = this.$el.find(".filterOptions");
-            //    var clearElement = this.$el.find('.drop-down-filter .filterOptions');
-            //    var closestEl = clearElement.find('.' + dataId);
-            //    var cl = $(closestEl).closest('.filterOptions');
-            //
-            //    if (filterOpt.length === 1) {
-            //        $(closestEl).prev().click();
-            //    } else {
-            //        cl.remove();
-            //    }
-            //
-            //    element.remove();
-            //
-            //    this.trigger('filter');
-            //}
+            },
+
+            /* writeValue: function (e) {
+             var inputText = e.target.nextElementSibling.textContent;
+             var filterValues = this.$el.find('.filterValues');
+             var filterIcons = this.$el.find('.filter-icons');
+             var input = this.$el.find('.drop-down-filter input');
+             var defaultFilter = this.$el.find('#defaultFilter');
+             var checked;
+
+             filterIcons.addClass('active');
+
+             $.each(input, function (index, value) {
+             if (value.checked) {
+             return checked = true
+             }
+             });
+             if (!checked) {
+             //this.trigger('defaultFilter');
+             filterValues.empty();
+             //filterIcons.removeClass('active');
+             }
+             if (e.target.checked) {
+             filterValues.append('<span class=' + '"' + inputText + '">' + inputText + '</span>');
+
+             } else {
+             filterValues.find('.' + inputText).remove();
+             }
+
+             if (e.target.id !== 'defaultFilter') {
+
+             defaultFilter.removeAttr('checked');
+             filterValues.find('.Default').remove();
+             this.trigger('filter');
+             } else {
+             $.each(input, function (index, value) {
+             if (value.id !== 'defaultFilter') value.checked = false
+             });
+             $.each($('.filterValues span'), function (index, item) {
+             if (item.className !== 'Clear') item.remove();
+             });
+             this.removeFilter();
+             this.trigger('defaultFilter');
+             }
+
+             /* if ($('.drop-down-filter input:checkbox:checked').length === 0) {
+             this.trigger('defaultFilter');
+             //this.$el.find('.removeFilter').trigger('click')
+             }*/
+
+            /* },
+
+             removeValues: function (e) {
+             var element = $(e.target).closest('.filter-icons');
+             var dataId = element.attr('data-id');
+             var filterOpt = this.$el.find(".filterOptions");
+             var clearElement = this.$el.find('.drop-down-filter .filterOptions');
+             var closestEl = clearElement.find('.' + dataId);
+             var cl = $(closestEl).closest('.filterOptions');
+
+             if (filterOpt.length === 1) {
+             $(closestEl).prev().click();
+             } else {
+             cl.remove();
+             }
+
+             element.remove();
+
+             this.trigger('filter');
+             }
+             */
         });
 
         return FilterView;
