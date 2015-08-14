@@ -36,7 +36,7 @@ define([
                 this.parentContentType = options.contentType;
                 this.constantsObject = CONSTANTS.FILTERS[this.parentContentType];
                 this.filterObject = App.filtersValues[this.parentContentType];
-                this.filter = {};
+                App.filter = {};
                 this.currentCollection = {};
                 if (App.savedFilters[this.parentContentType]) {
                     this.savedFilters = App.savedFilters[this.parentContentType];
@@ -46,17 +46,43 @@ define([
 
             useFilter: function (e) {
                 var target = $(e.target);
-
-                //this.$el.find('.filters').removeClass('current');
-               // $(e.target).addClass('current');
+                var filter;
 
                 var targetId = target.attr('id');
                 var savedFilters = App.savedFilters[this.parentContentType];
+                var length = savedFilters.length;
 
-                this.filter = Custom.getFilterById(savedFilters, targetId);
+                for (var i = length - 1; i >= 0; i--){
+                    if (savedFilters[i]['_id'] === targetId){
+                        keys = Object.keys(savedFilters[i]['filter']);
+                        filter = savedFilters[i]['filter'][keys[0]];
+                    }
+                }
+                App.filter = filter;
+                this.trigger('filter', filter);
+                this.showFilterIcons(filter);
+            },
 
-                this.trigger('filter', this.filter);
-                this.showFilterIcons(this.filter);
+            cloneFilter: function (filter) {
+                var newFilter = {};
+                var filterKeys = Object.keys(filter);
+                var filterKey;
+                var filterValue;
+                var newFilterValue = [];
+
+                _.forEach(filterKeys, function (filterkey) {
+                    filterKey = filter[filterkey]['key'];
+                    filterValue = filter[filterkey]['value'];
+                    for (var i = filterValue.length - 1; i >= 0; i--) {
+                        newFilterValue.push(filterValue[i]);
+                    }
+                    newFilter[filterkey] = {
+                        key: filterKey,
+                        value: newFilterValue
+                    };
+                });
+
+                return newFilter;
             },
 
             saveFilter: function () {
@@ -83,10 +109,10 @@ define([
                 });
 
                 key = subMenu.trim();
-                filterForSave[filterName] = self.filter;
+                filterForSave[filterName] = self.cloneFilter(App.filter);
 
                 if (!App.savedFilters[this.parentContentType]) {
-                    App.savedFilters[self.parentContentType] = [];
+                    App.savedFilters[this.parentContentType] = [];
                 }
 
                 if (!allowName) {
@@ -94,7 +120,7 @@ define([
                     bool = false;
                 }
 
-                if ((Object.keys(this.filter)).length === 0) {
+                if ((Object.keys(App.filter)).length === 0) {
                     alert('Please, use some filter!');
                     bool = false;
                 }
@@ -102,7 +128,7 @@ define([
                 if (bool && filterName.length > 0) {
                     filterObj['filter'] = {};
                     filterObj['filter'][filterName] = {};
-                    filterObj['filter'][filterName] = this.filter;
+                    filterObj['filter'][filterName] = App.filter;
                     filterObj['key'] = key;
 
                     currentUser.changed = filterObj;
@@ -117,18 +143,18 @@ define([
                             patch: true,
                             validate: false,
                             success: function (model) {
-                                //updatedInfo = model.get('success');
-                                //filters = updatedInfo['savedFilters'];
-                                //length = filters.length;
-                                //id = filters[length - 1];
-                                //App.savedFilters[self.parentContentType].push(
-                                //    {
-                                //        _id: id,
-                                //        contentView: key,
-                                //        filter: filterForSave
-                                //    }
-                                //);
-                                //favouritesContent.append('<li class="filters"  id ="' + id + '">' + filterName + '</li><button class="removeSavedFilter" id="' + id + '">' + 'x' + '</button>');
+                                updatedInfo = model.get('success');
+                                filters = updatedInfo['savedFilters'];
+                                length = filters.length;
+                                id = filters[length - 1];
+                                App.savedFilters[self.parentContentType].push(
+                                    {
+                                        _id: id,
+                                        contentView: key,
+                                        filter: filterForSave
+                                    }
+                                );
+                                favouritesContent.append('<li class="filters"  id ="' + id + '">' + filterName + '</li><button class="removeSavedFilter" id="' + id + '">' + 'x' + '</button>');
 
                             },
                             error: function (model, xhr) {
@@ -136,20 +162,6 @@ define([
                             },
                             editMode: false
                         });
-                    dataService.getData('/currentUser', null, function (response) {
-                        if (response && !response.error) {
-                            App.currentUser = response.user;
-                            App.savedFilters = response.savedFilters;
-                        } else {
-                            console.log('can\'t fetch currentUser');
-                        }
-                    });
-
-                    var keys = Object.keys(App.savedFilters).length;
-                    id = App.savedFilters[this.parentContentType][keys - 1]['_id'];
-
-                    favouritesContent.append('<li class="filters"  id ="' + id + '">' + filterName + '</li><button class="removeSavedFilter" id="' + id + '">' + 'x' + '</button>');
-
 
                     this.$el.find('#forFilterName').val('');
                 }
@@ -217,35 +229,35 @@ define([
 
                 if (currentElement.hasClass('checkedValue')) {
 
-                    if (!this.filter[filterObjectName]) {
-                        this.filter[filterObjectName] = {
+                    if (!App.filter[filterObjectName]) {
+                        App.filter[filterObjectName] = {
                             key: groupType,
                             value: []
                         };
                     }
 
-                    this.filter[filterObjectName]['value'].push(currentValue);
+                    App.filter[filterObjectName]['value'].push(currentValue);
                     collectionElement.set({status: true});
 
                     groupNameElement.addClass('checkedGroup');
 
                 } else {
-                    index = this.filter[filterObjectName]['value'].indexOf(currentValue);
+                    index = App.filter[filterObjectName]['value'].indexOf(currentValue);
 
                     if (index >= 0) {
-                        this.filter[filterObjectName]['value'].splice(index, 1);
+                        App.filter[filterObjectName]['value'].splice(index, 1);
                         collectionElement.set({status: false});
 
-                        if (this.filter[filterObjectName]['value'].length === 0) {
-                            delete this.filter[filterObjectName];
+                        if (App.filter[filterObjectName]['value'].length === 0) {
+                            delete App.filter[filterObjectName];
                             groupNameElement.removeClass('checkedGroup');
                         }
                     }
                     ;
                 }
 
-                this.trigger('filter', this.filter);
-                this.showFilterIcons(this.filter);
+                this.trigger('filter', App.filter);
+                this.showFilterIcons(App.filter);
             },
 
             showFilterIcons: function (filter) {
@@ -261,8 +273,6 @@ define([
                     filterIc.addClass('active');
                     filterValues.append('<div class="forFilterIcons"><span class="fa fa-filter funnelIcon"></span><span data-value="' + key + '" class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
                 });
-
-
             },
 
             removeFilter: function (e) {
@@ -273,19 +283,20 @@ define([
                 var valuesArray;
                 var collectionElement;
 
-                valuesArray = this.filter[filterView]['value'];
+                valuesArray = App.filter[filterView]['value'];
 
                 for (var i = valuesArray.length - 1; i >= 0; i--) {
                     collectionElement = this.currentCollection[filterView].findWhere({_id: valuesArray[i]});
                     collectionElement.set({status: false});
                 }
-                delete this.filter[filterView];
+                delete App.filter[filterView];
 
                 this.renderGroup(groupName);
-                $(e.target).closest('div').remove();
+
+                e.target.closest('div').remove();
 
                 this.renderFilterContent();
-                this.trigger('filter', this.filter);
+                this.trigger('filter', App.filter);
             },
 
             showHideValues: function (e) {
@@ -327,8 +338,9 @@ define([
                         }
                         self.renderGroup(key, filterView, groupStatus);
                     });
-                };
-                this.showFilterIcons(this.filter);
+                }
+                ;
+                //this.showFilterIcons(this.filter);
             },
 
             renderGroup: function (key, filterView, groupStatus) {
@@ -339,7 +351,7 @@ define([
 
                 this.currentCollection[filterView] = new filterValuesCollection(this.filterObject[filterView]);
 
-                if (this.filter[filterView]) {
+                if (App.filter[filterView]) {
                     this.setStatus(filterView);
                     status = true;
                 } else {
@@ -358,6 +370,7 @@ define([
 
                 container.html('');
                 container.html(itemView.render());
+                this.showFilterIcons(App.filter);
             },
 
             render: function () {
@@ -369,7 +382,7 @@ define([
 
                 savedContentView = new savedFiltersView({
                     contentType: this.parentContentType,
-                    filter: this.filter
+                    filter: App.filter
                 });
 
                 this.$el.find('#favoritesContent').append(savedContentView);
@@ -381,14 +394,14 @@ define([
                 var browserString = window.location.hash;
                 var browserFilter = browserString.split('/filter=')[1];
 
-                this.filter = (browserFilter) ? JSON.parse(decodeURIComponent(browserFilter)) : {};
+                App.filter = (browserFilter) ? JSON.parse(decodeURIComponent(browserFilter)) : {};
             },
 
             setStatus: function (filterKey) {
                 var valuesArray;
                 var collectionElement;
 
-                valuesArray = this.filter[filterKey]['value'];
+                valuesArray = App.filter[filterKey]['value'];
 
                 for (var i = valuesArray.length - 1; i >= 0; i--) {
                     collectionElement = this.currentCollection[filterKey].findWhere({_id: valuesArray[i]});
@@ -397,7 +410,7 @@ define([
             },
 
             applyFilter: function () {
-                this.trigger('filter', this.filter);
+                this.trigger('filter', App.filter);
             },
 
 

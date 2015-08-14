@@ -1,4 +1,9 @@
-define(['libs/date.format', 'common', 'constants'], function (dateformat, common, CONTENT_TYPES) {
+define([
+    'libs/date.format',
+    'common',
+    'constants',
+    'dataService'
+], function (dateformat, common, CONTENT_TYPES, dataService) {
 
     var runApplication = function (success) {
         if (!Backbone.history.fragment) {
@@ -235,17 +240,29 @@ define(['libs/date.format', 'common', 'constants'], function (dateformat, common
         return savedFilter;
     };
 
-    var getFilterById = function (savedFilters, id) {
+    var getFilterById = function (id, contentType) {
         var filter;
-        var length = savedFilters.length;
+        var length;
         var keys;
+        var savedFilters;
 
-        for (var i = length - 1; i >= 0; i--){
-            if (savedFilters[i]['_id'] === id){
-                keys = Object.keys(savedFilters[i]['filter']);
-                return filter = savedFilters[i]['filter'][keys[0]];
+        dataService.getData('/currentUser', null, function (response) {
+            if (response && !response.error) {
+                App.currentUser = response.user;
+                App.savedFilters = response.savedFilters;
+
+                length = App.savedFilters[contentType].length;
+                savedFilters = App.savedFilters[contentType];
+                for (var i = length - 1; i >= 0; i--){
+                    if (savedFilters[i]['_id'] === id){
+                        keys = Object.keys(savedFilters[i]['filter']);
+                        return savedFilters[i]['filter'][keys[0]];
+                    }
+                }
+            } else {
+                console.log('can\'t fetch currentUser');
             }
-        }
+        });
     };
 
     var getFiltersForContentType = function (contentType) {
