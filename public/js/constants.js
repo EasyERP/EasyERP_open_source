@@ -58,7 +58,7 @@ define([], function () {
         Companies: {
             'Name': {
                 view: 'name',
-                backend: 'name.first'
+                backend: '_id'
             },
             'Country': {
                 view: 'country',
@@ -82,6 +82,24 @@ define([], function () {
                 view: 'manager',
                 backend: 'manager._id'
             },
+            'Job Position': {
+                view: 'jobPosition',
+                backend: 'jobPosition._id'
+            }
+        },
+        Applications: {
+            'Full Name':{
+                view: 'name',
+                backend: '_id'
+            },
+            'Department': {
+                view: 'department',
+                backend: 'department._id'
+            },
+            /*'Manager': {
+                view: 'manager',
+                backend: 'manager._id'
+            },*/
             'Job Position': {
                 view: 'jobPosition',
                 backend: 'jobPosition._id'
