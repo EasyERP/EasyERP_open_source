@@ -53,20 +53,7 @@ define([
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
                 this.contentCollection = contentCollection;
                 this.stages = [];
-                this.allTotalVals = {
-                    hours: 0,
-                    monHours: 0,
-                    tueHours: 0,
-                    wedHours: 0,
-                    thuHours: 0,
-                    friHours: 0,
-                    satHours: 0,
-                    sunHours: 0,
-                    revenue: 0,
-                    cost: 0,
-                    profit: 0,
-                    amount: 0
-                }
+                this.filterView;
             },
 
             events: {
@@ -674,7 +661,6 @@ define([
                 var self = this;
                 var currentEl = this.$el;
                 var pagenation;
-                var FilterView;
                 var checkedInputs;
                 var allInputs;
 
@@ -748,17 +734,18 @@ define([
                     self.responseObj['#department'] = departments;
                 });
 
-                FilterView = new filterView({
-                    contentType: self.contentType
+                self.filterView = new filterView({
+                    contentType: this.contentType
                 });
 
-                // Filter custom event listen ------begin
-                FilterView.bind('filter', function(filter) {
+                self.filterView.bind('filter', function(filter) {
                     self.showFilteredPage(filter, self);
                 });
-                FilterView.bind('defaultFilter', function () {
+                self.filterView.bind('defaultFilter', function () {
                     self.showFilteredPage({}, self);
                 });
+
+                self.filterView.render();
 
                 setTimeout(function () {
                     /*self.editCollection = new EditCollection(self.collection.toJSON());
@@ -963,6 +950,7 @@ define([
                 holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
                 this.editCollection.reset(this.collection.models);
+                this.filterView.renderFilterContent();
             },
 
             goToEditDialog: function (e) {

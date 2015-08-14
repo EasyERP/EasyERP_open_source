@@ -8,11 +8,10 @@ define([
     ],
     function (valuesTemplate, filterCollection, CONSTANTS) {
         var filterValuesView = Backbone.View.extend({
-            el: '#filtersContent',
             initialize: function (options) {
+                this.status = options.status;
                 this.currentPage = 1;
                 this.groupName = options.groupName;
-                this.backendString = options.backendString;
                 this.collection = options.currentCollection;
                 this.collectionLength = this.collection.length;
                 this.elementToShow = options.elementToShow || (CONSTANTS.FILTERVALUESCOUNT > this.collectionLength) ? this.collectionLength : CONSTANTS.FILTERVALUESCOUNT;
@@ -23,7 +22,7 @@ define([
                 this.start;
                 this.end;
 
-                this.render();
+                this.el = options.element;
             },
 
             paginationChange: function (e, context) {
@@ -94,9 +93,9 @@ define([
                 var self = this;
 
                 $(this.el).append(_.template(valuesTemplate, {
+                    status: this.status,
                     groupName: this.groupName,
-                    paginationBool: this.paginationBool,
-                    backendString: this.backendString
+                    paginationBool: this.paginationBool
                 }));
 
                 this.renderContent();
