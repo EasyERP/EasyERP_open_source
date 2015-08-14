@@ -242,7 +242,6 @@
                 this.$el.find(".allNumberPerPage, .newSelectList").hide();
                 if (!el.closest('.search-view')) {
                     $('.search-content').removeClass('fa-caret-up');
-                    this.$el.find(".filterOptions, .filterActions, .search-options, .drop-down-filter").hide();
                 };
             },
 
@@ -330,7 +329,6 @@
 
             render: function () {
                 var self = this;
-                var FilterView;
                 var workflows = this.workflowsCollection.toJSON();
 
                 this.$el.html(_.template(WorkflowsTemplate, { workflowsCollection: workflows }));
@@ -389,18 +387,6 @@
                 this.$el.unbind();
                 $(document).on("click", function (e) {
                     self.hideItemsNumber(e);
-                });
-
-                dataService.getData('/employee/getFilterValues', null, function (values) {
-                    FilterView = new filterView({ collection: workflows, customCollection: values});
-                    // Filter custom event listen ------begin
-                    FilterView.bind('filter', function () {
-                        self.showFiltredPage(workflows, this.filter)
-                    });
-                    FilterView.on('defaultFilter', function () {
-                        self.showFiltredPage(workflows)
-                    });
-                    // Filter custom event listen ------end
                 });
 
                 return this;
