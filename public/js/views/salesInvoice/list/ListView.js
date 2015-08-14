@@ -43,6 +43,7 @@ define([
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
                 this.contentCollection = contentCollection;
                 this.stages = [];
+                this.filterView;
             },
 
             events: {
@@ -206,26 +207,18 @@ define([
                     self.hideItemsNumber(e);
                 });
 
-                dataService.getData("/workflow/fetch", {
-                    wId: 'Sales Invoice',
-                    source: 'purchase',
-                    targetSource: 'invoice'
-                }, function (stages) {
-                    self.stages = stages;
-
-                    self.filterView = new filterView({
-                        contentType: self.contentType
-                    });
-
-                    self.filterView.bind('filter', function (filter) {
-                        self.showFilteredPage(filter, self)
-                    });
-                    self.filterView.bind('defaultFilter', function () {
-                        self.showFilteredPage({}, self);
-                    });
-
-                    self.filterView.render();
+                self.filterView = new filterView({
+                    contentType: self.contentType
                 });
+
+                self.filterView.bind('filter', function (filter) {
+                    self.showFilteredPage(filter, self)
+                });
+                self.filterView.bind('defaultFilter', function () {
+                    self.showFilteredPage({}, self);
+                });
+
+                self.filterView.render();
 
                 function currentEllistRenderer(){
                     currentEl.append(_.template(listTemplate, {currentDb: App.currentDb}));
