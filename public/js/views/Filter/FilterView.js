@@ -42,7 +42,6 @@ define([
                     this.savedFilters = App.savedFilters[this.parentContentType];
                 }
                 this.parseFilter();
-               // this.browserFilterObject = {};
             },
 
             useFilter: function (e) {
@@ -220,7 +219,7 @@ define([
                 }
 
                 this.trigger('filter', this.filter);
-                this.showFilterIcons(this.filter);
+                //this.showFilterIcons(this.filter);
             },
 
             showFilterIcons: function (filter) {
@@ -265,65 +264,72 @@ define([
                 var keys = Object.keys(this.constantsObject);
                 var containerString;
                 var filterBackend;
+                var filterView;
+                var groupStatus;
+                var groupContainer;
 
-                filtersGroupContainer = $(this.el).find('#filtersContent');
-
-                //this.parseFilter();
-
-                filtersGroupContainer.html('');
+                filtersGroupContainer = this.$el.find('#filtersContent');
 
                 if (keys.length) {
                     keys.forEach(function (key) {
-
+                        filterView = self.constantsObject[key].view;
                         filterBackend = self.constantsObject[key].backend;
 
-                        containerString = '<div id="' + key + 'FullContainer" data-value="' + filterBackend + '" class="filterGroup">';
+                        groupContainer = self.$el.find('#' + filterView + 'Container');
 
-                        filtersGroupContainer.append(containerString);
+                        if (groupContainer.length) {
+                            groupStatus = groupContainer.hasClass('hidden');
+                        } else {
+                            groupStatus = true;
+                        }
 
-                        self.renderGroup(key);
+                        containerString = '<div id="' + filterView + 'FullContainer" data-value="' + filterBackend + '" class="filterGroup"></div>';
+
+                        if (!self.$el.find('#' + filterView).length) {
+                            filtersGroupContainer.append(containerString);
+                        }
+                        self.renderGroup(key, filterView, groupStatus);
                     });
                 };
                 this.showFilterIcons(this.filter);
             },
 
-            renderGroup: function (key, forUncheck) {
+            renderGroup: function (key, filterView, groupStatus, forUncheck) {
                 var itemView;
-                var idString = '#' + key + 'FullContainer';
-                var container = $(this.el).find(idString);
-                var filterKey;
+                var idString = '#' + filterView + 'FullContainer';
+                var container = this.$el.find(idString);
                 var status;
                 var valuesArray;
                 var collectionElement;
 
-                filterKey = this.constantsObject[key].view;
+                this.currentCollection[filterView] = new filterValuesCollection(this.filterObject[filterView]);
 
-                this.currentCollection[filterKey] = new filterValuesCollection(this.filterObject[filterKey]);
-
-                if (this.filter[filterKey]) {
-                    this.setStatus(filterKey);
+                if (this.filter[filterView]) {
+                    this.setStatus(filterView);
                     status = true;
                 } else {
                     status = false;
                 }
 
                 if (forUncheck){
-                    valuesArray = this.filter[filterKey]['value'];
+                    valuesArray = this.filter[filterView]['value'];
 
                     for (var i = valuesArray.length - 1; i >= 0; i--) {
-                        collectionElement = this.currentCollection[filterKey].findWhere({_id: valuesArray[i]});
+                        collectionElement = this.currentCollection[filterView].findWhere({_id: valuesArray[i]});
                         collectionElement.set({status: false});
                     }
                     status = false;
-                    delete this.filter[filterKey];
+                    delete this.filter[filterView];
                 }
 
                 itemView = new valuesView({
+                    groupStatus: groupStatus,
                     parentContentType: this.parentContentType,
                     element: idString,
                     status: status,
                     groupName: key,
-                    currentCollection: this.currentCollection[filterKey]
+                    groupViewName: filterView,
+                    currentCollection: this.currentCollection[filterView]
                 });
 
                 container.html('');
@@ -342,7 +348,7 @@ define([
                     filter: this.filter
                 });
 
-                $(this.el).find('#favoritesContent').append(savedContentView);
+                this.$el.find('#favoritesContent').append(savedContentView);
 
                 return this;
             },

@@ -11,8 +11,10 @@ define([
             initialize: function (options) {
                 this.contentType = options.parentContentType;
                 this.status = options.status;
+                this.groupStatus = options.groupStatus;
                 this.currentPage = 1;
                 this.groupName = options.groupName;
+                this.groupViewName = options.groupViewName;
                 this.collection = options.currentCollection;
                 this.collectionLength = this.collection.length;
                 this.elementToShow = options.elementToShow || (CONSTANTS.FILTERVALUESCOUNT > this.collectionLength) ? this.collectionLength : CONSTANTS.FILTERVALUESCOUNT;
@@ -23,7 +25,7 @@ define([
                 this.start;
                 this.end;
 
-                this.el = options.element;
+                this.$el = $(options.element);
             },
 
             paginationChange: function (e, context) {
@@ -40,7 +42,7 @@ define([
 
             renderContent: function () {
                 var displayCollection;
-                var ulElement = $(this.el).find("[id='" + this.groupName + "']");
+                var ulElement = this.$el.find("[id='" + this.groupViewName + "Ul']");
                 var ulContent = ulElement.closest('.ulContent');
                 var paginationLi = ulContent.find('.miniStylePagination');
                 var element;
@@ -93,8 +95,9 @@ define([
             render: function () {
                 var self = this;
 
-                $(this.el).append(_.template(valuesTemplate, {
-                    constants:  CONSTANTS.FILTERS[this.contentType],
+                this.$el.append(_.template(valuesTemplate, {
+                    groupStatus: this.groupStatus,
+                    groupViewName: this.groupViewName,
                     status: this.status,
                     groupName: this.groupName,
                     paginationBool: this.paginationBool
@@ -102,7 +105,7 @@ define([
 
                 this.renderContent();
 
-                $("[id='" + this.groupName + "Container'] .miniStylePagination a").click(function (e) {
+                $("[id='" + this.groupViewName + "Container'] .miniStylePagination a").click(function (e) {
                     self.paginationChange(e, self);
                 });
             }
