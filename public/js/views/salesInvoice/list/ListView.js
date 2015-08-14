@@ -1,10 +1,10 @@
 define([
+        'text!templates/Pagination/PaginationTemplate.html',
         'text!templates/salesInvoice/list/ListHeader.html',
         'text!templates/stages.html',
         'views/salesInvoice/CreateView',
         'views/salesInvoice/EditView',
         'models/InvoiceModel',
-        'models/UsersModel',
         'views/salesInvoice/list/ListItemView',
         'collections/salesInvoice/filterCollection',
         'views/Filter/FilterView',
@@ -13,7 +13,7 @@ define([
         'constants'
     ],
 
-    function (listTemplate, stagesTemplate, createView, editView, invoiceModel, usersModel, listItemView, contentCollection, filterView, common, dataService, CONSTANTS) {
+    function (paginationTemplate, listTemplate, stagesTemplate, createView, editView, invoiceModel, listItemView, contentCollection, filterView, common, dataService, CONSTANTS) {
         var InvoiceListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -43,6 +43,7 @@ define([
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
                 this.contentCollection = contentCollection;
                 this.stages = [];
+                this.filterView;
             },
 
             events: {
@@ -55,15 +56,12 @@ define([
                 "click .stageSelect": "showNewSelect",
                 //"click  .list td:not(.notForm)": "gotoForm",
                 "click  .list td:not(.notForm)": "goToEditDialog",
-                "click #itemsButton": "itemsNumber",
-                "click .currentPageList": "itemsNumber",
+                "mouseover .currentPageList": "itemsNumber",
                 "click": "hideItemsNumber",
                 "click #firstShowPage": "firstPage",
                 "click #lastShowPage": "lastPage",
                 "click .oe_sortable": "goSort",
-                "click .newSelectList li": "chooseOption",
-                "click .saveFilterButton": "saveFilter",
-                "click .removeFilterButton": "removeFilter"
+                "click .newSelectList li": "chooseOption"
             },
 
             fetchSortCollection: function (sortObject) {
@@ -145,7 +143,6 @@ define([
                 this.$el.find(".allNumberPerPage, .newSelectList").hide();
                 if (!el.closest('.search-view')) {
                     $('.search-content').removeClass('fa-caret-up');
-                    this.$el.find(".filterOptions, .filterActions, .search-options, .drop-down-filter").hide();
                 };
             },
 
@@ -210,26 +207,18 @@ define([
                     self.hideItemsNumber(e);
                 });
 
-                dataService.getData("/workflow/fetch", {
-                    wId: 'Sales Invoice',
-                    source: 'purchase',
-                    targetSource: 'invoice'
-                }, function (stages) {
-                    self.stages = stages;
-
-                    dataService.getData('/invoice/getFilterValues', null, function (values) {
-                        FilterView = new filterView({ collection: stages, customCollection: values});
-                        // Filter custom event listen ------begin
-                        FilterView.bind('filter', function () {
-                            self.showFilteredPage()
-                        });
-                        FilterView.bind('defaultFilter', function () {
-                            self.showFilteredPage();
-                        });
-                        // Filter custom event listen ------end
-
-                    });
+                self.filterView = new filterView({
+                    contentType: self.contentType
                 });
+
+                self.filterView.bind('filter', function (filter) {
+                    self.showFilteredPage(filter, self)
+                });
+                self.filterView.bind('defaultFilter', function () {
+                    self.showFilteredPage({}, self);
+                });
+
+                self.filterView.render();
 
                 function currentEllistRenderer(){
                     currentEl.append(_.template(listTemplate, {currentDb: App.currentDb}));
@@ -238,6 +227,8 @@ define([
                         page: self.page,
                         itemsNumber: self.collection.namberToShow
                     }).render());//added two parameters page and items number
+
+                    currentEl.append(_.template(paginationTemplate));
 
                     var pagenation = self.$el.find('.pagination');
                     if (self.collection.length === 0) {
@@ -376,141 +367,31 @@ define([
                 this.changeLocationHash(1, itemsNumber, this.filter);
             },
 
-            showFilteredPage: function () {
+            showFilteredPage: function (filter, context) {
                 var itemsNumber = $("#itemsNumber").text();
-                var checkedElements = $('.drop-down-filter input:checkbox:checked');
-                var chosen = this.$el.find('.chosen');
-                var condition = this.$el.find('.conditionAND > input')[0];
-                var self = this;
-                var showList;
 
-                this.startTime = new Date();
-                this.newCollection = false;
-                this.filter = {};
-                this.filter['condition'] = 'and';
-
-                if  (condition && !condition.checked) {
-                    self.filter['condition'] = 'or';
-                }
-
-                if (chosen && chosen.length) {
-                    chosen.each(function (index, elem) {
-                        if (elem.children[2].attributes.class.nodeValue === 'chooseDate') {
-                            if (self.filter[elem.children[1].value]) {
-                                self.filter[elem.children[1].value].push({start: $('#start').val(), end: $('#end').val()});
-
-                            } else {
-                                self.filter[elem.children[1].value] = [];
-                                self.filter[elem.children[1].value].push({start: $('#start').val(), end: $('#end').val()});
-                            }
-                        } else {
-                            self.filter[elem.children[1].value] = [];
-                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
-                                self.filter[elem.children[1].value].push(element.value);
-                            });
-                        }
-
-                    });
-                }
-
-                if ((checkedElements.length && checkedElements.attr('id') === 'defaultFilter') || (!chosen.length && !showList)) {
-                    self.filter = {forSales: true};
-                };
-
+                var alphaBet = this.$el.find('#startLetter');
+                var selectedLetter = $(alphaBet).find('.current').length ? $(alphaBet).find('.current')[0].text : '';
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
 
-                this.changeLocationHash(1, itemsNumber, this.filter);
-                this.collection.showMore({count: itemsNumber, page: 1, filter: this.filter});
-                this.getTotalLength(null, itemsNumber, this.filter);
-            },
-
-            saveFilter: function () {
-                var currentUser = new usersModel(App.currentUser);
-                var subMenu = $('#submenu-holder').find('li.selected').text();
-                var key;
-                var filterObj = {};
-                var mid = 39;
-
-                key = subMenu.trim();
-
-                filterObj['filter'] = {};
-                filterObj['filter'] = this.filter;
-                filterObj['key'] = 'salesInvoice';
-
-                currentUser.changed = filterObj;
-
-                currentUser.save(
-                    filterObj,
-                    {
-                        headers: {
-                            mid: mid
-                        },
-                        wait: true,
-                        patch:true,
-                        validate: false,
-                        success: function (model) {
-                            console.log('Filter was saved to db');
-                        },
-                        error: function (model,xhr) {
-                            console.error(xhr);
-                        },
-                        editMode: false
-                    }
-                );
-                if (!App.currentUser.savedFilters){
-                    App.currentUser.savedFilters = {};
+                if (selectedLetter === "All") {
+                    selectedLetter = '';
                 }
-                App.currentUser.savedFilters['salesInvoice'] = filterObj.filter;
-            },
 
-            removeFilter: function () {
-                var currentUser = new usersModel(App.currentUser);
-                var filterObj = {};
-                var mid = 39;
+                context.startTime = new Date();
+                context.newCollection = false;
 
-                this.clearFilter();
-
-                filterObj['key'] = 'salesInvoice';
-
-                currentUser.changed = filterObj;
-
-                currentUser.save(
-                    filterObj,
-                    {
-                        headers: {
-                            mid: mid
-                        },
-                        wait: true,
-                        patch:true,
-                        validate: false,
-                        success: function (model) {
-                            console.log('Filter was remover from db');
-                        },
-                        error: function (model,xhr) {
-                            console.error(xhr);
-                        },
-                        editMode: false
+                if (!filter.name) {
+                    if (selectedLetter !== '') {
+                        filter['letter'] = selectedLetter;
                     }
-                );
-
-                if (App.currentUser.savedFilters['salesInvoice']){
-                    delete App.currentUser.savedFilters['salesInvoice'];
                 }
-            },
 
-            clearFilter: function () {
-                this.$el.find('.filterValues').empty();
-                this.$el.find('.filter-icons').removeClass('active');
-                this.$el.find('.chooseOption').children().remove();
-                this.$el.find('.filterOptions').removeClass('chosen');
-
-                $.each($('.drop-down-filter input'), function (index, value) {
-                    value.checked = false
-                });
-
-                this.showFilteredPage();
+                context.changeLocationHash(1, itemsNumber, filter);
+                context.collection.showMore({ count: itemsNumber, page: 1, filter: filter});
+                context.getTotalLength(null, itemsNumber, filter);
             },
 
             showPage: function (event) {
@@ -537,6 +418,9 @@ define([
                 }
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
+
+                this.filterView.renderFilterContent();
+
                 holder.find('#timeRecivingDataFromServer').remove();
                 holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             },

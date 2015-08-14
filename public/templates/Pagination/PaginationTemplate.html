@@ -1,19 +1,39 @@
 <div class="pagination">
     <div class="countOnPage">
         <div>
-          <span>
-            <span id="grid-start"></span>
-            -
-            <span id="grid-end"></span>
-            of
-            <span id="grid-count"></span>
-            items
-          </span>
+                <span>
+                    <span id="grid-start"></span>
+                    -
+                    <span id="grid-end"></span>
+                    of
+                    <span id="grid-count"></span>
+                    items
+                </span>
         </div>
         <div class="pageList">
-            <button id="itemsButton">
+            <button id="itemsButton" class="iconsNum">
                 <span id="itemsNumber"></span>
             </button>
+            <!-- <ul class="allNumberPerPage">
+                <li>
+                    <a class="itemsNumber" href="javascript;">5</a>
+                </li>
+                <li>
+                    <a class="itemsNumber" href="javascript;">10</a>
+                </li>
+                <li>
+                    <a class="itemsNumber" href="javascript;">20</a>
+                </li>
+                <li>
+                    <a class="itemsNumber" href="javascript;">50</a>
+                </li>
+                <li>
+                    <a class="itemsNumber" href="javascript;">100</a>
+                </li>
+            </ul> -->
+        </div>
+        <div class="pageList">
+            <button class="currentPageList icon icons">v</button>
             <ul class="allNumberPerPage">
                 <li>
                     <a class="itemsNumber" href="javascript;">5</a>
@@ -32,11 +52,11 @@
                 </li>
             </ul>
         </div>
-        <span>Per Page</span>
     </div>
     <div class="nextPrev">
         <div>
-            <button id="previousPage" class="icon" type="button">9sometext</button>
+            <button id="firstShowPage" class="icon" type="button" disabled="disabled">88</button>
+            <button id="previousPage" class="icon" type="button" disabled="disabled">8</button>
             <div>
                 <span>Page</span>
             </div>
@@ -47,20 +67,18 @@
                     <input id="currentShowPage" type="text">
                 </div>
                 <div class="allPage">
-                    <button class="currentPageList">
-                       <!-- <i class="caret"></i>-->
-                    </button>
-                    <ul id="pageList" class="allNumberPerPage">
-                    </ul>
+                    <button class="currentPageList icon">v</button>
+                    <ul id="pageList" class="allNumberPerPage"></ul>
                 </div>
             </div>
         </div>
         <div>
-        <span>
-          of
-          <span id="lastPage"></span>
-        </span>
+                <span>
+                    of
+                    <span id="lastPage"></span>
+                </span>
         </div>
-        <button  id="nextPage" class="icon" type="button">9</button>
+        <button id="nextPage" type="button" class="icon" disabled="disabled">9</button>
+        <button id="lastShowPage" type="button" class="icon" disabled="disabled">99</button>
     </div>
 </div>

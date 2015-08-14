@@ -31,9 +31,18 @@ module.exports = (function () {
         officeLocation: { type: String, default: '' },
         relatedUser: { type: ObjectId, ref: 'Users', default: null },
         visibility: { type: String, default: 'Public' },
-        department: { type: ObjectId, ref: 'Department', default: null },
-        jobPosition: { type: ObjectId, ref: 'JobPosition', default: null },
-        manager: { type: ObjectId, ref: 'Employees', default: null },
+        department: {
+            _id: {type: ObjectId, ref: 'Department', default: null},
+            name: String
+        },
+        jobPosition: {
+            _id: {type: ObjectId, ref: 'JobPosition', default: null},
+            name: String
+        },
+        manager: {
+            _id: {type: ObjectId, ref: 'Employees', default: null},
+            name: String
+        },
         coach: { type: ObjectId, ref: 'Employees', default: null },
         nationality: { type: String, default: '' },
         identNo: String,

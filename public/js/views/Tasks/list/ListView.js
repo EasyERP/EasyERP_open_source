@@ -1,11 +1,11 @@
 define([
+        'text!templates/Pagination/PaginationTemplate.html',
         'text!templates/Tasks/list/ListHeader.html',
         'text!templates/stages.html',
         'views/Tasks/CreateView',
         'views/Tasks/list/ListItemView',
         'views/Tasks/EditView',
         'models/TasksModel',
-        'models/UsersModel',
         'views/Projects/EditView',
         'models/ProjectsModel',
         'collections/Tasks/filterCollection',
@@ -14,7 +14,7 @@ define([
         'dataService'
     ],
 
-    function (listTemplate, stagesTamplate, createView, listItemView, editView, currentModel, usersModel, projectEditView, projectModel, contentCollection, filterView, common, dataService) {
+    function (paginationTemplate, listTemplate, stagesTamplate, createView, listItemView, editView, currentModel, projectEditView, projectModel, contentCollection, filterView, common, dataService) {
         var TasksListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -55,8 +55,7 @@ define([
                 "click .checkbox": "checked",
                 "click td:not(:has('input[type='checkbox']'))": "goToEditDialog",
                 "click .project": "goToProject",
-                "click #itemsButton": "itemsNumber",
-                "click .currentPageList": "itemsNumber",
+                "mouseover .currentPageList": "itemsNumber",
                 "click": "hideItemsNumber",
                 "click .stageSelect": "showNewSelect",
                 "click .stageSelectType": "showNewSelectType",
@@ -65,9 +64,7 @@ define([
                 "click .filter-check-list li": "checkCheckbox",
                 "click #firstShowPage": "firstPage",
                 "click #lastShowPage": "lastPage",
-                "click .oe_sortable": "goSort",
-                "click .saveFilterButton": "saveFilter",
-                "click .removeFilterButton": "removeFilter"
+                "click .oe_sortable": "goSort"
             },
 
             fetchSortCollection: function (sortObject) {
@@ -233,25 +230,50 @@ define([
                 var model;
                 var id;
                 if (selectType == 'stages') {
-                    id = targetParrentElement.attr("id").replace("stages_", "");
-                    model = this.collection.get(id);
-                    model.urlRoot = '/Tasks';
-                    model.save({
-                            workflow: target.attr("id"),
-                            sequence: -1,
-                            sequenceStart: model.toJSON().sequence,
-                            workflowStart: model.toJSON().workflow ? model.toJSON().workflow._id : null
-                        },
-                        {
-                            headers: {
-                                mid: 39
+                    if ($(target).attr('data-status') === 'done'){
+                        id = targetParrentElement.attr("id").replace("stages_", "");
+                        model = this.collection.get(id);
+                        model.urlRoot = '/Tasks';
+                        model.save({
+                                workflow: target.attr("id"),
+                                sequence: -1,
+                                sequenceStart: model.toJSON().sequence,
+                                workflowStart: model.toJSON().workflow ? model.toJSON().workflow._id : null,
+                                progress: 100
                             },
-                            patch: true,
-                            validate: false,
-                            success: function () {
-                                that.showFilteredPage();
-                            }
-                        });
+                            {
+                                headers: {
+                                    mid: 39
+                                },
+                                patch: true,
+                                validate: false,
+                                success: function () {
+                                    that.showFilteredPage();
+                                }
+                            });
+                    } else {
+                        id = targetParrentElement.attr("id").replace("stages_", "");
+                        model = this.collection.get(id);
+                        model.urlRoot = '/Tasks';
+                        model.save({
+                                workflow: target.attr("id"),
+                                sequence: -1,
+                                sequenceStart: model.toJSON().sequence,
+                                workflowStart: model.toJSON().workflow ? model.toJSON().workflow._id : null,
+                                estimated: model.toJSON().estimated,
+                                logged: model.toJSON().logged
+                            },
+                            {
+                                headers: {
+                                    mid: 39
+                                },
+                                patch: true,
+                                validate: false,
+                                success: function () {
+                                    that.showFilteredPage();
+                                }
+                            });
+                    }
                 } else if (selectType == 'type') {
                     id = targetParrentElement.attr("id").replace("type_", "");
                     model = this.collection.get(id);
@@ -295,10 +317,6 @@ define([
                     self.filter['condition'] = 'or';
                 }
 
-                if (checkedElements.length && checkedElements.attr('id') === 'defaultFilter') {
-                    self.filter = 'empty';
-                }
-
                 if (choosen) {
                     choosen.each(function (index, elem) {
                         if (self.filter[elem.children[1].value]) {
@@ -314,103 +332,9 @@ define([
                     });
                 }
 
-                if (!choosen.length && !showList) {
-                    self.filter = 'empty';
-                }
-
                 this.changeLocationHash(1, itemsNumber, this.filter);
                 this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter, parrentContentId: this.parrentContentId });
                 this.getTotalLength(null, itemsNumber, this.filter);
-            },
-
-            saveFilter: function () {
-                var currentUser = new usersModel(App.currentUser);
-                var subMenu = $('#submenu-holder').find('li.selected').text();
-                var key;
-                var filterObj = {};
-                var mid = 39;
-
-                key = subMenu.trim();
-
-                filterObj['filter'] = {};
-                filterObj['filter'] = this.filter;
-                filterObj['key'] = key;
-
-                currentUser.changed = filterObj;
-
-                currentUser.save(
-                    filterObj,
-                    {
-                        headers: {
-                            mid: mid
-                        },
-                        wait: true,
-                        patch:true,
-                        validate: false,
-                        success: function (model) {
-                            console.log('Filter was saved to db');
-                        },
-                        error: function (model,xhr) {
-                            console.error(xhr);
-                        },
-                        editMode: false
-                    }
-                );
-                if (!App.currentUser.savedFilters){
-                    App.currentUser.savedFilters = {};
-                }
-                App.currentUser.savedFilters['Tasks'] = filterObj.filter;
-            },
-
-            removeFilter: function () {
-                var currentUser = new usersModel(App.currentUser);
-                var subMenu = $('#submenu-holder').find('li.selected').text();
-                var key;
-                var filterObj = {};
-                var mid = 39;
-
-                this.clearFilter();
-
-                key = subMenu.trim();
-                filterObj['key'] = key;
-
-                currentUser.changed = filterObj;
-
-                currentUser.save(
-                    filterObj,
-                    {
-                        headers: {
-                            mid: mid
-                        },
-                        wait: true,
-                        patch:true,
-                        validate: false,
-                        success: function (model) {
-                            console.log('Filter was remover from db');
-                        },
-                        error: function (model,xhr) {
-                            console.error(xhr);
-                        },
-                        editMode: false
-                    }
-                );
-
-                if (App.currentUser.savedFilters['Tasks']){
-                    delete App.currentUser.savedFilters['Tasks'];
-                }
-            },
-
-            clearFilter: function () {
-                this.$el.find('.filterValues').empty();
-                this.$el.find('.filter-icons').removeClass('active');
-                this.$el.find('.chooseOption').children().remove();
-                this.$el.find('.filterOptions').removeClass('chosen');
-
-                $.each($('.drop-down-filter input'), function (index, value) {
-                    value.checked = false
-                });
-
-                this.showFilteredPage();
             },
 
             hideItemsNumber: function (e) {
@@ -419,7 +343,6 @@ define([
                 this.$el.find(".allNumberPerPage, .newSelectList").hide();
                 if (!el.closest('.search-view')) {
                     $('.search-content').removeClass('fa-caret-up');
-                    this.$el.find(".filterOptions, .filterActions, .search-options, .drop-down-filter").hide();
                 };
             },
 
@@ -494,6 +417,7 @@ define([
                 $(document).on("click", function (e) {
                     self.hideItemsNumber(e);
                 });
+                currentEl.append(_.template(paginationTemplate));
 
                 currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
                 var pagenation = this.$el.find('.pagination');

@@ -43,7 +43,7 @@ define([
         showMore: function (options) {
             var that = this;
             var filterObject = options || {};
-            filterObject['month'] = (options && options.month) ? options.month.toString() : this.monthto;
+            filterObject['month'] = (options && options.month) ? options.month.toString() : this.month.toString();
             filterObject['year'] = (options && options.year) ? options.year : this.year;
             this.fetch({
                 data: filterObject,

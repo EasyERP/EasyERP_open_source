@@ -6,7 +6,8 @@ define(['Validation'],function (Validation) {
             login:"",
             email:"",
             profile:null,
-            RelatedEmployee:null
+            RelatedEmployee:null,
+            savedFilters: []
         },
         initialize: function(){
             this.on('invalid', function(model, errors){

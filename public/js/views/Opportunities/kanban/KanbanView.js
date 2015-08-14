@@ -114,7 +114,7 @@ function (WorkflowsTemplate, kanbanSettingsTemplate, WorkflowsCollection, Kanban
         editKanban: function(e){
 			var self = this;
             dataService.getData('/currentUser', null, function (user, context) {
-                var tempDom = _.template(kanbanSettingsTemplate, { opportunities: user.kanbanSettings.opportunities });
+                var tempDom = _.template(kanbanSettingsTemplate, { opportunities: user.user.kanbanSettings.opportunities });
 				var self = context;
                 context.$el = $(tempDom).dialog({
                     dialogClass: "edit-dialog",
@@ -261,7 +261,6 @@ function (WorkflowsTemplate, kanbanSettingsTemplate, WorkflowsCollection, Kanban
             this.$el.find(".allNumberPerPage, .newSelectList").hide();
             if (!el.closest('.search-view')) {
                 $('.search-content').removeClass('fa-caret-up');
-                this.$el.find(".filterOptions, .filterActions, .search-options, .drop-down-filter").hide();
             };
 
         },
@@ -412,25 +411,6 @@ function (WorkflowsTemplate, kanbanSettingsTemplate, WorkflowsCollection, Kanban
 			$(document).on("keypress","#cPerPage",this.isNumberKey);
 
 			this.$el.unbind();
-
-            dataService.getData('/opportunity/getFilterValues', null, function (values) {
-                FilterView = new filterView({ collection: workflows, customCollection: values});
-                // Filter custom event listen ------begin
-                FilterView.bind('filter', function () {
-                    self.showFiltredPage(workflows)
-                });
-                FilterView.on('defaultFilter', function () {
-                    self.showFiltredPage(workflows)
-                   /* showList = _.pluck(workflows, '_id');
-
-                    showList.forEach(function (id) {
-                        el = $("td.column[data-id='"+id+"']");
-                        el.removeClass("fold");
-                    });*/
-                });
-                // Filter custom event listen ------end
-
-            });
 
             $(document).on("click", function (e) {
                 self.hideItemsNumber(e);

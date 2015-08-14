@@ -136,6 +136,7 @@ define([
             },
 
             saveItem: function () {
+                var empThumb;
                 var self = this;
 				
                 var gender = $("#genderDd").data("id");
@@ -150,14 +151,20 @@ define([
                 var relatedUser = this.$el.find("#relatedUsersDd").data("id");
                 relatedUser = relatedUser ? relatedUser : null;
 
-                var department = this.$el.find("#departmentsDd").data("id");
-                department = department ? department : null;
+                var department = {
+                    _id: this.$el.find("#departmentsDd").data("id") ? this.$el.find("#departmentsDd").data("id") : null,
+                    name: this.$el.find("#departmentsDd").text() ? this.$el.find("#departmentsDd").text() : null
+                };
 
-                var jobPosition = this.$el.find("#jobPositionDd").data("id");
-                jobPosition = jobPosition ? jobPosition : null;
+                var jobPosition = {
+                    _id: this.$el.find("#jobPositionDd").data("id") ? this.$el.find("#jobPositionDd").data("id") : null,
+                    name: this.$el.find("#jobPositionDd").text() ? this.$el.find("#jobPositionDd").text() : null
+                };
 
-                var manager = this.$el.find("#projectManagerDD").data("id");
-                manager = manager ? manager : null;
+                var manager = {
+                    _id: this.$el.find("#projectManagerDD").data("id") ? this.$el.find("#projectManagerDD").data("id") : null,
+                    name: this.$el.find("#projectManagerDD").text() ? this.$el.find("#projectManagerDD").text() : null
+                };
 
                 var coach = $.trim(this.$el.find("#coachDd").data("id"));
                 coach = coach ? coach : null;
@@ -253,7 +260,29 @@ define([
                         },
                         patch: true,
                         success: function (model) {
-                            Backbone.history.navigate("easyErp/" + self.contentType, { trigger: true });
+                            if (self.lastData === data.name.last &&
+                                self.firstData === data.name.first &&
+                                self.departmentData === data.department.name &&
+                                self.jobPositionData === data.jobPosition.name &&
+                                self.projectManagerData === data.manager.name) {
+
+                                model = model.toJSON();
+                                empThumb = $('#' + model._id);
+
+                                //empThumb.find('.fullName').html(model.name.first + ' ' + model.name.last);
+                                //empThumb.find('.jobPos').html(model.jobPosition.name);
+                                empThumb.find('.age').html(model.result.age);
+                                empThumb.find('.empDateBirth').html("(" + model.dateBirth + ")");
+                                empThumb.find('.telephone a').html(model.workPhones.mobile);
+                                empThumb.find('.telephone a').attr('href', "skype:" + model.workPhones.mobile + "?call");
+
+                                if (model.relatedUser) {
+                                    empThumb.find('.relUser').html(model.relatedUser.login);
+                                }
+
+                            } else {
+                                Backbone.history.navigate(window.location.hash, { trigger: true, replace: true });
+                            }
                             self.hideDialog();
                         },
                     error: function (model, xhr) {
@@ -286,8 +315,13 @@ define([
             },
 
             render: function () {
-                var hireArray = this.currentModel.get('hire');
-                var fireArray = this.currentModel.get('fire');
+                var lastElement;
+                var firstElement;
+                var jobPosElement;
+                var departmentElement;
+                var projectManagerElement;
+                var hireArray;
+                var fireArray;
 
                 if (this.currentModel.get('dateBirth')) {
                     this.currentModel.set({
@@ -405,6 +439,19 @@ define([
 
                     }
                 this.delegateEvents(this.events);
+
+                lastElement = this.$el.find("#last");
+                firstElement = this.$el.find("#first");
+                jobPosElement = this.$el.find("#jobPositionDd");
+                departmentElement = this.$el.find("#departmentsDd");
+                projectManagerElement = this.$el.find("#projectManagerDD");
+
+                this.lastData =  $.trim(lastElement.val());
+                this.firstData = $.trim(firstElement.val());
+                this.jobPositionData = $.trim(jobPosElement.val());
+                this.departmentData = $.trim(departmentElement.val());
+                this.projectManagerData = $.trim(projectManagerElement.val());
+
                 return this;
             }
 

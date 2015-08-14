@@ -132,7 +132,7 @@ var requestHandler = function (event, mainDb) {
                 if (typeof this[i] == 'string' && this[i].length === 24) {
                     _arrayOfID.push(objectId(this[i]));
                 }
-                if (this[i] === null) {
+                if (this[i] === null || this[i] === 'null') {
                     _arrayOfID.push(null);
                 }
 

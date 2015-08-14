@@ -10,7 +10,11 @@ var Employee = function (event, models) {
     function getTotalCount(req, response) {
         var res = {};
         var data = {};
+
         var condition;
+        var resArray = [];
+        var filtrElement = {};
+        var key;
 
 
         for (var i in req.query) {
@@ -33,67 +37,87 @@ var Employee = function (event, models) {
             optionsObject['workflow'] = { $in: [] };
         }
 
+
         switch (contentType) {
             case ('Employees'): {
-                optionsObject['$and'] = [];
-                optionsObject['$and'].push({'isEmployee': true});
 
+                for (var filterName in data.filter) {
+                    condition = data.filter[filterName]['value'];
+                    key = data.filter[filterName]['key'];
 
-                if (data && data.filter) {
-                    if (data.filter.condition === 'or') {
-                        optionsObject['$and'].push({$or: []});
-                        condition = optionsObject['$and'][1]['$or'];
+                    switch (filterName) {
+                        case 'name':
+                            filtrElement[key] = {$in: condition.objectID()};
+                            resArray.push(filtrElement);
+                            break;
+                        case 'letter':
+                            filtrElement['name.last'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
+                            resArray.push(filtrElement);
+                            break;
+                        case 'department':
+                            filtrElement[key] = {$in: condition.objectID()};
+                            resArray.push(filtrElement);
+                            break;
+                        case 'manager':
+                            filtrElement[key] = {$in: condition.objectID()};
+                            resArray.push(filtrElement);
+                            break;
+                        case 'jobPosition':
+                            filtrElement[key] = {$in: condition.objectID()};
+                            resArray.push(filtrElement);
+                            break;
+                    }
+                };
+
+                resArray.push({'isEmployee': true});
+
+                if (resArray.length) {
+
+                    if (data && data.filter && data.filter.condition === 'or') {
+                        optionsObject['$or'] = resArray;
                     } else {
-                        optionsObject['$and'].push({$and: []});
-                        condition = optionsObject['$and'][1]['$and'];
+                        optionsObject['$and'] = resArray;
                     }
-
-                    if (data.filter.department) {
-                        var arrOfObjectId = data.filter.department.objectID();
-                        condition.push({ 'department': {$in: arrOfObjectId}});
-                    }
-                    if (data.filter.Name) {
-                        condition.push({ 'name.last': {$in: data.filter.Name}});
-                    }
-                    if (data.filter.Email) {
-                        condition.push({ 'workEmail': {$in: data.filter.Email}});
-                    }
-
-                    if (!condition.length) {
-                        optionsObject['$and'].pop();
-                    }
-
-
                 }
             }
                 break;
             case ('Applications'): {
-                optionsObject['$and'] = [];
-                optionsObject['$and'].push({'isEmployee': false});
+                for (var filterName in data.filter) {
+                    condition = data.filter[filterName]['value'];
+                    key = data.filter[filterName]['key'];
 
-                if (data && data.filter) {
+                    switch (filterName) {
+                        case 'name':
+                            filtrElement[key] = {$in: condition.objectID()};
+                            resArray.push(filtrElement);
+                            break;
+                        case 'letter':
+                            filtrElement['name.last'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
+                            resArray.push(filtrElement);
+                            break;
+                        case 'department':
+                            filtrElement[key] = {$in: condition.objectID()};
+                            resArray.push(filtrElement);
+                            break;
+                        case 'manager':
+                            filtrElement[key] = {$in: condition.objectID()};
+                            resArray.push(filtrElement);
+                            break;
+                        case 'jobPosition':
+                            filtrElement[key] = {$in: condition.objectID()};
+                            resArray.push(filtrElement);
+                            break;
+                    }
+                };
 
-                    if (data.filter.condition === 'or') {
-                        optionsObject['$and'].push({$or: []});
-                        condition = optionsObject['$and'][1]['$or'];
+                resArray.push({'isEmployee': false});
+
+                if (resArray.length) {
+
+                    if (data && data.filter && data.filter.condition === 'or') {
+                        optionsObject['$or'] = resArray;
                     } else {
-                        optionsObject['$and'].push({$and: []});
-                        condition = optionsObject['$and'][1]['$and'];
-                    }
-                    for (var key in data.filter) {
-
-                        switch (key) {
-                            case 'Name':
-                                condition.push({ 'name.last': {$in: data.filter.Name}});
-                                break;
-                            case 'Email':
-                                condition.push({ 'workEmail': {$in: data.filter.Email}});
-                                break;
-
-                        }
-                    }
-                    if (!condition.length) {
-                        optionsObject['$and'].pop();
+                        optionsObject['$and'] = resArray;
                     }
                 }
             }
@@ -532,12 +556,15 @@ var Employee = function (event, models) {
     function getFilter(req, response) {
         var data = {};
         var optionsObject = {};
-        var condition;
-        var filterObj;
 
         var viewType;
         var contentType;
         var res = {};
+
+        var condition;
+        var resArray = [];
+        var filtrElement = {};
+        var key;
 
         for (var i in req.query) {
             data[i] = req.query[i];
@@ -550,75 +577,86 @@ var Employee = function (event, models) {
 
         switch (contentType) {
             case ('Employees'): {
-                //----------------------
-                optionsObject['$and'] = [];
-                optionsObject['$and'].push({'isEmployee': true});
 
+                for (var filterName in data.filter) {
+                    condition = data.filter[filterName]['value'];
+                    key = data.filter[filterName]['key'];
 
-                if (data && data.filter) {
+                    switch (filterName) {
+                        case 'name':
+                            filtrElement[key] = {$in: condition.objectID()};
+                            resArray.push(filtrElement);
+                            break;
+                        case 'letter':
+                            filtrElement['name.last'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
+                            resArray.push(filtrElement);
+                            break;
+                        case 'department':
+                            filtrElement[key] = {$in: condition.objectID()};
+                            resArray.push(filtrElement);
+                            break;
+                        case 'manager':
+                            filtrElement[key] = {$in: condition.objectID()};
+                            resArray.push(filtrElement);
+                            break;
+                        case 'jobPosition':
+                            filtrElement[key] = {$in: condition.objectID()};
+                            resArray.push(filtrElement);
+                            break;
+                    }
+                };
 
-                    if (data.filter.condition === 'or') {
-                        optionsObject['$and'].push({$or: []});
-                        condition = optionsObject['$and'][1]['$or'];
+                resArray.push({'isEmployee': true});
+
+                if (resArray.length) {
+
+                    if (data && data.filter && data.filter.condition === 'or') {
+                        optionsObject['$or'] = resArray;
                     } else {
-                        optionsObject['$and'].push({$and: []})
-                        condition = optionsObject['$and'][1]['$and'];
+                        optionsObject['$and'] = resArray;
                     }
-
-                    if (data.filter.department) {
-                        var arrOfObjectId = data.filter.department.objectID();
-                        condition.push({ 'department': {$in: arrOfObjectId}});
-                    }
-                    if (data.filter.Name) {
-                        condition.push({ 'name.last': {$in: data.filter.Name}});
-                    }
-                    if (data.filter.Email) {
-                        condition.push({ 'workEmail': {$in: data.filter.Email}});
-                    }
-
-                    if (!condition.length) {
-                        optionsObject['$and'].pop();
-                    }
-
-
-                }
-
-                if (data.filter.letter) {
-                    optionsObject['name.last'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
-
                 }
             }
                 break;
             case ('Applications'): {
-                optionsObject['$and'] = [];
-                optionsObject['$and'].push({'isEmployee': false});
+                for (var filterName in data.filter) {
+                    condition = data.filter[filterName]['value'];
+                    key = data.filter[filterName]['key'];
 
-                if (data && data.filter) {
-                    if (data.filter.condition === 'or') {
-                        optionsObject['$and'].push({$or: []});
-                        condition = optionsObject['$and'][1]['$or'];
+                    switch (filterName) {
+                        case 'name':
+                            filtrElement[key] = {$in: condition.objectID()};
+                            resArray.push(filtrElement);
+                            break;
+                        case 'letter':
+                            filtrElement['name.last'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
+                            resArray.push(filtrElement);
+                            break;
+                        case 'department':
+                            filtrElement[key] = {$in: condition.objectID()};
+                            resArray.push(filtrElement);
+                            break;
+                        case 'manager':
+                            filtrElement[key] = {$in: condition.objectID()};
+                            resArray.push(filtrElement);
+                            break;
+                        case 'jobPosition':
+                            filtrElement[key] = {$in: condition.objectID()};
+                            resArray.push(filtrElement);
+                            break;
+                    }
+                };
+
+                resArray.push({'isEmployee': false});
+
+                if (resArray.length) {
+
+                    if (data && data.filter && data.filter.condition === 'or') {
+                        optionsObject['$or'] = resArray;
                     } else {
-                        optionsObject['$and'].push({$and: []});
-                        condition = optionsObject['$and'][1]['$and'];
-                    }
-
-                    for (var key in data.filter) {
-
-                        switch (key) {
-                            case 'Name':
-                                condition.push({ 'name.last': {$in: data.filter.Name}});
-                                break;
-                            case 'Email':
-                                condition.push({ 'workEmail': {$in: data.filter.Email}});
-                                break;
-
-                        }
-                    }
-                    if (!condition.length) {
-                        optionsObject['$and'].pop();
+                        optionsObject['$and'] = resArray;
                     }
                 }
-
             }
                 break;
         }
@@ -691,17 +729,13 @@ var Employee = function (event, models) {
                                                 }
 
                                                 query.select('_id name createdBy editedBy department jobPosition manager dateBirth skype workEmail workPhones jobType').
-                                                    populate('manager', 'name').
-                                                    populate('jobPosition', 'name').
                                                     populate('createdBy.user', 'login').
-                                                    populate('department', 'departmentName').
                                                     populate('editedBy.user', 'login');
                                             }
                                                 break;
                                             case ('thumbnails'): {
                                                 query.select('_id name dateBirth age jobPosition relatedUser workPhones.mobile').
-                                                    populate('relatedUser', 'login').
-                                                    populate('jobPosition', 'name');
+                                                    populate('relatedUser', 'login')
                                             }
                                                 break;
 
@@ -725,10 +759,7 @@ var Employee = function (event, models) {
                                                     query.sort({ "editedBy.date": -1 });
                                                 }
                                                 query.select('_id name createdBy editedBy jobPosition manager workEmail workPhones creationDate workflow personalEmail department jobType sequence').
-                                                    populate('manager', 'name').
-                                                    populate('jobPosition', 'name').
                                                     populate('createdBy.user', 'login').
-                                                    populate('department', 'departmentName').
                                                     populate('editedBy.user', 'login').
                                                     populate('workflow', 'name status');
                                             }
@@ -920,7 +951,6 @@ var Employee = function (event, models) {
                                 models.get(req.session.lastDb, "Employees", employeeSchema).
                                     where('_id').in(responseOpportunities).
                                     select("_id name proposedSalary jobPosition nextAction workflow editedBy.date sequence").
-                                    populate('jobPosition', 'name').
                                     populate('workflow', '_id').
                                     sort({ 'sequence': -1 }).
                                     limit(req.session.kanbanSettings.applications.countPerPage).
@@ -955,11 +985,8 @@ var Employee = function (event, models) {
             data[i] = req.query[i];
         }
         var query = models.get(req.session.lastDb, "Employees", employeeSchema).findById(data.id);
-        query.populate('manager', 'name _id');
-        query.populate('department', 'departmentName _id');
         query.populate('coach', 'name _id');
         query.populate('relatedUser', 'login _id');
-        query.populate('jobPosition', 'name _id');
         query.populate('workflow').
             populate('createdBy.user').
             populate('editedBy.user').

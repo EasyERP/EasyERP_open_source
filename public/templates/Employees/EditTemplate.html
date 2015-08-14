@@ -58,14 +58,14 @@
 				<dl class="edit-employee-info">
                   <dt><label for="jobPositionDd">Job position</label></dt>
                   <dd>
-					<a id="jobPositionDd" data-id="<%=model.jobPosition?model.jobPosition._id:''%>" class="current-selected" href="javascript:;"><%=model.jobPosition?(model.jobPosition.name):'Select'%></a>
+					<a id="jobPositionDd" data-id="<%=model.jobPosition ? model.jobPosition._id:''%>" class="current-selected" href="javascript:;"><%=model.jobPosition?(model.jobPosition.name):'Select'%></a>
                   </dd>
                   <dt><label for="departmentsDd">Department</label></dt><dd>
-					<a id="departmentsDd" data-id="<%=model.department?model.department._id:''%>" class="current-selected" href="javascript:;"><%=model.department?(model.department.departmentName):'Select'%></a>
+					<a id="departmentsDd" data-id="<%=model.department ? model.department._id : ''%>" class="current-selected" href="javascript:;"><%=model.department ? (model.department.name) : 'Select'%></a>
                   </dd>
                   <dt><label for="projectManagerDD">Manager</label></dt>
                   <dd>
-					<a id="projectManagerDD" data-id="<%=model.projectmanager?model.projectmanager._id:''%>" class="current-selected" href="javascript:;"><%=model.manager?(model.manager.name.first+' '+model.manager.name.last):'Select'%></a>
+					<a id="projectManagerDD" data-id="<%=model.projectmanager ? model.projectmanager._id : ''%>" class="current-selected" href="javascript:;"><%=model.manager._id ? (model.manager.name) : 'Select'%></a>
                   </dd>
                   <dt><label for="jobTypeDd">Job type</label></dt>
                   <dd>
