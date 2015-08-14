@@ -50,6 +50,7 @@ require(['app'], function (app) {
     Backbone.Collection.prototype.getElement = function (id) {
         return (id) ? this.get(id) : ((this.currentElement) ? this.currentElement : this.at(0));
     };
+
     Backbone.Collection.prototype.setElement = function (id, model) {
         if (arguments.length === 0) {
             this.currentElement = this.at(0);
