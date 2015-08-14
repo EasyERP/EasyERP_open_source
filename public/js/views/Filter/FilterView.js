@@ -83,7 +83,7 @@ define([
                 });
 
                 key = subMenu.trim();
-                filterForSave[filterName] = this.filter;
+                filterForSave[filterName] = self.filter;
 
                 if (!App.savedFilters[this.parentContentType]) {
                     App.savedFilters[self.parentContentType] = [];
