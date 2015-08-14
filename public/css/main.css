@@ -3367,6 +3367,7 @@ dl dd a.formLink {
   line-height: 18px !important;
   width: 15px;
   text-align: center;
+  margin-right: 3px;
 }
 .filterValues {
   display: inline-block;
@@ -8515,6 +8516,7 @@ textarea#editInput {
 #favoritesContent .removeSavedFilter {
   float: right;
   border: 1px solid #cccccc;
+  height: 21px;
 }
 #favoritesContent .line {
   height: 1px;
@@ -8534,4 +8536,15 @@ textarea#editInput {
 #favoritesContent .filters:hover {
   color: white;
   background-color: #36a9e1;
+}
+#favoritesContent .checkedValue {
+  color: white;
+  background-color: #36a9e1;
+}
+.forFilterIcons {
+  float: left;
+  position: relative;
+  display: inline-block;
+  padding-right: 17px;
+  margin-right: 3px;
 }

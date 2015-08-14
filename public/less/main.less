@@ -3303,6 +3303,7 @@ dl {
   line-height: 18px !important;
   width: 15px;
   text-align: center;
+  margin-right: 3px;
 }
 
 .filterValues {
@@ -6392,6 +6393,7 @@ textarea#editInput {
   .removeSavedFilter {
     float: right;
     border: 1px solid #cccccc;
+    height: 21px;
   }
   .line {
     height: 1px;
@@ -6409,7 +6411,20 @@ textarea#editInput {
     font-size: 12px;
       &:hover {
         color: white;
-        background-color: #36a9e1;
+        background-color: @tilte-color;
       }
+
   }
+  .checkedValue {
+    color: white;
+    background-color: @tilte-color;
+  }
+}
+
+.forFilterIcons {
+  float: left;
+  position: relative;
+  display: inline-block;
+  padding-right: 17px;
+  margin-right: 3px;
 }
