@@ -117,7 +117,6 @@ define([
                             patch: true,
                             validate: false,
                             success: function (model) {
-                                console.log('Filter was saved to db');
                                 updatedInfo = model.get('success');
                                 filters = updatedInfo['savedFilters'];
                                 length = filters.length;
@@ -162,7 +161,6 @@ define([
                         patch: true,
                         validate: false,
                         success: function (model) {
-                            console.log('Filter was removed from db');
                         },
                         error: function (model, xhr) {
                             console.error(xhr);
@@ -315,8 +313,7 @@ define([
                         }
                         self.renderGroup(key, filterView, groupStatus);
                     });
-                }
-                ;
+                };
                 this.showFilterIcons(this.filter);
             },
 
@@ -386,64 +383,8 @@ define([
             },
 
             applyFilter: function () {
-                /*this.$el.find('.filterValues').empty();
-                 this.$el.find('.filter-icons').removeClass('active');
-                 var values = this.$el.find('.chooseTerm');
-                 var filterContainer = this.$el.find('.oe_searchview_input');
-                 values.each(function (index, element) {
-                 if ($(element).val()) {
-                 filterContainer.append('<div class="filter-icons active" data-id=' + $(element).val() + '> <span class="fa fa-filter funnelIcon"></span>' +
-                 '<span class="filterValues"> <span class="Clear" data-id="' + $(element).val() +
-                 '">' + $(element).val() + '</span> </span> <span class="removeValues" data-id="' + $(element).val() + '">' + 'x </span> </div>');
-                 }
-                 });*/
-
                 this.trigger('filter', this.filter);
             },
-
-            //conditionClick: function (e) {
-            //    if (e.target.localName === 'li') {
-            //        $(e.target.children[0]).trigger('click');
-            //    }
-            //},
-
-            //removeFilter: function (e) {
-            //    var filter = this.$el.find('.filterOptions');
-            //    var opt = this.$el.find('.chooseOption');
-            //    var term = this.$el.find('.chooseTerm');
-            //    var date = this.$el.find('.chooseDate');
-            //
-            //    if (filter.length > 1 && e && e.target) {
-            //        if (e && e.target) {
-            //            $(e.target).closest('.filterOptions').remove();
-            //        }
-            //    } else {
-            //        filter.removeClass('chosen');
-            //        opt.children().remove();
-            //        term.val($(".chooseTerm option:first").val());
-            //        date.remove();
-            //        opt.removeClass('activated').show();
-            //        this.$el.find(".filterOptions, .filterActions").hide();
-            //        /* if (e && e.target) {
-            //         this.trigger('defaultFilter');
-            //         e.stopPropagation();
-            //         }*/
-            //
-            //    }
-            //},
-
-            //addCondition: function () {
-            //    var lastOpt;
-            //    this.$el.find(".filterOptions:first").clone().insertBefore('.filterActions');
-            //
-            //    lastOpt = this.$el.find(".filterOptions:last");
-            //    this.$el.find(".filterOptions:last").hide();
-            //    lastOpt.children('.chooseOption').children().remove();
-            //    lastOpt.children('.chooseOption').show().removeClass('activated');
-            //    lastOpt.children('.chooseDate').remove();
-            //    lastOpt.removeClass('chosen');
-            //    lastOpt.remove();
-            //},
 
 
             showSearchContent: function () {
@@ -468,77 +409,7 @@ define([
                     .siblings()
                     .addClass('hidden');
 
-            },
-
-            /* writeValue: function (e) {
-             var inputText = e.target.nextElementSibling.textContent;
-             var filterValues = this.$el.find('.filterValues');
-             var filterIcons = this.$el.find('.filter-icons');
-             var input = this.$el.find('.drop-down-filter input');
-             var defaultFilter = this.$el.find('#defaultFilter');
-             var checked;
-
-             filterIcons.addClass('active');
-
-             $.each(input, function (index, value) {
-             if (value.checked) {
-             return checked = true
-             }
-             });
-             if (!checked) {
-             //this.trigger('defaultFilter');
-             filterValues.empty();
-             //filterIcons.removeClass('active');
-             }
-             if (e.target.checked) {
-             filterValues.append('<span class=' + '"' + inputText + '">' + inputText + '</span>');
-
-             } else {
-             filterValues.find('.' + inputText).remove();
-             }
-
-             if (e.target.id !== 'defaultFilter') {
-
-             defaultFilter.removeAttr('checked');
-             filterValues.find('.Default').remove();
-             this.trigger('filter');
-             } else {
-             $.each(input, function (index, value) {
-             if (value.id !== 'defaultFilter') value.checked = false
-             });
-             $.each($('.filterValues span'), function (index, item) {
-             if (item.className !== 'Clear') item.remove();
-             });
-             this.removeFilter();
-             this.trigger('defaultFilter');
-             }
-
-             /* if ($('.drop-down-filter input:checkbox:checked').length === 0) {
-             this.trigger('defaultFilter');
-             //this.$el.find('.removeFilter').trigger('click')
-             }*/
-
-            /* },
-
-             removeValues: function (e) {
-             var element = $(e.target).closest('.filter-icons');
-             var dataId = element.attr('data-id');
-             var filterOpt = this.$el.find(".filterOptions");
-             var clearElement = this.$el.find('.drop-down-filter .filterOptions');
-             var closestEl = clearElement.find('.' + dataId);
-             var cl = $(closestEl).closest('.filterOptions');
-
-             if (filterOpt.length === 1) {
-             $(closestEl).prev().click();
-             } else {
-             cl.remove();
-             }
-
-             element.remove();
-
-             this.trigger('filter');
-             }
-             */
+            }
         });
 
         return FilterView;
