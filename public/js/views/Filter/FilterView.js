@@ -102,7 +102,7 @@ define([
                             editMode: false
                         });
                     self.$el.find('#forFilterName').val('');
-                    
+
                     dataService.getData('/currentUser', null, function (response) {
                         if (response && !response.error) {
                             App.currentUser = response.user;
