@@ -5,6 +5,7 @@ var mongoose = require('mongoose');
 var Filters = function (models) {
     var wTrackSchema = mongoose.Schemas['wTrack'];
     var CustomerSchema = mongoose.Schemas['Customer'];
+    var EmployeeSchema = mongoose.Schemas['Employee'];
     var _ = require('../node_modules/underscore');
     var async = require('async');
 
@@ -13,11 +14,13 @@ var Filters = function (models) {
 
         var WTrack = models.get(lastDB, 'wTrack', wTrackSchema);
         var Customer = models.get(lastDB, 'Customers', CustomerSchema);
+        var Employee = models.get(lastDB, 'Employee', EmployeeSchema);
 
         async.parallel({
                 wTrack: getWtrackFiltersValues,
                 Persons: getPersonFiltersValues,
                 Companies: getCompaniesFiltersValues,
+                Employee: getEmployeeFiltersValues,
             },
             function (err, result) {
                 if (err) {
@@ -182,6 +185,47 @@ var Filters = function (models) {
                         name: 'Customer'
                     }
                 ]
+
+                callback(null, result);
+            });
+        };
+        function getEmployeeFiltersValues(callback) {
+            Employee.aggregate([
+                {
+                    $group: {
+                        _id: null,
+                        'name': {
+                            $addToSet: {
+                                _id: '$_id',
+                                name: {$concat: ['$name.first', ' ', '$name.last']}
+                            }
+                        },
+                        'department': {
+                            $addToSet: {
+                                _id: '$department._id',
+                                name: {'$ifNull': ['$department.name', 'None']}
+                            }
+                        },
+                        'jobPosition': {
+                            $addToSet: {
+                                _id: '$jobPosition._id',
+                                name: {'$ifNull': ['$jobPosition.name', 'None']}
+                            }
+                        },
+                        'manager': {
+                            $addToSet: {
+                                _id: '$manager._id',
+                                name: {'$ifNull': ['$manager.name', 'None']}
+                            }
+                        }
+                    }
+                }
+            ], function (err, result) {
+                if (err) {
+                    callback(err);
+                }
+
+                result = result[0];
 
                 callback(null, result);
             });
