@@ -95,7 +95,7 @@ define([
                     bool = false;
                 }
 
-                if (this.filter){
+                if ((Object.keys(this.filter)).length === 0) {
                     alert('Please, use some filter!');
                     bool = false;
                 }
@@ -248,12 +248,11 @@ define([
                 _.forEach(filter, function (key, value) {
 
                     groupName = self.$el.find('#' + key).text();
-
                     filterIc.addClass('active');
                    filterValues.append('<div class="forFilterIcons"><span class="fa fa-filter funnelIcon"></span><span class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
                 });
 
-                this.$el.find('#forFilterName').val(groupName);
+
             },
 
             removeFilter: function (e) {

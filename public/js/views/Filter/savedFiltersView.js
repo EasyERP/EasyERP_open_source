@@ -32,7 +32,7 @@ define([
                         if (this.savedFilters[j]) {
                             var keys = Object.keys(this.savedFilters[j]['filter']);
                             for (var i = keys.length - 1; i >= 0; i--) {
-                                this.$el.append('<li class="filters"  id ="' + this.savedFilters[j]['_id'] + '">' + keys[i] + '</li><button class="removeSavedFilter" id="' + this.savedFilters[j]['_id'] + '">' + 'x' + '</button><br/>');
+                                this.$el.append('<li class="filters"  id ="' + this.savedFilters[j]['_id'] + '">' + keys[i] + '</li><span class="removeSavedFilter" id="' + this.savedFilters[j]['_id'] + '">' + 'x' + '</span><br/>');
                             }
                         }
                     }
