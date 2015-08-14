@@ -74,11 +74,11 @@ define([
                 var favouritesContent = this.$el.find('#favoritesContent');
                 var filterForSave = {};
                 var updatedInfo = {};
-                var allFilterNames = $('.filters');
+                var allFilterNames = this.$el.find('.filters');
                 var allowName = true;
 
                 _.forEach(allFilterNames, function(filterName){
-                    if (filterName.text() === filterName){
+                    if (filterName.innerHTML === filterName.innerHTML){
                         return allowName = false;
                     }
                 });
@@ -90,7 +90,7 @@ define([
                     App.savedFilters[self.parentContentType] = [];
                 }
 
-                if (!filterName || allowName) {
+                if (allowName) {
                     alert('Filter with same name already exists! Please, change filter name.');
                     bool = false;
                 }
@@ -245,7 +245,7 @@ define([
                     groupName = self.$el.find('#' + key).text();
 
                     filterIc.addClass('active');
-                   filterValues.append('<div><span class="fa fa-filter funnelIcon"></span><span class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
+                   filterValues.append('<div class="forFilterIcons"><span class="fa fa-filter funnelIcon"></span><span class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
                 });
             },
 
