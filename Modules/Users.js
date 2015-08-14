@@ -297,25 +297,25 @@ var Users = function (mainDb, models) {
             function updateUser() {
                 var query = {};
                 var key = data.key;
-                var filter = data.filter;
                 var deleteId = data.deleteId;
                 var id;
-                var filterM = models.get(req.session.lastDb, 'savedFilters', savedFiltersSchema);
-                var filterModel = new filterM();
+                var savedFilters = models.get(req.session.lastDb, 'savedFilters', savedFiltersSchema);
+                var filterModel = new savedFilters();
 
 
                 if (data.changePass) {
                     query = {$set: data};
-                    query = {$set: data};
+
                     updateThisUser(_id, query);
                 } else if (data.deleteId) {
-                    filterM.findByIdAndRemove(deleteId, function (err, result) {
+                    savedFilters.findByIdAndRemove(deleteId, function (err, result) {
                         if (err) {
                             console.log(err);
                         }
-                        if (result){
+                        if (result) {
                             id = result.get('_id');
                             query = {$pull: {'savedFilters': deleteId}};
+
                             updateThisUser(_id, query);
                         }
                     });
@@ -326,15 +326,15 @@ var Users = function (mainDb, models) {
 
                     filterModel.save(function (err, result) {
                         if (err) {
-                            return console.log('ERROR SAVE FILTERMODEL');
+                            return console.log('error save filter');
                         };
 
-                        id = result.get('_id');
-                        //App.savedFilters[key].push(result.toJSON());
-                        query = {$push: {'savedFilters': id}};
+                        if (result){
+                            id = result.get('_id');
+                            query = {$push: {'savedFilters': id}};
 
-                        updateThisUser(_id, query);
-
+                            updateThisUser(_id, query);
+                        }
                     });
                 } else {
                     query = {$set: data};
@@ -343,15 +343,26 @@ var Users = function (mainDb, models) {
 
                 function updateThisUser(_id, query) {
                     models.get(req.session.lastDb, 'Users', userSchema).findByIdAndUpdate(_id, query, function (err, result) {
+                        //if (err) {
+                        //    logWriter.log("User.js update profile.update" + err);
+                        //    res.send(500, {error: 'User.update DB error'});
+                        //} else {
+                        //    req.session.kanbanSettings = result.kanbanSettings;
+                        //    if (data.profile && (result._id == req.session.uId))
+                        //        //res.send(200, {success: 'User updated success', logout: true});
+                        //    res.status(200).send(result);
+                        //    else
+                        //        res.status(200).send(result);
+                        //       // res.send(200, {success: 'User updated success'});
+                        //}
                         if (err) {
-                            logWriter.log("User.js update profile.update" + err);
-                            res.send(500, {error: 'User.update DB error'});
+                            return next(err);
+                        }
+                        req.session.kanbanSettings = result.kanbanSettings;
+                        if (data.profile && (result._id == req.session.uId)) {
+                            res.status(200).send({success: result, logout: true});
                         } else {
-                            req.session.kanbanSettings = result.kanbanSettings;
-                            if (data.profile && (result._id == req.session.uId))
-                                res.send(200, {success: 'User updated success', logout: true});
-                            else
-                                res.send(200, {success: 'User updated success'});
+                            res.status(200).send({success: result});
                         }
                     });
                 }

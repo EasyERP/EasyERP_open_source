@@ -243,11 +243,9 @@ define(['libs/date.format', 'common', 'constants'], function (dateformat, common
         for (var i = length - 1; i >= 0; i--){
             if (savedFilters[i]['_id'] === id){
                 keys = Object.keys(savedFilters[i]['filter']);
-                filter = savedFilters[i]['filter'][keys[0]];
+                return filter = savedFilters[i]['filter'][keys[0]];
             }
         }
-
-        return filter;
     };
 
     var getFiltersForContentType = function (contentType) {

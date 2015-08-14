@@ -913,6 +913,7 @@ define([
 
             showFilteredPage: function (filter, context) {
                 var itemsNumber = $("#itemsNumber").text();
+                this.filter = filter;
 
                 context.startTime = new Date();
                 context.newCollection = false;
