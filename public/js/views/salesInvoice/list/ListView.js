@@ -214,18 +214,18 @@ define([
                 }, function (stages) {
                     self.stages = stages;
 
-                    dataService.getData('/invoice/getFilterValues', null, function (values) {
-                        FilterView = new filterView({ collection: stages, customCollection: values});
-                        // Filter custom event listen ------begin
-                        FilterView.bind('filter', function () {
-                            self.showFilteredPage()
-                        });
-                        FilterView.bind('defaultFilter', function () {
-                            self.showFilteredPage();
-                        });
-                        // Filter custom event listen ------end
-
+                    self.filterView = new filterView({
+                        contentType: self.contentType
                     });
+
+                    self.filterView.bind('filter', function (filter) {
+                        self.showFilteredPage(filter, self)
+                    });
+                    self.filterView.bind('defaultFilter', function () {
+                        self.showFilteredPage({}, self);
+                    });
+
+                    self.filterView.render();
                 });
 
                 function currentEllistRenderer(){
@@ -375,54 +375,31 @@ define([
                 this.changeLocationHash(1, itemsNumber, this.filter);
             },
 
-            showFilteredPage: function () {
+            showFilteredPage: function (filter, context) {
                 var itemsNumber = $("#itemsNumber").text();
-                var checkedElements = $('.drop-down-filter input:checkbox:checked');
-                var chosen = this.$el.find('.chosen');
-                var condition = this.$el.find('.conditionAND > input')[0];
-                var self = this;
-                var showList;
 
-                this.startTime = new Date();
-                this.newCollection = false;
-                this.filter = {};
-                this.filter['condition'] = 'and';
-
-                if  (condition && !condition.checked) {
-                    self.filter['condition'] = 'or';
-                }
-
-                if (chosen && chosen.length) {
-                    chosen.each(function (index, elem) {
-                        if (elem.children[2].attributes.class.nodeValue === 'chooseDate') {
-                            if (self.filter[elem.children[1].value]) {
-                                self.filter[elem.children[1].value].push({start: $('#start').val(), end: $('#end').val()});
-
-                            } else {
-                                self.filter[elem.children[1].value] = [];
-                                self.filter[elem.children[1].value].push({start: $('#start').val(), end: $('#end').val()});
-                            }
-                        } else {
-                            self.filter[elem.children[1].value] = [];
-                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
-                                self.filter[elem.children[1].value].push(element.value);
-                            });
-                        }
-
-                    });
-                }
-
-                if ((checkedElements.length && checkedElements.attr('id') === 'defaultFilter') || (!chosen.length && !showList)) {
-                    self.filter = {forSales: true};
-                };
-
+                var alphaBet = this.$el.find('#startLetter');
+                var selectedLetter = $(alphaBet).find('.current').length ? $(alphaBet).find('.current')[0].text : '';
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
 
-                this.changeLocationHash(1, itemsNumber, this.filter);
-                this.collection.showMore({count: itemsNumber, page: 1, filter: this.filter});
-                this.getTotalLength(null, itemsNumber, this.filter);
+                if (selectedLetter === "All") {
+                    selectedLetter = '';
+                }
+
+                context.startTime = new Date();
+                context.newCollection = false;
+
+                if (!filter.name) {
+                    if (selectedLetter !== '') {
+                        filter['letter'] = selectedLetter;
+                    }
+                }
+
+                context.changeLocationHash(1, itemsNumber, filter);
+                context.collection.showMore({ count: itemsNumber, page: 1, filter: filter});
+                context.getTotalLength(null, itemsNumber, filter);
             },
 
             showPage: function (event) {
@@ -449,6 +426,9 @@ define([
                 }
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
+
+                this.filterView.renderFilterContent();
+
                 holder.find('#timeRecivingDataFromServer').remove();
                 holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             },

@@ -146,7 +146,6 @@
                 var createdInTag = "<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>";
                 var currentEl = this.$el;
                 var filterObject;
-                var FilterView;
 
                 currentEl.html('');
                 if (this.collection.length > 0) {
@@ -174,17 +173,6 @@
                     }
                 });
 
-                filterObject = [
-                    {
-                        name: 'isCustomer',
-                        _id: 'isCustomer'
-                    },
-                    {
-                        name: 'isSupplier',
-                        _id: 'isSupplier'
-                    }
-                ];
-
                 self.filterview = new filterView({ contentType: self.contentType });
 
                 self.filterview.bind('filter', function (filter) {
@@ -210,7 +198,6 @@
                 this.$el.find(".allNumberPerPage, .newSelectList").hide();
                 if (!el.closest('.search-view')) {
                     $('.search-content').removeClass('fa-caret-up');
-                    this.$el.find(".filterOptions, .filterActions, .search-options, .drop-down-filter").hide();
                 };
             },
 

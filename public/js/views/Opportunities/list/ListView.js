@@ -276,20 +276,6 @@ define([
                     self.stages = stages;
                     var stage = (self.filter) ? self.filter.workflow : null;
                     itemView.trigger('incomingStages', stages);
-                    dataService.getData('/opportunity/getFilterValues', null, function (values) {
-                        FilterView = new filterView({ collection: stages, customCollection: values});
-                        // Filter custom event listen ------begin
-                        FilterView.bind('filter', function () {
-                            self.showFilteredPage()
-                        });
-                        FilterView.bind('defaultFilter', function () {
-                            self.showFilteredPage();
-                        });
-                        // Filter custom event listen ------end
-
-                    });
-
-
                 });
                 $(document).on("click", function (e) {
                     self.hideItemsNumber(e);

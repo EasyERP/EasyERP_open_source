@@ -272,20 +272,6 @@ define([
                     self.stages = stages;
                     var stage = (self.filter) ? self.filter.workflow : null;
                     itemView.trigger('incomingStages', stages);
-                    dataService.getData('/opportunity/getFilterValues', null, function (values) {
-                        FilterView = new filterView({ collection: stages, customCollection: values});
-                        // Filter custom event listen ------begin
-                        FilterView.bind('filter', function () {
-                            showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
-                            self.showFilteredPage(showList)
-                        });
-                        FilterView.bind('defaultFilter', function () {
-                            showList = _.pluck(self.stages, '_id');
-                            self.showFilteredPage(showList);
-                        });
-                        // Filter custom event listen ------end
-
-                    });
                 });
 
                 $(document).on("click", function (e) {

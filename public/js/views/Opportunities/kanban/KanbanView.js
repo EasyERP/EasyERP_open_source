@@ -413,25 +413,6 @@ function (WorkflowsTemplate, kanbanSettingsTemplate, WorkflowsCollection, Kanban
 
 			this.$el.unbind();
 
-            dataService.getData('/opportunity/getFilterValues', null, function (values) {
-                FilterView = new filterView({ collection: workflows, customCollection: values});
-                // Filter custom event listen ------begin
-                FilterView.bind('filter', function () {
-                    self.showFiltredPage(workflows)
-                });
-                FilterView.on('defaultFilter', function () {
-                    self.showFiltredPage(workflows)
-                   /* showList = _.pluck(workflows, '_id');
-
-                    showList.forEach(function (id) {
-                        el = $("td.column[data-id='"+id+"']");
-                        el.removeClass("fold");
-                    });*/
-                });
-                // Filter custom event listen ------end
-
-            });
-
             $(document).on("click", function (e) {
                 self.hideItemsNumber(e);
             });
