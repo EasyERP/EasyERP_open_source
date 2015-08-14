@@ -96,10 +96,10 @@ define([], function () {
                 view: 'department',
                 backend: 'department._id'
             },
-            'Manager': {
+            /*'Manager': {
                 view: 'manager',
                 backend: 'manager._id'
-            },
+            },*/
             'Job Position': {
                 view: 'jobPosition',
                 backend: 'jobPosition._id'
