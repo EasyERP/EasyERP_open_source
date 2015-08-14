@@ -8515,6 +8515,7 @@ textarea#editInput {
 #favoritesContent .removeSavedFilter {
   float: right;
   border: 1px solid #cccccc;
+  height: 21px;
 }
 #favoritesContent .line {
   height: 1px;
@@ -8532,6 +8533,10 @@ textarea#editInput {
   font-size: 12px;
 }
 #favoritesContent .filters:hover {
+  color: white;
+  background-color: #36a9e1;
+}
+#favoritesContent .checkedValue {
   color: white;
   background-color: #36a9e1;
 }
