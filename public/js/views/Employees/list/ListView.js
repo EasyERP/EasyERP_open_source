@@ -39,6 +39,8 @@ define([
 
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
                 this.contentCollection = contentCollection;
+
+                this.filterView;
             },
 
             events: {
@@ -227,24 +229,18 @@ define([
                     }
                 });
 
-                dataService.getData('/department/getForDD', null, function (departments) {
-                    departments.data.forEach(function (department) {
-                        department.name = department.departmentName;
-                    });
-
-                    dataService.getData('/employee/getFilterValues', null, function (values) {
-                        FilterView = new filterView({collection: departments.data, customCollection: values});
-                        // Filter custom event listen ------begin
-                        FilterView.bind('filter', function () {
-                            self.showFilteredPage()
-                        });
-                        FilterView.bind('defaultFilter', function () {
-                            self.showFilteredPage();
-                        });
-                        // Filter custom event listen ------end
-                    });
+                self.filterView = new filterView({
+                    contentType: self.contentType
                 });
 
+                self.filterView.bind('filter', function (filter) {
+                    self.showFilteredPage(filter, self)
+                });
+                self.filterView.bind('defaultFilter', function () {
+                    self.showFilteredPage({}, self);
+                });
+
+                self.filterView.render();
                 currentEl.append(_.template(paginationTemplate));
 
                 var pagenation = this.$el.find('.pagination');
@@ -347,15 +343,12 @@ define([
                 $('#check_all').prop('checked', false);
                 this.changeLocationHash(1, itemsNumber, this.filter);
             },
-            //modified for filter Vasya
-            showFilteredPage: function (e) {
+
+            showFilteredPage: function (filter, context) {
                 var itemsNumber = $("#itemsNumber").text();
+
                 var alphaBet = this.$el.find('#startLetter');
                 var selectedLetter = $(alphaBet).find('.current').length ? $(alphaBet).find('.current')[0].text : '';
-                var chosen = this.$el.find('.chosen');
-
-                var logicAndStatus = this.$el.find('#logicCondition')[0].checked;
-                var defaultFilterStatus = this.$el.find('#defaultFilter')[0].checked;
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
@@ -364,17 +357,18 @@ define([
                     selectedLetter = '';
                 }
 
-                this.filter = custom.getFiltersValues(chosen, defaultFilterStatus, logicAndStatus);
+                context.startTime = new Date();
+                context.newCollection = false;
 
+                if (!filter.name) {
+                    if (selectedLetter !== '') {
+                        filter['letter'] = selectedLetter;
+                    }
+                }
 
-                this.startTime = new Date();
-                this.newCollection = false;
-
-                this.filter['letter'] = selectedLetter;
-
-                this.changeLocationHash(1, itemsNumber, this.filter);
-                this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter });
-                this.getTotalLength(null, itemsNumber, this.filter);
+                context.changeLocationHash(1, itemsNumber, filter);
+                context.collection.showMore({ count: itemsNumber, page: 1, filter: filter});
+                context.getTotalLength(null, itemsNumber, filter);
             },
 
             showPage: function (event) {
@@ -400,6 +394,9 @@ define([
                 }
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
+
+                this.filterView.renderFilterContent();
+
                 holder.find('#timeRecivingDataFromServer').remove();
                 holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             },
