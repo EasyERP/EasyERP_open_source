@@ -735,7 +735,7 @@ define([
                 });
 
                 self.filterView = new filterView({
-                    contentType: this.contentType
+                    contentType: self.contentType
                 });
 
                 self.filterView.bind('filter', function(filter) {
@@ -946,11 +946,11 @@ define([
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
 
-                holder.find('#timeRecivingDataFromServer').remove();
-                holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
-
                 this.editCollection.reset(this.collection.models);
                 this.filterView.renderFilterContent();
+
+                holder.find('#timeRecivingDataFromServer').remove();
+                holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             },
 
             goToEditDialog: function (e) {

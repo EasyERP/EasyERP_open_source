@@ -37,6 +37,8 @@
 
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
                 this.asyncLoadImgs(this.collection);
+
+                this.filterView;
             },
 
             events: {
@@ -183,15 +185,17 @@
                     }
                 ];
 
-                FilterView = new filterView({ contentType: self.contentType });
+                self.filterview = new filterView({ contentType: self.contentType });
 
-                FilterView.bind('filter', function (filter) {
+                self.filterview.bind('filter', function (filter) {
                     self.showFilteredPage(filter, self)
                 });
-                FilterView.bind('defaultFilter', function () {
+                self.filterview.bind('defaultFilter', function () {
                     self.showFilteredPage({}, self);
                 });
-                    // Filter custom event listen ------end
+
+                self.filterview.render();
+
                 $(document).on("click", function (e) {
                     self.hideItemsNumber(e);
                 });
@@ -233,6 +237,8 @@
 
                 }
                 this.asyncLoadImgs(newModels);
+
+                this.filterView.renderFilterContent();
             },
 
             //modified for filter Vasya

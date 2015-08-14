@@ -40,6 +40,8 @@ define([
 
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
                 this.contentCollection = contentCollection;
+
+                this.filterView;
             },
 
             events: {
@@ -178,15 +180,18 @@ define([
                         $("#top-bar-deleteBtn").hide();
                 });
 
-                FilterView = new filterView({ contentType: self.contentType });
+                self.filterView = new filterView({
+                    contentType: self.contentType
+                });
 
-                FilterView.bind('filter', function (filter) {
+                self.filterView.bind('filter', function (filter) {
                     self.showFilteredPage(filter, self)
                 });
-                FilterView.bind('defaultFilter', function () {
+                self.filterView.bind('defaultFilter', function () {
                     self.showFilteredPage({}, self);
                 });
 
+                self.filterView.render();
 
                 $(document).on("click", function (e) {
                     self.hideItemsNumber(e);
@@ -373,6 +378,9 @@ define([
                 }
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
+
+                this.filterView.renderFilterContent();
+
                 holder.find('#timeRecivingDataFromServer').remove();
                 holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             },
