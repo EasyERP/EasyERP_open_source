@@ -8200,6 +8200,7 @@ textarea#editInput {
   left: 0;
   top: calc(99%);
 }
+/**- **/
 .btn-filter {
   position: relative;
   float: left;
@@ -8208,6 +8209,7 @@ textarea#editInput {
   position: relative;
   float: left;
 }
+/**-**/
 .drop-down-filter {
   box-sizing: content-box;
   font-family: "Lucida Grande", Helvetica, Verdana, Arial, sans-serif;
@@ -8492,4 +8494,44 @@ textarea#editInput {
 .CondParagraph {
   font-size: 14px;
   margin-left: 50px;
+}
+#favoritesContent {
+  padding-top: 5px;
+}
+#favoritesContent #forFilterName {
+  height: 22px;
+  width: 84%;
+  border-bottom-left-radius: 5px;
+  border-top-left-radius: 5px;
+}
+#favoritesContent #saveFilterButton {
+  border: 1px solid #cccccc;
+  border-left: 0;
+  margin-left: -7px;
+  box-sizing: border-box;
+  border-radius: 0 5px 5px 0;
+  height: 28px;
+}
+#favoritesContent .removeSavedFilter {
+  float: right;
+  border: 1px solid #cccccc;
+}
+#favoritesContent .line {
+  height: 1px;
+  width: 100%;
+  background-color: #e6e6e6;
+  margin: 9px 0;
+}
+#favoritesContent li {
+  list-style: none;
+}
+#favoritesContent .filters {
+  float: left;
+  width: 88%;
+  padding-left: 6px;
+  font-size: 12px;
+}
+#favoritesContent .filters:hover {
+  color: white;
+  background-color: #36a9e1;
 }
