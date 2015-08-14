@@ -77,8 +77,8 @@ define([
                 var allFilterNames = this.$el.find('.filters');
                 var allowName = true;
 
-                _.forEach(allFilterNames, function(filterName){
-                    if (filterName.innerHTML === filterName.innerHTML){
+                _.forEach(allFilterNames, function(filter){
+                    if (filter.innerHTML === filterName){
                         return allowName = false;
                     }
                 });
@@ -90,8 +90,13 @@ define([
                     App.savedFilters[self.parentContentType] = [];
                 }
 
-                if (allowName) {
+                if (!allowName) {
                     alert('Filter with same name already exists! Please, change filter name.');
+                    bool = false;
+                }
+
+                if (this.filter){
+                    alert('Please, use some filter!');
                     bool = false;
                 }
 
@@ -229,6 +234,7 @@ define([
 
                 this.trigger('filter', this.filter);
                 this.showFilterIcons(this.filter);
+
             },
 
             showFilterIcons: function (filter) {
@@ -238,7 +244,6 @@ define([
                 var self = this;
                 var groupName;
 
-
                 filterValues.empty();
                 _.forEach(filter, function (key, value) {
 
@@ -247,6 +252,8 @@ define([
                     filterIc.addClass('active');
                    filterValues.append('<div class="forFilterIcons"><span class="fa fa-filter funnelIcon"></span><span class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
                 });
+
+                this.$el.find('#forFilterName').val(groupName);
             },
 
             removeFilter: function (e) {
