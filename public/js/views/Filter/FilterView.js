@@ -76,8 +76,8 @@ define([
                 var allFilterNames = this.$el.find('.filters');
                 var allowName = true;
 
-                _.forEach(allFilterNames, function(filter){
-                    if (filter.innerHTML === filterName){
+                _.forEach(allFilterNames, function (filter) {
+                    if (filter.innerHTML === filterName) {
                         return allowName = false;
                     }
                 });
@@ -228,7 +228,8 @@ define([
                             delete this.filter[filterObjectName];
                             groupNameElement.removeClass('checkedGroup');
                         }
-                    };
+                    }
+                    ;
                 }
 
                 this.trigger('filter', this.filter);
@@ -244,10 +245,9 @@ define([
 
                 filterValues.empty();
                 _.forEach(filter, function (key, value) {
-
                     groupName = self.$el.find('#' + key).text();
                     filterIc.addClass('active');
-                   filterValues.append('<div class="forFilterIcons"><span class="fa fa-filter funnelIcon"></span><span class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
+                    filterValues.append('<div class="forFilterIcons"><span class="fa fa-filter funnelIcon"></span><span data-value="' + key + '" class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
                 });
 
 
@@ -256,11 +256,23 @@ define([
             removeFilter: function (e) {
                 var target = $(e.target);
                 var groupName = target.prev().text();
+                var filterView = target.prev().attr('data-value');
+
+                var valuesArray;
+                var collectionElement;
+
+                valuesArray = this.filter[filterView]['value'];
+
+                for (var i = valuesArray.length - 1; i >= 0; i--) {
+                    collectionElement = this.currentCollection[filterView].findWhere({_id: valuesArray[i]});
+                    collectionElement.set({status: false});
+                }
+                delete this.filter[filterView];
 
                 this.renderGroup(groupName, true);
                 $(e.target).closest('div').remove();
 
-               this.renderFilterContent();
+                this.renderFilterContent();
                 this.trigger('filter', this.filter);
             },
 
@@ -303,17 +315,16 @@ define([
                         }
                         self.renderGroup(key, filterView, groupStatus);
                     });
-                };
+                }
+                ;
                 this.showFilterIcons(this.filter);
             },
 
-            renderGroup: function (key, filterView, groupStatus, forUncheck) {
+            renderGroup: function (key, filterView, groupStatus) {
                 var itemView;
                 var idString = '#' + filterView + 'FullContainer';
                 var container = this.$el.find(idString);
                 var status;
-                var valuesArray;
-                var collectionElement;
 
                 this.currentCollection[filterView] = new filterValuesCollection(this.filterObject[filterView]);
 
@@ -322,17 +333,6 @@ define([
                     status = true;
                 } else {
                     status = false;
-                }
-
-                if (forUncheck){
-                    valuesArray = this.filter[filterView]['value'];
-
-                    for (var i = valuesArray.length - 1; i >= 0; i--) {
-                        collectionElement = this.currentCollection[filterView].findWhere({_id: valuesArray[i]});
-                        collectionElement.set({status: false});
-                    }
-                    status = false;
-                    delete this.filter[filterView];
                 }
 
                 itemView = new valuesView({
