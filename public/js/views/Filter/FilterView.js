@@ -74,6 +74,14 @@ define([
                 var favouritesContent = this.$el.find('#favoritesContent');
                 var filterForSave = {};
                 var updatedInfo = {};
+                var allFilterNames = this.$el.find('.filters');
+                var allowName = true;
+
+                _.forEach(allFilterNames, function(filterName){
+                    if (filterName.innerHTML === filterName.innerHTML){
+                        return allowName = false;
+                    }
+                });
 
                 key = subMenu.trim();
                 filterForSave[filterName] = this.filter;
@@ -82,8 +90,8 @@ define([
                     App.savedFilters[self.parentContentType] = [];
                 }
 
-                if (!filterName) {
-                    alert('Please, enter filter name!');
+                if (allowName) {
+                    alert('Filter with same name already exists! Please, change filter name.');
                     bool = false;
                 }
 
@@ -224,8 +232,8 @@ define([
             },
 
             showFilterIcons: function (filter) {
-                var filterIc = $(this.$el).find('.filter-icons');
-                var filterValues = $(this.$el).find('.search-field .oe_searchview_input');
+                var filterIc = this.$el.find('.filter-icons');
+                var filterValues = this.$el.find('.search-field .oe_searchview_input');
                 var filter = Object.keys(filter);
                 var self = this;
                 var groupName;
@@ -234,10 +242,10 @@ define([
                 filterValues.empty();
                 _.forEach(filter, function (key, value) {
 
-                    groupName = $(self.$el.find('#' + key)).text();
+                    groupName = self.$el.find('#' + key).text();
 
                     filterIc.addClass('active');
-                   filterValues.append('<div><span class="fa fa-filter funnelIcon"></span><span class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
+                   filterValues.append('<div class="forFilterIcons"><span class="fa fa-filter funnelIcon"></span><span class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
                 });
             },
 
