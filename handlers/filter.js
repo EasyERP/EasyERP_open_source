@@ -21,6 +21,7 @@ var Filters = function (models) {
                 Persons: getPersonFiltersValues,
                 Companies: getCompaniesFiltersValues,
                 Employees: getEmployeeFiltersValues,
+                Applications: getApplicationFiltersValues,
             },
             function (err, result) {
                 if (err) {
@@ -191,6 +192,53 @@ var Filters = function (models) {
         };
         function getEmployeeFiltersValues(callback) {
             Employee.aggregate([
+                {
+                  $match: {'isEmployee': true}
+                },
+                {
+                    $group: {
+                        _id: null,
+                        'name': {
+                            $addToSet: {
+                                _id: '$_id',
+                                name: {$concat: ['$name.first', ' ', '$name.last']}
+                            }
+                        },
+                        'department': {
+                            $addToSet: {
+                                _id: '$department._id',
+                                name: {'$ifNull': ['$department.name', 'None']}
+                            }
+                        },
+                        'jobPosition': {
+                            $addToSet: {
+                                _id: '$jobPosition._id',
+                                name: {'$ifNull': ['$jobPosition.name', 'None']}
+                            }
+                        },
+                        'manager': {
+                            $addToSet: {
+                                _id: '$manager._id',
+                                name: {'$ifNull': ['$manager.name', 'None']}
+                            }
+                        }
+                    }
+                }
+            ], function (err, result) {
+                if (err) {
+                    callback(err);
+                }
+
+                result = result[0];
+
+                callback(null, result);
+            });
+        };
+        function getApplicationFiltersValues(callback) {
+            Employee.aggregate([
+                {
+                    $match: {'isEmployee': false}
+                },
                 {
                     $group: {
                         _id: null,

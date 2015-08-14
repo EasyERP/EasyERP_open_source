@@ -69,7 +69,7 @@ var Employee = function (event, models) {
                     }
                 };
 
-                resArray.push[{'isEmployee': 'true'}];
+                resArray.push({'isEmployee': true});
 
                 if (resArray.length) {
 
@@ -110,7 +110,7 @@ var Employee = function (event, models) {
                     }
                 };
 
-                resArray.push[{'isEmployee': 'false'}];
+                resArray.push({'isEmployee': false});
 
                 if (resArray.length) {
 
@@ -606,7 +606,7 @@ var Employee = function (event, models) {
                     }
                 };
 
-                resArray.push[{'isEmployee': 'true'}];
+                resArray.push({'isEmployee': true});
 
                 if (resArray.length) {
 
@@ -647,7 +647,7 @@ var Employee = function (event, models) {
                     }
                 };
 
-                resArray.push[{'isEmployee': 'false'}];
+                resArray.push({'isEmployee': false});
 
                 if (resArray.length) {
 

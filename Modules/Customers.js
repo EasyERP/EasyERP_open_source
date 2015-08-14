@@ -645,7 +645,7 @@
                         }
                     };
 
-                    resArray.push[{'type': 'Person'}];
+                    resArray.push({'type': 'Person'});
 
                     if (resArray.length) {
 
@@ -690,7 +690,7 @@
                         }
                     };
 
-                    resArray.push[{'type': 'Companies'}];
+                    resArray.push({'type': 'Company'});
 
                     if (resArray.length) {
 

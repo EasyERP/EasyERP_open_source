@@ -70,8 +70,6 @@ define([
 
                         if (element._id) {
                             ulElement.append('<li data-value="' + element._id + '"' + status + '>' + element.name + '</li>');
-                        } else {
-                            ulElement.append('<li data-value="' + element + '"' + status + '>' + element + '</li>');
                         }
                     }
                 }
