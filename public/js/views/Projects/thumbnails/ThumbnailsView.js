@@ -65,7 +65,7 @@
                     this.hideHealth();
                     return false;
                 } else {
-                    $(e.target).parent().append(_.template(stagesTamplate, { stagesCollection: this.stages }));
+                    $(e.target).parent().append(_.template(stagesTamplate, {stagesCollection: this.stages}));
                     return false;
                 }
             },
@@ -75,7 +75,7 @@
                 var targetElement = $(e.target).parents(".thumbnail");
                 var id = targetElement.attr("id");
                 var model = this.collection.get(id);
-                model.save({ 'workflow._id': $(e.target).attr("id"), 'workflow.name': $(e.target).text() }, {
+                model.save({'workflow._id': $(e.target).attr("id"), 'workflow.name': $(e.target).text()}, {
                     headers: {
                         mid: 39
                     },
@@ -98,7 +98,7 @@
                 var id = target.parents(".thumbnail").attr("id");
                 var model = this.collection.get(id);
                 var helth = parseInt(currTargHelth);
-                model.save({ health: helth }, {
+                model.save({health: helth}, {
                     headers: {
                         mid: 39
                     },
@@ -157,13 +157,17 @@
                 context.$el.find('.thumbnailwithavatar').remove();
 
                 context.changeLocationHash(null, context.defaultItemsNumber, filter);
-                context.collection.showMoreAlphabet({ count: context.defaultItemsNumber, page: 1, filter: filter });
+                context.collection.showMore({count: context.defaultItemsNumber, page: 1, filter: filter});
                 context.getTotalLength(this.defaultItemsNumber, filter);
             },
 
 
             getTotalLength: function (currentNumber, filter, newCollection) {
-                dataService.getData('/totalCollectionLength/Projects', { currentNumber: currentNumber, filter: this.filter, newCollection: this.newCollection }, function (response, context) {
+                dataService.getData('/totalCollectionLength/Projects', {
+                    currentNumber: currentNumber,
+                    filter: this.filter,
+                    newCollection: this.newCollection
+                }, function (response, context) {
                     var showMore = context.$el.find('#showMoreDiv');
                     if (response.showMore) {
                         if (showMore.length === 0) {
@@ -198,7 +202,8 @@
                 this.$el.find(".allNumberPerPage, .newSelectList").hide();
                 if (!el.closest('.search-view')) {
                     $('.search-content').removeClass('fa-caret-up');
-                };
+                }
+                ;
             },
 
             render: function () {
@@ -214,26 +219,27 @@
                     else
                         $("#top-bar-deleteBtn").hide();
                 });
+
                 if (this.collection.length > 0) {
-                    currentEl.append(this.template({ collection: this.collection.toJSON() }));
+                    currentEl.append(this.template({collection: this.collection.toJSON()}));
                 } else {
-                    currentEl.append('<div class="filterButton"><span class="text">Stage</span><div class="arrow">7</div></div><ul class="filter-check-list"><li><input type="checkbox"  value="null" checked="checked"><span>Undefinded</span></li></ul>');
+                    currentEl.html('<h2>No projects found</h2>');
                 }
-                this.bind('incomingStages', this.pushStages, this);
+                //this.bind('incomingStages', this.pushStages, this);
 
-                common.populateWorkflowsList("Projects", ".filter-check-list", "", "/Workflows", null, function (stages) {
+                common.populateWorkflowsList("Projects", ".filter-check-list", "", "/Workflows", null, function (stages) {/*
                     var stage = (self.filter) ? self.filter.workflow || [] : [];
-                    self.trigger('incomingStages', stages);
-                    self.filterview = new filterView({ contentType: self.contentType });
+                    self.trigger('incomingStages', stages);*/
+                    self.filterView = new filterView({contentType: self.contentType});
 
-                self.filterview.bind('filter', function (filter) {
-                    self.showFilteredPage(filter, self)
-                });
-                self.filterview.bind('defaultFilter', function () {
-                    self.showFilteredPage({}, self);
-                });
+                    self.filterView.bind('filter', function (filter) {
+                        self.showFilteredPage(filter, self)
+                    });
+                    self.filterView.bind('defaultFilter', function () {
+                        self.showFilteredPage({}, self);
+                    });
 
-                self.filterview.render();
+                    self.filterView.render();
                 });
 
                 $('#check_all').click(function () {
@@ -259,11 +265,11 @@
                 } else {
                     e.preventDefault();
                     var id = $(e.target).closest('.thumbnail').attr("id");
-                    var model = new currentModel({ validate: false });
+                    var model = new currentModel({validate: false});
                     model.urlRoot = '/Projects/form/' + id;
                     model.fetch({
                         success: function (model) {
-                            new editView({ model: model });
+                            new editView({model: model});
                         },
                         error: function () {
                             alert('Please refresh browser');
@@ -274,7 +280,7 @@
 
             showMore: function (event) {
                 event.preventDefault();
-                this.collection.showMore({ filter: this.filter, newCollection: this.newCollection });
+                this.collection.showMore({filter: this.filter, newCollection: this.newCollection});
             },
 
             showMoreContent: function (newModels) {
@@ -287,12 +293,12 @@
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
 
                 if (showMore.length != 0) {
-                    showMore.before(this.template({ collection: this.collection.toJSON() }));
+                    showMore.before(this.template({collection: this.collection.toJSON()}));
                     $(".filter-check-list").eq(1).remove();
 
                     showMore.after(created);
                 } else {
-                    content.html(this.template({ collection: this.collection.toJSON() }));
+                    content.html(this.template({collection: this.collection.toJSON()}));
 
                 }
                 this.asyncLoadImgs(newModels);
@@ -307,7 +313,7 @@
 
             editItem: function () {
                 //create editView in dialog here
-                new editView({ collection: this.collection });
+                new editView({collection: this.collection});
             },
 
             deleteItems: function () {

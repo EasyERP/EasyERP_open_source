@@ -135,7 +135,7 @@ define([], function () {
         },
         Projects: {
             'Project Name': {
-                view: 'projectName',
+                view: 'name',
                 backend: '_id'
             },
             'Contact': {
