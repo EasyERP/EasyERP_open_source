@@ -256,7 +256,8 @@ define([
                 for (var i = length - 1; i >= 0; i--){
                     if (savedFilters[i]['_id'] === id){
                         keys = Object.keys(savedFilters[i]['filter']);
-                        return savedFilters[i]['filter'][keys[0]];
+                        App.filter = savedFilters[i]['filter'][keys[0]];
+                        return App.filter;
                     }
                 }
             } else {

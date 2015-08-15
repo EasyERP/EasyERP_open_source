@@ -70,7 +70,7 @@ define([
                     currentUser = response.user;
                     App.currentUser = currentUser;
 
-                    if (response && currentUser.profile && currentUser.profile.profileName == 'baned') {
+                    if (currentUser && currentUser.profile && currentUser.profile.profileName == 'baned') {
                         $('title').text("EasyERP");
                         context.$el.find("li#userpage").remove();
                         context.$el.find("#top-bar").addClass("banned");

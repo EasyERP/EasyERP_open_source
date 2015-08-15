@@ -263,10 +263,11 @@ var JobPosition = function (models) {
         var res = {};
         res['data'] = [];
         var query = models.get(req.session.lastDb, 'JobPosition', jobPositionSchema).find({});
-        query.populate('department').
-            populate('createdBy.user').
-            populate('editedBy.user').
-            populate('workflow', 'name _id');
+        query
+            .populate('createdBy.user')
+            .populate('editedBy.user')
+            .populate('department', 'departmentName')
+            .populate('workflow', 'name _id status');
         query.sort({name: 1});
         query.exec(function (err, result) {
             if (err) {

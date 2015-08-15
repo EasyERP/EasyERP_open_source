@@ -6,13 +6,13 @@ define([
         'collections/JobPositions/filterCollection',
         'models/JobPositionsModel',
         'views/JobPositions/EditView',
-        'views/Filter/FilterView',
+        //'views/Filter/FilterView',
         'common',
         'dataService',
         'text!templates/stages.html'
     ],
 
-    function (paginationTemplate, listTemplate, createView, listItemView, contentCollection, currentModel, editView, filterView, common, dataService, stagesTamplate) {
+    function (paginationTemplate, listTemplate, createView, listItemView, contentCollection, currentModel, editView,/* filterView, */common, dataService, stagesTamplate) {
         var JobPositionsListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -273,17 +273,17 @@ define([
                     var stage = (self.filter) ? self.filter.workflow : null;
                     itemView.trigger('incomingStages', stages);
 
-                    dataService.getData('/jobPosition/getFilterValues', null, function (values) {
-                        FilterView = new filterView({ collection: stages, customCollection: values});
-                        // Filter custom event listen ------begin
-                        FilterView.bind('filter', function () {
-                            self.showFilteredPage()
-                        });
-                        FilterView.bind('defaultFilter', function () {
-                            self.showFilteredPage();
-                        });
-                        // Filter custom event listen ------end
-                    });
+                    //dataService.getData('/jobPosition/getFilterValues', null, function (values) {
+                    //   // FilterView = new filterView({ collection: stages, customCollection: values});
+                    //    // Filter custom event listen ------begin
+                    //    FilterView.bind('filter', function () {
+                    //        self.showFilteredPage()
+                    //    });
+                    //    FilterView.bind('defaultFilter', function () {
+                    //        self.showFilteredPage();
+                    //    });
+                    //    // Filter custom event listen ------end
+                    //});
                 });
 
                 $(document).on("click", function (e) {
