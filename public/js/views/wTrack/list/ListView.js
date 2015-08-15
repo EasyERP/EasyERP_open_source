@@ -296,6 +296,7 @@ define([
                 var width;
                 var editedElement;
                 var value;
+                var insertedInput;
 
                 if (wTrackId && el.prop('tagName') !== 'INPUT') {
                     if (this.wTrackId) {
@@ -313,6 +314,10 @@ define([
                     tempContainer = el.text();
                     width = el.width() - 6;
                     el.html('<input class="editing" type="text" value="' + tempContainer + '"  maxLength="4" style="width:' + width + 'px">');
+
+                    insertedInput = el.find('input');
+                    insertedInput.focus();
+                    insertedInput[0].setSelectionRange(0, insertedInput.val().length);
 
                     this.autoCalc(e);
 
