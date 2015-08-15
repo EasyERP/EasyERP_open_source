@@ -68,7 +68,7 @@ define([
                         self.trigger('filter', App.filter);
                         self.showFilterIcons(App.filter);
                     } else {
-                        console.log('can\'t fetch currentUser');
+                        console.log('can\'t get savedFilters');
                     }
                 });
 
@@ -98,7 +98,6 @@ define([
 
             saveFilter: function () {
                 var currentUser = new usersModel(App.currentUser);
-                var subMenu = $('#submenu-holder').find('li.selected').text();
                 var key;
                 var id;
                 var filterObj = {};
@@ -119,7 +118,8 @@ define([
                     }
                 });
 
-                key = subMenu.trim();
+                key = this.parentContentType;
+
                 filterForSave[filterName] = self.cloneFilter(App.filter);
 
                 if (!App.savedFilters[this.parentContentType]) {
@@ -208,15 +208,8 @@ define([
 
                 $.find('#' + filterID)[0].remove();
                 $.find('#' + filterID)[0].remove();
-
-                //var filters = App.savedFilters[this.parentContentType];
-                //for (var i = filters.length - 1; i >= 0; i--) {
-                //    if (filters[i]['_id'] === filterID) {
-                //        delete App.savedFilters[this.parentContentType][i];
-                //    }
-                //
-                //}
             },
+
             selectValue: function (e) {
                 var currentElement = $(e.target);
                 var currentValue = currentElement.attr('data-value');
@@ -263,8 +256,7 @@ define([
                             delete App.filter[filterObjectName];
                             groupNameElement.removeClass('checkedGroup');
                         }
-                    }
-                    ;
+                    };
                 }
 
                 this.trigger('filter', App.filter);
