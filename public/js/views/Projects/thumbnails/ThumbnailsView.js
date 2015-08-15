@@ -38,6 +38,8 @@
                 this.render();
 
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
+                this.filterView;
+
             },
 
             events: {
@@ -134,54 +136,31 @@
 
             },
 
-            showFilteredPage: function () {
-                var chosen = this.$el.find('.chosen');
-                var self = this;
-                var checkedElements = $('.drop-down-filter input:checkbox:checked');
-                var showList;
-                var condition = this.$el.find('.conditionAND > input')[0];
+            showFilteredPage: function (filter, context) {
+                var itemsNumber = $("#itemsNumber").text();
 
-                this.$el.find('.thumbnail').remove();
-                this.startTime = new Date();
-                this.newCollection = false;
-                this.filter =  {};
-                this.defaultItemsNumber = 0;
-                this.filter['condition'] = 'and';
+                var alphaBet = this.$el.find('#startLetter');
+                var selectedLetter = $(alphaBet).find('.current').length ? $(alphaBet).find('.current')[0].text : '';
 
-                if  (condition && !condition.checked) {
-                    self.filter['condition'] = 'or';
+                $("#top-bar-deleteBtn").hide();
+                $('#check_all').prop('checked', false);
+
+                context.startTime = new Date();
+                context.newCollection = false;
+
+                if (!filter.name) {
+                    if (selectedLetter !== '') {
+                        filter['letter'] = selectedLetter;
+                    }
                 }
 
-                if (chosen) {
-                    chosen.each(function (index, elem) {
-                        if (elem.children[2].attributes.class.nodeValue === 'chooseDate') {
-                            if (self.filter[elem.children[1].value]) {
-                                self.filter[elem.children[1].value].push({start: $('#start').val(), end: $('#end').val()});
+                context.$el.find('.thumbnailwithavatar').remove();
 
-                            } else {
-                                self.filter[elem.children[1].value] = [];
-                                self.filter[elem.children[1].value].push({start: $('#start').val(), end: $('#end').val()});
-                            }
-                        } else {
-                            if (self.filter[elem.children[1].value]) {
-                                $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
-                                    self.filter[elem.children[1].value].push(element.value);
-                                })
-                            } else {
-                                self.filter[elem.children[1].value] = [];
-                                $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
-                                    self.filter[elem.children[1].value].push(element.value);
-                                })
-                            }
-                        }
-
-                    });
-                };
-
-                this.changeLocationHash(null, this.defaultItemsNumber, this.filter);
-                this.collection.showMore({ count: this.defaultItemsNumber, page: 1, filter: this.filter, newCollection: true });
-                this.getTotalLength(this.defaultItemsNumber, this.filter);
+                context.changeLocationHash(null, context.defaultItemsNumber, filter);
+                context.collection.showMoreAlphabet({ count: context.defaultItemsNumber, page: 1, filter: filter });
+                context.getTotalLength(this.defaultItemsNumber, filter);
             },
+
 
             getTotalLength: function (currentNumber, filter, newCollection) {
                 dataService.getData('/totalCollectionLength/Projects', { currentNumber: currentNumber, filter: this.filter, newCollection: this.newCollection }, function (response, context) {
@@ -243,22 +222,34 @@
                 }
                 this.bind('incomingStages', this.pushStages, this);
 
-                common.populateWorkflowsList("Projects", ".filter-check-list", "", "/Workflows", null, function (stages) {
-                    var stage = (self.filter) ? self.filter.workflow || [] : [];
-                    self.trigger('incomingStages', stages);
-                    dataService.getData('/project/getFilterValues', null, function (values) {
-                        FilterView = new filterView({ collection: stages, customCollection: values});
-                        // Filter custom event listen ------begin
-                        FilterView.bind('filter', function () {
-                            self.showFilteredPage()
-                        });
-                        FilterView.bind('defaultFilter', function () {
-                            self.showFilteredPage();
-                        });
-                        // Filter custom event listen ------end
+                //common.populateWorkflowsList("Projects", ".filter-check-list", "", "/Workflows", null, function (stages) {
+                //    var stage = (self.filter) ? self.filter.workflow || [] : [];
+                //    self.trigger('incomingStages', stages);
+                //    dataService.getData('/project/getFilterValues', null, function (values) {
+                //        FilterView = new filterView({ collection: stages, customCollection: values});
+                //        // Filter custom event listen ------begin
+                //        FilterView.bind('filter', function () {
+                //            self.showFilteredPage()
+                //        });
+                //        FilterView.bind('defaultFilter', function () {
+                //            self.showFilteredPage();
+                //        });
+                //        // Filter custom event listen ------end
+                //
+                //    });
+                //});
 
-                    });
+                self.filterview = new filterView({ contentType: self.contentType });
+
+                self.filterview.bind('filter', function (filter) {
+                    self.showFilteredPage(filter, self)
                 });
+                self.filterview.bind('defaultFilter', function () {
+                    self.showFilteredPage({}, self);
+                });
+
+                self.filterview.render();
+
                 $('#check_all').click(function () {
                     $(':checkbox').prop('checked', this.checked);
                     if ($("input.checkbox:checked").length > 0)
@@ -319,6 +310,8 @@
 
                 }
                 this.asyncLoadImgs(newModels);
+                this.filterView.renderFilterContent();
+
             },
 
             createItem: function () {
