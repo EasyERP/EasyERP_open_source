@@ -359,7 +359,6 @@ define([
                 $('.ui-dialog ').remove();
                 var self = this;
                 var currentEl = this.$el;
-                var FilterView;
 
                 currentEl.html('');
                 currentEl.append(_.template(listTemplate));
