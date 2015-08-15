@@ -916,23 +916,6 @@ var Project = function (models, event) {
                                 if (data && data.filter) {
 
                                     qObj['$and'].push({$and: caseFilter(data.filter)});
-
-                                    /*for (var key in data.filter) {
-                                        switch (key) {
-                                            case 'workflow':
-                                                condition.push({'workflow._id': {$in: data.filter.workflow.value.objectID()}});
-                                                break;
-                                            case 'project':
-                                                condition.push({'project._id': {$in: data.filter.project.value.objectID()}});
-                                                break;
-                                            case 'customer':
-                                                condition.push({'customer._id': {$in: data.filter.customer.value.objectID()}});
-                                                break;
-                                            case 'projectmanager':
-                                                condition.push({'projectmanager._id': {$in: data.filter.projectmanager.value.objectID()}});
-                                                break;
-                                        }
-                                    }*/
                                 }
 
                                 var query = models.get(req.session.lastDb, "Project", projectSchema).find(qObj);
@@ -942,9 +925,6 @@ var Project = function (models, event) {
                                 }*/
 
                                 query.select("_id projectName task workflow projectmanager customer health").
-                                   // populate('workflow._id', 'name').
-                                    //populate('projectmanager._id', 'name _id').
-                                    //populate('customer._id', 'name').
                                     skip((data.page - 1) * data.count).
                                     limit(data.count).
                                     exec(function (error, _res) {
@@ -1115,7 +1095,7 @@ var Project = function (models, event) {
                                     });
                                 } else {
                                     if (data.currentNumber && data.currentNumber < projectsId.length) {
-                                        res['showMore'] = true;
+                                        //res['showMore'] = true;
                                     }
                                     res['count'] = projectsId.length;
                                     response.send(res);

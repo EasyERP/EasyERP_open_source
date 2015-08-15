@@ -140,7 +140,7 @@
             },
 
             showFilteredPage: function (filter, context) {
-                var itemsNumber = $("#itemsNumber").text();
+               /* var itemsNumber = $("#itemsNumber").text();
 
                 var alphaBet = this.$el.find('#startLetter');
                 var selectedLetter = $(alphaBet).find('.current').length ? $(alphaBet).find('.current')[0].text : '';
@@ -151,13 +151,11 @@
                 context.startTime = new Date();
                 context.newCollection = false;
 
-                if (!filter.name) {
-                    if (selectedLetter !== '') {
-                        filter['letter'] = selectedLetter;
-                    }
-                }
+                context.$el.find('.thumbnailwithavatar').remove();*/
 
-                context.$el.find('.thumbnailwithavatar').remove();
+                this.$el.find('.thumbnail').remove();
+                this.startTime = new Date();
+                this.newCollection = false;
 
                 context.changeLocationHash(null, context.defaultItemsNumber, filter);
                 context.collection.showMore({count: context.defaultItemsNumber, page: 1, filter: filter});
@@ -288,7 +286,7 @@
                 var holder = this.$el;
                 var showMore = holder.find('#showMoreDiv');
                 var created = holder.find('#timeRecivingDataFromServer');
-                var content = holder.find(".thumbnailwithavatar");
+                var content = holder.find("#thumbnailContent");
 
                 this.defaultItemsNumber += newModels.length;
                 this.changeLocationHash(null, (this.defaultItemsNumber < 50) ? 50 : this.defaultItemsNumber, this.filter);
@@ -296,16 +294,13 @@
 
                 if (showMore.length != 0) {
                     showMore.before(this.template({collection: this.collection.toJSON()}));
-                    //$(".filter-check-list").eq(1).remove();
 
                     showMore.after(created);
                 } else {
                     content.html(this.template({collection: this.collection.toJSON()}));
-
                 }
                 this.asyncLoadImgs(newModels);
                 this.filterView.renderFilterContent();
-
             },
 
             createItem: function () {
