@@ -207,18 +207,26 @@ define([
                     self.hideItemsNumber(e);
                 });
 
-                self.filterView = new filterView({
-                    contentType: self.contentType
+                dataService.getData("/workflow/fetch", {
+                        wId: 'Sales Invoice',
+                        source: 'purchase',
+                        targetSource: 'invoice'
+                    }, function (stages) {
+                    self.stages = stages;
                 });
 
-                self.filterView.bind('filter', function (filter) {
-                    self.showFilteredPage(filter, self)
-                });
-                self.filterView.bind('defaultFilter', function () {
-                    self.showFilteredPage({}, self);
-                });
-
-                self.filterView.render();
+                //self.filterView = new filterView({
+                //    contentType: self.contentType
+                //});
+                //
+                //self.filterView.bind('filter', function (filter) {
+                //    self.showFilteredPage(filter, self)
+                //});
+                //self.filterView.bind('defaultFilter', function () {
+                //    self.showFilteredPage({}, self);
+                //});
+                //
+                //self.filterView.render();
 
                 function currentEllistRenderer(){
                     currentEl.append(_.template(listTemplate, {currentDb: App.currentDb}));
@@ -367,32 +375,38 @@ define([
                 this.changeLocationHash(1, itemsNumber, this.filter);
             },
 
-            showFilteredPage: function (filter, context) {
+            showFilteredPage: function (showList) {
                 var itemsNumber = $("#itemsNumber").text();
+                this.startTime = new Date();
+                this.newCollection = false;
 
-                var alphaBet = this.$el.find('#startLetter');
-                var selectedLetter = $(alphaBet).find('.current').length ? $(alphaBet).find('.current')[0].text : '';
+                this.filter = {};
+                //if (showList.length) this.filter['workflow'] = showList;
+
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
-
-                if (selectedLetter === "All") {
-                    selectedLetter = '';
-                }
-
-                context.startTime = new Date();
-                context.newCollection = false;
-
-                if (!filter.name) {
-                    if (selectedLetter !== '') {
-                        filter['letter'] = selectedLetter;
-                    }
-                }
-
-                context.changeLocationHash(1, itemsNumber, filter);
-                context.collection.showMore({ count: itemsNumber, page: 1, filter: filter});
-                context.getTotalLength(null, itemsNumber, filter);
+                this.changeLocationHash(1, itemsNumber, this.filter);
+                this.collection.showMore({count: itemsNumber, page: 1, filter: this.filter});
+                this.getTotalLength(null, itemsNumber, this.filter);
             },
+
+            //showFilteredPage: function (filter, context) {
+            //    var itemsNumber = $("#itemsNumber").text();
+            //
+            //    context.startTime = new Date();
+            //    context.newCollection = false;
+            //
+            //    if (!filter.name) {
+            //        if (selectedLetter !== '') {
+            //            filter['letter'] = selectedLetter;
+            //        }
+            //    }
+            //
+            //    context.changeLocationHash(1, itemsNumber, filter);
+            //    context.collection.showMore({ count: itemsNumber, page: 1, filter: filter});
+            //    context.getTotalLength(null, itemsNumber, filter);
+            //},
 
             showPage: function (event) {
                 event.preventDefault();
@@ -419,7 +433,7 @@ define([
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
 
-                this.filterView.renderFilterContent();
+               // this.filterView.renderFilterContent();
 
                 holder.find('#timeRecivingDataFromServer').remove();
                 holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");

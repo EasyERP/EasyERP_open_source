@@ -576,10 +576,10 @@ var Opportunities = function (models, event) {
                  break;
                  }
                  }*/
-                if (!condition.length) {
-                    delete filterObj['$or'];
-                    delete filterObj['$and']
-                }
+               // if (!condition.length) {
+               //     delete filterObj['$or'];
+               //     delete filterObj['$and']
+               // }
             }
             }
                 break;
@@ -591,16 +591,16 @@ var Opportunities = function (models, event) {
                     optionsObject['isConverted'] = true;
                     optionsObject['isOpportunitie'] = true;
                 }
-                //if (data && data.filter) {
-                //    filterObj = {};
-                //    optionsObject['$and'].push(filterObj);
-                //    if (data.filter.condition === 'or') {
-                //        filterObj['$or'] = [];
-                //        condition = filterObj['$or'];
-                //    } else {
-                //        filterObj['$and'] = [];
-                //        condition = filterObj['$and'];
-                //    }
+                if (data && data.filter) {
+                    filterObj = {};
+                    optionsObject['$and'].push(filterObj);
+                    if (data.filter.condition === 'or') {
+                        filterObj['$or'] = [];
+                        condition = filterObj['$or'];
+                    } else {
+                        filterObj['$and'] = [];
+                        condition = filterObj['$and'];
+                    }
                    // caseFilterOpp(data.filter, condition);
 
                     /*for (var key in data.filter) {
@@ -622,11 +622,11 @@ var Opportunities = function (models, event) {
                      break;
                      }
                      }*/
-                    if (!condition.length) {
-                        delete filterObj['$or'];
-                        delete filterObj['$and']
-                    }
-               // }
+                    //if (!condition.length) {
+                    //    delete filterObj['$or'];
+                    //    delete filterObj['$and']
+                    //}
+                }
             }
                 break;
         }
