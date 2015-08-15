@@ -7,6 +7,7 @@ var Filters = function (models) {
     var CustomerSchema = mongoose.Schemas['Customer'];
     var EmployeeSchema = mongoose.Schemas['Employee'];
     var ProjectSchema = mongoose.Schemas['Project'];
+    var TaskSchema = mongoose.Schemas['Tasks'];
     var _ = require('../node_modules/underscore');
     var async = require('async');
 
@@ -17,6 +18,7 @@ var Filters = function (models) {
         var Customer = models.get(lastDB, 'Customers', CustomerSchema);
         var Employee = models.get(lastDB, 'Employee', EmployeeSchema);
         var Project = models.get(lastDB, 'Project', ProjectSchema);
+        var Task = models.get(lastDB, 'Tasks', TaskSchema);
 
         async.parallel({
                 wTrack: getWtrackFiltersValues,
@@ -25,6 +27,7 @@ var Filters = function (models) {
                 Employees: getEmployeeFiltersValues,
                 Applications: getApplicationFiltersValues,
                 Projects: getProjectFiltersValues,
+                Tasks: getTasksFiltersValues,
             },
             function (err, result) {
                 if (err) {
@@ -107,6 +110,7 @@ var Filters = function (models) {
                 callback(null, result);
             });
         };
+
         function getPersonFiltersValues(callback) {
             Customer.aggregate([
                 {
@@ -150,6 +154,7 @@ var Filters = function (models) {
                 callback(null, result);
             });
         };
+
         function getCompaniesFiltersValues(callback) {
             Customer.aggregate([
                 {
@@ -193,6 +198,7 @@ var Filters = function (models) {
                 callback(null, result);
             });
         };
+
         function getEmployeeFiltersValues(callback) {
             Employee.aggregate([
                 {
@@ -237,6 +243,7 @@ var Filters = function (models) {
                 callback(null, result);
             });
         };
+
         function getApplicationFiltersValues(callback) {
             Employee.aggregate([
                 {
@@ -281,6 +288,7 @@ var Filters = function (models) {
                 callback(null, result);
             });
         };
+
         function getProjectFiltersValues(callback) {
             Project.aggregate([
                 {
@@ -308,6 +316,48 @@ var Filters = function (models) {
                             $addToSet: {
                                 _id: '$projectmanager._id',
                                 name: {'$ifNull': ['$projectmanager.name', 'None']}
+                            }
+                        }
+                    }
+                }
+            ], function (err, result) {
+                if (err) {
+                    callback(err);
+                }
+
+                result = result[0];
+
+                callback(null, result);
+            });
+        };
+
+        function getTasksFiltersValues(callback) {
+            Task.aggregate([
+                {
+                    $group: {
+                        _id: null,
+                        'project': {
+                            $addToSet: {
+                                _id: '$project._id',
+                                name: '$project.projectName'
+                            }
+                        },
+                        'assignedTo': {
+                            $addToSet: {
+                                _id: '$assignedTo._id',
+                                name: {'$ifNull': ['$assignedTo.name', 'None']}
+                            }
+                        },
+                        'workflow': {
+                            $addToSet: {
+                                _id: '$workflow._id',
+                                name: {'$ifNull': ['$workflow.name', 'None']}
+                            }
+                        },
+                        'type': {
+                            $addToSet: {
+                                _id: '$type',
+                                name: '$type'
                             }
                         }
                     }

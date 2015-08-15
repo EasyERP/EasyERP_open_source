@@ -23,7 +23,7 @@ var Opportunities = function (models, event) {
             filterObj['$or'] = [];
             or = filterObj['$or'];
 
-            caseFilterOpp(filter, or);
+           // caseFilterOpp(filter, or);
         }
 
         if (data.filter && data.filter.workflow) {
@@ -38,10 +38,10 @@ var Opportunities = function (models, event) {
         switch (contentType) {
             case ('Opportunities'):
                 optionsObject['$and'].push({'isOpportunitie': true});
-
-                if (data && data.filter) {
-                    optionsObject['$and'].push(filterObj);
-                }
+                //
+                //if (data && data.filter) {
+                //    optionsObject['$and'].push(filterObj);
+                //}
                 break;
             case ('Leads'):
                 optionsObject['$and'].push({'isOpportunitie': false});
@@ -50,9 +50,9 @@ var Opportunities = function (models, event) {
                     optionsObject['isConverted'] = true;
                     optionsObject['isOpportunitie'] = true;
                 }
-                if (data && data.filter ) {
-                    optionsObject['$and'].push(filterObj);
-                }
+                //if (data && data.filter ) {
+                //    optionsObject['$and'].push(filterObj);
+                //}
                 break;
         }
 
@@ -553,34 +553,34 @@ var Opportunities = function (models, event) {
                     } else {
                         filterObj['$and'] = [];
                         condition = filterObj['$and'];
-                    }
-
-                    caseFilterOpp(data.filter, condition);
-
-                    /*for (var key in data.filter) {
-                     condition = data.filter[key];
-                     switch (key) {
-                     case 'Name':
-                     or.push({ 'name': {$in: condition}});
-                     break;
-                     case 'Creation date':
-                     or.push({ 'creationDate': {$gte: new Date(condition[0].start), $lte: new Date(condition[0].end)}});
-                     break;
-                     case 'Next action':
-                     if (!condition.length) condition = [''];
-                     or.push({ 'nextAction.desc': {$in: condition}});
-                     break;
-                     case 'Expected revenue':
-                     ConvertType(condition, 'integer');
-                     or.push({ 'expectedRevenue.value': {$in: condition}});
-                     break;
-                     }
-                     }*/
-                    if (!condition.length) {
-                        delete filterObj['$or'];
-                        delete filterObj['$and']
-                    }
                 }
+
+                //caseFilterOpp(data.filter, condition);
+
+                /*for (var key in data.filter) {
+                 condition = data.filter[key];
+                 switch (key) {
+                 case 'Name':
+                 or.push({ 'name': {$in: condition}});
+                 break;
+                 case 'Creation date':
+                 or.push({ 'creationDate': {$gte: new Date(condition[0].start), $lte: new Date(condition[0].end)}});
+                 break;
+                 case 'Next action':
+                 if (!condition.length) condition = [''];
+                 or.push({ 'nextAction.desc': {$in: condition}});
+                 break;
+                 case 'Expected revenue':
+                 ConvertType(condition, 'integer');
+                 or.push({ 'expectedRevenue.value': {$in: condition}});
+                 break;
+                 }
+                 }*/
+               // if (!condition.length) {
+               //     delete filterObj['$or'];
+               //     delete filterObj['$and']
+               // }
+            }
             }
                 break;
             case ('Leads'):
@@ -601,7 +601,7 @@ var Opportunities = function (models, event) {
                         filterObj['$and'] = [];
                         condition = filterObj['$and'];
                     }
-                    caseFilterOpp(data.filter, condition);
+                   // caseFilterOpp(data.filter, condition);
 
                     /*for (var key in data.filter) {
                      condition = data.filter[key];
@@ -622,10 +622,10 @@ var Opportunities = function (models, event) {
                      break;
                      }
                      }*/
-                    if (!condition.length) {
-                        delete filterObj['$or'];
-                        delete filterObj['$and']
-                    }
+                    //if (!condition.length) {
+                    //    delete filterObj['$or'];
+                    //    delete filterObj['$and']
+                    //}
                 }
             }
                 break;
@@ -693,20 +693,20 @@ var Opportunities = function (models, event) {
                                 } else {
                                     query.sort({"editedBy.date": -1});
                                 }
-                                if (data && data.filter && data.filter.workflow) {
-                                    data.filter.workflow = data.filter.workflow.map(function (item) {
-                                        return item === "null" ? null : item;
-                                    });
-                                }
+                                //if (data && data.filter && data.filter.workflow) {
+                                //    data.filter.workflow = data.filter.workflow.map(function (item) {
+                                //        return item === "null" ? null : item;
+                                //    });
+                                //}
                                 switch (data.contentType) {
 
                                     case ('Opportunities'):
                                     {
-                                        if (data && data.filter && data.filter.workflow) {
-                                            query.where('workflow').in(data.filter.workflow);
-                                        } else if (data && (!data.newCollection || data.newCollection === 'false')) {
-                                            query.where('workflow').in([]);
-                                        }
+                                        //if (data && data.filter && data.filter.workflow) {
+                                        //    query.where('workflow').in(data.filter.workflow);
+                                        //} else if (data && (!data.newCollection || data.newCollection === 'false')) {
+                                        //    query.where('workflow').in([]);
+                                        //}
                                         query.populate('customer', 'name').
                                             populate('workflow', '_id name status').
                                             populate('salesPerson', 'name').
@@ -716,13 +716,13 @@ var Opportunities = function (models, event) {
                                         break;
                                     case ('Leads'):
                                     {
-                                        if (data && data.filter && data.filter.workflow) {
-                                            query.where('workflow').in(data.filter.workflow);
-                                        } else if (data && data.filter) {
-                                            query;
-                                        } else if (data && (!data.newCollection || data.newCollection === 'false')) {
-                                            query.where('workflow').in([]);
-                                        }
+                                        //if (data && data.filter && data.filter.workflow) {
+                                        //    query.where('workflow').in(data.filter.workflow);
+                                        //} else if (data && data.filter) {
+                                        //    query;
+                                        //} else if (data && (!data.newCollection || data.newCollection === 'false')) {
+                                        //    query.where('workflow').in([]);
+                                        //}
 
                                         query.select("_id createdBy editedBy name workflow contactName phones campaign source email contactName").
                                             populate('company', 'name').

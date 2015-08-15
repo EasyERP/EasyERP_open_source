@@ -1159,7 +1159,8 @@ var requestHandler = function (event, mainDb) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getReadAccess(req, req.session.uId, 14, function (access) {
                 if (access) {
-                    jobPosition.getFilter(req, res);
+                   // jobPosition.getFilter(req, res);
+                    jobPosition.get(req, res);
                 } else {
                     res.send(403);
                 }
