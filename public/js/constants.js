@@ -150,6 +150,24 @@ define([], function () {
                 view: 'projectmanager',
                 backend: 'projectmanager._id'
             }
+        },
+        Tasks: {
+            'Project': {
+                view: 'project',
+                backend: 'project'
+            },
+            'Status': {
+                view: 'workflow',
+                backend: 'workflow'
+            },
+            'Assigned To': {
+                view: 'assignedTo',
+                backend: 'assignedTo'
+            },
+            'Type': {
+                view: 'type',
+                backend: 'type'
+            },
         }
 
     };

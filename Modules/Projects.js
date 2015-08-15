@@ -996,9 +996,6 @@ var Project = function (models, event) {
         }
         res['showMore'] = false;
 
-        /*if (data && data.parrentContentId) {
-            addObj['_id'] = objectId(data.parrentContentId);
-        }*/
         if (data && data.type !== 'Tasks' && data.filter) {
 
             addObj['$and'] = caseFilter(data.filter);
@@ -1029,9 +1026,12 @@ var Project = function (models, event) {
                 return item === "null" ? null : item;
             });
             addObj['workflow'] = {$in: data.filter.workflow.objectID()};*/
-        } else if (data && data.type !== 'Tasks' && data.newCollection === 'false') {
-            addObj['workflow'] = {$in: []};
         }
+
+        if (data && data.parrentContentId) {
+            addObj['$and'].push({_id: objectId(data.parrentContentId)});
+        }
+
         models.get(req.session.lastDb, "Department", department).aggregate(
             {
                 $match: {
@@ -1090,14 +1090,14 @@ var Project = function (models, event) {
                                 if (data && data.type == 'Tasks') {
                                     var query = models.get(req.session.lastDb, 'Tasks', tasksSchema).
                                         where('project').in(projectsId.objectID());
-                                    if (data && data.filter && data.filter.workflow) {
+                                    /*if (data && data.filter && data.filter.workflow) {
                                         data.filter.workflow = data.filter.workflow.map(function (item) {
                                             return item === "null" ? null : item;
                                         });
                                         query.where('workflow').in(data.filter.workflow);
                                     } else if (data && (!data.newCollection || data.newCollection === 'false')) {
                                         query.where('workflow').in([]);
-                                    }
+                                    }*/
                                     query.exec(function (err, result) {
                                         if (!err) {
                                             if (data.currentNumber && data.currentNumber < result.length) {
@@ -1875,7 +1875,7 @@ var Project = function (models, event) {
                                     where('project').in(projectsId.objectID());
                                 if (data && data.filter) {
 
-                                    for (var key in data.filter) {
+                                    /*for (var key in data.filter) {
                                         switch (key) {
                                             case 'workflow':
                                                 data.filter.workflow = data.filter.workflow.map(function (item) {
@@ -1887,11 +1887,10 @@ var Project = function (models, event) {
                                                 query.where('type').in(data.filter.type);
                                                 break;
                                         }
-                                    }
+                                    }*/
 
-                                } else if (data && (!data.newCollection || data.newCollection === 'false')) {
-                                    query.where('workflow').in([]);
                                 }
+
                                 if (data.sort) {
                                     query.sort(data.sort);
                                 } else {
