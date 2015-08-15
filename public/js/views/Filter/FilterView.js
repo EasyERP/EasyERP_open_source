@@ -46,22 +46,32 @@ define([
 
             useFilter: function (e) {
                 var target = $(e.target);
-                var filter;
-
+                var savedFilters;
+                var self = this;
+                var length;
                 var targetId = target.attr('id');
-               // var savedFilters = App.savedFilters[this.parentContentType];
-                var savedFilters = Custom.getFilterById(targetId, this.parentContentType);
-                var length = savedFilters.length;
 
-                //for (var i = length - 1; i >= 0; i--) {
-                //    if (savedFilters[i]['_id'] === targetId) {
-                //        keys = Object.keys(savedFilters[i]['filter']);
-                //        filter = savedFilters[i]['filter'][keys[0]];
-                //    }
-                //}
-                //App.filter = filter;
-                this.trigger('filter', filter);
-                this.showFilterIcons(filter);
+                dataService.getData('/currentUser', null, function (response) {
+                    if (response && !response.error) {
+                        App.currentUser = response.user;
+                        App.savedFilters = response.savedFilters;
+
+                        length = App.savedFilters[self.parentContentType].length;
+                        savedFilters = App.savedFilters[self.parentContentType];
+                        for (var i = length - 1; i >= 0; i--){
+                            if (savedFilters[i]['_id'] === targetId){
+                                keys = Object.keys(savedFilters[i]['filter']);
+                                App.filter = savedFilters[i]['filter'][keys[0]];
+                            }
+                        }
+
+                        self.trigger('filter', App.filter);
+                        self.showFilterIcons(App.filter);
+                    } else {
+                        console.log('can\'t fetch currentUser');
+                    }
+                });
+
             },
 
             cloneFilter: function (filter) {
@@ -199,13 +209,13 @@ define([
                 $.find('#' + filterID)[0].remove();
                 $.find('#' + filterID)[0].remove();
 
-                var filters = App.savedFilters[this.parentContentType];
-                for (var i = filters.length - 1; i >= 0; i--) {
-                    if (filters[i]['_id'] === filterID) {
-                        filters.splice(i, 1);
-                    }
-
-                }
+                //var filters = App.savedFilters[this.parentContentType];
+                //for (var i = filters.length - 1; i >= 0; i--) {
+                //    if (filters[i]['_id'] === filterID) {
+                //        delete App.savedFilters[this.parentContentType][i];
+                //    }
+                //
+                //}
             },
             selectValue: function (e) {
                 var currentElement = $(e.target);
@@ -280,56 +290,22 @@ define([
                 var target = $(e.target);
                 var groupName = target.prev().text();
                 var filterView = target.prev().attr('data-value');
-                var keys = Object.keys(this.constantsObject);
-                var containerString;
-                var filterBackend;
-                var groupStatus;
-                var filtersGroupContainer;
-                var groupContainer;
-                var self = this;
 
-                filtersGroupContainer = this.$el.find('#filtersContent');
+                var valuesArray;
+                var collectionElement;
 
-                if (keys.length) {
-                    keys.forEach(function (key) {
-                        filterView = self.constantsObject[key].view;
-                        filterBackend = self.constantsObject[key].backend;
+                valuesArray = App.filter[filterView]['value'];
 
-                        groupContainer = self.$el.find('#' + filterView + 'Container');
-
-                        if (groupContainer.length) {
-                            groupStatus = groupContainer.hasClass('hidden');
-                        } else {
-                            groupStatus = true;
-                        }
-
-                        containerString = '<div id="' + filterView + 'FullContainer" data-value="' + filterBackend + '" class="filterGroup"></div>';
-
-                        if (!self.$el.find('#' + filterView).length) {
-                            filtersGroupContainer.append(containerString);
-                        }
-                        self.renderGroup(key, true, filterView, groupStatus);
-                    });
+                for (var i = valuesArray.length - 1; i >= 0; i--) {
+                    collectionElement = this.currentCollection[filterView].findWhere({_id: valuesArray[i]});
+                    collectionElement.set({status: false});
                 }
-                ;
+                delete App.filter[filterView];
 
-                //var valuesArray;
-                //var collectionElement;
-                //
-                //valuesArray = App.filter[filterView]['value'];
-                //var newFilter = this.cloneFilter(App.filter);
-                //
-                ////for (var i = valuesArray.length - 1; i >= 0; i--) {
-                ////    collectionElement = this.currentCollection[filterView].findWhere({_id: valuesArray[i]});
-                ////    collectionElement.set({status: false});
-                ////}
-                ////delete newFilter[filterView];
-                //
-                //this.renderGroup(groupName, true);
+                this.renderGroup(groupName);
+                $(e.target).closest('div').remove();
 
-                e.target.closest('div').remove();
-
-                //this.renderFilterContent();
+                this.renderFilterContent();
                 this.trigger('filter', App.filter);
             },
 
@@ -370,20 +346,18 @@ define([
                         if (!self.$el.find('#' + filterView).length) {
                             filtersGroupContainer.append(containerString);
                         }
-                        self.renderGroup(key, false, filterView, groupStatus);
+                        self.renderGroup(key, filterView, groupStatus);
                     });
-                }
-                ;
-                //this.showFilterIcons(this.filter);
+                };
+
+                this.showFilterIcons(App.filter);
             },
 
-            renderGroup: function (key, froDelete, filterView, groupStatus) {
+            renderGroup: function (key, filterView, groupStatus) {
                 var itemView;
                 var idString = '#' + filterView + 'FullContainer';
                 var container = this.$el.find(idString);
                 var status;
-                var valuesArray;
-                var collectionElement;
 
                 this.currentCollection[filterView] = new filterValuesCollection(this.filterObject[filterView]);
 
@@ -392,19 +366,6 @@ define([
                     status = true;
                 } else {
                     status = false;
-                }
-
-                if (froDelete) {
-                    if (App.filter[filterView]){
-                        valuesArray = App.filter[filterView]['value'];
-
-                        for (var i = valuesArray.length - 1; i >= 0; i--) {
-                            collectionElement = this.currentCollection[filterView].findWhere({_id: valuesArray[i]});
-                            collectionElement.set({status: false});
-                        }
-                        status = false;
-                        delete App.filter[filterView];
-                    }
                 }
 
                 itemView = new valuesView({
@@ -419,7 +380,6 @@ define([
 
                 container.html('');
                 container.html(itemView.render());
-                this.showFilterIcons(App.filter);
             },
 
             render: function () {
