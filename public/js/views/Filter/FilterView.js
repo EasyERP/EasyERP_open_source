@@ -46,6 +46,11 @@ define([
                 }
 
                 this.parseFilter();
+
+                this.setDbOnce = _.debounce(
+                    function () {
+                        this.trigger('filter', App.filter)
+                    }, 500);
             },
 
             useFilter: function (e) {
@@ -263,7 +268,8 @@ define([
                     };
                 }
 
-                this.trigger('filter', App.filter);
+                //this.trigger('filter', App.filter);
+                this.setDbOnce();
                 this.showFilterIcons(App.filter);
             },
 
