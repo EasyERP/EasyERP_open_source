@@ -591,26 +591,27 @@ var Project = function (models, event) {
             });
     };
 
-    function caseFilter (filter, content) {
+    function caseFilter (filter) {
+        var condition = [];
+
         for (var key in filter) {
             switch (key) {
                 case 'workflow':
-                    filter.workflow = filter.workflow.map(function (item) {
-                        return item === "null" ? null : item;
-                    });
-                    content.where('workflow').in(filter.workflow);
+                    condition.push({'workflow._id': {$in: filter.workflow.value.objectID()}});
                     break;
                 case 'project':
-                    content.where('projectName').in(filter.project);
+                    condition.push({'project._id': {$in: filter.project.value.objectID()}});
                     break;
-                case 'startDate':
-                    content.where('StartDate').in(filter.startDate);
+                case 'customer':
+                    condition.push({'customer._id': {$in: filter.customer.value.objectID()}});
                     break;
-                case 'endDate':
-                    content.where('EndDate').in(filter.endDate);
+                case 'projectmanager':
+                    condition.push({'projectmanager._id': {$in: filter.projectmanager.value.objectID()}});
                     break;
             }
         }
+
+        return condition;
     };
 
     function getProjectsForList(req, data, response) {
@@ -666,9 +667,8 @@ var Project = function (models, event) {
                         },
                         function (err, result) {
                             if (!err) {
-                                var query = models.get(req.session.lastDb, "Project", projectSchema)
-                                    .find()
-                                    .where('_id').in(result);
+                                var obj = {'$and': [{_id: {$in: result}}]};
+
                                 /*if (data && data.filter && data.filter.workflow) {
                                     data.filter.workflow = data.filter.workflow.map(function (item) {
                                         return item === "null" ? null : item;
@@ -678,7 +678,7 @@ var Project = function (models, event) {
 
                                 } */
                             if (data && data.filter) {
-                                caseFilter(data.filter, query);
+                                obj['$and'].push({$and: caseFilter(data.filter)});
                                 /*for (var key in data.filter) {
                                     switch (key) {
                                         case 'workflow':
@@ -698,9 +698,10 @@ var Project = function (models, event) {
                                             break;
                                     }
                                 }*/
-                            } else if (data && (!data.newCollection || data.newCollection === 'false')) {
-                                    query.where('workflow._id').in([]);
-                                }
+                            }
+                                var query = models.get(req.session.lastDb, "Project", projectSchema)
+                                    .find(obj);
+
                                 if (data.sort) {
                                     query.sort(data.sort);
                                 } else {
@@ -906,43 +907,37 @@ var Project = function (models, event) {
                         function (err, result) {
                             if (!err) {
 
-                                var qObj = {$and:[{_id: {$in: result}}]};
-                                var condition;
+                                var qObj = {$and: [{_id: {$in: result}}]};
+                                //var condition;
 
                                 if (data && data.filter) {
-                                    if (data.filter.condition === 'or') {
-                                        qObj['$and'].push({$or: []});
-                                        condition = qObj['$and'][1]['$or'];
-                                    } else {
-                                        condition = qObj['$and'];
-                                    }
-                                    for (var key in data.filter) {
+
+                                    qObj['$and'].push({$and: caseFilter(data.filter)});
+
+                                    /*for (var key in data.filter) {
                                         switch (key) {
                                             case 'workflow':
-                                                data.filter.workflow = data.filter.workflow.map(function (item) {
-                                                    return item === "null" ? null : item;
-                                                });
-                                                condition.push({workflow: {$in: data.filter.workflow}});
+                                                condition.push({'workflow._id': {$in: data.filter.workflow.value.objectID()}});
                                                 break;
                                             case 'project':
-                                                condition.push({projectName: {$in: data.filter.project}});
+                                                condition.push({'project._id': {$in: data.filter.project.value.objectID()}});
                                                 break;
-                                            case 'startDate':
-                                                condition.push({StartDate: {$gte: new Date(data.filter.startDate[0].start), $lte: new Date(data.filter.startDate[0].end)}});
-
+                                            case 'customer':
+                                                condition.push({'customer._id': {$in: data.filter.customer.value.objectID()}});
                                                 break;
-                                            case 'endDate':
-                                                condition.push({EndDate: {$gte: new Date(data.filter.endDate[0].start), $lte: new Date(data.filter.endDate[0].end)}});
-
+                                            case 'projectmanager':
+                                                condition.push({'projectmanager._id': {$in: data.filter.projectmanager.value.objectID()}});
                                                 break;
                                         }
-                                    }
+                                    }*/
                                 }
+
                                 var query = models.get(req.session.lastDb, "Project", projectSchema).find(qObj);
 
-                                if (data && (!data.newCollection || data.newCollection === 'false')) {
+                                /*if (data && (!data.newCollection || data.newCollection === 'false')) {
                                     query.where('workflow').in([]);
-                                }
+                                }*/
+
                                 query.select("_id projectName task workflow projectmanager customer health").
                                    // populate('workflow._id', 'name').
                                     //populate('projectmanager._id', 'name _id').
@@ -1001,12 +996,14 @@ var Project = function (models, event) {
         }
         res['showMore'] = false;
 
-        if (data && data.parrentContentId) {
+        /*if (data && data.parrentContentId) {
             addObj['_id'] = objectId(data.parrentContentId);
-        }
+        }*/
         if (data && data.type !== 'Tasks' && data.filter) {
 
-            for (var key in data.filter) {
+            addObj['$and'] = caseFilter(data.filter);
+
+            /*for (var key in data.filter) {
                 var condition = data.filter[key];
 
                 switch (key) {
@@ -1026,7 +1023,7 @@ var Project = function (models, event) {
                         addObj['EndDate'] = {$in: condition};
                         break;
                 }
-            }
+            }*/
 
            /* data.filter.workflow = data.filter.workflow.map(function (item) {
                 return item === "null" ? null : item;

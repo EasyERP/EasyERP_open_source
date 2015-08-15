@@ -145,9 +145,9 @@
                 var self = this;
                 var createdInTag = "<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>";
                 var currentEl = this.$el;
-                var filterObject;
 
                 currentEl.html('');
+
                 if (this.collection.length > 0) {
                     currentEl.append(this.template({ collection: this.collection.toJSON() }));
                 } else {

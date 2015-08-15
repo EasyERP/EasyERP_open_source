@@ -122,11 +122,11 @@ define([
             goToEditDialog: function (e) {
                 e.preventDefault();
                 var id = $(e.target).closest('tr').data("id");
-                var model = new currentModel({ validate: false });
+                var model = new currentModel({validate: false});
                 model.urlRoot = '/Projects/form/' + id;
                 model.fetch({
                     success: function (model) {
-                        new editView({ model: model });
+                        new editView({model: model});
                     },
                     error: function () {
                         alert('Please refresh browser');
@@ -147,7 +147,7 @@ define([
                 target.find("div a").attr("class", target$.attr("class")).attr("data-value", target$.attr("class").replace("health", "")).parents("#health").find("ul").toggle();
                 var id = target.data("id");
                 var model = this.collection.get(id);
-                model.save({ health: target.find("div a").data("value") }, {
+                model.save({health: target.find("div a").data("value")}, {
                     headers: {
                         mid: 39
                     },
@@ -194,7 +194,7 @@ define([
                     this.hideNewSelect();
                     return false;
                 } else {
-                    $(e.target).parent().append(_.template(stagesTamplate, { stagesCollection: this.stages }));
+                    $(e.target).parent().append(_.template(stagesTamplate, {stagesCollection: this.stages}));
                     return false;
                 }
             },
@@ -206,7 +206,7 @@ define([
                 var id = targetElement.attr("id");
                 var model = this.collection.get(id);
 
-                model.save({ 'workflow._id': target$.attr("id"), 'workflow.name': target$.html() }, {
+                model.save({'workflow._id': target$.attr("id"), 'workflow.name': target$.html()}, {
                     headers: {
                         mid: 39
                     },
@@ -221,49 +221,31 @@ define([
                 return false;
             },
 
-            showFilteredPage: function () {
+            showFilteredPage: function (filter, context) {
                 var itemsNumber = $("#itemsNumber").text();
-                var self = this;
-                var chosen = this.$el.find('.chosen');
-                var checkedElements = $('.drop-down-filter input:checkbox:checked');
-                var showList;
 
-                this.startTime = new Date();
-                this.newCollection = false;
-                this.filter = {};
-
-                if (chosen) {
-                    chosen.each(function (index, elem) {
-                        if (elem.children[1].attributes.class.nodeValue === 'chooseDate') {
-                            if (self.filter[elem.children[1].value]) {
-                                self.filter[elem.children[1].value].push({start: $('#start').val(), end: $('#end').val()});
-
-                            } else {
-                                self.filter[elem.children[1].value] = [];
-                                self.filter[elem.children[1].value].push({start: $('#start').val(), end: $('#end').val()});
-                            }
-                        } else {
-                            if (self.filter[elem.children[1].value]) {
-                                $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
-                                    self.filter[elem.children[1].value].push(element.value);
-                                })
-                            } else {
-                                self.filter[elem.children[1].value] = [];
-                                $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
-                                    self.filter[elem.children[1].value].push(element.value);
-                                })
-                            }
-                        }
-
-                    });
-                }
+                var alphaBet = this.$el.find('#startLetter');
+                var selectedLetter = $(alphaBet).find('.current').length ? $(alphaBet).find('.current')[0].text : '';
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
 
-                this.changeLocationHash(1, itemsNumber, this.filter);
-                this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter });
-                this.getTotalLength(null, itemsNumber, this.filter);
+                if (selectedLetter === "All") {
+                    selectedLetter = '';
+                }
+
+                context.startTime = new Date();
+                context.newCollection = false;
+
+                if (!filter.name) {
+                    if (selectedLetter !== '') {
+                        filter['letter'] = selectedLetter;
+                    }
+                }
+
+                context.changeLocationHash(1, itemsNumber, filter);
+                context.collection.showMore({ count: itemsNumber, page: 1, filter: filter});
+                context.getTotalLength(null, itemsNumber, filter);
             },
 
             showfilter: function (e) {
@@ -282,7 +264,8 @@ define([
                 this.$el.find(".allNumberPerPage, .newSelectList").hide();
                 if (!el.closest('.search-view')) {
                     $('.search-content').removeClass('fa-caret-up');
-                };
+                }
+                ;
 
             },
 
@@ -387,7 +370,7 @@ define([
 
             showPage: function (event) {
                 event.preventDefault();
-                this.showP(event, { filter: this.filter, newCollection: this.newCollection, sort: this.sort });
+                this.showP(event, {filter: this.filter, newCollection: this.newCollection, sort: this.sort});
             },
 
             render: function () {
@@ -399,7 +382,11 @@ define([
 
                 currentEl.html('');
                 currentEl.append(_.template(listTemplate));
-                itemView = new listItemView({ collection: this.collection, page: this.page, itemsNumber: this.collection.namberToShow });
+                itemView = new listItemView({
+                    collection: this.collection,
+                    page: this.page,
+                    itemsNumber: this.collection.namberToShow
+                });
                 itemView.bind('incomingStages', this.pushStages, this);
 
                 currentEl.append(itemView.render());//added two parameters page and items number
@@ -414,19 +401,20 @@ define([
                 common.populateWorkflowsList("Projects", ".filter-check-list", "", "/Workflows", null, function (stages) {
                     var stage = (self.filter) ? self.filter.workflow._id || [] : [];
                     itemView.trigger('incomingStages', stages);
-                    dataService.getData('/project/getFilterValues', null, function (values) {
-                        FilterView = new filterView({ collection: stages, customCollection: values});
-                        itemView.trigger('incomingStages', stages);
-                        // Filter custom event listen ------begin
-                        FilterView.bind('filter', function () {
-                            self.showFilteredPage()
-                        });
-                        FilterView.bind('defaultFilter', function () {
-                            self.showFilteredPage();
-                        });
-                        // Filter custom event listen ------end
+                    itemView.trigger('incomingStages', stages);
 
+                    self.filterView = new filterView({
+                        contentType: self.contentType
                     });
+
+                    self.filterView.bind('filter', function (filter) {
+                        self.showFilteredPage(filter, self)
+                    });
+                    self.filterView.bind('defaultFilter', function () {
+                        self.showFilteredPage({}, self);
+                    });
+
+                    self.filterView.render();
                 });
 
                 $(document).on("click", function (e) {
@@ -452,7 +440,11 @@ define([
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
                 tBody.empty();
-                var itemView = new listItemView({ collection: this.collection, page: currentEl.find("#currentShowPage").val(), itemsNumber: currentEl.find("span#itemsNumber").text() });
+                var itemView = new listItemView({
+                    collection: this.collection,
+                    page: currentEl.find("#currentShowPage").val(),
+                    itemsNumber: currentEl.find("span#itemsNumber").text()
+                });
                 tBody.append(itemView.render());
                 var pagenation = this.$el.find('.pagination');
                 if (this.collection.length === 0) {
@@ -466,7 +458,11 @@ define([
                 var holder = this.$el;
                 var tBody = holder.find('#listTable');
                 tBody.empty();
-                var itemView = new listItemView({ collection: newModels, page: holder.find("#currentShowPage").val(), itemsNumber: holder.find("span#itemsNumber").text() });
+                var itemView = new listItemView({
+                    collection: newModels,
+                    page: holder.find("#currentShowPage").val(),
+                    itemsNumber: holder.find("span#itemsNumber").text()
+                });
                 tBody.append(itemView.render());
                 itemView.undelegateEvents();
                 var pagenation = holder.find('.pagination');
@@ -477,6 +473,9 @@ define([
                 }
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
+
+                this.filterView.renderFilterContent();
+
                 holder.find('#timeRecivingDataFromServer').remove();
                 holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             },
