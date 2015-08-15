@@ -608,6 +608,9 @@ var Project = function (models, event) {
                 case 'projectmanager':
                     condition.push({'projectmanager._id': {$in: filter.projectmanager.value.objectID()}});
                     break;
+                case 'name':
+                    condition.push({'_id': {$in: filter.name.value.objectID()}});
+                    break;
             }
         }
 

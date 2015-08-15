@@ -36,11 +36,15 @@ define([
                 this.parentContentType = options.contentType;
                 this.constantsObject = CONSTANTS.FILTERS[this.parentContentType];
                 this.filterObject = App.filtersValues[this.parentContentType];
+
                 App.filter = {};
+
                 this.currentCollection = {};
+
                 if (App.savedFilters[this.parentContentType]) {
                     this.savedFilters = App.savedFilters[this.parentContentType];
                 }
+
                 this.parseFilter();
             },
 
@@ -207,6 +211,7 @@ define([
 
                 }
             },
+
             selectValue: function (e) {
                 var currentElement = $(e.target);
                 var currentValue = currentElement.attr('data-value');
@@ -374,7 +379,6 @@ define([
                     });
                 }
                 ;
-                //this.showFilterIcons(this.filter);
             },
 
             renderGroup: function (key, froDelete, filterView, groupStatus) {

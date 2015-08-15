@@ -23,6 +23,7 @@
 
             initialize: function (options) {
                 $(document).off("click");
+
                 this.startTime = options.startTime;
                 this.collection = options.collection;
                 this.responseObj = {};
@@ -38,8 +39,6 @@
                 this.render();
 
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
-                this.filterView;
-
             },
 
             events: {
@@ -53,6 +52,7 @@
                 "click": "hideHealth",
                 "click .filter-check-list li": "checkCheckbox"
             },
+
             checkCheckbox: function (e) {
                 var target$ = $(e.target);
                 if (!target$.is("input")) {
@@ -75,6 +75,7 @@
                 var targetElement = $(e.target).parents(".thumbnail");
                 var id = targetElement.attr("id");
                 var model = this.collection.get(id);
+
                 model.save({'workflow._id': $(e.target).attr("id"), 'workflow.name': $(e.target).text()}, {
                     headers: {
                         mid: 39
@@ -94,10 +95,12 @@
                 var target$ = $(e.target);
                 var target = target$.parents(".health-wrapper");
                 var currTargHelth = target$.attr("class").replace("health", "");
-                target.find(".health-container a").attr("class", target$.attr("class")).attr("data-value", currTargHelth);
                 var id = target.parents(".thumbnail").attr("id");
                 var model = this.collection.get(id);
                 var helth = parseInt(currTargHelth);
+
+                target.find(".health-container a").attr("class", target$.attr("class")).attr("data-value", currTargHelth);
+
                 model.save({health: helth}, {
                     headers: {
                         mid: 39
@@ -209,38 +212,26 @@
             render: function () {
                 var self = this;
                 var currentEl = this.$el;
-                var createdInTag = "<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>";
+                var createdInTag;
 
                 currentEl.html('');
-                $('#check_all').click(function () {
-                    $(':checkbox').prop('checked', this.checked);
-                    if ($("input.checkbox:checked").length > 0)
-                        $("#top-bar-deleteBtn").show();
-                    else
-                        $("#top-bar-deleteBtn").hide();
-                });
 
                 if (this.collection.length > 0) {
                     currentEl.append(this.template({collection: this.collection.toJSON()}));
                 } else {
                     currentEl.html('<h2>No projects found</h2>');
                 }
-                //this.bind('incomingStages', this.pushStages, this);
 
-                common.populateWorkflowsList("Projects", ".filter-check-list", "", "/Workflows", null, function (stages) {/*
-                    var stage = (self.filter) ? self.filter.workflow || [] : [];
-                    self.trigger('incomingStages', stages);*/
-                    self.filterView = new filterView({contentType: self.contentType});
+                self.filterView = new filterView({contentType: self.contentType});
 
-                    self.filterView.bind('filter', function (filter) {
-                        self.showFilteredPage(filter, self)
-                    });
-                    self.filterView.bind('defaultFilter', function () {
-                        self.showFilteredPage({}, self);
-                    });
-
-                    self.filterView.render();
+                self.filterView.bind('filter', function (filter) {
+                    self.showFilteredPage(filter, self)
                 });
+                self.filterView.bind('defaultFilter', function () {
+                    self.showFilteredPage({}, self);
+                });
+
+                self.filterView.render();
 
                 $('#check_all').click(function () {
                     $(':checkbox').prop('checked', this.checked);
@@ -249,13 +240,18 @@
                     else
                         $("#top-bar-deleteBtn").hide();
                 });
-                currentEl.append(createdInTag);
+
                 $(document).on("click", function (e) {
                     self.hide(e);
                     self.hideHealth(e);
                     self.hideItemsNumber(e);
                 });
+
                 populate.getPriority("#priority", this);
+
+                createdInTag = "<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>";
+                currentEl.append(createdInTag);
+
                 return this;
             },
 
@@ -288,13 +284,14 @@
                 var showMore = holder.find('#showMoreDiv');
                 var created = holder.find('#timeRecivingDataFromServer');
                 var content = holder.find(".thumbnailwithavatar");
+
                 this.defaultItemsNumber += newModels.length;
                 this.changeLocationHash(null, (this.defaultItemsNumber < 50) ? 50 : this.defaultItemsNumber, this.filter);
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
 
                 if (showMore.length != 0) {
                     showMore.before(this.template({collection: this.collection.toJSON()}));
-                    $(".filter-check-list").eq(1).remove();
+                    //$(".filter-check-list").eq(1).remove();
 
                     showMore.after(created);
                 } else {
