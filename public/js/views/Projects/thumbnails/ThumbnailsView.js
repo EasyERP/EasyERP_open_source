@@ -205,7 +205,6 @@
                 var self = this;
                 var currentEl = this.$el;
                 var createdInTag = "<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>";
-                var FilterView;
 
                 currentEl.html('');
                 $('#check_all').click(function () {
@@ -222,24 +221,10 @@
                 }
                 this.bind('incomingStages', this.pushStages, this);
 
-                //common.populateWorkflowsList("Projects", ".filter-check-list", "", "/Workflows", null, function (stages) {
-                //    var stage = (self.filter) ? self.filter.workflow || [] : [];
-                //    self.trigger('incomingStages', stages);
-                //    dataService.getData('/project/getFilterValues', null, function (values) {
-                //        FilterView = new filterView({ collection: stages, customCollection: values});
-                //        // Filter custom event listen ------begin
-                //        FilterView.bind('filter', function () {
-                //            self.showFilteredPage()
-                //        });
-                //        FilterView.bind('defaultFilter', function () {
-                //            self.showFilteredPage();
-                //        });
-                //        // Filter custom event listen ------end
-                //
-                //    });
-                //});
-
-                self.filterview = new filterView({ contentType: self.contentType });
+                common.populateWorkflowsList("Projects", ".filter-check-list", "", "/Workflows", null, function (stages) {
+                    var stage = (self.filter) ? self.filter.workflow || [] : [];
+                    self.trigger('incomingStages', stages);
+                    self.filterview = new filterView({ contentType: self.contentType });
 
                 self.filterview.bind('filter', function (filter) {
                     self.showFilteredPage(filter, self)
@@ -249,6 +234,7 @@
                 });
 
                 self.filterview.render();
+                });
 
                 $('#check_all').click(function () {
                     $(':checkbox').prop('checked', this.checked);

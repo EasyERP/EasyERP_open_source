@@ -6,6 +6,7 @@ var Filters = function (models) {
     var wTrackSchema = mongoose.Schemas['wTrack'];
     var CustomerSchema = mongoose.Schemas['Customer'];
     var EmployeeSchema = mongoose.Schemas['Employee'];
+    var ProjectSchema = mongoose.Schemas['Project'];
     var _ = require('../node_modules/underscore');
     var async = require('async');
 
@@ -15,6 +16,7 @@ var Filters = function (models) {
         var WTrack = models.get(lastDB, 'wTrack', wTrackSchema);
         var Customer = models.get(lastDB, 'Customers', CustomerSchema);
         var Employee = models.get(lastDB, 'Employee', EmployeeSchema);
+        var Project = models.get(lastDB, 'Project', ProjectSchema);
 
         async.parallel({
                 wTrack: getWtrackFiltersValues,
@@ -22,6 +24,7 @@ var Filters = function (models) {
                 Companies: getCompaniesFiltersValues,
                 Employees: getEmployeeFiltersValues,
                 Applications: getApplicationFiltersValues,
+                Projects: getProjectFiltersValues,
             },
             function (err, result) {
                 if (err) {
@@ -264,6 +267,47 @@ var Filters = function (models) {
                             $addToSet: {
                                 _id: '$manager._id',
                                 name: {'$ifNull': ['$manager.name', 'None']}
+                            }
+                        }
+                    }
+                }
+            ], function (err, result) {
+                if (err) {
+                    callback(err);
+                }
+
+                result = result[0];
+
+                callback(null, result);
+            });
+        };
+        function getProjectFiltersValues(callback) {
+            Project.aggregate([
+                {
+                    $group: {
+                        _id: null,
+                        'name': {
+                            $addToSet: {
+                                _id: '$_id',
+                                name: '$projectName'
+                            }
+                        },
+                        'customer': {
+                            $addToSet: {
+                                _id: '$customer._id',
+                                name: {'$ifNull': ['$customer.name', 'None']}
+                            }
+                        },
+                        'workflow': {
+                            $addToSet: {
+                                _id: '$workflow._id',
+                                name: {'$ifNull': ['$workflow.name', 'None']}
+                            }
+                        },
+                        'projectmanager': {
+                            $addToSet: {
+                                _id: '$projectmanager._id',
+                                name: {'$ifNull': ['$projectmanager.name', 'None']}
                             }
                         }
                     }
