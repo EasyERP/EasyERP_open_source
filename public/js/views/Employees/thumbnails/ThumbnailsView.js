@@ -181,7 +181,7 @@
                 if (Object.keys(filter).length === 0){
                     this.filter = {};
                 }
-
+                this.defaultItemsNumber = 0;
                 context.$el.find('.thumbnailwithavatar').remove();
 
                 context.changeLocationHash(null, context.defaultItemsNumber, filter);

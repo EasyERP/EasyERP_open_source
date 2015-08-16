@@ -522,7 +522,9 @@ var Employee = function (event, models) {
                         function (err, responseOpportunities) {
                             if (!err) {
                                 responseOpportunities.forEach(function (object) {
-                                    if (object.count > req.session.kanbanSettings.applications.countPerPage) data['showMore'] = true;
+                                    if (object.count > req.session.kanbanSettings.applications.countPerPage) {
+                                        data['showMore'] = true;
+                                    }
                                 });
                                 data['arrayOfObjects'] = responseOpportunities;
                                 res.send(data);
