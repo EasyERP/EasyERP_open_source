@@ -94,9 +94,15 @@ define([
 
                 _.forEach(filterKeys, function (filterkey) {
                     filterKey = filter[filterkey]['key'];
-                    filterValue = filter[filterkey]['value'];
-                    for (var i = filterValue.length - 1; i >= 0; i--) {
-                        newFilterValue.push(filterValue[i]);
+                    newFilterValue = [];
+                    if (filterKey){
+                        filterValue = filter[filterkey]['value'];
+                        for (var i = filterValue.length - 1; i >= 0; i--) {
+                            newFilterValue.push(filterValue[i]);
+                        }
+                    } else {
+                        filterKey = 'letter';
+                        newFilterValue = filter[filterkey];
                     }
                     newFilter[filterkey] = {
                         key: filterKey,
@@ -285,9 +291,14 @@ define([
                 filterValues.empty();
                 _.forEach(filter, function (key, value) {
                     groupName = self.$el.find('#' + key).text();
-                    filterIc.addClass('active');
-                    filterValues.append('<div class="forFilterIcons"><span class="fa fa-filter funnelIcon"></span><span data-value="' + key + '" class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
-                });
+                    if (groupName.length > 0){
+                        filterIc.addClass('active');
+                        filterValues.append('<div class="forFilterIcons"><span class="fa fa-filter funnelIcon"></span><span data-value="' + key + '" class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
+                    } else {
+                        groupName = 'Letter';
+                        filterIc.addClass('active');
+                        filterValues.append('<div class="forFilterIcons"><span class="fa fa-filter funnelIcon"></span><span data-value="' + 'letter' + '" class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
+                    }});
             },
 
             removeFilter: function (e) {
@@ -300,13 +311,18 @@ define([
 
                 valuesArray = App.filter[filterView]['value'];
 
-                for (var i = valuesArray.length - 1; i >= 0; i--) {
-                    collectionElement = this.currentCollection[filterView].findWhere({_id: valuesArray[i]});
-                    collectionElement.set({status: false});
-                }
-                delete App.filter[filterView];
+                if (valuesArray){
+                    for (var i = valuesArray.length - 1; i >= 0; i--) {
+                        collectionElement = this.currentCollection[filterView].findWhere({_id: valuesArray[i]});
+                        collectionElement.set({status: false});
+                    }
+                    delete App.filter[filterView];
 
-                this.renderGroup(groupName);
+                    this.renderGroup(groupName);
+                } else {
+                    delete App.filter['letter'];
+                }
+
                 $(e.target).closest('div').remove();
 
                 this.renderFilterContent();
@@ -422,9 +438,9 @@ define([
                 }
             },
 
-            applyFilter: function () {
-                this.trigger('filter', App.filter);
-            },
+            //applyFilter: function () {
+            //    this.trigger('filter', App.filter);
+            //},
 
 
             showSearchContent: function () {
