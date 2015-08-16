@@ -23,7 +23,7 @@ define([
             },
 
             render: function () {
-                $(this.el).append(_.template(ContentFilterTemplate));
+                this.$el.append(_.template(ContentFilterTemplate));
 
                 if (App.savedFilters[this.contentType]) {
                     this.savedFilters = App.savedFilters[this.contentType];

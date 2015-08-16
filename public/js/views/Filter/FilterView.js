@@ -59,6 +59,7 @@ define([
                 var self = this;
                 var length;
                 var targetId = target.attr('id');
+                var keys;
 
                 dataService.getData('/currentUser', null, function (response) {
                     if (response && !response.error) {
@@ -75,6 +76,7 @@ define([
                         }
 
                         self.trigger('filter', App.filter);
+                        self.renderFilterContent();
                         self.showFilterIcons(App.filter);
                     } else {
                         console.log('can\'t get savedFilters');
