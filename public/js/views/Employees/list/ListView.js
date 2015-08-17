@@ -88,11 +88,14 @@ define([
                 $(e.target).addClass("current");
                 this.newCollection = false;
                 var selectedLetter = $(e.target).text();
+                this.filter = (this.filter) ? this.filter : {};
+
+                this.filter['letter'] = selectedLetter;
+
                 if ($(e.target).text() == "All") {
                     selectedLetter = "";
+                    this.filter = {};
                 }
-                this.filter = (this.filter) ? this.filter : {};
-                this.filter['letter'] = selectedLetter;
                 var itemsNumber = $("#itemsNumber").text();
                 this.changeLocationHash(1, itemsNumber, this.filter);
                 this.collection.showMore({count: itemsNumber, page: 1, filter: this.filter});
@@ -363,10 +366,14 @@ define([
                 context.startTime = new Date();
                 context.newCollection = false;
 
-                if (!filter.name) {
-                    if (selectedLetter !== '') {
-                        filter['letter'] = selectedLetter;
-                    }
+                //if (!filter.name) {
+                //    if (selectedLetter !== '') {
+                //        filter['letter'] = selectedLetter;
+                //    }
+                //}
+
+                if (Object.keys(filter).length === 0){
+                    this.filter = {};
                 }
 
                 context.changeLocationHash(1, itemsNumber, filter);
