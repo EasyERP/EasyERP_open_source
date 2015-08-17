@@ -32,7 +32,7 @@ define([
                 this.stages = [];
                 this.filter = options.filter;
                 this.sort = options.sort;
-                this.defaultItemsNumber = this.collection.namberToShow || 50;
+                this.defaultItemsNumber = this.collection.namberToShow || 100;
                 this.newCollection = options.newCollection;
                 this.deleteCounter = 0;
                 this.page = options.collection.page;
@@ -160,7 +160,7 @@ define([
                 }
             },
 
-            showFilteredPage: function (filter, context) {
+            showFilteredPage: function (filter) {
                 var itemsNumber = $("#itemsNumber").text();
 
                // var alphaBet = this.$el.find('#startLetter');
@@ -170,13 +170,13 @@ define([
                 $('#check_all').prop('checked', false);
 
 
-                context.startTime = new Date();
-                context.newCollection = false;
+                this.startTime = new Date();
+                this.newCollection = false;
 
 
-                context.changeLocationHash(1, itemsNumber, filter);
-                context.collection.showMore({ count: itemsNumber, page: 1, filter: filter});
-                context.getTotalLength(null, itemsNumber, filter);
+                this.changeLocationHash(1, itemsNumber, filter);
+                this.collection.showMore({ count: itemsNumber, page: 1, filter: filter});
+                this.getTotalLength(null, itemsNumber, filter);
             },
 
             showfilter: function (e) {
@@ -224,7 +224,6 @@ define([
                 $('.ui-dialog ').remove();
                 var self = this;
                 var currentEl = this.$el;
-                var FilterView;
                 var pagenation;
 
                 currentEl.html('');
@@ -234,6 +233,13 @@ define([
                 currentEl.append(itemView.render());
 
                 itemView.bind('incomingStages', itemView.pushStages, itemView);
+
+                common.populateWorkflowsList("Applications", ".filter-check-list", "", "/Workflows", null, function (stages) {
+                    self.stages = stages;
+                    var stage = (self.filter) ? self.filter.workflow : null;
+                    itemView.trigger('incomingStages', stages);
+                });
+
                 $('#check_all').click(function () {
                     $(':checkbox').prop('checked', this.checked);
                     if ($("input.checkbox:checked").length > 0)

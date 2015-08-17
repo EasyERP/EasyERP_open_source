@@ -212,7 +212,7 @@ define([
                                 $("#" + self.currentModel.toJSON()._id).find(".project-text span").eq(2).text(self.$el.find("#customerDd").text());
                             currentModel_holder.find(".bottom .stageSelect").text(self.$el.find("#workflowsDd").text()).attr("class", "stageSelect " + self.$el.find("#workflowsDd").text().toLowerCase().replace(" ", ''));
                             if (projectmanager)
-                                common.getImagesPM([projectmanager], "/getEmployeesImages", "#" + self.currentModel.toJSON()._id);
+                                common.getImagesPM([projectmanager._id], "/getEmployeesImages", "#" + self.currentModel.toJSON()._id);
                         }
                         if (data.workflow._id != workflowStart._id) {
                             var filter = window.location.hash.split('filter=')[1];

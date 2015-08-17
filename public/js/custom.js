@@ -15,7 +15,7 @@ define([
 
             Backbone.history.fragment = "";
             Backbone.history.navigate(url, {trigger: true});
-            this.getFiltersValues();
+            getFiltersValues();
 
         } else {
             if (App.requestedURL === null)
@@ -235,8 +235,8 @@ define([
         //
         //    savedFilter = filter[key];
         //} else {
-            savedFilter = uIFilter;
-       // }
+        savedFilter = uIFilter;
+        // }
 
         return savedFilter;
     };
@@ -254,8 +254,8 @@ define([
 
                 length = App.savedFilters[contentType].length;
                 savedFilters = App.savedFilters[contentType];
-                for (var i = length - 1; i >= 0; i--){
-                    if (savedFilters[i]['_id'] === id){
+                for (var i = length - 1; i >= 0; i--) {
+                    if (savedFilters[i]['_id'] === id) {
                         keys = Object.keys(savedFilters[i]['filter']);
                         App.filter = savedFilters[i]['filter'][keys[0]];
                         return App.filter;
@@ -310,7 +310,6 @@ define([
         cashToApp: cashToApp,
         retriveFromCash: retriveFromCash,
         savedFilters: savedFilters,
-        getFiltersValues: getFiltersValues,
         getFiltersForContentType: getFiltersForContentType,
         getFilterById: getFilterById
     };

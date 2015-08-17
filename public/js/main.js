@@ -164,9 +164,9 @@ require(['app'], function (app) {
 
         if (!count) {
             var thumbnails = location.split('thumbnails')[0];
-            count = (location.split('/c=')[1]) ? location.split('/c=')[1].split('/')[0] : 50;
-            if (thumbnails && count < 50)
-                count = 50;
+            count = (location.split('/c=')[1]) ? location.split('/c=')[1].split('/')[0] : 100;
+            if (thumbnails && count < 100)
+                count = 100;
         }
         var url = mainLocation;
         if (pId)

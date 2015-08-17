@@ -7,10 +7,11 @@
         'models/ProjectsModel',
         'views/Filter/FilterView',
         'common',
-        'populate'
+        'populate',
+        'custom'
     ],
 
-    function (thumbnailsItemTemplate, stagesTamplate, editView, createView, dataService, currentModel, filterView, common, populate) {
+    function (thumbnailsItemTemplate, stagesTamplate, editView, createView, dataService, currentModel, filterView, common, populate, custom) {
         var ProjectThumbnalView = Backbone.View.extend({
             el: '#content-holder',
             countPerPage: 0,
@@ -32,7 +33,7 @@
                 this.countPerPage = options.collection.length;
                 this.stages = [];
                 this.filter = options.filter;
-                this.defaultItemsNumber = this.collection.namberToShow || 50;
+                this.defaultItemsNumber = this.collection.namberToShow || 100;
                 this.newCollection = options.newCollection;
                 this.deleteCounter = 0;
 
@@ -65,7 +66,7 @@
                     this.hideHealth();
                     return false;
                 } else {
-                    $(e.target).parent().append(_.template(stagesTamplate, {stagesCollection: this.stages}));
+                    $(e.target).parent().append(_.template(stagesTamplate, { stagesCollection: this.stages }));
                     return false;
                 }
             },
@@ -83,7 +84,7 @@
                     patch: true,
                     validate: false,
                     success: function () {
-                        self.showFilteredPage(_.pluck(self.stages, '_id'));
+                       self.showFilteredPage({}/*_.pluck(self.stages, '_id')*/);
                     }
                 });
 
@@ -139,7 +140,7 @@
 
             },
 
-            showFilteredPage: function (filter, context) {
+            showFilteredPage: function (filter) {
                 this.$el.find('.thumbnail').remove();
                 this.startTime = new Date();
                 this.newCollection = true;
@@ -150,9 +151,8 @@
                     this.filter = {};
                 }
 
-                context.changeLocationHash(null, context.defaultItemsNumber, filter);
-                context.collection.showMore({count: context.defaultItemsNumber, page: 1, filter: filter});
-                //context.getTotalLength(this.defaultItemsNumber, filter);
+                this.changeLocationHash(null, this.defaultItemsNumber, filter);
+                this.collection.showMore({count: this.defaultItemsNumber, page: 1, filter: filter});
             },
 
 
@@ -197,13 +197,7 @@
                 if (!el.closest('.search-view')) {
                     $('.search-content').removeClass('fa-caret-up');
                     this.$el.find('.search-options').addClass('hidden');
-                }
-                ;
-                //this.$el.find(".allNumberPerPage, .newSelectList").hide();
-                //if (!el.closest('.search-view')) {
-                //    $('.search-content').removeClass('fa-caret-up');
-                //}
-                //;
+                };
             },
 
             render: function () {
@@ -219,13 +213,20 @@
                     currentEl.html('<h2>No projects found</h2>');
                 }
 
+                this.bind('incomingStages', this.pushStages, this);
+
+                common.populateWorkflowsList("Projects", ".filter-check-list", "", "/Workflows", null, function (stages) {
+                    var stage = (self.filter) ? self.filter.workflow || [] : [];
+                    self.trigger('incomingStages', stages);
+                });
+
                 self.filterView = new filterView({contentType: self.contentType});
 
                 self.filterView.bind('filter', function (filter) {
-                    self.showFilteredPage(filter, self)
+                    self.showFilteredPage(filter)
                 });
                 self.filterView.bind('defaultFilter', function () {
-                    self.showFilteredPage({}, self);
+                    self.showFilteredPage({});
                 });
 
                 self.filterView.render();
@@ -284,12 +285,12 @@
                 var numberToShow;
 
                 if (this.newCollection) {
-                    this.defaultItemsNumber = 50;
+                    this.defaultItemsNumber = 100;
                 } else {
                     this.defaultItemsNumber += newModels.length;
 
-                    if (this.defaultItemsNumber < 50) {
-                        this.defaultItemsNumber = 50;
+                    if (this.defaultItemsNumber < 100) {
+                        this.defaultItemsNumber = 100;
                     }
                 }
 

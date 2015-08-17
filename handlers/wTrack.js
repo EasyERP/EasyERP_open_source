@@ -314,14 +314,14 @@ var wTrack = function (models) {
             }
        }
 
-        var count = query.count ? query.count : 50;
+        var count = query.count ? query.count : 100;
         var page = query.page;
         var skip = (page - 1) > 0 ? (page - 1) * count : 0;
 
         if (query.sort) {
             sort = query.sort;
         } else {
-            sort = {"name": 1};
+            sort = {"project.projectName": 1, "year": 1, "month": 1, "week": 1};
         }
 
         departmentSearcher = function (waterfallCallback) {

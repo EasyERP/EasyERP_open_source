@@ -9,10 +9,11 @@ define([
         'collections/Projects/filterCollection',
         'views/Filter/FilterView',
         'common',
-        'dataService'
+        'dataService',
+        'custom'
     ],
 
-    function (paginationTemplate, listTemplate, stagesTamplate, CreateView, listItemView, editView, currentModel, contentCollection, filterView, common, dataService) {
+    function (paginationTemplate, listTemplate, stagesTamplate, CreateView, listItemView, editView, currentModel, contentCollection, filterView, common, dataService, custom) {
         var ProjectsListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -33,7 +34,7 @@ define([
                 this.stages = [];
                 this.sort = options.sort;
                 this.filter = options.filter;
-                this.defaultItemsNumber = this.collection.namberToShow || 50;
+                this.defaultItemsNumber = this.collection.namberToShow || 100;
                 this.newCollection = options.newCollection;
                 this.deleteCounter = 0;
                 this.page = options.collection.page;
@@ -194,7 +195,7 @@ define([
                     this.hideNewSelect();
                     return false;
                 } else {
-                    $(e.target).parent().append(_.template(stagesTamplate, {stagesCollection: this.stages}));
+                    $(e.target).parent().append(_.template(stagesTamplate, { stagesCollection: this.stages }));
                     return false;
                 }
             },
@@ -213,7 +214,7 @@ define([
                     patch: true,
                     validate: false,
                     success: function () {
-                        self.showFilteredPage(_.pluck(self.stages, '_id'));
+                        self.showFilteredPage({}/*_.pluck(self.stages, '_id')*/);
                     }
                 });
 
@@ -221,23 +222,23 @@ define([
                 return false;
             },
 
-            showFilteredPage: function (filter, context) {
+            showFilteredPage: function (filter) {
                 var itemsNumber = $("#itemsNumber").text();
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
 
-                context.startTime = new Date();
-                context.newCollection = false;
+                this.startTime = new Date();
+                this.newCollection = false;
 
 
-                if (Object.keys(filter).length === 0){
+                if (Object.keys(filter).length === 0) {
                     this.filter = {};
                 }
 
-                context.changeLocationHash(1, itemsNumber, filter);
-                context.collection.showMore({ count: itemsNumber, page: 1, filter: filter});
-                context.getTotalLength(null, itemsNumber, filter);
+                this.changeLocationHash(1, itemsNumber, filter);
+                this.collection.showMore({count: itemsNumber, page: 1, filter: filter});
+                this.getTotalLength(null, itemsNumber, filter);
             },
 
             showfilter: function (e) {
@@ -257,7 +258,8 @@ define([
                 if (!el.closest('.search-view')) {
                     $('.search-content').removeClass('fa-caret-up');
                     this.$el.find('.search-options').addClass('hidden');
-                };
+                }
+                ;
 
                 //this.$el.find(".allNumberPerPage, .newSelectList").hide();
                 //if (!el.closest('.search-view')) {
@@ -375,7 +377,6 @@ define([
                 var self = this;
                 $('.ui-dialog ').remove();
                 var currentEl = this.$el;
-                var FilterView;
                 var itemView;
 
                 currentEl.html('');
@@ -387,6 +388,11 @@ define([
                 });
                 itemView.bind('incomingStages', this.pushStages, this);
 
+                common.populateWorkflowsList("Projects", ".filter-check-list", "", "/Workflows", null, function (stages) {
+                    var stage = (self.filter) ? self.filter.workflow || [] : [];
+                    itemView.trigger('incomingStages', stages);
+                });
+
                 currentEl.append(itemView.render());//added two parameters page and items number
                 $('#check_all').click(function () {
                     $(':checkbox').prop('checked', this.checked);
@@ -396,24 +402,18 @@ define([
                         $("#top-bar-deleteBtn").hide();
                 });
 
-                common.populateWorkflowsList("Projects", ".filter-check-list", "", "/Workflows", null, function (stages) {
-                    var stage = (self.filter) ? self.filter.workflow._id || [] : [];
-                    itemView.trigger('incomingStages', stages);
-                    itemView.trigger('incomingStages', stages);
-
-                    self.filterView = new filterView({
-                        contentType: self.contentType
-                    });
-
-                    self.filterView.bind('filter', function (filter) {
-                        self.showFilteredPage(filter, self)
-                    });
-                    self.filterView.bind('defaultFilter', function () {
-                        self.showFilteredPage({}, self);
-                    });
-
-                    self.filterView.render();
+                self.filterView = new filterView({
+                    contentType: self.contentType
                 });
+
+                self.filterView.bind('filter', function (filter) {
+                    self.showFilteredPage(filter)
+                });
+                self.filterView.bind('defaultFilter', function () {
+                    self.showFilteredPage({});
+                });
+
+                self.filterView.render();
 
                 $(document).on("click", function (e) {
                     self.hideItemsNumber(e);

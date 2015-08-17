@@ -11,10 +11,11 @@ define([
         'collections/Tasks/filterCollection',
         'views/Filter/FilterView',
         'common',
+        'custom',
         'dataService'
     ],
 
-    function (paginationTemplate, listTemplate, stagesTamplate, createView, listItemView, editView, currentModel, projectEditView, projectModel, contentCollection, filterView, common, dataService) {
+    function (paginationTemplate, listTemplate, stagesTamplate, createView, listItemView, editView, currentModel, projectEditView, projectModel, contentCollection, filterView, common, custom, dataService) {
         var TasksListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -35,7 +36,7 @@ define([
                 this.stages = [];
                 this.sort = options.sort;
                 this.filter = options.filter;
-                this.defaultItemsNumber = this.collection.namberToShow || 50;
+                this.defaultItemsNumber = this.collection.namberToShow || 100;
                 this.newCollection = options.newCollection;
                 this.deleteCounter = 0;
                 this.page = options.collection.page;
@@ -270,7 +271,7 @@ define([
                                 patch: true,
                                 validate: false,
                                 success: function () {
-                                    that.showFilteredPage();
+                                    that.showFilteredPage({});
                                 }
                             });
                     }
@@ -289,7 +290,7 @@ define([
                             patch: true,
                             validate: false,
                             success: function (model) {
-                                that.showFilteredPage();//When add filter by Type, then uncoment this code
+                                that.showFilteredPage({});//When add filter by Type, then uncoment this code
                             }
                         });
                 }
@@ -297,18 +298,18 @@ define([
                 return false;
             },
 
-            showFilteredPage: function (filter, context) {
+            showFilteredPage: function (filter) {
                 var itemsNumber = $("#itemsNumber").text();
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
 
-                context.startTime = new Date();
-                context.newCollection = false;
+                this.startTime = new Date();
+                this.newCollection = false;
 
-                context.changeLocationHash(1, itemsNumber, filter);
-                context.collection.showMore({ count: itemsNumber, page: 1, filter: filter});
-                context.getTotalLength(null, itemsNumber, filter);
+                this.changeLocationHash(1, itemsNumber, filter);
+                this.collection.showMore({ count: itemsNumber, page: 1, filter: filter});
+                this.getTotalLength(null, itemsNumber, filter);
             },
 
             hideItemsNumber: function (e) {
@@ -374,21 +375,21 @@ define([
                         $("#top-bar-deleteBtn").hide();
                 });
 
-                /*common.populateWorkflowsList("Tasks", ".filter-check-list", "#workflowNamesDd", "/Workflows", null, function (stages) {
+                common.populateWorkflowsList("Tasks", ".filter-check-list", "#workflowNamesDd", "/Workflows", null, function (stages) {
                     var stage = (self.filter) ? self.filter.workflow || [] : [];
                     itemView.trigger('incomingStages', stages);
 
-                });*/
+                });
 
                /* self.filterView = new filterView({
                     contentType: self.contentType
                 });
 
                 self.filterView.bind('filter', function (filter) {
-                    self.showFilteredPage(filter, self)
+                    self.showFilteredPage(filter)
                 });
                 self.filterView.bind('defaultFilter', function () {
-                    self.showFilteredPage({}, self);
+                    self.showFilteredPage({});
                 });
 
                 self.filterView.render();*/
@@ -522,7 +523,7 @@ define([
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
 
-                this.filterView.renderFilterContent();
+                //this.filterView.renderFilterContent();
 
                 holder.find('#timeRecivingDataFromServer').remove();
                 holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");

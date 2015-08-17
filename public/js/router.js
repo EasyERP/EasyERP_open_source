@@ -90,15 +90,6 @@ define([
                     }
                 });
             };
-            if (!App || !App.filtersValues) {
-                dataService.getData('/filter/getFiltersValues', null, function (response) {
-                    if (response && !response.error) {
-                        App.filtersValues = response;
-                    } else {
-                        console.log('can\'t fetch filtersValues');
-                    }
-                });
-            }
         },
 
         dashBoardVacation: function(){
@@ -505,7 +496,7 @@ define([
                 var topBarViewUrl = "views/" + contentType + "/TopBarView";
                 var collectionUrl = context.buildCollectionRoute(contentType);
                 var navigatePage = (page) ? parseInt(page) : 1;
-                var count = (countPerPage) ? parseInt(countPerPage) || 50 : 50;
+                var count = (countPerPage) ? parseInt(countPerPage) || 100 : 100;
 
                // if (filter === 'empty') {
                 if (!filter) {
@@ -711,7 +702,7 @@ define([
                 var topBarViewUrl = "views/" + contentType + "/TopBarView";
                 var collectionUrl;
                 var savedFilter;
-                var count = (countPerPage) ? parseInt(countPerPage) || 50 : 50;
+                var count = (countPerPage) ? parseInt(countPerPage) || 100 : 100;
                 //if (filter === 'empty') {
                 if (!filter) {
                     newCollection = false;
