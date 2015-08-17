@@ -35,7 +35,6 @@ define([
             initialize: function (options) {
                 this.parentContentType = options.contentType;
                 this.constantsObject = CONSTANTS.FILTERS[this.parentContentType];
-                this.filterObject = App.filtersValues[this.parentContentType];
 
                 App.filter = {};
 
@@ -378,6 +377,15 @@ define([
                 var idString = '#' + filterView + 'FullContainer';
                 var container = this.$el.find(idString);
                 var status;
+                var self = this;
+
+                if (!App.filtersValues || !App.filtersValues[self.parentContentType]) {
+                    return setTimeout(function () {
+                        self.renderGroup(key, filterView, groupStatus);
+                    }, 10);
+                }
+
+                this.filterObject = App.filtersValues[this.parentContentType];
 
                 this.currentCollection[filterView] = new filterValuesCollection(this.filterObject[filterView]);
 
