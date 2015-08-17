@@ -81,7 +81,7 @@ var Opportunity = function (models) {
         var sort;
         var mid;
 
-        var count = data.count ? data.count : 50;
+        var count = data.count ? data.count : 100;
         var page = data.page;
         var skip = (page - 1) > 0 ? (page - 1) * count : 0;
 
