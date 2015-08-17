@@ -321,7 +321,7 @@ var wTrack = function (models) {
         if (query.sort) {
             sort = query.sort;
         } else {
-            sort = {"name": 1};
+            sort = {"project.projectName": 1, "year": 1, "month": 1, "week": 1};
         }
 
         departmentSearcher = function (waterfallCallback) {
