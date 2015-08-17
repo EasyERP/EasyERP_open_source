@@ -752,7 +752,7 @@ var Employee = function (event, models) {
                                                     });
                                                     query.where('workflow').in(data.filter.workflow);
                                                 } else if (data && (!data.newCollection || data.newCollection === 'false')) {
-                                                    query.where('workflow').in([]);
+                                                    query;//.where('workflow').in([]);
                                                 }
 
                                                 if (data.sort) {
