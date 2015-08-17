@@ -1095,7 +1095,7 @@ var Project = function (models, event) {
                                     });
                                 } else {
                                     if (data.currentNumber && data.currentNumber < projectsId.length) {
-                                        //res['showMore'] = true;
+                                        res['showMore'] = true;
                                     }
                                     res['count'] = projectsId.length;
                                     response.send(res);

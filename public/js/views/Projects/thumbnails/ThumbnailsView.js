@@ -140,18 +140,6 @@
             },
 
             showFilteredPage: function (filter, context) {
-               /* var itemsNumber = $("#itemsNumber").text();
-
-                var alphaBet = this.$el.find('#startLetter');
-                var selectedLetter = $(alphaBet).find('.current').length ? $(alphaBet).find('.current')[0].text : '';
-
-                $("#top-bar-deleteBtn").hide();
-                $('#check_all').prop('checked', false);
-
-                context.startTime = new Date();
-                context.newCollection = false;
-
-                context.$el.find('.thumbnailwithavatar').remove();*/
 
                 this.$el.find('.thumbnail').remove();
                 this.startTime = new Date();
