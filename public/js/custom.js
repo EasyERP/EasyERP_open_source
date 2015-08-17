@@ -15,7 +15,7 @@ define([
 
             Backbone.history.fragment = "";
             Backbone.history.navigate(url, {trigger: true});
-            getFiltersValues();
+            //getFiltersValues();
 
         } else {
             if (App.requestedURL === null)
@@ -301,9 +301,15 @@ define([
         }
     };
 
-    var getFiltersValuesByKey = function (contentType, field) {
+    var getFiltersValuesByKey = function (contentType, field, template, target) {
+        var currentCollection;
+
         if (App && App.filtersValues && App.filtersValues && App.filtersValues[contentType]) {
-            return App.filtersValues[contentType][field]
+            currentCollection = App.filtersValues[contentType][field];
+
+            target.parent().append(_.template(template, {
+                currentCollection: currentCollection
+            }));
         }
 
         return getFiltersValues(contentType, field);

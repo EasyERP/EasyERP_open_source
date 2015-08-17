@@ -8,7 +8,7 @@
         'views/Filter/FilterView',
         'common',
         'populate',
-        'custom',
+        'custom'
     ],
 
     function (thumbnailsItemTemplate, stagesTamplate, editView, createView, dataService, currentModel, filterView, common, populate, custom) {
@@ -62,13 +62,14 @@
             },
 
             showNewSelect: function (e) {
+                var target = $(e.target);
+
                 if ($(".newSelectList").is(":visible")) {
                     this.hideHealth();
                     return false;
                 } else {
-                    $(e.target).parent().append(_.template(stagesTamplate, {
-                        stagesCollection: custom.getFiltersValuesByKey(this.contentType, 'workflow')
-                    }));
+                    custom.getFiltersValuesByKey(this.contentType, 'workflow', stagesTamplate, target);
+
                     return false;
                 }
             },
