@@ -224,23 +224,15 @@ define([
             showFilteredPage: function (filter, context) {
                 var itemsNumber = $("#itemsNumber").text();
 
-                var alphaBet = this.$el.find('#startLetter');
-                var selectedLetter = $(alphaBet).find('.current').length ? $(alphaBet).find('.current')[0].text : '';
-
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
-
-                if (selectedLetter === "All") {
-                    selectedLetter = '';
-                }
 
                 context.startTime = new Date();
                 context.newCollection = false;
 
-                if (!filter.name) {
-                    if (selectedLetter !== '') {
-                        filter['letter'] = selectedLetter;
-                    }
+
+                if (Object.keys(filter).length === 0){
+                    this.filter = {};
                 }
 
                 context.changeLocationHash(1, itemsNumber, filter);
