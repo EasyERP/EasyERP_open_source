@@ -85,10 +85,11 @@
                     patch: true,
                     success: function (model, response) {
                         self.hideDialog();
-                        if (response && response.logout)
+                        if (response && response.logout) {
                             window.location.pathname = '/logout';
-                        else
+                        } else {
                             Backbone.history.navigate("easyErp/" + self.contentType, { trigger: true });
+                        }
                     },
                     error: function (model, xhr) {
                         self.errorNotification(xhr);

@@ -1183,7 +1183,7 @@ var Employee = function (event, models) {
     function getEmployeesImages(req, data, res) {
         var query = models.get(req.session.lastDb, "Employees", employeeSchema).find({ isEmployee: true });
         query.where('_id').in(data.ids).
-            select('_id imageSrc').
+            select('_id imageSrc name').
             exec(function (error, response) {
                 if (error) {
                     console.log(error);
