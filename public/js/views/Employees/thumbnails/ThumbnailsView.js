@@ -88,12 +88,15 @@
                 if (e && e.target) {
                     target = $(e.target);
                     selectedLetter = $(e.target).text();
+
+                    this.filter['letter'] = selectedLetter;
+
                     target.parent().find(".current").removeClass("current");
                     target.addClass("current");
                     if ($(e.target).text() == "All") {
                         selectedLetter = "";
+                        this.filter = {};
                     }
-                    this.filter['letter'] = selectedLetter;
                 };
 
                 this.startTime = new Date();
@@ -169,12 +172,16 @@
                 context.startTime = new Date();
                 context.newCollection = false;
 
-                if (!filter.name) {
-                    if (selectedLetter !== '') {
-                        filter['letter'] = selectedLetter;
-                    }
-                }
+                //if (!filter.name) {
+                //    if (selectedLetter !== '') {
+                //        filter['letter'] = selectedLetter;
+                //    }
+                //}
 
+                if (Object.keys(filter).length === 0){
+                    this.filter = {};
+                }
+                this.defaultItemsNumber = 0;
                 context.$el.find('.thumbnailwithavatar').remove();
 
                 context.changeLocationHash(null, context.defaultItemsNumber, filter);

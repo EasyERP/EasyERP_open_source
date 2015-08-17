@@ -140,33 +140,26 @@
             },
 
             showFilteredPage: function (filter, context) {
-               /* var itemsNumber = $("#itemsNumber").text();
-
-                var alphaBet = this.$el.find('#startLetter');
-                var selectedLetter = $(alphaBet).find('.current').length ? $(alphaBet).find('.current')[0].text : '';
-
-                $("#top-bar-deleteBtn").hide();
-                $('#check_all').prop('checked', false);
-
-                context.startTime = new Date();
-                context.newCollection = false;
-
-                context.$el.find('.thumbnailwithavatar').remove();*/
-
                 this.$el.find('.thumbnail').remove();
                 this.startTime = new Date();
-                this.newCollection = false;
+                this.newCollection = true;
+
+                this.filter = filter;
+
+                if (Object.keys(filter).length === 0){
+                    this.filter = {};
+                }
 
                 context.changeLocationHash(null, context.defaultItemsNumber, filter);
                 context.collection.showMore({count: context.defaultItemsNumber, page: 1, filter: filter});
-                context.getTotalLength(this.defaultItemsNumber, filter);
+                //context.getTotalLength(this.defaultItemsNumber, filter);
             },
 
 
             getTotalLength: function (currentNumber, filter, newCollection) {
                 dataService.getData('/totalCollectionLength/Projects', {
                     currentNumber: currentNumber,
-                    filter: this.filter,
+                    filter: filter,
                     newCollection: this.newCollection
                 }, function (response, context) {
                     var showMore = context.$el.find('#showMoreDiv');
@@ -204,7 +197,8 @@
                 if (!el.closest('.search-view')) {
                     $('.search-content').removeClass('fa-caret-up');
                     this.$el.find('.search-options').addClass('hidden');
-                };
+                }
+                ;
                 //this.$el.find(".allNumberPerPage, .newSelectList").hide();
                 //if (!el.closest('.search-view')) {
                 //    $('.search-content').removeClass('fa-caret-up');
@@ -287,9 +281,19 @@
                 var showMore = holder.find('#showMoreDiv');
                 var created = holder.find('#timeRecivingDataFromServer');
                 var content = holder.find("#thumbnailContent");
+                var numberToShow;
 
-                this.defaultItemsNumber += newModels.length;
-                this.changeLocationHash(null, (this.defaultItemsNumber < 50) ? 50 : this.defaultItemsNumber, this.filter);
+                if (this.newCollection) {
+                    this.defaultItemsNumber = 50;
+                } else {
+                    this.defaultItemsNumber += newModels.length;
+
+                    if (this.defaultItemsNumber < 50) {
+                        this.defaultItemsNumber = 50;
+                    }
+                }
+
+                this.changeLocationHash(null, this.defaultItemsNumber, this.filter);
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
 
                 if (showMore.length != 0) {
