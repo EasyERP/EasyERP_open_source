@@ -1,5 +1,5 @@
 ﻿<ul class="newSelectList">
-    <% currentCollection.forEach(function(element, index){ %>
-        <li id="<%= element._id %>" data-status="<%= element.status?element.status.replace(' ','').toLowerCase():''%>"><%= element.name %></li>
+    <% stagesCollection.forEach(function(stage, index){ %>
+    <li id="<%= stage._id %>" data-status="<%= stage.status?stage.status.replace(' ','').toLowerCase():''%>"><%= stage.name %></li>
     <% }) %>
 </ul>

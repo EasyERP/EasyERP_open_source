@@ -160,7 +160,7 @@ define([
                 }
             },
 
-            showFilteredPage: function (filter, context) {
+            showFilteredPage: function (filter) {
                 var itemsNumber = $("#itemsNumber").text();
 
                // var alphaBet = this.$el.find('#startLetter');
@@ -170,13 +170,13 @@ define([
                 $('#check_all').prop('checked', false);
 
 
-                context.startTime = new Date();
-                context.newCollection = false;
+                this.startTime = new Date();
+                this.newCollection = false;
 
 
-                context.changeLocationHash(1, itemsNumber, filter);
-                context.collection.showMore({ count: itemsNumber, page: 1, filter: filter});
-                context.getTotalLength(null, itemsNumber, filter);
+                this.changeLocationHash(1, itemsNumber, filter);
+                this.collection.showMore({ count: itemsNumber, page: 1, filter: filter});
+                this.getTotalLength(null, itemsNumber, filter);
             },
 
             showfilter: function (e) {
@@ -233,6 +233,12 @@ define([
                 currentEl.append(itemView.render());
 
                 itemView.bind('incomingStages', itemView.pushStages, itemView);
+
+                common.populateWorkflowsList("Applications", ".filter-check-list", "", "/Workflows", null, function (stages) {
+                    self.stages = stages;
+                    var stage = (self.filter) ? self.filter.workflow : null;
+                    itemView.trigger('incomingStages', stages);
+                });
 
                 $('#check_all').click(function () {
                     $(':checkbox').prop('checked', this.checked);

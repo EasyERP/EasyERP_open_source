@@ -11,7 +11,7 @@
         'custom'
     ],
 
-    function (thumbnailsItemTemplate, stagesTemplate, editView, createView, dataService, currentModel, filterView, common, populate, custom) {
+    function (thumbnailsItemTemplate, stagesTamplate, editView, createView, dataService, currentModel, filterView, common, populate, custom) {
         var ProjectThumbnalView = Backbone.View.extend({
             el: '#content-holder',
             countPerPage: 0,
@@ -62,15 +62,13 @@
             },
 
             showNewSelect: function (e) {
-                var target = $(e.target);
-
                 if ($(".newSelectList").is(":visible")) {
                     this.hideHealth();
+                    return false;
                 } else {
-                    custom.getStatuses(this.contentType, stagesTemplate, target);
+                    $(e.target).parent().append(_.template(stagesTamplate, { stagesCollection: this.stages }));
+                    return false;
                 }
-
-                return false;
             },
 
             chooseOption: function (e) {
@@ -86,7 +84,7 @@
                     patch: true,
                     validate: false,
                     success: function () {
-                        self.showFilteredPage(_.pluck(self.stages, '_id'));
+                       self.showFilteredPage({}/*_.pluck(self.stages, '_id')*/);
                     }
                 });
 
@@ -155,7 +153,6 @@
 
                 this.changeLocationHash(null, this.defaultItemsNumber, filter);
                 this.collection.showMore({count: this.defaultItemsNumber, page: 1, filter: filter});
-                //context.getTotalLength(this.defaultItemsNumber, filter);
             },
 
 
@@ -200,13 +197,7 @@
                 if (!el.closest('.search-view')) {
                     $('.search-content').removeClass('fa-caret-up');
                     this.$el.find('.search-options').addClass('hidden');
-                }
-                ;
-                //this.$el.find(".allNumberPerPage, .newSelectList").hide();
-                //if (!el.closest('.search-view')) {
-                //    $('.search-content').removeClass('fa-caret-up');
-                //}
-                //;
+                };
             },
 
             render: function () {
@@ -221,6 +212,13 @@
                 } else {
                     currentEl.html('<h2>No projects found</h2>');
                 }
+
+                this.bind('incomingStages', this.pushStages, this);
+
+                common.populateWorkflowsList("Projects", ".filter-check-list", "", "/Workflows", null, function (stages) {
+                    var stage = (self.filter) ? self.filter.workflow || [] : [];
+                    self.trigger('incomingStages', stages);
+                });
 
                 self.filterView = new filterView({contentType: self.contentType});
 

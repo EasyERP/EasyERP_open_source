@@ -13,7 +13,7 @@ define([
         'custom'
     ],
 
-    function (paginationTemplate, listTemplate, stagesTemplate, CreateView, listItemView, editView, currentModel, contentCollection, filterView, common, dataService, custom) {
+    function (paginationTemplate, listTemplate, stagesTamplate, CreateView, listItemView, editView, currentModel, contentCollection, filterView, common, dataService, custom) {
         var ProjectsListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -191,14 +191,13 @@ define([
             },
 
             showNewSelect: function (e) {
-                var target = $(e.target);
-
                 if ($(".newSelectList").is(":visible")) {
                     this.hideNewSelect();
+                    return false;
                 } else {
-                    custom.getFiltersValuesByKey(this.contentType, 'workflow', stagesTemplate, target);
+                    $(e.target).parent().append(_.template(stagesTamplate, { stagesCollection: this.stages }));
+                    return false;
                 }
-                return false;
             },
 
             chooseOption: function (e) {
@@ -215,7 +214,7 @@ define([
                     patch: true,
                     validate: false,
                     success: function () {
-                        self.showFilteredPage(_.pluck(self.stages, '_id'));
+                        self.showFilteredPage({}/*_.pluck(self.stages, '_id')*/);
                     }
                 });
 
@@ -388,6 +387,11 @@ define([
                     itemsNumber: this.collection.namberToShow
                 });
                 itemView.bind('incomingStages', this.pushStages, this);
+
+                common.populateWorkflowsList("Projects", ".filter-check-list", "", "/Workflows", null, function (stages) {
+                    var stage = (self.filter) ? self.filter.workflow || [] : [];
+                    itemView.trigger('incomingStages', stages);
+                });
 
                 currentEl.append(itemView.render());//added two parameters page and items number
                 $('#check_all').click(function () {

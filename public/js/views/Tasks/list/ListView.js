@@ -15,7 +15,7 @@ define([
         'dataService'
     ],
 
-    function (paginationTemplate, listTemplate, stagesTemplate, createView, listItemView, editView, currentModel, projectEditView, projectModel, contentCollection, filterView, common, custom, dataService) {
+    function (paginationTemplate, listTemplate, stagesTamplate, createView, listItemView, editView, currentModel, projectEditView, projectModel, contentCollection, filterView, common, custom, dataService) {
         var TasksListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -214,15 +214,13 @@ define([
             },
 
             showNewSelect: function (e) {
-                var target = $(e.target);
-
                 if ($(".newSelectList").is(":visible")) {
-                    this.hideHealth();
+                    this.hideNewSelect();
+                    return false;
                 } else {
-                    custom.getStatuses(this.contentType, '/Workflows', stagesTemplate, target);
+                    $(e.target).parent().append(_.template(stagesTamplate, { stagesCollection: this.stages}));
+                    return false;
                 }
-
-                return false;
             },
 
             chooseOption: function (e) {
@@ -273,7 +271,7 @@ define([
                                 patch: true,
                                 validate: false,
                                 success: function () {
-                                    that.showFilteredPage();
+                                    that.showFilteredPage({});
                                 }
                             });
                     }
@@ -292,7 +290,7 @@ define([
                             patch: true,
                             validate: false,
                             success: function (model) {
-                                that.showFilteredPage();//When add filter by Type, then uncoment this code
+                                that.showFilteredPage({});//When add filter by Type, then uncoment this code
                             }
                         });
                 }
@@ -377,11 +375,11 @@ define([
                         $("#top-bar-deleteBtn").hide();
                 });
 
-                /*common.populateWorkflowsList("Tasks", ".filter-check-list", "#workflowNamesDd", "/Workflows", null, function (stages) {
+                common.populateWorkflowsList("Tasks", ".filter-check-list", "#workflowNamesDd", "/Workflows", null, function (stages) {
                     var stage = (self.filter) ? self.filter.workflow || [] : [];
                     itemView.trigger('incomingStages', stages);
 
-                });*/
+                });
 
                /* self.filterView = new filterView({
                     contentType: self.contentType
