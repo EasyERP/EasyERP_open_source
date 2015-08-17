@@ -1130,9 +1130,10 @@ define([
             },
 
             checked: function (e) {
+                var checkLength;
 
                 if (this.collection.length > 0) {
-                    var checkLength = $("input.listCB:checked").length;
+                    checkLength = $("input.listCB:checked").length;
 
                     this.checkProjectId(e, checkLength);
 
