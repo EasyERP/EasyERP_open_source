@@ -52,7 +52,7 @@ define([
                        for (var i=0;i<n;i++){
                            var s = 0;
                            for (var j=0;j<k;j++){
-                               if (collection.workflow[i]._id==collection.data[j]._id._id){
+                               if (collection.workflow[i]._id==collection.data[j]._id){
                                    s = collection.data[j].count;
                                    break;
                                }
