@@ -117,11 +117,14 @@ define([
                 $(e.target).addClass("current");
 
                 var selectedLetter = $(e.target).text();
-                if ($(e.target).text() == "All") {
-                    selectedLetter = "";
-                }
                 this.filter = (this.filter) ? this.filter : {};
                 this.filter['letter'] = selectedLetter;
+
+                if ($(e.target).text() == "All") {
+                    selectedLetter = "";
+                    this.filter = {};
+                }
+
                 var itemsNumber = $("#itemsNumber").text();
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
@@ -267,7 +270,6 @@ define([
                     filter: this.filter,
                     newCollection: this.newCollection,
                     parrentContentId: this.parrentContentId
-
                 });
 
                 dataService.getData('/totalCollectionLength/Persons', {
@@ -347,10 +349,13 @@ define([
                 context.startTime = new Date();
                 context.newCollection = false;
 
-                if (!filter.name) {
-                    if (selectedLetter !== '') {
-                        filter['letter'] = selectedLetter;
-                    }
+                //if (!filter.name) {
+                //    if (selectedLetter !== '') {
+                //        filter['letter'] = selectedLetter;
+                //    }
+                //}
+                if (Object.keys(filter).length === 0){
+                    this.filter = {};
                 }
 
                 context.changeLocationHash(1, itemsNumber, filter);

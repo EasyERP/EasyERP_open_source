@@ -73,7 +73,7 @@
             //modified for filter Vasya
             alpabeticalRender: function (e) {
                 var selectedLetter;
-                var target;
+                var target = $(e.target);
 
                 this.$el.find('.thumbnailwithavatar').remove();
                 this.startTime = new Date();
@@ -82,19 +82,21 @@
                 this.filter = this.filter ? this.filter : {};
 
                 if (e && e.target) {
-                    selectedLetter = $(e.target).text();
-                    target = $(e.target);
-                    if ($(e.target).text() == "All") {
+                    selectedLetter = target.text();
+                    this.filter['letter'] = selectedLetter;
+
+                    if (target.text() == "All") {
                         selectedLetter = "";
+                        this.filter = {};
                     }
                     target.parent().find(".current").removeClass("current");
                     target.addClass("current");
                 }
 
-                if (selectedLetter || selectedLetter === '') {
-                    delete this.filter['name'];
-                    this.filter['letter'] = selectedLetter;
-                }
+                //if (selectedLetter || selectedLetter === '') {
+                //    delete this.filter['name'];
+                //    this.filter['letter'] = selectedLetter;
+                //}
 
                 this.defaultItemsNumber = 0;
 
@@ -128,10 +130,14 @@
                 context.startTime = new Date();
                 context.newCollection = false;
 
-                if (!filter.name) {
-                    if (selectedLetter !== '') {
-                        filter['letter'] = selectedLetter;
-                    }
+                //if (!filter.name) {
+                //    if (selectedLetter !== '') {
+                //        filter['letter'] = selectedLetter;
+                //    }
+                //}
+
+                if (Object.keys(filter).length === 0){
+                    this.filter = {};
                 }
 
                 context.$el.find('.thumbnailwithavatar').remove();

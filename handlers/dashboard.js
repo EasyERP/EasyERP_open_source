@@ -588,7 +588,7 @@ var wTrack = function (models) {
                         }
 
                         Department.populate(employees, {
-                            path: 'hiredEmployees.department',
+                            path: 'hiredEmployees.department._id',
                             select: '_id departmentName'
                         }, function(err, deps){
                             if(err){
@@ -662,7 +662,7 @@ var wTrack = function (models) {
                         }
 
                         Department.populate(employees, {
-                            path: 'firedEmployees.department',
+                            path: 'firedEmployees.department._id',
                             select: '_id departmentName',
                             options: {
                                 lean: true
