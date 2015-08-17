@@ -9,7 +9,7 @@ define(['Validation','common'],function (Validation, common) {
         },
 
         urlRoot: function () {
-            return "/Category";
+            return "/category/";
         }
     });
     return Model;

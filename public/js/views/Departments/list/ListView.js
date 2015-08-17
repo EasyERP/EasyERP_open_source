@@ -3,7 +3,7 @@ define([
     'views/Departments/CreateView',
     'models/DepartmentsModel',
     'views/Departments/list/ListItemView',
-    'views/Departments/EditView',
+    'views/Departments/EditView'
 ],
 
 function (ListTemplate, CreateView, currentModel, ListItemView, EditView) {

@@ -267,7 +267,7 @@ define([
                     }).render().el
                 );
                 populate.get("#productType", "/product/getProductsTypeForDd", {}, 'name', this);
-                populate.get("#productCategory", "/category", {}, 'name', this);
+                populate.get("#productCategory", "/category", {}, 'fullName', this);
                 common.canvasDraw({model: this.model.toJSON()}, this);
 
                 this.delegateEvents(this.events);

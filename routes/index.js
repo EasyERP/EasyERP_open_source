@@ -44,7 +44,7 @@ module.exports = function (app, mainDb) {
     var bonusTypeRouter = require('./bonusType')(models);
     var dashboardRouter = require('./dashboard')(models);
     var filterRouter = require('./filter')(models);
-    var productCategoriesRouter = require('./productCategories')(models);
+    var productCategoriesRouter = require('./productCategories')(models, event);
 
     app.get('/', function (req, res, next) {
         res.sendfile('index.html');
