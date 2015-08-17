@@ -127,15 +127,15 @@ define([
             },
 
             alpabeticalRender: function (e) {
-                this.startTime = new Date();
-                $(e.target).parent().find(".current").removeClass("current");
-                $(e.target).addClass("current");
                 var selectedLetter = $(e.target).text();
-                if ($(e.target).text() == "All") {
-                    selectedLetter = "";
-                }
                 this.filter = (this.filter) ? this.filter : {};
                 this.filter['letter'] = selectedLetter;
+
+                if ($(e.target).text() == "All") {
+                    selectedLetter = "";
+                    this.filter = {};
+                }
+
                 var itemsNumber = $("#itemsNumber").text();
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
@@ -152,11 +152,6 @@ define([
                     $('.search-content').removeClass('fa-caret-up');
                     this.$el.find('.search-options').addClass('hidden');
                 };
-
-                //this.$el.find(".allNumberPerPage, .newSelectList").hide();
-                //if (!el.closest('.search-view')) {
-                //    $('.search-content').removeClass('fa-caret-up');
-                //};
             },
 
             itemsNumber: function (e) {
@@ -344,10 +339,14 @@ define([
                 context.startTime = new Date();
                 context.newCollection = false;
 
-                if (!filter.name) {
-                    if (selectedLetter !== '') {
-                        filter['letter'] = selectedLetter;
-                    }
+                //if (!filter.name) {
+                //    if (selectedLetter !== '') {
+                //        filter['letter'] = selectedLetter;
+                //    }
+                //}
+
+                if (Object.keys(filter).length === 0){
+                    this.filter = {};
                 }
 
                 context.changeLocationHash(1, itemsNumber, filter);

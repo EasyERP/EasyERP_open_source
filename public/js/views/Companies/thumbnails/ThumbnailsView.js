@@ -86,21 +86,20 @@
                 this.startTime = new Date();
                 this.newCollection = false;
 
-                this.filter = this.filter ? this.filter : {};
+                this.filter = {};
 
                 if (e && e.target) {
-                    selectedLetter = $(e.target).text();
                     target = $(e.target);
-                    if ($(e.target).text() == "All") {
-                        selectedLetter = "";
-                    }
+                    selectedLetter = $(e.target).text();
+
+                    this.filter['letter'] = selectedLetter;
+
                     target.parent().find(".current").removeClass("current");
                     target.addClass("current");
-                }
-
-                if (selectedLetter || selectedLetter === '') {
-                    delete this.filter['name'];
-                    this.filter['letter'] = selectedLetter;
+                    if ($(e.target).text() == "All") {
+                        selectedLetter = "";
+                        this.filter = {};
+                    }
                 }
 
                 this.defaultItemsNumber = 0;
@@ -183,8 +182,8 @@
             showFilteredPage: function (filter, context) {
                 var itemsNumber = $("#itemsNumber").text();
 
-                var alphaBet = this.$el.find('#startLetter');
-                var selectedLetter = $(alphaBet).find('.current').length ? $(alphaBet).find('.current')[0].text : '';
+                //var alphaBet = this.$el.find('#startLetter');
+                //var selectedLetter = $(alphaBet).find('.current').length ? $(alphaBet).find('.current')[0].text : '';
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
@@ -192,10 +191,14 @@
                 context.startTime = new Date();
                 context.newCollection = false;
 
-                if (!filter.name) {
-                    if (selectedLetter !== '') {
-                        filter['letter'] = selectedLetter;
-                    }
+                //if (!filter.name) {
+                //    if (selectedLetter !== '') {
+                //        filter['letter'] = selectedLetter;
+                //    }
+                //}
+
+                if (Object.keys(filter).length === 0){
+                    this.filter = {};
                 }
 
                 context.$el.find('.thumbnailwithavatar').remove();
