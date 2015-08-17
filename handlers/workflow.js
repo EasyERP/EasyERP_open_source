@@ -7,6 +7,8 @@ var workflows = function (models) {
     var WorkflowSchema = mongoose.Schemas['workflow'];
     var RESPONSES = require('../constants/responses.js');
 
+    var _ = require('lodash');
+
     this.getFirstForConvert = function (req, res, next) {
         var callback;
         var Workflow = models.get(req.session.lastDb, 'workflows', WorkflowSchema);
@@ -107,6 +109,39 @@ var workflows = function (models) {
                 res.status(200).send(workflows)
             });
     };
+
+    this.getWorkflowsForApp = function (req, res, next) {
+        var resultObject = {};
+        var Workflow = models.get(req.session.lastDb, 'workflows', WorkflowSchema);
+
+        Workflow.aggregate([
+            {
+                $group: {
+                    _id: '$wId',
+                    values: {
+                        $addToSet: {
+                            _id: '$_id',
+                            name: '$name',
+                            status: '$status',
+                            wName: '$wName',
+                        }
+                    }
+                }
+            }
+        ], function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            _.map(result, function (element) {
+                return resultObject[element._id] = element.values
+            });
+
+
+            res.status(200).send(resultObject);
+        });
+
+    }
 
 };
 

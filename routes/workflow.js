@@ -10,6 +10,7 @@ module.exports = function (models) {
     var handler = new WorkflowHandler(models);
 
     router.get('/getFirstForConvert', handler.getFirstForConvert);
+    router.get('/getWorkflowsForApp', handler.getWorkflowsForApp);
     router.get('/fetch', handler.fetch);
 
     return router;

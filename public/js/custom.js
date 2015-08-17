@@ -16,6 +16,7 @@ define([
             Backbone.history.fragment = "";
             Backbone.history.navigate(url, {trigger: true});
             getFiltersValues();
+            getWorkflowsValues();
 
         } else {
             if (App.requestedURL === null)
@@ -235,8 +236,8 @@ define([
         //
         //    savedFilter = filter[key];
         //} else {
-            savedFilter = uIFilter;
-       // }
+        savedFilter = uIFilter;
+        // }
 
         return savedFilter;
     };
@@ -254,8 +255,8 @@ define([
 
                 length = App.savedFilters[contentType].length;
                 savedFilters = App.savedFilters[contentType];
-                for (var i = length - 1; i >= 0; i--){
-                    if (savedFilters[i]['_id'] === id){
+                for (var i = length - 1; i >= 0; i--) {
+                    if (savedFilters[i]['_id'] === id) {
                         keys = Object.keys(savedFilters[i]['filter']);
                         App.filter = savedFilters[i]['filter'][keys[0]];
                         return App.filter;
@@ -286,14 +287,11 @@ define([
         return filtersForContent;
     };
 
-    var getFiltersValues = function (contentType, field, template, target) {
+    var getFiltersValues = function () {
         if (!App || !App.filtersValues) {
             dataService.getData('/filter/getFiltersValues', null, function (response) {
                 if (response && !response.error) {
                     App.filtersValues = response;
-                    if (contentType) {
-                        getFiltersValuesByKey(contentType, field, template, target);
-                    }
                 } else {
                     console.log('can\'t fetch filtersValues');
                 }
@@ -301,13 +299,29 @@ define([
         }
     };
 
-    var getStatuses = function (contentType, url, template, target) {
+    var getWorkflowsValues = function (contentType, template, target) {
+        if (!App || !App.workflowsValues) {
+            dataService.getData('/workflow/getWorkflowsForApp', null, function (response) {
+                if (response && !response.error) {
+                    App.workflowsValues = response;
+                    if (contentType) {
+                        getStatuses(contentType, template, target);
+                    }
+                } else {
+                    console.log('can\'t fetch workflowsValues');
+                }
+            })
+        }
+    };
 
-        dataService.getData(url, {mid: 39, id: contentType}, function (response) {
+    var getStatuses = function (contentType, template, target) {
+        if (App && App.workflowsValues) {
             target.parent().append(_.template(template, {
-                currentCollection: response.data
+                currentCollection: App.workflowsValues[contentType]
             }));
-        });
+        } else {
+            getWorkflowsValues(contentType, template, target);
+        }
     };
 
     return {
@@ -322,7 +336,6 @@ define([
         cashToApp: cashToApp,
         retriveFromCash: retriveFromCash,
         savedFilters: savedFilters,
-        getFiltersValues: getFiltersValues,
         getStatuses: getStatuses,
         getFiltersForContentType: getFiltersForContentType,
         getFilterById: getFilterById

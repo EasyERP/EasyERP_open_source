@@ -217,10 +217,11 @@ define([
                 var target = $(e.target);
 
                 if ($(".newSelectList").is(":visible")) {
-                    this.hideNewSelect();
+                    this.hideHealth();
                 } else {
-                    custom.getFiltersValuesByKey(this.contentType, 'workflow', stagesTemplate, target);
+                    custom.getStatuses(this.contentType, '/Workflows', stagesTemplate, target);
                 }
+
                 return false;
             },
 
@@ -299,18 +300,18 @@ define([
                 return false;
             },
 
-            showFilteredPage: function (filter, context) {
+            showFilteredPage: function (filter) {
                 var itemsNumber = $("#itemsNumber").text();
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
 
-                context.startTime = new Date();
-                context.newCollection = false;
+                this.startTime = new Date();
+                this.newCollection = false;
 
-                context.changeLocationHash(1, itemsNumber, filter);
-                context.collection.showMore({ count: itemsNumber, page: 1, filter: filter});
-                context.getTotalLength(null, itemsNumber, filter);
+                this.changeLocationHash(1, itemsNumber, filter);
+                this.collection.showMore({ count: itemsNumber, page: 1, filter: filter});
+                this.getTotalLength(null, itemsNumber, filter);
             },
 
             hideItemsNumber: function (e) {
@@ -387,10 +388,10 @@ define([
                 });
 
                 self.filterView.bind('filter', function (filter) {
-                    self.showFilteredPage(filter, self)
+                    self.showFilteredPage(filter)
                 });
                 self.filterView.bind('defaultFilter', function () {
-                    self.showFilteredPage({}, self);
+                    self.showFilteredPage({});
                 });
 
                 self.filterView.render();*/
@@ -524,7 +525,7 @@ define([
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
 
-                this.filterView.renderFilterContent();
+                //this.filterView.renderFilterContent();
 
                 holder.find('#timeRecivingDataFromServer').remove();
                 holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
