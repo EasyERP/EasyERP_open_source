@@ -224,7 +224,6 @@ define([
                 $('.ui-dialog ').remove();
                 var self = this;
                 var currentEl = this.$el;
-                var FilterView;
                 var pagenation;
 
                 currentEl.html('');
@@ -234,6 +233,7 @@ define([
                 currentEl.append(itemView.render());
 
                 itemView.bind('incomingStages', itemView.pushStages, itemView);
+
                 $('#check_all').click(function () {
                     $(':checkbox').prop('checked', this.checked);
                     if ($("input.checkbox:checked").length > 0)

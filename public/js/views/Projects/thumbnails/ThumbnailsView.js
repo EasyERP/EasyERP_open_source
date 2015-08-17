@@ -67,7 +67,7 @@
                 if ($(".newSelectList").is(":visible")) {
                     this.hideHealth();
                 } else {
-                    custom.getFiltersValuesByKey(this.contentType, 'workflow', stagesTamplate, target);
+                    custom.getStatuses(this.contentType, '/Workflows', stagesTamplate, target);
                 }
 
                 return false;

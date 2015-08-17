@@ -301,18 +301,13 @@ define([
         }
     };
 
-    var getFiltersValuesByKey = function (contentType, field, template, target) {
-        var currentCollection;
+    var getStatuses = function (contentType, url, template, target) {
 
-        if (App && App.filtersValues && App.filtersValues && App.filtersValues[contentType]) {
-            currentCollection = App.filtersValues[contentType][field];
-
+        dataService.getData(url, {mid: 39, id: contentType}, function (response) {
             target.parent().append(_.template(template, {
-                currentCollection: currentCollection
+                currentCollection: response.data
             }));
-        }
-
-        return getFiltersValues(contentType, field, template, target);
+        });
     };
 
     return {
@@ -328,7 +323,7 @@ define([
         retriveFromCash: retriveFromCash,
         savedFilters: savedFilters,
         getFiltersValues: getFiltersValues,
-        getFiltersValuesByKey: getFiltersValuesByKey,
+        getStatuses: getStatuses,
         getFiltersForContentType: getFiltersForContentType,
         getFilterById: getFilterById
     };
