@@ -143,11 +143,13 @@
 
                 this.$el.find('.thumbnail').remove();
                 this.startTime = new Date();
-                this.newCollection = false;
+                this.newCollection = true;
+
+                this.filter = filter;
 
                 context.changeLocationHash(null, context.defaultItemsNumber, filter);
                 context.collection.showMore({count: context.defaultItemsNumber, page: 1, filter: filter});
-                context.getTotalLength(this.defaultItemsNumber, filter);
+                //context.getTotalLength(this.defaultItemsNumber, filter);
             },
 
 
@@ -192,7 +194,8 @@
                 if (!el.closest('.search-view')) {
                     $('.search-content').removeClass('fa-caret-up');
                     this.$el.find('.search-options').addClass('hidden');
-                };
+                }
+                ;
                 //this.$el.find(".allNumberPerPage, .newSelectList").hide();
                 //if (!el.closest('.search-view')) {
                 //    $('.search-content').removeClass('fa-caret-up');
@@ -275,9 +278,19 @@
                 var showMore = holder.find('#showMoreDiv');
                 var created = holder.find('#timeRecivingDataFromServer');
                 var content = holder.find("#thumbnailContent");
+                var numberToShow;
 
-                this.defaultItemsNumber += newModels.length;
-                this.changeLocationHash(null, (this.defaultItemsNumber < 50) ? 50 : this.defaultItemsNumber, this.filter);
+                if (this.newCollection) {
+                    this.defaultItemsNumber = 50;
+                } else {
+                    this.defaultItemsNumber += newModels.length;
+
+                    if (this.defaultItemsNumber < 50) {
+                        this.defaultItemsNumber = 50;
+                    }
+                }
+
+                this.changeLocationHash(null, this.defaultItemsNumber, this.filter);
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
 
                 if (showMore.length != 0) {
