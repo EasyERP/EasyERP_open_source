@@ -33,7 +33,7 @@
                 this.countPerPage = options.collection.length;
                 this.stages = [];
                 this.filter = options.filter;
-                this.defaultItemsNumber = this.collection.namberToShow || 50;
+                this.defaultItemsNumber = this.collection.namberToShow || 100;
                 this.newCollection = options.newCollection;
                 this.deleteCounter = 0;
 
@@ -287,12 +287,12 @@
                 var numberToShow;
 
                 if (this.newCollection) {
-                    this.defaultItemsNumber = 50;
+                    this.defaultItemsNumber = 100;
                 } else {
                     this.defaultItemsNumber += newModels.length;
 
-                    if (this.defaultItemsNumber < 50) {
-                        this.defaultItemsNumber = 50;
+                    if (this.defaultItemsNumber < 100) {
+                        this.defaultItemsNumber = 100;
                     }
                 }
 
