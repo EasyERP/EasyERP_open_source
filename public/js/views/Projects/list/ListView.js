@@ -13,7 +13,7 @@ define([
         'custom'
     ],
 
-    function (paginationTemplate, listTemplate, stagesTamplate, CreateView, listItemView, editView, currentModel, contentCollection, filterView, common, dataService, custom) {
+    function (paginationTemplate, listTemplate, stagesTemplate, CreateView, listItemView, editView, currentModel, contentCollection, filterView, common, dataService, custom) {
         var ProjectsListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -191,15 +191,14 @@ define([
             },
 
             showNewSelect: function (e) {
+                var target = $(e.target);
+
                 if ($(".newSelectList").is(":visible")) {
                     this.hideNewSelect();
-                    return false;
                 } else {
-                    $(e.target).parent().append(_.template(stagesTamplate, {
-                        stagesCollection: custom.getFiltersValuesByKey(this.contentType, 'workflow')
-                    }));
-                    return false;
+                    custom.getFiltersValuesByKey(this.contentType, 'workflow', stagesTemplate, target);
                 }
+                return false;
             },
 
             chooseOption: function (e) {
