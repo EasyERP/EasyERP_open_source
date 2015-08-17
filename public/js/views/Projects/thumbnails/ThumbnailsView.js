@@ -7,10 +7,11 @@
         'models/ProjectsModel',
         'views/Filter/FilterView',
         'common',
-        'populate'
+        'populate',
+        'custom',
     ],
 
-    function (thumbnailsItemTemplate, stagesTamplate, editView, createView, dataService, currentModel, filterView, common, populate) {
+    function (thumbnailsItemTemplate, stagesTamplate, editView, createView, dataService, currentModel, filterView, common, populate, custom) {
         var ProjectThumbnalView = Backbone.View.extend({
             el: '#content-holder',
             countPerPage: 0,
@@ -65,7 +66,9 @@
                     this.hideHealth();
                     return false;
                 } else {
-                    $(e.target).parent().append(_.template(stagesTamplate, {stagesCollection: this.stages}));
+                    $(e.target).parent().append(_.template(stagesTamplate, {
+                        stagesCollection: custom.getFiltersValuesByKey(this.contentType, 'workflow')
+                    }));
                     return false;
                 }
             },
@@ -139,7 +142,7 @@
 
             },
 
-            showFilteredPage: function (filter, context) {
+            showFilteredPage: function (filter) {
                 this.$el.find('.thumbnail').remove();
                 this.startTime = new Date();
                 this.newCollection = true;
@@ -150,8 +153,8 @@
                     this.filter = {};
                 }
 
-                context.changeLocationHash(null, context.defaultItemsNumber, filter);
-                context.collection.showMore({count: context.defaultItemsNumber, page: 1, filter: filter});
+                this.changeLocationHash(null, this.defaultItemsNumber, filter);
+                this.collection.showMore({count: this.defaultItemsNumber, page: 1, filter: filter});
                 //context.getTotalLength(this.defaultItemsNumber, filter);
             },
 
@@ -222,10 +225,10 @@
                 self.filterView = new filterView({contentType: self.contentType});
 
                 self.filterView.bind('filter', function (filter) {
-                    self.showFilteredPage(filter, self)
+                    self.showFilteredPage(filter)
                 });
                 self.filterView.bind('defaultFilter', function () {
-                    self.showFilteredPage({}, self);
+                    self.showFilteredPage({});
                 });
 
                 self.filterView.render();

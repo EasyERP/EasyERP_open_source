@@ -90,15 +90,6 @@ define([
                     }
                 });
             };
-            if (!App || !App.filtersValues) {
-                dataService.getData('/filter/getFiltersValues', null, function (response) {
-                    if (response && !response.error) {
-                        App.filtersValues = response;
-                    } else {
-                        console.log('can\'t fetch filtersValues');
-                    }
-                });
-            }
         },
 
         dashBoardVacation: function(){

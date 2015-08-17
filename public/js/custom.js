@@ -15,7 +15,7 @@ define([
 
             Backbone.history.fragment = "";
             Backbone.history.navigate(url, {trigger: true});
-            this.getFiltersValues();
+            getFiltersValues();
 
         } else {
             if (App.requestedURL === null)
@@ -286,16 +286,27 @@ define([
         return filtersForContent;
     };
 
-    var getFiltersValues = function () {
+    var getFiltersValues = function (contentType, field) {
         if (!App || !App.filtersValues) {
             dataService.getData('/filter/getFiltersValues', null, function (response) {
                 if (response && !response.error) {
                     App.filtersValues = response;
+                    if (contentType) {
+                        getFiltersValuesByKey(contentType, field);
+                    }
                 } else {
                     console.log('can\'t fetch filtersValues');
                 }
             });
         }
+    };
+
+    var getFiltersValuesByKey = function (contentType, field) {
+        if (App && App.filtersValues && App.filtersValues && App.filtersValues[contentType]) {
+            return App.filtersValues[contentType][field]
+        }
+
+        return getFiltersValues(contentType, field);
     };
 
     return {
@@ -311,6 +322,7 @@ define([
         retriveFromCash: retriveFromCash,
         savedFilters: savedFilters,
         getFiltersValues: getFiltersValues,
+        getFiltersValuesByKey: getFiltersValuesByKey,
         getFiltersForContentType: getFiltersForContentType,
         getFilterById: getFilterById
     };
