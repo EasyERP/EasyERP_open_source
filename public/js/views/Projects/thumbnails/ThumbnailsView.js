@@ -154,7 +154,7 @@
             getTotalLength: function (currentNumber, filter, newCollection) {
                 dataService.getData('/totalCollectionLength/Projects', {
                     currentNumber: currentNumber,
-                    filter: this.filter,
+                    filter: filter,
                     newCollection: this.newCollection
                 }, function (response, context) {
                     var showMore = context.$el.find('#showMoreDiv');
