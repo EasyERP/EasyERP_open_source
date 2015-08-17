@@ -11,7 +11,7 @@
         'custom'
     ],
 
-    function (thumbnailsItemTemplate, stagesTamplate, editView, createView, dataService, currentModel, filterView, common, populate, custom) {
+    function (thumbnailsItemTemplate, stagesTemplate, editView, createView, dataService, currentModel, filterView, common, populate, custom) {
         var ProjectThumbnalView = Backbone.View.extend({
             el: '#content-holder',
             countPerPage: 0,
@@ -67,7 +67,7 @@
                 if ($(".newSelectList").is(":visible")) {
                     this.hideHealth();
                 } else {
-                    custom.getStatuses(this.contentType, '/Workflows', stagesTamplate, target);
+                    custom.getStatuses(this.contentType, '/Workflows', stagesTemplate, target);
                 }
 
                 return false;

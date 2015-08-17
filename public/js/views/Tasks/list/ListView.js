@@ -11,10 +11,11 @@ define([
         'collections/Tasks/filterCollection',
         'views/Filter/FilterView',
         'common',
+        'custom',
         'dataService'
     ],
 
-    function (paginationTemplate, listTemplate, stagesTamplate, createView, listItemView, editView, currentModel, projectEditView, projectModel, contentCollection, filterView, common, dataService) {
+    function (paginationTemplate, listTemplate, stagesTemplate, createView, listItemView, editView, currentModel, projectEditView, projectModel, contentCollection, filterView, common, custom, dataService) {
         var TasksListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -213,13 +214,14 @@ define([
             },
 
             showNewSelect: function (e) {
+                var target = $(e.target);
+
                 if ($(".newSelectList").is(":visible")) {
                     this.hideNewSelect();
-                    return false;
                 } else {
-                    $(e.target).parent().append(_.template(stagesTamplate, { stagesCollection: this.stages}));
-                    return false;
+                    custom.getFiltersValuesByKey(this.contentType, 'workflow', stagesTemplate, target);
                 }
+                return false;
             },
 
             chooseOption: function (e) {
