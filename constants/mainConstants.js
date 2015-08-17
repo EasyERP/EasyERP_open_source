@@ -8,5 +8,7 @@ module.exports = {
 
     PAYONEER: '555cc981532aebbc4a8baf36',
     UKR_SIB_BANK: '555cc981532aebbc4a8baf37',
-    PRIMARY: '555cc981532aebbc4a8baf38'
+    PRIMARY: '555cc981532aebbc4a8baf38',
+
+    WTRACK_DB_NAME: 'weTrack'
 };

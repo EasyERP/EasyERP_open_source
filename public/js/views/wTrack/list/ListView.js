@@ -127,9 +127,13 @@ define([
                 });
             },
 
-            copyRow: function (e) {
+            hideGenerateCopy: function(){
                 $('#top-bar-generateBtn').hide();
                 $('#top-bar-copyBtn').hide();
+            },
+
+            copyRow: function (e) {
+               this.hideGenerateCopy();
 
                 this.changed = true;
                 this.createdCopied = true;
@@ -270,7 +274,7 @@ define([
                     editedElementContent = editedCol.data('content');
                     editedElementValue = editedElement.val();
 
-                    editWtrackModel = this.editCollection.get(editedElementRowId);
+                    //editWtrackModel = this.editCollection.get(editedElementRowId);
 
                     if (!this.changedModels[editedElementRowId]) {
                         this.changedModels[editedElementRowId] = {};
@@ -1185,11 +1189,14 @@ define([
                 }
 
                 this.editCollection.reset(this.collection.models);
+
+                this.hideGenerateCopy();
             },
 
             triggerDeleteItemsRender: function (deleteCounter) {
                 this.deleteCounter = deleteCounter;
                 this.deletePage = $("#currentShowPage").val();
+
                 this.deleteItemsRender(deleteCounter, this.deletePage);
             },
 

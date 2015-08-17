@@ -10,6 +10,8 @@ var Project = function (models, event) {
     var prioritySchema = mongoose.Schemas['Priority'];
     var fs = require('fs');
 
+    var CONSTANTS = require('../constants/mainConstants');
+
     event.on('updateContent', updateContent);//binding for Event
 
     function updateContent(request, response, projectId, eventType, tasks, data) {
@@ -395,7 +397,7 @@ var Project = function (models, event) {
                                     if (!err) {
                                         var query = models.get(req.session.lastDb, "Project", projectSchema).find().where('_id').in(result);
                                         query.select("projectName projectmanager _id health workflow").
-                                           // populate('projectmanager._id', 'name _id').
+                                            // populate('projectmanager._id', 'name _id').
                                             exec(function (error, _res) {
                                                 if (!error) {
                                                     res = {}
@@ -591,7 +593,7 @@ var Project = function (models, event) {
             });
     };
 
-    function caseFilter (filter) {
+    function caseFilter(filter) {
         var condition = [];
 
         for (var key in filter) {
@@ -673,35 +675,35 @@ var Project = function (models, event) {
                                 var obj = {'$and': [{_id: {$in: result}}]};
 
                                 /*if (data && data.filter && data.filter.workflow) {
-                                    data.filter.workflow = data.filter.workflow.map(function (item) {
-                                        return item === "null" ? null : item;
-                                    });
+                                 data.filter.workflow = data.filter.workflow.map(function (item) {
+                                 return item === "null" ? null : item;
+                                 });
 
-                                    query.where('workflow').in(data.filter.workflow);
+                                 query.where('workflow').in(data.filter.workflow);
 
-                                } */
-                            if (data && data.filter) {
-                                obj['$and'].push({$and: caseFilter(data.filter)});
-                                /*for (var key in data.filter) {
-                                    switch (key) {
-                                        case 'workflow':
-                                            data.filter.workflow = data.filter.workflow.map(function (item) {
-                                                return item === "null" ? null : item;
-                                            });
-                                            query.where('workflow').in(data.filter.workflow);
-                                            break;
-                                        case 'project':
-                                            query.where('projectName').in(data.filter.project);
-                                            break;
-                                        case 'startDate':
-                                            query.where('StartDate').in(data.filter.startDate);
-                                            break;
-                                        case 'endDate':
-                                            query.where('EndDate').in(data.filter.endDate);
-                                            break;
-                                    }
-                                }*/
-                            }
+                                 } */
+                                if (data && data.filter) {
+                                    obj['$and'].push({$and: caseFilter(data.filter)});
+                                    /*for (var key in data.filter) {
+                                     switch (key) {
+                                     case 'workflow':
+                                     data.filter.workflow = data.filter.workflow.map(function (item) {
+                                     return item === "null" ? null : item;
+                                     });
+                                     query.where('workflow').in(data.filter.workflow);
+                                     break;
+                                     case 'project':
+                                     query.where('projectName').in(data.filter.project);
+                                     break;
+                                     case 'startDate':
+                                     query.where('StartDate').in(data.filter.startDate);
+                                     break;
+                                     case 'endDate':
+                                     query.where('EndDate').in(data.filter.endDate);
+                                     break;
+                                     }
+                                     }*/
+                                }
                                 var query = models.get(req.session.lastDb, "Project", projectSchema)
                                     .find(obj);
 
@@ -714,8 +716,8 @@ var Project = function (models, event) {
                                     populate('createdBy.user', 'login').
                                     populate('editedBy.user', 'login').
                                     //populate('projectmanager', 'name').
-                                   // populate('customer', 'name').
-                                   // populate('workflow._id', 'status').
+                                    // populate('customer', 'name').
+                                    // populate('workflow._id', 'status').
                                     skip((data.page - 1) * data.count).
                                     limit(data.count).
                                     exec(function (error, _res) {
@@ -808,7 +810,7 @@ var Project = function (models, event) {
                             if (!err) {
                                 var query = models.get(req.session.lastDb, "Project", projectSchema).find().where('_id').in(result);
                                 query.select("_id TargetEndDate projectmanager projectName health").
-                                   // populate('projectmanager', 'name _id').
+                                    // populate('projectmanager', 'name _id').
                                     exec(function (error, _res) {
                                         if (!error) {
                                             var endThisWeek = new Date();
@@ -921,8 +923,8 @@ var Project = function (models, event) {
                                 var query = models.get(req.session.lastDb, "Project", projectSchema).find(qObj);
 
                                 /*if (data && (!data.newCollection || data.newCollection === 'false')) {
-                                    query.where('workflow').in([]);
-                                }*/
+                                 query.where('workflow').in([]);
+                                 }*/
 
                                 query.select("_id projectName task workflow projectmanager customer health").
                                     skip((data.page - 1) * data.count).
@@ -984,31 +986,31 @@ var Project = function (models, event) {
             addObj['$and'] = caseFilter(data.filter);
 
             /*for (var key in data.filter) {
-                var condition = data.filter[key];
+             var condition = data.filter[key];
 
-                switch (key) {
-                    case 'workflow':
-                        condition = condition.map(function (item) {
-                            return item === "null" ? null : item;
-                        });
-                        addObj['workflow'] = {$in: condition.objectID()};
-                        break;
-                    case 'project':
-                        addObj['projectName'] = {$in: condition};
-                        break;
-                    case 'startDate':
-                        addObj['StartDate'] = {$in: condition};
-                        break;
-                    case 'endDate':
-                        addObj['EndDate'] = {$in: condition};
-                        break;
-                }
-            }*/
+             switch (key) {
+             case 'workflow':
+             condition = condition.map(function (item) {
+             return item === "null" ? null : item;
+             });
+             addObj['workflow'] = {$in: condition.objectID()};
+             break;
+             case 'project':
+             addObj['projectName'] = {$in: condition};
+             break;
+             case 'startDate':
+             addObj['StartDate'] = {$in: condition};
+             break;
+             case 'endDate':
+             addObj['EndDate'] = {$in: condition};
+             break;
+             }
+             }*/
 
-           /* data.filter.workflow = data.filter.workflow.map(function (item) {
-                return item === "null" ? null : item;
-            });
-            addObj['workflow'] = {$in: data.filter.workflow.objectID()};*/
+            /* data.filter.workflow = data.filter.workflow.map(function (item) {
+             return item === "null" ? null : item;
+             });
+             addObj['workflow'] = {$in: data.filter.workflow.objectID()};*/
         }
 
         if (data && data.parrentContentId) {
@@ -1074,13 +1076,13 @@ var Project = function (models, event) {
                                     var query = models.get(req.session.lastDb, 'Tasks', tasksSchema).
                                         where('project').in(projectsId.objectID());
                                     /*if (data && data.filter && data.filter.workflow) {
-                                        data.filter.workflow = data.filter.workflow.map(function (item) {
-                                            return item === "null" ? null : item;
-                                        });
-                                        query.where('workflow').in(data.filter.workflow);
-                                    } else if (data && (!data.newCollection || data.newCollection === 'false')) {
-                                        query.where('workflow').in([]);
-                                    }*/
+                                     data.filter.workflow = data.filter.workflow.map(function (item) {
+                                     return item === "null" ? null : item;
+                                     });
+                                     query.where('workflow').in(data.filter.workflow);
+                                     } else if (data && (!data.newCollection || data.newCollection === 'false')) {
+                                     query.where('workflow').in([]);
+                                     }*/
                                     query.exec(function (err, result) {
                                         if (!err) {
                                             if (data.currentNumber && data.currentNumber < result.length) {
@@ -1224,9 +1226,14 @@ var Project = function (models, event) {
     }
 
     function update(req, _id, data, res, remove) {
+        var dbName = req.session.lastDb;
+        var wTrackSchema;
+        var wTrackModel;
+
         delete data._id;
         delete data.createdBy;
         delete data.task;
+
         if (data.groups) {
             if (data.groups.users) {
                 data.groups.users = data.groups.users.map(function (currentValue) {
@@ -1259,15 +1266,22 @@ var Project = function (models, event) {
             data.notes[data.notes.length - 1] = obj;
         }
 
-        var query = models.get(req.session.lastDb, 'Project', projectSchema).findByIdAndUpdate({_id: _id}, data);
+        var query = models.get(dbName, 'Project', projectSchema).findByIdAndUpdate({_id: _id}, data, {new: true});
         query.populate("editedBy.user", "login");
-        query.exec(function (err, projects) {
+        query.exec(function (err, project) {
             if (err) {
                 console.log(err);
                 logWriter.log("Project.js update project.update " + err);
                 res.send(500, {error: "Can't update Project"});
             } else {
-                res.send(200, projects);
+                res.send(200, project);
+
+                if (dbName === CONSTANTS.WTRACK_DB_NAME) {
+                    wTrackSchema = mongoose.Schemas['wTrack'];
+                    wTrackModel = models.get(dbName, 'wTrack', wTrackSchema);
+
+                    event.emit('updateName', _id, wTrackModel, 'project._id', 'project.projectName', project.projectName);
+                }
             }
         });
     };
@@ -1338,7 +1352,7 @@ var Project = function (models, event) {
         delete data.createdBy;
         var fileName = data.fileName;
         var progress
-         delete data.fileName;
+        delete data.fileName;
         if (data.notes && data.notes.length != 0) {
             var obj = data.notes[data.notes.length - 1];
             if (!obj._id)
@@ -1353,7 +1367,7 @@ var Project = function (models, event) {
         if (data && data.EndDate)
             data.duration = returnDuration(data.StartDate, data.EndDate);
         if (data.estimated && data.estimated != 0) {
-            if (data.progress === 100){
+            if (data.progress === 100) {
                 data.progress = 100;
             } else {
                 data.progress = Math.round((data.logged / data.estimated) * 100);
@@ -1754,15 +1768,15 @@ var Project = function (models, event) {
                                     where('project').in(projectsId.objectID()).
                                     where('workflow', objectId(data.workflowId));
 
-                                    if (data.filter && data.filter.type) {
-                                        query.where('type').in(data.filter.type);
+                                if (data.filter && data.filter.type) {
+                                    query.where('type').in(data.filter.type);
                                 }
 
 
                                 query.select("_id assignedTo workflow editedBy.date project taskCount summary type remaining priority sequence").
                                     populate('assignedTo', 'name').
                                     populate('project', 'projectShortDesc').
-                                   // populate('workflow._id', '_id').
+                                    // populate('workflow._id', '_id').
                                     sort({'sequence': -1}).
                                     limit(req.session.kanbanSettings.tasks.countPerPage).
                                     exec(function (err, result) {
@@ -1859,18 +1873,18 @@ var Project = function (models, event) {
                                 if (data && data.filter) {
 
                                     /*for (var key in data.filter) {
-                                        switch (key) {
-                                            case 'workflow':
-                                                data.filter.workflow = data.filter.workflow.map(function (item) {
-                                                    return item === "null" ? null : item;
-                                                });
-                                                query.where('workflow').in(data.filter.workflow);
-                                                break;
-                                            case 'type':
-                                                query.where('type').in(data.filter.type);
-                                                break;
-                                        }
-                                    }*/
+                                     switch (key) {
+                                     case 'workflow':
+                                     data.filter.workflow = data.filter.workflow.map(function (item) {
+                                     return item === "null" ? null : item;
+                                     });
+                                     query.where('workflow').in(data.filter.workflow);
+                                     break;
+                                     case 'type':
+                                     query.where('type').in(data.filter.type);
+                                     break;
+                                     }
+                                     }*/
 
                                 }
 
