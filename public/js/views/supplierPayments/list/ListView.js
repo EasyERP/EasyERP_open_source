@@ -2,13 +2,14 @@
  * Created by soundstorm on 21.05.15.
  */
 define([
+        'text!templates/Pagination/PaginationTemplate.html',
         'text!templates/supplierPayments/list/ListHeader.html',
         'views/supplierPayments/list/ListItemView',
         'views/supplierPayments/list/ListTotalView',
         'collections/supplierPayments/filterCollection',
         'dataService'
     ],
-    function (listTemplate, listItemView, listTotalView, paymentCollection, dataService) {
+    function (paginationTemplate, listTemplate, listItemView, listTotalView, paymentCollection, dataService) {
         var PaymentListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -28,8 +29,7 @@ define([
                 "click #previousPage": "previousPage",
                 "click #nextPage": "nextPage",
                 "click .checkbox": "checked",
-                "click #itemsButton": "itemsNumber",
-                "click .currentPageList": "itemsNumber",
+                "mouseover .currentPageList": "itemsNumber",
                 "click": "hideItemsNumber",
                 "click #firstShowPage": "firstPage",
                 "click #lastShowPage": "lastPage",
@@ -41,7 +41,7 @@ define([
                 this.collection = options.collection;
                 this.filter = options.filter;
                 this.sort = options.sort;
-                this.defaultItemsNumber = this.collection.namberToShow || 50;
+                this.defaultItemsNumber = this.collection.namberToShow || 100;
                 this.newCollection = options.newCollection;
                 this.deleteCounter = 0;
                 this.page = options.collection.page;
@@ -339,7 +339,10 @@ define([
                     self.hideItemsNumber();
                 });
 
+                currentEl.append(_.template(paginationTemplate));
+
                 var pagenation = this.$el.find('.pagination');
+
                 if (this.collection.length === 0) {
                     pagenation.hide();
                 } else {

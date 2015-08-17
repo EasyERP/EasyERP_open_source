@@ -7,7 +7,8 @@ var App = App ||
     requestedURL: null,
     Calendar: {
         currentCalendarId: ""
-    }
+    },
+    savedFilters: {}
 };
 
 require.config({
@@ -49,6 +50,7 @@ require(['app'], function (app) {
     Backbone.Collection.prototype.getElement = function (id) {
         return (id) ? this.get(id) : ((this.currentElement) ? this.currentElement : this.at(0));
     };
+
     Backbone.Collection.prototype.setElement = function (id, model) {
         if (arguments.length === 0) {
             this.currentElement = this.at(0);
@@ -162,9 +164,9 @@ require(['app'], function (app) {
 
         if (!count) {
             var thumbnails = location.split('thumbnails')[0];
-            count = (location.split('/c=')[1]) ? location.split('/c=')[1].split('/')[0] : 50;
-            if (thumbnails && count < 50)
-                count = 50;
+            count = (location.split('/c=')[1]) ? location.split('/c=')[1].split('/')[0] : 100;
+            if (thumbnails && count < 100)
+                count = 100;
         }
         var url = mainLocation;
         if (pId)
@@ -186,7 +188,7 @@ require(['app'], function (app) {
             }
             if (notEmptyFilter) {
                 url += '/filter=' + encodeURIComponent(JSON.stringify(filter));
-            } else url += '/filter=empty';
+            } else url += '';
         }
 
         Backbone.history.navigate(url);

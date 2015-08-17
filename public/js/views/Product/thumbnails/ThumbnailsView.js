@@ -4,13 +4,12 @@
         'views/Product/CreateView',
         'dataService',
         'models/ProductModel',
-        'models/UsersModel',
         'views/Filter/FilterView',
         'common',
         'text!templates/Alpabet/AphabeticTemplate.html'
     ],
 
-    function (thumbnailsItemTemplate, editView, createView, dataService, currentModel, usersModel, filterView, common, AphabeticTemplate) {
+    function (thumbnailsItemTemplate, editView, createView, dataService, currentModel, filterView, common, AphabeticTemplate) {
         var ProductThumbnalView = Backbone.View.extend({
             el: '#content-holder',
             countPerPage: 0,
@@ -30,7 +29,7 @@
                 _.bind(this.collection.showMoreAlphabet, this.collection);
                 this.allAlphabeticArray = common.buildAllAphabeticArray();
                 this.filter = options.filter;
-                this.defaultItemsNumber = this.collection.namberToShow || 50;
+                this.defaultItemsNumber = this.collection.namberToShow || 100;
                 this.newCollection = options.newCollection;
                 this.deleteCounter = 0;
                 this.page = options.collection.page;
@@ -141,96 +140,6 @@
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
             },
 
-            saveFilter: function () {
-                var currentUser = new usersModel(App.currentUser);
-                var subMenu = $('#submenu-holder').find('li.selected').text();
-                var key;
-                var filterObj = {};
-                var mid = 39;
-
-                key = subMenu.trim();
-
-                filterObj['filter'] = {};
-                filterObj['filter'] = this.filter;
-                filterObj['key'] = key;
-
-                currentUser.changed = filterObj;
-
-                currentUser.save(
-                    filterObj,
-                    {
-                        headers: {
-                            mid: mid
-                        },
-                        wait: true,
-                        patch:true,
-                        validate: false,
-                        success: function (model) {
-                            console.log('Filter was saved to db');
-                        },
-                        error: function (model,xhr) {
-                            console.error(xhr);
-                        },
-                        editMode: false
-                    }
-                );
-                if (!App.currentUser.savedFilters){
-                    App.currentUser.savedFilters = {};
-                }
-                App.currentUser.savedFilters['Product'] = filterObj.filter;
-            },
-
-            removeFilter: function () {
-                var currentUser = new usersModel(App.currentUser);
-                var subMenu = $('#submenu-holder').find('li.selected').text();
-                var key;
-                var filterObj = {};
-                var mid = 39;
-
-                this.clearFilter();
-
-                key = subMenu.trim();
-                filterObj['key'] = key;
-
-                currentUser.changed = filterObj;
-
-                currentUser.save(
-                    filterObj,
-                    {
-                        headers: {
-                            mid: mid
-                        },
-                        wait: true,
-                        patch:true,
-                        validate: false,
-                        success: function (model) {
-                            console.log('Filter was remover from db');
-                        },
-                        error: function (model,xhr) {
-                            console.error(xhr);
-                        },
-                        editMode: false
-                    }
-                );
-
-                if (App.currentUser.savedFilters['Product']){
-                    delete App.currentUser.savedFilters['Product'];
-                }
-            },
-
-            clearFilter: function () {
-                this.$el.find('.filterValues').empty();
-                this.$el.find('.filter-icons').removeClass('active');
-                this.$el.find('.chooseOption').children().remove();
-                this.$el.find('.filterOptions').removeClass('chosen');
-
-                $.each($('.drop-down-filter input'), function (index, value) {
-                    value.checked = false
-                });
-
-                this.alpabeticalRender(null);
-            },
-
             render: function () {
                 var self = this;
                 var currentEl = this.$el;
@@ -276,9 +185,6 @@
                     });
                     FilterView.bind('defaultFilter', function () {
                         self.alpabeticalRender();
-                        $(".saveFilterButton").hide();
-                        $(".clearFilterButton").hide();
-                        $(".removeFilterButton").show();
                     });
                     // Filter custom event listen ------end
                 });
@@ -292,7 +198,6 @@
                 this.$el.find(".allNumberPerPage, .newSelectList").hide();
                 if (!el.closest('.search-view')) {
                     $('.search-content').removeClass('fa-caret-up');
-                    this.$el.find(".filterOptions, .filterActions, .search-options, .drop-down-filter").hide();
                 };
             },
 
@@ -339,7 +244,7 @@
                 var showMore = holder.find('#showMoreDiv');
                 var created = holder.find('#timeRecivingDataFromServer');
                 this.defaultItemsNumber += newModels.length;
-                this.changeLocationHash(null, (this.defaultItemsNumber < 50) ? 50 : this.defaultItemsNumber, this.filter);
+                this.changeLocationHash(null, (this.defaultItemsNumber < 100) ? 100 : this.defaultItemsNumber, this.filter);
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
 
                 if (showMore.length != 0) {
@@ -362,7 +267,7 @@
                 var showMore = holder.find('#showMoreDiv');
                 var content = holder.find(".thumbnailwithavatar");
                 this.defaultItemsNumber += newModels.length;
-                this.changeLocationHash(null, (this.defaultItemsNumber < 50) ? 50 : this.defaultItemsNumber, this.filter);
+                this.changeLocationHash(null, (this.defaultItemsNumber < 100) ? 100 : this.defaultItemsNumber, this.filter);
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
                 holder.append(this.template({collection: newModels.toJSON()}));
                // holder.prepend(alphaBet);

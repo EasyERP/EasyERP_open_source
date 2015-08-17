@@ -10,7 +10,6 @@ module.exports = function (models) {
 
     router.get('/getForDD', handler.getForDD);
     router.get('/bySales', handler.getBySales);
-    router.get('/getFilterValues', handler.getFilterValues);
     router.get('/byDepartment', handler.byDepartment);
 
     return router;

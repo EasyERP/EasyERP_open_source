@@ -1,5 +1,6 @@
 define([
-        'text!templates/monthHours/list/listHeader.html',
+    'text!templates/Pagination/PaginationTemplate.html',
+    'text!templates/monthHours/list/listHeader.html',
         'views/monthHours/CreateView',
         'views/monthHours/list/ListItemView',
         'views/monthHours/EditView',
@@ -11,7 +12,7 @@ define([
         'populate',
         'async',
         'constants'
-    ], function (listTemplate, createView, listItemView, editView, currentModel, contentCollection, EditCollection, common, dataService, populate, async, constants) {
+    ], function (paginationTemplate, listTemplate, createView, listItemView, editView, currentModel, contentCollection, EditCollection, common, dataService, populate, async, constants) {
         var monthHoursListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -34,7 +35,7 @@ define([
                 this.collection = options.collection;
                 this.filter = options.filter;
                 this.sort = options.sort;
-                this.defaultItemsNumber = this.collection.namberToShow || 50;
+                this.defaultItemsNumber = this.collection.namberToShow || 100;
                 this.newCollection = options.newCollection;
                 this.deleteCounter = 0;
                 this.page = options.collection.page;
@@ -54,8 +55,7 @@ define([
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
                 "click td.editable": "editRow",
-                "click #itemsButton": "itemsNumber",
-                "click .currentPageList": "itemsNumber",
+                "mouseover .currentPageList": "itemsNumber",
                 "click": "hideItemsNumber",
                 "click #firstShowPage": "firstPage",
                 "click #lastShowPage": "lastPage",
@@ -261,11 +261,6 @@ define([
                 var el = e.target;
                 $(".allNumberPerPage").hide();
                 $(".newSelectList").hide();
-                if (!el.closest('.search-view')) {
-                    $(".drop-down-filter").hide();
-                    $('.search-options').hide();
-                    $('.search-content').removeClass('fa-caret-up')
-                }
             },
 
             showNewSelect: function (e, prev, next) {
@@ -329,6 +324,8 @@ define([
                         $("#top-bar-deleteBtn").hide();
                     }
                 });
+
+                currentEl.append(_.template(paginationTemplate));
 
                 pagenation = this.$el.find('.pagination');
 

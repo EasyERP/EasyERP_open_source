@@ -171,7 +171,7 @@
 
             editKanban: function (e) {
                 dataService.getData('/currentUser', null, function (user, context) {
-                    var tempDom = _.template(kanbanSettingsTemplate, { tasks: user.kanbanSettings.tasks });
+                    var tempDom = _.template(kanbanSettingsTemplate, { tasks: user.user.kanbanSettings.tasks });
                     context.$el = $(tempDom).dialog({
                         dialogClass: "edit-dialog",
                         width: "400",
@@ -322,8 +322,12 @@
                 this.$el.find(".allNumberPerPage, .newSelectList").hide();
                 if (!el.closest('.search-view')) {
                     $('.search-content').removeClass('fa-caret-up');
-                    this.$el.find(".filterOptions, .filterActions, .search-options, .drop-down-filter").hide();
+                    this.$el.find('.search-options').addClass('hidden');
                 };
+                //this.$el.find(".allNumberPerPage, .newSelectList").hide();
+                //if (!el.closest('.search-view')) {
+                //    $('.search-content').removeClass('fa-caret-up');
+                //};
             },
 
             foldUnfiltredItems: function (workflows) {

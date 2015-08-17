@@ -127,7 +127,7 @@ function (ListTemplate, CreateView, currentModel, ListItemView, EditView) {
 
         showMore: function () {
             _.bind(this.collection.showMore, this.collection);
-            this.collection.showMore({ count: 50 });
+            this.collection.showMore({ count: 100 });
         },
 
         showMoreContent: function (newModels) {

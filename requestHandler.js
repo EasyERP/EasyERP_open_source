@@ -60,6 +60,21 @@ var requestHandler = function (event, mainDb) {
             });
         }
     });
+    //if name was updated, need update related wTrack, or other models
+
+    event.on('updateName', function (id, targetModel, searchField, fieldName, fieldValue) {
+        var sercObject = {};
+        var updateObject = {};
+
+        sercObject[searchField] = id;
+        updateObject[fieldName] = fieldValue;
+
+        targetModel.update(sercObject, updateObject, function(err){
+            if(err){
+                logWriter.log('requestHandler_eventEmiter_updateName', err.message);
+            }
+        });
+    });
     //binding for Sequence
     event.on('updateSequence', function (model, sequenceField, start, end, workflowStart, workflowEnd, isCreate, isDelete, callback) {
         var query;
@@ -132,7 +147,7 @@ var requestHandler = function (event, mainDb) {
                 if (typeof this[i] == 'string' && this[i].length === 24) {
                     _arrayOfID.push(objectId(this[i]));
                 }
-                if (this[i] === null) {
+                if (this[i] === null || this[i] === 'null') {
                     _arrayOfID.push(null);
                 }
 
@@ -267,13 +282,13 @@ var requestHandler = function (event, mainDb) {
 
     function updateCurrentUser(req, res, data) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getEditWritAccess(req, req.session.uId, 7, function (access) {
-                if (access) {
+           /* access.getEditWritAccess(req, req.session.uId, 7, function (access) {
+                if (access) {*/
                     users.updateUser(req, req.session.uId, req.body, res, data);
-                } else {
+               /* } else {
                     res.send(403);
                 }
-            });
+            });*/
         } else {
             res.send(401);
         }
@@ -1159,7 +1174,8 @@ var requestHandler = function (event, mainDb) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getReadAccess(req, req.session.uId, 14, function (access) {
                 if (access) {
-                    jobPosition.getFilter(req, res);
+                   // jobPosition.getFilter(req, res);
+                    jobPosition.get(req, res);
                 } else {
                     res.send(403);
                 }

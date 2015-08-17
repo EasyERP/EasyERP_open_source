@@ -9,7 +9,6 @@ var wTrackHandler = require('../handlers/wTrack');
 module.exports = function (models) {
     var handler = new wTrackHandler(models);
 
-    router.get('/getFilterValues', handler.getFilterValues);
     router.get('/totalCollectionLength', handler.totalCollectionLength);
     router.get('/:viewType', handler.getByViewType);
     router.post('/', handler.create);

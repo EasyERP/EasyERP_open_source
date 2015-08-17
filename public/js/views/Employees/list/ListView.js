@@ -1,16 +1,17 @@
 define([
+        'text!templates/Pagination/PaginationTemplate.html',
         'text!templates/Employees/list/ListHeader.html',
         'views/Employees/CreateView',
         'views/Employees/list/ListItemView',
         'views/Filter/FilterView',
         'text!templates/Alpabet/AphabeticTemplate.html',
         'collections/Employees/filterCollection',
-        'models/UsersModel',
         'common',
-        'dataService'
+        'dataService',
+        'custom'
     ],
 
-    function (listTemplate, createView, listItemView, filterView, aphabeticTemplate, contentCollection, usersModel, common, dataService) {
+    function (paginationTemplate, listTemplate, createView, listItemView, filterView, aphabeticTemplate, contentCollection, common, dataService, custom) {
         var EmployeesListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -29,7 +30,7 @@ define([
                 _.bind(this.collection.showMoreAlphabet, this.collection);
                 this.allAlphabeticArray = common.buildAllAphabeticArray();
                 this.filter = options.filter;
-                this.defaultItemsNumber = this.collection.namberToShow || 50;
+                this.defaultItemsNumber = this.collection.namberToShow || 100;
                 this.newCollection = options.newCollection;
                 this.deleteCounter = 0;
                 this.page = options.collection.page;
@@ -38,6 +39,8 @@ define([
 
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
                 this.contentCollection = contentCollection;
+
+                this.filterView;
             },
 
             events: {
@@ -48,8 +51,7 @@ define([
                 "click #nextPage": "nextPage",
                 "click .checkbox": "checked",
                 "click  .list td:not(.notForm)": "gotoForm",
-                "click #itemsButton": "itemsNumber",
-                "click .currentPageList": "itemsNumber",
+                "mouseover .currentPageList": "itemsNumber",
                 "click": "hideItemsNumber",
                 "click .letter:not(.empty)": "alpabeticalRender",
                 "click #firstShowPage": "firstPage",
@@ -86,11 +88,14 @@ define([
                 $(e.target).addClass("current");
                 this.newCollection = false;
                 var selectedLetter = $(e.target).text();
+                this.filter = (this.filter) ? this.filter : {};
+
+                this.filter['letter'] = selectedLetter;
+
                 if ($(e.target).text() == "All") {
                     selectedLetter = "";
+                    this.filter = {};
                 }
-                this.filter = (this.filter && this.filter !== 'empty') ? this.filter : {};
-                this.filter['letter'] = selectedLetter;
                 var itemsNumber = $("#itemsNumber").text();
                 this.changeLocationHash(1, itemsNumber, this.filter);
                 this.collection.showMore({count: itemsNumber, page: 1, filter: this.filter});
@@ -154,9 +159,12 @@ define([
                 this.$el.find(".allNumberPerPage, .newSelectList").hide();
                 if (!el.closest('.search-view')) {
                     $('.search-content').removeClass('fa-caret-up');
-                    this.$el.find(".filterOptions, .filterActions, .search-options, .drop-down-filter").hide();
-                }
-                ;
+                    this.$el.find('.search-options').addClass('hidden');
+                };
+                //this.$el.find(".allNumberPerPage, .newSelectList").hide();
+                //if (!el.closest('.search-view')) {
+                //    $('.search-content').removeClass('fa-caret-up');
+                //};
             },
 
             itemsNumber: function (e) {
@@ -227,28 +235,22 @@ define([
                     }
                 });
 
-                dataService.getData('/department/getForDD', null, function (departments) {
-                    departments.data.forEach(function (department) {
-                        department.name = department.departmentName;
-                    });
-
-                    dataService.getData('/employee/getFilterValues', null, function (values) {
-                        FilterView = new filterView({collection: departments.data, customCollection: values});
-                        // Filter custom event listen ------begin
-                        FilterView.bind('filter', function () {
-                            self.showFilteredPage()
-                        });
-                        FilterView.bind('defaultFilter', function () {
-                            self.showFilteredPage();
-                            $(".saveFilterButton").hide();
-                            $(".clearFilterButton").hide();
-                            $(".removeFilterButton").show();
-                        });
-                        // Filter custom event listen ------end
-                    });
+                self.filterView = new filterView({
+                    contentType: self.contentType
                 });
 
+                self.filterView.bind('filter', function (filter) {
+                    self.showFilteredPage(filter, self)
+                });
+                self.filterView.bind('defaultFilter', function () {
+                    self.showFilteredPage({}, self);
+                });
+
+                self.filterView.render();
+                currentEl.append(_.template(paginationTemplate));
+
                 var pagenation = this.$el.find('.pagination');
+
                 if (this.collection.length === 0) {
                     pagenation.hide();
                 } else {
@@ -347,148 +349,36 @@ define([
                 $('#check_all').prop('checked', false);
                 this.changeLocationHash(1, itemsNumber, this.filter);
             },
-            //modified for filter Vasya
-            showFilteredPage: function (e) {
+
+            showFilteredPage: function (filter, context) {
                 var itemsNumber = $("#itemsNumber").text();
-                var selectedLetter;
-                var self = this;
-                var chosen = this.$el.find('.chosen');
-                var checkedElements = $('.drop-down-filter input:checkbox:checked');
-                var condition = this.$el.find('.conditionAND > input')[0];
-                var showList;
+
+                var alphaBet = this.$el.find('#startLetter');
+                var selectedLetter = $(alphaBet).find('.current').length ? $(alphaBet).find('.current')[0].text : '';
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
-                this.filter ={};
-                this.filter['condition'] = 'and';
 
-                if  (condition && !condition.checked) {
-                    self.filter['condition'] = 'or';
+                if (selectedLetter === "All") {
+                    selectedLetter = '';
                 }
 
-                if (e && e.target) {
-                    selectedLetter = $(e.target).text();
-                    if ($(e.target).text() == "All") {
-                        selectedLetter = "";
-                    }
+                context.startTime = new Date();
+                context.newCollection = false;
+
+                //if (!filter.name) {
+                //    if (selectedLetter !== '') {
+                //        filter['letter'] = selectedLetter;
+                //    }
+                //}
+
+                if (Object.keys(filter).length === 0){
+                    this.filter = {};
                 }
 
-                if (chosen) {
-                    chosen.each(function (index, elem) {
-                        if (self.filter[elem.children[1].value]) {
-                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
-                                self.filter[elem.children[1].value].push(element.value);
-                            })
-                        } else {
-                            self.filter[elem.children[1].value] = [];
-                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
-                                self.filter[elem.children[1].value].push(element.value);
-                            })
-                        }
-                    });
-                }
-                this.startTime = new Date();
-                this.newCollection = false;
-
-                if ((checkedElements.length && checkedElements.attr('id') === 'defaultFilter') || (!chosen.length && !showList)) {
-                    self.filter = 'empty';
-                };
-
-                this.filter['letter'] = selectedLetter;
-                this.changeLocationHash(1, itemsNumber, this.filter);
-                this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter });
-                this.getTotalLength(null, itemsNumber, this.filter);
-            },
-
-            saveFilter: function () {
-                var currentUser = new usersModel(App.currentUser);
-                var subMenu = $('#submenu-holder').find('li.selected').text();
-                var key;
-                var filterObj = {};
-                var mid = 39;
-
-                key = subMenu.trim();
-
-                filterObj['filter'] = {};
-                filterObj['filter'] = this.filter;
-                filterObj['key'] = key;
-
-                currentUser.changed = filterObj;
-
-                currentUser.save(
-                    filterObj,
-                    {
-                        headers: {
-                            mid: mid
-                        },
-                        wait: true,
-                        patch:true,
-                        validate: false,
-                        success: function (model) {
-                            console.log('Filter was saved to db');
-                        },
-                        error: function (model,xhr) {
-                            console.error(xhr);
-                        },
-                        editMode: false
-                    }
-                );
-                if (!App.currentUser.savedFilters){
-                    App.currentUser.savedFilters = {};
-                }
-                App.currentUser.savedFilters['Employees'] = filterObj.filter;
-            },
-
-            removeFilter: function () {
-                var currentUser = new usersModel(App.currentUser);
-                var subMenu = $('#submenu-holder').find('li.selected').text();
-                var key;
-                var filterObj = {};
-                var mid = 39;
-
-                this.clearFilter();
-
-                key = subMenu.trim();
-                filterObj['key'] = key;
-
-                currentUser.changed = filterObj;
-
-                currentUser.save(
-                    filterObj,
-                    {
-                        headers: {
-                            mid: mid
-                        },
-                        wait: true,
-                        patch:true,
-                        validate: false,
-                        success: function (model) {
-                            console.log('Filter was remover from db');
-                        },
-                        error: function (model,xhr) {
-                            console.error(xhr);
-                        },
-                        editMode: false
-                    }
-                );
-
-                if (App.currentUser.savedFilters['Employees']){
-                    delete App.currentUser.savedFilters['Employees'];
-                }
-            },
-
-            clearFilter: function () {
-
-                this.$el.find('.filterValues').empty();
-                this.$el.find('.filter-icons').removeClass('active');
-                this.$el.find('.chooseOption').children().remove();
-                this.$el.find('.filterOptions').removeClass('chosen');
-
-                $.each($('.drop-down-filter input'), function (index, value) {
-                    value.checked = false
-                });
-
-                this.showFilteredPage();
+                context.changeLocationHash(1, itemsNumber, filter);
+                context.collection.showMore({ count: itemsNumber, page: 1, filter: filter});
+                context.getTotalLength(null, itemsNumber, filter);
             },
 
             showPage: function (event) {
@@ -514,6 +404,9 @@ define([
                 }
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
+
+                this.filterView.renderFilterContent();
+
                 holder.find('#timeRecivingDataFromServer').remove();
                 holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             },

@@ -3,62 +3,20 @@
     <div class="search-field">
         <span class="search fa fa-search fa-lg"></span>
 
-        <div class="filter-icons"><span class="fa fa-filter funnelIcon"></span><span class="filterValues"></span>
-            <span class="removeValues">x</span></div>
+        <!--<div class="filter-icons"><span class="fa fa-filter funnelIcon"></span><span class="filterValuesIcons"></span>
+            <span class="removeValues">x</span></div> -->
         <!--<input class="search-input" type="text"/>-->
         <div class="oe_searchview_input" contenteditable="true" tabindex="0"></div>
         <span class="search-content fa fa-lg fa-fw fa-caret-down"></span>
         <!--<div class="search-content"></div>-->
     </div>
-    <div class="search-options">
-        <div class="btn-group">
-            <div class="btn-group">
-                <button class="< group btn btn-default filter">
+    <div class="search-options hidden">
+        <ul class="filter-dialog-tabs">
+                <li data-value="#filtersContent" class="btn">
                     <span class="fa fa-filter"></span>
                     Filters
                     <span class="caret"></span>
-                </button>
-                <ul class="condition hidden">
-                    <span class="CondParagraph">Condition</span>
-                    <li class="conditionAND">
-                        <input type="checkbox" checked id="logicCondition" value="and">
-                        <label for="logicCondition">AND</label>
-                    </li>
-                </ul>
-                <ul class="drop-down-filter">
-                    <li class="hidden">
-                        <input type="checkbox" id="defaultFilter" value="empty">
-                        <label for="defaultFilter">Clear</label>
-                    </li>
-
-                    <li class="group btn btn-default customFilter">
-                        Add Custom Filter
-                    </li>
-                    <li class="filterOptions">
-                        <span class="removeFilter">x</span>
-                        <select class="chooseTerm">
-                            <option selected value="">Choose Term</option>
-                            <% var keys = _.keys(customCollection[0]);
-                            keys.shift();
-                            keys.forEach(function(key, index){ %>
-                            <option value="<%=key%>"><%= customCollection[0][key]['displayName'] ? customCollection[0][key]['displayName'] : key %></option>
-                            <% }) %>
-                        </select>
-                        <ul class="chooseOption">
-
-                        </ul>
-
-                    </li>
-                    <li class="filterActions">
-                        <button class="pull-left group btn btn-default applyFilter">Apply</button>
-                        <button class="group btn btn-default addCondition">Add a condition</button>
-                    </li>
-                    <li class="filterActions">
-                        <button class="saveFilterButton">Save</button>
-                        <button class="removeFilterButton">Remove</button>
-                    </li>
-                </ul>
-            </div>
+                </li>
             <!--<div class="btn-group">
                 <button class="group btn btn-default">
                     <span class="fa fa-bars"></span>
@@ -66,13 +24,56 @@
                     <span class="caret"></span>
                 </button>
             </div>-->
-            <!--<div class="btn-group">-->
-            <!--<button class="btn btn-default">-->
-            <!--<span class="fa fa-star"></span>-->
-            <!--Favorites-->
-            <!--<span class="caret"></span>-->
-            <!--</button>-->
-            <!--</div>-->
+                <li data-value="#favoritesContent" class="btn">
+                    <span class="fa fa-star"></span>
+                    Favorites
+                    <span class="caret"></span>
+                </li>
+        </ul>
+
+        <div class="drop-down-filter">
+            <ul class="condition hidden">
+                <span class="CondParagraph">Condition</span>
+                <li class="conditionAND">
+                    <input type="checkbox" checked id="logicCondition" value="and">
+                    <label for="logicCondition">AND</label>
+                </li>
+            </ul>
+            <li class="hidden">
+                <input type="checkbox" id="defaultFilter" value="empty">
+                <label for="defaultFilter">Clear</label>
+            </li>
+
+            <li class="hidden group btn btn-default customFilter">
+                Add Custom Filter
+            </li>
+
+            <div id="filtersContent" class="tabContent"></div>
+            <div id="favoritesContent" class="tabContent hidden"></div>
+
+            <!--<li class="filterOptions">
+                <span class="removeFilter">x</span>
+                <select class="chooseTerm">
+                    <option selected value="">Choose Term</option>
+                    <% var keys = _.keys(filterCollection);
+                    keys.forEach(function(key, index){ %>
+                    <option value="<%=filterCollection[key].view%>"><%= key %></option>
+                    <% }) %>
+                </select>
+                <ul class="chooseOption">
+
+                </ul>
+
+            </li>-->
+            <!--<li class="filterActions">
+                <button class="pull-left group btn btn-default applyFilter">Apply</button>
+                &lt;!&ndash;<button class="group btn btn-default addCondition">Add a condition</button>&ndash;&gt;
+            </li>-->
+            <!--<li id="applyFilter">Apply Filter</li>-->
+            <!--<li class="filterActions">
+                <button class="saveFilterButton">Save</button>
+                <button class="removeFilterButton">Remove</button>
+            </li>-->
         </div>
     </div>
 </div>

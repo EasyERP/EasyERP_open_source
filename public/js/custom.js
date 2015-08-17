@@ -1,4 +1,9 @@
-define(['libs/date.format', 'common', 'constants'], function (dateformat, common, CONTENT_TYPES) {
+define([
+    'libs/date.format',
+    'common',
+    'constants',
+    'dataService'
+], function (dateformat, common, CONTENT_TYPES, dataService) {
 
     var runApplication = function (success) {
         if (!Backbone.history.fragment) {
@@ -10,6 +15,7 @@ define(['libs/date.format', 'common', 'constants'], function (dateformat, common
 
             Backbone.history.fragment = "";
             Backbone.history.navigate(url, {trigger: true});
+            getFiltersValues();
 
         } else {
             if (App.requestedURL === null)
@@ -210,47 +216,86 @@ define(['libs/date.format', 'common', 'constants'], function (dateformat, common
         return App.cashedData[key];
     }
 
-    var savedFilters = function (contentType, filter) {
+    var savedFilters = function (contentType, uIFilter) {
         var savedFilter;
+        var length;
+        var filtersForContent;
+        var key;
+        var filter;
+        var beName;
+        var beNamesNaw;
+        var filterWithName;
 
-        if (App.currentUser && App.currentUser.savedFilters && App.currentUser.savedFilters[contentType]) {
-            savedFilter = App.currentUser.savedFilters[contentType];
-        } else {
-            savedFilter = filter;
-        }
+        //if (App && App.savedFilters && App.savedFilters[contentType]) {
+        //    filtersForContent = App.savedFilters[contentType];
+        //    length = filtersForContent.length;
+        //    filter = filtersForContent[length - 1];
+        //    filterWithName =  filter['filter'];
+        //    var key = Object.keys(filterWithName)[0];
+        //
+        //    savedFilter = filter[key];
+        //} else {
+        savedFilter = uIFilter;
+        // }
 
         return savedFilter;
     };
 
-    var getFiltersValues = function (chosen, defaultFilterStatus, logicAndStatus) {
-        var filterKey;
-        var checkedValues;
-        var filter = {};
+    var getFilterById = function (id, contentType) {
+        var filter;
+        var length;
+        var keys;
+        var savedFilters;
 
-        filter['condition'] = logicAndStatus ? 'and' : 'or';
+        dataService.getData('/currentUser', null, function (response) {
+            if (response && !response.error) {
+                App.currentUser = response.user;
+                App.savedFilters = response.savedFilters;
 
-        if (chosen.length) {
-            chosen.each(function (index, elem) {
-                filterKey = $(elem).find('.chooseTerm').val();
-                checkedValues = $(elem).find('input:checked');
-
-                if (checkedValues.length) {
-                    if (!filter[filterKey]) {
-                        filter[filterKey] = [];
+                length = App.savedFilters[contentType].length;
+                savedFilters = App.savedFilters[contentType];
+                for (var i = length - 1; i >= 0; i--) {
+                    if (savedFilters[i]['_id'] === id) {
+                        keys = Object.keys(savedFilters[i]['filter']);
+                        App.filter = savedFilters[i]['filter'][keys[0]];
+                        return App.filter;
                     }
+                }
+            } else {
+                console.log('can\'t fetch currentUser');
+            }
+        });
+    };
 
-                    checkedValues.each(function (index, element) {
-                        filter[filterKey].push($(element).val());
-                    });
+    var getFiltersForContentType = function (contentType) {
+        var length = App.currentUser.savedFilters.length;
+        var filtersForContent = [];
+        var filterObj = {};
+        var savedFiltersArray = App.currentUser.savedFilters;
+
+        for (var i = length - 1; i >= 0; i--) {
+            if (savedFiltersArray[i]['contentView'] === contentType) {
+                filterObj = {};
+                filterObj._id = savedFiltersArray[i]['_id'];
+                filterObj.value = savedFiltersArray[i]['filter'][0];
+                filtersForContent.push(filterObj);
+            }
+        }
+
+        App.savedFilters[contentType] = filtersForContent;
+        return filtersForContent;
+    };
+
+    var getFiltersValues = function () {
+        if (!App || !App.filtersValues) {
+            dataService.getData('/filter/getFiltersValues', null, function (response) {
+                if (response && !response.error) {
+                    App.filtersValues = response;
+                } else {
+                    console.log('can\'t fetch filtersValues');
                 }
             });
-        };
-
-        if (defaultFilterStatus || (Object.keys(filter).length === 1)) {
-            filter = 'empty';
-        };
-
-        return filter;
+        }
     };
 
     return {
@@ -265,6 +310,7 @@ define(['libs/date.format', 'common', 'constants'], function (dateformat, common
         cashToApp: cashToApp,
         retriveFromCash: retriveFromCash,
         savedFilters: savedFilters,
-        getFiltersValues: getFiltersValues
+        getFiltersForContentType: getFiltersForContentType,
+        getFilterById: getFilterById
     };
 });

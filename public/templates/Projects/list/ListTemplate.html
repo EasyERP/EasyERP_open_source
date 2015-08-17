@@ -1,9 +1,9 @@
 <% projectsCollection.forEach(function(project, index){ %>
-<tr data-index="<%= index %>" data-id="<%=project._id%>" class="stage-<%=(project.workflow) ? project.workflow.status.toLowerCase() : ''%>">
+<tr data-index="<%= index %>" data-id="<%=project._id%>" class="stage-<%=(project.workflow) ? project.workflow._id : ''%>">
   <td><input type="checkbox" value="<%=project._id%>" class="checkbox" /></td>
   <td><%=startNumber + index + 1 %></td>
   <td><%=project.projectName%></td>
-  <td><%=(project.customer) ? project.customer.name.first + " " + project.customer.name.last : ''%></td>
+  <td><%=(project.customer) ? project.customer.name : ''%></td>
   <td><%=project.StartDate%></td>
   <td <%=(project.EndDate && project.TargetEndDate && (new Date(project.TargetEndDate)<new Date(project.EndDate))) ? "class='red-border' " : " "%>><%=project.EndDate%></td>
       <td><%=project.TargetEndDate%></td>

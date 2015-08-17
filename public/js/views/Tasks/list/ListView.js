@@ -1,20 +1,21 @@
 define([
+        'text!templates/Pagination/PaginationTemplate.html',
         'text!templates/Tasks/list/ListHeader.html',
         'text!templates/stages.html',
         'views/Tasks/CreateView',
         'views/Tasks/list/ListItemView',
         'views/Tasks/EditView',
         'models/TasksModel',
-        'models/UsersModel',
         'views/Projects/EditView',
         'models/ProjectsModel',
         'collections/Tasks/filterCollection',
         'views/Filter/FilterView',
         'common',
+        'custom',
         'dataService'
     ],
 
-    function (listTemplate, stagesTamplate, createView, listItemView, editView, currentModel, usersModel, projectEditView, projectModel, contentCollection, filterView, common, dataService) {
+    function (paginationTemplate, listTemplate, stagesTamplate, createView, listItemView, editView, currentModel, projectEditView, projectModel, contentCollection, filterView, common, custom, dataService) {
         var TasksListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -35,7 +36,7 @@ define([
                 this.stages = [];
                 this.sort = options.sort;
                 this.filter = options.filter;
-                this.defaultItemsNumber = this.collection.namberToShow || 50;
+                this.defaultItemsNumber = this.collection.namberToShow || 100;
                 this.newCollection = options.newCollection;
                 this.deleteCounter = 0;
                 this.page = options.collection.page;
@@ -55,8 +56,7 @@ define([
                 "click .checkbox": "checked",
                 "click td:not(:has('input[type='checkbox']'))": "goToEditDialog",
                 "click .project": "goToProject",
-                "click #itemsButton": "itemsNumber",
-                "click .currentPageList": "itemsNumber",
+                "mouseover .currentPageList": "itemsNumber",
                 "click": "hideItemsNumber",
                 "click .stageSelect": "showNewSelect",
                 "click .stageSelectType": "showNewSelectType",
@@ -65,9 +65,7 @@ define([
                 "click .filter-check-list li": "checkCheckbox",
                 "click #firstShowPage": "firstPage",
                 "click #lastShowPage": "lastPage",
-                "click .oe_sortable": "goSort",
-                "click .saveFilterButton": "saveFilter",
-                "click .removeFilterButton": "removeFilter"
+                "click .oe_sortable": "goSort"
             },
 
             fetchSortCollection: function (sortObject) {
@@ -233,25 +231,50 @@ define([
                 var model;
                 var id;
                 if (selectType == 'stages') {
-                    id = targetParrentElement.attr("id").replace("stages_", "");
-                    model = this.collection.get(id);
-                    model.urlRoot = '/Tasks';
-                    model.save({
-                            workflow: target.attr("id"),
-                            sequence: -1,
-                            sequenceStart: model.toJSON().sequence,
-                            workflowStart: model.toJSON().workflow ? model.toJSON().workflow._id : null
-                        },
-                        {
-                            headers: {
-                                mid: 39
+                    if ($(target).attr('data-status') === 'done'){
+                        id = targetParrentElement.attr("id").replace("stages_", "");
+                        model = this.collection.get(id);
+                        model.urlRoot = '/Tasks';
+                        model.save({
+                                workflow: target.attr("id"),
+                                sequence: -1,
+                                sequenceStart: model.toJSON().sequence,
+                                workflowStart: model.toJSON().workflow ? model.toJSON().workflow._id : null,
+                                progress: 100
                             },
-                            patch: true,
-                            validate: false,
-                            success: function () {
-                                that.showFilteredPage();
-                            }
-                        });
+                            {
+                                headers: {
+                                    mid: 39
+                                },
+                                patch: true,
+                                validate: false,
+                                success: function () {
+                                    that.showFilteredPage();
+                                }
+                            });
+                    } else {
+                        id = targetParrentElement.attr("id").replace("stages_", "");
+                        model = this.collection.get(id);
+                        model.urlRoot = '/Tasks';
+                        model.save({
+                                workflow: target.attr("id"),
+                                sequence: -1,
+                                sequenceStart: model.toJSON().sequence,
+                                workflowStart: model.toJSON().workflow ? model.toJSON().workflow._id : null,
+                                estimated: model.toJSON().estimated,
+                                logged: model.toJSON().logged
+                            },
+                            {
+                                headers: {
+                                    mid: 39
+                                },
+                                patch: true,
+                                validate: false,
+                                success: function () {
+                                    that.showFilteredPage({});
+                                }
+                            });
+                    }
                 } else if (selectType == 'type') {
                     id = targetParrentElement.attr("id").replace("type_", "");
                     model = this.collection.get(id);
@@ -267,7 +290,7 @@ define([
                             patch: true,
                             validate: false,
                             success: function (model) {
-                                that.showFilteredPage();//When add filter by Type, then uncoment this code
+                                that.showFilteredPage({});//When add filter by Type, then uncoment this code
                             }
                         });
                 }
@@ -275,142 +298,18 @@ define([
                 return false;
             },
 
-            showFilteredPage: function () {
+            showFilteredPage: function (filter) {
                 var itemsNumber = $("#itemsNumber").text();
-                var self = this;
-                var choosen = this.$el.find('.chosen');
-                var checkedElements = $('.drop-down-filter input:checkbox:checked');
-                var condition = this.$el.find('.conditionAND > input')[0];
-                var showList;
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
 
                 this.startTime = new Date();
                 this.newCollection = false;
-                this.filter = {};
-                this.filter['condition'] = 'and';
 
-                if  (condition && !condition.checked) {
-                    self.filter['condition'] = 'or';
-                }
-
-                if (checkedElements.length && checkedElements.attr('id') === 'defaultFilter') {
-                    self.filter = 'empty';
-                }
-
-                if (choosen) {
-                    choosen.each(function (index, elem) {
-                        if (self.filter[elem.children[1].value]) {
-                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
-                                self.filter[elem.children[1].value].push(element.value);
-                            })
-                        } else {
-                            self.filter[elem.children[1].value] = [];
-                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
-                                self.filter[elem.children[1].value].push(element.value);
-                            })
-                        }
-                    });
-                }
-
-                if (!choosen.length && !showList) {
-                    self.filter = 'empty';
-                }
-
-                this.changeLocationHash(1, itemsNumber, this.filter);
-                this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter, parrentContentId: this.parrentContentId });
-                this.getTotalLength(null, itemsNumber, this.filter);
-            },
-
-            saveFilter: function () {
-                var currentUser = new usersModel(App.currentUser);
-                var subMenu = $('#submenu-holder').find('li.selected').text();
-                var key;
-                var filterObj = {};
-                var mid = 39;
-
-                key = subMenu.trim();
-
-                filterObj['filter'] = {};
-                filterObj['filter'] = this.filter;
-                filterObj['key'] = key;
-
-                currentUser.changed = filterObj;
-
-                currentUser.save(
-                    filterObj,
-                    {
-                        headers: {
-                            mid: mid
-                        },
-                        wait: true,
-                        patch:true,
-                        validate: false,
-                        success: function (model) {
-                            console.log('Filter was saved to db');
-                        },
-                        error: function (model,xhr) {
-                            console.error(xhr);
-                        },
-                        editMode: false
-                    }
-                );
-                if (!App.currentUser.savedFilters){
-                    App.currentUser.savedFilters = {};
-                }
-                App.currentUser.savedFilters['Tasks'] = filterObj.filter;
-            },
-
-            removeFilter: function () {
-                var currentUser = new usersModel(App.currentUser);
-                var subMenu = $('#submenu-holder').find('li.selected').text();
-                var key;
-                var filterObj = {};
-                var mid = 39;
-
-                this.clearFilter();
-
-                key = subMenu.trim();
-                filterObj['key'] = key;
-
-                currentUser.changed = filterObj;
-
-                currentUser.save(
-                    filterObj,
-                    {
-                        headers: {
-                            mid: mid
-                        },
-                        wait: true,
-                        patch:true,
-                        validate: false,
-                        success: function (model) {
-                            console.log('Filter was remover from db');
-                        },
-                        error: function (model,xhr) {
-                            console.error(xhr);
-                        },
-                        editMode: false
-                    }
-                );
-
-                if (App.currentUser.savedFilters['Tasks']){
-                    delete App.currentUser.savedFilters['Tasks'];
-                }
-            },
-
-            clearFilter: function () {
-                this.$el.find('.filterValues').empty();
-                this.$el.find('.filter-icons').removeClass('active');
-                this.$el.find('.chooseOption').children().remove();
-                this.$el.find('.filterOptions').removeClass('chosen');
-
-                $.each($('.drop-down-filter input'), function (index, value) {
-                    value.checked = false
-                });
-
-                this.showFilteredPage();
+                this.changeLocationHash(1, itemsNumber, filter);
+                this.collection.showMore({ count: itemsNumber, page: 1, filter: filter});
+                this.getTotalLength(null, itemsNumber, filter);
             },
 
             hideItemsNumber: function (e) {
@@ -419,8 +318,12 @@ define([
                 this.$el.find(".allNumberPerPage, .newSelectList").hide();
                 if (!el.closest('.search-view')) {
                     $('.search-content').removeClass('fa-caret-up');
-                    this.$el.find(".filterOptions, .filterActions, .search-options, .drop-down-filter").hide();
+                    this.$el.find('.search-options').addClass('hidden');
                 };
+                //this.$el.find(".allNumberPerPage, .newSelectList").hide();
+                //if (!el.closest('.search-view')) {
+                //    $('.search-content').removeClass('fa-caret-up');
+                //};
             },
 
             itemsNumber: function (e) {
@@ -457,7 +360,6 @@ define([
                 $('.ui-dialog ').remove();
                 var self = this;
                 var currentEl = this.$el;
-                var FilterView;
 
                 currentEl.html('');
                 currentEl.append(_.template(listTemplate));
@@ -476,24 +378,26 @@ define([
                 common.populateWorkflowsList("Tasks", ".filter-check-list", "#workflowNamesDd", "/Workflows", null, function (stages) {
                     var stage = (self.filter) ? self.filter.workflow || [] : [];
                     itemView.trigger('incomingStages', stages);
-                    dataService.getData('/task/getFilterValues', null, function (values) {
-                        FilterView = new filterView({ collection: stages, customCollection: values});
-                        itemView.trigger('incomingStages', stages);
-                        // Filter custom event listen ------begin
-                        FilterView.bind('filter', function () {
-                            self.showFilteredPage()
-                        });
-                        FilterView.bind('defaultFilter', function () {
-                            self.showFilteredPage();
-                        });
-                        // Filter custom event listen ------end
-                    });
+
                 });
 
+               /* self.filterView = new filterView({
+                    contentType: self.contentType
+                });
+
+                self.filterView.bind('filter', function (filter) {
+                    self.showFilteredPage(filter)
+                });
+                self.filterView.bind('defaultFilter', function () {
+                    self.showFilteredPage({});
+                });
+
+                self.filterView.render();*/
 
                 $(document).on("click", function (e) {
                     self.hideItemsNumber(e);
                 });
+                currentEl.append(_.template(paginationTemplate));
 
                 currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
                 var pagenation = this.$el.find('.pagination');
@@ -618,6 +522,9 @@ define([
                 }
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
+
+                //this.filterView.renderFilterContent();
+
                 holder.find('#timeRecivingDataFromServer').remove();
                 holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             },

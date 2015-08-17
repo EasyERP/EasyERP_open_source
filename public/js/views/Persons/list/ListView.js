@@ -1,4 +1,5 @@
 define([
+        'text!templates/Pagination/PaginationTemplate.html',
         'text!templates/Persons/list/ListHeader.html',
         'views/Persons/CreateView',
         'views/Persons/list/ListItemView',
@@ -7,16 +8,15 @@ define([
         'views/Filter/FilterView',
         'common',
         'dataService',
-        'models/UsersModel',
         'custom'
     ],
 
-    function (listTemplate, createView, listItemView, aphabeticTemplate, contentCollection, filterView, common, dataService, usersModel, custom) {
+    function (paginationTemplate, listTemplate, createView, listItemView, aphabeticTemplate, contentCollection, filterView, common, dataService, custom) {
         var PersonsListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
             listLength: null,
-            filter: null,
+            filter: {},
             sort: null,
             newCollection: null,
             page: null, //if reload page, and in url is valid page
@@ -31,7 +31,7 @@ define([
                 this.allAlphabeticArray = common.buildAllAphabeticArray();
                 this.filter = options.filter;
                 this.sort = options.sort;
-                this.defaultItemsNumber = this.collection.namberToShow || 50;
+                this.defaultItemsNumber = this.collection.namberToShow || 100;
                 this.newCollection = options.newCollection;
                 this.deleteCounter = 0;
                 this.page = options.collection.page;
@@ -40,6 +40,8 @@ define([
 
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
                 this.contentCollection = contentCollection;
+
+                this.filterView;
             },
 
             events: {
@@ -50,15 +52,12 @@ define([
                 "click #nextPage": "nextPage",
                 "click .checkbox": "checked",
                 "click  .list td:not(.notForm)": "gotoForm",
-                "click #itemsButton": "itemsNumber",
-                "click .currentPageList": "itemsNumber",
+                "mouseover .currentPageList": "itemsNumber",
                 "click": "hideItemsNumber",
                 "click .letter:not(.empty)": "alpabeticalRender",
                 "click #firstShowPage": "firstPage",
                 "click #lastShowPage": "lastPage",
-                "click .oe_sortable": "goSort",
-                "click .saveFilterButton": "saveFilter",
-                "click .removeFilterButton": "removeFilter"
+                "click .oe_sortable": "goSort"
             },
 
             fetchSortCollection: function (sortObject) {
@@ -118,11 +117,14 @@ define([
                 $(e.target).addClass("current");
 
                 var selectedLetter = $(e.target).text();
+                this.filter = (this.filter) ? this.filter : {};
+                this.filter['letter'] = selectedLetter;
+
                 if ($(e.target).text() == "All") {
                     selectedLetter = "";
+                    this.filter = {};
                 }
-                this.filter = (this.filter && this.filter !== 'empty') ? this.filter : {};
-                this.filter['letter'] = selectedLetter;
+
                 var itemsNumber = $("#itemsNumber").text();
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
@@ -137,7 +139,7 @@ define([
                 this.$el.find(".allNumberPerPage, .newSelectList").hide();
                 if (!el.closest('.search-view')) {
                     $('.search-content').removeClass('fa-caret-up');
-                    this.$el.find(".filterOptions, .filterActions, .search-options, .drop-down-filter").hide();
+                    this.$el.find('.search-options').addClass('hidden');
                 };
             },
 
@@ -167,7 +169,6 @@ define([
                 $('.ui-dialog ').remove();
                 var self = this;
                 var currentEl = this.$el;
-                var FilterView;
 
                 currentEl.html('');
                 currentEl.append(_.template(listTemplate));
@@ -181,20 +182,18 @@ define([
                         $("#top-bar-deleteBtn").hide();
                 });
 
-                dataService.getData('/supplier/getFilterValues', null, function (values) {
-                    FilterView = new filterView({ collection: null, customCollection: values});
-                    // Filter custom event listen ------begin
-                    FilterView.bind('filter', function () {
-                        //showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
-                        self.showFilteredPage()
-                    });
-                    FilterView.bind('defaultFilter', function () {
-                        //showList = [];
-                        self.showFilteredPage();
-                    });
-                    // Filter custom event listen ------end
-
+                self.filterView = new filterView({
+                    contentType: self.contentType
                 });
+
+                self.filterView.bind('filter', function (filter) {
+                    self.showFilteredPage(filter, self)
+                });
+                self.filterView.bind('defaultFilter', function () {
+                    self.showFilteredPage({}, self);
+                });
+
+                self.filterView.render();
 
                 $(document).on("click", function (e) {
                     self.hideItemsNumber(e);
@@ -214,104 +213,17 @@ define([
                         });
                     }
                 });
+
+                currentEl.append(_.template(paginationTemplate));
+
                 var pagenation = this.$el.find('.pagination');
+
                 if (this.collection.length === 0) {
                     pagenation.hide();
                 } else {
                     pagenation.show();
                 }
                 currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
-            },
-
-            saveFilter: function () {
-                var currentUser = new usersModel(App.currentUser);
-                var subMenu = $('#submenu-holder').find('li.selected').text();
-                var key;
-                var filterObj = {};
-                var mid = 39;
-
-                key = subMenu.trim();
-
-                filterObj['filter'] = {};
-                filterObj['filter'] = this.filter;
-                filterObj['key'] = key;
-
-                currentUser.changed = filterObj;
-
-                currentUser.save(
-                    filterObj,
-                    {
-                        headers: {
-                            mid: mid
-                        },
-                        wait: true,
-                        patch:true,
-                        validate: false,
-                        success: function (model) {
-                            console.log('Filter was saved to db');
-                        },
-                        error: function (model,xhr) {
-                            console.error(xhr);
-                        },
-                        editMode: false
-                    }
-                );
-                if (!App.currentUser.savedFilters){
-                    App.currentUser.savedFilters = {};
-                }
-                App.currentUser.savedFilters['Persons'] = filterObj.filter;
-            },
-
-            removeFilter: function () {
-                var currentUser = new usersModel(App.currentUser);
-                var subMenu = $('#submenu-holder').find('li.selected').text();
-                var key;
-                var filterObj = {};
-                var mid = 39;
-
-                this.clearFilter();
-
-                key = subMenu.trim();
-                filterObj['key'] = key;
-
-                currentUser.changed = filterObj;
-
-                currentUser.save(
-                    filterObj,
-                    {
-                        headers: {
-                            mid: mid
-                        },
-                        wait: true,
-                        patch:true,
-                        validate: false,
-                        success: function (model) {
-                            console.log('Filter was remover from db');
-                        },
-                        error: function (model,xhr) {
-                            console.error(xhr);
-                        },
-                        editMode: false
-                    }
-                );
-
-                if (App.currentUser.savedFilters['Persons']){
-                    delete App.currentUser.savedFilters['Persons'];
-                }
-            },
-
-            clearFilter: function () {
-
-                this.$el.find('.filterValues').empty();
-                this.$el.find('.filter-icons').removeClass('active');
-                this.$el.find('.chooseOption').children().remove();
-                this.$el.find('.filterOptions').removeClass('chosen');
-
-                $.each($('.drop-down-filter input'), function (index, value) {
-                    value.checked = false
-                });
-
-                this.showFilteredPage();
             },
 
             renderContent: function () {
@@ -358,7 +270,6 @@ define([
                     filter: this.filter,
                     newCollection: this.newCollection,
                     parrentContentId: this.parrentContentId
-
                 });
 
                 dataService.getData('/totalCollectionLength/Persons', {
@@ -422,18 +333,11 @@ define([
                 this.changeLocationHash(1, itemsNumber, this.filter);
             },
 
-            showFilteredPage: function () {
+            showFilteredPage: function (filter, context) {
                 var itemsNumber = $("#itemsNumber").text();
+
                 var alphaBet = this.$el.find('#startLetter');
                 var selectedLetter = $(alphaBet).find('.current').length ? $(alphaBet).find('.current')[0].text : '';
-                var self = this;
-
-                var checkedElements = this.$el.find('input:checkbox:checked');
-                var chosen = this.$el.find('.chosen');
-
-                var logicAndStatus = this.$el.find('#logicCondition')[0].checked;
-                var defaultFilterStatus = this.$el.find('#defaultFilter')[0].checked;
-
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
@@ -442,16 +346,21 @@ define([
                     selectedLetter = '';
                 }
 
-                this.filter = custom.getFiltersValues(chosen, defaultFilterStatus, logicAndStatus);
+                context.startTime = new Date();
+                context.newCollection = false;
 
-                this.startTime = new Date();
-                this.newCollection = false;
+                //if (!filter.name) {
+                //    if (selectedLetter !== '') {
+                //        filter['letter'] = selectedLetter;
+                //    }
+                //}
+                if (Object.keys(filter).length === 0){
+                    this.filter = {};
+                }
 
-                this.filter['letter'] = selectedLetter;
-
-                this.changeLocationHash(1, itemsNumber, this.filter);
-                this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter});
-                this.getTotalLength(null, itemsNumber, this.filter);
+                context.changeLocationHash(1, itemsNumber, filter);
+                context.collection.showMore({ count: itemsNumber, page: 1, filter: filter});
+                context.getTotalLength(null, itemsNumber, filter);
             },
 
             showPage: function (event) {
@@ -473,6 +382,9 @@ define([
                 }
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
+
+                this.filterView.renderFilterContent();
+
                 holder.find('#timeRecivingDataFromServer').remove();
                 holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             },

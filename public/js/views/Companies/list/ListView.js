@@ -1,4 +1,5 @@
 define([
+        'text!templates/Pagination/PaginationTemplate.html',
         'text!templates/Companies/list/ListHeader.html',
         'views/Companies/CreateView',
         'views/Companies/list/ListItemView',
@@ -6,11 +7,10 @@ define([
         'collections/Companies/filterCollection',
         'views/Filter/FilterView',
         'common',
-        'dataService',
-        'models/UsersModel'
+        'dataService'
     ],
 
-    function (listTemplate, createView, listItemView, aphabeticTemplate, contentCollection, filterView, common, dataService, usersModel) {
+    function (paginationTemplate, listTemplate, createView, listItemView, aphabeticTemplate, contentCollection, filterView, common, dataService) {
         var CompaniesListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -28,7 +28,7 @@ define([
                 _.bind(this.collection.showMoreAlphabet, this.collection);
                 this.allAlphabeticArray = common.buildAllAphabeticArray();
                 this.filter = options.filter;
-                this.defaultItemsNumber = this.collection.namberToShow || 50;
+                this.defaultItemsNumber = this.collection.namberToShow || 100;
                 this.newCollection = options.newCollection;
                 this.deleteCounter = 0;
                 this.page = options.collection.page;
@@ -37,6 +37,8 @@ define([
 
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
                 this.contentCollection = contentCollection;
+
+                this.filterView;
             },
 
             events: {
@@ -47,8 +49,7 @@ define([
                 "click #nextPage": "nextPage",
                 "click .checkbox": "checked",
                 "click  .list td:not(.notForm)": "gotoForm",
-                "click #itemsButton": "itemsNumber",
-                "click .currentPageList": "itemsNumber",
+                "mouseover .currentPageList": "itemsNumber",
                 "click": "hideItemsNumber",
                 "click .letter:not(.empty)": "alpabeticalRender",
                 "click #firstShowPage": "firstPage",
@@ -126,15 +127,15 @@ define([
             },
 
             alpabeticalRender: function (e) {
-                this.startTime = new Date();
-                $(e.target).parent().find(".current").removeClass("current");
-                $(e.target).addClass("current");
                 var selectedLetter = $(e.target).text();
+                this.filter = (this.filter) ? this.filter : {};
+                this.filter['letter'] = selectedLetter;
+
                 if ($(e.target).text() == "All") {
                     selectedLetter = "";
+                    this.filter = {};
                 }
-                this.filter = (this.filter && this.filter !== 'empty') ? this.filter : {};
-                this.filter['letter'] = selectedLetter;
+
                 var itemsNumber = $("#itemsNumber").text();
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
@@ -149,7 +150,7 @@ define([
                 this.$el.find(".allNumberPerPage, .newSelectList").hide();
                 if (!el.closest('.search-view')) {
                     $('.search-content').removeClass('fa-caret-up');
-                    this.$el.find(".filterOptions, .filterActions, .search-options, .drop-down-filter").hide();
+                    this.$el.find('.search-options').addClass('hidden');
                 };
             },
 
@@ -179,9 +180,6 @@ define([
                 $('.ui-dialog ').remove();
                 var self = this;
                 var currentEl = this.$el;
-                var filterObject;
-                var FilterView;
-                var showList;
 
                 currentEl.html('');
                 currentEl.append(_.template(listTemplate));
@@ -210,37 +208,30 @@ define([
                     }
                 });
 
+                currentEl.append(_.template(paginationTemplate));
+
                 var pagenation = this.$el.find('.pagination');
+
                 if (this.collection.length === 0) {
                     pagenation.hide();
                 } else {
                     pagenation.show();
                 }
                 currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
-                filterObject = [
-                    {
-                        name: 'isCustomer',
-                        _id: 'isCustomer'
-                    },
-                    {
-                        name: 'isSupplier',
-                        _id: 'isSupplier'
-                    }
-                ];
-                dataService.getData('/supplier/getFilterValues', null, function (values) {
-                    FilterView = new filterView({ collection: filterObject, customCollection: values});
-                    // Filter custom event listen ------begin
-                    FilterView.bind('filter', function () {
-                        showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
-                        self.showFilteredPage(null, showList)
-                    });
-                    FilterView.bind('defaultFilter', function () {
-                        showList = [];
-                        self.showFilteredPage(null, showList);
-                    });
-                    // Filter custom event listen ------end
 
+                self.filterView = new filterView({
+                    contentType: self.contentType
                 });
+
+                self.filterView.bind('filter', function (filter) {
+                    self.showFilteredPage(filter, self)
+                });
+                self.filterView.bind('defaultFilter', function () {
+                    self.showFilteredPage({}, self);
+                });
+
+                self.filterView.render();
+
                 $(document).on("click", function (e) {
                     self.hideItemsNumber(e);
                 });
@@ -332,161 +323,36 @@ define([
                 this.changeLocationHash(1, itemsNumber, this.filter);
             },
 
-            showFilteredPage: function (e, showList) {
+            showFilteredPage: function (filter, context) {
                 var itemsNumber = $("#itemsNumber").text();
-                var selectedLetter;
-                var self = this;
-                var checkedElements = $('.drop-down-filter input:checkbox:checked');
-                var chosen = this.$el.find('.chosen');
-                var condition = this.$el.find('.conditionAND > input')[0];
+
+                var alphaBet = this.$el.find('#startLetter');
+                var selectedLetter = $(alphaBet).find('.current').length ? $(alphaBet).find('.current')[0].text : '';
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
 
-                if (e && e.target) {
-                    selectedLetter = $(e.target).text();
-
-                    if ($(e.target).text() == "All") {
-                        selectedLetter = '';
-                    }
+                if (selectedLetter === "All") {
+                    selectedLetter = '';
                 }
-                this.filter = {};
-                this.filter['condition'] = 'and';
 
-                if  (condition && !condition.checked) {
-                    self.filter['condition'] = 'or';
+                context.startTime = new Date();
+                context.newCollection = false;
+
+                //if (!filter.name) {
+                //    if (selectedLetter !== '') {
+                //        filter['letter'] = selectedLetter;
+                //    }
+                //}
+
+                if (Object.keys(filter).length === 0){
+                    this.filter = {};
                 }
-                if (showList && showList.indexOf('isCustomer') !== -1) {
-                    this.filter['isCustomer'] = 1;
-                }else if (showList && showList.indexOf('isSupplier') !== -1) {
-                    this.filter['isSupplier'] = 1;
-                } else {
-                    delete this.filter['isSupplier'];
-                    delete this.filter['isCustomer'];
-                }
-                if (this.filter['isSupplier'] && this.filter['isCustomer']) {
-                    delete this.filter['isSupplier'];
-                    delete this.filter['isCustomer'];
-                };
 
-                if (chosen) {
-                    chosen.each(function (index, elem) {
-                        if (self.filter[elem.children[1].value]) {
-                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
-                                self.filter[elem.children[1].value].push($(element).next().text());
-                            })
-                        } else {
-                            self.filter[elem.children[1].value] = [];
-                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
-                                self.filter[elem.children[1].value].push($(element).next().text());
-                            })
-                        }
-                    });
-                };
-
-                if ((checkedElements.length && checkedElements.attr('id') === 'defaultFilter') || (!chosen.length && !showList)) {
-                    self.filter = 'empty';
-                };
-
-                this.startTime = new Date();
-                this.newCollection = false;
-                this.filter['letter'] = selectedLetter;
-
-                this.changeLocationHash(1, itemsNumber, this.filter);
-                this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter});
-                this.getTotalLength(null, itemsNumber, this.filter);
+                context.changeLocationHash(1, itemsNumber, filter);
+                context.collection.showMore({ count: itemsNumber, page: 1, filter: filter});
+                context.getTotalLength(null, itemsNumber, filter);
             },
-
-            saveFilter: function () {
-                var currentUser = new usersModel(App.currentUser);
-                var subMenu = $('#submenu-holder').find('li.selected').text();
-                var key;
-                var filterObj = {};
-                var mid = 39;
-
-                key = subMenu.trim();
-
-                filterObj['filter'] = {};
-                filterObj['filter'] = this.filter;
-                filterObj['key'] = key;
-
-                currentUser.changed = filterObj;
-
-                currentUser.save(
-                    filterObj,
-                    {
-                        headers: {
-                            mid: mid
-                        },
-                        wait: true,
-                        patch:true,
-                        validate: false,
-                        success: function (model) {
-                            console.log('Filter was saved to db');
-                        },
-                        error: function (model,xhr) {
-                            console.error(xhr);
-                        },
-                        editMode: false
-                    }
-                );
-                if (!App.currentUser.savedFilters){
-                    App.currentUser.savedFilters = {};
-                }
-                App.currentUser.savedFilters['Companies'] = filterObj.filter;
-            },
-
-            removeFilter: function () {
-                var currentUser = new usersModel(App.currentUser);
-                var subMenu = $('#submenu-holder').find('li.selected').text();
-                var key;
-                var filterObj = {};
-                var mid = 39;
-
-                this.clearFilter();
-
-                key = subMenu.trim();
-                filterObj['key'] = key;
-
-                currentUser.changed = filterObj;
-
-                currentUser.save(
-                    filterObj,
-                    {
-                        headers: {
-                            mid: mid
-                        },
-                        wait: true,
-                        patch:true,
-                        validate: false,
-                        success: function (model) {
-                            console.log('Filter was remover from db');
-                        },
-                        error: function (model,xhr) {
-                            console.error(xhr);
-                        },
-                        editMode: false
-                    }
-                );
-
-                if (App.currentUser.savedFilters['Companies']){
-                    delete App.currentUser.savedFilters['Companies'];
-                }
-            },
-
-            clearFilter: function () {
-                this.$el.find('.filterValues').empty();
-                this.$el.find('.filter-icons').removeClass('active');
-                this.$el.find('.chooseOption').children().remove();
-                this.$el.find('.filterOptions').removeClass('chosen');
-
-                $.each($('.drop-down-filter input'), function (index, value) {
-                    value.checked = false
-                });
-
-                this.showFilteredPage(null);
-            },
-
 
             showPage: function (event) {
                 event.preventDefault();
@@ -507,6 +373,9 @@ define([
                 }
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
+
+                this.filterView.renderFilterContent();
+
                 holder.find('#timeRecivingDataFromServer').remove();
                 holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             },

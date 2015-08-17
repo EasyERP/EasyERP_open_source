@@ -1,10 +1,10 @@
 define([
+        'text!templates/Pagination/PaginationTemplate.html',
         'text!templates/Product/list/ListHeader.html',
         'views/Product/CreateView',
         'views/Product/list/ListItemView',
         'views/Product/EditView',
         'models/ProductModel',
-        'models/UsersModel',
         'text!templates/Alpabet/AphabeticTemplate.html',
         'collections/Product/filterCollection',
         'views/Filter/FilterView',
@@ -12,7 +12,7 @@ define([
         'dataService'
 ],
 
-    function (listTemplate, createView, listItemView, editView, productModel, usersModel, aphabeticTemplate, contentCollection, filterView, common, dataService) {
+    function (paginationTemplate, listTemplate, createView, listItemView, editView, productModel, aphabeticTemplate, contentCollection, filterView, common, dataService) {
         var ProductsListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -32,7 +32,7 @@ define([
                 this.allAlphabeticArray = common.buildAllAphabeticArray();
                 this.filter = options.filter ? options.filter : {};
                 this.filter.canBePurchased = true;
-                this.defaultItemsNumber = this.collection.namberToShow || 50;
+                this.defaultItemsNumber = this.collection.namberToShow || 100;
                 this.newCollection = options.newCollection;
                 this.deleteCounter = 0;
                 this.page = options.collection.page;
@@ -51,15 +51,12 @@ define([
                 "click #nextPage": "nextPage",
                 "click .checkbox": "checked",
                 "click  .list td:not(.notForm)": "goToEditDialog",
-                "click #itemsButton": "itemsNumber",
-                "click .currentPageList": "itemsNumber",
+                "mouseover .currentPageList": "itemsNumber",
                 "click": "hideItemsNumber",
                 "click .letter:not(.empty)": "alpabeticalRender",
                 "click #firstShowPage": "firstPage",
                 "click #lastShowPage": "lastPage",
-                "click .oe_sortable": "goSort",
-                "click .saveFilterButton": "saveFilter",
-                "click .removeFilterButton": "removeFilter"
+                "click .oe_sortable": "goSort"
             },
 
             renderContent: function () {
@@ -88,7 +85,7 @@ define([
                 if ($(e.target).text() == "All") {
                     selectedLetter = "";
                 }
-                this.filter = (this.filter && this.filter !== 'empty') ? this.filter : {};
+                this.filter = (this.filter) ? this.filter : {};
                 this.filter['letter'] = selectedLetter;
                 this.filter['canBePurchased'] = true;
                 var itemsNumber = $("#itemsNumber").text();
@@ -155,7 +152,6 @@ define([
                 this.$el.find(".allNumberPerPage, .newSelectList").hide();
                 if (!el.closest('.search-view')) {
                     $('.search-content').removeClass('fa-caret-up');
-                    this.$el.find(".filterOptions, .filterActions, .search-options, .drop-down-filter").hide();
                 };
             },
 
@@ -186,7 +182,6 @@ define([
                 var self = this;
                 var currentEl = this.$el;
                 var FilterView;
-                var showList;
 
                 currentEl.html('');
                 currentEl.append(_.template(listTemplate));
@@ -230,7 +225,10 @@ define([
                     // Filter custom event listen ------end
                 });
 
+                currentEl.append(_.template(paginationTemplate));
+
                 var pagenation = this.$el.find('.pagination');
+
                 if (this.collection.length === 0) {
                     pagenation.hide();
                 } else {
@@ -380,109 +378,12 @@ define([
                     });
                 }
 
-                if (checkedElements.length && checkedElements.attr('id') === 'defaultFilter') {
-                    self.filter = 'empty';
-                };
-
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
 
                 this.changeLocationHash(1, itemsNumber, this.filter);
                 this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter });
                 this.getTotalLength(null, itemsNumber, this.filter);
-            },
-
-
-            saveFilter: function () {
-                var currentUser = new usersModel(App.currentUser);
-                var subMenu = $('#submenu-holder').find('li.selected').text();
-                var key;
-                var filterObj = {};
-                var mid = 39;
-
-                key = subMenu.trim();
-
-                filterObj['filter'] = {};
-                filterObj['filter'] = this.filter;
-                filterObj['key'] = key;
-
-                currentUser.changed = filterObj;
-
-                currentUser.save(
-                    filterObj,
-                    {
-                        headers: {
-                            mid: mid
-                        },
-                        wait: true,
-                        patch:true,
-                        validate: false,
-                        success: function (model) {
-                            console.log('Filter was saved to db');
-                        },
-                        error: function (model,xhr) {
-                            console.error(xhr);
-                        },
-                        editMode: false
-                    }
-                );
-                if (!App.currentUser.savedFilters){
-                    App.currentUser.savedFilters = {};
-                }
-                App.currentUser.savedFilters['Product'] = filterObj.filter;
-            },
-
-            removeFilter: function () {
-                var currentUser = new usersModel(App.currentUser);
-                var subMenu = $('#submenu-holder').find('li.selected').text();
-                var key;
-                var filterObj = {};
-                var mid = 39;
-
-                this.clearFilter();
-
-                key = subMenu.trim();
-                filterObj['key'] = key;
-
-                currentUser.changed = filterObj;
-
-                currentUser.save(
-                    filterObj,
-                    {
-                        headers: {
-                            mid: mid
-                        },
-                        wait: true,
-                        patch:true,
-                        validate: false,
-                        success: function (model) {
-                            console.log('Filter was remover from db');
-                        },
-                        error: function (model,xhr) {
-                            console.error(xhr);
-                        },
-                        editMode: false
-                    }
-                );
-
-                if (App.currentUser.savedFilters['Product']){
-                    delete App.currentUser.savedFilters['Product'];
-                }
-            },
-
-            clearFilter: function () {
-                this.filter = 'empty';
-
-                this.$el.find('.filterValues').empty();
-                this.$el.find('.filter-icons').removeClass('active');
-                this.$el.find('.chooseOption').children().remove();
-                this.$el.find('.filterOptions').removeClass('chosen');
-
-                $.each($('.drop-down-filter input'), function (index, value) {
-                    value.checked = false
-                });
-
-                this.showFilteredPage(null);
             },
 
             showPage: function (event) {

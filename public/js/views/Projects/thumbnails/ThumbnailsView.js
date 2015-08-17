@@ -5,13 +5,13 @@
         'views/Projects/CreateView',
         'dataService',
         'models/ProjectsModel',
-        'models/UsersModel',
         'views/Filter/FilterView',
         'common',
-        'populate'
+        'populate',
+        'custom'
     ],
 
-    function (thumbnailsItemTemplate, stagesTamplate, editView, createView, dataService, currentModel, usersModel, filterView, common, populate) {
+    function (thumbnailsItemTemplate, stagesTamplate, editView, createView, dataService, currentModel, filterView, common, populate, custom) {
         var ProjectThumbnalView = Backbone.View.extend({
             el: '#content-holder',
             countPerPage: 0,
@@ -24,6 +24,7 @@
 
             initialize: function (options) {
                 $(document).off("click");
+
                 this.startTime = options.startTime;
                 this.collection = options.collection;
                 this.responseObj = {};
@@ -32,7 +33,7 @@
                 this.countPerPage = options.collection.length;
                 this.stages = [];
                 this.filter = options.filter;
-                this.defaultItemsNumber = this.collection.namberToShow || 50;
+                this.defaultItemsNumber = this.collection.namberToShow || 100;
                 this.newCollection = options.newCollection;
                 this.deleteCounter = 0;
 
@@ -50,10 +51,9 @@
                 "click .stageSelect": "showNewSelect",
                 "click .newSelectList li": "chooseOption",
                 "click": "hideHealth",
-                "click .filter-check-list li": "checkCheckbox",
-                "click .saveFilterButton": "saveFilter",
-                "click .removeFilterButton": "removeFilter"
+                "click .filter-check-list li": "checkCheckbox"
             },
+
             checkCheckbox: function (e) {
                 var target$ = $(e.target);
                 if (!target$.is("input")) {
@@ -76,14 +76,15 @@
                 var targetElement = $(e.target).parents(".thumbnail");
                 var id = targetElement.attr("id");
                 var model = this.collection.get(id);
-                model.save({ workflow: $(e.target).attr("id") }, {
+
+                model.save({'workflow._id': $(e.target).attr("id"), 'workflow.name': $(e.target).text()}, {
                     headers: {
                         mid: 39
                     },
                     patch: true,
                     validate: false,
                     success: function () {
-                        self.showFilteredPage(_.pluck(self.stages, '_id'));
+                       self.showFilteredPage({}/*_.pluck(self.stages, '_id')*/);
                     }
                 });
 
@@ -95,11 +96,13 @@
                 var target$ = $(e.target);
                 var target = target$.parents(".health-wrapper");
                 var currTargHelth = target$.attr("class").replace("health", "");
-                target.find(".health-container a").attr("class", target$.attr("class")).attr("data-value", currTargHelth);
                 var id = target.parents(".thumbnail").attr("id");
                 var model = this.collection.get(id);
                 var helth = parseInt(currTargHelth);
-                model.save({ health: helth }, {
+
+                target.find(".health-container a").attr("class", target$.attr("class")).attr("data-value", currTargHelth);
+
+                model.save({health: helth}, {
                     headers: {
                         mid: 39
                     },
@@ -137,61 +140,28 @@
 
             },
 
-            showFilteredPage: function () {
-                var chosen = this.$el.find('.chosen');
-                var self = this;
-                var checkedElements = $('.drop-down-filter input:checkbox:checked');
-                var showList;
-                var condition = this.$el.find('.conditionAND > input')[0];
-
+            showFilteredPage: function (filter) {
                 this.$el.find('.thumbnail').remove();
                 this.startTime = new Date();
-                this.newCollection = false;
-                this.filter =  {};
-                this.defaultItemsNumber = 0;
-                this.filter['condition'] = 'and';
+                this.newCollection = true;
 
-                if  (condition && !condition.checked) {
-                    self.filter['condition'] = 'or';
+                this.filter = filter;
+
+                if (Object.keys(filter).length === 0){
+                    this.filter = {};
                 }
 
-                if (chosen) {
-                    chosen.each(function (index, elem) {
-                        if (elem.children[2].attributes.class.nodeValue === 'chooseDate') {
-                            if (self.filter[elem.children[1].value]) {
-                                self.filter[elem.children[1].value].push({start: $('#start').val(), end: $('#end').val()});
-
-                            } else {
-                                self.filter[elem.children[1].value] = [];
-                                self.filter[elem.children[1].value].push({start: $('#start').val(), end: $('#end').val()});
-                            }
-                        } else {
-                            if (self.filter[elem.children[1].value]) {
-                                $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
-                                    self.filter[elem.children[1].value].push(element.value);
-                                })
-                            } else {
-                                self.filter[elem.children[1].value] = [];
-                                $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
-                                    self.filter[elem.children[1].value].push(element.value);
-                                })
-                            }
-                        }
-
-                    });
-                };
-
-                if ((checkedElements.length && checkedElements.attr('id') === 'defaultFilter') || (!chosen.length && !showList)) {
-                    self.filter = 'empty';
-                };
-
-                this.changeLocationHash(null, this.defaultItemsNumber, this.filter);
-                this.collection.showMore({ count: this.defaultItemsNumber, page: 1, filter: this.filter, newCollection: true });
-                this.getTotalLength(this.defaultItemsNumber, this.filter);
+                this.changeLocationHash(null, this.defaultItemsNumber, filter);
+                this.collection.showMore({count: this.defaultItemsNumber, page: 1, filter: filter});
             },
 
+
             getTotalLength: function (currentNumber, filter, newCollection) {
-                dataService.getData('/totalCollectionLength/Projects', { currentNumber: currentNumber, filter: this.filter, newCollection: this.newCollection }, function (response, context) {
+                dataService.getData('/totalCollectionLength/Projects', {
+                    currentNumber: currentNumber,
+                    filter: filter,
+                    newCollection: this.newCollection
+                }, function (response, context) {
                     var showMore = context.$el.find('#showMoreDiv');
                     if (response.showMore) {
                         if (showMore.length === 0) {
@@ -226,47 +196,41 @@
                 this.$el.find(".allNumberPerPage, .newSelectList").hide();
                 if (!el.closest('.search-view')) {
                     $('.search-content').removeClass('fa-caret-up');
-                    this.$el.find(".filterOptions, .filterActions, .search-options, .drop-down-filter").hide();
+                    this.$el.find('.search-options').addClass('hidden');
                 };
             },
 
             render: function () {
                 var self = this;
                 var currentEl = this.$el;
-                var createdInTag = "<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>";
-                var FilterView;
+                var createdInTag;
 
                 currentEl.html('');
-                $('#check_all').click(function () {
-                    $(':checkbox').prop('checked', this.checked);
-                    if ($("input.checkbox:checked").length > 0)
-                        $("#top-bar-deleteBtn").show();
-                    else
-                        $("#top-bar-deleteBtn").hide();
-                });
+
                 if (this.collection.length > 0) {
-                    currentEl.append(this.template({ collection: this.collection.toJSON() }));
+                    currentEl.append(this.template({collection: this.collection.toJSON()}));
                 } else {
-                    currentEl.append('<div class="filterButton"><span class="text">Stage</span><div class="arrow">7</div></div><ul class="filter-check-list"><li><input type="checkbox"  value="null" checked="checked"><span>Undefinded</span></li></ul>');
+                    currentEl.html('<h2>No projects found</h2>');
                 }
+
                 this.bind('incomingStages', this.pushStages, this);
 
                 common.populateWorkflowsList("Projects", ".filter-check-list", "", "/Workflows", null, function (stages) {
                     var stage = (self.filter) ? self.filter.workflow || [] : [];
                     self.trigger('incomingStages', stages);
-                    dataService.getData('/project/getFilterValues', null, function (values) {
-                        FilterView = new filterView({ collection: stages, customCollection: values});
-                        // Filter custom event listen ------begin
-                        FilterView.bind('filter', function () {
-                            self.showFilteredPage()
-                        });
-                        FilterView.bind('defaultFilter', function () {
-                            self.showFilteredPage();
-                        });
-                        // Filter custom event listen ------end
-
-                    });
                 });
+
+                self.filterView = new filterView({contentType: self.contentType});
+
+                self.filterView.bind('filter', function (filter) {
+                    self.showFilteredPage(filter)
+                });
+                self.filterView.bind('defaultFilter', function () {
+                    self.showFilteredPage({});
+                });
+
+                self.filterView.render();
+
                 $('#check_all').click(function () {
                     $(':checkbox').prop('checked', this.checked);
                     if ($("input.checkbox:checked").length > 0)
@@ -274,103 +238,19 @@
                     else
                         $("#top-bar-deleteBtn").hide();
                 });
-                currentEl.append(createdInTag);
+
                 $(document).on("click", function (e) {
                     self.hide(e);
                     self.hideHealth(e);
                     self.hideItemsNumber(e);
                 });
+
                 populate.getPriority("#priority", this);
+
+                createdInTag = "<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>";
+                currentEl.append(createdInTag);
+
                 return this;
-            },
-
-            saveFilter: function () {
-                var currentUser = new usersModel(App.currentUser);
-                var subMenu = $('#submenu-holder').find('li.selected').text();
-                var key;
-                var filterObj = {};
-                var mid = 39;
-
-                key = subMenu.trim();
-
-                filterObj['filter'] = {};
-                filterObj['filter'] = this.filter;
-                filterObj['key'] = key;
-
-                currentUser.changed = filterObj;
-                currentUser.save(
-                    filterObj,
-                    {
-                        headers: {
-                            mid: mid
-                        },
-                        wait: true,
-                        patch:true,
-                        validate: false,
-                        success: function (model) {
-                            console.log('Filter was saved to db');
-                        },
-                        error: function (model,xhr) {
-                            console.error(xhr);
-                        },
-                        editMode: false
-                    }
-                );
-                if (!App.currentUser.savedFilters){
-                    App.currentUser.savedFilters = {};
-                }
-                App.currentUser.savedFilters['Projects'] = filterObj.filter;
-            },
-
-            removeFilter: function () {
-                var currentUser = new usersModel(App.currentUser);
-                var subMenu = $('#submenu-holder').find('li.selected').text();
-                var key;
-                var filterObj = {};
-                var mid = 39;
-
-                this.clearFilter();
-
-                key = subMenu.trim();
-                filterObj['key'] = key;
-
-                currentUser.changed = filterObj;
-
-                currentUser.save(
-                    filterObj,
-                    {
-                        headers: {
-                            mid: mid
-                        },
-                        wait: true,
-                        patch:true,
-                        validate: false,
-                        success: function (model) {
-                            console.log('Filter was remover from db');
-                        },
-                        error: function (model,xhr) {
-                            console.error(xhr);
-                        },
-                        editMode: false
-                    }
-                );
-
-                if (App.currentUser.savedFilters['Projects']){
-                    delete App.currentUser.savedFilters['Projects'];
-                }
-            },
-
-            clearFilter: function () {
-                this.$el.find('.filterValues').empty();
-                this.$el.find('.filter-icons').removeClass('active');
-                this.$el.find('.chooseOption').children().remove();
-                this.$el.find('.filterOptions').removeClass('chosen');
-
-                $.each($('.drop-down-filter input'), function (index, value) {
-                    value.checked = false
-                });
-
-                this.showFilteredPage();
             },
 
             gotoEditForm: function (e) {
@@ -379,11 +259,11 @@
                 } else {
                     e.preventDefault();
                     var id = $(e.target).closest('.thumbnail').attr("id");
-                    var model = new currentModel({ validate: false });
+                    var model = new currentModel({validate: false});
                     model.urlRoot = '/Projects/form/' + id;
                     model.fetch({
                         success: function (model) {
-                            new editView({ model: model });
+                            new editView({model: model});
                         },
                         error: function () {
                             alert('Please refresh browser');
@@ -394,28 +274,38 @@
 
             showMore: function (event) {
                 event.preventDefault();
-                this.collection.showMore({ filter: this.filter, newCollection: this.newCollection });
+                this.collection.showMore({filter: this.filter, newCollection: this.newCollection});
             },
 
             showMoreContent: function (newModels) {
                 var holder = this.$el;
                 var showMore = holder.find('#showMoreDiv');
                 var created = holder.find('#timeRecivingDataFromServer');
-                var content = holder.find(".thumbnailwithavatar");
-                this.defaultItemsNumber += newModels.length;
-                this.changeLocationHash(null, (this.defaultItemsNumber < 50) ? 50 : this.defaultItemsNumber, this.filter);
+                var content = holder.find("#thumbnailContent");
+                var numberToShow;
+
+                if (this.newCollection) {
+                    this.defaultItemsNumber = 100;
+                } else {
+                    this.defaultItemsNumber += newModels.length;
+
+                    if (this.defaultItemsNumber < 100) {
+                        this.defaultItemsNumber = 100;
+                    }
+                }
+
+                this.changeLocationHash(null, this.defaultItemsNumber, this.filter);
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
 
                 if (showMore.length != 0) {
-                    showMore.before(this.template({ collection: this.collection.toJSON() }));
-                    $(".filter-check-list").eq(1).remove();
+                    showMore.before(this.template({collection: this.collection.toJSON()}));
 
                     showMore.after(created);
                 } else {
-                    content.html(this.template({ collection: this.collection.toJSON() }));
-
+                    content.html(this.template({collection: this.collection.toJSON()}));
                 }
                 this.asyncLoadImgs(newModels);
+                this.filterView.renderFilterContent();
             },
 
             createItem: function () {
@@ -425,7 +315,7 @@
 
             editItem: function () {
                 //create editView in dialog here
-                new editView({ collection: this.collection });
+                new editView({collection: this.collection});
             },
 
             deleteItems: function () {

@@ -84,12 +84,13 @@ define([
             if (!App || !App.currentUser) {
                 dataService.getData('/currentUser', null, function (response) {
                     if (response && !response.error) {
-                        App.currentUser = response;
+                        App.currentUser = response.user;
+                        App.savedFilters = response.savedFilters;
                     } else {
                         console.log('can\'t fetch currentUser');
                     }
                 });
-            }
+            };
         },
 
         dashBoardVacation: function(){
@@ -549,9 +550,10 @@ define([
                 var topBarViewUrl = "views/" + contentType + "/TopBarView";
                 var collectionUrl = context.buildCollectionRoute(contentType);
                 var navigatePage = (page) ? parseInt(page) : 1;
-                var count = (countPerPage) ? parseInt(countPerPage) || 50 : 50;
+                var count = (countPerPage) ? parseInt(countPerPage) || 100 : 100;
 
-                if (filter === 'empty') {
+               // if (filter === 'empty') {
+                if (!filter) {
                     newCollection = false;
                 } else if (filter) {
                     filter = JSON.parse(filter);
@@ -754,8 +756,9 @@ define([
                 var topBarViewUrl = "views/" + contentType + "/TopBarView";
                 var collectionUrl;
                 var savedFilter;
-                var count = (countPerPage) ? parseInt(countPerPage) || 50 : 50;
-                if (filter === 'empty') {
+                var count = (countPerPage) ? parseInt(countPerPage) || 100 : 100;
+                //if (filter === 'empty') {
+                if (!filter) {
                     newCollection = false;
                 } else if (filter) {
                     filter = JSON.parse(filter);

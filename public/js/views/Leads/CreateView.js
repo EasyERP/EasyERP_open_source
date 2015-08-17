@@ -77,6 +77,10 @@ define([
 
             },
 
+            hideNewSelect: function () {
+                $(".newSelectList").hide();
+            },
+
             notHide: function () {
                 return false;
             },

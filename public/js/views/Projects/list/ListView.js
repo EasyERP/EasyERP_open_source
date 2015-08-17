@@ -1,18 +1,19 @@
 define([
+        'text!templates/Pagination/PaginationTemplate.html',
         'text!templates/Projects/list/ListHeader.html',
         'text!templates/stages.html',
         'views/Projects/CreateView',
         'views/Projects/list/ListItemView',
         'views/Projects/EditView',
         'models/ProjectsModel',
-        'models/UsersModel',
         'collections/Projects/filterCollection',
         'views/Filter/FilterView',
         'common',
-        'dataService'
+        'dataService',
+        'custom'
     ],
 
-    function (listTemplate, stagesTamplate, CreateView, listItemView, editView, currentModel, usersModel, contentCollection, filterView, common, dataService) {
+    function (paginationTemplate, listTemplate, stagesTamplate, CreateView, listItemView, editView, currentModel, contentCollection, filterView, common, dataService, custom) {
         var ProjectsListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -33,7 +34,7 @@ define([
                 this.stages = [];
                 this.sort = options.sort;
                 this.filter = options.filter;
-                this.defaultItemsNumber = this.collection.namberToShow || 50;
+                this.defaultItemsNumber = this.collection.namberToShow || 100;
                 this.newCollection = options.newCollection;
                 this.deleteCounter = 0;
                 this.page = options.collection.page;
@@ -51,8 +52,7 @@ define([
                 "click #previousPage": "previousPage",
                 "click #nextPage": "nextPage",
                 "click .checkbox": "checked",
-                "click #itemsButton": "itemsNumber",
-                "click .currentPageList": "itemsNumber",
+                "mouseover .currentPageList": "itemsNumber",
                 "click": "hideItemsNumber",
                 "click .filterButton": "showfilter",
                 "click .filter-check-list li": "checkCheckbox",
@@ -63,9 +63,7 @@ define([
                 "click td:not(:has('input[type='checkbox']'))": "goToEditDialog",
                 "click .oe_sortable": "goSort",
                 "click #firstShowPage": "firstPage",
-                "click #lastShowPage": "lastPage",
-                "click .saveFilterButton": "saveFilter",
-                "click .removeFilterButton": "removeFilter"
+                "click #lastShowPage": "lastPage"
             },
 
             fetchSortCollection: function (sortObject) {
@@ -125,11 +123,11 @@ define([
             goToEditDialog: function (e) {
                 e.preventDefault();
                 var id = $(e.target).closest('tr').data("id");
-                var model = new currentModel({ validate: false });
+                var model = new currentModel({validate: false});
                 model.urlRoot = '/Projects/form/' + id;
                 model.fetch({
                     success: function (model) {
-                        new editView({ model: model });
+                        new editView({model: model});
                     },
                     error: function () {
                         alert('Please refresh browser');
@@ -150,7 +148,7 @@ define([
                 target.find("div a").attr("class", target$.attr("class")).attr("data-value", target$.attr("class").replace("health", "")).parents("#health").find("ul").toggle();
                 var id = target.data("id");
                 var model = this.collection.get(id);
-                model.save({ health: target.find("div a").data("value") }, {
+                model.save({health: target.find("div a").data("value")}, {
                     headers: {
                         mid: 39
                     },
@@ -209,14 +207,14 @@ define([
                 var id = targetElement.attr("id");
                 var model = this.collection.get(id);
 
-                model.save({ workflow: target$.attr("id") }, {
+                model.save({'workflow._id': target$.attr("id"), 'workflow.name': target$.html()}, {
                     headers: {
                         mid: 39
                     },
                     patch: true,
                     validate: false,
                     success: function () {
-                        self.showFilteredPage(_.pluck(self.stages, '_id'));
+                        self.showFilteredPage({}/*_.pluck(self.stages, '_id')*/);
                     }
                 });
 
@@ -224,144 +222,23 @@ define([
                 return false;
             },
 
-            showFilteredPage: function () {
+            showFilteredPage: function (filter) {
                 var itemsNumber = $("#itemsNumber").text();
-                var self = this;
-                var chosen = this.$el.find('.chosen');
-                var checkedElements = $('.drop-down-filter input:checkbox:checked');
-                var showList;
-
-                this.startTime = new Date();
-                this.newCollection = false;
-                this.filter = {};
-
-                if (chosen) {
-                    chosen.each(function (index, elem) {
-                        if (elem.children[1].attributes.class.nodeValue === 'chooseDate') {
-                            if (self.filter[elem.children[1].value]) {
-                                self.filter[elem.children[1].value].push({start: $('#start').val(), end: $('#end').val()});
-
-                            } else {
-                                self.filter[elem.children[1].value] = [];
-                                self.filter[elem.children[1].value].push({start: $('#start').val(), end: $('#end').val()});
-                            }
-                        } else {
-                            if (self.filter[elem.children[1].value]) {
-                                $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
-                                    self.filter[elem.children[1].value].push(element.value);
-                                })
-                            } else {
-                                self.filter[elem.children[1].value] = [];
-                                $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
-                                    self.filter[elem.children[1].value].push(element.value);
-                                })
-                            }
-                        }
-
-                    });
-                }
-
-                if ((checkedElements.length && checkedElements.attr('id') === 'defaultFilter') || (!chosen.length && !showList)) {
-                    self.filter = 'empty';
-                };
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
 
-                this.changeLocationHash(1, itemsNumber, this.filter);
-                this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter });
-                this.getTotalLength(null, itemsNumber, this.filter);
-            },
+                this.startTime = new Date();
+                this.newCollection = false;
 
-            saveFilter: function () {
-                var currentUser = new usersModel(App.currentUser);
-                var subMenu = $('#submenu-holder').find('li.selected').text();
-                var key;
-                var filterObj = {};
-                var mid = 39;
 
-                key = subMenu.trim();
-
-                filterObj['filter'] = {};
-                filterObj['filter'] = this.filter;
-                filterObj['key'] = key;
-
-                currentUser.changed = filterObj;
-
-                currentUser.save(
-                    filterObj,
-                    {
-                        headers: {
-                            mid: mid
-                        },
-                        wait: true,
-                        patch:true,
-                        validate: false,
-                        success: function (model) {
-                            console.log('Filter was saved to db');
-                        },
-                        error: function (model,xhr) {
-                            console.error(xhr);
-                        },
-                        editMode: false
-                    }
-                );
-                if (!App.currentUser.savedFilters){
-                    App.currentUser.savedFilters = {};
+                if (Object.keys(filter).length === 0) {
+                    this.filter = {};
                 }
-                App.currentUser.savedFilters['Projects'] = filterObj.filter;
-            },
 
-            removeFilter: function () {
-                var currentUser = new usersModel(App.currentUser);
-                var subMenu = $('#submenu-holder').find('li.selected').text();
-                var key;
-                var filterObj = {};
-                var mid = 39;
-
-                this.clearFilter();
-
-                key = subMenu.trim();
-                filterObj['key'] = key;
-
-                currentUser.changed = filterObj;
-
-                currentUser.save(
-                    filterObj,
-                    {
-                        headers: {
-                            mid: mid
-                        },
-                        wait: true,
-                        patch:true,
-                        validate: false,
-                        success: function (model) {
-                            console.log('Filter was remover from db');
-                        },
-                        error: function (model,xhr) {
-                            console.error(xhr);
-                        },
-                        editMode: false
-                    }
-                );
-
-                if (App.currentUser.savedFilters['Projects']){
-                    delete App.currentUser.savedFilters['Projects'];
-                }
-            },
-
-            clearFilter: function () {
-
-                this.$el.find('.filterValues').empty();
-                this.$el.find('.filter-icons').removeClass('active');
-                this.$el.find('.chooseOption').children().remove();
-                this.$el.find('.filterOptions').removeClass('chosen');
-
-                $.each($('.drop-down-filter input'), function (index, value) {
-                    value.checked = false
-                });
-
-                this.showFilteredPage();
+                this.changeLocationHash(1, itemsNumber, filter);
+                this.collection.showMore({count: itemsNumber, page: 1, filter: filter});
+                this.getTotalLength(null, itemsNumber, filter);
             },
 
             showfilter: function (e) {
@@ -380,8 +257,15 @@ define([
                 this.$el.find(".allNumberPerPage, .newSelectList").hide();
                 if (!el.closest('.search-view')) {
                     $('.search-content').removeClass('fa-caret-up');
-                    this.$el.find(".filterOptions, .filterActions, .search-options, .drop-down-filter").hide();
-                };
+                    this.$el.find('.search-options').addClass('hidden');
+                }
+                ;
+
+                //this.$el.find(".allNumberPerPage, .newSelectList").hide();
+                //if (!el.closest('.search-view')) {
+                //    $('.search-content').removeClass('fa-caret-up');
+                //}
+                //;
 
             },
 
@@ -486,20 +370,28 @@ define([
 
             showPage: function (event) {
                 event.preventDefault();
-                this.showP(event, { filter: this.filter, newCollection: this.newCollection, sort: this.sort });
+                this.showP(event, {filter: this.filter, newCollection: this.newCollection, sort: this.sort});
             },
 
             render: function () {
                 var self = this;
                 $('.ui-dialog ').remove();
                 var currentEl = this.$el;
-                var FilterView;
                 var itemView;
-                currentEl.html('');
 
+                currentEl.html('');
                 currentEl.append(_.template(listTemplate));
-                itemView = new listItemView({ collection: this.collection, page: this.page, itemsNumber: this.collection.namberToShow });
+                itemView = new listItemView({
+                    collection: this.collection,
+                    page: this.page,
+                    itemsNumber: this.collection.namberToShow
+                });
                 itemView.bind('incomingStages', this.pushStages, this);
+
+                common.populateWorkflowsList("Projects", ".filter-check-list", "", "/Workflows", null, function (stages) {
+                    var stage = (self.filter) ? self.filter.workflow || [] : [];
+                    itemView.trigger('incomingStages', stages);
+                });
 
                 currentEl.append(itemView.render());//added two parameters page and items number
                 $('#check_all').click(function () {
@@ -510,28 +402,27 @@ define([
                         $("#top-bar-deleteBtn").hide();
                 });
 
-                common.populateWorkflowsList("Projects", ".filter-check-list", "", "/Workflows", null, function (stages) {
-                    var stage = (self.filter) ? self.filter.workflow || [] : [];
-                    itemView.trigger('incomingStages', stages);
-                    dataService.getData('/project/getFilterValues', null, function (values) {
-                        FilterView = new filterView({ collection: stages, customCollection: values});
-                        itemView.trigger('incomingStages', stages);
-                        // Filter custom event listen ------begin
-                        FilterView.bind('filter', function () {
-                            self.showFilteredPage()
-                        });
-                        FilterView.bind('defaultFilter', function () {
-                            self.showFilteredPage();
-                        });
-                        // Filter custom event listen ------end
-
-                    });
+                self.filterView = new filterView({
+                    contentType: self.contentType
                 });
+
+                self.filterView.bind('filter', function (filter) {
+                    self.showFilteredPage(filter)
+                });
+                self.filterView.bind('defaultFilter', function () {
+                    self.showFilteredPage({});
+                });
+
+                self.filterView.render();
 
                 $(document).on("click", function (e) {
                     self.hideItemsNumber(e);
                 });
+
+                currentEl.append(_.template(paginationTemplate));
+
                 var pagenation = this.$el.find('.pagination');
+
                 if (this.collection.length === 0) {
                     pagenation.hide();
                 } else {
@@ -547,7 +438,11 @@ define([
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
                 tBody.empty();
-                var itemView = new listItemView({ collection: this.collection, page: currentEl.find("#currentShowPage").val(), itemsNumber: currentEl.find("span#itemsNumber").text() });
+                var itemView = new listItemView({
+                    collection: this.collection,
+                    page: currentEl.find("#currentShowPage").val(),
+                    itemsNumber: currentEl.find("span#itemsNumber").text()
+                });
                 tBody.append(itemView.render());
                 var pagenation = this.$el.find('.pagination');
                 if (this.collection.length === 0) {
@@ -561,7 +456,11 @@ define([
                 var holder = this.$el;
                 var tBody = holder.find('#listTable');
                 tBody.empty();
-                var itemView = new listItemView({ collection: newModels, page: holder.find("#currentShowPage").val(), itemsNumber: holder.find("span#itemsNumber").text() });
+                var itemView = new listItemView({
+                    collection: newModels,
+                    page: holder.find("#currentShowPage").val(),
+                    itemsNumber: holder.find("span#itemsNumber").text()
+                });
                 tBody.append(itemView.render());
                 itemView.undelegateEvents();
                 var pagenation = holder.find('.pagination');
@@ -572,6 +471,9 @@ define([
                 }
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
+
+                this.filterView.renderFilterContent();
+
                 holder.find('#timeRecivingDataFromServer').remove();
                 holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             },

@@ -43,6 +43,7 @@ module.exports = function (app, mainDb) {
     var vacationRouter = require('./vacation')(models);
     var bonusTypeRouter = require('./bonusType')(models);
     var dashboardRouter = require('./dashboard')(models);
+    var filterRouter = require('./filter')(models);
     var productCategoriesRouter = require('./productCategories')(models);
 
     app.get('/', function (req, res, next) {
@@ -55,6 +56,7 @@ module.exports = function (app, mainDb) {
         res.sendfile('index.html');
     });
 
+    app.use('/filter', filterRouter);
     app.use('/product', productRouter);
     app.use('/order', orderRouter);
     app.use('/invoice', invoiceRouter);
