@@ -140,12 +140,15 @@
             },
 
             showFilteredPage: function (filter, context) {
-
                 this.$el.find('.thumbnail').remove();
                 this.startTime = new Date();
                 this.newCollection = true;
 
                 this.filter = filter;
+
+                if (Object.keys(filter).length === 0){
+                    this.filter = {};
+                }
 
                 context.changeLocationHash(null, context.defaultItemsNumber, filter);
                 context.collection.showMore({count: context.defaultItemsNumber, page: 1, filter: filter});
