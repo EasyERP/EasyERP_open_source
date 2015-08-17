@@ -15,6 +15,7 @@ define([
 
             Backbone.history.fragment = "";
             Backbone.history.navigate(url, {trigger: true});
+            this.getFiltersValues();
 
         } else {
             if (App.requestedURL === null)
@@ -285,32 +286,16 @@ define([
         return filtersForContent;
     };
 
-    var getFiltersValues = function (chosen, defaultFilterStatus, logicAndStatus) {
-        var filterKey;
-        var checkedValues;
-        var filter = {};
-
-        filter['condition'] = logicAndStatus ? 'and' : 'or';
-
-        if (chosen.length) {
-            chosen.each(function (index, elem) {
-                filterKey = $(elem).find('.chooseTerm').val();
-                checkedValues = $(elem).find('input:checked');
-
-                if (checkedValues.length) {
-                    if (!filter[filterKey]) {
-                        filter[filterKey] = [];
-                    }
-
-                    checkedValues.each(function (index, element) {
-                        filter[filterKey].push($(element).val());
-                    });
+    var getFiltersValues = function () {
+        if (!App || !App.filtersValues) {
+            dataService.getData('/filter/getFiltersValues', null, function (response) {
+                if (response && !response.error) {
+                    App.filtersValues = response;
+                } else {
+                    console.log('can\'t fetch filtersValues');
                 }
             });
-        };
-
-
-        return filter;
+        }
     };
 
     return {
