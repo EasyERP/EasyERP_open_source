@@ -66,12 +66,11 @@
 
                 if ($(".newSelectList").is(":visible")) {
                     this.hideHealth();
-                    return false;
                 } else {
                     custom.getFiltersValuesByKey(this.contentType, 'workflow', stagesTamplate, target);
-
-                    return false;
                 }
+
+                return false;
             },
 
             chooseOption: function (e) {
