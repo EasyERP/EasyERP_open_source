@@ -299,31 +299,6 @@ define([
         }
     };
 
-    var getWorkflowsValues = function (contentType, template, target) {
-        if (!App || !App.workflowsValues) {
-            dataService.getData('/workflow/getWorkflowsForApp', null, function (response) {
-                if (response && !response.error) {
-                    App.workflowsValues = response;
-                    if (contentType) {
-                        getStatuses(contentType, template, target);
-                    }
-                } else {
-                    console.log('can\'t fetch workflowsValues');
-                }
-            })
-        }
-    };
-
-    var getStatuses = function (contentType, template, target) {
-        if (App && App.workflowsValues) {
-            target.parent().append(_.template(template, {
-                currentCollection: App.workflowsValues[contentType]
-            }));
-        } else {
-            getWorkflowsValues(contentType, template, target);
-        }
-    };
-
     return {
         runApplication: runApplication,
         changeContentViewType: changeContentViewType,
@@ -336,7 +311,6 @@ define([
         cashToApp: cashToApp,
         retriveFromCash: retriveFromCash,
         savedFilters: savedFilters,
-        getStatuses: getStatuses,
         getFiltersForContentType: getFiltersForContentType,
         getFilterById: getFilterById
     };
