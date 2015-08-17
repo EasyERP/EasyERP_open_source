@@ -35,7 +35,7 @@ var Holiday = function (models) {
                     var queryObject = {};
                     var sort = {};
                     var query;
-                    var count = options.count ? options.count : 50;
+                    var count = options.count ? options.count : 100;
                     var page = options.page;
                     var skip = (page - 1) > 0 ? (page - 1) * count : 0;
 

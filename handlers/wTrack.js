@@ -314,7 +314,7 @@ var wTrack = function (models) {
             }
        }
 
-        var count = query.count ? query.count : 50;
+        var count = query.count ? query.count : 100;
         var page = query.page;
         var skip = (page - 1) > 0 ? (page - 1) * count : 0;
 

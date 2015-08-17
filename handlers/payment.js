@@ -92,7 +92,7 @@ var Payment = function (models) {
 
                     var optionsObject = {forSale: forSale};
                     var sort = {};
-                    var count = req.query.count ? req.query.count : 50;
+                    var count = req.query.count ? req.query.count : 100;
                     var page = req.query.page;
                     var skip = (page - 1) > 0 ? (page - 1) * count : 0;
 

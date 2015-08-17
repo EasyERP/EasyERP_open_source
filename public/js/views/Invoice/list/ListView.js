@@ -32,7 +32,7 @@ define([
                 this.parrentContentId = options.collection.parrentContentId;
                 this.filter = options.filter ? options.filter : {};
                 this.sort = options.sort;
-                this.defaultItemsNumber = this.collection.namberToShow || 50;
+                this.defaultItemsNumber = this.collection.namberToShow || 100;
                 this.newCollection = options.newCollection;
                 this.deleteCounter = 0;
                 this.page = options.collection.page;
