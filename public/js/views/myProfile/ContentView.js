@@ -122,9 +122,12 @@ define([
 
             save: function (e) {
                 e.preventDefault();
+                var ids = [];
                 var email = $.trim($("#email").val());
                 var login = $.trim($("#login").val());
                 var RelatedEmployee = $("input[type='radio']:checked").attr("data-id");
+
+                ids.push(RelatedEmployee);
                 dataService.getData('/currentUser', null, function (response, context) {
 
                     context.UsersModel = new UsersModel(response.user);
@@ -144,6 +147,11 @@ define([
 	                    patch:true,
 	                    wait: true,
 	                    success: function () {
+                            common.getImages(ids, '/getEmployeesImages', function(response){
+                                App.currentUser.imageSrc =  response.data[0].imageSrc;
+                                $("#loginPanel .iconEmployee").attr("src", response.data[0].imageSrc);
+                                $("#loginPanel #userName").text( response.data[0].fullName);
+                            });
 	                        Backbone.history.fragment = "";
 	                        Backbone.history.navigate("easyErp/myProfile", { trigger: true });
 	                    },

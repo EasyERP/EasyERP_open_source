@@ -201,7 +201,7 @@ define([
 
                 });
                 var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
-				var nationality =  $("#nationality").data("id");
+                var nationality =  $("#nationality").data("id");
                 var data = {
                     name: {
                         first: $.trim(this.$el.find("#first").val()),
@@ -260,6 +260,10 @@ define([
                         },
                         patch: true,
                         success: function (model) {
+                            /* App.currentUser.imageSrc =  self.imageSrc;
+                             $("#loginPanel .iconEmployee").attr("src", self.imageSrc);
+                             $("#loginPanel #userName").text(model.toJSON().fullName);*/
+                            
                             if (self.departmentData === data.department.name &&
                                 self.jobPositionData === data.jobPosition.name &&
                                 self.projectManagerData === data.manager.name) {
