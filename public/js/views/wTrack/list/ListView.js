@@ -385,7 +385,12 @@ define([
                         costElement.addClass('money');
                         costElement.text('0.00');
 
+                        profitVal =  (parseFloat(revenueVal) - 0).toFixed(2);
+                        profit.text(profitVal);
+
                         self.changedModels[wTrackId].cost = 0;
+                        self.changedModels[wTrackId].profit = parseFloat(profitVal) * 100;
+;
 
                         return 0;
                     }
