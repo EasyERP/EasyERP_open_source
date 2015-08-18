@@ -191,11 +191,8 @@ define([
                 var workedEl = tr.find('[data-content="worked"]');
                 var revenueEl = tr.find('[data-content="revenue"]');
                 var rateEl = tr.find('[data-content="rate"]');
-                var profitEl = tr.find('[data-content="profit"]');
                 var rateVal;
                 var revenueVal;
-                var profitVal;
-                var costVal = tr.find('[data-content="cost"]');
 
                 function eplyDefaultValue(el){
                     var value = el.text();
@@ -222,10 +219,7 @@ define([
                 rateVal = parseFloat(eplyDefaultValue(rateEl));
                 revenueVal = parseFloat(worked * rateVal).toFixed(2);
 
-                profitVal =  (parseFloat(revenueVal) - parseFloat(eplyDefaultValue(costVal))).toFixed(2);
-
                 revenueEl.text(revenueVal);
-                profitEl.text(profitVal);
 
                 editWtrackModel = this.editCollection.get(wTrackId);
 
@@ -352,8 +346,11 @@ define([
                 var hours;
                 var calc;
                 var year;
-
                 var tr = $(e.target).closest('tr');
+                var profit = tr.find('[data-content="profit"]');
+                var revenueVal = tr.find('[data-content="revenue"]').text();
+                var profitVal = tr.find('[data-content="profit"]').text();
+
 
                 if (!this.changedModels[wTrackId]) {
                     this.changedModels[wTrackId] = {};
@@ -404,7 +401,12 @@ define([
                     costElement.addClass('money');
                     costElement.text(calc);
 
+
+                    profitVal =  (parseFloat(revenueVal) - parseFloat(calc)).toFixed(2);
+                    profit.text(profitVal);
+
                     self.changedModels[wTrackId].cost = parseFloat(calc) * 100;
+                    self.changedModels[wTrackId].profit = parseFloat(profitVal) * 100;
 
                     return calc;
                 });
