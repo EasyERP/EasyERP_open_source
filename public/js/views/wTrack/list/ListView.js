@@ -222,6 +222,7 @@ define([
                 revenueEl.text(revenueVal);
 
                 editWtrackModel = this.editCollection.get(wTrackId);
+
                 workedEl.text(worked);
                 //editWtrackModel.set('worked', worked);
 
@@ -345,8 +346,11 @@ define([
                 var hours;
                 var calc;
                 var year;
-
                 var tr = $(e.target).closest('tr');
+                var profit = tr.find('[data-content="profit"]');
+                var revenueVal = tr.find('[data-content="revenue"]').text();
+                var profitVal = tr.find('[data-content="profit"]').text();
+
 
                 if (!this.changedModels[wTrackId]) {
                     this.changedModels[wTrackId] = {};
@@ -381,7 +385,12 @@ define([
                         costElement.addClass('money');
                         costElement.text('0.00');
 
+                        profitVal =  (parseFloat(revenueVal) - 0).toFixed(2);
+                        profit.text(profitVal);
+
                         self.changedModels[wTrackId].cost = 0;
+                        self.changedModels[wTrackId].profit = parseFloat(profitVal) * 100;
+;
 
                         return 0;
                     }
@@ -397,7 +406,12 @@ define([
                     costElement.addClass('money');
                     costElement.text(calc);
 
+
+                    profitVal =  (parseFloat(revenueVal) - parseFloat(calc)).toFixed(2);
+                    profit.text(profitVal);
+
                     self.changedModels[wTrackId].cost = parseFloat(calc) * 100;
+                    self.changedModels[wTrackId].profit = parseFloat(profitVal) * 100;
 
                     return calc;
                 });
