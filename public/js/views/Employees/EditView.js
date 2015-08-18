@@ -260,9 +260,7 @@ define([
                         },
                         patch: true,
                         success: function (model) {
-                            if (self.lastData === data.name.last &&
-                                self.firstData === data.name.first &&
-                                self.departmentData === data.department.name &&
+                            if (self.departmentData === data.department.name &&
                                 self.jobPositionData === data.jobPosition.name &&
                                 self.projectManagerData === data.manager.name) {
 
@@ -281,6 +279,7 @@ define([
                                 }
 
                             } else {
+                                Backbone.history.fragment = '';
                                 Backbone.history.navigate(window.location.hash, { trigger: true, replace: true });
                             }
                             self.hideDialog();
