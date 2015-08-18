@@ -136,8 +136,9 @@ define([
             },
 
             saveItem: function () {
+                var empThumb;
                 var self = this;
-
+				
                 var gender = $("#genderDd").data("id");
                 gender = gender ? gender : null;
 
@@ -173,8 +174,17 @@ define([
                     var el = $(this);
                     homeAddress[el.attr("name")] = $.trim(el.val());
                 });
-                // date parse
+                // date parse 
                 var dateBirthSt = $.trim(this.$el.find("#dateBirth").val());
+
+                var hireArray = this.currentModel.get('hire');
+                var newHireArray = [];
+
+                _.each(hireArray, function(hire, key) {
+
+                    newHireArray.push($.trim(self.$el.find("#hire" + key).val()));
+                    return newHireArray;
+                });
 
                 var active = (this.$el.find("#active").is(":checked")) ? true : false;
                 var sourceId = $("#sourceDd").data("id");
@@ -207,6 +217,10 @@ define([
                         zip: $.trim(this.$el.find('#zip').val()),
                         country: $.trim(this.$el.find('#country').val())
                     },
+                    social: {
+                        LI: $.trim(this.$el.find('#LI').val()),
+                        FB: $.trim(this.$el.find('#FB').val())
+                    },
                     tags: $.trim(this.$el.find("#tags").val()).split(','),
                     workEmail: $.trim(this.$el.find("#workEmail").val()),
                     personalEmail:$.trim(this.$el.find("#personalEmail").val()),
@@ -230,35 +244,59 @@ define([
                     active: active,
                     source: sourceId,
                     imageSrc: this.imageSrc,
-                    nationality:nationality,
+					nationality:nationality,
                     groups: {
-                        owner: $("#allUsersSelect").data("id"),
+						owner: $("#allUsersSelect").data("id"),
                         users: usersId,
                         group: groupsId
                     },
-                    whoCanRW: whoCanRW
+                    whoCanRW: whoCanRW,
+                    hire: newHireArray
                 };
                 this.currentModel.set(data);
                 this.currentModel.save(this.currentModel.changed, {
-                    headers: {
-                        mid: 39
-                    },
-                    patch: true,
-                    success: function (model) {
-                        Backbone.history.navigate("easyErp/" + self.contentType, { trigger: true });
-                        self.hideDialog();
-                       /* App.currentUser.imageSrc =  self.imageSrc;
-                        $("#loginPanel .iconEmployee").attr("src", self.imageSrc);
-                        $("#loginPanel #userName").text(model.toJSON().fullName);*/
-                    },
+                        headers: {
+                            mid: 39
+                        },
+                        patch: true,
+                        success: function (model) {
+                            /* App.currentUser.imageSrc =  self.imageSrc;
+                             $("#loginPanel .iconEmployee").attr("src", self.imageSrc);
+                             $("#loginPanel #userName").text(model.toJSON().fullName);*/
+                            
+                            if (self.firstData === data.name.first &&
+                                self.lastData === data.name.last &&
+                                self.departmentData === data.department.name &&
+                                self.jobPositionData === data.jobPosition.name &&
+                                self.projectManagerData === data.manager.name) {
+
+                                model = model.toJSON();
+                                empThumb = $('#' + model._id);
+
+                                //empThumb.find('.fullName').html(model.name.first + ' ' + model.name.last);
+                                //empThumb.find('.jobPos').html(model.jobPosition.name);
+                                empThumb.find('.age').html(model.result.age);
+                                empThumb.find('.empDateBirth').html("(" + model.dateBirth + ")");
+                                empThumb.find('.telephone a').html(model.workPhones.mobile);
+                                empThumb.find('.telephone a').attr('href', "skype:" + model.workPhones.mobile + "?call");
+
+                                if (model.relatedUser) {
+                                    empThumb.find('.relUser').html(model.relatedUser.login);
+                                }
+
+                            } else {
+                                Backbone.history.fragment = '';
+                                Backbone.history.navigate(window.location.hash, { trigger: true, replace: true });
+                            }
+                            self.hideDialog();
+                        },
                     error: function (model, xhr) {
-                        self.errorNotification(xhr);
+    					self.errorNotification(xhr);
                     }
 
                 });
 
             },
-
             deleteItem: function(event) {
                 var mid = 39;
                 event.preventDefault();
