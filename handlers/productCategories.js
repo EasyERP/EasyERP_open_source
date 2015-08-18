@@ -7,6 +7,8 @@ var Categories = function (models, event) {
     var CategorySchema = mongoose.Schemas['ProductCategory'];
     var ProductSchema = mongoose.Schemas['Products'];
 
+    var async = require('async');
+
     this.getForDd = function (req, res, next) {
         var ProductCategory = models.get(req.session.lastDb, 'ProductCategory', CategorySchema);
 
@@ -142,6 +144,21 @@ var Categories = function (models, event) {
 
         }
     }
+
+    function updateFullName(id, Model, fullName, cb){
+       /* Model
+            .findById(id)
+            .populate('parentCategory')
+            .exec(function(err, category){
+                var parrentFullName = category.parentCategory.fullName;
+                var fullName = parrentFullName + ' / ' + category.name;
+
+                if(!err){
+                    Model.findByIdAndUpdate(id, {$set: {fullName: fullName}}, cb);
+                }
+            });*/
+        Model.findByIdAndUpdate(id, {$set: {fullName: fullName}}, cb);
+    };
 
     this.update = function (req, res, next) {
         var ProductCategory = models.get(req.session.lastDb, 'ProductCategory', CategorySchema);
