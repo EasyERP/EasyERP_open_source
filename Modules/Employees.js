@@ -1196,33 +1196,19 @@ var Employee = function (event, models) {
 
     return {
         getTotalCount: getTotalCount,
-
         create: create,
-
         get: get,
-
         getCollectionLengthByWorkflows: getCollectionLengthByWorkflows,
-
         getFilter: getFilter,
-
         getEmployeesAlphabet: getEmployeesAlphabet,
-
         getForDd: getForDd,
-
         getForDdByRelatedUser: getForDdByRelatedUser,
-
         addAtach: addAtach,
-
         updateOnlySelectedFields: updateOnlySelectedFields,
-
         remove: remove,
-
         getApplications: getApplications,
-
         getApplicationsForKanban: getApplicationsForKanban,
-
         getEmployeesImages: getEmployeesImages,
-
         getById: getById
     };
 };

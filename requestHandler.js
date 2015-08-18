@@ -60,6 +60,21 @@ var requestHandler = function (event, mainDb) {
             });
         }
     });
+    //if name was updated, need update related wTrack, or other models
+
+    event.on('updateName', function (id, targetModel, searchField, fieldName, fieldValue) {
+        var sercObject = {};
+        var updateObject = {};
+
+        sercObject[searchField] = id;
+        updateObject[fieldName] = fieldValue;
+
+        targetModel.update(sercObject, updateObject, function(err){
+            if(err){
+                logWriter.log('requestHandler_eventEmiter_updateName', err.message);
+            }
+        });
+    });
     //binding for Sequence
     event.on('updateSequence', function (model, sequenceField, start, end, workflowStart, workflowEnd, isCreate, isDelete, callback) {
         var query;
