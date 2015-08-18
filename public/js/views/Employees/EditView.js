@@ -264,7 +264,9 @@ define([
                              $("#loginPanel .iconEmployee").attr("src", self.imageSrc);
                              $("#loginPanel #userName").text(model.toJSON().fullName);*/
                             
-                            if (self.departmentData === data.department.name &&
+                            if (self.firstData === data.name.first &&
+                                self.lastData === data.name.last &&
+                                self.departmentData === data.department.name &&
                                 self.jobPositionData === data.jobPosition.name &&
                                 self.projectManagerData === data.manager.name) {
 
