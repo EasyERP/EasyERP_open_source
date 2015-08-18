@@ -222,7 +222,7 @@ var Users = function (mainDb, models) {
         var savedFilters;
 
         query.populate('profile')
-            .populate('RelatedEmployee', 'imageSrc fullName')
+            .populate('RelatedEmployee', 'imageSrc name fullName')
             .populate('savedFilters');
 
         query.exec(function (err, result) {

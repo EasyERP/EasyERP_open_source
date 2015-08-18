@@ -278,6 +278,24 @@
                     });
                     $(this).remove();
                 });
+                common.buildAphabeticArray(this.collection, function (arr) {
+                    $("#startLetter").remove();
+                    self.alphabeticArray = arr;
+                    $("#searchContainer").after(_.template(AphabeticTemplate, {
+                        alphabeticArray: self.alphabeticArray,
+                        selectedLetter: (self.selectedLetter == "" ? "All" : self.selectedLetter),
+                        allAlphabeticArray: self.allAlphabeticArray
+                    }));
+                    var currentLetter = (self.filter) ? self.filter.letter : null
+                    if (currentLetter) {
+                        $('#startLetter a').each(function () {
+                            var target = $(this);
+                            if (target.text() == currentLetter) {
+                                target.addClass("current");
+                            }
+                        });
+                    }
+                });
             }
         });
 

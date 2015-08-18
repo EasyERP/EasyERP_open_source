@@ -78,8 +78,8 @@ define([
                     }
                     if (currentUser.RelatedEmployee) {
                         $("#loginPanel .iconEmployee").attr("src", currentUser.RelatedEmployee.imageSrc);
-                        if (currentUser.RelatedEmployee.fullName) {
-                            $("#loginPanel  #userName").text(currentUser.RelatedEmployee.fullName);
+                        if (currentUser.RelatedEmployee.name) {
+                            $("#loginPanel  #userName").text(currentUser.RelatedEmployee.name.first + " " + currentUser.RelatedEmployee.name.last);
                         } else {
                             $("#loginPanel  #userName").text(currentUser.login);
                         }
