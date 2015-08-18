@@ -247,9 +247,9 @@ define([
                     success: function (model) {
                         Backbone.history.navigate("easyErp/" + self.contentType, { trigger: true });
                         self.hideDialog();
-                        App.currentUser.imageSrc =  self.imageSrc;
+                       /* App.currentUser.imageSrc =  self.imageSrc;
                         $("#loginPanel .iconEmployee").attr("src", self.imageSrc);
-                        $("#loginPanel #userName").text(model.toJSON().fullName);
+                        $("#loginPanel #userName").text(model.toJSON().fullName);*/
                     },
                     error: function (model, xhr) {
                         self.errorNotification(xhr);
