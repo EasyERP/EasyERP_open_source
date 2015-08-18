@@ -191,8 +191,11 @@ define([
                 var workedEl = tr.find('[data-content="worked"]');
                 var revenueEl = tr.find('[data-content="revenue"]');
                 var rateEl = tr.find('[data-content="rate"]');
+                var profitEl = tr.find('[data-content="profit"]');
                 var rateVal;
                 var revenueVal;
+                var profitVal;
+                var costVal = tr.find('[data-content="cost"]');
 
                 function eplyDefaultValue(el){
                     var value = el.text();
@@ -219,9 +222,13 @@ define([
                 rateVal = parseFloat(eplyDefaultValue(rateEl));
                 revenueVal = parseFloat(worked * rateVal).toFixed(2);
 
+                profitVal =  (parseFloat(revenueVal) - parseFloat(eplyDefaultValue(costVal))).toFixed(2);
+
                 revenueEl.text(revenueVal);
+                profitEl.text(profitVal);
 
                 editWtrackModel = this.editCollection.get(wTrackId);
+
                 workedEl.text(worked);
                 //editWtrackModel.set('worked', worked);
 
