@@ -253,6 +253,9 @@ define([
                     whoCanRW: whoCanRW,
                     hire: newHireArray
                 };
+                if (!relatedUser){
+                    data['currentUser']= App.currentUser._id;
+                }
                 this.currentModel.set(data);
                 this.currentModel.save(this.currentModel.changed, {
                         headers: {
@@ -260,9 +263,14 @@ define([
                         },
                         patch: true,
                         success: function (model) {
-                            /* App.currentUser.imageSrc =  self.imageSrc;
-                             $("#loginPanel .iconEmployee").attr("src", self.imageSrc);
-                             $("#loginPanel #userName").text(model.toJSON().fullName);*/
+                             //App.currentUser.imageSrc =  self.imageSrc;
+                            if (relatedUser){
+                                $("#loginPanel .iconEmployee").attr("src", self.imageSrc);
+                                $("#loginPanel #userName").text(model.toJSON().fullName);
+                            } else {
+                                $("#loginPanel .iconEmployee").attr("src", App.currentUser.imageSrc);
+                                $("#loginPanel  #userName").text(App.currentUser.login);
+                            }
                             
                             if (self.firstData === data.name.first &&
                                 self.lastData === data.name.last &&

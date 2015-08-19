@@ -1034,6 +1034,8 @@ var Employee = function (event, models) {
 
     function updateOnlySelectedFields(req, _id, data, res) {
         var dbName = req.session.lastDb;
+        var UsersSchema = mongoose.Schemas['User'];
+        var UsersModel = models.get(dbName, 'Users',  UsersSchema);
 
         var fileName = data.fileName;
         var dataObj = {};
@@ -1118,8 +1120,15 @@ var Employee = function (event, models) {
 
             if (dataObj.hire || dataObj.fire){
                 query = { $set: updateObject, $push: dataObj };
-            } else {
+            } else  if (data.relatedUser){
                 query = { $set: updateObject};
+                event.emit('updateName', data.relatedUser, UsersModel, '_id', 'RelatedEmployee',  _id);
+            } else if (data.currentUser) {
+                event.emit('updateName', data.currentUser, UsersModel, '_id', 'RelatedEmployee', null);
+                delete data.currentUser;
+                query = {$set: updateObject};
+            } else {
+                query = {$set: updateObject};
             }
 
             models.get(req.session.lastDb, 'Employees', employeeSchema).findByIdAndUpdate(_id, query, function (err, result) {

@@ -100,7 +100,7 @@
 
                 currentEl.html('');
                 common.buildAphabeticArray(this.collection, function (arr) {
-                    $(".startLetter").remove();
+                    $("#startLetter").remove();
                     self.alphabeticArray = arr;
                     $('#searchContainer').after(_.template(AphabeticTemplate, {
                         alphabeticArray: self.alphabeticArray,
