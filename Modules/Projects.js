@@ -270,8 +270,8 @@ var Project = function (models, event) {
                     if (data.EndDate) {
                         _project.EndDate = data.EndDate;
                     }
-                    if (data.targetEndDate) {
-                        _project.TargetEndDate = data.targetEndDate;
+                    if (data.TargetEndDate) {
+                        _project.TargetEndDate = data.TargetEndDate;
                     }
                     if (data.sequence) {
                         _project.sequence = data.sequence;

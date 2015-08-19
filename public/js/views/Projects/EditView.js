@@ -118,6 +118,7 @@ define([
                 var projecttype = this.$el.find("#projectTypeDD").data("id");
                 var $userNodes = $("#usereditDd option:selected");
                 var startDate = $.trim(this.$el.find("#StartDate").val());
+                var endDate = $.trim(this.$el.find("#EndDate").val());
                 var users = [];
                 var bonusContainer = $('#bonusTable');
                 var bonusRow = bonusContainer.find('tr');
@@ -145,14 +146,14 @@ define([
                         validation = false;
                     }
 
-                    var startDate = $(val).find(".startDate>div").text().trim() || $(val).find(".startDate input").val();
-                    var endDate = $(val).find(".endDate>div").text().trim() || $(val).find(".endDate input").val();
+                    var startD = $(val).find(".startDate>div").text().trim() || $(val).find(".startDate input").val();
+                    var endD = $(val).find(".endDate>div").text().trim() || $(val).find(".endDate input").val();
 
                     bonus.push({
                         employeeId: employeeId,
                         bonusId: bonusId,
-                        startDate: startDate,
-                        endDate: endDate
+                        startDate: startD,
+                        endDate: endD
                     });
                 });
 
@@ -172,7 +173,7 @@ define([
                 var _targetEndDate = $.trim(this.$el.find("#EndDateTarget").val());
                 var description = $.trim(this.$el.find("#description").val());
                 var currentTargetEndDate = this.currentModel.get('TargetEndDate');
-                var TargetEndDate = _targetEndDate || currentTargetEndDate;
+                //var TargetEndDate = _targetEndDate || currentTargetEndDate;
                 var data = {
                     projectName: projectName,
                     projectShortDesc: projectShortDesc,
@@ -192,7 +193,8 @@ define([
                     whoCanRW: whoCanRW,
                     health: health,
                     StartDate: startDate,
-                    TargetEndDate: TargetEndDate,
+                    EndDate: endDate,
+                    TargetEndDate:  _targetEndDate,
                     bonus: bonus
                 };
                 var workflowStart = this.currentModel.get('workflow');
@@ -355,6 +357,17 @@ define([
                 //
                 //    }
                 $('#StartDate').datepicker({
+                    dateFormat: "d M, yy",
+                    changeMonth: true,
+                    changeYear: true,
+                    onSelect: function () {
+                        //Setting minimum of endDate to picked startDate
+                        var endDate = $('#StartDate').datepicker('getDate');
+                        endDate.setDate(endDate.getDate());
+                        $('#EndDateTarget').datepicker('option', 'minDate', endDate);
+                    }
+                });
+                $('#EndDate').datepicker({
                     dateFormat: "d M, yy",
                     changeMonth: true,
                     changeYear: true,
