@@ -16,6 +16,7 @@
     </tr>
     </thead>
     <tbody id="bonusTable">
+
     <%bonus.forEach(function(bonus, index){ %>
         <tr data-index="<%= index %>" data-id="<%=bonus._id%>">
             <td><input type="checkbox" value="<%=bonus._id%>" class="bonus-checkbox" /></td>
@@ -50,5 +51,6 @@
             </td>
         </tr>
     <% }) %>
+
     </tbody>
 </table>

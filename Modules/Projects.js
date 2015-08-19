@@ -282,15 +282,15 @@ var Project = function (models, event) {
                     if (data.projecttype) {
                         _project.projecttype = data.projecttype;
                     }
-                    if (data.workflow) {
+                    if (data.workflow._id) {
                         _project.workflow._id = data.workflow._id;
                         _project.workflow.name = data.workflow.name;
                     }
-                    if (data.customer) {
+                    if (data.customer._id) {
                         _project.customer._id = data.customer._id;
                         _project.customer.name = data.customer.name;
                     }
-                    if (data.projectmanager) {
+                    if (data.projectmanager._id) {
                         _project.projectmanager._id = data.projectmanager._id;
                         _project.projectmanager.name = data.projectmanager.name;
                     }

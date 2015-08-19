@@ -95,6 +95,8 @@ define([
                 var self = this;
                 var mid = 39;
                 var customer = {};
+                var validation = true;
+
                 customer._id = this.$el.find("#customerDd").data("id");
                 customer.name = this.$el.find("#customerDd").text();
 
@@ -114,6 +116,19 @@ define([
                 bonusRow.each(function (key, val) {
                     var employeeId = $(val).find("[data-content='employee']").attr('data-id');
                     var bonusId = $(val).find("[data-content='bonus']").attr('data-id');
+                    var value;
+
+                    if (!employeeId || !bonusId){
+                        if (!employeeId){
+                            value = 'Employee';
+                            alert('Please, choose ' + value + ' first.');
+                        } else if (!bonusId){
+                            value = 'Bonus';
+                            alert('Please, choose ' + value + ' first.');
+                        }
+                        validation = false;
+                    }
+
                     var startDate = $(val).find(".startDate input").val();
                     var endDate = $(val).find(".endDate input").val();
                    // var startDate = $(val).find(".startDate>div").text().trim() || $(val).find(".startDate input").val();
@@ -150,37 +165,40 @@ define([
                 var health = this.$el.find('#health a').data('value');
                 var startDate = $.trim(this.$el.find("#StartDate").val());
                 var targetEndDate = $.trim(this.$el.find("#EndDateTarget").val());
-                this.model.save({
-                        projectName: $.trim(this.$el.find("#projectName").val()),
-                        projectShortDesc: $.trim(this.$el.find("#projectShortDesc").val()),
-                        customer: customer ? customer : "",
-                        projectmanager: projectmanager ? projectmanager : "",
-                        workflow: workflow ? workflow : "",
-                        projecttype: projecttype ? projecttype : "",
-                        description: description,
-                        groups: {
-                            owner: $("#allUsersSelect").data("id"),
-                            users: usersId,
-                            group: groupsId
+
+                if (validation) {
+                    this.model.save({
+                            projectName: $.trim(this.$el.find("#projectName").val()),
+                            projectShortDesc: $.trim(this.$el.find("#projectShortDesc").val()),
+                            customer: customer ? customer : "",
+                            projectmanager: projectmanager ? projectmanager : "",
+                            workflow: workflow ? workflow : "",
+                            projecttype: projecttype ? projecttype : "",
+                            description: description,
+                            groups: {
+                                owner: $("#allUsersSelect").data("id"),
+                                users: usersId,
+                                group: groupsId
+                            },
+                            whoCanRW: whoCanRW,
+                            health: health,
+                            StartDate: startDate,
+                            targetEndDate: targetEndDate,
+                            bonus: bonus
                         },
-                        whoCanRW: whoCanRW,
-                        health: health,
-                        StartDate: startDate,
-                        targetEndDate: targetEndDate,
-                        bonus: bonus
-                    },
-                    {
-                        headers: {
-                            mid: mid
-                        },
-                        wait: true,
-                        success: function (model, response) {
-                            self.attachView.sendToServer(null, model.changed);
-                        },
-                        error: function (model, xhr) {
-                            self.errorNotification(xhr);
-                        }
-                    });
+                        {
+                            headers: {
+                                mid: mid
+                            },
+                            wait: true,
+                            success: function (model, response) {
+                                self.attachView.sendToServer(null, model.changed);
+                            },
+                            error: function (model, xhr) {
+                                self.errorNotification(xhr);
+                            }
+                        });
+                }
             },
 
             hideDialog: function () {
@@ -233,7 +251,7 @@ define([
                 });
                 populate.get("#projectTypeDD", "/projectType", {}, "name", this, true, true);
                 populate.get2name("#projectManagerDD", "/getPersonsForDd", {}, this, true);
-                populate.get2name("#customerDd", "/Customer", {}, this, true, true);
+                populate.get2name("#customerDd", "/Customer", {}, this, true, false);
                 populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/WorkflowsForDd", {id: "Projects"}, "name", this, true);
 
                 $('#StartDate').datepicker({
