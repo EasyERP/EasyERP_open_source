@@ -325,9 +325,7 @@ define([
                     insertedInput[0].setSelectionRange(0, insertedInput.val().length);
 
                     this.autoCalc(e);
-
-                    value = _.bind(this.calculateCost, this);
-                    value(e, wTrackId);
+                    this.calculateCost(e, wTrackId);
                 }
 
                 return false;
@@ -377,10 +375,8 @@ define([
                 async.parallel([getBaseSalary, getMonthData], function callback(err, results) {
                     var baseSalary = results[0];
                     var coefficients = results[1];
-                    var baseSalaryLength = baseSalary.length;
-                    var coeficientsLength = coefficients.length;
 
-                    if (err || (baseSalaryLength === 0) || (coeficientsLength === 0)) {
+                    if (err  || !baseSalary) {
                         costElement.text('');
                         costElement.addClass('money');
                         costElement.text('0.00');
@@ -395,7 +391,7 @@ define([
                         return 0;
                     }
 
-                    baseSalaryValue = parseFloat(baseSalary[0].employeesArray.baseSalary);
+                    baseSalaryValue = parseFloat(baseSalary);
                     expenseCoefficient = parseFloat(coefficients[0].expenseCoefficient);
                     fixedExpense = parseInt(coefficients[0].fixedExpense);
                     hours = parseInt(coefficients[0].hours);
@@ -417,8 +413,10 @@ define([
                 });
 
                 function getBaseSalary(callback) {
+                    var employeeSalary;
 
-                    dataService.getData('/salary/list', {
+                    dataService.getData('/salary/getByMonth',
+                        {
                         month: month,
                         year: year,
                         _id: employeeId
@@ -428,7 +426,7 @@ define([
                             return callback(response.error);
                         }
 
-                        callback(null, response);
+                        callback(null, response.data);
 
                     }, this);
 
@@ -522,8 +520,7 @@ define([
                     changedAttr.employee = employee;
                     changedAttr.department = department;
 
-                    value = _.bind(this.calculateCost, this);
-                    value(e, wTrackId);
+                    this.calculateCost(e, wTrackId);
 
                     tr.find('[data-content="department"]').removeClass('errorContent');
                 } else if (elementType === '#department') {

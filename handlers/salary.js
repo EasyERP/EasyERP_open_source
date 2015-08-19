@@ -9,6 +9,7 @@ var Salary = function (models) {
     var SalarySchema = mongoose.Schemas['Salary'];
     var SalaryCashSchema = mongoose.Schemas['SalaryCash'];
     var DepartmentSchema = mongoose.Schemas['Department'];
+    var _ = require('lodash');
 
     var async = require('async');
     var mapObject = require('../helpers/bodyMaper');
@@ -328,6 +329,27 @@ var Salary = function (models) {
             }
             res.status(200).send(result);
         });
+    };
+
+    this.getByMonth = function (req, res, next) {
+        var data = req.query;
+        var month = data.month;
+        var year = data.year;
+        var empId = data._id;
+        var baseSalary = 0;
+        var Salary = models.get(req.session.lastDb, 'Salary', SalarySchema);
+
+        var matchObject = {month: month, year: year, 'employee._id': empId};
+        var query = Salary.findOne(matchObject);
+
+        query.exec(function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({data: result.baseSalary});
+        });
+
     };
 
     this.totalCollectionLength = function (req, res, next) {
