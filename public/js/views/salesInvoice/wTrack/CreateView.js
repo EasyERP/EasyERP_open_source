@@ -156,7 +156,9 @@
                 var description;
 
                 var supplier = thisEl.find("#supplier").data("id") || null;
+                var supplierName = this.$("#supplier").text() || null;
                 var salesPersonId = thisEl.find("#assigned").data("id") || null;
+                var salesPersonName = this.$("#salesPerson").text() ? this.$("#salesPerson").text() : null;
                 var paymentTermId = thisEl.find("#paymentTerms").data("id") || null;
                 var invoiceDate = thisEl.find("#invoiceDate").val();
                 var dueDate = thisEl.find("#dueDate").val();
@@ -214,7 +216,10 @@
                     dueDate: dueDate,
                     project: project,
 
-                    salesPerson: salesPersonId,
+                    supplier: {
+                        _id: supplier,
+                        name: supplierName
+                    },
                     paymentTerms: paymentTermId,
 
                     products: products,

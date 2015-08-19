@@ -30,7 +30,10 @@ module.exports = (function () {
         name: {type: String, default: ''},
         invoiceType: {type: String, default: 'wTrack'},
         forSales: {type: Boolean, default: true},
-        supplier: { type: ObjectId, ref: 'Customers', default: null },
+        supplier: {
+            _id: {type: ObjectId, ref: 'Customers', default: null},
+            name: String
+        },
         /*fiscalPosition: { type: String, default: null },*/
         sourceDocument: { type: String, default: null },
         paymentReference: { type: String, default: 'free' },
@@ -41,14 +44,20 @@ module.exports = (function () {
         dueDate: Date,
         paymentDate: Date,
 
-        salesPerson: {type: ObjectId, ref: 'Employees', default: null},
+        salesPerson: {
+            _id: {type: ObjectId, ref: 'Employees', default: null},
+            name: String
+        },
         paymentTerms: {type: ObjectId, ref: 'PaymentTerm', default: null},
 
         paymentInfo: payments,
         payments: [{type: ObjectId, ref: 'Payment', default: null}],
         products: [ products],
 
-        workflow: {type: ObjectId, ref: 'workflows', default: null},
+        workflow: {
+            _id: {type: ObjectId, ref: 'workflows', default: null},
+            name: String
+        },
         whoCanRW: {type: String, enum: ['owner', 'group', 'everyOne'], default: 'everyOne'},
 
         groups: {
