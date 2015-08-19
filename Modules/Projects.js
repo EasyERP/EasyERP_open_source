@@ -303,6 +303,10 @@ var Project = function (models, event) {
                         _project.health = data.health;
                     }
 
+                    if (data.bonus){
+                        _project.bonus = data.bonus;
+                    }
+
                     _project.save(function (err, result) {
                         try {
                             if (err) {

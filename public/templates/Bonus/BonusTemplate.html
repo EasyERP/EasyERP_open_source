@@ -28,10 +28,10 @@
             </td>
             <td data-content="startDate" class="startDate">
                 <div>
-                    <%if (formatingDate(bonus.startDate) === startDate) {%>
-                        From start of project
+                    <%if (bonus.startDate) {%>
+                    <%= formatingDate(bonus.startDate) %>
                     <%} else {%>
-                        <%=formatingDate(bonus.startDate) || '&nbsp;'%>
+                        From start of project
                     <%}%>
                 </div>
 
@@ -39,10 +39,10 @@
             </td>
             <td data-content="endDate" class="endDate">
                 <div>
-                    <%if (formatingDate(bonus.endDate) === endDate) {%>
-                        To end of project
+                    <%if (bonus.endDate) {%>
+                    <%= formatingDate(bonus.endDate) %>
                     <%} else {%>
-                        <%=formatingDate(bonus.endDate) || '&nbsp;'%>
+                    To end of project
                     <%}%>
                 </div>
 
