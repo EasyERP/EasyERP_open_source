@@ -10,5 +10,7 @@ module.exports = {
     UKR_SIB_BANK: '555cc981532aebbc4a8baf37',
     PRIMARY: '555cc981532aebbc4a8baf38',
 
-    WTRACK_DB_NAME: 'weTrack'
+    WTRACK_DB_NAME: 'weTrack',
+
+    MOBILE_DEFAULT_COUNT_PER_LIST: 50
 };

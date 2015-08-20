@@ -714,6 +714,8 @@
         },
 
         getFilterCustomers: function (req, response) {
+
+
             var data = req.query;
             var viewType = data.viewType;
             var contentType = data.contentType;

@@ -46,6 +46,17 @@ module.exports = function (mainDb, dbsNames) {
         next();
     };
 
+    var chackMobile = function (req, res, next){
+        var client = req.headers['user-agent'];
+        var regExp = /mobile/i;
+
+        if(req.session && !(req.session.isMobile === false || req.session.isMobile === true)) {
+            req.session.isMobile = regExp.test(client);
+        }
+
+        next();
+    };
+
     /*app.enable('trust proxy');*/
     app.set('dbsObject', dbsObject);
     app.set('dbsNames', dbsNames);
@@ -69,9 +80,9 @@ module.exports = function (mainDb, dbsNames) {
     }));
 
     app.use(allowCrossDomain);
+    app.use(chackMobile);
 
     require('./routes/index')(app, mainDb);
-
 
     return app;
 };
