@@ -222,6 +222,7 @@ define([
                 revenueEl.text(revenueVal);
 
                 editWtrackModel = this.editCollection.get(wTrackId);
+
                 workedEl.text(worked);
                 //editWtrackModel.set('worked', worked);
 
@@ -324,9 +325,7 @@ define([
                     insertedInput[0].setSelectionRange(0, insertedInput.val().length);
 
                     this.autoCalc(e);
-
-                    value = _.bind(this.calculateCost, this);
-                    value(e, wTrackId);
+                    this.calculateCost(e, wTrackId);
                 }
 
                 return false;
@@ -345,8 +344,11 @@ define([
                 var hours;
                 var calc;
                 var year;
-
                 var tr = $(e.target).closest('tr');
+                var profit = tr.find('[data-content="profit"]');
+                var revenueVal = tr.find('[data-content="revenue"]').text();
+                var profitVal = tr.find('[data-content="profit"]').text();
+
 
                 if (!this.changedModels[wTrackId]) {
                     this.changedModels[wTrackId] = {};
@@ -373,20 +375,23 @@ define([
                 async.parallel([getBaseSalary, getMonthData], function callback(err, results) {
                     var baseSalary = results[0];
                     var coefficients = results[1];
-                    var baseSalaryLength = baseSalary.length;
-                    var coeficientsLength = coefficients.length;
 
-                    if (err || (baseSalaryLength === 0) || (coeficientsLength === 0)) {
+                    if (err  || !baseSalary) {
                         costElement.text('');
                         costElement.addClass('money');
                         costElement.text('0.00');
 
+                        profitVal =  (parseFloat(revenueVal) - 0).toFixed(2);
+                        profit.text(profitVal);
+
                         self.changedModels[wTrackId].cost = 0;
+                        self.changedModels[wTrackId].profit = parseFloat(profitVal) * 100;
+;
 
                         return 0;
                     }
 
-                    baseSalaryValue = parseFloat(baseSalary[0].employeesArray.baseSalary);
+                    baseSalaryValue = parseFloat(baseSalary);
                     expenseCoefficient = parseFloat(coefficients[0].expenseCoefficient);
                     fixedExpense = parseInt(coefficients[0].fixedExpense);
                     hours = parseInt(coefficients[0].hours);
@@ -397,14 +402,21 @@ define([
                     costElement.addClass('money');
                     costElement.text(calc);
 
+
+                    profitVal =  (parseFloat(revenueVal) - parseFloat(calc)).toFixed(2);
+                    profit.text(profitVal);
+
                     self.changedModels[wTrackId].cost = parseFloat(calc) * 100;
+                    self.changedModels[wTrackId].profit = parseFloat(profitVal) * 100;
 
                     return calc;
                 });
 
                 function getBaseSalary(callback) {
+                    var employeeSalary;
 
-                    dataService.getData('/salary/list', {
+                    dataService.getData('/salary/getByMonth',
+                        {
                         month: month,
                         year: year,
                         _id: employeeId
@@ -414,7 +426,7 @@ define([
                             return callback(response.error);
                         }
 
-                        callback(null, response);
+                        callback(null, response.data);
 
                     }, this);
 
@@ -508,8 +520,7 @@ define([
                     changedAttr.employee = employee;
                     changedAttr.department = department;
 
-                    value = _.bind(this.calculateCost, this);
-                    value(e, wTrackId);
+                    this.calculateCost(e, wTrackId);
 
                     tr.find('[data-content="department"]').removeClass('errorContent');
                 } else if (elementType === '#department') {

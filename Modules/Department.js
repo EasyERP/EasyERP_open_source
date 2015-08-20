@@ -1,7 +1,9 @@
-var Department = function (models) {
+var Department = function (event, models) {
     var mongoose = require('mongoose');
     var logWriter = require('../helpers/logWriter.js');
     var DepartmentSchema = mongoose.Schemas['Department'];
+
+    var CONSTANTS = require('../constants/mainConstants');
     
     function create(req, data, res) {
         try {
@@ -286,6 +288,10 @@ var Department = function (models) {
     }
 
     function update(req, _id, data, res) {
+        var dbName = req.session.lastDb;
+        var EmployeeSchema;
+        var EmployeeModel;
+
         try {
             delete data._id;
             delete data.createdBy;
@@ -297,7 +303,7 @@ var Department = function (models) {
             if (data.sequenceStart) {
                 updateSequence(models.get(req.session.lastDb, "Department", DepartmentSchema), "sequence", data.sequenceStart, data.sequence, data.parentDepartmentStart, data.parentDepartment, false, false, function (sequence) {
                     data.sequence = sequence;
-                    models.get(req.session.lastDb, 'Department', DepartmentSchema).update({ _id: _id }, data, function (err, result) {
+                    models.get(req.session.lastDb, 'Department', DepartmentSchema).findByIdAndUpdate({ _id: _id }, data, {new: true}, function (err, result) {
                         if (err) {
                             console.log(err);
                             logWriter.log("Department.js update Department.update " + err);
@@ -310,12 +316,19 @@ var Department = function (models) {
                             }
                             else {
                                 res.send(200, { success: 'Department updated success' });
+
+                                if (dbName === CONSTANTS.WTRACK_DB_NAME) {
+                                    EmployeeSchema = mongoose.Schemas['Employee'];
+                                    EmployeeModel = models.get(dbName, 'Employee', EmployeeSchema);
+
+                                    event.emit('updateName', _id, EmployeeModel, 'department._id', 'department.name', result.departmentName);
+                                }
                             }
                         }
                     });
                 });
             } else {
-                models.get(req.session.lastDb, 'Department', DepartmentSchema).update({ _id: _id }, data, function (err, result) {
+                models.get(req.session.lastDb, 'Department', DepartmentSchema).findByIdAndUpdate({ _id: _id }, data, {new: true}, function (err, result) {
                     if (err) {
                         console.log(err);
                         logWriter.log("Department.js update Department.update " + err);
@@ -328,6 +341,13 @@ var Department = function (models) {
                         }
                         else {
                             res.send(200, { success: 'Department updated success' });
+
+                            if (dbName === CONSTANTS.WTRACK_DB_NAME) {
+                                EmployeeSchema = mongoose.Schemas['Employee'];
+                                EmployeeModel = models.get(dbName, 'Employee', EmployeeSchema);
+
+                                event.emit('updateName', _id, EmployeeModel, 'department._id', 'department.name', result.departmentName);
+                            }
                         }
                     }
                 });

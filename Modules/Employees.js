@@ -7,6 +7,8 @@ var Employee = function (event, models) {
     var employeeSchema = mongoose.Schemas['Employee'];
     var fs = require('fs');
 
+    var CONSTANTS = require('../constants/mainConstants');
+
     function getTotalCount(req, response) {
         var res = {};
         var data = {};
@@ -1007,7 +1009,34 @@ var Employee = function (event, models) {
 
     }
 
+    function updateRefs (result, dbName, _id) {
+        var EmployeeSchema;
+        var EmployeeModel;
+        var ProjectSchema;
+        var ProjectModel;
+
+        var fullName;
+
+        if (dbName === CONSTANTS.WTRACK_DB_NAME) {
+            EmployeeSchema = mongoose.Schemas['Employee'];
+            EmployeeModel = models.get(dbName, 'Employee', EmployeeSchema);
+
+            ProjectSchema = mongoose.Schemas['Project'];
+            ProjectModel = models.get(dbName, 'Project', ProjectSchema);
+
+            fullName = result.name.last ? (result.name.first + ' ' + result.name.last) : result.name.first;
+
+            event.emit('updateName', _id, EmployeeModel, 'manager._id', 'manager.name', fullName);
+            event.emit('updateName', _id, ProjectModel, 'projectmanager._id', 'projectmanager.name', fullName);
+            event.emit('updateName', _id, ProjectModel, 'customer._id', 'customer.name', fullName);
+        }
+    };
+
     function updateOnlySelectedFields(req, _id, data, res) {
+        var dbName = req.session.lastDb;
+        var UsersSchema = mongoose.Schemas['User'];
+        var UsersModel = models.get(dbName, 'Users',  UsersSchema);
+
         var fileName = data.fileName;
         var dataObj = {};
         var query = {};
@@ -1051,6 +1080,8 @@ var Employee = function (event, models) {
                         models.get(req.session.lastDb, 'Employees', employeeSchema).findByIdAndUpdate(_id, query, function (err, result) {
                             if (!err) {
                                 res.send(200, { success: 'Employees updated', sequence: result.sequence });
+
+                                updateRefs(result, dbName, _id);
                             } else {
                                 res.send(500, { error: "Can't update Employees" });
                             }
@@ -1066,6 +1097,8 @@ var Employee = function (event, models) {
                     models.get(req.session.lastDb, 'Employees', employeeSchema).findByIdAndUpdate(_id, { $set: data }, function (err, result) {
                         if (!err) {
                             res.send(200, { success: 'Employees updated' });
+
+                            updateRefs(result, dbName, _id);
                         } else {
                             res.send(500, { error: "Can't update Employees" });
                         }
@@ -1087,8 +1120,15 @@ var Employee = function (event, models) {
 
             if (dataObj.hire || dataObj.fire){
                 query = { $set: updateObject, $push: dataObj };
-            } else {
+            } else  if (data.relatedUser){
                 query = { $set: updateObject};
+                event.emit('updateName', data.relatedUser, UsersModel, '_id', 'RelatedEmployee',  _id);
+            } else if (data.currentUser) {
+                event.emit('updateName', data.currentUser, UsersModel, '_id', 'RelatedEmployee', null);
+                delete data.currentUser;
+                query = {$set: updateObject};
+            } else {
+                query = {$set: updateObject};
             }
 
             models.get(req.session.lastDb, 'Employees', employeeSchema).findByIdAndUpdate(_id, query, function (err, result) {
@@ -1126,7 +1166,7 @@ var Employee = function (event, models) {
                         fs.unlink(path, function (err) {
                             console.log(err);
                             fs.readdir(dir, function (err, files) {
-                                if (files.length === 0) {
+                                if (files && files.length === 0) {
                                     fs.rmdir(dir, function () { });
                                 }
                             });
@@ -1134,6 +1174,8 @@ var Employee = function (event, models) {
 
                     }
                     res.send(200, { success: 'Employees updated', result: result });
+
+                    updateRefs(result, dbName, _id);
                 }  else {
                     res.send(500, { error: "Can't update Employees" });
                 }
@@ -1183,7 +1225,7 @@ var Employee = function (event, models) {
     function getEmployeesImages(req, data, res) {
         var query = models.get(req.session.lastDb, "Employees", employeeSchema).find({ isEmployee: true });
         query.where('_id').in(data.ids).
-            select('_id imageSrc').
+            select('_id imageSrc name').
             exec(function (error, response) {
                 if (error) {
                     console.log(error);

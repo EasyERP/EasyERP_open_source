@@ -142,7 +142,7 @@ define([
                     patch: true,
                     validate: false,
                     success: function (err, model) {
-                        self.showFilteredPage(_.pluck(self.stages, '_id'));
+                        self.showFilteredPage({}/*_.pluck(self.stages, '_id')*/);
                     }
                 });
 

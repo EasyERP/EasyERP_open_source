@@ -201,7 +201,7 @@ define([
 
                 });
                 var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
-				var nationality =  $("#nationality").data("id");
+                var nationality =  $("#nationality").data("id");
                 var data = {
                     name: {
                         first: $.trim(this.$el.find("#first").val()),
@@ -253,6 +253,9 @@ define([
                     whoCanRW: whoCanRW,
                     hire: newHireArray
                 };
+                if (!relatedUser){
+                    data['currentUser']= App.currentUser._id;
+                }
                 this.currentModel.set(data);
                 this.currentModel.save(this.currentModel.changed, {
                         headers: {
@@ -260,8 +263,17 @@ define([
                         },
                         patch: true,
                         success: function (model) {
-                            if (self.lastData === data.name.last &&
-                                self.firstData === data.name.first &&
+                             //App.currentUser.imageSrc =  self.imageSrc;
+                            if (relatedUser){
+                                $("#loginPanel .iconEmployee").attr("src", self.imageSrc);
+                                $("#loginPanel #userName").text(model.toJSON().fullName);
+                            } else {
+                                $("#loginPanel .iconEmployee").attr("src", App.currentUser.imageSrc);
+                                $("#loginPanel  #userName").text(App.currentUser.login);
+                            }
+                            
+                            if (self.firstData === data.name.first &&
+                                self.lastData === data.name.last &&
                                 self.departmentData === data.department.name &&
                                 self.jobPositionData === data.jobPosition.name &&
                                 self.projectManagerData === data.manager.name) {
@@ -281,6 +293,7 @@ define([
                                 }
 
                             } else {
+                                Backbone.history.fragment = '';
                                 Backbone.history.navigate(window.location.hash, { trigger: true, replace: true });
                             }
                             self.hideDialog();

@@ -1,9 +1,11 @@
-var JobPosition = function (models) {
+var JobPosition = function (event, models) {
     var mongoose = require('mongoose');
     var objectId = mongoose.Types.ObjectId;
     var logWriter = require('../helpers/logWriter');
     var employee = mongoose.Schemas['Employee'];
     var department = mongoose.Schemas['Department'];
+
+    var CONSTANTS = require('../constants/mainConstants');
 
     var jobPositionSchema = mongoose.Schemas['JobPosition'];
 
@@ -491,7 +493,21 @@ var JobPosition = function (models) {
             });
     }
 
+    function updateRefs (result, dbName, _id) {
+        var EmployeeSchema;
+        var EmployeeModel;
+
+        if (dbName === CONSTANTS.WTRACK_DB_NAME) {
+            EmployeeSchema = mongoose.Schemas['Employee'];
+            EmployeeModel = models.get(dbName, 'Employee', EmployeeSchema);
+
+            event.emit('updateName', _id, EmployeeModel, 'jobPosition._id', 'jobPosition.name', result.name);
+        }
+    };
+
     function update(req, _id, data, res) {
+        var dbName = req.session.lastDb;
+
         try {
             delete data._id;
             delete data.createdBy;
@@ -509,13 +525,15 @@ var JobPosition = function (models) {
             if (data.workflow && data.workflow._id) {
                 data.workflow = data.workflow._id;
             }
-            models.get(req.session.lastDb, 'JobPosition', jobPositionSchema).update({_id: _id}, data, function (err, result) {
+            models.get(req.session.lastDb, 'JobPosition', jobPositionSchema).findOneAndUpdate({_id: _id}, data, {new: true}, function (err, result) {
                 if (err) {
                     console.log(err);
                     logWriter.log("JobPosition.js update job.update " + err);
                     res.send(500, {error: "Can't update JobPosition"});
                 } else {
                     res.send(200, {success: 'JobPosition updated success'});
+
+                    updateRefs(result, dbName, _id);
                 }
             });
         }

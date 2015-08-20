@@ -78,7 +78,7 @@ define([
                     }
                     if (currentUser.RelatedEmployee) {
                         $("#loginPanel .iconEmployee").attr("src", currentUser.RelatedEmployee.imageSrc);
-                        if (response.RelatedEmployee.name) {
+                        if (currentUser.RelatedEmployee.name) {
                             $("#loginPanel  #userName").text(currentUser.RelatedEmployee.name.first + " " + currentUser.RelatedEmployee.name.last);
                         } else {
                             $("#loginPanel  #userName").text(currentUser.login);
