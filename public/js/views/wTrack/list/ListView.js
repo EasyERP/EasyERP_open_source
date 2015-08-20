@@ -359,24 +359,24 @@ define([
                 if (wTrackId.length < 24) {
                     employeeId = this.changedModels[wTrackId].employee._id;
 
-                    month = tr.find('[data-content="month"]').text();
-                    year = tr.find('[data-content="year"]').text();
+                    month = (tr.find('[data-content="month"]').text()) ? tr.find('[data-content="month"]').text() : tr.find('.editing').val();
+                    year = (tr.find('[data-content="year"]').text()) ? tr.find('[data-content="year"]').text() : tr.find('.editing').val();
                     trackWeek = tr.find('[data-content="worked"]').text();
 
                 } else {
                     editWtrackModel = this.editCollection.get(wTrackId);
 
                     employeeId = editWtrackModel.attributes.employee._id;
-                    month = tr.find('[data-content="month"]').text();
-                    year = tr.find('[data-content="year"]').text();
+                    month = (tr.find('[data-content="month"]').text()) ? tr.find('[data-content="month"]').text() : tr.find('.editing').val();
+                    year = (tr.find('[data-content="year"]').text()) ? tr.find('[data-content="year"]').text() : tr.find('.editing').val();
                     trackWeek = tr.find('[data-content="worked"]').text();
                 }
 
                 async.parallel([getBaseSalary, getMonthData], function callback(err, results) {
                     var baseSalary = results[0];
-                    var coefficients = results[1];
+                    var coefficients = results[1][0];
 
-                    if (err  || !baseSalary) {
+                    if (err  || !baseSalary || !coefficients) {
                         costElement.text('');
                         costElement.addClass('money');
                         costElement.text('0.00');
@@ -392,9 +392,9 @@ define([
                     }
 
                     baseSalaryValue = parseFloat(baseSalary);
-                    expenseCoefficient = parseFloat(coefficients[0].expenseCoefficient);
-                    fixedExpense = parseInt(coefficients[0].fixedExpense);
-                    hours = parseInt(coefficients[0].hours);
+                    expenseCoefficient = parseFloat(coefficients.expenseCoefficient);
+                    fixedExpense = parseInt(coefficients.fixedExpense);
+                    hours = parseInt(coefficients.hours);
 
                     calc = ((((baseSalaryValue * expenseCoefficient) + fixedExpense) / hours) * trackWeek).toFixed(2);
 
