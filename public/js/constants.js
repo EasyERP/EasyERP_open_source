@@ -121,13 +121,18 @@ define([], function () {
         },
         salesInvoice: {
             'Customer': {
-                view: 'customer',
-                backend: 'customer._id'
+                view: 'supplier',
+                backend: 'supplier._id'
             },
             'Assigned': {
                 view: 'salesPerson',
                 backend: 'salesPerson._id'
             },
+            'Project Name': {
+                view: 'project',
+                backend: 'project._id'
+            }
+            ,
             'Status': {
                 view: 'workflow',
                 backend: 'workflow._id'

@@ -12,6 +12,7 @@ var WorkflowHandler = require('./workflow');
 var _ = require('lodash');
 
 var CONSTANTS = require('../constants/modules');
+var MAINCONSTANTS = require('../constants/mainConstants');
 
 function returnModuleId(req){
     var body = req.body;
@@ -210,6 +211,7 @@ var Payment = function (models) {
         var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
         var workflowHandler = new WorkflowHandler(models);
         var invoiceId = body.invoice._id;
+        var DbName = req.session.lastDb;
 
         var moduleId = returnModuleId(req);
 
@@ -248,9 +250,10 @@ var Payment = function (models) {
             var totalToPay = (invoice.paymentInfo) ? invoice.paymentInfo.balance : 0;
             var paid = payment.paidAmount;
             var isNotFullPaid;
+            var wId = (DbName === MAINCONSTANTS.WTRACK_DB_NAME) ? 'Sales Invoice' : 'Purchase Invoice';
             var request = {
                 query: {
-                    wId: 'Purchase Invoice',
+                    wId: wId,
                     source: 'purchase',
                     targetSource: 'invoice'
                 },
@@ -372,7 +375,7 @@ var Payment = function (models) {
 
         waterfallTasks = [fetchInvoice, savePayment, invoiceUpdater];
 
-        if (req.session.lastDb === 'weTrack') {
+        if (DbName === MAINCONSTANTS.WTRACK_DB_NAME) {
             waterfallTasks.push(updateWtrack);
         }
 
