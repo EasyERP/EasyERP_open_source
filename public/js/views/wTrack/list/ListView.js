@@ -773,10 +773,10 @@ define([
                 });
 
                 self.filterView.bind('filter', function(filter) {
-                    self.showFilteredPage(filter, self);
+                    self.showFilteredPage(filter);
                 });
                 self.filterView.bind('defaultFilter', function () {
-                    self.showFilteredPage({}, self);
+                    self.showFilteredPage({});
                 });
 
                 self.filterView.render();
@@ -932,20 +932,20 @@ define([
                 this.changeLocationHash(1, itemsNumber, this.filter);
             },
 
-            showFilteredPage: function (filter, context) {
+            showFilteredPage: function (filter) {
                 var itemsNumber = $("#itemsNumber").text();
                 this.filter = filter;
 
-                context.startTime = new Date();
-                context.newCollection = false;
+                this.startTime = new Date();
+                this.newCollection = false;
                 //this.filter = custom.getFiltersValues(chosen, defaultFilterStatus, logicAndStatus);
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
 
-                context.changeLocationHash(1, itemsNumber, filter);
-                context.collection.showMore({count: itemsNumber, page: 1, filter: filter});
-                context.getTotalLength(null, itemsNumber, filter);
+                this.changeLocationHash(1, itemsNumber, filter);
+                this.collection.showMore({count: itemsNumber, page: 1, filter: filter});
+                this.getTotalLength(null, itemsNumber, filter);
             },
 
             showPage: function (event) {
