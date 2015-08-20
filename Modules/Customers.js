@@ -1,10 +1,12 @@
-﻿var Customers = function (models) {
+﻿var Customers = function (event, models) {
     var mongoose = require('mongoose');
     var logWriter = require('../helpers/logWriter.js');
     var objectId = mongoose.Types.ObjectId;
     var customerSchema = mongoose.Schemas['Customer'];
     var department = mongoose.Schemas['Department'];
     var fs = require('fs');
+
+    var CONSTANTS = require('../constants/mainConstants');
 
     return {
 
@@ -901,7 +903,34 @@
             });
         },
 
+        updateRefs: function (result, dbName, _id) {
+            var InvoiceSchema;
+            var Invoice;
+            var PaymentSchema;
+            var Payment;
+
+            var fullName;
+
+            if (dbName === CONSTANTS.WTRACK_DB_NAME) {
+
+                InvoiceSchema = mongoose.Schemas['wTrackInvoice'];
+                Invoice = models.get(dbName, 'wTrackInvoice', InvoiceSchema);
+
+                PaymentSchema = mongoose.Schemas['wTrackPayment'];
+                Payment = models.get(dbName, 'wTrackPayment', PaymentSchema);
+
+                fullName = result.name.last ? (result.name.first + ' ' + result.name.last) : result.name.first;
+
+                event.emit('updateName', _id, Invoice, 'supplier._id', 'supplier.name', fullName);
+                event.emit('updateName', _id, Payment, 'supplier._id', 'supplier.fullName', fullName);
+
+            }
+        },
+
         update: function (req, _id, remove, data, res) {
+            var dbName = req.session.lastDb;
+            var self = this;
+
             try {
                 delete data._id;
                 delete data.createdBy;
@@ -929,6 +958,8 @@
                         res.send(500, {error: "Can't update customer"});
                     } else {
                         res.send(200, customers);
+
+                        self.updateRefs(customers, dbName, _id);
                     }
                 });
             }
@@ -939,6 +970,9 @@
         },
 
         updateOnlySelectedFields: function (req, _id, data, res) {
+            var dbName = req.session.lastDb;
+            var self = this;
+
             delete data._id;
             var fileName = data.fileName;
             delete data.fileName;
@@ -995,6 +1029,8 @@
 
                     }
                     res.send(200, {success: 'Customer update', notes: result.notes});
+
+                    self.updateRefs(result, dbName, _id);
                 }
             });
         },
