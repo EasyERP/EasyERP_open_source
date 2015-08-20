@@ -1014,6 +1014,10 @@ var Employee = function (event, models) {
         var EmployeeModel;
         var ProjectSchema;
         var ProjectModel;
+        var InvoiceSchema;
+        var Invoice;
+        var PaymentSchema;
+        var Payment;
 
         var fullName;
 
@@ -1024,11 +1028,20 @@ var Employee = function (event, models) {
             ProjectSchema = mongoose.Schemas['Project'];
             ProjectModel = models.get(dbName, 'Project', ProjectSchema);
 
+            InvoiceSchema = mongoose.Schemas['wTrackInvoice'];
+            Invoice = models.get(req.session.lastDb, 'wTrackInvoice', InvoiceSchema);
+
+            PaymentSchema = mongoose.Schemas['wTrackPayment'];
+            Payment = models.get(req.session.lastDb, 'wTrackPayment', PaymentSchema);
+
             fullName = result.name.last ? (result.name.first + ' ' + result.name.last) : result.name.first;
 
             event.emit('updateName', _id, EmployeeModel, 'manager._id', 'manager.name', fullName);
             event.emit('updateName', _id, ProjectModel, 'projectmanager._id', 'projectmanager.name', fullName);
             event.emit('updateName', _id, ProjectModel, 'customer._id', 'customer.name', fullName);
+            event.emit('updateName', _id, Invoice, 'salesPerson._id', 'salesPerson.name', fullName);
+            event.emit('updateName', _id, Payment, 'invoice.assigned._id', 'invoice.assigned.name', fullName);
+
         }
     };
 

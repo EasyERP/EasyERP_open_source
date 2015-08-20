@@ -129,7 +129,7 @@ define([
                     },
                     supplier: {
                         _id: supplierId,
-                        name: supplierName
+                        fullName: supplierName
                     },
                     paymentMethod: {
                         _id: paymentMethodID,
