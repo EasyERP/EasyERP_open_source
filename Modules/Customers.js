@@ -986,7 +986,7 @@
 
                         fs.unlink(path, function (err) {
                             fs.readdir(dir, function (err, files) {
-                                if (files.length === 0) {
+                                if (files && files.length === 0) {
                                     fs.rmdir(dir, function () {
                                     });
                                 }

@@ -336,7 +336,6 @@ var Salary = function (models) {
         var month = data.month;
         var year = data.year;
         var empId = data._id;
-        var baseSalary = 0;
         var Salary = models.get(req.session.lastDb, 'Salary', SalarySchema);
 
         var matchObject = {month: month, year: year, 'employee._id': empId};
