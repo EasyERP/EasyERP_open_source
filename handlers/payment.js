@@ -280,7 +280,7 @@ var Payment = function (models) {
                     name: workflow.name,
                     status: workflow.status
                 };
-                invoice.paymentInfo.balance = (totalToPay - paid);
+                invoice.paymentInfo.balance = (totalToPay - paid)/100;
                 invoice.paymentInfo.unTaxed += paid / 100;
                 invoice.payments.push(payment._id);
                 invoice.save(function (err, invoice) {
