@@ -1029,10 +1029,10 @@ var Employee = function (event, models) {
             ProjectModel = models.get(dbName, 'Project', ProjectSchema);
 
             InvoiceSchema = mongoose.Schemas['wTrackInvoice'];
-            Invoice = models.get(req.session.lastDb, 'wTrackInvoice', InvoiceSchema);
+            Invoice = models.get(dbName, 'wTrackInvoice', InvoiceSchema);
 
             PaymentSchema = mongoose.Schemas['wTrackPayment'];
-            Payment = models.get(req.session.lastDb, 'wTrackPayment', PaymentSchema);
+            Payment = models.get(dbName, 'wTrackPayment', PaymentSchema);
 
             fullName = result.name.last ? (result.name.first + ' ' + result.name.last) : result.name.first;
 
