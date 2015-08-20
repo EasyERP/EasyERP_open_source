@@ -16,12 +16,12 @@ module.exports = (function () {
 
     var customerSchema = mongoose.Schema({
         /**
-         * Type of Customer, proper values are: 'Person', 'Company'
+         * Type of __Customer__, proper values are: _'Person'_, _'Company'_
          * @property type
          * @type String
          */
         /**
-         * determine is a Person or Company our own. Actually now is not needed
+         * determine is a ___Person___ or ___Company___ our own. Actually now is not needed
          * @property isOwn
          * @type Boolean
          * @default false
@@ -31,25 +31,25 @@ module.exports = (function () {
          * @type Object
          */
         /**
-         * First name of Customer
+         * First `name` of _Customer_
          * @property name.first
          * @type String
          * @default demo
          */
         /**
-         * Last name of Customer
+         * Last `name` of Customer
          * @property name.last
          * @type String
          * @default ''
          */
         /**
-         * Date of Birth, expect ISO string, example '1998-07-28 17:12:26'
+         * Date of Birth, expect ISO string, example `'1998-07-28 17:12:26'`
          * @property dateBirth
          * @type String
          * @default ''
          */
         /**
-         * base64 representation of avatar
+         * `base64` representation of avatar
          * @property imageSrc
          * @type String
          */
@@ -58,7 +58,7 @@ module.exports = (function () {
          * @type String
          */
         /**
-         * if type of Customer='Person' should determine Company which from Person, can be empty
+         * if type of _Customer_=__'Person'__ should determine __Company__ which from __Person__, can be empty
          * @property company
          * @type String
          * @default null
@@ -69,15 +69,10 @@ module.exports = (function () {
          * @default demo
          */
         /**
-         * Last `name` of Customer
-         * @property name.last
+         * Address `street` of Customer
+         * @property address.street
          * @type String
          * @default ''
-         */
-        /**
-         * #### Example
-         *     var a = 100;
-         * @class Customer
          */
 
         type: {type: String, default: ''},

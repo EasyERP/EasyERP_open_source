@@ -29,5 +29,9 @@
     "underscore": "1.8.3",
     "xml2js": "0.4.0",
     "bower": "^1.4.1"
+  },
+  "apidoc": {
+    "title": "Custom apiDoc browser title",
+    "url" : "https://api.github.com/v1"
   }
 }

@@ -79,6 +79,16 @@ var Customers = function (models) {
 
     this.getAll = function (req, res, next) {
 
+        /**
+         * @api {get} /customers/:id Request User information
+         * @apiName GetUser
+         * @apiGroup User
+         *
+         * @apiParam {Number} id Users unique ID.
+         *
+         * @apiSuccess {String} firstname Firstname of the User.
+         * @apiSuccess {String} lastname  Lastname of the User.
+         */
         var Model = models.get(req.session.lastDb, 'Customers', CustomerSchema);
         var query = req.query;
         var type = query.type || 'Person';
