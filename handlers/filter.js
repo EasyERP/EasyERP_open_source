@@ -8,6 +8,7 @@ var Filters = function (models) {
     var EmployeeSchema = mongoose.Schemas['Employee'];
     var ProjectSchema = mongoose.Schemas['Project'];
     var TaskSchema = mongoose.Schemas['Tasks'];
+    var InvoiceSchema = mongoose.Schemas['Invoice'];
     var _ = require('../node_modules/underscore');
     var async = require('async');
 
@@ -19,6 +20,7 @@ var Filters = function (models) {
         var Employee = models.get(lastDB, 'Employee', EmployeeSchema);
         var Project = models.get(lastDB, 'Project', ProjectSchema);
         var Task = models.get(lastDB, 'Tasks', TaskSchema);
+        var Invoice = models.get(lastDB, 'Invoice', InvoiceSchema);
 
         async.parallel({
                 wTrack: getWtrackFiltersValues,
@@ -28,6 +30,7 @@ var Filters = function (models) {
                 Applications: getApplicationFiltersValues,
                 Projects: getProjectFiltersValues,
                 Tasks: getTasksFiltersValues,
+                salesInvoice: getSalesInvoiceFiltersValues
             },
             function (err, result) {
                 if (err) {
@@ -334,6 +337,46 @@ var Filters = function (models) {
         function getTasksFiltersValues(callback) {
             Task.aggregate([
                 {
+                    $match: {forSales: true}
+                },
+                {
+                    $group: {
+                        _id: null,
+                        'salesPerson': {
+                            $addToSet: {
+                                _id: 'salesPerson._id',
+                                name: {'$ifNull': ['salesPerson.name', 'None']}
+                            }
+                        },
+                        'workflow': {
+                            $addToSet: {
+                                _id: '$workflow._id',
+                                name: {'$ifNull': ['$workflow.name', 'None']}
+                            }
+                        },
+                        'customer': {
+                            $addToSet: {
+                                _id: 'customer._id',
+                                name: {'$ifNull': ['customer.name', 'None']}
+                            }
+                        }
+                    }
+                }
+            ], function (err, result) {
+                if (err) {
+                    callback(err);
+                }
+
+                result = result[0];
+
+                callback(null, result);
+            });
+        };
+
+
+        function getSalesInvoiceFiltersValues(callback) {
+            Invoice.aggregate([
+                {
                     $group: {
                         _id: null,
                         'project': {
@@ -372,6 +415,7 @@ var Filters = function (models) {
                 callback(null, result);
             });
         };
+
     };
 
 };

@@ -307,9 +307,8 @@ define([
             },
 
             deleteItem: function (event) {
-                var redirectUrl = self.forSales ? "easyErp/salesInvoice" : "easyErp/Invoice";
+                var redirectUrl = this.forSales ? "easyErp/salesInvoice" : "easyErp/Invoice";
                 event.preventDefault();
-                var self = this;
                 var answer = confirm("Realy DELETE items ?!");
                 if (answer == true) {
                     this.currentModel.destroy({

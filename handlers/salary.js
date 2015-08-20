@@ -348,7 +348,12 @@ var Salary = function (models) {
 
 
             //res.header('Content-Type', 'application/json');
-            res.status(200).send({data: result.baseSalary});
+            if (result){
+                res.status(200).send({data: result.baseSalary});
+            } else {
+                res.status(200).send({data: 0});
+            }
+
         });
 
     };
