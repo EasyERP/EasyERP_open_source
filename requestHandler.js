@@ -69,7 +69,7 @@ var requestHandler = function (event, mainDb) {
         sercObject[searchField] = id;
         updateObject[fieldName] = fieldValue;
 
-        targetModel.update(sercObject, updateObject, function(err){
+        targetModel.update(sercObject, updateObject, {multi: true}, function(err){
             if(err){
                 logWriter.log('requestHandler_eventEmiter_updateName', err.message);
             }

@@ -278,7 +278,7 @@ var Invoice = function (models) {
                             /*if (req.query.filter.workflow) {
                                 optionsObject.$and.push({workflow: {$in: req.query.filter.workflow}});
                             }*/
-                            if (req.query.filter['Due date']) {
+                            /*if (req.query.filter['Due date']) {
                                 if (req.query.filter.condition === 'or') {
                                     optionsObject.$or.push({dueDate: {$gte: new Date(req.query.filter['Due date'][0].start), $lte: new Date(req.query.filter['Due date'][0].end)}});
                                 } else {
@@ -292,21 +292,22 @@ var Invoice = function (models) {
                                 } else {
                                     optionsObject.$and.push({salesPerson: {$in: req.query.filter.salesPerson}})
                                 }
-                            }
+                            }*/
                         }
 
                         var query = Invoice.find(optionsObject).limit(count).skip(skip).sort(sort);
 
-                        query.populate('supplier', 'name _id').
-                            populate('salesPerson', 'name _id').
-                            populate('department', '_id departmentName').
+                        query
+                            //.populate('supplier', 'name _id').
+                            //populate('salesPerson', 'name _id').
+                            .populate('department', '_id departmentName').
                             populate('createdBy.user').
                             populate('editedBy.user').
                             populate('groups.users').
                             populate('groups.group').
-                            populate('groups.owner', '_id login').
-                            populate('project', '_id projectName').
-                            populate('workflow', '-sequence');
+                            populate('groups.owner', '_id login');/*.
+                            //populate('project', '_id projectName').
+                            populate('workflow._id', '-sequence');*/
 
                         query.lean().exec(waterfallCallback);
                     };
@@ -426,10 +427,10 @@ var Invoice = function (models) {
 
                         var query = Invoice.findOne(optionsObject);
 
-                        query.populate('supplier', '_id name').
-                            populate('salesPerson', 'name _id').
-                            populate('project', '_id projectName').
-                            populate('products.product').
+                        query//.populate('supplier', '_id name').
+                            //populate('salesPerson', 'name _id').
+                            //populate('project', '_id projectName').
+                            .populate('products.product').
                             populate('payments', '_id name date paymentRef paidAmount').
                             populate('department', '_id departmentName').
                             populate('paymentTerms', '_id name').
@@ -437,8 +438,8 @@ var Invoice = function (models) {
                             populate('editedBy.user').
                             populate('groups.users').
                             populate('groups.group').
-                            populate('groups.owner', '_id login').
-                            populate('workflow', '-sequence');
+                            populate('groups.owner', '_id login');/*.
+                            populate('workflow._id', '-sequence');*/
 
                         query.lean().exec(waterfallCallback);
                     };

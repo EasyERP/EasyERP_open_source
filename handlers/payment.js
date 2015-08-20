@@ -209,7 +209,7 @@ var Payment = function (models) {
         var body = req.body;
         var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
         var workflowHandler = new WorkflowHandler(models);
-        var invoiceId = body.invoice;
+        var invoiceId = body.invoice._id;
 
         var moduleId = returnModuleId(req);
 
@@ -275,7 +275,11 @@ var Payment = function (models) {
                     return waterfallCallback(err);
                 }
 
-                invoice.workflow = workflow._id;
+                invoice.workflow = {
+                    _id: workflow._id,
+                    name: workflow.name,
+                    status: workflow.status
+                };
                 invoice.paymentInfo.balance = (totalToPay - paid);
                 invoice.paymentInfo.unTaxed += paid / 100;
                 invoice.payments.push(payment._id);
