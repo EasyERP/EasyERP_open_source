@@ -198,6 +198,7 @@ define([
                 var currentUser = new usersModel(App.currentUser);
                 var filterObj = {};
                 var mid = 39;
+                var savedFilters =  App.savedFilters[this.parentContentType];
                 var filterID = $(e.target).attr('id'); //chosen current filter id
 
                 filterObj['deleteId'] = filterID;
@@ -224,6 +225,12 @@ define([
 
                 $.find('#' + filterID)[0].remove();
                 $.find('#' + filterID)[0].remove();
+                
+               for (var i = savedFilters.length - 1; i >= 0; i--){
+                   if (savedFilters[i]['_id'] === filterID){
+                       delete App.savedFilters[this.parentContentType][i];
+                   }
+               }
             },
 
             selectValue: function (e) {
