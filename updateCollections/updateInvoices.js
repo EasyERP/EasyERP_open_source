@@ -45,6 +45,10 @@ var invoiceSchema = new mongoose.Schema({
     payments: [{type: ObjectId, ref: 'Payment', default: null}],
     products: [ products],
 
+    invoiceType: {type: String},
+
+    project: {type: ObjectId, ref: 'Project', default: null},
+
     workflow: {type: ObjectId, ref: 'workflows', default: null},
     whoCanRW: {type: String, enum: ['owner', 'group', 'everyOne'], default: 'everyOne'},
 
@@ -80,6 +84,7 @@ function setPrice(num) {
 mongoose.Schemas['InvoiceOld'] = invoiceSchema;
 
 var InvoiceSchema = mongoose.Schemas['Invoice'];
+var wTrackInvoiceSchema = mongoose.Schemas['wTrackInvoice'];
 var InvoiceSchemaOld = mongoose.Schemas['InvoiceOld'];
 
 var dbObject = mongoose.createConnection('localhost', 'weTrack');
@@ -89,12 +94,14 @@ dbObject.once('open', function callback() {
 });
 
 var Invoice = dbObject.model("Invoice", InvoiceSchema);
+var InvoiceWeTrack = dbObject.model("wTrackInvoice", wTrackInvoiceSchema);
+
 var InoiceOld = dbObject.model("InvoiceNew", InvoiceSchemaOld);
 
 var query = InoiceOld.find()
-    .populate('workflow', 'name')
+    .populate('workflow', '-sequence')
     .populate('salesPerson', 'name')
-    .populate('project', 'projectName')
+    .populate('project')
     .populate('supplier', 'name')
     .lean();
 
@@ -115,7 +122,7 @@ query.exec(function (error, _res) {
                         : invoice.salesPerson.name.first,
                 } : {
                     _id: null,
-                    name: null
+                    name: ''
                 },
 
                 supplier: invoice.supplier ? {
@@ -125,27 +132,37 @@ query.exec(function (error, _res) {
                         : invoice.supplier.name.first,
                 } : {
                     _id: null,
-                    name: null
+                    name: ''
                 },
 
                 workflow: invoice.workflow ? {
                     _id: invoice.workflow._id,
-                    name: invoice.workflow.name
+                    name: invoice.workflow.name,
+                    status: invoice.workflow.status
                 } : {
                     _id: null,
-                    name: null
-                },
-                project: invoice.project ? {
-                    _id: invoice.project._id,
-                    name: invoice.project.projectName
-                } : {
-                    _id: null,
-                    name: null
+                    name: '',
+                    status: ''
                 }
             };
         }
 
-        Invoice.update({_id: invoice._id}, objectToSave, callback);
+        if (invoice.invoiceType === 'wTrack') {
+            objectToSave['project'] = invoice.project._id ? {
+                _id: invoice.project._id,
+                name: invoice.project.projectName
+            } : {
+                _id: null,
+                name: ''
+            }
+        }
+
+        if (invoice.invoiceType && invoice.invoiceType === 'wTrack') {
+            InvoiceWeTrack.update({_id: invoice._id}, objectToSave, callback);
+        } else {
+            Invoice.update({_id: invoice._id}, objectToSave, callback);
+        }
+
     }, function (err) {
         if (err) {
             return console.dir(err);

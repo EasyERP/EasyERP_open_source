@@ -305,9 +305,9 @@ var Invoice = function (models) {
                             populate('editedBy.user').
                             populate('groups.users').
                             populate('groups.group').
-                            populate('groups.owner', '_id login').
+                            populate('groups.owner', '_id login');/*.
                             //populate('project', '_id projectName').
-                            populate('workflow._id', '-sequence');
+                            populate('workflow._id', '-sequence');*/
 
                         query.lean().exec(waterfallCallback);
                     };
@@ -438,8 +438,8 @@ var Invoice = function (models) {
                             populate('editedBy.user').
                             populate('groups.users').
                             populate('groups.group').
-                            populate('groups.owner', '_id login').
-                            populate('workflow', '-sequence');
+                            populate('groups.owner', '_id login');/*.
+                            populate('workflow._id', '-sequence');*/
 
                         query.lean().exec(waterfallCallback);
                     };

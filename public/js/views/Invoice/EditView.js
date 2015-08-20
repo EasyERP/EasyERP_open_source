@@ -182,7 +182,7 @@ define([
                 var description;
                 var taxes;
                 var amount;
-                var workflow = this.currentModel.workflow ? this.currentModel.workflow._id : null;
+                var workflow = this.currentModel.workflow ? this.currentModel.workflow : null;
 
                 var invoiceDate = this.$el.find("#invoice_date").val();
                 var dueDate = this.$el.find("#due_date").val();

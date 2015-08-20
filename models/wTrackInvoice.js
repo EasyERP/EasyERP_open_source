@@ -38,7 +38,10 @@ module.exports = (function () {
         sourceDocument: { type: String, default: null },
         paymentReference: { type: String, default: 'free' },
 
-        project: {type: ObjectId, ref: 'Project', default: null},
+        project: {
+            _id: {type: ObjectId, ref: 'Project', default: null},
+            name: String
+        },
 
         invoiceDate: { type: Date, default: Date.now },
         dueDate: Date,
@@ -56,7 +59,8 @@ module.exports = (function () {
 
         workflow: {
             _id: {type: ObjectId, ref: 'workflows', default: null},
-            name: String
+            name: String,
+            status: String
         },
         whoCanRW: {type: String, enum: ['owner', 'group', 'everyOne'], default: 'everyOne'},
 
@@ -93,3 +97,4 @@ module.exports = (function () {
 
     mongoose.Schemas['wTrackInvoice'] = invoiceSchema;
 })();
+

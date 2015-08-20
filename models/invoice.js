@@ -53,7 +53,8 @@ module.exports = (function () {
 
         workflow: {
             _id: {type: ObjectId, ref: 'workflows', default: null},
-            name: String
+            name: String,
+            status: String
         },
         whoCanRW: {type: String, enum: ['owner', 'group', 'everyOne'], default: 'everyOne'},
 
