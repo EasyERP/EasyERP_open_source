@@ -75,6 +75,7 @@ define([
                 e.preventDefault();
 
                 var self = this;
+                var redirectUrl = self.forSales ? "easyErp/salesInvoice" : "easyErp/Invoice";
 
                 populate.fetchWorkflow({
                     wId: 'Purchase Invoice',
@@ -95,7 +96,7 @@ define([
                         },
                         patch: true,
                         success: function () {
-                            Backbone.history.navigate("easyErp/Invoice", {trigger: true});
+                            Backbone.history.navigate(redirectUrl, {trigger: true});
                         }
                     });
                 });
@@ -306,7 +307,7 @@ define([
             },
 
             deleteItem: function (event) {
-
+                var redirectUrl = self.forSales ? "easyErp/salesInvoice" : "easyErp/Invoice";
                 event.preventDefault();
                 var self = this;
                 var answer = confirm("Realy DELETE items ?!");
@@ -314,7 +315,7 @@ define([
                     this.currentModel.destroy({
                         success: function () {
                             $('.edit-invoice-dialog').remove();
-                            Backbone.history.navigate("easyErp/" + self.contentType, {trigger: true});
+                            Backbone.history.navigate(redirectUrl, {trigger: true});
                         },
                         error: function (model, err) {
                             if (err.status === 403) {

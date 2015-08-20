@@ -270,8 +270,8 @@ var Project = function (models, event) {
                     if (data.EndDate) {
                         _project.EndDate = data.EndDate;
                     }
-                    if (data.targetEndDate) {
-                        _project.TargetEndDate = data.targetEndDate;
+                    if (data.TargetEndDate) {
+                        _project.TargetEndDate = data.TargetEndDate;
                     }
                     if (data.sequence) {
                         _project.sequence = data.sequence;
@@ -282,15 +282,15 @@ var Project = function (models, event) {
                     if (data.projecttype) {
                         _project.projecttype = data.projecttype;
                     }
-                    if (data.workflow) {
+                    if (data.workflow._id) {
                         _project.workflow._id = data.workflow._id;
                         _project.workflow.name = data.workflow.name;
                     }
-                    if (data.customer) {
+                    if (data.customer._id) {
                         _project.customer._id = data.customer._id;
                         _project.customer.name = data.customer.name;
                     }
-                    if (data.projectmanager) {
+                    if (data.projectmanager._id) {
                         _project.projectmanager._id = data.projectmanager._id;
                         _project.projectmanager.name = data.projectmanager.name;
                     }
@@ -301,6 +301,10 @@ var Project = function (models, event) {
 
                     if (data.health) {
                         _project.health = data.health;
+                    }
+
+                    if (data.bonus){
+                        _project.bonus = data.bonus;
                     }
 
                     _project.save(function (err, result) {
@@ -1341,7 +1345,7 @@ var Project = function (models, event) {
                     fs.unlink(path, function (err) {
                         console.log(err);
                         fs.readdir(dir, function (err, files) {
-                            if (files.length === 0) {
+                            if (files && files.length === 0) {
                                 fs.rmdir(dir, function () {
                                 });
                             }
@@ -1453,7 +1457,7 @@ var Project = function (models, event) {
                         fs.unlink(path, function (err) {
                             console.log(err);
                             fs.readdir(dir, function (err, files) {
-                                if (files.length === 0) {
+                                if (files && files.length === 0) {
                                     fs.rmdir(dir, function () {
                                     });
                                 }
