@@ -132,6 +132,12 @@ module.exports = (function () {
          * @default ''
          */
         /**
+         * Contacts `fax` of Customer
+         * @property phones.fax
+         * @type String
+         * @default ''
+         */
+        /**
          * @property salesPurchases
          *  @type Object
          */
@@ -231,7 +237,7 @@ module.exports = (function () {
          * @type String
          */
         /**
-         * Company `size`
+         * Company find of `industry`
          * @property companyInfo.industry
          * @type String
          * @default null
