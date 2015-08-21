@@ -78,6 +78,7 @@ var Customers = function (models) {
     };
 
     this.getAll = function (req, res, next) {
+
          /**
          * @api {get} /customers/:id Request User information
          * @apiName GetUser
