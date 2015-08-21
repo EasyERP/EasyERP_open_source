@@ -1,0 +1,202 @@
+.list(@defaultColor: @list-color-text, @font-size: 13px, @defaultBgColorOdd: @defaultBgColorOdd-color, @defaultBgColorHover: @defaultBgHover-color, @defaultProgressColor: #f5f5f5, @defaultBorderColor:@border-color-main ) {
+  color: @defaultColor !important;
+  font-family: @lucida-font;
+  width: 100%;
+
+  tfoot {
+    tr {
+      border-bottom: 1px solid @defaultBorderColor;
+      background: #eee !important;
+      vertical-align: middle;
+    }
+    td {
+      padding: 3px 6px;
+      line-height: 18px;
+      .bold;
+      font-size: @font-size;
+      text-align: right;
+    }
+  }
+
+  thead {
+    tr {
+      border-top: 0;
+      background: inherit !important;
+      vertical-align: top;
+    }
+
+    th {
+      padding: 3px 8px;
+      line-height: 18px;
+      .bold;
+      font-size: @font-size;
+      text-align: right;
+      // text-shadow: 0 1px 1px rgba(222, 222, 222, 0.5);
+
+      &:nth-child(1), &:nth-child(2) {
+        text-align: center;
+      }
+
+      input[type="checkbox"] {
+        margin-top: 2.5px;
+      }
+      &.oe_sortable, &.oe_sortable_sub {
+        cursor: pointer;
+        .arrow {
+          display: none;
+          padding: 0 0 0 5px;
+          margin: 0;
+          text-align: center;
+          width: 5px;
+          height: 5px;
+          font-weight: 100 !important;
+          cursor: pointer;
+          font-family: Icons;
+          text-decoration: none;
+          line-height: 23px;
+          background: none;
+        }
+        &.sortUp {
+          .up {
+            display: inline-block;
+          }
+        }
+        &.sortDn {
+          .down {
+            display: inline-block;
+          }
+        }
+      }
+      &:first-of-type {
+        width: 12px;
+
+        input {
+          cursor: pointer;
+        }
+      }
+    }
+  }
+
+  tbody {
+
+    tr {
+      &.greenAlarm {
+        border: 2px solid #90ee90;
+      }
+      &.canceledListItem {
+        color: grey;
+        .newSelectList {
+          color: #000;
+        }
+      }
+      border-top: @thin-border @defaultBorderColor;
+
+      &:last-child {
+        border-bottom: @thin-border @defaultBorderColor;
+      }
+      &.stage-cancelled,
+      &.stage-refused,
+      &.stage-contractend,
+      &.stage-lost {
+        text-decoration: line-through;
+      }
+      td {
+        .text-overflow;
+        cursor: pointer;
+        padding: 4px 8px;
+        line-height: 17px;
+        font-size: @font-size - 2;
+        text-align: right;
+        &.red-border {
+          color: red;
+        }
+
+        &:nth-child(1), &:nth-child(2) {
+          text-align: center;
+        }
+
+        &.withSelect {
+          position: relative;
+        }
+
+        &[data-content="workflow"] {
+          position: relative;
+          padding: 4px 15px;
+          overflow: visible;
+
+          .newSelectList {
+            top: 5px;
+            right: 15px;
+          }
+        }
+
+        progress {
+          width: 100%;
+        }
+
+        a {
+          color: #1E8FC6 !important;
+        }
+        a.done {
+          color: #00c60b !important;
+        }
+
+        progress {
+          background-color: @defaultProgressColor;
+        }
+
+        progress::-webkit-progress-bar {
+          background-color: @defaultProgressColor;
+        }
+
+        progress::-webkit-progress-value {
+          background-color: #57B5E3;
+        }
+
+        &:first-of-type {
+          padding-left: 7px;
+
+          input {
+            cursor: pointer;
+          }
+        }
+      }
+    }
+  }
+
+  tr:nth-child(odd) {
+    background-color: @defaultBgColorOdd;
+  }
+
+  tr:hover {
+    background-color: @defaultBgColorHover;
+  }
+}
+
+.list2 {
+  .list;
+  table-layout: fixed;
+
+  thead th:first-of-type {
+    width: 15%;
+  }
+
+  .datepicker {
+    width: 90%
+  }
+
+  .datepicker.notVisible {
+    display: none;
+  }
+
+}
+
+.ui-dialog {
+  .list2 thead th, .list2 tbody tr td, .list2 tfoot tr td {
+    text-align: left;
+  }
+}
+
+.margin(@t: 5px, @r: 5px, @b: 5px, @l: 5px) {
+  margin: @arguments;
+}
