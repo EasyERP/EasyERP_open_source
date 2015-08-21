@@ -23,7 +23,24 @@
   font-weight: 400;
   src: local('Open Sans'), local('OpenSans'), url(../font/Open-Sans.woff) format('woff');
 }
+/************* Main Colors *************/
+/* errors, negativeMoney */
+/* .cash */
+/* .card */
+/* .label-saccess*/
+/* .label-warning*/
+/* .label-danger*/
+/**** Project > wTrack****/
+/**** ****/
+/*== for test =======================*/
+/*==Main menu==========================*/
+/*==Sub MENU, Top-bar =========================*/
+/*== Filters ======================*/
+/*== Customer ======================*/
+/*==LIST ============================*/
 /*------------------------Constants-----------------------------*/
+/*@body-font: "Segoe UI", sans-serif;*/
+/* @lucida-font: "Lucida Grande", Helvetica, Verdana, Arial, sans-serif; */
 html,
 body {
   margin: 0;
@@ -240,13 +257,13 @@ input::-ms-clear {
   text-align: center;
 }
 .list2 {
-  color: #000000 !important;
-  font-family: "Lucida Grande", Helvetica, Verdana, Arial, sans-serif;
+  color: #67809f !important;
+  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
   width: 100%;
   table-layout: fixed;
 }
 .list2 tfoot tr {
-  border-bottom: 1px solid #cacaca;
+  border-bottom: 1px solid #4d7188;
   background: #eee !important;
   vertical-align: middle;
 }
@@ -256,11 +273,10 @@ input::-ms-clear {
   font-weight: bold;
   font-size: 13px;
   text-align: right;
-  text-shadow: 0 1px 1px rgba(222, 222, 222, 0.5);
 }
 .list2 thead tr {
   border-top: 0;
-  background: #fff !important;
+  background: inherit !important;
   vertical-align: top;
 }
 .list2 thead th {
@@ -269,7 +285,6 @@ input::-ms-clear {
   font-weight: bold;
   font-size: 13px;
   text-align: right;
-  text-shadow: 0 1px 1px rgba(222, 222, 222, 0.5);
 }
 .list2 thead th:nth-child(1),
 .list2 thead th:nth-child(2) {
@@ -312,8 +327,7 @@ input::-ms-clear {
   cursor: pointer;
 }
 .list2 tbody tr {
-  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.3);
-  border-top: 1px solid #ababab;
+  border-top: 1px solid #4d7188;
 }
 .list2 tbody tr.greenAlarm {
   border: 2px solid #90ee90;
@@ -325,7 +339,7 @@ input::-ms-clear {
   color: #000;
 }
 .list2 tbody tr:last-child {
-  border-bottom: 1px solid #ababab;
+  border-bottom: 1px solid #4d7188;
 }
 .list2 tbody tr.stage-cancelled,
 .list2 tbody tr.stage-refused,
@@ -387,13 +401,13 @@ input::-ms-clear {
   cursor: pointer;
 }
 .list2 tr:nth-child(odd) {
-  background-color: #f9f9f9;
+  background-color: #413c6b;
 }
 .list2 tr:hover {
-  background-color: #f5f5f5;
+  background-color: #554e8c;
 }
 .list2 tfoot tr {
-  border-bottom: 1px solid #cacaca;
+  border-bottom: 1px solid #4d7188;
   background: #eee !important;
   vertical-align: middle;
 }
@@ -403,11 +417,10 @@ input::-ms-clear {
   font-weight: bold;
   font-size: 13px;
   text-align: right;
-  text-shadow: 0 1px 1px rgba(222, 222, 222, 0.5);
 }
 .list2 thead tr {
   border-top: 0;
-  background: #fff !important;
+  background: inherit !important;
   vertical-align: top;
 }
 .list2 thead th {
@@ -416,7 +429,6 @@ input::-ms-clear {
   font-weight: bold;
   font-size: 13px;
   text-align: right;
-  text-shadow: 0 1px 1px rgba(222, 222, 222, 0.5);
 }
 .list2 thead th:nth-child(1),
 .list2 thead th:nth-child(2) {
@@ -459,8 +471,7 @@ input::-ms-clear {
   cursor: pointer;
 }
 .list2 tbody tr {
-  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.3);
-  border-top: 1px solid #ababab;
+  border-top: 1px solid #4d7188;
 }
 .list2 tbody tr.greenAlarm {
   border: 2px solid #90ee90;
@@ -472,7 +483,7 @@ input::-ms-clear {
   color: #000;
 }
 .list2 tbody tr:last-child {
-  border-bottom: 1px solid #ababab;
+  border-bottom: 1px solid #4d7188;
 }
 .list2 tbody tr.stage-cancelled,
 .list2 tbody tr.stage-refused,
@@ -534,10 +545,10 @@ input::-ms-clear {
   cursor: pointer;
 }
 .list2 tr:nth-child(odd) {
-  background-color: #f9f9f9;
+  background-color: #413c6b;
 }
 .list2 tr:hover {
-  background-color: #f5f5f5;
+  background-color: #554e8c;
 }
 .list2 thead th:first-of-type {
   width: 15%;
@@ -1432,14 +1443,14 @@ select:not([type="checkbox"]):focus {
 }
 .btn-list {
   height: 24px;
-  border: 1px solid #ababab;
+  border: 1px solid #4d7188;
   border-right: 0;
   border-bottom: 0;
   float: left;
   margin: 5px 12px 0 5px;
 }
 .btn-list li {
-  border-right: 1px solid #ababab;
+  border-right: 1px solid #4d7188;
   padding: 0;
   margin: 0;
   display: block;
@@ -1451,7 +1462,8 @@ select:not([type="checkbox"]):focus {
   text-decoration: none;
 }
 .btn-list .selected {
-  border-bottom: 1px solid white;
+  border-bottom: 3px solid #75c9b5;
+  color: #75c9b5;
 }
 .btn-list .selected a {
   color: white;
@@ -1475,7 +1487,7 @@ h3 {
   text-overflow: ellipsis;
 }
 body {
-  font-family: "Segoe UI", sans-serif;
+  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
   font-size: 12px;
 }
 dl {
@@ -1681,7 +1693,7 @@ dl dd a.formLink {
   font-size: 24px;
   line-height: 30px;
   min-height: 24px;
-  font: "Lucida Grande", Helvetica, Verdana, Arial, sans-serif;
+  font: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
 }
 .form .mainInfo p {
   height: 20px !important;
@@ -1831,7 +1843,7 @@ dl dd a.formLink {
   margin: 0 2px 5px 0;
 }
 .form h2 {
-  font-family: "Lucida Grande", Helvetica, Verdana, Arial, sans-serif;
+  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
   color: #4c4c4c;
   font-weight: bold;
   font-size: 24px !important;
@@ -1845,7 +1857,7 @@ dl dd a.formLink {
   margin: 0 0 8px;
 }
 .form p {
-  font-family: "Lucida Grande", Helvetica, Verdana, Arial, sans-serif;
+  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
   color: #4c4c4c;
   font-size: 13px;
   text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
@@ -2250,7 +2262,7 @@ dl dd a.formLink {
   font-size: 24px;
   line-height: 30px;
   min-height: 24px;
-  font: "Lucida Grande", Helvetica, Verdana, Arial, sans-serif;
+  font: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
 }
 .formLeftColumn .form .mainInfo p {
   height: 20px !important;
@@ -2400,7 +2412,7 @@ dl dd a.formLink {
   margin: 0 2px 5px 0;
 }
 .formLeftColumn .form h2 {
-  font-family: "Lucida Grande", Helvetica, Verdana, Arial, sans-serif;
+  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
   color: #4c4c4c;
   font-weight: bold;
   font-size: 24px !important;
@@ -2414,7 +2426,7 @@ dl dd a.formLink {
   margin: 0 0 8px;
 }
 .formLeftColumn .form p {
-  font-family: "Lucida Grande", Helvetica, Verdana, Arial, sans-serif;
+  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
   color: #4c4c4c;
   font-size: 13px;
   text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
@@ -2600,7 +2612,7 @@ dl dd a.formLink {
   font-size: 24px;
   line-height: 30px;
   min-height: 24px;
-  font: "Lucida Grande", Helvetica, Verdana, Arial, sans-serif;
+  font: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
 }
 .formRightColumn .form .mainInfo p {
   height: 20px !important;
@@ -2750,7 +2762,7 @@ dl dd a.formLink {
   margin: 0 2px 5px 0;
 }
 .formRightColumn .form h2 {
-  font-family: "Lucida Grande", Helvetica, Verdana, Arial, sans-serif;
+  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
   color: #4c4c4c;
   font-weight: bold;
   font-size: 24px !important;
@@ -2764,7 +2776,7 @@ dl dd a.formLink {
   margin: 0 0 8px;
 }
 .formRightColumn .form p {
-  font-family: "Lucida Grande", Helvetica, Verdana, Arial, sans-serif;
+  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
   color: #4c4c4c;
   font-size: 13px;
   text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
@@ -3017,18 +3029,19 @@ dl dd a.formLink {
   height: 100%;
 }
 #wrapper {
+  background-color: #37335b;
   width: 100%;
   height: 100%;
   width: auto;
   min-width: 100%;
-  height: inherit;
+  height: 100hv;
   position: absolute;
   clear: both;
 }
 #wrapper #content-holder {
   height: auto;
   display: block;
-  background: #fff;
+  background: inherit;
   clear: both;
   position: relative;
 }
@@ -3036,16 +3049,18 @@ dl dd a.formLink {
   margin: 0;
   padding: 5px 0;
   text-align: center;
-  border-bottom: 1px solid #d5d5d5;
+  border-bottom: 1px solid #4d7188;
 }
 #startLetter .letter {
   padding: 5px 10px;
+  color: #67809f;
 }
 #startLetter .letter.current {
   font-weight: bold;
+  color: #75c9b5;
 }
 #startLetter .letter.empty {
-  color: #CCC;
+  color: #7f8387;
   cursor: default;
 }
 #startLetter .letter.empty:hover {
@@ -3816,7 +3831,7 @@ a.red:hover {
   line-height: 30px;
 }
 #loginPanel .dropdown-button:hover {
-  background: #36a9e1;
+  background: #75c9b5;
   color: #fff;
 }
 .ui-widget-overlay {
@@ -4247,7 +4262,7 @@ table#workflows tr td.edit-status {
   right: auto;
   bottom: auto;
   width: 100%;
-  background: #fff;
+  background: inherit;
   height: 30px;
   padding: 0;
   margin: 0;
@@ -4255,7 +4270,7 @@ table#workflows tr td.edit-status {
 }
 #mainmenu-holder nav {
   float: left;
-  background: #4D5A75;
+  background: #3f8a8e;
 }
 #mainmenu-holder nav ul {
   padding: 0;
@@ -4297,7 +4312,7 @@ table#workflows tr td.edit-status {
   display: block;
 }
 #mainmenu-holder nav ul li.selected {
-  background-color: #36a9e1;
+  background-color: #75c9b5;
   height: 30px;
   border: 0;
   -webkit-transition: all ease .5s;
@@ -4325,26 +4340,26 @@ table#workflows tr td.edit-status {
 #submenu-holder nav ul li {
   list-style: none;
   font-size: 14px;
-  color: #4d5a75;
+  color: #67809f;
   line-height: 30px;
   float: left;
   display: block;
   width: 120px;
   height: 30px;
   text-align: center;
-  background: #ffffff;
+  background: #37335b;
 }
 #submenu-holder nav ul li.hover {
   height: 30px;
   line-height: 30px;
 }
 #submenu-holder nav ul li.hover a {
-  color: #4d5a75;
+  color: #67809f;
   text-decoration: underline;
 }
 #submenu-holder nav ul li a {
   font-family: 'Lato', Helvetica, Arial, sans-serif;
-  color: #4d5a75;
+  color: #67809f;
   font-size: 12px;
   line-height: 30px;
   display: block;
@@ -4366,15 +4381,15 @@ table#workflows tr td.edit-status {
   display: block;
   width: 100%;
   height: 30px;
-  border-bottom: 1px solid #ababab;
-  background: #ffffff;
+  border-bottom: 1px solid #4d7188;
+  background: #37335b;
   clear: both;
   margin-top: 5px;
 }
 #top-bar h3 {
   margin: 6px 0 0 0;
   padding: 0 10px;
-  color: #333333 !important;
+  color: #a3bb3a !important;
   font-family: Title;
   font-weight: normal;
   float: left;
@@ -4387,15 +4402,15 @@ table#workflows tr td.edit-status {
   display: block;
   width: 100%;
   height: 30px;
-  border-bottom: 1px solid #ababab;
-  background: #ffffff;
+  border-bottom: 1px solid #4d7188;
+  background: #37335b;
   clear: both;
   margin-top: 5px;
 }
 #top-bar-bonus h3 {
   margin: 6px 0 0 0;
   padding: 0 10px;
-  color: #333333 !important;
+  color: #a3bb3a !important;
   font-family: Title;
   font-weight: normal;
   float: left;
@@ -4438,10 +4453,11 @@ table#workflows tr td.edit-status {
   margin-right: 2px;
   cursor: pointer;
   vertical-align: baseline;
+  color: #a3bb3a;
 }
 .createBtnHolder a:hover,
 #createBtnHolder a:hover {
-  color: #808da8;
+  color: #d6ee6d;
 }
 /*----------------------------- Login Form --------------------------------*/
 #loginForm {
@@ -4713,12 +4729,12 @@ ul.dialog-tabs li.right button {
   line-height: 15px;
 }
 .thumbnailwithavatar h4 {
-  color: #36a9e1;
+  color: #75c9b5;
   font-size: 13px;
   font-weight: bold;
   text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5) !important;
   line-height: 18px;
-  font-family: "Lucida Grande", Helvetica, Verdana, Arial, sans-serif;
+  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
   white-space: normal;
 }
 .thumbnailwithavatar h4 span {
@@ -4733,12 +4749,11 @@ ul.dialog-tabs li.right button {
   cursor: pointer;
 }
 .thumbnailwithavatar .title {
-  color: #36a9e1;
+  color: #75c9b5;
   font-size: 13px;
   font-weight: bold;
-  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5) !important;
   line-height: 18px;
-  font-family: "Lucida Grande", Helvetica, Verdana, Arial, sans-serif;
+  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
   white-space: normal;
 }
 .thumbnailwithavatar .title span {
@@ -4763,7 +4778,7 @@ ul.dialog-tabs li.right button {
   text-align: center;
 }
 .thumbnailwithavatar .inner .info P {
-  font-family: "Lucida Grande", Helvetica, Verdana, Arial, sans-serif;
+  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
   color: #000;
   font-size: 13px;
   font-weight: 200 !important;
@@ -4827,13 +4842,17 @@ ul.dialog-tabs li.right button {
   padding: 0;
   width: 100%;
 }
+.thumbnailwithavatar .email,
+.thumbnailwithavatar .company {
+  color: #83bbad;
+}
 .list {
-  color: #000000 !important;
-  font-family: "Lucida Grande", Helvetica, Verdana, Arial, sans-serif;
+  color: #67809f !important;
+  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
   width: 100%;
 }
 .list tfoot tr {
-  border-bottom: 1px solid #cacaca;
+  border-bottom: 1px solid #4d7188;
   background: #eee !important;
   vertical-align: middle;
 }
@@ -4843,11 +4862,10 @@ ul.dialog-tabs li.right button {
   font-weight: bold;
   font-size: 13px;
   text-align: right;
-  text-shadow: 0 1px 1px rgba(222, 222, 222, 0.5);
 }
 .list thead tr {
   border-top: 0;
-  background: #fff !important;
+  background: inherit !important;
   vertical-align: top;
 }
 .list thead th {
@@ -4856,7 +4874,6 @@ ul.dialog-tabs li.right button {
   font-weight: bold;
   font-size: 13px;
   text-align: right;
-  text-shadow: 0 1px 1px rgba(222, 222, 222, 0.5);
 }
 .list thead th:nth-child(1),
 .list thead th:nth-child(2) {
@@ -4899,8 +4916,7 @@ ul.dialog-tabs li.right button {
   cursor: pointer;
 }
 .list tbody tr {
-  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.3);
-  border-top: 1px solid #ababab;
+  border-top: 1px solid #4d7188;
 }
 .list tbody tr.greenAlarm {
   border: 2px solid #90ee90;
@@ -4912,7 +4928,7 @@ ul.dialog-tabs li.right button {
   color: #000;
 }
 .list tbody tr:last-child {
-  border-bottom: 1px solid #ababab;
+  border-bottom: 1px solid #4d7188;
 }
 .list tbody tr.stage-cancelled,
 .list tbody tr.stage-refused,
@@ -4974,10 +4990,10 @@ ul.dialog-tabs li.right button {
   cursor: pointer;
 }
 .list tr:nth-child(odd) {
-  background-color: #f9f9f9;
+  background-color: #413c6b;
 }
 .list tr:hover {
-  background-color: #f5f5f5;
+  background-color: #554e8c;
 }
 .thumbnail {
   float: left;
@@ -5038,7 +5054,7 @@ ul.dialog-tabs li.right button {
   text-align: right;
 }
 .thumbnail span {
-  font-family: "Lucida Grande", Helvetica, Verdana, Arial, sans-serif;
+  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
   position: relative;
   color: #4c4c4c;
   font-size: 13px;
@@ -5064,7 +5080,7 @@ ul.dialog-tabs li.right button {
   text-decoration: underline;
 }
 .thumbnail p {
-  font-family: "Lucida Grande", Helvetica, Verdana, Arial, sans-serif;
+  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
   color: #4c4c4c;
   font-size: 13px;
   text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
@@ -5073,7 +5089,7 @@ ul.dialog-tabs li.right button {
   font-weight: normal !important;
 }
 .thumbnail h2 {
-  font-family: "Lucida Grande", Helvetica, Verdana, Arial, sans-serif;
+  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
   color: #4c4c4c;
   font-size: 13px;
   text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
@@ -5247,7 +5263,7 @@ ul.dialog-tabs li.right button {
   border-radius: 0px;
 }
 .ui-dialog .ui-widget-content a {
-  color: #36a9e1;
+  color: #75c9b5;
 }
 .ui-dialog .avatar {
   display: block;
@@ -5638,7 +5654,7 @@ ul.dialog-tabs li.right button {
 }
 .ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button {
   background-image: none;
-  color: #36a9e1;
+  color: #75c9b5;
   border: 1px solid #dddddd;
   margin: .5em .4em .5em 0;
   cursor: pointer;
@@ -5658,7 +5674,7 @@ ul.dialog-tabs li.right button {
   line-height: normal;
   background: #ffffff;
   padding: .4em 1em;
-  color: #36a9e1;
+  color: #75c9b5;
 }
 .ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button span:hover {
   background: #ececec !important;
@@ -7432,7 +7448,7 @@ input::-webkit-inner-spin-button {
   display: none;
 }
 .h2 {
-  color: #36a9e1;
+  color: #75c9b5;
   font-size: 1.3em;
   padding: 5px 0;
 }
@@ -8068,7 +8084,7 @@ textarea#editInput {
   line-height: 1.42857143;
   color: #555;
   background: #fff none;
-  border: 1px solid #ababab;
+  border: 1px solid #4d7188;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   -webkit-transition: border-color ease-in-out 0.15s, -webkit-box-shadow ease-in-out 0.15s;
@@ -8213,7 +8229,7 @@ textarea#editInput {
 /**-**/
 .drop-down-filter {
   box-sizing: content-box;
-  font-family: "Lucida Grande", Helvetica, Verdana, Arial, sans-serif;
+  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
   padding: 5px 10px;
   position: absolute;
   z-index: 10;
@@ -8264,7 +8280,7 @@ textarea#editInput {
   content: '\2713';
 }
 .drop-down-filter #filtersContent .filterGroup li:not(.checkedValue):hover:before {
-  color: #36a9e1;
+  color: #75c9b5;
 }
 .drop-down-filter #filtersContent .filterGroup li:not(.checkedValue):before,
 .drop-down-filter #filtersContent .filterGroup li.checkedValue:before,
@@ -8273,7 +8289,7 @@ textarea#editInput {
 }
 .drop-down-filter #filtersContent .filterGroup li:hover,
 .drop-down-filter #filtersContent .filterGroup li.checkedValue {
-  background-color: #36a9e1;
+  background-color: #75c9b5;
   color: white;
 }
 .drop-down-filter #filtersContent .filterGroup .filterValues {
@@ -8535,11 +8551,11 @@ textarea#editInput {
 }
 #favoritesContent .filters:hover {
   color: white;
-  background-color: #36a9e1;
+  background-color: #75c9b5;
 }
 #favoritesContent .checkedValue {
   color: white;
-  background-color: #36a9e1;
+  background-color: #75c9b5;
 }
 .forFilterIcons {
   float: left;

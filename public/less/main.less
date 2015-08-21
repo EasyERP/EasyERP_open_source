@@ -1,52 +1,27 @@
-@font-face {
-  font-family: 'Segoe UI';
-  src: url("../font/segoeui.woff") format('woff');
-}
-
-@font-face {
-  font-family: 'Title';
-  src: url("../font/title.woff") format('woff');
-}
-
-@font-face {
-  font-family: 'Icons';
-  src: url("../font/easyERP.eot");
-  src: url("../font/easyERP.eot?#iefix") format('embedded-opentype'), url("../font/easyERP.woff") format('woff'), url("../font/easyERP.ttf") format('truetype'), url("../font/easyERP.svg#quartzregular") format('svg');
-}
-
-@font-face {
-  font-family: 'Open Sans';
-  font-style: normal;
-  font-weight: 300;
-  src: local('Open Sans Light'), local('OpenSans-Light'), url(../font/Open-Sans-Light.woff) format('woff');
-}
-
-@font-face {
-  font-family: 'Open Sans';
-  font-style: normal;
-  font-weight: 400;
-  src: local('Open Sans'), local('OpenSans'), url(../font/Open-Sans.woff) format('woff');
-}
+@import "_font";
+@import "_colors";
 
 /*------------------------Constants-----------------------------*/
 @imagesfolder: '../images';
-@body-font: "Segoe UI", sans-serif;
-@lucida-font: "Lucida Grande", Helvetica, Verdana, Arial, sans-serif;
+/*@body-font: "Segoe UI", sans-serif;*/
+@body-font: 'Helvetica Neue','Segoe UI',Helvetica,Verdana,san-serif;
+/* @lucida-font: "Lucida Grande", Helvetica, Verdana, Arial, sans-serif; */
+@lucida-font: 'Helvetica Neue','Segoe UI',Helvetica,Verdana,san-serif;
 @icon-font: Icons;
 @title-font: Title;
-@tilte-color: #36A9E1;
+//@tilte-color: #36A9E1;
 @metroicon-font: "Metrize-Icons";
-@blue: #4d5a75;
-@defaultBorderColor: #ababab;
-@lightmagenta: #7c7bad;
-@lightgrey: #c8c8d3;
-@lightblue: #008bbf;
-@dark-blue: #444f67;
+//@blue: #4d5a75;
+//@defaultBorderColor: #ababab;
+//@lightmagenta: #7c7bad;
+//@lightgrey: #c8c8d3;
+//@lightblue: #008bbf;
+//@dark-blue: #444f67;
 @bold-border: 3px solid;
 @thin-border: 1px solid;
-@taskBorderColor: #4d5a75;
-@tabColor: #BDC3C7;
-@birthdayColor: #555;
+//@taskBorderColor: #4d5a75;
+//@tabColor: #BDC3C7;
+//@birthdayColor: #555;
 .i(@name) {
   background-image: url("@{imagesfolder}/@{name}");
 }
@@ -74,6 +49,7 @@ h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, cite, cod
   line-height: 1;
   font-family: inherit;
 }
+
 
 table {
   border-collapse: collapse;
@@ -705,14 +681,14 @@ input::-ms-clear {
   bottom: @bottom;
 }
 
-.list(@defaultColor: #000, @font-size: 13px, @defaultBgColorOdd: #f9f9f9, @defaultBgColorHover: #f5f5f5, @defaultProgressColor: #f5f5f5) {
+.list(@defaultColor: @list-color-text, @font-size: 13px, @defaultBgColorOdd: @defaultBgColorOdd-color, @defaultBgColorHover: @defaultBgHover-color, @defaultProgressColor: #f5f5f5, @defaultBorderColor:@border-color-main ) {
   color: @defaultColor !important;
   font-family: @lucida-font;
   width: 100%;
 
   tfoot {
     tr {
-      border-bottom: 1px solid #cacaca;
+      border-bottom: 1px solid @defaultBorderColor;
       background: #eee !important;
       vertical-align: middle;
     }
@@ -722,14 +698,13 @@ input::-ms-clear {
       .bold;
       font-size: @font-size;
       text-align: right;
-      text-shadow: 0 1px 1px rgba(222, 222, 222, 0.5);
     }
   }
 
   thead {
     tr {
       border-top: 0;
-      background: #fff !important;
+      background: inherit !important;
       vertical-align: top;
     }
 
@@ -739,7 +714,7 @@ input::-ms-clear {
       .bold;
       font-size: @font-size;
       text-align: right;
-      text-shadow: 0 1px 1px rgba(222, 222, 222, 0.5);
+     // text-shadow: 0 1px 1px rgba(222, 222, 222, 0.5);
 
       &:nth-child(1), &:nth-child(2) {
         text-align: center;
@@ -797,7 +772,6 @@ input::-ms-clear {
           color: #000;
         }
       }
-      text-shadow: 0 1px 1px rgba(255, 255, 255, 0.3);
       border-top: @thin-border @defaultBorderColor;
 
       &:last-child {
@@ -910,18 +884,18 @@ input::-ms-clear {
   margin: @arguments;
 }
 
-.mainmenu(@defaultColor: #333,@activeColor: #36a9e1, @height: 30px) {
+.mainmenu(@defaultColor: #333,@activeColor: @bg-main-menu-selected, @height: 30px) {
   display: block;
   float: none;
   .position(relative);
   width: 100%;
-  background: #fff;
+  background: inherit;
   height: @height;
   .noPaddingMargin;
   border-bottom: @thin-border #4D5A75;
   nav {
     .left;
-    background: #4D5A75;
+    background: @bg-main-menu;
 
     ul {
       .noPaddingMargin;
@@ -985,7 +959,7 @@ input::-ms-clear {
   }
 }
 
-.top-bar(@defaultHeight: 30px, @defaultBackground: #fff, @defaultBorderColor: #ababab, @defaultH3Color: #333, @defaultMargin: 6px 0 0 0, @defaultPadding: 0 10px) {
+.top-bar(@defaultHeight: 30px, @defaultBackground: @bg-main, @defaultBorderColor: @border-color-main, @defaultH3Color: @creatBtn-color, @defaultMargin: 6px 0 0 0, @defaultPadding: 0 10px) {
   display: block;
   width: 100%;
   height: @defaultHeight;
@@ -1008,7 +982,7 @@ input::-ms-clear {
   }
 }
 
-.submenu(@defaultColor: #FFF,@activeColor: #FFF, @height: 30px, @bg: #4D5A75) {
+.submenu(@defaultColor: @bg-submenu ,@activeColor: #FFF, @height: 30px, @bg: @submenu-text-color) {
   display: block;
   height: @height;
   width: auto;
@@ -1785,7 +1759,6 @@ input::-ms-clear {
     color: @tilte-color;
     font-size: @font-size;
     .bold;
-    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5) !important;
     line-height: 18px;
     font-family: @lucida-font;
     white-space: normal;
@@ -1830,6 +1803,10 @@ input::-ms-clear {
     .avatar(100px, 0, auto, 0, auto);
     .border-radius(3px);
     .box-shadow(0 1px 4px rgba(0, 0, 0, 0.4));
+  }
+
+  .email,.company {
+    color: @link-color;
   }
 }
 
@@ -2581,6 +2558,7 @@ input::-ms-clear {
 
 #content-holder .inner-holder {
   margin: 20px;
+
 }
 
 #profileTableWrapper table {
@@ -2835,14 +2813,14 @@ input, textarea, select {
 
 .btn-list {
   height: 24px;
-  border: @thin-border #ababab;
+  border: @thin-border @border-color-main;
   border-right: 0;
   border-bottom: 0;
   float: left;
   margin: 5px 12px 0 5px;
 
   li {
-    border-right: @thin-border #ababab;
+    border-right: @thin-border @border-color-main;
     .noPaddingMargin;
     display: block;
     .left;
@@ -2857,7 +2835,8 @@ input, textarea, select {
   }
 
   .selected {
-    border-bottom: 1px solid white;
+    border-bottom: 3px solid @border-color-selected;
+    color: @selected-filters-color;
 
     a {
       color: white;
@@ -3172,17 +3151,18 @@ dl {
 }
 
 #wrapper {
+  background-color: @bg-main;
   .fullsize;
   width: auto;
   min-width: 100%;
-  height: inherit;
+  height: 100hv;
   position: absolute;
   clear: both;
 
   #content-holder {
     height: auto;
     display: block;
-    background: #fff;
+    background: inherit;
     clear: both;
     position: relative;
   }
@@ -3192,17 +3172,19 @@ dl {
   margin: 0;
   padding: 5px 0;
   text-align: center;
-  border-bottom: @thin-border #D5D5D5;
+  border-bottom: @thin-border @border-color-main;
 
   .letter {
     padding: 5px 10px;
+    color: @normal-submenu-text;
 
     &.current {
       .bold;
+      color: @current-submenu-text;
     }
 
     &.empty {
-      color: #CCC;
+      color: @non-active-submenu-text;
       cursor: default;
 
       &:hover {
@@ -4129,9 +4111,10 @@ table#workflows {
     margin-right: 2px;
     cursor: pointer;
     vertical-align: baseline;
+    color: @creatBtn-color;
 
     &:hover {
-      color: @blue + #333;
+      color: @creatBtn-color + #333;
     }
   }
 }
@@ -5901,7 +5884,7 @@ textarea#editInput {
   line-height: 1.42857143;
   color: #555;
   background: #fff none;
-  border: 1px solid #ababab;
+  border: 1px solid @border-color-main;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
   -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
