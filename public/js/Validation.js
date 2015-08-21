@@ -415,6 +415,15 @@ define(
             }
         }
 
+        var checkJobPositionField = function(errorArray, required, fieldValue, fieldName){
+            if(required) {
+                if (!fieldValue) {
+                    errorArray.push([fieldName, errorMessages.requiredMsg].join(' '));
+                    return;
+                }
+            }
+        }
+
         var checkEmailField = function(errorArray, required, fieldValue, fieldName){
             if(required){
                 if(!fieldValue){
@@ -552,6 +561,7 @@ define(
             checkLogedField:checkLogedField,
 			checkWorkflowNameField:checkWorkflowNameField,
 			checkSkypeField:checkSkypeField,
-            checkPriceField:checkPriceField
+            checkPriceField:checkPriceField,
+            checkJobPositionField:checkJobPositionField
         }
     });
