@@ -52,10 +52,12 @@ module.exports = (function () {
          * `base64` representation of avatar
          * @property imageSrc
          * @type String
+         * @default: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC'
          */
         /**
          * @property email
          * @type String
+         * @default ''
          */
         /**
          * if type of _Customer_=__'Person'__ should determine __Company__ which from __Person__, can be empty
@@ -74,6 +76,234 @@ module.exports = (function () {
          * @type String
          * @default ''
          */
+        /**
+         * Address `city` of Customer
+         * @property address.city
+         * @type String
+         * @default ''
+         */
+        /**
+         * Address `state` of Customer
+         * @property address.state
+         * @type String
+         * @default ''
+         */
+        /**
+         * Address `zip` of Customer
+         * @property address.zip
+         * @type String
+         * @default ''
+         */
+        /**
+         * Address `country` of Customer
+         * @property address.country
+         * @type String
+         * @default ''
+         */
+        /**
+         * @property website
+         * @type String
+         * @default ''
+         */
+        /**
+         * @property jobPosition
+         * @type String
+         * @default ''
+         */
+        /**
+         * @property skype
+         * @type String
+         * @default ''
+         */
+        /**
+         * @property phones
+         * @type Object
+         */
+        /**
+         * Contacts `phone` of Customer
+         * @property phones.phone
+         * @type String
+         * @default ''
+         */
+        /**
+         * Contacts `mobile` of Customer
+         * @property phones.mobile
+         * @type String
+         * @default ''
+         */
+        /**
+         * Contacts `fax` of Customer
+         * @property phones.fax
+         * @type String
+         * @default ''
+         */
+        /**
+         * @property salesPurchases
+         *  @type Object
+         */
+        /**
+         * Sales & Purchases option `isCustomer` of Customer
+         * @property salesPurchases.isCustomer
+         * @type Boolean
+         * @default true
+         */
+        /**
+         * Sales & Purchases option `isSupplier` of Customer
+         * @property salesPurchases.isSupplier
+         * @type Boolean
+         * @default false
+         */
+        /**
+         * Sales & Purchases option `salesPerson` of Customer
+         * @property salesPurchases.salesPerson
+         * @type String
+         * @default null
+         */
+        /**
+         * Sales & Purchases option `implementedBy` of Customer
+         * @property salesPurchases.implementedBy
+         * @type String
+         * @default null
+         */
+        /**
+         * Sales & Purchases option `reference` of Customer
+         * @property salesPurchases.reference
+         * @type String
+         * @default ''
+         */
+        /**
+         * Sales & Purchases option `language` of Customer
+         * @property salesPurchases.language
+         * @type String
+         * @default 'English'
+         */
+        /**
+         * @property social
+         * @type Object
+         */
+        /**
+         * Social linc `FB` of Customer
+         * @property social.FB
+         * @type String
+         * @default ''
+         */
+        /**
+         * Social linc `LI` of Customer
+         * @property social.LI
+         * @type String
+         * @default ''
+         */
+        /**
+         * @property whoCanRW
+         * @type String
+         * @default 'everyOne'
+         */
+        /**
+         * @property groups
+         * @type Object
+         */
+        /**
+         * Groups `users`
+         * @property groups.users
+         * @type Array
+         */
+        /**
+         * Groups `group`
+         * @property groups.group
+         * @type Array
+         */
+        /**
+         * @property editedBy
+         * @type Object
+         */
+        /**
+         * Edited last time by `editedBy.user`
+         * @property editedBy.user
+         * @type String
+         */
+        /**
+         * Edited last time on `editedBy.date`
+         * @property editedBy.date
+         * @type Date
+         * @default Date.now
+         */
+        /**
+         * @property companyInfo
+         * @type Object
+         */
+        /**
+         * Company `size`
+         * @property companyInfo.size
+         * @type String
+         */
+        /**
+         * Company kind of `industry`
+         * @property companyInfo.industry
+         * @type String
+         * @default null
+         */
+        /**
+         * @property createdBy
+         * @type Object
+         */
+        /**
+         * Created by `createdBy.user`
+         * @property createdBy.user
+         * @type String
+         */
+        /**
+         * Created on `createdBy.date`
+         * @property createdBy.date
+         * @type Date
+         * @default Date.now
+         */
+        /**
+         * @property history
+         * @type Array
+         * @default []
+         */
+        /**
+         * @property attachments
+         * @type Array
+         * @default []
+         */
+        /**
+         * @property internalNotes
+         * @type String
+         * @default ''
+         */
+        /**
+         * @property notes
+         * @type Array
+         * @default []
+         */
+        /**
+         * @property title
+         * @type String
+         * @default ''
+         */
+        /**
+         * @property contacts
+         * @type Array
+         * @default []
+         */
+        /**
+         * @property timezone
+         * @type String
+         * @default 'UTC'
+         */
+        /**
+         * @property department
+         * @type String
+         * @default null
+         */
+        /**
+         * @property company
+         * @type String
+         * @default null
+         */
+
+
 
         type: {type: String, default: ''},
         isOwn: {type: Boolean, default: false},
