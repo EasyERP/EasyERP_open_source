@@ -6,7 +6,7 @@ module.exports = function (models) {
     var handler = new opportunityHandler(models);
 
     /**
-     * Base ___url___ for build __requests__ is `http://192.168.88.122:8089/totalCollectionLength/Leads`
+     * Base ___url___ for build __requests__ is `http:/192.168.88.122:8089/totalCollectionLength/Leads`
      *
      * This __method__ allows get count of Leads.
      *
@@ -20,7 +20,7 @@ module.exports = function (models) {
      * @namespace EasyERP
      */
     /**
-     * Base ___url___ for build __requests__ is `http://192.168.88.122:8089/Leads/form/:id`
+     * Base ___url___ for build __requests__ is `http:/192.168.88.122:8089/Leads/form/:id`
      *
      * This __method__ allows get all Leads for `form` viewType.
      * @method Leads/form/:id
@@ -29,7 +29,7 @@ module.exports = function (models) {
      */
 
     /**
-     * Base ___url___ for build __requests__ is `http://192.168.88.122:8089/Leads/kanban`
+     * Base ___url___ for build __requests__ is `http:/192.168.88.122:8089/Leads/kanban`
      *
      * This __method__ allows get all Leads for `kanban` viewType.
      * @method Leads/kanban
