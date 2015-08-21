@@ -342,13 +342,15 @@ var Salary = function (models) {
         var query = Salary.findOne(matchObject);
 
         query.exec(function (err, result) {
+            var baseSalary;
+
             if (err) {
                 return next(err);
             }
 
-
+            baseSalary = result ? result.baseSalary : null;
             //res.header('Content-Type', 'application/json');
-            res.status(200).send({data: result.baseSalary});
+            res.status(200).send({data: baseSalary});
         });
 
     };
