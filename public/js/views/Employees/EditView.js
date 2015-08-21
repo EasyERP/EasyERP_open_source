@@ -421,21 +421,21 @@ define([
                     //    target.val(day + '/' + month + '/' + year);
                     //}
                 });
-                _.each(hireArray, function(hire, key) {
-                    $('#hire' + key).datepicker({
+                //_.each(hireArray, function(hire, key) {
+                    $('.hire').datepicker({
                         dateFormat: "d M, yy",
                         changeMonth: true,
                         changeYear: true
                     });
-                });
+                //});
 
-                _.each(fireArray, function(fire, key) {
-                    $('#fire' + key).datepicker({
+                //_.each(fireArray, function(fire, key) {
+                    $('.fire').datepicker({
                         dateFormat: "d M, yy",
                         changeMonth : true,
                         changeYear : true
                     });
-                });
+                //});
 
                 var model = this.currentModel.toJSON();
                 if (model.groups)
