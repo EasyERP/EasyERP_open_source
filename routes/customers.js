@@ -1,6 +1,3 @@
-/**
- * Created by Roman on 18.08.2015.
- */
 var express = require('express');
 var router = express.Router();
 var CustomerHandler = require('../handlers/customer');
@@ -21,7 +18,13 @@ module.exports = function (models) {
     }
 
     /**
-     * @method /customers
+     * Base ___url___ for build __requests__ is `http://192.168.88.122:8089/customers`
+     *
+     * This __method__ allows get all customers based on `type`
+     *
+     * @method customers/
+     * @for Customer
+     * @namespace EasyERP
      */
     router.get('/', checkAuth, handler.getAll);
     router.get('/:id', checkAuth, handler.getById);

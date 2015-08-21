@@ -32,6 +32,6 @@
   },
   "apidoc": {
     "title": "Custom apiDoc browser title",
-    "url" : "https://api.github.com/v1"
+    "url" : "http://192.168.88.122"
   }
 }

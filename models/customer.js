@@ -3,8 +3,8 @@
  */
 
 /**
- * Customers Module, allow You create Person & Company
- * @module Customers
+ * Base Url
+ * @module Customer
  * @namespace EasyERP
  * @class Customer
  * @constructor
