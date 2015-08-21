@@ -237,7 +237,7 @@ module.exports = (function () {
          * @type String
          */
         /**
-         * Company find of `industry`
+         * Company kind of `industry`
          * @property companyInfo.industry
          * @type String
          * @default null
@@ -276,11 +276,6 @@ module.exports = (function () {
          * @property notes
          * @type Array
          * @default []
-         */
-        /**
-         * @property color
-         * @type String
-         * @default '#4d5a75'
          */
         /**
          * @property title

@@ -1,11 +1,12 @@
 /**
  * Created by Roman on 04.04.2015.
  */
+
 /**
  * Base Url
- * @module Opportunity
+ * @module Leads
  * @namespace EasyERP
- * @class Opportunity
+ * @class Leads
  * @constructor
  */
 module.exports = (function () {
@@ -126,11 +127,6 @@ module.exports = (function () {
          * @property active
          * @type Boolean
          * @default true
-         */
-        /**
-         * @property color
-         * @type String
-         * @default '#4d5a75'
          */
         /**
          * @property categories
