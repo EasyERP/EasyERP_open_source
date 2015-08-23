@@ -1,0 +1,10 @@
+{
+  "source": {
+    "include": [
+      "./models",
+      "./Modules",
+      "./handlers"
+    ],
+    "outdir": "./api"
+  }
+}
