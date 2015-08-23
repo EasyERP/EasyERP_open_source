@@ -1234,6 +1234,9 @@ var Project = function (models, event) {
         var wTrackSchema;
         var wTrackModel;
 
+        var InvoiceSchema;
+        var Invoice;
+
         delete data._id;
         delete data.createdBy;
         delete data.task;
@@ -1284,7 +1287,11 @@ var Project = function (models, event) {
                     wTrackSchema = mongoose.Schemas['wTrack'];
                     wTrackModel = models.get(dbName, 'wTrack', wTrackSchema);
 
+                    InvoiceSchema = mongoose.Schemas['wTrackInvoice'];
+                    Invoice = models.get(req.session.lastDb, 'wTrackInvoice', InvoiceSchema);
+
                     event.emit('updateName', _id, wTrackModel, 'project._id', 'project.projectName', project.projectName);
+                    event.emit('updateName', _id, Invoice, 'project._id', 'project.name', project.projectName);
                 }
             }
         });

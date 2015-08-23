@@ -108,7 +108,9 @@ define([
                 var forSales = (this.forSales) ? true : false;
 
                 var supplier = this.$("#supplier").data("id");
+                var supplierName = this.$("#supplier").text();
                 var salesPersonId = this.$("#salesPerson").data("id") ? this.$("#salesPerson").data("id") : null;
+                var salesPersonName = this.$("#salesPerson").text() ? this.$("#salesPerson").text() : null;
                 var paymentTermId = this.$("#payment_terms").data("id") ? this.$("#payment_terms").data("id") : null;
                 var invoiceDate = this.$("#invoice_date").val();
                 var dueDate = this.$("#due_date").val();
@@ -162,7 +164,10 @@ define([
                 var data = {
                     forSales: forSales,
 
-                    supplier: supplier,
+                    supplier: {
+                        _id: supplier,
+                        name: supplierName
+                    },
                     fiscalPosition: null,
                     sourceDocument: $.trim($('#source_document').val()),
                     supplierInvoiceNumber: $.trim($('#supplier_invoice_num').val()),
@@ -172,7 +177,10 @@ define([
                     account: null,
                     journal: null,
 
-                    salesPerson: salesPersonId,
+                    salesPerson: {
+                        _id: salesPersonId,
+                        name: salesPersonName
+                    },
                     paymentTerms: paymentTermId,
 
                     products: products,

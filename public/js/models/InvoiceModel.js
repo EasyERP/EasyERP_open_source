@@ -84,6 +84,7 @@ define(['Validation', 'common'], function (Validation, common) {
                 name: ''
             },
             salesPerson: {
+                id: '',
                 name: ''
             },
 

@@ -8,6 +8,7 @@ var Filters = function (models) {
     var EmployeeSchema = mongoose.Schemas['Employee'];
     var ProjectSchema = mongoose.Schemas['Project'];
     var TaskSchema = mongoose.Schemas['Tasks'];
+    var wTrackInvoiceSchema = mongoose.Schemas['wTrackInvoice'];
     var _ = require('../node_modules/underscore');
     var async = require('async');
 
@@ -19,6 +20,7 @@ var Filters = function (models) {
         var Employee = models.get(lastDB, 'Employee', EmployeeSchema);
         var Project = models.get(lastDB, 'Project', ProjectSchema);
         var Task = models.get(lastDB, 'Tasks', TaskSchema);
+        var wTrackInvoice = models.get(lastDB, 'wTrackInvoice', wTrackInvoiceSchema);
 
         async.parallel({
                 wTrack: getWtrackFiltersValues,
@@ -28,6 +30,7 @@ var Filters = function (models) {
                 Applications: getApplicationFiltersValues,
                 Projects: getProjectFiltersValues,
                 Tasks: getTasksFiltersValues,
+                salesInvoice: getSalesInvoiceFiltersValues,
             },
             function (err, result) {
                 if (err) {
@@ -372,6 +375,56 @@ var Filters = function (models) {
                 callback(null, result);
             });
         };
+
+
+        function getSalesInvoiceFiltersValues(callback) {
+            wTrackInvoice.aggregate([
+                {
+                    $match: {
+                        forSales: true,
+                        invoiceType: 'wTrack'
+                    }
+                },
+                {
+                    $group: {
+                        _id: null,
+                        'project': {
+                            $addToSet: {
+                                _id: '$project._id',
+                                name: '$project.name'
+                            }
+                        },
+                        'salesPerson': {
+                            $addToSet: {
+                                _id: '$salesPerson._id',
+                                name: {'$ifNull': ['$salesPerson.name', 'None']}
+                            }
+                        },
+                        'supplier': {
+                            $addToSet: {
+                                _id: '$supplier._id',
+                                name: {'$ifNull': ['$supplier.name', 'None']}
+                            }
+                        },
+                        'workflow': {
+                            $addToSet: {
+                                _id: '$workflow._id',
+                                name: {'$ifNull': ['$workflow.name', 'None']}
+                            }
+                        }
+                    }
+                }
+            ], function (err, result) {
+                if (err) {
+                    callback(err);
+                }
+
+                result = result[0];
+
+                callback(null, result);
+            });
+        };
+
     };
 
 };

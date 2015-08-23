@@ -5,7 +5,7 @@
     <%}%>>
     <td class = "notForm"><input type="checkbox" value="<%=Invoice._id%>" class="checkbox" /></td>
     <td><%=startNumber + index + 1%></td>
-    <td><%=(Invoice.supplier.name)? Invoice.supplier.name.first+' '+Invoice.supplier.name.last:' - - - '%></td>
+    <td><%=(Invoice.supplier.name) ? Invoice.supplier.name.first' : ' - - - '%></td>
     <td><%=Invoice.invoiceDate%></td>
     <td><%=Invoice.supplierInvoiceNumber%></td>
     <td><%=(Invoice.salesPerson)? Invoice.salesPerson.name.first+' '+Invoice.salesPerson.name.last:''%></td>

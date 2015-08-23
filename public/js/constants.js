@@ -119,20 +119,25 @@ define([], function () {
                 backend: 'department'
             }
         },
-        //salesInvoice: {
-        //    'Customer': {
-        //        view: 'customer',
-        //        backend: 'customer'
-        //    },
-        //    'Assigned': {
-        //        view: 'salesPerson',
-        //        backend: 'salesPerson'
-        //    },
-        //    'Status': {
-        //        view: 'workflow',
-        //        backend: 'workflow'
-        //    }
-        //},
+        salesInvoice: {
+            'Customer': {
+                view: 'supplier',
+                backend: 'supplier._id'
+            },
+            'Assigned': {
+                view: 'salesPerson',
+                backend: 'salesPerson._id'
+            },
+            'Project Name': {
+                view: 'project',
+                backend: 'project._id'
+            }
+            ,
+            'Status': {
+                view: 'workflow',
+                backend: 'workflow._id'
+            }
+        },
         Projects: {
             'Project Name': {
                 view: 'name',
