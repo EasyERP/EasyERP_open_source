@@ -6,8 +6,9 @@
   "options": {
     "paths": [
       "./models",
-      "./Modules",
-      "./handlers"
+      "./routes",
+      "./handlers",
+      "./Modules"
     ],
     "outdir": "./api"
   }
