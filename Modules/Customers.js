@@ -1,10 +1,12 @@
-﻿var Customers = function (models) {
+﻿var Customers = function (event, models) {
     var mongoose = require('mongoose');
     var logWriter = require('../helpers/logWriter.js');
     var objectId = mongoose.Types.ObjectId;
     var customerSchema = mongoose.Schemas['Customer'];
     var department = mongoose.Schemas['Department'];
     var fs = require('fs');
+
+    var CONSTANTS = require('../constants/mainConstants');
 
     return {
 
@@ -19,33 +21,7 @@
             var contentType = req.params.contentType;
             var optionsObject = {};
 
-            switch (contentType) {
-                case ('Persons'):
-                {
-                    optionsObject['type'] = 'Person';
-
-                    if (data.filter && data.filter.letter) {
-                        optionsObject['name.last'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
-                    }
-                }
-                    break;
-                case ('Companies'):
-                {
-                    optionsObject['type'] = 'Company';
-                    if (data.filter && data.filter.letter)
-                        optionsObject['name.first'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
-                }
-                    break;
-                case ('ownCompanies'):
-                {
-                    optionsObject['type'] = 'Company';
-                    optionsObject['isOwn'] = true;
-                    if (data.letter)
-                        optionsObject['name.first'] = new RegExp('^[' + data.letter.toLowerCase() + data.letter.toUpperCase() + '].*');
-                }
-                    break;
-            }
-
+            this.caseFilter(contentType, optionsObject, data);
 
             models.get(req.session.lastDb, "Department", department).aggregate(
                 {
@@ -211,6 +187,14 @@
                             }
                             if (data.phones.fax) {
                                 _customer.phones.fax = data.phones.fax;
+                            }
+                        }
+                        if (data.social) {
+                            if (data.social.LI) {
+                                _customer.social.LI = data.social.LI;
+                            }
+                            if (data.social.FB) {
+                                _customer.social.FB = data.social.FB;
                             }
                         }
                         if (data.contacts) {
@@ -624,53 +608,99 @@
 
         },
 
-        getFilterCustomers: function (req, response) {
-            var data = req.query;
-            var viewType = data.viewType;
-            var contentType = data.contentType;
-            var res = {
-                data: []
-            };
-            var optionsObject = {};
+        caseFilter: function (contentType, optionsObject, data) {
+            var condition;
+            var resArray = [];
+            var filtrElement = {};
+            var key;
 
             switch (contentType) {
                 case ('Persons'):
                 {
-                    optionsObject['type'] = 'Person';
-                    if (data && data.filter && data.filter.letter) {
-                        optionsObject['name.last'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
-                    }
-                    if (data && data.filter && data.filter.isCustomer) {
-                        optionsObject['salesPurchases.isCustomer'] = true;
-                    }
-                    if (data && data.filter && data.filter.isSupplier) {
-                        optionsObject['salesPurchases.isSupplier'] = true;
-                    }
-                    if (data && data.filter && data.filter.name) {
-                        optionsObject['name.first'] = {$in: data.filter.name};
-                    }
-                    if (data && data.filter && data.filter.country) {
-                        optionsObject['address.country'] = {$in: data.filter.country};
+                    for (var filterName in data.filter) {
+                        condition = data.filter[filterName]['value'];
+                        key = data.filter[filterName]['key'];
+
+                        switch (filterName) {
+                            case 'country':
+                                filtrElement[key] = {$in: condition};
+                                resArray.push(filtrElement);
+                                break;
+                            case 'name':
+                                filtrElement[key] = {$in: condition.objectID()};
+                                resArray.push(filtrElement);
+                                break;
+                            case 'letter':
+                                filtrElement['name.last'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
+                                resArray.push(filtrElement);
+                                break;
+                            case 'services':
+                                if (condition.indexOf('isCustomer') !== -1) {
+                                    filtrElement['salesPurchases.isCustomer'] = true;
+                                    resArray.push(filtrElement);
+                                }
+                                if (condition.indexOf('isSupplier') !== -1) {
+                                    filtrElement['salesPurchases.isSupplier'] = true;
+                                    resArray.push(filtrElement);
+                                }
+                                break;
+                        }
+                    };
+
+                    resArray.push({'type': 'Person'});
+
+                    if (resArray.length) {
+
+                        if (data && data.filter && data.filter.condition === 'or') {
+                            optionsObject['$or'] = resArray;
+                        } else {
+                            optionsObject['$and'] = resArray;
+                        }
                     }
                 }
                     break;
                 case ('Companies'):
                 {
-                    optionsObject['type'] = 'Company';
-                    if (data && data.filter && data.filter.letter) {
-                        optionsObject['name.first'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
-                    }
-                    if (data && data.filter && data.filter.isCustomer) {
-                        optionsObject['salesPurchases.isCustomer'] = true;
-                    }
-                    if (data && data.filter && data.filter.isSupplier) {
-                        optionsObject['salesPurchases.isSupplier'] = true;
-                    }
-                    if (data && data.filter && data.filter.name) {
-                        optionsObject['name.first'] = {$in: data.filter.name};
-                    }
-                    if (data && data.filter && data.filter.country) {
-                        optionsObject['address.country'] = {$in: data.filter.country};
+
+                    for (var filterName in data.filter) {
+                        condition = data.filter[filterName]['value'];
+                        key = data.filter[filterName]['key'];
+
+                        switch (filterName) {
+                            case 'country':
+                                filtrElement[key] = {$in: condition};
+                                resArray.push(filtrElement);
+                                break;
+                            case 'name':
+                                filtrElement[key] = {$in: condition.objectID()};
+                                resArray.push(filtrElement);
+                                break;
+                            case 'letter':
+                                filtrElement['name.first'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
+                                resArray.push(filtrElement);
+                                break;
+                            case 'services':
+                                if (condition.indexOf('isCustomer') !== -1) {
+                                    filtrElement['salesPurchases.isCustomer'] = true;
+                                    resArray.push(filtrElement);
+                                }
+                                if (condition.indexOf('isSupplier') !== -1) {
+                                    filtrElement['salesPurchases.isSupplier'] = true;
+                                    resArray.push(filtrElement);
+                                }
+                                break;
+                        }
+                    };
+
+                    resArray.push({'type': 'Company'});
+
+                    if (resArray.length) {
+
+                        if (data && data.filter && data.filter.condition === 'or') {
+                            optionsObject['$or'] = resArray;
+                        } else {
+                            optionsObject['$and'] = resArray;
+                        }
                     }
                 }
                     break;
@@ -683,6 +713,21 @@
                 }
                     break;
             }
+        },
+
+        getFilterCustomers: function (req, response) {
+
+
+            var data = req.query;
+            var viewType = data.viewType;
+            var contentType = data.contentType;
+            var res = {
+                data: []
+            };
+            var optionsObject = {};
+
+
+            this.caseFilter(contentType, optionsObject, data);
 
             models.get(req.session.lastDb, "Department", department).aggregate(
                 {
@@ -860,7 +905,34 @@
             });
         },
 
+        updateRefs: function (result, dbName, _id) {
+            var InvoiceSchema;
+            var Invoice;
+            var PaymentSchema;
+            var Payment;
+
+            var fullName;
+
+            if (dbName === CONSTANTS.WTRACK_DB_NAME) {
+
+                InvoiceSchema = mongoose.Schemas['wTrackInvoice'];
+                Invoice = models.get(dbName, 'wTrackInvoice', InvoiceSchema);
+
+                PaymentSchema = mongoose.Schemas['wTrackPayment'];
+                Payment = models.get(dbName, 'wTrackPayment', PaymentSchema);
+
+                fullName = result.name.last ? (result.name.first + ' ' + result.name.last) : result.name.first;
+
+                event.emit('updateName', _id, Invoice, 'supplier._id', 'supplier.name', fullName);
+                event.emit('updateName', _id, Payment, 'supplier._id', 'supplier.fullName', fullName);
+
+            }
+        },
+
         update: function (req, _id, remove, data, res) {
+            var dbName = req.session.lastDb;
+            var self = this;
+
             try {
                 delete data._id;
                 delete data.createdBy;
@@ -888,6 +960,8 @@
                         res.send(500, {error: "Can't update customer"});
                     } else {
                         res.send(200, customers);
+
+                        self.updateRefs(customers, dbName, _id);
                     }
                 });
             }
@@ -898,6 +972,9 @@
         },
 
         updateOnlySelectedFields: function (req, _id, data, res) {
+            var dbName = req.session.lastDb;
+            var self = this;
+
             delete data._id;
             var fileName = data.fileName;
             delete data.fileName;
@@ -945,7 +1022,7 @@
 
                         fs.unlink(path, function (err) {
                             fs.readdir(dir, function (err, files) {
-                                if (files.length === 0) {
+                                if (files && files.length === 0) {
                                     fs.rmdir(dir, function () {
                                     });
                                 }
@@ -954,6 +1031,8 @@
 
                     }
                     res.send(200, {success: 'Customer update', notes: result.notes});
+
+                    self.updateRefs(result, dbName, _id);
                 }
             });
         },

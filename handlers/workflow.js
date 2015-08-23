@@ -7,6 +7,8 @@ var workflows = function (models) {
     var WorkflowSchema = mongoose.Schemas['workflow'];
     var RESPONSES = require('../constants/responses.js');
 
+    var _ = require('lodash');
+
     this.getFirstForConvert = function (req, res, next) {
         var callback;
         var Workflow = models.get(req.session.lastDb, 'workflows', WorkflowSchema);
@@ -106,8 +108,7 @@ var workflows = function (models) {
                 }
                 res.status(200).send(workflows)
             });
-    };
-
+    }
 };
 
 module.exports = workflows;

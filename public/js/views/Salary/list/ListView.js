@@ -1,4 +1,5 @@
 define([
+        'text!templates/Pagination/PaginationTemplate.html',
         'text!templates/Salary/list/ListHeader.html',
         'views/Salary/list/ListItemView',
         'views/Salary/subSalary/list/ListView',
@@ -11,7 +12,7 @@ define([
         'moment'
     ],
 
-    function (listTemplate, listItemView, subSalaryView, salaryModel, contentCollection, salaryEditableCollection, filterView, common, dataService, moment) {
+    function (paginationTemplate, listTemplate, listItemView, subSalaryView, salaryModel, contentCollection, salaryEditableCollection, filterView, common, dataService, moment) {
         var SalaryListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -28,7 +29,7 @@ define([
                 this.collection = options.collection;
                 this.filter = options.filter;
                 this.sort = options.sort;
-                this.defaultItemsNumber = this.collection.namberToShow || 50;
+                this.defaultItemsNumber = this.collection.namberToShow || 100;
                 this.newCollection = options.newCollection;
                 this.deleteCounter = 0;
                 this.page = options.collection.page;
@@ -49,8 +50,7 @@ define([
                 "click .stageSelect": "showNewSelect",
                 "click td.editable": "editRow",
                 "click .list tbody tr:not(.subRow, .disabled, .copy) td:not(.notForm, .editable)": "showSubSalary",
-                "click #itemsButton": "itemsNumber",
-                "click .currentPageList": "itemsNumber",
+                "mouseover .currentPageList": "itemsNumber",
                 "click": "hideItemsNumber",
                 "click #firstShowPage": "firstPage",
                 "click #lastShowPage": "lastPage",
@@ -241,6 +241,7 @@ define([
                     newCollection: this.newCollection
                 });
                 this.collection.bind('reset', this.renderContent, this);
+                this.collection.bind('showmore', this.showMoreContent, this);
             },
 
             goSort: function (e) {
@@ -342,7 +343,10 @@ define([
                     self.hideNewSelect();
                  });
 
+                currentEl.append(_.template(paginationTemplate));
+
                 var pagenation = this.$el.find('.pagination');
+
                 if (this.collection.length === 0) {
                     pagenation.hide();
                 } else {

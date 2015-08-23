@@ -12,7 +12,10 @@ module.exports = (function () {
         invoice: {type: ObjectId, ref: 'Invoice', default: null},
         supplier: {type: ObjectId, ref: 'Customers', default: null},
         paidAmount: {type: Number, default: 0, set: setPrice},
-        paymentMethod: {type: ObjectId, ref: 'PaymentMethod', default: null},
+        paymentMethod: {
+            _id: {type: ObjectId, ref: 'PaymentMethod', default: null},
+            name: String
+        },
         date: {type: Date, default: Date.now},
         name: {type: String, default: '', unique: true},
         period: {type: ObjectId, ref: 'Destination', default: null},

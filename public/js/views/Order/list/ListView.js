@@ -1,4 +1,5 @@
 define([
+        'text!templates/Pagination/PaginationTemplate.html',
         'text!templates/Order/list/ListHeader.html',
         'text!templates/stages.html',
         'views/Quotation/CreateView',
@@ -12,7 +13,7 @@ define([
         'dataService'
 ],
 
-function (listTemplate, stagesTamplate, createView, listItemView, listTotalView, editView, quotationModel, contentCollection, filterView, common, dataService) {
+function (paginationTemplate, listTemplate, stagesTamplate, createView, listItemView, listTotalView, editView, quotationModel, contentCollection, filterView, common, dataService) {
     var OrdersListView = Backbone.View.extend({
         el: '#content-holder',
         defaultItemsNumber: null,
@@ -29,11 +30,13 @@ function (listTemplate, stagesTamplate, createView, listItemView, listTotalView,
             this.collection = options.collection;
             this.filter = options.filter;
             this.sort = options.sort;
-            this.defaultItemsNumber = this.collection.namberToShow || 50;
+            this.defaultItemsNumber = this.collection.namberToShow || 100;
             this.newCollection = options.newCollection;
             this.deleteCounter = 0;
             this.page = options.collection.page;
+
             this.render();
+
             this.getTotalLength(null, this.defaultItemsNumber, this.filter);
             this.contentCollection = contentCollection;
         },
@@ -47,13 +50,14 @@ function (listTemplate, stagesTamplate, createView, listItemView, listTotalView,
             "click .checkbox": "checked",
             "click .stageSelect": "showNewSelect",
             "click  .list tbody td:not(.notForm)": "goToEditDialog",
-            "click #itemsButton": "itemsNumber",
-            "click .currentPageList": "itemsNumber",
+            "mouseover .currentPageList": "itemsNumber",
             "click": "hideItemsNumber",
             "click #firstShowPage": "firstPage",
             "click #lastShowPage": "lastPage",
             "click .oe_sortable": "goSort",
-            "click .newSelectList li": "chooseOption"
+            "click .newSelectList li": "chooseOption",
+            "click .saveFilterButton": "saveFilter",
+            "click .removeFilterButton": "removeFilter"
         },
 
         chooseOption: function (e) {
@@ -92,6 +96,7 @@ function (listTemplate, stagesTamplate, createView, listItemView, listTotalView,
                     newCollection: this.newCollection
                 });
                 this.collection.bind('reset', this.renderContent, this);
+                this.collection.bind('showmore', this.showMoreContent, this);
         },
 
         goSort: function (e) {
@@ -137,7 +142,6 @@ function (listTemplate, stagesTamplate, createView, listItemView, listTotalView,
             this.$el.find(".allNumberPerPage, .newSelectList").hide();
             if (!el.closest('.search-view')) {
                 $('.search-content').removeClass('fa-caret-up');
-                this.$el.find(".filterOptions, .filterActions, .search-options, .drop-down-filter").hide();
             };
         },
 
@@ -183,7 +187,6 @@ function (listTemplate, stagesTamplate, createView, listItemView, listTotalView,
             var self = this;
             var currentEl = this.$el;
             var FilterView;
-            var showList;
 
             currentEl.html('');
             currentEl.append(_.template(listTemplate));
@@ -205,7 +208,10 @@ function (listTemplate, stagesTamplate, createView, listItemView, listTotalView,
             $(document).on("click", function (e) {
                 self.hideItemsNumber(e);
             });
-                var pagenation = this.$el.find('.pagination');
+
+            currentEl.append(_.template(paginationTemplate));
+
+            var pagenation = this.$el.find('.pagination');
                 if (this.collection.length === 0) {
                         pagenation.hide();
                 } else {
@@ -225,12 +231,10 @@ function (listTemplate, stagesTamplate, createView, listItemView, listTotalView,
                         FilterView = new filterView({ collection: stages, customCollection: values});
                         // Filter custom event listen ------begin
                         FilterView.bind('filter', function () {
-                            showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
-                            self.showFilteredPage(showList)
+                            self.showFilteredPage()
                         });
                         FilterView.bind('defaultFilter', function () {
-                            showList = _.pluck(stages, '_id');
-                            self.showFilteredPage(showList)
+                            self.showFilteredPage();
                         });
                         // Filter custom event listen ------end
                     })
@@ -352,17 +356,32 @@ function (listTemplate, stagesTamplate, createView, listItemView, listTotalView,
                 this.changeLocationHash(1, itemsNumber, this.filter);
         },
 
-        showFilteredPage: function (workflowIdArray) {
+        showFilteredPage: function () {
             var itemsNumber;
             var self = this;
             var chosen = this.$el.find('.chosen');
+            var checkedElements = $('.drop-down-filter input:checkbox:checked');
+            var condition = this.$el.find('.conditionAND > input')[0];
+            var showList;
 
             this.startTime = new Date();
             this.newCollection = false;
 
-
             this.filter = {};
-            if (workflowIdArray && workflowIdArray.length) this.filter['workflow'] = workflowIdArray;
+            this.filter['condition'] = 'and';
+
+            if  (condition && !condition.checked) {
+                self.filter['condition'] = 'or';
+            }
+
+            //if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
+            //    showList = checkedElements.map(function() {
+            //        return this.value
+            //    }).get();
+            //
+            //    this.filter['workflow'] = showList;
+            //};
+
 
             if (chosen) {
                 chosen.each(function (index, elem) {
@@ -376,10 +395,14 @@ function (listTemplate, stagesTamplate, createView, listItemView, listTotalView,
                         }
                     } else {
                         if (self.filter[elem.children[1].value]) {
-                            self.filter[elem.children[1].value].push(elem.children[2].value);
+                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+                                self.filter[elem.children[1].value].push($(element).next().text());
+                            })
                         } else {
                             self.filter[elem.children[1].value] = [];
-                            self.filter[elem.children[1].value].push(elem.children[2].value);
+                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+                                self.filter[elem.children[1].value].push($(element).next().text());
+                            })
                         }
                     }
 
@@ -388,6 +411,7 @@ function (listTemplate, stagesTamplate, createView, listItemView, listTotalView,
             itemsNumber = $("#itemsNumber").text();
             $("#top-bar-deleteBtn").hide();
             $('#check_all').prop('checked', false);
+
 
             this.changeLocationHash(1, itemsNumber, this.filter);
             this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter });

@@ -186,15 +186,27 @@ define([
                 var marital = $("#maritalDd").data("id");
                 var officeLocation = $.trim($("#officeLocation").val());
                 var relatedUser = $("#relatedUsersDd").data("id");
-                var department = $("#departmentsDd").data("id");
-                var jobPosition = $("#jobPositionDd").data("id");
-                var manager = $("#projectManagerDD").data("id");
+                var department = {
+                    _id: $("#departmentsDd").data("id"),
+                    name: $("#departmentsDd").text()
+                };
+                var jobPosition = {
+                    _id: $("#jobPositionDd").data("id"),
+                    name: $("#jobPositionDd").text()
+                };
+                var manager = {
+                    _id: $("#projectManagerDD").data("id"),
+                    name: $("#projectManagerDD").text()
+                };
                 var coach = $("#coachDd").data("id");
                 var identNo = $.trim($("#identNo").val());
 				var nationality =  $("#nationality").data("id");
                 var passportNo = $.trim($("#passportNo").val());
                 var bankAccountNo = $.trim($("#bankAccountNo").val());
                 var otherId = $.trim($("#otherId").val());
+                var LI = $.trim(this.$el.find('#LI').val());
+                var FB = $.trim(this.$el.find('#FB').val());
+
                 var homeAddress = {};
                 $("dd").find(".homeAddress").each(function () {
                     var el = $(this);
@@ -202,6 +214,7 @@ define([
                 });
                 // date parse 
                 var dateBirthSt = $.trim(this.$el.find("#dateBirth").val());
+                var hire = $.trim(this.$el.find("#hire").val());
                
                 var active = ($("#active").is(":checked")) ? true : false;
                 var sourceId = $("#sourceDd").data("id");
@@ -243,12 +256,17 @@ define([
                     active: active,
                     source:sourceId,
 					nationality:nationality,
+                        social: {
+                            LI: LI,
+                            FB: FB
+                        },
                     groups: {
 						owner: $("#allUsersSelect").data("id"),
                         users: usersId,
                         group: groupsId
                     },
-                    whoCanRW: whoCanRW
+                    whoCanRW: whoCanRW,
+                        hire: hire
                 },
                 {
                     headers: {
@@ -318,6 +336,12 @@ define([
                     changeYear: true,
                     yearRange: '-100y:c+nn',
                     maxDate: '-18y'
+                });
+
+                $('#hire').datepicker({
+                    dateFormat: "d M, yy",
+                    changeMonth: true,
+                    changeYear: true
                 });
 
                 this.delegateEvents(this.events);

@@ -45,7 +45,6 @@ module.exports = (function () {
                 total: Number
             }
         }]
-
     }, {collection: 'SalaryCash'});
 
     mongoose.model('SalaryCash', salaryCashSchema);

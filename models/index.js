@@ -25,6 +25,7 @@ module.exports = (function () {
     require('./priority.js');
     require('./period.js');
     require('./product.js');
+    require('./productCategory.js');
     require('./productTypes.js');
     require('./profile.js');
     require('./project.js');
@@ -46,4 +47,5 @@ module.exports = (function () {
     require('./holiday.js');
     require('./vacation.js');
     require('./bonusType.js');
+    require('./savedFilters.js');
 })();

@@ -32,7 +32,6 @@ define([
             responseObj: {},
             monthElement: null,
             yearElement: null,
-            changedModels: {},
 
             initialize: function (options) {
                 this.startTime = options.startTime;
@@ -40,7 +39,7 @@ define([
                 _.bind(this.collection.showMore, this.collection);
                 this.filter = options.filter ? options.filter : {};
                 this.sort = options.sort ? options.sort : {};
-                this.defaultItemsNumber = this.collection.namberToShow || 50;
+                this.defaultItemsNumber = this.collection.namberToShow || 100;
                 this.newCollection = options.newCollection;
                 this.deleteCounter = 0;
                 this.page = options.collection.page;
@@ -689,6 +688,7 @@ define([
                 tBody.append(itemView.render());
 
                 var pagenation = this.$el.find('.pagination');
+
                 if (this.collection.length === 0) {
                     pagenation.hide();
                 } else {

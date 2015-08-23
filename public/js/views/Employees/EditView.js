@@ -136,6 +136,7 @@ define([
             },
 
             saveItem: function () {
+                var empThumb;
                 var self = this;
 				
                 var gender = $("#genderDd").data("id");
@@ -150,14 +151,20 @@ define([
                 var relatedUser = this.$el.find("#relatedUsersDd").data("id");
                 relatedUser = relatedUser ? relatedUser : null;
 
-                var department = this.$el.find("#departmentsDd").data("id");
-                department = department ? department : null;
+                var department = {
+                    _id: this.$el.find("#departmentsDd").data("id") ? this.$el.find("#departmentsDd").data("id") : null,
+                    name: this.$el.find("#departmentsDd").text() ? this.$el.find("#departmentsDd").text() : null
+                };
 
-                var jobPosition = this.$el.find("#jobPositionDd").data("id");
-                jobPosition = jobPosition ? jobPosition : null;
+                var jobPosition = {
+                    _id: this.$el.find("#jobPositionDd").data("id") ? this.$el.find("#jobPositionDd").data("id") : null,
+                    name: this.$el.find("#jobPositionDd").text() ? this.$el.find("#jobPositionDd").text() : null
+                };
 
-                var manager = this.$el.find("#projectManagerDD").data("id");
-                manager = manager ? manager : null;
+                var manager = {
+                    _id: this.$el.find("#projectManagerDD").data("id") ? this.$el.find("#projectManagerDD").data("id") : null,
+                    name: this.$el.find("#projectManagerDD").text() ? this.$el.find("#projectManagerDD").text() : null
+                };
 
                 var coach = $.trim(this.$el.find("#coachDd").data("id"));
                 coach = coach ? coach : null;
@@ -169,6 +176,15 @@ define([
                 });
                 // date parse 
                 var dateBirthSt = $.trim(this.$el.find("#dateBirth").val());
+
+                var hireArray = this.currentModel.get('hire');
+                var newHireArray = [];
+
+                _.each(hireArray, function(hire, key) {
+
+                    newHireArray.push($.trim(self.$el.find("#hire" + key).val()));
+                    return newHireArray;
+                });
 
                 var active = (this.$el.find("#active").is(":checked")) ? true : false;
                 var sourceId = $("#sourceDd").data("id");
@@ -185,7 +201,7 @@ define([
 
                 });
                 var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
-				var nationality =  $("#nationality").data("id");
+                var nationality =  $("#nationality").data("id");
                 var data = {
                     name: {
                         first: $.trim(this.$el.find("#first").val()),
@@ -200,6 +216,10 @@ define([
                         state: $.trim(this.$el.find('#state').val()),
                         zip: $.trim(this.$el.find('#zip').val()),
                         country: $.trim(this.$el.find('#country').val())
+                    },
+                    social: {
+                        LI: $.trim(this.$el.find('#LI').val()),
+                        FB: $.trim(this.$el.find('#FB').val())
                     },
                     tags: $.trim(this.$el.find("#tags").val()).split(','),
                     workEmail: $.trim(this.$el.find("#workEmail").val()),
@@ -230,8 +250,12 @@ define([
                         users: usersId,
                         group: groupsId
                     },
-                    whoCanRW: whoCanRW
+                    whoCanRW: whoCanRW,
+                    hire: newHireArray
                 };
+                if (!relatedUser){
+                    data['currentUser']= App.currentUser._id;
+                }
                 this.currentModel.set(data);
                 this.currentModel.save(this.currentModel.changed, {
                         headers: {
@@ -239,7 +263,39 @@ define([
                         },
                         patch: true,
                         success: function (model) {
-                            Backbone.history.navigate("easyErp/" + self.contentType, { trigger: true });
+                             //App.currentUser.imageSrc =  self.imageSrc;
+                            if (relatedUser){
+                                $("#loginPanel .iconEmployee").attr("src", self.imageSrc);
+                                $("#loginPanel #userName").text(model.toJSON().fullName);
+                            } else {
+                                $("#loginPanel .iconEmployee").attr("src", App.currentUser.imageSrc);
+                                $("#loginPanel  #userName").text(App.currentUser.login);
+                            }
+                            
+                            if (self.firstData === data.name.first &&
+                                self.lastData === data.name.last &&
+                                self.departmentData === data.department.name &&
+                                self.jobPositionData === data.jobPosition.name &&
+                                self.projectManagerData === data.manager.name) {
+
+                                model = model.toJSON();
+                                empThumb = $('#' + model._id);
+
+                                //empThumb.find('.fullName').html(model.name.first + ' ' + model.name.last);
+                                //empThumb.find('.jobPos').html(model.jobPosition.name);
+                                empThumb.find('.age').html(model.result.age);
+                                empThumb.find('.empDateBirth').html("(" + model.dateBirth + ")");
+                                empThumb.find('.telephone a').html(model.workPhones.mobile);
+                                empThumb.find('.telephone a').attr('href', "skype:" + model.workPhones.mobile + "?call");
+
+                                if (model.relatedUser) {
+                                    empThumb.find('.relUser').html(model.relatedUser.login);
+                                }
+
+                            } else {
+                                Backbone.history.fragment = '';
+                                Backbone.history.navigate(window.location.hash, { trigger: true, replace: true });
+                            }
                             self.hideDialog();
                         },
                     error: function (model, xhr) {
@@ -272,6 +328,14 @@ define([
             },
 
             render: function () {
+                var lastElement;
+                var firstElement;
+                var jobPosElement;
+                var departmentElement;
+                var projectManagerElement;
+                var hireArray;
+                var fireArray;
+
                 if (this.currentModel.get('dateBirth')) {
                     this.currentModel.set({
                         dateBirth: this.currentModel.get('dateBirth').split('T')[0].replace(/-/g, '/')
@@ -279,6 +343,21 @@ define([
                         silent: true
                     });
                 }
+                if (hireArray){
+                    this.currentModel.set({
+                        hire: hireArray
+                    }, {
+                        silent: true
+                    });
+                }
+                if (fireArray){
+                    this.currentModel.set({
+                        fire: fireArray
+                    }, {
+                        silent: true
+                    });
+                }
+
                 var formString = this.template({
                     model: this.currentModel.toJSON()
                 });
@@ -342,6 +421,22 @@ define([
                     //    target.val(day + '/' + month + '/' + year);
                     //}
                 });
+                //_.each(hireArray, function(hire, key) {
+                    $('.hire').datepicker({
+                        dateFormat: "d M, yy",
+                        changeMonth: true,
+                        changeYear: true
+                    });
+                //});
+
+                //_.each(fireArray, function(fire, key) {
+                    $('.fire').datepicker({
+                        dateFormat: "d M, yy",
+                        changeMonth : true,
+                        changeYear : true
+                    });
+                //});
+
                 var model = this.currentModel.toJSON();
                 if (model.groups)
                     if (model.groups.users.length>0||model.groups.group.length){
@@ -357,6 +452,19 @@ define([
 
                     }
                 this.delegateEvents(this.events);
+
+                lastElement = this.$el.find("#last");
+                firstElement = this.$el.find("#first");
+                jobPosElement = this.$el.find("#jobPositionDd");
+                departmentElement = this.$el.find("#departmentsDd");
+                projectManagerElement = this.$el.find("#projectManagerDD");
+
+                this.lastData =  $.trim(lastElement.val());
+                this.firstData = $.trim(firstElement.val());
+                this.jobPositionData = $.trim(jobPosElement.val());
+                this.departmentData = $.trim(departmentElement.val());
+                this.projectManagerData = $.trim(projectManagerElement.val());
+
                 return this;
             }
 

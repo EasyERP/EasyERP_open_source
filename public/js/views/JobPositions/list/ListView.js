@@ -1,17 +1,18 @@
 define([
+        'text!templates/Pagination/PaginationTemplate.html',
         'text!templates/JobPositions/list/ListHeader.html',
         'views/JobPositions/CreateView',
         'views/JobPositions/list/ListItemView',
         'collections/JobPositions/filterCollection',
         'models/JobPositionsModel',
         'views/JobPositions/EditView',
-        'views/Filter/FilterView',
+        //'views/Filter/FilterView',
         'common',
         'dataService',
         'text!templates/stages.html'
     ],
 
-    function (listTemplate, createView, listItemView, contentCollection, currentModel, editView, filterView, common, dataService, stagesTamplate) {
+    function (paginationTemplate, listTemplate, createView, listItemView, contentCollection, currentModel, editView,/* filterView, */common, dataService, stagesTamplate) {
         var JobPositionsListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -26,12 +27,15 @@ define([
                 this.startTime = options.startTime;
                 this.collection = options.collection;
                 _.bind(this.collection.showMore, this.collection);
-                this.defaultItemsNumber = this.collection.namberToShow || 50;
+                this.defaultItemsNumber = this.collection.namberToShow || 100;
                 this.newCollection = options.newCollection;
                 this.deleteCounter = 0;
                 this.newCollection = options.newCollection;
                 this.page = options.collection.page;
+                this.filter = options.filter;
+
                 this.render();
+
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
                 this.contentCollection = contentCollection;
             },
@@ -44,14 +48,15 @@ define([
                 "click #nextPage": "nextPage",
                 "click .checkbox": "checked",
                 "click  .list td:not(.notForm)": "goToEditDialog",
-                "click #itemsButton": "itemsNumber",
-                "click .currentPageList": "itemsNumber",
+                "mouseover .currentPageList": "itemsNumber",
                 "click": "hideItemsNumber",
                 "click .oe_sortable": "goSort",
                 "click .stageSelect": "showNewSelect",
                 "click .newSelectList li": "chooseOption",
                 "click #firstShowPage": "firstPage",
-                "click #lastShowPage": "lastPage"
+                "click #lastShowPage": "lastPage",
+                "click .saveFilterButton": "saveFilter",
+                "click .removeFilterButton": "removeFilter"
 
             },
 
@@ -177,7 +182,6 @@ define([
                 this.$el.find(".allNumberPerPage, .newSelectList").hide();
                 if (!el.closest('.search-view')) {
                     $('.search-content').removeClass('fa-caret-up');
-                    this.$el.find(".filterOptions, .filterActions, .search-options, .drop-down-filter").hide();
                 };
             },
 
@@ -186,9 +190,10 @@ define([
                 return false;
             },
 
-            getTotalLength: function (currentNumber, itemsNumber) {
+            getTotalLength: function (currentNumber, itemsNumber, filter) {
                 dataService.getData('/totalCollectionLength/JobPositions', {
                     currentNumber: currentNumber,
+                    filter: filter,
                     newCollection: this.newCollection
                 }, function (response, context) {
                     var page = context.page || 1;
@@ -202,33 +207,45 @@ define([
                 }, this);
             },
 
-            showFilteredPage: function (workflowIdArray) {
+            showFilteredPage: function () {
                 var itemsNumber = $("#itemsNumber").text();
                 var self = this;
                 var chosen = this.$el.find('.chosen');
+                var checkedElements = $('.drop-down-filter input:checkbox:checked');
+                var condition = this.$el.find('.conditionAND > input')[0];
+                var showList;
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
 
                 this.startTime = new Date();
-                this.newCollection = false;
+               // this.newCollection = false;
                 this.filter = {};
-                if (workflowIdArray.length) this.filter['workflow'] = workflowIdArray;
+                this.filter['condition'] = 'and';
+
+                if  (condition && !condition.checked) {
+                    self.filter['condition'] = 'or';
+                }
 
                 if (chosen) {
                     chosen.each(function (index, elem) {
                         if (self.filter[elem.children[1].value]) {
-                            self.filter[elem.children[1].value].push(elem.children[2].value);
+                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+                                self.filter[elem.children[1].value].push($(element).next().text());
+                            })
                         } else {
                             self.filter[elem.children[1].value] = [];
-                            self.filter[elem.children[1].value].push(elem.children[2].value);
+                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+                                self.filter[elem.children[1].value].push($(element).next().text());
+                            })
                         }
                     });
                 }
 
                 this.changeLocationHash(1, itemsNumber, this.filter);
-                this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter, parrentContentId: this.parrentContentId });
+                this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter, newCollection: true });
                 this.getTotalLength(null, itemsNumber, this.filter);
+
             },
 
             render: function () {
@@ -236,13 +253,13 @@ define([
                 var self = this;
                 var currentEl = this.$el;
                 var FilterView;
-                var showList;
 
                 currentEl.html('');
                 currentEl.append(_.template(listTemplate));
                 var itemView = new listItemView({ collection: this.collection, page: this.page, itemsNumber: this.collection.namberToShow });
                 currentEl.append(itemView.render());
                 itemView.bind('incomingStages', itemView.pushStages, itemView);
+
                 $('#check_all').click(function () {
                     $(':checkbox').prop('checked', this.checked);
                     if ($("input.checkbox:checked").length > 0)
@@ -256,25 +273,27 @@ define([
                     var stage = (self.filter) ? self.filter.workflow : null;
                     itemView.trigger('incomingStages', stages);
 
-                    dataService.getData('/jobPosition/getFilterValues', null, function (values) {
-                        FilterView = new filterView({ collection: stages, customCollection: values});
-                        // Filter custom event listen ------begin
-                        FilterView.bind('filter', function () {
-                            showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
-                            self.showFilteredPage(showList)
-                        });
-                        FilterView.bind('defaultFilter', function () {
-                            showList = _.pluck(self.stages, '_id');
-                            self.showFilteredPage(showList)
-                        });
-                        // Filter custom event listen ------end
-                    });
+                    //dataService.getData('/jobPosition/getFilterValues', null, function (values) {
+                    //   // FilterView = new filterView({ collection: stages, customCollection: values});
+                    //    // Filter custom event listen ------begin
+                    //    FilterView.bind('filter', function () {
+                    //        self.showFilteredPage()
+                    //    });
+                    //    FilterView.bind('defaultFilter', function () {
+                    //        self.showFilteredPage();
+                    //    });
+                    //    // Filter custom event listen ------end
+                    //});
                 });
 
                 $(document).on("click", function (e) {
                     self.hideItemsNumber(e);
                 });
+
+                currentEl.append(_.template(paginationTemplate));
+
                 var pagenation = this.$el.find('.pagination');
+
                 if (this.collection.length === 0) {
                     pagenation.hide();
                 } else {
@@ -304,7 +323,7 @@ define([
                 $('#check_all').prop('checked', false);
                 this.nextP({
                     sort: this.sort,
-                    newCollection: this.newCollection,
+                    newCollection: this.newCollection
                 });
                 dataService.getData('/totalCollectionLength/JobPositions', {
                     newCollection: this.newCollection
@@ -351,7 +370,7 @@ define([
                 this.startTime = new Date();
                 var itemsNumber = event.target.textContent;
                 this.defaultItemsNumber = itemsNumber;
-                this.getTotalLength(null, itemsNumber);
+                this.getTotalLength(null, itemsNumber, this.filter);
                 this.collection.showMore({
                     count: itemsNumber,
                     page: 1,

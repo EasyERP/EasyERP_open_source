@@ -1,4 +1,5 @@
 define([
+        'text!templates/Pagination/PaginationTemplate.html',
         'text!templates/Product/list/ListHeader.html',
         'views/Product/CreateView',
         'views/Product/list/ListItemView',
@@ -11,7 +12,7 @@ define([
         'dataService'
 ],
 
-    function (listTemplate, createView, listItemView, editView, productModel, aphabeticTemplate, contentCollection, filterView, common, dataService) {
+    function (paginationTemplate, listTemplate, createView, listItemView, editView, productModel, aphabeticTemplate, contentCollection, filterView, common, dataService) {
         var ProductsListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -31,11 +32,13 @@ define([
                 this.allAlphabeticArray = common.buildAllAphabeticArray();
                 this.filter = options.filter ? options.filter : {};
                 this.filter.canBePurchased = true;
-                this.defaultItemsNumber = this.collection.namberToShow || 50;
+                this.defaultItemsNumber = this.collection.namberToShow || 100;
                 this.newCollection = options.newCollection;
                 this.deleteCounter = 0;
                 this.page = options.collection.page;
+
                 this.render();
+
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
                 this.contentCollection = contentCollection;
             },
@@ -48,8 +51,7 @@ define([
                 "click #nextPage": "nextPage",
                 "click .checkbox": "checked",
                 "click  .list td:not(.notForm)": "goToEditDialog",
-                "click #itemsButton": "itemsNumber",
-                "click .currentPageList": "itemsNumber",
+                "mouseover .currentPageList": "itemsNumber",
                 "click": "hideItemsNumber",
                 "click .letter:not(.empty)": "alpabeticalRender",
                 "click #firstShowPage": "firstPage",
@@ -83,7 +85,7 @@ define([
                 if ($(e.target).text() == "All") {
                     selectedLetter = "";
                 }
-                this.filter = (this.filter && this.filter !== 'empty') ? this.filter : {};
+                this.filter = (this.filter) ? this.filter : {};
                 this.filter['letter'] = selectedLetter;
                 this.filter['canBePurchased'] = true;
                 var itemsNumber = $("#itemsNumber").text();
@@ -150,7 +152,6 @@ define([
                 this.$el.find(".allNumberPerPage, .newSelectList").hide();
                 if (!el.closest('.search-view')) {
                     $('.search-content').removeClass('fa-caret-up');
-                    this.$el.find(".filterOptions, .filterActions, .search-options, .drop-down-filter").hide();
                 };
             },
 
@@ -181,7 +182,6 @@ define([
                 var self = this;
                 var currentEl = this.$el;
                 var FilterView;
-                var showList;
 
                 currentEl.html('');
                 currentEl.append(_.template(listTemplate));
@@ -195,7 +195,6 @@ define([
                         $("#top-bar-deleteBtn").hide();
                 });
 
-
                 $(document).on("click", function (e) {
                     self.hideItemsNumber(e);
                 });
@@ -203,7 +202,7 @@ define([
                 common.buildAphabeticArray(this.collection, function (arr) {
                     $("#startLetter").remove();
                     self.alphabeticArray = arr;
-                    currentEl.prepend(_.template(aphabeticTemplate, { alphabeticArray: self.alphabeticArray, selectedLetter: (self.selectedLetter == "" ? "All" : self.selectedLetter), allAlphabeticArray: self.allAlphabeticArray }));
+                    $('#searchContainer').after(_.template(aphabeticTemplate, { alphabeticArray: self.alphabeticArray, selectedLetter: (self.selectedLetter == "" ? "All" : self.selectedLetter), allAlphabeticArray: self.allAlphabeticArray }));
                     var currentLetter = (self.filter) ? self.filter.letter : null;
                     if (currentLetter) {
                         $('#startLetter a').each(function () {
@@ -221,12 +220,15 @@ define([
                         self.showFilteredPage()
                     });
                     FilterView.bind('defaultFilter', function () {
-                        self.showFilteredPage()
+                        self.showFilteredPage();
                     });
                     // Filter custom event listen ------end
                 });
 
+                currentEl.append(_.template(paginationTemplate));
+
                 var pagenation = this.$el.find('.pagination');
+
                 if (this.collection.length === 0) {
                     pagenation.hide();
                 } else {
@@ -331,6 +333,7 @@ define([
                 var chosen = this.$el.find('.chosen');
                 var itemsNumber = $("#itemsNumber").text();
                 var checkedElements = $('.drop-down-filter input:checkbox:checked');
+                var condition = this.$el.find('.conditionAND > input')[0];
 
                 this.startTime = new Date();
                 this.newCollection = false;
@@ -343,6 +346,11 @@ define([
 
                 this.filter =  {};
                 this.filter['letter'] = selectedLetter;
+                this.filter['condition'] = 'and';
+
+                if  (condition && !condition.checked) {
+                    self.filter['condition'] = 'or';
+                }
 
                 if (chosen) {
                     chosen.each(function (index, elem) {
@@ -356,26 +364,28 @@ define([
                             }
                         } else {
                             if (self.filter[elem.children[1].value]) {
-                                self.filter[elem.children[1].value].push(elem.children[2].value);
+                                $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+                                    self.filter[elem.children[1].value].push($(element).next().text());
+                                })
                             } else {
                                 self.filter[elem.children[1].value] = [];
-                                self.filter[elem.children[1].value].push(elem.children[2].value);
+                                $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+                                    self.filter[elem.children[1].value].push($(element).next().text());
+                                })
                             }
                         }
 
                     });
                 }
 
-                if (checkedElements.length && checkedElements.attr('id') === 'defaultFilter') {
-                    self.filter = {};
-                }
-
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
+
                 this.changeLocationHash(1, itemsNumber, this.filter);
                 this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter });
                 this.getTotalLength(null, itemsNumber, this.filter);
             },
+
             showPage: function (event) {
                 event.preventDefault();
                 this.showP(event, { filter: this.filter, newCollection: this.newCollection, sort: this.sort });

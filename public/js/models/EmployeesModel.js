@@ -25,6 +25,18 @@
                         return attachment;
                     });
                 }
+                if (response.hire) {
+                    response.hire = _.map(response.hire, function (hire) {
+                        hire = common.utcDateToLocaleDate(hire);
+                        return hire;
+                    });
+                }
+                if (response.fire) {
+                    response.fire = _.map(response.fire, function (fire) {
+                        fire = common.utcDateToLocaleDate(fire);
+                        return fire;
+                    });
+                }
             }
             return response;
         },
@@ -46,6 +58,7 @@
             Validation.checkCountryCityStateField(errors, false, attrs.homeAddress.state, "State");
             Validation.checkZipField(errors, false, attrs.homeAddress.zip, "Zip");
             Validation.checkStreetField(errors, false, attrs.homeAddress.street, "Street");
+            Validation.checkJobPositionField(errors, true, attrs.jobPosition._id, "Job Position");
             if(errors.length > 0)
                 return errors;
         },
@@ -77,7 +90,10 @@
             relatedUser: null,
             visibility: 'Public',
             department: '',
-            jobPosition: '',
+            jobPosition: {
+                _id: null,
+                name: ''
+            },
             nationality: '',
             identNo: '',
             passportNo: '',

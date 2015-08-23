@@ -44,7 +44,7 @@
 
                                     <dt><label for="supplier">Supplier</label></dt>
                                     <dd>
-                                        <a id="supplier" data-id="<%=(model.supplier)?model.supplier._id:''%>" class="current-selected" href="javascript:;"><%=(model.supplier)?(model.supplier.name.first+" "+model.supplier.name.last):"Select"%></a>
+                                        <a id="supplier" data-id="<%=(model.supplier)?model.supplier._id:''%>" class="current-selected" href="javascript:;"><%=(model.supplier)?model.supplier.name:"Select"%></a>
                                     </dd>
 
                                     <dt><label for="fiscal_pos">Fiscal Position</label></dt>
@@ -103,15 +103,15 @@
                                 <dl class="opp-info">
                                     <dt><label for="assigned">Assigned</label></dt>
                                     <dd>
-                                        <span id="assigned" data-id="<%= assigned._id%>"><%= assigned.name ? assigned.name.first + ' ' + assigned.name.last : ''%></span>
+                                        <span id="assigned" data-id="<%= assigned._id%>"><%= assigned.name ? assigned.name : ''%></span>
                                     </dd>
                                     <dt><label for="supplier">Customer</label></dt>
                                     <dd>
-                                        <span id="supplier" data-id="<%= customer._id%>"><%= customer.name ? customer.name.first + ' ' + customer.name.last : ''%></span>
+                                        <span id="supplier" data-id="<%= customer._id%>"><%= customer.name ? customer.name : ''%></span>
                                     </dd>
                                     <dt><label for="project">Project</label></dt>
                                     <dd>
-                                        <span id="project" data-id="<%= project._id%>"><%= project.projectName%></span>
+                                        <span id="project" data-id="<%= project._id%>"><%= project.name%></span>
                                     </dd>
                                     <dt><label for="paymentTerms">Payment Terms</label></dt>
                                     <dd>
@@ -229,9 +229,9 @@
                                             </td>
                                             <td>
                                                     <span>
-                                                        <span id="totalUntaxes" class="currency">
+                                                        <span id="totalUntaxes" class="money">
                                                             <%if (total) {%>
-                                                            <%= total%>
+                                                            <%= currencySplitter(total)%>
                                                             <%} else {%>
                                                             0.00
                                                             <%}%>
@@ -245,7 +245,7 @@
                                             </td>
                                             <td>
                                                     <span>
-                                                        <span id="taxes" class="currency">
+                                                        <span id="taxes" class="money">
                                                             0.00
                                                         </span>
                                                     </span>
@@ -257,9 +257,9 @@
                                             </td>
                                             <td>
                                                     <span class="">
-                                                        <span id="totalAmount" class="currency">
+                                                        <span id="totalAmount" class="money">
                                                             <%if (total) {%>
-                                                            <%=total%>
+                                                            <%=currencySplitter(total)%>
                                                             <%} else {%>
                                                             0.00
                                                             <%}%>

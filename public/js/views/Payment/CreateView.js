@@ -18,7 +18,7 @@ define([
 
             initialize: function (options) {
                 if (options) {
-                    this.forSale = !!options.forSale;
+                    this.forSales = !!options.forSales;
                     this.invoiceModel = options.model;
                     this.totalAmount = this.invoiceModel.get('paymentInfo').balance || 0;
                 }
@@ -28,7 +28,9 @@ define([
 
                 this.render();
 
-                this.forSales = App.currentDb === constants.WTRACK_DB_NAME;
+                if(!this.forSales) {
+                    this.forSales = App.currentDb === constants.WTRACK_DB_NAME;
+                }
             },
 
             events: {
@@ -101,21 +103,38 @@ define([
                 var mid = 55;
                 var thisEl = this.$el;
                 var invoiceModel = this.invoiceModel.toJSON();
-                var supplier = thisEl.find('#supplierDd').data('id');
+                var supplier = thisEl.find('#supplierDd');
+                var supplierId = supplier.attr('data-id');
+                var supplierName = supplier.text();
                 var paidAmount = thisEl.find('#paidAmount').val();
-                var paymentMethod = thisEl.find('#paymentMethod').data('id');
+                var paymentMethod = thisEl.find('#paymentMethod');
+                var paymentMethodID = paymentMethod.attr('data-id');
+                var paymentMethodName = paymentMethod.text();
                 var date = thisEl.find('#paymentDate').val();
                 var paymentRef = thisEl.find('#paymentRef').val();
-                var period = thisEl.find('#period').data('id');
+                var period = thisEl.find('#period').attr('data-id');
 
                 paymentMethod = paymentMethod || null;
                 period = period || null;
 
                 data = {
                     forSale: this.forSale,
-                    invoice: invoiceModel._id,
-                    supplier: supplier,
-                    paymentMethod: paymentMethod,
+                    invoice: {
+                        _id: invoiceModel._id,
+                        name: invoiceModel.name,
+                        assigned: {
+                            _id: invoiceModel.salesPerson._id,
+                            name: invoiceModel.salesPerson.name
+                        }
+                    },
+                    supplier: {
+                        _id: supplierId,
+                        fullName: supplierName
+                    },
+                    paymentMethod: {
+                        _id: paymentMethodID,
+                        name: paymentMethodName
+                    },
                     date: date,
                     period: period,
                     paymentRef: paymentRef,

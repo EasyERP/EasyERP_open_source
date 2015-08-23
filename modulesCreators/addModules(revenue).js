@@ -62,7 +62,7 @@ MongoClient.connect(url, function (err, db) {
 
         q.drain = function () {
             callback(null, 'done');
-        }
+        };
 
         var cursor = profiles.find()
 

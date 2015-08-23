@@ -94,17 +94,31 @@ define([
 
             saveItem: function (event) {
                 event.preventDefault();
+
+                var validation = true;
                 var self = this;
                 var viewType = custom.getCurrentVT();
                 var mid = 39;
                 var projectName = $.trim(this.$el.find("#projectName").val());
                 var projectShortDesc = $.trim(this.$el.find("#projectShortDesc").val());
-                var customer = this.$el.find("#customerDd").data("id");
-                var projectmanager = this.$el.find("#projectManagerDD").data("id");
-                var workflow = this.$el.find("#workflowsDd").data("id");
+                var customer = {};
+
+                customer._id = this.$el.find("#customerDd").data("id");
+                customer.name = this.$el.find("#customerDd").text();
+
+                var projectmanager = {};
+                projectmanager._id = this.$el.find("#projectManagerDD").data("id");
+                projectmanager.name = this.$el.find("#projectManagerDD").text();
+
+                var workflow = {};
+                workflow._id = this.$el.find("#workflowsDd").data("id");
+                workflow.name = this.$el.find("#workflowsDd").text();
+
+
                 var projecttype = this.$el.find("#projectTypeDD").data("id");
                 var $userNodes = $("#usereditDd option:selected");
                 var startDate = $.trim(this.$el.find("#StartDate").val());
+                var endDate = $.trim(this.$el.find("#EndDate").val());
                 var users = [];
                 var bonusContainer = $('#bonusTable');
                 var bonusRow = bonusContainer.find('tr');
@@ -119,14 +133,27 @@ define([
                 bonusRow.each(function (key, val) {
                     var employeeId = $(val).find("[data-content='employee']").attr('data-id');
                     var bonusId = $(val).find("[data-content='bonus']").attr('data-id');
-                    var startDate = $(val).find(".startDate>div").text().trim() || $(val).find(".startDate input").val();
-                    var endDate = $(val).find(".endDate>div").text().trim() || $(val).find(".endDate input").val();
+                    var value;
+
+                    if (!employeeId || !bonusId){
+                        if (!employeeId){
+                            value = 'Employee';
+                            alert('Please, choose ' + value + ' first.');
+                        } else if (!bonusId){
+                            value = 'Bonus';
+                            alert('Please, choose ' + value + ' first.');
+                        }
+                        validation = false;
+                    }
+
+                    var startD = $(val).find(".startDate>div").text().trim() || $(val).find(".startDate input").val();
+                    var endD = $(val).find(".endDate>div").text().trim() || $(val).find(".endDate input").val();
 
                     bonus.push({
                         employeeId: employeeId,
                         bonusId: bonusId,
-                        startDate: startDate,
-                        endDate: endDate
+                        startDate: startD,
+                        endDate: endD
                     });
                 });
 
@@ -146,7 +173,7 @@ define([
                 var _targetEndDate = $.trim(this.$el.find("#EndDateTarget").val());
                 var description = $.trim(this.$el.find("#description").val());
                 var currentTargetEndDate = this.currentModel.get('TargetEndDate');
-                var TargetEndDate = _targetEndDate || currentTargetEndDate;
+                //var TargetEndDate = _targetEndDate || currentTargetEndDate;
                 var data = {
                     projectName: projectName,
                     projectShortDesc: projectShortDesc,
@@ -166,59 +193,63 @@ define([
                     whoCanRW: whoCanRW,
                     health: health,
                     StartDate: startDate,
-                    TargetEndDate: TargetEndDate,
+                    EndDate: endDate,
+                    TargetEndDate:  _targetEndDate,
                     bonus: bonus
                 };
                 var workflowStart = this.currentModel.get('workflow');
-                this.currentModel.save(data, {
-                    headers: {
-                        mid: mid
-                    },
-                    success: function (model) {
-                        $('.edit-project-dialog').remove();
-                        $(".add-group-dialog").remove();
-                        $(".add-user-dialog").remove();
-                        if (viewType == "list") {
-                            var tr_holder = $("tr[data-id='" + self.currentModel.toJSON()._id + "'] td");
-                            $("a[data-id='" + self.currentModel.toJSON()._id + "']").text(projectName);
-                            tr_holder.eq(2).text(projectName);
-                            tr_holder.eq(3).text(self.$el.find("#customerDd").text());
-                            tr_holder.eq(4).text(self.$el.find("#StartDate").val());
-                            tr_holder.eq(5).text(self.$el.find("#EndDate").val());
-                            tr_holder.eq(6).text(self.$el.find("#EndDateTarget").val());
-                            if (new Date(self.$el.find("#EndDate").val()) < new Date(self.$el.find("#EndDateTarget").val())) {
-                                tr_holder.eq(5).addClass("red-border");
+
+                if (validation) {
+                    this.currentModel.save(data, {
+                        headers: {
+                            mid: mid
+                        },
+                        success: function (model) {
+                            $('.edit-project-dialog').remove();
+                            $(".add-group-dialog").remove();
+                            $(".add-user-dialog").remove();
+                            if (viewType == "list") {
+                                var tr_holder = $("tr[data-id='" + self.currentModel.toJSON()._id + "'] td");
+                                $("a[data-id='" + self.currentModel.toJSON()._id + "']").text(projectName);
+                                tr_holder.eq(2).text(projectName);
+                                tr_holder.eq(3).text(self.$el.find("#customerDd").text());
+                                tr_holder.eq(4).text(self.$el.find("#StartDate").val());
+                                tr_holder.eq(5).text(self.$el.find("#EndDate").val());
+                                tr_holder.eq(6).text(self.$el.find("#EndDateTarget").val());
+                                if (new Date(self.$el.find("#EndDate").val()) < new Date(self.$el.find("#EndDateTarget").val())) {
+                                    tr_holder.eq(5).addClass("red-border");
+                                } else {
+                                    tr_holder.eq(5).removeClass("red-border");
+                                }
+                                tr_holder.eq(8).find(".stageSelect").text(self.$el.find("#workflowsDd").text());
+                                tr_holder.eq(9).find(".health-container a").attr("class", "health" + health).attr("data-value", health);
+                                tr_holder.eq(11).text(model.toJSON().editedBy.date + " (" + model.toJSON().editedBy.user.login + ")");
                             } else {
-                                tr_holder.eq(5).removeClass("red-border");
+                                var currentModel_holder = $("#" + self.currentModel.toJSON()._id);
+                                currentModel_holder.find(".project-text span").eq(0).text(projectName);
+                                currentModel_holder.find(".project-text span").eq(1).find("a").attr("class", "health" + health).attr("data-value", health);
+                                if (customer)
+                                    $("#" + self.currentModel.toJSON()._id).find(".project-text span").eq(2).text(self.$el.find("#customerDd").text());
+                                currentModel_holder.find(".bottom .stageSelect").text(self.$el.find("#workflowsDd").text()).attr("class", "stageSelect " + self.$el.find("#workflowsDd").text().toLowerCase().replace(" ", ''));
+                                if (projectmanager)
+                                    common.getImagesPM([projectmanager._id], "/getEmployeesImages", "#" + self.currentModel.toJSON()._id);
                             }
-                            tr_holder.eq(8).find(".stageSelect").text(self.$el.find("#workflowsDd").text());
-                            tr_holder.eq(9).find(".health-container a").attr("class", "health" + health).attr("data-value", health);
-                            tr_holder.eq(11).text(model.toJSON().editedBy.date + " (" + model.toJSON().editedBy.user.login + ")");
-                        } else {
-                            var currentModel_holder = $("#" + self.currentModel.toJSON()._id);
-                            currentModel_holder.find(".project-text span").eq(0).text(projectName);
-                            currentModel_holder.find(".project-text span").eq(1).find("a").attr("class", "health" + health).attr("data-value", health);
-                            if (customer)
-                                $("#" + self.currentModel.toJSON()._id).find(".project-text span").eq(2).text(self.$el.find("#customerDd").text());
-                            currentModel_holder.find(".bottom .stageSelect").text(self.$el.find("#workflowsDd").text()).attr("class", "stageSelect " + self.$el.find("#workflowsDd").text().toLowerCase().replace(" ", ''));
-                            if (projectmanager)
-                                common.getImagesPM([projectmanager], "/getEmployeesImages", "#" + self.currentModel.toJSON()._id);
-                        }
-                        if (data.workflow != workflowStart) {
-                            var filter = window.location.hash.split('filter=')[1];
-                            var url = "#easyErp/Projects/thumbnails";
-                            if (filter)
-                                url += '/filter=' + filter;
-                            Backbone.history.fragment = "";
-                            Backbone.history.navigate(url, { trigger: true });
+                            if (data.workflow._id != workflowStart._id) {
+                                var filter = window.location.hash.split('filter=')[1];
+                                var url = "#easyErp/Projects/thumbnails";
+                                if (filter)
+                                    url += '/filter=' + filter;
+                                Backbone.history.fragment = "";
+                                Backbone.history.navigate(url, {trigger: true});
 
+                            }
+                        },
+                        error: function (model, xhr) {
+                            self.errorNotification(xhr);
                         }
-                    },
-                    error: function (model, xhr) {
-    					self.errorNotification(xhr);
-                    }
 
-                });
+                    });
+                }
             },
 
             deleteItem: function (event) {
@@ -309,23 +340,34 @@ define([
                 });
                 populate.get("#projectTypeDD", "/projectType", {}, "name", this, false, true);
                 populate.get2name("#projectManagerDD", "/getPersonsForDd", {}, this);
-                populate.get2name("#customerDd", "/Customer", {}, this, false, true);
+                populate.get2name("#customerDd", "/Customer", {}, this, false, false);
                 populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/WorkflowsForDd", { id: "Projects" }, "name", this);
                 var model = this.currentModel.toJSON();
-                if (model.groups)
-                    if (model.groups.users.length > 0 || model.groups.group.length) {
-                        $(".groupsAndUser").show();
-                        model.groups.group.forEach(function (item) {
-                            $(".groupsAndUser").append("<tr data-type='targetGroups' data-id='" + item._id + "'><td>" + item.departmentName + "</td><td class='text-right'></td></tr>");
-                            $("#targetGroups").append("<li id='" + item._id + "'>" + item.departmentName + "</li>");
-                        });
-                        model.groups.users.forEach(function (item) {
-                            $(".groupsAndUser").append("<tr data-type='targetUsers' data-id='" + item._id + "'><td>" + item.login + "</td><td class='text-right'></td></tr>");
-                            $("#targetUsers").append("<li id='" + item._id + "'>" + item.login + "</li>");
-                        });
-
-                    }
+                //if (model.groups)
+                //    if (model.groups.users.length > 0 || model.groups.group.length) {
+                //        $(".groupsAndUser").show();
+                //        model.groups.group.forEach(function (item) {
+                //            $(".groupsAndUser").append("<tr data-type='targetGroups' data-id='" + item._id + "'><td>" + item.departmentName + "</td><td class='text-right'></td></tr>");
+                //            $("#targetGroups").append("<li id='" + item._id + "'>" + item.departmentName + "</li>");
+                //        });
+                //        model.groups.users.forEach(function (item) {
+                //            $(".groupsAndUser").append("<tr data-type='targetUsers' data-id='" + item._id + "'><td>" + item.login + "</td><td class='text-right'></td></tr>");
+                //            $("#targetUsers").append("<li id='" + item._id + "'>" + item.login + "</li>");
+                //        });
+                //
+                //    }
                 $('#StartDate').datepicker({
+                    dateFormat: "d M, yy",
+                    changeMonth: true,
+                    changeYear: true,
+                    onSelect: function () {
+                        //Setting minimum of endDate to picked startDate
+                        var endDate = $('#StartDate').datepicker('getDate');
+                        endDate.setDate(endDate.getDate());
+                        $('#EndDateTarget').datepicker('option', 'minDate', endDate);
+                    }
+                });
+                $('#EndDate').datepicker({
                     dateFormat: "d M, yy",
                     changeMonth: true,
                     changeYear: true,

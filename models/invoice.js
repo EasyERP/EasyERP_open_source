@@ -26,7 +26,10 @@ module.exports = (function () {
 
     var invoiceSchema = new mongoose.Schema({
         forSales: {type: Boolean, default: true},
-        supplier: { type: ObjectId, ref: 'Customers', default: null },
+        supplier: {
+            _id: {type: ObjectId, ref: 'Customers', default: null},
+            name: String
+        },
         /*fiscalPosition: { type: String, default: null },*/
         sourceDocument: { type: String, default: null },
         supplierInvoiceNumber: { type: String, default: null },
@@ -38,14 +41,21 @@ module.exports = (function () {
         account: { type: String, default: null },
         journal: { type: String, default: null },
 
-        salesPerson: {type: ObjectId, ref: 'Employees', default: null},
+        salesPerson: {
+            _id: {type: ObjectId, ref: 'Employees', default: null},
+            name: String
+        },
         paymentTerms: {type: ObjectId, ref: 'PaymentTerm', default: null},
 
         paymentInfo: payments,
         payments: [{type: ObjectId, ref: 'Payment', default: null}],
         products: [ products],
 
-        workflow: {type: ObjectId, ref: 'workflows', default: null},
+        workflow: {
+            _id: {type: ObjectId, ref: 'workflows', default: null},
+            name: String,
+            status: String
+        },
         whoCanRW: {type: String, enum: ['owner', 'group', 'everyOne'], default: 'everyOne'},
 
         groups: {

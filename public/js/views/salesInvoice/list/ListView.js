@@ -1,8 +1,9 @@
 define([
+        'text!templates/Pagination/PaginationTemplate.html',
         'text!templates/salesInvoice/list/ListHeader.html',
         'text!templates/stages.html',
         'views/salesInvoice/CreateView',
-        'views/Invoice/EditView',
+        'views/salesInvoice/EditView',
         'models/InvoiceModel',
         'views/salesInvoice/list/ListItemView',
         'collections/salesInvoice/filterCollection',
@@ -12,7 +13,7 @@ define([
         'constants'
     ],
 
-    function (listTemplate, stagesTemplate, createView, editView, invoiceModel, listItemView, contentCollection, filterView, common, dataService, CONSTANTS) {
+    function (paginationTemplate, listTemplate, stagesTemplate, createView, editView, invoiceModel, listItemView, contentCollection, filterView, common, dataService, CONSTANTS) {
         var InvoiceListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -21,7 +22,7 @@ define([
             sort: null,
             newCollection: null,
             page: null, //if reload page, and in url is valid page
-            contentType: 'Invoice',//needs in view.prototype.changeLocationHash
+            contentType:'salesInvoice', //'Invoice',//needs in view.prototype.changeLocationHash
             viewType: 'list',//needs in view.prototype.changeLocationHash
 
             initialize: function (options) {
@@ -32,14 +33,17 @@ define([
                 this.filter = options.filter ? options.filter : {};
                 this.filter.forSales = true;
                 this.sort = options.sort;
-                this.defaultItemsNumber = this.collection.namberToShow || 50;
+                this.defaultItemsNumber = this.collection.namberToShow || 100;
                 this.newCollection = options.newCollection;
                 this.deleteCounter = 0;
                 this.page = options.collection.page;
+
                 this.render();
+
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
                 this.contentCollection = contentCollection;
                 this.stages = [];
+                this.filterView;
             },
 
             events: {
@@ -52,8 +56,7 @@ define([
                 "click .stageSelect": "showNewSelect",
                 //"click  .list td:not(.notForm)": "gotoForm",
                 "click  .list td:not(.notForm)": "goToEditDialog",
-                "click #itemsButton": "itemsNumber",
-                "click .currentPageList": "itemsNumber",
+                "mouseover .currentPageList": "itemsNumber",
                 "click": "hideItemsNumber",
                 "click #firstShowPage": "firstPage",
                 "click #lastShowPage": "lastPage",
@@ -140,7 +143,6 @@ define([
                 this.$el.find(".allNumberPerPage, .newSelectList").hide();
                 if (!el.closest('.search-view')) {
                     $('.search-content').removeClass('fa-caret-up');
-                    this.$el.find(".filterOptions, .filterActions, .search-options, .drop-down-filter").hide();
                 };
             },
 
@@ -185,7 +187,6 @@ define([
                 var self = this;
                 var currentEl = this.$el;
                 var FilterView;
-                var showList;
 
                 currentEl.html('');
 
@@ -207,25 +208,25 @@ define([
                 });
 
                 dataService.getData("/workflow/fetch", {
-                    wId: 'Sales Invoice',
-                    source: 'purchase',
-                    targetSource: 'invoice'
-                }, function (stages) {
+                        wId: 'Sales Invoice',
+                        source: 'purchase',
+                        targetSource: 'invoice'
+                    }, function (stages) {
                     self.stages = stages;
-
-                    dataService.getData('/invoice/getFilterValues', null, function (values) {
-                        FilterView = new filterView({ collection: stages, customCollection: values});
-                        // Filter custom event listen ------begin
-                        FilterView.bind('filter', function () {
-                            self.showFilteredPage()
-                        });
-                        FilterView.bind('defaultFilter', function () {
-                            self.showFilteredPage()
-                        });
-                        // Filter custom event listen ------end
-
-                    });
                 });
+
+                self.filterView = new filterView({
+                    contentType: self.contentType
+                });
+
+                self.filterView.bind('filter', function (filter) {
+                    self.showFilteredPage(filter)
+                });
+                self.filterView.bind('defaultFilter', function () {
+                    self.showFilteredPage({});
+                });
+
+                self.filterView.render();
 
                 function currentEllistRenderer(){
                     currentEl.append(_.template(listTemplate, {currentDb: App.currentDb}));
@@ -234,6 +235,8 @@ define([
                         page: self.page,
                         itemsNumber: self.collection.namberToShow
                     }).render());//added two parameters page and items number
+
+                    currentEl.append(_.template(paginationTemplate));
 
                     var pagenation = self.$el.find('.pagination');
                     if (self.collection.length === 0) {
@@ -372,53 +375,19 @@ define([
                 this.changeLocationHash(1, itemsNumber, this.filter);
             },
 
-            showFilteredPage: function () {
+            showFilteredPage: function (filter) {
                 var itemsNumber = $("#itemsNumber").text();
-                var checkedElements = $('.drop-down-filter input:checkbox:checked');
-                var chosen = this.$el.find('.chosen');
-                var self = this;
-                var showList;
+                this.filter = filter;
 
                 this.startTime = new Date();
                 this.newCollection = false;
 
-                if (checkedElements.length && checkedElements.attr('id') !== 'defaultFilter') {
-                    showList = checkedElements.map(function () {
-                        return this.value;
-                    }).get();
-
-                    this.filter['workflow'] = showList;
-
-                } else  if (chosen && chosen.length) {
-                    chosen.each(function (index, elem) {
-                        if (elem.children[2].attributes.class.nodeValue === 'chooseDate') {
-                            if (self.filter[elem.children[1].value]) {
-                                self.filter[elem.children[1].value].push({start: $('#start').val(), end: $('#end').val()});
-
-                            } else {
-                                self.filter[elem.children[1].value] = [];
-                                self.filter[elem.children[1].value].push({start: $('#start').val(), end: $('#end').val()});
-                            }
-                        } else {
-                            if (self.filter[elem.children[1].value]) {
-                                self.filter[elem.children[1].value].push(elem.children[2].value);
-                            } else {
-                                self.filter[elem.children[1].value] = [];
-                                self.filter[elem.children[1].value].push(elem.children[2].value);
-                            }
-                        }
-
-                    });
-                } else {
-                    this.filter['workflow'] = _.pluck(this.stages, '_id');
-                }
-
-
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
-                this.changeLocationHash(1, itemsNumber, this.filter);
-                this.collection.showMore({count: itemsNumber, page: 1, filter: this.filter});
-                this.getTotalLength(null, itemsNumber, this.filter);
+
+                this.changeLocationHash(1, itemsNumber, filter);
+                this.collection.showMore({count: itemsNumber, page: 1, filter: filter});
+                this.getTotalLength(null, itemsNumber, filter);
             },
 
             showPage: function (event) {
@@ -445,6 +414,9 @@ define([
                 }
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
+
+                this.filterView.renderFilterContent();
+
                 holder.find('#timeRecivingDataFromServer').remove();
                 holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             },
@@ -469,6 +441,7 @@ define([
                     },
                     success: function (model) {
                         var isWtrack = App.currentDb === CONSTANTS.WTRACK_DB_NAME;
+
                         new editView({model: model, isWtrack: isWtrack});
                     },
                     error: function () {

@@ -8,6 +8,9 @@ var Salary = function (models) {
     var access = require("../Modules/additions/access.js")(models);
     var SalarySchema = mongoose.Schemas['Salary'];
     var SalaryCashSchema = mongoose.Schemas['SalaryCash'];
+    var DepartmentSchema = mongoose.Schemas['Department'];
+    var _ = require('lodash');
+
     var async = require('async');
     var mapObject = require('../helpers/bodyMaper');
     var self = this;
@@ -20,35 +23,44 @@ var Salary = function (models) {
         var SalaryCash = models.get(req.session.lastDb, 'SalaryCash', SalaryCashSchema);
         var queryObject = {};
 
-        if (data) {
-            if (data.month) {
-                queryObject.month = data.month;
-            }
-            if (data.year) {
-                queryObject.year = data.year;
-            }
-        }
+        access.getDeleteAccess(req, req.session.uId, 66, function (access) {
+            if (access) {
 
-        if (queryObject.month && queryObject.year) {
-            Salary.remove(queryObject, function (err, salary) {
-                if (err) {
-                    return next(err);
-                }
-                SalaryCash.remove({_id: id}, function (err, salaryCash) {
-                    if (err) {
-                        return next(err);
+
+                if (data) {
+                    if (data.month) {
+                        queryObject.month = data.month;
                     }
-                    res.status(200).send({success: salaryCash});
-                })
-            });
-        } else {
-            Salary.remove({_id: id}, function (err, salary) {
-                if (err) {
-                    return next(err);
+                    if (data.year) {
+                        queryObject.year = data.year;
+                    }
                 }
-                res.status(200).send({success: salary});
-            });
-        }
+
+                if (queryObject.month && queryObject.year) {
+                    Salary.remove(queryObject, function (err, salary) {
+                        if (err) {
+                            return next(err);
+                        }
+                        SalaryCash.remove({_id: id}, function (err, salaryCash) {
+                            if (err) {
+                                return next(err);
+                            }
+                            res.status(200).send({success: salaryCash});
+                        });
+                    });
+                } else {
+                    Salary.remove({_id: id}, function (err, salary) {
+                        if (err) {
+                            return next(err);
+                        }
+                        res.status(200).send({success: salary});
+                    });
+                }
+
+            } else {
+                res.status(403).send();
+            }
+        });
     };
 
     this.putchModel = function (req, res, next) {
@@ -189,14 +201,14 @@ var Salary = function (models) {
                     var query = req.query;
                     var queryObject = {};
                     var sort = {};
-                    var count = query.count ? query.count : 50;
+                    var count = query.count ? query.count : 100;
                     var page = req.query.page;
                     var skip = (page - 1) > 0 ? (page - 1) * count : 0;
 
-                    //var departmentSearcher;
-                    //var contentIdsSearcher;
-                    //var contentSearcher;
-                    //var waterfallTasks;
+                    var departmentSearcher;
+                    var contentIdsSearcher;
+                    var contentSearcher;
+                    var waterfallTasks;
 
                     if (query && query.sort) {
                         sort = query.sort;
@@ -204,98 +216,58 @@ var Salary = function (models) {
                         sort = {"year": -1, "month": -1};
                     }
 
-                    /*departmentSearcher = function (waterfallCallback) {
-                     models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
-                     {
-                     $match: {
-                     users: objectId(req.session.uId)
-                     }
-                     }, {
-                     $project: {
-                     _id: 1
-                     }
-                     },
-                     waterfallCallback);
-                     };*/
-
-                    /*contentIdsSearcher = function (deps, waterfallCallback) {
-                     var arrOfObjectId = deps.objectID();
-
-                     models.get(req.session.lastDb, "Product", ProductSchema).aggregate(
-                     {
-                     $match: {
-                     $and: [
-                     queryObject,
-                     {
-                     $or: [
-                     {
-                     $or: [
-                     {
-                     $and: [
-                     {whoCanRW: 'group'},
-                     {'groups.users': objectId(req.session.uId)}
-                     ]
-                     },
-                     {
-                     $and: [
-                     {whoCanRW: 'group'},
-                     {'groups.group': {$in: arrOfObjectId}}
-                     ]
-                     }
-                     ]
-                     },
-                     {
-                     $and: [
-                     {whoCanRW: 'owner'},
-                     {'groups.owner': objectId(req.session.uId)}
-                     ]
-                     },
-                     {whoCanRW: "everyOne"}
-                     ]
-                     }
-                     ]
-                     }
-                     },
-                     {
-                     $project: {
-                     _id: 1
-                     }
-                     },
-                     waterfallCallback
-                     );
-                     };*/
-
-                    /*contentSearcher = function (productsIds, waterfallCallback) {
-                     queryObject._id = {$in: productsIds};
-
-                     var query = Product.find(queryObject).limit(count).skip(skip).sort(sort);
-                     query.exec(waterfallCallback);
-                     };
-
-                     waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
-
-                     async.waterfall(waterfallTasks, function(err, result){
-                     if(err){
-                     return next(err);
-                     }
-                     res.status(200).send({success: result});
-                     });*/
-                    self.totalCollectionLength(req, function (err, ressult) {
-                        if (ressult) {
-                            var query = Salary.find(queryObject).limit(count).skip(skip).sort(sort);
-                            query.exec(function (err, result) {
-                                if (err) {
-                                    return next(err);
+                    departmentSearcher = function (waterfallCallback) {
+                        models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
+                            {
+                                $match: {
+                                    users: objectId(req.session.uId)
                                 }
-                                res.status(200).send({success: result});
-                            });
-                        } else {
-                            async.series({
+                            }, {
+                                $project: {
+                                    _id: 1
+                                }
+                            },
+                            waterfallCallback);
+                    };
+
+                    contentIdsSearcher = function (deps, waterfallCallback) {
+
+                        Salary.aggregate(
+                            {
+                                $match: {}
+                            },
+                            {
+                                $project: {
+                                    _id: 1
+                                }
+                            },
+                            waterfallCallback
+                        );
+                    };
+
+                    contentSearcher = function (salaryIds, waterfallCallback) {
+                        var query;
+                        queryObject._id = {$in: salaryIds};
+
+                        self.totalCollectionLength(req, function (err, ressult) {
+                            if (ressult) {
+                                query = Salary.find(queryObject)
+                                    .limit(count)
+                                    .skip(skip)
+                                    .lean()
+                                    .sort(sort);
+                                query.exec(waterfallCallback);
+                            } else {
+                                async.series({
                                     first: function (callback) {
                                         self.recalculateCashSalary(req, callback);
                                     },
                                     second: function (callback) {
-                                        var query = Salary.find(queryObject).limit(count).skip(skip).sort(sort);
+                                        query = Salary.find(queryObject)
+                                            .limit(count)
+                                            .skip(skip)
+                                            .lean()
+                                            .sort(sort);
                                         query.exec(function (err, result) {
                                             if (err) {
                                                 callback(err);
@@ -303,17 +275,22 @@ var Salary = function (models) {
                                             callback(null, result);
                                         });
                                     }
-                                },
-                                function (err, results) {
-                                    if (err) {
-                                        return next(err);
-                                    }
-                                    if (results.second) {
-                                        res.status(200).send({success: results.second});
-                                    }
-                                });
+                                }, waterfallCallback);
+                            }
+                        })
+
+                    };
+
+                    waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
+
+                    async.waterfall(waterfallTasks, function (err, result) {
+                        if (err) {
+                            return next(err);
                         }
-                    })
+
+                        res.status(200).send(result);
+                    });
+
                 } else {
                     res.send(403);
                 }
@@ -354,6 +331,33 @@ var Salary = function (models) {
         });
     };
 
+    this.getByMonth = function (req, res, next) {
+        var data = req.query;
+        var month = data.month;
+        var year = data.year;
+        var empId = data._id;
+        var Salary = models.get(req.session.lastDb, 'Salary', SalarySchema);
+
+        var matchObject = {month: month, year: year, 'employee._id': empId};
+        var query = Salary.findOne(matchObject);
+
+        query.exec(function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+
+            //res.header('Content-Type', 'application/json');
+            if (result){
+                res.status(200).send({data: result.baseSalary});
+            } else {
+                res.status(200).send({data: 0});
+            }
+
+        });
+
+    };
+
     this.totalCollectionLength = function (req, res, next) {
         var Salary = models.get(req.session.lastDb, 'SalaryCash', SalaryCashSchema);
         var query;
@@ -392,7 +396,7 @@ var Salary = function (models) {
                             diffOnCash: {$sum: "$diff.onCash"},
                             diffOnCard: {$sum: "$diff.onCard"},
                             diffTotal: {$sum: "$diff.total"},
-                            employeesArray: {$push: "$$ROOT"}
+                            employeesArray: {$push: "$$ROOT"},
                         }
                     }
                 ], callback

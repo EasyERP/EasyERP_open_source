@@ -19,10 +19,17 @@
         <div class="clearfix"></div>
         <div class="dialog-tabs-items">
           <div class="dialog-tabs-item active">
-            <div class="avatar left">
-              <div class="upload">Edit<input type="file" value="Edit" id="inputImg"></div>
-              <canvas id="avatar" width="140" height="140"></canvas>
-            </div>
+              <div class="left">
+                <div class="avatar">
+                <div class="upload">Edit<input type="file" value="Edit" id="inputImg"></div>
+                <canvas id="avatar" width="140" height="140"></canvas>
+                </div>
+                <div class="social">
+                  <% if (model.social.FB){%><a class="facebook" href="<%=model.social.FB%>"></a><%}%>
+                  <% if (model.social.LI){%><a class="linkedin" href="<%=model.social.LI%>"></a><%}%>
+                  <% if (model.skype){%><a class="skype" href="skype:<%=model.skype%>?call"></a><%}%>
+                </div>
+              </div>
 
 			<div class="avatarInfoContainer employee">
               <div class="half-block left">
@@ -34,6 +41,12 @@
                   <dt><label for="mobile">Personal Mobile</label></dt><dd><input type="text" name="mobile" id="mobile" value="<%=model.workPhones.mobile%>"  maxlength="20"/></dd>
                   <dt><label for="personalEmail">Personal Email</label></dt><dd><input type="text"  id="personalEmail" value="<%=model.personalEmail%>" required maxlength="48"/></dd>
                   <dt><label for="skype">Skype</label></dt><dd><input type="text" id="skype" value="<%=model.skype%>" maxlength="32"/></dd>
+                    <dt><label for="LI">LinkedIn</label></dt>
+                    <dd><input type="text" id="LI" value="<%=model.social.LI%>" placeholder="LingedIn"
+                               maxlength="32"/></dd>
+                    <dt><label for="LI">Facebook</label></dt>
+                    <dd><input type="text" id="FB" value="<%=model.social.FB%>" placeholder="Facebook"
+                               maxlength="32"/></dd>
                   <dt><label for="relatedUsersDd">Related User</label></dt><dd>
 					<a id="relatedUsersDd" data-id="<%=model.relatedUser?model.relatedUser._id:''%>" class="current-selected" href="javascript:;"><%=model.relatedUser?(model.relatedUser.login):'Select'%></a>
 				  </dd>
@@ -45,14 +58,14 @@
 				<dl class="edit-employee-info">
                   <dt><label for="jobPositionDd">Job position</label></dt>
                   <dd>
-					<a id="jobPositionDd" data-id="<%=model.jobPosition?model.jobPosition._id:''%>" class="current-selected" href="javascript:;"><%=model.jobPosition?(model.jobPosition.name):'Select'%></a>
+					<a id="jobPositionDd" data-id="<%=model.jobPosition ? model.jobPosition._id:''%>" class="current-selected" href="javascript:;"><%=model.jobPosition?(model.jobPosition.name):'Select'%></a>
                   </dd>
                   <dt><label for="departmentsDd">Department</label></dt><dd>
-					<a id="departmentsDd" data-id="<%=model.department?model.department._id:''%>" class="current-selected" href="javascript:;"><%=model.department?(model.department.departmentName):'Select'%></a>
+					<a id="departmentsDd" data-id="<%=model.department ? model.department._id : ''%>" class="current-selected" href="javascript:;"><%=model.department ? (model.department.name) : 'Select'%></a>
                   </dd>
                   <dt><label for="projectManagerDD">Manager</label></dt>
                   <dd>
-					<a id="projectManagerDD" data-id="<%=model.projectmanager?model.projectmanager._id:''%>" class="current-selected" href="javascript:;"><%=model.manager?(model.manager.name.first+' '+model.manager.name.last):'Select'%></a>
+					<a id="projectManagerDD" data-id="<%=model.projectmanager ? model.projectmanager._id : ''%>" class="current-selected" href="javascript:;"><%=model.manager._id ? (model.manager.name) : 'Select'%></a>
                   </dd>
                   <dt><label for="jobTypeDd">Job type</label></dt>
                   <dd>
@@ -88,7 +101,7 @@
 			</div>
 		  </div>
 		  <div class="dialog-tabs-item">
-	
+
 			<div>
 			  <div class="formTitle left">
 				<h3 class="left">Citizenship &amp; Other Info</h3>
@@ -178,13 +191,13 @@
                 <div class="half-block left withPaddingLeft">
                     <%_.each(model.hire, function(hire, key){ %>
                     <dt><label>Hired</label></dt>
-                    <dd><input type="text" name="hire" value="<%=model.hire[key]%>" required readonly/></dd>
+                    <dd><input class="hire" type="text" name="hire" id="hire<%=key%>" value="<%=model.hire[key]%>" required readonly/></dd>
                     <% }); %>
                 </div>
                 <div class="half-block right withPaddingLeft">
                     <%_.each(model.fire, function(fire, key){ %>
                     <dt><label>Fired</label></dt>
-                    <dd><input type="text" name="fire" value="<%=model.fire[key]%>" required readonly/></dd>
+                    <dd><input class="fire" type="text" name="fire" id="fire<%=key%>" value="<%=model.fire[key]%>" required readonly/></dd>
                     <% }); %>
                 </div>
 

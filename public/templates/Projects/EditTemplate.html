@@ -36,7 +36,7 @@
                   <label for="projectManagerDD">Project Manager</label>
                 </dt>
                 <dd>
-				  <a id="projectManagerDD" data-id="<%=model.projectmanager?model.projectmanager._id:''%>" class="current-selected" href="javascript:;"><%=model.projectmanager?(model.projectmanager.name.first+' '+model.projectmanager.name.last):'Select'%></a>
+				  <a id="projectManagerDD" data-id="<%=model.projectmanager?model.projectmanager._id:''%>" class="current-selected" href="javascript:;"><%=model.projectmanager?(model.projectmanager.name):'Select'%></a>
                 </dd>
 
                 <dt><label for="projectTypeDD">Project Type </label></dt>
@@ -49,7 +49,7 @@
                   <label for="customerDd">Project Customer </label>
                 </dt>
                 <dd>
-				  <a id="customerDd" data-id="<%=model.customer?model.customer._id:''%>" class="current-selected" href="javascript:;"><%=model.customer?(model.customer.name.first+' '+model.customer.name.last):'Select'%></a>
+				  <a id="customerDd" data-id="<%=model.customer?model.customer._id:''%>" class="current-selected" href="javascript:;"><%=model.customer?(model.customer.name):'Select'%></a>
                 </dd>
                 <dt>
                   <label for="workflowsDd">Status</label>
@@ -73,7 +73,7 @@
                   </ul>
                 </dd>
                 <dt><label for="EndDate">End Date </label></dt>
-                <dd><input class="info blueback" type="text" name="EndDate" id="EndDate" value="<%=model.StartDate%>" readonly /></dd>
+                <dd><input class="info blueback" type="text" name="EndDate" id="EndDate" value="<%=model.EndDate%>" readonly /></dd>
                 <dt><label for="targetEndDate">Target End Date</label></dt>
                 <dd><input class="info blueback" type="text" name="TargetEndtDate" id="EndDateTarget" value="<%=model.TargetEndDate%>" readonly /></dd>
               </dl>

@@ -13,11 +13,18 @@ var MonthHours = function (models) {
         var body = req.body;
         var monthHours = new  MonthHoursModel(body);
 
-        monthHours.save(function(err, monthHours){
-            if (err){
-                return next(err);
+        access.getEditWritAccess(req, req.session.uId, 68, function (access) {
+            if (access) {
+
+                monthHours.save(function (err, monthHours) {
+                    if (err) {
+                        return next(err);
+                    }
+                    res.status(200).send(monthHours);
+                });
+            } else {
+
             }
-            res.status(200).send(monthHours);
         });
     };
 
@@ -53,7 +60,7 @@ var MonthHours = function (models) {
     this.getList = function (req, res, next) {
         var MonthHoursModel = models.get(req.session.lastDb, 'MonthHours', MonthHoursSchema );
         var sort = {};
-        var count = req.query.count ? req.query.count : 50;
+        var count = req.query.count ? req.query.count : 100;
         var page = req.query.page;
         var skip = (page - 1) > 0 ? (page - 1) * count : 0;
         var query = req.query;
@@ -62,18 +69,24 @@ var MonthHours = function (models) {
             sort = query.sort;
         } else sort = {};
 
-        MonthHoursModel
-            .find()
-            .limit(count)
-            .skip(skip)
-            .sort(sort)
-            .exec(function (err, data) {
-                if (err) {
-                    return next(err);
-                } else {
-                    res.status(200).send(data);
-                }
-            });
+        access.getReadAccess(req, req.session.uId, 68, function (access) {
+            if (access) {
+                MonthHoursModel
+                    .find()
+                    .limit(count)
+                    .skip(skip)
+                    .sort(sort)
+                    .exec(function (err, data) {
+                        if (err) {
+                            return next(err);
+                        } else {
+                            res.status(200).send(data);
+                        }
+                    });
+            } else {
+                res.status(403).send();
+            }
+        });
     };
 
     this.getData = function (req, res, next) {
@@ -90,20 +103,25 @@ var MonthHours = function (models) {
                 queryObj.year = Number(query.year);
             }
 
-
-        MonthHoursModel
-            .aggregate(
-            [{
-                $match: queryObj
-            }]
-        )
-            .exec(function (err, data) {
-                if (err) {
-                    return next(err);
-                } else {
-                    res.status(200).send(data);
-                }
-            });
+        access.getReadAccess(req, req.session.uId, 68, function (access) {
+            if (access) {
+                MonthHoursModel
+                    .aggregate(
+                    [{
+                        $match: queryObj
+                    }]
+                )
+                    .exec(function (err, data) {
+                        if (err) {
+                            return next(err);
+                        } else {
+                            res.status(200).send(data);
+                        }
+                    });
+            } else {
+                res.status(403).send();
+            }
+        });
     };
 
     this.totalCollectionLength = function(req, res, next) {
@@ -120,44 +138,21 @@ var MonthHours = function (models) {
     this.remove = function(req, res, id, next) {
        var MonthHoursModel = models.get(req.session.lastDb, "MonthHours", MonthHoursSchema);
 
-        MonthHoursModel.findByIdAndRemove(id, function (err, result) {
-            if (err) {
-                next(err);
+        access.getDeleteAccess(req, req.session.uId, 68, function (access) {
+            if (access) {
+                MonthHoursModel.findByIdAndRemove(id, function (err, result) {
+                    if (err) {
+                        next(err);
+                    } else {
+                        res.status(200).send({success: result});
+                    }
+                });
             } else {
-                res.status(200).send({success: result});
+                res.status(403).send();
             }
         });
     };
 
-    this.getData = function (req, res, next) {
-        var MonthHoursModel = models.get(req.session.lastDb, 'MonthHours', MonthHoursSchema );
-        var queryObj = {};
-
-        var query = req.query;
-
-
-        if (query.month) {
-            queryObj.month = Number(query.month);
-        }
-        if (query.year) {
-            queryObj.year = Number(query.year);
-        }
-
-
-        MonthHoursModel
-            .aggregate(
-            [{
-                $match: queryObj
-            }]
-        )
-            .exec(function (err, data) {
-                if (err) {
-                    return next(err);
-                } else {
-                    res.status(200).send(data);
-                }
-            });
-    };
 };
 
 module.exports = MonthHours;

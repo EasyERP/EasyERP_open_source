@@ -5,10 +5,11 @@
         'text!templates/Alpabet/AphabeticTemplate.html',
         "text!templates/Persons/thumbnails/ThumbnailsItemTemplate.html",
         'dataService',
-        'views/Filter/FilterView'
+        'views/Filter/FilterView',
+        'custom'
     ],
 
-    function (common, editView, createView, AphabeticTemplate, ThumbnailsItemTemplate, dataService, filterView) {
+    function (common, editView, createView, AphabeticTemplate, ThumbnailsItemTemplate, dataService, filterView, custom) {
         var PersonsThumbnalView = Backbone.View.extend({
             el: '#content-holder',
             countPerPage: 0,
@@ -28,12 +29,16 @@
                 _.bind(this.collection.showMoreAlphabet, this.collection);
                 this.allAlphabeticArray = common.buildAllAphabeticArray();
                 this.filter = options.filter;
-                this.defaultItemsNumber = this.collection.namberToShow || 50;
+                this.defaultItemsNumber = this.collection.namberToShow || 100;
                 this.newCollection = options.newCollection;
                 this.deleteCounter = 0;
+
                 this.render();
+
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
                 this.asyncLoadImgs(this.collection);
+
+                this.filterView;
             },
 
             events: {
@@ -66,60 +71,35 @@
                 common.getImages(ids, "/getCustomersImages");
             },
             //modified for filter Vasya
-            alpabeticalRender: function (e, showList) {
+            alpabeticalRender: function (e) {
                 var selectedLetter;
-                var target;
-                var checkedElements = $('.drop-down-filter input:checkbox:checked');
-                var chosen = this.$el.find('.chosen');
-                var self = this;
+                var target = $(e.target);
 
                 this.$el.find('.thumbnailwithavatar').remove();
                 this.startTime = new Date();
                 this.newCollection = false;
-                this.filter = {};
+
+                this.filter = this.filter ? this.filter : {};
 
                 if (e && e.target) {
-                    selectedLetter = $(e.target).text();
-                    target = $(e.target);
-                    if ($(e.target).text() == "All") {
+                    selectedLetter = target.text();
+                    this.filter['letter'] = selectedLetter;
+
+                    if (target.text() == "All") {
                         selectedLetter = "";
+                        this.filter = {};
                     }
                     target.parent().find(".current").removeClass("current");
                     target.addClass("current");
                 }
 
-                if (checkedElements && checkedElements.length && checkedElements.attr('id') === 'defaultFilter') {
-                    this.filter = {};
-                };
-                if (chosen) {
-                    chosen.each(function (index, elem) {
-                        if (self.filter[elem.children[1].value]) {
-                            self.filter[elem.children[1].value].push(elem.children[2].value);
-                        } else {
-                            self.filter[elem.children[1].value] = [];
-                            self.filter[elem.children[1].value].push(elem.children[2].value);
-                        }
-                    });
-                };
-
-                if (showList) {
-                    if (showList.indexOf('isCustomer') !== -1) {
-                        this.filter['isCustomer'] = 1;
-                    }else if (showList.indexOf('isSupplier') !== -1) {
-                        this.filter['isSupplier'] = 1;
-                    } else {
-                        delete this.filter['isSupplier'];
-                        delete this.filter['isCustomer'];
-                    }
-                    if (this.filter['isSupplier'] && this.filter['isCustomer']) {
-                        delete this.filter['isSupplier'];
-                        delete this.filter['isCustomer'];
-                    }
-                }
-
-                if (selectedLetter || selectedLetter === '') this.filter['letter'] = selectedLetter;
+                //if (selectedLetter || selectedLetter === '') {
+                //    delete this.filter['name'];
+                //    this.filter['letter'] = selectedLetter;
+                //}
 
                 this.defaultItemsNumber = 0;
+
                 this.changeLocationHash(null, this.defaultItemsNumber, this.filter);
                 this.collection.showMoreAlphabet({ count: this.defaultItemsNumber, page: 1, filter: this.filter });
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
@@ -138,15 +118,42 @@
                 window.location.hash = "#easyErp/Companies/form/" + id;
             },
 
+            showFilteredPage: function (filter, context) {
+                var itemsNumber = $("#itemsNumber").text();
+
+                var alphaBet = this.$el.find('#startLetter');
+                var selectedLetter = $(alphaBet).find('.current').length ? $(alphaBet).find('.current')[0].text : '';
+
+                $("#top-bar-deleteBtn").hide();
+                $('#check_all').prop('checked', false);
+
+                context.startTime = new Date();
+                context.newCollection = false;
+
+                //if (!filter.name) {
+                //    if (selectedLetter !== '') {
+                //        filter['letter'] = selectedLetter;
+                //    }
+                //}
+
+                if (Object.keys(filter).length === 0){
+                    this.filter = {};
+                }
+
+                context.$el.find('.thumbnailwithavatar').remove();
+
+                context.changeLocationHash(null, context.defaultItemsNumber, filter);
+                context.collection.showMoreAlphabet({ count: context.defaultItemsNumber, page: 1, filter: filter });
+                context.getTotalLength(this.defaultItemsNumber, filter);
+            },
+
             render: function () {
                 var self = this;
                 var createdInTag = "<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>";
                 var currentEl = this.$el;
-                var filterObject;
-                var FilterView;
-                var showList;
 
                 currentEl.html('');
+
                 if (this.collection.length > 0) {
                     currentEl.append(this.template({ collection: this.collection.toJSON() }));
                 } else {
@@ -171,30 +178,18 @@
                         });
                     }
                 });
-                filterObject = [
-                    {
-                        name: 'isCustomer',
-                        _id: 'isCustomer'
-                    },
-                    {
-                        name: 'isSupplier',
-                        _id: 'isSupplier'
-                    }
-                ];
-                dataService.getData('/supplier/getFilterValues', null, function (values) {
-                    FilterView = new filterView({ collection: filterObject, customCollection: values});
-                    // Filter custom event listen ------begin
-                    FilterView.bind('filter', function () {
-                        showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
-                        self.alpabeticalRender(null, showList)
-                    });
-                    FilterView.bind('defaultFilter', function () {
-                        showList = [];
-                        self.alpabeticalRender(null, showList)
-                    });
-                    // Filter custom event listen ------end
 
+                self.filterview = new filterView({ contentType: self.contentType });
+
+                self.filterview.bind('filter', function (filter) {
+                    self.showFilteredPage(filter, self)
                 });
+                self.filterview.bind('defaultFilter', function () {
+                    self.showFilteredPage({}, self);
+                });
+
+                self.filterview.render();
+
                 $(document).on("click", function (e) {
                     self.hideItemsNumber(e);
                 });
@@ -209,8 +204,12 @@
                 this.$el.find(".allNumberPerPage, .newSelectList").hide();
                 if (!el.closest('.search-view')) {
                     $('.search-content').removeClass('fa-caret-up');
-                    this.$el.find(".filterOptions, .filterActions, .search-options, .drop-down-filter").hide();
+                    this.$el.find('.search-options').addClass('hidden');
                 };
+                //this.$el.find(".allNumberPerPage, .newSelectList").hide();
+                //if (!el.closest('.search-view')) {
+                //    $('.search-content').removeClass('fa-caret-up');
+                //};
             },
 
             showMore: function (event) {
@@ -223,7 +222,7 @@
                 var content = holder.find("#thumbnailContent");
                 var showMore = holder.find('#showMoreDiv');
                 var created = holder.find('#timeRecivingDataFromServer');
-                this.changeLocationHash(null, (this.defaultItemsNumber < 50) ? 50 : this.defaultItemsNumber, this.filter);
+                this.changeLocationHash(null, (this.defaultItemsNumber < 100) ? 100 : this.defaultItemsNumber, this.filter);
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
 
                 if (showMore.length != 0) {
@@ -236,6 +235,8 @@
 
                 }
                 this.asyncLoadImgs(newModels);
+
+                this.filterView.renderFilterContent();
             },
 
             //modified for filter Vasya
@@ -246,13 +247,11 @@
                 var showMore = holder.find('#showMoreDiv');
                 var content = holder.find(".thumbnailwithavatar");
                 this.defaultItemsNumber += newModels.length;
-                this.changeLocationHash(null, (this.defaultItemsNumber < 50) ? 50 : this.defaultItemsNumber, this.filter);
+                this.changeLocationHash(null, (this.defaultItemsNumber < 100) ? 100 : this.defaultItemsNumber, this.filter);
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
                 holder.append(this.template({ collection: newModels.toJSON() }));
-                holder.prepend(alphaBet);
                 holder.append(created);
                 created.before(showMore);
-                this.asyncLoadImgs(newModels);
                 this.asyncLoadImgs(newModels);
             },
 
@@ -278,6 +277,24 @@
                         }
                     });
                     $(this).remove();
+                });
+                common.buildAphabeticArray(this.collection, function (arr) {
+                    $("#startLetter").remove();
+                    self.alphabeticArray = arr;
+                    $("#searchContainer").after(_.template(AphabeticTemplate, {
+                        alphabeticArray: self.alphabeticArray,
+                        selectedLetter: (self.selectedLetter == "" ? "All" : self.selectedLetter),
+                        allAlphabeticArray: self.allAlphabeticArray
+                    }));
+                    var currentLetter = (self.filter) ? self.filter.letter : null
+                    if (currentLetter) {
+                        $('#startLetter a').each(function () {
+                            var target = $(this);
+                            if (target.text() == currentLetter) {
+                                target.addClass("current");
+                            }
+                        });
+                    }
                 });
             }
         });

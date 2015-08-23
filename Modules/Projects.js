@@ -10,6 +10,8 @@ var Project = function (models, event) {
     var prioritySchema = mongoose.Schemas['Priority'];
     var fs = require('fs');
 
+    var CONSTANTS = require('../constants/mainConstants');
+
     event.on('updateContent', updateContent);//binding for Event
 
     function updateContent(request, response, projectId, eventType, tasks, data) {
@@ -268,8 +270,8 @@ var Project = function (models, event) {
                     if (data.EndDate) {
                         _project.EndDate = data.EndDate;
                     }
-                    if (data.targetEndDate) {
-                        _project.TargetEndDate = data.targetEndDate;
+                    if (data.TargetEndDate) {
+                        _project.TargetEndDate = data.TargetEndDate;
                     }
                     if (data.sequence) {
                         _project.sequence = data.sequence;
@@ -280,14 +282,17 @@ var Project = function (models, event) {
                     if (data.projecttype) {
                         _project.projecttype = data.projecttype;
                     }
-                    if (data.workflow) {
-                        _project.workflow = data.workflow;
+                    if (data.workflow._id) {
+                        _project.workflow._id = data.workflow._id;
+                        _project.workflow.name = data.workflow.name;
                     }
-                    if (data.customer) {
-                        _project.customer = data.customer;
+                    if (data.customer._id) {
+                        _project.customer._id = data.customer._id;
+                        _project.customer.name = data.customer.name;
                     }
-                    if (data.projectmanager) {
-                        _project.projectmanager = data.projectmanager;
+                    if (data.projectmanager._id) {
+                        _project.projectmanager._id = data.projectmanager._id;
+                        _project.projectmanager.name = data.projectmanager.name;
                     }
 
                     if (data.notes) {
@@ -296,6 +301,10 @@ var Project = function (models, event) {
 
                     if (data.health) {
                         _project.health = data.health;
+                    }
+
+                    if (data.bonus){
+                        _project.bonus = data.bonus;
                     }
 
                     _project.save(function (err, result) {
@@ -352,7 +361,7 @@ var Project = function (models, event) {
                                 {
                                     $match: {
                                         $and: [
-                                            {workflow: objectId(res._id.toString())},
+                                            {'workflow._id': objectId(res._id.toString())},
                                             {
                                                 $or: [
                                                     {
@@ -391,8 +400,8 @@ var Project = function (models, event) {
                                 function (err, result) {
                                     if (!err) {
                                         var query = models.get(req.session.lastDb, "Project", projectSchema).find().where('_id').in(result);
-                                        query.select("projectName projectmanager _id health").
-                                            populate('projectmanager', 'name _id').
+                                        query.select("projectName projectmanager _id health workflow").
+                                            // populate('projectmanager._id', 'name _id').
                                             exec(function (error, _res) {
                                                 if (!error) {
                                                     res = {}
@@ -482,7 +491,7 @@ var Project = function (models, event) {
                                             },
                                             {
                                                 $group: {
-                                                    _id: "$workflow",
+                                                    _id: "$workflow._id",
                                                     count: {$sum: 1}
 
                                                 }
@@ -568,6 +577,7 @@ var Project = function (models, event) {
                                 var query = models.get(req.session.lastDb, "Project", projectSchema).find().where('_id').in(result);
                                 query.select("_id projectName projectShortDesc")
                                     .lean()
+                                    .sort({'projectName': 1})
                                     .exec(function (error, _res) {
                                         if (!error) {
                                             res['data'] = _res;
@@ -585,6 +595,32 @@ var Project = function (models, event) {
                     next(err);
                 }
             });
+    };
+
+    function caseFilter(filter) {
+        var condition = [];
+
+        for (var key in filter) {
+            switch (key) {
+                case 'workflow':
+                    condition.push({'workflow._id': {$in: filter.workflow.value.objectID()}});
+                    break;
+                case 'project':
+                    condition.push({'project._id': {$in: filter.project.value.objectID()}});
+                    break;
+                case 'customer':
+                    condition.push({'customer._id': {$in: filter.customer.value.objectID()}});
+                    break;
+                case 'projectmanager':
+                    condition.push({'projectmanager._id': {$in: filter.projectmanager.value.objectID()}});
+                    break;
+                case 'name':
+                    condition.push({'_id': {$in: filter.name.value.objectID()}});
+                    break;
+            }
+        }
+
+        return condition;
     };
 
     function getProjectsForList(req, data, response) {
@@ -640,40 +676,41 @@ var Project = function (models, event) {
                         },
                         function (err, result) {
                             if (!err) {
-                                var query = models.get(req.session.lastDb, "Project", projectSchema)
-                                    .find()
-                                    .where('_id').in(result);
+                                var obj = {'$and': [{_id: {$in: result}}]};
+
                                 /*if (data && data.filter && data.filter.workflow) {
-                                    data.filter.workflow = data.filter.workflow.map(function (item) {
-                                        return item === "null" ? null : item;
-                                    });
+                                 data.filter.workflow = data.filter.workflow.map(function (item) {
+                                 return item === "null" ? null : item;
+                                 });
 
-                                    query.where('workflow').in(data.filter.workflow);
+                                 query.where('workflow').in(data.filter.workflow);
 
-                                } */
-                            if (data && data.filter) {
-                                for (var key in data.filter) {
-                                    switch (key) {
-                                        case 'workflow':
-                                            data.filter.workflow = data.filter.workflow.map(function (item) {
-                                                return item === "null" ? null : item;
-                                            });
-                                            query.where('workflow').in(data.filter.workflow);
-                                            break;
-                                        case 'project':
-                                            query.where('projectName').in(data.filter.project);
-                                            break;
-                                        case 'startDate':
-                                            query.where('StartDate').in(data.filter.startDate);
-                                            break;
-                                        case 'endDate':
-                                            query.where('EndDate').in(data.filter.endDate);
-                                            break;
-                                    }
+                                 } */
+                                if (data && data.filter) {
+                                    obj['$and'].push({$and: caseFilter(data.filter)});
+                                    /*for (var key in data.filter) {
+                                     switch (key) {
+                                     case 'workflow':
+                                     data.filter.workflow = data.filter.workflow.map(function (item) {
+                                     return item === "null" ? null : item;
+                                     });
+                                     query.where('workflow').in(data.filter.workflow);
+                                     break;
+                                     case 'project':
+                                     query.where('projectName').in(data.filter.project);
+                                     break;
+                                     case 'startDate':
+                                     query.where('StartDate').in(data.filter.startDate);
+                                     break;
+                                     case 'endDate':
+                                     query.where('EndDate').in(data.filter.endDate);
+                                     break;
+                                     }
+                                     }*/
                                 }
-                            } else if (data && (!data.newCollection || data.newCollection === 'false')) {
-                                    query.where('workflow').in([]);
-                                }
+                                var query = models.get(req.session.lastDb, "Project", projectSchema)
+                                    .find(obj);
+
                                 if (data.sort) {
                                     query.sort(data.sort);
                                 } else {
@@ -682,9 +719,9 @@ var Project = function (models, event) {
                                 query.select("_id createdBy editedBy workflow projectName health customer progress StartDate EndDate TargetEndDate").
                                     populate('createdBy.user', 'login').
                                     populate('editedBy.user', 'login').
-                                    populate('projectmanager', 'name').
-                                    populate('customer', 'name').
-                                    populate('workflow').
+                                    //populate('projectmanager', 'name').
+                                    // populate('customer', 'name').
+                                    // populate('workflow._id', 'status').
                                     skip((data.page - 1) * data.count).
                                     limit(data.count).
                                     exec(function (error, _res) {
@@ -777,7 +814,7 @@ var Project = function (models, event) {
                             if (!err) {
                                 var query = models.get(req.session.lastDb, "Project", projectSchema).find().where('_id').in(result);
                                 query.select("_id TargetEndDate projectmanager projectName health").
-                                    populate('projectmanager', 'name _id').
+                                    // populate('projectmanager', 'name _id').
                                     exec(function (error, _res) {
                                         if (!error) {
                                             var endThisWeek = new Date();
@@ -879,35 +916,21 @@ var Project = function (models, event) {
                         function (err, result) {
                             if (!err) {
 
-                                var query = models.get(req.session.lastDb, "Project", projectSchema).find().where('_id').in(result);
+                                var qObj = {$and: [{_id: {$in: result}}]};
+                                //var condition;
 
                                 if (data && data.filter) {
-                                    for (var key in data.filter) {
-                                        switch (key) {
-                                            case 'workflow':
-                                                data.filter.workflow = data.filter.workflow.map(function (item) {
-                                                    return item === "null" ? null : item;
-                                                });
-                                                query.where('workflow').in(data.filter.workflow);
-                                                break;
-                                            case 'project':
-                                                query.where('projectName').in(data.filter.project);
-                                                break;
-                                            case 'startDate':
-                                                query.where('StartDate', {$gte: new Date(data.filter.startDate[0].start), $lte: new Date(data.filter.startDate[0].end)});
-                                                break;
-                                            case 'endDate':
-                                                query.where('EndDate', {$gte: new Date(data.filter.endDate[0].start), $lte: new Date(data.filter.endDate[0].end)});
-                                                break;
-                                        }
-                                    }
-                                } else if (data && (!data.newCollection || data.newCollection === 'false')) {
-                                    query.where('workflow').in([]);
+
+                                    qObj['$and'].push({$and: caseFilter(data.filter)});
                                 }
+
+                                var query = models.get(req.session.lastDb, "Project", projectSchema).find(qObj);
+
+                                /*if (data && (!data.newCollection || data.newCollection === 'false')) {
+                                 query.where('workflow').in([]);
+                                 }*/
+
                                 query.select("_id projectName task workflow projectmanager customer health").
-                                    populate('workflow', 'name').
-                                    populate('projectmanager', 'name').
-                                    populate('customer', 'name').
                                     skip((data.page - 1) * data.count).
                                     limit(data.count).
                                     exec(function (error, _res) {
@@ -932,9 +955,9 @@ var Project = function (models, event) {
 
     function getById(req, data, response) {
         var query = models.get(req.session.lastDb, 'Project', projectSchema).findById(data.id);
-        query.populate('projectmanager', 'name _id');
-        query.populate('customer', 'name _id');
-        query.populate('workflow').
+        //query.//populate('projectmanager', 'name _id');
+        //query.populate('customer', 'name _id');
+        query.//populate('workflow._id').
             populate('bonus.employeeId', '_id name').
             populate('bonus.bonusId', '_id name').
             populate('createdBy.user', '_id login').
@@ -962,17 +985,42 @@ var Project = function (models, event) {
         }
         res['showMore'] = false;
 
+        if (data && data.type !== 'Tasks' && data.filter) {
+
+            addObj['$and'] = caseFilter(data.filter);
+
+            /*for (var key in data.filter) {
+             var condition = data.filter[key];
+
+             switch (key) {
+             case 'workflow':
+             condition = condition.map(function (item) {
+             return item === "null" ? null : item;
+             });
+             addObj['workflow'] = {$in: condition.objectID()};
+             break;
+             case 'project':
+             addObj['projectName'] = {$in: condition};
+             break;
+             case 'startDate':
+             addObj['StartDate'] = {$in: condition};
+             break;
+             case 'endDate':
+             addObj['EndDate'] = {$in: condition};
+             break;
+             }
+             }*/
+
+            /* data.filter.workflow = data.filter.workflow.map(function (item) {
+             return item === "null" ? null : item;
+             });
+             addObj['workflow'] = {$in: data.filter.workflow.objectID()};*/
+        }
+
         if (data && data.parrentContentId) {
-            addObj['_id'] = objectId(data.parrentContentId);
+            addObj['$and'].push({_id: objectId(data.parrentContentId)});
         }
-        if (data && data.type !== 'Tasks' && data.filter && data.filter.workflow) {
-            data.filter.workflow = data.filter.workflow.map(function (item) {
-                return item === "null" ? null : item;
-            });
-            addObj['workflow'] = {$in: data.filter.workflow.objectID()};
-        } else if (data && data.type !== 'Tasks' && data.newCollection === 'false') {
-            addObj['workflow'] = {$in: []};
-        }
+
         models.get(req.session.lastDb, "Department", department).aggregate(
             {
                 $match: {
@@ -1031,14 +1079,14 @@ var Project = function (models, event) {
                                 if (data && data.type == 'Tasks') {
                                     var query = models.get(req.session.lastDb, 'Tasks', tasksSchema).
                                         where('project').in(projectsId.objectID());
-                                    if (data && data.filter && data.filter.workflow) {
-                                        data.filter.workflow = data.filter.workflow.map(function (item) {
-                                            return item === "null" ? null : item;
-                                        });
-                                        query.where('workflow').in(data.filter.workflow);
-                                    } else if (data && (!data.newCollection || data.newCollection === 'false')) {
-                                        query.where('workflow').in([]);
-                                    }
+                                    /*if (data && data.filter && data.filter.workflow) {
+                                     data.filter.workflow = data.filter.workflow.map(function (item) {
+                                     return item === "null" ? null : item;
+                                     });
+                                     query.where('workflow').in(data.filter.workflow);
+                                     } else if (data && (!data.newCollection || data.newCollection === 'false')) {
+                                     query.where('workflow').in([]);
+                                     }*/
                                     query.exec(function (err, result) {
                                         if (!err) {
                                             if (data.currentNumber && data.currentNumber < result.length) {
@@ -1182,9 +1230,17 @@ var Project = function (models, event) {
     }
 
     function update(req, _id, data, res, remove) {
+        var dbName = req.session.lastDb;
+        var wTrackSchema;
+        var wTrackModel;
+
+        var InvoiceSchema;
+        var Invoice;
+
         delete data._id;
         delete data.createdBy;
         delete data.task;
+
         if (data.groups) {
             if (data.groups.users) {
                 data.groups.users = data.groups.users.map(function (currentValue) {
@@ -1198,15 +1254,17 @@ var Project = function (models, event) {
             }
         }
         if (data.workflow && data.workflow._id) {
-            data.workflow = data.workflow._id;
+            data.workflow._id = data.workflow._id;
+            data.workflow.name = data.workflow.name;
         }
-        if (data.workflowForList || data.workflowForKanban) {//may be for delete
-            data = {
-                $set: {
-                    workflow: data.workflow
-                }
-            };
-        }
+        //if (data.workflowForList || data.workflowForKanban) {//may be for delete
+        //    data = {
+        //        $set: {
+        //            'workflow._id': data.workflow._id,
+        //            'workflow.name': data.workflow.name
+        //        }
+        //    };
+        //}
         if (data.notes && data.notes.length != 0 && !remove) {
             var obj = data.notes[data.notes.length - 1];
             obj._id = mongoose.Types.ObjectId();
@@ -1215,15 +1273,26 @@ var Project = function (models, event) {
             data.notes[data.notes.length - 1] = obj;
         }
 
-        var query = models.get(req.session.lastDb, 'Project', projectSchema).findByIdAndUpdate({_id: _id}, data);
+        var query = models.get(dbName, 'Project', projectSchema).findByIdAndUpdate({_id: _id}, data, {new: true});
         query.populate("editedBy.user", "login");
-        query.exec(function (err, projects) {
+        query.exec(function (err, project) {
             if (err) {
                 console.log(err);
                 logWriter.log("Project.js update project.update " + err);
                 res.send(500, {error: "Can't update Project"});
             } else {
-                res.send(200, projects);
+                res.send(200, project);
+
+                if (dbName === CONSTANTS.WTRACK_DB_NAME) {
+                    wTrackSchema = mongoose.Schemas['wTrack'];
+                    wTrackModel = models.get(dbName, 'wTrack', wTrackSchema);
+
+                    InvoiceSchema = mongoose.Schemas['wTrackInvoice'];
+                    Invoice = models.get(req.session.lastDb, 'wTrackInvoice', InvoiceSchema);
+
+                    event.emit('updateName', _id, wTrackModel, 'project._id', 'project.projectName', project.projectName);
+                    event.emit('updateName', _id, Invoice, 'project._id', 'project.name', project.projectName);
+                }
             }
         });
     };
@@ -1276,7 +1345,7 @@ var Project = function (models, event) {
                     fs.unlink(path, function (err) {
                         console.log(err);
                         fs.readdir(dir, function (err, files) {
-                            if (files.length === 0) {
+                            if (files && files.length === 0) {
                                 fs.rmdir(dir, function () {
                                 });
                             }
@@ -1293,6 +1362,7 @@ var Project = function (models, event) {
         delete data._id;
         delete data.createdBy;
         var fileName = data.fileName;
+        var progress
         delete data.fileName;
         if (data.notes && data.notes.length != 0) {
             var obj = data.notes[data.notes.length - 1];
@@ -1308,13 +1378,18 @@ var Project = function (models, event) {
         if (data && data.EndDate)
             data.duration = returnDuration(data.StartDate, data.EndDate);
         if (data.estimated && data.estimated != 0) {
-            data.progress = Math.round((data.logged / data.estimated) * 100);
-            var StartDate = (data.StartDate) ? new Date(data.StartDate) : new Date();
-            data.EndDate = calculateTaskEndDate(StartDate, data.estimated);
-            data.duration = returnDuration(data.StartDate, data.EndDate);
+            if (data.progress === 100) {
+                data.progress = 100;
+            } else {
+                data.progress = Math.round((data.logged / data.estimated) * 100);
+                var StartDate = (data.StartDate) ? new Date(data.StartDate) : new Date();
+                data.EndDate = calculateTaskEndDate(StartDate, data.estimated);
+                data.duration = returnDuration(data.StartDate, data.EndDate);
+            }
         } else if (!data.estimated && data.logged) {
             data.progress = 0;
         }
+
         if (data.assignedTo && typeof (data.assignedTo) == 'object') {
             data.assignedTo = data.assignedTo._id;
         }
@@ -1382,7 +1457,7 @@ var Project = function (models, event) {
                         fs.unlink(path, function (err) {
                             console.log(err);
                             fs.readdir(dir, function (err, files) {
-                                if (files.length === 0) {
+                                if (files && files.length === 0) {
                                     fs.rmdir(dir, function () {
                                     });
                                 }
@@ -1462,6 +1537,7 @@ var Project = function (models, event) {
                     }
                     if (data.assignedTo) {
                         _task.assignedTo = data.assignedTo;
+                        _task.assignedTo = data.assignedTo;
                     }
                     if (data.type) {
                         _task.type = data.type;
@@ -1532,7 +1608,7 @@ var Project = function (models, event) {
                         _task.EndDate = calculateTaskEndDate(StartDate, data.estimated);
                         _task.duration = returnDuration(StartDate, _task.EndDate);
                     }
-                    event.emit('updateSequence', models.get(req.session.lastDb, 'Tasks', tasksSchema), "sequence", 0, 0, _task.workflow, _task.workflow, true, false, function (sequence) {
+                    event.emit('updateSequence', models.get(req.session.lastDb, 'Tasks', tasksSchema), "sequence", 0, 0, _task.workflow._id, _task.workflow._id, true, false, function (sequence) {
                         _task.sequence = sequence;
                         _task.save(function (err, _task) {
                             if (err) {
@@ -1703,15 +1779,15 @@ var Project = function (models, event) {
                                     where('project').in(projectsId.objectID()).
                                     where('workflow', objectId(data.workflowId));
 
-                                    if (data.filter && data.filter.type) {
-                                        query.where('type').in(data.filter.type);
+                                if (data.filter && data.filter.type) {
+                                    query.where('type').in(data.filter.type);
                                 }
 
 
                                 query.select("_id assignedTo workflow editedBy.date project taskCount summary type remaining priority sequence").
                                     populate('assignedTo', 'name').
                                     populate('project', 'projectShortDesc').
-                                    populate('workflow', '_id').
+                                    // populate('workflow._id', '_id').
                                     sort({'sequence': -1}).
                                     limit(req.session.kanbanSettings.tasks.countPerPage).
                                     exec(function (err, result) {
@@ -1807,23 +1883,22 @@ var Project = function (models, event) {
                                     where('project').in(projectsId.objectID());
                                 if (data && data.filter) {
 
-                                    for (var key in data.filter) {
-                                        switch (key) {
-                                            case 'workflow':
-                                                data.filter.workflow = data.filter.workflow.map(function (item) {
-                                                    return item === "null" ? null : item;
-                                                });
-                                                query.where('workflow').in(data.filter.workflow);
-                                                break;
-                                            case 'type':
-                                                query.where('type').in(data.filter.type);
-                                                break;
-                                        }
-                                    }
+                                    /*for (var key in data.filter) {
+                                     switch (key) {
+                                     case 'workflow':
+                                     data.filter.workflow = data.filter.workflow.map(function (item) {
+                                     return item === "null" ? null : item;
+                                     });
+                                     query.where('workflow').in(data.filter.workflow);
+                                     break;
+                                     case 'type':
+                                     query.where('type').in(data.filter.type);
+                                     break;
+                                     }
+                                     }*/
 
-                                } else if (data && (!data.newCollection || data.newCollection === 'false')) {
-                                    query.where('workflow').in([]);
                                 }
+
                                 if (data.sort) {
                                     query.sort(data.sort);
                                 } else {

@@ -161,6 +161,10 @@ define([
                         mobile: $.trim(thisEl.find('#mobileInput').val()),
                         fax: $.trim(thisEl.find('#faxInput').val())
                     },
+                    social: {
+                        LI: $.trim(thisEl.find('#LI').val()),
+                        FB: $.trim(thisEl.find('#FB').val())
+                    },
                     email: $.trim(thisEl.find('#emailInput').val()),
                     salesPurchases: {
                         isCustomer: isCustomer,

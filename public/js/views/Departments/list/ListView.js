@@ -3,7 +3,7 @@ define([
     'views/Departments/CreateView',
     'models/DepartmentsModel',
     'views/Departments/list/ListItemView',
-    'views/Departments/EditView',
+    'views/Departments/EditView'
 ],
 
 function (ListTemplate, CreateView, currentModel, ListItemView, EditView) {
@@ -79,14 +79,16 @@ function (ListTemplate, CreateView, currentModel, ListItemView, EditView) {
         },
         render: function () {
             $('.ui-dialog ').remove();
+
             this.$el.html(_.template(ListTemplate));
             var departments = this.collection.toJSON();
             var self = this;
+
             departments.forEach(function (elm, i) {
                 if (!elm.parentDepartment) {
                     self.$el.find("#groupList").append(self.createDepartmentListRow(elm, i + 1, "child"));
                 } else {
-                    var par = self.$el.find("[data-id='" + elm.parentDepartment._id + "']").removeClass('child').addClass('parent')
+                    var par = self.$el.find("[data-id='" + elm.parentDepartment._id + "']").removeClass('child').addClass('parent');
                     if (par.find("ul").length === 0) {
                         par.append("<ul style='margin-left:20px'></ul>");
                     }
@@ -125,7 +127,7 @@ function (ListTemplate, CreateView, currentModel, ListItemView, EditView) {
 
         showMore: function () {
             _.bind(this.collection.showMore, this.collection);
-            this.collection.showMore({ count: 50 });
+            this.collection.showMore({ count: 100 });
         },
 
         showMoreContent: function (newModels) {

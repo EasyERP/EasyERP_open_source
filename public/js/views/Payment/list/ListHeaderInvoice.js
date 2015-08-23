@@ -4,8 +4,8 @@
 define([
     "text!templates/Payment/list/ListHeaderInvoice.html",
     "text!templates/Payment/list/ListTemplateInvoice.html",
-    'collections/Payment/payments'
-], function (listHeaderTemplate, listTemplate, paymentCollection) {
+    'helpers'
+], function (listHeaderTemplate, listTemplate, helpers) {
     var PaymentItemsTemplate = Backbone.View.extend({
         el: '#payments-container',
 
@@ -30,7 +30,11 @@ define([
             thisEl.html(this.template());
 
             itemsContainer = thisEl.find('#paymentsList');
-            itemsContainer.append(_.template(listTemplate, {paymentCollection: payments}));
+            itemsContainer.append(_.template(listTemplate, {
+                paymentCollection: payments,
+                currencySplitter: helpers.currencySplitter
+            }));
+
 
             return this;
         }

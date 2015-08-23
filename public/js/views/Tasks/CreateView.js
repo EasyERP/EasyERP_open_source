@@ -147,7 +147,8 @@ define([
                },
                render: function () {
                    var afterPid = (window.location.hash).split('pId=')[1];
-                   var projectID = afterPid ? afterPid.split('/')[0] : null;
+                   var forKanban = (window.location.hash).split('kanban/')[1];
+                   var projectID = afterPid ? afterPid.split('/')[0] : forKanban;
                    var formString = this.template();
                    var self = this;
                    this.$el = $(formString).dialog({

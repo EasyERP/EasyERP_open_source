@@ -25,7 +25,8 @@ define([
                 } else {
                     this.$el.append(_.template(PaymentListTemplate, {
                         paymentCollection: this.collection.toJSON(),
-                        startNumber: this.startNumber
+                        startNumber: this.startNumber,
+                        currencySplitter: helpers.currencySplitter
                     }));
                 }
             }

@@ -43,6 +43,9 @@ module.exports = function (app, mainDb) {
     var vacationRouter = require('./vacation')(models);
     var bonusTypeRouter = require('./bonusType')(models);
     var dashboardRouter = require('./dashboard')(models);
+    var filterRouter = require('./filter')(models);
+    var productCategoriesRouter = require('./productCategories')(models, event);
+    var customersRouter = require('./customers')(models, event);
 
     app.get('/', function (req, res, next) {
         res.sendfile('index.html');
@@ -54,6 +57,7 @@ module.exports = function (app, mainDb) {
         res.sendfile('index.html');
     });
 
+    app.use('/filter', filterRouter);
     app.use('/product', productRouter);
     app.use('/order', orderRouter);
     app.use('/invoice', invoiceRouter);
@@ -83,6 +87,8 @@ module.exports = function (app, mainDb) {
     app.use('/monthHours', monthHoursRouter);
     app.use('/bonusType', bonusTypeRouter);
     app.use('/dashboard', dashboardRouter);
+    app.use('/category', productCategoriesRouter);
+    app.use('/customers', customersRouter);
     app.get('/getDBS', function (req, res) {
         res.send(200, {dbsNames: dbsNames});
     });
@@ -536,6 +542,15 @@ module.exports = function (app, mainDb) {
         if (req.body.oldpass && req.body.pass) {
             data.changePass = true;
         }
+        requestHandler.updateCurrentUser(req, res, data);
+    });
+
+    app.patch('/currentUser', function (req, res) {
+        var data = {};
+        if (req.body){
+            data.savedFilters = req.body;
+        }
+
         requestHandler.updateCurrentUser(req, res, data);
     });
 

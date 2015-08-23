@@ -25,16 +25,17 @@ define([
             "easyErp/Revenue": "revenue",
             "easyErp/Attendance": "attendance",
             "easyErp/Profiles": "goToProfiles",
+            "easyErp/productSettings": "productSettings",
             "easyErp/myProfile": "goToUserPages",
             "easyErp/Workflows": "goToWorkflows",
             "easyErp/Dashboard": "goToDashboard",
             "easyErp/DashBoardVacation": "dashBoardVacation",
+            "easyErp/HrDashboard": "hrDashboard",
             "easyErp/projectDashboard": "goToProjectDashboard",
             "easyErp/:contentType": "getList",
 
             "*any": "any"
         },
-
 
 
         initialize: function () {
@@ -80,6 +81,16 @@ define([
                     $(".list2 tbody").find("[data-id='false']").remove();
                 }
             });
+            if (!App || !App.currentUser) {
+                dataService.getData('/currentUser', null, function (response) {
+                    if (response && !response.error) {
+                        App.currentUser = response.user;
+                        App.savedFilters = response.savedFilters;
+                    } else {
+                        console.log('can\'t fetch currentUser');
+                    }
+                });
+            };
         },
 
         dashBoardVacation: function(){
@@ -106,6 +117,44 @@ define([
                     self.main("DashBoardVacation");
                 } else {
                     self.mainView.updateMenu("DashBoardVacation");
+                }
+
+                require([contentViewUrl], function (contentView) {
+                    var contentview;
+
+                    custom.setCurrentVT('list');
+
+                    contentview = new contentView({startTime: startTime});
+
+                    self.changeView(contentview, true);
+                });
+            }
+        },
+
+        hrDashboard: function(){
+            var self = this;
+
+            if(!this.isAuth) {
+                this.checkLogin(function (success) {
+                    if (success) {
+                        self.isAuth = true;
+                        renderDash();
+                    } else {
+                        self.redirectTo();
+                    }
+                });
+            } else {
+                renderDash();
+            }
+
+            function renderDash () {
+                var startTime = new Date();
+                var contentViewUrl = "views/hrDashboard/index";
+
+                if (self.mainView === null) {
+                    self.main("HrDashboard");
+                } else {
+                    self.mainView.updateMenu("HrDashboard");
                 }
 
                 require([contentViewUrl], function (contentView) {
@@ -237,6 +286,59 @@ define([
                         context.changeView(contentview);
                         context.changeTopBarView(topbarView);
                         var url = '#easyErp/Profiles';
+                        Backbone.history.navigate(url, {replace: true});
+                    }
+                });
+            }
+        },
+
+        productSettings: function () {
+            var self = this;
+
+            this.checkLogin(function (success) {
+                if (success) {
+                    goSettings(self);
+                } else {
+                   self.redirectTo();
+                }
+            });
+
+            function goSettings (context) {
+                var startTime = new Date();
+                var contentViewUrl = 'views/settingsProduct/ContentView';
+                var topBarViewUrl = 'views/settingsProduct/TopBarView';
+                var collectionUrl = 'collections/Product/ProductCategories';
+                var self = context;
+
+                if (context.mainView === null) {
+                    context.main("productSettings");
+                } else {
+                    context.mainView.updateMenu("productSettings");
+                }
+
+                require([contentViewUrl, topBarViewUrl, collectionUrl], function (contentView, topBarView, contentCollection) {
+                    var collection = new contentCollection();
+
+                    collection.bind('reset', _.bind(createViews, self));
+                    custom.setCurrentVT('list');
+
+                    function createViews () {
+                        collection.unbind('reset');
+
+                        var url;
+                        var contentview = new contentView({collection: collection, startTime: startTime});
+                        var topbarView = new topBarView({actionType: "Content"});
+
+                        topbarView.bind('createEvent', contentview.createItem, contentview);
+                        topbarView.bind('editEvent', contentview.editItem, contentview);
+                        topbarView.bind('deleteEvent', contentview.deleteItems, contentview);
+                        topbarView.bind('saveEvent', contentview.saveItem, contentview);
+
+                        context.changeView(contentview);
+                        context.changeTopBarView(topbarView);
+
+                        url = '#easyErp/productSettings';
+
                         Backbone.history.navigate(url, {replace: true});
                     }
                 });
@@ -442,18 +544,23 @@ define([
                 }
                 var newCollection = true;
                 var self = context;
+                var savedFilter;
                 var startTime = new Date();
                 var contentViewUrl = "views/" + contentType + "/list/ListView";
                 var topBarViewUrl = "views/" + contentType + "/TopBarView";
                 var collectionUrl = context.buildCollectionRoute(contentType);
                 var navigatePage = (page) ? parseInt(page) : 1;
-                var count = (countPerPage) ? parseInt(countPerPage) || 50 : 50;
+                var count = (countPerPage) ? parseInt(countPerPage) || 100 : 100;
 
-                if (filter === 'empty') {
+               // if (filter === 'empty') {
+                if (!filter) {
                     newCollection = false;
                 } else if (filter) {
                     filter = JSON.parse(filter);
                 }
+
+                savedFilter = custom.savedFilters(contentType, filter);
+
                 if (context.mainView === null) {
                     context.main(contentType);
                 } else {
@@ -464,7 +571,7 @@ define([
                         viewType: 'list',
                         page: navigatePage,
                         count: count,
-                        filter: filter,
+                        filter: savedFilter,
                         parrentContentId: parrentContentId,
                         contentType: contentType,
                         newCollection: newCollection
@@ -479,7 +586,7 @@ define([
                         var contentview = new contentView({
                             collection: collection,
                             startTime: startTime,
-                            filter: filter,
+                            filter: savedFilter,
                             newCollection: newCollection
                         });
 
@@ -488,6 +595,7 @@ define([
                         topbarView.bind('saveEvent', contentview.saveItem, contentview);
                         topbarView.bind('deleteEvent', contentview.deleteItems, contentview);
                         topbarView.bind('generateInvoice', contentview.generateInvoice, contentview);
+                        topbarView.bind('copyRow', contentview.copyRow, contentview);
 
                         collection.bind('showmore', contentview.showMoreContent, contentview);
                         context.changeView(contentview);
@@ -647,12 +755,17 @@ define([
                 var contentViewUrl;
                 var topBarViewUrl = "views/" + contentType + "/TopBarView";
                 var collectionUrl;
-                var count = (countPerPage) ? parseInt(countPerPage) || 50 : 50;
-                if (filter === 'empty') {
+                var savedFilter;
+                var count = (countPerPage) ? parseInt(countPerPage) || 100 : 100;
+                //if (filter === 'empty') {
+                if (!filter) {
                     newCollection = false;
                 } else if (filter) {
                     filter = JSON.parse(filter);
                 }
+
+                savedFilter = custom.savedFilters(contentType, filter);
+
                 if (context.mainView === null) {
                     context.main(contentType);
                 } else {
@@ -667,7 +780,7 @@ define([
                         viewType: 'thumbnails',
                         //page: 1,
                         count: count,
-                        filter: filter,
+                        filter: savedFilter,
                         contentType: contentType,
                         newCollection: newCollection
                     })
@@ -681,7 +794,7 @@ define([
                         var contentview = new contentView({
                             collection: collection,
                             startTime: startTime,
-                            filter: filter,
+                            filter: savedFilter,
                             newCollection: newCollection
                         });
                         var topbarView = new topBarView({actionType: "Content", collection: collection});
@@ -709,8 +822,8 @@ define([
         },
 
         getList: function (contentType) {
-
             this.contentType = contentType;
+
             contentType = this.testContent(contentType);
             var viewType = custom.getCurrentVT({contentType: contentType});
             Backbone.history.navigate('#easyErp/' + contentType + '/' + viewType, {trigger: true, replace: true});

@@ -155,8 +155,12 @@
                 var amount;
                 var description;
 
-                var supplier = thisEl.find("#supplier").data("id") || null;
-                var salesPersonId = thisEl.find("#assigned").data("id") || null;
+                var supplier = thisEl.find("#supplier");
+                var supplierId = supplier.data("id") || null;
+                var supplierName = supplier.text() || null;
+                var salesPerson = thisEl.find("#assigned");
+                var salesPersonId = salesPerson.data("id") || null;
+                var salesPersonName = salesPerson.text() ? salesPerson.text() : null;
                 var paymentTermId = thisEl.find("#paymentTerms").data("id") || null;
                 var invoiceDate = thisEl.find("#invoiceDate").val();
                 var dueDate = thisEl.find("#dueDate").val();
@@ -165,7 +169,9 @@
                 var total = parseFloat(thisEl.find("#totalAmount").text());
                 var unTaxed = parseFloat(thisEl.find("#totalUntaxes").text());
 
-                var project = thisEl.find("#project").data('id');
+                var project = thisEl.find("#project");
+                var projectId = project.data('id');
+                var projectName = project.text();
 
                 var payments = {
                     total: total,
@@ -209,12 +215,21 @@
 
                 var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
                 var data = {
-                    supplier: supplier,
+                    supplier: {
+                        _id: supplierId,
+                        name: supplierName
+                    },
                     invoiceDate: invoiceDate,
                     dueDate: dueDate,
-                    project: project,
+                    project: {
+                        _id: projectId,
+                        name: projectName
+                    },
 
-                    salesPerson: salesPersonId,
+                    salesPerson: {
+                        _id: salesPersonId,
+                        name: salesPersonName
+                    },
                     paymentTerms: paymentTermId,
 
                     products: products,
@@ -226,7 +241,11 @@
                         group: groupsId
                     },
                     whoCanRW: whoCanRW,
-                    workflow: this.defaultWorkflow,
+                    workflow: {
+                        _id: this.defaultWorkflow._id,
+                        name: this.defaultWorkflow.name,
+                        status: this.defaultWorkflow.status
+                    },
                     name: name
 
                 };
@@ -260,6 +279,7 @@
             render: function (options) {
                 options.model = null;
                 options.balanceVisible = null;
+                options.total = (options.total/100).toFixed(2);
 
                 var notDiv;
                 var now = new Date();
@@ -276,7 +296,7 @@
                     resizable: true,
                     dialogClass: "edit-dialog",
                     title: "Create Invoice",
-                    width: '1000',
+                    width: '1200',
                     //width: 'auto',
                     position: {within: $("#wrapper")},
                     buttons: [
@@ -319,7 +339,7 @@
                     targetSource: 'invoice'
                 }, function (response) {
                     if (!response.error) {
-                        self.defaultWorkflow = response._id;
+                        self.defaultWorkflow = response;
                     }
                 });
 

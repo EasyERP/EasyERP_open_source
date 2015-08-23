@@ -36,6 +36,7 @@
             showMore: function (options) {
                 var that = this;
                 var filterObject = {};
+
                 if (options) {
                     for (var i in options) {
                         filterObject[i] = options[i];
@@ -47,6 +48,7 @@
                 if (options && options.count) {
                     this.namberToShow = options.count;
                 }
+
                 filterObject['page'] = this.page;
                 filterObject['count'] = this.namberToShow;
                 filterObject['filter'] = (options && options.filter) ? options.filter : {};
@@ -64,7 +66,6 @@
                 });
             },
 
-            parse: true,
             parse: function (response) {
                 return response.data;
             }

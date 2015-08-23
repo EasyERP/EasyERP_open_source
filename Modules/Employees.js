@@ -7,9 +7,18 @@ var Employee = function (event, models) {
     var employeeSchema = mongoose.Schemas['Employee'];
     var fs = require('fs');
 
+    var CONSTANTS = require('../constants/mainConstants');
+
     function getTotalCount(req, response) {
         var res = {};
         var data = {};
+
+        var condition;
+        var resArray = [];
+        var filtrElement = {};
+        var key;
+
+
         for (var i in req.query) {
             data[i] = req.query[i];
         }
@@ -17,7 +26,7 @@ var Employee = function (event, models) {
 
         var contentType = req.params.contentType;
         var optionsObject = {};
-        if (data.filter.letter)
+        if (data.filter && data.filter.letter)
             optionsObject['name.last'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
 
 
@@ -30,13 +39,89 @@ var Employee = function (event, models) {
             optionsObject['workflow'] = { $in: [] };
         }
 
+
         switch (contentType) {
             case ('Employees'): {
-                optionsObject['isEmployee'] = true;
+
+                for (var filterName in data.filter) {
+                    condition = data.filter[filterName]['value'];
+                    key = data.filter[filterName]['key'];
+
+                    switch (filterName) {
+                        case 'name':
+                            filtrElement[key] = {$in: condition.objectID()};
+                            resArray.push(filtrElement);
+                            break;
+                        case 'letter':
+                            filtrElement['name.last'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
+                            resArray.push(filtrElement);
+                            break;
+                        case 'department':
+                            filtrElement[key] = {$in: condition.objectID()};
+                            resArray.push(filtrElement);
+                            break;
+                        case 'manager':
+                            filtrElement[key] = {$in: condition.objectID()};
+                            resArray.push(filtrElement);
+                            break;
+                        case 'jobPosition':
+                            filtrElement[key] = {$in: condition.objectID()};
+                            resArray.push(filtrElement);
+                            break;
+                    }
+                };
+
+                resArray.push({'isEmployee': true});
+
+                if (resArray.length) {
+
+                    if (data && data.filter && data.filter.condition === 'or') {
+                        optionsObject['$or'] = resArray;
+                    } else {
+                        optionsObject['$and'] = resArray;
+                    }
+                }
             }
                 break;
             case ('Applications'): {
-                optionsObject['isEmployee'] = false;
+                for (var filterName in data.filter) {
+                    condition = data.filter[filterName]['value'];
+                    key = data.filter[filterName]['key'];
+
+                    switch (filterName) {
+                        case 'name':
+                            filtrElement[key] = {$in: condition.objectID()};
+                            resArray.push(filtrElement);
+                            break;
+                        case 'letter':
+                            filtrElement['name.last'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
+                            resArray.push(filtrElement);
+                            break;
+                        case 'department':
+                            filtrElement[key] = {$in: condition.objectID()};
+                            resArray.push(filtrElement);
+                            break;
+                        case 'manager':
+                            filtrElement[key] = {$in: condition.objectID()};
+                            resArray.push(filtrElement);
+                            break;
+                        case 'jobPosition':
+                            filtrElement[key] = {$in: condition.objectID()};
+                            resArray.push(filtrElement);
+                            break;
+                    }
+                };
+
+                resArray.push({'isEmployee': false});
+
+                if (resArray.length) {
+
+                    if (data && data.filter && data.filter.condition === 'or') {
+                        optionsObject['$or'] = resArray;
+                    } else {
+                        optionsObject['$and'] = resArray;
+                    }
+                }
             }
                 break;
         }
@@ -153,7 +238,7 @@ var Employee = function (event, models) {
             }
 
             function savetoDb(data) {
-                _employee = new models.get(req.session.lastDb, "Employees", employeeSchema)();
+                var _employee = new models.get(req.session.lastDb, "Employees", employeeSchema)();
                 if (data.uId) {
                     _employee.createdBy.user = data.uId;
                     //uId for edited by field on creation
@@ -214,6 +299,14 @@ var Employee = function (event, models) {
                     }
                     if (data.workPhones.mobile) {
                         _employee.workPhones.mobile = data.workPhones.mobile;
+                    }
+                }
+                if (data.social) {
+                    if (data.social.LI) {
+                        _employee.social.LI = data.social.LI;
+                    }
+                    if (data.social.FB) {
+                        _employee.social.FB = data.social.FB;
                     }
                 }
                 if (data.officeLocation) {
@@ -316,6 +409,9 @@ var Employee = function (event, models) {
                 if (data.nationality) {
                     _employee.nationality = data.nationality;
                 }
+                if (data.hire) {
+                    _employee.hire = getDate(data.hire);
+                }
                 ///////////////////////////////////////////////////
                 event.emit('updateSequence', models.get(req.session.lastDb, "Employees", employeeSchema), "sequence", 0, 0, _employee.workflow, _employee.workflow, true, false, function (sequence) {
                     _employee.sequence = sequence;
@@ -346,7 +442,7 @@ var Employee = function (event, models) {
         var query = models.get(req.session.lastDb, "Employees", employeeSchema).find();
         query.where('isEmployee', true);
         query.select('_id name').
-        sort({ 'name.first': 1 });
+            sort({ 'name.first': 1 });
         query.exec(function (err, result) {
             if (err) {
                 console.log(err);
@@ -428,7 +524,9 @@ var Employee = function (event, models) {
                         function (err, responseOpportunities) {
                             if (!err) {
                                 responseOpportunities.forEach(function (object) {
-                                    if (object.count > req.session.kanbanSettings.applications.countPerPage) data['showMore'] = true;
+                                    if (object.count > req.session.kanbanSettings.applications.countPerPage) {
+                                        data['showMore'] = true;
+                                    }
                                 });
                                 data['arrayOfObjects'] = responseOpportunities;
                                 res.send(data);
@@ -462,78 +560,107 @@ var Employee = function (event, models) {
     function getFilter(req, response) {
         var data = {};
         var optionsObject = {};
-        var or;
-        var filterObj;
+
+        var viewType;
+        var contentType;
+        var res = {};
+
+        var condition;
+        var resArray = [];
+        var filtrElement = {};
+        var key;
+
         for (var i in req.query) {
             data[i] = req.query[i];
         }
 
-        var viewType = data.viewType;
-        var contentType = data.contentType;
-        var res = {};
+        viewType = data.viewType;
+        contentType = data.contentType;
+
         res['data'] = [];
 
         switch (contentType) {
             case ('Employees'): {
-                //----------------------
-                optionsObject['$and'] = [];
-                optionsObject['$and'].push({'isEmployee': true});
 
-                if (data && data.filter) {
-                    optionsObject['$and'].push({$or: []});
-                    or = optionsObject['$and'][1]['$or'];
+                for (var filterName in data.filter) {
+                    condition = data.filter[filterName]['value'];
+                    key = data.filter[filterName]['key'];
 
-                    if (data.filter.department) {
-                        var arrOfObjectId = data.filter.department.objectID();
-                        or.push({ 'department': {$in: arrOfObjectId}});
+                    switch (filterName) {
+                        case 'name':
+                            filtrElement[key] = {$in: condition.objectID()};
+                            resArray.push(filtrElement);
+                            break;
+                        case 'letter':
+                            filtrElement['name.last'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
+                            resArray.push(filtrElement);
+                            break;
+                        case 'department':
+                            filtrElement[key] = {$in: condition.objectID()};
+                            resArray.push(filtrElement);
+                            break;
+                        case 'manager':
+                            filtrElement[key] = {$in: condition.objectID()};
+                            resArray.push(filtrElement);
+                            break;
+                        case 'jobPosition':
+                            filtrElement[key] = {$in: condition.objectID()};
+                            resArray.push(filtrElement);
+                            break;
                     }
-                    if (data.filter.Name) {
-                     or.push({ 'name.last': {$in: data.filter.Name}});
-                     }
-                    if (data.filter.Email) {
-                        or.push({ 'workEmail': {$in: data.filter.Email}});
+                };
+
+                resArray.push({'isEmployee': true});
+
+                if (resArray.length) {
+
+                    if (data && data.filter && data.filter.condition === 'or') {
+                        optionsObject['$or'] = resArray;
+                    } else {
+                        optionsObject['$and'] = resArray;
                     }
-
-                    if (!or.length) {
-                        optionsObject['$and'].pop();
-                    }
-
-
-                }
-
-                if (data.filter.letter) {
-                    optionsObject['name.last'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
-
                 }
             }
                 break;
             case ('Applications'): {
-                optionsObject['$and'] = [];
-                optionsObject['$and'].push({'isEmployee': false});
+                for (var filterName in data.filter) {
+                    condition = data.filter[filterName]['value'];
+                    key = data.filter[filterName]['key'];
 
-                if (data && data.filter) {
-                    filterObj = {};
-                    optionsObject['$and'].push(filterObj);
-                    filterObj['$or'] = [];
-                    or = filterObj['$or'];
-
-                    for (var key in data.filter) {
-
-                        switch (key) {
-                            case 'Name':
-                                or.push({ 'name.last': {$in: data.filter.Name}});
-                                break;
-                            case 'Email':
-                                or.push({ 'workEmail': {$in: data.filter.Email}});
-                                break;
-
-                        }
+                    switch (filterName) {
+                        case 'name':
+                            filtrElement[key] = {$in: condition.objectID()};
+                            resArray.push(filtrElement);
+                            break;
+                        case 'letter':
+                            filtrElement['name.last'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
+                            resArray.push(filtrElement);
+                            break;
+                        case 'department':
+                            filtrElement[key] = {$in: condition.objectID()};
+                            resArray.push(filtrElement);
+                            break;
+                        case 'manager':
+                            filtrElement[key] = {$in: condition.objectID()};
+                            resArray.push(filtrElement);
+                            break;
+                        case 'jobPosition':
+                            filtrElement[key] = {$in: condition.objectID()};
+                            resArray.push(filtrElement);
+                            break;
                     }
-                    if (!or.length) {
-                        optionsObject['$and'].pop();
+                };
+
+                resArray.push({'isEmployee': false});
+
+                if (resArray.length) {
+
+                    if (data && data.filter && data.filter.condition === 'or') {
+                        optionsObject['$or'] = resArray;
+                    } else {
+                        optionsObject['$and'] = resArray;
                     }
                 }
-
             }
                 break;
         }
@@ -606,17 +733,13 @@ var Employee = function (event, models) {
                                                 }
 
                                                 query.select('_id name createdBy editedBy department jobPosition manager dateBirth skype workEmail workPhones jobType').
-                                                    populate('manager', 'name').
-                                                    populate('jobPosition', 'name').
                                                     populate('createdBy.user', 'login').
-                                                    populate('department', 'departmentName').
                                                     populate('editedBy.user', 'login');
                                             }
                                                 break;
                                             case ('thumbnails'): {
                                                 query.select('_id name dateBirth age jobPosition relatedUser workPhones.mobile').
-                                                    populate('relatedUser', 'login').
-                                                    populate('jobPosition', 'name');
+                                                    populate('relatedUser', 'login')
                                             }
                                                 break;
 
@@ -631,7 +754,7 @@ var Employee = function (event, models) {
                                                     });
                                                     query.where('workflow').in(data.filter.workflow);
                                                 } else if (data && (!data.newCollection || data.newCollection === 'false')) {
-                                                    query.where('workflow').in([]);
+                                                    query;//.where('workflow').in([]);
                                                 }
 
                                                 if (data.sort) {
@@ -640,10 +763,7 @@ var Employee = function (event, models) {
                                                     query.sort({ "editedBy.date": -1 });
                                                 }
                                                 query.select('_id name createdBy editedBy jobPosition manager workEmail workPhones creationDate workflow personalEmail department jobType sequence').
-                                                    populate('manager', 'name').
-                                                    populate('jobPosition', 'name').
                                                     populate('createdBy.user', 'login').
-                                                    populate('department', 'departmentName').
                                                     populate('editedBy.user', 'login').
                                                     populate('workflow', 'name status');
                                             }
@@ -748,7 +868,7 @@ var Employee = function (event, models) {
         var res = {};
         var startTime = new Date();
         var filterObj = {};
-        var or;
+        var condition;
 
         res['data'] = [];
         res['workflowId'] = data.workflowId;
@@ -768,20 +888,28 @@ var Employee = function (event, models) {
                     filterObj['$and'] = [];
                     filterObj['$and'].push({isEmployee: false});
                     filterObj['$and'].push({workflow: objectId(data.workflowId)});
-                    filterObj['$and'].push({$or: []});
-                    or = filterObj['$and'][2]['$or'];
+                    /*filterObj['$and'].push({$or: []});
+                    or = filterObj['$and'][2]['$or'];*/
 
+                    if (data && data.filter) {
+                        if (data.filter.condition === 'or') {
+                            filterObj['$and'].push({$or: []});
+                            condition = filterObj['$and'][2]['$or'];
+                        } else {
+                            filterObj['$and'].push({$and: []});
+                            condition = filterObj['$and'][2]['$and'];
+                        }
 
-                    if ( data.filter && data.filter.Name) {
-                        or .push({ 'name.last': {$in: data.filter.Name}});
+                        if (data.filter && data.filter.Name) {
+                            condition.push({'name.last': {$in: data.filter.Name}});
+                        }
+                        if (data.filter && data.filter.Email) {
+                            condition.push({'workEmail': {$in: data.filter.Email}});
+                        }
+                        if (!condition.length) {
+                            filterObj['$and'].pop();
+                        }
                     }
-                    if ( data.filter && data.filter.Email) {
-                        or .push({ 'workEmail': {$in: data.filter.Email}});
-                    }
-                    if (!filterObj['$and'][2]['$or'].length) {
-                       filterObj['$and'].pop();
-                    }
-
                     models.get(req.session.lastDb, "Employees", employeeSchema).aggregate(
                         {
                             $match: {
@@ -827,7 +955,6 @@ var Employee = function (event, models) {
                                 models.get(req.session.lastDb, "Employees", employeeSchema).
                                     where('_id').in(responseOpportunities).
                                     select("_id name proposedSalary jobPosition nextAction workflow editedBy.date sequence").
-                                    populate('jobPosition', 'name').
                                     populate('workflow', '_id').
                                     sort({ 'sequence': -1 }).
                                     limit(req.session.kanbanSettings.applications.countPerPage).
@@ -862,13 +989,10 @@ var Employee = function (event, models) {
             data[i] = req.query[i];
         }
         var query = models.get(req.session.lastDb, "Employees", employeeSchema).findById(data.id);
-        query.populate('manager', 'name _id');
-        query.populate('department', 'departmentName _id');
         query.populate('coach', 'name _id');
         query.populate('relatedUser', 'login _id');
-        query.populate('jobPosition', 'name _id');
         query.populate('workflow').
-			populate('createdBy.user').
+            populate('createdBy.user').
             populate('editedBy.user').
             populate('groups.users').
             populate('groups.group').
@@ -885,7 +1009,47 @@ var Employee = function (event, models) {
 
     }
 
+    function updateRefs (result, dbName, _id) {
+        var EmployeeSchema;
+        var EmployeeModel;
+        var ProjectSchema;
+        var ProjectModel;
+        var InvoiceSchema;
+        var Invoice;
+        var PaymentSchema;
+        var Payment;
+
+        var fullName;
+
+        if (dbName === CONSTANTS.WTRACK_DB_NAME) {
+            EmployeeSchema = mongoose.Schemas['Employee'];
+            EmployeeModel = models.get(dbName, 'Employee', EmployeeSchema);
+
+            ProjectSchema = mongoose.Schemas['Project'];
+            ProjectModel = models.get(dbName, 'Project', ProjectSchema);
+
+            InvoiceSchema = mongoose.Schemas['wTrackInvoice'];
+            Invoice = models.get(dbName, 'wTrackInvoice', InvoiceSchema);
+
+            PaymentSchema = mongoose.Schemas['wTrackPayment'];
+            Payment = models.get(dbName, 'wTrackPayment', PaymentSchema);
+
+            fullName = result.name.last ? (result.name.first + ' ' + result.name.last) : result.name.first;
+
+            event.emit('updateName', _id, EmployeeModel, 'manager._id', 'manager.name', fullName);
+            event.emit('updateName', _id, ProjectModel, 'projectmanager._id', 'projectmanager.name', fullName);
+            event.emit('updateName', _id, ProjectModel, 'customer._id', 'customer.name', fullName);
+            event.emit('updateName', _id, Invoice, 'salesPerson._id', 'salesPerson.name', fullName);
+            event.emit('updateName', _id, Payment, 'invoice.assigned._id', 'invoice.assigned.name', fullName);
+
+        }
+    };
+
     function updateOnlySelectedFields(req, _id, data, res) {
+        var dbName = req.session.lastDb;
+        var UsersSchema = mongoose.Schemas['User'];
+        var UsersModel = models.get(dbName, 'Users',  UsersSchema);
+
         var fileName = data.fileName;
         var dataObj = {};
         var query = {};
@@ -929,6 +1093,8 @@ var Employee = function (event, models) {
                         models.get(req.session.lastDb, 'Employees', employeeSchema).findByIdAndUpdate(_id, query, function (err, result) {
                             if (!err) {
                                 res.send(200, { success: 'Employees updated', sequence: result.sequence });
+
+                                updateRefs(result, dbName, _id);
                             } else {
                                 res.send(500, { error: "Can't update Employees" });
                             }
@@ -944,6 +1110,8 @@ var Employee = function (event, models) {
                     models.get(req.session.lastDb, 'Employees', employeeSchema).findByIdAndUpdate(_id, { $set: data }, function (err, result) {
                         if (!err) {
                             res.send(200, { success: 'Employees updated' });
+
+                            updateRefs(result, dbName, _id);
                         } else {
                             res.send(500, { error: "Can't update Employees" });
                         }
@@ -965,8 +1133,15 @@ var Employee = function (event, models) {
 
             if (dataObj.hire || dataObj.fire){
                 query = { $set: updateObject, $push: dataObj };
-            } else {
+            } else  if (data.relatedUser){
                 query = { $set: updateObject};
+                event.emit('updateName', data.relatedUser, UsersModel, '_id', 'RelatedEmployee',  _id);
+            } else if (data.currentUser) {
+                event.emit('updateName', data.currentUser, UsersModel, '_id', 'RelatedEmployee', null);
+                delete data.currentUser;
+                query = {$set: updateObject};
+            } else {
+                query = {$set: updateObject};
             }
 
             models.get(req.session.lastDb, 'Employees', employeeSchema).findByIdAndUpdate(_id, query, function (err, result) {
@@ -981,30 +1156,30 @@ var Employee = function (event, models) {
                         var dir;
                         switch (osType) {
                             case "Windows":
-                                {
-                                    var newDirname = __dirname.replace("\\Modules", "");
-                                    while (newDirname.indexOf("\\") !== -1) {
-                                        newDirname = newDirname.replace("\\", "\/");
-                                    }
-                                    path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
-                                    dir = newDirname + "\/uploads\/" + _id;
+                            {
+                                var newDirname = __dirname.replace("\\Modules", "");
+                                while (newDirname.indexOf("\\") !== -1) {
+                                    newDirname = newDirname.replace("\\", "\/");
                                 }
+                                path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
+                                dir = newDirname + "\/uploads\/" + _id;
+                            }
                                 break;
                             case "Linux":
-                                {
-                                    var newDirname = __dirname.replace("/Modules", "");
-                                    while (newDirname.indexOf("\\") !== -1) {
-                                        newDirname = newDirname.replace("\\", "\/");
-                                    }
-                                    path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
-                                    dir = newDirname + "\/uploads\/" + _id;
+                            {
+                                var newDirname = __dirname.replace("/Modules", "");
+                                while (newDirname.indexOf("\\") !== -1) {
+                                    newDirname = newDirname.replace("\\", "\/");
                                 }
+                                path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
+                                dir = newDirname + "\/uploads\/" + _id;
+                            }
                         }
 
                         fs.unlink(path, function (err) {
                             console.log(err);
                             fs.readdir(dir, function (err, files) {
-                                if (files.length === 0) {
+                                if (files && files.length === 0) {
                                     fs.rmdir(dir, function () { });
                                 }
                             });
@@ -1012,6 +1187,8 @@ var Employee = function (event, models) {
 
                     }
                     res.send(200, { success: 'Employees updated', result: result });
+
+                    updateRefs(result, dbName, _id);
                 }  else {
                     res.send(500, { error: "Can't update Employees" });
                 }
@@ -1061,7 +1238,7 @@ var Employee = function (event, models) {
     function getEmployeesImages(req, data, res) {
         var query = models.get(req.session.lastDb, "Employees", employeeSchema).find({ isEmployee: true });
         query.where('_id').in(data.ids).
-			select('_id imageSrc').
+            select('_id imageSrc name').
             exec(function (error, response) {
                 if (error) {
                     console.log(error);
@@ -1074,33 +1251,19 @@ var Employee = function (event, models) {
 
     return {
         getTotalCount: getTotalCount,
-
         create: create,
-
         get: get,
-
         getCollectionLengthByWorkflows: getCollectionLengthByWorkflows,
-
         getFilter: getFilter,
-
         getEmployeesAlphabet: getEmployeesAlphabet,
-
         getForDd: getForDd,
-
         getForDdByRelatedUser: getForDdByRelatedUser,
-
         addAtach: addAtach,
-
         updateOnlySelectedFields: updateOnlySelectedFields,
-
         remove: remove,
-
         getApplications: getApplications,
-
         getApplicationsForKanban: getApplicationsForKanban,
-
         getEmployeesImages: getEmployeesImages,
-
         getById: getById
     };
 };

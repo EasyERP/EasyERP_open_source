@@ -7,7 +7,8 @@
             <th>N</th>
             <th class="oe_sortable" data-sort="projectName">Project Name<span class="arrow down">7</span><span
                     class="arrow up">v</span></th>
-            <th>Contact</th>
+            <th class="oe_sortable" data-sort="customer.name">Contact<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
             <th class="oe_sortable" data-sort="StartDate">Start Date<span class="arrow down">7</span><span
                     class="arrow up">v</span></th>
             <th class="oe_sortable" data-sort="EndDate">Actual End Date<span class="arrow down">7</span><span
@@ -16,7 +17,8 @@
                     class="arrow up">v</span></th>
             <th class="oe_sortable" data-sort="progress">Progress<span class="arrow down">7</span><span
                     class="arrow up">v</span></th>
-            <th>Status</th>
+            <th class="oe_sortable" data-sort="workflow">Status<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
             <th class="oe_sortable" data-sort="health">Health<span class="arrow down">7</span><span
                     class="arrow up">v</span></th>
             <th class="oe_sortable" data-sort="createdBy.date">Created By<span class="arrow down">7</span><span
@@ -27,70 +29,4 @@
         </thead>
         <tbody id="listTable"></tbody>
     </table>
-    <div class="pagination">
-        <div class="countOnPage">
-            <div>
-          <span>
-            <span id="grid-start"></span>
-            -
-            <span id="grid-end"></span>
-            of
-            <span id="grid-count"></span>
-            items
-          </span>
-            </div>
-            <div class="pageList">
-                <button id="itemsButton">
-                    <span id="itemsNumber"></span>
-                </button>
-                <ul class="allNumberPerPage">
-                    <li>
-                        <a class="itemsNumber" href="javascript;">5</a>
-                    </li>
-                    <li>
-                        <a class="itemsNumber" href="javascript;">10</a>
-                    </li>
-                    <li>
-                        <a class="itemsNumber" href="javascript;">20</a>
-                    </li>
-                    <li>
-                        <a class="itemsNumber" href="javascript;">50</a>
-                    </li>
-                    <li>
-                        <a class="itemsNumber" href="javascript;">100</a>
-                    </li>
-                </ul>
-            </div>
-            <span>Per Page</span>
-        </div>
-        <div class="nextPrev">
-            <div>
-                <button id="firstShowPage" class="icon" type="button" disabled="disabled">88</button>
-                <button id="previousPage" class="icon" type="button" disabled="disabled">8</button>
-                <div>
-                    <span>Page</span>
-                </div>
-            </div>
-            <div>
-                <div>
-                    <div>
-                        <input id="currentShowPage" type="text">
-                    </div>
-                    <div class="allPage">
-                        <button class="currentPageList icon">v</button>
-                        <ul id="pageList" class="allNumberPerPage">
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div>
-        <span>
-          of
-          <span id="lastPage"></span>
-        </span>
-            </div>
-            <button id="nextPage" type="button" class="icon" disabled="disabled">9</button>
-            <button id="lastShowPage" type="button" class="icon" disabled="disabled">99</button>
-        </div>
-    </div>
 </div>

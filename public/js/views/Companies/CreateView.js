@@ -136,6 +136,9 @@ define([
                 var language = $.trim(this.$el.find("#language").text());
                 var isCustomer = this.$el.find("#isCustomer").is(":checked");
                 var isSupplier = this.$el.find("#isSupplier").is(":checked");
+                var LI = $.trim(this.$el.find('#LI').val());
+                var FB = $.trim(this.$el.find('#FB').val());
+
                 var active = this.$el.find("#active").is(":checked");
                 var usersId=[];
                 var groupsId=[];
@@ -156,6 +159,10 @@ define([
                     name: name,
                     imageSrc: this.imageSrc,
                     email: email,
+                        social: {
+                            LI: LI,
+                            FB: FB
+                        },
                     phones: {
                         phone: phone,
                         mobile: mobile,

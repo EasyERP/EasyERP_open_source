@@ -9,9 +9,10 @@ define([
         "custom",
         "dataService",
         "populate",
-        'constants'
+        'constants',
+        'helpers'
     ],
-    function (EditTemplate, AssigneesView, InvoiceItemView, wTrackRows, PaymentCreateView, listHederInvoice, common, Custom, dataService, populate, CONSTANTS) {
+    function (EditTemplate, AssigneesView, InvoiceItemView, wTrackRows, PaymentCreateView, listHederInvoice, common, Custom, dataService, populate, CONSTANTS, helpers) {
 
         var EditView = Backbone.View.extend({
             contentType: "Invoice",
@@ -42,7 +43,7 @@ define([
                     this.render();
                 }
 
-               /* this.render();*/
+                /* this.render();*/
             },
 
             events: {
@@ -74,6 +75,7 @@ define([
                 e.preventDefault();
 
                 var self = this;
+                var redirectUrl = self.forSales ? "easyErp/salesInvoice" : "easyErp/Invoice";
 
                 populate.fetchWorkflow({
                     wId: 'Purchase Invoice',
@@ -94,7 +96,7 @@ define([
                         },
                         patch: true,
                         success: function () {
-                            Backbone.history.navigate("easyErp/Invoice", {trigger: true});
+                            Backbone.history.navigate(redirectUrl, {trigger: true});
                         }
                     });
                 });
@@ -181,7 +183,7 @@ define([
                 var description;
                 var taxes;
                 var amount;
-                var workflow = this.currentModel.workflow ? this.currentModel.workflow._id : null;
+                var workflow = this.currentModel.workflow ? this.currentModel.workflow : null;
 
                 var invoiceDate = this.$el.find("#invoice_date").val();
                 var dueDate = this.$el.find("#due_date").val();
@@ -304,17 +306,15 @@ define([
                 holder.text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
             },
 
-
             deleteItem: function (event) {
-
+                var redirectUrl = this.forSales ? "easyErp/salesInvoice" : "easyErp/Invoice";
                 event.preventDefault();
-                var self = this;
                 var answer = confirm("Realy DELETE items ?!");
                 if (answer == true) {
                     this.currentModel.destroy({
                         success: function () {
                             $('.edit-invoice-dialog').remove();
-                            Backbone.history.navigate("easyErp/" + self.contentType, {trigger: true});
+                            Backbone.history.navigate(redirectUrl, {trigger: true});
                         },
                         error: function (model, err) {
                             if (err.status === 403) {
@@ -360,10 +360,11 @@ define([
                     project: project,
                     assigned: assigned,
                     customer: customer,
-                    total: total
+                    total: total,
+                    currencySplitter: helpers.currencySplitter
                 });
 
-                if(this.isWtrack){
+                if (this.isWtrack) {
                     buttons = [
                         {
                             text: "Cancel",
@@ -402,7 +403,7 @@ define([
                     resizable: true,
                     dialogClass: "edit-invoice-dialog",
                     title: "Edit Invoice",
-                    width: self.isWtrack ? '1000': '900',
+                    width: self.isWtrack ? '1200' : '900',
                     position: {my: "center bottom", at: "center", of: window},
                     buttons: buttons
 

@@ -8,7 +8,7 @@ var Employee = function (models) {
     var access = require("../Modules/additions/access.js")(models);
     var EmployeeSchema = mongoose.Schemas['Employee'];
     var ProjectSchema = mongoose.Schemas['Project'];
-    var objectId = mongoose.Types.ObjectId;
+    var _ = require('../node_modules/underscore');
 
     this.getForDD = function (req, res, next) {
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
@@ -16,7 +16,7 @@ var Employee = function (models) {
         Employee
             .find()
             .select('_id name department')
-            .populate('department', '_id departmentName')
+            //.populate('department._id', '_id departmentName')
             .sort({'name.first': 1})
             .lean()
             .exec(function (err, employees) {
@@ -33,14 +33,14 @@ var Employee = function (models) {
 
         function assigneFinder(cb) {
             var match = {
-                projectmanager: {$ne: null}
+                'projectmanager._id': {$ne: null}
             };
 
             Project.aggregate([{
                 $match: match
             }, {
                 $group: {
-                    _id: "$projectmanager"
+                    _id: "$projectmanager._id"
                 }
             }], cb);
         };
@@ -72,7 +72,7 @@ var Employee = function (models) {
                 $match: {isEmployee: true}
             }, {
                 $group: {
-                    _id: "$department",
+                    _id: "$department._id",
                     employees: {$push: {
                         name: {$concat: ['$name.first', ' ', '$name.last']},
                         _id: '$_id'
@@ -90,31 +90,6 @@ var Employee = function (models) {
                 }
 
                 res.status(200).send(employees);
-            });
-    };
-
-    this.getFilterValues = function (req, res, next) {
-        var Employee = models.get(req.session.lastDb, 'Employee', EmployeeSchema);
-
-        Employee
-            .aggregate([
-                {
-                    $group: {
-                        _id: null,
-                        'Name': {
-                            $addToSet: '$name.last'
-                        },
-                        'Email': {
-                            $addToSet: '$workEmail'
-                        }
-                    }
-                }
-            ], function (err, result) {
-                if (err) {
-                    return next(err);
-                }
-
-                res.status(200).send(result);
             });
     };
 

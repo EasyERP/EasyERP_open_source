@@ -8,7 +8,7 @@ paymentCollection.forEach(function(payment) {%>
     <td data-name=""></td>
     <td data-name=""></td>
     <td data-name=""></td>
-    <td data-name="paidAmount"><%=payment.paidAmount%></td>
+    <td data-name="paidAmount" class="money"><%=payment.paidAmount ? currencySplitter((payment.paidAmount / 100).toFixed(2)) : 2%></td>
 </tr>
 <%})} else {%>
 <tr>

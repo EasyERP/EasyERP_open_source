@@ -2,6 +2,7 @@
  * Created by soundstorm on 21.05.15.
  */
 define([
+        'text!templates/Pagination/PaginationTemplate.html',
         'text!templates/supplierPayments/list/ListHeader.html',
         'text!templates/customerPayments/forWTrack/ListHeader.html',
         'views/customerPayments/list/ListItemView',
@@ -10,9 +11,10 @@ define([
         'collections/customerPayments/editCollection',
         'models/PaymentModel',
         'dataService',
-        'populate'
+        'populate',
+        'async'
     ],
-    function (listTemplate, ListHeaderForWTrack, listItemView, listTotalView, paymentCollection, editCollection, currentModel, dataService, populate) {
+    function (paginationTemplate, listTemplate, ListHeaderForWTrack, listItemView, listTotalView, paymentCollection, editCollection, currentModel, dataService, populate, async) {
         var PaymentListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -30,19 +32,15 @@ define([
             changedModels: {},
             responseObj: {},
 
-            template: _.template(listTemplate),
-
             events: {
                 "click .itemsNumber": "switchPageCounter",
-                "click .currentSelected": "showNewSelect",
                 "click .showPage": "showPage",
                 "change #currentShowPage": "showPage",
                 "click #previousPage": "previousPage",
                 "click #nextPage": "nextPage",
                 "click .checkbox": "checked",
                 "click td.editable": "editRow",
-                "click #itemsButton": "itemsNumber",
-                "click .currentPageList": "itemsNumber",
+                "mouseover .currentPageList": "itemsNumber",
                 "click": "hideItemsNumber",
                 "click #firstShowPage": "firstPage",
                 "click #lastShowPage": "lastPage",
@@ -56,28 +54,15 @@ define([
                 this.collection = options.collection;
                 this.filter = options.filter;
                 this.sort = options.sort;
-                this.defaultItemsNumber = this.collection.namberToShow || 50;
+                this.defaultItemsNumber = this.collection.namberToShow || 100;
                 this.newCollection = options.newCollection;
                 this.deleteCounter = 0;
                 this.page = options.collection.page;
 
                 this.render();
+
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
                 this.contentCollection = paymentCollection;
-
-                this.responseObj['#workflow'] = [{
-                    _id: 'done',
-                    name: 'Paid'
-                }, {
-                    _id: 'new',
-                    name: 'Draft'
-                }];
-            },
-
-            showNewSelect: function (e, prev, next) {
-                populate.showSelect(e, prev, next, this);
-
-                return false;
             },
 
             setEditable: function (td) {
@@ -119,12 +104,13 @@ define([
                 var ul;
                 var el = $(e.target);
                 var tr = $(e.target).closest('tr');
+                var td = $(e.target).closest('td');
                 var modelId = tr.data('id');
                 var colType = el.data('type');
                 var isDTPicker = colType !== 'input' && el.prop("tagName") !== 'INPUT' && el.data('content') === 'date';
                 var tempContainer;
                 var width;
-                var isSelect = colType !== 'input' && el.prop("tagName") !== 'INPUT' && el.data('content') === 'workflow';
+                var isSelect = td.data('content') === 'workflow';
 
                 if (modelId && el.prop('tagName') !== 'INPUT') {
                     if (this.modelId) {
@@ -145,7 +131,7 @@ define([
                     }).addClass('datepicker');
                 } else if (isSelect) {
                     ul = "<ul class='newSelectList'>" + "<li data-id='Paid'>Paid</li>" + "<li data-id='Draft'>Draft</li></ul>";
-                    el.html(ul);
+                    el.append(ul);
                 } else {
                     tempContainer = el.text();
                     width = el.width() - 6;
@@ -169,7 +155,7 @@ define([
                     editedElementContent = editedCol.data('content');
                     editedElementValue = editedElement.val();
 
-                    editHolidayModel = this.editCollection.get(editedElementRowId);
+                    editHolidayModel = this.collection.get(editedElementRowId);
 
                     if (!this.changedModels[editedElementRowId]) {
                         if (!editHolidayModel.id) {
@@ -189,20 +175,16 @@ define([
             chooseOption: function (e) {
                 var target = $(e.target);
                 var targetElement = target.parents("td");
-                var targetA = targetElement.find('a');
+                var targetW = targetElement.find("a");
                 var tr = target.parents("tr");
                 var modelId = tr.data('id');
                 var id = target.attr("id");
                 var attr = targetElement.attr("id") || targetElement.data("content");
                 var elementType = '#' + attr;
-                var changedAttr;
                 var workflow;
+                var changedAttr;
 
-                var element = _.find(this.responseObj[elementType], function (el) {
-                    return el._id === id;
-                });
-
-                var editModel = this.editCollection.get(modelId);
+                var editModel = this.collection.get(modelId);
 
                 if (!this.changedModels[modelId]) {
                     if (!editModel.id) {
@@ -215,21 +197,20 @@ define([
                 changedAttr = this.changedModels[modelId];
 
                 if (elementType === '#workflow') {
+                    targetW.attr("class", "currentSelected");
                     changedAttr.workflow = target.text();
+                    if (target.attr('data-id') === 'Paid') {
+                        targetW.addClass('done');
+                    } else {
+                        targetW.addClass('new');
+                    }
                 }
-
-                targetA.text(target.text());
+                targetW.text(target.text());
 
                 this.hideNewSelect();
                 this.setEditable(targetElement);
-                this.chooseOptClassManipulator(targetA, id);
 
                 return false;
-            },
-
-            chooseOptClassManipulator: function(el, cls){
-                el.removeClass();
-                el.addClass('currentSelected ' + cls);
             },
 
             saveItem: function () {
@@ -243,7 +224,6 @@ define([
                     modelJSON = model.toJSON();
                     model.changed = this.changedModels[id];
                 }
-
                 this.editCollection.save();
             },
 
@@ -260,13 +240,13 @@ define([
             },
 
             showSaveCancelBtns: function () {
-               /* var createBtnEl = $('#top-bar-createBtn');*/
+                var createBtnEl = $('#top-bar-createBtn');
                 var saveBtnEl = $('#top-bar-saveBtn');
                 var cancelBtnEl = $('#top-bar-deleteBtn');
 
-                /*if (!this.changed) {
+                if (!this.changed) {
                     createBtnEl.hide();
-                }*/
+                }
                 saveBtnEl.show();
                 cancelBtnEl.show();
 
@@ -324,6 +304,8 @@ define([
                 return !!newRow.length;
             },
 
+            template: _.template(listTemplate),
+
             showNewSelect: function (e, prev, next) {
                 populate.showSelect(e, prev, next, this);
                 return false;
@@ -377,7 +359,7 @@ define([
                     newCollection: this.newCollection,
                     parrentContentId: this.parrentContentId
                 });
-                dataService.getData('/supplierPayments/totalCollectionLength', {
+                dataService.getData(this.collectionLengthUrl, {
                     filter: this.filter,
                     newCollection: this.newCollection,
                     parrentContentId: this.parrentContentId,
@@ -503,10 +485,8 @@ define([
                         break;
                 }
                 sortObject[sortBy] = sortConst;
-
                 this.fetchSortCollection(sortObject);
                 this.changeLocationHash(1, this.defaultItemsNumber);
-
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
             },
 
@@ -587,18 +567,14 @@ define([
             renderContent: function () {
                 var currentEl = this.$el;
                 var tBody = currentEl.find('#listTable');
-
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
-
                 tBody.empty();
-
                 var itemView = new listItemView({
                     collection: this.collection,
                     page: currentEl.find("#currentShowPage").val(),
                     itemsNumber: currentEl.find("span#itemsNumber").text()
                 });
-
                 tBody.append(itemView.render());
 
                 currentEl.append(new listTotalView({element: tBody, cellSpan: 7}).render());
@@ -650,6 +626,8 @@ define([
                     self.hideItemsNumber();
                 });
 
+                currentEl.append(_.template(paginationTemplate));
+
                 pagenation = this.$el.find('.pagination');
 
                 if (this.collection.length === 0) {
@@ -671,6 +649,70 @@ define([
                 currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
                 return this;
+            },
+
+            deleteItemsRender: function (deleteCounter, deletePage) {
+                $('#check_all').prop('checked', false);
+                dataService.getData('/payment/customers/totalCollectionLength', {
+                    filter: this.filter,
+                    newCollection: this.newCollection
+                }, function (response, context) {
+                    context.listLength = response.count || 0;
+                }, this);
+
+                this.deleteRender(deleteCounter, deletePage, {
+                    filter: this.filter,
+                    newCollection: this.newCollection,
+                });
+
+                var pagenation = this.$el.find('.pagination');
+                if (this.collection.length === 0) {
+                    pagenation.hide();
+                } else {
+                    pagenation.show();
+                }
+            },
+
+            deleteItems: function () {
+                var that = this;
+                var mid = 61;
+                var model;
+                var localCounter = 0;
+                var count = $("#listTable input:checked").length;
+                this.collectionLength = this.collection.length;
+
+                $.each($("tbody input:checked"), function (index, checkbox) {
+                    model = that.collection.get(checkbox.value);
+                    model.destroy({
+                        headers: {
+                            mid: mid
+                        },
+                        wait: true,
+                        success: function () {
+                            that.listLength--;
+                            localCounter++;
+                            count--;
+                            if (count === 0) {
+                                that.deleteCounter = localCounter;
+                                that.deletePage = $("#currentShowPage").val();
+                                that.deleteItemsRender(that.deleteCounter, that.deletePage);
+
+                            }
+                        },
+                        error: function (model, res) {
+                            if (res.status === 403 && index === 0) {
+                                alert("You do not have permission to perform this action");
+                            }
+                            that.listLength--;
+                            count--;
+                            if (count === 0) {
+                                that.deleteCounter = localCounter;
+                                that.deletePage = $("#currentShowPage").val();
+                                that.deleteItemsRender(that.deleteCounter, that.deletePage);
+                            }
+                        }
+                    });
+                });
             }
         });
 
