@@ -1,11 +1,17 @@
 /**
  * Created by Roman on 04.05.2015.
  */
-
+var async = require('async');
+var _ = require('lodash');
 var mongoose = require('mongoose');
+
+var moment = require('../public/js/libs/moment/moment');
+
 var wTrack = function (models) {
     var access = require("../Modules/additions/access.js")(models);
     var wTrackSchema = mongoose.Schemas['wTrack'];
+    var ProjectSchema = mongoose.Schemas['Project'];
+    var BonusTypeSchema = mongoose.Schemas['bonusType'];
 
     this.bySales = function (req, res, next) {
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
@@ -661,6 +667,139 @@ var wTrack = function (models) {
                 }
 
                 res.status(200).send(response);
+            });
+
+        });
+    };
+
+    this.allBonus = function (req, res, next) {
+        var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+        var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
+        var BonusType = models.get(req.session.lastDb, 'bonusType', BonusTypeSchema);
+
+        access.getReadAccess(req, req.session.uId, 67, function (access) {
+            var options = req.query;
+            var startMonth = parseInt(options.month) || 8;
+            var startYear = parseInt(options.year) || 2014;
+            var endMonth = parseInt(options.endMonth) || 7;
+            var endYear = parseInt(options.endYear) || 2015;
+            var startDate;
+            var endDate;
+            var waterfallTasks;
+
+            var startWeek = moment().isoWeekYear(startYear).month(startMonth - 1).isoWeek();
+            var endWeek = moment().isoWeekYear(endYear).month(endMonth - 1).isoWeek();
+
+            startDate = parseInt(options.startDate) || (startYear * 100 + startMonth);
+            endDate = parseInt(options.endDate) || (endYear * 100 + endMonth);
+
+            console.log(startWeek, startYear, endWeek, endYear);
+
+            var idForProjects = function (callback) {
+                Project.aggregate([{
+                    $project: {
+                        _id: 1,
+                        bonus: 1,
+                        bonusCount: {$size: '$bonus'}
+                    }
+                }, {
+                    $match: {
+                        $and: [{
+                            bonusCount: {$gt: 0}}, {
+                            $or: [{
+                                $or: [{
+                                    'bonus.startDate': null
+                                }, {
+                                    'bonus.endDate': null
+                                }]
+                            }, {
+                                $or: [{
+                                    'bonus.startWeek': {$gte: startWeek},
+                                    'bonus.startYear': {$gte: startWeek}
+                                }, {
+                                    'bonus.endWeek': {$lte: endWeek},
+                                    'bonus.endYear': {$lte: endWeek}
+                                }]
+                            }]
+                        }]
+                    }
+                }, {
+                    $project: {
+                        _id: 1
+                    }
+                }], function (err, response) {
+                    if (err) {
+                        return callback(err);
+                    }
+
+                    response = _.pluck(response, '_id');
+
+                    callback(null, response);
+                });
+            };
+
+            function getWTracksByProjects(_ids, callback) {
+                var queryObject = {};
+
+                queryObject['$and'] = [
+                    {'dateByMonth': {'$gte': startDate}},
+                    {'dateByMonth': {'$lte': endDate}},
+                    {'project._id': {'$in': _ids}}
+                ];
+
+                WTrack.find(queryObject)
+                    .lean()
+                    .exec(function (err, result) {
+                        if (err) {
+                            return callback(err);
+                        }
+                        callback(null, result);
+                    })
+            };
+
+            function getProjectsByIds(wTracks, callback) {
+                var _ids = _.pluck(wTracks, 'project._id');
+
+                Project.aggregate([
+                    {
+                        $match: {
+                            _id: {'$in': _ids}
+                        }
+                    },
+                    {
+                        $unwind: '$bonus'
+                    },
+                    {
+                        $group: {
+                            _id: {employeeId: '$bonus.employeeId', bonusId: '$bonus.bonusId'},
+                            dateArray: {
+                                $push: {
+                                    startDate: '$bonus.startDate',
+                                    endDate: '$bonus.endDate',
+                                    projectId: '$_id'
+                                }
+                            }
+
+                        }
+                    }
+                ], callback);
+            };
+
+
+            if (!access) {
+                return res.status(403).send();
+            }
+
+            waterfallTasks = [idForProjects/*, getWTracksByProjects, getProjectsByIds*/];
+
+            async.waterfall(waterfallTasks, function (err, result) {
+                if (err) {
+                    return next(err);
+                }
+
+                //result = _.sortBy(result, '_id.employeeId');
+
+                res.status(200).send(result);
             });
 
         });

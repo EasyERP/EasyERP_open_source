@@ -215,18 +215,18 @@ define([
                     self.stages = stages;
                 });
 
-                //self.filterView = new filterView({
-                //    contentType: self.contentType
-                //});
-                //
-                //self.filterView.bind('filter', function (filter) {
-                //    self.showFilteredPage(filter, self)
-                //});
-                //self.filterView.bind('defaultFilter', function () {
-                //    self.showFilteredPage({}, self);
-                //});
-                //
-                //self.filterView.render();
+                self.filterView = new filterView({
+                    contentType: self.contentType
+                });
+
+                self.filterView.bind('filter', function (filter) {
+                    self.showFilteredPage(filter)
+                });
+                self.filterView.bind('defaultFilter', function () {
+                    self.showFilteredPage({});
+                });
+
+                self.filterView.render();
 
                 function currentEllistRenderer(){
                     currentEl.append(_.template(listTemplate, {currentDb: App.currentDb}));
@@ -375,38 +375,20 @@ define([
                 this.changeLocationHash(1, itemsNumber, this.filter);
             },
 
-            showFilteredPage: function (showList) {
+            showFilteredPage: function (filter) {
                 var itemsNumber = $("#itemsNumber").text();
+                this.filter = filter;
+
                 this.startTime = new Date();
                 this.newCollection = false;
 
-                this.filter = {};
-                //if (showList.length) this.filter['workflow'] = showList;
-
-
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
-                this.changeLocationHash(1, itemsNumber, this.filter);
-                this.collection.showMore({count: itemsNumber, page: 1, filter: this.filter});
-                this.getTotalLength(null, itemsNumber, this.filter);
-            },
 
-            //showFilteredPage: function (filter, context) {
-            //    var itemsNumber = $("#itemsNumber").text();
-            //
-            //    context.startTime = new Date();
-            //    context.newCollection = false;
-            //
-            //    if (!filter.name) {
-            //        if (selectedLetter !== '') {
-            //            filter['letter'] = selectedLetter;
-            //        }
-            //    }
-            //
-            //    context.changeLocationHash(1, itemsNumber, filter);
-            //    context.collection.showMore({ count: itemsNumber, page: 1, filter: filter});
-            //    context.getTotalLength(null, itemsNumber, filter);
-            //},
+                this.changeLocationHash(1, itemsNumber, filter);
+                this.collection.showMore({count: itemsNumber, page: 1, filter: filter});
+                this.getTotalLength(null, itemsNumber, filter);
+            },
 
             showPage: function (event) {
                 event.preventDefault();
@@ -433,7 +415,7 @@ define([
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
 
-               // this.filterView.renderFilterContent();
+                this.filterView.renderFilterContent();
 
                 holder.find('#timeRecivingDataFromServer').remove();
                 holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");

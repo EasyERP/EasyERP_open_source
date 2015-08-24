@@ -191,13 +191,13 @@
                 <div class="half-block left withPaddingLeft">
                     <%_.each(model.hire, function(hire, key){ %>
                     <dt><label>Hired</label></dt>
-                    <dd><input type="text" name="hire" id="hire<%=key%>" value="<%=model.hire[key]%>" required readonly/></dd>
+                    <dd><input class="hire" type="text" name="hire" id="hire<%=key%>" value="<%=model.hire[key]%>" required readonly/></dd>
                     <% }); %>
                 </div>
                 <div class="half-block right withPaddingLeft">
                     <%_.each(model.fire, function(fire, key){ %>
                     <dt><label>Fired</label></dt>
-                    <dd><input type="text" name="fire" id="fire<%=key%>" value="<%=model.fire[key]%>" required readonly/></dd>
+                    <dd><input class="fire" type="text" name="fire" id="fire<%=key%>" value="<%=model.fire[key]%>" required readonly/></dd>
                     <% }); %>
                 </div>
 
