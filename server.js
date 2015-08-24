@@ -1,4 +1,6 @@
 /*Just for test*/
+require('pmx').init();
+
 var mongoose = require('mongoose');
 var mainAppConfig = require('./config/main').mainApp;
 var dbsObject = {};
