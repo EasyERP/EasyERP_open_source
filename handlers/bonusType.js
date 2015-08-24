@@ -12,7 +12,7 @@ var BonusType = function (models) {
         var bonusTypeModel = models.get(req.session.lastDb, 'bonusType', bonusTypeSchema);
         var body = req.body;
         var bonusType = new  bonusTypeModel(body);
-        access.getEditWritAccess(req, req.session.uId, moduleId, function (access) {
+        access.getEditWritAccess(req, req.session.uId, 72, function (access) {
             if (access) {
                 bonusType.save(function (err, bonusType) {
                     if (err) {
