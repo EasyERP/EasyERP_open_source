@@ -64,5 +64,5 @@ mainDb.once('open', function callback () {
         console.log('==============================================================\n');
     });
 
-    open('http://localhost:8089', "");
+    //open('http://localhost:8089', "");
 });
