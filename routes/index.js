@@ -1,6 +1,7 @@
 /**
  * Created by Roman on 02.04.2015.
  */
+require('pmx').init();
 
 module.exports = function (app, mainDb) {
     var events = require('events');
