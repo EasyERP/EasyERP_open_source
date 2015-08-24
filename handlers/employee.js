@@ -16,7 +16,7 @@ var Employee = function (models) {
         Employee
             .find()
             .select('_id name department')
-            .populate('department._id', '_id departmentName')
+            //.populate('department._id', '_id departmentName')
             .sort({'name.first': 1})
             .lean()
             .exec(function (err, employees) {
