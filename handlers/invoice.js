@@ -167,6 +167,56 @@ var Invoice = function (models) {
         });
     };
 
+    function ConvertType(element, type) {
+        if (type === 'boolean') {
+            if (element === 'true') {
+                element = true;
+            } else if (element === 'false') {
+                element = false;
+            }
+        }
+
+        return element;
+    };
+
+    function caseFilter(filter) {
+        var condition;
+        var resArray = [];
+        var filtrElement = {};
+        var key;
+
+        for (var filterName in filter){
+            condition = filter[filterName]['value'];
+            key = filter[filterName]['key'];
+
+            switch (filterName) {
+                case 'project':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'salesPerson':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'supplier':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'workflow':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'forSales':
+                    condition = ConvertType(condition, 'boolean');
+                    filtrElement[key] = condition;
+                    resArray.push(filtrElement);
+                    break;
+            }
+        };
+
+        return resArray;
+    };
+
     this.getForView = function (req, res, next) {
         var db = req.session.lastDb;
         var moduleId = 56;
@@ -182,6 +232,7 @@ var Invoice = function (models) {
 
                     var query = req.query;
                     var queryObject = {};
+                    var filter = query.filter;
 
                     var optionsObject = {};
                     var sort = {};
@@ -193,12 +244,6 @@ var Invoice = function (models) {
                     var contentIdsSearcher;
                     var contentSearcher;
                     var waterfallTasks;
-
-                    if (query && query.filter && query.filter.forSales === 'true') {
-                        queryObject['forSales'] = true;
-                    } else {
-                        queryObject['forSales'] = false;
-                    }
 
                     if (req.query.sort) {
                         sort = req.query.sort;
@@ -271,42 +316,27 @@ var Invoice = function (models) {
                         optionsObject.$and = [];
                         optionsObject.$and.push({_id: {$in: invoicesIds}});
 
-                        if (req.query && req.query.filter) {
-                            if (req.query.filter.condition === 'or') {
-                                optionsObject.$or = [];
-                            }
-                            /*if (req.query.filter.workflow) {
-                                optionsObject.$and.push({workflow: {$in: req.query.filter.workflow}});
-                            }*/
-                            if (req.query.filter['Due date']) {
-                                if (req.query.filter.condition === 'or') {
-                                    optionsObject.$or.push({dueDate: {$gte: new Date(req.query.filter['Due date'][0].start), $lte: new Date(req.query.filter['Due date'][0].end)}});
-                                } else {
-                                    optionsObject.$and.push({dueDate: {$gte: new Date(req.query.filter['Due date'][0].start), $lte: new Date(req.query.filter['Due date'][0].end)}});
-                                }
-
-                            }
-                            if (req.query.filter.salesPerson) {
-                                if (req.query.filter.condition === 'or') {
-                                    optionsObject.$or.push({salesPerson: {$in: req.query.filter.salesPerson}})
-                                } else {
-                                    optionsObject.$and.push({salesPerson: {$in: req.query.filter.salesPerson}})
-                                }
+                        if (filter && typeof filter === 'object') {
+                            if (filter.condition === 'or') {
+                                optionsObject['$or'] = caseFilter(filter);
+                            } else {
+                                optionsObject['$and'] = caseFilter(filter);
                             }
                         }
 
                         var query = Invoice.find(optionsObject).limit(count).skip(skip).sort(sort);
 
-                        query.populate('supplier', 'name _id').
-                            populate('salesPerson', 'name _id').
-                            populate('department', '_id departmentName').
+                        query
+                            //.populate('supplier', 'name _id').
+                            //populate('salesPerson', 'name _id').
+                            .populate('department', '_id departmentName').
                             populate('createdBy.user').
                             populate('editedBy.user').
                             populate('groups.users').
                             populate('groups.group').
-                            populate('groups.owner', '_id login').
-                            populate('project', '_id projectName').
-                            populate('workflow', '-sequence');
+                            populate('groups.owner', '_id login');/*.
+                            //populate('project', '_id projectName').
+                            populate('workflow._id', '-sequence');*/
 
                         query.lean().exec(waterfallCallback);
                     };
@@ -426,10 +456,10 @@ var Invoice = function (models) {
 
                         var query = Invoice.findOne(optionsObject);
 
-                        query.populate('supplier', '_id name').
-                            populate('salesPerson', 'name _id').
-                            populate('project', '_id projectName').
-                            populate('products.product').
+                        query//.populate('supplier', '_id name').
+                            //populate('salesPerson', 'name _id').
+                            //populate('project', '_id projectName').
+                            .populate('products.product').
                             populate('payments', '_id name date paymentRef paidAmount').
                             populate('department', '_id departmentName').
                             populate('paymentTerms', '_id name').
@@ -437,8 +467,8 @@ var Invoice = function (models) {
                             populate('editedBy.user').
                             populate('groups.users').
                             populate('groups.group').
-                            populate('groups.owner', '_id login').
-                            populate('workflow', '-sequence');
+                            populate('groups.owner', '_id login');/*.
+                            populate('workflow._id', '-sequence');*/
 
                         query.lean().exec(waterfallCallback);
                     };
@@ -499,7 +529,7 @@ var Invoice = function (models) {
                                     if (err) {
                                         return console.log(err);
                                     }
-                                    console.log('success');
+                                   // console.log('success');
                                 });
                             });
                         };
@@ -520,7 +550,7 @@ var Invoice = function (models) {
                                     if (err) {
                                         return console.log(err);
                                     }
-                                    console.log('success');
+                                  //  console.log('success');
                                 });
                             });
                         };
@@ -530,7 +560,7 @@ var Invoice = function (models) {
                                 next(err)
                             }
 
-                            console.log('success');
+                           // console.log('success');
 
                         });
 
@@ -591,6 +621,7 @@ var Invoice = function (models) {
 
     this.totalCollectionLength = function (req, res, next) {
         var data = req.query;
+        var filter = data.filter;
 
         var optionsObject = {};
         var result = {};
@@ -604,10 +635,12 @@ var Invoice = function (models) {
         var contentSearcher;
         var waterfallTasks;
 
-        if (data && data.filter && data.filter.forSales) {
-            optionsObject['forSales'] = true;
-        } else {
-            optionsObject['forSales'] = false;
+        if (filter && typeof filter === 'object') {
+            if (filter.condition === 'or') {
+                optionsObject['$or'] = caseFilter(filter);
+            } else {
+                optionsObject['$and'] = caseFilter(filter);
+            }
         }
 
         departmentSearcher = function (waterfallCallback) {
@@ -674,24 +707,9 @@ var Invoice = function (models) {
 
         contentSearcher = function (invoicesIds, waterfallCallback) {
             var query;
+            var queryObject = ({_id: {$in: invoicesIds}});
 
-            optionsObject.$and = [];
-            optionsObject.$and.push({_id: {$in: invoicesIds}});
-
-            if (req.query && req.query.filter) {
-                if (req.query.filter.workflow) {
-                    optionsObject.$and.push({workflow: {$in: req.query.filter.workflow}});
-                }
-                if (req.query.filter['Due date']) {
-                    optionsObject.$and.push({dueDate: {$gte: new Date(req.query.filter['Due date'][0].start), $lte: new Date(req.query.filter['Due date'][0].end)}});
-
-                }
-                if (req.query.filter.salesPerson) {
-                    optionsObject.$and.push({salesPerson: {$in: req.query.filter.salesPerson}})
-                }
-            }
-
-            query = Invoice.find(optionsObject);
+            query = Invoice.find(queryObject);
             query.exec(waterfallCallback);
         };
 

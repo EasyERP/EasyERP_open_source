@@ -12,8 +12,9 @@
 <% employees.forEach(function(employee){ %>
 <div id="<%= employee._id %>" class="divRow">
     <div class="divCell left-cell">
-                    <span><%= employee.name.first + " " + employee.name.last %>
-                    </span>
+        <span>
+            <%= employee.name.first + " " + employee.name.last %>
+        </span>
     </div>
     <div data-id="<%= employee._id%>">
 
@@ -21,8 +22,22 @@
 
     <div class="divCell chart_mini trend">
     </div>
-
 </div>
+    <% employee.bonus.forEach(function(bonus){ %>
+        <div id="<%= bonus._id %>" class="divRow">
+            <div class="divCell left-cell">
+                <span>
+                    <%= bonus.type %>
+                </span>
+            </div>
+            <div data-id="<%= bonus._id%>">
+
+            </div>
+
+            <div class="divCell chart_mini trend">
+            </div>
+        </div>
+    <% }) %>
 <% }) %>
 <div data-content="<%=content%>" class="divRow <%=className%>">
 

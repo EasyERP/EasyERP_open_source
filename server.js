@@ -7,6 +7,8 @@ var mainDb = mongoose.createConnection('localhost', 'mainDB');
 var sessionParser = require('./helpers/sessionParser');
 var app;
 
+var open = require('open');
+
 
 require('./config/' + mainAppConfig.NODE_ENV);
 process.env.NODE_ENV = mainAppConfig.NODE_ENV;
@@ -61,4 +63,6 @@ mainDb.once('open', function callback () {
         console.log('|| server start success on port=' + port + ' in ' + process.env.NODE_ENV + ' version ||');
         console.log('==============================================================\n');
     });
+
+    //open('http://localhost:8089', "");
 });

@@ -1026,10 +1026,12 @@ module.exports = function (models) {
         var ProjectsSchema = mongoose.Schemas[projectsCollection];
         var EmployeeSchema = mongoose.Schemas['Employees'];
         var BonusTypeSchema = mongoose.Schemas['bonusType'];
+        var wTrackSchema = mongoose.Schemas['wTrack'];
 
         var Project = models.get(req.session.lastDb, projectsCollection, ProjectsSchema);
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
         var BonusType = models.get(req.session.lastDb, 'bonusType', BonusTypeSchema);
+        var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
 
         function importBonus(BonusSchema, seriesCb) {
             var query = queryBuilder(BonusSchema.table);
@@ -1093,6 +1095,11 @@ module.exports = function (models) {
                             var startDate = fetchedBonus['StartDate'] || (result.project ? result.project.StartDate : null);
                             var endDate = fetchedBonus['EndDate'] || (result.project ? result.project.EndDate : null);
 
+                            var startWeek = moment(startDate).isoWeek();
+                            var startYear = moment(startDate).isoWeekYear();
+                            var endWeek = moment(endDate).isoWeek();
+                            var endYear = moment(endDate).isoWeekYear();
+
                             var query = {
                                 _id: projectId
                             };
@@ -1103,6 +1110,10 @@ module.exports = function (models) {
                                         employeeId: employeeId,
                                         bonusId: bonusId,
                                         startDate: startDate,
+                                        startWeek: startWeek,
+                                        startYear: startYear,
+                                        endWeek: endWeek,
+                                        endYear: endYear,
                                         endDate: endDate
                                     }
                                 }
@@ -1113,13 +1124,39 @@ module.exports = function (models) {
                                 upsert: true
                             };
 
-                            Project.findByIdAndUpdate(query, updatQuery, settings, function (err, model) {
-                                if (err) {
-                                    return cb(err);
-                                }
+                            function projectUpdater(cb) {
+                                Project.findByIdAndUpdate(query, updatQuery, settings, function (err, model) {
+                                    if (err) {
+                                        return cb(err);
+                                    }
 
-                                cb(null, model);
-                            });
+                                    cb(null, model);
+                                });
+                            }
+
+                            function wTrackUpdater(cb){
+                                WTrack.findOneAndUpdate({'project._id': projectId}, {$push: {
+                                    "project.bonus": {
+                                        employeeId: employeeId,
+                                        bonusId: bonusId,
+                                        startDate: startDate,
+                                        startWeek: startWeek,
+                                        startYear: startYear,
+                                        endWeek: endWeek,
+                                        endYear: endYear,
+                                        endDate: endDate
+                                    }
+                                }}, settings, function (err, model) {
+                                    if (err) {
+                                        return cb(err);
+                                    }
+
+                                    cb(null, model);
+                                });
+                            }
+
+                            async.parallel([projectUpdater, wTrackUpdater], cb);
+
                         });
                     }
                 }, function (err) {

@@ -9,9 +9,9 @@
                     <dl class="opp-info">
                         <dt><label for="supplierDD">Supplier</label></dt>
                         <dd>
-                            <%if(invoice && invoice.supplier){%>
+                            <%if(invoice && invoice.supplier && invoice.supplier._id){%>
                             <a id="supplierDd" class="current-selected" href="javascript:;"
-                               data-id="<%=invoice.supplier._id%>"><%=invoice.supplier.fullName%></a>
+                               data-id="<%=invoice.supplier._id%>"><%=invoice.supplier.name%></a>
                             <%} else {%>
                             <a id="supplierDd" class="current-selected" href="javascript:;">Select</a>
                             <%}%>
