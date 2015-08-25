@@ -6,7 +6,7 @@ module.exports = function (grunt) {
     grunt.initConfig({
         jsdoc : {
             dist : {
-                src: [/*'handlers/!**!/!*.js',*/ 'routes/**/*.js'],
+                src: ['handlers/!**!/!*.js', 'routes/**/*.js', 'models/**/*.js'],
                 options: {
                     destination: 'doc',
                     template : "node_modules/grunt-jsdoc/node_modules/ink-docstrap/template",
