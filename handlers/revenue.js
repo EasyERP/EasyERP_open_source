@@ -1,6 +1,9 @@
 /**
- * Created by Roman on 04.05.2015.
+ * Creates a new Person.
+ * @class Represents a person.
+ * @type {async|exports|module.exports}
  */
+
 var async = require('async');
 var _ = require('lodash');
 var mongoose = require('mongoose');
@@ -12,6 +15,7 @@ var wTrack = function (models) {
     var wTrackSchema = mongoose.Schemas['wTrack'];
     var ProjectSchema = mongoose.Schemas['Project'];
     var BonusTypeSchema = mongoose.Schemas['bonusType'];
+    var monthHoursSchema = mongoose.Schemas['MonthHours'];
 
     this.bySales = function (req, res, next) {
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
@@ -672,6 +676,7 @@ var wTrack = function (models) {
         });
     };
 
+
     this.allBonus = function (req, res, next) {
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
         var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
@@ -705,7 +710,8 @@ var wTrack = function (models) {
                 }, {
                     $match: {
                         $and: [{
-                            bonusCount: {$gt: 0}}, {
+                            bonusCount: {$gt: 0}
+                        }, {
                             $or: [{
                                 $or: [{
                                     'bonus.startDate': null
@@ -800,6 +806,107 @@ var wTrack = function (models) {
                 //result = _.sortBy(result, '_id.employeeId');
 
                 res.status(200).send(result);
+            });
+
+        });
+    };
+
+    this.totalHours = function (req, res, next) {
+        var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+        var MonthHours = models.get(req.session.lastDb, 'MonthHours', monthHoursSchema);
+
+        access.getReadAccess(req, req.session.uId, 67, function (access) {
+            var options = req.query;
+            var startWeek = parseInt(options.week);
+            var startYear = parseInt(options.year);
+            var startMonth = moment().year(startYear).isoWeek(startWeek).month();
+            var endMonth;
+            var endWeek;
+            var endYear;
+            var startDate;
+            var endDate;
+            var match;
+            var groupBy;
+
+            if (!access) {
+                return res.status(403).send();
+            }
+
+            if (startWeek >= 40) {
+                endWeek = parseInt(startWeek) + 14 - 53;
+                endYear = parseInt(startYear) + 1;
+            } else {
+                endWeek = parseInt(startWeek) + 14;
+                endYear = parseInt(startYear);
+            }
+
+            startDate = startYear * 100 + startWeek;
+            endDate = endYear * 100 + endWeek;
+
+            endMonth = moment().year(endYear).isoWeek(endWeek).month()
+
+            function monthHourRetriver(waterfallCb) {
+                MonthHours
+                    .find({
+                        month: {$gte: startMonth, $lte: endMonth},
+                        year: {$gte: startYear, $lte: endYear}
+                    })
+                    .exec(waterfallCb)
+            };
+
+            function wTrackComposer(/*someData,*/ waterfallCb) {
+                match = {
+                    dateByWeek: {
+                        $gte: startDate,
+                        $lt: endDate
+                    }
+                };
+
+                groupBy = {
+                    _id: {
+                        department: '$department.departmentName',
+                        _id: '$department._id',
+                        year: '$year',
+                        week: '$week'
+                    },
+                    sold: {$sum: '$worked'}
+                };
+
+                WTrack.aggregate([{
+                    $match: match
+                }, {
+                    $group: groupBy
+                }, {
+                    $project: {
+                        year: "$_id.year",
+                        week: "$_id.week",
+                        department: "$_id.department",
+                        sold: 1,
+                        _id: 0
+                    }
+                }, {
+                    $group: {
+                        _id: '$department',
+                        root: {$push: '$$ROOT'},
+                        totalSold: {$sum: '$sold'}
+                    }
+                }, {
+                    $sort: {_id: 1}
+                }], function (err, response) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    res.status(200).send(response);
+                });
+            };
+
+            async.waterfall([monthHourRetriver], function (err, response) {
+                if (err) {
+                    return next(err);
+                }
+
+                res.status(200).send(response);
             });
 
         });
