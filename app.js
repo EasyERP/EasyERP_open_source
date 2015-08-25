@@ -1,6 +1,10 @@
+
 /**
- * Created by Roman on 01.04.2015.
+ * # This is myClass
+ * @class MyClass
+ * @type {exports|module.exports}
  */
+
 
 module.exports = function (mainDb, dbsNames) {
     //mongoose is delegated because it encapsulated main connection
