@@ -3,7 +3,6 @@
  */
 
 /**
- * Base Url
  * @module Customer
  * @namespace EasyERP
  * @class Customer
@@ -16,9 +15,7 @@ module.exports = (function () {
 
     var customerSchema = mongoose.Schema({
         /**
-         * Type of __Customer__, proper values are: _'Person'_, _'Company'_
-         * @property type
-         * @type String
+         * @property {String} type - Type of __Customer__, proper values are: _'Person'_, _'Company'_
          */
         /**
          * determine is a ___Person___ or ___Company___ our own. Actually now is not needed
@@ -194,9 +191,7 @@ module.exports = (function () {
          * @default ''
          */
         /**
-         * @property whoCanRW
-         * @type String
-         * @default 'everyOne'
+         * @property {String} whoCanRW
          */
         /**
          * @property groups

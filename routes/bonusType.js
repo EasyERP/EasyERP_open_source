@@ -1,6 +1,4 @@
-/**
- * Created by Liliya_Pikiner on 7/1/2015.
- */
+
 var bonusTypeHandler = require('../handlers/bonusType');
 var express = require('express');
 var router = express.Router();

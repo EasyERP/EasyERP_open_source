@@ -1,51 +1,27 @@
-/**
- * Created by Roman on 21.05.2015.
- */
+
 var express = require('express');
 var router = express.Router();
 var EmployeeHandler = require('../handlers/employee');
 
+/**
+ * @module Employees
+ */
 module.exports = function (models) {
-    var handler = new EmployeeHandler(models);
-    /**
-     * Base ___url___ for build __requests__ is `http://192.168.88.122:8089/totalCollectionLength/Employees`
-     *
-     * This __method__ allows get count of Employees.
-     *
-     *#### Response example:
-     *     {
-     *         "showMore": false,
-     *         "count": 135
-     *     }
-     *
-     * @method totalCollectionLength/Employees
-     * @for Employees
-     * @namespace EasyERP
-     */
     /**
      * Base ___url___ for build __requests__ is `http:/192.168.88.122:8089/Employees/form/:id`
-     *
      * This __method__ allows get all Employees for `form` viewType.
      * @method Employees/form/:id
-     * @for Employees
-     * @namespace EasyERP
      */
-
     /**
      * Base ___url___ for build __requests__ is `http:/192.168.88.122:8089/Employees/kanban`
-     *
      * This __method__ allows get all Employees for `kanban` viewType.
      * @method Employees/kanban
-     * @for Employees
-     * @namespace EasyERP
      */
-
-    /**
+     /**
      * Base ___url___ for build __requests__ is `http:/192.168.88.122:8089/Employees/list`
-     *
      * This __method__ allows get all Employees for `list` viewType.
      *
-     *#### Response example:
+     * @example
      *        {"data": [{
      *        "_id": "55b92ad221e4b7c40f000030",
      *        "dateBirth": "1981-12-31T00:00:00.000Z",
@@ -146,10 +122,17 @@ module.exports = function (models) {
      *        "fullName": "Alex Ssss",
      *        "id": "55b92ad221e4b7c40f000030"
      *        }]}
-     *
      * @method Employees/list
-     * @for Employees
-     * @namespace EasyERP
+     */
+    var handler = new EmployeeHandler(models);
+    /**
+     * Base ___url___ for build __requests__ is `http://192.168.88.122:8089/totalCollectionLength/Employees`
+     * This __method__ allows get count of Employees.
+     * @example {
+     *         "showMore": false,
+     *         "count": 135
+     *     }
+     * @method totalCollectionLength/Employees
      */
     router.get('/getForDD', handler.getForDD);
     router.get('/bySales', handler.getBySales);

@@ -1,6 +1,4 @@
-/**
- * Created by soundstorm on 30.06.15.
- */
+
 var express = require('express');
 var router = express.Router();
 var VocationHandler = require('../handlers/vacation');

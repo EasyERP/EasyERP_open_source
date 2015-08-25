@@ -1,6 +1,4 @@
-/**
- * Created by Roman on 09.07.2015.
- */
+
 require('pmx').init();
 
 var express = require('express');

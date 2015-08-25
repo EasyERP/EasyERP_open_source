@@ -1,6 +1,4 @@
-/**
- * Created by soundstorm on 15.06.15.
- */
+
 var express = require('express');
 var router = express.Router();
 var SalaryHandler = require('../handlers/salary');
