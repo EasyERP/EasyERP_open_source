@@ -9,7 +9,7 @@ var mainDb = mongoose.createConnection('localhost', 'mainDB');
 var sessionParser = require('./helpers/sessionParser');
 var app;
 
-var open = require('open');
+//var open = require('open');
 
 
 require('./config/' + mainAppConfig.NODE_ENV);
