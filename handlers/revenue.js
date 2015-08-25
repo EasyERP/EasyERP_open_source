@@ -16,6 +16,8 @@ var wTrack = function (models) {
     var ProjectSchema = mongoose.Schemas['Project'];
     var BonusTypeSchema = mongoose.Schemas['bonusType'];
     var monthHoursSchema = mongoose.Schemas['MonthHours'];
+    var vacationSchema = mongoose.Schemas['Vacation'];
+    var holidaysSchema = mongoose.Schemas['Holiday'];
 
     this.bySales = function (req, res, next) {
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
@@ -698,8 +700,6 @@ var wTrack = function (models) {
             startDate = parseInt(options.startDate) || (startYear * 100 + startMonth);
             endDate = parseInt(options.endDate) || (endYear * 100 + endMonth);
 
-            console.log(startWeek, startYear, endWeek, endYear);
-
             var idForProjects = function (callback) {
                 Project.aggregate([{
                     $project: {
@@ -814,6 +814,8 @@ var wTrack = function (models) {
     this.totalHours = function (req, res, next) {
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
         var MonthHours = models.get(req.session.lastDb, 'MonthHours', monthHoursSchema);
+        var Vacation = models.get(req.session.lastDb, 'Vacation', vacationSchema);
+        var Holidays = models.get(req.session.lastDb, 'Holiday', holidaysSchema);
 
         access.getReadAccess(req, req.session.uId, 67, function (access) {
             var options = req.query;
@@ -827,6 +829,7 @@ var wTrack = function (models) {
             var endDate;
             var match;
             var groupBy;
+            var parallelTasksObject;
 
             if (!access) {
                 return res.status(403).send();
@@ -843,18 +846,51 @@ var wTrack = function (models) {
             startDate = startYear * 100 + startWeek;
             endDate = endYear * 100 + endWeek;
 
-            endMonth = moment().year(endYear).isoWeek(endWeek).month()
+            endMonth = moment().year(endYear).isoWeek(endWeek).month();
 
-            function monthHourRetriver(waterfallCb) {
+            match = {
+                month: {$gte: startMonth, $lte: endMonth},
+                year: {$gte: startYear, $lte: endYear}
+            };
+
+            groupBy = {
+                _id: '$department.name',
+                root: {
+                    $push: '$$ROOT'
+                }
+            };
+
+            function monthHourRetriver(parallelCb) {
                 MonthHours
-                    .find({
-                        month: {$gte: startMonth, $lte: endMonth},
-                        year: {$gte: startYear, $lte: endYear}
-                    })
+                    .find(match)
                     .exec(waterfallCb)
             };
 
-            function wTrackComposer(/*someData,*/ waterfallCb) {
+            function vacationComposer(parallelCb) {
+                Vacation.aggregate([{
+                    $match: match
+                }, {
+                    $group: groupBy
+                }, {
+                    $project: {
+                        year: "$_id.year",
+                        week: "$_id.week",
+                        department: "$_id.department",
+                        sold: 1,
+                        _id: 0
+                    }
+                }, {
+                    $sort: {_id: 1}
+                }], function (err, response) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    res.status(200).send(response);
+                });
+            };
+
+            function wTrackComposer(parallelCb) {
                 match = {
                     dateByWeek: {
                         $gte: startDate,
@@ -901,7 +937,13 @@ var wTrack = function (models) {
                 });
             };
 
-            async.waterfall([monthHourRetriver], function (err, response) {
+            parallelTasksObject = {
+                monthHourRetriver: monthHourRetriver,
+                vacationComposer: vacationComposer,
+                wTrackComposer: wTrackComposer
+            };
+
+            async.parallel(parallelTasksObject, function (err, response) {
                 if (err) {
                     return next(err);
                 }
