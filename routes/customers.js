@@ -21,7 +21,7 @@ module.exports = function (models) {
      * Base ___url___ for build __requests__ is `http://192.168.88.122:8089/customers`
      *
      * This __method__ allows get all customers based on `type`
-     *#### Response example:
+     * #### Response example:
      *        {"data":
      *        [{
      *        "_id":"55ba0301d79a3a343900000d",
