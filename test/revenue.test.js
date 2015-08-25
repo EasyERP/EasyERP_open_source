@@ -126,7 +126,7 @@ describe("BDD for revenue", function () {  // Runs once before all tests start.
                     return done(err);
                 }
 
-                expect(body).to.be.instanceOf(Array);
+                expect(body).to.be.instanceOf(Function);
                 done();
             });
 
