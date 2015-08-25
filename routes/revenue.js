@@ -20,6 +20,8 @@ module.exports = function (models) {
     router.get('/employeeBySales', expressSession.authenticatedUser, handler.employeeBySales);
     router.get('/hoursByDep', expressSession.authenticatedUser, handler.hoursByDep);
 
+    router.get('/totalHours', expressSession.authenticatedUser, handler.totalHours);
+
     router.get('/allBonus', expressSession.authenticatedUser, handler.allBonus);
 /*    router.get('/uncalcBonus', expressSession.authenticatedUser, handler.uncalcBonus);
     router.get('/calcBonus', expressSession.authenticatedUser, handler.calcBonus);

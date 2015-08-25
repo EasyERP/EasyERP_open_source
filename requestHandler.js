@@ -1,3 +1,5 @@
+require('pmx').init();
+
 var requestHandler = function (event, mainDb) {
     var dbsObject = mainDb.dbsObject;
     var mongoose = require('mongoose');

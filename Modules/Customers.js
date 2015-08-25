@@ -1,4 +1,6 @@
-﻿var Customers = function (event, models) {
+﻿require('pmx').init();
+
+var Customers = function (event, models) {
     var mongoose = require('mongoose');
     var logWriter = require('../helpers/logWriter.js');
     var objectId = mongoose.Types.ObjectId;
