@@ -646,6 +646,7 @@ input::-ms-clear {
     width: 90%;
     height: 30px;
     line-height: 26px;
+    color: @mainText-color;
   }
 
   input {
@@ -766,7 +767,7 @@ input::-ms-clear {
   width: 100%;
   height: @defaultHeight;
   border-bottom: @thin-border @defaultBorderColor;
-  background: @defaultBackground;
+ // background: @defaultBackground;
   clear: both;
   margin-top: 5px;
 
@@ -1715,7 +1716,7 @@ input::-ms-clear {
   }
 }
 
-.dialog(@background: @bg-main, @color: @bg-main-menu, @borderColor: @border-color-main) {
+.dialog(@background: @bg-main-menu, @color: @mainText-color, @borderColor: @border-color-main) {
   border: @thin-border @borderColor;
   background: @background;
   color: @color;
@@ -1800,6 +1801,7 @@ input::-ms-clear {
 
   .inner {
     padding: 5px;
+    background: @bg-main-menu;
   }
 
   .form-holder {
@@ -2101,6 +2103,7 @@ input::-ms-clear {
         line-height: 17px;
         float: left;
         max-width: 95%;
+        color: @formColum-main-text-color;
         .text-overflow;
       }
     }
@@ -2511,7 +2514,7 @@ input::-ms-clear {
   line-height: 20px;
   height: 20px;
   cursor: pointer;
-  color: @bg-main-menu;
+  color: @tilte-color;
   input {
     position: absolute;
     top: 0;
@@ -2865,7 +2868,7 @@ dl {
 
     &.active {
       padding: 10px 14px 10px 10px;
-
+      width: 100%;
       .buttons {
         margin-top: 3px;
         .dialog-buttons;
@@ -3040,8 +3043,9 @@ dl {
 
 .customer-info {
   dt {
+    color: @formColum-main-subText-color;
     span {
-      color: @formColum-main-subText-color;
+
     }
   }
 }
@@ -4427,10 +4431,10 @@ h3.dashboard {
     margin-left: 6px;
     border: @thin-border silver;
     &.health1 {
-      background-color: green;
+      background-color: @green-lights-color;
     }
     &.health2 {
-      background-color: yellow;
+      background-color: @yellow-lights-color;
     }
     &.health3 {
       background-color: red;
@@ -4523,8 +4527,16 @@ h3.dashboard {
   &.inprogress {
     color: @lightblue;
   }
-  &.closed, &.done {
-    color: #00af00;
+  &.closed, &.done, &.unDone {
+    display: block;
+    background-color: @green-lights-color;
+    color: @mainText-color;
+    text-align: center;
+    .border-radius(4px);
+    padding: 2px 5px;
+  }
+  &.unDone {
+    background-color: @yellow-lights-color;
   }
 
 }
