@@ -7,6 +7,7 @@ define([
         'text!templates/customerPayments/forWTrack/ListHeader.html',
         'views/customerPayments/list/ListItemView',
         'views/customerPayments/list/ListTotalView',
+        'views/Filter/FilterView',
         'collections/customerPayments/filterCollection',
         'collections/customerPayments/editCollection',
         'models/PaymentModel',
@@ -14,7 +15,7 @@ define([
         'populate',
         'async'
     ],
-    function (paginationTemplate, listTemplate, ListHeaderForWTrack, listItemView, listTotalView, paymentCollection, editCollection, currentModel, dataService, populate, async) {
+    function (paginationTemplate, listTemplate, ListHeaderForWTrack, listItemView, listTotalView, filterView, paymentCollection, editCollection, currentModel, dataService, populate, async) {
         var PaymentListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -63,6 +64,8 @@ define([
 
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
                 this.contentCollection = paymentCollection;
+
+                this.filterView;
             },
 
             setEditable: function (td) {
@@ -557,6 +560,8 @@ define([
                     pagenation.hide();
                 }
 
+                this.filterView.renderFilterContent();
+
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
 
@@ -585,6 +590,21 @@ define([
                 } else {
                     pagenation.show();
                 }
+            },
+
+            showFilteredPage: function (filter) {
+                var itemsNumber = $("#itemsNumber").text();
+                this.filter = filter;
+
+                this.startTime = new Date();
+                this.newCollection = false;
+
+                $("#top-bar-deleteBtn").hide();
+                $('#check_all').prop('checked', false);
+
+                this.changeLocationHash(1, itemsNumber, filter);
+                this.collection.showMore({count: itemsNumber, page: 1, filter: filter});
+                this.getTotalLength(null, itemsNumber, filter);
             },
 
             render: function (options) {
@@ -635,6 +655,19 @@ define([
                 } else {
                     pagenation.show();
                 }
+
+                self.filterView = new filterView({
+                    contentType: self.contentType
+                });
+
+                self.filterView.bind('filter', function (filter) {
+                    self.showFilteredPage(filter)
+                });
+                self.filterView.bind('defaultFilter', function () {
+                    self.showFilteredPage({});
+                });
+
+                self.filterView.render();
 
                 setTimeout(function () {
                     self.editCollection = new editCollection(self.collection.toJSON());

@@ -173,8 +173,25 @@ define([], function () {
                 view: 'type',
                 backend: 'type'
             },
+        },
+        customerPayments: {
+            'Assigned': {
+                view: 'assigned',
+                backend: 'invoice.assigned._id'
+            },
+            'Company': {
+                view: 'supplier',
+                backend: 'supplier._id'
+            },
+            'Payment Way': {
+                view: 'paymentMethod',
+                backend: 'paymentMethod._id'
+            },
+            'Status': {
+                view: 'workflow',
+                backend: 'workflow'
+            }
         }
-
     };
 
     return {
