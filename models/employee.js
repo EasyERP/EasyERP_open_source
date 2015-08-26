@@ -1,15 +1,15 @@
 
 module.exports = (function () {
-    /**
-     * @module Employee
-     * @type {*|exports|module.exports}
-     */
+
     var mongoose = require('mongoose');
     var ObjectId = mongoose.Schema.Types.ObjectId;
 
     var employeeSchema = new mongoose.Schema({
 
         /**
+         * Application is same as Employee, but `isEmployee` is false. That means that employee is not hired.
+         * @module Employee
+         *
          * @class Employee
          * @property {Boolean} isEmployee - If property _isEmployee_ is _true_ than Employee is hired
          *

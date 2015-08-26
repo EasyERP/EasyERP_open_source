@@ -17,12 +17,14 @@ module.exports = function (models) {
      *     }
      *
      * @method totalCollectionLength/Leads
+     * @instance
      */
     /**
      * Base ___url___ for build __requests__ is `http:/192.168.88.122:8089/Leads/form/:id`
      *
      * This __method__ allows get all Leads for `form` viewType.
      * @method Leads/form/:id
+     * @instance
      */
 
     /**
@@ -30,6 +32,7 @@ module.exports = function (models) {
      *
      * This __method__ allows get all Leads for `kanban` viewType.
      * @method Leads/kanban
+     * @instance
      */
 
     /**
@@ -130,6 +133,7 @@ module.exports = function (models) {
      *        }]}
      *
      * @method Leads/list
+     * @instance
      */
     router.get('/getFilterValues', handler.getFilterValues);
     router.get('/:viewType', handler.getByViewType);
@@ -151,12 +155,14 @@ module.exports = function (models) {
      *     }
      *
      * @method totalCollectionLength/Opportunities
+     * @instance
      */
     /**
      * Base ___url___ for build __requests__ is `http://192.168.88.122:8089/Opportunities/form/:id`
      *
      * This __method__ allows get all opportunities for `form` viewType.
      * @method Opportunities/form/:id
+     * @instance
      */
 
     /**
@@ -164,6 +170,7 @@ module.exports = function (models) {
      *
      * This __method__ allows get all opportunities for `kanban` viewType.
      * @method Opportunities/kanban
+     * @instance
      */
 
     /**
@@ -264,6 +271,7 @@ module.exports = function (models) {
      *        }]}
      *
      * @method Opportunities/list
+     * @instance
      */
     return router;
 };

@@ -21,14 +21,20 @@ module.exports = function (models) {
     }
 
     /**
-     * Base ___url___ for build __requests__ is `http://192.168.88.122:8089/customers`
+     * __Type__ `GET`
      *
-     * This __method__ allows get all customers based on `type`
+     * Base ___url___ for build __requests__ is `http://192.168.88.133:8089/customers`
+     *
+     * This __method__ allows get all customers based on `type`. Type can be `Company` or `Person`.
+     * @example Request example:
+     *
+     *         http://192.168.88.133:8089/Persons/list
+     *
      * @example Response example:
+     *
      *        {"data":
      *        [{
      *        "_id":"55ba0301d79a3a343900000d",
-     *        "__v":0,
      *        "companyInfo":{
      *            "industry":null
      *            },
@@ -100,15 +106,17 @@ module.exports = function (models) {
      *        ]}
      *
      * @method customer/
+     * @instance
      */
 
 
     router.get('/', checkAuth, handler.getAll);
 
     /**
-     * This __method__ allows get customer by _id
+     * This __method__ allows get _Customer_ by _id
      *
-     * @method customers/:id
+     * @method customer/:id
+     * @instance
      */
     router.get('/:id', checkAuth, handler.getById);
     //router.post('/', handler.create);

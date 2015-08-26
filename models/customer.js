@@ -1,16 +1,15 @@
 
 
 module.exports = (function () {
-    /**
-     * @module Customer
-     * @type {*|exports|module.exports}
-     */
+
     var mongoose = require('mongoose');
     var ObjectId = mongoose.Schema.Types.ObjectId;
 
     var customerSchema = mongoose.Schema({
         /**
+         * @module Customer
          * @class Customer
+         *
          * @property {String} type - Type of __Customer__, proper values are: _'Person'_, _'Company'_
          *
          * @property {Boolean} isOwn - Determine is a ___Person___ or ___Company___ our own. Actually now is not needed

@@ -12,12 +12,14 @@ module.exports = function (models) {
      *
      * This __method__ allows get all Employees for `form` viewType.
      * @method Employees/form/:id
+     * @instance
      */
     /**
      * Base ___url___ for build __requests__ is `http:/192.168.88.122:8089/Employees/kanban`
      *
      * This __method__ allows get all Employees for `kanban` viewType.
      * @method Employees/kanban
+     * @instance
      */
      /**
      * Base ___url___ for build __requests__ is `http:/192.168.88.122:8089/Employees/list`
@@ -126,7 +128,8 @@ module.exports = function (models) {
      *        "id": "55b92ad221e4b7c40f000030"
      *        }]}
      * @method Employees/list
-     */
+      * @instance
+      */
     var handler = new EmployeeHandler(models);
     /**
      * Base ___url___ for build __requests__ is `http://192.168.88.122:8089/totalCollectionLength/Employees`
@@ -136,7 +139,45 @@ module.exports = function (models) {
      *         "count": 135
      *     }
      * @method totalCollectionLength/Employees
+     * @instance
      */
+    /**
+     * @module Application
+     */
+    /**
+     *
+     * Base ___url___ for build __requests__ is `http://192.168.88.122:8089/totalCollectionLength/Applications`
+     * This __method__ allows get count of Employees that are not hired.
+     * @example {
+     *         "showmore": false,
+     *         "count": 42
+     *     }
+     *
+     * @method totalCollectionLength/Applications
+     * @instance
+     */
+    /**
+     * Base ___url___ for build __requests__ is `http:/192.168.88.122:8089/Applications/form/:id`
+     *
+     * This __method__ allows get all Employees that are not hired for `form` viewType.
+     * @method Applications/form/:id
+     * @instance
+     */
+    /**
+     * Base ___url___ for build __requests__ is `http:/192.168.88.122:8089/Applications/kanban`
+     *
+     * This __method__ allows get all Employees that are not hired for `kanban` viewType.
+     * @method Applications/kanban
+     * @instance
+     */
+    /**
+     * Base ___url___ for build __requests__ is `http:/192.168.88.122:8089/Applications/list`
+     *
+     * This __method__ allows get all Employees that are not hired for `list` viewType.
+     * @method Applications/list
+     * @instance
+     */
+
     router.get('/getForDD', handler.getForDD);
     router.get('/bySales', handler.getBySales);
     router.get('/byDepartment', handler.byDepartment);

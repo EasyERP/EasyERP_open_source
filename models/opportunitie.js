@@ -1,20 +1,12 @@
-/**
- * Created by Roman on 04.04.2015.
- */
 
 module.exports = (function () {
-    /**
-     * @module Lead
-     */
-    /**
-     * @module Opportunity
-     */
     var mongoose = require('mongoose');
     var ObjectId = mongoose.Schema.Types.ObjectId;
 
     var opportunitiesSchema = mongoose.Schema({
         /**
-         * @class Leads
+         * @module Lead
+         * @class Lead
          * @property {Boolean} isOpportunitie - Is Opportunity, proper values are: _'true'_, _'false'_
          *
          * @property {String} jobkey
