@@ -693,6 +693,7 @@ var wTrack = function (models) {
             var startDate;
             var endDate;
             var waterfallTasks;
+            var projectIds;
 
             var startWeek = moment().isoWeekYear(startYear).month(startMonth - 1).isoWeek();
             var endWeek = moment().isoWeekYear(endYear).month(endMonth - 1).isoWeek();
@@ -747,23 +748,70 @@ var wTrack = function (models) {
             function getWTracksByProjects(_ids, callback) {
                 var queryObject = {};
 
+                projectIds = _ids;
+
                 queryObject['$and'] = [
                     {'dateByMonth': {'$gte': startDate}},
                     {'dateByMonth': {'$lte': endDate}},
-                    {'project._id': {'$in': _ids}}
+                    {'project._id': {'$in': projectIds}}
                 ];
 
-                WTrack.find(queryObject)
-                    .lean()
-                    .exec(function (err, result) {
-                        if (err) {
-                            return callback(err);
+                WTrack.aggregate([
+                    {
+                        $match: queryObject
+                    }, {
+                        $group: {
+                            _id: '$dateByMonth',
+                            root: {$push: '$$ROOT'}
                         }
-                        callback(null, result);
-                    })
+                    }, {
+                        $sort: {
+                            _id: 1
+                        }
+                    }], function (err, result) {
+                    if (err) {
+                        return callback(err);
+                    }
+
+                    callback(null, result);
+                });
             };
 
             function getProjectsByIds(wTracks, callback) {
+                //var _ids = _.pluck(wTracks, 'project._id');
+
+                Project.aggregate([
+                    {
+                        $match: {
+                            _id: {'$in': projectIds}
+                        }
+                    },
+                    {
+                        $unwind: '$bonus'
+                    },
+                    {
+                        $group: {
+                            _id: {employeeId: '$bonus.employeeId', bonusId: '$bonus.bonusId'},
+                            dateArray: {
+                                $push: {
+                                    startDate: '$bonus.startDate',
+                                    endDate: '$bonus.endDate',
+                                    projectId: '$_id'
+                                }
+                            }
+
+                        }
+                    }
+                ], function (err, projects) {
+                    if (err) {
+                        return callback(err)
+                    }
+
+                    callback(null, {wTracks: wTracks, projects: projects});
+                });
+            };
+
+            function getBonuses(wTracks, callback) {
                 var _ids = _.pluck(wTracks, 'project._id');
 
                 Project.aggregate([
@@ -796,7 +844,7 @@ var wTrack = function (models) {
                 return res.status(403).send();
             }
 
-            waterfallTasks = [idForProjects/*, getWTracksByProjects, getProjectsByIds*/];
+            waterfallTasks = [idForProjects, getWTracksByProjects, getProjectsByIds];
 
             async.waterfall(waterfallTasks, function (err, result) {
                 if (err) {
