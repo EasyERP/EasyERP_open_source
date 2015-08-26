@@ -1,6 +1,4 @@
-/**
- * Created by soundstorm on 15.06.15.
- */
+
 var mongoose = require('mongoose');
 var moment = require('../public/js/libs/moment/moment');
 var Salary = function (models) {
