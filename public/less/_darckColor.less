@@ -1,25 +1,60 @@
-/*== Main Colo =======================*/
+@bg-main: #242B30;
+@tilte-color: #33FFFF; //for hover
+@fontColor-2: #4D5A75;
+@mainText-color: #fff;
 
-@bg-main: #1C1C1C;
-@tilte-color: #75C9B5;//for hover
 
-@border-color-main: #4d7188;
+@border-color-main: #7f7f80;
 @border-color: @border-color-main;
 @border-color-selected: @bg-main-menu-selected; //lighten(@border-color-main, 30%);
 
 /*==Main menu==========================*/
 
-@bg-main-menu: #3F8A8E;
-@bg-main-menu-selected: #75C9B5;
-
+@bg-main-menu: #1A2227;
+@bg-main-menu-selected: #33FFFF;
 @span-color: @bg-main-menu-selected;
+@grey: #A9A9A9;
 
 /*==Sub MENU, Top-bar =========================*/
 
 @bg-submenu: @bg-main;
-@submenu-text-color: #67809F;
+@submenu-text-color: @mainText-color;
 
-@normal-submenu-text: #67809f;
-@current-submenu-text: #75c9b5;
+@normal-submenu-text: #D5D5D5;
+@current-submenu-text: #33FFFF;
 @non-active-submenu-text: desaturate(@normal-submenu-text, 19%);
 @creatBtn-color: #a3bb3a;
+/*== Filters ======================*/
+
+@selected-filters-color: @tilte-color;
+@filter-icon-color: @normal-submenu-text;
+@bg-drop-down-color: #67809F;
+@filter-border-color: @bg-drop-down-color;
+
+/*== Customer ======================*/
+
+@link-color: desaturate(@bg-main-menu-selected, 15%);
+
+/*==LIST ============================*/
+
+@defaultBgColorOdd-color: lighten(@bg-main, 5%);
+@list-color-text: @submenu-text-color;
+@defaultBgHover-color: lighten(@bg-main, 15%);
+@list-border-color: #7f7f80;
+
+
+/*==Form Colum==============================*/
+
+@formColum-main-text-color: @bg-main-menu-selected;
+@formColum-main-subText-color: @submenu-text-color;
+@formColum-customer-info: @bg-main-menu-selected;
+@input-text-color: #A9A9A9;
+
+
+/*== TABS ==================================*/
+@whiteText: #fff;
+@bg-butt-color: @bg-main;
+@input-tab-text-color: @input-text-color;
+
+/*== Kanab Opportunities*/
+@kanab-text-color: @bg-main-menu-selected;

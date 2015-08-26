@@ -1,6 +1,6 @@
 @import "_font";
 @import "_colors";
-//@import "_darckColor";
+@import "_darckColor";
 @import "_list";
 
 /*------------------------Constants-----------------------------*/
@@ -686,15 +686,15 @@ input::-ms-clear {
   bottom: @bottom;
 }
 
-.mainmenu(@defaultColor: #333,@activeColor: @bg-main-menu-selected, @height: 30px) {
+.mainmenu(@defaultColor: #333,@activeColor: @bg-main-menu-selected, @height: 30px, @border-color: @border-color-main) {
   display: block;
   float: none;
   .position(relative);
   width: 100%;
-  background: inherit;
+  background: @bg-main-menu;
   height: @height;
   .noPaddingMargin;
-  border-bottom: @thin-border #4D5A75;
+  border-bottom: @thin-border @border-color;
   nav {
     .left;
     background: @bg-main-menu;
@@ -2119,11 +2119,13 @@ input::-ms-clear {
 
   .countOnPage {
     float: left;
+    color: @mainText-color;
   }
 
   .nextPrev {
     float: right;
     margin-right: 5px;
+    color: @mainText-color;
   }
 
   .countOnPage {
@@ -2179,8 +2181,9 @@ input::-ms-clear {
     }
   }
   #currentShowPage {
-    border: @thin-border rgba(0, 0, 0, 0.4);
-    border-right: @thin-border rgba(0, 0, 0, 0);
+    border: @thin-border @border-color-main;
+    border-right: none;
+    background-color: #fff;
     width: 21px;
     height: 12px;
     margin-left: 5px;
@@ -2188,8 +2191,8 @@ input::-ms-clear {
   }
 
   #pageList {
-    background-color: white;
-    border: @thin-border rgba(0, 0, 0, 0.4);
+    background-color: @bg-main-menu;
+    border: @thin-border @border-color-main;
     position: absolute;
     bottom: 17px;
     left: -7px;
@@ -2202,9 +2205,10 @@ input::-ms-clear {
       line-height: 20px;
       text-align: center;
       font-size: 12px;
+      cursor: pointer;
 
       &:hover {
-        background-color: #13C4A5;
+        background-color: @bg-main-menu-selected;
         color: white;
         text-decoration: none;
       }
@@ -2234,15 +2238,15 @@ input::-ms-clear {
       margin: 0 5px;
       line-height: 10px;
       font-size: 12px;
-
+      padding: 3px 2px;
       &:hover {
         background-color: #F7F8F9;
       }
     }
 
     ul {
-      background-color: white;
-      border: @thin-border rgba(0, 0, 0, 0.4);
+      background-color: @bg-main-menu;
+      border: @thin-border @border-color-main;
       position: absolute;
       bottom: 15px;
       left: 5px;
@@ -2258,7 +2262,7 @@ input::-ms-clear {
           text-align: center;
 
           &:hover {
-            background-color: #13C4A5;
+            background-color: @bg-main-menu-selected;
             color: white;
             text-decoration: none;
           }
@@ -3458,10 +3462,14 @@ button.red, a.red {
     span {
       display: block;
       line-height: 30px;
+      color: @grey;
+        &:hover {
+          color: #fff;
+        }
     }
 
     &:hover {
-      background: @tilte-color;
+      background: @bg-main-menu-selected;
       color: #fff;
     }
   }
