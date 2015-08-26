@@ -633,7 +633,7 @@ input::-ms-clear {
   text-align: left;
   border: 1px solid #7f7f80;
   background-color: #242b30;
-  color: #33ffff;
+  color: #02a1f2;
   cursor: move;
   transition: box-shadow 1s ease;
   transition: border-color 1s ease;
@@ -785,7 +785,7 @@ input::-ms-clear {
   position: absolute;
   top: 4px;
   right: 28px;
-  color: #33ffff;
+  color: #02a1f2;
 }
 .kanban .column .columnNameDiv .columnName .fold-unfold {
   display: block;
@@ -802,10 +802,10 @@ input::-ms-clear {
   font-weight: bold;
   margin: 0 2px 0 4px;
   cursor: pointer;
-  color: #33ffff;
+  color: #02a1f2;
 }
 .kanban .column .columnNameDiv .columnName .text {
-  color: #33ffff;
+  color: #02a1f2;
 }
 .kanban .column .columnNameDiv.cancelled .columnName {
   border-bottom: 2px solid #FF5454 !important;
@@ -1036,7 +1036,7 @@ input::-ms-clear {
   padding: 5px 15px;
 }
 .dialog-buttons input:hover {
-  border: 1px solid #33ffff !important;
+  border: 1px solid #02a1f2 !important;
   color: #ffffff !important;
 }
 .pagination {
@@ -1137,7 +1137,7 @@ input::-ms-clear {
   cursor: pointer;
 }
 .pagination #pageList li:hover {
-  background-color: #33ffff;
+  background-color: #02a1f2;
   color: white;
   text-decoration: none;
 }
@@ -1185,7 +1185,7 @@ input::-ms-clear {
   text-align: center;
 }
 .pagination .pageList ul li a:hover {
-  background-color: #33ffff;
+  background-color: #02a1f2;
   color: white;
   text-decoration: none;
 }
@@ -1362,7 +1362,7 @@ input::-ms-clear {
   line-height: 20px;
   height: 20px;
   cursor: pointer;
-  color: #33ffff;
+  color: #02a1f2;
 }
 .input-file input {
   position: absolute;
@@ -1387,7 +1387,7 @@ select:not([type="checkbox"]):focus {
   -moz-box-shadow: 0 0 5px rgba(82, 168, 236, 0.5);
   -webkit-box-shadow: 0 0 5px rgba(82, 168, 236, 0.5);
   outline: none;
-  border: 1px solid #33ffff !important;
+  border: 1px solid #02a1f2 !important;
 }
 .current-selected {
   color: #1E8FC6 !important;
@@ -1489,8 +1489,8 @@ select:not([type="checkbox"]):focus {
   text-decoration: none;
 }
 .btn-list .selected {
-  border-bottom: 3px solid #33ffff;
-  color: #33ffff;
+  border-bottom: 3px solid #02a1f2;
+  color: #02a1f2;
 }
 .btn-list .selected a {
   color: white;
@@ -1935,7 +1935,7 @@ dl dd a.formLink {
 .form #cancelSpan a,
 .form #saveSpan a,
 .form #editSpan a {
-  color: #33ffff;
+  color: #02a1f2;
 }
 .form label {
   display: block;
@@ -2505,7 +2505,7 @@ dl dd a.formLink {
 .formLeftColumn .form #cancelSpan a,
 .formLeftColumn .form #saveSpan a,
 .formLeftColumn .form #editSpan a {
-  color: #33ffff;
+  color: #02a1f2;
 }
 .formLeftColumn .form label {
   display: block;
@@ -2860,7 +2860,7 @@ dl dd a.formLink {
 .formRightColumn .form #cancelSpan a,
 .formRightColumn .form #saveSpan a,
 .formRightColumn .form #editSpan a {
-  color: #33ffff;
+  color: #02a1f2;
 }
 .formRightColumn .form label {
   display: block;
@@ -2980,7 +2980,7 @@ dl dd a.formLink {
   padding: 5px 15px;
 }
 .noteWrapper .addNote.active .buttons input:hover {
-  border: 1px solid #33ffff !important;
+  border: 1px solid #02a1f2 !important;
   color: #ffffff !important;
 }
 .noteWrapper .addNote.active .buttons input {
@@ -2999,7 +2999,7 @@ dl dd a.formLink {
 }
 .noteWrapper .addNote.active .buttons #cancelNote:hover {
   text-decoration: none;
-  border: 1px solid #33ffff;
+  border: 1px solid #02a1f2;
 }
 .noteWrapper .addNote.active label {
   display: block;
@@ -3169,7 +3169,7 @@ dl dd a.formLink {
 .person-info span,
 .customer-info span {
   padding: 0 !important;
-  color: #33ffff;
+  color: #02a1f2;
 }
 .settings-info {
   clear: both;
@@ -3824,7 +3824,7 @@ a.red:hover {
   color: #fff;
 }
 #loginPanel .dropdown-button:hover {
-  background: #33ffff;
+  background: #02a1f2;
   color: #fff;
 }
 .ui-widget-overlay {
@@ -4305,7 +4305,7 @@ table#workflows tr td.edit-status {
   display: block;
 }
 #mainmenu-holder nav ul li.selected {
-  background-color: #33ffff;
+  background-color: #02a1f2;
   height: 30px;
   border: 0;
   -webkit-transition: all ease .5s;
@@ -4662,7 +4662,7 @@ ul.dialog-tabs li a.active {
   height: 35px;
   line-height: 34px;
   border-bottom: none;
-  background-color: #33ffff;
+  background-color: #02a1f2;
   color: #ffffff;
 }
 ul.dialog-tabs li.right {
@@ -4718,7 +4718,7 @@ ul.dialog-tabs li.right button {
   color: #ffffff;
 }
 .thumbnailwithavatar h4 {
-  color: #33ffff;
+  color: #02a1f2;
   font-size: 13px;
   font-weight: bold;
   line-height: 18px;
@@ -4737,7 +4737,7 @@ ul.dialog-tabs li.right button {
   cursor: pointer;
 }
 .thumbnailwithavatar .title {
-  color: #33ffff;
+  color: #02a1f2;
   font-size: 13px;
   font-weight: bold;
   line-height: 18px;
@@ -4831,7 +4831,7 @@ ul.dialog-tabs li.right button {
 }
 .thumbnailwithavatar .email,
 .thumbnailwithavatar .company {
-  color: #42f0f0;
+  color: #149be0;
 }
 .list {
   color: #ffffff !important;
@@ -5249,7 +5249,7 @@ ul.dialog-tabs li.right button {
   border-radius: 0px;
 }
 .ui-dialog .ui-widget-content a {
-  color: #33ffff;
+  color: #02a1f2;
 }
 .ui-dialog .avatar {
   display: block;
@@ -5640,7 +5640,7 @@ ul.dialog-tabs li.right button {
 }
 .ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button {
   background-image: none;
-  color: #33ffff;
+  color: #02a1f2;
   border: 1px solid #7f7f80;
   margin: .5em .4em .5em 0;
   cursor: pointer;
@@ -5660,7 +5660,7 @@ ul.dialog-tabs li.right button {
   line-height: normal;
   background: #242b30;
   padding: .4em 1em;
-  color: #33ffff;
+  color: #02a1f2;
 }
 .ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button span:hover {
   background: #11181d !important;
@@ -5725,7 +5725,7 @@ ul.dialog-tabs li.right button {
   padding: 5px 15px;
 }
 .form-holder form .buttons input:hover {
-  border: 1px solid #33ffff !important;
+  border: 1px solid #02a1f2 !important;
   color: #ffffff !important;
 }
 .form-holder form label {
@@ -5814,11 +5814,11 @@ ul.dialog-tabs li.right button {
   color: #a9a9a9;
 }
 .form-holder form input:not([type=checkbox]):focus {
-  box-shadow: 0 0 5px #33ffff;
-  -moz-box-shadow: 0 0 5px #33ffff;
-  -webkit-box-shadow: 0 0 5px #33ffff;
+  box-shadow: 0 0 5px #02a1f2;
+  -moz-box-shadow: 0 0 5px #02a1f2;
+  -webkit-box-shadow: 0 0 5px #02a1f2;
   outline: medium none;
-  border: 1px solid #33ffff !important;
+  border: 1px solid #02a1f2 !important;
 }
 .form-holder form .mainInfo {
   width: auto;
@@ -5886,7 +5886,7 @@ ul.dialog-tabs li a.active {
   height: 35px;
   line-height: 34px;
   border-bottom: none;
-  background-color: #33ffff;
+  background-color: #02a1f2;
   color: #ffffff;
 }
 ul.dialog-tabs li.right {
@@ -6013,7 +6013,7 @@ ul.chart-tabs li a.active {
   height: 35px;
   line-height: 34px;
   border-bottom: none;
-  background-color: #33ffff;
+  background-color: #02a1f2;
   color: #ffffff;
 }
 ul.chart-tabs li.right {
@@ -7404,7 +7404,7 @@ input::-webkit-inner-spin-button {
   display: none;
 }
 .h2 {
-  color: #33ffff;
+  color: #02a1f2;
   font-size: 1.3em;
   padding: 5px 0;
 }
@@ -8239,7 +8239,7 @@ textarea#editInput {
   content: '\2713';
 }
 .drop-down-filter #filtersContent .filterGroup li:not(.checkedValue):hover:before {
-  color: #33ffff;
+  color: #02a1f2;
 }
 .drop-down-filter #filtersContent .filterGroup li:not(.checkedValue):before,
 .drop-down-filter #filtersContent .filterGroup li.checkedValue:before,
@@ -8248,7 +8248,7 @@ textarea#editInput {
 }
 .drop-down-filter #filtersContent .filterGroup li:hover,
 .drop-down-filter #filtersContent .filterGroup li.checkedValue {
-  background-color: #33ffff;
+  background-color: #02a1f2;
   color: white;
 }
 .drop-down-filter #filtersContent .filterGroup .filterValues {
@@ -8510,11 +8510,11 @@ textarea#editInput {
 }
 #favoritesContent .filters:hover {
   color: white;
-  background-color: #33ffff;
+  background-color: #02a1f2;
 }
 #favoritesContent .checkedValue {
   color: white;
-  background-color: #33ffff;
+  background-color: #02a1f2;
 }
 .forFilterIcons {
   float: left;
