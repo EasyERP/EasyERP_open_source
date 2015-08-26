@@ -7,7 +7,7 @@
     "cleverLinks": true,
     "monospaceLinks": false,
     "dateFormat": "ddd MMM Do YYYY",
-    "outputSourceFiles": true,
+    "outputSourceFiles": false,
     "outputSourcePath": true,
     "systemName": "EasyERP",
     "footer": "",
