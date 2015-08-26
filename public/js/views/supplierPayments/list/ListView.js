@@ -4,12 +4,13 @@
 define([
         'text!templates/Pagination/PaginationTemplate.html',
         'text!templates/supplierPayments/list/ListHeader.html',
+        'text!templates/supplierPayments/forWTrack/ListHeader.html',
         'views/supplierPayments/list/ListItemView',
         'views/supplierPayments/list/ListTotalView',
         'collections/supplierPayments/filterCollection',
         'dataService'
     ],
-    function (paginationTemplate, listTemplate, listItemView, listTotalView, paymentCollection, dataService) {
+    function (paginationTemplate, listTemplate, ListHeaderForWTrack, listItemView, listTotalView, paymentCollection, dataService) {
         var PaymentListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -318,13 +319,24 @@ define([
                 var self = this;
                 var currentEl = this.$el;
 
-                currentEl.html('');
-                currentEl.append(_.template(listTemplate));
-                currentEl.append(new listItemView({
-                    collection: this.collection,
-                    page: this.page,
-                    itemsNumber: this.collection.namberToShow
-                }).render());
+                if (App.currentDb === 'weTrack') {
+                    currentEl.html('');
+                    currentEl.append(_.template(ListHeaderForWTrack));
+                    currentEl.append(new listItemView({
+                        collection: this.collection,
+                        page: this.page,
+                        itemsNumber: this.collection.namberToShow
+                    }).render());
+                } else {
+                    currentEl.html('');
+                    currentEl.append(_.template(listTemplate));
+                    currentEl.append(new listItemView({
+                        collection: this.collection,
+                        page: this.page,
+                        itemsNumber: this.collection.namberToShow
+                    }).render());
+                }
+
                 currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 7}).render());
 
                 $('#check_all').click(function () {
