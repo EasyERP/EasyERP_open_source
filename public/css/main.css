@@ -1645,8 +1645,8 @@ dl dd a.formLink {
   margin: 0 !important;
   padding: 4px 10px;
 }
-.form .compactList li.inner:hover {
-  background: #f1f1f1;
+.form .compactList li.inner:hover p {
+  color: #ffffff;
 }
 .form .compactList li p {
   line-height: 20px !important;
@@ -2215,8 +2215,8 @@ dl dd a.formLink {
   margin: 0 !important;
   padding: 4px 10px;
 }
-.formLeftColumn .form .compactList li.inner:hover {
-  background: #f1f1f1;
+.formLeftColumn .form .compactList li.inner:hover p {
+  color: #ffffff;
 }
 .formLeftColumn .form .compactList li p {
   line-height: 20px !important;
@@ -2570,8 +2570,8 @@ dl dd a.formLink {
   margin: 0 !important;
   padding: 4px 10px;
 }
-.formRightColumn .form .compactList li.inner:hover {
-  background: #f1f1f1;
+.formRightColumn .form .compactList li.inner:hover p {
+  color: #ffffff;
 }
 .formRightColumn .form .compactList li p {
   line-height: 20px !important;
@@ -4656,7 +4656,7 @@ ul.dialog-tabs li a {
   text-align: center;
   line-height: 35px;
   text-decoration: none;
-  color: #36A9E1;
+  color: #ffffff;
 }
 ul.dialog-tabs li a.active {
   height: 35px;
@@ -4988,7 +4988,7 @@ ul.dialog-tabs li.right button {
   margin-left: 4px;
   position: relative;
   display: block;
-  background: #ffffff !important;
+  background: #1a2227 !important;
   border: 1px solid #4d5a75;
   border-bottom-color: rgba(0, 0, 0, 0.3);
   -webkit-transition: -webkit-transform, -webkit-box-shadow, border 200ms linear;
@@ -5880,7 +5880,7 @@ ul.dialog-tabs li a {
   text-align: center;
   line-height: 35px;
   text-decoration: none;
-  color: #36A9E1;
+  color: #ffffff;
 }
 ul.dialog-tabs li a.active {
   height: 35px;
@@ -6007,7 +6007,7 @@ ul.chart-tabs li a {
   text-align: center;
   line-height: 35px;
   text-decoration: none;
-  color: #36A9E1;
+  color: #ffffff;
 }
 ul.chart-tabs li a.active {
   height: 35px;

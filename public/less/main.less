@@ -371,7 +371,9 @@ input::-ms-clear {
         padding: 4px 10px;
 
         &:hover {
-          background: #f1f1f1;
+          p {
+            color: @formColum-main-text-color;
+          }
         }
       }
 
@@ -1046,7 +1048,7 @@ input::-ms-clear {
   //text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
 }
 
-.thumbnail(@background: #fff, @width: 280px) {
+.thumbnail(@background: @bg-main-menu, @width: 280px) {
   .left;
   margin-top: 4px;
   margin-left: 4px;
@@ -2303,7 +2305,7 @@ input::-ms-clear {
       text-align: center;
       line-height: 35px;
       text-decoration: none;
-      color: #36A9E1;
+      color: @whiteText;
 
       &.active {
         height: 35px;
