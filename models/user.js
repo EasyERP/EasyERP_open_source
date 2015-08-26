@@ -33,6 +33,7 @@ module.exports = (function () {
                 foldWorkflows: [{type: String, default: ''}]
             }
         },
+        savedFilters: [{type: ObjectId, ref: 'savedFilters', default: []}],
         RelatedEmployee: {type: ObjectId, ref: 'Employees', default: null}
     }, {collection: 'Users'});
 

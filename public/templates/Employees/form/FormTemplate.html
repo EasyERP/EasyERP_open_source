@@ -60,9 +60,9 @@
 			  <dd><%=workAddress.country%></dd>-->
 			  <dt>Job </dt><dd><%=(jobPosition) ? jobPosition.name : ''%></dd>
 
-			  <dt>Department </dt><dd><%=(department) ? department.departmentName : ''%></dd>
+			  <dt>Department </dt><dd><%=(department) ? department.name : ''%></dd>
 
-			  <dt>Manager </dt><dd><%=(manager) ? manager.name.first + " " + manager.name.last : ''%></dd>
+			  <dt>Manager </dt><dd><%=(manager) ? manager.name : ''%></dd>
 			  <dt>Job Type</dt><dd><%=(jobType) ? jobType : ''%></dd>
 			  
 			  <dt>Work Email </dt><dd><a href="mailto:<%=workEmail%>" target="_blank"><%=workEmail%></a></dd>
@@ -144,10 +144,25 @@
               <dd><span><%=marital%></span></dd>
 			</dl>
 		  </div>
-		  <div class="half-block left withPaddingLeft">
+		  <div class="formTitle">
+			  <h3 class="left">HiredFired</h3>
+			  <div class="clearfix"></div>
+
+			  <div class="half-block left withPaddingLeft">
+				  <%_.each(hire, function(hire, key){ %>
+				  <dt><label>Hired</label></dt>
+				  <dd><%=hire%></dd>
+				  <% }); %>
+			  </div>
+			  <div class="half-block right withPaddingLeft">
+				  <%_.each(fire, function(fire, key){ %>
+				  <dt><label>Fired</label></dt>
+				  <dd><%=fire%></dd>
+				  <% }); %>
+			  </div>
 		  </div>
 
-		  <div class="clearfix"></div>
+			<div class="clearfix"></div>
 	      <div class="formTitle">
 			<h3 class="left"><legend>Resume</legend></h3>
 			<div class="clearfix"></div>

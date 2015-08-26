@@ -16,7 +16,7 @@ var Holiday = function (models) {
         query.exec(function (err, result) {
             if (next) {
                 if (err) {
-                    next(err);
+                    return next(err);
                 }
 
                 res.status(200).send({count: result.length});
@@ -35,7 +35,7 @@ var Holiday = function (models) {
                     var queryObject = {};
                     var sort = {};
                     var query;
-                    var count = options.count ? options.count : 50;
+                    var count = options.count ? options.count : 100;
                     var page = options.page;
                     var skip = (page - 1) > 0 ? (page - 1) * count : 0;
 
@@ -139,11 +139,17 @@ var Holiday = function (models) {
         var id = req.params.id;
         var Holiday = models.get(req.session.lastDb, 'Holiday', HolidaySchema);
 
-        Holiday.remove({_id: id}, function (err, holiday) {
-            if (err) {
-                return next(err);
+        access.getDeleteAccess(req, req.session.uId, 69, function (access) {
+            if (access) {
+                Holiday.remove({_id: id}, function (err, holiday) {
+                    if (err) {
+                        return next(err);
+                    }
+                    res.status(200).send({success: holiday});
+                });
+            } else {
+                res.status(403).send();
             }
-            res.status(200).send({success: holiday});
         });
     };
 
@@ -151,12 +157,17 @@ var Holiday = function (models) {
         var Holiday = models.get(req.session.lastDb, 'Holiday', HolidaySchema);
         var body = mapObject(req.body);
         var Holiday = new Holiday(body);
-
-        Holiday.save(function (err, Holiday) {
-            if (err) {
-                return next(err);
+        access.getEditWritAccess(req, req.session.uId, 69, function (access) {
+            if (access) {
+                Holiday.save(function (err, Holiday) {
+                    if (err) {
+                        return next(err);
+                    }
+                    res.status(200).send({success: Holiday});
+                });
+            } else {
+                res.status(403).send();
             }
-            res.status(200).send({success: Holiday});
         });
     };
 

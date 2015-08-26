@@ -171,7 +171,7 @@
 
             editKanban: function (e) {
                 dataService.getData('/currentUser', null, function (user, context) {
-                    var tempDom = _.template(kanbanSettingsTemplate, { tasks: user.kanbanSettings.tasks });
+                    var tempDom = _.template(kanbanSettingsTemplate, { tasks: user.user.kanbanSettings.tasks });
                     context.$el = $(tempDom).dialog({
                         dialogClass: "edit-dialog",
                         width: "400",
@@ -319,13 +319,15 @@
             hideItemsNumber: function (e) {
                 var el = e.target;
 
-                $(".allNumberPerPage").hide();
-                $(".newSelectList").hide();
+                this.$el.find(".allNumberPerPage, .newSelectList").hide();
                 if (!el.closest('.search-view')) {
-                    $(".drop-down-filter").hide();
-                    $('.search-options').hide();
                     $('.search-content').removeClass('fa-caret-up');
+                    this.$el.find('.search-options').addClass('hidden');
                 };
+                //this.$el.find(".allNumberPerPage, .newSelectList").hide();
+                //if (!el.closest('.search-view')) {
+                //    $('.search-content').removeClass('fa-caret-up');
+                //};
             },
 
             foldUnfiltredItems: function (workflows) {
@@ -334,16 +336,22 @@
                 var list_id;
                 var foldList;
                 var choosen = this.$el.find('.chosen');
+                var checkedElements = $('.drop-down-filter > input:checkbox:checked');
                 var self = this;
 
                 this.filter = {};
+
                 if (choosen.length) {
                     choosen.each(function (index, elem) {
-                        if (self.filter[elem.children[0].value]) {
-                            self.filter[elem.children[0].value].push(elem.children[1].value);
+                        if (self.filter[elem.children[1].value]) {
+                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+                                self.filter[elem.children[1].value].push(element.value);
+                            })
                         } else {
-                            self.filter[elem.children[0].value] = [];
-                            self.filter[elem.children[0].value].push(elem.children[1].value);
+                            self.filter[elem.children[1].value] = [];
+                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+                                self.filter[elem.children[1].value].push(element.value);
+                            })
                         }
                     });
                     _.each(workflows, function (wfModel) {
@@ -353,6 +361,17 @@
 
                     return false
                 }
+                /*if ((checkedElements.length && checkedElements.attr('id') === 'defaultFilter') || (!choosen.length)) {
+                    self.filter = {};
+
+                    _.each(workflows, function (wfModel) {
+                        $('.column').children('.item').remove();
+                        dataService.getData('/Tasks/kanban', { workflowId: wfModel._id, filter: this.filter }, this.asyncRender, this);
+                    }, this);
+
+
+                    return false
+                };*/
 
                 list_id = _.pluck(workflows, '_id');
                 showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
@@ -381,7 +400,12 @@
             showDefaultFilter: function(workflows) {
                 var el;
                 var showList = _.pluck(workflows, '_id');
+                this.filter = {};
 
+                _.each(workflows, function (wfModel) {
+                    $('.column').children('.item').remove();
+                    dataService.getData('/Tasks/kanban', { workflowId: wfModel._id, filter: this.filter }, this.asyncRender, this);
+                }, this);
                 showList.forEach(function (id) {
                     el = $("td.column[id='" + id + "']");
                     el.removeClass("fold");
@@ -466,7 +490,10 @@
                         self.foldUnfiltredItems(workflows)
                     });
                     FilterView.bind('defaultFilter', function () {
-                        self.showDefaultFilter(workflows)
+                        self.showDefaultFilter(workflows);
+                        $(".saveFilterButton").hide();
+                        $(".clearFilterButton").hide();
+                        $(".removeFilterButton").show();
                     });
                     // Filter custom event listen ------end
                 });

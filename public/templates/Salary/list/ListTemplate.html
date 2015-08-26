@@ -4,12 +4,22 @@
     <td class="icon left">5</td>
     <td class="month"><%=salary.month%></td>
     <td class="year"><%=salary.year%></td>
-    <td class="total_calc_salary"><%=salary.calc.salary%></td>
-    <td class="total_calc_onCard"><%=salary.calc.onCard%></td>
-    <td class="total_paid_onCard"><%=salary.paid.onCard%></td>
-    <td class="total_diff_onCard"><%=salary.diff.onCard%></td>
-    <td class="total_calc_onCash"><%=salary.calc.onCash%></td>
-    <td class="total_paid_onCash"><%=salary.paid.onCash%></td>
-    <td class="total_diff_onCash"><%=salary.diff.onCash%></td>
+    <td class="total_calc_salary money"><%=Number(salary.calc.salary).toLocaleString('en')%></td>
+    <td class="total_calc_onCard money"><%=Number(salary.calc.onCard).toLocaleString('en')%></td>
+    <td class="total_paid_onCard money"><%=Number(salary.paid.onCard).toLocaleString('en')%></td>
+    '<td class="total_diff_onCard
+    <%if (salary.diff.onCard < 0) {%>
+        negativeMoney"><%=Number(salary.diff.onCard * (-1)).toLocaleString('en')%></td>
+    <%} else {%>
+        money"><%=Number(salary.diff.onCard).toLocaleString('en')%></td>
+    <%}%>
+    <td class="total_calc_onCash money"><%=Number(salary.calc.onCash).toLocaleString('en')%></td>
+    <td class="total_paid_onCash money"><%=Number(salary.paid.onCash).toLocaleString('en')%></td>
+    <td class="total_diff_onCash
+    <%if (salary.diff.onCash < 0) {%>
+        negativeMoney"><%=Number(salary.diff.onCash * (-1)).toLocaleString('en')%></td>
+    <%} else {%>
+        money"><%=Number(salary.diff.onCash).toLocaleString('en')%></td>
+    <%}%>
 </tr>
 <% }) %>

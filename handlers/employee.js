@@ -8,6 +8,7 @@ var Employee = function (models) {
     var access = require("../Modules/additions/access.js")(models);
     var EmployeeSchema = mongoose.Schemas['Employee'];
     var ProjectSchema = mongoose.Schemas['Project'];
+    var _ = require('../node_modules/underscore');
 
     this.getForDD = function (req, res, next) {
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
@@ -15,7 +16,7 @@ var Employee = function (models) {
         Employee
             .find()
             .select('_id name department')
-            .populate('department', '_id departmentName')
+            //.populate('department._id', '_id departmentName')
             .sort({'name.first': 1})
             .lean()
             .exec(function (err, employees) {
@@ -30,21 +31,21 @@ var Employee = function (models) {
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
         var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
 
-        function assigneFinder(cb){
+        function assigneFinder(cb) {
             var match = {
-                projectmanager: {$ne: null}
+                'projectmanager._id': {$ne: null}
             };
 
             Project.aggregate([{
                 $match: match
             }, {
                 $group: {
-                    _id: "$projectmanager"
+                    _id: "$projectmanager._id"
                 }
             }], cb);
         };
 
-        function employeeFinder(assignedArr, cb){
+        function employeeFinder(assignedArr, cb) {
             Employee
                 .find({_id: {$in: assignedArr}})
                 .select('_id name')
@@ -53,8 +54,8 @@ var Employee = function (models) {
                 .exec(cb);
         }
 
-        async.waterfall([assigneFinder, employeeFinder], function(err, employees){
-            if(err){
+        async.waterfall([assigneFinder, employeeFinder], function (err, employees) {
+            if (err) {
                 return next(err);
             }
 
@@ -63,29 +64,33 @@ var Employee = function (models) {
 
     };
 
-    this.getFilterValues = function (req, res, next) {
-        var Employee = models.get(req.session.lastDb, 'Employee', EmployeeSchema);
+    this.byDepartment = function (req, res, next) {
+        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
 
         Employee
-            .aggregate([
-            {
-                $group:{
-                    _id: null,
-                    'Name': {
-                        $addToSet: '$name.last'
-                    },
-                    'Email': {
-                        $addToSet: '$workEmail'
-                    }
+            .aggregate([{
+                $match: {isEmployee: true}
+            }, {
+                $group: {
+                    _id: "$department._id",
+                    employees: {$push: {
+                        name: {$concat: ['$name.first', ' ', '$name.last']},
+                        _id: '$_id'
+                    }}
                 }
-            }
-        ], function (err, result) {
-            if (err) {
-                return next(err);
-            }
+            }, {
+                $project: {
+                    department: '$_id',
+                    employees: 1,
+                    _id: 0
+                }
+            }], function (err, employees) {
+                if(err){
+                    return next(err);
+                }
 
-            res.status(200).send(result);
-        });
+                res.status(200).send(employees);
+            });
     };
 
 };

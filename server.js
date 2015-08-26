@@ -12,7 +12,7 @@ require('./config/' + mainAppConfig.NODE_ENV);
 process.env.NODE_ENV = mainAppConfig.NODE_ENV;
 mainDb.on('error', console.error.bind(console, 'connection error:'));
 mainDb.once('open', function callback () {
-    var port = process.env.PORT || 8088;
+    var port = process.env.PORT || 8089;
     mainDb.dbsObject = dbsObject;
 
     console.log("Connection to mainDB is success");

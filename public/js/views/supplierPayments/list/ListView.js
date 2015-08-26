@@ -2,13 +2,14 @@
  * Created by soundstorm on 21.05.15.
  */
 define([
+        'text!templates/Pagination/PaginationTemplate.html',
         'text!templates/supplierPayments/list/ListHeader.html',
         'views/supplierPayments/list/ListItemView',
         'views/supplierPayments/list/ListTotalView',
         'collections/supplierPayments/filterCollection',
         'dataService'
     ],
-    function (listTemplate, listItemView, listTotalView, paymentCollection, dataService) {
+    function (paginationTemplate, listTemplate, listItemView, listTotalView, paymentCollection, dataService) {
         var PaymentListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -19,6 +20,7 @@ define([
             page: null, //if reload page, and in url is valid page
             contentType: 'supplierPayments',//needs in view.prototype.changeLocationHash
             viewType: 'list',//needs in view.prototype.changeLocationHash
+            collectionLengthUrl: '/payment/suppliers/totalCollectionLength',
 
             events: {
                 "click .itemsNumber": "switchPageCounter",
@@ -27,8 +29,7 @@ define([
                 "click #previousPage": "previousPage",
                 "click #nextPage": "nextPage",
                 "click .checkbox": "checked",
-                "click #itemsButton": "itemsNumber",
-                "click .currentPageList": "itemsNumber",
+                "mouseover .currentPageList": "itemsNumber",
                 "click": "hideItemsNumber",
                 "click #firstShowPage": "firstPage",
                 "click #lastShowPage": "lastPage",
@@ -40,7 +41,7 @@ define([
                 this.collection = options.collection;
                 this.filter = options.filter;
                 this.sort = options.sort;
-                this.defaultItemsNumber = this.collection.namberToShow || 50;
+                this.defaultItemsNumber = this.collection.namberToShow || 100;
                 this.newCollection = options.newCollection;
                 this.deleteCounter = 0;
                 this.page = options.collection.page;
@@ -53,7 +54,7 @@ define([
 
             showPage: function (event) {
                 event.preventDefault();
-                this.showP(event,{filter: this.filter, newCollection: this.newCollection,sort: this.sort});
+                this.showP(event, {filter: this.filter, newCollection: this.newCollection, sort: this.sort});
             },
 
             switchPageCounter: function (event) {
@@ -228,23 +229,30 @@ define([
                     newCollection: this.newCollection
                 });
                 this.collection.bind('reset', this.renderContent, this);
+                this.collection.bind('showmore', this.showMoreContent, this);
             },
 
-            getTotalLength: function (currentNumber, itemsNumber,filter) {
-                dataService.getData('/supplierPayments/totalCollectionLength', {
+            getTotalLength: function (currentNumber, itemsNumber, filter) {
+                dataService.getData(this.collectionLengthUrl, {
                     contentType: this.contentType,
                     currentNumber: currentNumber,
                     filter: filter,
                     newCollection: this.newCollection
                 }, function (response, context) {
-                    var page = context.page || 1;
-                    var length = context.listLength = response.count || 0;
-                    if (itemsNumber * (page - 1) > length) {
-                        context.page = page = Math.ceil(length / itemsNumber);
-                        context.fetchSortCollection(context.sort);
-                        context.changeLocationHash(page, context.defaultItemsNumber, filter);
+                    var page;
+                    var length;
+
+                    if (!response.error) {
+                        page = context.page || 1;
+                        length = context.listLength = response.count || 0;
+
+                        if (itemsNumber * (page - 1) > length) {
+                            context.page = page = Math.ceil(length / itemsNumber);
+                            context.fetchSortCollection(context.sort);
+                            context.changeLocationHash(page, context.defaultItemsNumber, filter);
+                        }
+                        context.pageElementRender(response.count, itemsNumber, page);//prototype in main.js
                     }
-                    context.pageElementRender(response.count, itemsNumber, page);//prototype in main.js
                 }, this);
             },
 
@@ -262,7 +270,7 @@ define([
 
                 holder.append(itemView.render());
 
-                holder.append(new listTotalView({element: holder.find("#listTable"), cellSpan:7}).render());
+                holder.append(new listTotalView({element: holder.find("#listTable"), cellSpan: 7}).render());
 
                 itemView.undelegateEvents();
 
@@ -287,10 +295,14 @@ define([
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
                 tBody.empty();
-                var itemView = new listItemView({ collection: this.collection,page: currentEl.find("#currentShowPage").val(), itemsNumber: currentEl.find("span#itemsNumber").text() });
+                var itemView = new listItemView({
+                    collection: this.collection,
+                    page: currentEl.find("#currentShowPage").val(),
+                    itemsNumber: currentEl.find("span#itemsNumber").text()
+                });
                 tBody.append(itemView.render());
 
-                currentEl.append(new listTotalView({element: tBody, cellSpan:7}).render());
+                currentEl.append(new listTotalView({element: tBody, cellSpan: 7}).render());
 
                 var pagenation = this.$el.find('.pagination');
                 if (this.collection.length === 0) {
@@ -327,7 +339,10 @@ define([
                     self.hideItemsNumber();
                 });
 
+                currentEl.append(_.template(paginationTemplate));
+
                 var pagenation = this.$el.find('.pagination');
+
                 if (this.collection.length === 0) {
                     pagenation.hide();
                 } else {

@@ -161,6 +161,10 @@ define([
                         mobile: $.trim(thisEl.find('#mobileInput').val()),
                         fax: $.trim(thisEl.find('#faxInput').val())
                     },
+                    social: {
+                        LI: $.trim(thisEl.find('#LI').val()),
+                        FB: $.trim(thisEl.find('#FB').val())
+                    },
                     email: $.trim(thisEl.find('#emailInput').val()),
                     salesPurchases: {
                         isCustomer: isCustomer,
@@ -287,7 +291,7 @@ define([
                     }).render().el
                 );
 
-                //populate.getCompanies("#companiesDd", "/CompaniesForDd", {}, this, false, true);
+                populate.getCompanies("#companiesDd", "/CompaniesForDd", {}, this, false, true);
 
                 common.canvasDraw({model: this.currentModel.toJSON()}, this);
                 thisEl.find('.dateBirth').datepicker({

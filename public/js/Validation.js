@@ -6,7 +6,7 @@ define(
             floatNumberRegExp = /(^[0-9]+(\.[0-9]{1,2})?)$/,
             nameRegExp = /^[a-zA-Z]+[a-zA-Z-_\s]+$/,
             groupsNameRegExp = /[a-zA-Z0-9]+[a-zA-Z0-9-,#@&*-_\s()\.\/\s]+$/,
-            loginRegExp = /[\w\.@]{6,100}$/,
+            loginRegExp = /[\w\.@]{4,100}$/,
             passRegExp = /^[\w\.@]{3,100}$/,
             skypeRegExp = /^[\w\._@]{6,100}$/,
             workflowRegExp = /^[a-zA-Z0-9\s]{2,100}$/,
@@ -18,7 +18,7 @@ define(
             emailRegExp = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
             loggedRegExp = /^([0-9]{1,9})\.?([0-9]{1,2})?$/;
         var MIN_LENGTH = 2,
-            LOGIN_MIN_LENGTH = 6,
+            LOGIN_MIN_LENGTH = 4,
             WORKFLOW_MIN_LENGTH = 3;
 
         var validateEmail = function(validatedString){
@@ -415,6 +415,15 @@ define(
             }
         }
 
+        var checkJobPositionField = function(errorArray, required, fieldValue, fieldName){
+            if(required) {
+                if (!fieldValue) {
+                    errorArray.push([fieldName, errorMessages.requiredMsg].join(' '));
+                    return;
+                }
+            }
+        }
+
         var checkEmailField = function(errorArray, required, fieldValue, fieldName){
             if(required){
                 if(!fieldValue){
@@ -552,6 +561,7 @@ define(
             checkLogedField:checkLogedField,
 			checkWorkflowNameField:checkWorkflowNameField,
 			checkSkypeField:checkSkypeField,
-            checkPriceField:checkPriceField
+            checkPriceField:checkPriceField,
+            checkJobPositionField:checkJobPositionField
         }
     });

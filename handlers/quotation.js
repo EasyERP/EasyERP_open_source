@@ -121,7 +121,6 @@ var Quotation = function (models) {
                     $match: {
                         $and: [
                             optionsObject,
-
                             {
                                 $or: [
                                     {
@@ -162,12 +161,17 @@ var Quotation = function (models) {
         };
 
         contentSearcher = function (quotationsIds, waterfallCallback) {
-            var queryObject = {_id: {$in: quotationsIds}};
+            var data = req.query;
             var query;
+            var queryObject = {};
+            queryObject['$and'] = [];
 
-            queryObject.isOrder = isOrder;
+            queryObject.$and.push({_id: {$in: quotationsIds}});
+            queryObject.$and.push({isOrder: isOrder});
+
+            caseFilter(queryObject, data);
+
             query = Quotation.count(queryObject);
-
             query.count(waterfallCallback);
         };
 
@@ -180,6 +184,33 @@ var Quotation = function (models) {
 
             res.status(200).send({count: result});
         });
+    };
+
+    function caseFilter (queryObject, data) {
+        var filter = data.filter;
+
+        if (data && filter) {
+            if (filter.condition === 'or') {
+                queryObject['$or'] = []
+            }
+            if (filter.workflow) {
+                queryObject.$and.push({workflow: {$in: filter.workflow.objectID()}});
+            }
+            /*if (filter.Reference) {
+                queryObject.$and.push({supplierReference: {$in: filter.Reference}});
+            }*/
+            if (filter.supplier) {
+                queryObject.$and.push({supplier: {$in: filter.supplier}});
+            }
+            if (filter['Order date']) {
+                if (filter.condition === 'or') {
+                    queryObject.$or.push({orderDate: {$gte: new Date(filter['Order date'][0].start), $lte: new Date(filter['Order date'][0].end)}});
+                } else {
+                    queryObject.$and.push({orderDate: {$gte: new Date(filter['Order date'][0].start), $lte: new Date(filter['Order date'][0].end)}});
+                }
+
+            }
+        }
     };
 
     this.getByViewType = function (req, res, next) {
@@ -196,7 +227,7 @@ var Quotation = function (models) {
         var contentType = query.contentType;
         var isOrder = (contentType === 'Order' || contentType === 'salesOrder');
         var sort = {};
-        var count = query.count ? query.count : 50;
+        var count = query.count ? query.count : 100;
         var page = query.page;
         var skip = (page - 1) > 0 ? (page - 1) * count : 0;
 
@@ -275,20 +306,21 @@ var Quotation = function (models) {
         };
 
         contentSearcher = function (quotationsIds, waterfallCallback) {
-            var queryObject = {};// {_id: {$in: quotationsIds}};
+            var data = req.query;
             var query;
-            var workflowArray;
-            //queryObject.isOrder = isOrder;
+            var queryObject = {};
+            queryObject['$and'] = [];
 
-            if (req.query && req.query.filter && req.query.filter.workflow) {
-                workflowArray = req.query.filter.workflow;
-                queryObject.workflow = {$in: workflowArray};
-                //  {workflow: {$in: ['55647b9d2e4aa3804a765ec8']}}   '55647b932e4aa3804a765ec5'
-            } else {
-                queryObject._id = {$in: quotationsIds};
+            queryObject.$and.push({_id: {$in: quotationsIds}});
+            queryObject.$and.push({isOrder: isOrder});
 
-            }
-            query = Quotation.find(queryObject).limit(count).skip(skip).sort(sort);
+            caseFilter(queryObject, data);
+
+            query = Quotation
+                .find(queryObject)
+                .limit(count)
+                .skip(skip)
+                .sort(sort);
 
             query.populate('supplier', '_id name fullName');
             query.populate('destination');
@@ -440,6 +472,62 @@ var Quotation = function (models) {
             }
             res.status(200).send({success: product});
         });
+    };
+
+    this.getFilterValues = function (req, res, next) {
+        var CustomersSchema = mongoose.Schemas['Customers'];
+        var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
+        var Customers = models.get(req.session.lastDb, 'Customers', CustomersSchema);
+
+
+        async.waterfall([
+            function (cb) {
+                Quotation
+                    .aggregate([
+                        {
+                            $group:{
+                                _id: null,
+                                /*'Reference': {
+                                    $addToSet: '$supplierReference'
+                                },*/
+                                'Order date': {
+                                    $addToSet: '$orderDate'
+                                }
+                            }
+                        }
+                    ], function (err, quot) {
+                        if (err) {
+                            cb(err)
+
+                        } else {
+                            cb(null, quot)
+                        }
+                    })
+            },
+            function (quot, cb) {
+                Customers
+                    .populate(quot , {
+                        path: 'supplier',
+                        model: Customers,
+                        select: 'name _id'
+                    },
+                    function (err, quot) {
+                        if (err) {
+                            return cb(err)
+
+                        }
+                            cb(null, quot)
+
+                    })
+            }
+
+        ], function (err, result) {
+            if (err) {
+                return next(err)
+            }
+            res.status(200).send(result)
+
+        })
     };
 
 };

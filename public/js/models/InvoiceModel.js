@@ -16,7 +16,7 @@ define(['Validation', 'common'], function (Validation, common) {
             });
         },
         parse: function (response) {
-            if (!response.data) {
+            if (response) {
                 var payments = response.payments;
                 var balance;
                 var paid;
@@ -84,6 +84,7 @@ define(['Validation', 'common'], function (Validation, common) {
                 name: ''
             },
             salesPerson: {
+                id: '',
                 name: ''
             },
 

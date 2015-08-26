@@ -12,7 +12,13 @@ define([], function(){
             yearOfMonth: null,
             weeksArr: [],
             bySalesData: [],
-            byDepData: []
+            byDepData: [],
+            paidBySales: [],
+            unpaidBySales: [],
+            cancelledBySales: [],
+            projectBySales: [],
+            employeeBySales: [],
+            hoursByDep: []
         }
     });
 

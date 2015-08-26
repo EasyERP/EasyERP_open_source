@@ -1,6 +1,8 @@
 /**
  * Created by Roman on 27.05.2015.
  */
+var CONSTANTS = require('../../../constants/mainConstants');
+
 module.exports = (function () {
     var vacation = {
         collection: 'Vacation',
@@ -29,7 +31,7 @@ module.exports = (function () {
             employee: 'Employee',
             startDate: 'StartDate',
             endDate: 'EndDate',
-            vocationType: 'AbsenceType'
+            vacationType: 'AbsenceType'
         }
     };
     var holiday = {
@@ -71,6 +73,15 @@ module.exports = (function () {
                 value: 'undefined',
                 field: 'imageSrc',
                 fieldValue: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC'
+            }],
+            'PersonalEmail': [{
+                value: 'Null',
+                field: 'personalEmail',
+                fieldValue: null
+            }, {
+                value: 'null',
+                field: 'personalEmail',
+                fieldValue: ''
             }]
         },
         aliases: {
@@ -279,15 +290,28 @@ module.exports = (function () {
             'PaymentWay': [{
                 value: '1',
                 field: 'paymentMethod',
-                fieldValue: '5589888738a5416cab8bdc5d'
+                fieldValue: CONSTANTS.PAYONEER
             }, {
                 value: '2',
                 field: 'paymentMethod',
-                fieldValue: '5589888738a5416cab8bdc5e'
+                fieldValue: CONSTANTS.UKR_SIB_BANK
             }, {
                 value: '3',
                 field: 'paymentMethod',
-                fieldValue: '5589888738a5416cab8bdc5f'
+                fieldValue: CONSTANTS.PRIMARY
+            }],
+            'Status': [{
+                value: '1',
+                field: 'workflow',
+                fieldValue: 'Paid'
+            }, {
+                value: '2',
+                field: 'workflow',
+                fieldValue: 'Draft'
+            }, {
+                value: '0',
+                field: 'workflow',
+                fieldValue: 'Draft'
             }]
         },
         aliases: {
@@ -299,20 +323,60 @@ module.exports = (function () {
             paidAmount: 'Amount',
             paymentDate: 'PaymentDate',
             'paymentInfo.total': 'Amount',
-            workflow: 'PaymentStatus'
+            workflow: 'Status'
         }
     };
 
-    var user = {
-        collection: 'Users',
-        table: 'Users',
+    var monthHours = {
+        collection: 'MonthHours',
+        table: 'MonthlyHours',
         aliases: {
             ID: 'ID',
-            login: 'Login',
-            pass: 'Password',
-            RelatedEmployee: 'Employee' /*TODO*/
+            month: 'Month',
+            hours: 'Hours',
+            year: 'Year',
+            expenseCoefficient: 'ExpenseCoefficient',
+            fixedExpense: 'FixedExpense'
         }
     };
 
-    return [department, jobPosition, employee, project, customer, wTrack, salary, invoice, payment, holiday, vacation];
+    var bonusType = {
+        collection: 'bonusType',
+        table: 'BonusType',
+        aliases: {
+            ID: 'ID',
+            name: 'Name',
+            bonusType: 'Type',
+            value: 'Value',
+            isPercent: 'isPercent'
+        }
+    };
+
+    var bonus = {
+        collection: 'Project',
+        table: 'Bonus',
+        aliases: {
+            ID: 'Project',
+            bonus: [{
+                'employeeId': 'Employee',
+                'bonusId': 'Type',
+                'startDate': 'StartDate',
+                'endDate': 'EndDate'
+            }]
+        }
+    };
+
+    var payOut = {
+        collection: 'Payment',
+        table: 'Payout',
+        aliases: {
+            ID: 'ID',
+            date: 'Date',
+            paidAmount: 'Amount',
+            month: 'Month',
+            year: 'Year'
+        }
+    };
+
+    return [department, jobPosition, employee, project, customer, wTrack, salary, invoice, payment, holiday, vacation, monthHours, bonusType, bonus, payOut];
 })();

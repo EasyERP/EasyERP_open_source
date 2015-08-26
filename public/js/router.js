@@ -1,11 +1,12 @@
 define([
     'views/main/MainView',
     'views/login/LoginView',
+    'dataService',
     'custom',
     'common',
     'constants'
 
-], function (mainView, loginView, custom, common, CONTENT_TYPES) {
+], function (mainView, loginView, dataService, custom, common, CONTENT_TYPES) {
 
     var appRouter = Backbone.Router.extend({
 
@@ -21,12 +22,14 @@ define([
             "easyErp/:contentType/thumbnails(/c=:countPerPage)(/filter=:filter)": "goToThumbnails",
             "easyErp/:contentType/form(/:modelId)": "goToForm", //FixMe chenge to required Id after test
             "easyErp/:contentType/list(/pId=:parrentContentId)(/p=:page)(/c=:countPerPage)(/filter=:filter)": "goToList",
-            "easyErp/Attendance": "attendance",
             "easyErp/Revenue": "revenue",
+            "easyErp/Attendance": "attendance",
             "easyErp/Profiles": "goToProfiles",
             "easyErp/myProfile": "goToUserPages",
             "easyErp/Workflows": "goToWorkflows",
             "easyErp/Dashboard": "goToDashboard",
+            "easyErp/DashBoardVacation": "dashBoardVacation",
+            "easyErp/HrDashboard": "hrDashboard",
             "easyErp/projectDashboard": "goToProjectDashboard",
             "easyErp/:contentType": "getList",
 
@@ -77,6 +80,92 @@ define([
                     $(".list2 tbody").find("[data-id='false']").remove();
                 }
             });
+            if (!App || !App.currentUser) {
+                dataService.getData('/currentUser', null, function (response) {
+                    if (response && !response.error) {
+                        App.currentUser = response.user;
+                        App.savedFilters = response.savedFilters;
+                    } else {
+                        console.log('can\'t fetch currentUser');
+                    }
+                });
+            };
+        },
+
+        dashBoardVacation: function(){
+            var self = this;
+
+            if(!this.isAuth) {
+                this.checkLogin(function (success) {
+                    if (success) {
+                        self.isAuth = true;
+                        renderDash();
+                    } else {
+                        self.redirectTo();
+                    }
+                });
+            } else {
+                renderDash();
+            }
+
+            function renderDash () {
+                var startTime = new Date();
+                var contentViewUrl = "views/vacationDashboard/index";
+
+                if (self.mainView === null) {
+                    self.main("DashBoardVacation");
+                } else {
+                    self.mainView.updateMenu("DashBoardVacation");
+                }
+
+                require([contentViewUrl], function (contentView) {
+                    var contentview;
+
+                    custom.setCurrentVT('list');
+
+                    contentview = new contentView({startTime: startTime});
+
+                    self.changeView(contentview, true);
+                });
+            }
+        },
+
+        hrDashboard: function(){
+            var self = this;
+
+            if(!this.isAuth) {
+                this.checkLogin(function (success) {
+                    if (success) {
+                        self.isAuth = true;
+                        renderDash();
+                    } else {
+                        self.redirectTo();
+                    }
+                });
+            } else {
+                renderDash();
+            }
+
+            function renderDash () {
+                var startTime = new Date();
+                var contentViewUrl = "views/hrDashboard/index";
+
+                if (self.mainView === null) {
+                    self.main("HrDashboard");
+                } else {
+                    self.mainView.updateMenu("HrDashboard");
+                }
+
+                require([contentViewUrl], function (contentView) {
+                    var contentview;
+
+                    custom.setCurrentVT('list');
+
+                    contentview = new contentView({startTime: startTime});
+
+                    self.changeView(contentview, true);
+                });
+            }
         },
 
         redirectTo: function(){
@@ -85,6 +174,44 @@ define([
             }
             Backbone.history.fragment = "";
             Backbone.history.navigate("login", {trigger: true});
+        },
+
+        revenue: function(){
+            var self = this;
+
+            if(!this.isAuth) {
+                this.checkLogin(function (success) {
+                    if (success) {
+                        self.isAuth = true;
+                        renderRevenue();
+                    } else {
+                        self.redirectTo();
+                    }
+                });
+            } else {
+                renderRevenue();
+            }
+
+            function renderRevenue () {
+                var startTime = new Date();
+                var contentViewUrl = "views/Revenue/index";
+
+                if (self.mainView === null) {
+                    self.main("Revenue");
+                } else {
+                    self.mainView.updateMenu("Revenue");
+                }
+
+                require([contentViewUrl], function (contentView) {
+                    var contentview;
+
+                    custom.setCurrentVT('list');
+
+                    contentview = new contentView({startTime: startTime});
+
+                    self.changeView(contentview, true);
+                });
+            }
         },
 
         attendance: function () {
@@ -115,42 +242,6 @@ define([
             }
         },
 
-        revenue: function () {
-            var self = this;
-
-            if (!this.isAuth) {
-                this.checkLogin(function (success) {
-                    if (success) {
-                        self.isAuth = true;
-                        renderRevenue();
-                    } else {
-
-                    }
-                });
-            }
-
-            function renderRevenue() {
-                var startTime = new Date();
-                var contentViewUrl = "views/Revenue/index";
-
-                if (self.mainView === null) {
-                    self.main("Revenue");
-                } else {
-                    self.mainView.updateMenu("Revenue");
-                }
-
-                require([contentViewUrl], function (contentView) {
-                    var contentview;
-
-                    custom.setCurrentVT('list');
-
-                    contentview = new contentView({startTime: startTime});
-
-                    self.changeView(contentview);
-                });
-            }
-        },
-
         goToProfiles: function () {
             var self = this;
             this.checkLogin(function (success) {
@@ -161,7 +252,7 @@ define([
                 }
             });
 
-            function goProfile(context) {
+            function goProfile (context) {
                 var startTime = new Date();
                 if (context.mainView === null) {
                     context.main("Profiles");
@@ -181,7 +272,7 @@ define([
                     collection.bind('reset', _.bind(createViews, self));
                     custom.setCurrentVT('list');
 
-                    function createViews() {
+                    function createViews () {
                         collection.unbind('reset');
                         var contentview = new contentView({collection: collection, startTime: startTime});
                         var topbarView = new topBarView({actionType: "Content"});
@@ -210,7 +301,7 @@ define([
                 }
             });
 
-            function goMyProfile(context) {
+            function goMyProfile (context) {
                 var startTime = new Date();
                 var contentViewUrl = "views/myProfile/ContentView";
                 var topBarViewUrl = "views/myProfile/TopBarView";
@@ -246,7 +337,7 @@ define([
                 }
             });
 
-            function goDashboard(context) {
+            function goDashboard (context) {
                 var startTime = new Date();
                 var contentViewUrl = "views/Dashboard/ContentView";
                 var topBarViewUrl = "views/Dashboard/TopBarView";
@@ -269,6 +360,7 @@ define([
                 });
             }
         },
+
         goToProjectDashboard: function () {
             var self = this;
             this.checkLogin(function (success) {
@@ -279,7 +371,7 @@ define([
                 }
             });
 
-            function goProjectDashboard(context) {
+            function goProjectDashboard (context) {
                 var startTime = new Date();
                 var contentViewUrl = "views/projectDashboard/ContentView";
                 var topBarViewUrl = "views/projectDashboard/TopBarView";
@@ -313,7 +405,7 @@ define([
                 }
             });
 
-            function goToWorkflows(context) {
+            function goToWorkflows (context) {
                 var startTime = new Date();
 
                 if (context.mainView === null) {
@@ -334,7 +426,7 @@ define([
                     collection.bind('reset', _.bind(createViews, self));
                     custom.setCurrentVT('list');
 
-                    function createViews() {
+                    function createViews () {
                         collection.unbind('reset');
                         var contentview = new contentView({collection: collection, startTime: startTime});
                         var topbarView = new topBarView({actionType: "Content"});
@@ -369,13 +461,25 @@ define([
             var self = this;
             this.checkLogin(function (success) {
                 if (success) {
-                    goList(self);
+                    if (!App || !App.currentDb) {
+                        dataService.getData('/currentDb', null, function (response) {
+                            if (response && !response.error) {
+                                App.currentDb = response;
+                            } else {
+                                console.log('can\'t fetch current db');
+                            }
+
+                            goList(self);
+                        });
+                    } else {
+                        goList(self);
+                    }
                 } else {
                     self.redirectTo();
                 }
             });
 
-            function goList(context) {
+            function goList (context) {
                 var currentContentType = context.testContent(contentType);
                 if (contentType !== currentContentType) {
                     contentType = currentContentType;
@@ -386,18 +490,23 @@ define([
                 }
                 var newCollection = true;
                 var self = context;
+                var savedFilter;
                 var startTime = new Date();
                 var contentViewUrl = "views/" + contentType + "/list/ListView";
                 var topBarViewUrl = "views/" + contentType + "/TopBarView";
                 var collectionUrl = context.buildCollectionRoute(contentType);
                 var navigatePage = (page) ? parseInt(page) : 1;
-                var count = (countPerPage) ? parseInt(countPerPage) || 50 : 50;
+                var count = (countPerPage) ? parseInt(countPerPage) || 100 : 100;
 
-                if (filter === 'empty') {
+               // if (filter === 'empty') {
+                if (!filter) {
                     newCollection = false;
                 } else if (filter) {
                     filter = JSON.parse(filter);
                 }
+
+                savedFilter = custom.savedFilters(contentType, filter);
+
                 if (context.mainView === null) {
                     context.main(contentType);
                 } else {
@@ -408,7 +517,7 @@ define([
                         viewType: 'list',
                         page: navigatePage,
                         count: count,
-                        filter: filter,
+                        filter: savedFilter,
                         parrentContentId: parrentContentId,
                         contentType: contentType,
                         newCollection: newCollection
@@ -417,13 +526,13 @@ define([
                     collection.bind('reset', _.bind(createViews, self));
                     custom.setCurrentVT('list');
 
-                    function createViews() {
+                    function createViews () {
                         collection.unbind('reset');
                         var topbarView = new topBarView({actionType: "Content", collection: collection});
                         var contentview = new contentView({
                             collection: collection,
                             startTime: startTime,
-                            filter: filter,
+                            filter: savedFilter,
                             newCollection: newCollection
                         });
 
@@ -432,6 +541,7 @@ define([
                         topbarView.bind('saveEvent', contentview.saveItem, contentview);
                         topbarView.bind('deleteEvent', contentview.deleteItems, contentview);
                         topbarView.bind('generateInvoice', contentview.generateInvoice, contentview);
+                        topbarView.bind('copyRow', contentview.copyRow, contentview);
 
                         collection.bind('showmore', contentview.showMoreContent, contentview);
                         context.changeView(contentview);
@@ -451,7 +561,7 @@ define([
                 }
             });
 
-            function goForm(context) {
+            function goForm (context) {
                 var currentContentType = context.testContent(contentType);
                 if (contentType !== currentContentType) {
                     contentType = currentContentType;
@@ -507,21 +617,6 @@ define([
             }
         },
 
-        convertModelDates: function (model) {
-            if (model.has('createdBy'))
-                model.get('createdBy').date = common.utcDateToLocaleDateTime(model.get('createdBy').date);
-            if (model.has('editedBy'))
-                model.get('editedBy').date = common.utcDateToLocaleDateTime(model.get('editedBy').date);
-            if (model.has('dateBirth'))
-                model.set({
-                    dateBirth: common.utcDateToLocaleDate(model.get('dateBirth'))
-                });
-            if (model.has('nextAction'))
-                model.set({
-                    nextAction: common.utcDateToLocaleDate(model.get('nextAction').date)
-                });
-        },
-
         goToKanban: function (contentType, parrentContentId) {
             var self = this;
             this.checkLogin(function (success) {
@@ -532,7 +627,7 @@ define([
                 }
             });
 
-            function goKanban(context) {
+            function goKanban (context) {
                 var self = context;
                 var currentContentType = context.testContent(contentType);
                 if (contentType !== currentContentType) {
@@ -556,7 +651,7 @@ define([
 
                     collection.bind('reset', _.bind(createViews, self));
 
-                    function createViews() {
+                    function createViews () {
                         var contentview = new contentView({
                             workflowCollection: collection,
                             startTime: startTime,
@@ -593,7 +688,7 @@ define([
                 }
             });
 
-            function goThumbnails(context) {
+            function goThumbnails (context) {
                 var currentContentType = context.testContent(contentType);
                 if (contentType !== currentContentType) {
                     contentType = currentContentType;
@@ -606,12 +701,17 @@ define([
                 var contentViewUrl;
                 var topBarViewUrl = "views/" + contentType + "/TopBarView";
                 var collectionUrl;
-                var count = (countPerPage) ? parseInt(countPerPage) || 50 : 50;
-                if (filter === 'empty') {
+                var savedFilter;
+                var count = (countPerPage) ? parseInt(countPerPage) || 100 : 100;
+                //if (filter === 'empty') {
+                if (!filter) {
                     newCollection = false;
                 } else if (filter) {
                     filter = JSON.parse(filter);
                 }
+
+                savedFilter = custom.savedFilters(contentType, filter);
+
                 if (context.mainView === null) {
                     context.main(contentType);
                 } else {
@@ -626,7 +726,7 @@ define([
                         viewType: 'thumbnails',
                         //page: 1,
                         count: count,
-                        filter: filter,
+                        filter: savedFilter,
                         contentType: contentType,
                         newCollection: newCollection
                     })
@@ -635,12 +735,12 @@ define([
                     collection.bind('reset', _.bind(createViews, self));
                     custom.setCurrentVT('thumbnails');
 
-                    function createViews() {
+                    function createViews () {
                         collection.unbind('reset');
                         var contentview = new contentView({
                             collection: collection,
                             startTime: startTime,
-                            filter: filter,
+                            filter: savedFilter,
                             newCollection: newCollection
                         });
                         var topbarView = new topBarView({actionType: "Content", collection: collection});
@@ -668,8 +768,8 @@ define([
         },
 
         getList: function (contentType) {
-
             this.contentType = contentType;
+
             contentType = this.testContent(contentType);
             var viewType = custom.getCurrentVT({contentType: contentType});
             Backbone.history.navigate('#easyErp/' + contentType + '/' + viewType, {trigger: true, replace: true});
@@ -689,7 +789,13 @@ define([
             this.topBarView = topBarView;
         },
 
-        changeView: function (view) {
+        changeView: function (view, hideTopBar) {
+            if(hideTopBar){
+                $('#top-bar').hide();
+            } else {
+                $('#top-bar').show();
+            }
+
             if (this.view) {
                 this.view.undelegateEvents();
             }

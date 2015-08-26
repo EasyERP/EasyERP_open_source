@@ -8,7 +8,7 @@ module.exports = (function () {
 
     var payments = {
         _id: false,
-        payments: [{ type: ObjectId, ref: 'Payment', default: null }],
+        //payments: [{ type: ObjectId, ref: 'Payment', default: null }],
         total: {type: Number, default: 0, set: setPrice},
         balance: {type: Number, default: 0, set: setPrice},
         unTaxed: {type: Number, default: 0, set: setPrice},
@@ -30,25 +30,38 @@ module.exports = (function () {
         name: {type: String, default: ''},
         invoiceType: {type: String, default: 'wTrack'},
         forSales: {type: Boolean, default: true},
-        supplier: { type: ObjectId, ref: 'Customers', default: null },
+        supplier: {
+            _id: {type: ObjectId, ref: 'Customers', default: null},
+            name: String
+        },
         /*fiscalPosition: { type: String, default: null },*/
         sourceDocument: { type: String, default: null },
         paymentReference: { type: String, default: 'free' },
 
-        project: {type: ObjectId, ref: 'Project', default: null},
+        project: {
+            _id: {type: ObjectId, ref: 'Project', default: null},
+            name: String
+        },
 
         invoiceDate: { type: Date, default: Date.now },
         dueDate: Date,
         paymentDate: Date,
 
-        salesPerson: {type: ObjectId, ref: 'Employees', default: null},
+        salesPerson: {
+            _id: {type: ObjectId, ref: 'Employees', default: null},
+            name: String
+        },
         paymentTerms: {type: ObjectId, ref: 'PaymentTerm', default: null},
 
         paymentInfo: payments,
         payments: [{type: ObjectId, ref: 'Payment', default: null}],
         products: [ products],
 
-        workflow: {type: ObjectId, ref: 'workflows', default: null},
+        workflow: {
+            _id: {type: ObjectId, ref: 'workflows', default: null},
+            name: String,
+            status: String
+        },
         whoCanRW: {type: String, enum: ['owner', 'group', 'everyOne'], default: 'everyOne'},
 
         groups: {
@@ -72,7 +85,7 @@ module.exports = (function () {
 
     function setPrice(num) {
         return num * 100;
-    }
+    };
 
     invoiceSchema.set('toJSON', {getters: true});
 
@@ -84,3 +97,4 @@ module.exports = (function () {
 
     mongoose.Schemas['wTrackInvoice'] = invoiceSchema;
 })();
+

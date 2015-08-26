@@ -18,7 +18,7 @@
                 "dblclick .item": "gotoEditForm",
                 "click .item": "selectItem",
                 "click .column.fold": "foldUnfoldKanban",
-                "click .fold-unfold": "foldUnfoldKanban",
+                "click .fold-unfold": "foldUnfoldKanban"
             },
 
             columnTotalLength: null,
@@ -26,9 +26,12 @@
                 this.startTime = options.startTime;
                 this.workflowsCollection = options.workflowCollection;
                 this.foldWorkflows = [];
+
                 this.render();
+
                 this.asyncFetc(options.workflowCollection);
                 this.getCollectionLengthByWorkflows(this);
+
             },
 
             updateFoldWorkflow: function () {
@@ -103,7 +106,7 @@
 
             editKanban: function (e) {
                 dataService.getData('/currentUser', null, function (user, context) {
-                    var tempDom = _.template(kanbanSettingsTemplate, { applications: user.kanbanSettings.applications });
+                    var tempDom = _.template(kanbanSettingsTemplate, { applications: user.user.kanbanSettings.applications });
                     context.$el = $(tempDom).dialog({
                         dialogClass: "edit-dialog",
                         width: "400",
@@ -234,49 +237,78 @@
             },
 
             hideItemsNumber: function (e) {
-                $(".allNumberPerPage").hide();
-                $(".newSelectList").hide();
-                if (!$(e.target).closest(".drop-down-filter").length) {
-                    $(".allNumberPerPage").hide();
-                    if ($(".drop-down-filter").is(":visible")) {
-                        $(".drop-down-filter").hide();
-                        $('.search-options').hide();
-                        $('.search-content').removeClass('fa-caret-up');
-                    }
-                }
+                var el = e.target;
+
+                this.$el.find(".allNumberPerPage, .newSelectList").hide();
+                if (!el.closest('.search-view')) {
+                    $('.search-content').removeClass('fa-caret-up');
+                    this.$el.find('.search-options').addClass('hidden');
+                };
+                //this.$el.find(".allNumberPerPage, .newSelectList").hide();
+                //if (!el.closest('.search-view')) {
+                //    $('.search-content').removeClass('fa-caret-up');
+                //};
             },
 
-            showFiltredPage: function (workflows) {
+            showFiltredPage: function (workflows, savedFilter) {
                 var list_id;
                 var foldList;
                 var showList;
                 var el;
                 var self = this;
                 var chosen = this.$el.find('.chosen');
+                var checkedElements = $('.drop-down-filter input:checkbox:checked');
+                var condition = this.$el.find('.conditionAND > input')[0];
+
 
                 this.filter = {};
+                this.filter['condition'] = 'and';
+
+                if  (condition && !condition.checked) {
+                    self.filter['condition'] = 'or';
+                }
 
                 if (chosen.length) {
                     chosen.each(function (index, elem) {
-                        if (self.filter[elem.children[0].value]) {
-                            self.filter[elem.children[0].value].push(elem.children[1].value);
+                        if (self.filter[elem.children[1].value]) {
+                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+                                self.filter[elem.children[1].value].push(element.value);
+                            })
                         } else {
-                            self.filter[elem.children[0].value] = [];
-                            self.filter[elem.children[0].value].push(elem.children[1].value);
+                            self.filter[elem.children[1].value] = [];
+                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
+                                self.filter[elem.children[1].value].push(element.value);
+                            })
                         }
                     });
+
                     _.each(workflows, function (wfModel) {
                         $('.column').children('.item').remove();
                         dataService.getData('/Applications/kanban', { workflowId: wfModel._id, filter: this.filter }, this.asyncRender, this);
                     }, this);
 
-
                     return false
                 }
 
                 list_id = _.pluck(workflows, '_id');
-                showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
+                if (savedFilter){
+                    showList = savedFilter['workflow'];
+                } else {
+                    showList = checkedElements.map(function() {return this.value;}).get();
+                }
+
                 foldList = _.difference(list_id, showList);
+
+                if ((checkedElements.length && checkedElements.attr('id') === 'defaultFilter') || !chosen.length) {
+                    self.filter = {};
+
+                    _.each(workflows, function (wfModel) {
+                        $('.column').children('.item').remove();
+                        dataService.getData('/Applications/kanban', { workflowId: wfModel._id, filter: this.filter }, this.asyncRender, this);
+                    }, this);
+                    showList = _.pluck(workflows, '_id');
+                    foldList = [];
+                };
 
                 foldList.forEach(function (id) {
                     var w;
@@ -292,22 +324,22 @@
                     k=-k;
                     el.find(".columnName .text").css({"left":k+"px","top":Math.abs(w/2+47)+"px" });
                 });
+
                 showList.forEach(function (id) {
                     el = $("td.column[data-id='"+id+"']");
                     el.removeClass("fold");
                 });
+
             },
 
             render: function () {
                 var self = this;
-                var FilterView;
                 var workflows = this.workflowsCollection.toJSON();
-                var showList;
-                var el;
 
                 this.$el.html(_.template(WorkflowsTemplate, { workflowsCollection: workflows }));
                 $(".column").last().addClass("lastColumn");
                 var itemCount;
+
                 _.each(workflows, function (workflow, i) {
                     itemCount = 0;
                     var column = this.$(".column").eq(i);
@@ -360,23 +392,6 @@
                 this.$el.unbind();
                 $(document).on("click", function (e) {
                     self.hideItemsNumber(e);
-                });
-
-                dataService.getData('/employee/getFilterValues', null, function (values) {
-                    FilterView = new filterView({ collection: workflows, customCollection: values});
-                    // Filter custom event listen ------begin
-                    FilterView.bind('filter', function () {
-                        self.showFiltredPage(workflows)
-                    });
-                    FilterView.on('defaultFilter', function () {
-                        showList = _.pluck(workflows, '_id');
-
-                        showList.forEach(function (id) {
-                            el = $("td.column[data-id='"+id+"']");
-                            el.removeClass("fold");
-                        });
-                    });
-                    // Filter custom event listen ------end
                 });
 
                 return this;

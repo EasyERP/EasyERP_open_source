@@ -19,6 +19,8 @@
                 this.contentType = options.contentType;
                 this.page = options.page || 1;
 
+                this.filter = options.filter;
+
                 if (options && options.contentType && !(options.filter))
                 {
                     options.filter = {};
@@ -27,7 +29,7 @@
                     }
                 }
 
-                this.filter = options.filter;
+
 
                 if (options && options.viewType) {
                     this.url += options.viewType;
@@ -74,10 +76,6 @@
                         alert('Some Error');
                     }
                 });
-            },
-
-            parse: function (response) {
-                return response.success;
             }
         });
         return InvoiceCollection;

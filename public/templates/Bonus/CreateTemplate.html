@@ -1,0 +1,32 @@
+<tr id="false" data-id="<%=cid%>">
+    <td class="notForm"><input type="checkbox" class="bonus-checkbox" value="<%=options.bonus._id%>"/></td>
+    <td></td>
+    <td data-content="bonus" class="choseType" data-id="<%=options.bonus ? options.bonus._id : ''%>">
+        <%=options.bonus ? options.bonus.name : ''%>
+    </td>
+    <td data-content="employee" class="choseEmployee" data-id="<%=options.employee ? options.employee.name : ''%>">
+        <%=options.employee ? options.employee.name : ''%>
+    </td>
+    <td data-content="startDate" class="startDate">
+        <div>
+            <%if (options.startDate === startDate) {%>
+            From start of project
+            <%} else {%>
+            <%=options.startDate ? options.startDate : ''%>
+            <%}%>
+        </div>
+
+        <input id="<%=cid%>StartDate" type="text" readonly/>
+    </td>
+    <td data-content="endDate" class="endDate">
+        <div>
+            <%if (options.endDate === endDate) {%>
+                To end of project
+            <%} else {%>
+                <%=options.endDate ? options.endDate : ''%>
+            <%}%>
+        </div>
+
+        <input id="<%=cid%>EndDate" type="text" readonly/>
+    </td>
+</tr>

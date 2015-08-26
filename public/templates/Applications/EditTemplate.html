@@ -50,7 +50,7 @@
                 </dd>
                 <dt><label for="departmentDd">Department</label></dt>
                 <dd>
-				  <a id="departmentDd" data-id="<%=model.department?model.department._id:""%>" class="current-selected" href="javascript:;"><%=model.department?model.department.departmentName:"Select"%></a>
+				  <a id="departmentDd" data-id="<%=model.department._id?model.department._id:""%>" class="current-selected" href="javascript:;"><%=model.department.name?model.department.name:"Select"%></a>
                 </dd>
                 <dt><label for="sourceDd">Source </label></dt>
                 <dd>

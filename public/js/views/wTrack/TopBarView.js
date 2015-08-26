@@ -16,11 +16,16 @@ define([
                 "click #top-bar-saveBtn": "saveEvent",
                 "click #top-bar-editBtn": "editEvent",
                 "click #top-bar-createBtn": "createEvent",
-                "click #top-bar-generateBtn": "generateInvoice"
+                "click #top-bar-generateBtn": "generateInvoice",
+                "click #top-bar-copyBtn": "copyRow"
             },
 
             generateInvoice: function (e) {
                 this.trigger('generateInvoice');
+            },
+
+            copyRow: function (e) {
+                this.trigger('copyRow');
             },
 
             changeContentViewType: function (e) {
@@ -47,6 +52,9 @@ define([
                 this.$el.html(this.template({viewType: viewType, contentType: this.contentType}));
 
                 Common.displayControlBtnsByActionType('Content', viewType);
+                this.$el.find('#top-bar-generateBtn').hide();
+                this.$el.find('#top-bar-copyBtn').hide();
+
                 return this;
             },
 

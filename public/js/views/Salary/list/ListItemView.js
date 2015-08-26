@@ -10,24 +10,16 @@ function (listTemplate) {
             this.collection = options.collection;
             this.startNumber = (options.page - 1 ) * options.itemsNumber;
         },
-        toCurrency: function(value) {
-            var currency;
-            currency = parseFloat(value)
-                .toString()
-                .replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-            return currency;
-        },
         render: function() {
-            var self = this;
             var result = this.collection.toJSON();
             /*result.forEach(function(element){
-                element.calc.salary = self.toCurrency(element.calc.salary);
-                element.calc.onCash = self.toCurrency(element.calc.onCash);
-                element.calc.onCard = self.toCurrency(element.calc.onCard);
-                element.paid.onCash = self.toCurrency(element.paid.onCash);
-                element.paid.onCard = self.toCurrency(element.paid.onCard);
-                element.diff.onCash = self.toCurrency(element.diff.onCash);
-                element.diff.onCard = self.toCurrency(element.diff.onCard);
+                element.calc.salary = Number(element.calc.salary).toLocaleString('en');
+                element.calc.onCash = Number(element.calc.onCash).toLocaleString('en');
+                element.calc.onCard = Number(element.calc.onCard).toLocaleString('en');
+                element.paid.onCash = Number(element.paid.onCash).toLocaleString('en');
+                element.paid.onCard = Number(element.paid.onCard).toLocaleString('en');
+                element.diff.onCash = Number(element.diff.onCash).toLocaleString('en');
+                element.diff.onCard = Number(element.diff.onCard).toLocaleString('en');
             });*/
 
             this.$el.append(_.template(listTemplate, { salaryCollection: result }));

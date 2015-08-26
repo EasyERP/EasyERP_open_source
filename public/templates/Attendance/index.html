@@ -18,7 +18,7 @@
             </span>
             <select id="currentStatus">
                 <% status.forEach(function(stat){ %>
-                <option>
+                <option id="stat">
                     <%= stat %>
                 </option>
                 <% }) %>
@@ -28,7 +28,7 @@
             <span>Select a Year:</span>
             <select id="currentTime">
                 <% years.forEach(function(year){ %>
-                <option>
+                <option id="<%= year %>">
                     <%= year %>
                 </option>
                 <% }) %>
@@ -43,11 +43,14 @@
                 <span></span>
             </th>
 
+            <% for (var i = 1; i <= 6; i++) { %>
             <% weekDays.forEach(function(day){ %>
             <th>
                 <%= day %>
             </th>
             <% }) %>
+            <% } %>
+
         </tr>
         </thead>
         <tbody id="attendanceMonth">
@@ -56,97 +59,10 @@
 
     <div class="statisticsAtten">
         <table>
-            <tr>
-                <td>
-                    <div class="item">
-                        <div class="title">Days on Leave</div>
-                        <div class="countDays leave">
-                            <%= leaveDays %>
-                        </div>
-                        <div class="lastTime">
-                            LAST YEAR <%= lastLeave %>
-                        </div>
-                        <div class="percent">
-                            0
-                        </div>
-                    </div>
-                </td>
-                <td>
-                    <div class="item">
-                        <div class="title">Working Days</div>
-                        <div class="countDays working">
-                            <%= workingDays %>
-                        </div>
-                        <div class="lastTime">
-                            LAST YEAR <%= lastWorkingDays %>
-                        </div>
-                        <div class="percent">
-                            0
-                        </div>
-                    </div>
-                </td>
-                <td>
-                    <div class="item">
-                        <div class="title">on Vacation</div>
-                        <div class="countDays vacation">
-                            <%= vacation %>
-                        </div>
-                        <div class="lastTime">
-                            LAST YEAR <%= lastVacation %>
-                        </div>
-                        <div class="percent">
-                            0
-                        </div>
-                    </div>
-                </td>
-                <td>
-                    <div class="item">
-                        <div class="title">on Personal</div>
-                        <div class="countDays personal">
-                            <%= personal %>
-                        </div>
-                        <div class="lastTime">
-                            LAST YEAR <%= lastPersonal %>
-                        </div>
-                        <div class="percent">
-                            0
-                        </div>
-                    </div>
-                </td>
-                <td>
-                    <div class="item">
-                        <div class="title">on Sick</div>
-                        <div class="countDays sick">
-                            <%= sick %>
-                        </div>
-                        <div class="lastTime">
-                            LAST YEAR <%= lastSick %>
-                        </div>
-                        <div class="percent">
-                            0
-                        </div>
-                    </div>
-                </td>
-                <td>
-                    <div class="item">
-                        <div class="title">on Education</div>
-                        <div class="countDays education">
-                            <%= education %>
-                        </div>
-                        <div class="lastTime">
-                            LAST YEAR <%= lastEducation %>
-                        </div>
-                        <div class="percent">
-                            0
-                        </div>
-                    </div>
-                </td>
-            </tr>
-            <tr class="footerRow">
-                <td colspan="6">
-                    <span>&nbsp;</span>
-                </td>
-            </tr>
+            <tbody id="statictics">
+
+            </tbody>
         </table>
     </div>
+    <div id='timeRecivingDataFromServer'></div>
 </div>

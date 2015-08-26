@@ -11,15 +11,21 @@ module.exports = (function () {
         forSale:{type: Boolean, default: true},
         invoice: {type: ObjectId, ref: 'Invoice', default: null},
         supplier: {type: ObjectId, ref: 'Customers', default: null},
-        paidAmount: {type: Number, default: 0},
-        paymentMethod: {type: ObjectId, ref: 'PaymentMethod', default: null},
+        paidAmount: {type: Number, default: 0, set: setPrice},
+        paymentMethod: {
+            _id: {type: ObjectId, ref: 'PaymentMethod', default: null},
+            name: String
+        },
         date: {type: Date, default: Date.now},
         name: {type: String, default: '', unique: true},
         period: {type: ObjectId, ref: 'Destination', default: null},
         paymentRef: {type: String, default: ''},
         workflow: {type: String, enum: ['Draft', 'Paid'], default: 'Draft'},
-        differenceAmount: {type: Number, default: 0},
+        differenceAmount: {type: Number, default: 0, set: setPrice},
         whoCanRW: {type: String, enum: ['owner', 'group', 'everyOne'], default: 'everyOne'},
+        month: {type: Number},
+        year:  {type: Number},
+        bonus: {type: Boolean},
 
         groups: {
             owner: {type: ObjectId, ref: 'Users', default: null},
@@ -65,7 +71,7 @@ module.exports = (function () {
             });
     });
 
-    /*paymentSchema.post('save', function (doc) {
+    paymentSchema.post('save', function (doc) {
         var payment = this;
         var db = payment.db.db;
 
@@ -74,7 +80,7 @@ module.exports = (function () {
             },
             [['name', 1]],
             {
-                paymentDate: new Date()
+                $set: {paymentDate: new Date()}
             },
             null,
             function (err) {
@@ -84,7 +90,11 @@ module.exports = (function () {
 
                 console.log('Invoice %s was updated success', doc.invoice);
             });
-    });*/
+    });
+
+    function setPrice(num) {
+        return num * 100;
+    }
 
     if (!mongoose.Schemas) {
         mongoose.Schemas = {};

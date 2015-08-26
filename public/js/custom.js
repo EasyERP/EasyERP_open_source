@@ -1,4 +1,9 @@
-define(['libs/date.format', 'common', 'constants'], function (dateformat, common, CONTENT_TYPES) {
+define([
+    'libs/date.format',
+    'common',
+    'constants',
+    'dataService'
+], function (dateformat, common, CONTENT_TYPES, dataService) {
 
     var runApplication = function (success) {
         if (!Backbone.history.fragment) {
@@ -10,6 +15,7 @@ define(['libs/date.format', 'common', 'constants'], function (dateformat, common
 
             Backbone.history.fragment = "";
             Backbone.history.navigate(url, {trigger: true});
+            getFiltersValues();
 
         } else {
             if (App.requestedURL === null)
@@ -82,6 +88,7 @@ define(['libs/date.format', 'common', 'constants'], function (dateformat, common
                     case CONTENT_TYPES.WTRACK:
                     case CONTENT_TYPES.SALARY:
                     case CONTENT_TYPES.MONTHHOURS:
+                    case CONTENT_TYPES.BONUSTYPE:
                     case CONTENT_TYPES.HOLIDAY:
                     case CONTENT_TYPES.VACATION:
                         App.currentViewType = 'list';
@@ -124,6 +131,7 @@ define(['libs/date.format', 'common', 'constants'], function (dateformat, common
                     case CONTENT_TYPES.WTRACK:
                     case CONTENT_TYPES.SALARY:
                     case CONTENT_TYPES.MONTHHOURS:
+                    case CONTENT_TYPES.BONUSTYPE:
                     case CONTENT_TYPES.HOLIDAY:
                     case CONTENT_TYPES.VACATION:
                         App.currentViewType = 'list';
@@ -189,14 +197,106 @@ define(['libs/date.format', 'common', 'constants'], function (dateformat, common
     };
 
 
-    function applyDefaultSettings (chartControl) {
+    function applyDefaultSettings(chartControl) {
         chartControl.setImagePath("/crm_backbone_repo/images/");
         chartControl.setEditable(false);
         chartControl.showTreePanel(false);
         chartControl.showContextMenu(false);
         chartControl.showDescTask(true, 'd,s-f');
         chartControl.showDescProject(true, 'n,d');
+    };
+
+    function cashToApp(key, data) {
+        App.cashedData = App.cashedData || {};
+        App.cashedData[key] = data;
     }
+
+    function retriveFromCash(key) {
+        App.cashedData = App.cashedData || {};
+        return App.cashedData[key];
+    }
+
+    var savedFilters = function (contentType, uIFilter) {
+        var savedFilter;
+        var length;
+        var filtersForContent;
+        var key;
+        var filter;
+        var beName;
+        var beNamesNaw;
+        var filterWithName;
+
+        //if (App && App.savedFilters && App.savedFilters[contentType]) {
+        //    filtersForContent = App.savedFilters[contentType];
+        //    length = filtersForContent.length;
+        //    filter = filtersForContent[length - 1];
+        //    filterWithName =  filter['filter'];
+        //    var key = Object.keys(filterWithName)[0];
+        //
+        //    savedFilter = filter[key];
+        //} else {
+        savedFilter = uIFilter;
+        // }
+
+        return savedFilter;
+    };
+
+    var getFilterById = function (id, contentType) {
+        var filter;
+        var length;
+        var keys;
+        var savedFilters;
+
+        dataService.getData('/currentUser', null, function (response) {
+            if (response && !response.error) {
+                App.currentUser = response.user;
+                App.savedFilters = response.savedFilters;
+
+                length = App.savedFilters[contentType].length;
+                savedFilters = App.savedFilters[contentType];
+                for (var i = length - 1; i >= 0; i--) {
+                    if (savedFilters[i]['_id'] === id) {
+                        keys = Object.keys(savedFilters[i]['filter']);
+                        App.filter = savedFilters[i]['filter'][keys[0]];
+                        return App.filter;
+                    }
+                }
+            } else {
+                console.log('can\'t fetch currentUser');
+            }
+        });
+    };
+
+    var getFiltersForContentType = function (contentType) {
+        var length = App.currentUser.savedFilters.length;
+        var filtersForContent = [];
+        var filterObj = {};
+        var savedFiltersArray = App.currentUser.savedFilters;
+
+        for (var i = length - 1; i >= 0; i--) {
+            if (savedFiltersArray[i]['contentView'] === contentType) {
+                filterObj = {};
+                filterObj._id = savedFiltersArray[i]['_id'];
+                filterObj.value = savedFiltersArray[i]['filter'][0];
+                filtersForContent.push(filterObj);
+            }
+        }
+
+        App.savedFilters[contentType] = filtersForContent;
+        return filtersForContent;
+    };
+
+    var getFiltersValues = function () {
+        if (!App || !App.filtersValues) {
+            dataService.getData('/filter/getFiltersValues', null, function (response) {
+                if (response && !response.error) {
+                    App.filtersValues = response;
+                } else {
+                    console.log('can\'t fetch filtersValues');
+                }
+            });
+        }
+    };
 
     return {
         runApplication: runApplication,
@@ -206,6 +306,11 @@ define(['libs/date.format', 'common', 'constants'], function (dateformat, common
         getCurrentVT: getCurrentVT,
         setCurrentVT: setCurrentVT,
         getCurrentCL: getCurrentCL,
-        setCurrentCL: setCurrentCL
+        setCurrentCL: setCurrentCL,
+        cashToApp: cashToApp,
+        retriveFromCash: retriveFromCash,
+        savedFilters: savedFilters,
+        getFiltersForContentType: getFiltersForContentType,
+        getFilterById: getFilterById
     };
 });

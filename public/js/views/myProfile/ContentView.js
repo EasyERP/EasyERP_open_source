@@ -93,7 +93,7 @@ define([
                     confirmPass = $.trim(this.$el.find('#confirm_new_password').val());
 
                 dataService.getData('/currentUser', null, function (response, context) {
-                    context.UsersModel = new UsersModel(response);
+                    context.UsersModel = new UsersModel(response.user);
                     context.UsersModel.urlRoot = '/currentUser';
 
                     var mid = 39;
@@ -122,12 +122,20 @@ define([
 
             save: function (e) {
                 e.preventDefault();
+                var ids = [];
                 var email = $.trim($("#email").val());
                 var login = $.trim($("#login").val());
                 var RelatedEmployee = $("input[type='radio']:checked").attr("data-id");
+
+                if (RelatedEmployee){
+                    ids.push(RelatedEmployee);
+                } else {
+                    RelatedEmployee = null;
+                }
+
                 dataService.getData('/currentUser', null, function (response, context) {
 
-                    context.UsersModel = new UsersModel(response);
+                    context.UsersModel = new UsersModel(response.user);
                     context.UsersModel.urlRoot = '/currentUser';
                     var self = this;
                     var mid = 39;
@@ -143,7 +151,17 @@ define([
 	                    },
 	                    patch:true,
 	                    wait: true,
-	                    success: function () {
+	                    success: function (model) {
+                            if (RelatedEmployee) {
+                                common.getImages(ids, '/getEmployeesImages', function (response) {
+                                   // App.currentUser.imageSrc = response.data[0].imageSrc;
+                                    $("#loginPanel .iconEmployee").attr("src", response.data[0].imageSrc);
+                                    $("#loginPanel #userName").text(response.data[0].fullName);
+                                });
+                            } else {
+                                $("#loginPanel .iconEmployee").attr("src", model.toJSON().imageSrc);
+                                $("#loginPanel  #userName").text(model.toJSON().login);
+                            }
 	                        Backbone.history.fragment = "";
 	                        Backbone.history.navigate("easyErp/myProfile", { trigger: true });
 	                    },
@@ -197,7 +215,7 @@ define([
                             var timezone = ("UTC +" + (minutes / 60)*(-1));
                         else
                             var timezone = ("UTC -" + (minutes / 60)*(-1));
-                        var model = response;
+                        var model = response.user;
                         context.$el.html(_.template(UsersPagesTemplate,
 	                            {
 	                                model: model,
@@ -206,8 +224,8 @@ define([
 	                            }));
                         common.canvasDraw({ model: model }, this);
 
-                        if (response.RelatedEmployee) {
-                            $("input[type='radio'][value=" + response.RelatedEmployee._id + "]").attr("checked", true);
+                        if (response.user.RelatedEmployee) {
+                            $("input[type='radio'][value=" + response.user.RelatedEmployee._id + "]").attr("checked", true);
                         }
                         else {
                             $("input[type='radio']:first").attr("checked", true);

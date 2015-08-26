@@ -21,7 +21,6 @@ var Department = function (models) {
                 res.status(200).send({data: departments})
             });
     };
-
 };
 
 module.exports = Department;

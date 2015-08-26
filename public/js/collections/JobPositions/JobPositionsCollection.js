@@ -23,7 +23,7 @@ function (JobPositionsModel) {
             parse: true,
             parse: function (response) {
                 return response.data;
-            },
+            }
         });
         return JobPositionsCollection;
 });

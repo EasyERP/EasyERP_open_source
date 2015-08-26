@@ -4,6 +4,8 @@ var Workflow = function (models, event) {
     var relatedStatusSchema = mongoose.Schemas['relatedStatus'];
     var workflowSchema = mongoose.Schemas['workflow'];
 
+    var CONSTANTS = require('../constants/mainConstants');
+
     function updateSequence(model, sequenceField, start, end, wId, isCreate, isDelete, callback) {
         var query;
         var objFind = {};
@@ -94,7 +96,21 @@ var Workflow = function (models, event) {
             }
         },
 
+        updateRefs: function (result, dbName, _id) {
+            var ProjectSchema;
+            var ProjectModel;
+
+            if (dbName === CONSTANTS.WTRACK_DB_NAME) {
+                ProjectSchema = mongoose.Schemas['Project'];
+                ProjectModel = models.get(dbName, 'Project', ProjectSchema);
+
+                event.emit('updateName', _id, ProjectModel, 'workflow._id', 'workflow.name', result.name);
+            }
+        },
+
         update: function (req, _id, data, result) {
+            var dbName = req.session.lastDb;
+            var self = this;
 
             try {
                 if (data) {
@@ -107,7 +123,7 @@ var Workflow = function (models, event) {
                                 }
                             }
                             else {
-                                models.get(req.session.lastDb, "workflows", workflowSchema).update({_id: _id}, data, function (err, res) {
+                                models.get(req.session.lastDb, "workflows", workflowSchema).findOneAndUpdate({_id: _id}, data, function (err, res) {
                                     if (err) {
                                         console.log(err);
                                         logWriter.log('WorkFlow.js update workflow.update ' + err);
@@ -115,6 +131,8 @@ var Workflow = function (models, event) {
                                         return;
                                     } else {
                                         result.send(200, {success: 'WorkFlow update success'});
+
+                                        self.updateRefs(res, dbName, _id);
                                     }
                                 });
                             }

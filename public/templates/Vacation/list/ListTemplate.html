@@ -1,10 +1,16 @@
 <% vacationCollection.forEach(function(vacation, index){ %>
 <tr data-id="<%=vacation._id%>">
-    <td data-type="select" class="editable employee" data-content="employee">
+    <td class="editable employee" data-content="employee" data-type="employeeSelect">
         <%=vacation.employee ? vacation.employee.name : ''%>
     </td>
     <td class="department">
         <%=vacation.department ? vacation.department.name : ''%>
+    </td>
+    <% for (var i=0; i<=vacation.vacArray.length - 1; i++) { %>
+        <%=vacation.vacArray[i] ? '<td data-dayID="' + (i) + '" class="editable ' + vacation.vacArray[i] + ' selectedType" data-content="vacType">' + vacation.vacArray[i] + '<input type="text" readonly value="' + vacation.vacArray[i] + '"></td>' : '<td data-dayID="' + (i) + '" class="editable" data-content="vacType"><input type="text" readonly value=""></td>'%>
+    <% } %>
+    <td class="totalDays">
+        <%=vacation.countVacationDays%>
     </td>
 </tr>
 <% }) %>

@@ -2,7 +2,7 @@
         './filterCollection'
     ],
     function (ParrantCollection) {
-        var EditableCoolecton = ParrantCollection.extend({
+        var EditableColection = ParrantCollection.extend({
 
             initialize: function(){
                 this.on( "change", this.change, this);
@@ -14,6 +14,11 @@
                 var models = [];
                 var newModel;
                 var modelObject;
+                var dateByWeek;
+                var dateByMonth;
+                var year;
+                var month;
+                var week;
                 var syncObject = {
                     trigger: this.trigger,
                     url: this.url,
@@ -47,10 +52,38 @@
                     if(model && model.id && model.hasChanged()){
                         modelObject = model.changed;
                         modelObject._id = model.id;
+
+                        year = modelObject.year || model.get('year');
+                        month = modelObject.month || model.get('month');
+                        week = modelObject.week || model.get('week');
+
+                        if(year && week){
+                            dateByWeek = parseInt(year)*100 + parseInt(week);
+                            modelObject.dateByWeek = dateByWeek;
+                        }
+                        if(year && month){
+                            dateByMonth = parseInt(year)*100 + parseInt(month);
+                            modelObject.dateByMonth = dateByMonth;
+                        }
+
                         models.push(modelObject);
                     } else if (model && !model.id){
                         newModel = model.changed;
                         newModel._id =  model.id;
+
+                        year = newModel.year || model.get('year');
+                        month = newModel.month || model.get('month');
+                        week = newModel.week || model.get('week');
+
+                        if(year && week){
+                            dateByWeek = parseInt(year)*100 + parseInt(week);
+                            newModel.dateByWeek = dateByWeek;
+                        }
+                        if(year && month){
+                            dateByMonth = parseInt(year)*100 + parseInt(month);
+                            newModel.dateByMonth = dateByMonth;
+                        }
+
                         Backbone.sync("create", saveObject, options);
                     }
                 }
@@ -61,5 +94,5 @@
             }
         });
 
-        return EditableCoolecton;
+        return EditableColection;
     });

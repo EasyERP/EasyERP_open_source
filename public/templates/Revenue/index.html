@@ -10,10 +10,10 @@
             <div><img src="images/chart3.png">WP</div>
             <div><img src="images/chart4.png">Web</div>
             <div>
-                Week: <input type="number" id="currentStartWeek" value="<%= currentStartWeek %>">
+                <label>Week:</label> <input type="number" id="currentStartWeek" value="<%= currentStartWeek %>">
             </div>
             <div>
-                Year: <span class="pull-right" id="currentYear"><%= currentYear %></span>
+                <label>Year:</label> <span id="currentYear"><%= currentYear %></span>
             </div>
         </div>
     </div>
@@ -24,7 +24,7 @@
             <div class="divCell left-cell th">
                 <span>Revenue By Sales</span>
             </div>
-            <div id="revenueBySales">
+            <div id="revenueBySales" class="revenueBySales">
 
             </div>
 
@@ -51,6 +51,24 @@
         </div>
     </div>
     <div class="divTable" id="tableByDep">
+
+    </div>
+    <div class="divTable" id="tablePaidBySales">
+
+    </div>
+    <div class="divTable" id="tableUnpaidBySales">
+
+    </div>
+    <div class="divTable" id="tableCancelledBySales">
+
+    </div>
+    <div class="divTable" id="tableProjectBySales">
+
+    </div>
+    <div class="divTable" id="tableEmployeeBySales">
+
+    </div>
+    <div class="divTable" id="tableHoursByDep">
 
     </div>
 

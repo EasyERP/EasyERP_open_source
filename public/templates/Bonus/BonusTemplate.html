@@ -1,0 +1,56 @@
+<div id="top-bar-bonus">
+    <div id="createBtnHolder">
+        <a href="javascript;" class="icon add left" title="Create" id="createBonus">5</a>
+        <a href="javascript;" class="icon remove left" title="Remove"  id="removeBonus">x</a>
+    </div>
+</div>
+<table class="list task-list">
+    <thead>
+    <tr>
+        <th><input type="checkbox" id="check_all_bonus"/></th>
+        <th>N</th>
+        <th>Bonus Name</th>
+        <th>Employee</th>
+        <th>Start Date</th>
+        <th>End Date</th>
+    </tr>
+    </thead>
+    <tbody id="bonusTable">
+
+    <%bonus.forEach(function(bonus, index){ %>
+        <tr data-index="<%= index %>" data-id="<%=bonus._id%>">
+            <td><input type="checkbox" value="<%=bonus._id%>" class="bonus-checkbox" /></td>
+            <td><%=index + 1 %></td>
+            <td data-content="bonus" class="choseType" data-id="<%=bonus.bonusId._id%>">
+                <%=bonus.bonusId.name%>
+            </td>
+            <td data-content="employee" class="choseEmployee" data-id="<%=bonus.employeeId._id%>">
+                <%=bonus.employeeId.fullName%>
+            </td>
+            <td data-content="startDate" class="startDate">
+                <div>
+                    <%if (bonus.startDate) {%>
+                    <%= formatingDate(bonus.startDate) %>
+                    <%} else {%>
+                        From start of project
+                    <%}%>
+                </div>
+
+                <input id="<%=bonus._id%>StartDate" type="text" readonly/>
+            </td>
+            <td data-content="endDate" class="endDate">
+                <div>
+                    <%if (bonus.endDate) {%>
+                    <%= formatingDate(bonus.endDate) %>
+                    <%} else {%>
+                    To end of project
+                    <%}%>
+                </div>
+
+                <input id="<%=bonus._id%>EndDate" type="text" readonly/>
+            </td>
+        </tr>
+    <% }) %>
+
+    </tbody>
+</table>

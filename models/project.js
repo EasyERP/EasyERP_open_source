@@ -9,8 +9,16 @@ module.exports = (function () {
         projectShortDesc: { type: String, default: 'emptyProject' },
         projectName: { type: String, default: 'emptyProject' },
         task: [{ type: ObjectId, ref: 'Tasks', default: null }],
-        customer: { type: ObjectId, ref: 'Customers', default: null },
-        projectmanager: { type: ObjectId, ref: 'Employees', default: null },
+        //customer: { type: ObjectId, ref: 'Customers', default: null },
+        customer: {
+            _id: {type: ObjectId, ref: 'Customers', default: null},
+            name: String
+        },
+        //projectmanager: { type: ObjectId, ref: 'Employees', default: null },
+        projectmanager: {
+            _id: {type: ObjectId, ref: 'Employees', default: null},
+            name: String
+        },
         description: String,
         whoCanRW: { type: String, enum: ['owner', 'group', 'everyOne'], default: 'everyOne' },
         groups: {
@@ -23,7 +31,11 @@ module.exports = (function () {
         TargetEndDate: Date,
         sequence: { type: Number, default: 0 },
         parent: { type: String, default: null },
-        workflow: { type: ObjectId, ref: 'workflows', default: null },
+        //workflow: { type: ObjectId, ref: 'workflows', default: null },
+        workflow: {
+            _id: {type: ObjectId, ref: 'workflows', default: null },
+            name: String
+        },
         estimated: { type: Number, default: 0 },
         logged: { type: Number, default: 0 },
         remaining: { type: Number, default: 0 },
@@ -40,7 +52,19 @@ module.exports = (function () {
             date: { type: Date }
         },
         health: { type: Number, default: 1 },
-        ID: Number
+        ID: Number,
+        bonus: [{
+            employeeId: {
+                type: ObjectId,
+                ref: 'Employees'
+            },
+            bonusId: {
+                type: ObjectId,
+                ref: 'bonusType'
+            },
+            startDate: Date,
+            endDate: Date
+        }]
     }, { collection: 'Project' });
 
     mongoose.model('Project', projectSchema);

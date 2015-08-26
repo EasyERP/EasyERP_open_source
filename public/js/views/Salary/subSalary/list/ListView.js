@@ -56,7 +56,81 @@ function (listTemplate, cancelEdit, createView, listItemView, subSalaryTotalTemp
             "click td.editable": "editRow",
             "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
             "change .autoCalc": "autoCalc",
-            "change .editable": "setEditable"
+            "change .editable": "setEditable",
+            "click .oe_sortable_sub": "goSort"
+        },
+
+        goSort: function (e) {
+            e.preventDefault();
+            var target$ = $(e.target);
+            var currentParrentSortClass = target$.attr('class');
+            var sortClass = currentParrentSortClass.split(' ')[1];
+            var sortField = target$.attr('data-sort');
+            var sortConst = 1;
+
+            if (!sortClass) {
+                target$.addClass('sortDn');
+                sortClass = "sortDn";
+            }
+            switch (sortClass) {
+                case "sortDn":
+                {
+                    target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
+                    target$.removeClass('sortDn').addClass('sortUp');
+                    sortConst = 1;
+                }
+                    break;
+                case "sortUp":
+                {
+                    target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
+                    target$.removeClass('sortUp').addClass('sortDn');
+                    sortConst = -1;
+                }
+                    break;
+            }
+
+            this.sortByOrder({orderField: sortField, order: sortConst});
+
+            this.renderTable();
+        },
+
+        sortByOrder: function(options) {
+            var collection;
+            var order = options.order || 1;
+            var orderField = options.orderField || 'employee.name';
+
+            collection = this.model.get('employeesArray');
+            collection = _.sortBy(collection, function(model) {
+                var orderField1;
+                var orderField2;
+                var fullField = orderField.split(".");
+
+                orderField1 = fullField[0];
+                orderField2 = fullField[1];
+
+                if (orderField2) {
+                    return model[orderField1][orderField2];
+                } else {
+                    return model[orderField1];
+                }
+            });
+
+            if (order < 0) {
+                collection.reverse();
+            }
+
+            this.model.set('employeesArray', collection);
+        },
+
+        renderTable: function() {
+            var itemView;
+
+            this.$el.find(this.bodyContainerId).html('');
+            itemView = new listItemView({
+                el: this.bodyContainerId,
+                model: this.model
+            });
+            $(this.bodyContainerId).append(itemView.render());
         },
 
         autoCalc: function (e) {
@@ -79,6 +153,9 @@ function (listTemplate, cancelEdit, createView, listItemView, subSalaryTotalTemp
             var calc;
             var diffObj;
 
+            var diffOnCardRealValue;
+            var diffOnCashRealValue;
+
             if ($(td).hasClass('cash')) {
                 calcKey = 'onCash';
                 tdForUpdate = diffOnCash;
@@ -97,10 +174,17 @@ function (listTemplate, cancelEdit, createView, listItemView, subSalaryTotalTemp
                 calc = calc ? parseInt(calc) : input.val();
 
                 value = paid - calc;
-                tdForUpdate.text(value);
 
-                totalValue = parseInt(diffOnCash.text()) + parseInt(diffOnCard.text());
-                diffTotal.text(totalValue);
+                tdForUpdate.text(this.checkMoneyTd(tdForUpdate, value));
+
+                diffOnCashRealValue = diffOnCash.attr('data-value');
+                diffOnCashRealValue = diffOnCashRealValue ? diffOnCashRealValue : diffOnCash.text();
+
+                diffOnCardRealValue = diffOnCard.attr('data-value');
+                diffOnCardRealValue = diffOnCardRealValue ? diffOnCardRealValue : diffOnCard.text();
+
+                totalValue = parseInt(diffOnCashRealValue) + parseInt(diffOnCardRealValue);
+                diffTotal.text(this.checkMoneyTd(diffTotal, totalValue));
 
                 diffObj = _.clone(editEmployeeModel.get('diff'));
                 diffObj['total'] = totalValue;
@@ -110,6 +194,26 @@ function (listTemplate, cancelEdit, createView, listItemView, subSalaryTotalTemp
             }
 
             this.getTotal(td);
+        },
+
+        checkMoneyTd: function(td, value) {
+            var moneyClassCheck = $(td).hasClass('money');
+            var negativeMoneyClass = $(td).hasClass('negativeMoney');
+
+            if (value < 0) {
+                if (moneyClassCheck) {
+                    $(td).removeClass('money');
+                }
+                $(td).addClass('negativeMoney');
+                $(td).attr('data-value', value);
+                value *= -1;
+            } else {
+                if (negativeMoneyClass) {
+                    $(td).removeClass('negativeMoney');
+                }
+                $(td).addClass('money');
+            }
+            return value;
         },
 
         getTotal: function (td) {
@@ -134,9 +238,12 @@ function (listTemplate, cancelEdit, createView, listItemView, subSalaryTotalTemp
                 var diffOnCash;
                 var diffOnCard;
 
+                var diffByNameElement;
+
                 self.bodyContainer.find('.' + className + '[data-content="' + name +'"]').each(function() {
                     input = $(this).find('input.editing');
-                    tdVal = $(this).text();
+                    tdVal = $(this).attr('data-value');
+                    tdVal = tdVal ? tdVal : $(this).text();
                     addVal = tdVal ? parseInt(tdVal) :  parseInt(input.val());
                     calcVal += addVal;
                 });
@@ -144,13 +251,12 @@ function (listTemplate, cancelEdit, createView, listItemView, subSalaryTotalTemp
                 $('#subSalary-listTotal' + self.id).find('.total_' + className + '_' + name).text(calcVal);
                 $('tr[data-id="' + self.id + '"]').find('.total_' + className + '_' + name).text(calcVal);
 
-                if ( name==='onCard' || name==='onCash' ) {
+                if ( name === 'onCard' || name === 'onCash' ) {
+                    diffByNameElement = $('#subSalary-listTotal' + self.id).find('.total_diff_' + name);
 
-                    self.bodyContainer.find('.diff[data-content="' + name + '"]').each(function () {
-                        diffNameVal += parseInt($(this).text());
-                    });
+                    diffNameVal = $('#subSalary-listTotal' + self.id).find('.total_calc_' + name).text() - $('#subSalary-listTotal' + self.id).find('.total_paid_' + name).text();
 
-                    $('#subSalary-listTotal' + self.id).find('.total_diff_' + name).text(diffNameVal);
+                    diffByNameElement.text(self.checkMoneyTd(diffByNameElement, diffNameVal));
                     $('tr[data-id="' + self.id + '"]').find('.total_diff_' + name).text(diffNameVal);
 
                     diffOnCash = $('#subSalary-listTotal' + self.id).find('.total_diff_onCash').text();
@@ -481,9 +587,9 @@ function (listTemplate, cancelEdit, createView, listItemView, subSalaryTotalTemp
                         paid = _.clone(editEmployeeModel.get('paid'));
 
                         if (editedCol.hasClass('calc')) {
-                            //if (editedCol.data('content') === 'salary') {
-                                //this.whatToSet['baseSalary'] = editedElementValue;
-                            //} else {
+                            if (editedCol.data('content') === 'salary') {
+                                this.whatToSet['baseSalary'] = editedElementValue;
+                            }// else {
                                 calc[editedElementContent] = editedElementValue;
                                 this.whatToSet['calc'] = calc;
                             //}

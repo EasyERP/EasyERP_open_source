@@ -8,6 +8,7 @@ module.exports = (function () {
     var wTrackSchema = mongoose.Schema({
         ID: Number,
         dateByWeek: Number,
+        dateByMonth: Number,
         project: {
             _id: {
                 type: ObjectId, ref: 'Project', default: null
@@ -19,7 +20,8 @@ module.exports = (function () {
             },
             workflow: {
                 _id: { type: ObjectId, ref: 'workflows', default: null },
-                name: String
+                name: String,
+                status: String
             },
             customer: {
                 _id: { type: ObjectId, ref: 'Customers', default: null },
@@ -37,18 +39,18 @@ module.exports = (function () {
         year: Number,
         month: Number,
         week: Number,
-        1: Number,
-        2: Number,
-        3: Number,
-        4: Number,
-        5: Number,
-        6: Number,
-        7: Number,
+        1: {type: Number, default: 0},
+        2: {type: Number, default: 0},
+        3: {type: Number, default: 0},
+        4: {type: Number, default: 0},
+        5: {type: Number, default: 0},
+        6: {type: Number, default: 0},
+        7: {type: Number, default: 0},
         worked: Number,
         rate: Number,
-        revenue: {type: Number, /*get: getPrice,*/ set: setPrice},
+        revenue: {type: Number, /*get: getPrice,*/ set: setPrice, default: 0},
         cost: {type: Number, /*get: getPrice,*/ set: setPrice},
-        amount: {type: Number, /*get: getPrice,*/ set: setPrice},
+        amount: {type: Number, /*get: getPrice,*/ set: setPrice, default: 0},
         isPaid: {type: Boolean, default: false},
         invoice: {type: ObjectId, ref: 'Invoice', default: null},
         info: {

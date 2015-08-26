@@ -5,13 +5,13 @@
 </div>
 <% weeksArr.forEach(function(weekObject){ %>
 <div class="divCell">
-    <span>
+    <span class="<%= bySalesByDepPerWeek[weekObject.week] ? 'money' : ''%>">
         <%= bySalesByDepPerWeek[weekObject.week] ? bySalesByDepPerWeek[weekObject.week] : '&nbsp'%>
     </span>
 </div>
 <% }) %>
 <div class="divCell">
-    <span>
+    <span class="<%= globalTotal ? 'money' : ''%>">
         <%= globalTotal ? globalTotal : '&nbsp'%>
     </span>
 </div>

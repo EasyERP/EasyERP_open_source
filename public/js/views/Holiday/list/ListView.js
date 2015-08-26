@@ -1,4 +1,5 @@
 define([
+        'text!templates/Pagination/PaginationTemplate.html',
         'text!templates/Holiday/list/ListHeader.html',
         'text!templates/Holiday/list/cancelEdit.html',
         'views/Holiday/CreateView',
@@ -9,10 +10,11 @@ define([
         'common',
         'dataService',
         'constants',
-        'async'
+        'async',
+        'moment'
     ],
 
-    function (listTemplate, cancelEdit, createView, listItemView, holidayModel, holidayCollection, editCollection, common, dataService, CONSTANTS, async) {
+    function (paginationTemplate, listTemplate, cancelEdit, createView, listItemView, holidayModel, holidayCollection, editCollection, common, dataService, CONSTANTS, async, moment) {
         var HolidayListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -33,7 +35,7 @@ define([
                 _.bind(this.collection.showMore, this.collection);
                 this.filter = options.filter ? options.filter : {};
                 this.sort = options.sort ? options.sort : {};
-                this.defaultItemsNumber = this.collection.namberToShow || 50;
+                this.defaultItemsNumber = this.collection.namberToShow || 100;
                 this.newCollection = options.newCollection;
                 this.deleteCounter = 0;
                 this.page = options.collection.page;
@@ -50,8 +52,7 @@ define([
                 "click #nextPage": "nextPage",
                 "click .checkbox": "checked",
                 "click td.editable": "editRow",
-                "click #itemsButton": "itemsNumber",
-                "click .currentPageList": "itemsNumber",
+                "mouseover .currentPageList": "itemsNumber",
                 "click": "hideItemsNumber",
                 "click #firstShowPage": "firstPage",
                 "click #lastShowPage": "lastPage",
@@ -118,10 +119,14 @@ define([
 
             saveItem: function () {
                 var model;
+                var modelJSON;
 
                 for (var id in this.changedModels) {
                     model = this.editCollection.get(id);
+                    modelJSON = model.toJSON();
                     model.changed = this.changedModels[id];
+                    model.changed.year = moment(modelJSON.date).year();
+                    model.changed.week = moment(modelJSON.date).isoWeek();
                 }
                 this.editCollection.save();
             },
@@ -254,6 +259,7 @@ define([
                     newCollection: this.newCollection
                 });
                 this.collection.bind('reset', this.renderContent, this);
+                this.collection.bind('showmore', this.showMoreContent, this);
             },
 
             goSort: function (e) {
@@ -354,7 +360,11 @@ define([
                 $(document).on("click", function () {
                     self.hideItemsNumber();
                 });
+
+                currentEl.append(_.template(paginationTemplate));
+
                 var pagenation = this.$el.find('.pagination');
+
                 if (this.collection.length === 0) {
                     pagenation.hide();
                 } else {

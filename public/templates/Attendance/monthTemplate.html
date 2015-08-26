@@ -1,12 +1,12 @@
 <% months.forEach(function(month){ %>
 <tr>
     <td>
-        <span class="text-left"><%=month%></span>
+        <span class="text-left"><%=month.label%></span>
     </td>
-    <% days[month].forEach(function(day){ %>
+    <% month.daysData.forEach(function(day){ %>
     <td class="dayOfMonth">
-        <span class="text-left <%= day.type %>">
-            <%=day.number%>
+        <span class="text-center <%= day.type %> ">
+            <%=day.number ? day.number : 0%>
         </span>
     </td>
     <% }) %>

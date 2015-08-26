@@ -1,0 +1,17 @@
+<div class="divCell left-cell">
+    <span>
+        Total Hours Sold
+    </span>
+</div>
+<% weeksArr.forEach(function(weekObject){ %>
+<div class="divCell">
+    <span>
+        <%= bySalesByDepPerWeek[weekObject.week] ? bySalesByDepPerWeek[weekObject.week] : '&nbsp'%>
+    </span>
+</div>
+<% }) %>
+<div class="divCell">
+    <span>
+        <%= globalTotal ? globalTotal : '&nbsp'%>
+    </span>
+</div>

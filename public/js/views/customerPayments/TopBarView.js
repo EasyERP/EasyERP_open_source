@@ -2,7 +2,7 @@
  * Created by soundstorm on 21.05.15.
  */
 define([
-        'text!templates/supplierPayments/TopBarTemplate.html',
+        'text!templates/customerPayments/TopBarTemplate.html',
         'custom',
         'common',
         'constants'
@@ -10,14 +10,15 @@ define([
     function (ContentTopBarTemplate, Custom, Common, CONSTANTS) {
         var TopBarView = Backbone.View.extend({
             el: '#top-bar',
-            contentType: CONSTANTS.SUPPLIERPAYMENTS,
+            contentType: CONSTANTS.CUSTOMERPAYMENTS,
             template: _.template(ContentTopBarTemplate),
 
             events: {
                 "click a.changeContentView": 'changeContentViewType',
                 "click #top-bar-deleteBtn": "deleteEvent",
                 "click #top-bar-editBtn": "editEvent",
-                "click #top-bar-createBtn": "createEvent"
+                "click #top-bar-createBtn": "createEvent",
+                "click #top-bar-saveBtn": "saveEvent"
             },
 
             changeContentViewType: function (e) {
@@ -33,6 +34,11 @@ define([
             createEvent: function (event) {
                 event.preventDefault();
                 this.trigger('createEvent');
+            },
+
+            saveEvent: function (event) {
+                event.preventDefault();
+                this.trigger('saveEvent');
             },
 
             render: function () {

@@ -1,17 +1,19 @@
 define([
+        'text!templates/Pagination/PaginationTemplate.html',
         'text!templates/salesInvoice/list/ListHeader.html',
         'text!templates/stages.html',
         'views/salesInvoice/CreateView',
-        'views/Invoice/EditView',
+        'views/salesInvoice/EditView',
         'models/InvoiceModel',
         'views/salesInvoice/list/ListItemView',
         'collections/salesInvoice/filterCollection',
         'views/Filter/FilterView',
         'common',
-        'dataService'
+        'dataService',
+        'constants'
     ],
 
-    function (listTemplate, stagesTemplate, createView, editView, invoiceModel, listItemView, contentCollection, filterView, common, dataService) {
+    function (paginationTemplate, listTemplate, stagesTemplate, createView, editView, invoiceModel, listItemView, contentCollection, filterView, common, dataService, CONSTANTS) {
         var InvoiceListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -20,7 +22,7 @@ define([
             sort: null,
             newCollection: null,
             page: null, //if reload page, and in url is valid page
-            contentType: 'Invoice',//needs in view.prototype.changeLocationHash
+            contentType:'salesInvoice', //'Invoice',//needs in view.prototype.changeLocationHash
             viewType: 'list',//needs in view.prototype.changeLocationHash
 
             initialize: function (options) {
@@ -31,14 +33,17 @@ define([
                 this.filter = options.filter ? options.filter : {};
                 this.filter.forSales = true;
                 this.sort = options.sort;
-                this.defaultItemsNumber = this.collection.namberToShow || 50;
+                this.defaultItemsNumber = this.collection.namberToShow || 100;
                 this.newCollection = options.newCollection;
                 this.deleteCounter = 0;
                 this.page = options.collection.page;
+
                 this.render();
+
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
                 this.contentCollection = contentCollection;
                 this.stages = [];
+                this.filterView;
             },
 
             events: {
@@ -51,8 +56,7 @@ define([
                 "click .stageSelect": "showNewSelect",
                 //"click  .list td:not(.notForm)": "gotoForm",
                 "click  .list td:not(.notForm)": "goToEditDialog",
-                "click #itemsButton": "itemsNumber",
-                "click .currentPageList": "itemsNumber",
+                "mouseover .currentPageList": "itemsNumber",
                 "click": "hideItemsNumber",
                 "click #firstShowPage": "firstPage",
                 "click #lastShowPage": "lastPage",
@@ -135,11 +139,9 @@ define([
 
             hideItemsNumber: function (e) {
                 var el = e.target;
-                $(".allNumberPerPage").hide();
-                $(".newSelectList").hide();
+
+                this.$el.find(".allNumberPerPage, .newSelectList").hide();
                 if (!el.closest('.search-view')) {
-                    $(".drop-down-filter").hide();
-                    $('.search-options').hide();
                     $('.search-content').removeClass('fa-caret-up');
                 };
             },
@@ -185,7 +187,6 @@ define([
                 var self = this;
                 var currentEl = this.$el;
                 var FilterView;
-                var showList;
 
                 currentEl.html('');
 
@@ -207,24 +208,25 @@ define([
                 });
 
                 dataService.getData("/workflow/fetch", {
-                    wId: 'Sales Invoice',
-                    source: 'purchase',
-                    targetSource: 'invoice'
-                }, function (stages) {
+                        wId: 'Sales Invoice',
+                        source: 'purchase',
+                        targetSource: 'invoice'
+                    }, function (stages) {
                     self.stages = stages;
-
-                    FilterView = new filterView({ collection: stages, customCollection: []});
-                    // Filter custom event listen ------begin
-                    FilterView.bind('filter', function () {
-                        showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
-                        self.showFilteredPage(showList)
-                    });
-                    FilterView.bind('defaultFilter', function () {
-                        showList = _.pluck(stages, '_id');
-                        self.showFilteredPage(showList)
-                    });
-                    // Filter custom event listen ------end
                 });
+
+                self.filterView = new filterView({
+                    contentType: self.contentType
+                });
+
+                self.filterView.bind('filter', function (filter) {
+                    self.showFilteredPage(filter)
+                });
+                self.filterView.bind('defaultFilter', function () {
+                    self.showFilteredPage({});
+                });
+
+                self.filterView.render();
 
                 function currentEllistRenderer(){
                     currentEl.append(_.template(listTemplate, {currentDb: App.currentDb}));
@@ -233,6 +235,8 @@ define([
                         page: self.page,
                         itemsNumber: self.collection.namberToShow
                     }).render());//added two parameters page and items number
+
+                    currentEl.append(_.template(paginationTemplate));
 
                     var pagenation = self.$el.find('.pagination');
                     if (self.collection.length === 0) {
@@ -371,20 +375,19 @@ define([
                 this.changeLocationHash(1, itemsNumber, this.filter);
             },
 
-            showFilteredPage: function (showList) {
+            showFilteredPage: function (filter) {
                 var itemsNumber = $("#itemsNumber").text();
+                this.filter = filter;
+
                 this.startTime = new Date();
                 this.newCollection = false;
 
-                this.filter = {};
-                if (showList.length) this.filter['workflow'] = showList;
-
-
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
-                this.changeLocationHash(1, itemsNumber, this.filter);
-                this.collection.showMore({count: itemsNumber, page: 1, filter: this.filter});
-                this.getTotalLength(null, itemsNumber, this.filter);
+
+                this.changeLocationHash(1, itemsNumber, filter);
+                this.collection.showMore({count: itemsNumber, page: 1, filter: filter});
+                this.getTotalLength(null, itemsNumber, filter);
             },
 
             showPage: function (event) {
@@ -411,6 +414,9 @@ define([
                 }
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
+
+                this.filterView.renderFilterContent();
+
                 holder.find('#timeRecivingDataFromServer').remove();
                 holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             },
@@ -423,13 +429,20 @@ define([
 
             goToEditDialog: function (e) {
                 e.preventDefault();
+
                 var id = $(e.target).closest('tr').data("id");
                 var model = new invoiceModel({validate: false});
+
                 model.urlRoot = '/Invoice/form';
                 model.fetch({
-                    data: {id: id},
+                    data: {
+                        id: id,
+                        currentDb: App.currentDb
+                    },
                     success: function (model) {
-                        new editView({model: model});
+                        var isWtrack = App.currentDb === CONSTANTS.WTRACK_DB_NAME;
+
+                        new editView({model: model, isWtrack: isWtrack});
                     },
                     error: function () {
                         alert('Please refresh browser');

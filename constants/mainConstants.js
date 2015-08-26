@@ -1,0 +1,14 @@
+/**
+ * Created by Roman on 13.07.2015.
+ */
+module.exports = {
+    HR_DEPARTMENT_ID: '55b79342b370f8642a0013b5',
+    BUSINESS_DEPARTMENT_ID: '55b79342b370f8642a0013b4',
+    MARKETING_DEPARTMENT_ID: '55b79342b370f8642a0013b3',
+
+    PAYONEER: '555cc981532aebbc4a8baf36',
+    UKR_SIB_BANK: '555cc981532aebbc4a8baf37',
+    PRIMARY: '555cc981532aebbc4a8baf38',
+
+    WTRACK_DB_NAME: 'weTrack'
+};

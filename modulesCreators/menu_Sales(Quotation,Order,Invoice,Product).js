@@ -102,18 +102,18 @@ MongoClient.connect(url, function (err, db) {
         }, 1000);
 
         q.drain = function () {
-            callback(null, parrent, module, module2, module3, module4);
+            callback(null, parrent, /*module, module2, module3,*/ module4);
         };
 
-        q.push([module, module2, module3, module4], function () {
+        q.push([/*module, module2, module3,*/ module4], function () {
             console.log('finished process');
         });
     };
 
 
-    function profileUpdater(parrent, child, child2, child3, child4, callback) {
+    function profileUpdater(parrent, /*child, child2, child3,*/ child4, callback) {
         var i;
-        var parrentInsert = {
+       /* var parrentInsert = {
             "module": parrent._id,
             "access": {
                 "del": true,
@@ -147,7 +147,7 @@ MongoClient.connect(url, function (err, db) {
                 "editWrite": true,
                 "read": true
             }
-        };
+        };*/
 
         var childInsert4 = {
             "module": child4._id,
@@ -161,7 +161,7 @@ MongoClient.connect(url, function (err, db) {
         var q = async.queue(function (profile, callback) {
             if (profile) {
                 console.log('profile = ' + profile._id);
-                profiles.findOneAndUpdate({ _id: profile._id }, { $push: { profileAccess: { $each: [parrentInsert, childInsert, childInsert2, childInsert3, childInsert4] } } }, callback);
+                profiles.findOneAndUpdate({ _id: profile._id }, { $push: { profileAccess: { $each: [/*parrentInsert, childInsert, childInsert2, childInsert3,*/ childInsert4] } } }, callback);
             }
         }, 1000);
 

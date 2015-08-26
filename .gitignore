@@ -33,7 +33,6 @@ node_modules
 .idea
 log.txt
 add_menus.js
-menu_HR_salary.js
 menu_Sales_\[quotation|order|Invoice|Product\].js
 public/js/libs/async
 public/js/libs/backbone.memento
@@ -43,3 +42,6 @@ EasyErp-Desktop.njsproj
 EasyErp-Desktop.sln
 .vs
 routes/uploads
+EasyErp-Desktop.iml
+config/development.js
+public/css/main.css

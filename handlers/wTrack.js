@@ -8,24 +8,33 @@ var wTrack = function (models) {
     var _ = require('../node_modules/underscore');
     var wTrackSchema = mongoose.Schemas['wTrack'];
     var DepartmentSchema = mongoose.Schemas['Department'];
-    var CustomerSchema = mongoose.Schemas['Customer'];
-    var EmployeeSchema = mongoose.Schemas['Employee'];
-    var WorkflowSchema = mongoose.Schemas['workflow'];
+    /*var CustomerSchema = mongoose.Schemas['Customer'];
+     var EmployeeSchema = mongoose.Schemas['Employee'];
+     var WorkflowSchema = mongoose.Schemas['workflow'];*/
 
     var objectId = mongoose.Types.ObjectId;
     var async = require('async');
     var mapObject = require('../helpers/bodyMaper');
 
-    this.create = function (req, res, next) {
-        var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
-        var body = mapObject(req.body);
-        var wTrack = new WTrack(body);
 
-        wTrack.save(function (err, wTrack) {
-            if (err) {
-                return next(err);
+    this.create = function (req, res, next) {
+        access.getEditWritAccess(req, req.session.uId, 75, function (access) {
+            if (access) {
+
+                var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+                var body = mapObject(req.body);
+
+                wTrack = new WTrack(body);
+
+                wTrack.save(function (err, wTrack) {
+                    if (err) {
+                        return next(err);
+                    }
+                    res.status(200).send({success: wTrack});
+                });
+            } else {
+                res.status(403).send();
             }
-            res.status(200).send({success: wTrack});
         });
     };
 
@@ -35,12 +44,17 @@ var wTrack = function (models) {
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getEditWritAccess(req, req.session.uId, 65, function (access) {
+            access.getEditWritAccess(req, req.session.uId, 75, function (access) {
                 if (access) {
                     data.editedBy = {
                         user: req.session.uId,
                         date: new Date().toISOString()
                     };
+
+                    if (data && data.revenue) {
+                        data.revenue *= 100;
+                    }
+
                     WTrack.findByIdAndUpdate(id, {$set: data}, function (err, response) {
                         if (err) {
                             return next(err);
@@ -64,10 +78,14 @@ var wTrack = function (models) {
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             uId = req.session.uId;
-            access.getEditWritAccess(req, req.session.uId, 65, function (access) {
+            access.getEditWritAccess(req, req.session.uId, 75, function (access) {
                 if (access) {
                     async.each(body, function (data, cb) {
-                        var id = data._id;
+                        var id = data._id
+
+                        if (data && data.revenue) {
+                            data.revenue *= 100;
+                        }
 
                         data.editedBy = {
                             user: uId,
@@ -91,6 +109,81 @@ var wTrack = function (models) {
         }
     };
 
+    function ConvertType(array, type) {
+        if (type === 'integer') {
+            for (var i = array.length - 1; i >= 0; i--) {
+                array[i] = parseInt(array[i]);
+            }
+        } else if (type === 'boolean') {
+            for (var i = array.length - 1; i >= 0; i--) {
+                if (array[i] === 'true') {
+                    array[i] = true;
+                } else if (array[i] === 'false') {
+                    array[i] = false;
+                } else {
+                    array[i] = null;
+                }
+            }
+        }
+    };
+
+    function caseFilter(filter) {
+        var condition;
+        var resArray = [];
+        var filtrElement = {};
+        var key;
+
+        for (var filterName in filter){
+            condition = filter[filterName]['value'];
+            key = filter[filterName]['key'];
+
+            switch (filterName) {
+                case 'projectManager':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'projectName':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'customer':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'employee':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'department':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'year':
+                    ConvertType(condition, 'integer');
+                    filtrElement[key] = {$in: condition};
+                    resArray.push(filtrElement);
+                    break;
+                case 'month':
+                    ConvertType(condition, 'integer');
+                    filtrElement[key] = {$in: condition};
+                    resArray.push(filtrElement);
+                    break;
+                case 'week':
+                    ConvertType(condition, 'integer');
+                    filtrElement[key] = {$in: condition};
+                    resArray.push(filtrElement);
+                    break;
+                case 'isPaid':
+                    ConvertType(condition, 'boolean');
+                    filtrElement[key] = {$in: condition};
+                    resArray.push(filtrElement);
+                    break;
+            }
+        };
+
+        return resArray;
+    };
+
     this.totalCollectionLength = function (req, res, next) {
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
         var departmentSearcher;
@@ -101,7 +194,11 @@ var wTrack = function (models) {
         var filter = query.filter;
 
         if (filter && typeof filter === 'object') {
-            queryObject = query.filter;
+            if (filter.condition === 'or') {
+                queryObject['$or'] = caseFilter(filter);
+            } else {
+                queryObject['$and'] = caseFilter(filter);
+            }
         }
         var waterfallTasks;
 
@@ -205,88 +302,26 @@ var wTrack = function (models) {
         var contentIdsSearcher;
         var contentSearcher;
         var waterfallTasks;
-        var condition;
-        var or;
 
         var sort = {};
 
-        function ConvertType(array, type) {
-            if (type === 'integer') {
-                for (var i = array.length - 1; i >= 0; i--) {
-                    array[i] = parseInt(array[i]);
-                }
-            } else  if (type === 'boolean') {
-                for (var i = array.length - 1; i >= 0; i--) {
-                    if (condition[i] === 'true') {
-                        condition[i] = true;
-                    } else if (condition[i] === 'false') {
-                        condition[i] = false;
-                    } else {
-                        condition[i] = null;
-                    }
-                }
-            }
-
-        };
 
         if (filter && typeof filter === 'object') {
-            queryObject['$or'] = [];
-            or = queryObject['$or'];
-
-            for (var key in filter){
-                condition = filter[key];
-
-                switch (key) {
-                    case 'projectmanagers':
-                        or.push({ 'project.projectmanager.name': {$in: condition}});
-                        break;
-                    case 'projectsname':
-                       or.push({ 'project.projectName': {$in: condition}});
-                        break;
-                    case 'workflows':
-                        or.push({ 'project.workflow': {$in: condition}});
-                        break;
-                    case 'customers':
-                        or.push({ 'project.customer': {$in: condition}});
-                        break;
-                    case 'employees':
-                        or.push({ 'employee.name': {$in: condition}});
-                        break;
-                    case 'departments':
-                        or.push({ 'department.departmentName': {$in: condition}});
-                        break;
-                    case 'years':
-                        ConvertType(condition, 'integer');
-
-                        or.push({ 'year': {$in: condition}});
-                        break;
-                    case 'months':
-                        ConvertType(condition, 'integer');
-
-                        or.push({ 'month': {$in: condition}});
-                        break;
-                    case 'weeks':
-                        ConvertType(condition, 'integer');
-
-                        or.push({ 'week': {$in: condition}});
-                        break;
-                    case 'isPaid':
-                        ConvertType(condition, 'boolean');
-
-                        or.push({ 'isPaid': {$in: condition}});
-                        break;
-                }
-            };
+            if (filter.condition === 'or') {
+                queryObject['$or'] = caseFilter(filter);
+            } else {
+                queryObject['$and'] = caseFilter(filter);
+            }
        }
 
-        var count = query.count ? query.count : 50;
+        var count = query.count ? query.count : 100;
         var page = query.page;
         var skip = (page - 1) > 0 ? (page - 1) * count : 0;
 
         if (query.sort) {
             sort = query.sort;
         } else {
-            sort = {"name": 1};
+            sort = {"project.projectName": 1, "year": 1, "month": 1, "week": 1};
         }
 
         departmentSearcher = function (waterfallCallback) {
@@ -368,12 +403,13 @@ var wTrack = function (models) {
                 .limit(count)
                 .skip(skip)
                 .sort(sort)
+                .lean()
                 .exec(waterfallCallback);
         };
 
         waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
 
-        access.getEditWritAccess(req, req.session.uId, 65, function (access) {
+        access.getReadAccess(req, req.session.uId, 75, function (access) {
             if (!access) {
                 return res.status(403).send();
             }
@@ -392,7 +428,6 @@ var wTrack = function (models) {
         var id = req.params.id;
         var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
         /* var queryParams = {};
-
          for (var i in req.query) {
          queryParams[i] = req.query[i];
          }*/
@@ -406,7 +441,6 @@ var wTrack = function (models) {
         var isOrder = !!(contentType === 'Order');
 
         /* var data = {};
-
          for (var i in req.query) {
          data[i] = req.query[i];
          }*/
@@ -497,12 +531,18 @@ var wTrack = function (models) {
 
         waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
 
-        async.waterfall(waterfallTasks, function (err, result) {
-            if (err) {
-                return next(err);
+        access.getReadAccess(req, req.session.uId, 75, function (access) {
+            if (!access) {
+                return res.status(403).send();
             }
 
-            res.status(200).send(result);
+            async.waterfall(waterfallTasks, function (err, result) {
+                if (err) {
+                    return next(err);
+                }
+
+                res.status(200).send(result);
+            });
         });
     };
 
@@ -510,62 +550,19 @@ var wTrack = function (models) {
         var id = req.params.id;
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
 
-        WTrack.remove({_id: id}, function (err, product) {
-            if (err) {
-                return next(err);
-            }
-            res.status(200).send({success: product});
-        });
-    };
-
-    this.getFilterValues = function (req, res, next) {
-        var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
-
-        WTrack.aggregate([
-            {
-                $group:{
-                    _id: null,
-                    projectmanagers: {
-                        $addToSet: '$project.projectmanager'
-                    },
-                    projectsname: {
-                        $addToSet: '$project.projectName'
-                    },
-                    workflows: {
-                        $addToSet: '$project.workflow'
-                    },
-                    customers: {
-                        $addToSet: '$project.customer'
-                    },
-                    employees: {
-                        $addToSet: '$employee'
-                    },
-                    departments: {
-                        $addToSet: '$department'
-                    },
-                    years: {
-                        $addToSet: '$year'
-                    },
-                    months: {
-                        $addToSet: '$month'
-                    },
-                    weeks: {
-                        $addToSet: '$week'
-                    },
-                    isPaid: {
-                        $addToSet: '$isPaid'
+        access.getDeleteAccess(req, req.session.uId, 72, function (access) {
+            if (access) {
+                WTrack.remove({_id: id}, function (err, product) {
+                    if (err) {
+                        return next(err);
                     }
-                }
+                    res.status(200).send({success: product});
+                });
+            } else {
+                res.status(403).send();
             }
-        ], function (err, result) {
-            if (err) {
-                return next(err);
-            }
-
-            res.status(200).send(result);
         });
-    };
-
+    };    
 };
 
 module.exports = wTrack;

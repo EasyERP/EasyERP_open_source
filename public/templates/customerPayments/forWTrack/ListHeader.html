@@ -1,0 +1,39 @@
+<div>
+    <table class="list payment-list">
+        <col width="2%">
+        <col width="2%">
+        <col width="12%">
+        <col width="12%">
+        <col width="12%">
+        <col width="12%">
+        <col width="20%">
+        <col width="15%">
+        <col width="20%">
+        <col width="15%">
+
+        <thead>
+        <tr>
+            <th><input type="checkbox" id="check_all"/></th>
+            <th>N</th>
+            <th class="oe_sortable" data-sort="invoice.assigned.name">Assigned<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="supplier.fullName">Company<span class="arrow down">7</span><span class="arrow up">v</span>
+            </th>
+            <th class="oe_sortable" data-sort="invoice.name">Invoice<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <th class="oe_sortable sortDn" data-sort="date">Payment Date<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="paymentMethod.name">Payment Way<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="invoiced">Invoiced<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="paidAmount">Paid<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="workflow">Status<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+        </tr>
+        </thead>
+        <tbody id="listTable"></tbody>
+        <tfoot id="listTotal"></tfoot>
+    </table>
+</div>

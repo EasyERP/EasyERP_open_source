@@ -9,18 +9,31 @@ var RESPONSES = require('../constants/responses');
 var Invoice = function (models) {
     var access = require("../Modules/additions/access.js")(models);
     var InvoiceSchema = mongoose.Schemas['Invoice'];
+    var wTrackInvoiceSchema = mongoose.Schemas['wTrackInvoice'];
     var OrderSchema = mongoose.Schemas['Quotation'];
     var DepartmentSchema = mongoose.Schemas['Department'];
+    var CustomerSchema = mongoose.Schemas['Customer'];
+    var PaymentSchema = mongoose.Schemas['Payment'];
+    var wTrackSchema = mongoose.Schemas['wTrack'];
     var objectId = mongoose.Types.ObjectId;
     var async = require('async');
     var workflowHandler = new WorkflowHandler(models);
     var moment = require('../public/js/libs/moment/moment');
+    var _ = require('../node_modules/underscore');
 
     this.create = function (req, res, next) {
-        var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
+        var isWtrack = req.session.lastDb === 'weTrack';
         var body = req.body;
+        var Invoice;
+        var invoice;
 
-        var invoice = new Invoice(body);
+        if(isWtrack){
+            Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
+        } else {
+            Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
+        }
+
+        invoice = new Invoice(body);
 
         if (req.session.uId) {
             invoice.createdBy.user = req.session.uId;
@@ -31,7 +44,7 @@ var Invoice = function (models) {
             if (err) {
                 return next(err);
             }
-            res.status(200).send({success: result});
+            res.status(200).send(result);
         });
     };
 
@@ -105,7 +118,7 @@ var Invoice = function (models) {
                 return next(err)
             }
 
-            res.status(201).send({success: result});
+            res.status(201).send(result);
         });
 
     };
@@ -129,7 +142,7 @@ var Invoice = function (models) {
                         if (err) {
                             next(err);
                         } else {
-                            res.status(200).send({success: 'Invoice updated', result: invoice});
+                            res.status(200).send(invoice);
                         }
                     });
 
@@ -140,32 +153,90 @@ var Invoice = function (models) {
         } else {
             res.status(401).send();
         }
-    }
+    };
 
     this.getAll = function (req, res, next) {
         var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
         var query = {};
 
-        Invoice.find(query, function (err, invoice) {
+        Invoice.find(query, function (err, invoices) {
             if (err) {
                 return next(err);
             }
-            res.status(200).send({success: invoice});
+            res.status(200).send(invoices);
         });
     };
 
+    function ConvertType(element, type) {
+        if (type === 'boolean') {
+            if (element === 'true') {
+                element = true;
+            } else if (element === 'false') {
+                element = false;
+            }
+        }
+
+        return element;
+    };
+
+    function caseFilter(filter) {
+        var condition;
+        var resArray = [];
+        var filtrElement = {};
+        var key;
+
+        for (var filterName in filter){
+            condition = filter[filterName]['value'];
+            key = filter[filterName]['key'];
+
+            switch (filterName) {
+                case 'project':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'salesPerson':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'supplier':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'workflow':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'forSales':
+                    condition = ConvertType(condition, 'boolean');
+                    filtrElement[key] = condition;
+                    resArray.push(filtrElement);
+                    break;
+            }
+        };
+
+        return resArray;
+    };
+
     this.getForView = function (req, res, next) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, 56, function (access) {
+        var db = req.session.lastDb;
+        var moduleId = 56;
+
+        if (db === 'weTrack'){
+            moduleId = 64
+        }
+
+        if (req.session && req.session.loggedIn && db) {
+            access.getReadAccess(req, req.session.uId, moduleId, function (access) {
                 if (access) {
-                    var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
+                    var Invoice = models.get(db, 'Invoice', InvoiceSchema);
 
                     var query = req.query;
                     var queryObject = {};
+                    var filter = query.filter;
 
                     var optionsObject = {};
                     var sort = {};
-                    var count = query.count ? query.count : 50;
+                    var count = query.count ? query.count : 100;
                     var page = query.page;
                     var skip = (page - 1) > 0 ? (page - 1) * count : 0;
 
@@ -173,13 +244,6 @@ var Invoice = function (models) {
                     var contentIdsSearcher;
                     var contentSearcher;
                     var waterfallTasks;
-
-                    if (query && query.filter && query.filter.forSales) {
-                        queryObject['forSales'] = true;
-                    } else {
-                        queryObject['forSales'] = false;
-                    }
-
 
                     if (req.query.sort) {
                         sort = req.query.sort;
@@ -249,30 +313,32 @@ var Invoice = function (models) {
                     };
 
                     contentSearcher = function (invoicesIds, waterfallCallback) {
-                        var workflowArray;
-                        if (req.query && req.query.filter && req.query.filter.workflow) {
-                            workflowArray = req.query.filter.workflow;
-                            optionsObject.workflow = {$in: workflowArray};
-                        } else {
-                            optionsObject._id = {$in: invoicesIds};
+                        optionsObject.$and = [];
+                        optionsObject.$and.push({_id: {$in: invoicesIds}});
 
+                        if (filter && typeof filter === 'object') {
+                            if (filter.condition === 'or') {
+                                optionsObject['$or'] = caseFilter(filter);
+                            } else {
+                                optionsObject['$and'] = caseFilter(filter);
+                            }
                         }
 
                         var query = Invoice.find(optionsObject).limit(count).skip(skip).sort(sort);
 
-                            query.populate('supplier', 'name _id').
-                                populate('salesPerson', 'name _id').
-                                populate('department', '_id departmentName').
-                                populate('createdBy.user').
-                                populate('editedBy.user').
-                                populate('groups.users').
-                                populate('groups.group').
-                                populate('groups.owner', '_id login').
-                                populate('workflow', '-sequence');
+                        query
+                            //.populate('supplier', 'name _id').
+                            //populate('salesPerson', 'name _id').
+                            .populate('department', '_id departmentName').
+                            populate('createdBy.user').
+                            populate('editedBy.user').
+                            populate('groups.users').
+                            populate('groups.group').
+                            populate('groups.owner', '_id login');/*.
+                            //populate('project', '_id projectName').
+                            populate('workflow._id', '-sequence');*/
 
-                            query.exec(waterfallCallback);
-
-
+                        query.lean().exec(waterfallCallback);
                     };
 
                     waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
@@ -281,7 +347,7 @@ var Invoice = function (models) {
                         if (err) {
                             return next(err);
                         }
-                        res.status(200).send({success: result});
+                        res.status(200).send(result);
                     });
                 } else {
                     res.status(403).send();
@@ -294,10 +360,17 @@ var Invoice = function (models) {
     };
 
     this.getInvoiceById = function (req, res, next) {
+        var isWtrack = req.session.lastDb === 'weTrack';
+        var moduleId = 56;
+
+        if (isWtrack){
+            moduleId = 64
+        }
+
         if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, 56, function (access) {
+            access.getReadAccess(req, req.session.uId, moduleId, function (access) {
                 if (access) {
-                    var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
+                    var Invoice;
                     var optionsObject = {};
 
                     var departmentSearcher;
@@ -305,6 +378,11 @@ var Invoice = function (models) {
                     var contentSearcher;
                     var waterfallTasks;
 
+                    if(isWtrack){
+                        Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
+                    } else {
+                        Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
+                    }
 
                     departmentSearcher = function (waterfallCallback) {
                         models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
@@ -378,19 +456,21 @@ var Invoice = function (models) {
 
                         var query = Invoice.findOne(optionsObject);
 
-                        query.populate('supplier', '_id name').
-                            populate('salesPerson', 'name _id').
-                            populate('products.product', '_id name').
+                        query//.populate('supplier', '_id name').
+                            //populate('salesPerson', 'name _id').
+                            //populate('project', '_id projectName').
+                            .populate('products.product').
                             populate('payments', '_id name date paymentRef paidAmount').
                             populate('department', '_id departmentName').
+                            populate('paymentTerms', '_id name').
                             populate('createdBy.user').
                             populate('editedBy.user').
                             populate('groups.users').
                             populate('groups.group').
-                            populate('groups.owner', '_id login').
-                            populate('workflow', '-sequence');
+                            populate('groups.owner', '_id login');/*.
+                            populate('workflow._id', '-sequence');*/
 
-                        query.exec(waterfallCallback);
+                        query.lean().exec(waterfallCallback);
                     };
 
                     waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
@@ -413,16 +493,78 @@ var Invoice = function (models) {
     };
 
     this.removeInvoice = function (req, res, id, next) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, 56, function (access) {
+        var db = req.session.lastDb;
+        var moduleId = 56;
+        var paymentIds = [];
+        var wTrackIds  = [];
+        var invoiceDeleted;
+        var Payment = models.get(db, "Payment", PaymentSchema);
+        var wTrack = models.get(db, "wTrack", wTrackSchema);
+
+        if (db === 'weTrack'){
+            moduleId = 64
+        }
+
+        if (req.session && req.session.loggedIn && db) {
+            access.getDeleteAccess(req, req.session.uId, moduleId, function (access) {
                 if (access) {
 
-                    models.get(req.session.lastDb, "Invoice", InvoiceSchema).findByIdAndRemove(id, function (err, result) {
+                    models.get(db, "Invoice", InvoiceSchema).findByIdAndRemove(id, function (err, result) {
                         if (err) {
-                            next(err);
-                        } else {
-                            res.status(200).send({success: result});
+                           return next(err);
                         }
+
+                        invoiceDeleted = result.toJSON();
+
+                        async.each(invoiceDeleted.products, function (product) {
+                            wTrackIds.push(product.product);
+                        });
+                        async.each(invoiceDeleted.payments, function (payment) {
+                            paymentIds.push(payment);
+                        });
+
+                        function paymentsRemove (){
+                            async.each(paymentIds, function (id) {
+                                Payment.findByIdAndRemove(id, function (err, result) {
+                                    if (err) {
+                                        return console.log(err);
+                                    }
+                                   // console.log('success');
+                                });
+                            });
+                        };
+
+                        function wTrackUpdate (){
+                            var setData = {};
+
+                            async.each(wTrackIds, function (id) {
+                                setData.editedBy = {
+                                    user: req.session.uId,
+                                    date: new Date().toISOString()
+                                };
+
+                                setData.isPaid = false;
+                                setData.amount = 0;
+
+                                wTrack.findByIdAndUpdate(id, setData, function (err, result) {
+                                    if (err) {
+                                        return console.log(err);
+                                    }
+                                  //  console.log('success');
+                                });
+                            });
+                        };
+
+                        async.parallel([paymentsRemove, wTrackUpdate], function (err, result) {
+                            if (err){
+                                next(err)
+                            }
+
+                           // console.log('success');
+
+                        });
+
+                        res.status(200).send(result);
                     });
 
                 } else {
@@ -437,10 +579,17 @@ var Invoice = function (models) {
     };
 
     this.updateInvoice = function (req, res, _id, data, next) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, 56, function (access) {
+        var db = req.session.lastDb;
+        var moduleId = 56;
+
+        if (db === 'weTrack'){
+            moduleId = 64
+        }
+
+        if (req.session && req.session.loggedIn && db) {
+            access.getEditWritAccess(req, req.session.uId, moduleId, function (access) {
                 if (access) {
-                    var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
+                    var Invoice = models.get(db, 'Invoice', InvoiceSchema);
                     //data.editedBy = {
                     //    user: req.session.uId,
                     //    date: new Date().toISOString()
@@ -455,7 +604,7 @@ var Invoice = function (models) {
                         if (err) {
                             next(err);
                         } else {
-                            res.status(200).send({success: 'Invoice updated success', result: result});
+                            res.status(200).send(result);
                         }
                     })
 
@@ -472,6 +621,7 @@ var Invoice = function (models) {
 
     this.totalCollectionLength = function (req, res, next) {
         var data = req.query;
+        var filter = data.filter;
 
         var optionsObject = {};
         var result = {};
@@ -485,10 +635,12 @@ var Invoice = function (models) {
         var contentSearcher;
         var waterfallTasks;
 
-        if (data && data.filter && data.filter.forSales) {
-            optionsObject['forSales'] = true;
-        } else {
-            optionsObject['forSales'] = false;
+        if (filter && typeof filter === 'object') {
+            if (filter.condition === 'or') {
+                optionsObject['$or'] = caseFilter(filter);
+            } else {
+                optionsObject['$and'] = caseFilter(filter);
+            }
         }
 
         departmentSearcher = function (waterfallCallback) {
@@ -554,8 +706,10 @@ var Invoice = function (models) {
         };
 
         contentSearcher = function (invoicesIds, waterfallCallback) {
-            optionsObject._id = {$in: invoicesIds};
-            var query = Invoice.find(optionsObject);
+            var query;
+            var queryObject = ({_id: {$in: invoicesIds}});
+
+            query = Invoice.find(queryObject);
             query.exec(waterfallCallback);
         };
 
@@ -601,6 +755,71 @@ var Invoice = function (models) {
                 resultName = rate.seq + '-' + date;
                 res.status(200).send(resultName) ;
             });
+    };
+
+    this.getFilterValues = function (req, res, next) {
+        var EmployeeSchema = mongoose.Schemas['Employee'];
+        var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
+        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+
+
+        async.waterfall([
+            function (cb) {
+                Invoice
+                    .aggregate([
+                        {
+                            $group:{
+                                _id: null,
+                                'Due date': {
+                                    $addToSet: '$dueDate'
+                                }/*,
+                                'salesPerson': {
+                                    $addToSet: '$salesPerson'
+                                }*/
+                            }
+                        }
+                    ], function (err, invoice) {
+                        if (err) {
+                            cb(err)
+
+                        } else {
+                            cb(null, invoice)
+                        }
+
+                    })
+            }/*,
+            function (invoice, cb) {
+                Employee
+                    .populate(invoice , {
+                        path: 'salesPerson',
+                        model: Employee,
+                        select: 'name _id'
+                    },
+                    function (err, invoice) {
+                        if (err) {
+                            return cb(err)
+
+                        }
+                            cb(null, invoice)
+
+                })
+            }*/
+
+        ], function (err, result) {
+            if (err) {
+               return next(err)
+            }
+
+            _.map(result[0], function(value, key) {
+                switch (key) {
+                    case 'salesPerson':
+                        result[0][key] = _.sortBy(value, 'name');
+                        break;;
+
+                }
+            });
+            res.status(200).send(result)
+        })
     };
 
 };

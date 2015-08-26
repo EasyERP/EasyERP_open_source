@@ -4,12 +4,14 @@ var Users = function (mainDb, models) {
     var logWriter = require('../helpers/logWriter.js');
     var crypto = require('crypto');
     var userSchema = mongoose.Schemas['User'];
+    var savedFiltersSchema = mongoose.Schemas['savedFilters'];
     var dbsObject = mainDb.dbsObject;
     var RESPONSES = require('../constants/responses');
+    var _ = require('lodash');
 
     function getAllUserWithProfile(req, id, response) {
         var res = {};
-        var query = models.get(req.session.lastDb, 'Users', userSchema).find({ profile: id }, { _id: 0, login: 1 });
+        var query = models.get(req.session.lastDb, 'Users', userSchema).find({profile: id}, {_id: 0, login: 1});
         query.exec(function (err, result) {
             if (!err) {
                 res.count = result.length;
@@ -20,21 +22,21 @@ var Users = function (mainDb, models) {
                 response.send(res);
             } else {
                 logWriter.log("JobPosition.js getTotalCount JobPositions.find " + err);
-                response.send(500, { error: "Can't find JobPositions" });
+                response.send(500, {error: "Can't find JobPositions"});
             }
         });
     };
 
     function getTotalCount(req, response) {
         var res = {};
-        var query = models.get(req.session.lastDb, 'Users', userSchema).find({}, { __v: 0, upass: 0 });
+        var query = models.get(req.session.lastDb, 'Users', userSchema).find({}, {__v: 0, upass: 0});
         query.exec(function (err, result) {
             if (!err) {
                 res['count'] = result.length;
                 response.send(res);
             } else {
                 logWriter.log("JobPosition.js getTotalCount JobPositions.find " + err);
-                response.send(500, { error: "Can't find JobPositions" });
+                response.send(500, {error: "Can't find JobPositions"});
             }
         });
     };
@@ -45,17 +47,18 @@ var Users = function (mainDb, models) {
             var res = {};
             if (!data) {
                 logWriter.log('Person.create Incorrect Incoming Data');
-                result.send(400, { error: 'User.create Incorrect Incoming Data' });
+                result.send(400, {error: 'User.create Incorrect Incoming Data'});
+                return;
             } else {
-                models.get(req.session.lastDb, 'Users', userSchema).find({ login: data.login }, function (error, doc) {
+                models.get(req.session.lastDb, 'Users', userSchema).find({login: data.login}, function (error, doc) {
                     try {
                         if (error) {
                             logWriter.log('User.js create User.find' + error);
-                            result.send(500, { error: 'User.create find error' });
+                            result.send(500, {error: 'User.create find error'});
                         }
                         if (doc.length > 0) {
                             if (doc[0].login === data.login) {
-                                result.send(400, { error: "An user with the same Login already exists" });
+                                result.send(400, {error: "An user with the same Login already exists"});
                             }
                         }
                         else if (doc.length === 0) {
@@ -65,71 +68,52 @@ var Users = function (mainDb, models) {
 
                     catch (error) {
                         logWriter.log("User.js. create Account.find " + error);
-                        result.send(500, { error: 'User.create find error' });
+                        result.send(500, {error: 'User.create find error'});
                     }
                 });
             }
             function savetoBd(data) {
                 try {
-                    Saas.findOne({ 'users.user': data.email/*, DBname: req.session.lastDb*/ }, function (err, saasDbUser) {
+                    var _user = new models.get(req.session.lastDb, 'Users', userSchema)();
+
+                    if (data.profile) {
+                        _user.profile = data.profile;
+                    }
+                    if (data.login) {
+                        _user.login = data.login;
+                    }
+                    if (data.pass) {
+                        shaSum.update(data.pass);
+                        _user.pass = shaSum.digest('hex');
+                    }
+
+                    if (data.email) {
+                        _user.email = data.email;
+                    }
+
+                    if (data.imageSrc) {
+                        _user.imageSrc = data.imageSrc;
+                    }
+
+                    _user.save(function (err, result1) {
                         if (err) {
-                            new Error(err);
+                            logWriter.log("User.js create savetoBd _user.save " + err);
+                            result.send(500, {error: 'User.create save error'});
+                        } else {
+                            result.send(201, {success: 'A new User crate success', id: result1._id});
                         }
-                        if (saasDbUser && saasDbUser._id) {
-                            new Error('email already used');
-                        }
-
-                        _user = new models.get(req.session.lastDb, 'Users', userSchema)();
-                        if (data.profile) {
-                            _user.profile = data.profile;
-                        }
-                        if (data.login) {
-                            _user.login = data.login;
-                        }
-                        if (data.pass) {
-                            shaSum.update(data.pass);
-                            _user.pass = shaSum.digest('hex');
-                        }
-
-                        if (data.email) {
-                            _user.email = data.email;
-                        }
-
-                        if (data.imageSrc) {
-                            _user.imageSrc = data.imageSrc;
-                        }
-
-                        _user.save(function (err, result1) {
-                            if (err) {
-                                logWriter.log("User.js create savetoBd _user.save " + err);
-                                result.send(500, { error: 'User.create save error' });
-                            } else {
-                                Saas.findOneAndUpdate({ DBname: req.session.lastDb }, {
-                                    $push: {
-                                        users: {
-                                            user: data.email,
-                                            pass: _user.pass
-                                        }
-                                    }
-                                }, function (err, res) {
-                                    if (err) {
-                                        return result.status(500).send({ error: err.message });
-                                    }
-                                    result.send(201, { success: 'A new User crate success', id: result1._id });
-                                });
-                            }
-                        });
                     });
+
                 }
                 catch (error) {
                     logWriter.log("User.js create savetoBd" + error);
-                    result.send(500, { error: 'User.create save error' });
+                    result.send(500, {error: 'User.create save error'});
                 }
             }
         }
         catch (exception) {
             logWriter.log("User.js  " + exception);
-            result.send(500, { error: 'User.create save error' });
+            result.send(500, {error: 'User.create save error'});
         }
     }
 
@@ -138,7 +122,7 @@ var Users = function (mainDb, models) {
         try {
             if (data) {
                 if (data.login || data.email) {
-                    models.get(data.dbId, 'Users', userSchema).findOne({ $or: [{ login: (data.login).toLowerCase() }, { email: data.email }] }, function (err, _user) {
+                    models.get(data.dbId, 'Users', userSchema).findOne({$or: [{login: (data.login)/*.toLowerCase()*/}, {email: data.email}]}, function (err, _user) {
                         try {
                             if (_user && _user._id) {
                                 var shaSum = crypto.createHash('sha256');
@@ -151,7 +135,7 @@ var Users = function (mainDb, models) {
                                     req.session.kanbanSettings = _user.kanbanSettings;
                                     var lastAccess = new Date();
                                     req.session.lastAccess = lastAccess;
-                                    models.get(data.dbId, 'Users', userSchema).findByIdAndUpdate(_user._id, { $set: { lastAccess: lastAccess } }, function (err, result) {
+                                    models.get(data.dbId, 'Users', userSchema).findByIdAndUpdate(_user._id, {$set: {lastAccess: lastAccess}}, function (err, result) {
                                         if (err) {
                                             logWriter.log("User.js. login User.findByIdAndUpdate " + err);
                                         }
@@ -173,12 +157,12 @@ var Users = function (mainDb, models) {
                         }
                     }); //End find method
                 } else {
-                    res.send(400, { error: "Incorect Incoming Data" });
+                    res.send(400, {error: "Incorect Incoming Data"});
                 }
                 //End Validating input data for login
             }
             else {
-                res.send(400, { error: "Incorect Incoming Data" });
+                res.send(400, {error: "Incorect Incoming Data"});
             }//End If data != null
         }
         catch (exception) {
@@ -190,16 +174,16 @@ var Users = function (mainDb, models) {
     function getUsers(req, response, data) {
         var res = {};
         res['data'] = [];
-        var query = models.get(req.session.lastDb, 'Users', userSchema).find({}, { __v: 0, upass: 0 });
+        var query = models.get(req.session.lastDb, 'Users', userSchema).find({}, {__v: 0, upass: 0});
         query.populate('profile');
-        query.sort({ login: 1 });
+        query.sort({login: 1});
         if (data.page && data.count) {
             query.skip((data.page - 1) * data.count).limit(data.count);
         }
         query.exec(function (err, result) {
             if (err) {
                 logWriter.log("Users.js get User.find " + err);
-                response.send(500, { error: 'User get DB error' });
+                response.send(500, {error: 'User get DB error'});
             } else {
                 res['data'] = result;
                 response.send(res);
@@ -216,14 +200,14 @@ var Users = function (mainDb, models) {
         res['data'] = [];
         var query = models.get(req.session.lastDb, 'Users', userSchema).find();
         query.select("_id login");
-        query.sort({ login: 1 });
+        query.sort({login: 1});
         if (data.page && data.count) {
             query.skip((data.page - 1) * data.count).limit(data.count);
         }
         query.exec(function (err, result) {
             if (err) {
                 logWriter.log("Users.js get User.find " + err);
-                response.send(500, { error: 'User get DB error' });
+                response.send(500, {error: 'User get DB error'});
             } else {
                 res['data'] = result;
                 response.send(res);
@@ -233,15 +217,24 @@ var Users = function (mainDb, models) {
 
     function getUserById(req, id, response) {
         var query = models.get(req.session.lastDb, 'Users', userSchema).findById(id);
-        query.populate('profile');
-        query.populate('RelatedEmployee', 'imageSrc name');
+        var key;
+        var newUserResult = {};
+        var savedFilters;
+
+        query.populate('profile')
+            .populate('RelatedEmployee', 'imageSrc name fullName')
+            .populate('savedFilters');
 
         query.exec(function (err, result) {
             if (err) {
                 logWriter.log("Users.js get User.find " + err);
-                response.send(500, { error: 'User get DB error' });
+                response.send(500, {error: 'User get DB error'});
             } else {
-                response.send(result);
+                if (result && result.toJSON().savedFilters) {
+                    savedFilters = result.toJSON().savedFilters;
+                    newUserResult = _.groupBy(savedFilters, 'contentView');
+                }
+                response.send({user: result, savedFilters: newUserResult});
             }
         });
     }
@@ -253,18 +246,18 @@ var Users = function (mainDb, models) {
         for (var i in req.query) {
             data[i] = req.query[i];
         }
-        var query = models.get(req.session.lastDb, 'Users', userSchema).find({}, { __v: 0, upass: 0 });
+        var query = models.get(req.session.lastDb, 'Users', userSchema).find({}, {__v: 0, upass: 0});
         if (data.sort) {
             query.sort(data.sort);
         } else {
-            query.sort({ "lastAccess": -1 });
+            query.sort({"lastAccess": -1});
         }
         query.populate('profile');
         query.skip((data.page - 1) * data.count).limit(data.count);
         query.exec(function (err, result) {
             if (err) {
                 logWriter.log("Users.js getFilter.find " + err);
-                response.send(500, { error: "User get DB error" });
+                response.send(500, {error: "User get DB error"});
             } else {
                 res['data'] = result;
                 response.send(res);
@@ -283,7 +276,7 @@ var Users = function (mainDb, models) {
 
                     if (err) {
                         logWriter.log("User.js update profile.update" + err);
-                        res.send(500, { error: 'User.update BD error' });
+                        res.send(500, {error: 'User.update BD error'});
                     } else {
                         var shaSum = crypto.createHash('sha256');
                         shaSum.update(data.oldpass);
@@ -293,44 +286,107 @@ var Users = function (mainDb, models) {
                             updateUser();
                         } else {
                             logWriter.log("User.js update Incorect Old Pass");
-                            res.send(500, { error: 'Incorect Old Pass' });
+                            res.send(500, {error: 'Incorect Old Pass'});
                         }
                     }
                 });
-            } else updateUser();
+            } else {
+                updateUser();
+            }
+
             function updateUser() {
-                models.get(req.session.lastDb, 'Users', userSchema).findByIdAndUpdate(_id, { $set: data }, function (err, result) {
-                    if (err) {
-                        logWriter.log("User.js update profile.update" + err);
-                        res.send(500, { error: 'User.update DB error' });
-                    } else {
+                var query = {};
+                var key = data.key;
+                var deleteId = data.deleteId;
+                var id;
+                var savedFilters = models.get(req.session.lastDb, 'savedFilters', savedFiltersSchema);
+                var filterModel = new savedFilters();
+
+
+                if (data.changePass) {
+                    query = {$set: data};
+
+                    updateThisUser(_id, query);
+                } else if (data.deleteId) {
+                    savedFilters.findByIdAndRemove(deleteId, function (err, result) {
+                        if (err) {
+                            console.log(err);
+                        }
+                        if (result) {
+                            id = result.get('_id');
+                            query = {$pull: {'savedFilters': deleteId}};
+
+                            updateThisUser(_id, query);
+                        }
+                    });
+                } else if (data.filter && data.key) {
+
+                    filterModel.contentView = key;
+                    filterModel.filter = data.filter;
+
+                    filterModel.save(function (err, result) {
+                        if (err) {
+                            return console.log('error save filter');
+                        };
+
+                        if (result){
+                            id = result.get('_id');
+                            query = {$push: {'savedFilters': id}};
+
+                            updateThisUser(_id, query);
+                        }
+                    });
+                } else {
+                    query = {$set: data};
+                    updateThisUser(_id, query);
+                }
+
+                function updateThisUser(_id, query) {
+                    models.get(req.session.lastDb, 'Users', userSchema).findByIdAndUpdate(_id, query, function (err, result) {
+                        //if (err) {
+                        //    logWriter.log("User.js update profile.update" + err);
+                        //    res.send(500, {error: 'User.update DB error'});
+                        //} else {
+                        //    req.session.kanbanSettings = result.kanbanSettings;
+                        //    if (data.profile && (result._id == req.session.uId))
+                        //        //res.send(200, {success: 'User updated success', logout: true});
+                        //    res.status(200).send(result);
+                        //    else
+                        //        res.status(200).send(result);
+                        //       // res.send(200, {success: 'User updated success'});
+                        //}
+                        if (err) {
+                            return next(err);
+                        }
                         req.session.kanbanSettings = result.kanbanSettings;
-                        if (data.profile && (result._id == req.session.uId))
-                            res.send(200, { success: 'User updated success', logout: true });
-                        else
-                            res.send(200, { success: 'User updated success' });
-                    }
-                });
+                        if (data.profile && (result._id == req.session.uId)) {
+                            res.status(200).send({success: result, logout: true});
+                        } else {
+                            res.status(200).send({success: result});
+                        }
+                    });
+                }
+
             }
         }
         catch (exception) {
             logWriter.log("Profile.js update " + exception);
-            res.send(500, { error: 'User.update BD error' });
+            res.send(500, {error: 'User.update BD error'});
         }
     }
 
     function removeUser(req, _id, res) {
         if (req.session.uId == _id) {
-            res.send(400, { error: 'You cannot delete current user' });
+            res.send(400, {error: 'You cannot delete current user'});
         }
         else
-            models.get(req.session.lastDb, 'Users', userSchema).remove({ _id: _id }, function (err, result) {
+            models.get(req.session.lastDb, 'Users', userSchema).remove({_id: _id}, function (err, result) {
                 if (err) {
                     logWriter.log("Users.js remove user.remove " + err);
-                    res.send(500, { error: 'User.remove BD error' });
+                    res.send(500, {error: 'User.remove BD error'});
 
                 } else {
-                    res.send(200, { success: 'User remove success' });
+                    res.send(200, {success: 'User remove success'});
                 }
             });
     }
