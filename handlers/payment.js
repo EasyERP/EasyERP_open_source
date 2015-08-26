@@ -77,6 +77,8 @@ var Payment = function (models) {
     function getPaymentFilter(req, res, next, forSale) {
         var isWtrack = req.session.lastDb === 'weTrack';
         var Payment;
+        var data = req.query;
+        var filter = data.filter;
 
         var moduleId = returnModuleId(req);
 
@@ -91,7 +93,7 @@ var Payment = function (models) {
                 if (access) {
                     var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
 
-                    var optionsObject = {forSale: forSale};
+                    var optionsObject = {}; //{forSale: forSale};
                     var sort = {};
                     var count = req.query.count ? req.query.count : 100;
                     var page = req.query.page;
@@ -107,6 +109,18 @@ var Payment = function (models) {
                     } else {
                         sort = {"date": -1};
                     }
+
+                    optionsObject.$and = [];
+
+
+                    if (filter && typeof filter === 'object') {
+                        if (filter.condition === 'or') {
+                            optionsObject['$or'] = caseFilter(filter);
+                        } else {
+                            optionsObject['$and'] = caseFilter(filter);
+                        }
+                    }
+                    optionsObject.$and.push({forSale: forSale});
 
                     departmentSearcher = function (waterfallCallback) {
                         models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
@@ -170,7 +184,7 @@ var Payment = function (models) {
                     };
 
                     contentSearcher = function (paymentsIds, waterfallCallback) {
-                        optionsObject._id = {$in: paymentsIds};
+                        //optionsObject._id = {$in: paymentsIds};
                         var query = Payment.find(optionsObject).limit(count).skip(skip).sort(sort);
 
                         query
@@ -204,6 +218,56 @@ var Payment = function (models) {
         } else {
             res.send(401);
         }
+    };
+
+    function caseFilter(filter) {
+        var condition;
+        var resArray = [];
+        var filtrElement = {};
+        var key;
+
+        for (var filterName in filter){
+            condition = filter[filterName]['value'];
+            key = filter[filterName]['key'];
+
+            switch (filterName) {
+                case 'assigned':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'supplier':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'paymentMethod':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'workflow':
+                    filtrElement[key] = {$in: condition};
+                    resArray.push(filtrElement);
+                    break;
+                case 'forSale':
+                    condition = ConvertType(condition, 'boolean');
+                    filtrElement[key] = condition;
+                    resArray.push(filtrElement);
+                    break;
+            }
+        };
+
+        return resArray;
+    };
+
+    function ConvertType(element, type) {
+        if (type === 'boolean') {
+            if (element === 'true') {
+                element = true;
+            } else if (element === 'false') {
+                element = false;
+            }
+        }
+
+        return element;
     };
 
     this.create = function (req, res, next) {
@@ -398,6 +462,7 @@ var Payment = function (models) {
         var forSale = req.params.byType === 'customers';
 
         var queryObject = {};
+        var filter = req.query.filter;
 
         var departmentSearcher;
         var contentIdsSearcher;
@@ -414,9 +479,17 @@ var Payment = function (models) {
             Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
         }
 
-        queryObject = {
-            forSale: forSale
-        };
+        queryObject.$and = [];
+
+        if (filter && typeof filter === 'object') {
+            if (filter.condition === 'or') {
+                queryObject['$or'] = caseFilter(filter);
+            } else {
+                queryObject['$and'] = caseFilter(filter);
+            }
+        }
+
+        queryObject.$and.push({forSale: forSale});
 
         departmentSearcher = function (waterfallCallback) {
             models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
@@ -482,7 +555,6 @@ var Payment = function (models) {
 
         contentSearcher = function (paymentIds, waterfallCallback) {
             var query;
-            var queryObject = {_id: {$in: paymentIds}};
 
             query = Payment.find(queryObject);
             query.count(waterfallCallback);
