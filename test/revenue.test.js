@@ -9,7 +9,7 @@ var expect = require('chai').expect;
 var host = process.env.HOST;
 var url;
 var aggent;
-var queryString = '?week=29&year=2015';
+var queryString = '?week=23&year=2015';
 
 describe("BDD for revenue", function () {  // Runs once before all tests start.
     before(function (done) {
