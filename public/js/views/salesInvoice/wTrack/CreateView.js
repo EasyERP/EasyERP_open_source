@@ -279,7 +279,7 @@
             render: function (options) {
                 options.model = null;
                 options.balanceVisible = null;
-                options.total = (options.total/100).toFixed(2);
+                options.total = (options.total).toFixed(2);
 
                 var notDiv;
                 var now = new Date();

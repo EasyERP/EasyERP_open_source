@@ -2,9 +2,6 @@
  * Created by soundstorm on 06.08.15.
  */
 
-/**
- * Created by Roman on 04.04.2015.
- */
 
 var mongoose = require('mongoose');
 var ObjectId = mongoose.Schema.Types.ObjectId;
@@ -152,21 +149,21 @@ query.exec(function (error, _res) {
                     name: (emp.manager.name.first + ' ' +  emp.manager.name.last)
                 } : {
                     _id: null,
-                    name: null
+                    name: ''
                 },
                 jobPosition: emp.jobPosition ? {
                     _id: emp.jobPosition._id,
                     name: emp.jobPosition.name
                 } : {
                     _id: null,
-                    name: null
+                    name: ''
                 },
                 department: emp.department ? {
                     _id: emp.department._id,
                     name: emp.department.departmentName
                 } : {
                     _id: null,
-                    name: null
+                    name: ''
                 }
             };
         }
