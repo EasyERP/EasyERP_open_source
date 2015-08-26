@@ -7,7 +7,7 @@ module.exports = (function () {
 
     var projectSchema = mongoose.Schema({
         projectShortDesc: { type: String, default: 'emptyProject' },
-        projectName: { type: String, default: 'emptyProject' },
+        projectName: { type: String, default: 'emptyProject', unique: true },
         task: [{ type: ObjectId, ref: 'Tasks', default: null }],
         //customer: { type: ObjectId, ref: 'Customers', default: null },
         customer: {
