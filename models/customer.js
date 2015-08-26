@@ -1,303 +1,98 @@
-/**
- * Created by Roman on 04.04.2015.
- */
 
-/**
- * @module Customer
- * @namespace EasyERP
- * @class Customer
- * @constructor
- */
 
 module.exports = (function () {
+    /**
+     * @module Customer
+     * @type {*|exports|module.exports}
+     */
     var mongoose = require('mongoose');
     var ObjectId = mongoose.Schema.Types.ObjectId;
 
     var customerSchema = mongoose.Schema({
         /**
+         * @class Customer
          * @property {String} type - Type of __Customer__, proper values are: _'Person'_, _'Company'_
-         */
-        /**
-         * determine is a ___Person___ or ___Company___ our own. Actually now is not needed
-         * @property isOwn
-         * @type Boolean
-         * @default false
-         */
-        /**
-         * @property name
-         * @type Object
-         */
-        /**
-         * First `name` of _Customer_
-         * @property name.first
-         * @type String
-         * @default demo
-         */
-        /**
-         * Last `name` of Customer
-         * @property name.last
-         * @type String
-         * @default ''
-         */
-        /**
-         * Date of Birth, expect ISO string, example `'1998-07-28 17:12:26'`
-         * @property dateBirth
-         * @type String
-         * @default ''
-         */
-        /**
-         * `base64` representation of avatar
-         * @property imageSrc
-         * @type String
-         * @default: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC'
-         */
-        /**
-         * @property email
-         * @type String
-         * @default ''
-         */
-        /**
-         * if type of _Customer_=__'Person'__ should determine __Company__ which from __Person__, can be empty
-         * @property company
-         * @type String
-         * @default null
-         */
-        /**
-         * @property address
-         * @type Object
-         * @default demo
-         */
-        /**
-         * Address `street` of Customer
-         * @property address.street
-         * @type String
-         * @default ''
-         */
-        /**
-         * Address `city` of Customer
-         * @property address.city
-         * @type String
-         * @default ''
-         */
-        /**
-         * Address `state` of Customer
-         * @property address.state
-         * @type String
-         * @default ''
-         */
-        /**
-         * Address `zip` of Customer
-         * @property address.zip
-         * @type String
-         * @default ''
-         */
-        /**
-         * Address `country` of Customer
-         * @property address.country
-         * @type String
-         * @default ''
-         */
-        /**
-         * @property website
-         * @type String
-         * @default ''
-         */
-        /**
-         * @property jobPosition
-         * @type String
-         * @default ''
-         */
-        /**
-         * @property skype
-         * @type String
-         * @default ''
-         */
-        /**
-         * @property phones
-         * @type Object
-         */
-        /**
-         * Contacts `phone` of Customer
-         * @property phones.phone
-         * @type String
-         * @default ''
-         */
-        /**
-         * Contacts `mobile` of Customer
-         * @property phones.mobile
-         * @type String
-         * @default ''
-         */
-        /**
-         * Contacts `fax` of Customer
-         * @property phones.fax
-         * @type String
-         * @default ''
-         */
-        /**
-         * @property salesPurchases
-         *  @type Object
-         */
-        /**
-         * Sales & Purchases option `isCustomer` of Customer
-         * @property salesPurchases.isCustomer
-         * @type Boolean
-         * @default true
-         */
-        /**
-         * Sales & Purchases option `isSupplier` of Customer
-         * @property salesPurchases.isSupplier
-         * @type Boolean
-         * @default false
-         */
-        /**
-         * Sales & Purchases option `salesPerson` of Customer
-         * @property salesPurchases.salesPerson
-         * @type String
-         * @default null
-         */
-        /**
-         * Sales & Purchases option `implementedBy` of Customer
-         * @property salesPurchases.implementedBy
-         * @type String
-         * @default null
-         */
-        /**
-         * Sales & Purchases option `reference` of Customer
-         * @property salesPurchases.reference
-         * @type String
-         * @default ''
-         */
-        /**
-         * Sales & Purchases option `language` of Customer
-         * @property salesPurchases.language
-         * @type String
-         * @default 'English'
-         */
-        /**
-         * @property social
-         * @type Object
-         */
-        /**
-         * Social linc `FB` of Customer
-         * @property social.FB
-         * @type String
-         * @default ''
-         */
-        /**
-         * Social linc `LI` of Customer
-         * @property social.LI
-         * @type String
-         * @default ''
-         */
-        /**
+         *
+         * @property {Boolean} isOwn - Determine is a ___Person___ or ___Company___ our own. Actually now is not needed
+         *
+         * @property {Object} name
+         * @property {String} name.first - First `name` of Customer
+         * @property {String} name.last - Last `name` of Customer
+         *
+         * @property {Date} dateBirth - Date of Birth, expect ISO string, example `'1998-07-28 17:12:26'`
+         *
+         * @property {String} imageSrc - `base64` representation of avatar
+         *
+         * @property {String} email - Email
+         *
+         * @property {String} company - if type of _Customer_=__'Person'__ should determine __Company__ which from __Person__, can be empty
+         *
+         * @property {Object} address - `Address` of _Customer_
+         * @property {String} address.street - Address `street` of _Customer_
+         * @property {String} address.city - Address `city` of _Customer_
+         * @property {String} address.state - Address `state` of _Customer_
+         * @property {String} address.zip - Address `zip` of _Customer_
+         * @property {String} address.country - Address `country` of _Customer_
+         *
+         * @property {String} website - Website
+         *
+         * @property {String} jobPosition
+         *
+         * @property {String} skype - Skype login
+         *
+         * @property {Object} phones - `Phones` of _Customer_
+         * @property {String} phones.mobile - `mobile` of _Customer_
+         * @property {String} phones.phone - `phone` of _Customer_
+         * @property {String} phones.fax - `fax` of _Customer_
+         *
+         * @property {Object} salesPurchases - Sales & Purchases options
+         * @property {Boolean} salesPurchases.isCustomer
+         * @property {Boolean} salesPurchases.isSupplier
+         * @property {String} salesPurchases.salesPerson
+         * @property {String} salesPurchases.implementedBy
+         * @property {String} salesPurchases.reference
+         * @property {String} salesPurchases.language
+         *
+         * @property {Object} social - Social lincs of  _Customer_
+         * @property {String} social.FB
+         * @property {String} social.LI
+         *
          * @property {String} whoCanRW
+         *
+         * @property {Object} groups - `Groups` of _Customer_
+         * @property {String} groups.users
+         * @property {String} groups.group
+         *
+         * @property {Object} editedBy
+         * @property {String} editedBy.users - Edited by user
+         * @property {Date} editedBy.date - Edited on date
+         *
+         * @property {Object} companyInfo - Information about company
+         * @property {String} companyInfo.size
+         * @property {String} companyInfo.industry
+         *
+         * @property {Object} createdBy
+         * @property {String} createdBy.users - Created by user
+         * @property {Date} createdBy.date - Creation date
+         *
+         * @property {Array} history
+         *
+         * @property {Array} attachments - Some files
+         *
+         * @property {String} internalNotes - Some notes
+         *
+         * @property {String} notes - Some notes
+         *
+         * @property {String} title
+         *
+         * @property {Array} contacts - Contacts
+         *
+         * @property {String} timezone - Default time zone 'UTC'
+         *
+         * @property {String} department - Department of _Customer_
+         *
+         * @property {String} company - Company of _Customer_
          */
-        /**
-         * @property groups
-         * @type Object
-         */
-        /**
-         * Groups `users`
-         * @property groups.users
-         * @type Array
-         */
-        /**
-         * Groups `group`
-         * @property groups.group
-         * @type Array
-         */
-        /**
-         * @property editedBy
-         * @type Object
-         */
-        /**
-         * Edited last time by `editedBy.user`
-         * @property editedBy.user
-         * @type String
-         */
-        /**
-         * Edited last time on `editedBy.date`
-         * @property editedBy.date
-         * @type Date
-         * @default Date.now
-         */
-        /**
-         * @property companyInfo
-         * @type Object
-         */
-        /**
-         * Company `size`
-         * @property companyInfo.size
-         * @type String
-         */
-        /**
-         * Company kind of `industry`
-         * @property companyInfo.industry
-         * @type String
-         * @default null
-         */
-        /**
-         * @property createdBy
-         * @type Object
-         */
-        /**
-         * Created by `createdBy.user`
-         * @property createdBy.user
-         * @type String
-         */
-        /**
-         * Created on `createdBy.date`
-         * @property createdBy.date
-         * @type Date
-         * @default Date.now
-         */
-        /**
-         * @property history
-         * @type Array
-         * @default []
-         */
-        /**
-         * @property attachments
-         * @type Array
-         * @default []
-         */
-        /**
-         * @property internalNotes
-         * @type String
-         * @default ''
-         */
-        /**
-         * @property notes
-         * @type Array
-         * @default []
-         */
-        /**
-         * @property title
-         * @type String
-         * @default ''
-         */
-        /**
-         * @property contacts
-         * @type Array
-         * @default []
-         */
-        /**
-         * @property timezone
-         * @type String
-         * @default 'UTC'
-         */
-        /**
-         * @property department
-         * @type String
-         * @default null
-         */
-        /**
-         * @property company
-         * @type String
-         * @default null
-         */
-
 
 
         type: {type: String, default: ''},

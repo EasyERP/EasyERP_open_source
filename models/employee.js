@@ -1,7 +1,7 @@
 
 module.exports = (function () {
     /**
-     * @module Employees
+     * @module Employee
      * @type {*|exports|module.exports}
      */
     var mongoose = require('mongoose');
@@ -10,7 +10,7 @@ module.exports = (function () {
     var employeeSchema = new mongoose.Schema({
 
         /**
-         * @class Employees
+         * @class Employee
          * @property {Boolean} isEmployee - If property _isEmployee_ is _true_ than Employee is hired
          *
          * @property {String} imageSrc - `base64` representation of avatar
@@ -48,7 +48,7 @@ module.exports = (function () {
          * @property {String} manager._id - Manager `_id` of _Employee_
          * @property {String} manager.name - Manager `name` of _Employee_
          *
-         * @property {Date} dateBirth - Date of birth of _Employee_
+         * @property {Date} dateBirth - Date of Birth, expect ISO string, example `'1998-07-28 17:12:26'`
          *
          * @property {Number} age - Age of _Employee_
          *

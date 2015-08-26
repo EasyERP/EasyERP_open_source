@@ -1,7 +1,9 @@
 var express = require('express');
 var router = express.Router();
 var opportunityHandler = require('../handlers/opportunity');
-
+/**
+ * @module Lead
+ */
 module.exports = function (models) {
     var handler = new opportunityHandler(models);
 
@@ -10,22 +12,17 @@ module.exports = function (models) {
      *
      * This __method__ allows get count of Leads.
      *
-     *#### Response example:
-     *     {
+     * @example {
      *         "count": 35
      *     }
      *
      * @method totalCollectionLength/Leads
-     * @for Leads
-     * @namespace EasyERP
      */
     /**
      * Base ___url___ for build __requests__ is `http:/192.168.88.122:8089/Leads/form/:id`
      *
      * This __method__ allows get all Leads for `form` viewType.
      * @method Leads/form/:id
-     * @for Leads
-     * @namespace EasyERP
      */
 
     /**
@@ -33,8 +30,6 @@ module.exports = function (models) {
      *
      * This __method__ allows get all Leads for `kanban` viewType.
      * @method Leads/kanban
-     * @for Leads
-     * @namespace EasyERP
      */
 
     /**
@@ -42,7 +37,7 @@ module.exports = function (models) {
      *
      * This __method__ allows get all Leads for `list` viewType.
      *
-     *#### Response example:
+     * @example
      *        {"data":[{
      *        "_id":"5374c181503e85ec0e000010",
      *        "__v":0,
@@ -135,8 +130,6 @@ module.exports = function (models) {
      *        }]}
      *
      * @method Leads/list
-     * @for Leads
-     * @namespace EasyERP
      */
     router.get('/getFilterValues', handler.getFilterValues);
     router.get('/:viewType', handler.getByViewType);
@@ -145,33 +138,25 @@ module.exports = function (models) {
      *
      * Just choose __true__ or __false__ in `isOpportunitie` field.
      *
-     * Property
      * @module Opportunity
-     * @namespace EasyERP
-     * @class Opportunity
-     * @constructor
      */
     /**
      * Base ___url___ for build __requests__ is `http://192.168.88.122:8089/totalCollectionLength/Opportunities`
      *
      * This __method__ allows get count of opportunities.
      *
-     *#### Response example:
+     * @example
      *     {
      *         "count": 15
      *     }
      *
      * @method totalCollectionLength/Opportunities
-     * @for Opportunity
-     * @namespace EasyERP
      */
     /**
      * Base ___url___ for build __requests__ is `http://192.168.88.122:8089/Opportunities/form/:id`
      *
      * This __method__ allows get all opportunities for `form` viewType.
      * @method Opportunities/form/:id
-     * @for Opportunity
-     * @namespace EasyERP
      */
 
     /**
@@ -179,8 +164,6 @@ module.exports = function (models) {
      *
      * This __method__ allows get all opportunities for `kanban` viewType.
      * @method Opportunities/kanban
-     * @for Opportunity
-     * @namespace EasyERP
      */
 
     /**
@@ -188,7 +171,7 @@ module.exports = function (models) {
      *
      * This __method__ allows get all opportunities for `list` viewType.
      *
-     *#### Response example:
+     * @example
      *        {"data":[{
      *        "_id":"5374c180503e85ec0e00000d",
      *        "__v":0,
@@ -281,8 +264,6 @@ module.exports = function (models) {
      *        }]}
      *
      * @method Opportunities/list
-     * @for Opportunity
-     * @namespace EasyERP
      */
     return router;
 };

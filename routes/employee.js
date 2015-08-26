@@ -4,22 +4,25 @@ var router = express.Router();
 var EmployeeHandler = require('../handlers/employee');
 
 /**
- * @module Employees
+ * @module Employee
  */
 module.exports = function (models) {
     /**
      * Base ___url___ for build __requests__ is `http:/192.168.88.122:8089/Employees/form/:id`
+     *
      * This __method__ allows get all Employees for `form` viewType.
      * @method Employees/form/:id
      */
     /**
      * Base ___url___ for build __requests__ is `http:/192.168.88.122:8089/Employees/kanban`
+     *
      * This __method__ allows get all Employees for `kanban` viewType.
      * @method Employees/kanban
      */
      /**
      * Base ___url___ for build __requests__ is `http:/192.168.88.122:8089/Employees/list`
-     * This __method__ allows get all Employees for `list` viewType.
+      *
+      * This __method__ allows get all Employees for `list` viewType.
      *
      * @example
      *        {"data": [{

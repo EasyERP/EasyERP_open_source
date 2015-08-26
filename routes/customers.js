@@ -3,6 +3,9 @@ var router = express.Router();
 var CustomerHandler = require('../handlers/customer');
 
 module.exports = function (models) {
+    /**
+     * @module Customer
+     */
     var handler = new CustomerHandler(models);
 
     function checkAuth(req, res, next){
@@ -21,11 +24,6 @@ module.exports = function (models) {
      * Base ___url___ for build __requests__ is `http://192.168.88.122:8089/customers`
      *
      * This __method__ allows get all customers based on `type`
-     *
-     * @module Customer
-     * @class Customer
-     * @method customer/
-     *
      * @example Response example:
      *        {"data":
      *        [{
@@ -100,6 +98,8 @@ module.exports = function (models) {
      *        "fullName":"#Play ",
      *        "id":"55ba0301d79a3a343900000d"}
      *        ]}
+     *
+     * @method customer/
      */
 
 
@@ -108,7 +108,6 @@ module.exports = function (models) {
     /**
      * This __method__ allows get customer by _id
      *
-     * @class Customer
      * @method customers/:id
      */
     router.get('/:id', checkAuth, handler.getById);
