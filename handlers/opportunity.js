@@ -97,7 +97,7 @@ var Opportunity = function (models) {
      * This __method__ allows get all opportunities for `form` viewType.
      * @method Opportunities
      * @param {String} form - View type
-     * @param {String} id - Id of Lead
+     * @param {String} id - Id of Opportunity
      * @instance
      */
 
