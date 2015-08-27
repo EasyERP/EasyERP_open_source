@@ -845,7 +845,7 @@ var wTrack = function (models) {
 
                     Employee.populate(projects, {
                         path: '_id',
-                        match: {'department._id': '55df060534c1478027000014'},
+                        match: {'department._id': '55b92ace21e4b7c40f000014'},
                         select: '_id name',
                         options: {
                             lean: true
@@ -951,12 +951,14 @@ var wTrack = function (models) {
                     //iterate over grouped result of wTrack by date and projects
                     for(var j = groupedWtracks.length; j--;){
                         dateStr = groupedWtracks[j]._id;
-                        employee[dateStr] = [];
-
+                        /*employee[dateStr] = [];*/
+                        bonusObject = {
+                            total: 0
+                        };
                         for(var m  = groupedEmployee.root.length; m--; ){
-                            bonusObject = {
+                            /*bonusObject = {
                                 total: 0
-                            };
+                            };*/
                             totalByBonus = 0;
 
                             for(var k = groupedWtracks[j].root.length; k--;) {
@@ -969,9 +971,13 @@ var wTrack = function (models) {
 
                             }
                             bonusObject[groupedEmployee.root[m].bonus.name] = totalByBonus;
-                            employee[dateStr].push(bonusObject);
+                            bonusObject.total += totalByBonus;
+                            bonusObject.total = parseFloat(bonusObject.total.toFixed(2));
+                            /*employee[dateStr].push(bonusObject);*/
                         }
-
+                        employee.total += bonusObject.total;
+                        employee.total = parseFloat(employee.total.toFixed(2));
+                        employee[dateStr] = bonusObject;
                     }
 
                     employees.push(employee);
