@@ -1,6 +1,4 @@
-/**
- * Created by Roman on 13.05.2015.
- */
+
 var mongoose = require('mongoose');
 var Categories = function (models, event) {
     var access = require("../Modules/additions/access.js")(models);

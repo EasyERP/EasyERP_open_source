@@ -1,8 +1,4 @@
-/**
- * Creates a new Person.
- * @class Represents a person.
- * @type {async|exports|module.exports}
- */
+
 
 var async = require('async');
 var _ = require('lodash');

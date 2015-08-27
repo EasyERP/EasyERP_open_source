@@ -1,6 +1,4 @@
-/**
- * Created by Roman on 29.04.2015.
- */
+
 
 var mongoose = require('mongoose');
 var Products = function (models) {
