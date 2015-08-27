@@ -18,6 +18,7 @@ define([
     'text!templates/Revenue/hoursByDepItem.html',
     'text!templates/Revenue/hoursByDepTotal.html',
     'text!templates/Revenue/bonusBySales.html',
+    'text!templates/Revenue/tableAllBonusByMonth.html',
     'models/Revenue',
     'moment',
     'dataService',
@@ -25,7 +26,7 @@ define([
     'custom',
     'd3',
     'constants'
-], function (mainTemplate, weeksArray, tableByDep, bySalesByDep, perWeek, paidBySales, paidBySalesItems, projectBySalesItems, unpaidBySales, monthsArray, perMonth, perMonthInt, tableSold, hoursByDepItem, hoursByDepTotal, bonusBySales, RevenueModel, moment, dataService, async, custom, d3, CONSTANTS) {
+], function (mainTemplate, weeksArray, tableByDep, bySalesByDep, perWeek, paidBySales, paidBySalesItems, projectBySalesItems, unpaidBySales, monthsArray, perMonth, perMonthInt, tableSold, hoursByDepItem, hoursByDepTotal, bonusBySales, allBonus, RevenueModel, moment, dataService, async, custom, d3, CONSTANTS) {
     var View = Backbone.View.extend({
         el: '#content-holder',
 
@@ -46,6 +47,7 @@ define([
         hoursByDepTemplate: _.template(hoursByDepItem),
         hoursByDepTotalTemplate: _.template(hoursByDepTotal),
         bonusBySalesTemplate: _.template(bonusBySales),
+        allBonusTemplate: _.template(allBonus),
 
         paidUnpaidDateRange: {},
 
@@ -76,6 +78,7 @@ define([
             this.listenTo(this.model, 'change:hoursByDep', this.changeHoursByDep);
 
             this.listenTo(this.model, 'change:allBonus', this.changeAllBonus);
+            this.listenTo(this.model, 'change:allBonusByMonth', this.changeAllBonusByMonth);
 /*            this.listenTo(this.model, 'change:uncalcBonus', this.changeHoursByDep);
             this.listenTo(this.model, 'change:calcBonus', this.changeHoursByDep);
             this.listenTo(this.model, 'change:paidBonus', this.changeHoursByDep);
@@ -184,6 +187,7 @@ define([
             this.fetchProjectBySales();
             this.fetchEmployeeBySales();
             this.fetchAllBonus();
+            this.fetchAllBonusByMonth();
 /*            this.fetchUncalcBonus();
             this.fetchCalcBonus();
             this.fetchPaidBonus();
@@ -357,6 +361,17 @@ define([
             dataService.getData('/revenue/allBonus', data, function (allBonus) {
                 self.model.set('allBonus', allBonus);
                 self.model.trigger('change:allBonus');
+            });
+        },
+
+        fetchAllBonusByMonth: function () {
+            var self = this;
+            var data = this.paidUnpaidDateRange;
+
+            //ToDo Request
+            dataService.getData('/revenue/allBonus', data, function (allBonus) {
+                self.model.set('allBonusByMonth', allBonus);
+                self.model.trigger('change:allBonusByMonth');
             });
         },
 
@@ -984,6 +999,80 @@ define([
                     weeksArr: weeksArr,
                     bySalesByDepPerWeek: hoursByDepPerWeek,
                     globalTotal: globalTotal
+                }));
+
+                return false;
+            });
+        },
+
+        changeAllBonusByMonth: function () {
+            var self = this;
+            var allBonus = this.model.get('allBonusByMonth');
+            var monthArr = this.monthArr;
+            var target = self.$el.find('#tableAllBonusByMonth');
+            var targetTotal;
+            var monthContainer;
+            var bySalesPerMonth = {};
+            var tempPerMonth;
+            var globalTotal = 0;
+
+            target.html(this.allBonusTemplate({
+                employees: self.employees,
+                content: 'totalAllBonus',
+                className: 'totalByAllBonus',
+                headName: 'All Bonus'
+            }));
+            targetTotal = $(self.$el.find('[data-content="totalAllBonus"]'));
+            monthContainer = target.find('.monthContainer');
+            monthContainer.html(this.monthsArrayTemplate({monthArr: monthArr}));
+
+            async.each(self.employees, function (employee, cb) {
+                var employeeId = employee._id;
+                var employeeContainer = target.find('[data-id="' + employeeId + '"]');
+
+                var byMonthData;
+                var total;
+                var allBonusBySales;
+
+
+                allBonusBySales = _.find(allBonus, function (el) {
+                    return el._id === employeeId;
+                });
+
+
+                //if (allBonusBySales) {
+                //    byMonthData = _.groupBy(allBonusBySales.root, 'month');
+                //    total = allBonusBySales.total;
+                //    globalTotal += total;
+                //    employeeContainer.html(self.projectBySalesItemsTemplate({
+                //        monthArr: monthArr,
+                //        byMonthData: byMonthData,
+                //        total: total
+                //    }));
+                //}
+                cb();
+            }, function (err) {
+
+                if (err) {
+                    alert(err);
+                }
+
+                //for (var i = allBonusBySales.length - 1; i >= 0; i--) {
+                //    tempPerMonth = allBonusBySales[i].root;
+                //    tempPerMonth.forEach(function (monthResult) {
+                //        if (!(monthResult.month in bySalesPerMonth)) {
+                //            bySalesPerMonth[monthResult.month] = monthResult.projectCount;
+                //        } else {
+                //            bySalesPerMonth[monthResult.month] += monthResult.projectCount;
+                //        }
+                //    });
+                //}
+
+                targetTotal.html(self.bySalesPerMonthIntTemplate({
+                    monthArr: monthArr,
+                    bySalesByDepPerWeek: bySalesPerMonth,
+                    globalTotal: globalTotal,
+                    totalName: 'Bonus Total'
                 }));
 
                 return false;
