@@ -1,0 +1,13 @@
+<% monthArr.forEach(function(monthObject){ %>
+<% var key = monthObject.year*100 + monthObject.month %>
+<div class="divCell">
+    <span>
+        <%= byMonthData[key] ? byMonthData[key]['total'] : '&nbsp'%>
+    </span>
+</div>
+<% }) %>
+<div class="divCell">
+    <span>
+        <%= total ? total : '&nbsp'%>
+    </span>
+</div>
