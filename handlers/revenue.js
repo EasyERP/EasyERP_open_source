@@ -934,9 +934,13 @@ var wTrack = function (models) {
                 var _employee;
                 var dateStr;
                 var groupedEmployee;
+                var totalByBonus;
+                var bonusObject;
 
                 //iterate over grouped result of projects with bonus by Employee
                 for(var i = groupedEmployees.length; i--;){
+                    totalByBonus = 0;
+
                     groupedEmployee = groupedEmployees[i];
                     _employee = groupedEmployee._id;
                     employee = {
@@ -948,20 +952,31 @@ var wTrack = function (models) {
                     for(var j = groupedWtracks.length; j--;){
                         dateStr = groupedWtracks[j]._id;
                         employee[dateStr] = [];
-                        //iterate over projects in wTrackElement
-                        for(var k = groupedWtracks[j].root.length; k--;){
 
-                            for(var m = groupedEmployee.root.length; m--;) {
+                        for(var m  = groupedEmployee.root.length; m--; ){
+                            bonusObject = {};
+                            totalByBonus = 0;
+
+                            for(var k = groupedWtracks[j].root.length; k--;) {
 
                                 for (var l = groupedEmployee.root[m].projects.length; l--;){
-                                    console.log(groupedWtracks[j].root[k]._id, groupedEmployee.root[m].projects[l]._id);
-                                    if (groupedWtracks[j].root[k]._id === groupedEmployee.root[m].projects[l]._id) {
-                                        employee[dateStr].push(groupedEmployee.root[m].projects[l].name);
+                                    if (groupedWtracks[j].root[k]._id.toString() === groupedEmployee.root[m].projects[l]._id.toString()) {
+                                        //ToDo calculate total
+                                        totalByBonus += (groupedEmployee.root[m].bonus.value * groupedWtracks[j].root[k].revenue / 100) / 100;
                                     }
                                 }
+
+                               /* if(_employee._id.toString() === '55b92ad221e4b7c40f00004a'){
+                                    console.log(groupedEmployee.root[m].bonus.name, dateStr);
+                                }
+                                console.log('======================================================');*/
+
+
                             }
-                            console.log('===============================================================');
+                            bonusObject[groupedEmployee.root[m].bonus.name] = totalByBonus;
+                            employee[dateStr].push(bonusObject);
                         }
+
                     }
 
                     employees.push(employee);
