@@ -65,15 +65,12 @@ var requestHandler = function (event, mainDb) {
     event.on('updateName', function (id, targetModel, searchField, fieldName, fieldValue, fieldInArray) {
         var sercObject = {};
         var updateObject = {};
-        var key = '';
 
         sercObject[searchField] = id;
-        if (fieldInArray) {
-            key = fieldInArray +
 
-            updateObject['$set'] = {
-                fieldInArray 'employeesArray.$.employee.name': fieldValue
-            }
+        if (fieldInArray) {
+            updateObject['$set'] = {};
+            updateObject['$set'][fieldName] = fieldValue;
         } else {
             updateObject[fieldName] = fieldValue;
         }

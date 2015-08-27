@@ -1058,7 +1058,7 @@ var Employee = function (event, models) {
             event.emit('updateName', _id, Invoice, 'salesPerson._id', 'salesPerson.name', fullName);
             event.emit('updateName', _id, Payment, 'invoice.assigned._id', 'invoice.assigned.name', fullName);
             event.emit('updateName', _id, Salary, 'employee._id', 'employee.name', fullName);
-            event.emit('updateName', _id, SalaryCash, 'employeesArray.employee._id', 'employeesArray.employee.name', fullName);
+            event.emit('updateName', _id, SalaryCash, 'employeesArray.employee._id', 'employeesArray.$.employee.name', fullName, true);
             event.emit('updateName', _id, Vacation, 'employee._id', 'employee.name', fullName);
         }
     };
