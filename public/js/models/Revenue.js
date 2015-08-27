@@ -23,7 +23,8 @@ define([], function () {
             uncalcBonus: [],
             calcBonus: [],
             paidBonus: [],
-            balanceBonus: []
+            balanceBonus: [],
+            allBonusByMonth: []
         }
     });
 

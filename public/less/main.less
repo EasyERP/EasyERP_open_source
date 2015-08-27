@@ -5747,6 +5747,11 @@ textarea#editInput {
         border-bottom: 2px solid #ed9409;
       }
     }
+    &#tableAllBonusByMonth {
+      .th {
+        border-bottom: 2px solid #edc485;
+      }
+    }
     &#tablePaidBySales {
       .th {
         border-bottom: 2px solid #a2a2a3;
@@ -5782,6 +5787,9 @@ textarea#editInput {
     width: auto;
     &.totalBySales {
       background-color: #ed9409
+    }
+    &.totalByAllBonus {
+      background-color: #edcc85
     }
     &.totalByDep, &.totalHoursByDep {
       background-color: #00af00
@@ -5822,6 +5830,7 @@ textarea#editInput {
   #tableUnpaidBySales,
   #tableCancelledBySales,
   #tableProjectBySales,
+  #tableAllBonusByMonth,
   #tableEmployeeBySales {
     .divCell {
       width: 6.34%;

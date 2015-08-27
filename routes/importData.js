@@ -421,7 +421,8 @@ module.exports = function (models) {
 
                         if (key === 'workflow') {
                             objectToSave[key] = {};
-                            objectToSave[key]._id = workflows[fetchedProject[msSqlKey]][0];
+                            objectToSave[key]['_id'] = workflows[fetchedProject[msSqlKey]][0];
+                            objectToSave[key]['name'] = workflows[fetchedProject[msSqlKey]];
                         } else {
                             objectToSave[key] = fetchedProject[msSqlKey];
                         }
@@ -1488,7 +1489,7 @@ module.exports = function (models) {
                         };
 
                         function departmentFinder(callback) {
-                            Department.findOne(departmentQuery, function (err, department) {
+                            Department.findOne(departmentQuery, {_id: 1}, function (err, department) {
                                 if (err) {
                                     return callback(err);
                                 }
@@ -1509,28 +1510,8 @@ module.exports = function (models) {
                             department: departmentFinder,
                             jobPosition: jobPositionFinder
                         }, function (err, result) {
-                            objectToSave.department = {};
-                            objectToSave.jobPosition = {};
-
-                            if (result.department){
-                                objectToSave.department._id = result.department._id;
-                                objectToSave.department.name = result.department.departmentName;
-                            } else {
-                                objectToSave.department = {
-                                    _id: null,
-                                    name: ''
-                                }
-                            }
-
-                            if (result.jobPosition){
-                                objectToSave.jobPosition._id = result.jobPosition._id;
-                                objectToSave.jobPosition.name = result.jobPosition.name;
-                            } else {
-                                objectToSave.jobPosition = {
-                                    _id: null,
-                                    name: ''
-                                }
-                            }
+                            objectToSave.department = result.department ? result.department._id : null;
+                            objectToSave.jobPosition = result.jobPosition ? result.jobPosition._id : null;
 
                             model = new Employee(objectToSave);
                             model.save(cb);
@@ -1541,7 +1522,7 @@ module.exports = function (models) {
                         return callback(err);
                     }
 
-                    callback(null, 'employeeImporter');
+                    callback(null, 'Completed');
                 })
             }
 
@@ -1706,7 +1687,7 @@ module.exports = function (models) {
                         return callback(err);
                     }
 
-                    callback(null, 'importSalary');
+                    callback(null, 'Completed');
                 })
             }
 
@@ -1787,7 +1768,7 @@ module.exports = function (models) {
                     seriesCb(err);
                 }
 
-                seriesCb(null, 'importHoliday')
+                seriesCb(null, 'Complete')
             });
         }
 
@@ -1852,7 +1833,7 @@ module.exports = function (models) {
 
                         Employee.findOne(employeeQuery,
                             {_id: 1, name: 1, department: 1})
-                            .populate('department._id')
+                            .populate('department')
                             .lean()
                             .exec(function (err, employee) {
                                 if (err) {
@@ -1865,7 +1846,7 @@ module.exports = function (models) {
                                     objectToSave.employee.name = employee.name ? employee.name.first + ' ' + employee.name.last : '';
 
                                     if (employee.department && employee.department.departmentName) {
-                                        objectToSave.department = {};
+                                        objectToSave.department = {}
                                         objectToSave.department._id = employee.department._id;
                                         objectToSave.department.name = employee.department.departmentName;
                                     }
@@ -1935,7 +1916,7 @@ module.exports = function (models) {
                         return callback(err);
                     }
 
-                    callback(null, 'importVacation');
+                    callback(null, 'Completed');
                 })
             }
 
