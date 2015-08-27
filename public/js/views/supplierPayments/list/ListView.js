@@ -5,13 +5,16 @@ define([
         'text!templates/Pagination/PaginationTemplate.html',
         'text!templates/supplierPayments/list/ListHeader.html',
         'text!templates/supplierPayments/forWTrack/ListHeader.html',
+        'views/supplierPayments/CreateView',
+        'models/PaymentModel',
         'views/supplierPayments/list/ListItemView',
         'views/supplierPayments/list/ListTotalView',
         'collections/supplierPayments/filterCollection',
         'collections/supplierPayments/editCollection',
-        'dataService'
+        'dataService',
+        'populate',
     ],
-    function (paginationTemplate, listTemplate, ListHeaderForWTrack, listItemView, listTotalView, paymentCollection, editCollection, dataService) {
+    function (paginationTemplate, listTemplate, ListHeaderForWTrack, createView, currentModel, listItemView, listTotalView, paymentCollection, editCollection, dataService, populate) {
         var PaymentListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -24,6 +27,7 @@ define([
             viewType: 'list',//needs in view.prototype.changeLocationHash
             collectionLengthUrl: '/payment/suppliers/totalCollectionLength',
             changedModels: {},
+            responseObj: {},
 
             events: {
                 "click .itemsNumber": "switchPageCounter",
@@ -67,6 +71,12 @@ define([
                 var elementType = '#' + attr;
                 var workflow;
                 var changedAttr;
+                var employee;
+                var paymentId = tr.data('id');
+
+                var element = _.find(this.responseObj[elementType], function (el) {
+                    return el._id === id;
+                });
 
                 var editModel = this.collection.get(modelId);
 
@@ -80,7 +90,17 @@ define([
 
                 changedAttr = this.changedModels[modelId];
 
-                if (elementType === '#workflow') {
+                if (elementType === '#employee') {
+
+                    employee = _.clone(editModel.get('employee'));
+
+                    employee._id = element._id;
+                    employee.name = target.text();
+
+                    changedAttr.employee = employee;
+                } else if (elementType === '#bonusType') {
+                        changedAttr.paymentRef = target.text();
+                } else if (elementType === '#workflow') {
                     targetW.attr("class", "currentSelected");
                     changedAttr.workflow = target.text();
                     if (target.attr('data-id') === 'Paid') {
@@ -101,6 +121,12 @@ define([
                 $(".newSelectList").remove();
             },
 
+            isNewRow: function () {
+                var newRow = $('#false');
+
+                return !!newRow.length;
+            },
+
             editRow: function (e, prev, next) {
                 var self = this;
 
@@ -113,7 +139,8 @@ define([
                 var isDTPicker = colType !== 'input' && el.prop("tagName") !== 'INPUT' && el.data('content') === 'date';
                 var tempContainer;
                 var width;
-                var isSelect = td.data('content') === 'workflow';
+                var isWorkflow = td.data('content') === 'workflow';
+                var isSelect = colType !== 'input' && el.prop("tagName") !== 'INPUT';
 
                 if (modelId && el.prop('tagName') !== 'INPUT') {
                     if (this.modelId) {
@@ -121,7 +148,6 @@ define([
                     }
                     this.modelId = modelId;
                 }
-
 
                 if (isDTPicker) {
                     tempContainer = (el.text()).trim();
@@ -132,9 +158,11 @@ define([
                         changeYear: true,
                         onChanged: self.setChangedValue()
                     }).addClass('datepicker');
-                } else if (isSelect) {
+                } else if (isWorkflow) {
                     ul = "<ul class='newSelectList'>" + "<li data-id='Paid'>Paid</li>" + "<li data-id='Draft'>Draft</li></ul>";
                     el.append(ul);
+                } else if (isSelect) {
+                    populate.showSelect(e, prev, next, this);
                 } else {
                     tempContainer = el.text();
                     width = el.width() - 6;
@@ -186,6 +214,35 @@ define([
                 }
             },
 
+            createItem: function () {
+                var now = new Date();
+                var cid;
+                var year = now.getFullYear();
+                var month = now.getMonth() + 1;
+                var startData = {
+                    year: year,
+                    month: month
+                };
+
+                var model = new currentModel(startData);
+                cid = model.cid;
+
+                startData.cid = cid;
+
+                if (!this.isNewRow()) {
+                    this.showSaveCancelBtns();
+                    this.editCollection.add(model);
+
+                    if (!this.changedModels[cid]) {
+                        this.changedModels[cid] = model;
+                    }
+
+                    new createView(startData);
+                }
+
+                this.changed = true;
+            },
+
             showSaveCancelBtns: function () {
                 var createBtnEl = $('#top-bar-createBtn');
                 var saveBtnEl = $('#top-bar-saveBtn');
@@ -220,7 +277,7 @@ define([
                 var editedElementRowId;
                 var editedElementContent;
                 var editedElementValue;
-                var editHolidayModel;
+                var editPaymentModel;
 
                 if (editedElement.length) {
                     editedCol = editedElement.closest('td');
@@ -228,11 +285,11 @@ define([
                     editedElementContent = editedCol.data('content');
                     editedElementValue = editedElement.val();
 
-                    editHolidayModel = this.collection.get(editedElementRowId);
+                    editPaymentModel = this.collection.get(editedElementRowId);
 
                     if (!this.changedModels[editedElementRowId]) {
-                        if (!editHolidayModel.id) {
-                            this.changedModels[editedElementRowId] = editHolidayModel.attributes;
+                        if (editPaymentModel && editPaymentModel.id) {
+                            this.changedModels[editedElementRowId] = editPaymentModel.attributes;
                         } else {
                             this.changedModels[editedElementRowId] = {};
                         }
@@ -578,6 +635,30 @@ define([
                 } else {
                     pagenation.show();
                 }
+
+                dataService.getData("/employee/getForDD", null, function (employees) {
+                    employees = _.map(employees.data, function (employee) {
+                        employee.name = employee.name.first + ' ' + employee.name.last;
+
+                        return employee
+                    });
+
+                    self.responseObj['#employee'] = employees;
+                });
+
+                dataService.getData("/employee/getForDD", null, function (employees) {
+                    employees = _.map(employees.data, function (employee) {
+                        employee.name = employee.name.first + ' ' + employee.name.last;
+
+                        return employee
+                    });
+
+                    self.responseObj['#employee'] = employees;
+                });
+
+                dataService.getData("/bonusType/getForDD", null, function (bonusTypes) {
+                    self.responseObj['#bonusType'] = bonusTypes.data;
+                });
 
                 setTimeout(function () {
                     self.editCollection = new editCollection(self.collection.toJSON());

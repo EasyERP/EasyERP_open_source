@@ -63,6 +63,7 @@ var requestHandler = function (event, mainDb) {
     //if name was updated, need update related wTrack, or other models
 
     event.on('updateName', function (id, targetModel, searchField, fieldName, fieldValue, fieldInArray) {
+        //fieldInArray(bool) added for update values in array. If true then fieldName contains .$.
         var sercObject = {};
         var updateObject = {};
 
