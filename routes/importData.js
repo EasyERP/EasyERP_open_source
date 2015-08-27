@@ -714,7 +714,11 @@ module.exports = function (models) {
                         }
 
                         if (key === 'workflow') {
-                            objectToSave[key] = workflows[fetchedInvoice[msSqlKey]][0]._id;
+                            objectToSave[key] = {
+                                _id: workflows[fetchedInvoice[msSqlKey]][0]._id,
+                                name: workflows[fetchedInvoice[msSqlKey]][0].name,
+                                status: workflows[fetchedInvoice[msSqlKey]][0].status
+                            };
                         } else {
                             objectToSave[key] = fetchedInvoice[msSqlKey];
                         }
@@ -803,9 +807,30 @@ module.exports = function (models) {
                                 });
                             }
                             if (result.project) {
-                                objectToSave.supplier = result.project.customer ? result.project.customer._id : null;
-                                objectToSave.salesPerson = result.project.projectmanager ? result.project.projectmanager._id : null;
-                                objectToSave.project = result.project._id;
+                                objectToSave.supplier = result.project.customer ? {
+                                    _id: result.project.customer._id,
+                                    name: result.project.customer.name.last
+                                        ? (result.project.customer.name.first + ' ' + result.project.customer.name.last)
+                                        : result.project.customer.name.first
+                                } : {
+                                    _id: null,
+                                    name: ''
+                                };
+
+                                objectToSave.salesPerson = result.project.projectmanager ? {
+                                    _id: result.project.projectmanager._id,
+                                    name: result.project.projectmanager.name.last
+                                        ? (result.project.projectmanager.name.first + ' ' + result.project.customer.name.last)
+                                        : result.project.projectmanager.name.first
+                                } : {
+                                    _id: null,
+                                    name: ''
+                                };
+
+                                objectToSave.project = {
+                                    _id: result.project._id,
+                                    name: result.project.projectName
+                                };
                             }
 
 
