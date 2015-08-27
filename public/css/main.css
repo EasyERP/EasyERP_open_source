@@ -23,7 +23,352 @@
   font-weight: 400;
   src: local('Open Sans'), local('OpenSans'), url(../font/Open-Sans.woff) format('woff');
 }
+/************* Main Colors *************/
+/* errors, negativeMoney */
+/* .cash */
+/* .card */
+/* .label-saccess*/
+/* .label-warning*/
+/* .label-danger*/
+/**** Project > wTrack****/
+/**** ****/
+/*==========================================================================*/
+/*== for test =======================*/
+/*==Main menu==========================*/
+/*==Sub MENU, Top-bar =========================*/
+/*== Filters ======================*/
+/*== Customer ======================*/
+/*==LIST ============================*/
+/*==Form Colum==============================*/
+/*== TABS ==================================*/
+/*== Kanab Opportunities*/
+/*
+NEW: data:image/png;base64,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
+
+OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC
+
+*/
+/*== Lights =========================*/
+/*== Borders=========================*/
+/*==Main menu==========================*/
+/*==Sub MENU, Top-bar =========================*/
+/*== Filters ======================*/
+/*== Customer ======================*/
+/*==LIST ============================*/
+/*==Form Colum==============================*/
+/*== TABS ==================================*/
+/*== Kanab Opportunities*/
+.list2 {
+  color: #ffffff !important;
+  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
+  width: 100%;
+  table-layout: fixed;
+}
+.list2 tfoot tr {
+  border-bottom: 1px solid #7f7f80;
+  background: inherit !important;
+  vertical-align: middle;
+}
+.list2 tfoot td {
+  padding: 3px 6px;
+  line-height: 18px;
+  font-weight: bold;
+  font-size: 13px;
+  text-align: right;
+}
+.list2 thead tr {
+  border-top: 0;
+  background: inherit !important;
+  vertical-align: top;
+}
+.list2 thead th {
+  padding: 3px 8px;
+  line-height: 18px;
+  font-weight: bold;
+  font-size: 13px;
+  text-align: right;
+}
+.list2 thead th:nth-child(1),
+.list2 thead th:nth-child(2) {
+  text-align: center;
+}
+.list2 thead th input[type="checkbox"] {
+  margin-top: 2.5px;
+}
+.list2 thead th.oe_sortable,
+.list2 thead th.oe_sortable_sub {
+  cursor: pointer;
+}
+.list2 thead th.oe_sortable .arrow,
+.list2 thead th.oe_sortable_sub .arrow {
+  display: none;
+  padding: 0 0 0 5px;
+  margin: 0;
+  text-align: center;
+  width: 5px;
+  height: 5px;
+  font-weight: 100 !important;
+  cursor: pointer;
+  font-family: Icons;
+  text-decoration: none;
+  line-height: 23px;
+  background: none;
+}
+.list2 thead th.oe_sortable.sortUp .up,
+.list2 thead th.oe_sortable_sub.sortUp .up {
+  display: inline-block;
+}
+.list2 thead th.oe_sortable.sortDn .down,
+.list2 thead th.oe_sortable_sub.sortDn .down {
+  display: inline-block;
+}
+.list2 thead th:first-of-type {
+  width: 12px;
+}
+.list2 thead th:first-of-type input {
+  cursor: pointer;
+}
+.list2 tbody tr {
+  border-top: 1px solid #7f7f80;
+}
+.list2 tbody tr.greenAlarm {
+  border: 2px solid #90ee90;
+}
+.list2 tbody tr.canceledListItem {
+  color: grey;
+}
+.list2 tbody tr.canceledListItem .newSelectList {
+  color: #000;
+}
+.list2 tbody tr:last-child {
+  border-bottom: 1px solid #7f7f80;
+}
+.list2 tbody tr.stage-cancelled,
+.list2 tbody tr.stage-refused,
+.list2 tbody tr.stage-contractend,
+.list2 tbody tr.stage-lost {
+  text-decoration: line-through;
+}
+.list2 tbody tr td {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  padding: 0 8px;
+  font-size: 11px;
+  text-align: right;
+  border-right: 1px solid #7f7f80;
+}
+.list2 tbody tr td.red-border {
+  color: red;
+}
+.list2 tbody tr td:nth-child(1),
+.list2 tbody tr td:nth-child(2) {
+  text-align: center;
+}
+.list2 tbody tr td.withSelect {
+  position: relative;
+}
+.list2 tbody tr td[data-content="workflow"] {
+  position: relative;
+  padding: 4px 15px;
+  overflow: visible;
+}
+.list2 tbody tr td[data-content="workflow"] .newSelectList {
+  top: 5px;
+  right: 15px;
+}
+.list2 tbody tr td progress {
+  width: 100%;
+}
+.list2 tbody tr td a {
+  color: #1E8FC6 !important;
+}
+.list2 tbody tr td a.done {
+  color: #00c60b !important;
+}
+.list2 tbody tr td progress {
+  background-color: #f5f5f5;
+}
+.list2 tbody tr td progress::-webkit-progress-bar {
+  background-color: #f5f5f5;
+}
+.list2 tbody tr td progress::-webkit-progress-value {
+  background-color: #57B5E3;
+}
+.list2 tbody tr td:first-of-type {
+  padding-left: 7px;
+}
+.list2 tbody tr td:first-of-type input {
+  cursor: pointer;
+}
+.list2 tr:nth-child(odd) {
+  background-color: #2f383f;
+}
+.list2 tr:hover {
+  background-color: #45525c;
+}
+.list2 tfoot tr {
+  border-bottom: 1px solid #7f7f80;
+  background: inherit !important;
+  vertical-align: middle;
+}
+.list2 tfoot td {
+  padding: 3px 6px;
+  line-height: 18px;
+  font-weight: bold;
+  font-size: 13px;
+  text-align: right;
+}
+.list2 thead tr {
+  border-top: 0;
+  background: inherit !important;
+  vertical-align: top;
+}
+.list2 thead th {
+  padding: 3px 8px;
+  line-height: 18px;
+  font-weight: bold;
+  font-size: 13px;
+  text-align: right;
+}
+.list2 thead th:nth-child(1),
+.list2 thead th:nth-child(2) {
+  text-align: center;
+}
+.list2 thead th input[type="checkbox"] {
+  margin-top: 2.5px;
+}
+.list2 thead th.oe_sortable,
+.list2 thead th.oe_sortable_sub {
+  cursor: pointer;
+}
+.list2 thead th.oe_sortable .arrow,
+.list2 thead th.oe_sortable_sub .arrow {
+  display: none;
+  padding: 0 0 0 5px;
+  margin: 0;
+  text-align: center;
+  width: 5px;
+  height: 5px;
+  font-weight: 100 !important;
+  cursor: pointer;
+  font-family: Icons;
+  text-decoration: none;
+  line-height: 23px;
+  background: none;
+}
+.list2 thead th.oe_sortable.sortUp .up,
+.list2 thead th.oe_sortable_sub.sortUp .up {
+  display: inline-block;
+}
+.list2 thead th.oe_sortable.sortDn .down,
+.list2 thead th.oe_sortable_sub.sortDn .down {
+  display: inline-block;
+}
+.list2 thead th:first-of-type {
+  width: 12px;
+}
+.list2 thead th:first-of-type input {
+  cursor: pointer;
+}
+.list2 tbody tr {
+  border-top: 1px solid #7f7f80;
+}
+.list2 tbody tr.greenAlarm {
+  border: 2px solid #90ee90;
+}
+.list2 tbody tr.canceledListItem {
+  color: grey;
+}
+.list2 tbody tr.canceledListItem .newSelectList {
+  color: #000;
+}
+.list2 tbody tr:last-child {
+  border-bottom: 1px solid #7f7f80;
+}
+.list2 tbody tr.stage-cancelled,
+.list2 tbody tr.stage-refused,
+.list2 tbody tr.stage-contractend,
+.list2 tbody tr.stage-lost {
+  text-decoration: line-through;
+}
+.list2 tbody tr td {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  padding: 0 8px;
+  font-size: 11px;
+  text-align: right;
+  border-right: 1px solid #7f7f80;
+}
+.list2 tbody tr td.red-border {
+  color: red;
+}
+.list2 tbody tr td:nth-child(1),
+.list2 tbody tr td:nth-child(2) {
+  text-align: center;
+}
+.list2 tbody tr td.withSelect {
+  position: relative;
+}
+.list2 tbody tr td[data-content="workflow"] {
+  position: relative;
+  padding: 4px 15px;
+  overflow: visible;
+}
+.list2 tbody tr td[data-content="workflow"] .newSelectList {
+  top: 5px;
+  right: 15px;
+}
+.list2 tbody tr td progress {
+  width: 100%;
+}
+.list2 tbody tr td a {
+  color: #1E8FC6 !important;
+}
+.list2 tbody tr td a.done {
+  color: #00c60b !important;
+}
+.list2 tbody tr td progress {
+  background-color: #f5f5f5;
+}
+.list2 tbody tr td progress::-webkit-progress-bar {
+  background-color: #f5f5f5;
+}
+.list2 tbody tr td progress::-webkit-progress-value {
+  background-color: #57B5E3;
+}
+.list2 tbody tr td:first-of-type {
+  padding-left: 7px;
+}
+.list2 tbody tr td:first-of-type input {
+  cursor: pointer;
+}
+.list2 tr:nth-child(odd) {
+  background-color: #2f383f;
+}
+.list2 tr:hover {
+  background-color: #45525c;
+}
+.list2 thead th:first-of-type {
+  width: 15%;
+}
+.list2 .datepicker {
+  width: 90%;
+}
+.list2 .datepicker.notVisible {
+  display: none;
+}
+.ui-dialog .list2 thead th,
+.ui-dialog .list2 tbody tr td,
+.ui-dialog .list2 tfoot tr td {
+  text-align: left;
+}
 /*------------------------Constants-----------------------------*/
+/*@body-font: "Segoe UI", sans-serif;*/
+/* @lucida-font: "Lucida Grande", Helvetica, Verdana, Arial, sans-serif; */
 html,
 body {
   margin: 0;
@@ -239,324 +584,9 @@ input::-ms-clear {
 .text-center {
   text-align: center;
 }
-.list2 {
-  color: #000000 !important;
-  font-family: "Lucida Grande", Helvetica, Verdana, Arial, sans-serif;
-  width: 100%;
-  table-layout: fixed;
-}
-.list2 tfoot tr {
-  border-bottom: 1px solid #cacaca;
-  background: #eee !important;
-  vertical-align: middle;
-}
-.list2 tfoot td {
-  padding: 3px 6px;
-  line-height: 18px;
-  font-weight: bold;
-  font-size: 13px;
-  text-align: right;
-  text-shadow: 0 1px 1px rgba(222, 222, 222, 0.5);
-}
-.list2 thead tr {
-  border-top: 0;
-  background: #fff !important;
-  vertical-align: top;
-}
-.list2 thead th {
-  padding: 3px 8px;
-  line-height: 18px;
-  font-weight: bold;
-  font-size: 13px;
-  text-align: right;
-  text-shadow: 0 1px 1px rgba(222, 222, 222, 0.5);
-}
-.list2 thead th:nth-child(1),
-.list2 thead th:nth-child(2) {
-  text-align: center;
-}
-.list2 thead th input[type="checkbox"] {
-  margin-top: 2.5px;
-}
-.list2 thead th.oe_sortable,
-.list2 thead th.oe_sortable_sub {
-  cursor: pointer;
-}
-.list2 thead th.oe_sortable .arrow,
-.list2 thead th.oe_sortable_sub .arrow {
-  display: none;
-  padding: 0 0 0 5px;
-  margin: 0;
-  text-align: center;
-  width: 5px;
-  height: 5px;
-  font-weight: 100 !important;
-  cursor: pointer;
-  font-family: Icons;
-  text-decoration: none;
-  line-height: 23px;
-  background: none;
-}
-.list2 thead th.oe_sortable.sortUp .up,
-.list2 thead th.oe_sortable_sub.sortUp .up {
-  display: inline-block;
-}
-.list2 thead th.oe_sortable.sortDn .down,
-.list2 thead th.oe_sortable_sub.sortDn .down {
-  display: inline-block;
-}
-.list2 thead th:first-of-type {
-  width: 12px;
-}
-.list2 thead th:first-of-type input {
-  cursor: pointer;
-}
-.list2 tbody tr {
-  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.3);
-  border-top: 1px solid #ababab;
-}
-.list2 tbody tr.greenAlarm {
-  border: 2px solid #90ee90;
-}
-.list2 tbody tr.canceledListItem {
-  color: grey;
-}
-.list2 tbody tr.canceledListItem .newSelectList {
-  color: #000;
-}
-.list2 tbody tr:last-child {
-  border-bottom: 1px solid #ababab;
-}
-.list2 tbody tr.stage-cancelled,
-.list2 tbody tr.stage-refused,
-.list2 tbody tr.stage-contractend,
-.list2 tbody tr.stage-lost {
-  text-decoration: line-through;
-}
-.list2 tbody tr td {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  cursor: pointer;
-  padding: 4px 8px;
-  line-height: 17px;
-  font-size: 11px;
-  text-align: right;
-}
-.list2 tbody tr td.red-border {
-  color: red;
-}
-.list2 tbody tr td:nth-child(1),
-.list2 tbody tr td:nth-child(2) {
-  text-align: center;
-}
-.list2 tbody tr td.withSelect {
-  position: relative;
-}
-.list2 tbody tr td[data-content="workflow"] {
-  position: relative;
-  padding: 4px 15px;
-  overflow: visible;
-}
-.list2 tbody tr td[data-content="workflow"] .newSelectList {
-  top: 5px;
-  right: 15px;
-}
-.list2 tbody tr td progress {
-  width: 100%;
-}
-.list2 tbody tr td a {
-  color: #1E8FC6 !important;
-}
-.list2 tbody tr td a.done {
-  color: #00c60b !important;
-}
-.list2 tbody tr td progress {
-  background-color: #f5f5f5;
-}
-.list2 tbody tr td progress::-webkit-progress-bar {
-  background-color: #f5f5f5;
-}
-.list2 tbody tr td progress::-webkit-progress-value {
-  background-color: #57B5E3;
-}
-.list2 tbody tr td:first-of-type {
-  padding-left: 7px;
-}
-.list2 tbody tr td:first-of-type input {
-  cursor: pointer;
-}
-.list2 tr:nth-child(odd) {
-  background-color: #f9f9f9;
-}
-.list2 tr:hover {
-  background-color: #f5f5f5;
-}
-.list2 tfoot tr {
-  border-bottom: 1px solid #cacaca;
-  background: #eee !important;
-  vertical-align: middle;
-}
-.list2 tfoot td {
-  padding: 3px 6px;
-  line-height: 18px;
-  font-weight: bold;
-  font-size: 13px;
-  text-align: right;
-  text-shadow: 0 1px 1px rgba(222, 222, 222, 0.5);
-}
-.list2 thead tr {
-  border-top: 0;
-  background: #fff !important;
-  vertical-align: top;
-}
-.list2 thead th {
-  padding: 3px 8px;
-  line-height: 18px;
-  font-weight: bold;
-  font-size: 13px;
-  text-align: right;
-  text-shadow: 0 1px 1px rgba(222, 222, 222, 0.5);
-}
-.list2 thead th:nth-child(1),
-.list2 thead th:nth-child(2) {
-  text-align: center;
-}
-.list2 thead th input[type="checkbox"] {
-  margin-top: 2.5px;
-}
-.list2 thead th.oe_sortable,
-.list2 thead th.oe_sortable_sub {
-  cursor: pointer;
-}
-.list2 thead th.oe_sortable .arrow,
-.list2 thead th.oe_sortable_sub .arrow {
-  display: none;
-  padding: 0 0 0 5px;
-  margin: 0;
-  text-align: center;
-  width: 5px;
-  height: 5px;
-  font-weight: 100 !important;
-  cursor: pointer;
-  font-family: Icons;
-  text-decoration: none;
-  line-height: 23px;
-  background: none;
-}
-.list2 thead th.oe_sortable.sortUp .up,
-.list2 thead th.oe_sortable_sub.sortUp .up {
-  display: inline-block;
-}
-.list2 thead th.oe_sortable.sortDn .down,
-.list2 thead th.oe_sortable_sub.sortDn .down {
-  display: inline-block;
-}
-.list2 thead th:first-of-type {
-  width: 12px;
-}
-.list2 thead th:first-of-type input {
-  cursor: pointer;
-}
-.list2 tbody tr {
-  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.3);
-  border-top: 1px solid #ababab;
-}
-.list2 tbody tr.greenAlarm {
-  border: 2px solid #90ee90;
-}
-.list2 tbody tr.canceledListItem {
-  color: grey;
-}
-.list2 tbody tr.canceledListItem .newSelectList {
-  color: #000;
-}
-.list2 tbody tr:last-child {
-  border-bottom: 1px solid #ababab;
-}
-.list2 tbody tr.stage-cancelled,
-.list2 tbody tr.stage-refused,
-.list2 tbody tr.stage-contractend,
-.list2 tbody tr.stage-lost {
-  text-decoration: line-through;
-}
-.list2 tbody tr td {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  cursor: pointer;
-  padding: 4px 8px;
-  line-height: 17px;
-  font-size: 11px;
-  text-align: right;
-}
-.list2 tbody tr td.red-border {
-  color: red;
-}
-.list2 tbody tr td:nth-child(1),
-.list2 tbody tr td:nth-child(2) {
-  text-align: center;
-}
-.list2 tbody tr td.withSelect {
-  position: relative;
-}
-.list2 tbody tr td[data-content="workflow"] {
-  position: relative;
-  padding: 4px 15px;
-  overflow: visible;
-}
-.list2 tbody tr td[data-content="workflow"] .newSelectList {
-  top: 5px;
-  right: 15px;
-}
-.list2 tbody tr td progress {
-  width: 100%;
-}
-.list2 tbody tr td a {
-  color: #1E8FC6 !important;
-}
-.list2 tbody tr td a.done {
-  color: #00c60b !important;
-}
-.list2 tbody tr td progress {
-  background-color: #f5f5f5;
-}
-.list2 tbody tr td progress::-webkit-progress-bar {
-  background-color: #f5f5f5;
-}
-.list2 tbody tr td progress::-webkit-progress-value {
-  background-color: #57B5E3;
-}
-.list2 tbody tr td:first-of-type {
-  padding-left: 7px;
-}
-.list2 tbody tr td:first-of-type input {
-  cursor: pointer;
-}
-.list2 tr:nth-child(odd) {
-  background-color: #f9f9f9;
-}
-.list2 tr:hover {
-  background-color: #f5f5f5;
-}
-.list2 thead th:first-of-type {
-  width: 15%;
-}
-.list2 .datepicker {
-  width: 90%;
-}
-.list2 .datepicker.notVisible {
-  display: none;
-}
-.ui-dialog .list2 thead th,
-.ui-dialog .list2 tbody tr td,
-.ui-dialog .list2 tfoot tr td {
-  text-align: left;
-}
 .thumbnail-text {
   color: #4c4c4c;
   font-size: 13px;
-  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
 }
 .kanban {
   padding: 0;
@@ -601,9 +631,9 @@ input::-ms-clear {
   width: 95%;
   min-height: 40px;
   text-align: left;
-  border: 1px solid #4d5a75;
-  background-color: #fff;
-  color: #2C3E50;
+  border: 1px solid #7f7f80;
+  background-color: #242b30;
+  color: #02a1f2;
   cursor: move;
   transition: box-shadow 1s ease;
   transition: border-color 1s ease;
@@ -684,7 +714,6 @@ input::-ms-clear {
   overflow: hidden;
   font-size: 15px;
   line-height: 18px;
-  text-shadow: 1px 1px 1px #fff;
   text-align: center;
   display: block;
   position: absolute;
@@ -717,7 +746,6 @@ input::-ms-clear {
   color: #333333;
   font-size: 16px;
   font-weight: bold;
-  text-shadow: 0 1px 0 white;
   white-space: nowrap;
 }
 .kanban .column h2 span {
@@ -739,7 +767,7 @@ input::-ms-clear {
   font-size: 13px;
 }
 .kanban .column .columnNameDiv {
-  background: #fff;
+  background: #242b30;
   height: 35px;
   position: relative;
 }
@@ -753,10 +781,11 @@ input::-ms-clear {
 .kanban .column .columnNameDiv .columnName .totalCount {
   float: right;
   padding: 2px 5px;
-  border: 1px solid #000;
+  border: 1px solid #7f7f80;
   position: absolute;
   top: 4px;
   right: 28px;
+  color: #02a1f2;
 }
 .kanban .column .columnNameDiv .columnName .fold-unfold {
   display: block;
@@ -766,13 +795,17 @@ input::-ms-clear {
   width: 14px;
   height: 17px;
   border-radius: 17px;
-  border: 1px solid #000;
+  border: 1px solid #7f7f80;
   padding-left: 3px;
   font-family: Icons;
   line-height: 19px;
   font-weight: bold;
   margin: 0 2px 0 4px;
   cursor: pointer;
+  color: #02a1f2;
+}
+.kanban .column .columnNameDiv .columnName .text {
+  color: #02a1f2;
 }
 .kanban .column .columnNameDiv.cancelled .columnName {
   border-bottom: 2px solid #FF5454 !important;
@@ -814,7 +847,6 @@ input::-ms-clear {
   margin-left: 3px;
   font-size: 13px;
   color: #4c4c4c;
-  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
 }
 .kanban .column.rotate h2 {
   position: relative;
@@ -996,17 +1028,16 @@ input::-ms-clear {
 .dialog-buttons input {
   height: 25px !important;
   line-height: 15px !important;
-  background-image: url("../images/bt-bg.png") !important;
+  background-color: inherit !important;
   font-size: 11px;
   font-family: Tahoma, Arial, Helvetica, sans-serif;
-  text-shadow: 0 1px 0 #FFF;
-  color: #222 !important;
-  border: 1px solid #c3c3c3 !important;
+  color: #ffffff !important;
+  border: 1px solid #7f7f80 !important;
   padding: 5px 15px;
 }
 .dialog-buttons input:hover {
-  border: 1px solid #888888 !important;
-  color: #222 !important;
+  border: 1px solid #02a1f2 !important;
+  color: #ffffff !important;
 }
 .pagination {
   width: 100%;
@@ -1019,10 +1050,12 @@ input::-ms-clear {
 }
 .pagination .countOnPage {
   float: left;
+  color: #ffffff;
 }
 .pagination .nextPrev {
   float: right;
   margin-right: 5px;
+  color: #ffffff;
 }
 .pagination .countOnPage {
   margin-left: 5px;
@@ -1078,16 +1111,17 @@ input::-ms-clear {
   cursor: default;
 }
 .pagination #currentShowPage {
-  border: 1px solid rgba(0, 0, 0, 0.4);
-  border-right: 1px solid rgba(0, 0, 0, 0);
+  border: 1px solid #7f7f80;
+  border-right: none;
+  background-color: #fff;
   width: 21px;
   height: 12px;
   margin-left: 5px;
   font-size: 12px !important;
 }
 .pagination #pageList {
-  background-color: white;
-  border: 1px solid rgba(0, 0, 0, 0.4);
+  background-color: #1a2227;
+  border: 1px solid #7f7f80;
   position: absolute;
   bottom: 17px;
   left: -7px;
@@ -1100,9 +1134,10 @@ input::-ms-clear {
   line-height: 20px;
   text-align: center;
   font-size: 12px;
+  cursor: pointer;
 }
 .pagination #pageList li:hover {
-  background-color: #13C4A5;
+  background-color: #02a1f2;
   color: white;
   text-decoration: none;
 }
@@ -1128,13 +1163,14 @@ input::-ms-clear {
   margin: 0 5px;
   line-height: 10px;
   font-size: 12px;
+  padding: 3px 2px;
 }
 .pagination .pageList button:hover {
   background-color: #F7F8F9;
 }
 .pagination .pageList ul {
-  background-color: white;
-  border: 1px solid rgba(0, 0, 0, 0.4);
+  background-color: #1a2227;
+  border: 1px solid #7f7f80;
   position: absolute;
   bottom: 15px;
   left: 5px;
@@ -1149,7 +1185,7 @@ input::-ms-clear {
   text-align: center;
 }
 .pagination .pageList ul li a:hover {
-  background-color: #13C4A5;
+  background-color: #02a1f2;
   color: white;
   text-decoration: none;
 }
@@ -1320,11 +1356,13 @@ input::-ms-clear {
   float: left;
   width: 60px;
   margin-right: 10px;
+  margin-top: 10px;
   text-align: center;
-  border: 1px solid #cccccc;
+  border: 1px solid #7f7f80;
   line-height: 20px;
   height: 20px;
   cursor: pointer;
+  color: #02a1f2;
 }
 .input-file input {
   position: absolute;
@@ -1339,8 +1377,8 @@ input:not([type="checkbox"]),
 textarea:not([type="checkbox"]),
 select:not([type="checkbox"]) {
   padding: 2px 4px;
-  border: 1px solid #cccccc;
-  background: white;
+  border: 1px solid #7f7f80;
+  background-color: inherit;
 }
 input:not([type="checkbox"]):focus,
 textarea:not([type="checkbox"]):focus,
@@ -1349,7 +1387,7 @@ select:not([type="checkbox"]):focus {
   -moz-box-shadow: 0 0 5px rgba(82, 168, 236, 0.5);
   -webkit-box-shadow: 0 0 5px rgba(82, 168, 236, 0.5);
   outline: none;
-  border: 1px solid rgba(121, 187, 238, 0.75) !important;
+  border: 1px solid #02a1f2 !important;
 }
 .current-selected {
   color: #1E8FC6 !important;
@@ -1432,14 +1470,14 @@ select:not([type="checkbox"]):focus {
 }
 .btn-list {
   height: 24px;
-  border: 1px solid #ababab;
+  border: 1px solid #7f7f80;
   border-right: 0;
   border-bottom: 0;
   float: left;
   margin: 5px 12px 0 5px;
 }
 .btn-list li {
-  border-right: 1px solid #ababab;
+  border-right: 1px solid #7f7f80;
   padding: 0;
   margin: 0;
   display: block;
@@ -1451,14 +1489,14 @@ select:not([type="checkbox"]):focus {
   text-decoration: none;
 }
 .btn-list .selected {
-  border-bottom: 1px solid white;
+  border-bottom: 3px solid #02a1f2;
+  color: #02a1f2;
 }
 .btn-list .selected a {
   color: white;
-  text-shadow: 0 1px 2px black;
 }
 a {
-  color: #4d5a75;
+  color: #ffffff;
   text-decoration: none;
 }
 a:hover {
@@ -1475,7 +1513,7 @@ h3 {
   text-overflow: ellipsis;
 }
 body {
-  font-family: "Segoe UI", sans-serif;
+  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
   font-size: 12px;
 }
 dl {
@@ -1583,11 +1621,11 @@ dl dd a.formLink {
   width: 860px;
   max-width: 860px;
   margin: 0 auto;
-  background: #ffffff;
+  background: #242b30;
   min-height: 130px;
   display: block;
   position: relative;
-  border: 1px solid #c8c8d3;
+  border: 1px solid #7f7f80;
 }
 .form #internalNotes {
   resize: none;
@@ -1601,14 +1639,14 @@ dl dd a.formLink {
   padding-right: 40px;
 }
 .form .compactList li {
-  border-bottom: 1px solid #c8c8d3;
+  border-bottom: 1px solid #7f7f80;
 }
 .form .compactList li.inner {
   margin: 0 !important;
   padding: 4px 10px;
 }
-.form .compactList li.inner:hover {
-  background: #f1f1f1;
+.form .compactList li.inner:hover p {
+  color: #ffffff;
 }
 .form .compactList li p {
   line-height: 20px !important;
@@ -1619,7 +1657,7 @@ dl dd a.formLink {
 }
 .form .formTitle {
   width: 100%;
-  border-bottom: 1px solid #c8c8d3;
+  border-bottom: 1px solid #7f7f80;
 }
 .form .formTitle.withMargin {
   margin-bottom: 0;
@@ -1640,7 +1678,7 @@ dl dd a.formLink {
   font-weight: bold;
 }
 .form .formTitle h3 {
-  color: #333 !important;
+  color: #ffffff !important;
   margin: 0;
   font-family: Title;
   font-size: 18px;
@@ -1654,10 +1692,12 @@ dl dd a.formLink {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  color: #ffffff;
 }
 .form h3 {
   margin-bottom: 10px;
   display: block;
+  color: #ffffff;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -1677,11 +1717,11 @@ dl dd a.formLink {
   display: block;
 }
 .form .mainInfo h3 {
-  color: #333;
+  color: #ffffff;
   font-size: 24px;
   line-height: 30px;
   min-height: 24px;
-  font: "Lucida Grande", Helvetica, Verdana, Arial, sans-serif;
+  font: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
 }
 .form .mainInfo p {
   height: 20px !important;
@@ -1689,7 +1729,7 @@ dl dd a.formLink {
   min-height: 20px !important;
 }
 .form .details {
-  border: 1px solid #c1c1c1;
+  border: 1px solid #7f7f80;
   background: #cecece;
   padding: 2px 3px;
   line-height: 5px;
@@ -1766,7 +1806,6 @@ dl dd a.formLink {
   overflow: hidden;
   font-size: 15px;
   line-height: 18px;
-  text-shadow: 1px 1px 1px #fff;
   text-align: center;
   display: block;
   position: absolute;
@@ -1796,7 +1835,6 @@ dl dd a.formLink {
   overflow: hidden;
   font-size: 15px;
   line-height: 18px;
-  text-shadow: 1px 1px 1px #fff;
   text-align: center;
   display: block;
   position: absolute;
@@ -1831,11 +1869,10 @@ dl dd a.formLink {
   margin: 0 2px 5px 0;
 }
 .form h2 {
-  font-family: "Lucida Grande", Helvetica, Verdana, Arial, sans-serif;
+  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
   color: #4c4c4c;
   font-weight: bold;
   font-size: 24px !important;
-  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
   margin-bottom: 12px;
 }
 .form h2:first-of-type {
@@ -1845,10 +1882,9 @@ dl dd a.formLink {
   margin: 0 0 8px;
 }
 .form p {
-  font-family: "Lucida Grande", Helvetica, Verdana, Arial, sans-serif;
+  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
   color: #4c4c4c;
   font-size: 13px;
-  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
   line-height: 30px;
   min-height: 30px;
 }
@@ -1871,7 +1907,6 @@ dl dd a.formLink {
   width: 16px;
   height: 25px;
   line-height: 15px;
-  color: #4D5A75;
   font-size: 16px;
   background: no-repeat 0 50%;
   margin-right: 5px;
@@ -1882,7 +1917,6 @@ dl dd a.formLink {
   width: 16px;
   height: 25px;
   line-height: 27px;
-  color: #4D5A75;
   font-size: 16px;
   background: no-repeat 0 50%;
   margin-right: 5px;
@@ -1893,11 +1927,15 @@ dl dd a.formLink {
   width: 16px;
   height: 25px;
   line-height: 27px;
-  color: #4D5A75;
   font-size: 16px;
   background: no-repeat 0 50%;
   margin-right: 5px;
   font-family: Icons;
+}
+.form #cancelSpan a,
+.form #saveSpan a,
+.form #editSpan a {
+  color: #02a1f2;
 }
 .form label {
   display: block;
@@ -1906,6 +1944,7 @@ dl dd a.formLink {
   width: 90%;
   height: 30px;
   line-height: 26px;
+  color: #ffffff;
 }
 .form input {
   margin: 2px 2px 2px 0;
@@ -2151,11 +2190,11 @@ dl dd a.formLink {
   width: 98%;
   max-width: 98%;
   margin: 0 auto;
-  background: #ffffff;
+  background: #242b30;
   min-height: 130px;
   display: block;
   position: relative;
-  border: 0 solid #c8c8d3;
+  border: 0 solid #7f7f80;
   margin-bottom: 10px;
 }
 .formLeftColumn .form #internalNotes {
@@ -2170,14 +2209,14 @@ dl dd a.formLink {
   padding-right: 40px;
 }
 .formLeftColumn .form .compactList li {
-  border-bottom: 1px solid #c8c8d3;
+  border-bottom: 1px solid #7f7f80;
 }
 .formLeftColumn .form .compactList li.inner {
   margin: 0 !important;
   padding: 4px 10px;
 }
-.formLeftColumn .form .compactList li.inner:hover {
-  background: #f1f1f1;
+.formLeftColumn .form .compactList li.inner:hover p {
+  color: #ffffff;
 }
 .formLeftColumn .form .compactList li p {
   line-height: 20px !important;
@@ -2188,7 +2227,7 @@ dl dd a.formLink {
 }
 .formLeftColumn .form .formTitle {
   width: 100%;
-  border-bottom: 1px solid #c8c8d3;
+  border-bottom: 1px solid #7f7f80;
 }
 .formLeftColumn .form .formTitle.withMargin {
   margin-bottom: 0;
@@ -2209,7 +2248,7 @@ dl dd a.formLink {
   font-weight: bold;
 }
 .formLeftColumn .form .formTitle h3 {
-  color: #333 !important;
+  color: #ffffff !important;
   margin: 0;
   font-family: Title;
   font-size: 18px;
@@ -2223,10 +2262,12 @@ dl dd a.formLink {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  color: #ffffff;
 }
 .formLeftColumn .form h3 {
   margin-bottom: 10px;
   display: block;
+  color: #ffffff;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -2246,11 +2287,11 @@ dl dd a.formLink {
   display: block;
 }
 .formLeftColumn .form .mainInfo h3 {
-  color: #333;
+  color: #ffffff;
   font-size: 24px;
   line-height: 30px;
   min-height: 24px;
-  font: "Lucida Grande", Helvetica, Verdana, Arial, sans-serif;
+  font: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
 }
 .formLeftColumn .form .mainInfo p {
   height: 20px !important;
@@ -2258,7 +2299,7 @@ dl dd a.formLink {
   min-height: 20px !important;
 }
 .formLeftColumn .form .details {
-  border: 1px solid #c1c1c1;
+  border: 1px solid #7f7f80;
   background: #cecece;
   padding: 2px 3px;
   line-height: 5px;
@@ -2335,7 +2376,6 @@ dl dd a.formLink {
   overflow: hidden;
   font-size: 15px;
   line-height: 18px;
-  text-shadow: 1px 1px 1px #fff;
   text-align: center;
   display: block;
   position: absolute;
@@ -2365,7 +2405,6 @@ dl dd a.formLink {
   overflow: hidden;
   font-size: 15px;
   line-height: 18px;
-  text-shadow: 1px 1px 1px #fff;
   text-align: center;
   display: block;
   position: absolute;
@@ -2400,11 +2439,10 @@ dl dd a.formLink {
   margin: 0 2px 5px 0;
 }
 .formLeftColumn .form h2 {
-  font-family: "Lucida Grande", Helvetica, Verdana, Arial, sans-serif;
+  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
   color: #4c4c4c;
   font-weight: bold;
   font-size: 24px !important;
-  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
   margin-bottom: 12px;
 }
 .formLeftColumn .form h2:first-of-type {
@@ -2414,10 +2452,9 @@ dl dd a.formLink {
   margin: 0 0 8px;
 }
 .formLeftColumn .form p {
-  font-family: "Lucida Grande", Helvetica, Verdana, Arial, sans-serif;
+  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
   color: #4c4c4c;
   font-size: 13px;
-  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
   line-height: 30px;
   min-height: 30px;
 }
@@ -2440,7 +2477,6 @@ dl dd a.formLink {
   width: 16px;
   height: 25px;
   line-height: 15px;
-  color: #4D5A75;
   font-size: 16px;
   background: no-repeat 0 50%;
   margin-right: 5px;
@@ -2451,7 +2487,6 @@ dl dd a.formLink {
   width: 16px;
   height: 25px;
   line-height: 27px;
-  color: #4D5A75;
   font-size: 16px;
   background: no-repeat 0 50%;
   margin-right: 5px;
@@ -2462,11 +2497,15 @@ dl dd a.formLink {
   width: 16px;
   height: 25px;
   line-height: 27px;
-  color: #4D5A75;
   font-size: 16px;
   background: no-repeat 0 50%;
   margin-right: 5px;
   font-family: Icons;
+}
+.formLeftColumn .form #cancelSpan a,
+.formLeftColumn .form #saveSpan a,
+.formLeftColumn .form #editSpan a {
+  color: #02a1f2;
 }
 .formLeftColumn .form label {
   display: block;
@@ -2475,6 +2514,7 @@ dl dd a.formLink {
   width: 90%;
   height: 30px;
   line-height: 26px;
+  color: #ffffff;
 }
 .formLeftColumn .form input {
   margin: 2px 2px 2px 0;
@@ -2489,6 +2529,10 @@ dl dd a.formLink {
   height: 160px;
   resize: none;
 }
+.formLeftColumn .edited-block p,
+.formLeftColumn .edited-block span {
+  color: #ffffff;
+}
 #details-dialog {
   display: none;
 }
@@ -2501,11 +2545,11 @@ dl dd a.formLink {
   width: 98%;
   max-width: 98%;
   margin: 0 auto;
-  background: #ffffff;
+  background: #242b30;
   min-height: 130px;
   display: block;
   position: relative;
-  border: 0 solid #c8c8d3;
+  border: 0 solid #7f7f80;
   margin-bottom: 10px;
 }
 .formRightColumn .form #internalNotes {
@@ -2520,14 +2564,14 @@ dl dd a.formLink {
   padding-right: 40px;
 }
 .formRightColumn .form .compactList li {
-  border-bottom: 1px solid #c8c8d3;
+  border-bottom: 1px solid #7f7f80;
 }
 .formRightColumn .form .compactList li.inner {
   margin: 0 !important;
   padding: 4px 10px;
 }
-.formRightColumn .form .compactList li.inner:hover {
-  background: #f1f1f1;
+.formRightColumn .form .compactList li.inner:hover p {
+  color: #ffffff;
 }
 .formRightColumn .form .compactList li p {
   line-height: 20px !important;
@@ -2538,7 +2582,7 @@ dl dd a.formLink {
 }
 .formRightColumn .form .formTitle {
   width: 100%;
-  border-bottom: 1px solid #c8c8d3;
+  border-bottom: 1px solid #7f7f80;
 }
 .formRightColumn .form .formTitle.withMargin {
   margin-bottom: 0;
@@ -2559,7 +2603,7 @@ dl dd a.formLink {
   font-weight: bold;
 }
 .formRightColumn .form .formTitle h3 {
-  color: #333 !important;
+  color: #ffffff !important;
   margin: 0;
   font-family: Title;
   font-size: 18px;
@@ -2573,10 +2617,12 @@ dl dd a.formLink {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  color: #ffffff;
 }
 .formRightColumn .form h3 {
   margin-bottom: 10px;
   display: block;
+  color: #ffffff;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -2596,11 +2642,11 @@ dl dd a.formLink {
   display: block;
 }
 .formRightColumn .form .mainInfo h3 {
-  color: #333;
+  color: #ffffff;
   font-size: 24px;
   line-height: 30px;
   min-height: 24px;
-  font: "Lucida Grande", Helvetica, Verdana, Arial, sans-serif;
+  font: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
 }
 .formRightColumn .form .mainInfo p {
   height: 20px !important;
@@ -2608,7 +2654,7 @@ dl dd a.formLink {
   min-height: 20px !important;
 }
 .formRightColumn .form .details {
-  border: 1px solid #c1c1c1;
+  border: 1px solid #7f7f80;
   background: #cecece;
   padding: 2px 3px;
   line-height: 5px;
@@ -2685,7 +2731,6 @@ dl dd a.formLink {
   overflow: hidden;
   font-size: 15px;
   line-height: 18px;
-  text-shadow: 1px 1px 1px #fff;
   text-align: center;
   display: block;
   position: absolute;
@@ -2715,7 +2760,6 @@ dl dd a.formLink {
   overflow: hidden;
   font-size: 15px;
   line-height: 18px;
-  text-shadow: 1px 1px 1px #fff;
   text-align: center;
   display: block;
   position: absolute;
@@ -2750,11 +2794,10 @@ dl dd a.formLink {
   margin: 0 2px 5px 0;
 }
 .formRightColumn .form h2 {
-  font-family: "Lucida Grande", Helvetica, Verdana, Arial, sans-serif;
+  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
   color: #4c4c4c;
   font-weight: bold;
   font-size: 24px !important;
-  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
   margin-bottom: 12px;
 }
 .formRightColumn .form h2:first-of-type {
@@ -2764,10 +2807,9 @@ dl dd a.formLink {
   margin: 0 0 8px;
 }
 .formRightColumn .form p {
-  font-family: "Lucida Grande", Helvetica, Verdana, Arial, sans-serif;
+  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
   color: #4c4c4c;
   font-size: 13px;
-  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
   line-height: 30px;
   min-height: 30px;
 }
@@ -2790,7 +2832,6 @@ dl dd a.formLink {
   width: 16px;
   height: 25px;
   line-height: 15px;
-  color: #4D5A75;
   font-size: 16px;
   background: no-repeat 0 50%;
   margin-right: 5px;
@@ -2801,7 +2842,6 @@ dl dd a.formLink {
   width: 16px;
   height: 25px;
   line-height: 27px;
-  color: #4D5A75;
   font-size: 16px;
   background: no-repeat 0 50%;
   margin-right: 5px;
@@ -2812,11 +2852,15 @@ dl dd a.formLink {
   width: 16px;
   height: 25px;
   line-height: 27px;
-  color: #4D5A75;
   font-size: 16px;
   background: no-repeat 0 50%;
   margin-right: 5px;
   font-family: Icons;
+}
+.formRightColumn .form #cancelSpan a,
+.formRightColumn .form #saveSpan a,
+.formRightColumn .form #editSpan a {
+  color: #02a1f2;
 }
 .formRightColumn .form label {
   display: block;
@@ -2825,6 +2869,7 @@ dl dd a.formLink {
   width: 90%;
   height: 30px;
   line-height: 26px;
+  color: #ffffff;
 }
 .formRightColumn .form input {
   margin: 2px 2px 2px 0;
@@ -2861,11 +2906,11 @@ dl dd a.formLink {
 }
 .noteWrapper > label {
   font-size: 16px;
-  color: #555;
+  color: #ffffff;
 }
 .noteWrapper .addNote {
   margin-top: 6px;
-  background-color: #EDEFF4;
+  background-color: inherit;
   padding: 5px 9px 10px 5px;
   margin-bottom: 5px;
 }
@@ -2914,10 +2959,11 @@ dl dd a.formLink {
   box-shadow: 0 0 5px rgba(82, 168, 236, 0.5);
   -moz-box-shadow: 0 0 5px rgba(82, 168, 236, 0.5);
   -webkit-box-shadow: 0 0 5px rgba(82, 168, 236, 0.5);
-  border: 1px solid rgba(121, 187, 238, 0.75);
+  border: 1px solid #7f7f80;
 }
 .noteWrapper .addNote.active {
   padding: 10px 14px 10px 10px;
+  width: 100%;
 }
 .noteWrapper .addNote.active .buttons {
   margin-top: 3px;
@@ -2926,17 +2972,16 @@ dl dd a.formLink {
 .noteWrapper .addNote.active .buttons input {
   height: 25px !important;
   line-height: 15px !important;
-  background-image: url("../images/bt-bg.png") !important;
+  background-color: inherit !important;
   font-size: 11px;
   font-family: Tahoma, Arial, Helvetica, sans-serif;
-  text-shadow: 0 1px 0 #FFF;
-  color: #222 !important;
-  border: 1px solid #c3c3c3 !important;
+  color: #ffffff !important;
+  border: 1px solid #7f7f80 !important;
   padding: 5px 15px;
 }
 .noteWrapper .addNote.active .buttons input:hover {
-  border: 1px solid #888888 !important;
-  color: #222 !important;
+  border: 1px solid #02a1f2 !important;
+  color: #ffffff !important;
 }
 .noteWrapper .addNote.active .buttons input {
   width: auto;
@@ -2946,15 +2991,24 @@ dl dd a.formLink {
   float: left;
 }
 .noteWrapper .addNote.active .buttons #cancelNote {
-  line-height: 24px;
-  display: block;
+  line-height: 14px;
+  display: inline-block;
+  border: 1px solid #7f7f80;
+  padding: 5px 15px;
+  font-size: 11px;
+}
+.noteWrapper .addNote.active .buttons #cancelNote:hover {
+  text-decoration: none;
+  border: 1px solid #02a1f2;
 }
 .noteWrapper .addNote.active label {
   display: block;
+  color: #ffffff;
 }
 .noteWrapper .addNote.active textarea {
   height: 60px;
   resize: none;
+  color: #a9a9a9;
 }
 .noteWrapper .addNote.active input {
   display: block;
@@ -3017,18 +3071,18 @@ dl dd a.formLink {
   height: 100%;
 }
 #wrapper {
+  background-color: #242b30;
   width: 100%;
   height: 100%;
-  width: auto;
   min-width: 100%;
-  height: inherit;
+  height: 100hv;
   position: absolute;
   clear: both;
 }
 #wrapper #content-holder {
   height: auto;
   display: block;
-  background: #fff;
+  background: inherit;
   clear: both;
   position: relative;
 }
@@ -3036,16 +3090,18 @@ dl dd a.formLink {
   margin: 0;
   padding: 5px 0;
   text-align: center;
-  border-bottom: 1px solid #d5d5d5;
+  border-bottom: 1px solid #7f7f80;
 }
 #startLetter .letter {
   padding: 5px 10px;
+  color: #d5d5d5;
 }
 #startLetter .letter.current {
   font-weight: bold;
+  color: #33ffff;
 }
 #startLetter .letter.empty {
-  color: #CCC;
+  color: #808080;
   cursor: default;
 }
 #startLetter .letter.empty:hover {
@@ -3113,6 +3169,7 @@ dl dd a.formLink {
 .person-info span,
 .customer-info span {
   padding: 0 !important;
+  color: #02a1f2;
 }
 .settings-info {
   clear: both;
@@ -3166,6 +3223,9 @@ dl dd a.formLink {
 }
 .settings-info label {
   line-height: 20px;
+}
+.customer-info dt {
+  color: #ffffff;
 }
 .project-edit-info {
   clear: both;
@@ -3398,7 +3458,6 @@ dl dd a.formLink {
   text-align: center;
   font-weight: bold;
   cursor: pointer;
-  text-shadow: 0 1px 1px white;
 }
 .filterButton {
   background-color: #FFF;
@@ -3469,103 +3528,56 @@ dl dd a.formLink {
   margin: 5px 1px 4px 1px !important;
 }
 .btn {
-  border: 1px solid rgba(0, 0, 0, 0.4);
-  color: #4c4c4c;
+  border: 1px solid #7f7f80;
+  color: #1a2227;
   margin: 0;
   padding: 2px 6px;
   line-height: 13px;
   font-size: 13px;
   text-align: center;
   text-decoration: none;
-  background-color: #c6c6c6;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#e8e8e8), to(#c6c6c6));
-  background-image: -webkit-linear-gradient(top, #e8e8e8, #c6c6c6);
-  background-image: -moz-linear-gradient(top, #e8e8e8, #c6c6c6);
-  background-image: -ms-linear-gradient(top, #e8e8e8, #c6c6c6);
-  background-image: -o-linear-gradient(top, #e8e8e8, #c6c6c6);
-  background-image: linear-gradient(to bottom, #e8e8e8, #c6c6c6);
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px;
   border-radius: 3px;
-  -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(255, 255, 255, 0.8) inset;
-  -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(255, 255, 255, 0.8) inset;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(255, 255, 255, 0.8) inset;
-  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
   -webkit-font-smoothing: antialiased;
   outline: none;
 }
 .btn:hover {
-  background-color: #c1c1c1;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#e3e3e3), to(#c1c1c1));
-  background-image: -webkit-linear-gradient(top, #e3e3e3, #c1c1c1);
-  background-image: -moz-linear-gradient(top, #e3e3e3, #c1c1c1);
-  background-image: -ms-linear-gradient(top, #e3e3e3, #c1c1c1);
-  background-image: -o-linear-gradient(top, #e3e3e3, #c1c1c1);
-  background-image: linear-gradient(to bottom, #e3e3e3, #c1c1c1);
   cursor: pointer;
   background-position: 0;
 }
 button {
-  border: 1px solid rgba(0, 0, 0, 0.4);
-  color: #4c4c4c;
+  border: 1px solid #7f7f80;
+  color: #1a2227;
   margin: 0;
   padding: 2px 6px;
   line-height: 13px;
   font-size: 13px;
   text-align: center;
   text-decoration: none;
-  background-color: #c6c6c6;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#e8e8e8), to(#c6c6c6));
-  background-image: -webkit-linear-gradient(top, #e8e8e8, #c6c6c6);
-  background-image: -moz-linear-gradient(top, #e8e8e8, #c6c6c6);
-  background-image: -ms-linear-gradient(top, #e8e8e8, #c6c6c6);
-  background-image: -o-linear-gradient(top, #e8e8e8, #c6c6c6);
-  background-image: linear-gradient(to bottom, #e8e8e8, #c6c6c6);
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px;
   border-radius: 3px;
-  -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(255, 255, 255, 0.8) inset;
-  -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(255, 255, 255, 0.8) inset;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(255, 255, 255, 0.8) inset;
-  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
   -webkit-font-smoothing: antialiased;
   outline: none;
 }
 button:hover {
-  background-color: #c1c1c1;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#e3e3e3), to(#c1c1c1));
-  background-image: -webkit-linear-gradient(top, #e3e3e3, #c1c1c1);
-  background-image: -moz-linear-gradient(top, #e3e3e3, #c1c1c1);
-  background-image: -ms-linear-gradient(top, #e3e3e3, #c1c1c1);
-  background-image: -o-linear-gradient(top, #e3e3e3, #c1c1c1);
-  background-image: linear-gradient(to bottom, #e3e3e3, #c1c1c1);
   cursor: pointer;
   background-position: 0;
 }
 button.red,
 a.red {
-  border: 1px solid rgba(0, 0, 0, 0.4);
-  color: #4c4c4c;
+  border: 1px solid #7f7f80;
+  color: #1a2227;
   margin: 0;
   padding: 2px 6px;
   line-height: 13px;
   font-size: 13px;
   text-align: center;
   text-decoration: none;
-  background-color: #c6c6c6;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#e8e8e8), to(#c6c6c6));
-  background-image: -webkit-linear-gradient(top, #e8e8e8, #c6c6c6);
-  background-image: -moz-linear-gradient(top, #e8e8e8, #c6c6c6);
-  background-image: -ms-linear-gradient(top, #e8e8e8, #c6c6c6);
-  background-image: -o-linear-gradient(top, #e8e8e8, #c6c6c6);
-  background-image: linear-gradient(to bottom, #e8e8e8, #c6c6c6);
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px;
   border-radius: 3px;
-  -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(255, 255, 255, 0.8) inset;
-  -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(255, 255, 255, 0.8) inset;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(255, 255, 255, 0.8) inset;
-  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
   -webkit-font-smoothing: antialiased;
   outline: none;
   background-color: #af1b1b;
@@ -3582,13 +3594,6 @@ a.red {
 }
 button.red:hover,
 a.red:hover {
-  background-color: #c1c1c1;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#e3e3e3), to(#c1c1c1));
-  background-image: -webkit-linear-gradient(top, #e3e3e3, #c1c1c1);
-  background-image: -moz-linear-gradient(top, #e3e3e3, #c1c1c1);
-  background-image: -ms-linear-gradient(top, #e3e3e3, #c1c1c1);
-  background-image: -o-linear-gradient(top, #e3e3e3, #c1c1c1);
-  background-image: linear-gradient(to bottom, #e3e3e3, #c1c1c1);
   cursor: pointer;
   background-position: 0;
 }
@@ -3695,7 +3700,6 @@ a.red:hover {
   overflow: hidden;
   font-size: 15px;
   line-height: 18px;
-  text-shadow: 1px 1px 1px #fff;
   text-align: center;
   display: block;
   position: absolute;
@@ -3814,9 +3818,13 @@ a.red:hover {
 #loginPanel .dropdown-button span {
   display: block;
   line-height: 30px;
+  color: #a9a9a9;
+}
+#loginPanel .dropdown-button span:hover {
+  color: #fff;
 }
 #loginPanel .dropdown-button:hover {
-  background: #36a9e1;
+  background: #02a1f2;
   color: #fff;
 }
 .ui-widget-overlay {
@@ -3982,7 +3990,7 @@ a.red:hover {
   width: 250px;
   height: 150px;
   margin: 5px;
-  border: 1px solid #e5e5e5;
+  border: 1px solid #7f7f80;
   overflow-x: hidden;
 }
 #sourceUsers li,
@@ -3992,7 +4000,7 @@ a.red:hover {
   cursor: pointer;
   line-height: 20px;
   padding-left: 10px;
-  border-bottom: 1px solid #eeeeee;
+  border-bottom: 1px solid #7f7f80;
   color: #555;
 }
 #sourceUsers li:hover,
@@ -4247,15 +4255,15 @@ table#workflows tr td.edit-status {
   right: auto;
   bottom: auto;
   width: 100%;
-  background: #fff;
+  background: #1a2227;
   height: 30px;
   padding: 0;
   margin: 0;
-  border-bottom: 1px solid #4d5a75;
+  border-bottom: 1px solid #7f7f80;
 }
 #mainmenu-holder nav {
   float: left;
-  background: #4D5A75;
+  background: #1a2227;
 }
 #mainmenu-holder nav ul {
   padding: 0;
@@ -4297,7 +4305,7 @@ table#workflows tr td.edit-status {
   display: block;
 }
 #mainmenu-holder nav ul li.selected {
-  background-color: #36a9e1;
+  background-color: #02a1f2;
   height: 30px;
   border: 0;
   -webkit-transition: all ease .5s;
@@ -4325,26 +4333,26 @@ table#workflows tr td.edit-status {
 #submenu-holder nav ul li {
   list-style: none;
   font-size: 14px;
-  color: #4d5a75;
+  color: #ffffff;
   line-height: 30px;
   float: left;
   display: block;
   width: 120px;
   height: 30px;
   text-align: center;
-  background: #ffffff;
+  background: #242b30;
 }
 #submenu-holder nav ul li.hover {
   height: 30px;
   line-height: 30px;
 }
 #submenu-holder nav ul li.hover a {
-  color: #4d5a75;
+  color: #ffffff;
   text-decoration: underline;
 }
 #submenu-holder nav ul li a {
   font-family: 'Lato', Helvetica, Arial, sans-serif;
-  color: #4d5a75;
+  color: #ffffff;
   font-size: 12px;
   line-height: 30px;
   display: block;
@@ -4366,15 +4374,14 @@ table#workflows tr td.edit-status {
   display: block;
   width: 100%;
   height: 30px;
-  border-bottom: 1px solid #ababab;
-  background: #ffffff;
+  border-bottom: 1px solid #7f7f80;
   clear: both;
   margin-top: 5px;
 }
 #top-bar h3 {
   margin: 6px 0 0 0;
   padding: 0 10px;
-  color: #333333 !important;
+  color: #a3bb3a !important;
   font-family: Title;
   font-weight: normal;
   float: left;
@@ -4387,15 +4394,14 @@ table#workflows tr td.edit-status {
   display: block;
   width: 100%;
   height: 30px;
-  border-bottom: 1px solid #ababab;
-  background: #ffffff;
+  border-bottom: 1px solid #7f7f80;
   clear: both;
   margin-top: 5px;
 }
 #top-bar-bonus h3 {
   margin: 6px 0 0 0;
   padding: 0 10px;
-  color: #333333 !important;
+  color: #a3bb3a !important;
   font-family: Title;
   font-weight: normal;
   float: left;
@@ -4438,10 +4444,11 @@ table#workflows tr td.edit-status {
   margin-right: 2px;
   cursor: pointer;
   vertical-align: baseline;
+  color: #a3bb3a;
 }
 .createBtnHolder a:hover,
 #createBtnHolder a:hover {
-  color: #808da8;
+  color: #d6ee6d;
 }
 /*----------------------------- Login Form --------------------------------*/
 #loginForm {
@@ -4632,7 +4639,7 @@ table#workflows tr td.edit-status {
 /*----------------------------- Tabs ------------------------------------*/
 ul.dialog-tabs {
   height: 35px;
-  border-bottom: 1px solid #dddddd;
+  border-bottom: 1px solid #7f7f80;
   margin: 0 -20px 0 -20px;
   padding: 0 20px;
 }
@@ -4649,17 +4656,14 @@ ul.dialog-tabs li a {
   text-align: center;
   line-height: 35px;
   text-decoration: none;
-  color: #36A9E1;
+  color: #ffffff;
 }
 ul.dialog-tabs li a.active {
   height: 35px;
   line-height: 34px;
-  border: 1px solid #dddddd;
   border-bottom: none;
-  background-color: white;
-}
-ul.dialog-tabs li a:hover {
-  background-color: #EEE;
+  background-color: #02a1f2;
+  color: #ffffff;
 }
 ul.dialog-tabs li.right {
   float: right;
@@ -4690,7 +4694,7 @@ ul.dialog-tabs li.right button {
 .thumbnailwithavatar {
   display: block;
   position: relative;
-  width: 150px;
+  width: 149px;
   min-height: 165px;
   margin: 7px 0 0 7px;
   border: 1px solid transparent;
@@ -4711,14 +4715,14 @@ ul.dialog-tabs li.right button {
 }
 .thumbnailwithavatar .info p {
   line-height: 15px;
+  color: #ffffff;
 }
 .thumbnailwithavatar h4 {
-  color: #36a9e1;
+  color: #02a1f2;
   font-size: 13px;
   font-weight: bold;
-  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5) !important;
   line-height: 18px;
-  font-family: "Lucida Grande", Helvetica, Verdana, Arial, sans-serif;
+  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
   white-space: normal;
 }
 .thumbnailwithavatar h4 span {
@@ -4733,12 +4737,11 @@ ul.dialog-tabs li.right button {
   cursor: pointer;
 }
 .thumbnailwithavatar .title {
-  color: #36a9e1;
+  color: #02a1f2;
   font-size: 13px;
   font-weight: bold;
-  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5) !important;
   line-height: 18px;
-  font-family: "Lucida Grande", Helvetica, Verdana, Arial, sans-serif;
+  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
   white-space: normal;
 }
 .thumbnailwithavatar .title span {
@@ -4754,7 +4757,7 @@ ul.dialog-tabs li.right button {
 }
 .thumbnailwithavatar .inner .info {
   float: left;
-  width: 130px;
+  width: 129px;
 }
 .thumbnailwithavatar .inner .info div {
   overflow: hidden;
@@ -4763,7 +4766,7 @@ ul.dialog-tabs li.right button {
   text-align: center;
 }
 .thumbnailwithavatar .inner .info P {
-  font-family: "Lucida Grande", Helvetica, Verdana, Arial, sans-serif;
+  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
   color: #000;
   font-size: 13px;
   font-weight: 200 !important;
@@ -4801,7 +4804,6 @@ ul.dialog-tabs li.right button {
   overflow: hidden;
   font-size: 15px;
   line-height: 18px;
-  text-shadow: 1px 1px 1px #fff;
   text-align: center;
   display: block;
   position: absolute;
@@ -4827,14 +4829,18 @@ ul.dialog-tabs li.right button {
   padding: 0;
   width: 100%;
 }
+.thumbnailwithavatar .email,
+.thumbnailwithavatar .company {
+  color: #149be0;
+}
 .list {
-  color: #000000 !important;
-  font-family: "Lucida Grande", Helvetica, Verdana, Arial, sans-serif;
+  color: #ffffff !important;
+  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
   width: 100%;
 }
 .list tfoot tr {
-  border-bottom: 1px solid #cacaca;
-  background: #eee !important;
+  border-bottom: 1px solid #7f7f80;
+  background: inherit !important;
   vertical-align: middle;
 }
 .list tfoot td {
@@ -4843,11 +4849,10 @@ ul.dialog-tabs li.right button {
   font-weight: bold;
   font-size: 13px;
   text-align: right;
-  text-shadow: 0 1px 1px rgba(222, 222, 222, 0.5);
 }
 .list thead tr {
   border-top: 0;
-  background: #fff !important;
+  background: inherit !important;
   vertical-align: top;
 }
 .list thead th {
@@ -4856,7 +4861,6 @@ ul.dialog-tabs li.right button {
   font-weight: bold;
   font-size: 13px;
   text-align: right;
-  text-shadow: 0 1px 1px rgba(222, 222, 222, 0.5);
 }
 .list thead th:nth-child(1),
 .list thead th:nth-child(2) {
@@ -4899,8 +4903,7 @@ ul.dialog-tabs li.right button {
   cursor: pointer;
 }
 .list tbody tr {
-  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.3);
-  border-top: 1px solid #ababab;
+  border-top: 1px solid #7f7f80;
 }
 .list tbody tr.greenAlarm {
   border: 2px solid #90ee90;
@@ -4912,7 +4915,7 @@ ul.dialog-tabs li.right button {
   color: #000;
 }
 .list tbody tr:last-child {
-  border-bottom: 1px solid #ababab;
+  border-bottom: 1px solid #7f7f80;
 }
 .list tbody tr.stage-cancelled,
 .list tbody tr.stage-refused,
@@ -4925,10 +4928,10 @@ ul.dialog-tabs li.right button {
   white-space: nowrap;
   text-overflow: ellipsis;
   cursor: pointer;
-  padding: 4px 8px;
-  line-height: 17px;
+  padding: 0 8px;
   font-size: 11px;
   text-align: right;
+  border-right: 1px solid #7f7f80;
 }
 .list tbody tr td.red-border {
   color: red;
@@ -4974,10 +4977,10 @@ ul.dialog-tabs li.right button {
   cursor: pointer;
 }
 .list tr:nth-child(odd) {
-  background-color: #f9f9f9;
+  background-color: #2f383f;
 }
 .list tr:hover {
-  background-color: #f5f5f5;
+  background-color: #45525c;
 }
 .thumbnail {
   float: left;
@@ -4985,7 +4988,7 @@ ul.dialog-tabs li.right button {
   margin-left: 4px;
   position: relative;
   display: block;
-  background: #ffffff !important;
+  background: #1a2227 !important;
   border: 1px solid #4d5a75;
   border-bottom-color: rgba(0, 0, 0, 0.3);
   -webkit-transition: -webkit-transform, -webkit-box-shadow, border 200ms linear;
@@ -5038,7 +5041,7 @@ ul.dialog-tabs li.right button {
   text-align: right;
 }
 .thumbnail span {
-  font-family: "Lucida Grande", Helvetica, Verdana, Arial, sans-serif;
+  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
   position: relative;
   color: #4c4c4c;
   font-size: 13px;
@@ -5064,7 +5067,7 @@ ul.dialog-tabs li.right button {
   text-decoration: underline;
 }
 .thumbnail p {
-  font-family: "Lucida Grande", Helvetica, Verdana, Arial, sans-serif;
+  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
   color: #4c4c4c;
   font-size: 13px;
   text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
@@ -5073,7 +5076,7 @@ ul.dialog-tabs li.right button {
   font-weight: normal !important;
 }
 .thumbnail h2 {
-  font-family: "Lucida Grande", Helvetica, Verdana, Arial, sans-serif;
+  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
   color: #4c4c4c;
   font-size: 13px;
   text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
@@ -5106,7 +5109,6 @@ ul.dialog-tabs li.right button {
   overflow: hidden;
   font-size: 15px;
   line-height: 18px;
-  text-shadow: 1px 1px 1px #fff;
   text-align: center;
   display: block;
   position: absolute;
@@ -5237,9 +5239,9 @@ ul.dialog-tabs li.right button {
   opacity: .35;
 }
 .ui-dialog {
-  border: 1px solid #aaaaaa;
-  background: #ffffff;
-  color: #222222;
+  border: 1px solid #7f7f80;
+  background: #1a2227;
+  color: #ffffff;
   z-index: 1000;
   margin: 0 auto;
   -moz-border-radius: 0px;
@@ -5247,7 +5249,7 @@ ul.dialog-tabs li.right button {
   border-radius: 0px;
 }
 .ui-dialog .ui-widget-content a {
-  color: #36a9e1;
+  color: #02a1f2;
 }
 .ui-dialog .avatar {
   display: block;
@@ -5259,7 +5261,7 @@ ul.dialog-tabs li.right button {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   -moz-box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   -webkit-box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  border: 1px solid #c8c8d3;
+  border: 1px solid #7f7f80;
 }
 .ui-dialog .avatar img {
   height: auto;
@@ -5273,7 +5275,6 @@ ul.dialog-tabs li.right button {
   overflow: hidden;
   font-size: 15px;
   line-height: 18px;
-  text-shadow: 1px 1px 1px #fff;
   text-align: center;
   display: block;
   position: absolute;
@@ -5386,6 +5387,7 @@ ul.dialog-tabs li.right button {
 }
 .ui-dialog .inner {
   padding: 5px;
+  background: #1a2227;
 }
 .ui-dialog .form-holder {
   position: relative;
@@ -5612,9 +5614,9 @@ ul.dialog-tabs li.right button {
   margin-top: 7px;
 }
 .ui-dialog .ui-dialog-buttonpane {
-  border: 1px solid #aaaaaa;
-  background: #ffffff;
-  color: #222222;
+  border: 1px solid #7f7f80;
+  background: #1a2227;
+  color: #ffffff;
   text-align: left;
   border-width: 1px 0 0;
   background-image: none;
@@ -5638,11 +5640,11 @@ ul.dialog-tabs li.right button {
 }
 .ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button {
   background-image: none;
-  color: #36a9e1;
-  border: 1px solid #dddddd;
+  color: #02a1f2;
+  border: 1px solid #7f7f80;
   margin: .5em .4em .5em 0;
   cursor: pointer;
-  background-color: #E6E6E6;
+  background-color: #242b30;
   font-size: 1.2em;
   display: inline-block;
   position: relative;
@@ -5656,12 +5658,12 @@ ul.dialog-tabs li.right button {
 .ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button span {
   display: block;
   line-height: normal;
-  background: #ffffff;
+  background: #242b30;
   padding: .4em 1em;
-  color: #36a9e1;
+  color: #02a1f2;
 }
 .ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button span:hover {
-  background: #ececec !important;
+  background: #11181d !important;
 }
 .ui-dialog .ui-helper-clearfix:before,
 .ui-dialog .ui-helper-clearfix:after {
@@ -5715,17 +5717,16 @@ ul.dialog-tabs li.right button {
 .form-holder form .buttons input {
   height: 25px !important;
   line-height: 15px !important;
-  background-image: url("../images/bt-bg.png") !important;
+  background-color: inherit !important;
   font-size: 11px;
   font-family: Tahoma, Arial, Helvetica, sans-serif;
-  text-shadow: 0 1px 0 #FFF;
-  color: #222 !important;
-  border: 1px solid #c3c3c3 !important;
+  color: #ffffff !important;
+  border: 1px solid #7f7f80 !important;
   padding: 5px 15px;
 }
 .form-holder form .buttons input:hover {
-  border: 1px solid #888888 !important;
-  color: #222 !important;
+  border: 1px solid #02a1f2 !important;
+  color: #ffffff !important;
 }
 .form-holder form label {
   font-weight: normal;
@@ -5803,22 +5804,21 @@ ul.dialog-tabs li.right button {
   -moz-border-radius: 0px;
   -webkit-border-radius: 0px;
   border-radius: 0px;
-  border: 1px solid #e2e9ef;
-  border-top-color: #CBD3E2;
+  border: 1px solid #7f7f80;
   max-width: 280px;
   height: 18px;
   background-color: transparent;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 12px;
   padding: 2px;
-  color: #262626;
+  color: #a9a9a9;
 }
 .form-holder form input:not([type=checkbox]):focus {
-  box-shadow: 0 0 5px rgba(82, 168, 236, 0.5);
-  -moz-box-shadow: 0 0 5px rgba(82, 168, 236, 0.5);
-  -webkit-box-shadow: 0 0 5px rgba(82, 168, 236, 0.5);
+  box-shadow: 0 0 5px #02a1f2;
+  -moz-box-shadow: 0 0 5px #02a1f2;
+  -webkit-box-shadow: 0 0 5px #02a1f2;
   outline: medium none;
-  border: 1px solid rgba(121, 187, 238, 0.75) !important;
+  border: 1px solid #02a1f2 !important;
 }
 .form-holder form .mainInfo {
   width: auto;
@@ -5837,6 +5837,7 @@ ul.dialog-tabs li.right button {
   line-height: 17px;
   float: left;
   max-width: 95%;
+  color: #ffffff;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -5862,7 +5863,7 @@ ul.dialog-tabs li.right button {
 }
 ul.dialog-tabs {
   height: 35px;
-  border-bottom: 1px solid #dddddd;
+  border-bottom: 1px solid #7f7f80;
   margin: 0 -20px 0 -20px;
   padding: 0 20px;
 }
@@ -5879,17 +5880,14 @@ ul.dialog-tabs li a {
   text-align: center;
   line-height: 35px;
   text-decoration: none;
-  color: #36A9E1;
+  color: #ffffff;
 }
 ul.dialog-tabs li a.active {
   height: 35px;
   line-height: 34px;
-  border: 1px solid #dddddd;
   border-bottom: none;
-  background-color: white;
-}
-ul.dialog-tabs li a:hover {
-  background-color: #EEE;
+  background-color: #02a1f2;
+  color: #ffffff;
 }
 ul.dialog-tabs li.right {
   float: right;
@@ -5914,28 +5912,17 @@ ul.dialog-tabs .withEndContract .endContractReasonList,
 ul.dialog-tabs .withEndContract .arrow {
   float: right;
   width: 80px;
-  border: 1px solid rgba(0, 0, 0, 0.4);
-  color: #4c4c4c;
+  border: 1px solid #7f7f80;
+  color: #1a2227;
   margin: 0;
   padding: 2px 6px;
   line-height: 13px;
   font-size: 13px;
   text-align: center;
   text-decoration: none;
-  background-color: #c6c6c6;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#e8e8e8), to(#c6c6c6));
-  background-image: -webkit-linear-gradient(top, #e8e8e8, #c6c6c6);
-  background-image: -moz-linear-gradient(top, #e8e8e8, #c6c6c6);
-  background-image: -ms-linear-gradient(top, #e8e8e8, #c6c6c6);
-  background-image: -o-linear-gradient(top, #e8e8e8, #c6c6c6);
-  background-image: linear-gradient(to bottom, #e8e8e8, #c6c6c6);
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px;
   border-radius: 3px;
-  -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(255, 255, 255, 0.8) inset;
-  -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(255, 255, 255, 0.8) inset;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(255, 255, 255, 0.8) inset;
-  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
   -webkit-font-smoothing: antialiased;
   outline: none;
   height: 15px;
@@ -5955,13 +5942,6 @@ ul.dialog-tabs .withEndContract .arrow {
 }
 ul.dialog-tabs .withEndContract .endContractReasonList:hover,
 ul.dialog-tabs .withEndContract .arrow:hover {
-  background-color: #c1c1c1;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#e3e3e3), to(#c1c1c1));
-  background-image: -webkit-linear-gradient(top, #e3e3e3, #c1c1c1);
-  background-image: -moz-linear-gradient(top, #e3e3e3, #c1c1c1);
-  background-image: -ms-linear-gradient(top, #e3e3e3, #c1c1c1);
-  background-image: -o-linear-gradient(top, #e3e3e3, #c1c1c1);
-  background-image: linear-gradient(to bottom, #e3e3e3, #c1c1c1);
   cursor: pointer;
   background-position: 0;
 }
@@ -6010,7 +5990,7 @@ ul.dialog-tabs .withEndContract .arrow {
 }
 ul.chart-tabs {
   height: 35px;
-  border-bottom: 1px solid #dddddd;
+  border-bottom: 1px solid #7f7f80;
   margin: 10px -20px 0 0;
   padding: 0 20px;
 }
@@ -6027,17 +6007,14 @@ ul.chart-tabs li a {
   text-align: center;
   line-height: 35px;
   text-decoration: none;
-  color: #36A9E1;
+  color: #ffffff;
 }
 ul.chart-tabs li a.active {
   height: 35px;
   line-height: 34px;
-  border: 1px solid #dddddd;
   border-bottom: none;
-  background-color: white;
-}
-ul.chart-tabs li a:hover {
-  background-color: #EEE;
+  background-color: #02a1f2;
+  color: #ffffff;
 }
 ul.chart-tabs li.right {
   float: right;
@@ -6065,28 +6042,17 @@ ul.chart-tabs .withEndContract .endContractReasonList,
 ul.chart-tabs .withEndContract .arrow {
   float: right;
   width: 80px;
-  border: 1px solid rgba(0, 0, 0, 0.4);
-  color: #4c4c4c;
+  border: 1px solid #7f7f80;
+  color: #1a2227;
   margin: 0;
   padding: 2px 6px;
   line-height: 13px;
   font-size: 13px;
   text-align: center;
   text-decoration: none;
-  background-color: #c6c6c6;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#e8e8e8), to(#c6c6c6));
-  background-image: -webkit-linear-gradient(top, #e8e8e8, #c6c6c6);
-  background-image: -moz-linear-gradient(top, #e8e8e8, #c6c6c6);
-  background-image: -ms-linear-gradient(top, #e8e8e8, #c6c6c6);
-  background-image: -o-linear-gradient(top, #e8e8e8, #c6c6c6);
-  background-image: linear-gradient(to bottom, #e8e8e8, #c6c6c6);
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px;
   border-radius: 3px;
-  -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(255, 255, 255, 0.8) inset;
-  -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(255, 255, 255, 0.8) inset;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(255, 255, 255, 0.8) inset;
-  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
   -webkit-font-smoothing: antialiased;
   outline: none;
   height: 15px;
@@ -6105,13 +6071,6 @@ ul.chart-tabs .withEndContract .arrow {
 }
 ul.chart-tabs .withEndContract .endContractReasonList:hover,
 ul.chart-tabs .withEndContract .arrow:hover {
-  background-color: #c1c1c1;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#e3e3e3), to(#c1c1c1));
-  background-image: -webkit-linear-gradient(top, #e3e3e3, #c1c1c1);
-  background-image: -moz-linear-gradient(top, #e3e3e3, #c1c1c1);
-  background-image: -ms-linear-gradient(top, #e3e3e3, #c1c1c1);
-  background-image: -o-linear-gradient(top, #e3e3e3, #c1c1c1);
-  background-image: linear-gradient(to bottom, #e3e3e3, #c1c1c1);
   cursor: pointer;
   background-position: 0;
 }
@@ -6375,11 +6334,11 @@ h3.dashboard {
 }
 #health a.health1,
 .health-wrapper a.health1 {
-  background-color: green;
+  background-color: #96d085;
 }
 #health a.health2,
 .health-wrapper a.health2 {
-  background-color: yellow;
+  background-color: #ffa500;
 }
 #health a.health3,
 .health-wrapper a.health3 {
@@ -6471,8 +6430,21 @@ span.inprogress {
 .stageSelect.closed,
 span.closed,
 .stageSelect.done,
-span.done {
-  color: #00af00;
+span.done,
+.stageSelect.unDone,
+span.unDone {
+  display: block;
+  background-color: #96d085;
+  color: #ffffff;
+  text-align: center;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+  padding: 2px 5px;
+}
+.stageSelect.unDone,
+span.unDone {
+  background-color: #ffa500;
 }
 .form-holder form .task-info {
   clear: both;
@@ -7432,7 +7404,7 @@ input::-webkit-inner-spin-button {
   display: none;
 }
 .h2 {
-  color: #36a9e1;
+  color: #02a1f2;
   font-size: 1.3em;
   padding: 5px 0;
 }
@@ -8067,8 +8039,8 @@ textarea#editInput {
   font-size: 14px;
   line-height: 1.42857143;
   color: #555;
-  background: #fff none;
-  border: 1px solid #ababab;
+  background: inherit;
+  border: 1px solid #7f7f80;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   -webkit-transition: border-color ease-in-out 0.15s, -webkit-box-shadow ease-in-out 0.15s;
@@ -8080,6 +8052,9 @@ textarea#editInput {
   position: absolute;
   top: 6px;
   left: 5px;
+}
+.search-field span:before {
+  color: #d5d5d5;
 }
 .search-field .search-content {
   position: absolute;
@@ -8213,13 +8188,13 @@ textarea#editInput {
 /**-**/
 .drop-down-filter {
   box-sizing: content-box;
-  font-family: "Lucida Grande", Helvetica, Verdana, Arial, sans-serif;
+  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
   padding: 5px 10px;
   position: absolute;
   z-index: 10;
   width: calc(100% - 22px);
-  background-color: #f9f9f9;
-  border: 1px solid #c0c0c0;
+  background-color: #67809f;
+  border: 1px solid #67809f;
   right: 0;
   top: calc(100% - 3px);
 }
@@ -8241,7 +8216,7 @@ textarea#editInput {
 .drop-down-filter #filtersContent .filterGroup {
   overflow: hidden;
   text-align: center;
-  border: 1px solid #e2e2e2;
+  border: 1px solid #7f7f80;
   background-color: white;
   border-radius: 5px;
   margin: 5px;
@@ -8264,7 +8239,7 @@ textarea#editInput {
   content: '\2713';
 }
 .drop-down-filter #filtersContent .filterGroup li:not(.checkedValue):hover:before {
-  color: #36a9e1;
+  color: #02a1f2;
 }
 .drop-down-filter #filtersContent .filterGroup li:not(.checkedValue):before,
 .drop-down-filter #filtersContent .filterGroup li.checkedValue:before,
@@ -8273,7 +8248,7 @@ textarea#editInput {
 }
 .drop-down-filter #filtersContent .filterGroup li:hover,
 .drop-down-filter #filtersContent .filterGroup li.checkedValue {
-  background-color: #36a9e1;
+  background-color: #02a1f2;
   color: white;
 }
 .drop-down-filter #filtersContent .filterGroup .filterValues {
@@ -8535,11 +8510,11 @@ textarea#editInput {
 }
 #favoritesContent .filters:hover {
   color: white;
-  background-color: #36a9e1;
+  background-color: #02a1f2;
 }
 #favoritesContent .checkedValue {
   color: white;
-  background-color: #36a9e1;
+  background-color: #02a1f2;
 }
 .forFilterIcons {
   float: left;
