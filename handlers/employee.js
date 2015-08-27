@@ -217,6 +217,30 @@ var Employee = function (models) {
 /**
  * __Type__ `GET`
  *
+ * Base ___url___ for build __requests__ is `http:/192.168.88.133:8089/getSalesPerson`
+ *
+ * This __method__ allows to get Employees that can be sales persons.
+ * @example {
+ *   "data": [
+ *       {
+ *           "_id": "55b92ad221e4b7c400000030",
+ *           "name": {
+ *               "first": "Alex",
+ *               "last": "Alex"
+ *           },
+ *           "fullName": "Alex Alex",
+ *           "id": "55b92ad221e4b7c400000030"
+ *       },
+ *       ...........
+ *       ]
+ *     }
+ *
+ * @method getSalesPerson
+ * @instance
+ */
+/**
+ * __Type__ `GET`
+ *
  * Base ___url___ for build __requests__ is `http:/192.168.88.133:8089/Employees/kanban`
  *
  * This __method__ allows get all Employees for `kanban` viewType.
