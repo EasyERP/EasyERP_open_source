@@ -98,7 +98,7 @@ var Employee = function (models) {
 /**
  * __Type__ `GET`
  *
- * Base ___url___ for build __requests__ is `http:/192.168.88.122:8089/Employees/form/:id`
+ * Base ___url___ for build __requests__ is `http:/192.168.88.133:8089/Employees/form/:id`
  *
  * This __method__ allows get all Employees for `form` viewType.
  * @method Employees
@@ -109,7 +109,115 @@ var Employee = function (models) {
 /**
  * __Type__ `GET`
  *
- * Base ___url___ for build __requests__ is `http:/192.168.88.122:8089/Employees/kanban`
+ * Base ___url___ for build __requests__ is `http:/192.168.88.133:8089/Birthdays`
+ *
+ * This __method__ allows get all birthdays of Employees for current week, next week and current month.
+ * @example {
+ *   "data": {
+ *       "weekly": [
+ *           {
+ *               "daysForBirth": 3,
+ *               "_id": "55b92ad221e4b7c40f000047",
+ *               "dateBirth": "2015-08-30T00:00:00.000Z",
+ *               "age": 26,
+ *               "jobPosition": {
+ *                   "_id": "55b92acf21e4b7c40f000027",
+ *                   "name": "Senior iOS"
+ *                   },
+ *               "department": {
+ *                   "_id": "55b92ace21e4b7c40f00000f",
+ *                   "name": "iOS"
+ *                   },
+ *               "workPhones": {
+ *                   "mobile": "+38 050 10 86 444"
+ *                   },
+ *               "name": {
+ *                   "last": "Khymych",
+ *                   "first": "Ilya"
+ *                   }
+ *            }
+ *         ]
+ *       }
+ *   }
+ *
+ * @method Birthdays
+ * @instance
+ */
+/**
+ * __Type__ `GET`
+ *
+ * Base ___url___ for build __requests__ is `http:/192.168.88.133:8089/getForDdByRelatedUser`
+ *
+ * This __method__ allows get related Employees for current user.
+ * @example {
+ *   "data": [
+ *       {
+ *           "_id": "55b92ad221e4b7550f00004f",
+ *           "name": {
+ *               "last": "Alex",
+ *               "first": "Alex"
+ *           },
+ *           "fullName": "Alex Alex",
+ *           "id": "55b92ad221e4b7550f00004f"
+ *        }
+ *      ]
+ *   }
+ *
+ * @method getForDdByRelatedUser
+ * @instance
+ */
+/**
+ * __Type__ `POST`
+ *
+ * Base ___url___ for build __requests__ is `http:/192.168.88.133:8089/Employees`
+ *
+ * This __method__ allows create new Employee.
+ * @example {
+ *   "success": "A new Employees create success",
+ *   "result": {
+ *         .......//model of Employee
+ *         }
+ *   }
+ * @method Employees
+ * @property {JSON} Object - Object with properties for new Employee
+ * @instance
+ */
+/**
+ * __Type__ `PATCH`
+ *
+ * Base ___url___ for build __requests__ is `http:/192.168.88.133:8089/Employees/:id`
+ *
+ * This __method__ allows to update only modified fields in Employee by id.
+ * @example {
+ *   "success": "Employees updated",
+ *   "result": {
+ *       "_id": "55deaef309b1c0e30a000006",
+ *       .......//model of Employee
+ *       }
+ *   }
+ *
+ * @method Employees
+ * @param {String} id - Id of Employee
+ * @instance
+ */
+/**
+ * __Type__ `DELETE`
+ *
+ * Base ___url___ for build __requests__ is `http:/192.168.88.133:8089/Employees/:id`
+ *
+ * This __method__ allows to delete Employee by id.
+ * @example {
+ *   "success": "Employees removed"
+ *  }
+ *
+ * @method Employees
+ * @param {String} id - Id of Employee
+ * @instance
+ */
+/**
+ * __Type__ `GET`
+ *
+ * Base ___url___ for build __requests__ is `http:/192.168.88.133:8089/Employees/kanban`
  *
  * This __method__ allows get all Employees for `kanban` viewType.
  * @method Employees
@@ -119,9 +227,9 @@ var Employee = function (models) {
 /**
  * __Type__ `GET`
  *
- * Base ___url___ for build __requests__ is `http:/192.168.88.122:8089/Employees/list`
+ * Base ___url___ for build __requests__ is `http:/192.168.88.133:8089/Employees/list`
  *
- * This __method__ allows get all Employees for `list` viewType.
+ * This __method__ allows get all Employees for `list` viewType.33
  *
  * @example
  *        {"data": [{
