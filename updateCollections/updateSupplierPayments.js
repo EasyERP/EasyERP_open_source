@@ -6,8 +6,52 @@ var ObjectId = mongoose.Schema.Types.ObjectId;
 require('../models/index.js');
 var async = require('async');
 
-var PaymentSchema = mongoose.Schemas['wTrackPayment'];
-var PaymentSchemaOld = mongoose.Schemas['Payment'];
+var paymentSchema = new mongoose.Schema({
+    forSale:{type: Boolean, default: true},
+    invoice: {type: ObjectId, ref: 'Invoice', default: null},
+    supplier: {type: ObjectId, ref: 'Employees', default: null},
+    paidAmount: {type: Number, default: 0},
+    paymentMethod: {
+        _id: {type: ObjectId, ref: 'PaymentMethod', default: null},
+        name: String
+    },
+    date: {type: Date, default: Date.now},
+    name: {type: String, default: '', unique: true},
+    period: {type: ObjectId, ref: 'Destination', default: null},
+    paymentRef: {type: String, default: ''},
+    workflow: {type: String, enum: ['Draft', 'Paid'], default: 'Draft'},
+    differenceAmount: {type: Number, default: 0},
+    whoCanRW: {type: String, enum: ['owner', 'group', 'everyOne'], default: 'everyOne'},
+    month: {type: Number},
+    year:  {type: Number},
+    bonus: {type: Boolean},
+
+    groups: {
+        owner: {type: ObjectId, ref: 'Users', default: null},
+        users: [{type: ObjectId, ref: 'Users', default: null}],
+        group: [{type: ObjectId, ref: 'Department', default: null}]
+    },
+
+    createdBy: {
+        user: {type: ObjectId, ref: 'Users', default: null},
+        date: {type: Date, default: Date.now}
+    },
+    editedBy: {
+        user: {type: ObjectId, ref: 'Users', default: null},
+        date: {type: Date, default: Date.now}
+    }
+}, {collection: 'Payment'});
+
+mongoose.model('PaymentPayOut', paymentSchema);
+
+if (!mongoose.Schemas) {
+    mongoose.Schemas = {};
+}
+
+mongoose.Schemas['Payment'] = paymentSchema;
+
+var wTrackPayOutSchema = mongoose.Schemas['wTrackPayOut'];
+var PaymentSchema = mongoose.Schemas['Payment'];
 
 var dbObject = mongoose.createConnection('localhost', 'weTrack');
 dbObject.on('error', console.error.bind(console, 'connection error:'));
@@ -15,10 +59,10 @@ dbObject.once('open', function callback() {
     console.log("Connection to weTrack is success");
 });
 
-var Payment = dbObject.model("wTrackPayment", PaymentSchema);
-var PaymentOld = dbObject.model("Payment", PaymentSchemaOld);
+var wTrackPayOut = dbObject.model("wTrackPayOut", wTrackPayOutSchema);
+var Payment = dbObject.model("PaymentPayOut", PaymentSchema);
 
-var query = PaymentOld.find({forSale: false, bonus: true})
+var query = Payment.find({forSale: false, bonus: true})
     .populate('supplier', 'name')
     .lean();
 
@@ -34,15 +78,15 @@ query.exec(function (error, _res) {
             objectToSave = {
                 supplier: payment.supplier ? {
                     _id: payment.supplier._id,
-                    name: (payment.supplier.name.first + ' ' +  payment.supplier.name.last)
+                    fullName: (payment.supplier.name.first + ' ' +  payment.supplier.name.last)
                 } : {
                     _id: null,
-                    name: ''
+                    fullName: ''
                 }
             };
         }
 
-        Payment.update({_id: payment._id}, objectToSave, callback);
+        wTrackPayOut.update({_id: payment._id}, objectToSave, callback);
     }, function (err) {
         if (err) {
             return console.dir(err);

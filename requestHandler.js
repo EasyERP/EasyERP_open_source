@@ -62,12 +62,21 @@ var requestHandler = function (event, mainDb) {
     });
     //if name was updated, need update related wTrack, or other models
 
-    event.on('updateName', function (id, targetModel, searchField, fieldName, fieldValue) {
+    event.on('updateName', function (id, targetModel, searchField, fieldName, fieldValue, fieldInArray) {
         var sercObject = {};
         var updateObject = {};
+        var key = '';
 
         sercObject[searchField] = id;
-        updateObject[fieldName] = fieldValue;
+        if (fieldInArray) {
+            key = fieldInArray +
+
+            updateObject['$set'] = {
+                fieldInArray 'employeesArray.$.employee.name': fieldValue
+            }
+        } else {
+            updateObject[fieldName] = fieldValue;
+        }
 
         targetModel.update(sercObject, updateObject, {multi: true}, function(err){
             if(err){

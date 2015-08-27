@@ -1018,6 +1018,12 @@ var Employee = function (event, models) {
         var Invoice;
         var PaymentSchema;
         var Payment;
+        var SalaryCashSchema;
+        var SalaryCash;
+        var SalarySchema;
+        var Salary;
+        var VacationSchema;
+        var Vacation;
 
         var fullName;
 
@@ -1034,6 +1040,16 @@ var Employee = function (event, models) {
             PaymentSchema = mongoose.Schemas['wTrackPayment'];
             Payment = models.get(dbName, 'wTrackPayment', PaymentSchema);
 
+            SalarySchema = mongoose.Schemas['Salary'];
+            Salary = models.get(dbName, 'Salary', SalarySchema);
+
+            SalaryCashSchema = mongoose.Schemas['SalaryCash'];
+            SalaryCash = models.get(dbName, 'SalaryCash', SalaryCashSchema);
+
+            VacationSchema = mongoose.Schemas['Vacation'];
+            Vacation = models.get(dbName, 'Vacation', VacationSchema);
+
+
             fullName = result.name.last ? (result.name.first + ' ' + result.name.last) : result.name.first;
 
             event.emit('updateName', _id, EmployeeModel, 'manager._id', 'manager.name', fullName);
@@ -1041,7 +1057,9 @@ var Employee = function (event, models) {
             event.emit('updateName', _id, ProjectModel, 'customer._id', 'customer.name', fullName);
             event.emit('updateName', _id, Invoice, 'salesPerson._id', 'salesPerson.name', fullName);
             event.emit('updateName', _id, Payment, 'invoice.assigned._id', 'invoice.assigned.name', fullName);
-
+            event.emit('updateName', _id, Salary, 'employee._id', 'employee.name', fullName);
+            event.emit('updateName', _id, SalaryCash, 'employeesArray.employee._id', 'employeesArray.employee.name', fullName);
+            event.emit('updateName', _id, Vacation, 'employee._id', 'employee.name', fullName);
         }
     };
 
