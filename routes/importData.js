@@ -420,7 +420,9 @@ module.exports = function (models) {
                         }
 
                         if (key === 'workflow') {
-                            objectToSave[key] = workflows[fetchedProject[msSqlKey]][0];
+                            objectToSave[key] = {};
+                            objectToSave[key]['_id'] = workflows[fetchedProject[msSqlKey]][0];
+                            objectToSave[key]['name'] = workflows[fetchedProject[msSqlKey]];
                         } else {
                             objectToSave[key] = fetchedProject[msSqlKey];
                         }
@@ -462,8 +464,12 @@ module.exports = function (models) {
                             customerResult: customerFinder,
                             employeeResult: employeeFinder
                         }, function (err, result) {
-                            objectToSave.customer = result.customerResult ? result.customerResult._id : null;
-                            objectToSave.projectmanager = result.employeeResult ? result.employeeResult._id : null;
+                            objectToSave.customer = {};
+                            objectToSave.customer._id = result.customerResult ? result.customerResult._id : null;
+                            objectToSave.customer.name = result.customerResult ? result.customerResult.name.first +  result.customerResult.name.last : null;
+                            objectToSave.projectmanager = {};
+                            objectToSave.projectmanager._id = result.employeeResult ? result.employeeResult._id : null;
+                            objectToSave.projectmanager.name = result.employeeResult ? result.employeeResult.name.first +  result.employeeResult.name.last : null;
 
                             model = new Project(objectToSave);
                             model.save(function (err, project) {
