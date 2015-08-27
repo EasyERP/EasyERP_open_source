@@ -1,6 +1,4 @@
-/**
- * Created by ����� on 23.06.2015.
- */
+
 var mongoose = require('mongoose');
 var async = require('async');
 

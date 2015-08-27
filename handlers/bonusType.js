@@ -1,6 +1,4 @@
-/**
- * Created by Liliya_Pikiner on 7/1/2015.
- */
+
 var mongoose = require('mongoose');
 
 var BonusType = function (models) {
