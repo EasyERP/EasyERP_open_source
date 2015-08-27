@@ -369,6 +369,7 @@ module.exports = function (models) {
 
             var projectionObject = {
                 status: 1,
+                name: 1,
                 _id: 1
             };
 
@@ -421,8 +422,8 @@ module.exports = function (models) {
 
                         if (key === 'workflow') {
                             objectToSave[key] = {};
-                            objectToSave[key]['_id'] = workflows[fetchedProject[msSqlKey]][0];
-                            objectToSave[key]['name'] = workflows[fetchedProject[msSqlKey]];
+                            objectToSave[key]['_id'] = workflows[fetchedProject[msSqlKey]][0]._id;
+                            objectToSave[key]['name'] = workflows[fetchedProject[msSqlKey]][0].name;
                         } else {
                             objectToSave[key] = fetchedProject[msSqlKey];
                         }
@@ -443,7 +444,7 @@ module.exports = function (models) {
                         };
 
                         function customerFinder(callback) {
-                            Customer.findOne(customerQuery, {_id: 1}, function (err, customer) {
+                            Customer.findOne(customerQuery, function (err, customer) {
                                 if (err) {
                                     return callback(err);
                                 }
@@ -452,7 +453,7 @@ module.exports = function (models) {
                         };
 
                         function employeeFinder(callback) {
-                            Employee.findOne(employeeQuery, {_id: 1}, function (err, employee) {
+                            Employee.findOne(employeeQuery, function (err, employee) {
                                 if (err) {
                                     return callback(err);
                                 }
@@ -464,8 +465,12 @@ module.exports = function (models) {
                             customerResult: customerFinder,
                             employeeResult: employeeFinder
                         }, function (err, result) {
-                            objectToSave.customer = result.customerResult ? result.customerResult._id : null;
-                            objectToSave.projectmanager = result.employeeResult ? result.employeeResult._id : null;
+                            objectToSave.customer = {};
+                            objectToSave.customer._id = result.customerResult ? result.customerResult._id : null;
+                            objectToSave.customer.name = result.customerResult ? result.customerResult.name.first + ' ' + result.customerResult.name.last : null;
+                            objectToSave.projectmanager = {};
+                            objectToSave.projectmanager._id = result.employeeResult ? result.employeeResult._id : null;
+                            objectToSave.projectmanager.name = result.employeeResult ? result.employeeResult.name.first + ' ' + result.employeeResult.name.last : null;
 
                             model = new Project(objectToSave);
                             model.save(function (err, project) {
@@ -569,9 +574,9 @@ module.exports = function (models) {
                         function projectFinder(callback) {
                             Project
                                 .findOne(projectQuery)
-                                .populate('projectmanager')
-                                .populate('customer')
-                                .populate('workflow')
+                                .populate('projectmanager._id')
+                                .populate('customer._id')
+                                .populate('workflow._id')
                                 .lean()
                                 .exec(function (err, project) {
                                     if (err) {
@@ -769,8 +774,8 @@ module.exports = function (models) {
                         function projectFinder(callback) {
                             Project
                                 .findOne(projectQuery)
-                                .populate('projectmanager')
-                                .populate('customer')
+                                .populate('projectmanager._id')
+                                .populate('customer._id')
                                 .lean()
                                 .exec(function (err, project) {
                                     if (err) {
@@ -805,9 +810,26 @@ module.exports = function (models) {
                                 });
                             }
                             if (result.project) {
-                                objectToSave.supplier = result.project.customer ? result.project.customer._id : null;
-                                objectToSave.salesPerson = result.project.projectmanager ? result.project.projectmanager._id : null;
-                                objectToSave.project = result.project._id;
+                                objectToSave.supplier = result.project.customer ? {
+                                    _id: result.project.customer._id,
+                                    name: result.project.customer.name
+                                } : {
+                                    _id: null,
+                                    name: ''
+                                };
+
+                                objectToSave.salesPerson = result.project.projectmanager ? {
+                                    _id: result.project.projectmanager._id,
+                                    name: result.project.projectmanager.name
+                                } : {
+                                    _id: null,
+                                    name: ''
+                                };
+
+                                objectToSave.project = {
+                                    _id: result.project._id,
+                                    name: result.project.projectName
+                                };
                             }
 
 
@@ -933,14 +955,14 @@ module.exports = function (models) {
                         function invoiceFinder(callback) {
                             Invoice
                                 .findOne(invoiceQuery)
-                                .populate('project')
-                                .populate('salesPerson', '_id name')
+                                .populate('project._id')
+                                .populate('salesPerson._id', '_id name')
                                 .exec(function (err, invoice) {
                                     if (err) {
                                         return callback(err);
                                     }
                                     Customer.populate(invoice.project, {
-                                        path: 'customer',
+                                        path: 'customer._id',
                                         options: {lean: true}
                                     }, function (err, customer) {
                                         if (err) {
@@ -969,8 +991,8 @@ module.exports = function (models) {
                                     }
                                 };
                                 objectToSave.supplier = {
-                                    _id: _invoice.project.customer._id,
-                                    fullName: _invoice.project.customer && _invoice.project.customer.name ? _invoice.project.customer.name.first + ' ' + _invoice.project.customer.name.last : ''
+                                    _id: _invoice.project.customer ? _invoice.project.customer._id : null,
+                                    fullName: _invoice.project.customer && _invoice.project.customer.name ? _invoice.project.customer.name : ''
                                 };
 
                                 objectToSave.differenceAmount = _invoice.paymentInfo.balance / 100;
@@ -1510,7 +1532,30 @@ module.exports = function (models) {
                             department: departmentFinder,
                             jobPosition: jobPositionFinder
                         }, function (err, result) {
-                            objectToSave.department = result.department ? result.department._id : null;
+                            objectToSave.department;
+                           if(result.department){
+                               objectToSave.department = {
+                                   _id: result.department._id,
+                                   name: result.department.departmentName
+                               }
+                           } else {
+                               objectToSave.department = {
+                                   _id: null,
+                                   name:''
+                               }
+                           }
+
+                            if(result.jobPosition){
+                               objectToSave.jobPosition = {
+                                   _id: result.jobPosition._id,
+                                   name: result.jobPosition.name
+                               }
+                           } else {
+                               objectToSave.jobPosition = {
+                                   _id: null,
+                                   name:''
+                               }
+                           }
                             objectToSave.jobPosition = result.jobPosition ? result.jobPosition._id : null;
 
                             model = new Employee(objectToSave);
@@ -1833,7 +1878,7 @@ module.exports = function (models) {
 
                         Employee.findOne(employeeQuery,
                             {_id: 1, name: 1, department: 1})
-                            .populate('department')
+                            .populate('department._id')
                             .lean()
                             .exec(function (err, employee) {
                                 if (err) {

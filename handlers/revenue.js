@@ -845,7 +845,7 @@ var wTrack = function (models) {
 
                     Employee.populate(projects, {
                         path: '_id',
-                        match: {'department._id': '55b92ace21e4b7c40f000014'},
+                        match: {'department._id': '55df060534c1478027000014'},
                         select: '_id name',
                         options: {
                             lean: true
@@ -954,23 +954,18 @@ var wTrack = function (models) {
                         employee[dateStr] = [];
 
                         for(var m  = groupedEmployee.root.length; m--; ){
-                            bonusObject = {};
+                            bonusObject = {
+                                total: 0
+                            };
                             totalByBonus = 0;
 
                             for(var k = groupedWtracks[j].root.length; k--;) {
 
                                 for (var l = groupedEmployee.root[m].projects.length; l--;){
                                     if (groupedWtracks[j].root[k]._id.toString() === groupedEmployee.root[m].projects[l]._id.toString()) {
-                                        //ToDo calculate total
                                         totalByBonus += (groupedEmployee.root[m].bonus.value * groupedWtracks[j].root[k].revenue / 100) / 100;
                                     }
                                 }
-
-                               /* if(_employee._id.toString() === '55b92ad221e4b7c40f00004a'){
-                                    console.log(groupedEmployee.root[m].bonus.name, dateStr);
-                                }
-                                console.log('======================================================');*/
-
 
                             }
                             bonusObject[groupedEmployee.root[m].bonus.name] = totalByBonus;
