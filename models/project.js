@@ -54,6 +54,7 @@ module.exports = (function () {
         health: { type: Number, default: 1 },
         ID: Number,
         bonus: [{
+            _id: false,
             employeeId: {
                 type: ObjectId,
                 ref: 'Employees'

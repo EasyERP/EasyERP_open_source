@@ -177,7 +177,8 @@ describe("BDD for revenue", function () {  // Runs once before all tests start.
                     return done(err);
                 }
 
-                expect(body).to.be.instanceOf(Array);
+                expect(body).to.be.instanceOf(Object);
+                expect(Object.keys(body)).to.be.least(1);
                 done();
             });
 
