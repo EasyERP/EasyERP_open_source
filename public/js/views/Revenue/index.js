@@ -1108,8 +1108,9 @@ define([
                     monthArr.forEach(function (monthResult) {
 
                         if (!(monthResult.year * 100 + monthResult.month in bySalesPerMonth)) {
-                            bySalesPerMonth[monthResult.year * 100 + monthResult.month] = tempPerMonth[monthResult.year * 100 + monthResult.month]['total'];
-                        } else {
+                            if (tempPerMonth[monthResult.year * 100 + monthResult.month]){
+                                bySalesPerMonth[monthResult.year * 100 + monthResult.month] = tempPerMonth[monthResult.year * 100 + monthResult.month]['total'];
+                            }                        } else {
                             bySalesPerMonth[monthResult.year * 100 + monthResult.month] += tempPerMonth[monthResult.year * 100 + monthResult.month]['total'];
                         }
                     });
@@ -1308,8 +1309,9 @@ define([
                     monthArr.forEach(function (monthResult) {
 
                         if (!(monthResult.year * 100 + monthResult.month in bySalesPerMonth)) {
-                            bySalesPerMonth[monthResult.year * 100 + monthResult.month] = tempPerMonth[monthResult.year * 100 + monthResult.month]['total'];
-                        } else {
+                            if (tempPerMonth[monthResult.year * 100 + monthResult.month]){
+                                bySalesPerMonth[monthResult.year * 100 + monthResult.month] = tempPerMonth[monthResult.year * 100 + monthResult.month]['total'];
+                            }                        } else {
                             bySalesPerMonth[monthResult.year * 100 + monthResult.month] += tempPerMonth[monthResult.year * 100 + monthResult.month]['total'];
                         }
                     });
