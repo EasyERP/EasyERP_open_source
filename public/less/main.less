@@ -2552,8 +2552,8 @@ input, textarea, select {
 
 .newSelectList {
   position: absolute !important;
-  border: solid 1px #898989;
-  background-color: white;
+  border: solid 1px @border-color-main;
+  background-color: @bg-main;
   padding: 3px 0;
   z-index: 100;
   .box-shadow(0, 1px, 3px, rgba(150, 150, 150, 0.7));
@@ -2591,7 +2591,7 @@ input, textarea, select {
     }
 
     &:hover {
-      background-color: #EAF0F7 !important;
+      background-color: lighten(@bg-main, 5%) !important;
       border: 0 !important;
       color: #FF5A00 !important;
     }
@@ -5986,7 +5986,7 @@ textarea#editInput {
       &.activeGroup .groupName,
       & .groupName:hover {
         color: white;
-        background-color: @blue;
+        background-color: @bg-hover-drop-down-color;
       }
       .groupName {
         cursor: pointer;
