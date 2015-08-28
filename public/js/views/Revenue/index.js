@@ -262,6 +262,9 @@ define([
             this.fetchBySales();
             this.fetchByDeps();
             this.fetchhoursByDep();
+            this.fetchAllBonusByMonth();
+            this.fetchUncalcBonus();
+            this.fetchCalcBonus();
 
             this.model.set('weeksArr', weeksArr);
 
@@ -1014,15 +1017,15 @@ define([
             var target = $(e.target);
             var tergetText = target.prev().text();
             var id = target.closest('div').attr('data-value');
-            var bonusRows = $.find("[data-value='" + id + "bonus']");
-            var bonusCells = this.$el.find("[data-id='" + id + "']");
-            var bonus = bonusCells.find('.divCell .forBonus');
+            var dataVal = target.closest('div').attr('data-cont');
+            var table = this.$el.find('#' + dataVal);
+            var bonusRows = $(table).find("[data-value='" + id + "bonus']");
 
-            bonusRows.forEach(function (bonusRow) {
-                $(bonusRow).toggle();
-            });
+            var bonusCells = $(table).find("#" + id + " .divRow");
 
-            $(bonus).toggle();
+            $(bonusCells).toggle();
+            $(bonusRows).toggle();
+            $(bonusRows).children().toggle();
 
             if (tergetText === '+'){
                 target.prev().text('-');
@@ -1035,7 +1038,7 @@ define([
             var self = this;
             var allBonus = this.model.get('allBonusByMonth');
             var monthArr = this.monthArr;
-            var target = self.$el.find('#tableAllBonusByMonth');
+            var target = self.$el.find('#totalAllBonus');
             var targetTotal;
             var monthContainer;
             var bySalesPerMonth = {};
@@ -1043,7 +1046,6 @@ define([
             var globalTotal = 0;
             var employee = [];
             var bonusRows;
-            var bonus;
 
             async.each(allBonus, function (element, cb) {
                 var obj = {};
@@ -1085,6 +1087,7 @@ define([
                     globalTotal += total;
 
                     employeeContainer.html(self.allBonusByMonth({
+                        content: 'totalAllBonus',
                         bonus: employee,
                         monthArr: monthArr,
                         byMonthData: element,
@@ -1113,20 +1116,19 @@ define([
                 }
 
                 targetTotal.html(self.perMonthForAllBonus({
+                    content: 'totalAllBonus',
                     monthArr: monthArr,
                     bySalesByDepPerWeek: bySalesPerMonth,
                     globalTotal: globalTotal.toFixed(2),
                     totalName: 'Bonus Total'
                 }));
 
-                bonusRows = $.find(".subRow");
-                bonus = $.find('.divCell .forBonus');
+                bonusRows = $.find("[data-val='totalAllBonus']");
 
                 bonusRows.forEach(function (bonusRow) {
                     $(bonusRow).toggle();
                 });
 
-                $(bonus).toggle();
                 return false;
             });
         },
@@ -1135,7 +1137,7 @@ define([
             var self = this;
             var allBonus = this.model.get('uncalcBonus');
             var monthArr = this.monthArr;
-            var target = self.$el.find('#tableUncalcBonus');
+            var target = self.$el.find('#totalUncalcBonus');
             var targetTotal;
             var monthContainer;
             var bySalesPerMonth = {};
@@ -1143,7 +1145,6 @@ define([
             var globalTotal = 0;
             var employee = [];
             var bonusRows;
-            var bonus;
 
             async.each(allBonus, function (element, cb) {
                 var obj = {};
@@ -1185,6 +1186,7 @@ define([
                     globalTotal += total;
 
                     employeeContainer.html(self.allBonusByMonth({
+                        content: 'totalUncalcBonus',
                         bonus: employee,
                         monthArr: monthArr,
                         byMonthData: element,
@@ -1215,20 +1217,19 @@ define([
                 }
 
                 targetTotal.html(self.perMonthForAllBonus({
+                    content: 'totalUncalcBonus',
                     monthArr: monthArr,
                     bySalesByDepPerWeek: bySalesPerMonth,
                     globalTotal: globalTotal.toFixed(2),
                     totalName: 'Uncalc Bonus Total'
                 }));
 
-                bonusRows = $.find(".subRow");
-                bonus = $.find('.divCell .forBonus');
+                bonusRows = $.find("[data-val='totalUncalcBonus']");
 
                 bonusRows.forEach(function (bonusRow) {
                     $(bonusRow).toggle();
                 });
 
-                $(bonus).toggle();
                 return false;
             });
         },
@@ -1237,7 +1238,7 @@ define([
             var self = this;
             var allBonus = this.model.get('calcBonus');
             var monthArr = this.monthArr;
-            var target = self.$el.find('#tableCalcBonus');
+            var target = self.$el.find('#totalCalcBonus');
             var targetTotal;
             var monthContainer;
             var bySalesPerMonth = {};
@@ -1245,7 +1246,6 @@ define([
             var globalTotal = 0;
             var employee = [];
             var bonusRows;
-            var bonus;
 
             async.each(allBonus, function (element, cb) {
                 var obj = {};
@@ -1287,6 +1287,7 @@ define([
                     globalTotal += total;
 
                     employeeContainer.html(self.allBonusByMonth({
+                        content: 'totalCalcBonus',
                         bonus: employee,
                         monthArr: monthArr,
                         byMonthData: element,
@@ -1315,20 +1316,19 @@ define([
                 }
 
                 targetTotal.html(self.perMonthForAllBonus({
+                    content: 'totalCalcBonus',
                     monthArr: monthArr,
                     bySalesByDepPerWeek: bySalesPerMonth,
                     globalTotal: globalTotal.toFixed(2),
                     totalName: 'Calc Bonus Total'
                 }));
 
-                bonusRows = $.find(".subRow");
-                bonus = $.find('.divCell .forBonus');
+                bonusRows = $.find("[data-val='totalCalcBonus']");
 
                 bonusRows.forEach(function (bonusRow) {
                     $(bonusRow).toggle();
                 });
 
-                $(bonus).toggle();
                 return false;
             });
         },

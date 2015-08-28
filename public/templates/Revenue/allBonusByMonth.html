@@ -11,12 +11,12 @@
      <% bonus.forEach(function(oneBonus){ %>
       <% if (byMonthData._id === oneBonus._id) { %>
        <% oneBonus.bonus.forEach(function(bon){ %>
-        <div class="divRow">
+        <div class="divRow" data-val="<%=content%>">
 
          <% if (byMonthData[key] && byMonthData[key][bon] === 0) { %>
-           <span class="divCell forBonus"><%='&nbsp'%></span>
+           <span class="divCell forBonus" ><%='&nbsp'%></span>
          <% } else { %>
-           <span class="divCell forBonus"><%= byMonthData[key] ? byMonthData[key][bon].toFixed(2) : '&nbsp'%></span>
+           <span class="divCell forBonus" ><%= byMonthData[key] ? byMonthData[key][bon].toFixed(2) : '&nbsp'%></span>
          <% } %>
         </div>
       <% }) %>
