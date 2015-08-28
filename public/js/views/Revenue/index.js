@@ -82,11 +82,10 @@ define([
             this.listenTo(this.model, 'change:employeeBySales', this.changeEmployeeBySales);
             this.listenTo(this.model, 'change:hoursByDep', this.changeHoursByDep);
 
-            // this.listenTo(this.model, 'change:allBonus', this.changeAllBonus);
             this.listenTo(this.model, 'change:allBonusByMonth', this.changeAllBonusByMonth);
-            /*            this.listenTo(this.model, 'change:uncalcBonus', this.changeHoursByDep);
-             this.listenTo(this.model, 'change:calcBonus', this.changeHoursByDep);
-             this.listenTo(this.model, 'change:paidBonus', this.changeHoursByDep);
+            this.listenTo(this.model, 'change:uncalcBonus', this.changeUnCalcBonusByMonth);
+            this.listenTo(this.model, 'change:calcBonus', this.changeCalcBonusByMonth);
+             /**this.listenTo(this.model, 'change:paidBonus', this.changeHoursByDep);
              this.listenTo(this.model, 'change:balanceBonus', this.changeHoursByDep);*/
 
             var currentStartWeek = currentWeek - 6;
@@ -193,6 +192,8 @@ define([
             this.fetchEmployeeBySales();
             this.fetchAllBonus();
             this.fetchAllBonusByMonth();
+            this.fetchUncalcBonus();
+            this.fetchCalcBonus();
             /*            this.fetchUncalcBonus();
              this.fetchCalcBonus();
              this.fetchPaidBonus();
@@ -380,7 +381,7 @@ define([
             });
         },
 
-        /*        fetchUncalcBonus: function () {
+        fetchUncalcBonus: function () {
          var self = this;
          var data = this.paidUnpaidDateRange;
 
@@ -402,7 +403,7 @@ define([
          });
          },
 
-         fetchPaidBonus: function () {
+         /*fetchPaidBonus: function () {
          var self = this;
          var data = this.paidUnpaidDateRange;
 
@@ -1130,52 +1131,67 @@ define([
             });
         },
 
-        changeAllBonus: function () {
+        changeUnCalcBonusByMonth: function () {
             var self = this;
-            var allBonus = this.model.get('allBonus');
+            var allBonus = this.model.get('uncalcBonus');
             var monthArr = this.monthArr;
-            var target = self.$el.find('#tableAllBonus');
+            var target = self.$el.find('#tableUncalcBonus');
             var targetTotal;
             var monthContainer;
-
             var bySalesPerMonth = {};
             var tempPerMonth;
             var globalTotal = 0;
+            var employee = [];
+            var bonusRows;
+            var bonus;
 
-            target.html(this.bonusBySalesTemplate({
-                employees: self.employees,
-                content: 'totalAllBonus',
-                className: 'totalBonus',
-                headName: 'All Bonus'
+            async.each(allBonus, function (element, cb) {
+                var obj = {};
+                var keys;
+
+                obj.bonus = {};
+                obj._id = element._id;
+                obj.name = element.name;
+                keys = Object.keys(element);
+
+                keys.forEach(function (key) {
+                    if (typeof element[key] === 'object') {
+                        obj.bonus = Object.keys(element[key]);
+                        obj.bonus.splice(0, 1);
+                    }
+                });
+
+                employee.push(obj);
+            });
+
+
+            target.html(this.allBonusTemplate({
+                employees: employee,
+                content: 'totalUncalcBonus',
+                className: 'totalUncalcBonus',
+                headName: 'Uncalc Bonus'
             }));
-            targetTotal = $(self.$el.find('[data-content="totalAllBonus"]'));
+            targetTotal = $(self.$el.find('[data-content="totalUncalcBonus"]'));
             monthContainer = target.find('.monthContainer');
             monthContainer.html(this.monthsArrayTemplate({monthArr: monthArr}));
 
-            async.each(self.employees, function (employee, cb) {
-                var employeeId = employee._id;
+            async.each(allBonus, function (element, cb) {
+                var employeeId = element._id;
                 var employeeContainer = target.find('[data-id="' + employeeId + '"]');
-
-                var byMonthData;
                 var total;
-                var allBonusBySales;
 
-
-                allBonusBySales = _.find(allBonus, function (el) {
-                    return el._id === employeeId;
-                });
-
-
-                if (allBonusBySales) {
-                    byMonthData = _.groupBy(allBonusBySales.root, 'month');
-                    total = allBonusBySales.total;
+                if (allBonus) {
+                    total = element.total;
                     globalTotal += total;
-                    employeeContainer.html(self.projectBySalesItemsTemplate({
+
+                    employeeContainer.html(self.allBonusByMonth({
+                        bonus: employee,
                         monthArr: monthArr,
-                        byMonthData: byMonthData,
+                        byMonthData: element,
                         total: total
                     }));
                 }
+
                 cb();
             }, function (err) {
 
@@ -1183,24 +1199,136 @@ define([
                     alert(err);
                 }
 
-                for (var i = allBonusBySales.length - 1; i >= 0; i--) {
-                    tempPerMonth = allBonusBySales[i].root;
-                    tempPerMonth.forEach(function (monthResult) {
-                        if (!(monthResult.month in bySalesPerMonth)) {
-                            bySalesPerMonth[monthResult.month] = monthResult.projectCount;
+                for (var i = allBonus.length - 1; i >= 0; i--) {
+                    tempPerMonth = allBonus[i];
+
+                    monthArr.forEach(function (monthResult) {
+
+                        if (!(monthResult.year * 100 + monthResult.month in bySalesPerMonth)) {
+                            if (tempPerMonth[monthResult.year * 100 + monthResult.month]){
+                                bySalesPerMonth[monthResult.year * 100 + monthResult.month] = tempPerMonth[monthResult.year * 100 + monthResult.month]['total'];
+                            }
                         } else {
-                            bySalesPerMonth[monthResult.month] += monthResult.projectCount;
+                            bySalesPerMonth[monthResult.year * 100 + monthResult.month] += tempPerMonth[monthResult.year * 100 + monthResult.month]['total'];
                         }
                     });
                 }
 
-                targetTotal.html(self.bySalesPerMonthIntTemplate({
+                targetTotal.html(self.perMonthForAllBonus({
                     monthArr: monthArr,
                     bySalesByDepPerWeek: bySalesPerMonth,
-                    globalTotal: globalTotal,
-                    totalName: 'Employee Total'
+                    globalTotal: globalTotal.toFixed(2),
+                    totalName: 'Uncalc Bonus Total'
                 }));
 
+                bonusRows = $.find(".subRow");
+                bonus = $.find('.divCell .forBonus');
+
+                bonusRows.forEach(function (bonusRow) {
+                    $(bonusRow).toggle();
+                });
+
+                $(bonus).toggle();
+                return false;
+            });
+        },
+
+        changeCalcBonusByMonth: function () {
+            var self = this;
+            var allBonus = this.model.get('calcBonus');
+            var monthArr = this.monthArr;
+            var target = self.$el.find('#tableCalcBonus');
+            var targetTotal;
+            var monthContainer;
+            var bySalesPerMonth = {};
+            var tempPerMonth;
+            var globalTotal = 0;
+            var employee = [];
+            var bonusRows;
+            var bonus;
+
+            async.each(allBonus, function (element, cb) {
+                var obj = {};
+                var keys;
+
+                obj.bonus = {};
+                obj._id = element._id;
+                obj.name = element.name;
+                keys = Object.keys(element);
+
+                keys.forEach(function (key) {
+                    if (typeof element[key] === 'object') {
+                        obj.bonus = Object.keys(element[key]);
+                        obj.bonus.splice(0, 1);
+                    }
+                });
+
+                employee.push(obj);
+            });
+
+
+            target.html(this.allBonusTemplate({
+                employees: employee,
+                content: 'totalCalcBonus',
+                className: 'totalCalcBonus',
+                headName: 'Calc Bonus'
+            }));
+            targetTotal = $(self.$el.find('[data-content="totalCalcBonus"]'));
+            monthContainer = target.find('.monthContainer');
+            monthContainer.html(this.monthsArrayTemplate({monthArr: monthArr}));
+
+            async.each(allBonus, function (element, cb) {
+                var employeeId = element._id;
+                var employeeContainer = target.find('[data-id="' + employeeId + '"]');
+                var total;
+
+                if (allBonus) {
+                    total = element.total;
+                    globalTotal += total;
+
+                    employeeContainer.html(self.allBonusByMonth({
+                        bonus: employee,
+                        monthArr: monthArr,
+                        byMonthData: element,
+                        total: total
+                    }));
+                }
+
+                cb();
+            }, function (err) {
+
+                if (err) {
+                    alert(err);
+                }
+
+                for (var i = allBonus.length - 1; i >= 0; i--) {
+                    tempPerMonth = allBonus[i];
+
+                    monthArr.forEach(function (monthResult) {
+
+                        if (!(monthResult.year * 100 + monthResult.month in bySalesPerMonth)) {
+                            bySalesPerMonth[monthResult.year * 100 + monthResult.month] = tempPerMonth[monthResult.year * 100 + monthResult.month]['total'];
+                        } else {
+                            bySalesPerMonth[monthResult.year * 100 + monthResult.month] += tempPerMonth[monthResult.year * 100 + monthResult.month]['total'];
+                        }
+                    });
+                }
+
+                targetTotal.html(self.perMonthForAllBonus({
+                    monthArr: monthArr,
+                    bySalesByDepPerWeek: bySalesPerMonth,
+                    globalTotal: globalTotal.toFixed(2),
+                    totalName: 'Calc Bonus Total'
+                }));
+
+                bonusRows = $.find(".subRow");
+                bonus = $.find('.divCell .forBonus');
+
+                bonusRows.forEach(function (bonusRow) {
+                    $(bonusRow).toggle();
+                });
+
+                $(bonus).toggle();
                 return false;
             });
         },
