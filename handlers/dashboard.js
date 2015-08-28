@@ -1,6 +1,3 @@
-/**
- * Created by Roman on 04.05.2015.
- */
 
 var mongoose = require('mongoose');
 var wTrack = function (models) {
@@ -153,7 +150,7 @@ var wTrack = function (models) {
 
                 function sendResponse() {
                     Department.populate(employeesByDep, {
-                        path: 'department',
+                        path: 'department._id',
                         select: 'departmentName _id'
                     }, function () {
                         res.status(200).send(employeesByDep);
@@ -333,7 +330,7 @@ var wTrack = function (models) {
                                 }
 
                                 employees = _.pluck(employees, '_id');
-                                //waterfallCb(null, employees);
+
                                 inerWaterfallCb(null, employees);
                             });
                     };

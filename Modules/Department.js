@@ -115,6 +115,7 @@ var Department = function (event, models) {
             }
         });
     };
+
     function getAllChildIds(req, id, callback, trueCallback) {
         models.get(req.session.lastDb, 'Department', DepartmentSchema).find({ parentDepartment: id }).exec(function (err, result) {
             var n = 0;
@@ -133,6 +134,7 @@ var Department = function (event, models) {
             }
         });
     }
+
     function getForEditDd(req, id, response) {
         var res = {};
         res['data'] = [];
@@ -202,7 +204,6 @@ var Department = function (event, models) {
         });
     };
 
-
     function updateNestingLevel(req, id, nestingLevel, callback) {
         models.get(req.session.lastDb, 'Department', DepartmentSchema).find({ parentDepartment: id }).exec(function (err, result) {
             var n = 0;
@@ -225,6 +226,7 @@ var Department = function (event, models) {
             }
         });
     }
+
     function updateSequence(model, sequenceField, start, end, parentDepartmentStart, parentDepartmentEnd, isCreate, isDelete, callback) {
         var query;
         var objFind = {};
