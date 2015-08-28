@@ -60,7 +60,8 @@ define([
 
         events: {
             'change #currentStartWeek': 'changeWeek',
-            'click .ui-spinner-button': 'changeWeek'
+            'click .ui-spinner-button': 'changeWeek',
+            'click .clickToShow': 'showBonus'
         },
 
         initialize: function () {
@@ -81,12 +82,12 @@ define([
             this.listenTo(this.model, 'change:employeeBySales', this.changeEmployeeBySales);
             this.listenTo(this.model, 'change:hoursByDep', this.changeHoursByDep);
 
-           // this.listenTo(this.model, 'change:allBonus', this.changeAllBonus);
+            // this.listenTo(this.model, 'change:allBonus', this.changeAllBonus);
             this.listenTo(this.model, 'change:allBonusByMonth', this.changeAllBonusByMonth);
-/*            this.listenTo(this.model, 'change:uncalcBonus', this.changeHoursByDep);
-            this.listenTo(this.model, 'change:calcBonus', this.changeHoursByDep);
-            this.listenTo(this.model, 'change:paidBonus', this.changeHoursByDep);
-            this.listenTo(this.model, 'change:balanceBonus', this.changeHoursByDep);*/
+            /*            this.listenTo(this.model, 'change:uncalcBonus', this.changeHoursByDep);
+             this.listenTo(this.model, 'change:calcBonus', this.changeHoursByDep);
+             this.listenTo(this.model, 'change:paidBonus', this.changeHoursByDep);
+             this.listenTo(this.model, 'change:balanceBonus', this.changeHoursByDep);*/
 
             var currentStartWeek = currentWeek - 6;
             var currentYear = moment().weekYear();
@@ -192,10 +193,10 @@ define([
             this.fetchEmployeeBySales();
             this.fetchAllBonus();
             this.fetchAllBonusByMonth();
-/*            this.fetchUncalcBonus();
-            this.fetchCalcBonus();
-            this.fetchPaidBonus();
-            this.fetchBalanceBonus();*/
+            /*            this.fetchUncalcBonus();
+             this.fetchCalcBonus();
+             this.fetchPaidBonus();
+             this.fetchBalanceBonus();*/
         },
 
         changeWeek: function () {
@@ -379,49 +380,49 @@ define([
             });
         },
 
-/*        fetchUncalcBonus: function () {
-            var self = this;
-            var data = this.paidUnpaidDateRange;
+        /*        fetchUncalcBonus: function () {
+         var self = this;
+         var data = this.paidUnpaidDateRange;
 
-            //ToDo Request
-            dataService.getData('/revenue/uncalcBonus', data, function (uncalcBonus) {
-                self.model.set('uncalcBonus', uncalcBonus);
-                self.model.trigger('change:uncalcBonus');
-            });
-        },
+         //ToDo Request
+         dataService.getData('/revenue/uncalcBonus', data, function (uncalcBonus) {
+         self.model.set('uncalcBonus', uncalcBonus);
+         self.model.trigger('change:uncalcBonus');
+         });
+         },
 
-        fetchCalcBonus: function () {
-            var self = this;
-            var data = this.paidUnpaidDateRange;
+         fetchCalcBonus: function () {
+         var self = this;
+         var data = this.paidUnpaidDateRange;
 
-            //ToDo Request
-            dataService.getData('/revenue/calcBonus', data, function (calcBonus) {
-                self.model.set('calcBonus', calcBonus);
-                self.model.trigger('change:calcBonus');
-            });
-        },
+         //ToDo Request
+         dataService.getData('/revenue/calcBonus', data, function (calcBonus) {
+         self.model.set('calcBonus', calcBonus);
+         self.model.trigger('change:calcBonus');
+         });
+         },
 
-        fetchPaidBonus: function () {
-            var self = this;
-            var data = this.paidUnpaidDateRange;
+         fetchPaidBonus: function () {
+         var self = this;
+         var data = this.paidUnpaidDateRange;
 
-            //ToDo Request
-            dataService.getData('/revenue/paidBonus', data, function (paidBonus) {
-                self.model.set('paidBonus', paidBonus);
-                self.model.trigger('change:paidBonus');
-            });
-        },
+         //ToDo Request
+         dataService.getData('/revenue/paidBonus', data, function (paidBonus) {
+         self.model.set('paidBonus', paidBonus);
+         self.model.trigger('change:paidBonus');
+         });
+         },
 
-        fetchBalanceBonus: function () {
-            var self = this;
-            var data = this.paidUnpaidDateRange;
+         fetchBalanceBonus: function () {
+         var self = this;
+         var data = this.paidUnpaidDateRange;
 
-            //ToDo Request
-            dataService.getData('/revenue/balanceBonus', data, function (balanceBonus) {
-                self.model.set('balanceBonus', balanceBonus);
-                self.model.trigger('change:balanceBonus');
-            });
-        },*/
+         //ToDo Request
+         dataService.getData('/revenue/balanceBonus', data, function (balanceBonus) {
+         self.model.set('balanceBonus', balanceBonus);
+         self.model.trigger('change:balanceBonus');
+         });
+         },*/
 
         changeBySalesData: function () {
             var self = this;
@@ -1008,7 +1009,27 @@ define([
                 return false;
             });
         },
+        showBonus: function (e) {
+            var target = $(e.target);
+            var tergetText = target.prev().text();
+            var id = target.closest('div').attr('data-value');
+            var bonusRows = $.find("[data-value='" + id + "bonus']");
+            var bonusCells = this.$el.find("[data-id='" + id + "']");
+            var bonus = bonusCells.find('.divCell .forBonus');
 
+            bonusRows.forEach(function (bonusRow) {
+                $(bonusRow).toggle();
+            });
+
+            $(bonus).toggle();
+
+            if (tergetText === '+'){
+                target.prev().text('-');
+            } else {
+                target.prev().text('+');
+            }
+
+        },
         changeAllBonusByMonth: function () {
             var self = this;
             var allBonus = this.model.get('allBonusByMonth');
@@ -1020,19 +1041,22 @@ define([
             var tempPerMonth;
             var globalTotal = 0;
             var employee = [];
+            var bonusRows;
+            var bonus;
 
             async.each(allBonus, function (element, cb) {
                 var obj = {};
                 var keys;
+
                 obj.bonus = {};
                 obj._id = element._id;
                 obj.name = element.name;
                 keys = Object.keys(element);
 
-                keys.forEach(function(key){
-                    if (typeof element[key] === 'object'){
-                       obj.bonus = element[key];
-                      //  delete obj.bonus.total;
+                keys.forEach(function (key) {
+                    if (typeof element[key] === 'object') {
+                        obj.bonus = Object.keys(element[key]);
+                        obj.bonus.splice(0, 1);
                     }
                 });
 
@@ -1053,21 +1077,20 @@ define([
             async.each(allBonus, function (element, cb) {
                 var employeeId = element._id;
                 var employeeContainer = target.find('[data-id="' + employeeId + '"]');
-
-                var byMonthData;
                 var total;
 
-
                 if (allBonus) {
-                    //byMonthData = _.groupBy(allBonusBySales.root, 'month');
                     total = element.total;
                     globalTotal += total;
+
                     employeeContainer.html(self.allBonusByMonth({
+                        bonus: employee,
                         monthArr: monthArr,
                         byMonthData: element,
                         total: total
                     }));
                 }
+
                 cb();
             }, function (err) {
 
@@ -1077,11 +1100,13 @@ define([
 
                 for (var i = allBonus.length - 1; i >= 0; i--) {
                     tempPerMonth = allBonus[i];
+
                     monthArr.forEach(function (monthResult) {
-                        if (!(monthResult.year*100 + monthResult.month in bySalesPerMonth)) {
-                            bySalesPerMonth[monthResult.year*100 + monthResult.month] = tempPerMonth[monthResult.year*100 + monthResult.month]['total'];
+
+                        if (!(monthResult.year * 100 + monthResult.month in bySalesPerMonth)) {
+                            bySalesPerMonth[monthResult.year * 100 + monthResult.month] = tempPerMonth[monthResult.year * 100 + monthResult.month]['total'];
                         } else {
-                            bySalesPerMonth[monthResult.year*100 + monthResult.month] += tempPerMonth[monthResult.year*100 + monthResult.month]['total'];
+                            bySalesPerMonth[monthResult.year * 100 + monthResult.month] += tempPerMonth[monthResult.year * 100 + monthResult.month]['total'];
                         }
                     });
                 }
@@ -1093,6 +1118,14 @@ define([
                     totalName: 'Bonus Total'
                 }));
 
+                bonusRows = $.find(".subRow");
+                bonus = $.find('.divCell .forBonus');
+
+                bonusRows.forEach(function (bonusRow) {
+                    $(bonusRow).toggle();
+                });
+
+                $(bonus).toggle();
                 return false;
             });
         },
@@ -1181,7 +1214,7 @@ define([
             var maxdata = 0;
             var weeksArr = this.model.get('weeksArr');
             var weekLength = weeksArr.length;
-            var dataByDep = _.groupBy(self.model.get('byDepData'),'_id');
+            var dataByDep = _.groupBy(self.model.get('byDepData'), '_id');
             var keys = Object.keys(dataByDep);
             var keysLength = keys.length - 1;
             var height = 150;
@@ -1193,7 +1226,7 @@ define([
             var line;
 
             for (var i = keysLength; i >= 0; i--) {
-                dataByDep[keys[i]] = _.groupBy(dataByDep[keys[i]][0].root,'week');
+                dataByDep[keys[i]] = _.groupBy(dataByDep[keys[i]][0].root, 'week');
             }
 
             for (var j = 0; j < weekLength; j++) {

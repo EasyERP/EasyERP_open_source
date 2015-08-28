@@ -1,12 +1,24 @@
 <% monthArr.forEach(function(monthObject){ %>
-<% var key = monthObject.year*100 + monthObject.month %>
-<div class="divCell">
-    <span>
-        <%= byMonthData[key] ? byMonthData[key]['total'] : '&nbsp'%>
-    </span>
+ <% var key = monthObject.year*100 + monthObject.month %>
+  <div class="divCell">
+    <span><%= byMonthData[key] ? byMonthData[key]['total'] : '&nbsp'%></span>
+     <% bonus.forEach(function(oneBonus){ %>
+      <% if (byMonthData._id === oneBonus._id) { %>
+       <% oneBonus.bonus.forEach(function(bon){ %>
+        <div class="divRow">
+
+         <% if (byMonthData[key][bon] === 0) { %>
+           <span class="divCell forBonus"><%='&nbsp'%></span>
+         <% } else { %>
+           <span class="divCell forBonus"><%= byMonthData[key] ? byMonthData[key][bon].toFixed(2) : '&nbsp'%></span>
+         <% } %>
+        </div>
+      <% }) %>
+     <% } %>
+    <% }) %>
 </div>
 <% }) %>
-<div class="divCell">
+<div class="divCell ">
     <span>
         <%= total ? total : '&nbsp'%>
     </span>
