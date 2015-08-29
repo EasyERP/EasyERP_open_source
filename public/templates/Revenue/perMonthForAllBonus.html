@@ -5,13 +5,13 @@
 </div>
 <% monthArr.forEach(function(monthObject){ %>
 <div class="divCell">
-    <% if (bySalesByDepPerWeek[monthObject.year*100 + monthObject.month] === 0) {%>
+    <% if (perMonth[monthObject.year*100 + monthObject.month] === 0) {%>
     <span>
         <%='&nbsp'%>
     </span>
     <%} else {%>
     <span>
-        <%= bySalesByDepPerWeek[monthObject.year*100 + monthObject.month] ? bySalesByDepPerWeek[monthObject.year*100 + monthObject.month].toFixed(2) : '&nbsp'%>
+        <%= perMonth[monthObject.year*100 + monthObject.month] ? perMonth[monthObject.year*100 + monthObject.month].toFixed(2) : '&nbsp'%>
     </span>
     <% } %>
 </div>

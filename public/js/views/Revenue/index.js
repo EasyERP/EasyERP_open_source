@@ -1119,7 +1119,7 @@ define([
                 targetTotal.html(self.perMonthForAllBonus({
                     content: 'totalAllBonus',
                     monthArr: monthArr,
-                    bySalesByDepPerWeek: bySalesPerMonth,
+                    perMonth: bySalesPerMonth,
                     globalTotal: globalTotal.toFixed(2),
                     totalName: 'Bonus Total'
                 }));
@@ -1220,7 +1220,7 @@ define([
                 targetTotal.html(self.perMonthForAllBonus({
                     content: 'totalUncalcBonus',
                     monthArr: monthArr,
-                    bySalesByDepPerWeek: bySalesPerMonth,
+                    perMonth: bySalesPerMonth,
                     globalTotal: globalTotal.toFixed(2),
                     totalName: 'Uncalc Bonus Total'
                 }));
@@ -1320,7 +1320,7 @@ define([
                 targetTotal.html(self.perMonthForAllBonus({
                     content: 'totalCalcBonus',
                     monthArr: monthArr,
-                    bySalesByDepPerWeek: bySalesPerMonth,
+                    perMonth: bySalesPerMonth,
                     globalTotal: globalTotal.toFixed(2),
                     totalName: 'Calc Bonus Total'
                 }));
