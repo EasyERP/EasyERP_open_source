@@ -1,6 +1,4 @@
-/**
- * Created by Roman on 16.06.2015.
- */
+
 
 function kill(req, res, next) {
     if (req.session) {

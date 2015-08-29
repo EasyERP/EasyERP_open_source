@@ -20,6 +20,12 @@ module.exports = (function () {
             barcode: {type: String, default: ''},
             description: {type: String, default: ''}
         },
+        accounting: {
+            category: {
+                _id: { type: ObjectId, ref: 'ProductCategory', default: null },
+                name: {type: String, default: ''}
+            }
+        },
         workflow: { type: ObjectId, ref: 'workflows', default: null },
         whoCanRW: { type: String, enum: ['owner', 'group', 'everyOne'], default: 'everyOne' },
         groups: {

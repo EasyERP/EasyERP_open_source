@@ -1,6 +1,4 @@
-/**
- * Created by soundstorm on 12.08.15.
- */
+
 var express = require('express');
 var router = express.Router();
 var filterHandler = require('../handlers/filter');

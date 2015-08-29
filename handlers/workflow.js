@@ -1,6 +1,4 @@
-/**
- * Created by Roman on 15.05.2015.
- */
+
 var mongoose = require('mongoose');
 var workflows = function (models) {
     var access = require("../Modules/additions/access.js")(models);

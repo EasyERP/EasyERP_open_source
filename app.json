@@ -1,0 +1,13 @@
+{
+  "apps" : [{
+    "name"        : "EasyERP",
+    "script"      : "server.js",
+    "instances": 0,
+    "exec_mode"  : "cluster",
+    "watch"       : true,
+    "merge_logs"  : true,
+    "env": {
+      "NODE_ENV": "development"
+    }
+  }]
+}

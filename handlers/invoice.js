@@ -1,6 +1,4 @@
-/**
- * Created by ANDREY on 29.04.2015.
- */
+
 
 var mongoose = require('mongoose');
 var WorkflowHandler = require('./workflow');

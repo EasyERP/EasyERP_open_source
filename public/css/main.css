@@ -1397,8 +1397,8 @@ select:not([type="checkbox"]):focus {
 }
 .newSelectList {
   position: absolute !important;
-  border: solid 1px #898989;
-  background-color: white;
+  border: solid 1px #7f7f80;
+  background-color: #242b30;
   padding: 3px 0;
   z-index: 100;
   box-shadow: 0 1px 3px rgba(150, 150, 150, 0.7);
@@ -1433,7 +1433,7 @@ select:not([type="checkbox"]):focus {
   background-color: #BEF624 !important;
 }
 .newSelectList li:hover {
-  background-color: #EAF0F7 !important;
+  background-color: #2f383f !important;
   border: 0 !important;
   color: #FF5A00 !important;
 }
@@ -8193,8 +8193,8 @@ textarea#editInput {
   position: absolute;
   z-index: 10;
   width: calc(100% - 22px);
-  background-color: #67809f;
-  border: 1px solid #67809f;
+  background-color: #242b30;
+  border: 1px solid #7f7f80;
   right: 0;
   top: calc(100% - 3px);
 }
@@ -8272,7 +8272,7 @@ textarea#editInput {
 .drop-down-filter #filtersContent .filterGroup.activeGroup .groupName,
 .drop-down-filter #filtersContent .filterGroup .groupName:hover {
   color: white;
-  background-color: #4d5a75;
+  background-color: #1a2227;
 }
 .drop-down-filter #filtersContent .filterGroup .groupName {
   cursor: pointer;
