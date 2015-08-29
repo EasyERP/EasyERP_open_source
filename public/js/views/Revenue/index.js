@@ -366,7 +366,6 @@ define([
             var self = this;
             var data = this.paidUnpaidDateRange;
 
-            //ToDo Request
             dataService.getData('/revenue/allBonus', data, function (allBonus) {
                 self.model.set('allBonus', allBonus);
                 self.model.trigger('change:allBonus');
@@ -377,7 +376,6 @@ define([
             var self = this;
             var data = this.paidUnpaidDateRange;
 
-            //ToDo Request
             dataService.getData('/revenue/allBonus', data, function (allBonus) {
                 self.model.set('allBonusByMonth', allBonus);
                 self.model.trigger('change:allBonusByMonth');
@@ -388,7 +386,6 @@ define([
          var self = this;
          var data = this.paidUnpaidDateRange;
 
-         //ToDo Request
          dataService.getData('/revenue/uncalcBonus', data, function (uncalcBonus) {
          self.model.set('uncalcBonus', uncalcBonus);
          self.model.trigger('change:uncalcBonus');
@@ -1019,13 +1016,13 @@ define([
             var id = target.closest('div').attr('data-value');
             var dataVal = target.closest('div').attr('data-cont');
             var table = this.$el.find('#' + dataVal);
-            var bonusRows = $(table).find("[data-value='" + id + "bonus']");
+            var bonusRows = table.find("[data-value='" + id + "bonus']");
 
-            var bonusCells = $(table).find("#" + id + " .divRow");
+            var bonusCells = table.find("#" + id + " .divRow");
 
-            $(bonusCells).toggle();
-            $(bonusRows).toggle();
-            $(bonusRows).children().toggle();
+            bonusCells.toggle();
+            bonusRows.toggle();
+            bonusRows.children().toggle();
 
             if (tergetText === '+'){
                 target.prev().text('-');
