@@ -487,6 +487,8 @@ define([
                 var dayIndex;
                 var dayTotalElement;
 
+                var findEmployee;
+
                 if (modelId) {
                     editVacationModel = this.editCollection.get(modelId);
 
@@ -516,6 +518,16 @@ define([
                 }
 
                 if (elementType === '#employee') {
+                    findEmployee = self.collection.filter(function(model) {
+                        return model.get('employee')._id === element._id;
+                    });
+
+                    if (findEmployee.length > 0) {
+                        tr.remove();
+                        self.hideSaveCancelBtns();
+                        return alert(CONSTANTS.RESPONSES.DOUBLE_EMPLOYEE_VACATION);
+                    }
+
                     tr.find('[data-content="employee"]').text(element.name);
                     tr.find('.department').text(element.department.name);
 
