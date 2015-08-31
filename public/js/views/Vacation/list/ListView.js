@@ -517,7 +517,7 @@ define([
 
                 if (elementType === '#employee') {
                     tr.find('[data-content="employee"]').text(element.name);
-                    tr.find('.department').text(element.department.departmentName);
+                    tr.find('.department').text(element.department.name);
 
                     employee = _.clone(editVacationModel.get('employee'));
                     department = _.clone(editVacationModel.get('department'));
@@ -526,7 +526,7 @@ define([
                     employee.name = target.text();
 
                     department._id = element.department._id;
-                    department.name = element.department.departmentName;
+                    department.name = element.department.name;
 
                     changedAttr.employee = employee;
                     changedAttr.department = department;
