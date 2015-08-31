@@ -102,6 +102,8 @@ define([
                     var model = self.collection.get(id);
                     var revenue = model.get('revenue').replace('$', '');
 
+                    model.set({revenue: parseFloat(revenue)*100});
+
                     revenue = parseFloat(revenue);
 
                     total += revenue;

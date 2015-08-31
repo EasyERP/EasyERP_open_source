@@ -17,7 +17,7 @@
     <td data-type="input" data-content="6"><%=wTrack['6']%></td>
     <td data-type="input" data-content="7"><%=wTrack['7']%></td>
     <td><%=wTrack.isPaid ? 'Paid' : 'Unpaid'%></td>
-    <td class="money"><%=wTrack.revenue ? currencySplitter(wTrack.revenue) : 0.00%></td>
-    <td class="editable autoCalc money" ><%=wTrack.amount ? currencySplitter(wTrack.amount) : 0.00%></td>
+    <td class="money"><%=wTrack.revenue ? currencySplitter((wTrack.revenue / 100).toFixed(2)) : 0.00%></td>
+    <td class="editable autoCalc money" ><%=wTrack.amount ? currencySplitter((wTrack.amount / 100).toFixed(2)) : 0.00%></td>
 </tr>
 <% }) %>
