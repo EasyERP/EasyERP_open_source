@@ -54,7 +54,6 @@ define([
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
                 "blur td.editable input": "hideInput",
                 "click td.editable": "editRow",
-                "click td.editable input": "editRow",
                 "click .current-selected": "showNewCurrentSelect",
                 "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
                 "click .oe_sortable": "goSort",
@@ -525,7 +524,8 @@ define([
                     if (findEmployee.length > 0) {
                         tr.remove();
                         self.hideSaveCancelBtns();
-                        return alert(CONSTANTS.RESPONSES.DOUBLE_EMPLOYEE_VACATION);
+                        alert(CONSTANTS.RESPONSES.DOUBLE_EMPLOYEE_VACATION);
+                        return false;
                     }
 
                     tr.find('[data-content="employee"]').text(element.name);
