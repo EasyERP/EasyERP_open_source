@@ -88,7 +88,7 @@ var wTrack = function (models) {
                             if (dashResultByEmployee) {
                                 _employee.weekData = _.map(tempWeekArr, function (weekData) {
                                     var data;
-                                    var holidayCount;
+                                    var holidayCount = 0;
                                     var _vacations;
 
                                     data = _.find(dashResultByEmployee.weekData, function (d) {
@@ -105,7 +105,7 @@ var wTrack = function (models) {
                                     if (_vacations) {
                                         _vacations.vacations.forEach(function (vacation) {
                                             if (vacation.hasOwnProperty(weekData.dateByWeek)) {
-                                                holidayCount = vacation[weekData.dateByWeek];
+                                                holidayCount += vacation[weekData.dateByWeek];
                                             }
                                         });
                                     }
@@ -116,7 +116,7 @@ var wTrack = function (models) {
                                 });
                             } else {
                                 _employee.weekData = _.map(tempWeekArr, function (weekData) {
-                                    var holidayCount;
+                                    var holidayCount = 0;
                                     var _vacations;
 
                                     _vacations = _.find(vacations, function (vacationObject) {
@@ -126,7 +126,7 @@ var wTrack = function (models) {
                                     if (_vacations) {
                                         _vacations.vacations.forEach(function (vacation) {
                                             if (vacation.hasOwnProperty(weekData.dateByWeek)) {
-                                                holidayCount = vacation[weekData.dateByWeek];
+                                                holidayCount += vacation[weekData.dateByWeek];
                                             }
                                         });
                                     }
