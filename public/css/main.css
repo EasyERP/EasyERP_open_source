@@ -55,9 +55,12 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 /*== Filters ======================*/
 /*== Customer ======================*/
 /*==LIST ============================*/
-/*==Form Colum==============================*/
-/*== TABS ==================================*/
-/*== Kanab Opportunities*/
+/*==Form Colum=================================*/
+/*== TABS ======================================*/
+/*== Kanab Opportunities=========================*/
+/*== ProjectPM====================================*/
+/*== Vocations ===================================*/
+/*=New User=======================================*/
 .list2 {
   color: #ffffff !important;
   font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
@@ -895,7 +898,7 @@ input::-ms-clear {
   position: absolute;
   width: 40px;
   border: 0;
-  color: #008bbf;
+  color: #02a1f2;
   font-size: 18px;
   line-height: 26px;
   float: none;
@@ -906,7 +909,7 @@ input::-ms-clear {
   padding: 0;
 }
 .kanban .column.fold .columnNameDiv .columnName .text {
-  color: #008bbf;
+  color: #02a1f2;
   margin: 0 auto;
   text-align: center;
   position: absolute;
@@ -925,7 +928,7 @@ input::-ms-clear {
 }
 .kanban .column.fold:hover .columnNameDiv .columnName .totalCount,
 .kanban .column.fold:hover .columnNameDiv .columnName .text {
-  color: #16a1d5;
+  color: #18b7ff;
 }
 .kanban .column.fold:hover .text {
   color: white;
@@ -948,7 +951,7 @@ input::-ms-clear {
 }
 .ui-datepicker {
   padding: .2em .2em 0;
-  background-color: white;
+  background-color: #242b30;
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-prev,
 .ui-datepicker .ui-datepicker-header .ui-datepicker-next {
@@ -993,15 +996,27 @@ input::-ms-clear {
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-title select {
   width: 49%;
+  color: #a9a9a9;
+  background-color: #242b30;
+}
+.ui-datepicker .ui-datepicker-header .ui-datepicker-title select option {
+  background-color: #45525c;
+}
+.ui-datepicker .ui-datepicker-header .ui-datepicker-title select option:hover {
+  background-color: #45525c;
 }
 .ui-datepicker table.ui-datepicker-calendar tr th {
   padding: .7em .3em;
   text-align: center;
+  color: #ffffff;
 }
 .ui-datepicker table.ui-datepicker-calendar tr td {
   width: 15px;
   height: 20px;
   padding: 1px;
+}
+.ui-datepicker table.ui-datepicker-calendar tr td a {
+  color: #a9a9a9;
 }
 .ui-datepicker table.ui-datepicker-calendar tr td a,
 .ui-datepicker table.ui-datepicker-calendar tr td span {
@@ -1013,11 +1028,11 @@ input::-ms-clear {
 .ui-datepicker table.ui-datepicker-calendar tr td a:hover,
 .ui-datepicker table.ui-datepicker-calendar tr td span:hover {
   text-decoration: none;
-  background-color: #EEE;
+  background-color: #45525c;
 }
 .ui-datepicker table.ui-datepicker-calendar tr td a.ui-state-active,
 .ui-datepicker table.ui-datepicker-calendar tr td span.ui-state-active {
-  background-color: #EEE;
+  background-color: #45525c;
 }
 .ui-datepicker table.ui-datepicker-calendar tr td.ui-state-disabled {
   opacity: .35;
@@ -1258,13 +1273,13 @@ input::-ms-clear {
   white-space: nowrap;
   text-overflow: ellipsis;
   border: 1px solid rgba(0, 0, 0, 0);
-  border-right-color: #ddd;
+  border-right-color: #7f7f80;
   height: 40px;
   line-height: 40px;
 }
 .workflow-list li:hover:not(.quickEdit),
 .workflow-sub-list li:hover:not(.quickEdit) {
-  background-color: #EEE;
+  background-color: #45525c;
 }
 .workflow-list li:hover:not(.quickEdit) a,
 .workflow-sub-list li:hover:not(.quickEdit) a {
@@ -1392,7 +1407,6 @@ select:not([type="checkbox"]):focus {
 .current-selected {
   color: #1E8FC6 !important;
   font-size: 12px;
-  font-family: Arial, Helvetica, sans-serif;
   line-height: 26px !important;
 }
 .newSelectList {
@@ -1411,6 +1425,7 @@ select:not([type="checkbox"]):focus {
   cursor: pointer;
   font-size: 12px;
   text-align: left;
+  color: #a9a9a9;
 }
 .newSelectList li.testing,
 .newSelectList li.analysis {
@@ -3801,12 +3816,15 @@ a.red:hover {
   display: none;
   position: relative;
   z-index: 999;
-  border: 1px solid silver;
-  background-color: white;
+  border: 1px solid #7f7f80;
+  background-color: #242b30;
 }
 #loginPanel .dropdown-button #loginSelect li {
   height: 20px;
   line-height: 20px;
+}
+#loginPanel .dropdown-button #loginSelect li a {
+  color: #a9a9a9;
 }
 #loginPanel .dropdown-button img {
   float: left;
@@ -4989,8 +5007,7 @@ ul.dialog-tabs li.right button {
   position: relative;
   display: block;
   background: #1a2227 !important;
-  border: 1px solid #4d5a75;
-  border-bottom-color: rgba(0, 0, 0, 0.3);
+  border: 1px solid #7f7f80;
   -webkit-transition: -webkit-transform, -webkit-box-shadow, border 200ms linear;
   width: 280px;
   min-height: 130px;
@@ -5002,6 +5019,9 @@ ul.dialog-tabs li.right button {
   top: 2.5px;
   right: 7px;
   position: absolute;
+}
+.thumbnail .dropDown a:hover {
+  color: #02a1f2;
 }
 .thumbnail .viewswitch {
   position: absolute;
@@ -5039,6 +5059,9 @@ ul.dialog-tabs li.right button {
 }
 .thumbnail .bottom .half-block:last-child {
   text-align: right;
+}
+.thumbnail .bottom .half-block .left label {
+  color: #a9a9a9;
 }
 .thumbnail span {
   font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
@@ -5084,10 +5107,10 @@ ul.dialog-tabs li.right button {
   margin: 0 0 8px;
 }
 .thumbnail:hover {
-  border: 1px solid #7c7bad;
-  box-shadow: 0 0 4px #7c7bad;
-  -moz-box-shadow: 0 0 4px #7c7bad;
-  -webkit-box-shadow: 0 0 4px #7c7bad;
+  border: 1px solid #7f7f80;
+  box-shadow: 0 0 4px #02a1f2;
+  -moz-box-shadow: 0 0 4px #02a1f2;
+  -webkit-box-shadow: 0 0 4px #02a1f2;
 }
 .thumbnail .avatar {
   display: block;
@@ -5137,6 +5160,9 @@ ul.dialog-tabs li.right button {
 .thumbnail .project-text {
   width: 180px;
 }
+.thumbnail .project-text span {
+  color: #ffffff;
+}
 .thumbnail .project-text span.bold {
   display: block;
   max-width: 150px;
@@ -5149,6 +5175,10 @@ ul.dialog-tabs li.right button {
   clear: both;
   text-align: center;
 }
+#showMoreDiv #showMore {
+  color: #ffffff;
+  margin-top: 20px;
+}
 #modulesAccessTable td {
   text-align: center;
 }
@@ -5159,12 +5189,12 @@ ul.dialog-tabs li.right button {
   border-radius: 0 !important;
   font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
   margin-top: 2px;
-  border: 1px solid #DDD !important;
+  border: 1px solid #7f7f80 !important;
   display: none;
 }
 .ui-datepicker {
   padding: .2em .2em 0;
-  background-color: white;
+  background-color: #242b30;
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-prev,
 .ui-datepicker .ui-datepicker-header .ui-datepicker-next {
@@ -5209,15 +5239,27 @@ ul.dialog-tabs li.right button {
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-title select {
   width: 49%;
+  color: #a9a9a9;
+  background-color: #242b30;
+}
+.ui-datepicker .ui-datepicker-header .ui-datepicker-title select option {
+  background-color: #45525c;
+}
+.ui-datepicker .ui-datepicker-header .ui-datepicker-title select option:hover {
+  background-color: #45525c;
 }
 .ui-datepicker table.ui-datepicker-calendar tr th {
   padding: .7em .3em;
   text-align: center;
+  color: #ffffff;
 }
 .ui-datepicker table.ui-datepicker-calendar tr td {
   width: 15px;
   height: 20px;
   padding: 1px;
+}
+.ui-datepicker table.ui-datepicker-calendar tr td a {
+  color: #a9a9a9;
 }
 .ui-datepicker table.ui-datepicker-calendar tr td a,
 .ui-datepicker table.ui-datepicker-calendar tr td span {
@@ -5229,11 +5271,11 @@ ul.dialog-tabs li.right button {
 .ui-datepicker table.ui-datepicker-calendar tr td a:hover,
 .ui-datepicker table.ui-datepicker-calendar tr td span:hover {
   text-decoration: none;
-  background-color: #EEE;
+  background-color: #45525c;
 }
 .ui-datepicker table.ui-datepicker-calendar tr td a.ui-state-active,
 .ui-datepicker table.ui-datepicker-calendar tr td span.ui-state-active {
-  background-color: #EEE;
+  background-color: #45525c;
 }
 .ui-datepicker table.ui-datepicker-calendar tr td.ui-state-disabled {
   opacity: .35;
@@ -6283,7 +6325,7 @@ h3.dashboard {
   text-align: center;
   font-weight: bold;
   font-size: 18px;
-  color: #008bbf;
+  color: #02a1f2;
   line-height: 40px;
 }
 #projectPM table {
@@ -6294,8 +6336,9 @@ h3.dashboard {
   font-weight: bold;
   padding-left: 3px;
   line-height: 25px;
-  border-bottom: 2px solid #d6d6d6;
+  border-bottom: 2px solid #7f7f80;
   height: 25px;
+  color: #a9a9a9;
 }
 #projectPM table tr th.center {
   text-align: center;
@@ -6304,7 +6347,7 @@ h3.dashboard {
   height: 25px;
   padding-left: 3px;
   line-height: 25px;
-  border-bottom: 2px solid #e7e7e7;
+  border-bottom: 2px solid #7f7f80;
 }
 #projectPM table tr td .green {
   width: 10px;
@@ -6312,6 +6355,12 @@ h3.dashboard {
   margin: 0 auto;
   border-radius: 10px;
   background-color: green;
+}
+#projectPM table tbody tr td {
+  color: #ffffff;
+}
+#projectPM table tbody tr td:first-child {
+  color: #a9a9a9;
 }
 .line {
   fill: none;
@@ -6419,13 +6468,19 @@ h3.dashboard {
 .avatarInfoContainer.employee .half-block {
   margin-top: 8px;
 }
+.avatarInfoContainer.employee .half-block dt {
+  color: #02a1f2;
+}
+.avatarInfoContainer.employee .half-block dd {
+  color: #ffffff;
+}
 .stageSelect.pending,
 span.pending {
   color: red;
 }
 .stageSelect.inprogress,
 span.inprogress {
-  color: #008bbf;
+  color: #02a1f2;
 }
 .stageSelect.closed,
 span.closed,
@@ -7295,7 +7350,7 @@ span.ui-spinner .ui-spinner-up {
 }
 span.ui-spinner .ui-spinner-up:hover {
   text-decoration: none;
-  color: #33bef2;
+  color: #35d4ff;
 }
 span.ui-spinner .ui-spinner-down {
   position: absolute;
@@ -7308,10 +7363,10 @@ span.ui-spinner .ui-spinner-down {
 }
 span.ui-spinner .ui-spinner-down:hover {
   text-decoration: none;
-  color: #33bef2;
+  color: #35d4ff;
 }
 .blue {
-  color: #008bbf;
+  color: #02a1f2;
 }
 .floatAvatar {
   margin-left: 160px;
@@ -7901,6 +7956,9 @@ textarea#editInput {
 .grid-conatiner.revenue .divTable#tableBySales .th {
   border-bottom: 2px solid #ed9409;
 }
+.grid-conatiner.revenue .divTable#tableAllBonusByMonth .th {
+  border-bottom: 2px solid #edc485;
+}
 .grid-conatiner.revenue .divTable#tablePaidBySales .th {
   border-bottom: 2px solid #a2a2a3;
 }
@@ -7925,6 +7983,9 @@ textarea#editInput {
 }
 .grid-conatiner.revenue .divRow.totalBySales {
   background-color: #ed9409;
+}
+.grid-conatiner.revenue .divRow.totalByAllBonus {
+  background-color: #edcc85;
 }
 .grid-conatiner.revenue .divRow.totalByDep,
 .grid-conatiner.revenue .divRow.totalHoursByDep {
@@ -7963,6 +8024,7 @@ textarea#editInput {
 .grid-conatiner.revenue #tableUnpaidBySales .divCell,
 .grid-conatiner.revenue #tableCancelledBySales .divCell,
 .grid-conatiner.revenue #tableProjectBySales .divCell,
+.grid-conatiner.revenue #tableAllBonusByMonth .divCell,
 .grid-conatiner.revenue #tableEmployeeBySales .divCell {
   width: 6.34%;
 }
@@ -7970,6 +8032,7 @@ textarea#editInput {
 .grid-conatiner.revenue #tableUnpaidBySales .divCell.left-cell,
 .grid-conatiner.revenue #tableCancelledBySales .divCell.left-cell,
 .grid-conatiner.revenue #tableProjectBySales .divCell.left-cell,
+.grid-conatiner.revenue #tableAllBonusByMonth .divCell.left-cell,
 .grid-conatiner.revenue #tableEmployeeBySales .divCell.left-cell {
   width: 10%;
 }
@@ -7977,6 +8040,7 @@ textarea#editInput {
 .grid-conatiner.revenue #tableUnpaidBySales .divCell.th-trend,
 .grid-conatiner.revenue #tableCancelledBySales .divCell.th-trend,
 .grid-conatiner.revenue #tableProjectBySales .divCell.th-trend,
+.grid-conatiner.revenue #tableAllBonusByMonth .divCell.th-trend,
 .grid-conatiner.revenue #tableEmployeeBySales .divCell.th-trend {
   width: 7.5%;
 }
@@ -8038,7 +8102,7 @@ textarea#editInput {
   padding: 2px 24px;
   font-size: 14px;
   line-height: 1.42857143;
-  color: #555;
+  color: #a9a9a9;
   background: inherit;
   border: 1px solid #7f7f80;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
@@ -8305,7 +8369,7 @@ textarea#editInput {
 }
 #searchContainer {
   float: right;
-  width: 25%;
+  width: 35%;
   position: relative;
   margin-top: -26px;
   margin-right: 90px;
@@ -8386,7 +8450,7 @@ textarea#editInput {
 }
 .vacation-list thead th {
   font-weight: bold;
-  border: 1px solid #d2d2d2;
+  border: 1px solid #7f7f80;
 }
 .vacation-list thead th#legandCaption {
   text-align: left;
@@ -8403,12 +8467,17 @@ textarea#editInput {
 .vacation-list thead th.sortUp:after {
   content: "\00a0\25B4";
 }
+.vacation-list thead th #monthSelect,
+.vacation-list thead th #yearSelect {
+  font-size: 30px;
+  line-height: 50px;
+}
 .vacation-list tfoot td {
   font-weight: bold;
 }
 .vacation-list tbody td,
 .vacation-list tfoot td {
-  border: 1px solid #d2d2d2;
+  border: 1px solid #7f7f80;
   text-align: center;
 }
 .vacation-list tbody td.employee,
@@ -8421,12 +8490,24 @@ textarea#editInput {
 .vacation-list tfoot td.totalDays {
   font-weight: bold;
 }
+.vacation-list tfoot tr td {
+  color: #ffffff;
+}
+.vacation-list tbody .employee,
+.vacation-list tbody .department,
+.vacation-list tbody .totalDays {
+  color: #a9a9a9;
+}
 .vacation-list #caption,
 .vacation-list .borders,
 .vacation-list thead,
 .vacation-list tbody,
 .vacation-list tfoot {
-  border: 0.2em solid #d2d2d2;
+  border: 0.2em solid #7f7f80;
+}
+.vacation-list #caption th,
+.vacation-list .subHeaderHolder th {
+  color: #ffffff;
 }
 .vacation-list .newSelectList,
 .salary-list .newSelectList,
