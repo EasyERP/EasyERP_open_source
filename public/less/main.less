@@ -5578,9 +5578,19 @@ textarea#editInput {
         border-bottom: 2px solid #ed9409;
       }
     }
-    &#tableAllBonusByMonth {
+    &#totalAllBonus {
       .th {
-        border-bottom: 2px solid #edc485;
+        border-bottom: 2px solid #edb523;
+      }
+    }
+    &#totalCalcBonus {
+      .th {
+        border-bottom: 2px solid #2a6fce;
+      }
+    }
+    &#totalUncalcBonus {
+      .th {
+        border-bottom: 2px solid #b37d53;
       }
     }
     &#tablePaidBySales {
@@ -5620,7 +5630,13 @@ textarea#editInput {
       background-color: #ed9409
     }
     &.totalByAllBonus {
-      background-color: #edcc85
+      background-color: #edb523
+    }
+    &.totalCalcBonus {
+      background-color: #2a6fce
+    }
+    &.totalUncalcBonus {
+      background-color: #b37d53
     }
     &.totalByDep, &.totalHoursByDep {
       background-color: #00af00
@@ -5637,8 +5653,18 @@ textarea#editInput {
     &.totalEmployee {
       background-color: #91ce50
     }
+    &.subRow {
+     padding: 15px;
+  }
   }
 
+  .clickToShow {
+    font-weight: 500;
+  }
+  .bonusCell {
+    color: #9bedda;
+    padding: 15px;
+  }
   .divCell {
     float: left;
     display: table-column;
@@ -5655,13 +5681,25 @@ textarea#editInput {
     &.trend {
       width: 7.5%;
     }
+    &.forBonus {
+      float: right;
+      display: table-column;
+      width: 15%;
+      height: 22px;
+      padding: 0 15px;
+      box-sizing: border-box;
+      text-align: left;
+      line-height: 22px;
+    }
   }
 
   #tablePaidBySales,
   #tableUnpaidBySales,
   #tableCancelledBySales,
   #tableProjectBySales,
-  #tableAllBonusByMonth,
+  #totalAllBonus,
+  #totalCalcBonus,
+  #totalUncalcBonus,
   #tableEmployeeBySales {
     .divCell {
       width: 6.34%;

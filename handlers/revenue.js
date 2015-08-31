@@ -957,8 +957,8 @@ var wTrack = function (models) {
                         };
                         for(var m  = groupedEmployee.root.length; m--; ){
                             /*bonusObject = {
-                                total: 0
-                            };*/
+                             total: 0
+                             };*/
                             totalByBonus = 0;
 
                             for(var k = groupedWtracks[j].root.length; k--;) {
@@ -988,6 +988,635 @@ var wTrack = function (models) {
 
         });
     };
+
+    this.uncalcBonus = function (req, res, next) {
+        var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+        var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
+        var Employee = models.get(req.session.lastDb, 'Employees', employeeSchema);
+        var BonusType = models.get(req.session.lastDb, 'bonusType', BonusTypeSchema);
+
+        access.getReadAccess(req, req.session.uId, 67, function (access) {
+            var options = req.query;
+            var startMonth = parseInt(options.month) || 8;
+            var startYear = parseInt(options.year) || 2014;
+            var endMonth = parseInt(options.endMonth) || 7;
+            var endYear = parseInt(options.endYear) || 2015;
+            var startDateByWeek;
+            var startDate;
+            var endDateByWeek;
+            var endDate;
+            var waterfallTasks;
+            var projectIds;
+
+            var startMomentDate = moment().isoWeekYear(startYear).month(startMonth - 1);
+            var endMomentDate = moment().isoWeekYear(endYear).month(endMonth - 1);
+
+            var startWeek = startMomentDate.isoWeek();
+            var endWeek = endMomentDate.isoWeek();
+
+            startDate = startMomentDate.date(1).toDate();
+            endDate = endMomentDate.date(31).toDate();
+
+            startDateByWeek = parseInt(options.startDate) || (startYear * 100 + startMonth);
+            endDateByWeek = parseInt(options.endDate) || (endYear * 100 + endMonth);
+
+            var idForProjects = function (callback) {
+                Project.aggregate([{
+                    $project: {
+                        _id: 1,
+                        bonus: 1,
+                        bonusCount: {$size: '$bonus'}
+                    }
+                }, {
+                    $match: {
+                        $and: [{
+                            bonusCount: {$gt: 0}
+                        }, {
+                            $or: [{
+                                $or: [{
+                                    'bonus.startDate': null
+                                }, {
+                                    'bonus.endDate': null
+                                }]
+                            }, {
+                                $or: [{
+                                    'bonus.startDate': {$gte: startDate}
+                                }, {
+                                    'bonus.endDate': {$lte: endDate}
+                                }]
+                            }]
+                        }]
+                    }
+                }, {
+                    $project: {
+                        _id: 1
+                    }
+                }], function (err, response) {
+                    if (err) {
+                        return callback(err);
+                    }
+
+                    response = _.pluck(response, '_id');
+
+                    callback(null, response);
+                });
+            };
+
+            function getWTracksByProjects(_ids, callback) {
+                var queryObject = {};
+
+                projectIds = _ids;
+
+                queryObject['$and'] = [
+                    {'dateByMonth': {'$gte': startDateByWeek}},
+                    {'dateByMonth': {'$lte': endDateByWeek}},
+                    {'project._id': {'$in': projectIds}},
+                    {'isPaid': false}
+                ];
+
+                WTrack.aggregate([
+                    {
+                        $match: queryObject
+                    }, {
+                        $group: {
+                            _id: {
+                                name: '$project.projectName',
+                                _id: '$project._id',
+                                dateByMonth: '$dateByMonth'
+                            },
+                            ids: {$addToSet:'$project._id'},
+                            revenue: {$sum: {$subtract: ['$revenue', '$cost']}}
+                        }
+                    }, {
+                        $project: {
+                            projectName: '$_id.name',
+                            _id: '$_id._id',
+                            dateByMonth: '$_id.dateByMonth',
+                            revenue: 1
+                        }
+                    }, {
+                        $group: {
+                            _id: '$dateByMonth',
+                            root: {$addToSet: '$$ROOT'}
+                        }
+                    } , {
+                        $sort: {
+                            _id: 1
+                        }
+                    }], function (err, result) {
+
+                    if (err) {
+                        return callback(err);
+                    }
+
+                    callback(null, result);
+                });
+            };
+
+            function getProjectsByIds(wTracks, callback) {
+                //var _ids = _.pluck(wTracks, 'project._id');
+
+                Project.aggregate([
+                    {
+                        $match: {
+                            _id: {'$in': projectIds}
+                        }
+                    },
+                    {
+                        $unwind: '$bonus'
+                    },
+                    {
+                        $group: {
+                            _id: {
+                                employeeId: '$bonus.employeeId',
+                                bonusId: '$bonus.bonusId'
+                            },
+                            projects: {
+                                $addToSet: {
+                                    _id: '$_id',
+                                    name: '$projectName'
+                                }
+                            }
+
+                        }
+                    }, {
+                        $project: {
+                            employee: '$_id.employeeId',
+                            bonus: '$_id.bonusId',
+                            projects: 1,
+                            _id: 0
+                        }
+                    }, {
+                        $group: {
+                            _id: '$employee',
+                            root: {$push: '$$ROOT'}
+                        }
+                    }
+                ], function (err, projects) {
+                    if (err) {
+                        return callback(err)
+                    }
+
+                    Employee.populate(projects, {
+                        path: '_id',
+                        match: {'department._id': '55b92ace21e4b7c40f000014'},
+                        select: '_id name',
+                        options: {
+                            lean: true
+                        }
+                    }, function(err, employees){
+                        if(err){
+                            return callback(err);
+
+                        }
+
+                        projects = _.filter(projects, function(employee){
+                            if(employee._id){
+                                return employee;
+                            }
+                        });
+
+                        BonusType.populate(projects, {
+                            path: 'root.bonus',
+                            select: '_id name value',
+                            options: {
+                                lean: true
+                            }
+                        }, function(err, types){
+                            if(err){
+                                return callback(err);
+
+                            }
+
+                            callback(null, {wTracks: wTracks, projects: projects});
+                        });
+                    });
+
+                });
+            };
+
+            function getBonuses(wTracks, callback) {
+                var _ids = _.pluck(wTracks, 'project._id');
+
+                Project.aggregate([
+                    {
+                        $match: {
+                            _id: {'$in': _ids}
+                        }
+                    },
+                    {
+                        $unwind: '$bonus'
+                    },
+                    {
+                        $group: {
+                            _id: {employeeId: '$bonus.employeeId', bonusId: '$bonus.bonusId'},
+                            dateArray: {
+                                $push: {
+                                    startDate: '$bonus.startDate',
+                                    endDate: '$bonus.endDate',
+                                    projectId: '$_id'
+                                }
+                            }
+
+                        }
+                    }
+                ], callback);
+            };
+
+
+            if (!access) {
+                return res.status(403).send();
+            }
+
+            waterfallTasks = [idForProjects, getWTracksByProjects, getProjectsByIds];
+
+            async.waterfall(waterfallTasks, function (err, result) {
+                if (err) {
+                    return next(err);
+                }
+
+                result = resultGenerator(result);
+
+                res.status(200).send(result);
+            });
+
+            function resultGenerator(projectsWetrackObject){
+                var employees = [];
+                var groupedEmployees = projectsWetrackObject.projects;
+                var groupedWtracks = projectsWetrackObject.wTracks;
+                var employee;
+                var _employee;
+                var dateStr;
+                var groupedEmployee;
+                var totalByBonus;
+                var bonusObject;
+
+                //iterate over grouped result of projects with bonus by Employee
+                for(var i = groupedEmployees.length; i--;){
+                    totalByBonus = 0;
+
+                    groupedEmployee = groupedEmployees[i];
+                    _employee = groupedEmployee._id;
+                    employee = {
+                        _id: _employee._id,
+                        name: _employee.name.first + ' ' + _employee.name.last,
+                        total: 0
+                    };
+                    //iterate over grouped result of wTrack by date and projects
+                    for(var j = groupedWtracks.length; j--;){
+                        dateStr = groupedWtracks[j]._id;
+                        /*employee[dateStr] = [];*/
+                        bonusObject = {
+                            total: 0
+                        };
+                        for(var m  = groupedEmployee.root.length; m--; ){
+                            /*bonusObject = {
+                             total: 0
+                             };*/
+                            totalByBonus = 0;
+
+                            for(var k = groupedWtracks[j].root.length; k--;) {
+
+                                for (var l = groupedEmployee.root[m].projects.length; l--;){
+                                    if (groupedWtracks[j].root[k]._id.toString() === groupedEmployee.root[m].projects[l]._id.toString()) {
+                                        totalByBonus += (groupedEmployee.root[m].bonus.value * groupedWtracks[j].root[k].revenue / 100) / 100;
+                                    }
+                                }
+
+                            }
+                            bonusObject[groupedEmployee.root[m].bonus.name] = totalByBonus;
+                            bonusObject.total += totalByBonus;
+                            bonusObject.total = parseFloat(bonusObject.total.toFixed(2));
+                            /*employee[dateStr].push(bonusObject);*/
+                        }
+                        employee.total += bonusObject.total;
+                        employee.total = parseFloat(employee.total.toFixed(2));
+                        employee[dateStr] = bonusObject;
+                    }
+
+                    employees.push(employee);
+                }
+
+                return employees;
+            }
+
+        });
+    };
+
+    this.calcBonus = function (req, res, next) {
+        var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+        var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
+        var Employee = models.get(req.session.lastDb, 'Employees', employeeSchema);
+        var BonusType = models.get(req.session.lastDb, 'bonusType', BonusTypeSchema);
+
+        access.getReadAccess(req, req.session.uId, 67, function (access) {
+            var options = req.query;
+            var startMonth = parseInt(options.month) || 8;
+            var startYear = parseInt(options.year) || 2014;
+            var endMonth = parseInt(options.endMonth) || 7;
+            var endYear = parseInt(options.endYear) || 2015;
+            var startDateByWeek;
+            var startDate;
+            var endDateByWeek;
+            var endDate;
+            var waterfallTasks;
+            var projectIds;
+
+            var startMomentDate = moment().isoWeekYear(startYear).month(startMonth - 1);
+            var endMomentDate = moment().isoWeekYear(endYear).month(endMonth - 1);
+
+            var startWeek = startMomentDate.isoWeek();
+            var endWeek = endMomentDate.isoWeek();
+
+            startDate = startMomentDate.date(1).toDate();
+            endDate = endMomentDate.date(31).toDate();
+
+            startDateByWeek = parseInt(options.startDate) || (startYear * 100 + startMonth);
+            endDateByWeek = parseInt(options.endDate) || (endYear * 100 + endMonth);
+
+            var idForProjects = function (callback) {
+                Project.aggregate([{
+                    $project: {
+                        _id: 1,
+                        bonus: 1,
+                        bonusCount: {$size: '$bonus'}
+                    }
+                }, {
+                    $match: {
+                        $and: [{
+                            bonusCount: {$gt: 0}
+                        }, {
+                            $or: [{
+                                $or: [{
+                                    'bonus.startDate': null
+                                }, {
+                                    'bonus.endDate': null
+                                }]
+                            }, {
+                                $or: [{
+                                    'bonus.startDate': {$gte: startDate}
+                                }, {
+                                    'bonus.endDate': {$lte: endDate}
+                                }]
+                            }]
+                        }]
+                    }
+                }, {
+                    $project: {
+                        _id: 1
+                    }
+                }], function (err, response) {
+                    if (err) {
+                        return callback(err);
+                    }
+
+                    response = _.pluck(response, '_id');
+
+                    callback(null, response);
+                });
+            };
+
+            function getWTracksByProjects(_ids, callback) {
+                var queryObject = {};
+
+                projectIds = _ids;
+
+                queryObject['$and'] = [
+                    {'dateByMonth': {'$gte': startDateByWeek}},
+                    {'dateByMonth': {'$lte': endDateByWeek}},
+                    {'project._id': {'$in': projectIds}},
+                    {'isPaid': true}
+                ];
+
+                WTrack.aggregate([
+                    {
+                        $match: queryObject
+                    }, {
+                        $group: {
+                            _id: {
+                                name: '$project.projectName',
+                                _id: '$project._id',
+                                dateByMonth: '$dateByMonth'
+                            },
+                            ids: {$addToSet:'$project._id'},
+                            revenue: {$sum: {$subtract: ['$revenue', '$cost']}}
+                        }
+                    }, {
+                        $project: {
+                            projectName: '$_id.name',
+                            _id: '$_id._id',
+                            dateByMonth: '$_id.dateByMonth',
+                            revenue: 1
+                        }
+                    }, {
+                        $group: {
+                            _id: '$dateByMonth',
+                            root: {$addToSet: '$$ROOT'}
+                        }
+                    } , {
+                        $sort: {
+                            _id: 1
+                        }
+                    }], function (err, result) {
+
+                    if (err) {
+                        return callback(err);
+                    }
+
+                    callback(null, result);
+                });
+            };
+
+            function getProjectsByIds(wTracks, callback) {
+                //var _ids = _.pluck(wTracks, 'project._id');
+
+                Project.aggregate([
+                    {
+                        $match: {
+                            _id: {'$in': projectIds}
+                        }
+                    },
+                    {
+                        $unwind: '$bonus'
+                    },
+                    {
+                        $group: {
+                            _id: {
+                                employeeId: '$bonus.employeeId',
+                                bonusId: '$bonus.bonusId'
+                            },
+                            projects: {
+                                $addToSet: {
+                                    _id: '$_id',
+                                    name: '$projectName'
+                                }
+                            }
+
+                        }
+                    }, {
+                        $project: {
+                            employee: '$_id.employeeId',
+                            bonus: '$_id.bonusId',
+                            projects: 1,
+                            _id: 0
+                        }
+                    }, {
+                        $group: {
+                            _id: '$employee',
+                            root: {$push: '$$ROOT'}
+                        }
+                    }
+                ], function (err, projects) {
+                    if (err) {
+                        return callback(err)
+                    }
+
+                    Employee.populate(projects, {
+                        path: '_id',
+                        match: {'department._id': '55b92ace21e4b7c40f000014'},
+                        select: '_id name',
+                        options: {
+                            lean: true
+                        }
+                    }, function(err, employees){
+                        if(err){
+                            return callback(err);
+
+                        }
+
+                        projects = _.filter(projects, function(employee){
+                            if(employee._id){
+                                return employee;
+                            }
+                        });
+
+                        BonusType.populate(projects, {
+                            path: 'root.bonus',
+                            select: '_id name value',
+                            options: {
+                                lean: true
+                            }
+                        }, function(err, types){
+                            if(err){
+                                return callback(err);
+
+                            }
+
+                            callback(null, {wTracks: wTracks, projects: projects});
+                        });
+                    });
+
+                });
+            };
+
+            function getBonuses(wTracks, callback) {
+                var _ids = _.pluck(wTracks, 'project._id');
+
+                Project.aggregate([
+                    {
+                        $match: {
+                            _id: {'$in': _ids}
+                        }
+                    },
+                    {
+                        $unwind: '$bonus'
+                    },
+                    {
+                        $group: {
+                            _id: {employeeId: '$bonus.employeeId', bonusId: '$bonus.bonusId'},
+                            dateArray: {
+                                $push: {
+                                    startDate: '$bonus.startDate',
+                                    endDate: '$bonus.endDate',
+                                    projectId: '$_id'
+                                }
+                            }
+
+                        }
+                    }
+                ], callback);
+            };
+
+
+            if (!access) {
+                return res.status(403).send();
+            }
+
+            waterfallTasks = [idForProjects, getWTracksByProjects, getProjectsByIds];
+
+            async.waterfall(waterfallTasks, function (err, result) {
+                if (err) {
+                    return next(err);
+                }
+
+                result = resultGenerator(result);
+
+                res.status(200).send(result);
+            });
+
+            function resultGenerator(projectsWetrackObject){
+                var employees = [];
+                var groupedEmployees = projectsWetrackObject.projects;
+                var groupedWtracks = projectsWetrackObject.wTracks;
+                var employee;
+                var _employee;
+                var dateStr;
+                var groupedEmployee;
+                var totalByBonus;
+                var bonusObject;
+
+                //iterate over grouped result of projects with bonus by Employee
+                for(var i = groupedEmployees.length; i--;){
+                    totalByBonus = 0;
+
+                    groupedEmployee = groupedEmployees[i];
+                    _employee = groupedEmployee._id;
+                    employee = {
+                        _id: _employee._id,
+                        name: _employee.name.first + ' ' + _employee.name.last,
+                        total: 0
+                    };
+                    //iterate over grouped result of wTrack by date and projects
+                    for(var j = groupedWtracks.length; j--;){
+                        dateStr = groupedWtracks[j]._id;
+                        /*employee[dateStr] = [];*/
+                        bonusObject = {
+                            total: 0
+                        };
+                        for(var m  = groupedEmployee.root.length; m--; ){
+                            /*bonusObject = {
+                             total: 0
+                             };*/
+                            totalByBonus = 0;
+
+                            for(var k = groupedWtracks[j].root.length; k--;) {
+
+                                for (var l = groupedEmployee.root[m].projects.length; l--;){
+                                    if (groupedWtracks[j].root[k]._id.toString() === groupedEmployee.root[m].projects[l]._id.toString()) {
+                                        totalByBonus += (groupedEmployee.root[m].bonus.value * groupedWtracks[j].root[k].revenue / 100) / 100;
+                                    }
+                                }
+
+                            }
+                            bonusObject[groupedEmployee.root[m].bonus.name] = totalByBonus;
+                            bonusObject.total += totalByBonus;
+                            bonusObject.total = parseFloat(bonusObject.total.toFixed(2));
+                            /*employee[dateStr].push(bonusObject);*/
+                        }
+                        employee.total += bonusObject.total;
+                        employee.total = parseFloat(employee.total.toFixed(2));
+                        employee[dateStr] = bonusObject;
+                    }
+
+                    employees.push(employee);
+                }
+
+                return employees;
+            }
+
+        });
+    };
+
 
     this.totalHours = function (req, res, next) {
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);

@@ -150,7 +150,7 @@ var wTrack = function (models) {
 
                 function sendResponse() {
                     Department.populate(employeesByDep, {
-                        path: 'department._id',
+                        path: 'department',
                         select: 'departmentName _id'
                     }, function () {
                         res.status(200).send(employeesByDep);
