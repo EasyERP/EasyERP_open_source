@@ -21,6 +21,7 @@ define([
     'text!templates/Revenue/tableAllBonusByMonth.html',
     'text!templates/Revenue/allBonusByMonth.html',
     'text!templates/Revenue/perMonthForAllBonus.html',
+    'text!templates/Revenue/totalHours.html',
     'models/Revenue',
     'moment',
     'dataService',
@@ -28,7 +29,7 @@ define([
     'custom',
     'd3',
     'constants'
-], function (mainTemplate, weeksArray, tableByDep, bySalesByDep, perWeek, paidBySales, paidBySalesItems, projectBySalesItems, unpaidBySales, monthsArray, perMonth, perMonthInt, tableSold, hoursByDepItem, hoursByDepTotal, bonusBySales, allBonus, allBonusByMonth, perMonthForAllBonus, RevenueModel, moment, dataService, async, custom, d3, CONSTANTS) {
+], function (mainTemplate, weeksArray, tableByDep, bySalesByDep, perWeek, paidBySales, paidBySalesItems, projectBySalesItems, unpaidBySales, monthsArray, perMonth, perMonthInt, tableSold, hoursByDepItem, hoursByDepTotal, bonusBySales, allBonus, allBonusByMonth, perMonthForAllBonus, totalHours, RevenueModel, moment, dataService, async, custom, d3, CONSTANTS) {
     var View = Backbone.View.extend({
         el: '#content-holder',
 
@@ -52,6 +53,7 @@ define([
         allBonusTemplate: _.template(allBonus),
         allBonusByMonth: _.template(allBonusByMonth),
         perMonthForAllBonus: _.template(perMonthForAllBonus),
+        perMonthTotalHours: _.template(totalHours),
 
         paidUnpaidDateRange: {},
 
@@ -85,6 +87,7 @@ define([
             this.listenTo(this.model, 'change:allBonusByMonth', this.changeAllBonusByMonth);
             this.listenTo(this.model, 'change:uncalcBonus', this.changeUnCalcBonusByMonth);
             this.listenTo(this.model, 'change:calcBonus', this.changeCalcBonusByMonth);
+            this.listenTo(this.model, 'change:totalHours', this.changeTotalHours);
              /**this.listenTo(this.model, 'change:paidBonus', this.changeHoursByDep);
              this.listenTo(this.model, 'change:balanceBonus', this.changeHoursByDep);*/
 
@@ -194,8 +197,8 @@ define([
             this.fetchAllBonusByMonth();
             this.fetchUncalcBonus();
             this.fetchCalcBonus();
-            /*            this.fetchUncalcBonus();
-             this.fetchCalcBonus();
+            this.fetchTotalHours();
+            /*
              this.fetchPaidBonus();
              this.fetchBalanceBonus();*/
         },
@@ -265,6 +268,7 @@ define([
             this.fetchAllBonusByMonth();
             this.fetchUncalcBonus();
             this.fetchCalcBonus();
+            this.fetchTotalHours();
 
             this.model.set('weeksArr', weeksArr);
 
@@ -402,6 +406,22 @@ define([
          self.model.trigger('change:calcBonus');
          });
          },
+
+        fetchTotalHours: function () {
+            var self = this;
+            var currentStartWeek = moment().week() - 6;
+            var currentYear = moment().weekYear();
+            var data = {
+                week: currentStartWeek,
+                year: currentYear
+            };
+
+            //ToDo Request
+            dataService.getData('/revenue/totalHours', data, function (totalHours) {
+                self.model.set('totalHours', totalHours);
+                self.model.trigger('change:totalHours');
+            });
+        },
 
          /*fetchPaidBonus: function () {
          var self = this;
@@ -1230,6 +1250,12 @@ define([
 
                 return false;
             });
+        },
+
+        changeTotalHours: function(){
+            var totalHours = this.model.get('totalHours');
+            var monthArr = this.monthArr;
+            console.dir(totalHours);
         },
 
         changeCalcBonusByMonth: function () {

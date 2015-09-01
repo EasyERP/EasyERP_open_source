@@ -1623,6 +1623,7 @@ var wTrack = function (models) {
         var MonthHours = models.get(req.session.lastDb, 'MonthHours', monthHoursSchema);
         var Vacation = models.get(req.session.lastDb, 'Vacation', vacationSchema);
         var Holidays = models.get(req.session.lastDb, 'Holiday', holidaysSchema);
+        var Employees = models.get(req.session.lastDb, 'Employees', employeeSchema);
 
         access.getReadAccess(req, req.session.uId, 67, function (access) {
             var options = req.query;
@@ -1635,8 +1636,11 @@ var wTrack = function (models) {
             var startDate;
             var endDate;
             var match;
+            var matchHoliday;
+            var matchVacation;
             var groupBy;
             var parallelTasksObject;
+            var waterfallTasks;
 
             if (!access) {
                 return res.status(403).send();
@@ -1655,11 +1659,6 @@ var wTrack = function (models) {
 
             endMonth = moment().year(endYear).isoWeek(endWeek).month();
 
-            match = {
-                month: {$gte: startMonth, $lte: endMonth},
-                year: {$gte: startYear, $lte: endYear}
-            };
-
             groupBy = {
                 _id: '$department.name',
                 root: {
@@ -1667,96 +1666,230 @@ var wTrack = function (models) {
                 }
             };
 
-            function monthHourRetriver(parallelCb) {
-                MonthHours
-                    .find(match)
-                    .exec(waterfallCb)
+            function employeesRetriver(waterfallCb) {
+                Employees
+                    .find(
+                    {isEmployee: true},
+                    {_id: 1}
+                )
+                    .lean()
+                    .exec(function(err, result){
+                        if (err){
+                            waterfallCb(err);
+                        }
+                        var Ids = [];
+                        result.forEach(function(element){
+                            Ids.push(element._id);
+                        });
+
+                        waterfallCb(null, Ids);
+                    })
             };
 
-            function vacationComposer(parallelCb) {
-                Vacation.aggregate([{
-                    $match: match
-                }, {
-                    $group: groupBy
-                }, {
-                    $project: {
-                        year: "$_id.year",
-                        week: "$_id.week",
-                        department: "$_id.department",
-                        sold: 1,
-                        _id: 0
-                    }
-                }, {
-                    $sort: {_id: 1}
-                }], function (err, response) {
-                    if (err) {
-                        return next(err);
-                    }
+            waterfallTasks = [
+                employeesRetriver,
+                parallel
+            ];
 
-                    res.status(200).send(response);
-                });
-            };
 
-            function wTrackComposer(parallelCb) {
+            function parallel (ids, waterfallCb){
                 match = {
-                    dateByWeek: {
-                        $gte: startDate,
-                        $lt: endDate
-                    }
+                    month: {$gte: startMonth, $lte: endMonth},
+                    year: {$gte: startYear, $lte: endYear}
                 };
 
-                groupBy = {
-                    _id: {
-                        department: '$department.departmentName',
-                        _id: '$department._id',
-                        year: '$year',
-                        week: '$week'
+                matchVacation = {
+                    month: {$gte: startMonth, $lte: endMonth},
+                    year: {$gte: startYear, $lte: endYear},
+                    'employee._id': {$in: ids}
+                };
+
+                matchHoliday = {
+                    week: {$gte: startWeek, $lte: endWeek},
+                    year: {$gte: startYear, $lte: endYear}
+                };
+
+                parallelTasksObject = {
+                    monthHours: monthHourRetriver,
+                    holidays: holidaysRetriver,
+                    vacations: vacationComposer,
+                    wTracks: wTrackComposer
+                };
+
+                function monthHourRetriver( parallelCb) {
+                    MonthHours
+                        .find(
+                        match,
+                        {year:1, month: 1, hours: 1}
+                    )
+                        .lean()
+                        .exec(parallelCb)
+                };
+
+                function holidaysRetriver( parallelCb) {
+                    Holidays
+                        .find(matchHoliday)
+                        .lean()
+                        .exec(parallelCb)
+                };
+                function vacationComposer(parallelCb) {
+                    Vacation.aggregate([{
+                        $match: matchVacation
                     },
-                    sold: {$sum: '$worked'}
-                };
+                        {
+                            $group: {
+                                _id: {
+                                    _id: '$employee._id',
+                                    name: '$employee.name',
+                                    month: '$month',
+                                    monthTotal: '$monthTotal'
+                                },
+                            }
+                        }, {
+                            $project: {
+                                employee: '$_id._id',
+                                name: '$_id.name',
+                                month: '$_id.month',
+                                monthTotal: '$_id.monthTotal'
+                            }
+                        },
+                        {
+                            $sort: {_id: 1}
+                        }
+                    ], function (err, response) {
+                        if (err) {
+                            return next(err);
+                        }
 
-                WTrack.aggregate([{
-                    $match: match
-                }, {
-                    $group: groupBy
-                }, {
-                    $project: {
-                        year: "$_id.year",
-                        week: "$_id.week",
-                        department: "$_id.department",
-                        sold: 1,
-                        _id: 0
-                    }
-                }, {
-                    $group: {
-                        _id: '$department',
-                        root: {$push: '$$ROOT'},
-                        totalSold: {$sum: '$sold'}
-                    }
-                }, {
-                    $sort: {_id: 1}
-                }], function (err, response) {
+                        parallelCb(null, response);
+                    });
+                };
+                function wTrackComposer(parallelCb) {
+                    match = {
+                        month: {$gte: startMonth, $lte: endMonth},
+                        year: {$gte: startYear, $lte: endYear},
+                        'employee._id': {$in: ids}
+                    };
+
+                    groupBy = {
+                        _id: {
+                            department: '$department.departmentName',
+                            _id: '$department._id',
+                            year: '$year',
+                            month: '$month',
+                            employee: '$employee'
+                        },
+                        sold: {$sum: '$worked'}
+                    };
+
+                    WTrack.aggregate([{
+                        $match: match
+                    }, {
+                        $group: groupBy
+                    }, {
+                        $project: {
+                            year: "$_id.year",
+                            month: "$_id.month",
+                            department: "$_id.department",
+                            sold: 1,
+                            employee: '$_id.employee'
+                        }
+                    },
+                        {
+                            $group: {
+                                _id: '$department',
+                                root: {$push: '$$ROOT'},
+                                totalSold: {$sum: '$sold'}
+                            }
+                        }, {
+                            $sort: {_id: 1}
+                        }], function (err, response) {
+                        if (err) {
+                            return next(err);
+                        }
+                        parallelCb(null, response);
+
+                    });
+                };
+                async.parallel(parallelTasksObject, function (err, response) {
                     if (err) {
                         return next(err);
                     }
 
-                    res.status(200).send(response);
+                    waterfallCb(null, response);
                 });
-            };
+            }
 
-            parallelTasksObject = {
-                monthHourRetriver: monthHourRetriver,
-                vacationComposer: vacationComposer,
-                wTrackComposer: wTrackComposer
-            };
-
-            async.parallel(parallelTasksObject, function (err, response) {
+            function waterfallCb(err, response){
                 if (err) {
                     return next(err);
                 }
 
-                res.status(200).send(response);
-            });
+                resultMapper(response);
+
+               // res.status(200).send(response);
+            }
+
+            function resultMapper (response){
+                var holidays = response['holidays'];
+                var vacations = response['vacations'];
+                var weTracks = response['wTracks'];
+                var monthHours = response['monthHours'];
+                var result = [];
+
+                weTracks.forEach(function(wTrack){
+                    var department = {};
+                    var depRoot;
+                    var key;
+
+                    department._id = wTrack._id;
+                    department.employees = [];
+                    depRoot = wTrack.root;
+
+                    depRoot.forEach(function(element){
+                        var employee = {};
+                        var vacationForEmployee = 0;
+                        var hoursForMonth = 0;
+                        var holidaysForMonth = 0;
+
+                        employee._id = element.employee._id;
+                        employee.name = element.employee.name;
+
+                        vacations.forEach(function(vacation){
+                            if (employee._id.toString() === vacation.employee.toString()){
+                                vacationForEmployee = vacation.monthTotal;
+                            }
+                        });
+
+                        monthHours.forEach(function(month){
+                            if ((parseInt(element.month) === parseInt(month.month)) && (parseInt(element.year) === parseInt(month.year))){
+                                hoursForMonth = month.hours;
+                            }
+                        });
+
+                        holidays.forEach(function(holiday){
+                            var dateMonth = moment(holiday.date).month();
+                            if (dateMonth === element.month){
+                                holidaysForMonth += 1;
+                            }
+                        });
+
+
+                        key = element.year * 100 + element.month;
+                        employee.hoursTotal = {};
+                        employee.hoursTotal[key] = parseInt(hoursForMonth) - parseInt(vacationForEmployee) * 8 - parseInt(holidaysForMonth) * 8;
+
+                        department.employees.push(employee);
+                    });
+
+
+                    result.push(department);
+                });
+
+                res.status(200).send(result);
+            }
+
+            async.waterfall(waterfallTasks, waterfallCb);
 
         });
     };

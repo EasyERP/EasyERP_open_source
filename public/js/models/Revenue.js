@@ -24,7 +24,8 @@ define([], function () {
             calcBonus: [],
             paidBonus: [],
             balanceBonus: [],
-            allBonusByMonth: []
+            allBonusByMonth: [],
+            totalHours: []
         }
     });
 
