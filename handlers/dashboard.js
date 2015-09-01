@@ -73,6 +73,16 @@ var wTrack = function (models) {
 
                 function departmentMapper(department, departmentCb) {
                     var dashDepartment = _.find(dashBoardResult, function (deps) {
+                        if(deps.department == null){
+                            console.log('==================== deps =======================');
+                            console.log(deps);
+                            console.log('===========================================');
+                        }
+                        if(department.department == null){
+                            console.log('===================== department ======================');
+                            console.log(department);
+                            console.log('===========================================');
+                        }
                         return deps.department.toString() === department.department.toString();
                     });
 
