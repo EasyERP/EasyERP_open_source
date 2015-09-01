@@ -174,14 +174,14 @@
                    var relatedUser = this.$el.find("#relatedUsersDd option:selected").val();
                    relatedUser = relatedUser ? relatedUser : null;
                    var department = {
-                       _id: this.$el.find("#departmentsDd").data("id") ? this.$el.find("#departmentsDd").data("id") : null,
-                       name: this.$el.find("#departmentsDd").text() ? this.$el.find("#departmentsDd").text() : null
+                       _id: this.$el.find("#departmentDd").attr("data-id") ? this.$el.find("#departmentDd").attr("data-id") : null,
+                       name: this.$el.find("#departmentDd").text() ? this.$el.find("#departmentDd").text() : ''
                    };
                    var dateBirthSt = $.trim(this.$el.find("#dateBirth").val());
                    var nextAction = $.trim(this.$el.find("#nextAction").val());
                    var jobPositionId = {
-                       _id: this.$el.find("#jobPositionDd").data("id") ? this.$el.find("#jobPositionDd").data("id") : null,
-                       name: this.$el.find("#jobPositionDd").text() ? this.$el.find("#jobPositionDd").text() : null
+                       _id: this.$el.find("#jobPositionDd").attr("data-id") ? this.$el.find("#jobPositionDd").attr("data-id") : null,
+                       name: this.$el.find("#jobPositionDd").text() ? this.$el.find("#jobPositionDd").text() : ''
                    };
                    var usersId = [];
                    var groupsId = [];
