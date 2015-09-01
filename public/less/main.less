@@ -2267,7 +2267,7 @@ input::-ms-clear {
       background-image: none;
       border-radius: 0;
       width: 27px;
-      margin: 0 5px;
+      margin: 0 0 0 5px;
       line-height: 10px;
       font-size: 12px;
       padding: 3px 2px;
@@ -2276,12 +2276,17 @@ input::-ms-clear {
       }
     }
 
+    .currentPageList {
+      margin-left: 0;
+      border-left: none;
+    }
+
     ul {
       background-color: @bg-main-menu;
       border: @thin-border @border-color-main;
       position: absolute;
-      bottom: 15px;
-      left: 5px;
+      bottom: 17px;
+      left: 0px;
       display: none;
       font-size: 12px;
 
@@ -3852,6 +3857,7 @@ button.red, a.red {
     font-size: 30px;
     line-height: 30px;
     padding-top: 15px;
+    color: @mainText-color;
   }
 }
 
@@ -4315,11 +4321,12 @@ ul.chart-tabs {
 }
 
 .legend-box {
-  border: @thin-border #efefef;
+  border: @thin-border @border-color-main;
   width: 525px;
   height: 32px;
   padding: 3px 0 0;
   margin: -39px auto 0;
+  color: @mainText-color;
 
   &.small {
     width: 255px;
@@ -4378,6 +4385,14 @@ ul.chart-tabs {
 h3.dashboard {
   text-align: center;
   line-height: 50px;
+  color: @mainText-color-selected;
+}
+
+.leadChart, .chart {
+  text {
+      fill: @mainText-color;
+
+  }
 }
 
 #modulesAccessTable {
@@ -5001,27 +5016,28 @@ textarea#editInput {
 .grid {
   min-width: 100%;
   font-size: 11px;
-  border-bottom: 1px solid transparent;
-
+  border-bottom: 1px solid @border-color-main;
+  background-color: @bg-main;
   tr {
-
+  color: @captionsColor;
     th span {
       padding-right: 6px;
       text-align: right;
       height: 25px;
       line-height: 25px;
       display: block;
+      color: @list-color-text;
     }
 
     td {
-      border-top: 1px solid transparent;
+      border-top: 1px solid @border-color-main;
     }
 
     td,
     th {
-      border-bottom: 1px solid #d2d2d2;
-      border-top: 1px solid #d2d2d2;
-      border-left: 1px solid #d2d2d2;
+      border-bottom: 1px solid @border-color-main;
+      border-top: 1px solid @border-color-main;
+      border-left: 1px solid @border-color-main;
     }
 
     td span {
@@ -5064,14 +5080,14 @@ textarea#editInput {
       }
 
       &.activeHead {
-        border: 1px solid #000;
+        border: 1px solid @border-color-selected;
         border-bottom: none;
         display: table-cell;
       }
     }
 
     &:hover td {
-      background: #000 !important;
+      background: @dashBoard-bg-menu-hoverColor !important;
       color: #ffffff;
     }
 
@@ -5079,7 +5095,7 @@ textarea#editInput {
       &.dashboardWeek {
         width: 107px;
         min-width: 107px;
-        background-color: #ffffff;
+        background-color: @bg-main;
 
         input {
           background-color: #bdd7ee;
@@ -5110,12 +5126,12 @@ textarea#editInput {
         &.red {
           background-color: #fd0001;
           color: white;
-          border-bottom: 1px solid #d2d2d2;
-          border-left: 1px solid #d2d2d2;
+          border-bottom: 1px solid @border-color-main;
+          border-left: 1px solid @border-color-main;
         }
         &.active {
-          border-left: 1px solid #000 !important;
-          border-right: 1px solid #000 !important;
+          border-left: 1px solid @border-color-selected !important;
+          border-right: 1px solid @border-color-selected !important;
           display: table-cell;
         }
         &.inactive {
@@ -5196,9 +5212,8 @@ textarea#editInput {
             float: left;
             padding: 0;
             padding-right: 3px;
-            // width: 52px;
-            background-color: #5a9ad4;
-            color: white;
+            //background-color: #5a9ad4;
+            color: @mainText-color;
             text-align: center;
             &.size40 {
               width: 50%;
@@ -5274,21 +5289,29 @@ textarea#editInput {
         border-right: 1px solid #d2d2d2;
       }
     }
+   /* tr.head-row {
+      td {
+        span {
+          color: @captionsColor;
+        }
+      }
+    }*/
     &.group {
-      color: black;
-
+      /*color: black;*/
+      color: @mainText-color;
       cursor: pointer;
       td {
-        background-color: #bdd7ee !important;
+        background-color: @dashBoard-bg-group-color !important;
       }
       span {
         text-align: left;
+
       }
     }
   }
 
   tr:nth-child(2n+1) td {
-    background-color: #f5f5f5;
+    background-color: @dashBoard-bg-color;
   }
 
   &.attendance {
@@ -5331,7 +5354,7 @@ textarea#editInput {
       border-bottom: none;
 
       &:nth-child(even) {
-        background-color: #f5f5f5;
+        background-color: @dashBoard-bg-color;
       }
 
       td {
@@ -5379,8 +5402,19 @@ textarea#editInput {
   .attendanceTop {
     margin-bottom: 10px;
     div {
-      border: 1px solid #d2d2d2;
+      border: 1px solid @border-color-main;
       padding: 5px;
+
+      span {
+        color: @mainText-color;
+      }
+
+      #currentEmployee, #currentStatus, #currentTime {
+        color: @grey;
+          option {
+            background-color: @bg-main;
+          }
+      }
 
       &.pull-left {
         margin-right: 10px;
@@ -5423,6 +5457,7 @@ textarea#editInput {
               text-align: center;
               font-size: 16px;
               margin-bottom: 10px;
+              color: @mainText-color;
             }
             .countDays {
               font-size: 52px;
@@ -5451,6 +5486,7 @@ textarea#editInput {
             .lastTime {
               text-align: center;
               margin-top: 10px;
+              color: @mainText-color;
             }
             .percent {
               text-align: center;
@@ -5459,6 +5495,11 @@ textarea#editInput {
           }
         }
       }
+    }
+  }
+  table {
+    .grid {
+      border-color: @border-color-main;
     }
   }
 }
@@ -6189,7 +6230,7 @@ textarea#editInput {
 
     input, input:focus {
       position: absolute;
-      width: 100%;
+      width: 95%;
       height: 100%;
       top: 0;
       left: 0;
@@ -6200,6 +6241,7 @@ textarea#editInput {
       outline-offset: 0;
       display: none;
       cursor: pointer;
+      border: 1px solid @border-color-selected;
     }
 
     input:focus {
@@ -6313,15 +6355,11 @@ textarea#editInput {
   overflow-y: scroll;
 }
 
-.filter {
-  //margin-right: 20px;
-}
-
 .condition {
   z-index: 10;
   width: 165px;
   background-color: #f9f9f9;
-  border: 1px solid #c0c0c0;
+  border: 1px solid @border-color-main;
   right: 0;
   top: calc(100% - 1px);
 }
@@ -6343,9 +6381,10 @@ textarea#editInput {
     width: 84%;
     border-bottom-left-radius: 5px;
     border-top-left-radius: 5px;
+    color: @filter-text-color;
   }
   #saveFilterButton {
-    border: 1px solid #cccccc;
+    border: 1px solid @border-color-main;
     border-left: 0;
     margin-left: -7px;
     box-sizing: border-box;
@@ -6354,7 +6393,7 @@ textarea#editInput {
   }
   .removeSavedFilter {
     float: right;
-    border: 1px solid #cccccc;
+    border: 1px solid @border-color-main;
     height: 21px;
   }
   .line {
