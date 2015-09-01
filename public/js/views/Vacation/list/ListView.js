@@ -524,6 +524,7 @@ define([
                     if (findEmployee.length > 0) {
                         tr.remove();
                         self.hideSaveCancelBtns();
+                        self.changedModels[modelId]
                         alert(CONSTANTS.RESPONSES.DOUBLE_EMPLOYEE_VACATION);
                         return false;
                     }

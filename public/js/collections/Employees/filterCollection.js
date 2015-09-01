@@ -64,6 +64,7 @@
                 filterObject['viewType'] = (options && options.viewType) ? options.viewType: this.viewType;
                 filterObject['contentType'] = (options && options.contentType) ? options.contentType: this.contentType;
                 filterObject['filter'] = (options) ? options.filter : {};
+
                 this.fetch({
                     data: filterObject,
                     waite: true,
@@ -76,6 +77,7 @@
                     }
                 });
             },
+
             getAlphabet: function (callback) {
 				dataService.getData("/getEmployeesAlphabet", { mid: 39 }, function (response) {
 					if (callback){
