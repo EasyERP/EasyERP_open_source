@@ -280,10 +280,10 @@ define([
             this.fetchBySales();
             this.fetchByDeps();
             this.fetchhoursByDep();
-           // this.fetchAllBonusByMonth();
-           // this.fetchUncalcBonus();
-           // this.fetchCalcBonus();
-           // this.fetchTotalHours();
+            // this.fetchAllBonusByMonth();
+            // this.fetchUncalcBonus();
+            // this.fetchCalcBonus();
+            // this.fetchTotalHours();
             //this.fetchHoursSold();
 
             this.model.set('weeksArr', weeksArr);
@@ -1289,31 +1289,9 @@ define([
             var targetTotal;
             var self = this;
 
-            async.each(totalHours, function (element, cb) {
-                var obj = {};
-                var objToSave = {};
-                var empArr;
-                obj.employees = [];
-                obj.name = element._id;
-
-                obj.totalForDep = 0;
-
-                empArr = element.employees;
-
-                empArr.forEach(function (employee) {
-
-                    objToSave.name = employee.name;
-                    objToSave.total = employee.total;
-                    objToSave.hoursTotal = employee.hoursTotal;
-                    var object = _.clone(objToSave);
-                    obj.employees.push(object);
-                    obj.totalForDep += objToSave.total;
-                });
-                departments.push(obj);
-            });
 
             target.html(this.totalHoursTemplate({
-                departments: departments,
+                departments: totalHours,
                 content: 'totalTotalHours',
                 className: 'totalTotalHours',
                 headName: 'Total Hours'
@@ -1322,14 +1300,14 @@ define([
             monthContainer = target.find('.monthContainer');
             monthContainer.html(this.monthsArrayTemplate({monthArr: monthArr}));
 
-            async.each(departments, function (element, cb) {
+            async.each(totalHours, function (element, cb) {
                 var department = element.name;
                 var departmentContainer = target.find('[data-id="' + department + '"]');
 
 
                 var totalObj;
 
-                if (departments) {
+                if (totalHours) {
                     var total;
                     var employeesArr;
 
@@ -1341,7 +1319,7 @@ define([
                         totalObj = employee.hoursTotal;
                         departmentContainer.html(self.totalHoursByMonth({
                             content: 'totalTotalHours',
-                            departments: departments,
+                            departments: totalHours,
                             monthArr: monthArr,
                             byMonthData: totalObj,
                             total: total,
@@ -1495,15 +1473,148 @@ define([
             });
         },
 
-        changeHoursUnsold: function(){
+        changeHoursUnsold: function () {
             var hoursSold = this.model.get('hoursSold');
             var totalHours = this.model.get('totalHours');
-            alert('!!!!!!!');
+            var resultForUnsold = [];
+            var monthArr = this.monthArr;
+            var target = this.$el.find('#totalHoursUnsold');
+            var monthContainer;
+            var bySalesPerMonth = {};
+            var globalTotal = 0;
+            var departments = [];
+            var bonusRows;
+            var targetTotal;
+            var self = this;
+
+            totalHours.forEach(function (department) {
+                var obj = {};
+                var objToSave = {};
+                var empArray;
+
+                obj.name = department.name;
+                obj.employees = [];
+                obj.totalForDep = 0;
+
+                empArray = department.employees;
+
+                empArray.forEach(function (employee) {
+                    objToSave.name = employee.name;
+                    var hoursTotal = employee.hoursTotal;
+                    var keys = Object.keys(hoursTotal);
+                    var empArr = [];
+                    var totalSold;
+
+                    hoursSold.forEach(function (dep) {
+                        if (obj.name === dep.name) {
+                            empArr = dep.employees;
+
+                            empArr.forEach(function (emp) {
+                                if (employee.name === emp.name) {
+                                    totalSold = _.clone(emp.hoursSold);
+                                }
+                            });
+                        }
+
+                        objToSave.hoursTotal = {};
+                        objToSave.total = 0;
+                        keys.forEach(function (key) {
+                            var sold = (totalSold && totalSold[key]) ? totalSold[key] : 0;
+                            objToSave.hoursTotal[key] = hoursTotal[key] - sold;
+                            objToSave.total += objToSave.hoursTotal[key];
+                        });
+                    });
+                    var object = _.clone(objToSave);
+                    obj.employees.push(object);
+                    obj.totalForDep += objToSave.total;
+                });
+                resultForUnsold.push(obj);
+            });
+
+            target.html(this.totalHoursTemplate({
+                departments: resultForUnsold,
+                content: 'totalHoursUnsold',
+                className: 'totalHoursUnsold',
+                headName: 'Hours Unsold'
+            }));
+            targetTotal = $(this.$el.find('[data-content="totalHoursUnsold"]'));
+            monthContainer = target.find('.monthContainer');
+            monthContainer.html(this.monthsArrayTemplate({monthArr: monthArr}));
+
+            async.each(resultForUnsold, function (element, cb) {
+                var department = element.name;
+                var departmentContainer = target.find('[data-id="' + department + '"]');
+
+
+                var totalObj;
+
+                if (resultForUnsold) {
+                    var total;
+                    var employeesArr;
+
+                    total = element.totalForDep;
+                    globalTotal += total;
+                    employeesArr = element.employees;
+
+                    employeesArr.forEach(function (employee) {
+                        totalObj = employee.hoursTotal;
+                        departmentContainer.html(self.totalHoursByMonth({
+                            content: 'totalHoursUnsold',
+                            departments: resultForUnsold,
+                            monthArr: monthArr,
+                            byMonthData: totalObj,
+                            total: total,
+                            employees: element.employees
+                        }));
+                    });
+                }
+
+                cb();
+            }, function (err) {
+
+                if (err) {
+                    alert(err);
+                }
+
+                for (var i = resultForUnsold.length - 1; i >= 0; i--) {
+                    var employees = resultForUnsold[i].employees;
+
+                    employees.forEach(function (employee) {
+                        var totalHours = _.clone(employee.hoursTotal);
+
+                        monthArr.forEach(function (monthResult) {
+
+                            if (!(monthResult.year * 100 + monthResult.month in bySalesPerMonth)) {
+                                if (totalHours[monthResult.year * 100 + monthResult.month]) {
+                                    bySalesPerMonth[monthResult.year * 100 + monthResult.month] = totalHours[monthResult.year * 100 + monthResult.month];
+                                }
+                            } else {
+                                bySalesPerMonth[monthResult.year * 100 + monthResult.month] += totalHours[monthResult.year * 100 + monthResult.month];
+                            }
+                        });
+                    });
+                }
+
+                targetTotal.html(self.perMonthForTotalHours({
+                    content: 'totalHoursUnsold',
+                    monthArr: monthArr,
+                    perMonth: bySalesPerMonth,
+                    globalTotal: globalTotal,
+                    totalName: 'Total Hours'
+                }));
+
+                bonusRows = $.find("[data-val='totalHoursUnsold']");
+
+                bonusRows.forEach(function (bonusRow) {
+                    $(bonusRow).toggle();
+                });
+
+                return false;
+            });
         },
 
 
-
-        changeHoursSold: function(){
+        changeHoursSold: function () {
             var self = this;
             var hoursSold = this.model.get('hoursSold');
             var monthArr = this.monthArr;
@@ -1515,35 +1626,8 @@ define([
             var globalTotal = 0;
             var bySalesPerMonth = {};
 
-            async.each(hoursSold, function (element) {
-                var obj = {};
-                var objToSave = {};
-                var empArr;
-                var key;
-
-                obj.employees = [];
-                obj.name = element.department;
-
-                obj.totalForDep = 0;
-
-                empArr = element.employees;
-
-
-                empArr.forEach(function (element) {
-                    key = Object.keys(element)[0];
-
-                    objToSave.name = element[key].name;
-                    objToSave.total = element[key].total;
-                    objToSave.hoursSold = element[key].hoursSold;
-                    var object = _.clone(objToSave);
-                    obj.employees.push(object);
-                    obj.totalForDep += objToSave.total;
-                });
-                departments.push(obj);
-            });
-
             target.html(this.hoursSoldTemplate({
-                departments: departments,
+                departments: hoursSold,
                 content: 'totalHoursSold',
                 className: 'totalHoursSold',
                 headName: 'Hours Sold'
@@ -1552,7 +1636,7 @@ define([
             monthContainer = target.find('.monthContainer');
             monthContainer.html(this.monthsArrayTemplate({monthArr: monthArr}));
 
-            async.each(departments, function (element, cb) {
+            async.each(hoursSold, function (element, cb) {
                 var department = element.name;
                 var departmentContainer = target.find('[data-id="' + department + '"]');
 
@@ -1571,7 +1655,7 @@ define([
                         totalObj = employee.hoursSold;
                         departmentContainer.html(self.hoursSoldByMonth({
                             content: 'totalHoursSold',
-                            departments: departments,
+                            departments: hoursSold,
                             monthArr: monthArr,
                             byMonthData: totalObj,
                             total: total,
@@ -1591,8 +1675,7 @@ define([
                     var employees = hoursSold[i].employees;
 
                     employees.forEach(function (employee) {
-                        var empKey = Object.keys(employee);
-                        var totalHours = _.clone(employee[empKey].hoursSold);
+                        var totalHours = _.clone(employee.hoursSold);
 
                         monthArr.forEach(function (monthResult) {
 
@@ -1604,7 +1687,7 @@ define([
                                     bySalesPerMonth[monthResult.year * 100 + monthResult.month] = 0;
                                 }
                             } else {
-                                bySalesPerMonth[monthResult.year * 100 + monthResult.month] += totalHours[monthResult.year * 100 + monthResult.month] ? totalHours[monthResult.year * 100 + monthResult.month]: 0;
+                                bySalesPerMonth[monthResult.year * 100 + monthResult.month] += totalHours[monthResult.year * 100 + monthResult.month] ? totalHours[monthResult.year * 100 + monthResult.month] : 0;
                             }
                         });
                     });

@@ -1625,18 +1625,12 @@ var wTrack = function (models) {
 
         access.getReadAccess(req, req.session.uId, 67, function (access) {
             var options = req.query;
-            // var startWeek = parseInt(options.week);
-            // var startYear = parseInt(options.year);
             var startMonth = parseInt(options.month) || 10;
             var startYear = parseInt(options.year) || 2014;
             var endMonth = parseInt(options.endMonth) || 9;
             var endYear = parseInt(options.endYear) || 2015;
             var startWeek = moment().year(startYear).month(startMonth - 1).isoWeek();
             var endWeek = moment().year(endYear).month(endMonth - 1).isoWeek();
-            // var startMonth = moment().year(startYear).isoWeek(startWeek).month() + 1;
-            //var endMonth;
-
-            // var endYear;
             var startDate;
             var endDate;
             var match;
@@ -1650,25 +1644,6 @@ var wTrack = function (models) {
                 return res.status(403).send();
             }
 
-            //if (startWeek >= 40) {
-            //    endWeek = parseInt(startWeek) + 14 - 53;
-            //  //  endYear = parseInt(startYear) + 1;
-            //} else {
-            //    endWeek = parseInt(startWeek) + 14;
-            //  //  endYear = parseInt(startYear);
-            //}
-
-            startDate = startYear * 100 + startWeek;
-            endDate = endYear * 100 + endWeek;
-
-            //endMonth = moment().year(endYear).isoWeek(endWeek).month() + 1;
-
-            groupBy = {
-                _id: '$department.name',
-                root: {
-                    $push: '$$ROOT'
-                }
-            };
 
             function employeesRetriver(waterfallCb) {
                 Employees
@@ -1836,6 +1811,7 @@ var wTrack = function (models) {
                 var employees = response['employees'];
                 var monthHours = response['monthHours'];
                 var result = [];
+                var departments = [];
 
                 employees.forEach(function (employee) {
                     var department = {};
@@ -1891,8 +1867,29 @@ var wTrack = function (models) {
 
                     result.push(department);
                 });
+                async.each(result, function (element) {
+                    var obj = {};
+                    var objToSave = {};
+                    var empArr;
+                    obj.employees = [];
+                    obj.name = element._id;
 
-                res.status(200).send(result);
+                    obj.totalForDep = 0;
+
+                    empArr = element.employees;
+
+                    empArr.forEach(function (employee) {
+
+                        objToSave.name = employee.name;
+                        objToSave.total = employee.total;
+                        objToSave.hoursTotal = employee.hoursTotal;
+                        var object = _.clone(objToSave);
+                        obj.employees.push(object);
+                        obj.totalForDep += objToSave.total;
+                    });
+                    departments.push(obj);
+                });
+                res.status(200).send(departments);
             }
 
             async.waterfall(waterfallTasks, waterfallCb);
@@ -1972,6 +1969,7 @@ var wTrack = function (models) {
 
             function resultMapper (response){
                 var result = [];
+                var departments = [];
 
                 response.forEach(function(departments){
                     var department = [];
@@ -2000,7 +1998,6 @@ var wTrack = function (models) {
                                 empObj[element.employee._id] = element.employee;
                                 empObj[element.employee._id].hoursSold = {};
                                 empObj[element.employee._id].hoursSold[key] = element.sold;
-                                //empObj[element.employee._id].total = 0;
                                 empObj[element.employee._id].total = parseInt(element.sold);
                             } else {
                                 empObj[element.employee._id].hoursSold[key] = element.sold;
@@ -2014,8 +2011,34 @@ var wTrack = function (models) {
 
                     result.push(depObj);
                 });
+                async.each(result, function (element) {
+                    var obj = {};
+                    var objToSave = {};
+                    var empArr;
+                    var key;
 
-                res.status(200).send(result);
+                    obj.employees = [];
+                    obj.name = element.department;
+
+                    obj.totalForDep = 0;
+
+                    empArr = element.employees;
+
+
+                    empArr.forEach(function (element) {
+                        var object;
+                        key = Object.keys(element)[0];
+
+                        objToSave.name = element[key].name;
+                        objToSave.total = element[key].total;
+                        objToSave.hoursSold = element[key].hoursSold;
+                        object = _.clone(objToSave);
+                        obj.employees.push(object);
+                        obj.totalForDep += objToSave.total;
+                    });
+                    departments.push(obj);
+                });
+                res.status(200).send(departments);
             }
         });
     }
