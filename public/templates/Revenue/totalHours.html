@@ -1,0 +1,27 @@
+<% monthArr.forEach(function(monthObject){ %>
+<% var key = monthObject.year*100 + monthObject.month; %>
+<% var totalForDep = 0; %>
+
+  <div class="divCell">
+    <% employees.forEach(function(employee){ %>
+    <%var byMonthData = employee.hoursTotal%>
+        <% totalForDep +=  byMonthData[key]; %>
+    <% }) %>
+    <span id="totalForDep"><%= totalForDep ? totalForDep : '&nbsp' %></span>
+
+    <% employees.forEach(function(employee){ %>
+    <%var byMonthData = employee.hoursTotal%>
+    <div class="divRow" data-val="<%=content%>">
+        <% totalForDep +=  byMonthData[key]; %>
+        <span class="divCell forBonus" ><%= byMonthData[key] ? byMonthData[key] : '&nbsp'%></span>
+    </div>
+    <% }) %>
+
+  </div>
+<% }) %>
+
+<div class="divCell ">
+      <span>
+        <%= total ? total : '&nbsp'%>
+      </span>
+</div>
