@@ -14,17 +14,17 @@ var _ = require('lodash');
 var CONSTANTS = require('../constants/modules');
 var MAINCONSTANTS = require('../constants/mainConstants');
 
-function returnModuleId(req){
+function returnModuleId(req) {
     var body = req.body;
     var moduleId;
 
-    var isWtrack = req.session.lastDb === 'weTrack';
+    /*    var isWtrack = req.session.lastDb === 'weTrack';
 
-    if(isWtrack){
-        moduleId = 61;
-    } else {
-        moduleId = !!body.forSales ? 61 : 60
-    }
+     if(isWtrack){
+     moduleId = 61;
+     } else {*/
+    moduleId = !!body.forSales ? 61 : 60
+    /*    }*/
 
     return moduleId;
 }
@@ -33,6 +33,7 @@ var Payment = function (models) {
     var access = require("../Modules/additions/access.js")(models);
 
     var EmployeeSchema = mongoose.Schemas['Employee'];
+    var wTrackPayOutSchema = mongoose.Schemas['wTrackPayOut'];
     var PaymentSchema = mongoose.Schemas['Payment'];
     var wTrackPaymentSchema = mongoose.Schemas['wTrackPayment'];
     var InvoiceSchema = mongoose.Schemas['Invoice'];
@@ -47,7 +48,7 @@ var Payment = function (models) {
         var isWtrack = req.session.lastDb === 'weTrack';
         var Payment;
 
-        if(isWtrack){
+        if (isWtrack) {
             Payment = models.get(req.session.lastDb, 'wTrackPayment', wTrackPaymentSchema);
         } else {
             Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
@@ -80,7 +81,7 @@ var Payment = function (models) {
 
         var moduleId = returnModuleId(req);
 
-        if(isWtrack){
+        if (isWtrack) {
             Payment = models.get(req.session.lastDb, 'wTrackPayment', wTrackPaymentSchema);
         } else {
             Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
@@ -175,14 +176,18 @@ var Payment = function (models) {
 
                         query
                             .populate('invoice._id', '_id name');
-                            /*.populate('paymentMethod', '_id name');*/
+                        /*.populate('paymentMethod', '_id name');*/
 
-                        query.exec(function(err, result){
-                            if(err){
+                        query.exec(function (err, result) {
+                            if (err) {
                                 return waterfallCallback(err);
                             }
 
-                            Employee.populate(result, {path: 'invoice.salesPerson', select: '_id name', options: {lean: true}}, function(){
+                            Employee.populate(result, {
+                                path: 'invoice.salesPerson',
+                                select: '_id name',
+                                options: {lean: true}
+                            }, function () {
                                 waterfallCallback(null, result);
                             });
                         });
@@ -206,6 +211,39 @@ var Payment = function (models) {
         }
     };
 
+    this.createPayOut = function (req, res, next) {
+        var body = req.body;
+
+        var moduleId = returnModuleId(req);
+        var isWtrack = req.session.lastDb === 'weTrack';
+
+        var Payment;
+
+        if (isWtrack) {
+            Payment = models.get(req.session.lastDb, 'wTrackPayOut', wTrackPayOutSchema);
+        } else {
+            Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
+        }
+
+        access.getEditWritAccess(req, req.session.uId, moduleId, function (access) {
+            if (access) {
+                var payment = new Payment(body);
+
+                payment.save(function (err, payment) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    res.status(200).send(payment);
+                });
+
+            } else {
+                res.status(403).send();
+            }
+        });
+
+    };
+
     this.create = function (req, res, next) {
         var body = req.body;
         var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
@@ -218,7 +256,7 @@ var Payment = function (models) {
         var isWtrack = req.session.lastDb === 'weTrack';
         var Payment;
 
-        if(isWtrack){
+        if (isWtrack) {
             Payment = models.get(req.session.lastDb, 'wTrackPayment', wTrackPaymentSchema);
         } else {
             Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
@@ -283,7 +321,7 @@ var Payment = function (models) {
                     name: workflow.name,
                     status: workflow.status
                 };
-                invoice.paymentInfo.balance = (totalToPay - paid)/100;
+                invoice.paymentInfo.balance = (totalToPay - paid) / 100;
                 invoice.paymentInfo.unTaxed += paid / 100;
                 invoice.payments.push(payment._id);
                 invoice.save(function (err, invoice) {
@@ -321,7 +359,7 @@ var Payment = function (models) {
                     var amount;
                     var err;
 
-                    if(!wTrackDoc){
+                    if (!wTrackDoc) {
                         err = new Error('wTracks are missing');
 
                         return innerWaterfallCb(err);
@@ -408,7 +446,7 @@ var Payment = function (models) {
         var isWtrack = req.session.lastDb === 'weTrack';
         var Payment;
 
-        if(isWtrack){
+        if (isWtrack) {
             Payment = models.get(req.session.lastDb, 'wTrackPayment', wTrackPaymentSchema);
         } else {
             Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
@@ -502,6 +540,7 @@ var Payment = function (models) {
     this.putchBulk = function (req, res, next) {
         var body = req.body;
         var uId;
+
         var Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
 
         var moduleId = returnModuleId(req);
@@ -517,6 +556,12 @@ var Payment = function (models) {
                             user: uId,
                             date: new Date().toISOString()
                         };
+
+                        if (moduleId === 60) {
+                            delete data.paid;
+                            delete data.differenceAmount;
+                            delete data.paidAmount;
+                        }
 
                         delete data._id;
                         Payment.findByIdAndUpdate(id, {$set: data}, cb);
@@ -543,7 +588,7 @@ var Payment = function (models) {
 
         var moduleId = req.headers.mId || returnModuleId(req);
 
-        if(isWtrack){
+        if (isWtrack) {
             Payment = models.get(req.session.lastDb, 'wTrackPayment', wTrackPaymentSchema);
         } else {
             Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);

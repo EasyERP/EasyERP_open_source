@@ -15,6 +15,7 @@ module.exports = (function () {
             fullName: String
         },
         paidAmount: {type: Number, default: 0, set: setPrice},
+        name: {type: String, default: '', unique: true},
         date: {type: Date, default: Date.now},
         paymentRef: {type: String, default: ''},
         workflow: {type: String, enum: ['Draft', 'Paid'], default: 'Draft'},
@@ -41,6 +42,13 @@ module.exports = (function () {
     }, {collection: 'Payment'});
 
     mongoose.model('wTrackPayOut', paymentSchema);
+    paymentSchema.pre('save', function (next) {
+        var payment = this;
+
+        payment.name = new Date().valueOf();
+        next();
+    });
+
 
     function setPrice(num) {
         return num * 100;

@@ -25,25 +25,30 @@ define([
             page: null, //if reload page, and in url is valid page
             contentType: 'supplierPayments',//needs in view.prototype.changeLocationHash
             viewType: 'list',//needs in view.prototype.changeLocationHash
+            modelId: null,
+            $listTable: null,
+            editCollection: null,
             collectionLengthUrl: '/payment/suppliers/totalCollectionLength',
             changedModels: {},
             responseObj: {},
 
             events: {
+                "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
+                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
                 "click .itemsNumber": "switchPageCounter",
                 "click .showPage": "showPage",
                 "change #currentShowPage": "showPage",
                 "click #previousPage": "previousPage",
                 "click #nextPage": "nextPage",
                 "click .checkbox": "checked",
+                "click td.editable": "editRow",
                 "mouseover .currentPageList": "itemsNumber",
                 "click": "hideItemsNumber",
                 "click #firstShowPage": "firstPage",
                 "click #lastShowPage": "lastPage",
                 "click .oe_sortable": "goSort",
-                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-                "click td.editable": "editRow",
                 "change .editable ": "setEditable",
+                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
             },
 
             initialize: function (options) {
@@ -55,9 +60,24 @@ define([
                 this.newCollection = options.newCollection;
                 this.deleteCounter = 0;
                 this.page = options.collection.page;
+
                 this.render();
+
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
                 this.contentCollection = paymentCollection;
+            },
+
+            showNewSelect: function (e, prev, next) {
+                populate.showSelect(e, prev, next, this);
+                return false;
+            },
+
+            nextSelect: function (e) {
+                this.showNewSelect(e, false, true);
+            },
+
+            prevSelect: function (e) {
+                this.showNewSelect(e, true, false);
             },
 
             chooseOption: function (e) {
@@ -65,41 +85,46 @@ define([
                 var targetElement = target.parents("td");
                 var targetW = targetElement.find("a");
                 var tr = target.parents("tr");
-                var modelId = tr.data('id');
+                var modelId = tr.attr('data-id');
                 var id = target.attr("id");
-                var attr = targetElement.attr("id") || targetElement.data("content");
+                var attr = targetElement.attr("id") || targetElement.attr("data-content");
                 var elementType = '#' + attr;
                 var workflow;
                 var changedAttr;
-                var employee;
-                var paymentId = tr.data('id');
+                var supplier;
+                var editModel;
 
                 var element = _.find(this.responseObj[elementType], function (el) {
                     return el._id === id;
                 });
 
-                var editModel = this.collection.get(modelId);
+                if (modelId) {
+                    editModel = this.editCollection.get(modelId);
 
-                if (!this.changedModels[modelId]) {
-                    if (!editModel.id) {
-                        this.changedModels[modelId] = editModel.attributes;
-                    } else {
-                        this.changedModels[modelId] = {};
+                    if (!this.changedModels[modelId]) {
+                        if (!editModel.id) {
+                            this.changedModels[modelId] = editModel.attributes;
+                        } else {
+                            this.changedModels[modelId] = {};
+                        }
                     }
-                }
 
-                changedAttr = this.changedModels[modelId];
+                    changedAttr = this.changedModels[modelId];
+                }
 
                 if (elementType === '#employee') {
 
-                    employee = _.clone(editModel.get('employee'));
+                    tr.find('[data-content="employee"]').text(element.name);
 
-                    employee._id = element._id;
-                    employee.name = target.text();
+                    supplier = _.clone(editModel.get('supplier'));
 
-                    changedAttr.employee = employee;
+                    supplier._id = element._id;
+                    supplier.fullName = target.text();
+
+                    changedAttr.supplier = supplier;
                 } else if (elementType === '#bonusType') {
-                        changedAttr.paymentRef = target.text();
+                    tr.find('[data-content="bonusType"]').text(element.name);
+                    changedAttr.paymentRef = target.text();
                 } else if (elementType === '#workflow') {
                     targetW.attr("class", "currentSelected");
                     changedAttr.workflow = target.text();
@@ -134,12 +159,12 @@ define([
                 var el = $(e.target);
                 var tr = $(e.target).closest('tr');
                 var td = $(e.target).closest('td');
-                var modelId = tr.data('id');
-                var colType = el.data('type');
+                var modelId = tr.attr('data-id');
+                var colType = el.attr('data-type');
                 var isDTPicker = colType !== 'input' && el.prop("tagName") !== 'INPUT' && el.data('content') === 'date';
                 var tempContainer;
                 var width;
-                var isWorkflow = td.data('content') === 'workflow';
+                var isWorkflow = td.attr('data-content') === 'workflow';
                 var isSelect = colType !== 'input' && el.prop("tagName") !== 'INPUT';
 
                 if (modelId && el.prop('tagName') !== 'INPUT') {
@@ -189,6 +214,7 @@ define([
                     model = this.editCollection.get(id);
                     modelJSON = model.toJSON();
                     model.changed = this.changedModels[id];
+                    model.changed.differenceAmount = this.changedModels[id].paidAmount - this.changedModels[id].paid;
                 }
                 this.editCollection.save();
             },
@@ -212,6 +238,16 @@ define([
                 } else {
                     this.collection.set(this.editCollection.models, {remove: false});
                 }
+                this.bindingEventsToEditedCollection(this);
+            },
+
+            bindingEventsToEditedCollection: function (context) {
+                if (context.editCollection) {
+                    context.editCollection.unbind();
+                }
+                context.editCollection = new editCollection(context.collection.toJSON());
+                context.editCollection.on('saved', context.savedNewModel, context);
+                context.editCollection.on('updated', context.updatedOptions, context);
             },
 
             createItem: function () {
@@ -232,10 +268,6 @@ define([
                 if (!this.isNewRow()) {
                     this.showSaveCancelBtns();
                     this.editCollection.add(model);
-
-                    if (!this.changedModels[cid]) {
-                        this.changedModels[cid] = model;
-                    }
 
                     new createView(startData);
                 }
@@ -281,8 +313,8 @@ define([
 
                 if (editedElement.length) {
                     editedCol = editedElement.closest('td');
-                    editedElementRowId = editedElement.closest('tr').data('id');
-                    editedElementContent = editedCol.data('content');
+                    editedElementRowId = editedElement.closest('tr').attr('data-id');
+                    editedElementContent = editedCol.attr('data-content');
                     editedElementValue = editedElement.val();
 
                     editPaymentModel = this.collection.get(editedElementRowId);
@@ -460,7 +492,7 @@ define([
                 var currentParrentSortClass = target$.attr('class');
                 var sortClass = currentParrentSortClass.split(' ')[1];
                 var sortConst = 1;
-                var sortBy = target$.data('sort');
+                var sortBy = target$.attr('data-sort');
                 var sortObject = {};
 
                 this.collection.unbind('reset');
@@ -602,6 +634,9 @@ define([
                         page: this.page,
                         itemsNumber: this.collection.namberToShow
                     }).render());
+
+                    currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 7, wTrack: true}).render());
+
                 } else {
                     currentEl.html('');
                     currentEl.append(_.template(listTemplate));
@@ -610,9 +645,11 @@ define([
                         page: this.page,
                         itemsNumber: this.collection.namberToShow
                     }).render());
+
+                    currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 7}).render());
                 }
 
-                currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 7}).render());
+
 
                 $('#check_all').click(function () {
                     $(':checkbox').prop('checked', this.checked);
@@ -646,16 +683,6 @@ define([
                     self.responseObj['#employee'] = employees;
                 });
 
-                dataService.getData("/employee/getForDD", null, function (employees) {
-                    employees = _.map(employees.data, function (employee) {
-                        employee.name = employee.name.first + ' ' + employee.name.last;
-
-                        return employee
-                    });
-
-                    self.responseObj['#employee'] = employees;
-                });
-
                 dataService.getData("/bonusType/getForDD", null, function (bonusTypes) {
                     self.responseObj['#bonusType'] = bonusTypes.data;
                 });
@@ -668,13 +695,38 @@ define([
                     self.$listTable = $('#listTable');
                 }, 10);
 
-                this.$listTable = $('#listTable');
+                $(document).on("click", function (e) {
+                    self.hideNewSelect();
+                });
 
                 currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+            },
 
-                return this;
+            savedNewModel: function (modelObject) {
+                var savedRow = this.$listTable.find('#false');
+                var modelId;
+                var checkbox = savedRow.find('input[type=checkbox]');
+                var editedEl = savedRow.find('.editing');
+                var editedCol = editedEl.closest('td');
+
+                savedRow.find('[data-content="employee"]').removeClass('editable');
+                savedRow.find('[data-content="bonusType"]').removeClass('editable');
+
+                if (modelObject) {
+                    modelId = modelObject._id;
+                    savedRow.attr("data-id", modelId);
+                    checkbox.val(modelId);
+                    savedRow.removeAttr('id');
+                }
+
+                this.hideSaveCancelBtns();
+                editedCol.text(editedEl.val());
+                editedEl.remove();
+                this.changedModels = {};
+                this.resetCollection(modelObject);
             }
         });
 
         return PaymentListView;
-    });
+    })
+;

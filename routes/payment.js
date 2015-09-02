@@ -12,6 +12,7 @@ module.exports = function (models) {
     router.get('/:byType/totalCollectionLength', handler.totalCollectionLength);
     router.get('/:byType/:viewType', handler.getForView);
     router.post('/', handler.create);
+    router.post('/supplier', handler.createPayOut);
     router.delete('/:id', handler.remove);
     router.patch('/customers', handler.putchBulk);
     router.patch('/supplier', handler.putchBulk);
