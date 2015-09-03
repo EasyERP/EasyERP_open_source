@@ -93,9 +93,11 @@ define([
 
             saveItem: function () {
                 var self = this;
+                var value;
                 var mid = 39;
                 var customer = {};
                 var validation = true;
+                var custom = this.$el.find("#customerDd").text();
 
                 customer._id = this.$el.find("#customerDd").data("id");
                 customer.name = this.$el.find("#customerDd").text();
@@ -113,12 +115,19 @@ define([
                 var bonusRow = bonusContainer.find('tr');
                 var bonus = [];
 
+                if (custom === 'Select'){
+                    value = 'Customer';
+                    alert('Please, choose ' + value + ' first.');
+                    validation = false;
+                }
+
+
                 bonusRow.each(function (key, val) {
                     var employeeId = $(val).find("[data-content='employee']").attr('data-id');
                     var bonusId = $(val).find("[data-content='bonus']").attr('data-id');
                     var value;
 
-                    if (!employeeId || !bonusId){
+                    if (!employeeId || !bonusId || custom === 'Select'){
                         if (!employeeId){
                             value = 'Employee';
                             alert('Please, choose ' + value + ' first.');
@@ -251,7 +260,7 @@ define([
                 });
                 populate.get("#projectTypeDD", "/projectType", {}, "name", this, true, true);
                 populate.get2name("#projectManagerDD", "/getPersonsForDd", {}, this, true);
-                populate.get2name("#customerDd", "/Customer", {}, this, true, false);
+                populate.get2name("#customerDd", "/Customer", {}, this, true, true);
                 populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/WorkflowsForDd", {id: "Projects"}, "name", this, true);
 
                 $('#StartDate').datepicker({
