@@ -1617,7 +1617,6 @@ var wTrack = function (models) {
 
 
     this.totalHours = function (req, res, next) {
-        var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
         var MonthHours = models.get(req.session.lastDb, 'MonthHours', monthHoursSchema);
         var Vacation = models.get(req.session.lastDb, 'Vacation', vacationSchema);
         var Holidays = models.get(req.session.lastDb, 'Holiday', holidaysSchema);
@@ -1629,14 +1628,9 @@ var wTrack = function (models) {
             var startYear = parseInt(options.year) || 2014;
             var endMonth = parseInt(options.endMonth) || 9;
             var endYear = parseInt(options.endYear) || 2015;
-            var startWeek = moment().year(startYear).month(startMonth - 1).isoWeek();
-            var endWeek = moment().year(endYear).month(endMonth - 1).isoWeek();
-            var startDate;
-            var endDate;
             var match;
             var matchHoliday;
             var matchVacation;
-            var groupBy;
             var parallelTasksObject;
             var waterfallTasks;
 
@@ -1646,6 +1640,8 @@ var wTrack = function (models) {
 
 
             function employeesRetriver(waterfallCb) {
+                var Ids = [];
+
                 Employees
                     .find(
                     {isEmployee: true},
@@ -1656,7 +1652,7 @@ var wTrack = function (models) {
                         if (err) {
                             waterfallCb(err);
                         }
-                        var Ids = [];
+
                         result.forEach(function (element) {
                             Ids.push(element._id);
                         });
@@ -1795,6 +1791,7 @@ var wTrack = function (models) {
                     if (err) {
                         return next(err);
                     }
+
                     response.employees = employees;
                     waterfallCb(null, response);
                 });
@@ -1831,6 +1828,7 @@ var wTrack = function (models) {
                         var hire;
                         var date;
                         var fire;
+
                         employee.hire = [];
 
                         hire = _.clone(element.hire);
@@ -1854,6 +1852,7 @@ var wTrack = function (models) {
 
                         employee.total = 0;
                         employee.hoursTotal = {};
+
                         monthHours.forEach(function (months) {
                             var month = months.month;
                             var year = months.year;
@@ -1879,7 +1878,6 @@ var wTrack = function (models) {
                                 }
                             });
 
-
                             key = year * 100 + month;
 
                             employee.hoursTotal[key] = parseInt(hoursForMonth) - parseInt(vacationForEmployee) * 8 - parseInt(holidaysForMonth) * 8;
@@ -1895,6 +1893,7 @@ var wTrack = function (models) {
                     var obj = {};
                     var objToSave = {};
                     var empArr;
+
                     obj.employees = [];
                     obj.name = element._id;
 
@@ -1903,13 +1902,14 @@ var wTrack = function (models) {
                     empArr = element.employees;
 
                     empArr.forEach(function (employee) {
+                        var object;
 
                         objToSave.name = employee.name;
                         objToSave.total = employee.total;
                         objToSave.hoursTotal = employee.hoursTotal;
                         objToSave.hire = employee.hire;
                         objToSave.fire = employee.fire;
-                        var object = _.clone(objToSave);
+                        object = _.clone(objToSave);
                         obj.employees.push(object);
                         obj.totalForDep += objToSave.total;
                     });
@@ -2015,7 +2015,6 @@ var wTrack = function (models) {
 
                         arrayGrouped.forEach(function(element){
 
-
                             var key = element.year * 100 + element.month;
 
                             if (!empObj[element.employee._id]){
@@ -2049,7 +2048,6 @@ var wTrack = function (models) {
                     obj.totalForDep = 0;
 
                     empArr = element.employees;
-
 
                     empArr.forEach(function (element) {
                         var object;
