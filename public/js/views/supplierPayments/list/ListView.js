@@ -49,6 +49,8 @@ define([
                 "click .oe_sortable": "goSort",
                 "change .editable ": "setEditable",
                 "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
+                "focusout .editing": "onChangeInput",
+                "keyup .editing": "onKeyUpInput"
             },
 
             initialize: function (options) {
@@ -165,10 +167,9 @@ define([
                 var tempContainer;
                 var width;
                 var isWorkflow = td.attr('data-content') === 'workflow';
-                var isMonth = td.attr('data-content') === 'month';
-                var isYear = td.attr('data-content') === 'year';
                 var isSelect = colType !== 'input' && el.prop("tagName") !== 'INPUT';
                 var editingEl;
+                var dataContent;
 
                 if (modelId && el.prop('tagName') !== 'INPUT') {
                     if (this.modelId) {
@@ -195,49 +196,46 @@ define([
                     tempContainer = el.text();
                     width = el.width() - 6;
                     el.html('<input class="editing" type="number" value="' + tempContainer + '"  style="width:' + width + 'px">');
+
+                    dataContent = $(el).attr('data-content');
                     editingEl = $(el).find('.editing');
 
-                    if (isMonth) {
+                    if (dataContent === 'month') {
                         editingEl.attr({
-                            "min" : 1,
-                            "max" : 12,
-                            "maxLength" : 2
-                        })
-                    }
-
-                    if (isYear) {
+                            "min": 1,
+                            "max": 12,
+                            "maxLength": 2
+                        });
+                    } else if (dataContent === 'year') {
                         editingEl.attr({
-                            "min" : 1980,
-                            "maxLength" : 4
-                        })
+                            "min": 1980,
+                            "maxLength": 4
+                        });
                     }
-
-                    $(editingEl).keyup(function(element) {
-                        onInput(element.target);
-                    });
-
-                    $(editingEl).change(function(element) {
-                        onChange(element.target);
-                    });
                 }
 
-                function onInput (element) {
-                    if (element.maxLength && element.value.length > element.maxLength) {
-                        element.value = element.value.slice(0, element.maxLength);
-                    }
-                };
-
-                function onChange (element) {
-                    if (element.max && element.value > element.max) {
-                        element.value = element.max;
-                    }
-
-                    if (element.min && element.value < element.min) {
-                        element.value = element.min;
-                    }
-                };
 
                 return false;
+            },
+
+            onKeyUpInput: function (e) {
+                var element = e.target;
+
+                if (element.maxLength && element.value.length > element.maxLength) {
+                    element.value = element.value.slice(0, element.maxLength);
+                }
+            },
+
+            onChangeInput: function (e) {
+                var element = e.target;
+
+                if (element.max && element.value > element.max) {
+                    element.value = element.max;
+                }
+
+                if (element.min && element.value < element.min) {
+                    element.value = element.min;
+                }
             },
 
             setChangedValue: function () {
@@ -678,7 +676,11 @@ define([
                         itemsNumber: this.collection.namberToShow
                     }).render());
 
-                    currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 7, wTrack: true}).render());
+                    currentEl.append(new listTotalView({
+                        element: this.$el.find("#listTable"),
+                        cellSpan: 7,
+                        wTrack: true
+                    }).render());
 
                 } else {
                     currentEl.html('');
@@ -691,7 +693,6 @@ define([
 
                     currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 7}).render());
                 }
-
 
 
                 $('#check_all').click(function () {
