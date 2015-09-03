@@ -5687,6 +5687,21 @@ textarea#editInput {
         border-bottom: 2px solid #b37d53;
       }
     }
+    &#totalHoursSold {
+      .th {
+        border-bottom: 2px solid #b3ce67;
+      }
+    }
+    &#totalHoursUnsold {
+      .th {
+        border-bottom: 2px solid #9c827b;
+      }
+    }
+    &#totalTotalHours {
+      .th {
+        border-bottom: 2px solid #750ace;
+      }
+    }
     &#tablePaidBySales {
       .th {
         border-bottom: 2px solid #a2a2a3;
@@ -5731,6 +5746,15 @@ textarea#editInput {
     }
     &.totalUncalcBonus {
       background-color: #b37d53
+    }
+    &.totalTotalHours {
+      background-color: #750ace
+    }
+    &.totalHoursSold {
+      background-color: #b3ce67
+    }
+    &.totalHoursUnsold {
+      background-color: #9c827b
     }
     &.totalByDep, &.totalHoursByDep {
       background-color: #00af00
@@ -5779,7 +5803,7 @@ textarea#editInput {
       float: right;
       display: table-column;
       width: 15%;
-      height: 22px;
+      height: 17px;
       padding: 0 15px;
       box-sizing: border-box;
       text-align: left;
@@ -5794,6 +5818,9 @@ textarea#editInput {
   #totalAllBonus,
   #totalCalcBonus,
   #totalUncalcBonus,
+  #totalTotalHours,
+  #totalHoursSold,
+  #totalHoursUnsold,
   #tableEmployeeBySales {
     .divCell {
       width: 6.34%;

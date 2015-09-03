@@ -379,8 +379,18 @@ var Vacation = function (models) {
         var Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
         var body = req.body;
         var Vacation;
+        var vacationKeys;
+        var result = 0;
 
         body.vacations = calculateWeeks(body.vacArray, body.month, body.year);
+
+        vacationKeys = Object.keys(body.vacations);
+
+        vacationKeys.forEach(function(key){
+            result += body.vacations[key];
+        });
+
+        body.monthTotal = result;
 
         Vacation = new Vacation(body);
 
