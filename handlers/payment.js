@@ -67,22 +67,27 @@ var Payment = function (models) {
     this.getForView = function (req, res, next) {
         var viewType = req.params.viewType;
         var forSale = req.params.byType === 'customers';
+        var bonus = req.params.byType === 'supplier';
 
         switch (viewType) {
             case "list":
-                getPaymentFilter(req, res, next, forSale);
+                getPaymentFilter(req, res, next, forSale, bonus);
                 break;
         }
     };
 
-    function getPaymentFilter(req, res, next, forSale) {
+    function getPaymentFilter(req, res, next, forSale, bonus) {
         var isWtrack = req.session.lastDb === 'weTrack';
         var Payment;
 
         var moduleId = returnModuleId(req);
 
         if (isWtrack) {
-            Payment = models.get(req.session.lastDb, 'wTrackPayment', wTrackPaymentSchema);
+            if (moduleId === 61) {
+                Payment = models.get(req.session.lastDb, 'wTrackPayment', wTrackPaymentSchema);
+            } else {
+                Payment = models.get(req.session.lastDb, 'wTrackPayOut', wTrackPayOutSchema);
+            }
         } else {
             Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
         }
@@ -107,6 +112,10 @@ var Payment = function (models) {
                         sort = req.query.sort;
                     } else {
                         sort = {"date": -1};
+                    }
+
+                    if (bonus) {
+                        optionsObject.bonus = bonus;
                     }
 
                     departmentSearcher = function (waterfallCallback) {
@@ -171,8 +180,11 @@ var Payment = function (models) {
                     };
 
                     contentSearcher = function (paymentsIds, waterfallCallback) {
+                        var query;
+
                         optionsObject._id = {$in: paymentsIds};
-                        var query = Payment.find(optionsObject).limit(count).skip(skip).sort(sort);
+
+                        query = Payment.find(optionsObject).limit(count).skip(skip).sort(sort);
 
                         query
                             .populate('invoice._id', '_id name');
