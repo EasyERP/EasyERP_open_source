@@ -25,6 +25,7 @@ define([
             "easyErp/Revenue": "revenue",
             "easyErp/Attendance": "attendance",
             "easyErp/Profiles": "goToProfiles",
+            "easyErp/productSettings": "productSettings",
             "easyErp/myProfile": "goToUserPages",
             "easyErp/Workflows": "goToWorkflows",
             "easyErp/Dashboard": "goToDashboard",
@@ -285,6 +286,59 @@ define([
                         context.changeView(contentview);
                         context.changeTopBarView(topbarView);
                         var url = '#easyErp/Profiles';
+                        Backbone.history.navigate(url, {replace: true});
+                    }
+                });
+            }
+        },
+
+        productSettings: function () {
+            var self = this;
+
+            this.checkLogin(function (success) {
+                if (success) {
+                    goSettings(self);
+                } else {
+                   self.redirectTo();
+                }
+            });
+
+            function goSettings (context) {
+                var startTime = new Date();
+                var contentViewUrl = 'views/settingsProduct/ContentView';
+                var topBarViewUrl = 'views/settingsProduct/TopBarView';
+                var collectionUrl = 'collections/Product/ProductCategories';
+                var self = context;
+
+                if (context.mainView === null) {
+                    context.main("productSettings");
+                } else {
+                    context.mainView.updateMenu("productSettings");
+                }
+
+                require([contentViewUrl, topBarViewUrl, collectionUrl], function (contentView, topBarView, contentCollection) {
+                    var collection = new contentCollection();
+
+                    collection.bind('reset', _.bind(createViews, self));
+                    custom.setCurrentVT('list');
+
+                    function createViews () {
+                        collection.unbind('reset');
+
+                        var url;
+                        var contentview = new contentView({collection: collection, startTime: startTime});
+                        var topbarView = new topBarView({actionType: "Content"});
+
+                        topbarView.bind('createEvent', contentview.createItem, contentview);
+                        topbarView.bind('editEvent', contentview.editItem, contentview);
+                        topbarView.bind('deleteEvent', contentview.deleteItems, contentview);
+                        topbarView.bind('saveEvent', contentview.saveItem, contentview);
+
+                        context.changeView(contentview);
+                        context.changeTopBarView(topbarView);
+
+                        url = '#easyErp/productSettings';
+
                         Backbone.history.navigate(url, {replace: true});
                     }
                 });

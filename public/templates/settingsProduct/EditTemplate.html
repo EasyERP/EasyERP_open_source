@@ -1,0 +1,28 @@
+<div class="form-holder">
+    <form method="post" action="" id="createDepartmentForm" class="form">
+        <fieldset>
+            <div class="inner">
+                <div class="inner">
+                    <div class="half-block left">
+                        <dl class="department-info">
+                            <dt><label>Department Name</label></dt>
+                            <dd><input type="text" class="title-input blueback" name="categoryName" id="categoryName" maxlength="32" placeholder="Category Name" required value="<%=model.name%>"/></dd>
+                        </dl>
+                    </div>
+                    <div class="half-block left">
+                        <dl class="department-info">
+                            <dt><label for="parentCategory">Parent Category</label></dt>
+                            <dd>
+                                <a id="parentCategory" class="current-selected" href="javascript:;" data-id="<%=(model.parentCategory) ? model.parentCategory._id: ''%>" data-level="<%=model.nestingLevel || ''%>" data-fullname="<%=model.fullName%>"><%=model.name%></a>
+                            </dd>
+                        </dl>
+                    </div>
+                    <div class="clearfix">
+                    </div>
+                </div>
+            </div>
+            <div class="clearfix">
+            </div>
+        </fieldset>
+    </form>
+</div>

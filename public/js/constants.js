@@ -173,8 +173,25 @@ define([], function () {
                 view: 'type',
                 backend: 'type'
             },
+        },
+        customerPayments: {
+            'Assigned': {
+                view: 'assigned',
+                backend: 'invoice.assigned._id'
+            },
+            'Company': {
+                view: 'supplier',
+                backend: 'supplier._id'
+            },
+            'Payment Way': {
+                view: 'paymentMethod',
+                backend: 'paymentMethod._id'
+            },
+            'Status': {
+                view: 'workflow',
+                backend: 'workflow'
+            }
         }
-
     };
 
     return {
@@ -220,7 +237,8 @@ define([], function () {
         RESPONSES: {
             BAD_RESPONSE: 'Please try again',
             CREATE_QUOTATION: 'Please check at most one supplier or create one',
-            CONFIRM_ORDER: 'Please add at most one product to quotation'
+            CONFIRM_ORDER: 'Please add at most one product to quotation',
+            DOUBLE_EMPLOYEE_VACATION: 'Current Employee already has vacation line'
         },
 
         WTRACK_DB_NAME: 'weTrack',

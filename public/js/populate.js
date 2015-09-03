@@ -50,6 +50,27 @@ define([
             });
         };
 
+        var getParrentCategory = function (id, url, data, content, isCreate, canBeEmpty) {
+            dataService.getData(url, data, function (response) {
+                content.responseObj[id] = [];
+                if (canBeEmpty) {
+                    content.responseObj[id].push({_id: "", name: "Select"});
+                }
+                content.responseObj[id] = content.responseObj[id].concat(_.map(response.data, function (item) {
+                    return {
+                        _id: item._id,
+                        name: item.name,
+                        level: item.nestingLevel,
+                        parentCategory: item.parentCategory,
+                        fullName: item.fullName
+                    };
+                }));
+                if (isCreate) {
+                    $(id).text(content.responseObj[id][0].name).attr("data-id", content.responseObj[id][0]._id).attr("data-level", content.responseObj[id][0].level).attr("data-fullname", content.responseObj[id][0].fullName);
+                }
+            });
+        };
+
         var getPriority = function (id, content, isCreate) {
             dataService.getData("/Priority", {}, function (response) {
                 content.responseObj[id] = _.map(response.data, function (item) {
@@ -304,6 +325,7 @@ define([
             getWorkflow: getWorkflow,
             showSelect: showSelect,
             getParrentDepartment: getParrentDepartment,
+            getParrentCategory: getParrentCategory,
             getCompanies: getCompanies,
             showSelectPriority: showSelectPriority,
             showProductsSelect: showProductsSelect,

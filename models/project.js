@@ -7,7 +7,7 @@ module.exports = (function () {
 
     var projectSchema = mongoose.Schema({
         projectShortDesc: { type: String, default: 'emptyProject' },
-        projectName: { type: String, default: 'emptyProject' },
+        projectName: { type: String, default: 'emptyProject', unique: true },
         task: [{ type: ObjectId, ref: 'Tasks', default: null }],
         //customer: { type: ObjectId, ref: 'Customers', default: null },
         customer: {
@@ -54,6 +54,7 @@ module.exports = (function () {
         health: { type: Number, default: 1 },
         ID: Number,
         bonus: [{
+            _id: false,
             employeeId: {
                 type: ObjectId,
                 ref: 'Employees'
@@ -63,7 +64,11 @@ module.exports = (function () {
                 ref: 'bonusType'
             },
             startDate: Date,
-            endDate: Date
+            startWeek: Number,
+            startYear: Number,
+            endDate: Date,
+            endWeek: Number,
+            endYear: Number
         }]
     }, { collection: 'Project' });
 

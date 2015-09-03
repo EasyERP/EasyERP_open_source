@@ -1,6 +1,4 @@
-/**
- * Created by soundstorm on 15.06.15.
- */
+
 var mongoose = require('mongoose');
 var moment = require('../public/js/libs/moment/moment');
 var Salary = function (models) {
@@ -342,11 +340,13 @@ var Salary = function (models) {
         var query = Salary.findOne(matchObject);
 
         query.exec(function (err, result) {
+            var baseSalary;
+
             if (err) {
                 return next(err);
             }
 
-
+            baseSalary = result ? result.baseSalary : null;
             //res.header('Content-Type', 'application/json');
             if (result){
                 res.status(200).send({data: result.baseSalary});

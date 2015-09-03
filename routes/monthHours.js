@@ -1,6 +1,4 @@
-/**
- * Created by ����� on 23.06.2015.
- */
+
 var MonthHoursHandler = require('../handlers/monthHours');
 var express = require('express');
 var router = express.Router();

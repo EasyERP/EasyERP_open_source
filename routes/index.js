@@ -1,8 +1,8 @@
-/**
- * Created by Roman on 02.04.2015.
- */
+
+require('pmx').init();
 
 module.exports = function (app, mainDb) {
+
     var events = require('events');
     var event = new events.EventEmitter();
     var logWriter = require('../helpers/logWriter');
@@ -44,6 +44,8 @@ module.exports = function (app, mainDb) {
     var bonusTypeRouter = require('./bonusType')(models);
     var dashboardRouter = require('./dashboard')(models);
     var filterRouter = require('./filter')(models);
+    var productCategoriesRouter = require('./productCategories')(models, event);
+    var customersRouter = require('./customers')(models, event);
 
     app.get('/', function (req, res, next) {
         res.sendfile('index.html');
@@ -85,6 +87,8 @@ module.exports = function (app, mainDb) {
     app.use('/monthHours', monthHoursRouter);
     app.use('/bonusType', bonusTypeRouter);
     app.use('/dashboard', dashboardRouter);
+    app.use('/category', productCategoriesRouter);
+    app.use('/customers', customersRouter);
     app.get('/getDBS', function (req, res) {
         res.send(200, {dbsNames: dbsNames});
     });

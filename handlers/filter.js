@@ -1,6 +1,4 @@
-/**
- * Created by soundstorm on 11.08.15.
- */
+
 var mongoose = require('mongoose');
 var Filters = function (models) {
     var wTrackSchema = mongoose.Schemas['wTrack'];
@@ -9,6 +7,7 @@ var Filters = function (models) {
     var ProjectSchema = mongoose.Schemas['Project'];
     var TaskSchema = mongoose.Schemas['Tasks'];
     var wTrackInvoiceSchema = mongoose.Schemas['wTrackInvoice'];
+    var customerPaymentsSchema = mongoose.Schemas['Payment'];
     var _ = require('../node_modules/underscore');
     var async = require('async');
 
@@ -21,6 +20,7 @@ var Filters = function (models) {
         var Project = models.get(lastDB, 'Project', ProjectSchema);
         var Task = models.get(lastDB, 'Tasks', TaskSchema);
         var wTrackInvoice = models.get(lastDB, 'wTrackInvoice', wTrackInvoiceSchema);
+        var customerPayments = models.get(lastDB, 'Payment', customerPaymentsSchema);
 
         async.parallel({
                 wTrack: getWtrackFiltersValues,
@@ -31,6 +31,7 @@ var Filters = function (models) {
                 Projects: getProjectFiltersValues,
                 Tasks: getTasksFiltersValues,
                 salesInvoice: getSalesInvoiceFiltersValues,
+                customerPayments: getCustomerPaymentsFiltersValues
             },
             function (err, result) {
                 if (err) {
@@ -143,16 +144,18 @@ var Filters = function (models) {
 
                 result = result[0];
 
-                result['services'] = [
-                    {
-                        _id: 'isSupplier',
-                        name: 'Supplier'
-                    },
-                    {
-                        _id: 'isCustomer',
-                        name: 'Customer'
-                    }
-                ]
+                if (result){
+                    result['services'] = [
+                        {
+                            _id: 'isSupplier',
+                            name: 'Supplier'
+                        },
+                        {
+                            _id: 'isCustomer',
+                            name: 'Customer'
+                        }
+                    ]
+                }
 
                 callback(null, result);
             });
@@ -187,16 +190,18 @@ var Filters = function (models) {
 
                 result = result[0];
 
-                result['services'] = [
-                    {
-                        _id: 'isSupplier',
-                        name: 'Supplier'
-                    },
-                    {
-                        _id: 'isCustomer',
-                        name: 'Customer'
-                    }
-                ]
+                if (result) {
+                    result['services'] = [
+                        {
+                            _id: 'isSupplier',
+                            name: 'Supplier'
+                        },
+                        {
+                            _id: 'isCustomer',
+                            name: 'Customer'
+                        }
+                    ]
+                }
 
                 callback(null, result);
             });
@@ -410,6 +415,53 @@ var Filters = function (models) {
                             $addToSet: {
                                 _id: '$workflow._id',
                                 name: {'$ifNull': ['$workflow.name', 'None']}
+                            }
+                        }
+                    }
+                }
+            ], function (err, result) {
+                if (err) {
+                    callback(err);
+                }
+
+                result = result[0];
+
+                callback(null, result);
+            });
+        };
+
+        function getCustomerPaymentsFiltersValues(callback) {
+            customerPayments.aggregate([
+                {
+                    $match: {
+                        forSale: true
+                    }
+                },
+                {
+                    $group: {
+                        _id: null,
+                        'assigned': {
+                            $addToSet: {
+                                _id: '$invoice.assigned._id',
+                                name: '$invoice.assigned.name'
+                            }
+                        },
+                        'supplier': {
+                            $addToSet: {
+                                _id: '$supplier._id',
+                                name: {'$ifNull': ['$supplier.fullName', 'None']}
+                            }
+                        },
+                        'paymentMethod': {
+                            $addToSet: {
+                                _id: '$paymentMethod._id',
+                                name: {'$ifNull': ['$paymentMethod.name', 'None']}
+                            }
+                        },
+                        'workflow': {
+                            $addToSet: {
+                                _id: '$workflow',
+                                name: {'$ifNull': ['$workflow', 'None']}
                             }
                         }
                     }

@@ -25,6 +25,7 @@ module.exports = (function () {
     require('./priority.js');
     require('./period.js');
     require('./product.js');
+    require('./productCategory.js');
     require('./productTypes.js');
     require('./profile.js');
     require('./project.js');

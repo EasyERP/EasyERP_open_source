@@ -1,6 +1,4 @@
-/**
- * Created by soundstorm on 13.05.15.
- */
+
 var express = require('express');
 var router = express.Router();
 var QuotationHandler = require('../handlers/quotation');
