@@ -9,11 +9,25 @@
     <% }) %>
     <span id="totalForDep"><%= totalForDep ? totalForDep : '&nbsp' %></span>
 
-    <% employees.forEach(function(employee){ %>
+    <% employees.forEach(function(employee, index){ %>
     <%var byMonthData = employee.hoursTotal%>
-    <div class="divRow" data-val="<%=content%>">
+    <%var hire = employee.hire%>
+    <%var fire = employee.fire%>
+    <%var hireFirst = hire[0] ? hire[0] : 0%>
+    <%var fireFirst = fire[0] ? fire[0] : 0%>
+      <%var hireLast = hire[1] ? hire[1] : 0%>
+
+      <div class="divRow" data-val="<%=content%>">
+        <% if ((hireFirst <= key) && (key <=  fireFirst))  {%>
         <% totalForDep +=  byMonthData[key]; %>
         <span class="divCell forBonus" ><%= byMonthData[key] ? byMonthData[key] : '&nbsp'%></span>
+          <% } else if (key >=  hireLast) { %>
+          <% totalForDep +=  byMonthData[key]; %>
+          <span class="divCell forBonus" ><%= byMonthData[key] ? byMonthData[key] : '&nbsp'%></span>
+        <% } else { %>
+          <% totalForDep -=  byMonthData[key]; %>
+            <span class="divCell forBonus" ><%='&nbsp'%></span>
+        <% } %>
     </div>
     <% }) %>
 

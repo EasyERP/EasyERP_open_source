@@ -1515,7 +1515,8 @@ define([
                                 }
                             });
                         }
-
+                        objToSave.hire = employee.hire;
+                        objToSave.fire = employee.fire;
                         objToSave.hoursTotal = {};
                         objToSave.total = 0;
                         keys.forEach(function (key) {

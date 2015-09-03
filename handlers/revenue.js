@@ -1640,9 +1640,6 @@ var wTrack = function (models) {
             var parallelTasksObject;
             var waterfallTasks;
 
-            startDate = moment().year(startYear).month(startMonth - 1).date(1).toDate();
-            endDate = moment().year(endYear).month(endMonth - 1).date(31).toDate();
-
             if (!access) {
                 return res.status(403).send();
             }
@@ -1677,7 +1674,8 @@ var wTrack = function (models) {
                                         depId: '$department._id',
                                         employee: '$name',
                                         _id: '$_id',
-                                            hire: '$hire'
+                                            hire: '$hire',
+                                            fire: '$fire'
                                     }
                                 }
                             },
@@ -1687,7 +1685,8 @@ var wTrack = function (models) {
                                     depId: '$_id.depId',
                                     employee: '$_id.employee',
                                     _id: '$_id._id',
-                                    hire: '$_id.hire'
+                                    hire: '$_id.hire',
+                                    fire: '$_id.fire'
                                 }
                             },
                             {
@@ -1829,6 +1828,26 @@ var wTrack = function (models) {
 
                     depRoot.forEach(function (element) {
                         var employee = {};
+                        var hire;
+                        var date;
+                        var fire;
+                        employee.hire = [];
+
+                        hire = _.clone(element.hire);
+
+                        hire.forEach(function(hireDate){
+                            date = new Date(hireDate);
+                            employee.hire.push(moment(date).year() * 100 + moment(date).month() + 1);
+                        });
+
+                        employee.fire = [];
+
+                        fire = _.clone(element.fire);
+
+                        fire.forEach(function(hireDate){
+                            date = new Date(hireDate);
+                            employee.fire.push(moment(date).year() * 100 + moment(date).month() + 1);
+                        });
 
                         employee._id = element._id;
                         employee.name = element.employee.first + ' ' + element.employee.last;
@@ -1888,6 +1907,8 @@ var wTrack = function (models) {
                         objToSave.name = employee.name;
                         objToSave.total = employee.total;
                         objToSave.hoursTotal = employee.hoursTotal;
+                        objToSave.hire = employee.hire;
+                        objToSave.fire = employee.fire;
                         var object = _.clone(objToSave);
                         obj.employees.push(object);
                         obj.totalForDep += objToSave.total;
