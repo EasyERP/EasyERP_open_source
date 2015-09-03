@@ -446,6 +446,7 @@ var Payment = function (models) {
 
     this.totalCollectionLength = function (req, res, next) {
         var forSale = req.params.byType === 'customers';
+        var bonus = req.params.byType === 'supplier';
 
         var queryObject = {};
 
@@ -467,6 +468,10 @@ var Payment = function (models) {
         queryObject = {
             forSale: forSale
         };
+
+        if (bonus) {
+            queryObject.bonus = bonus;
+        }
 
         departmentSearcher = function (waterfallCallback) {
             models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
