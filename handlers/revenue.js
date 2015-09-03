@@ -1640,6 +1640,9 @@ var wTrack = function (models) {
             var parallelTasksObject;
             var waterfallTasks;
 
+            startDate = moment().year(startYear).month(startMonth - 1).date(1).toDate();
+            endDate = moment().year(endYear).month(endMonth - 1).date(31).toDate();
+
             if (!access) {
                 return res.status(403).send();
             }
@@ -1673,7 +1676,8 @@ var wTrack = function (models) {
                                         department: '$department.name',
                                         depId: '$department._id',
                                         employee: '$name',
-                                        _id: '$_id'
+                                        _id: '$_id',
+                                            hire: '$hire'
                                     }
                                 }
                             },
@@ -1682,7 +1686,8 @@ var wTrack = function (models) {
                                     department: '$_id.department',
                                     depId: '$_id.depId',
                                     employee: '$_id.employee',
-                                    _id: '$_id._id'
+                                    _id: '$_id._id',
+                                    hire: '$_id.hire'
                                 }
                             },
                             {
