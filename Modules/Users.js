@@ -1,5 +1,9 @@
 // JavaScript source code
+/**
+ * @module User
+ */
 var Users = function (mainDb, models) {
+
     var mongoose = require('mongoose');
     var logWriter = require('../helpers/logWriter.js');
     var crypto = require('crypto');
@@ -42,6 +46,27 @@ var Users = function (mainDb, models) {
     };
 
     function createUser(req, data, result) {
+        /**
+         * __Type__ `POST`
+         *
+         * Base ___url___ for build __requests__ is `http:/192.168.88.133:8089/Users`
+         *
+         * This __method__ allows to create __User__
+         * @example  Object for request: {
+	     *    "pass" : "777777",
+	     *    "email" : "Alex@mail.com",
+		 *    "login" : "Alex",
+         *    "imageSrc" : ""
+         *   }
+         *
+         * @example Response example: {
+         *      "success":"A new User crate success",
+         *      "id":"55df03676774745332000005"
+         *     }
+         * @method Users
+         * @property {JSON} Object - Object with data to create User (like in example)
+         * @instance
+         */
         try {
             var shaSum = crypto.createHash('sha256');
             var res = {};
@@ -116,8 +141,32 @@ var Users = function (mainDb, models) {
             result.send(500, {error: 'User.create save error'});
         }
     }
-
+    /**
+     * __Type__ `GET`
+     *
+     * Base ___url___ for build __requests__ is `http:/192.168.88.133:8089/logout`
+     *
+     * This __method__ allows to logout.
+     *
+     * @method logout
+     * @instance
+     */
     function login(req, res, next) {
+        /**
+         * __Type__ `POST`
+         *
+         * Base ___url___ for build __requests__ is `http:/192.168.88.133:8089/login`
+         *
+         * This __method__ allows to login.
+         * @example {
+         *     dbId: "CRM",
+         *     login: "Alex"
+         *     pass: "777777"
+         * }
+         * @method login
+         * @property {JSON} Object - Object with data for logining (like in example)
+         * @instance
+         */
         var data = req.body;
         try {
             if (data) {
@@ -172,6 +221,16 @@ var Users = function (mainDb, models) {
     }
 
     function getUsers(req, response, data) {
+        /**
+         * __Type__ `GET`
+         *
+         * Base ___url___ for build __requests__ is `http:/192.168.88.133:8089/Users`
+         *
+         * This __method__ allows to get all Users.
+         *
+         * @method Users
+         * @instance
+         */
         var res = {};
         res['data'] = [];
         var query = models.get(req.session.lastDb, 'Users', userSchema).find({}, {__v: 0, upass: 0});

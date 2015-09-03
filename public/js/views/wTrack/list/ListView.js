@@ -102,6 +102,8 @@ define([
                     var model = self.collection.get(id);
                     var revenue = model.get('revenue').replace('$', '');
 
+                    model.set({revenue: parseFloat(revenue)*100});
+
                     revenue = parseFloat(revenue);
 
                     total += revenue;
@@ -150,6 +152,7 @@ define([
 
                 $(selectedWtrack).attr('checked', false);
 
+                model.set({"isPaid": false});
                 model = model.toJSON();
                 delete model._id;
                 _model = new currentModel(model);
@@ -168,6 +171,8 @@ define([
 
                 tdsArr = row.find('td');
                 $(tdsArr[0]).find('input').val(cid);
+                $(tdsArr[20]).find('span').text('Unpaid');
+                $(tdsArr[20]).find('span').addClass('unDone');
                 $(tdsArr[1]).text(cid);
             },
 

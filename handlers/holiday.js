@@ -1,6 +1,4 @@
-/**
- * Created by soundstorm on 29.06.15.
- */
+
 var mongoose = require('mongoose');
 var Holiday = function (models) {
     var access = require("../Modules/additions/access.js")(models);

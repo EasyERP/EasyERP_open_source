@@ -1,11 +1,102 @@
-/**
- * Created by Roman on 04.04.2015.
- */
+
 module.exports = (function () {
     var mongoose = require('mongoose');
     var ObjectId = mongoose.Schema.Types.ObjectId;
 
     var opportunitiesSchema = mongoose.Schema({
+        /**
+         * @module Lead
+         * @class Lead
+         * @property {Boolean} isOpportunitie - Is Opportunity, proper values are: _'true'_, _'false'_
+         *
+         * @property {String} jobkey
+         *
+         * @property {Array} attachments - Some files
+         *
+         * @property {String} notes - Some notes
+         *
+         * @property {Date} convertedDate - Date, when Lead was converted into Opportunity
+         *
+         * @property {Boolean} isConverted
+         *
+         * @property {String} source - Where _Lead_ was found
+         *
+         * @property {String} campaign
+         *
+         * @property {Object} createdBy
+         * @property {String} createdBy.users - Created by user
+         * @property {Date} createdBy.date - Creation date
+         *
+         * @property {Object} editedBy
+         * @property {String} editedBy.users - Edited by user
+         * @property {Date} editedBy.date - Edited on date
+         *
+         * @property {Number} sequence
+         *
+         * @property {Object} groups - `Groups` of _Lead_
+         * @property {String} groups.users
+         * @property {String} groups.group
+         *
+         * @property {String} whoCanRW
+         *
+         *
+         * @property {String} workflow
+         *
+         * @property {String} reffered
+         *
+         * @property {Boolean} optout
+         *
+         * @property {Boolean} active
+         *
+         * @property {Object} categories - Information about categories
+         * @property {String} categories.name
+         * @property {String} categories.id
+         *
+         * @property {String} priority - default 'Trivial'
+         *
+         * @property {Date} expectedClosing
+         *
+         * @property {Object} nextAction - Information about next action
+         * @property {String} nextAction.desc
+         * @property {Date} nextAction.date
+         *
+         * @property {String} internalNotes - Some notes
+         *
+         * @property {String} salesPerson - Sales person
+         *
+         * @property {Object} phones - `Phones` of _Lead_
+         * @property {String} phones.mobile - `mobile` of _Lead_
+         * @property {String} phones.phone - `phone` of _Lead_
+         * @property {String} phones.fax - `fax` of _Lead_
+         *
+         * @property {String} email - Email
+         *
+         * @property {Object} contactName - Name of contact person
+         * @property {String} contactName.last
+         * @property {String} contactName.first
+         *
+         * @property {Object} address - `Address` of _Lead_
+         * @property {String} address.street - Address `street` of _Lead_
+         * @property {String} address.city - Address `city` of _Lead_
+         * @property {String} address.state - Address `state` of _Lead_
+         * @property {String} address.zip - Address `zip` of _Lead_
+         * @property {String} address.country - Address `country` of _Lead_
+         *
+         * @property {String} customer
+         *
+         * @property {String} company - Company of _Lead_
+         *
+         * @property {String} tempCompanyField
+         *
+         * @property {Date} creationDate - DAte when _Lead_ was created
+         *
+         * @property {Object} expectedRevenue - Expected revenue
+         * @property {String} expectedRevenue.currency
+         * @property {Number} expectedRevenue.progress
+         * @property {Number} expectedRevenue.value
+         *
+         * @property {String} name
+         */
         isOpportunitie: {type: Boolean, default: false, index: true},
         jobkey: {type: String},
         name: {type: String, default: ''},

@@ -1,6 +1,4 @@
-/**
- * Created by soundstorm on 11.08.15.
- */
+
 var mongoose = require('mongoose');
 var Filters = function (models) {
     var wTrackSchema = mongoose.Schemas['wTrack'];

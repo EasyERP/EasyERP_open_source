@@ -1,6 +1,3 @@
-/**
- * Created by Roman on 04.05.2015.
- */
 
 var mongoose = require('mongoose');
 var wTrack = function (models) {
@@ -76,6 +73,16 @@ var wTrack = function (models) {
 
                 function departmentMapper(department, departmentCb) {
                     var dashDepartment = _.find(dashBoardResult, function (deps) {
+                        if(deps.department == null){
+                            console.log('==================== deps =======================');
+                            console.log(deps);
+                            console.log('===========================================');
+                        }
+                        if(department.department == null){
+                            console.log('===================== department ======================');
+                            console.log(department);
+                            console.log('===========================================');
+                        }
                         return deps.department.toString() === department.department.toString();
                     });
 
@@ -91,7 +98,7 @@ var wTrack = function (models) {
                             if (dashResultByEmployee) {
                                 _employee.weekData = _.map(tempWeekArr, function (weekData) {
                                     var data;
-                                    var holidayCount;
+                                    var holidayCount = 0;
                                     var _vacations;
 
                                     data = _.find(dashResultByEmployee.weekData, function (d) {
@@ -108,7 +115,7 @@ var wTrack = function (models) {
                                     if (_vacations) {
                                         _vacations.vacations.forEach(function (vacation) {
                                             if (vacation.hasOwnProperty(weekData.dateByWeek)) {
-                                                holidayCount = vacation[weekData.dateByWeek];
+                                                holidayCount += vacation[weekData.dateByWeek];
                                             }
                                         });
                                     }
@@ -119,7 +126,7 @@ var wTrack = function (models) {
                                 });
                             } else {
                                 _employee.weekData = _.map(tempWeekArr, function (weekData) {
-                                    var holidayCount;
+                                    var holidayCount = 0;
                                     var _vacations;
 
                                     _vacations = _.find(vacations, function (vacationObject) {
@@ -129,7 +136,7 @@ var wTrack = function (models) {
                                     if (_vacations) {
                                         _vacations.vacations.forEach(function (vacation) {
                                             if (vacation.hasOwnProperty(weekData.dateByWeek)) {
-                                                holidayCount = vacation[weekData.dateByWeek];
+                                                holidayCount += vacation[weekData.dateByWeek];
                                             }
                                         });
                                     }
@@ -333,7 +340,7 @@ var wTrack = function (models) {
                                 }
 
                                 employees = _.pluck(employees, '_id');
-                                //waterfallCb(null, employees);
+
                                 inerWaterfallCb(null, employees);
                             });
                     };

@@ -1,13 +1,14 @@
 define([
     'text!templates/Users/form/FormTemplate.html',
-    'views/Users/EditView'
+        'models/UsersModel',
+        'views/Users/EditView'
 ],
 
-    function (FormTemplate, EditView) {
+    function (FormTemplate, userModel, EditView) {
         var FormView = Backbone.View.extend({
             el: '#content-holder',
             initialize: function (options) {
-                this.formModel = options.model;
+                this.formModel = new userModel(options.model.get('user'));
 				this.formModel.urlRoot = "/Users";
             },
 

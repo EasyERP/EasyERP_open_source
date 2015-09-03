@@ -54,6 +54,7 @@ module.exports = (function () {
         health: { type: Number, default: 1 },
         ID: Number,
         bonus: [{
+            _id: false,
             employeeId: {
                 type: ObjectId,
                 ref: 'Employees'
@@ -63,7 +64,11 @@ module.exports = (function () {
                 ref: 'bonusType'
             },
             startDate: Date,
-            endDate: Date
+            startWeek: Number,
+            startYear: Number,
+            endDate: Date,
+            endWeek: Number,
+            endYear: Number
         }]
     }, { collection: 'Project' });
 
