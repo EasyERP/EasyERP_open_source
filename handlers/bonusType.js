@@ -114,6 +114,22 @@ var BonusType = function (models) {
             }
         });
     };
+
+    this.getForDD = function (req, res, next) {
+        var Bonus = models.get(req.session.lastDb, 'bonusType', bonusTypeSchema);
+
+        Bonus
+            .find()
+            .select('_id name')
+            .sort({'name': 1})
+            .lean()
+            .exec(function (err, bonusTypes) {
+                if (err) {
+                    return next(err);
+                }
+                res.status(200).send({data: bonusTypes})
+            });
+    };
 };
 
 module.exports = BonusType;
