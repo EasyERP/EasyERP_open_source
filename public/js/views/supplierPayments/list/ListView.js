@@ -706,10 +706,6 @@ define([
                         $("#top-bar-deleteBtn").hide();
                 });
 
-                $(document).on("click", function () {
-                    self.hideItemsNumber();
-                });
-
                 currentEl.append(_.template(paginationTemplate));
 
                 var pagenation = this.$el.find('.pagination');

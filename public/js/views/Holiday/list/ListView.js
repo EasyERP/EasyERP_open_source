@@ -366,8 +366,8 @@ define([
                         $("#top-bar-deleteBtn").hide();
                 });
 
-                $(document).on("click", function () {
-                    self.hideItemsNumber();
+                $(document).on("click", function (e) {
+                    self.hideItemsNumber(e);
                 });
 
                 currentEl.append(_.template(paginationTemplate));
