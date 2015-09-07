@@ -54,7 +54,6 @@ define([
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
                 "blur td.editable input": "hideInput",
                 "click td.editable": "editRow",
-                "click td.editable input": "editRow",
                 "click .current-selected": "showNewCurrentSelect",
                 "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
                 "click .oe_sortable": "goSort",
@@ -487,6 +486,8 @@ define([
                 var dayIndex;
                 var dayTotalElement;
 
+                var findEmployee;
+
                 if (modelId) {
                     editVacationModel = this.editCollection.get(modelId);
 
@@ -516,8 +517,20 @@ define([
                 }
 
                 if (elementType === '#employee') {
+                    findEmployee = self.collection.filter(function(model) {
+                        return model.get('employee')._id === element._id;
+                    });
+
+                    if (findEmployee.length > 0) {
+                        tr.remove();
+                        self.hideSaveCancelBtns();
+                        self.changedModels[modelId]
+                        alert(CONSTANTS.RESPONSES.DOUBLE_EMPLOYEE_VACATION);
+                        return false;
+                    }
+
                     tr.find('[data-content="employee"]').text(element.name);
-                    tr.find('.department').text(element.department.departmentName);
+                    tr.find('.department').text(element.department.name);
 
                     employee = _.clone(editVacationModel.get('employee'));
                     department = _.clone(editVacationModel.get('department'));
@@ -526,7 +539,7 @@ define([
                     employee.name = target.text();
 
                     department._id = element.department._id;
-                    department.name = element.department.departmentName;
+                    department.name = element.department.name;
 
                     changedAttr.employee = employee;
                     changedAttr.department = department;

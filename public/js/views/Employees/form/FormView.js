@@ -10,6 +10,7 @@ define([
             el: '#content-holder',
             initialize: function (options) {
                 this.formModel = options.model;
+                this.formModel.urlRoot = "/Employees";
             },
             events: {
                 'click .chart-tabs a': 'changeTab',
@@ -119,8 +120,9 @@ define([
             endContract: function (e) {
                 var wfId = $('.endContractReasonList').attr('data-id');
                 var contractEndReason = $(e.target).text();
-                this.formModel.set({ workflow: wfId, contractEndReason: contractEndReason, workflowContractEnd: true });
-                this.formModel.save({}, {
+                this.formModel.set({ workflow: wfId, contractEndReason: contractEndReason, fired: true});
+                this.formModel.save(this.formModel.changed, {
+                    patch: true,
                     success: function () {
                         Backbone.history.navigate("easyErp/Applications/kanban", { trigger: true });
                     },

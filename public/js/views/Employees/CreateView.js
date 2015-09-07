@@ -157,55 +157,62 @@ define([
             saveItem: function () {
                 var self = this;
                 var mid = 39;
+                var thisEl = this.$el;
                 var employeeModel = new EmployeeModel();
                 var name = {
-                    first: $.trim(this.$el.find("#first").val()),
-                    last: $.trim(this.$el.find("#last").val())
+                    first: $.trim(thisEl.find("#first").val()),
+                    last: $.trim(thisEl.find("#last").val())
                 };
-				$("#createBtnDialog").attr("disabled","disabled");
+                thisEl.find("#createBtnDialog").attr("disabled","disabled");
                 var workAddress = {};
                 $("dd").find(".workAddress").each(function () {
                     var el = $(this);
                     workAddress[el.attr("name")] = $.trim(el.val());
                 });
-                var tags = $.trim(this.$el.find("#tags").val()).split(',');
-                var workEmail = $.trim(this.$el.find("#workEmail").val());
-                var personalEmail = $.trim(this.$el.find("#personalEmail").val());
-                var skype = $.trim(this.$el.find("#skype").val());
+                var tags = $.trim(thisEl.find("#tags").val()).split(',');
+                var workEmail = $.trim(thisEl.find("#workEmail").val());
+                var personalEmail = $.trim(thisEl.find("#personalEmail").val());
+                var skype = $.trim(thisEl.find("#skype").val());
 
-                var phone = $.trim(this.$el.find("#phone").val());
-                var mobile = $.trim(this.$el.find("#mobile").val());
+                var phone = $.trim(thisEl.find("#phone").val());
+                var mobile = $.trim(thisEl.find("#mobile").val());
                 var workPhones = {
                     phone: phone,
                     mobile: mobile
                 };
 
 
-                var gender = $("#genderDd").data("id");
-                var jobType = $("#jobTypeDd").data("id");
-                var marital = $("#maritalDd").data("id");
-                var officeLocation = $.trim($("#officeLocation").val());
-                var relatedUser = $("#relatedUsersDd").data("id");
+                var gender = thisEl.find("#genderDd").attr("data-id");
+                var jobType = thisEl.find("#jobTypeDd").attr("data-id");
+                var marital = thisEl.find("#maritalDd").attr("data-id");
+                var officeLocation = $.trim(thisEl.find("#officeLocation").val());
+                var relatedUser = thisEl.find("#relatedUsersDd").attr("data-id");
+
+                var dep = thisEl.find("#departmentsDd");
                 var department = {
-                    _id: $("#departmentsDd").data("id"),
-                    name: $("#departmentsDd").text()
+                    _id: dep.attr("data-id"),
+                    name: dep.text()
                 };
+
+                var jobPos = thisEl.find("#jobPositionDd");
                 var jobPosition = {
-                    _id: $("#jobPositionDd").data("id"),
-                    name: $("#jobPositionDd").text()
+                    _id: jobPos.attr("data-id"),
+                    name: jobPos.text()
                 };
+
+                var manag = thisEl.find("#projectManagerDD");
                 var manager = {
-                    _id: $("#projectManagerDD").data("id"),
-                    name: $("#projectManagerDD").text()
+                    _id: manag.attr("data-id"),
+                    name: manag.text()
                 };
-                var coach = $("#coachDd").data("id");
+                var coach = thisEl.find("#coachDd").attr("data-id");
                 var identNo = $.trim($("#identNo").val());
-				var nationality =  $("#nationality").data("id");
+				var nationality =  thisEl.find("#nationality").attr("data-id");
                 var passportNo = $.trim($("#passportNo").val());
                 var bankAccountNo = $.trim($("#bankAccountNo").val());
-                var otherId = $.trim($("#otherId").val());
-                var LI = $.trim(this.$el.find('#LI').val());
-                var FB = $.trim(this.$el.find('#FB').val());
+                var otherId = $.trim(thisEl.find("#otherId").val());
+                var LI = $.trim(thisEl.find('#LI').val());
+                var FB = $.trim(thisEl.find('#FB').val());
 
                 var homeAddress = {};
                 $("dd").find(".homeAddress").each(function () {
@@ -213,23 +220,23 @@ define([
                     homeAddress[el.attr("name")] = el.val();
                 });
                 // date parse 
-                var dateBirthSt = $.trim(this.$el.find("#dateBirth").val());
-                var hire = $.trim(this.$el.find("#hire").val());
+                var dateBirthSt = $.trim(thisEl.find("#dateBirth").val());
+                var hire = $.trim(thisEl.find("#hire").val());
                
-                var active = ($("#active").is(":checked")) ? true : false;
-                var sourceId = $("#sourceDd").data("id");
+                var active = (thisEl.find("#active").is(":checked")) ? true : false;
+                var sourceId = thisEl.find("#sourceDd").attr("data-id");
                 var usersId=[];
                 var groupsId=[];
                 $(".groupsAndUser tr").each(function(){
                     if ($(this).data("type")=="targetUsers"){
-                        usersId.push($(this).data("id"));
+                        usersId.push($(this).attr("data-id"));
                     }
                     if ($(this).data("type")=="targetGroups"){
-                        groupsId.push($(this).data("id"));
+                        groupsId.push($(this).attr("data-id"));
                     }
 
                 });
-                var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
+                var whoCanRW = thisEl.find("[name='whoCanRW']:checked").val();
                 var valid = employeeModel.save({
                     name: name,
                     gender: gender ? gender : "",
@@ -261,7 +268,7 @@ define([
                             FB: FB
                         },
                     groups: {
-						owner: $("#allUsersSelect").data("id"),
+						owner: thisEl.find("#allUsersSelect").attr("data-id"),
                         users: usersId,
                         group: groupsId
                     },

@@ -144,16 +144,18 @@ var Filters = function (models) {
 
                 result = result[0];
 
-                result['services'] = [
-                    {
-                        _id: 'isSupplier',
-                        name: 'Supplier'
-                    },
-                    {
-                        _id: 'isCustomer',
-                        name: 'Customer'
-                    }
-                ]
+                if (result){
+                    result['services'] = [
+                        {
+                            _id: 'isSupplier',
+                            name: 'Supplier'
+                        },
+                        {
+                            _id: 'isCustomer',
+                            name: 'Customer'
+                        }
+                    ]
+                }
 
                 callback(null, result);
             });
@@ -188,16 +190,18 @@ var Filters = function (models) {
 
                 result = result[0];
 
-                result['services'] = [
-                    {
-                        _id: 'isSupplier',
-                        name: 'Supplier'
-                    },
-                    {
-                        _id: 'isCustomer',
-                        name: 'Customer'
-                    }
-                ]
+                if (result) {
+                    result['services'] = [
+                        {
+                            _id: 'isSupplier',
+                            name: 'Supplier'
+                        },
+                        {
+                            _id: 'isCustomer',
+                            name: 'Customer'
+                        }
+                    ]
+                }
 
                 callback(null, result);
             });

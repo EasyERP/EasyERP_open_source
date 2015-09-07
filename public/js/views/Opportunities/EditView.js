@@ -274,10 +274,8 @@
 									   }else{
 										   tr_holder.eq(9).text("");
 									   }
-                                       if (data.workflow) {
                                            Backbone.history.fragment = "";
                                            Backbone.history.navigate(window.location.hash.replace("#", ""), { trigger: true });
-                                       }
 
                                    }
                                    break;

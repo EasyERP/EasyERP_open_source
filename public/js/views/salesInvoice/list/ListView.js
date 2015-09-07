@@ -84,10 +84,19 @@ define([
                 var self = this;
                 var target$ = $(e.target);
                 var targetElement = target$.parents("td");
+                var wId = target$.attr("id");
+                var status = _.find(this.stages, function(stage){
+                    return wId === stage._id;
+                });
+                var name = target$.text();
                 var id = targetElement.attr("id");
                 var model = this.collection.get(id);
 
-                model.save({workflow: target$.attr("id")}, {
+                model.save({
+                    'workflow._id': wId,
+                    'workflow.status': status.status,
+                    'workflow.name': name
+                }, {
                     headers: {
                         mid: 55
                     },
