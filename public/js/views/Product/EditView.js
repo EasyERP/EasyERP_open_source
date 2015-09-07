@@ -135,7 +135,7 @@ define([
                 var barcode = $.trim(this.$el.find("#barcode").val());
                 var isActive = this.$el.find('#active').prop('checked');
                 var productType = this.$el.find("#productType").data("id");
-                var categoryEl = currEl.find('#productCategory');
+                var categoryEl = this.$el.find('#productCategory');
                 var category = {
                     _id: categoryEl.data('id'),
                     name: categoryEl.text()

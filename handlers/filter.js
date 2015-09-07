@@ -100,16 +100,18 @@ var Filters = function (models) {
 
                 result = result[0];
 
-                result['isPaid'] = [
-                    {
-                        _id: 'true',
-                        name: 'Paid'
-                    },
-                    {
-                        _id: 'false',
-                        name: 'Unpaid'
-                    }
-                ]
+                if (result){
+                    result['isPaid'] = [
+                        {
+                            _id: 'true',
+                            name: 'Paid'
+                        },
+                        {
+                            _id: 'false',
+                            name: 'Unpaid'
+                        }
+                    ]
+                };
 
                 callback(null, result);
             });
