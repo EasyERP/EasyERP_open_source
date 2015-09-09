@@ -161,6 +161,7 @@ define([
                 $(selectedWtrack).attr('checked', false);
 
                 model.set({"isPaid": false});
+                model.set({"amount": 0});
                 model = model.toJSON();
                 delete model._id;
                 _model = new currentModel(model);
@@ -181,6 +182,7 @@ define([
                 $(tdsArr[0]).find('input').val(cid);
                 $(tdsArr[20]).find('span').text('Unpaid');
                 $(tdsArr[20]).find('span').addClass('unDone');
+                $(tdsArr[24]).text(0);
                 $(tdsArr[1]).text(cid);
             },
 
