@@ -21,6 +21,10 @@
 
                 this.filter = options.filter;
 
+                if (regex.test(this.contentType)) {
+                    options['forSales'] = true;
+                }
+
                 if (options && options.contentType && !(options.filter))
                 {
                     options.filter = {};
@@ -56,6 +60,10 @@
                 filterObject['viewType'] = (options && options.viewType) ? options.viewType : this.viewType;
                 filterObject['contentType'] = (options && options.contentType) ? options.contentType : this.contentType;
                 filterObject['filter'] = (options) ? options.filter : {};
+
+                if (regex.test(this.contentType)) {
+                    filterObject['forSales'] = true;
+                }
 
                 if (options && options.contentType && !(options.filter))
                 {

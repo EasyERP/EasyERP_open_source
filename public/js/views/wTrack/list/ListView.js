@@ -100,11 +100,19 @@ define([
                 async.each(selectedWtracks, function (el, cb) {
                     var id = $(el).val();
                     var model = self.collection.get(id);
-                    var revenue = model.get('revenue').replace('$', '');
+                    var reven = model.get('revenue');
 
-                    model.set({revenue: parseFloat(revenue)*100});
+                    if (typeof(reven) != 'number') {
+                        model.set({revenue: parseFloat(reven) * 100});
+                    }
+
+                    var revenue = reven.toString().replace('$', '');
 
                     revenue = parseFloat(revenue);
+
+                    if (typeof(reven) === 'number') {
+                        revenue = revenue / 100;
+                    }
 
                     total += revenue;
 
@@ -153,6 +161,7 @@ define([
                 $(selectedWtrack).attr('checked', false);
 
                 model.set({"isPaid": false});
+                model.set({"amount": 0});
                 model = model.toJSON();
                 delete model._id;
                 _model = new currentModel(model);
@@ -173,6 +182,7 @@ define([
                 $(tdsArr[0]).find('input').val(cid);
                 $(tdsArr[20]).find('span').text('Unpaid');
                 $(tdsArr[20]).find('span').addClass('unDone');
+                $(tdsArr[24]).text(0);
                 $(tdsArr[1]).text(cid);
             },
 
@@ -1088,7 +1098,7 @@ define([
                 var checked = ellement ? ellement.checked : true;
                 var targetEl = $(ellement);
                 var tr = targetEl.closest('tr');
-                var wTrackId = tr.data('id');
+                var wTrackId = tr.attr('data-id');
                 var model = this.collection.get(wTrackId);
                 var projectContainer = tr.find('td[data-content="project"]');
                 var projectId = projectContainer.data('id');

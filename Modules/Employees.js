@@ -6,6 +6,8 @@ var Employee = function (event, models) {
     var objectId = mongoose.Types.ObjectId;
     var employeeSchema = mongoose.Schemas['Employee'];
     var fs = require('fs');
+    var moment = require('../public/js/libs/moment/moment');
+
 
     var CONSTANTS = require('../constants/mainConstants');
 
@@ -1071,6 +1073,7 @@ var Employee = function (event, models) {
         var fileName = data.fileName;
         var dataObj = {};
         var query = {};
+        var date = new Date();
         delete data.fileName;
 
         var updateObject = {};
@@ -1078,9 +1081,10 @@ var Employee = function (event, models) {
         for (var i in data) {
             if (i === 'contractEndReason') {
                 updateObject['isEmployee'] = false;
+                updateObject.lastFire = moment(date).year() * 100 + moment(date).isoWeek();
                 updateObject['contractEnd'] = {
                     reason: data[i],
-                    date: new Date()
+                    date: date
                 };
             } else {
                 updateObject[i] = data[i];
