@@ -24,8 +24,14 @@ function (Validation, common) {
                 projectShortDesc: '',
                 task: [],
                 privacy: 'All Users',
-                customer: '',
-                projectmanager: '',
+                customer: {
+                    _id: '',
+                    name: ''
+                },
+                projectmanager: {
+                    _id: '',
+                    name: ''
+                },
                 teams: {
                     users: [],
                     Teams: []

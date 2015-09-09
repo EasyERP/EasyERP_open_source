@@ -8001,6 +8001,9 @@ textarea#editInput {
 .grid-conatiner.revenue .divTable#tableBySales .th {
   border-bottom: 2px solid #ed9409;
 }
+.grid-conatiner.revenue .divTable#revenueTotal .th {
+  border-bottom: 2px solid #289718;
+}
 .grid-conatiner.revenue .divTable#totalAllBonus .th {
   border-bottom: 2px solid #edb523;
 }
@@ -8026,7 +8029,7 @@ textarea#editInput {
   border-bottom: 2px solid #fd0001;
 }
 .grid-conatiner.revenue .divTable#tableCancelledBySales .th {
-  border-bottom: 2px solid #fd0001;
+  border-bottom: 2px solid #3d4bfd;
 }
 .grid-conatiner.revenue .divTable#tableProjectBySales .th {
   border-bottom: 2px solid #5a9ad4;
@@ -8043,6 +8046,9 @@ textarea#editInput {
 }
 .grid-conatiner.revenue .divRow.totalBySales {
   background-color: #ed9409;
+}
+.grid-conatiner.revenue .divRow.revenueTotal {
+  background-color: #289718;
 }
 .grid-conatiner.revenue .divRow.totalByAllBonus {
   background-color: #edb523;
@@ -8071,6 +8077,9 @@ textarea#editInput {
 }
 .grid-conatiner.revenue .divRow.totalUnpaid {
   background-color: #fd0001;
+}
+.grid-conatiner.revenue .divRow.totalCancelled {
+  background-color: #3d4bfd;
 }
 .grid-conatiner.revenue .divRow.totalProject {
   background-color: #5a9ad4;
@@ -8125,6 +8134,7 @@ textarea#editInput {
 .grid-conatiner.revenue #totalTotalHours .divCell,
 .grid-conatiner.revenue #totalHoursSold .divCell,
 .grid-conatiner.revenue #totalHoursUnsold .divCell,
+.grid-conatiner.revenue #revenueTotal .divCell,
 .grid-conatiner.revenue #tableEmployeeBySales .divCell {
   width: 6.34%;
 }
@@ -8138,6 +8148,7 @@ textarea#editInput {
 .grid-conatiner.revenue #totalTotalHours .divCell.left-cell,
 .grid-conatiner.revenue #totalHoursSold .divCell.left-cell,
 .grid-conatiner.revenue #totalHoursUnsold .divCell.left-cell,
+.grid-conatiner.revenue #revenueTotal .divCell.left-cell,
 .grid-conatiner.revenue #tableEmployeeBySales .divCell.left-cell {
   width: 10%;
 }
@@ -8151,6 +8162,7 @@ textarea#editInput {
 .grid-conatiner.revenue #totalTotalHours .divCell.th-trend,
 .grid-conatiner.revenue #totalHoursSold .divCell.th-trend,
 .grid-conatiner.revenue #totalHoursUnsold .divCell.th-trend,
+.grid-conatiner.revenue #revenueTotal .divCell.th-trend,
 .grid-conatiner.revenue #tableEmployeeBySales .divCell.th-trend {
   width: 7.5%;
 }

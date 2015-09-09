@@ -5672,6 +5672,11 @@ textarea#editInput {
         border-bottom: 2px solid #ed9409;
       }
     }
+    &#revenueTotal {
+      .th {
+        border-bottom: 2px solid #289718;
+      }
+    }
     &#totalAllBonus {
       .th {
         border-bottom: 2px solid #edb523;
@@ -5714,7 +5719,7 @@ textarea#editInput {
     }
     &#tableCancelledBySales {
       .th {
-        border-bottom: 2px solid #fd0001;
+        border-bottom: 2px solid #3d4bfd;
       }
     }
     &#tableProjectBySales {
@@ -5737,6 +5742,9 @@ textarea#editInput {
     width: auto;
     &.totalBySales {
       background-color: #ed9409
+    }
+    &.revenueTotal {
+      background-color: #289718
     }
     &.totalByAllBonus {
       background-color: #edb523
@@ -5764,6 +5772,9 @@ textarea#editInput {
     }
     &.totalUnpaid {
       background-color: #fd0001
+    }
+    &.totalCancelled {
+      background-color: #3d4bfd
     }
     &.totalProject {
       background-color: #5a9ad4
@@ -5821,6 +5832,7 @@ textarea#editInput {
   #totalTotalHours,
   #totalHoursSold,
   #totalHoursUnsold,
+  #revenueTotal,
   #tableEmployeeBySales {
     .divCell {
       width: 6.34%;

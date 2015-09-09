@@ -57,7 +57,14 @@ define([
                 "click #firstShowPage": "firstPage",
                 "click #lastShowPage": "lastPage",
                 "click .oe_sortable": "goSort",
-                "change .editable ": "setEditable"
+                "change .editable ": "setEditable",
+                "keydown input.editing": "setChanges"
+            },
+
+            setChanges: function(e){
+                if (e.which === 13) {
+                    this.setChangedValueToModel();
+                }
             },
 
             savedNewModel: function (modelObject) {
@@ -120,13 +127,15 @@ define([
             saveItem: function () {
                 var model;
                 var modelJSON;
+                var date;
 
                 for (var id in this.changedModels) {
                     model = this.editCollection.get(id);
                     modelJSON = model.toJSON();
+                    date = new Date(modelJSON.date);
                     model.changed = this.changedModels[id];
-                    model.changed.year = moment(modelJSON.date).year();
-                    model.changed.week = moment(modelJSON.date).isoWeek();
+                    model.changed.year = moment(date).year();
+                    model.changed.week = moment(date).isoWeek();
                 }
                 this.editCollection.save();
             },
@@ -357,8 +366,8 @@ define([
                         $("#top-bar-deleteBtn").hide();
                 });
 
-                $(document).on("click", function () {
-                    self.hideItemsNumber();
+                $(document).on("click", function (e) {
+                    self.hideItemsNumber(e);
                 });
 
                 currentEl.append(_.template(paginationTemplate));

@@ -10,7 +10,10 @@ module.exports = (function () {
     var paymentSchema = new Schema({
         forSale:{type: Boolean, default: true},
         invoice: {type: ObjectId, ref: 'Invoice', default: null},
-        supplier: {type: ObjectId, ref: 'Customers', default: null},
+        supplier: {
+            _id: {type: ObjectId, ref: 'Customers', default: null},
+            fullName: String
+        },
         paidAmount: {type: Number, default: 0, set: setPrice},
         paymentMethod: {
             _id: {type: ObjectId, ref: 'PaymentMethod', default: null},
