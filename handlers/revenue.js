@@ -682,7 +682,6 @@ var wTrack = function (models) {
         });
     };
 
-
     this.allBonus = function (req, res, next) {
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
         var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
@@ -1624,7 +1623,6 @@ var wTrack = function (models) {
         });
     };
 
-
     this.totalHours = function (req, res, next) {
         var MonthHours = models.get(req.session.lastDb, 'MonthHours', monthHoursSchema);
         var Vacation = models.get(req.session.lastDb, 'Vacation', vacationSchema);
@@ -1880,7 +1878,7 @@ var wTrack = function (models) {
                             var month = months.month;
                             var year = months.year;
                             var vacationForEmployee = 0;
-                            var hoursForMonth = 0;
+                            var hoursForMonth;
                             var holidaysForMonth = 0;
 
                             hoursForMonth = months.hours;
@@ -1906,6 +1904,7 @@ var wTrack = function (models) {
                             employee.hoursTotal[key] = parseInt(hoursForMonth) - parseInt(vacationForEmployee) * 8 - parseInt(holidaysForMonth) * 8;
                             employee.total += employee.hoursTotal[key];
                         });
+
                         department.employees.push(employee);
                     });
 
@@ -1941,7 +1940,9 @@ var wTrack = function (models) {
                         objToSave.hoursTotal = employee.hoursTotal;
                         objToSave.hire = employee.hire;
                         objToSave.fire = employee.fire;
+
                         object = _.clone(objToSave);
+
                         obj.employees.push(object);
                         obj.totalForDep += objToSave.total;
                     });
@@ -2008,8 +2009,7 @@ var wTrack = function (models) {
                     employee: '$_id.employee',
                     _id: 0
                 }
-            },
-                {
+            }, {
                     $group: {
                         _id: '$department',
                         root: {$push: '$$ROOT'},
@@ -2018,6 +2018,7 @@ var wTrack = function (models) {
                 }, {
                     $sort: {_id: 1}
                 }], function (err, response) {
+
                 if (err) {
                     return next(err);
                 }
@@ -2032,31 +2033,30 @@ var wTrack = function (models) {
                 var sortDepartments = [];
 
                 response.forEach(function(departments){
-                    var department = [];
                     var depObj = {};
                     var depName = departments._id;
                     var rootArray = departments.root;
                     var employeesArray = [];
-
-                    depObj.department = depName;
-
                     var groupedRoot = _.groupBy(rootArray, 'employee._id');
                     var keys = Object.keys(groupedRoot);
+
+                    depObj.department = depName;
 
                     keys.forEach(function(key){
                         var arrayGrouped = groupedRoot[key];
                         var empObj = {};
 
                         arrayGrouped.forEach(function(element){
-
                             var key = element.year * 100 + element.month;
 
                             if (!empObj[element.employee._id]){
-                                empObj[element.employee._id] = {};
 
+                                empObj[element.employee._id] = {};
                                 empObj[element.employee._id] = element.employee;
+
                                 empObj[element.employee._id].hoursSold = {};
                                 empObj[element.employee._id].hoursSold[key] = element.sold;
+
                                 empObj[element.employee._id].total = parseInt(element.sold);
                             } else {
                                 empObj[element.employee._id].hoursSold[key] = element.sold;
@@ -2094,6 +2094,7 @@ var wTrack = function (models) {
 
                     empArr.forEach(function (element) {
                         var object;
+
                         key = Object.keys(element)[0];
 
                         objToSave.name = element[key].name;
