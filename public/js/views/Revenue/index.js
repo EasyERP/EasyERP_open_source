@@ -505,11 +505,14 @@ define([
 
                 for (var i = bySalesByDep.length - 1; i >= 0; i--) {
                     tempPerWeek = bySalesByDep[i].root;
-                    tempPerWeek.forEach(function (weekResault) {
-                        if (!(weekResault.week in bySalesByDepPerWeek)) {
-                            bySalesByDepPerWeek[weekResault.week] = weekResault.revenue;
+
+                    tempPerWeek.forEach(function (weekResult) {
+                        var key = weekResult.week;
+
+                        if (!bySalesByDepPerWeek[key]) {
+                            bySalesByDepPerWeek[key] = weekResult.revenue;
                         } else {
-                            bySalesByDepPerWeek[weekResault.week] += weekResault.revenue;
+                            bySalesByDepPerWeek[key] += weekResult.revenue;
                         }
                     });
                 }
@@ -542,11 +545,14 @@ define([
                 this.departments.push(bySalesByDep[i]._id);
 
                 tempPerWeek = bySalesByDep[i].root;
-                tempPerWeek.forEach(function (weekResault) {
-                    if (!(weekResault.week in bySalesByDepPerWeek)) {
-                        bySalesByDepPerWeek[weekResault.week] = weekResault.revenue;
+
+                tempPerWeek.forEach(function (weekResult) {
+                    var key = weekResult.week;
+
+                    if (!bySalesByDepPerWeek[key]) {
+                        bySalesByDepPerWeek[key] = weekResault.revenue;
                     } else {
-                        bySalesByDepPerWeek[weekResault.week] += weekResault.revenue;
+                        bySalesByDepPerWeek[key] += weekResault.revenue;
                     }
                 });
             }
@@ -572,6 +578,7 @@ define([
                     byWeekData = _.groupBy(bySalesByDepPerEmployee.root, 'week');
                     total = bySalesByDepPerEmployee.total;
                     globalTotal += total;
+
                     target.html(self.bySalesByDepTemplate({
                         weeksArr: weeksArr,
                         byWeekData: byWeekData,
@@ -638,6 +645,7 @@ define([
                     byMonthData = _.groupBy(bySalesByDepPerEmployee.root, 'month');
                     total = bySalesByDepPerEmployee.total;
                     globalTotal += total;
+
                     employeeContainer.html(self.paidBySalesItemsTemplate({
                         monthArr: monthArr,
                         byMonthData: byMonthData,
@@ -653,11 +661,14 @@ define([
 
                 for (var i = paidBySales.length - 1; i >= 0; i--) {
                     tempPerMonth = paidBySales[i].root;
-                    tempPerMonth.forEach(function (weekResault) {
-                        if (!(weekResault.month in bySalesByDepPerWeek)) {
-                            bySalesByDepPerWeek[weekResault.month] = weekResault.revenue;
+
+                    tempPerMonth.forEach(function (weekResult) {
+                        var key = weekResult.month;
+
+                        if (!bySalesByDepPerWeek[key]) {
+                            bySalesByDepPerWeek[key] = weekResult.revenue;
                         } else {
-                            bySalesByDepPerWeek[weekResault.month] += weekResault.revenue;
+                            bySalesByDepPerWeek[key] += weekResult.revenue;
                         }
                     });
                 }
@@ -714,6 +725,7 @@ define([
                     byMonthData = _.groupBy(bySalesByDepPerEmployee.root, 'month');
                     total = bySalesByDepPerEmployee.total;
                     globalTotal += total;
+
                     employeeContainer.html(self.paidBySalesItemsTemplate({
                         monthArr: monthArr,
                         byMonthData: byMonthData,
@@ -729,11 +741,13 @@ define([
 
                 for (var i = unpaidBySales.length - 1; i >= 0; i--) {
                     tempPerMonth = unpaidBySales[i].root;
-                    tempPerMonth.forEach(function (weekResault) {
-                        if (!(weekResault.month in bySalesByDepPerWeek)) {
-                            bySalesByDepPerWeek[weekResault.month] = weekResault.revenue;
+                    tempPerMonth.forEach(function (weekResult) {
+                        var key = weekResult.month;
+
+                        if (!bySalesByDepPerWeek[key]) {
+                            bySalesByDepPerWeek[key] = weekResult.revenue;
                         } else {
-                            bySalesByDepPerWeek[weekResault.month] += weekResault.revenue;
+                            bySalesByDepPerWeek[key] += weekResult.revenue;
                         }
                     });
                 }
@@ -790,6 +804,7 @@ define([
                     byMonthData = _.groupBy(bySalesByDepPerEmployee.root, 'month');
                     total = bySalesByDepPerEmployee.total;
                     globalTotal += total;
+
                     employeeContainer.html(self.paidBySalesItemsTemplate({
                         monthArr: monthArr,
                         byMonthData: byMonthData,
@@ -805,11 +820,14 @@ define([
 
                 for (var i = unpaidBySales.length - 1; i >= 0; i--) {
                     tempPerMonth = unpaidBySales[i].root;
-                    tempPerMonth.forEach(function (weekResault) {
-                        if (!(weekResault.month in bySalesByDepPerWeek)) {
-                            bySalesByDepPerWeek[weekResault.month] = weekResault.revenue;
+
+                    tempPerMonth.forEach(function (weekResult) {
+                        var key = weekResult.month;
+
+                        if (!bySalesByDepPerWeek[key]) {
+                            bySalesByDepPerWeek[key] = weekResult.revenue;
                         } else {
-                            bySalesByDepPerWeek[weekResault.month] += weekResault.revenue;
+                            bySalesByDepPerWeek[key] += weekResult.revenue;
                         }
                     });
                 }
@@ -904,6 +922,7 @@ define([
                     byMonthData = _.groupBy(bySalesByDepPerEmployee.root, 'month');
                     total = bySalesByDepPerEmployee.total;
                     globalTotal += total;
+
                     employeeContainer.html(self.paidBySalesItemsTemplate({
                         monthArr: monthArr,
                         byMonthData: byMonthData,
@@ -919,11 +938,14 @@ define([
 
                 for (var i = revenueTotal.length - 1; i >= 0; i--) {
                     tempPerMonth = revenueTotal[i].root;
-                    tempPerMonth.forEach(function (weekResault) {
-                        if (!(weekResault.month in bySalesByDepPerWeek)) {
-                            bySalesByDepPerWeek[weekResault.month] = weekResault.revenue;
+
+                    tempPerMonth.forEach(function (weekResult) {
+                        var key = weekResult.month;
+
+                        if (!bySalesByDepPerWeek[key]) {
+                            bySalesByDepPerWeek[key] = weekResult.revenue;
                         } else {
-                            bySalesByDepPerWeek[weekResault.month] += weekResault.revenue;
+                            bySalesByDepPerWeek[key] += weekResult.revenue;
                         }
                     });
                 }
@@ -980,6 +1002,7 @@ define([
                     byMonthData = _.groupBy(bySalesByDepPerEmployee.root, 'month');
                     total = bySalesByDepPerEmployee.total;
                     globalTotal += total;
+
                     employeeContainer.html(self.projectBySalesItemsTemplate({
                         monthArr: monthArr,
                         byMonthData: byMonthData,
@@ -995,11 +1018,14 @@ define([
 
                 for (var i = projectBySales.length - 1; i >= 0; i--) {
                     tempPerMonth = projectBySales[i].root;
-                    tempPerMonth.forEach(function (weekResault) {
-                        if (!(weekResault.month in bySalesByDepPerWeek)) {
-                            bySalesByDepPerWeek[weekResault.month] = weekResault.projectCount;
+
+                    tempPerMonth.forEach(function (weekResult) {
+                        var key = weekResult.month;
+
+                        if (!bySalesByDepPerWeek[key]) {
+                            bySalesByDepPerWeek[key] = weekResult.projectCount;
                         } else {
-                            bySalesByDepPerWeek[weekResault.month] += weekResault.projectCount;
+                            bySalesByDepPerWeek[key] += weekResult.projectCount;
                         }
                     });
                 }
@@ -1055,6 +1081,7 @@ define([
                     byMonthData = _.groupBy(bySalesByDepPerEmployee.root, 'month');
                     total = bySalesByDepPerEmployee.total;
                     globalTotal += total;
+
                     employeeContainer.html(self.projectBySalesItemsTemplate({
                         monthArr: monthArr,
                         byMonthData: byMonthData,
@@ -1070,11 +1097,14 @@ define([
 
                 for (var i = employeeBySales.length - 1; i >= 0; i--) {
                     tempPerMonth = employeeBySales[i].root;
-                    tempPerMonth.forEach(function (weekResault) {
-                        if (!(weekResault.month in bySalesByDepPerWeek)) {
-                            bySalesByDepPerWeek[weekResault.month] = weekResault.projectCount;
+
+                    tempPerMonth.forEach(function (weekResult) {
+                        var key = weekResult.month;
+
+                        if (! bySalesByDepPerWeek[key]) {
+                            bySalesByDepPerWeek[key] = weekResult.projectCount;
                         } else {
-                            bySalesByDepPerWeek[weekResault.month] += weekResault.projectCount;
+                            bySalesByDepPerWeek[key] += weekResult.projectCount;
                         }
                     });
                 }
@@ -1108,11 +1138,14 @@ define([
                 this.departments.push(hoursByDep[i]._id);
 
                 tempPerWeek = hoursByDep[i].root;
-                tempPerWeek.forEach(function (weekResault) {
-                    if (!(weekResault.week in hoursByDepPerWeek)) {
-                        hoursByDepPerWeek[weekResault.week] = weekResault.sold;
+
+                tempPerWeek.forEach(function (weekResult) {
+                    var key = weekResult.week;
+
+                    if (!hoursByDepPerWeek[key]) {
+                        hoursByDepPerWeek[key] = weekResult.sold;
                     } else {
-                        hoursByDepPerWeek[weekResault.week] += weekResault.sold;
+                        hoursByDepPerWeek[key] += weekResult.sold;
                     }
                 });
             }
@@ -1254,13 +1287,14 @@ define([
                     tempPerMonth = allBonus[i];
 
                     monthArr.forEach(function (monthResult) {
+                        var key = monthResult.year * 100 + monthResult.month;
 
-                        if (!(monthResult.year * 100 + monthResult.month in bySalesPerMonth)) {
-                            if (tempPerMonth[monthResult.year * 100 + monthResult.month]) {
-                                bySalesPerMonth[monthResult.year * 100 + monthResult.month] = tempPerMonth[monthResult.year * 100 + monthResult.month]['total'];
+                        if (!bySalesPerMonth[key]) {
+                            if (tempPerMonth[key]) {
+                                bySalesPerMonth[key] = tempPerMonth[key]['total'];
                             }
                         } else {
-                            bySalesPerMonth[monthResult.year * 100 + monthResult.month] += tempPerMonth[monthResult.year * 100 + monthResult.month]['total'];
+                            bySalesPerMonth[key] += tempPerMonth[key]['total'];
                         }
                     });
                 }
@@ -1355,13 +1389,14 @@ define([
                     tempPerMonth = allBonus[i];
 
                     monthArr.forEach(function (monthResult) {
+                        var key = monthResult.year * 100 + monthResult.month;
 
-                        if (!(monthResult.year * 100 + monthResult.month in bySalesPerMonth)) {
-                            if (tempPerMonth[monthResult.year * 100 + monthResult.month]) {
-                                bySalesPerMonth[monthResult.year * 100 + monthResult.month] = tempPerMonth[monthResult.year * 100 + monthResult.month]['total'];
+                        if (!bySalesPerMonth[key]) {
+                            if (tempPerMonth[key]) {
+                                bySalesPerMonth[key] = tempPerMonth[key]['total'];
                             }
                         } else {
-                            bySalesPerMonth[monthResult.year * 100 + monthResult.month] += tempPerMonth[monthResult.year * 100 + monthResult.month]['total'];
+                            bySalesPerMonth[key] += tempPerMonth[key]['total'];
                         }
                     });
                 }
@@ -1449,13 +1484,14 @@ define([
                         var totalHours = _.clone(employee.hoursTotal);
 
                         monthArr.forEach(function (monthResult) {
+                            var key = monthResult.year * 100 + monthResult.month;
 
-                            if (!(monthResult.year * 100 + monthResult.month in bySalesPerMonth)) {
-                                if (totalHours[monthResult.year * 100 + monthResult.month]) {
-                                    bySalesPerMonth[monthResult.year * 100 + monthResult.month] = totalHours[monthResult.year * 100 + monthResult.month];
+                            if (!bySalesPerMonth[key]) {
+                                if (totalHours[key]) {
+                                    bySalesPerMonth[key] = totalHours[key];
                                 }
                             } else {
-                                bySalesPerMonth[monthResult.year * 100 + monthResult.month] += totalHours[monthResult.year * 100 + monthResult.month];
+                                bySalesPerMonth[key] += totalHours[key];
                             }
                         });
                     });
@@ -1551,13 +1587,14 @@ define([
                     tempPerMonth = allBonus[i];
 
                     monthArr.forEach(function (monthResult) {
+                        var key = monthResult.year * 100 + monthResult.month;
 
-                        if (!(monthResult.year * 100 + monthResult.month in bySalesPerMonth)) {
-                            if (tempPerMonth[monthResult.year * 100 + monthResult.month]) {
-                                bySalesPerMonth[monthResult.year * 100 + monthResult.month] = tempPerMonth[monthResult.year * 100 + monthResult.month]['total'];
+                        if (!bySalesPerMonth[key]) {
+                            if (tempPerMonth[key]) {
+                                bySalesPerMonth[key] = tempPerMonth[key]['total'];
                             }
                         } else {
-                            bySalesPerMonth[monthResult.year * 100 + monthResult.month] += tempPerMonth[monthResult.year * 100 + monthResult.month]['total'];
+                            bySalesPerMonth[key] += tempPerMonth[key]['total'];
                         }
                     });
                 }
@@ -1628,6 +1665,7 @@ define([
                         objToSave.total = 0;
                         keys.forEach(function (key) {
                             var sold = (totalSold && totalSold[key]) ? totalSold[key] : 0;
+
                             objToSave.hoursTotal[key] = hoursTotal[key] - sold;
                             objToSave.total += objToSave.hoursTotal[key];
                         });
@@ -1691,13 +1729,14 @@ define([
                         var totalHours = _.clone(employee.hoursTotal);
 
                         monthArr.forEach(function (monthResult) {
+                            var key = monthResult.year * 100 + monthResult.month;
 
-                            if (!(monthResult.year * 100 + monthResult.month in bySalesPerMonth)) {
-                                if (totalHours[monthResult.year * 100 + monthResult.month]) {
-                                    bySalesPerMonth[monthResult.year * 100 + monthResult.month] = totalHours[monthResult.year * 100 + monthResult.month];
+                            if (!bySalesPerMonth[key]) {
+                                if (totalHours[key]) {
+                                    bySalesPerMonth[key] = totalHours[key];
                                 }
                             } else {
-                                bySalesPerMonth[monthResult.year * 100 + monthResult.month] += totalHours[monthResult.year * 100 + monthResult.month];
+                                bySalesPerMonth[key] += totalHours[key];
                             }
                         });
                     });
@@ -1786,16 +1825,17 @@ define([
                         var totalHours = _.clone(employee.hoursSold);
 
                         monthArr.forEach(function (monthResult) {
+                            var key = monthResult.year * 100 + monthResult.month;
 
-                            if (!(monthResult.year * 100 + monthResult.month in bySalesPerMonth)) {
-                                if (totalHours[monthResult.year * 100 + monthResult.month]) {
-                                    bySalesPerMonth[monthResult.year * 100 + monthResult.month] = parseInt(totalHours[monthResult.year * 100 + monthResult.month]);
+                            if (!bySalesPerMonth[key]) {
+                                if (totalHours[key]) {
+                                    bySalesPerMonth[key] = parseInt(totalHours[key]);
                                 } else {
-                                    totalHours[monthResult.year * 100 + monthResult.month] = 0;
-                                    bySalesPerMonth[monthResult.year * 100 + monthResult.month] = 0;
+                                    totalHours[key] = 0;
+                                    bySalesPerMonth[key] = 0;
                                 }
                             } else {
-                                bySalesPerMonth[monthResult.year * 100 + monthResult.month] += totalHours[monthResult.year * 100 + monthResult.month] ? totalHours[monthResult.year * 100 + monthResult.month] : 0;
+                                bySalesPerMonth[key] += totalHours[key] ? totalHours[key] : 0;
                             }
                         });
                     });
