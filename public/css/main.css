@@ -63,7 +63,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 /*=New User=======================================*/
 /*==DashBoard Vocation============================*/
 .list2 {
-  color: #ffffff !important;
+  color: #000000 !important;
   font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
   width: 100%;
   table-layout: fixed;
@@ -208,10 +208,10 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   cursor: pointer;
 }
 .list2 tr:nth-child(odd) {
-  background-color: #2f383f;
+  background-color: #ffffff;
 }
 .list2 tr:hover {
-  background-color: #45525c;
+  background-color: #ffffff;
 }
 .list2 tfoot tr {
   border-bottom: 1px solid #7f7f80;
@@ -353,10 +353,10 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   cursor: pointer;
 }
 .list2 tr:nth-child(odd) {
-  background-color: #2f383f;
+  background-color: #ffffff;
 }
 .list2 tr:hover {
-  background-color: #45525c;
+  background-color: #ffffff;
 }
 .list2 thead th:first-of-type {
   width: 15%;
@@ -638,7 +638,7 @@ input::-ms-clear {
   min-height: 40px;
   text-align: left;
   border: 1px solid #7f7f80;
-  background-color: #242b30;
+  background-color: #ffffff;
   color: #02a1f2;
   cursor: move;
   transition: box-shadow 1s ease;
@@ -773,7 +773,7 @@ input::-ms-clear {
   font-size: 13px;
 }
 .kanban .column .columnNameDiv {
-  background: #242b30;
+  background: #ffffff;
   height: 35px;
   position: relative;
 }
@@ -954,7 +954,7 @@ input::-ms-clear {
 }
 .ui-datepicker {
   padding: .2em .2em 0;
-  background-color: #242b30;
+  background-color: #ffffff;
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-prev,
 .ui-datepicker .ui-datepicker-header .ui-datepicker-next {
@@ -1000,18 +1000,18 @@ input::-ms-clear {
 .ui-datepicker .ui-datepicker-header .ui-datepicker-title select {
   width: 49%;
   color: #a9a9a9;
-  background-color: #242b30;
+  background-color: #ffffff;
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-title select option {
-  background-color: #45525c;
+  background-color: #ffffff;
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-title select option:hover {
-  background-color: #45525c;
+  background-color: #ffffff;
 }
 .ui-datepicker table.ui-datepicker-calendar tr th {
   padding: .7em .3em;
   text-align: center;
-  color: #ffffff;
+  color: #000000;
 }
 .ui-datepicker table.ui-datepicker-calendar tr td {
   width: 15px;
@@ -1031,11 +1031,11 @@ input::-ms-clear {
 .ui-datepicker table.ui-datepicker-calendar tr td a:hover,
 .ui-datepicker table.ui-datepicker-calendar tr td span:hover {
   text-decoration: none;
-  background-color: #45525c;
+  background-color: #ffffff;
 }
 .ui-datepicker table.ui-datepicker-calendar tr td a.ui-state-active,
 .ui-datepicker table.ui-datepicker-calendar tr td span.ui-state-active {
-  background-color: #45525c;
+  background-color: #ffffff;
 }
 .ui-datepicker table.ui-datepicker-calendar tr td.ui-state-disabled {
   opacity: .35;
@@ -1049,13 +1049,13 @@ input::-ms-clear {
   background-color: inherit !important;
   font-size: 11px;
   font-family: Tahoma, Arial, Helvetica, sans-serif;
-  color: #ffffff !important;
+  color: #000000 !important;
   border: 1px solid #7f7f80 !important;
   padding: 5px 15px;
 }
 .dialog-buttons input:hover {
   border: 1px solid #02a1f2 !important;
-  color: #ffffff !important;
+  color: #000000 !important;
 }
 .pagination {
   width: 100%;
@@ -1068,12 +1068,12 @@ input::-ms-clear {
 }
 .pagination .countOnPage {
   float: left;
-  color: #ffffff;
+  color: #000000;
 }
 .pagination .nextPrev {
   float: right;
   margin-right: 5px;
-  color: #ffffff;
+  color: #000000;
 }
 .pagination .countOnPage {
   margin-left: 5px;
@@ -1138,7 +1138,7 @@ input::-ms-clear {
   font-size: 12px !important;
 }
 .pagination #pageList {
-  background-color: #1a2227;
+  background-color: #eeeeee;
   border: 1px solid #7f7f80;
   position: absolute;
   bottom: 17px;
@@ -1191,7 +1191,7 @@ input::-ms-clear {
   border-left: none;
 }
 .pagination .pageList ul {
-  background-color: #1a2227;
+  background-color: #eeeeee;
   border: 1px solid #7f7f80;
   position: absolute;
   bottom: 17px;
@@ -1286,7 +1286,7 @@ input::-ms-clear {
 }
 .workflow-list li:hover:not(.quickEdit),
 .workflow-sub-list li:hover:not(.quickEdit) {
-  background-color: #45525c;
+  background-color: #ffffff;
 }
 .workflow-list li:hover:not(.quickEdit) a,
 .workflow-sub-list li:hover:not(.quickEdit) a {
@@ -1419,7 +1419,7 @@ select:not([type="checkbox"]):focus {
 .newSelectList {
   position: absolute !important;
   border: solid 1px #7f7f80;
-  background-color: #242b30;
+  background-color: #ffffff;
   padding: 3px 0;
   z-index: 100;
   box-shadow: 0 1px 3px rgba(150, 150, 150, 0.7);
@@ -1455,7 +1455,7 @@ select:not([type="checkbox"]):focus {
   background-color: #BEF624 !important;
 }
 .newSelectList li:hover {
-  background-color: #2f383f !important;
+  background-color: #ffffff !important;
   border: 0 !important;
   color: #FF5A00 !important;
 }
@@ -1518,7 +1518,7 @@ select:not([type="checkbox"]):focus {
   color: white;
 }
 a {
-  color: #ffffff;
+  color: #000000;
   text-decoration: none;
 }
 a:hover {
@@ -1643,7 +1643,7 @@ dl dd a.formLink {
   width: 860px;
   max-width: 860px;
   margin: 0 auto;
-  background: #242b30;
+  background: #ffffff;
   min-height: 130px;
   display: block;
   position: relative;
@@ -1668,7 +1668,7 @@ dl dd a.formLink {
   padding: 4px 10px;
 }
 .form .compactList li.inner:hover p {
-  color: #ffffff;
+  color: #000000;
 }
 .form .compactList li p {
   line-height: 20px !important;
@@ -1700,7 +1700,7 @@ dl dd a.formLink {
   font-weight: bold;
 }
 .form .formTitle h3 {
-  color: #ffffff !important;
+  color: #000000 !important;
   margin: 0;
   font-family: Title;
   font-size: 18px;
@@ -1714,12 +1714,12 @@ dl dd a.formLink {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  color: #ffffff;
+  color: #000000;
 }
 .form h3 {
   margin-bottom: 10px;
   display: block;
-  color: #ffffff;
+  color: #000000;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -1739,7 +1739,7 @@ dl dd a.formLink {
   display: block;
 }
 .form .mainInfo h3 {
-  color: #ffffff;
+  color: #000000;
   font-size: 24px;
   line-height: 30px;
   min-height: 24px;
@@ -1966,7 +1966,7 @@ dl dd a.formLink {
   width: 90%;
   height: 30px;
   line-height: 26px;
-  color: #ffffff;
+  color: #000000;
 }
 .form input {
   margin: 2px 2px 2px 0;
@@ -2212,7 +2212,7 @@ dl dd a.formLink {
   width: 98%;
   max-width: 98%;
   margin: 0 auto;
-  background: #242b30;
+  background: #ffffff;
   min-height: 130px;
   display: block;
   position: relative;
@@ -2238,7 +2238,7 @@ dl dd a.formLink {
   padding: 4px 10px;
 }
 .formLeftColumn .form .compactList li.inner:hover p {
-  color: #ffffff;
+  color: #000000;
 }
 .formLeftColumn .form .compactList li p {
   line-height: 20px !important;
@@ -2270,7 +2270,7 @@ dl dd a.formLink {
   font-weight: bold;
 }
 .formLeftColumn .form .formTitle h3 {
-  color: #ffffff !important;
+  color: #000000 !important;
   margin: 0;
   font-family: Title;
   font-size: 18px;
@@ -2284,12 +2284,12 @@ dl dd a.formLink {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  color: #ffffff;
+  color: #000000;
 }
 .formLeftColumn .form h3 {
   margin-bottom: 10px;
   display: block;
-  color: #ffffff;
+  color: #000000;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -2309,7 +2309,7 @@ dl dd a.formLink {
   display: block;
 }
 .formLeftColumn .form .mainInfo h3 {
-  color: #ffffff;
+  color: #000000;
   font-size: 24px;
   line-height: 30px;
   min-height: 24px;
@@ -2536,7 +2536,7 @@ dl dd a.formLink {
   width: 90%;
   height: 30px;
   line-height: 26px;
-  color: #ffffff;
+  color: #000000;
 }
 .formLeftColumn .form input {
   margin: 2px 2px 2px 0;
@@ -2553,7 +2553,7 @@ dl dd a.formLink {
 }
 .formLeftColumn .edited-block p,
 .formLeftColumn .edited-block span {
-  color: #ffffff;
+  color: #000000;
 }
 #details-dialog {
   display: none;
@@ -2567,7 +2567,7 @@ dl dd a.formLink {
   width: 98%;
   max-width: 98%;
   margin: 0 auto;
-  background: #242b30;
+  background: #ffffff;
   min-height: 130px;
   display: block;
   position: relative;
@@ -2593,7 +2593,7 @@ dl dd a.formLink {
   padding: 4px 10px;
 }
 .formRightColumn .form .compactList li.inner:hover p {
-  color: #ffffff;
+  color: #000000;
 }
 .formRightColumn .form .compactList li p {
   line-height: 20px !important;
@@ -2625,7 +2625,7 @@ dl dd a.formLink {
   font-weight: bold;
 }
 .formRightColumn .form .formTitle h3 {
-  color: #ffffff !important;
+  color: #000000 !important;
   margin: 0;
   font-family: Title;
   font-size: 18px;
@@ -2639,12 +2639,12 @@ dl dd a.formLink {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  color: #ffffff;
+  color: #000000;
 }
 .formRightColumn .form h3 {
   margin-bottom: 10px;
   display: block;
-  color: #ffffff;
+  color: #000000;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -2664,7 +2664,7 @@ dl dd a.formLink {
   display: block;
 }
 .formRightColumn .form .mainInfo h3 {
-  color: #ffffff;
+  color: #000000;
   font-size: 24px;
   line-height: 30px;
   min-height: 24px;
@@ -2891,7 +2891,7 @@ dl dd a.formLink {
   width: 90%;
   height: 30px;
   line-height: 26px;
-  color: #ffffff;
+  color: #000000;
 }
 .formRightColumn .form input {
   margin: 2px 2px 2px 0;
@@ -2928,7 +2928,7 @@ dl dd a.formLink {
 }
 .noteWrapper > label {
   font-size: 16px;
-  color: #ffffff;
+  color: #000000;
 }
 .noteWrapper .addNote {
   margin-top: 6px;
@@ -2997,13 +2997,13 @@ dl dd a.formLink {
   background-color: inherit !important;
   font-size: 11px;
   font-family: Tahoma, Arial, Helvetica, sans-serif;
-  color: #ffffff !important;
+  color: #000000 !important;
   border: 1px solid #7f7f80 !important;
   padding: 5px 15px;
 }
 .noteWrapper .addNote.active .buttons input:hover {
   border: 1px solid #02a1f2 !important;
-  color: #ffffff !important;
+  color: #000000 !important;
 }
 .noteWrapper .addNote.active .buttons input {
   width: auto;
@@ -3025,7 +3025,7 @@ dl dd a.formLink {
 }
 .noteWrapper .addNote.active label {
   display: block;
-  color: #ffffff;
+  color: #000000;
 }
 .noteWrapper .addNote.active textarea {
   height: 60px;
@@ -3093,7 +3093,7 @@ dl dd a.formLink {
   height: 100%;
 }
 #wrapper {
-  background-color: #242b30;
+  background-color: #ffffff;
   width: 100%;
   height: 100%;
   min-width: 100%;
@@ -3247,7 +3247,7 @@ dl dd a.formLink {
   line-height: 20px;
 }
 .customer-info dt {
-  color: #ffffff;
+  color: #000000;
 }
 .project-edit-info {
   clear: both;
@@ -3551,7 +3551,7 @@ dl dd a.formLink {
 }
 .btn {
   border: 1px solid #7f7f80;
-  color: #1a2227;
+  color: #eeeeee;
   margin: 0;
   padding: 2px 6px;
   line-height: 13px;
@@ -3570,7 +3570,7 @@ dl dd a.formLink {
 }
 button {
   border: 1px solid #7f7f80;
-  color: #1a2227;
+  color: #eeeeee;
   margin: 0;
   padding: 2px 6px;
   line-height: 13px;
@@ -3590,7 +3590,7 @@ button:hover {
 button.red,
 a.red {
   border: 1px solid #7f7f80;
-  color: #1a2227;
+  color: #eeeeee;
   margin: 0;
   padding: 2px 6px;
   line-height: 13px;
@@ -3824,7 +3824,7 @@ a.red:hover {
   position: relative;
   z-index: 999;
   border: 1px solid #7f7f80;
-  background-color: #242b30;
+  background-color: #ffffff;
 }
 #loginPanel .dropdown-button #loginSelect li {
   height: 20px;
@@ -4210,7 +4210,7 @@ a.red:hover {
   font-size: 30px;
   line-height: 30px;
   padding-top: 15px;
-  color: #ffffff;
+  color: #000000;
 }
 table#workflows {
   width: 40%;
@@ -4281,7 +4281,7 @@ table#workflows tr td.edit-status {
   right: auto;
   bottom: auto;
   width: 100%;
-  background: #1a2227;
+  background: #eeeeee;
   height: 30px;
   padding: 0;
   margin: 0;
@@ -4289,7 +4289,7 @@ table#workflows tr td.edit-status {
 }
 #mainmenu-holder nav {
   float: left;
-  background: #1a2227;
+  background: #eeeeee;
 }
 #mainmenu-holder nav ul {
   padding: 0;
@@ -4359,26 +4359,26 @@ table#workflows tr td.edit-status {
 #submenu-holder nav ul li {
   list-style: none;
   font-size: 14px;
-  color: #ffffff;
+  color: #000000;
   line-height: 30px;
   float: left;
   display: block;
   width: 120px;
   height: 30px;
   text-align: center;
-  background: #242b30;
+  background: #ffffff;
 }
 #submenu-holder nav ul li.hover {
   height: 30px;
   line-height: 30px;
 }
 #submenu-holder nav ul li.hover a {
-  color: #ffffff;
+  color: #000000;
   text-decoration: underline;
 }
 #submenu-holder nav ul li a {
   font-family: 'Lato', Helvetica, Arial, sans-serif;
-  color: #ffffff;
+  color: #000000;
   font-size: 12px;
   line-height: 30px;
   display: block;
@@ -4741,7 +4741,7 @@ ul.dialog-tabs li.right button {
 }
 .thumbnailwithavatar .info p {
   line-height: 15px;
-  color: #ffffff;
+  color: #000000;
 }
 .thumbnailwithavatar h4 {
   color: #02a1f2;
@@ -4860,7 +4860,7 @@ ul.dialog-tabs li.right button {
   color: #149be0;
 }
 .list {
-  color: #ffffff !important;
+  color: #000000 !important;
   font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
   width: 100%;
 }
@@ -5004,10 +5004,10 @@ ul.dialog-tabs li.right button {
   cursor: pointer;
 }
 .list tr:nth-child(odd) {
-  background-color: #2f383f;
+  background-color: #ffffff;
 }
 .list tr:hover {
-  background-color: #45525c;
+  background-color: #ffffff;
 }
 .thumbnail {
   float: left;
@@ -5015,7 +5015,7 @@ ul.dialog-tabs li.right button {
   margin-left: 4px;
   position: relative;
   display: block;
-  background: #1a2227 !important;
+  background: #eeeeee !important;
   border: 1px solid #7f7f80;
   -webkit-transition: -webkit-transform, -webkit-box-shadow, border 200ms linear;
   width: 280px;
@@ -5170,7 +5170,7 @@ ul.dialog-tabs li.right button {
   width: 180px;
 }
 .thumbnail .project-text span {
-  color: #ffffff;
+  color: #000000;
 }
 .thumbnail .project-text span.bold {
   display: block;
@@ -5185,7 +5185,7 @@ ul.dialog-tabs li.right button {
   text-align: center;
 }
 #showMoreDiv #showMore {
-  color: #ffffff;
+  color: #000000;
   margin-top: 20px;
 }
 #modulesAccessTable td {
@@ -5203,7 +5203,7 @@ ul.dialog-tabs li.right button {
 }
 .ui-datepicker {
   padding: .2em .2em 0;
-  background-color: #242b30;
+  background-color: #ffffff;
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-prev,
 .ui-datepicker .ui-datepicker-header .ui-datepicker-next {
@@ -5249,18 +5249,18 @@ ul.dialog-tabs li.right button {
 .ui-datepicker .ui-datepicker-header .ui-datepicker-title select {
   width: 49%;
   color: #a9a9a9;
-  background-color: #242b30;
+  background-color: #ffffff;
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-title select option {
-  background-color: #45525c;
+  background-color: #ffffff;
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-title select option:hover {
-  background-color: #45525c;
+  background-color: #ffffff;
 }
 .ui-datepicker table.ui-datepicker-calendar tr th {
   padding: .7em .3em;
   text-align: center;
-  color: #ffffff;
+  color: #000000;
 }
 .ui-datepicker table.ui-datepicker-calendar tr td {
   width: 15px;
@@ -5280,19 +5280,19 @@ ul.dialog-tabs li.right button {
 .ui-datepicker table.ui-datepicker-calendar tr td a:hover,
 .ui-datepicker table.ui-datepicker-calendar tr td span:hover {
   text-decoration: none;
-  background-color: #45525c;
+  background-color: #ffffff;
 }
 .ui-datepicker table.ui-datepicker-calendar tr td a.ui-state-active,
 .ui-datepicker table.ui-datepicker-calendar tr td span.ui-state-active {
-  background-color: #45525c;
+  background-color: #ffffff;
 }
 .ui-datepicker table.ui-datepicker-calendar tr td.ui-state-disabled {
   opacity: .35;
 }
 .ui-dialog {
   border: 1px solid #7f7f80;
-  background: #1a2227;
-  color: #ffffff;
+  background: #eeeeee;
+  color: #000000;
   z-index: 1000;
   margin: 0 auto;
   -moz-border-radius: 0px;
@@ -5438,7 +5438,7 @@ ul.dialog-tabs li.right button {
 }
 .ui-dialog .inner {
   padding: 5px;
-  background: #1a2227;
+  background: #eeeeee;
 }
 .ui-dialog .form-holder {
   position: relative;
@@ -5666,8 +5666,8 @@ ul.dialog-tabs li.right button {
 }
 .ui-dialog .ui-dialog-buttonpane {
   border: 1px solid #7f7f80;
-  background: #1a2227;
-  color: #ffffff;
+  background: #eeeeee;
+  color: #000000;
   text-align: left;
   border-width: 1px 0 0;
   background-image: none;
@@ -5695,7 +5695,7 @@ ul.dialog-tabs li.right button {
   border: 1px solid #7f7f80;
   margin: .5em .4em .5em 0;
   cursor: pointer;
-  background-color: #242b30;
+  background-color: #ffffff;
   font-size: 1.2em;
   display: inline-block;
   position: relative;
@@ -5709,12 +5709,12 @@ ul.dialog-tabs li.right button {
 .ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button span {
   display: block;
   line-height: normal;
-  background: #242b30;
+  background: #ffffff;
   padding: .4em 1em;
   color: #02a1f2;
 }
 .ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button span:hover {
-  background: #11181d !important;
+  background: #ececec !important;
 }
 .ui-dialog .ui-helper-clearfix:before,
 .ui-dialog .ui-helper-clearfix:after {
@@ -5771,13 +5771,13 @@ ul.dialog-tabs li.right button {
   background-color: inherit !important;
   font-size: 11px;
   font-family: Tahoma, Arial, Helvetica, sans-serif;
-  color: #ffffff !important;
+  color: #000000 !important;
   border: 1px solid #7f7f80 !important;
   padding: 5px 15px;
 }
 .form-holder form .buttons input:hover {
   border: 1px solid #02a1f2 !important;
-  color: #ffffff !important;
+  color: #000000 !important;
 }
 .form-holder form label {
   font-weight: normal;
@@ -5888,7 +5888,7 @@ ul.dialog-tabs li.right button {
   line-height: 17px;
   float: left;
   max-width: 95%;
-  color: #ffffff;
+  color: #000000;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -5964,7 +5964,7 @@ ul.dialog-tabs .withEndContract .arrow {
   float: right;
   width: 80px;
   border: 1px solid #7f7f80;
-  color: #1a2227;
+  color: #eeeeee;
   margin: 0;
   padding: 2px 6px;
   line-height: 13px;
@@ -6094,7 +6094,7 @@ ul.chart-tabs .withEndContract .arrow {
   float: right;
   width: 80px;
   border: 1px solid #7f7f80;
-  color: #1a2227;
+  color: #eeeeee;
   margin: 0;
   padding: 2px 6px;
   line-height: 13px;
@@ -6273,7 +6273,7 @@ ul.chart-tabs .withEndContract .arrow {
   height: 32px;
   padding: 3px 0 0;
   margin: -39px auto 0;
-  color: #ffffff;
+  color: #000000;
 }
 .legend-box.small {
   width: 255px;
@@ -6318,7 +6318,7 @@ h3.dashboard {
 }
 .leadChart text,
 .chart text {
-  fill: #ffffff;
+  fill: #000000;
 }
 #modulesAccessTable tr th {
   text-align: center;
@@ -6372,7 +6372,7 @@ h3.dashboard {
   background-color: green;
 }
 #projectPM table tbody tr td {
-  color: #ffffff;
+  color: #000000;
 }
 #projectPM table tbody tr td:first-child {
   color: #a9a9a9;
@@ -6487,7 +6487,7 @@ h3.dashboard {
   color: #02a1f2;
 }
 .avatarInfoContainer.employee .half-block dd {
-  color: #ffffff;
+  color: #000000;
 }
 .stageSelect.pending,
 span.pending {
@@ -6505,7 +6505,7 @@ span.done,
 span.unDone {
   display: block;
   background-color: #96d085;
-  color: #ffffff;
+  color: #000000;
   text-align: center;
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
@@ -7499,7 +7499,7 @@ textarea#editInput {
   min-width: 100%;
   font-size: 11px;
   border-bottom: 1px solid #7f7f80;
-  background-color: #242b30;
+  background-color: #ffffff;
 }
 .grid tr {
   color: #a9a9a9;
@@ -7517,7 +7517,7 @@ textarea#editInput {
   height: 25px;
   line-height: 25px;
   display: block;
-  color: #ffffff;
+  color: #000000;
 }
 .grid tr td {
   border-top: 1px solid #7f7f80;
@@ -7572,13 +7572,13 @@ textarea#editInput {
   display: table-cell;
 }
 .grid tr:hover td {
-  background: #45525c !important;
+  background: #ffffff !important;
   color: #ffffff;
 }
 .grid tr td.dashboardWeek {
   width: 107px;
   min-width: 107px;
-  background-color: #242b30;
+  background-color: #ffffff;
 }
 .grid tr td.dashboardWeek input {
   background-color: #bdd7ee;
@@ -7667,7 +7667,7 @@ textarea#editInput {
   float: left;
   padding: 0;
   padding-right: 3px;
-  color: #ffffff;
+  color: #000000;
   text-align: center;
 }
 .grid tr td.withVacation span span.vacation.size40 {
@@ -7735,17 +7735,17 @@ textarea#editInput {
 }
 .grid tr.group {
   /*color: black;*/
-  color: #ffffff;
+  color: #000000;
   cursor: pointer;
 }
 .grid tr.group td {
-  background-color: #262e33 !important;
+  background-color: #ffffff !important;
 }
 .grid tr.group span {
   text-align: left;
 }
 .grid tr:nth-child(2n+1) td {
-  background-color: #2f383f;
+  background-color: #ffffff;
 }
 .grid.attendance {
   border-bottom: 5px solid #4c5975;
@@ -7785,7 +7785,7 @@ textarea#editInput {
   border-bottom: none;
 }
 .grid.attendance tr:nth-child(even) {
-  background-color: #2f383f;
+  background-color: #ffffff;
 }
 .grid.attendance tr td {
   border-left: 1px solid #d2d2d2;
@@ -7828,7 +7828,7 @@ textarea#editInput {
   padding: 5px;
 }
 .grid-conatiner .attendanceTop div span {
-  color: #ffffff;
+  color: #000000;
 }
 .grid-conatiner .attendanceTop div #currentEmployee,
 .grid-conatiner .attendanceTop div #currentStatus,
@@ -7838,7 +7838,7 @@ textarea#editInput {
 .grid-conatiner .attendanceTop div #currentEmployee option,
 .grid-conatiner .attendanceTop div #currentStatus option,
 .grid-conatiner .attendanceTop div #currentTime option {
-  background-color: #242b30;
+  background-color: #ffffff;
 }
 .grid-conatiner .attendanceTop div.pull-left {
   margin-right: 10px;
@@ -7874,7 +7874,7 @@ textarea#editInput {
   text-align: center;
   font-size: 16px;
   margin-bottom: 10px;
-  color: #ffffff;
+  color: #000000;
 }
 .grid-conatiner .statisticsAtten table tr td .item .countDays {
   font-size: 52px;
@@ -7903,7 +7903,7 @@ textarea#editInput {
 .grid-conatiner .statisticsAtten table tr td .item .lastTime {
   text-align: center;
   margin-top: 10px;
-  color: #ffffff;
+  color: #000000;
 }
 .grid-conatiner .statisticsAtten table tr td .item .percent {
   text-align: center;
@@ -8001,9 +8001,6 @@ textarea#editInput {
 .grid-conatiner.revenue .divTable#tableBySales .th {
   border-bottom: 2px solid #ed9409;
 }
-.grid-conatiner.revenue .divTable#revenueTotal .th {
-  border-bottom: 2px solid #289718;
-}
 .grid-conatiner.revenue .divTable#totalAllBonus .th {
   border-bottom: 2px solid #edb523;
 }
@@ -8013,15 +8010,6 @@ textarea#editInput {
 .grid-conatiner.revenue .divTable#totalUncalcBonus .th {
   border-bottom: 2px solid #b37d53;
 }
-.grid-conatiner.revenue .divTable#totalHoursSold .th {
-  border-bottom: 2px solid #b3ce67;
-}
-.grid-conatiner.revenue .divTable#totalHoursUnsold .th {
-  border-bottom: 2px solid #9c827b;
-}
-.grid-conatiner.revenue .divTable#totalTotalHours .th {
-  border-bottom: 2px solid #750ace;
-}
 .grid-conatiner.revenue .divTable#tablePaidBySales .th {
   border-bottom: 2px solid #a2a2a3;
 }
@@ -8029,7 +8017,7 @@ textarea#editInput {
   border-bottom: 2px solid #fd0001;
 }
 .grid-conatiner.revenue .divTable#tableCancelledBySales .th {
-  border-bottom: 2px solid #3d4bfd;
+  border-bottom: 2px solid #fd0001;
 }
 .grid-conatiner.revenue .divTable#tableProjectBySales .th {
   border-bottom: 2px solid #5a9ad4;
@@ -8047,9 +8035,6 @@ textarea#editInput {
 .grid-conatiner.revenue .divRow.totalBySales {
   background-color: #ed9409;
 }
-.grid-conatiner.revenue .divRow.revenueTotal {
-  background-color: #289718;
-}
 .grid-conatiner.revenue .divRow.totalByAllBonus {
   background-color: #edb523;
 }
@@ -8058,15 +8043,6 @@ textarea#editInput {
 }
 .grid-conatiner.revenue .divRow.totalUncalcBonus {
   background-color: #b37d53;
-}
-.grid-conatiner.revenue .divRow.totalTotalHours {
-  background-color: #750ace;
-}
-.grid-conatiner.revenue .divRow.totalHoursSold {
-  background-color: #b3ce67;
-}
-.grid-conatiner.revenue .divRow.totalHoursUnsold {
-  background-color: #9c827b;
 }
 .grid-conatiner.revenue .divRow.totalByDep,
 .grid-conatiner.revenue .divRow.totalHoursByDep {
@@ -8077,9 +8053,6 @@ textarea#editInput {
 }
 .grid-conatiner.revenue .divRow.totalUnpaid {
   background-color: #fd0001;
-}
-.grid-conatiner.revenue .divRow.totalCancelled {
-  background-color: #3d4bfd;
 }
 .grid-conatiner.revenue .divRow.totalProject {
   background-color: #5a9ad4;
@@ -8118,7 +8091,7 @@ textarea#editInput {
   float: right;
   display: table-column;
   width: 15%;
-  height: 17px;
+  height: 22px;
   padding: 0 15px;
   box-sizing: border-box;
   text-align: left;
@@ -8131,10 +8104,6 @@ textarea#editInput {
 .grid-conatiner.revenue #totalAllBonus .divCell,
 .grid-conatiner.revenue #totalCalcBonus .divCell,
 .grid-conatiner.revenue #totalUncalcBonus .divCell,
-.grid-conatiner.revenue #totalTotalHours .divCell,
-.grid-conatiner.revenue #totalHoursSold .divCell,
-.grid-conatiner.revenue #totalHoursUnsold .divCell,
-.grid-conatiner.revenue #revenueTotal .divCell,
 .grid-conatiner.revenue #tableEmployeeBySales .divCell {
   width: 6.34%;
 }
@@ -8145,10 +8114,6 @@ textarea#editInput {
 .grid-conatiner.revenue #totalAllBonus .divCell.left-cell,
 .grid-conatiner.revenue #totalCalcBonus .divCell.left-cell,
 .grid-conatiner.revenue #totalUncalcBonus .divCell.left-cell,
-.grid-conatiner.revenue #totalTotalHours .divCell.left-cell,
-.grid-conatiner.revenue #totalHoursSold .divCell.left-cell,
-.grid-conatiner.revenue #totalHoursUnsold .divCell.left-cell,
-.grid-conatiner.revenue #revenueTotal .divCell.left-cell,
 .grid-conatiner.revenue #tableEmployeeBySales .divCell.left-cell {
   width: 10%;
 }
@@ -8159,10 +8124,6 @@ textarea#editInput {
 .grid-conatiner.revenue #totalAllBonus .divCell.th-trend,
 .grid-conatiner.revenue #totalCalcBonus .divCell.th-trend,
 .grid-conatiner.revenue #totalUncalcBonus .divCell.th-trend,
-.grid-conatiner.revenue #totalTotalHours .divCell.th-trend,
-.grid-conatiner.revenue #totalHoursSold .divCell.th-trend,
-.grid-conatiner.revenue #totalHoursUnsold .divCell.th-trend,
-.grid-conatiner.revenue #revenueTotal .divCell.th-trend,
 .grid-conatiner.revenue #tableEmployeeBySales .divCell.th-trend {
   width: 7.5%;
 }
@@ -8379,7 +8340,7 @@ textarea#editInput {
   position: absolute;
   z-index: 10;
   width: calc(100% - 22px);
-  background-color: #242b30;
+  background-color: #ffffff;
   border: 1px solid #7f7f80;
   right: 0;
   top: calc(100% - 3px);
@@ -8458,7 +8419,7 @@ textarea#editInput {
 .drop-down-filter #filtersContent .filterGroup.activeGroup .groupName,
 .drop-down-filter #filtersContent .filterGroup .groupName:hover {
   color: white;
-  background-color: #1a2227;
+  background-color: #eeeeee;
 }
 .drop-down-filter #filtersContent .filterGroup .groupName {
   cursor: pointer;
@@ -8614,7 +8575,7 @@ textarea#editInput {
   font-weight: bold;
 }
 .vacation-list tfoot tr td {
-  color: #ffffff;
+  color: #000000;
 }
 .vacation-list tbody .employee,
 .vacation-list tbody .department,
@@ -8630,7 +8591,7 @@ textarea#editInput {
 }
 .vacation-list #caption th,
 .vacation-list .subHeaderHolder th {
-  color: #ffffff;
+  color: #000000;
 }
 .vacation-list .newSelectList,
 .salary-list .newSelectList,
