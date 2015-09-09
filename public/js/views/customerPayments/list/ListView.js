@@ -223,7 +223,7 @@ define([
                 this.setChangedValueToModel();
 
                 for (var id in this.changedModels) {
-                    model = this.editCollection.get(id);
+                    model = this.collection.get(id);
                     modelJSON = model.toJSON();
                     model.changed = this.changedModels[id];
                 }

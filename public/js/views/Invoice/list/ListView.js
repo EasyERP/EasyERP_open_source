@@ -36,6 +36,8 @@ define([
                 this.newCollection = options.newCollection;
                 this.deleteCounter = 0;
                 this.page = options.collection.page;
+                this.forSales = false;
+                this.filter = {forSales: false};
 
                 this.render();
 
@@ -169,8 +171,9 @@ define([
                 $(".newSelectList").remove();
             },
 
-            getTotalLength: function (currentNumber, itemsNumber,filter) {
+            getTotalLength: function (currentNumber, itemsNumber, filter) {
                 dataService.getData('/Invoice/totalCollectionLength', {
+                    forSales: this.forSales,
                     currentNumber: currentNumber,
                     filter: filter,
                     newCollection: this.newCollection
@@ -275,6 +278,7 @@ define([
                     parrentContentId: this.parrentContentId
                 });
                 dataService.getData('/Invoice/totalCollectionLength', {
+                    forSales: this.forSales,
                     filter: this.filter,
                     newCollection: this.newCollection,
                     parrentContentId: this.parrentContentId
@@ -297,6 +301,7 @@ define([
                 });
 
                 dataService.getData('/Invoice/totalCollectionLength', {
+                    forSales: this.forSales,
                     filter: this.filter,
                     newCollection: this.newCollection,
                     parrentContentId: this.parrentContentId
@@ -317,6 +322,7 @@ define([
                     newCollection: this.newCollection
                 });
                 dataService.getData('/Invoice/totalCollectionLength', {
+                    forSales: this.forSales,
                     filter: this.filter,
                     newCollection: this.newCollection
                 }, function (response, context) {
@@ -334,6 +340,7 @@ define([
                     newCollection: this.newCollection
                 });
                 dataService.getData('/Invoice/totalCollectionLength', {
+                    forSales: this.forSales,
                     filter: this.filter,
                     newCollection: this.newCollection
                 }, function (response, context) {
@@ -454,12 +461,17 @@ define([
             },*/
 
             goToEditDialog: function (e) {
+                var self = this;
+
                 e.preventDefault();
                 var id = $(e.target).closest('tr').data("id");
                 var model = new invoiceModel({ validate: false });
                 model.urlRoot = '/Invoice/form';
                 model.fetch({
-                    data: { id: id },
+                    data: {
+                        id: id,
+                        forSales: self.forSales
+                    },
                     success: function (model) {
                         new editView({ model: model });
                     },
@@ -490,6 +502,7 @@ define([
 
             deleteItemsRender: function (deleteCounter, deletePage) {
                 dataService.getData('/Invoice/totalCollectionLength', {
+                    forSales: this.forSales,
                     filter: this.filter,
                     newCollection: this.newCollection
                 }, function (response, context) {

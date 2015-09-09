@@ -13,6 +13,15 @@ var wTrack = function (models) {
     var vacationSchema = mongoose.Schemas['Vacation'];
     var holidaysSchema = mongoose.Schemas['Holiday'];
     var employeeSchema = mongoose.Schemas['Employee'];
+    var constForView = [
+        'iOS',
+        'Android',
+        'Web',
+        'WP',
+        'QA',
+        'Design',
+        'PM'
+    ];
 
     this.bySales = function (req, res, next) {
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
@@ -1628,11 +1637,14 @@ var wTrack = function (models) {
             var startYear = parseInt(options.year) || 2014;
             var endMonth = parseInt(options.endMonth) || 9;
             var endYear = parseInt(options.endYear) || 2015;
+            var startWeek = moment().year(startYear).month(startMonth - 1).isoWeek();
             var match;
             var matchHoliday;
             var matchVacation;
             var parallelTasksObject;
             var waterfallTasks;
+
+            var startDate = startYear * 100 + startWeek;
 
             if (!access) {
                 return res.status(403).send();
@@ -1643,8 +1655,7 @@ var wTrack = function (models) {
                 var Ids = [];
 
                 Employees
-                    .find(
-                    {isEmployee: true},
+                    .find({},
                     {_id: 1}
                 )
                     .lean()
@@ -1660,7 +1671,18 @@ var wTrack = function (models) {
                         Employees.aggregate([
                             {
                                 $match: {
-                                    isEmployee: true
+                                    $or: [
+                                        {
+                                            isEmployee: true
+                                        }, {
+                                            $and: [{isEmployee: false}, {
+                                                lastFire: {
+                                                    $ne: null,
+                                                    $gte: startDate
+                                                }
+                                            } ]
+                                        }
+                                    ],
                                 }
                             },
                             {
@@ -1670,8 +1692,8 @@ var wTrack = function (models) {
                                         depId: '$department._id',
                                         employee: '$name',
                                         _id: '$_id',
-                                            hire: '$hire',
-                                            fire: '$fire'
+                                        hire: '$hire',
+                                        fire: '$fire'
                                     }
                                 }
                             },
@@ -1813,6 +1835,7 @@ var wTrack = function (models) {
                 var monthHours = response['monthHours'];
                 var result = [];
                 var departments = [];
+                var sortDepartments = [];
 
                 employees.forEach(function (employee) {
                     var department = {};
@@ -1889,7 +1912,16 @@ var wTrack = function (models) {
 
                     result.push(department);
                 });
-                async.each(result, function (element) {
+
+                constForView.forEach(function(dep){
+                    result.forEach(function(depart){
+                        if (dep === depart._id ){
+                            sortDepartments.push(depart);
+                        }
+                    });
+                });
+
+                async.each(sortDepartments, function (element) {
                     var obj = {};
                     var objToSave = {};
                     var empArr;
@@ -1915,6 +1947,7 @@ var wTrack = function (models) {
                     });
                     departments.push(obj);
                 });
+
                 res.status(200).send(departments);
             }
 
@@ -1944,8 +1977,8 @@ var wTrack = function (models) {
                 return res.status(403).send();
             }
 
-            startDate = startYear * 100 + startWeek;
-            endDate = endYear * 100 + endWeek;
+            startDate = startYear * 100 + startMonth;
+            endDate = endYear * 100 + endMonth;
 
             match = {
                 dateByMonth: {$gte: startDate, $lte: endDate}
@@ -1996,6 +2029,7 @@ var wTrack = function (models) {
             function resultMapper (response){
                 var result = [];
                 var departments = [];
+                var sortDepartments = [];
 
                 response.forEach(function(departments){
                     var department = [];
@@ -2036,7 +2070,16 @@ var wTrack = function (models) {
 
                     result.push(depObj);
                 });
-                async.each(result, function (element) {
+
+                constForView.forEach(function(dep){
+                    result.forEach(function(depart){
+                        if (dep === depart.department ){
+                            sortDepartments.push(depart);
+                        }
+                    });
+                });
+
+                async.each(sortDepartments, function (element) {
                     var obj = {};
                     var objToSave = {};
                     var empArr;
@@ -2062,6 +2105,7 @@ var wTrack = function (models) {
                     });
                     departments.push(obj);
                 });
+
                 res.status(200).send(departments);
             }
         });

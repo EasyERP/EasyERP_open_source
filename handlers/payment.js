@@ -320,6 +320,10 @@ var Payment = function (models) {
         var workflowHandler = new WorkflowHandler(models);
         var invoiceId = body.invoice._id;
         var DbName = req.session.lastDb;
+        var mid = body.mid;
+        var data = body;
+
+        delete  data.mid;
 
         var moduleId = returnModuleId(req);
 
@@ -337,7 +341,7 @@ var Payment = function (models) {
         };
 
         function savePayment(invoice, waterfallCallback) {
-            var payment = new Payment(body);
+            var payment = new Payment(data);
 
             //payment.paidAmount = invoice.paymentInfo ? invoice.paymentInfo.total : 0;
             payment.name = invoice.sourceDocument;
@@ -430,9 +434,9 @@ var Payment = function (models) {
                     var err;
 
                     if (!wTrackDoc) {
-                        err = new Error('wTracks are missing');
+                        //err = new Error('wTracks are missing');
 
-                        return innerWaterfallCb(err);
+                        return innerWaterfallCb();
                     }
 
                     if (!wTrackDoc.isPaid) {

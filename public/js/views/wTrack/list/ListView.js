@@ -100,11 +100,19 @@ define([
                 async.each(selectedWtracks, function (el, cb) {
                     var id = $(el).val();
                     var model = self.collection.get(id);
-                    var revenue = model.get('revenue').replace('$', '');
+                    var reven = model.get('revenue');
 
-                    model.set({revenue: parseFloat(revenue)*100});
+                    if (typeof(reven) != 'number') {
+                        model.set({revenue: parseFloat(reven) * 100});
+                    }
+
+                    var revenue = reven.toString().replace('$', '');
 
                     revenue = parseFloat(revenue);
+
+                    if (typeof(reven) === 'number') {
+                        revenue = revenue / 100;
+                    }
 
                     total += revenue;
 
@@ -1088,7 +1096,7 @@ define([
                 var checked = ellement ? ellement.checked : true;
                 var targetEl = $(ellement);
                 var tr = targetEl.closest('tr');
-                var wTrackId = tr.data('id');
+                var wTrackId = tr.attr('data-id');
                 var model = this.collection.get(wTrackId);
                 var projectContainer = tr.find('td[data-content="project"]');
                 var projectId = projectContainer.data('id');

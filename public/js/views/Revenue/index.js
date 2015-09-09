@@ -83,6 +83,7 @@ define([
             var currentWeek = moment().week();
             var nowMonth = parseInt(moment().week(currentWeek).format("MM"));
             this.hoursUnsold = _.after(2, self.changeHoursUnsold);
+            this.revenueTotal = _.after(2, self.changeRevenue);
             this.model = new RevenueModel();
             this.listenTo(this.model, 'change:currentYear', this.changeYear);
             this.listenTo(this.model, 'change:currentStartWeek', this.changeWeek);
@@ -102,6 +103,7 @@ define([
             this.listenTo(this.model, 'change:totalHours', this.changeTotalHours);
             this.listenTo(this.model, 'change:hoursSold', this.changeHoursSold);
             this.listenTo(this.model, 'change:hoursUnsold', this.hoursUnsold);
+            this.listenTo(this.model, 'change:revenueTotal', this.revenueTotal);
             /**this.listenTo(this.model, 'change:paidBonus', this.changeHoursByDep);
              this.listenTo(this.model, 'change:balanceBonus', this.changeHoursByDep);*/
 
@@ -207,7 +209,6 @@ define([
             this.fetchCancelledBySales();
             this.fetchProjectBySales();
             this.fetchEmployeeBySales();
-            this.fetchAllBonus();
             this.fetchAllBonusByMonth();
             this.fetchUncalcBonus();
             this.fetchCalcBonus();
@@ -324,6 +325,7 @@ define([
             dataService.getData('/revenue/paidwtrack', data, function (byDepData) {
                 self.model.set('paidBySales', byDepData);
                 self.model.trigger('change:paidBySales');
+                self.model.trigger('change:revenueTotal');
             });
         },
 
@@ -334,6 +336,7 @@ define([
             dataService.getData('/revenue/unpaidwtrack', data, function (byDepData) {
                 self.model.set('unpaidBySales', byDepData);
                 self.model.trigger('change:unpaidBySales');
+                self.model.trigger('change:revenueTotal');
             });
         },
 
@@ -379,16 +382,6 @@ define([
             dataService.getData('/revenue/hoursByDep', data, function (hoursByDep) {
                 self.model.set('hoursByDep', hoursByDep);
                 self.model.trigger('change:hoursByDep');
-            });
-        },
-
-        fetchAllBonus: function () {
-            var self = this;
-            var data = this.paidUnpaidDateRange;
-
-            dataService.getData('/revenue/allBonus', data, function (allBonus) {
-                self.model.set('allBonus', allBonus);
-                self.model.trigger('change:allBonus');
             });
         },
 
@@ -695,7 +688,7 @@ define([
             target.html(this.paidBySalesTemplate({
                 employees: self.employees,
                 content: 'totalCancelledBySales',
-                className: 'totalUnpaid',
+                className: 'totalCancelled',
                 headName: 'Write Off'
             }));
             target.find('div.revenueBySales').html(this.weeksArrayTemplate({weeksArr: this.weekArr}));
@@ -826,6 +819,120 @@ define([
                     bySalesByDepPerWeek: bySalesByDepPerWeek,
                     globalTotal: globalTotal,
                     totalName: 'UnPaid Total'
+                }));
+
+                return false;
+            });
+        },
+
+        changeRevenue: function(){
+            var self = this;
+            var unpaidBySales = this.model.get('unpaidBySales');
+            var paidBySales = this.model.get('paidBySales');
+            var monthArr = this.monthArr;
+            var target = self.$el.find('#revenueTotal');
+            var targetTotal;
+            var monthContainer;
+            var revenueTotal = [];
+
+            var bySalesByDepPerWeek = {};
+            var tempPerMonth;
+            var globalTotal = 0;
+
+            paidBySales.forEach(function(emp){
+                var employee = {};
+
+                employee._id = emp._id;
+                employee.root = [];
+                employee.total = 0;
+
+                unpaidBySales.forEach(function(unpaidEmp){
+
+                    if (employee._id === unpaidEmp._id){
+                        employee.total = emp.total + unpaidEmp.total;
+
+
+                        emp.root.forEach(function(element){
+                            var rootEl = {};
+
+                            rootEl.employee = element._id;
+                            rootEl.dateByMonth = element.dateByMonth;
+                            rootEl.month = element.month;
+                            rootEl.year = element.year;
+                            rootEl.revenue = element.revenue;
+
+                            unpaidEmp.root.forEach(function(unpaidEl){
+                                if (element.dateByMonth[0] === unpaidEl.dateByMonth[0]){
+                                    rootEl.revenue += unpaidEl.revenue;
+                                }
+                            });
+                            employee.root.push(rootEl);
+                        });
+                    }
+
+                });
+
+                revenueTotal.push(employee);
+            });
+
+            target.html(this.paidBySalesTemplate({
+                employees: self.employees,
+                content: 'revenueTotal',
+                className: 'revenueTotal',
+                headName: 'Revenue'
+            }));
+
+            targetTotal = $(self.$el.find('[data-content="revenueTotal"]'));
+            monthContainer = target.find('.monthContainer');
+            monthContainer.html(this.monthsArrayTemplate({monthArr: monthArr}));
+
+            async.each(this.employees, function (employee, cb) {
+                var employeeId = employee._id;
+                var employeeContainer = target.find('[data-id="' + employeeId + '"]');
+
+                var byMonthData;
+                var total;
+                var bySalesByDepPerEmployee;
+
+
+                bySalesByDepPerEmployee = _.find(revenueTotal, function (el) {
+                    return el._id === employeeId;
+                });
+
+
+                if (bySalesByDepPerEmployee) {
+                    byMonthData = _.groupBy(bySalesByDepPerEmployee.root, 'month');
+                    total = bySalesByDepPerEmployee.total;
+                    globalTotal += total;
+                    employeeContainer.html(self.paidBySalesItemsTemplate({
+                        monthArr: monthArr,
+                        byMonthData: byMonthData,
+                        total: total
+                    }));
+                }
+                cb();
+            }, function (err) {
+
+                if (err) {
+                    alert(err);
+                }
+
+                for (var i = revenueTotal.length - 1; i >= 0; i--) {
+                    tempPerMonth = revenueTotal[i].root;
+                    tempPerMonth.forEach(function (weekResault) {
+                        if (!(weekResault.month in bySalesByDepPerWeek)) {
+                            bySalesByDepPerWeek[weekResault.month] = weekResault.revenue;
+                        } else {
+                            bySalesByDepPerWeek[weekResault.month] += weekResault.revenue;
+                        }
+                    });
+                }
+
+                targetTotal.html(self.bySalesPerMonthTemplate({
+                    monthArr: monthArr,
+                    bySalesByDepPerWeek: bySalesByDepPerWeek,
+                    globalTotal: globalTotal,
+                    totalName: 'Revenue Total'
                 }));
 
                 return false;
