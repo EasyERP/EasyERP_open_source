@@ -8090,6 +8090,10 @@ textarea#editInput {
 .grid-conatiner.revenue .divRow.subRow {
   padding: 15px;
 }
+.grid-conatiner.revenue .divRow .rowChecked {
+  font-size: 15px;
+  font-weight: 600;
+}
 .grid-conatiner.revenue .clickToShow {
   font-weight: 500;
 }
