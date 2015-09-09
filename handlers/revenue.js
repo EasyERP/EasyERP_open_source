@@ -682,7 +682,6 @@ var wTrack = function (models) {
         });
     };
 
-
     this.allBonus = function (req, res, next) {
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
         var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
@@ -1624,7 +1623,6 @@ var wTrack = function (models) {
         });
     };
 
-
     this.totalHours = function (req, res, next) {
         var MonthHours = models.get(req.session.lastDb, 'MonthHours', monthHoursSchema);
         var Vacation = models.get(req.session.lastDb, 'Vacation', vacationSchema);
@@ -2008,8 +2006,7 @@ var wTrack = function (models) {
                     employee: '$_id.employee',
                     _id: 0
                 }
-            },
-                {
+            }, {
                     $group: {
                         _id: '$department',
                         root: {$push: '$$ROOT'},
@@ -2018,6 +2015,7 @@ var wTrack = function (models) {
                 }, {
                     $sort: {_id: 1}
                 }], function (err, response) {
+
                 if (err) {
                     return next(err);
                 }
