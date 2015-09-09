@@ -8001,6 +8001,9 @@ textarea#editInput {
 .grid-conatiner.revenue .divTable#tableBySales .th {
   border-bottom: 2px solid #ed9409;
 }
+.grid-conatiner.revenue .divTable#revenueTotal .th {
+  border-bottom: 2px solid #289718;
+}
 .grid-conatiner.revenue .divTable#totalAllBonus .th {
   border-bottom: 2px solid #edb523;
 }
@@ -8010,6 +8013,15 @@ textarea#editInput {
 .grid-conatiner.revenue .divTable#totalUncalcBonus .th {
   border-bottom: 2px solid #b37d53;
 }
+.grid-conatiner.revenue .divTable#totalHoursSold .th {
+  border-bottom: 2px solid #b3ce67;
+}
+.grid-conatiner.revenue .divTable#totalHoursUnsold .th {
+  border-bottom: 2px solid #9c827b;
+}
+.grid-conatiner.revenue .divTable#totalTotalHours .th {
+  border-bottom: 2px solid #750ace;
+}
 .grid-conatiner.revenue .divTable#tablePaidBySales .th {
   border-bottom: 2px solid #a2a2a3;
 }
@@ -8017,7 +8029,7 @@ textarea#editInput {
   border-bottom: 2px solid #fd0001;
 }
 .grid-conatiner.revenue .divTable#tableCancelledBySales .th {
-  border-bottom: 2px solid #fd0001;
+  border-bottom: 2px solid #3d4bfd;
 }
 .grid-conatiner.revenue .divTable#tableProjectBySales .th {
   border-bottom: 2px solid #5a9ad4;
@@ -8035,6 +8047,9 @@ textarea#editInput {
 .grid-conatiner.revenue .divRow.totalBySales {
   background-color: #ed9409;
 }
+.grid-conatiner.revenue .divRow.revenueTotal {
+  background-color: #289718;
+}
 .grid-conatiner.revenue .divRow.totalByAllBonus {
   background-color: #edb523;
 }
@@ -8043,6 +8058,15 @@ textarea#editInput {
 }
 .grid-conatiner.revenue .divRow.totalUncalcBonus {
   background-color: #b37d53;
+}
+.grid-conatiner.revenue .divRow.totalTotalHours {
+  background-color: #750ace;
+}
+.grid-conatiner.revenue .divRow.totalHoursSold {
+  background-color: #b3ce67;
+}
+.grid-conatiner.revenue .divRow.totalHoursUnsold {
+  background-color: #9c827b;
 }
 .grid-conatiner.revenue .divRow.totalByDep,
 .grid-conatiner.revenue .divRow.totalHoursByDep {
@@ -8053,6 +8077,9 @@ textarea#editInput {
 }
 .grid-conatiner.revenue .divRow.totalUnpaid {
   background-color: #fd0001;
+}
+.grid-conatiner.revenue .divRow.totalCancelled {
+  background-color: #3d4bfd;
 }
 .grid-conatiner.revenue .divRow.totalProject {
   background-color: #5a9ad4;
@@ -8091,7 +8118,7 @@ textarea#editInput {
   float: right;
   display: table-column;
   width: 15%;
-  height: 22px;
+  height: 17px;
   padding: 0 15px;
   box-sizing: border-box;
   text-align: left;
@@ -8104,6 +8131,10 @@ textarea#editInput {
 .grid-conatiner.revenue #totalAllBonus .divCell,
 .grid-conatiner.revenue #totalCalcBonus .divCell,
 .grid-conatiner.revenue #totalUncalcBonus .divCell,
+.grid-conatiner.revenue #totalTotalHours .divCell,
+.grid-conatiner.revenue #totalHoursSold .divCell,
+.grid-conatiner.revenue #totalHoursUnsold .divCell,
+.grid-conatiner.revenue #revenueTotal .divCell,
 .grid-conatiner.revenue #tableEmployeeBySales .divCell {
   width: 6.34%;
 }
@@ -8114,6 +8145,10 @@ textarea#editInput {
 .grid-conatiner.revenue #totalAllBonus .divCell.left-cell,
 .grid-conatiner.revenue #totalCalcBonus .divCell.left-cell,
 .grid-conatiner.revenue #totalUncalcBonus .divCell.left-cell,
+.grid-conatiner.revenue #totalTotalHours .divCell.left-cell,
+.grid-conatiner.revenue #totalHoursSold .divCell.left-cell,
+.grid-conatiner.revenue #totalHoursUnsold .divCell.left-cell,
+.grid-conatiner.revenue #revenueTotal .divCell.left-cell,
 .grid-conatiner.revenue #tableEmployeeBySales .divCell.left-cell {
   width: 10%;
 }
@@ -8124,6 +8159,10 @@ textarea#editInput {
 .grid-conatiner.revenue #totalAllBonus .divCell.th-trend,
 .grid-conatiner.revenue #totalCalcBonus .divCell.th-trend,
 .grid-conatiner.revenue #totalUncalcBonus .divCell.th-trend,
+.grid-conatiner.revenue #totalTotalHours .divCell.th-trend,
+.grid-conatiner.revenue #totalHoursSold .divCell.th-trend,
+.grid-conatiner.revenue #totalHoursUnsold .divCell.th-trend,
+.grid-conatiner.revenue #revenueTotal .divCell.th-trend,
 .grid-conatiner.revenue #tableEmployeeBySales .divCell.th-trend {
   width: 7.5%;
 }
