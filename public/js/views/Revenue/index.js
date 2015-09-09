@@ -550,9 +550,9 @@ define([
                     var key = weekResult.week;
 
                     if (!bySalesByDepPerWeek[key]) {
-                        bySalesByDepPerWeek[key] = weekResault.revenue;
+                        bySalesByDepPerWeek[key] = weekResult.revenue;
                     } else {
-                        bySalesByDepPerWeek[key] += weekResault.revenue;
+                        bySalesByDepPerWeek[key] += weekResult.revenue;
                     }
                 });
             }
