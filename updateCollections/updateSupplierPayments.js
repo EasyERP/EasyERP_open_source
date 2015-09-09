@@ -9,7 +9,7 @@ var async = require('async');
 var paymentSchema = new mongoose.Schema({
     forSale:{type: Boolean, default: true},
     invoice: {type: ObjectId, ref: 'Invoice', default: null},
-    supplier: {type: ObjectId, ref: 'Customers', default: null},
+    supplier: {type: ObjectId, ref: 'Employees', default: null},
     paidAmount: {type: Number, default: 0},
     paymentMethod: {
         _id: {type: ObjectId, ref: 'PaymentMethod', default: null},
@@ -42,16 +42,16 @@ var paymentSchema = new mongoose.Schema({
     }
 }, {collection: 'Payment'});
 
-mongoose.model('PaymentOld', paymentSchema);
+mongoose.model('PaymentPayOut', paymentSchema);
 
 if (!mongoose.Schemas) {
     mongoose.Schemas = {};
 }
 
-mongoose.Schemas['PaymentOld'] = paymentSchema;
+mongoose.Schemas['Payment'] = paymentSchema;
 
+var wTrackPayOutSchema = mongoose.Schemas['wTrackPayOut'];
 var PaymentSchema = mongoose.Schemas['Payment'];
-var PaymentSchemaOld = mongoose.Schemas['PaymentOld'];
 
 var dbObject = mongoose.createConnection('localhost', 'weTrack');
 dbObject.on('error', console.error.bind(console, 'connection error:'));
@@ -59,10 +59,10 @@ dbObject.once('open', function callback() {
     console.log("Connection to weTrack is success");
 });
 
-var Payment = dbObject.model("Payment", PaymentSchema);
-var PaymentOld = dbObject.model("PaymentNew", PaymentSchemaOld);
+var wTrackPayOut = dbObject.model("wTrackPayOut", wTrackPayOutSchema);
+var Payment = dbObject.model("PaymentPayOut", PaymentSchema);
 
-var query = PaymentOld.find({forSale: false, bonus: true})
+var query = Payment.find({forSale: false, bonus: true})
     .populate('supplier', 'name')
     .lean();
 
@@ -78,15 +78,15 @@ query.exec(function (error, _res) {
             objectToSave = {
                 supplier: payment.supplier ? {
                     _id: payment.supplier._id,
-                    name: (payment.supplier.name.first + ' ' +  payment.supplier.name.last)
+                    fullName: (payment.supplier.name.first + ' ' +  payment.supplier.name.last)
                 } : {
                     _id: null,
-                    name: ''
+                    fullName: ''
                 }
             };
         }
 
-        Payment.update({_id: payment._id}, objectToSave, callback);
+        wTrackPayOut.update({_id: payment._id}, objectToSave, callback);
     }, function (err) {
         if (err) {
             return console.dir(err);

@@ -100,16 +100,18 @@ var Filters = function (models) {
 
                 result = result[0];
 
-                result['isPaid'] = [
-                    {
-                        _id: 'true',
-                        name: 'Paid'
-                    },
-                    {
-                        _id: 'false',
-                        name: 'Unpaid'
-                    }
-                ]
+                if (result){
+                    result['isPaid'] = [
+                        {
+                            _id: 'true',
+                            name: 'Paid'
+                        },
+                        {
+                            _id: 'false',
+                            name: 'Unpaid'
+                        }
+                    ]
+                };
 
                 callback(null, result);
             });
@@ -144,16 +146,18 @@ var Filters = function (models) {
 
                 result = result[0];
 
-                result['services'] = [
-                    {
-                        _id: 'isSupplier',
-                        name: 'Supplier'
-                    },
-                    {
-                        _id: 'isCustomer',
-                        name: 'Customer'
-                    }
-                ]
+                if (result){
+                    result['services'] = [
+                        {
+                            _id: 'isSupplier',
+                            name: 'Supplier'
+                        },
+                        {
+                            _id: 'isCustomer',
+                            name: 'Customer'
+                        }
+                    ]
+                }
 
                 callback(null, result);
             });
@@ -188,16 +192,18 @@ var Filters = function (models) {
 
                 result = result[0];
 
-                result['services'] = [
-                    {
-                        _id: 'isSupplier',
-                        name: 'Supplier'
-                    },
-                    {
-                        _id: 'isCustomer',
-                        name: 'Customer'
-                    }
-                ]
+                if (result) {
+                    result['services'] = [
+                        {
+                            _id: 'isSupplier',
+                            name: 'Supplier'
+                        },
+                        {
+                            _id: 'isCustomer',
+                            name: 'Customer'
+                        }
+                    ]
+                }
 
                 callback(null, result);
             });
