@@ -8,6 +8,7 @@ var Filters = function (models) {
     var TaskSchema = mongoose.Schemas['Tasks'];
     var wTrackInvoiceSchema = mongoose.Schemas['wTrackInvoice'];
     var customerPaymentsSchema = mongoose.Schemas['Payment'];
+    var productSchema  = mongoose.Schemas['Products'];
     var _ = require('../node_modules/underscore');
     var async = require('async');
 
@@ -21,6 +22,7 @@ var Filters = function (models) {
         var Task = models.get(lastDB, 'Tasks', TaskSchema);
         var wTrackInvoice = models.get(lastDB, 'wTrackInvoice', wTrackInvoiceSchema);
         var customerPayments = models.get(lastDB, 'Payment', customerPaymentsSchema);
+        var Product = models.get(lastDB, 'Products', productSchema);
 
         async.parallel({
                 wTrack: getWtrackFiltersValues,
@@ -32,7 +34,8 @@ var Filters = function (models) {
                 Tasks: getTasksFiltersValues,
                 salesInvoice: getSalesInvoiceFiltersValues,
                 customerPayments: getCustomerPaymentsFiltersValues,
-                supplierPayments: getSupplierPaymentsFiltersValues
+                supplierPayments: getSupplierPaymentsFiltersValues,
+                Product: getProductsFiltersValues
             },
             function (err, result) {
                 if (err) {
@@ -533,6 +536,70 @@ var Filters = function (models) {
             });
         };
 
+        function getProductsFiltersValues(callback) {
+            Product.aggregate([
+                {
+                    $group: {
+                        _id: null,
+                        'name': {
+                            $addToSet: {
+                                _id: '$_id',
+                                name: '$name'
+                            }
+                        },
+                        'productType': {
+                            $addToSet: {
+                                _id: '$info.productType',
+                                name: {'$ifNull': ['$info.productType', 'None']}
+                            }
+                        }
+                    }
+                }
+            ], function (err, result) {
+                if (err) {
+                    callback(err);
+                }
+
+                result = result[0];
+
+                result['canBeSold'] = [
+                    {
+                        _id: 'true',
+                        name: 'True'
+                    },
+                    {
+                        _id: 'false',
+                        name: 'False'
+                    }
+                ];
+
+                result['canBeExpensed'] = [
+                    {
+                        _id: 'true',
+                        name: 'True'
+                    },
+                    {
+                        _id: 'false',
+                        name: 'False'
+                    }
+                ];
+
+                result['canBePurchased'] = [
+                    {
+                        _id: 'true',
+                        name: 'True'
+                    },
+                    {
+                        _id: 'false',
+                        name: 'False'
+                    }
+                ];
+
+
+
+                callback(null, result);
+            });
+        };
 
     };
 

@@ -26,9 +26,20 @@
                 {
                     options.filter = {};
                     if (regex.test(this.contentType)) {
-                        options.filter.canBeSold = true;
+                        options.filter = {
+                            'canBeSold': {
+                                key: 'canBeSold',
+                                value: ['true']
+                            }
+
+                        };
                     } else {
-                        options.filter.canBePurchased = true;
+                        options.filter = {
+                            'canBePurchased': {
+                                key: 'canBePurchased',
+                                value: ['true']
+                            }
+                        };
                     }
                 }
 
@@ -59,15 +70,26 @@
                 filterObject['count'] = (options && options.count) ? options.count : this.namberToShow;
                 filterObject['viewType'] = (options && options.viewType) ? options.viewType : this.viewType;
                 filterObject['contentType'] = (options && options.contentType) ? options.contentType : this.contentType;
-                filterObject['filter'] = (options) ? options.filter : {};
+                //filterObject['filter'] = (options) ? options.filter : {};
 
                 if (options && options.contentType && !(options.filter))
                 {
                     options.filter = {};
                     if (regex.test(this.contentType)) {
-                        filterObject.filter.canBeSold = true;
+                        filterObject.filter = {
+                            'canBeSold': {
+                                key: 'canBeSold',
+                                value: ['true']
+                            }
+
+                        };
                     } else {
-                        filterObject.filter.canBePurchased = true;
+                        filterObject.filter = {
+                            'canBePurchased': {
+                                key: 'canBePurchased',
+                                value: ['true']
+                            }
+                        };
                     }
                 }
 
@@ -93,15 +115,26 @@
                 filterObject['count'] = (options && options.count) ? options.count : this.namberToShow;
                 filterObject['viewType'] = (options && options.viewType) ? options.viewType : this.viewType;
                 filterObject['contentType'] = (options && options.contentType) ? options.contentType : this.contentType;
-                filterObject['filter'] = (options) ? options.filter : {}
+               // filterObject['filter'] = (options) ? options.filter : {}
 
                 if (options && options.contentType && !(options.filter))
                 {
                     options.filter = {};
                     if (regex.test(this.contentType)) {
-                        filterObject.filter.canBeSold = true;
+                        filterObject.filter = {
+                            'canBeSold': {
+                                key: 'canBeSold',
+                                value: ['true']
+                            }
+
+                        };
                     } else {
-                        filterObject.filter.canBePurchased = true;
+                        filterObject.filter = {
+                            'canBePurchased': {
+                                key: 'canBePurchased',
+                                value: ['true']
+                            }
+                        };
                     }
                 }
 

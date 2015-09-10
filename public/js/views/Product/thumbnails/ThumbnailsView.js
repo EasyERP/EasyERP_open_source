@@ -79,64 +79,31 @@
 
             //modified for filter Vasya
             alpabeticalRender: function (e) {
-                var target;
                 var selectedLetter;
-                var self = this;
-                var chosen = this.$el.find('.chosen');
-                var checkedElements = $('.drop-down-filter input:checkbox:checked');
-                var condition = this.$el.find('.conditionAND > input')[0];
+                var target;
 
-                this.$el.find('.thumbnailwithavatar').remove();
-                this.startTime = new Date();
-                this.newCollection = true;
-                this.filter =  {};
-                this.filter['canBePurchased'] = true;
-                this.filter['condition'] = 'and';
-
-                if  (condition && !condition.checked) {
-                    self.filter['condition'] = 'or';
-                }
-
-                if (chosen) {
-                    chosen.each(function (index, elem) {
-                        if (elem.children[2].attributes.class.nodeValue === 'chooseDate') {
-                            if (self.filter[elem.children[1].value]) {
-                                self.filter[elem.children[1].value].push({start: $('#start').val(), end: $('#end').val()});
-
-                            } else {
-                                self.filter[elem.children[1].value] = [];
-                                self.filter[elem.children[1].value].push({start: $('#start').val(), end: $('#end').val()});
-                            }
-                        } else {
-                            self.filter[elem.children[1].value] = [];
-                            $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
-                                self.filter[elem.children[1].value].push($(element).next().text());
-                            })
-                        }
-
-                    });
-                }
-
-                if (checkedElements.length && checkedElements.attr('id') === 'defaultFilter' || !chosen.length) {
-                    self.filter = {};
-                    this.filter['canBePurchased'] = true;
-                }
-
+                this.filter = {};
                 if (e && e.target) {
                     target = $(e.target);
-                    target.parent().find(".current").removeClass("current");
-                    target.addClass("current");
                     selectedLetter = $(e.target).text();
 
-                    if (target.text() == "All") {
-                        selectedLetter = "";
-                    }
                     this.filter['letter'] = selectedLetter;
-                }
+
+                    target.parent().find(".current").removeClass("current");
+                    target.addClass("current");
+                    if ($(e.target).text() == "All") {
+                        selectedLetter = "";
+                        this.filter = {};
+                    }
+                };
+
+                this.startTime = new Date();
+                this.newCollection = false;
+                this.$el.find('.thumbnailwithavatar').remove();
 
                 this.defaultItemsNumber = 0;
                 this.changeLocationHash(null, this.defaultItemsNumber, this.filter);
-                this.collection.showMoreAlphabet({count: this.defaultItemsNumber, page: 1, filter: this.filter});
+                this.collection.showMoreAlphabet({count: this.defaultItemsNumber, filter: this.filter});
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
             },
 
@@ -144,7 +111,6 @@
                 var self = this;
                 var currentEl = this.$el;
                 var createdInTag = "<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>";
-                var FilterView;
 
                 currentEl.html('');
                 common.buildAphabeticArray(this.collection, function (arr) {
@@ -176,21 +142,56 @@
                 $(document).on("click", function (e) {
                     self.hideItemsNumber(e);
                 });
-                dataService.getData('/product/getFilterValues', null, function (values) {
-                    FilterView = new filterView({ collection: [], customCollection: values});
-                    // Filter custom event listen ------begin
-                    FilterView.unbind();
-                    FilterView.bind('filter', function () {
-                        self.alpabeticalRender()
-                    });
-                    FilterView.bind('defaultFilter', function () {
-                        self.alpabeticalRender();
-                    });
-                    // Filter custom event listen ------end
+                //dataService.getData('/product/getFilterValues', null, function (values) {
+                //    FilterView = new filterView({ collection: [], customCollection: values});
+                //    // Filter custom event listen ------begin
+                //    FilterView.unbind();
+                //    FilterView.bind('filter', function () {
+                //        self.alpabeticalRender()
+                //    });
+                //    FilterView.bind('defaultFilter', function () {
+                //        self.alpabeticalRender();
+                //    });
+                //    // Filter custom event listen ------end
+                //});
+
+                self.filterview = new filterView({ contentType: self.contentType });
+
+                self.filterview.bind('filter', function (filter) {
+                    self.showFilteredPage(filter)
                 });
+                self.filterview.bind('defaultFilter', function () {
+                    self.showFilteredPage({});
+                });
+
+                self.filterview.render();
 
                 return this;
             },
+
+            showFilteredPage: function (filter) {
+                var itemsNumber = $("#itemsNumber").text();
+
+                var alphaBet = this.$el.find('#startLetter');
+                var selectedLetter = $(alphaBet).find('.current').length ? $(alphaBet).find('.current')[0].text : '';
+
+                $("#top-bar-deleteBtn").hide();
+                $('#check_all').prop('checked', false);
+
+                this.startTime = new Date();
+                this.newCollection = false;
+
+                if (Object.keys(filter).length === 0){
+                    this.filter = {};
+                }
+                this.defaultItemsNumber = 0;
+                this.$el.find('.thumbnailwithavatar').remove();
+
+                this.changeLocationHash(null, this.defaultItemsNumber, filter);
+                this.collection.showMoreAlphabet({ count: this.defaultItemsNumber, page: 1, filter: filter });
+                this.getTotalLength(this.defaultItemsNumber, filter);
+            },
+
 
             hideItemsNumber: function (e) {
                 var el = e.target;
@@ -257,6 +258,8 @@
 
                 }
                 this.asyncLoadImgs(newModels);
+
+                this.filterView.renderFilterContent();
             },
             //modified for filter Vasya
             showMoreAlphabet: function (newModels) {

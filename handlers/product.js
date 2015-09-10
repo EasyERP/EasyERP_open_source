@@ -211,45 +211,61 @@ var Products = function (models) {
         });
     };
 
-    function caseFilter(queryObj, filter) {
-        if (filter.condition === 'or') {
-            queryObj['$or'] = []
-        }
-        if (filter.canBeSold) {
-            queryObj['canBeSold'] = true;
-        }
-        if (filter.canBePurchased) {
-            queryObj['canBePurchased'] = true;
-        }
-        if (filter.letter) {
-            queryObj['name'] = new RegExp('^[' + filter.letter.toLowerCase() + filter.letter.toUpperCase() + '].*');
-        }
-        if (filter.Name) {
-            if (filter.condition === 'or') {
-                queryObj.$or.push({name: {$in: filter.Name}});
-            } else {
-                queryObj['name'] = {$in: filter.Name};
-            }
-        }
-        if (filter['Can be sold']) {
-            filter['Can be sold'] = _.map(filter['Can be sold'], function (element) {
-                if (element === 'true') {
-                    return true;
-                }
-                return false;
-            });
-            queryObj['canBeSold'] = {$in: filter['Can be sold']}
-        }
-        if (filter['Creation Date']) {
-            if (filter.condition === 'or') {
-                queryObj.$or.push({creationDate: {$gte: new Date(filter['creationDate'][0].start), $lte: new Date(filter['creationDate'][0].end)}});
-            } else {
-                queryObj['creationDate'] = {
-                    $gte: new Date(filter['creationDate'][0].start),
-                    $lte: new Date(filter['creationDate'][0].end)
-                }
-            }
+    function caseFilter(filter) {
+        var condition;
+        var resArray = [];
+        var filtrElement = {};
+        var key;
 
+        for (var filterName in filter){
+            condition = filter[filterName]['value'];
+            key = filter[filterName]['key'];
+
+            switch (filterName) {
+                case 'name':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'info.productType':
+                    filtrElement[key] = {$in: condition};
+                    resArray.push(filtrElement);
+                    break;
+                case 'canBeSold':
+                    condition = ConvertType(condition, 'boolean');
+                    filtrElement[key] = condition;
+                    resArray.push(filtrElement);
+                    break;
+                case 'canBeExpensed':
+                    condition = ConvertType(condition, 'boolean');
+                    filtrElement[key] = condition;
+                    resArray.push(filtrElement);
+                    break;
+                case 'canBePurchased':
+                    condition = ConvertType(condition, 'boolean');
+                    filtrElement[key] = condition;
+                    resArray.push(filtrElement);
+                    break;
+            }
+        };
+
+        return resArray;
+    };
+
+    function ConvertType(array, type) {
+        if (type === 'integer') {
+            for (var i = array.length - 1; i >= 0; i--) {
+                array[i] = parseInt(array[i]);
+            }
+        } else if (type === 'boolean') {
+            for (var i = array.length - 1; i >= 0; i--) {
+                if (array[i] === 'true') {
+                    array[i] = true;
+                } else if (array[i] === 'false') {
+                    array[i] = false;
+                } else {
+                    array[i] = null;
+                }
+            }
         }
     };
 
@@ -270,8 +286,12 @@ var Products = function (models) {
                     var contentSearcher;
                     var waterfallTasks;
 
-                    if (query && query.filter) {
-                        caseFilter(queryObject, query.filter);
+                    if (query.filter && typeof query.filter === 'object') {
+                        if (query.filter.condition === 'or') {
+                            queryObject['$or'] = caseFilter(query.filter);
+                        } else {
+                            queryObject['$and'] = caseFilter(query.filter);
+                        }
                     }
 
                     if (query && query.sort) {
@@ -567,7 +587,13 @@ var Products = function (models) {
          optionsObject['name'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
          }*/
 
-        caseFilter(optionsObject, data.filter);
+        if (data.filter && typeof data.filter === 'object') {
+            if (data.filter.condition === 'or') {
+                optionsObject['$or'] = caseFilter(data.filter);
+            } else {
+                optionsObject['$and'] = caseFilter(data.filter);
+            }
+        }
 
         departmentSearcher = function (waterfallCallback) {
             models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
@@ -653,44 +679,6 @@ var Products = function (models) {
 
         });
     };
-
-    this.getFilterValues = function (req, res, next) {
-        var Product = models.get(req.session.lastDb, 'Product', ProductSchema);
-
-        Product
-            .aggregate([
-                {
-                    $group: {
-                        _id: null,/*
-                        'Can be sold': {
-                            $addToSet: '$canBeSold'
-                        },*/
-                        'Creation date': {
-                            $addToSet: '$creationDate'
-                        },
-                        'Name': {
-                            $addToSet: '$name'
-                        }
-                    }
-                }
-            ], function (err, prod) {
-                if (err) {
-                    return next(err)
-                }
-               // prod[0]['Name'] = underscore.sortBy(value, function (num) { return num});
-
-                _.map(prod[0], function(value, key) {
-                    switch (key) {
-                        case 'Name':
-                            prod[0][key] = _.sortBy(value, function (num) { return num});
-                            break;
-
-                    }
-                });
-
-                res.send(prod)
-            })
-    }
 
 };
 
