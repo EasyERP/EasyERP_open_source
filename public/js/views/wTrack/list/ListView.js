@@ -137,53 +137,58 @@ define([
                 });
             },
 
-            hideGenerateCopy: function(){
+            hideGenerateCopy: function () {
                 $('#top-bar-generateBtn').hide();
                 $('#top-bar-copyBtn').hide();
             },
 
             copyRow: function (e) {
-               this.hideGenerateCopy();
+                this.hideGenerateCopy();
 
                 this.changed = true;
                 this.createdCopied = true;
+                var checkedRows = this.$el.find('input.listCB:checked:not(#check_all)');
+                var length = checkedRows.length;
 
-                var selectedWtrack = this.$el.find('input.listCB:checked:not(#check_all)')[0];
-                var self = this;
-                var target = $(selectedWtrack);
-                var id = target.val();
-                var row = target.closest('tr');
-                var model = self.collection.get(id) ? self.collection.get(id) : self.editCollection.get(id);
-                var _model;
-                var tdsArr;
-                var cid;
 
-                $(selectedWtrack).attr('checked', false);
+                for (var i = length - 1; i >= 0; i--) {
+                    var selectedWtrack = checkedRows[i];
+                    var self = this;
+                    var target = $(selectedWtrack);
+                    var id = target.val();
+                    var row = target.closest('tr');
+                    var model = self.collection.get(id) ? self.collection.get(id) : self.editCollection.get(id);
+                    var _model;
+                    var tdsArr;
+                    var cid;
 
-                model.set({"isPaid": false});
-                model.set({"amount": 0});
-                model = model.toJSON();
-                delete model._id;
-                _model = new currentModel(model);
+                    $(selectedWtrack).attr('checked', false);
 
-                this.showSaveCancelBtns();
-                this.editCollection.add(_model);
+                    model.set({"isPaid": false});
+                    model.set({"amount": 0});
+                    model = model.toJSON();
+                    delete model._id;
+                    _model = new currentModel(model);
 
-                cid = _model.cid;
+                    this.showSaveCancelBtns();
+                    this.editCollection.add(_model);
 
-                if (!this.changedModels[cid]) {
-                    this.changedModels[cid] = model;
+                    cid = _model.cid;
+
+                    if (!this.changedModels[cid]) {
+                        this.changedModels[cid] = model;
+                    }
+
+                    this.$el.find('#listTable').prepend('<tr id="false" data-id="' + cid + '">' + row.html() + '</tr>');
+                    row = this.$el.find('#false');
+
+                    tdsArr = row.find('td');
+                    $(tdsArr[0]).find('input').val(cid);
+                    $(tdsArr[20]).find('span').text('Unpaid');
+                    $(tdsArr[20]).find('span').addClass('unDone');
+                    $(tdsArr[24]).text(0);
+                    $(tdsArr[1]).text(cid);
                 }
-
-                this.$el.find('#listTable').prepend('<tr id="false" data-id="' + cid + '">' + row.html() + '</tr>');
-                row = this.$el.find('#false');
-
-                tdsArr = row.find('td');
-                $(tdsArr[0]).find('input').val(cid);
-                $(tdsArr[20]).find('span').text('Unpaid');
-                $(tdsArr[20]).find('span').addClass('unDone');
-                $(tdsArr[24]).text(0);
-                $(tdsArr[1]).text(cid);
             },
 
             nextSelect: function (e) {
@@ -209,7 +214,7 @@ define([
                 var rateVal;
                 var revenueVal;
 
-                function eplyDefaultValue(el){
+                function eplyDefaultValue(el) {
                     var value = el.text();
 
                     if (value === '') {
@@ -391,17 +396,17 @@ define([
                     var baseSalary = results[0];
                     var coefficients = results[1][0];
 
-                    if (err  || !baseSalary || !coefficients) {
+                    if (err || !baseSalary || !coefficients) {
                         costElement.text('');
                         costElement.addClass('money');
                         costElement.text('0.00');
 
-                        profitVal =  (parseFloat(revenueVal) - 0).toFixed(2);
+                        profitVal = (parseFloat(revenueVal) - 0).toFixed(2);
                         profit.text(profitVal);
 
                         self.changedModels[wTrackId].cost = 0;
                         self.changedModels[wTrackId].profit = parseFloat(profitVal) * 100;
-;
+                        ;
 
                         return 0;
                     }
@@ -418,7 +423,7 @@ define([
                     costElement.text(calc);
 
 
-                    profitVal =  (parseFloat(revenueVal) - parseFloat(calc)).toFixed(2);
+                    profitVal = (parseFloat(revenueVal) - parseFloat(calc)).toFixed(2);
                     profit.text(profitVal);
 
                     self.changedModels[wTrackId].cost = parseFloat(calc) * 100;
@@ -432,18 +437,18 @@ define([
 
                     dataService.getData('/salary/getByMonth',
                         {
-                        month: month,
-                        year: year,
-                        _id: employeeId
-                    }, function (response, context) {
+                            month: month,
+                            year: year,
+                            _id: employeeId
+                        }, function (response, context) {
 
-                        if (response.error) {
-                            return callback(response.error);
-                        }
+                            if (response.error) {
+                                return callback(response.error);
+                            }
 
-                        callback(null, response.data);
+                            callback(null, response.data);
 
-                    }, this);
+                        }, this);
 
                 }
 
@@ -669,7 +674,8 @@ define([
                 if (!el.closest('.search-view')) {
                     $('.search-content').removeClass('fa-caret-up');
                     this.$el.find('.search-options').addClass('hidden');
-                };
+                }
+                ;
             },
 
             showNewSelect: function (e, prev, next) {
@@ -798,7 +804,7 @@ define([
                     contentType: self.contentType
                 });
 
-                self.filterView.bind('filter', function(filter) {
+                self.filterView.bind('filter', function (filter) {
                     self.showFilteredPage(filter);
                 });
                 self.filterView.bind('defaultFilter', function () {
@@ -1103,7 +1109,7 @@ define([
                 var projectContainer = tr.find('td[data-content="project"]');
                 var projectId = projectContainer.data('id');
 
-                if (checkLength === 1) {
+                if (checkLength > 1) {
                     this.copyEl.show();
                 } else {
                     this.copyEl.hide();
