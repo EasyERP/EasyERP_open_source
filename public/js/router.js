@@ -228,6 +228,7 @@ define([
 
             function renderAttendance(context) {
                 var contentViewUrl = "views/Attendance/index";
+                var topBarViewUrl = 'views/Attendance/TopBarView';
                 var self = context;
 
                 if (context.mainView === null) {
@@ -236,9 +237,11 @@ define([
                     context.mainView.updateMenu("Attendance");
                 }
 
-                require([contentViewUrl], function (contentView) {
+                require([contentViewUrl, topBarViewUrl], function (contentView, topBarView) {
                     var contentview = new contentView();
+                    var topBar = new topBarView({actionType: "Content"});
                     self.changeView(contentview);
+                    self.changeTopBarView(topBar);
                 });
             }
         },
