@@ -559,7 +559,7 @@ define([
                 startData.cid = model.cid;
 
                 if (!this.isNewRow()) {
-                    this.showSaveCancelBtns();
+                    //this.showSaveCancelBtns();
                     this.editCollection.add(model);
 
                     new createView(startData);
