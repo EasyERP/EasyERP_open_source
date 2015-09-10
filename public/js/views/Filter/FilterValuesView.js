@@ -83,6 +83,7 @@ define([
                 if (this.currentPage === 1 && !prevPage.hasClass('disabled')) {
                     prevPage.addClass('disabled');
                 } else if (this.currentPage === this.allPages && !nextPage.hasClass('disabled')) {
+                    prevPage.removeClass('disabled');
                     nextPage.addClass('disabled');
                 } else {
                     prevPage.removeClass('disabled');

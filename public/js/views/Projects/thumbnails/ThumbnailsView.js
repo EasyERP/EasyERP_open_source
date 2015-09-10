@@ -76,6 +76,7 @@
                 var targetElement = $(e.target).parents(".thumbnail");
                 var id = targetElement.attr("id");
                 var model = this.collection.get(id);
+                var filter;
 
                 model.save({'workflow._id': $(e.target).attr("id"), 'workflow.name': $(e.target).text()}, {
                     headers: {
@@ -84,7 +85,12 @@
                     patch: true,
                     validate: false,
                     success: function () {
-                       self.showFilteredPage({}/*_.pluck(self.stages, '_id')*/);
+                        var filter = window.location.hash.split('filter=')[1];
+                        var url = "#easyErp/Projects/thumbnails";
+                        if (filter)
+                            url += '/filter=' + filter;
+                        Backbone.history.fragment = "";
+                        Backbone.history.navigate(url, {trigger: true});
                     }
                 });
 
