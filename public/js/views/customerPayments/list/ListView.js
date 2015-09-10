@@ -158,7 +158,7 @@ define([
                     editedElementContent = editedCol.data('content');
                     editedElementValue = editedElement.val();
 
-                    editHolidayModel = this.collection.get(editedElementRowId);
+                    editHolidayModel = this.editCollection.get(editedElementRowId);
 
                     if (!this.changedModels[editedElementRowId]) {
                         if (!editHolidayModel.id) {
@@ -187,7 +187,7 @@ define([
                 var workflow;
                 var changedAttr;
 
-                var editModel = this.collection.get(modelId);
+                var editModel = this.editCollection.get(modelId);
 
                 if (!this.changedModels[modelId]) {
                     if (!editModel.id) {
@@ -223,7 +223,7 @@ define([
                 this.setChangedValueToModel();
 
                 for (var id in this.changedModels) {
-                    model = this.collection.get(id);
+                    model = this.editCollection.get(id);
                     modelJSON = model.toJSON();
                     model.changed = this.changedModels[id];
                 }
@@ -595,6 +595,7 @@ define([
                 } else {
                     pagenation.show();
                 }
+                this.editCollection.reset(this.collection.models);
             },
 
             showFilteredPage: function (filter) {
