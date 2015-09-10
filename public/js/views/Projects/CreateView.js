@@ -125,16 +125,8 @@ define([
                 bonusRow.each(function (key, val) {
                     var employeeId = $(val).find("[data-content='employee']").attr('data-id');
                     var bonusId = $(val).find("[data-content='bonus']").attr('data-id');
-                    var value;
 
                     if (!employeeId || !bonusId || custom === 'Select'){
-                        if (!employeeId){
-                            value = 'Employee';
-                            alert('Please, choose ' + value + ' first.');
-                        } else if (!bonusId){
-                            value = 'Bonus';
-                            alert('Please, choose ' + value + ' first.');
-                        }
                         validation = false;
                     }
 
@@ -150,6 +142,10 @@ define([
                         endDate: endDate
                     });
                 });
+
+                if (!validation){
+                    alert('Employee and bonus fields must not be empty.');
+                }
 
                 var description = $.trim(this.$el.find("#description").val());
                 var $userNodes = this.$el.find("#usereditDd option:selected"), users = [];
