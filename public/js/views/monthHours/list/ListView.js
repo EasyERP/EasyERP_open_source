@@ -586,10 +586,13 @@ define([
 
                     if ($("input.checkbox:checked").length > 0) {
                         $("#top-bar-deleteBtn").show();
+                        $('#check_all').prop('checked', false);
+
                         if (checkLength == this.collection.length) {
                             $('#check_all').prop('checked', true);
                         }
-                    } else {
+                    }
+                    else {
                         $("#top-bar-deleteBtn").hide();
                         $('#check_all').prop('checked', false);
                     }

@@ -573,16 +573,19 @@ define([
             },
 
             checked: function () {
-                if (this.editCollection.length > 0) {
+                if (this.collection.length > 0) {
                     var checkLength = $("input.checkbox:checked").length;
 
-                    if (checkLength > 0) {
-                        $('#top-bar-deleteBtn').show();
-                        if (checkLength == this.editCollection.length) {
+                    if ($("input.checkbox:checked").length > 0) {
+                        $("#top-bar-deleteBtn").show();
+                        $('#check_all').prop('checked', false);
+
+                        if (checkLength == this.collection.length) {
                             $('#check_all').prop('checked', true);
                         }
-                    } else {
-                        $('#top-bar-deleteBtn').hide();
+                    }
+                    else {
+                        $("#top-bar-deleteBtn").hide();
                         $('#check_all').prop('checked', false);
                     }
                 }
