@@ -1109,7 +1109,7 @@ define([
                 var projectContainer = tr.find('td[data-content="project"]');
                 var projectId = projectContainer.data('id');
 
-                if (checkLength > 1) {
+                if (checkLength >= 1) {
                     this.copyEl.show();
                 } else {
                     this.copyEl.hide();
