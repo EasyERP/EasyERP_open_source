@@ -191,6 +191,28 @@ define([], function () {
                 view: 'workflow',
                 backend: 'workflow'
             }
+        },
+        supplierPayments: {
+            'Employee':{
+                view: 'supplier',
+                backend: 'supplier._id'
+            },
+            'Bonus Type': {
+                view: 'paymentRef',
+                backend: 'paymentRef'
+            },
+            'Year': {
+                view: 'year',
+                backend: 'year'
+            },
+            'Month': {
+                view: 'month',
+                backend: 'month'
+            },
+            'Status': {
+                view: 'workflow',
+                backend: 'workflow'
+            }
         }
     };
 

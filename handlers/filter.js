@@ -31,7 +31,8 @@ var Filters = function (models) {
                 Projects: getProjectFiltersValues,
                 Tasks: getTasksFiltersValues,
                 salesInvoice: getSalesInvoiceFiltersValues,
-                customerPayments: getCustomerPaymentsFiltersValues
+                customerPayments: getCustomerPaymentsFiltersValues,
+                supplierPayments: getSupplierPaymentsFiltersValues
             },
             function (err, result) {
                 if (err) {
@@ -478,6 +479,60 @@ var Filters = function (models) {
                 callback(null, result);
             });
         };
+
+        function getSupplierPaymentsFiltersValues(callback) {
+            customerPayments.aggregate([
+                {
+                    $match: {
+                        forSale: false
+                    }
+                },
+                {
+                    $group: {
+                        _id: null,
+                        'supplier': {
+                            $addToSet: {
+                                _id: '$supplier._id',
+                                name: '$supplier.fullName'
+                            }
+                        },
+                        'paymentRef': {
+                            $addToSet: {
+                                _id: '$paymentRef',
+                                name: {'$ifNull': ['$paymentRef', 'None']}
+                            }
+                        },
+                        'year': {
+                            $addToSet: {
+                                _id: '$year',
+                                name: {'$ifNull': ['$year', 'None']}
+                            }
+                        },
+                        'month': {
+                            $addToSet: {
+                                _id: '$month',
+                                name: {'$ifNull': ['$month', 'None']}
+                            }
+                        },
+                        'workflow': {
+                            $addToSet: {
+                                _id: '$workflow',
+                                name: {'$ifNull': ['$workflow', 'None']}
+                            }
+                        }
+                    }
+                }
+            ], function (err, result) {
+                if (err) {
+                    callback(err);
+                }
+
+                result = result[0];
+
+                callback(null, result);
+            });
+        };
+
 
     };
 
