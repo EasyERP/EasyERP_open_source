@@ -153,7 +153,7 @@ define([
                 var target = $(selectedWtrack);
                 var id = target.val();
                 var row = target.closest('tr');
-                var model = self.collection.get(id);
+                var model = self.collection.get(id) ? self.collection.get(id) : self.editCollection.get(id);
                 var _model;
                 var tdsArr;
                 var cid;
