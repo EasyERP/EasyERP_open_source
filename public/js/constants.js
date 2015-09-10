@@ -277,6 +277,7 @@ define([], function () {
         ATTENDANCE: 'Attendance',
         DASHBOARD_VACATION: 'DashboardVacation',
         DASHBOARD_HR: 'HrDashboard',
+        HOURS: 'Hours',
 
         RESPONSES: {
             BAD_RESPONSE: 'Please try again',
