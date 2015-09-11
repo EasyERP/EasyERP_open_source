@@ -255,7 +255,7 @@ define([
                },
                 byMonth: {
                     year: year,
-                    week: month
+                    month: month
                 }
             };
 
