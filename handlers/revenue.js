@@ -2131,15 +2131,29 @@ var wTrack = function (models) {
         });
     }
 
-    this.getFromCash = function(req, res, next){
-        var HoursCashes = models.get(req.session.lastDb, 'HoursCashes', HoursCashesSchema);
-
+    this.getFromCash = function (req, res, next) {
         access.getReadAccess(req, req.session.uId, 67, function (access) {
-            if (access) {
+            var HoursCashes = models.get(req.session.lastDb, 'HoursCashes', HoursCashesSchema);
+            var query = req.query;
+            var dateByWeek = query.dateByWeek;
+            var dateByMonth = query.dateByMonth;
+            var dateKey = dateByWeek + '_' + dateByMonth;
+            var query;
 
-            } else {
+            if (!access) {
                 return res.status(403).send();
             }
+
+            query = HoursCashes.find({dateField: dateKey});
+            query.exec(function(err, result) {
+                if (err) {
+                    return next(err);
+                }
+
+                if (result.length  === 0) {
+
+                }
+            })
         })
     }
 };
