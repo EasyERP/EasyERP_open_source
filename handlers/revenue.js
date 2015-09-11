@@ -2676,7 +2676,7 @@ var wTrack = function (models) {
         });
     }
 
-    this.getTotalHours = function(options, waterfallCB){
+    this.getTotalHours = function(options){
         var hoursSold = options['hoursSold'];
         var hoursTotal = options['hoursTotal'];
         var resultForUnsold = [];
@@ -2727,10 +2727,7 @@ var wTrack = function (models) {
             resultForUnsold.push(obj);
         });
 
-        options['hoursUnsold'] = resultForUnsold;
-
-        waterfallCB(null, options);
-
+        return resultForUnsold;
     },
 
     this.getFromCash = function (req, res, next) {
@@ -2759,56 +2756,46 @@ var wTrack = function (models) {
                 }
 
                 if (result.length === 0) {
-                    function getData(waterfallCB) {
-                        async.parallel({
-                                hoursByDep: self.getHoursByDep(startWeek, startYear, callback),
-                                hoursSold: self.getHoursSold(startMonth, startYear, callback),
-                                hoursTotal: self.getHoursTotal(startMonth, startYear, callback)
-                            },
-                            function(err, results) {
-                                if (err) {
-                                    return waterfallCB(err);
-                                }
 
-                                waterfallCB(null, results);
-                            })
-                    };
-
-                    waterfallTasks = [getData, this.getTotalHours];
-
-
-                    async.waterfall(waterfallTasks, function(err, result) {
-                        if (err) {
-                            return next(err);
-                        }
-
-                        async.parallel([
-                            function(callback) {
-                                res.status(200).send(result);
-
-                                return callback(null, 'Done!');
-                            },
-                            function(callback) {
-                                modelToSave = {
-                                    dateField: dateKey,
-                                    result: result
-                                };
-
-                                hoursCashes = new HoursCashes(modelToSave);
-                                hoursCashes.save(function(err) {
-                                    if (err) {
-                                        return callback(err);
-                                    }
-
-                                    return callback(null, 'Done!');
-                                })
-                            }
-                        ], function(err, results) {
+                    async.parallel({
+                            hoursByDep: self.getHoursByDep(startWeek, startYear, callback),
+                            hoursSold: self.getHoursSold(startMonth, startYear, callback),
+                            hoursTotal: self.getHoursTotal(startMonth, startYear, callback)
+                        },
+                        function(err, results) {
                             if (err) {
                                 return next(err);
                             }
-                        });
-                    })
+
+                            results['hoursUnsold'] = this.getTotalHours(results);
+
+                            async.parallel([
+                                function(callback) {
+                                    res.status(200).send(results);
+
+                                    return callback(null, 'Done!');
+                                },
+                                function(callback) {
+                                    modelToSave = {
+                                        dateField: dateKey,
+                                        result: results
+                                    };
+
+                                    hoursCashes = new HoursCashes(modelToSave);
+                                    hoursCashes.save(function(err) {
+                                        if (err) {
+                                            return callback(err);
+                                        }
+
+                                        return callback(null, 'Done!');
+                                    })
+                                }
+                            ], function(err, results) {
+                                if (err) {
+                                    return next(err);
+                                }
+                            });
+                        })
 
                 } else {
                     res.status(200).send(result);
