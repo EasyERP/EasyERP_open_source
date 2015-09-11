@@ -7,6 +7,7 @@ define([
         'text!templates/supplierPayments/forWTrack/ListHeader.html',
         'text!templates/supplierPayments/forWTrack/cancelEdit.html',
         'views/supplierPayments/CreateView',
+        'views/Filter/FilterView',
         'models/PaymentModel',
         'views/supplierPayments/list/ListItemView',
         'views/supplierPayments/list/ListTotalView',
@@ -16,7 +17,7 @@ define([
         'populate',
         'async'
     ],
-    function (paginationTemplate, listTemplate, ListHeaderForWTrack, cancelEdit, createView, currentModel, listItemView, listTotalView, paymentCollection, editCollection, dataService, populate, async) {
+    function (paginationTemplate, listTemplate, ListHeaderForWTrack, cancelEdit, createView, filterView, currentModel, listItemView, listTotalView, paymentCollection, editCollection, dataService, populate, async) {
         var PaymentListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -508,8 +509,11 @@ define([
             checked: function () {
                 if (this.collection.length > 0) {
                     var checkLength = $("input.checkbox:checked").length;
+
                     if ($("input.checkbox:checked").length > 0) {
                         $("#top-bar-deleteBtn").show();
+                        $('#check_all').prop('checked', false);
+
                         if (checkLength == this.collection.length) {
                             $('#check_all').prop('checked', true);
                         }
@@ -527,8 +531,13 @@ define([
             },
 
             hideItemsNumber: function (e) {
-                $(".allNumberPerPage").hide();
-                $(".newSelectList").hide();
+                var el = e.target;
+
+                this.$el.find(".allNumberPerPage, .newSelectList").hide();
+                if (!el.closest('.search-view')) {
+                    $('.search-content').removeClass('fa-caret-up');
+                    this.$el.find('.search-options').addClass('hidden');
+                };
             },
 
             goSort: function (e) {
@@ -634,6 +643,8 @@ define([
                     pagenation.hide();
                 }
 
+                this.filterView.renderFilterContent();
+
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
 
@@ -684,6 +695,19 @@ define([
                         cellSpan: 7,
                         wTrack: true
                     }).render());
+
+                    self.filterView = new filterView({
+                        contentType: self.contentType
+                    });
+
+                    self.filterView.bind('filter', function (filter) {
+                        self.showFilteredPage(filter)
+                    });
+                    self.filterView.bind('defaultFilter', function () {
+                        self.showFilteredPage({});
+                    });
+
+                    self.filterView.render();
 
                 } else {
                     currentEl.html('');
@@ -739,10 +763,25 @@ define([
                 }, 10);
 
                 $(document).on("click", function (e) {
-                    self.hideNewSelect();
+                    self.hideNewSelect(e);
                 });
 
                 currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+            },
+
+            showFilteredPage: function (filter) {
+                var itemsNumber = $("#itemsNumber").text();
+                this.filter = filter;
+
+                this.startTime = new Date();
+                this.newCollection = false;
+
+                $("#top-bar-deleteBtn").hide();
+                $('#check_all').prop('checked', false);
+
+                this.changeLocationHash(1, itemsNumber, filter);
+                this.collection.showMore({count: itemsNumber, page: 1, filter: filter});
+                this.getTotalLength(null, itemsNumber, filter);
             },
 
             deleteItems: function () {

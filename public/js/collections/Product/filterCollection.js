@@ -26,9 +26,20 @@
                 {
                     options.filter = {};
                     if (regex.test(this.contentType)) {
-                        options.filter.canBeSold = true;
+                        options.filter = {
+                            'canBeSold': {
+                                key: 'canBeSold',
+                                value: ['true']
+                            }
+
+                        };
                     } else {
-                        options.filter.canBePurchased = true;
+                        options.filter = {
+                            'canBePurchased': {
+                                key: 'canBePurchased',
+                                value: ['true']
+                            }
+                        };
                     }
                 }
 
@@ -65,9 +76,20 @@
                 {
                     options.filter = {};
                     if (regex.test(this.contentType)) {
-                        filterObject.filter.canBeSold = true;
+                        filterObject.filter = {
+                            'canBeSold': {
+                                key: 'canBeSold',
+                                value: ['true']
+                            }
+
+                        };
                     } else {
-                        filterObject.filter.canBePurchased = true;
+                        filterObject.filter = {
+                            'canBePurchased': {
+                                key: 'canBePurchased',
+                                value: ['true']
+                            }
+                        };
                     }
                 }
 
@@ -99,9 +121,20 @@
                 {
                     options.filter = {};
                     if (regex.test(this.contentType)) {
-                        filterObject.filter.canBeSold = true;
+                        filterObject.filter = {
+                            'canBeSold': {
+                                key: 'canBeSold',
+                                value: ['true']
+                            }
+
+                        };
                     } else {
-                        filterObject.filter.canBePurchased = true;
+                        filterObject.filter = {
+                            'canBePurchased': {
+                                key: 'canBePurchased',
+                                value: ['true']
+                            }
+                        };
                     }
                 }
 

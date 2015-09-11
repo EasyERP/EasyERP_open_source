@@ -23,6 +23,7 @@ define([
             "easyErp/:contentType/form(/:modelId)": "goToForm", //FixMe chenge to required Id after test
             "easyErp/:contentType/list(/pId=:parrentContentId)(/p=:page)(/c=:countPerPage)(/filter=:filter)": "goToList",
             "easyErp/Revenue": "revenue",
+            "easyErp/Hours": "hours",
             "easyErp/Attendance": "attendance",
             "easyErp/Profiles": "goToProfiles",
             "easyErp/productSettings": "productSettings",
@@ -215,6 +216,45 @@ define([
             }
         },
 
+        hours: function(){
+            var self = this;
+
+            if(!this.isAuth) {
+                this.checkLogin(function (success) {
+                    if (success) {
+                        self.isAuth = true;
+                        renderRevenue();
+                    } else {
+                        self.redirectTo();
+                    }
+                });
+            } else {
+                renderRevenue();
+            }
+
+            function renderRevenue () {
+                var startTime = new Date();
+                var contentViewUrl = "views/Hours/index";
+
+                if (self.mainView === null) {
+                    self.main("Hours");
+                } else {
+                    self.mainView.updateMenu("Hours");
+                }
+
+                require([contentViewUrl], function (contentView) {
+                    var contentview;
+
+                    custom.setCurrentVT('list');
+
+                    contentview = new contentView({startTime: startTime});
+
+                    self.changeView(contentview, true);
+                });
+            }
+        },
+
+
         attendance: function () {
             var self = this;
 
@@ -228,6 +268,7 @@ define([
 
             function renderAttendance(context) {
                 var contentViewUrl = "views/Attendance/index";
+                var topBarViewUrl = 'views/Attendance/TopBarView';
                 var self = context;
 
                 if (context.mainView === null) {
@@ -236,9 +277,11 @@ define([
                     context.mainView.updateMenu("Attendance");
                 }
 
-                require([contentViewUrl], function (contentView) {
+                require([contentViewUrl, topBarViewUrl], function (contentView, topBarView) {
                     var contentview = new contentView();
+                    var topBar = new topBarView({actionType: "Content"});
                     self.changeView(contentview);
+                    self.changeTopBarView(topBar);
                 });
             }
         },

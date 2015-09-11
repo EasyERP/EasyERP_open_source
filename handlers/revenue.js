@@ -22,6 +22,15 @@ var wTrack = function (models) {
         'Design',
         'PM'
     ];
+    var constForDep = [
+        'PM',
+        'Design',
+        'QA',
+        'WP',
+        'Web',
+        'Android',
+        'iOS'
+    ];
 
     this.bySales = function (req, res, next) {
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
@@ -618,6 +627,7 @@ var wTrack = function (models) {
             var endDate;
             var match;
             var groupBy;
+            var sortResult = [];
 
             if (!access) {
                 return res.status(403).send();
@@ -676,7 +686,15 @@ var wTrack = function (models) {
                     return next(err);
                 }
 
-                res.status(200).send(response);
+                constForDep.forEach(function(dep){
+                    response.forEach(function(depart){
+                        if (dep === depart._id ){
+                            sortResult.push(depart);
+                        }
+                    });
+                });
+
+                res.status(200).send(sortResult);
             });
 
         });
