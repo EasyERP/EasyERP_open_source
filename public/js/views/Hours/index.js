@@ -501,51 +501,7 @@ define([
             var targetTotal;
             var self = this;
 
-            //totalHours.forEach(function (department) {
-            //    var obj = {};
-            //    var objToSave = {};
-            //    var empArray;
-            //
-            //    obj.name = department.name;
-            //    obj.employees = [];
-            //    obj.totalForDep = 0;
-            //
-            //    empArray = department.employees;
-            //
-            //    empArray.forEach(function (employee) {
-            //        objToSave.name = employee.name;
-            //        var hoursTotal = employee.hoursTotal;
-            //        var keys = Object.keys(hoursTotal);
-            //        var empArr = [];
-            //        var totalSold;
-            //
-            //        hoursSold.forEach(function (dep) {
-            //            if (obj.name === dep.name) {
-            //                empArr = dep.employees;
-            //
-            //                empArr.forEach(function (emp) {
-            //                    if (employee.name === emp.name) {
-            //                        totalSold = _.clone(emp.hoursSold);
-            //                    }
-            //                });
-            //            }
-            //            objToSave.hire = employee.hire;
-            //            objToSave.fire = employee.fire;
-            //            objToSave.hoursTotal = {};
-            //            objToSave.total = 0;
-            //            keys.forEach(function (key) {
-            //                var sold = (totalSold && totalSold[key]) ? totalSold[key] : 0;
-            //
-            //                objToSave.hoursTotal[key] = hoursTotal[key] - sold;
-            //                objToSave.total += objToSave.hoursTotal[key];
-            //            });
-            //        });
-            //        var object = _.clone(objToSave);
-            //        obj.employees.push(object);
-            //        obj.totalForDep += objToSave.total;
-            //    });
-            //    resultForUnsold.push(obj);
-            //});
+
 
             target.html(this.totalHoursTemplate({
                 departments: resultForUnsold,
