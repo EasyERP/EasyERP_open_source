@@ -116,11 +116,7 @@
                 common.buildAphabeticArray(this.collection, function (arr) {
                     $("#startLetter").remove();
                     self.alphabeticArray = arr;
-                    $("#searchContainer").after(_.template(AphabeticTemplate, {
-                        alphabeticArray: self.alphabeticArray,
-                        selectedLetter: (self.selectedLetter == "" ? "All" : self.selectedLetter),
-                        allAlphabeticArray: self.allAlphabeticArray
-                    }));
+                    $('#searchContainer').after(_.template(AphabeticTemplate, { alphabeticArray: self.alphabeticArray, selectedLetter: (self.selectedLetter == "" ? "All" : self.selectedLetter), allAlphabeticArray: self.allAlphabeticArray }));
                     var currentLetter = (self.filter) ? self.filter.letter : null;
                     if (currentLetter) {
                         $('#startLetter a').each(function () {
@@ -132,11 +128,11 @@
                     }
                 });
 
-                if (this.collection.length > 0) {
+                //if (this.collection.length > 0) {
                     currentEl.append(this.template({collection: this.collection.toJSON()}));
-                } else {
-                    currentEl.html('<h2>No Products found</h2>');
-                }
+               // } else {
+                   // currentEl.html('<h2>No Products found</h2>');
+               // }
                 currentEl.append(createdInTag);
 
                 $(document).on("click", function (e) {
@@ -188,7 +184,7 @@
                 this.$el.find('.thumbnailwithavatar').remove();
 
                 this.changeLocationHash(null, this.defaultItemsNumber, filter);
-                this.collection.showMoreAlphabet({ count: this.defaultItemsNumber, page: 1, filter: filter });
+                this.collection.showMore({ count: this.defaultItemsNumber, page: 1, filter: filter });
                 this.getTotalLength(this.defaultItemsNumber, filter);
             },
 

@@ -356,7 +356,7 @@ define([
                 this.$el.find('.thumbnailwithavatar').remove();
 
                 this.changeLocationHash(null, this.defaultItemsNumber, filter);
-                this.collection.showMoreAlphabet({ count: this.defaultItemsNumber, page: 1, filter: filter });
+                this.collection.showMore({ count: this.defaultItemsNumber, page: 1, filter: filter });
                 this.getTotalLength(this.defaultItemsNumber, filter);
             },
 
