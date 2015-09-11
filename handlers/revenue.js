@@ -2787,11 +2787,21 @@ var wTrack = function (models) {
                     waterfallTasks = [getData, this.getTotalHours];
 
 
-
                     async.waterfall(waterfallTasks, function(err, result) {
                         if (err) {
                             return next(err);
                         }
+
+                        async.parallel([
+                            function(callback) {
+                                res.status(200).send(result);
+
+                                return callback(null, 'Done!');
+                            },
+                            function(callback) {
+
+                            }
+                        ])
 
                     })
 
