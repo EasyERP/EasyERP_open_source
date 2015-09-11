@@ -615,6 +615,81 @@ var wTrack = function (models) {
         });
     };
 
+    this.getHoursByDep = function (startWeek, startYear, callback) {
+        var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+        var endWeek;
+        var endYear;
+        var startDate;
+        var endDate;
+        var match;
+        var groupBy;
+        var sortResult = [];
+
+        if (startWeek >= 40) {
+            endWeek = parseInt(startWeek) + 14 - 53;
+            endYear = parseInt(startYear) + 1;
+        } else {
+            endWeek = parseInt(startWeek) + 14;
+            endYear = parseInt(startYear);
+        }
+
+        startDate = startYear * 100 + startWeek;
+        endDate = endYear * 100 + endWeek;
+
+        match = {
+            dateByWeek: {
+                $gte: startDate,
+                $lt: endDate
+            }
+        };
+
+        groupBy = {
+            _id: {
+                department: '$department.departmentName',
+                _id: '$department._id',
+                year: '$year',
+                week: '$week'
+            },
+            sold: {$sum: '$worked'}
+        };
+
+        WTrack.aggregate([{
+            $match: match
+        }, {
+            $group: groupBy
+        }, {
+            $project: {
+                year: "$_id.year",
+                week: "$_id.week",
+                department: "$_id.department",
+                sold: 1,
+                _id: 0
+            }
+        }, {
+            $group: {
+                _id: '$department',
+                root: {$push: '$$ROOT'},
+                totalSold: {$sum: '$sold'}
+            }
+        }, {
+            $sort: {_id: 1}
+        }], function(err, result) {
+            if (err) {
+                return callback(err);
+            }
+
+            constForDep.forEach(function (dep) {
+                response.forEach(function (depart) {
+                    if (dep === depart._id) {
+                        sortResult.push(depart);
+                    }
+                });
+            });
+
+            callback(null, sortResult);
+        });
+    };
+
     this.hoursByDep = function (req, res, next) {
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
 
@@ -2133,6 +2208,7 @@ var wTrack = function (models) {
 
     this.getFromCash = function (req, res, next) {
         access.getReadAccess(req, req.session.uId, 67, function (access) {
+            var self = this;
             var HoursCashes = models.get(req.session.lastDb, 'HoursCashes', HoursCashesSchema);
             var query = req.query;
             var dateByWeek = query.dateByWeek;
@@ -2151,6 +2227,9 @@ var wTrack = function (models) {
                 }
 
                 if (result.length  === 0) {
+                    async.parallel({
+                        one: self.getHoursByDep()
+                    })
 
                 }
             })
