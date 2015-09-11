@@ -673,13 +673,13 @@ var wTrack = function (models) {
             }
         }, {
             $sort: {_id: 1}
-        }], function(err, result) {
+        }], function (err, result) {
             if (err) {
                 return callback(err);
             }
 
             constForDep.forEach(function (dep) {
-                response.forEach(function (depart) {
+                result.forEach(function (depart) {
                     if (dep === depart._id) {
                         sortResult.push(depart);
                     }
@@ -688,6 +688,150 @@ var wTrack = function (models) {
 
             callback(null, sortResult);
         });
+    };
+
+    this.getHoursSold = function (startMonth, startYear, callback) {
+        var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+
+        var endMonth = startMonth;
+        var endYear = startYear + 1;
+
+        var startDate;
+        var endDate;
+        var match;
+        var groupBy;
+
+        startDate = startYear * 100 + startMonth;
+        endDate = endYear * 100 + endMonth;
+
+        match = {
+            dateByMonth: {$gte: startDate, $lte: endDate}
+        };
+
+        groupBy = {
+            _id: {
+                department: '$department.departmentName',
+                _id: '$department._id',
+                year: '$year',
+                month: '$month',
+                employee: '$employee'
+            },
+            sold: {$sum: '$worked'}
+        };
+
+        WTrack.aggregate([{
+            $match: match
+        }, {
+            $group: groupBy
+        }, {
+            $project: {
+                year: "$_id.year",
+                month: "$_id.month",
+                department: "$_id.department",
+                sold: 1,
+                employee: '$_id.employee',
+                _id: 0
+            }
+        }, {
+            $group: {
+                _id: '$department',
+                root: {$push: '$$ROOT'},
+                totalSold: {$sum: '$sold'}
+            }
+        }, {
+            $sort: {_id: 1}
+        }], function (err, response) {
+
+            if (err) {
+                return callback(err);
+            }
+
+            resultMapper(response);
+
+        });
+
+        function resultMapper(response) {
+            var result = [];
+            var departments = [];
+            var sortDepartments = [];
+
+            response.forEach(function (departments) {
+                var depObj = {};
+                var depName = departments._id;
+                var rootArray = departments.root;
+                var employeesArray = [];
+                var groupedRoot = _.groupBy(rootArray, 'employee._id');
+                var keys = Object.keys(groupedRoot);
+
+                depObj.department = depName;
+
+                keys.forEach(function (key) {
+                    var arrayGrouped = groupedRoot[key];
+                    var empObj = {};
+
+                    arrayGrouped.forEach(function (element) {
+                        var key = element.year * 100 + element.month;
+
+                        if (!empObj[element.employee._id]) {
+
+                            empObj[element.employee._id] = {};
+                            empObj[element.employee._id] = element.employee;
+
+                            empObj[element.employee._id].hoursSold = {};
+                            empObj[element.employee._id].hoursSold[key] = element.sold;
+
+                            empObj[element.employee._id].total = parseInt(element.sold);
+                        } else {
+                            empObj[element.employee._id].hoursSold[key] = element.sold;
+                            empObj[element.employee._id].total += parseInt(element.sold);
+                        }
+
+                    });
+                    employeesArray.push(empObj);
+                });
+                depObj.employees = employeesArray;
+
+                result.push(depObj);
+            });
+
+            constForView.forEach(function (dep) {
+                result.forEach(function (depart) {
+                    if (dep === depart.department) {
+                        sortDepartments.push(depart);
+                    }
+                });
+            });
+
+            async.each(sortDepartments, function (element) {
+                var obj = {};
+                var objToSave = {};
+                var empArr;
+                var key;
+
+                obj.employees = [];
+                obj.name = element.department;
+
+                obj.totalForDep = 0;
+
+                empArr = element.employees;
+
+                empArr.forEach(function (element) {
+                    var object;
+
+                    key = Object.keys(element)[0];
+
+                    objToSave.name = element[key].name;
+                    objToSave.total = element[key].total;
+                    objToSave.hoursSold = element[key].hoursSold;
+                    object = _.clone(objToSave);
+                    obj.employees.push(object);
+                    obj.totalForDep += objToSave.total;
+                });
+                departments.push(obj);
+            });
+
+            callback(null, departments);
+        }
     };
 
     this.hoursByDep = function (req, res, next) {
@@ -2211,24 +2355,28 @@ var wTrack = function (models) {
             var self = this;
             var HoursCashes = models.get(req.session.lastDb, 'HoursCashes', HoursCashesSchema);
             var query = req.query;
-            var dateByWeek = query.dateByWeek;
-            var dateByMonth = query.dateByMonth;
+            var startWeek = query.byWeek.week;
+            var startYear = query.byWeek.year;
+            var startMonth = query.byMonth.month;
+            var dateByWeek = startYear * 100 + startWeek;
+            var dateByMonth = query.byMonth.year * 100 + query.byMonth.month;
             var dateKey = dateByWeek + '_' + dateByMonth;
-            var query;
 
             if (!access) {
                 return res.status(403).send();
             }
 
             query = HoursCashes.find({dateField: dateKey});
-            query.exec(function(err, result) {
+            query.exec(function (err, result) {
                 if (err) {
                     return next(err);
                 }
 
-                if (result.length  === 0) {
+                if (result.length === 0) {
                     async.parallel({
-                        one: self.getHoursByDep()
+                        one: self.getHoursByDep(startWeek, startYear, callback),
+                        two: self.getHoursSold(startMonth, startYear, callback),
+                        three: self.getHoursTotal(startMonth, startYear, callback)
                     })
 
                 }
