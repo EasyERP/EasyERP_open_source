@@ -2361,6 +2361,7 @@ var wTrack = function (models) {
             var dateByWeek = startYear * 100 + startWeek;
             var dateByMonth = query.byMonth.year * 100 + query.byMonth.month;
             var dateKey = dateByWeek + '_' + dateByMonth;
+            var waterfallTasks;
 
             if (!access) {
                 return res.status(403).send();
@@ -2373,10 +2374,30 @@ var wTrack = function (models) {
                 }
 
                 if (result.length === 0) {
-                    async.parallel({
-                        one: self.getHoursByDep(startWeek, startYear, callback),
-                        two: self.getHoursSold(startMonth, startYear, callback),
-                        three: self.getHoursTotal(startMonth, startYear, callback)
+                    function getData(waterfallCB) {
+                        async.parallel({
+                                one: self.getHoursByDep(startWeek, startYear, callback),
+                                two: self.getHoursSold(startMonth, startYear, callback),
+                                three: self.getHoursTotal(startMonth, startYear, callback)
+                            },
+                            function(err, results) {
+                                if (err) {
+                                    return waterfallCB(err);
+                                }
+
+                                waterfallCB(null, results);
+                            })
+                    };
+
+                    waterfallTasks = [getData];
+
+
+
+                    async.waterfall(waterfallTasks, function(err, result) {
+                        if (err) {
+                            return next(err);
+                        }
+
                     })
 
                 }
