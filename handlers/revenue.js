@@ -2676,6 +2676,63 @@ var wTrack = function (models) {
         });
     }
 
+    this.getTotalHours = function(options, waterfallCB){
+        var hoursSold = options['hoursSold'];
+        var hoursTotal = options['hoursTotal'];
+        var resultForUnsold = [];
+
+        hoursTotal.forEach(function (department) {
+            var obj = {};
+            var objToSave = {};
+            var empArray;
+
+            obj.name = department.name;
+            obj.employees = [];
+            obj.totalForDep = 0;
+
+            empArray = department.employees;
+
+            empArray.forEach(function (employee) {
+                objToSave.name = employee.name;
+                var hoursTotal = employee.hoursTotal;
+                var keys = Object.keys(hoursTotal);
+                var empArr = [];
+                var totalSold;
+
+                hoursSold.forEach(function (dep) {
+                    if (obj.name === dep.name) {
+                        empArr = dep.employees;
+
+                        empArr.forEach(function (emp) {
+                            if (employee.name === emp.name) {
+                                totalSold = _.clone(emp.hoursSold);
+                            }
+                        });
+                    }
+                    objToSave.hire = employee.hire;
+                    objToSave.fire = employee.fire;
+                    objToSave.hoursTotal = {};
+                    objToSave.total = 0;
+                    keys.forEach(function (key) {
+                        var sold = (totalSold && totalSold[key]) ? totalSold[key] : 0;
+
+                        objToSave.hoursTotal[key] = hoursTotal[key] - sold;
+                        objToSave.total += objToSave.hoursTotal[key];
+                    });
+                });
+                var object = _.clone(objToSave);
+                obj.employees.push(object);
+                obj.totalForDep += objToSave.total;
+            });
+            resultForUnsold.push(obj);
+        });
+
+        options['hoursUnsold'] = resultForUnsold;
+
+        waterfallCB(null, options);
+
+    },
+
     this.getFromCash = function (req, res, next) {
         access.getReadAccess(req, req.session.uId, 67, function (access) {
             var self = this;
@@ -2702,9 +2759,9 @@ var wTrack = function (models) {
                 if (result.length === 0) {
                     function getData(waterfallCB) {
                         async.parallel({
-                                one: self.getHoursByDep(startWeek, startYear, callback),
-                                two: self.getHoursSold(startMonth, startYear, callback),
-                                three: self.getHoursTotal(startMonth, startYear, callback)
+                                hoursByDep: self.getHoursByDep(startWeek, startYear, callback),
+                                hoursSold: self.getHoursSold(startMonth, startYear, callback),
+                                hoursTotal: self.getHoursTotal(startMonth, startYear, callback)
                             },
                             function(err, results) {
                                 if (err) {
@@ -2715,7 +2772,7 @@ var wTrack = function (models) {
                             })
                     };
 
-                    waterfallTasks = [getData];
+                    waterfallTasks = [getData, this.getTotalHours];
 
 
 
