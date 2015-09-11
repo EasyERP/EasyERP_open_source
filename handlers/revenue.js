@@ -686,9 +686,9 @@ var wTrack = function (models) {
                     return next(err);
                 }
 
-                constForDep.forEach(function(dep){
-                    response.forEach(function(depart){
-                        if (dep === depart._id ){
+                constForDep.forEach(function (dep) {
+                    response.forEach(function (depart) {
+                        if (dep === depart._id) {
                             sortResult.push(depart);
                         }
                     });
@@ -1696,7 +1696,7 @@ var wTrack = function (models) {
                                                     $ne: null,
                                                     $gte: startDate
                                                 }
-                                            } ]
+                                            }]
                                         }
                                     ],
                                 }
@@ -1872,7 +1872,7 @@ var wTrack = function (models) {
 
                         hire = _.clone(element.hire);
 
-                        hire.forEach(function(hireDate){
+                        hire.forEach(function (hireDate) {
                             date = new Date(hireDate);
                             employee.hire.push(moment(date).year() * 100 + moment(date).month() + 1);
                         });
@@ -1881,7 +1881,7 @@ var wTrack = function (models) {
 
                         fire = _.clone(element.fire);
 
-                        fire.forEach(function(hireDate){
+                        fire.forEach(function (hireDate) {
                             date = new Date(hireDate);
                             employee.fire.push(moment(date).year() * 100 + moment(date).month() + 1);
                         });
@@ -1930,9 +1930,9 @@ var wTrack = function (models) {
                     result.push(department);
                 });
 
-                constForView.forEach(function(dep){
-                    result.forEach(function(depart){
-                        if (dep === depart._id ){
+                constForView.forEach(function (dep) {
+                    result.forEach(function (depart) {
+                        if (dep === depart._id) {
                             sortDepartments.push(depart);
                         }
                     });
@@ -2028,14 +2028,14 @@ var wTrack = function (models) {
                     _id: 0
                 }
             }, {
-                    $group: {
-                        _id: '$department',
-                        root: {$push: '$$ROOT'},
-                        totalSold: {$sum: '$sold'}
-                    }
-                }, {
-                    $sort: {_id: 1}
-                }], function (err, response) {
+                $group: {
+                    _id: '$department',
+                    root: {$push: '$$ROOT'},
+                    totalSold: {$sum: '$sold'}
+                }
+            }, {
+                $sort: {_id: 1}
+            }], function (err, response) {
 
                 if (err) {
                     return next(err);
@@ -2045,12 +2045,12 @@ var wTrack = function (models) {
 
             });
 
-            function resultMapper (response){
+            function resultMapper(response) {
                 var result = [];
                 var departments = [];
                 var sortDepartments = [];
 
-                response.forEach(function(departments){
+                response.forEach(function (departments) {
                     var depObj = {};
                     var depName = departments._id;
                     var rootArray = departments.root;
@@ -2060,14 +2060,14 @@ var wTrack = function (models) {
 
                     depObj.department = depName;
 
-                    keys.forEach(function(key){
+                    keys.forEach(function (key) {
                         var arrayGrouped = groupedRoot[key];
                         var empObj = {};
 
-                        arrayGrouped.forEach(function(element){
+                        arrayGrouped.forEach(function (element) {
                             var key = element.year * 100 + element.month;
 
-                            if (!empObj[element.employee._id]){
+                            if (!empObj[element.employee._id]) {
 
                                 empObj[element.employee._id] = {};
                                 empObj[element.employee._id] = element.employee;
@@ -2089,9 +2089,9 @@ var wTrack = function (models) {
                     result.push(depObj);
                 });
 
-                constForView.forEach(function(dep){
-                    result.forEach(function(depart){
-                        if (dep === depart.department ){
+                constForView.forEach(function (dep) {
+                    result.forEach(function (depart) {
+                        if (dep === depart.department) {
                             sortDepartments.push(depart);
                         }
                     });
