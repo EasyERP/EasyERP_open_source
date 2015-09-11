@@ -679,11 +679,13 @@ var wTrack = function (models) {
             }
 
             constForDep.forEach(function (dep) {
-                result.forEach(function (depart) {
-                    if (dep === depart._id) {
-                        sortResult.push(depart);
-                    }
-                });
+                //result.forEach(function (depart) {
+                //    if (dep === depart._id) {
+                //        sortDepartments.push(depart);
+                //    }
+                //});
+                var depart = _.findWhere(result, {_id: dep});
+                sortResult.push(depart);
             });
 
             callback(null, sortResult);
@@ -795,11 +797,13 @@ var wTrack = function (models) {
             });
 
             constForView.forEach(function (dep) {
-                result.forEach(function (depart) {
-                    if (dep === depart.department) {
-                        sortDepartments.push(depart);
-                    }
-                });
+                //result.forEach(function (depart) {
+                //    if (dep === depart._id) {
+                //        sortDepartments.push(depart);
+                //    }
+                //});
+                var depart = _.findWhere(result, {_id: dep});
+                sortDepartments.push(depart);
             });
 
             async.each(sortDepartments, function (element) {
@@ -1114,15 +1118,16 @@ var wTrack = function (models) {
                 result.push(department);
             });
 
-            //constForView.forEach(function (dep) {
-            //    result.forEach(function (depart) {
-            //        if (dep === depart._id) {
-            //            sortDepartments.push(depart);
-            //        }
-            //    });
-            //});
+            constForView.forEach(function (dep) {
+                //result.forEach(function (depart) {
+                //    if (dep === depart._id) {
+                //        sortDepartments.push(depart);
+                //    }
+                //});
+                var depart = _.findWhere(result, {_id: dep});
+                sortDepartments.push(depart);
+            });
 
-            sortDepartments = _.intersection(constForView, result);
 
             async.each(sortDepartments, function (element) {
                 var obj = {};
@@ -1233,12 +1238,15 @@ var wTrack = function (models) {
                 }
 
                 constForDep.forEach(function (dep) {
-                    response.forEach(function (depart) {
-                        if (dep === depart._id) {
-                            sortResult.push(depart);
-                        }
-                    });
+                    //result.forEach(function (depart) {
+                    //    if (dep === depart._id) {
+                    //        sortDepartments.push(depart);
+                    //    }
+                    //});
+                    var depart = _.findWhere(response, {_id: dep});
+                    sortResult.push(depart);
                 });
+
 
                 res.status(200).send(sortResult);
             });
@@ -2477,11 +2485,13 @@ var wTrack = function (models) {
                 });
 
                 constForView.forEach(function (dep) {
-                    result.forEach(function (depart) {
-                        if (dep === depart._id) {
-                            sortDepartments.push(depart);
-                        }
-                    });
+                    //result.forEach(function (depart) {
+                    //    if (dep === depart._id) {
+                    //        sortDepartments.push(depart);
+                    //    }
+                    //});
+                    var depart = _.findWhere(result, {_id: dep});
+                    sortDepartments.push(depart);
                 });
 
                 async.each(sortDepartments, function (element) {
@@ -2636,11 +2646,13 @@ var wTrack = function (models) {
                 });
 
                 constForView.forEach(function (dep) {
-                    result.forEach(function (depart) {
-                        if (dep === depart.department) {
-                            sortDepartments.push(depart);
-                        }
-                    });
+                    //result.forEach(function (depart) {
+                    //    if (dep === depart._id) {
+                    //        sortDepartments.push(depart);
+                    //    }
+                    //});
+                    var depart = _.findWhere(result, {_id: dep});
+                    sortDepartments.push(depart);
                 });
 
                 async.each(sortDepartments, function (element) {
@@ -2678,7 +2690,7 @@ var wTrack = function (models) {
 
     this.getTotalHours = function(options, waterfallCB){
         var hoursSold = options['hoursSold'];
-        var hoursTotal = options['hoursTotal'];
+        var hoursTotal = options['totalHours'];
         var resultForUnsold = [];
 
         hoursTotal.forEach(function (department) {
@@ -2761,7 +2773,7 @@ var wTrack = function (models) {
                         async.parallel({
                                 hoursByDep: self.getHoursByDep(startWeek, startYear, callback),
                                 hoursSold: self.getHoursSold(startMonth, startYear, callback),
-                                hoursTotal: self.getHoursTotal(startMonth, startYear, callback)
+                                totalHours: self.getHoursTotal(startMonth, startYear, callback)
                             },
                             function(err, results) {
                                 if (err) {
