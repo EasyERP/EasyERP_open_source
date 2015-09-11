@@ -1114,13 +1114,15 @@ var wTrack = function (models) {
                 result.push(department);
             });
 
-            constForView.forEach(function (dep) {
-                result.forEach(function (depart) {
-                    if (dep === depart._id) {
-                        sortDepartments.push(depart);
-                    }
-                });
-            });
+            //constForView.forEach(function (dep) {
+            //    result.forEach(function (depart) {
+            //        if (dep === depart._id) {
+            //            sortDepartments.push(depart);
+            //        }
+            //    });
+            //});
+
+            sortDepartments = _.intersection(constForView, result);
 
             async.each(sortDepartments, function (element) {
                 var obj = {};
