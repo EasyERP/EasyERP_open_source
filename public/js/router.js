@@ -835,7 +835,6 @@ define([
                                 key: 'canBeSold',
                                 value: ['true']
                             }
-
                         };
                         Backbone.history.fragment = '';
                         Backbone.history.navigate(location + '/c=' + count + '/filter=' + encodeURI(JSON.stringify(filter)));
