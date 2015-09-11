@@ -197,11 +197,11 @@ var Products = function (models) {
         var queryObject = {};
         var query = req.query;
 
-        if (query && query.canBeSold) {
-            queryObject.canBeSold = true;
-        } else {
-            queryObject.canBePurchased = true;
-        }
+        //if (query && query.canBeSold) {
+        //    queryObject.canBeSold = true;
+        //} else {
+        //    queryObject.canBePurchased = true;
+        //}
 
         Product.find(queryObject, function (err, products) {
             if (err) {
@@ -252,21 +252,23 @@ var Products = function (models) {
     };
 
     function ConvertType(array, type) {
+        var result = [];
         if (type === 'integer') {
             for (var i = array.length - 1; i >= 0; i--) {
-                array[i] = parseInt(array[i]);
+                result[i] = parseInt(array[i]);
             }
         } else if (type === 'boolean') {
             for (var i = array.length - 1; i >= 0; i--) {
                 if (array[i] === 'true') {
-                    array[i] = true;
+                    result[i] = true;
                 } else if (array[i] === 'false') {
-                    array[i] = false;
+                    result[i] = false;
                 } else {
-                    array[i] = null;
+                    result[i] = null;
                 }
             }
         }
+        return result;
     };
 
     function getProductsFilter(req, res, next) {
@@ -275,7 +277,7 @@ var Products = function (models) {
                 if (access) {
                     var Product = models.get(req.session.lastDb, 'Product', ProductSchema);
                     var query = req.query;
-                    var queryObject = {};
+                    var optionsObject = {};
                     var sort = {};
                     var count = query.count ? query.count : 100;
                     var page = req.query.page;
@@ -286,18 +288,18 @@ var Products = function (models) {
                     var contentSearcher;
                     var waterfallTasks;
 
-                    if (query.filter && typeof query.filter === 'object') {
-                        if (query.filter.condition === 'or') {
-                            queryObject['$or'] = caseFilter(query.filter);
-                        } else {
-                            queryObject['$and'] = caseFilter(query.filter);
-                        }
-                    }
-
                     if (query && query.sort) {
                         sort = query.sort;
                     } else {
                         sort = {"name": 1};
+                    }
+
+                    if (query.filter && typeof query.filter === 'object') {
+                        if (query.filter.condition === 'or') {
+                            optionsObject['$or'] = caseFilter(query.filter);
+                        } else {
+                            optionsObject['$and'] = caseFilter(query.filter);
+                        }
                     }
 
                     departmentSearcher = function (waterfallCallback) {
@@ -311,6 +313,7 @@ var Products = function (models) {
                                     _id: 1
                                 }
                             },
+
                             waterfallCallback);
                     };
 
@@ -321,7 +324,7 @@ var Products = function (models) {
                             {
                                 $match: {
                                     $and: [
-                                        queryObject,
+                                        optionsObject,
                                         {
                                             $or: [
                                                 {
@@ -362,19 +365,21 @@ var Products = function (models) {
                     };
 
                     contentSearcher = function (productsIds, waterfallCallback) {
-                        queryObject._id = {$in: productsIds};
+                        var query;
+                        optionsObject._id = {$in: productsIds};
 
-                        var query = Product.find(queryObject).limit(count).skip(skip).sort(sort);
+                        query = Product.find(optionsObject);
                         query.exec(waterfallCallback);
                     };
 
                     waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
 
-                    async.waterfall(waterfallTasks, function (err, result) {
+                    async.waterfall(waterfallTasks, function (err, products) {
                         if (err) {
                             return next(err);
                         }
-                        res.status(200).send({success: result});
+                        res.status(200).send({success: products});
+
                     });
                 } else {
                     res.send(403);
@@ -532,13 +537,13 @@ var Products = function (models) {
         var queryObject = {};
         var query;
 
-        if (options && options.filter && options.filter.canBeSold) {
-            queryObject['canBeSold'] = true;
-        }
-
-        if (options && options.filter && options.filter.canBePurchased) {
-            queryObject['canBePurchased'] = true;
-        }
+        //if (options && options.filter && options.filter.canBeSold) {
+        //    queryObject['canBeSold'] = true;
+        //}
+        //
+        //if (options && options.filter && options.filter.canBePurchased) {
+        //    queryObject['canBePurchased'] = true;
+        //}
 
         query = models.get(req.session.lastDb, "Products", ProductSchema).aggregate([{$match: queryObject}, {$project: {later: {$substr: ["$name", 0, 1]}}}, {$group: {_id: "$later"}}]);
         query.exec(function (err, result) {

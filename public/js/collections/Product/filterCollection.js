@@ -70,7 +70,7 @@
                 filterObject['count'] = (options && options.count) ? options.count : this.namberToShow;
                 filterObject['viewType'] = (options && options.viewType) ? options.viewType : this.viewType;
                 filterObject['contentType'] = (options && options.contentType) ? options.contentType : this.contentType;
-                //filterObject['filter'] = (options) ? options.filter : {};
+                filterObject['filter'] = (options) ? options.filter : {};
 
                 if (options && options.contentType && !(options.filter))
                 {
@@ -115,7 +115,7 @@
                 filterObject['count'] = (options && options.count) ? options.count : this.namberToShow;
                 filterObject['viewType'] = (options && options.viewType) ? options.viewType : this.viewType;
                 filterObject['contentType'] = (options && options.contentType) ? options.contentType : this.contentType;
-               // filterObject['filter'] = (options) ? options.filter : {}
+                filterObject['filter'] = (options) ? options.filter : {}
 
                 if (options && options.contentType && !(options.filter))
                 {

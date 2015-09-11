@@ -31,7 +31,6 @@ define([
                 _.bind(this.collection.showMoreAlphabet, this.collection);
                 this.allAlphabeticArray = common.buildAllAphabeticArray();
                 this.filter = options.filter ? options.filter : {};
-                this.filter.canBePurchased = true;
                 this.defaultItemsNumber = this.collection.namberToShow || 100;
                 this.newCollection = options.newCollection;
                 this.deleteCounter = 0;
@@ -228,10 +227,10 @@ define([
                 self.filterview = new filterView({ contentType: self.contentType });
 
                 self.filterview.bind('filter', function (filter) {
-                    self.showFilteredPage(filter, self)
+                    self.showFilteredPage(filter)
                 });
                 self.filterview.bind('defaultFilter', function () {
-                    self.showFilteredPage({}, self);
+                    self.showFilteredPage({});
                 });
 
                 self.filterview.render();
@@ -356,8 +355,8 @@ define([
                 this.defaultItemsNumber = 0;
                 this.$el.find('.thumbnailwithavatar').remove();
 
-                this.changeLocationHash(null, context.defaultItemsNumber, filter);
-                this.collection.showMoreAlphabet({ count: context.defaultItemsNumber, page: 1, filter: filter });
+                this.changeLocationHash(null, this.defaultItemsNumber, filter);
+                this.collection.showMoreAlphabet({ count: this.defaultItemsNumber, page: 1, filter: filter });
                 this.getTotalLength(this.defaultItemsNumber, filter);
             },
 
