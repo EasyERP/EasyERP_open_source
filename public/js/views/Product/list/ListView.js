@@ -81,12 +81,13 @@ define([
                 $(e.target).addClass("current");
                 this.newCollection = false;
                 var selectedLetter = $(e.target).text();
+
                 if ($(e.target).text() == "All") {
                     selectedLetter = "";
                 }
-                this.filter = (this.filter) ? this.filter : {};
+
+                this.filter =  {};
                 this.filter['letter'] = selectedLetter;
-                this.filter['canBePurchased'] = true;
                 var itemsNumber = $("#itemsNumber").text();
                 this.changeLocationHash(1, itemsNumber, this.filter);
                 this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter });
@@ -151,6 +152,7 @@ define([
                 this.$el.find(".allNumberPerPage, .newSelectList").hide();
                 if (!el.closest('.search-view')) {
                     $('.search-content').removeClass('fa-caret-up');
+                    this.$el.find('.search-options').addClass('hidden');
                 };
             },
 
@@ -180,7 +182,6 @@ define([
                 $('.ui-dialog ').remove();
                 var self = this;
                 var currentEl = this.$el;
-                var FilterView;
 
                 currentEl.html('');
                 currentEl.append(_.template(listTemplate));
@@ -193,7 +194,6 @@ define([
                     else
                         $("#top-bar-deleteBtn").hide();
                 });
-
                 $(document).on("click", function (e) {
                     self.hideItemsNumber(e);
                 });
@@ -212,28 +212,17 @@ define([
                         });
                     }
                 });
-                //dataService.getData('/product/getFilterValues', null, function (values) {
-                //    FilterView = new filterView({ collection: [], customCollection: values});
-                //    // Filter custom event listen ------begin
-                //    FilterView.bind('filter', function () {
-                //        self.showFilteredPage()
-                //    });
-                //    FilterView.bind('defaultFilter', function () {
-                //        self.showFilteredPage();
-                //    });
-                //    // Filter custom event listen ------end
-                //});
 
-                self.filterview = new filterView({ contentType: self.contentType });
+                self.filterView = new filterView({ contentType: self.contentType });
 
-                self.filterview.bind('filter', function (filter) {
+                self.filterView.bind('filter', function (filter) {
                     self.showFilteredPage(filter)
                 });
-                self.filterview.bind('defaultFilter', function () {
+                self.filterView.bind('defaultFilter', function () {
                     self.showFilteredPage({});
                 });
 
-                self.filterview.render();
+                self.filterView.render();
 
                 currentEl.append(_.template(paginationTemplate));
 
@@ -346,19 +335,24 @@ define([
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
 
+                if (selectedLetter === "All") {
+                    selectedLetter = '';
+                }
+
                 this.startTime = new Date();
                 this.newCollection = false;
+
+
 
                 if (Object.keys(filter).length === 0){
                     this.filter = {};
                 }
-                this.defaultItemsNumber = 0;
-                this.$el.find('.thumbnailwithavatar').remove();
 
-                this.changeLocationHash(null, this.defaultItemsNumber, filter);
-                this.collection.showMore({ count: this.defaultItemsNumber, page: 1, filter: filter });
-                this.getTotalLength(this.defaultItemsNumber, filter);
+                this.changeLocationHash(1, itemsNumber, filter);
+                this.collection.showMore({ count: itemsNumber, page: 1, filter: filter});
+                this.getTotalLength(null, itemsNumber, filter);
             },
+
 
             showPage: function (event) {
                 event.preventDefault();
@@ -368,7 +362,11 @@ define([
             showMoreContent: function (newModels) {
                 var holder = this.$el;
                 holder.find("#listTable").empty();
-                var itemView = new listItemView({ collection: newModels, page: holder.find("#currentShowPage").val(), itemsNumber: holder.find("span#itemsNumber").text() });
+                var itemView = new listItemView({
+                    collection: newModels,
+                    page: holder.find("#currentShowPage").val(),
+                    itemsNumber: holder.find("span#itemsNumber").text()
+                });
                 holder.append(itemView.render());
                 itemView.undelegateEvents();
                 var pagenation = holder.find('.pagination');
@@ -388,12 +386,14 @@ define([
             //modified for filter Vasya
             showMoreAlphabet: function (newModels) {
                 var holder = this.$el;
+                var itemsNumber = holder.find("span#itemsNumber").text();
                 var alphaBet = holder.find('#startLetter');
                 var created = holder.find('#timeRecivingDataFromServer');
                 content.remove();
-                holder.append(this.template({ collection: newModels.toJSON(), page: holder.find("#currentShowPage").val(), itemsNumber: holder.find("span#itemsNumber").text() }));
+                holder.append(this.template({ collection: newModels.toJSON(), page: holder.find("#currentShowPage").val(), itemsNumber: itemsNumber }));
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
+
                 this.getTotalLength(null, itemsNumber, this.filter);
                 created.text("Created in " + (new Date() - this.startTime) + " ms");
                 holder.prepend(alphaBet);
@@ -491,7 +491,7 @@ define([
 									$("#startLetter").remove();
 									that.alphabeticArray = arr;
 									currentEl.prepend(_.template(aphabeticTemplate, { alphabeticArray: that.alphabeticArray, selectedLetter: (that.selectedLetter == "" ? "All" : that.selectedLetter), allAlphabeticArray: that.allAlphabeticArray }));
-									var currentLetter = (that.filter) ? that.filter.letter : null
+									var currentLetter = (that.filter) ? that.filter.letter : null;
 									if (currentLetter) {
 										$('#startLetter a').each(function() {
 											var target = $(this);

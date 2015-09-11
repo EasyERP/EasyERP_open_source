@@ -222,27 +222,31 @@ var Products = function (models) {
             key = filter[filterName]['key'];
 
             switch (filterName) {
+                case 'letter':
+                    filtrElement['name'] = new RegExp('^[' + filter.letter.toLowerCase() + filter.letter.toUpperCase() + '].*');
+                    resArray.push(filtrElement);
+                    break;
                 case 'name':
                     filtrElement[key] = {$in: condition.objectID()};
                     resArray.push(filtrElement);
                     break;
-                case 'info.productType':
+                case 'productType':
                     filtrElement[key] = {$in: condition};
                     resArray.push(filtrElement);
                     break;
                 case 'canBeSold':
                     condition = ConvertType(condition, 'boolean');
-                    filtrElement[key] = condition;
+                    filtrElement[key] = {$in: condition};
                     resArray.push(filtrElement);
                     break;
                 case 'canBeExpensed':
                     condition = ConvertType(condition, 'boolean');
-                    filtrElement[key] = condition;
+                    filtrElement[key] = {$in: condition};
                     resArray.push(filtrElement);
                     break;
                 case 'canBePurchased':
                     condition = ConvertType(condition, 'boolean');
-                    filtrElement[key] = condition;
+                    filtrElement[key] = {$in: condition};
                     resArray.push(filtrElement);
                     break;
             }
@@ -537,15 +541,7 @@ var Products = function (models) {
         var queryObject = {};
         var query;
 
-        //if (options && options.filter && options.filter.canBeSold) {
-        //    queryObject['canBeSold'] = true;
-        //}
-        //
-        //if (options && options.filter && options.filter.canBePurchased) {
-        //    queryObject['canBePurchased'] = true;
-        //}
-
-        query = models.get(req.session.lastDb, "Products", ProductSchema).aggregate([{$match: queryObject}, {$project: {later: {$substr: ["$name", 0, 1]}}}, {$group: {_id: "$later"}}]);
+        query = models.get(req.session.lastDb, "Product", ProductSchema).aggregate([{$match: queryObject}, {$project: {later: {$substr: ["$name", 0, 1]}}}, {$group: {_id: "$later"}}]);
         query.exec(function (err, result) {
             if (err) {
                 next(err)
@@ -579,18 +575,6 @@ var Products = function (models) {
 
         var contentSearcher;
         var waterfallTasks;
-
-        /*if (data && data.filter && data.filter.canBeSold) {
-         optionsObject['canBeSold'] = true;
-         }
-
-         if (data && data.filter && data.filter.canBePurchased) {
-         optionsObject['canBePurchased'] = true;
-         }
-
-         if (data.filter && data.filter.letter) {
-         optionsObject['name'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
-         }*/
 
         if (data.filter && typeof data.filter === 'object') {
             if (data.filter.condition === 'or') {
