@@ -91,13 +91,14 @@ define([
                         console.log('can\'t fetch currentUser');
                     }
                 });
-            };
+            }
+            ;
         },
 
-        dashBoardVacation: function(){
+        dashBoardVacation: function () {
             var self = this;
 
-            if(!this.isAuth) {
+            if (!this.isAuth) {
                 this.checkLogin(function (success) {
                     if (success) {
                         self.isAuth = true;
@@ -110,7 +111,7 @@ define([
                 renderDash();
             }
 
-            function renderDash () {
+            function renderDash() {
                 var startTime = new Date();
                 var contentViewUrl = "views/vacationDashboard/index";
 
@@ -132,10 +133,10 @@ define([
             }
         },
 
-        hrDashboard: function(){
+        hrDashboard: function () {
             var self = this;
 
-            if(!this.isAuth) {
+            if (!this.isAuth) {
                 this.checkLogin(function (success) {
                     if (success) {
                         self.isAuth = true;
@@ -148,7 +149,7 @@ define([
                 renderDash();
             }
 
-            function renderDash () {
+            function renderDash() {
                 var startTime = new Date();
                 var contentViewUrl = "views/hrDashboard/index";
 
@@ -170,7 +171,7 @@ define([
             }
         },
 
-        redirectTo: function(){
+        redirectTo: function () {
             if (App.requestedURL === null) {
                 App.requestedURL = Backbone.history.fragment;
             }
@@ -178,10 +179,10 @@ define([
             Backbone.history.navigate("login", {trigger: true});
         },
 
-        revenue: function(){
+        revenue: function () {
             var self = this;
 
-            if(!this.isAuth) {
+            if (!this.isAuth) {
                 this.checkLogin(function (success) {
                     if (success) {
                         self.isAuth = true;
@@ -194,7 +195,7 @@ define([
                 renderRevenue();
             }
 
-            function renderRevenue () {
+            function renderRevenue() {
                 var startTime = new Date();
                 var contentViewUrl = "views/Revenue/index";
 
@@ -216,10 +217,10 @@ define([
             }
         },
 
-        hours: function(){
+        hours: function () {
             var self = this;
 
-            if(!this.isAuth) {
+            if (!this.isAuth) {
                 this.checkLogin(function (success) {
                     if (success) {
                         self.isAuth = true;
@@ -232,7 +233,7 @@ define([
                 renderRevenue();
             }
 
-            function renderRevenue () {
+            function renderRevenue() {
                 var startTime = new Date();
                 var contentViewUrl = "views/Hours/index";
 
@@ -292,11 +293,11 @@ define([
                 if (success) {
                     goProfile(self);
                 } else {
-                   self.redirectTo();
+                    self.redirectTo();
                 }
             });
 
-            function goProfile (context) {
+            function goProfile(context) {
                 var startTime = new Date();
                 if (context.mainView === null) {
                     context.main("Profiles");
@@ -316,7 +317,7 @@ define([
                     collection.bind('reset', _.bind(createViews, self));
                     custom.setCurrentVT('list');
 
-                    function createViews () {
+                    function createViews() {
                         collection.unbind('reset');
                         var contentview = new contentView({collection: collection, startTime: startTime});
                         var topbarView = new topBarView({actionType: "Content"});
@@ -342,11 +343,11 @@ define([
                 if (success) {
                     goSettings(self);
                 } else {
-                   self.redirectTo();
+                    self.redirectTo();
                 }
             });
 
-            function goSettings (context) {
+            function goSettings(context) {
                 var startTime = new Date();
                 var contentViewUrl = 'views/settingsProduct/ContentView';
                 var topBarViewUrl = 'views/settingsProduct/TopBarView';
@@ -365,7 +366,7 @@ define([
                     collection.bind('reset', _.bind(createViews, self));
                     custom.setCurrentVT('list');
 
-                    function createViews () {
+                    function createViews() {
                         collection.unbind('reset');
 
                         var url;
@@ -398,7 +399,7 @@ define([
                 }
             });
 
-            function goMyProfile (context) {
+            function goMyProfile(context) {
                 var startTime = new Date();
                 var contentViewUrl = "views/myProfile/ContentView";
                 var topBarViewUrl = "views/myProfile/TopBarView";
@@ -434,7 +435,7 @@ define([
                 }
             });
 
-            function goDashboard (context) {
+            function goDashboard(context) {
                 var startTime = new Date();
                 var contentViewUrl = "views/Dashboard/ContentView";
                 var topBarViewUrl = "views/Dashboard/TopBarView";
@@ -468,7 +469,7 @@ define([
                 }
             });
 
-            function goProjectDashboard (context) {
+            function goProjectDashboard(context) {
                 var startTime = new Date();
                 var contentViewUrl = "views/projectDashboard/ContentView";
                 var topBarViewUrl = "views/projectDashboard/TopBarView";
@@ -502,7 +503,7 @@ define([
                 }
             });
 
-            function goToWorkflows (context) {
+            function goToWorkflows(context) {
                 var startTime = new Date();
 
                 if (context.mainView === null) {
@@ -523,7 +524,7 @@ define([
                     collection.bind('reset', _.bind(createViews, self));
                     custom.setCurrentVT('list');
 
-                    function createViews () {
+                    function createViews() {
                         collection.unbind('reset');
                         var contentview = new contentView({collection: collection, startTime: startTime});
                         var topbarView = new topBarView({actionType: "Content"});
@@ -576,7 +577,7 @@ define([
                 }
             });
 
-            function goList (context) {
+            function goList(context) {
                 var currentContentType = context.testContent(contentType);
                 if (contentType !== currentContentType) {
                     contentType = currentContentType;
@@ -594,13 +595,36 @@ define([
                 var collectionUrl = context.buildCollectionRoute(contentType);
                 var navigatePage = (page) ? parseInt(page) : 1;
                 var count = (countPerPage) ? parseInt(countPerPage) || 100 : 100;
+                var location = window.location.hash;
 
-               // if (filter === 'empty') {
                 if (!filter) {
                     newCollection = false;
+
+                    if (contentType === 'salesProduct') {
+                        filter = {
+                            'canBeSold': {
+                                key: 'canBeSold',
+                                value: ['true']
+                            }
+
+                        };
+
+                        Backbone.history.fragment = '';
+                        Backbone.history.navigate(location +  '/filter=' + encodeURI(JSON.stringify(filter)));
+                    } else if (contentType === 'Product') {
+                        filter = {
+                            'canBePurchased': {
+                                key: 'canBePurchased',
+                                value: ['true']
+                            }
+                        };
+                        Backbone.history.fragment = '';
+                        Backbone.history.navigate(location + '/filter=' + encodeURI(JSON.stringify(filter)));
+                    }
                 } else if (filter) {
                     filter = JSON.parse(filter);
                 }
+
 
                 savedFilter = custom.savedFilters(contentType, filter);
 
@@ -623,7 +647,7 @@ define([
                     collection.bind('reset', _.bind(createViews, self));
                     custom.setCurrentVT('list');
 
-                    function createViews () {
+                    function createViews() {
                         collection.unbind('reset');
                         var topbarView = new topBarView({actionType: "Content", collection: collection});
                         var contentview = new contentView({
@@ -658,7 +682,7 @@ define([
                 }
             });
 
-            function goForm (context) {
+            function goForm(context) {
                 var currentContentType = context.testContent(contentType);
                 if (contentType !== currentContentType) {
                     contentType = currentContentType;
@@ -724,7 +748,7 @@ define([
                 }
             });
 
-            function goKanban (context) {
+            function goKanban(context) {
                 var self = context;
                 var currentContentType = context.testContent(contentType);
                 if (contentType !== currentContentType) {
@@ -748,7 +772,7 @@ define([
 
                     collection.bind('reset', _.bind(createViews, self));
 
-                    function createViews () {
+                    function createViews() {
                         var contentview = new contentView({
                             workflowCollection: collection,
                             startTime: startTime,
@@ -785,7 +809,7 @@ define([
                 }
             });
 
-            function goThumbnails (context) {
+            function goThumbnails(context) {
                 var currentContentType = context.testContent(contentType);
                 if (contentType !== currentContentType) {
                     contentType = currentContentType;
@@ -800,9 +824,30 @@ define([
                 var collectionUrl;
                 var savedFilter;
                 var count = (countPerPage) ? parseInt(countPerPage) || 100 : 100;
-                //if (filter === 'empty') {
+                var location = window.location.hash;
+
                 if (!filter) {
                     newCollection = false;
+
+                    if (contentType === 'salesProduct') {
+                        filter = {
+                            'canBeSold': {
+                                key: 'canBeSold',
+                                value: ['true']
+                            }
+                        };
+                        Backbone.history.fragment = '';
+                        Backbone.history.navigate(location + '/c=' + count + '/filter=' + encodeURI(JSON.stringify(filter)));
+                    } else if (contentType === 'Product') {
+                        filter = {
+                            'canBePurchased': {
+                                key: 'canBePurchased',
+                                value: ['true']
+                            }
+                        };
+                        Backbone.history.fragment = '';
+                        Backbone.history.navigate(location + '/c=' + count + '/filter=' + encodeURI(JSON.stringify(filter)));
+                    }
                 } else if (filter) {
                     filter = JSON.parse(filter);
                 }
@@ -832,7 +877,7 @@ define([
                     collection.bind('reset', _.bind(createViews, self));
                     custom.setCurrentVT('thumbnails');
 
-                    function createViews () {
+                    function createViews() {
                         collection.unbind('reset');
                         var contentview = new contentView({
                             collection: collection,
@@ -887,7 +932,7 @@ define([
         },
 
         changeView: function (view, hideTopBar) {
-            if(hideTopBar){
+            if (hideTopBar) {
                 $('#top-bar').hide();
             } else {
                 $('#top-bar').show();

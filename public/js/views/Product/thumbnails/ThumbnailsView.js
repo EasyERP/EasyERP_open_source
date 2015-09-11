@@ -46,8 +46,19 @@
                 "click .thumbnailwithavatar": "gotoEditForm",
                 "click .letter:not(.empty)": "alpabeticalRender",
                 "click .saveFilterButton": "saveFilter",
-                "click .removeFilterButton": "removeFilter"
+                "click .removeFilterButton": "removeFilter",
             },
+
+            hideItemsNumber: function (e) {
+                var el = e.target;
+
+                this.$el.find(".allNumberPerPage, .newSelectList").hide();
+                if (!el.closest('.search-view')) {
+                    $('.search-content').removeClass('fa-caret-up');
+                    this.$el.find('.search-options').addClass('hidden');
+                };
+            },
+
 
             //modified for filter Vasya
             getTotalLength: function (currentNumber, filter, newCollection) {
@@ -128,28 +139,13 @@
                     }
                 });
 
-                //if (this.collection.length > 0) {
-                    currentEl.append(this.template({collection: this.collection.toJSON()}));
-               // } else {
-                   // currentEl.html('<h2>No Products found</h2>');
-               // }
+                currentEl.append(this.template({collection: this.collection.toJSON()}));
+
                 currentEl.append(createdInTag);
 
                 $(document).on("click", function (e) {
                     self.hideItemsNumber(e);
                 });
-                //dataService.getData('/product/getFilterValues', null, function (values) {
-                //    FilterView = new filterView({ collection: [], customCollection: values});
-                //    // Filter custom event listen ------begin
-                //    FilterView.unbind();
-                //    FilterView.bind('filter', function () {
-                //        self.alpabeticalRender()
-                //    });
-                //    FilterView.bind('defaultFilter', function () {
-                //        self.alpabeticalRender();
-                //    });
-                //    // Filter custom event listen ------end
-                //});
 
                 self.filterview = new filterView({ contentType: self.contentType });
 
@@ -184,18 +180,8 @@
                 this.$el.find('.thumbnailwithavatar').remove();
 
                 this.changeLocationHash(null, this.defaultItemsNumber, filter);
-                this.collection.showMore({ count: this.defaultItemsNumber, page: 1, filter: filter });
+                this.collection.showMoreAlphabet({ count: this.defaultItemsNumber, page: 1, filter: filter });
                 this.getTotalLength(this.defaultItemsNumber, filter);
-            },
-
-
-            hideItemsNumber: function (e) {
-                var el = e.target;
-
-                this.$el.find(".allNumberPerPage, .newSelectList").hide();
-                if (!el.closest('.search-view')) {
-                    $('.search-content').removeClass('fa-caret-up');
-                };
             },
 
             gotoForm: function (e) {
@@ -259,24 +245,23 @@
             },
             //modified for filter Vasya
             showMoreAlphabet: function (newModels) {
-
                 var holder = this.$el;
-                var alphaBet = holder.find('#startLetter');
                 var created = holder.find('#timeRecivingDataFromServer');
                 var showMore = holder.find('#showMoreDiv');
-                var content = holder.find(".thumbnailwithavatar");
+
                 this.defaultItemsNumber += newModels.length;
+
                 this.changeLocationHash(null, (this.defaultItemsNumber < 100) ? 100 : this.defaultItemsNumber, this.filter);
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
+
                 holder.append(this.template({collection: newModels.toJSON()}));
-               // holder.prepend(alphaBet);
                 holder.append(created);
                 created.before(showMore);
+
                 this.asyncLoadImgs(newModels);
             },
 
             createItem: function () {
-                //create editView in dialog here
                 new createView();
             }
         });
