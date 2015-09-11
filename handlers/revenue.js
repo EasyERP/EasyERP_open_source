@@ -13,6 +13,7 @@ var wTrack = function (models) {
     var vacationSchema = mongoose.Schemas['Vacation'];
     var holidaysSchema = mongoose.Schemas['Holiday'];
     var employeeSchema = mongoose.Schemas['Employee'];
+    var HoursCashesSchema = mongoose.Schemas['HoursCashes'];
     var constForView = [
         'iOS',
         'Android',
@@ -2128,6 +2129,18 @@ var wTrack = function (models) {
                 res.status(200).send(departments);
             }
         });
+    }
+
+    this.getFromCash = function(req, res, next){
+        var HoursCashes = models.get(req.session.lastDb, 'HoursCashes', HoursCashesSchema);
+
+        access.getReadAccess(req, req.session.uId, 67, function (access) {
+            if (access) {
+
+            } else {
+                return res.status(403).send();
+            }
+        })
     }
 };
 
