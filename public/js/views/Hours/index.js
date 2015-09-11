@@ -75,16 +75,16 @@ define([
             var currentYear = moment().weekYear();
             var currentMonth = parseInt(moment().week(currentStartWeek).format("MM"));
 
+            self.model.set({
+                currentStartWeek: currentStartWeek,
+                currentYear: currentYear,
+                currentMonth: currentMonth
+            });
+
             this.changeWeek = _.debounce(this.updateWeek, 1);
 
 
             dataService.getData('/employee/bySales', null, function (employess) {
-
-                self.model.set({
-                    currentStartWeek: currentStartWeek,
-                    currentYear: currentYear,
-                    currentMonth: currentMonth
-                });
 
                 self.render(employess);
                 self.$currentStartWeek.val(currentStartWeek);
@@ -234,15 +234,22 @@ define([
                 }
             }
 
-            this.fetchHours();
+
 
             this.model.set('weeksArr', weeksArr);
 
             custom.cashToApp('weeksArr', weeksArr);
+
+            //this.fetchHours();
         },
 
         fetchHours: function () {
             var self = this;
+            //var currentWeek = moment().week();
+            //var nowMonth = parseInt(moment().week(currentWeek).format("MM"));
+            //var currentStartWeek = currentWeek - 6;
+            //var currentYear = moment().year();
+            //var currentMonth = parseInt(moment().week(currentStartWeek).format("MM"));
             var week = this.model.get('currentStartWeek');
             var year = this.model.get('currentYear');
             var month = this.model.get('currentMonth');
@@ -254,22 +261,22 @@ define([
 
                },
                 byMonth: {
-                    year: year,
+                    year: year - 1,
                     month: month
                 }
             };
 
             dataService.getData('/revenue/getFromCash', data, function (result) {
-                self.model.set('hoursByDep', result['hoursByDep']);
+                self.model.set('hoursByDep', result.result['hoursByDep']);
                 self.model.trigger('change:hoursByDep');
 
-                self.model.set('totalHours', result['totalHours']);
+                self.model.set('totalHours', result.result['totalHours']);
                 self.model.trigger('change:totalHours');
 
-                self.model.set('hoursSold', result['hoursSold']);
+                self.model.set('hoursSold', result.result['hoursSold']);
                 self.model.trigger('change:hoursSold');
 
-                self.model.set('hoursUnsold', result['hoursUnsold']);
+                self.model.set('hoursUnsold', result.result['hoursUnsold']);
                 self.model.trigger('change:hoursUnsold');
             });
         },
