@@ -2745,6 +2745,8 @@ var wTrack = function (models) {
             var dateByMonth = query.byMonth.year * 100 + query.byMonth.month;
             var dateKey = dateByWeek + '_' + dateByMonth;
             var waterfallTasks;
+            var modelToSave;
+            var hoursCashes;
 
             if (!access) {
                 return res.status(403).send();
@@ -2787,12 +2789,29 @@ var wTrack = function (models) {
                                 return callback(null, 'Done!');
                             },
                             function(callback) {
+                                modelToSave = {
+                                    dateField: dateKey,
+                                    result: result
+                                };
 
+                                hoursCashes = new HoursCashes(modelToSave);
+                                hoursCashes.save(function(err) {
+                                    if (err) {
+                                        return callback(err);
+                                    }
+
+                                    return callback(null, 'Done!');
+                                })
                             }
-                        ])
-
+                        ], function(err, results) {
+                            if (err) {
+                                return next(err);
+                            }
+                        });
                     })
 
+                } else {
+                    res.status(200).send(result);
                 }
             })
         })
