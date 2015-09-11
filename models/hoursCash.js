@@ -3,7 +3,7 @@ module.exports = (function () {
 
     var hoursCashSchema = new mongoose.Schema({
         dateField: {type: String, default: ''},
-        result: [],
+        result: JSON
 
     }, {collection: 'HoursCashes'});
 
