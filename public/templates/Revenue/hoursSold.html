@@ -15,7 +15,6 @@
     <%var byMonthData = employee.hoursSold%>
     <div class="divRow" data-val="<%=content%>">
         <% if (byMonthData && byMonthData[key]) {%>
-        <% totalForDep +=  byMonthData[key]; %>
         <span class="divCell forBonus" ><%= byMonthData[key] ? byMonthData[key] : '&nbsp'%></span>
         <% } else {%>
         <span class="divCell forBonus" ><%= '&nbsp'%></span>

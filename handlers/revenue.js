@@ -2610,6 +2610,9 @@ var wTrack = function (models) {
                                 var vacationForEmployee = 0;
                                 var hoursForMonth;
                                 var holidaysForMonth = 0;
+                                var hireFirst;
+                                var hireLast;
+                                var fireFirst;
 
                                 hoursForMonth = months.hours;
 
@@ -2631,8 +2634,21 @@ var wTrack = function (models) {
 
                                 key = year * 100 + month;
 
-                                employee.hoursTotal[key] = parseInt(hoursForMonth) - parseInt(vacationForEmployee) * 8 - parseInt(holidaysForMonth) * 8;
-                                employee.total += employee.hoursTotal[key];
+                                hireFirst = employee.hire[0] ?  employee.hire[0] : key;
+                                hireLast = employee.hire[1] ?  employee.hire[1] : hireFirst;
+                                fireFirst = employee.fire[0] ?  employee.fire[0] : key;
+
+                                if ((hireFirst <= key) && (key <=  fireFirst))  {
+                                    employee.hoursTotal[key] = parseInt(hoursForMonth) - parseInt(vacationForEmployee) * 8 - parseInt(holidaysForMonth) * 8;
+                                    employee.total += employee.hoursTotal[key];
+                                } else if (key >=  hireLast){
+                                    employee.hoursTotal[key] = parseInt(hoursForMonth) - parseInt(vacationForEmployee) * 8 - parseInt(holidaysForMonth) * 8;
+                                    employee.total += employee.hoursTotal[key];
+                                } else {
+                                    employee.hoursTotal[key] = 0;
+                                    employee.total += employee.hoursTotal[key];
+                                }
+
                             });
 
                             department.employees.push(employee);
@@ -2669,8 +2685,8 @@ var wTrack = function (models) {
                             objToSave.name = employee.name;
                             objToSave.total = employee.total;
                             objToSave.hoursTotal = employee.hoursTotal;
-                            objToSave.hire = employee.hire;
-                            objToSave.fire = employee.fire;
+                           // objToSave.hire = employee.hire;
+                            //objToSave.fire = employee.fire;
 
                             object = _.clone(objToSave);
 
@@ -2720,8 +2736,8 @@ var wTrack = function (models) {
                                     }
                                 });
                             }
-                            objToSave.hire = employee.hire;
-                            objToSave.fire = employee.fire;
+                           // objToSave.hire = employee.hire;
+                           // objToSave.fire = employee.fire;
                             objToSave.hoursTotal = {};
                             objToSave.total = 0;
                             keys.forEach(function (key) {
@@ -2765,8 +2781,6 @@ var wTrack = function (models) {
                     if (err) {
                         return next(err);
                     }
-
-                    var resForView = result[0].toJSON();
 
                     if (result.length === 0) {
 
@@ -2818,7 +2832,8 @@ var wTrack = function (models) {
                             })
 
                     } else {
-                        res.status(200).send(resForView);
+                        var resForView = result[0].toJSON();
+                        res.status(200).send(resForView.result);
                     }
                 })
             })

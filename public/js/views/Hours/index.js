@@ -235,7 +235,6 @@ define([
             }
 
 
-
             this.model.set('weeksArr', weeksArr);
 
             custom.cashToApp('weeksArr', weeksArr);
@@ -245,21 +244,16 @@ define([
 
         fetchHours: function () {
             var self = this;
-            //var currentWeek = moment().week();
-            //var nowMonth = parseInt(moment().week(currentWeek).format("MM"));
-            //var currentStartWeek = currentWeek - 6;
-            //var currentYear = moment().year();
-            //var currentMonth = parseInt(moment().week(currentStartWeek).format("MM"));
             var week = this.model.get('currentStartWeek');
             var year = this.model.get('currentYear');
             var month = this.model.get('currentMonth');
 
             var data = {
-               byWeek: {
-                   year: year,
-                   week: week
+                byWeek: {
+                    year: year,
+                    week: week
 
-               },
+                },
                 byMonth: {
                     year: year - 1,
                     month: month
@@ -267,41 +261,19 @@ define([
             };
 
             dataService.getData('/revenue/getFromCash', data, function (result) {
-                self.model.set('hoursByDep', result.result['hoursByDep']);
+                self.model.set('hoursByDep', result['hoursByDep']);
                 self.model.trigger('change:hoursByDep');
 
-                self.model.set('totalHours', result.result['totalHours']);
+                self.model.set('totalHours', result['totalHours']);
                 self.model.trigger('change:totalHours');
 
-                self.model.set('hoursSold', result.result['hoursSold']);
+                self.model.set('hoursSold', result['hoursSold']);
                 self.model.trigger('change:hoursSold');
 
-                self.model.set('hoursUnsold', result.result['hoursUnsold']);
+                self.model.set('hoursUnsold', result['hoursUnsold']);
                 self.model.trigger('change:hoursUnsold');
             });
         },
-
-        //fetchTotalHours: function () {
-        //    var self = this;
-        //    var data = this.paidUnpaidDateRange;
-        //
-        //    dataService.getData('/revenue/totalHours', data, function (totalHours) {
-        //        self.model.set('totalHours', totalHours);
-        //        self.model.trigger('change:totalHours');
-        //        self.model.trigger('change:hoursUnsold');
-        //    });
-        //},
-        //
-        //fetchHoursSold: function () {
-        //    var self = this;
-        //    var data = this.paidUnpaidDateRange;
-        //
-        //    dataService.getData('/revenue/hoursSold', data, function (hoursSold) {
-        //        self.model.set('hoursSold', hoursSold);
-        //        self.model.trigger('change:hoursSold');
-        //        self.model.trigger('change:hoursUnsold');
-        //    });
-        //},
 
         changeHoursByDep: function () {
             var self = this;
@@ -411,7 +383,6 @@ define([
             var targetTotal;
             var self = this;
 
-
             target.html(this.totalHoursTemplate({
                 departments: totalHours,
                 content: 'totalTotalHours',
@@ -425,30 +396,16 @@ define([
             async.each(totalHours, function (element, cb) {
                 var department = element.name;
                 var departmentContainer = target.find('[data-id="' + department + '"]');
+                var total;
 
-
-                var totalObj;
-
-                if (totalHours) {
-                    var total;
-                    var employeesArr;
-
-                    total = element.totalForDep;
-                    globalTotal += total;
-                    employeesArr = element.employees;
-
-                    employeesArr.forEach(function (employee) {
-                        totalObj = employee.hoursTotal;
-                        departmentContainer.html(self.totalHoursByMonth({
-                            content: 'totalTotalHours',
-                            departments: totalHours,
-                            monthArr: monthArr,
-                            byMonthData: totalObj,
-                            total: total,
-                            employees: element.employees
-                        }));
-                    });
-                }
+                total = element.totalForDep;
+                globalTotal += total;
+                departmentContainer.html(self.totalHoursByMonth({
+                    content: 'totalTotalHours',
+                    monthArr: monthArr,
+                    total: total,
+                    employees: element.employees
+                }));
 
                 cb();
             }, function (err) {
@@ -467,11 +424,13 @@ define([
                             var key = monthResult.year * 100 + monthResult.month;
 
                             if (!bySalesPerMonth[key]) {
-                                if (totalHours[key]) {
+                                if (totalHours && totalHours[key]) {
                                     bySalesPerMonth[key] = totalHours[key];
                                 }
                             } else {
-                                bySalesPerMonth[key] += totalHours[key];
+                                if (totalHours && totalHours[key]) {
+                                    bySalesPerMonth[key] += totalHours[key];
+                                }
                             }
                         });
                     });
@@ -496,8 +455,8 @@ define([
         },
 
         changeHoursUnsold: function () {
-           // var hoursSold = this.model.get('hoursSold');
-           // var totalHours = this.model.get('totalHours');
+            // var hoursSold = this.model.get('hoursSold');
+            // var totalHours = this.model.get('totalHours');
             var resultForUnsold = this.model.get('hoursUnsold');
             var monthArr = this.monthArr;
             var target = this.$el.find('#totalHoursUnsold');
@@ -507,7 +466,6 @@ define([
             var bonusRows;
             var targetTotal;
             var self = this;
-
 
 
             target.html(this.totalHoursTemplate({
@@ -523,30 +481,17 @@ define([
             async.each(resultForUnsold, function (element, cb) {
                 var department = element.name;
                 var departmentContainer = target.find('[data-id="' + department + '"]');
+                var total;
 
+                total = element.totalForDep;
+                globalTotal += total;
+                departmentContainer.html(self.totalHoursByMonth({
+                    content: 'totalHoursUnsold',
+                    monthArr: monthArr,
+                    total: total,
+                    employees: element.employees
+                }));
 
-                var totalObj;
-
-                if (resultForUnsold) {
-                    var total;
-                    var employeesArr;
-
-                    total = element.totalForDep;
-                    globalTotal += total;
-                    employeesArr = element.employees;
-
-                    employeesArr.forEach(function (employee) {
-                        totalObj = employee.hoursTotal;
-                        departmentContainer.html(self.totalHoursByMonth({
-                            content: 'totalHoursUnsold',
-                            departments: resultForUnsold,
-                            monthArr: monthArr,
-                            byMonthData: totalObj,
-                            total: total,
-                            employees: element.employees
-                        }));
-                    });
-                }
 
                 cb();
             }, function (err) {
@@ -565,11 +510,13 @@ define([
                             var key = monthResult.year * 100 + monthResult.month;
 
                             if (!bySalesPerMonth[key]) {
-                                if (totalHours[key]) {
+                                if (totalHours && totalHours[key]) {
                                     bySalesPerMonth[key] = totalHours[key];
                                 }
                             } else {
-                                bySalesPerMonth[key] += totalHours[key];
+                                if (totalHours && totalHours[key]){
+                                    bySalesPerMonth[key] += totalHours[key];
+                                }
                             }
                         });
                     });
@@ -619,30 +566,17 @@ define([
             async.each(hoursSold, function (element, cb) {
                 var department = element.name;
                 var departmentContainer = target.find('[data-id="' + department + '"]');
+                var total;
 
+                total = element.totalForDep;
+                globalTotal += total;
 
-                var totalObj;
-
-                if (departments) {
-                    var total;
-                    var employeesArr;
-
-                    total = element.totalForDep;
-                    globalTotal += total;
-                    employeesArr = element.employees;
-
-                    employeesArr.forEach(function (employee) {
-                        totalObj = employee.hoursSold;
-                        departmentContainer.html(self.hoursSoldByMonth({
-                            content: 'totalHoursSold',
-                            departments: hoursSold,
-                            monthArr: monthArr,
-                            byMonthData: totalObj,
-                            total: total,
-                            employees: element.employees
-                        }));
-                    });
-                }
+                departmentContainer.html(self.hoursSoldByMonth({
+                    content: 'totalHoursSold',
+                    monthArr: monthArr,
+                    total: total,
+                    employees: element.employees
+                }));
 
                 cb();
             }, function (err) {
