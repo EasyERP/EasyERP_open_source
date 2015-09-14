@@ -19,6 +19,7 @@
                 var year;
                 var month;
                 var week;
+
                 var syncObject = {
                     trigger: this.trigger,
                     url: this.url,
@@ -27,19 +28,21 @@
                     }
                 };
 
-                var saveObject = {
-                    trigger: this.trigger,
-                    url: this.url,
-                    toJSON: function () {
-                        return newModel;
-                    }
-                };
+                //var saveObject = {
+                //    trigger: this.trigger,
+                //    url: this.url,
+                //    toJSON: function () {
+                //        return newModel;
+                //    }
+                //};
+                //
+                //var options = {
+                //    success: function (model, resp, xhr) {
+                //        self.trigger('saved', model);
+                //    }
+                //};
 
-                var options = {
-                    success: function (model, resp, xhr) {
-                        self.trigger('saved', model);
-                    }
-                };
+
                 var updatedOptions = {
                     success: function (model, resp, xhr) {
                         self.trigger('updated');
@@ -68,6 +71,21 @@
 
                         models.push(modelObject);
                     } else if (model && !model.id){
+
+                        var saveObject = {
+                            trigger: this.trigger,
+                            url: this.url,
+                            toJSON: function () {
+                                return newModel;
+                            }
+                        };
+
+                        var options = {
+                            success: function (model, resp, xhr) {
+                                self.trigger('saved', model);
+                            }
+                        };
+
                         newModel = model.changed;
                         newModel._id =  model.id;
 

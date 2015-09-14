@@ -296,22 +296,42 @@ var Payment = function (models) {
                     filtrElement[key] = condition;
                     resArray.push(filtrElement);
                     break;
+                case 'paymentRef':
+                    filtrElement[key] = {$in: condition};
+                    resArray.push(filtrElement);
+                    break;
+                case 'year':
+                    ConvertType(condition, 'integer');
+                    filtrElement[key] = {$in: condition};
+                    resArray.push(filtrElement);
+                    break;
+                case 'month':
+                    ConvertType(condition, 'integer');
+                    filtrElement[key] = {$in: condition};
+                    resArray.push(filtrElement);
+                    break;
             }
         };
 
         return resArray;
     };
 
-    function ConvertType(element, type) {
-        if (type === 'boolean') {
-            if (element === 'true') {
-                element = true;
-            } else if (element === 'false') {
-                element = false;
+    function ConvertType(array, type) {
+        if (type === 'integer') {
+            for (var i = array.length - 1; i >= 0; i--) {
+                array[i] = parseInt(array[i]);
+            }
+        } else if (type === 'boolean') {
+            for (var i = array.length - 1; i >= 0; i--) {
+                if (array[i] === 'true') {
+                    array[i] = true;
+                } else if (array[i] === 'false') {
+                    array[i] = false;
+                } else {
+                    array[i] = null;
+                }
             }
         }
-
-        return element;
     };
 
     this.create = function (req, res, next) {

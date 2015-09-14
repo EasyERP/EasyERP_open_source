@@ -1291,7 +1291,18 @@ var Project = function (models, event) {
                     Invoice = models.get(req.session.lastDb, 'wTrackInvoice', InvoiceSchema);
 
                     event.emit('updateName', _id, wTrackModel, 'project._id', 'project.projectName', project.projectName);
+                    event.emit('updateName', _id, wTrackModel, 'project._id', 'project.customer._id', project.customer._id);
+                    event.emit('updateName', _id, wTrackModel, 'project._id', 'project.customer.name', project.customer.name);
+                    event.emit('updateName', _id, wTrackModel, 'project._id', 'project.projectmanager._id', project.projectmanager._id);
+                    event.emit('updateName', _id, wTrackModel, 'project._id', 'project.projectmanager.name', project.projectmanager.name);
+                    event.emit('updateName', _id, wTrackModel, 'project._id', 'project.workflow._id', project.workflow._id);
+                    event.emit('updateName', _id, wTrackModel, 'project._id', 'project.workflow.name', project.workflow.name);
+
                     event.emit('updateName', _id, Invoice, 'project._id', 'project.name', project.projectName);
+                    event.emit('updateName', _id, Invoice, 'project._id', 'supplier._id', project.customer._id);
+                    event.emit('updateName', _id, Invoice, 'project._id', 'supplier.name', project.customer.name);
+                    event.emit('updateName', _id, Invoice, 'project._id', 'salesPerson._id', project.projectmanager._id);
+                    event.emit('updateName', _id, Invoice, 'project._id', 'salesPerson.name', project.projectmanager.name);
                 }
             }
         });

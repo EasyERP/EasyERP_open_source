@@ -31,7 +31,6 @@ define([
                 _.bind(this.collection.showMoreAlphabet, this.collection);
                 this.allAlphabeticArray = common.buildAllAphabeticArray();
                 this.filter = options.filter ? options.filter : {};
-                this.filter.canBePurchased = true;
                 this.defaultItemsNumber = this.collection.namberToShow || 100;
                 this.newCollection = options.newCollection;
                 this.deleteCounter = 0;
@@ -82,12 +81,13 @@ define([
                 $(e.target).addClass("current");
                 this.newCollection = false;
                 var selectedLetter = $(e.target).text();
+
                 if ($(e.target).text() == "All") {
                     selectedLetter = "";
                 }
-                this.filter = (this.filter) ? this.filter : {};
+
+                this.filter =  {};
                 this.filter['letter'] = selectedLetter;
-                this.filter['canBePurchased'] = true;
                 var itemsNumber = $("#itemsNumber").text();
                 this.changeLocationHash(1, itemsNumber, this.filter);
                 this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter });
@@ -152,6 +152,7 @@ define([
                 this.$el.find(".allNumberPerPage, .newSelectList").hide();
                 if (!el.closest('.search-view')) {
                     $('.search-content').removeClass('fa-caret-up');
+                    this.$el.find('.search-options').addClass('hidden');
                 };
             },
 
@@ -181,7 +182,6 @@ define([
                 $('.ui-dialog ').remove();
                 var self = this;
                 var currentEl = this.$el;
-                var FilterView;
 
                 currentEl.html('');
                 currentEl.append(_.template(listTemplate));
@@ -194,7 +194,6 @@ define([
                     else
                         $("#top-bar-deleteBtn").hide();
                 });
-
                 $(document).on("click", function (e) {
                     self.hideItemsNumber(e);
                 });
@@ -213,17 +212,17 @@ define([
                         });
                     }
                 });
-                dataService.getData('/product/getFilterValues', null, function (values) {
-                    FilterView = new filterView({ collection: [], customCollection: values});
-                    // Filter custom event listen ------begin
-                    FilterView.bind('filter', function () {
-                        self.showFilteredPage()
-                    });
-                    FilterView.bind('defaultFilter', function () {
-                        self.showFilteredPage();
-                    });
-                    // Filter custom event listen ------end
+
+                self.filterView = new filterView({ contentType: self.contentType });
+
+                self.filterView.bind('filter', function (filter) {
+                    self.showFilteredPage(filter)
                 });
+                self.filterView.bind('defaultFilter', function () {
+                    self.showFilteredPage({});
+                });
+
+                self.filterView.render();
 
                 currentEl.append(_.template(paginationTemplate));
 
@@ -327,64 +326,33 @@ define([
                 this.changeLocationHash(1, itemsNumber, this.filter);
             },
             //modified for filter Vasya
-            showFilteredPage: function (e) {
-                var self = this;
-                var selectedLetter;
-                var chosen = this.$el.find('.chosen');
+            showFilteredPage: function (filter) {
                 var itemsNumber = $("#itemsNumber").text();
-                var checkedElements = $('.drop-down-filter input:checkbox:checked');
-                var condition = this.$el.find('.conditionAND > input')[0];
 
-                this.startTime = new Date();
-                this.newCollection = false;
-                if (e && e.target) {
-                    selectedLetter = $(e.target).text();
-                    if ($(e.target).text() == "All") {
-                        selectedLetter = "";
-                    }
-                }
-
-                this.filter =  {};
-                this.filter['letter'] = selectedLetter;
-                this.filter['condition'] = 'and';
-
-                if  (condition && !condition.checked) {
-                    self.filter['condition'] = 'or';
-                }
-
-                if (chosen) {
-                    chosen.each(function (index, elem) {
-                        if (elem.children[2].attributes.class.nodeValue === 'chooseDate') {
-                            if (self.filter[elem.children[1].value]) {
-                                self.filter[elem.children[1].value].push({start: $('#start').val(), end: $('#end').val()});
-
-                            } else {
-                                self.filter[elem.children[1].value] = [];
-                                self.filter[elem.children[1].value].push({start: $('#start').val(), end: $('#end').val()});
-                            }
-                        } else {
-                            if (self.filter[elem.children[1].value]) {
-                                $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
-                                    self.filter[elem.children[1].value].push($(element).next().text());
-                                })
-                            } else {
-                                self.filter[elem.children[1].value] = [];
-                                $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
-                                    self.filter[elem.children[1].value].push($(element).next().text());
-                                })
-                            }
-                        }
-
-                    });
-                }
+                var alphaBet = this.$el.find('#startLetter');
+                var selectedLetter = $(alphaBet).find('.current').length ? $(alphaBet).find('.current')[0].text : '';
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
 
-                this.changeLocationHash(1, itemsNumber, this.filter);
-                this.collection.showMore({ count: itemsNumber, page: 1, filter: this.filter });
-                this.getTotalLength(null, itemsNumber, this.filter);
+                if (selectedLetter === "All") {
+                    selectedLetter = '';
+                }
+
+                this.startTime = new Date();
+                this.newCollection = false;
+
+
+
+                if (Object.keys(filter).length === 0){
+                    this.filter = {};
+                }
+
+                this.changeLocationHash(1, itemsNumber, filter);
+                this.collection.showMore({ count: itemsNumber, page: 1, filter: filter});
+                this.getTotalLength(null, itemsNumber, filter);
             },
+
 
             showPage: function (event) {
                 event.preventDefault();
@@ -394,7 +362,11 @@ define([
             showMoreContent: function (newModels) {
                 var holder = this.$el;
                 holder.find("#listTable").empty();
-                var itemView = new listItemView({ collection: newModels, page: holder.find("#currentShowPage").val(), itemsNumber: holder.find("span#itemsNumber").text() });
+                var itemView = new listItemView({
+                    collection: newModels,
+                    page: holder.find("#currentShowPage").val(),
+                    itemsNumber: holder.find("span#itemsNumber").text()
+                });
                 holder.append(itemView.render());
                 itemView.undelegateEvents();
                 var pagenation = holder.find('.pagination');
@@ -405,18 +377,23 @@ define([
                 }
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
+
+                this.filterView.renderFilterContent();
+
                 holder.find('#timeRecivingDataFromServer').remove();
                 holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             },
             //modified for filter Vasya
             showMoreAlphabet: function (newModels) {
                 var holder = this.$el;
+                var itemsNumber = holder.find("span#itemsNumber").text();
                 var alphaBet = holder.find('#startLetter');
                 var created = holder.find('#timeRecivingDataFromServer');
                 content.remove();
-                holder.append(this.template({ collection: newModels.toJSON(), page: holder.find("#currentShowPage").val(), itemsNumber: holder.find("span#itemsNumber").text() }));
+                holder.append(this.template({ collection: newModels.toJSON(), page: holder.find("#currentShowPage").val(), itemsNumber: itemsNumber }));
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
+
                 this.getTotalLength(null, itemsNumber, this.filter);
                 created.text("Created in " + (new Date() - this.startTime) + " ms");
                 holder.prepend(alphaBet);
@@ -451,8 +428,11 @@ define([
             checked: function () {
                 if (this.collection.length > 0) {
                     var checkLength = $("input.checkbox:checked").length;
+
                     if ($("input.checkbox:checked").length > 0) {
                         $("#top-bar-deleteBtn").show();
+                        $('#check_all').prop('checked', false);
+
                         if (checkLength == this.collection.length) {
                             $('#check_all').prop('checked', true);
                         }
@@ -511,7 +491,7 @@ define([
 									$("#startLetter").remove();
 									that.alphabeticArray = arr;
 									currentEl.prepend(_.template(aphabeticTemplate, { alphabeticArray: that.alphabeticArray, selectedLetter: (that.selectedLetter == "" ? "All" : that.selectedLetter), allAlphabeticArray: that.allAlphabeticArray }));
-									var currentLetter = (that.filter) ? that.filter.letter : null
+									var currentLetter = (that.filter) ? that.filter.letter : null;
 									if (currentLetter) {
 										$('#startLetter a').each(function() {
 											var target = $(this);

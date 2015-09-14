@@ -38,11 +38,11 @@
     </dd>
     <dt><label for="reference">Reference</label></dt>
     <dd>
-        <input type="text" id="reference" placeholder="Reference" maxlength="32"/>
+        <input type="text" id="reference" placeholder="Reference" maxlength="32" value="<%=model.salesPurchases.reference%>"/>
     </dd>
     <dt><label for="language">Language</label></dt>
     <dd>
-        <a id="language" class="current-selected" href="javascript:;"></a>
+        <a id="language" class="current-selected" href="javascript:;"><%=model.salesPurchases.language%></a>
     </dd>
     <!--<dt><label for="salesPriceList">Sale Pricelist</label></dt>
     <dd>

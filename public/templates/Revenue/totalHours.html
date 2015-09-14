@@ -4,47 +4,26 @@
 <% var totalForDep = 0; %>
 
 <div class="divCell">
-  <% employees.forEach(function(employee, index){ %>
-  <%var byMonthData = employee.hoursTotal%>
-  <%var hire = employee.hire%>
-  <%var fire = employee.fire%>
-  <%var hireFirst = hire[0] ? hire[0] : key%>
-  <%var fireFirst = fire[0] ? fire[0] : key%>
-  <%var hireLast = hire[1] ? hire[1] : hire[0]%>
-
-
-  <% if ((hireFirst <= key) && (key <=  fireFirst))  {%>
-  <% totalForDep +=  byMonthData[key]; %>
-  <% } else if (key >=  hireLast) { %>
-  <% totalForDep +=  byMonthData[key]; %>
-  <% } %>
+ <% employees.forEach(function(employee){ %>
+    <%var byMonthData = employee.hoursTotal%>
+     <% if (byMonthData && byMonthData[key]) {%>
+      <% totalForDep +=  byMonthData[key]; %>
+     <% } %>
   <% }) %>
+
   <span id="totalForDep"><%= totalForDep ? totalForDep : '&nbsp' %></span>
 
   <% employees.forEach(function(employee, index){ %>
   <%var byMonthData = employee.hoursTotal%>
-  <%var hire = employee.hire%>
-  <%var fire = employee.fire%>
-  <%var hireFirst = hire[0] ? hire[0] : key%>
-  <%var fireFirst = fire[0] ? fire[0] : key%>
-  <%var hireLast = hire[1] ? hire[1] : hire[0]%>
-
 
   <div class="divRow" data-val="<%=content%>">
-    <% if ((hireFirst <= key) && (key <=  fireFirst))  {%>
-    <span class="divCell forBonus" ><%= byMonthData[key] ? byMonthData[key] : '&nbsp'%></span>
-    <% totalForDep +=  byMonthData[key]; %>
-    <% } else if (key >=  hireLast) { %>
-    <% totalForDep +=  byMonthData[key]; %>
-    <span class="divCell forBonus" ><%= byMonthData[key] ? byMonthData[key] : '&nbsp'%></span>
+    <%if (byMonthData) {%>
+       <span class="divCell forBonus" ><%= byMonthData[key] ? byMonthData[key] : '&nbsp'%></span>
     <% } else { %>
-    <span class="divCell forBonus" ><%='&nbsp'%></span>
+       <span class="divCell forBonus" ><%= '&nbsp'%></span>
     <% } %>
   </div>
   <% }) %>
-
-
-
 </div>
 <% }) %>
 

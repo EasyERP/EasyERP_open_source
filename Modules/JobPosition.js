@@ -263,6 +263,7 @@ var JobPosition = function (event, models) {
 
     function get(req, response) {
         var res = {};
+        var sort = req.query.sort;
         var data = req.query;
         res['data'] = [];
         var query = models.get(req.session.lastDb, 'JobPosition', jobPositionSchema).find({});
@@ -271,7 +272,7 @@ var JobPosition = function (event, models) {
             .populate('editedBy.user')
             .populate('department', 'departmentName')
             .populate('workflow', 'name _id status');
-        query.sort({name: 1})
+        query.sort(sort)
             .skip((data.page - 1) * data.count)
             .limit(data.count)
        .exec(function (err, result) {

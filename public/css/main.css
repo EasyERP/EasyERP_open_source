@@ -7939,6 +7939,19 @@ textarea#editInput {
 .grid-conatiner.revenue .chartContainer .legend input {
   width: 50px;
 }
+.grid-conatiner.revenue .chartContainer .legendHours {
+  float: left;
+  line-height: 24px;
+  width: 140px;
+  padding: 0 10px;
+}
+.grid-conatiner.revenue .chartContainer .legendHours label {
+  display: inline-block;
+  width: 50px;
+}
+.grid-conatiner.revenue .chartContainer .legendHours input {
+  width: 50px;
+}
 .grid-conatiner.revenue .chartContainer .line1 {
   fill: none;
   stroke: black;
@@ -8090,6 +8103,10 @@ textarea#editInput {
 .grid-conatiner.revenue .divRow.subRow {
   padding: 15px;
 }
+.grid-conatiner.revenue .divRow .rowChecked {
+  font-size: 15px;
+  font-weight: 600;
+}
 .grid-conatiner.revenue .clickToShow {
   font-weight: 500;
 }
@@ -8115,14 +8132,14 @@ textarea#editInput {
   width: 7.5%;
 }
 .grid-conatiner.revenue .divCell.forBonus {
-  float: right;
   display: table-column;
-  width: 15%;
+  min-width: 57px;
   height: 17px;
-  padding: 0 15px;
+  padding: 0;
   box-sizing: border-box;
-  text-align: left;
+  text-align: right;
   line-height: 22px;
+  margin-left: 46px;
 }
 .grid-conatiner.revenue #tablePaidBySales .divCell,
 .grid-conatiner.revenue #tableUnpaidBySales .divCell,
