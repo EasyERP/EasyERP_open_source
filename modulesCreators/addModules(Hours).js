@@ -24,7 +24,7 @@ MongoClient.connect(url, function (err, db) {
             _id: 76,
             mname: 'Hours',
             href: 'Hours',
-            sequence: 76,
+            sequence: 72,
             parrent: 19,
             link: true,
             visible: true
