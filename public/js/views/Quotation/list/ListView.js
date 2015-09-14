@@ -168,47 +168,13 @@ define([
             showFilteredPage: function () {
                 var isConverted = true;
                 var itemsNumber = $("#itemsNumber").text();
-                var chosen = this.$el.find('.chosen');
-                var self = this;
-                var checkedElements = $('.drop-down-filter input:checkbox:checked');
-                var condition = this.$el.find('.conditionAND > input')[0];
-                var showList;
 
                 this.startTime = new Date();
                 this.newCollection = false;
                 this.filter = {};
                 this.filter['isConverted'] = isConverted;
-                this.filter['condition'] = 'and';
 
-                if  (!condition.checked) {
-                    self.filter['condition'] = 'or';
-                }
 
-                if (chosen) {
-                    chosen.each(function (index, elem) {
-                        if (elem.children[2].attributes.class.nodeValue === 'chooseDate') {
-                            if (self.filter[elem.children[1].value]) {
-                                self.filter[elem.children[1].value].push({start: $('#start').val(), end: $('#end').val()});
-
-                            } else {
-                                self.filter[elem.children[1].value] = [];
-                                self.filter[elem.children[1].value].push({start: $('#start').val(), end: $('#end').val()});
-                            }
-                        } else {
-                            if (self.filter[elem.children[1].value]) {
-                                $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
-                                    self.filter[elem.children[1].value].push($(element).next().text());
-                                })
-                            } else {
-                                self.filter[elem.children[1].value] = [];
-                                $($($(elem.children[2]).children('li')).children('input:checked')).each(function (index, element) {
-                                    self.filter[elem.children[1].value].push($(element).next().text());
-                                })
-                            }
-                        }
-
-                    });
-                }
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
 
