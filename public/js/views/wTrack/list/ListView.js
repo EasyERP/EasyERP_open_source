@@ -109,7 +109,6 @@ define([
                     var revenue = reven.toString().replace('$', '');
 
                     revenue = parseFloat(revenue);
-
                     if (typeof(reven) === 'number') {
                         revenue = revenue / 100;
                     }
