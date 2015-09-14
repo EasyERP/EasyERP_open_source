@@ -21,6 +21,8 @@ define([
 
             events: {
                 "mouseover .search-content": 'showSearchContent',
+                "click .oe_searchview_input": 'showSearchContent',
+                "click .search-content": 'showSearchContent',
                 "click .filter-dialog-tabs .btn": 'showFilterContent',
                 'click #applyFilter': 'applyFilter',
                 'click .condition li': 'conditionClick',
@@ -469,7 +471,8 @@ define([
                 searchOpt.removeClass('hidden');
 
                 if (el.hasClass(selector)) {
-                    el.removeClass(selector)
+                    el.removeClass(selector);
+                    this.$el.find('.search-options').addClass('hidden');
                 } else {
                     el.addClass(selector)
                 }
