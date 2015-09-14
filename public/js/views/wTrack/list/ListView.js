@@ -425,7 +425,7 @@ define([
                     profitVal = (parseFloat(revenueVal) - parseFloat(calc)).toFixed(2);
                     profit.text(profitVal);
 
-                    self.changedModels[wTrackId].cost = parseFloat(calc) * 100;
+                    self.changedModels[wTrackId].cost = parseFloat(calc);
                     self.changedModels[wTrackId].profit = parseFloat(profitVal) * 100;
 
                     return calc;
@@ -568,12 +568,16 @@ define([
                 for (var id in this.changedModels) {
                     model = this.editCollection.get(id);
                     model.changed = this.changedModels[id];
+
+
                 }
 
                 if (errors.length) {
                     return
                 }
                 this.editCollection.save();
+                this.changedModels = {};
+                this.editCollection.remove(id);
             },
 
             savedNewModel: function (modelObject) {
