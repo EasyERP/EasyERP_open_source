@@ -2,6 +2,7 @@ define([
         'text!templates/Pagination/PaginationTemplate.html',
         'text!templates/wTrack/list/ListHeader.html',
         'text!templates/wTrack/list/cancelEdit.html',
+        'text!templates/wTrack/list/forWeek.html',
         'views/wTrack/CreateView',
         'views/wTrack/list/ListItemView',
         'views/wTrack/EditView',
@@ -18,7 +19,7 @@ define([
         'moment'
     ],
 
-    function (paginationTemplate, listTemplate, cancelEdit, createView, listItemView, editView, wTrackCreateView, currentModel, contentCollection, EditCollection, filterView, common, dataService, populate, async, custom, moment) {
+    function (paginationTemplate, listTemplate, cancelEdit, forWeek, createView, listItemView, editView, wTrackCreateView, currentModel, contentCollection, EditCollection, filterView, common, dataService, populate, async, custom, moment) {
         var wTrackListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -316,11 +317,16 @@ define([
                 var colType = el.data('type');
                 var content = el.data('content');
                 var isSelect = colType !== 'input' && el.prop("tagName") !== 'INPUT';
+                var isWeek = el.attr("data-content") === 'week';
                 var tempContainer;
                 var width;
                 var editedElement;
                 var value;
                 var insertedInput;
+                var weeks;
+                var month = tr.find('[data-content="month"]').text();
+                var year = tr.find('[data-content="year"]').text();
+                var template;
 
                 if (wTrackId && el.prop('tagName') !== 'INPUT') {
                     if (this.wTrackId) {
@@ -334,6 +340,14 @@ define([
 
                 if (isSelect) {
                     populate.showSelect(e, prev, next, this);
+                } else if (isWeek){
+                    weeks = custom.getWeeks(month, year);
+
+                    template = _.template(forWeek);
+
+                    el.append(template({
+                        weeks: weeks
+                    }));
                 } else {
                     tempContainer = el.text();
                     width = el.width() - 6;
@@ -483,6 +497,7 @@ define([
                 var department;
                 var changedAttr;
                 var wTrackId = tr.data('id');
+                var week;
                 var value;
 
                 var element = _.find(this.responseObj[elementType], function (el) {
@@ -548,6 +563,10 @@ define([
                     department.departmentName = element.departmentName;
 
                     changedAttr.department = department;
+                } else if (elementType === '#week'){
+                    week = $(e.target).text();
+
+                    changedAttr.week = week;
                 }
 
                 targetElement.removeClass('errorContent');
