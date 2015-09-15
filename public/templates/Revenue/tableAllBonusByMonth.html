@@ -13,7 +13,7 @@
 <% employees.forEach(function(employee){ %>
 <div class="divRow" >
     <div data-value="<%= employee._id %>" class="divCell left-cell" data-cont="<%=content%>">
-        <span class="rowChecked">+</span><span class="clickToShow"><%= employee.name %></span>
+        <span class="rowChecked clickToShow">+</span><span class="clickToShow"><%= employee.name %></span>
 
     </div>
     <div data-id="<%= employee._id%>" id="<%= employee._id%>">
