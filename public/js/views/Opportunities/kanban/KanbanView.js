@@ -185,6 +185,10 @@ function (WorkflowsTemplate, kanbanSettingsTemplate, WorkflowsCollection, Kanban
 
         asyncRender: function (response,context) {
             var contentCollection = new OpportunitiesCollection();
+            var kanbanItemView;
+            var forContent;
+            var column;
+
             contentCollection.set(contentCollection.parse(response));
             if (collection) {
                 collection.add(contentCollection.models);
@@ -192,16 +196,22 @@ function (WorkflowsTemplate, kanbanSettingsTemplate, WorkflowsCollection, Kanban
                 collection = new OpportunitiesCollection();
                 collection.set(collection.parse(response));
             }
-            var kanbanItemView;
-            var column = this.$("[data-id='" + response.workflowId + "']");
+
+            column = this.$("[data-id='" + response.workflowId + "']");
+
+            forContent = column.find('#forContent');
+            forContent.html(''); // for duplicated content edited by Lilya
+
 			if (response.fold){
 				context.foldUnfoldKanban(null,response.workflowId);
 			}
             column.find(".counter").html(parseInt(column.find(".counter").html()) + contentCollection.models.length);
             _.each(contentCollection.models, function (wfModel) {
+                var curEl;
+
                 kanbanItemView = new KanbanItemView({ model: wfModel });
-                var curEl = kanbanItemView.render().el;
-                column.append(curEl);
+                curEl = kanbanItemView.render().el;
+                forContent.append(curEl);
             }, this);
         },
 

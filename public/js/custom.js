@@ -319,8 +319,6 @@ define([
             for (var i = diff; i >=0; i--){
                 result.push(isoWeeks - i);
             }
-
-            result.push(endWeek);
         } else {
             for (var i = diff; i >=0; i--){
                 result.push(endWeek - i);
