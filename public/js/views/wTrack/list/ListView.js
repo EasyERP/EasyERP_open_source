@@ -397,7 +397,8 @@ define([
                     trackWeek = tr.find('[data-content="worked"]').text();
 
                 } else {
-                    editWtrackModel = this.editCollection.get(wTrackId);
+                    editWtrackModel = this.collection.get(wTrackId);
+                    this.editCollection.add(editWtrackModel);
 
                     employeeId = editWtrackModel.attributes.employee._id;
                     month = (tr.find('[data-content="month"]').text()) ? tr.find('[data-content="month"]').text() : tr.find('.editing').val();
