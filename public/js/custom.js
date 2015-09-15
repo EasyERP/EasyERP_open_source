@@ -304,6 +304,7 @@ define([
         var startWeek;
         var endWeek;
         var diff;
+        var isoWeeks = moment(year).isoWeeksInYear();
         var startDate = moment([year, parseInt(month) - 1]);
         var endDate = moment([year, parseInt(month), -1 + 1]);
 
@@ -312,9 +313,21 @@ define([
 
         diff = endWeek - startWeek;
 
-        for (var i = diff; i >=0; i--){
-            result.push(endWeek - i);
+        if (diff < 0){
+            diff = isoWeeks - startWeek;
+
+            for (var i = diff; i >=0; i--){
+                result.push(isoWeeks - i);
+            }
+
+            result.push(endWeek);
+        } else {
+            for (var i = diff; i >=0; i--){
+                result.push(endWeek - i);
+            }
         }
+
+
 
         return result;
     };
