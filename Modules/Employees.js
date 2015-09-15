@@ -1075,6 +1075,8 @@ var Employee = function (event, models) {
         var dataObj = {};
         var query = {};
         var date = new Date();
+        var depForTransfer = data.depForTransfer;
+        delete data.depForTransfer;
         delete data.fileName;
 
         var updateObject = {};
@@ -1152,9 +1154,14 @@ var Employee = function (event, models) {
 
             } else if (data.hired) {
                 dataObj = {'hire': new Date()};
+            } else if (data.department) {
+                dataObj = {'transferred': {
+                    department: depForTransfer,
+                    date: new Date()
+                }};
             }
 
-            if (dataObj.hire || dataObj.fire){
+            if (dataObj.hire || dataObj.fire || data.department){
                 query = { $set: updateObject, $push: dataObj };
             } else  if (data.relatedUser){
                 query = { $set: updateObject};

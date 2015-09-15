@@ -138,6 +138,8 @@ define([
             saveItem: function () {
                 var empThumb;
                 var self = this;
+
+                var depForTransfer = this.currentModel.get('department');
 				
                 var gender = $("#genderDd").data("id");
                 gender = gender ? gender : null;
@@ -184,6 +186,30 @@ define([
 
                     newHireArray.push($.trim(self.$el.find("#hire" + key).val()));
                     return newHireArray;
+                });
+
+                var fireArray = this.currentModel.get('fire');
+                var newFireArray = [];
+
+                _.each(fireArray, function(hire, key) {
+
+                    newFireArray.push($.trim(self.$el.find("#fire" + key).val()));
+                    return newFireArray;
+                });
+
+                var transferArray = this.currentModel.get('transferred');
+                var newTransfer = [];
+
+                _.each(transferArray, function(obj, key) {
+                    var date = $.trim(self.$el.find("#date" + key).val());
+                    var dep = obj.department;
+                    var result = {};
+
+                    result.department = dep;
+                    result.date = new Date(date);
+
+                    newTransfer.push(result);
+                    return result;
                 });
 
                 var active = (this.$el.find("#active").is(":checked")) ? true : false;
@@ -251,7 +277,10 @@ define([
                         group: groupsId
                     },
                     whoCanRW: whoCanRW,
-                    hire: newHireArray
+                    hire: newHireArray,
+                    fire: newFireArray,
+                    transferred: newTransfer,
+                    depForTransfer: depForTransfer
                 };
                 //if (!relatedUser){
                 //    data['currentUser']= App.currentUser._id;
@@ -343,20 +372,24 @@ define([
                         silent: true
                     });
                 }
-                if (hireArray){
                     this.currentModel.set({
-                        hire: hireArray
+                        hire: this.currentModel.get('hire')
                     }, {
                         silent: true
                     });
-                }
-                if (fireArray){
+
                     this.currentModel.set({
-                        fire: fireArray
+                        fire: this.currentModel.get('fire')
                     }, {
                         silent: true
                     });
-                }
+
+                this.currentModel.set({
+                    transferred: this.currentModel.get('transferred')
+                }, {
+                    silent: true
+                });
+
 
                 var formString = this.template({
                     model: this.currentModel.toJSON()
@@ -421,21 +454,23 @@ define([
                     //    target.val(day + '/' + month + '/' + year);
                     //}
                 });
-                //_.each(hireArray, function(hire, key) {
                     $('.hire').datepicker({
                         dateFormat: "d M, yy",
                         changeMonth: true,
                         changeYear: true
                     });
-                //});
 
-                //_.each(fireArray, function(fire, key) {
                     $('.fire').datepicker({
                         dateFormat: "d M, yy",
                         changeMonth : true,
                         changeYear : true
                     });
-                //});
+
+                $('.date').datepicker({
+                    dateFormat: "d M, yy",
+                    changeMonth : true,
+                    changeYear : true
+                });
 
                 var model = this.currentModel.toJSON();
                 if (model.groups)

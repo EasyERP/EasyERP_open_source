@@ -190,7 +190,8 @@ module.exports = (function () {
         },
         hire: {type: Array, default: []},
         fire: {type: Array, default: []},
-        lastFire: {type: Number, default: null}
+        lastFire: {type: Number, default: null},
+        transferred: [JSON]
     }, { collection: 'Employees' });
 
     employeeSchema.virtual('fullName').get(function(){
