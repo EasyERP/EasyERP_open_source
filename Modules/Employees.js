@@ -429,6 +429,7 @@ var Employee = function (event, models) {
                         }
                     });
                 });
+                event.emit('dropHoursCashes', req);
             }
         }
         catch (exception) {
@@ -1208,6 +1209,7 @@ var Employee = function (event, models) {
                         });
 
                     }
+                    event.emit('dropHoursCashes', req);
                     res.send(200, { success: 'Employees updated', result: result });
 
                     updateRefs(result, dbName, _id);
@@ -1252,6 +1254,7 @@ var Employee = function (event, models) {
                     });
                 }
                 event.emit('recalculate', req);
+                event.emit('dropHoursCashes', req);
                 res.send(200, { success: 'Employees removed' });
             }
         });

@@ -4,8 +4,8 @@ var express = require('express');
 var router = express.Router();
 
 
-module.exports = function (models) {
-    var handler = new MonthHoursHandler(models);
+module.exports = function (event, models) {
+    var handler = new MonthHoursHandler(event, models);
 
     router.post('/', handler.create);
     router.patch('/', handler.patchM);

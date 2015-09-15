@@ -324,8 +324,8 @@ define([
                 var value;
                 var insertedInput;
                 var weeks;
-                var month = tr.find('[data-content="month"]').text();
-                var year = tr.find('[data-content="year"]').text();
+                var month = (tr.find('[data-content="month"]').text()) ? tr.find('[data-content="month"]').text() : tr.find('.editing').val();
+                var year = (tr.find('[data-content="year"]').text()) ? tr.find('[data-content="year"]').text() : tr.find('.editing').val();
                 var template;
 
                 if (wTrackId && el.prop('tagName') !== 'INPUT') {
@@ -397,7 +397,8 @@ define([
                     trackWeek = tr.find('[data-content="worked"]').text();
 
                 } else {
-                    editWtrackModel = this.editCollection.get(wTrackId);
+                    editWtrackModel = this.collection.get(wTrackId);
+                    this.editCollection.add(editWtrackModel);
 
                     employeeId = editWtrackModel.attributes.employee._id;
                     month = (tr.find('[data-content="month"]').text()) ? tr.find('[data-content="month"]').text() : tr.find('.editing').val();

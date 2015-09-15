@@ -8109,10 +8109,13 @@ textarea#editInput {
 }
 .grid-conatiner.revenue .clickToShow {
   font-weight: 500;
+  cursor: pointer;
+  padding-right: 33%;
+  margin-right: -30%;
 }
 .grid-conatiner.revenue .bonusCell {
   color: #9bedda;
-  padding: 15px;
+  padding: 15px 10px;
 }
 .grid-conatiner.revenue .divCell {
   float: left;

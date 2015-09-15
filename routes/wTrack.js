@@ -4,8 +4,8 @@ var express = require('express');
 var router = express.Router();
 var wTrackHandler = require('../handlers/wTrack');
 
-module.exports = function (models) {
-    var handler = new wTrackHandler(models);
+module.exports = function (event, models) {
+    var handler = new wTrackHandler(event, models);
 
     router.get('/totalCollectionLength', handler.totalCollectionLength);
     router.get('/:viewType', handler.getByViewType);

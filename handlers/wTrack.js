@@ -1,7 +1,7 @@
 
 
 var mongoose = require('mongoose');
-var wTrack = function (models) {
+var wTrack = function (event, models) {
     var access = require("../Modules/additions/access.js")(models);
     var _ = require('../node_modules/underscore');
     var wTrackSchema = mongoose.Schemas['wTrack'];
@@ -28,6 +28,8 @@ var wTrack = function (models) {
                     if (err) {
                         return next(err);
                     }
+
+                   event.emit('dropHoursCashes', req);
                     res.status(200).send({success: wTrack});
                 });
             } else {
@@ -96,6 +98,7 @@ var wTrack = function (models) {
                             return next(err);
                         }
 
+                        event.emit('dropHoursCashes', req);
                         res.status(200).send({success: 'updated'});
                     });
                 } else {
@@ -571,6 +574,8 @@ var wTrack = function (models) {
                     if (err) {
                         return next(err);
                     }
+
+                    event.emit('dropHoursCashes', req);
                     res.status(200).send({success: product});
                 });
             } else {
