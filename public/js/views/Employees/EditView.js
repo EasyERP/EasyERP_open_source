@@ -209,7 +209,7 @@ define([
                     result.date = new Date(date);
 
                     newTransfer.push(result);
-                    return result;
+                    return newTransfer;
                 });
 
                 var active = (this.$el.find("#active").is(":checked")) ? true : false;

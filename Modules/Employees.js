@@ -1161,7 +1161,10 @@ var Employee = function (event, models) {
                 }};
             }
 
-            if (dataObj.hire || dataObj.fire || data.department){
+            if (dataObj.hire || dataObj.fire ){
+                query = { $set: updateObject, $push: dataObj };
+            } else if (data.department){
+                delete updateObject.transferred;
                 query = { $set: updateObject, $push: dataObj };
             } else  if (data.relatedUser){
                 query = { $set: updateObject};
