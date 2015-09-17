@@ -14,8 +14,7 @@ var wTrack = function (models) {
             'WP',
             'QA',
             'Design',
-            'PM',
-            'BusinessDev'
+            'PM'
         ];
 
         var objectId = mongoose.Types.ObjectId;
