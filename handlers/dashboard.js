@@ -7,6 +7,16 @@ var wTrack = function (models) {
         var async = require('async');
 
         var CONSTANTS = require('../constants/mainConstants');
+        var constForView = [
+            'iOS',
+            'Android',
+            'Web',
+            'WP',
+            'QA',
+            'Design',
+            'PM',
+            'BusinessDev'
+        ];
 
         var objectId = mongoose.Types.ObjectId;
 
@@ -163,7 +173,17 @@ var wTrack = function (models) {
                         path: 'department',
                         select: 'departmentName _id'
                     }, function () {
-                        res.status(200).send(employeesByDep);
+                        var sortDepartments = [];
+
+                        constForView.forEach(function (dep) {
+                            employeesByDep.forEach(function (department, index) {
+                                if (dep === employeesByDep[index].department.departmentName) {
+                                    sortDepartments.push(employeesByDep[index]);
+                                }
+                            });
+                        });
+
+                        res.status(200).send(sortDepartments);
                     });
                 };
 
