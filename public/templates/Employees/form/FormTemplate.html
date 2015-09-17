@@ -162,6 +162,28 @@
 			  </div>
 		  </div>
 
+			<% if (transferred.length > 0) {%>
+			<div class="clearfix"></div>
+			<div class="formTitle">
+				<h3 class="left">Transfer</h3>
+
+				<div class="clearfix"></div>
+			</div>
+
+			<div class="half-block left withPaddingLeft">
+				<%_.each(transferred, function(obj, key){ %>
+				<dt><label>Department</label></dt>
+				<dd><%=obj.department.name%></dd>
+				<% }); %>
+			</div>
+			<div class="half-block right withPaddingLeft">
+				<%_.each(transferred, function(obj, key){ %>
+				<dt><label>Date</label></dt>
+				<dd><%=obj.date%></dd>
+				<% }); %>
+			</div>
+			<% } %>
+
 			<div class="clearfix"></div>
 	      <div class="formTitle">
 			<h3 class="left"><legend>Resume</legend></h3>
