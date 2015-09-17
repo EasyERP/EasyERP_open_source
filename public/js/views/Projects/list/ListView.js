@@ -5,6 +5,7 @@ define([
         'views/Projects/CreateView',
         'views/Projects/list/ListItemView',
         'views/Projects/EditView',
+        'views/Projects/form/FormView',
         'models/ProjectsModel',
         'collections/Projects/filterCollection',
         'views/Filter/FilterView',
@@ -13,7 +14,7 @@ define([
         'custom'
     ],
 
-    function (paginationTemplate, listTemplate, stagesTamplate, CreateView, listItemView, editView, currentModel, contentCollection, filterView, common, dataService, custom) {
+    function (paginationTemplate, listTemplate, stagesTamplate, CreateView, listItemView, editView, formView, currentModel, contentCollection, filterView, common, dataService, custom) {
         var ProjectsListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -60,10 +61,18 @@ define([
                 "click .newSelectList li": "chooseOption",
                 "click #health .health-container": "showHealthDd",
                 "click #health ul li div": "chooseHealthDd",
-                "click td:not(:has('input[type='checkbox']'))": "goToEditDialog",
+                //"click td:not(:has('input[type='checkbox']'))": "goToEditDialog",
                 "click .oe_sortable": "goSort",
                 "click #firstShowPage": "firstPage",
-                "click #lastShowPage": "lastPage"
+                "click #lastShowPage": "lastPage",
+                "click  .list td:not(.notForm)": "goToForm"
+            },
+
+            goToForm: function (e) {
+                e.preventDefault();
+                App.ownContentType = true;
+                var id = $(e.target).closest('tr').attr("data-id");
+                window.location.hash = "#easyErp/Projects/form/" + id;
             },
 
             fetchSortCollection: function (sortObject) {
@@ -127,7 +136,7 @@ define([
                 model.urlRoot = '/Projects/form/' + id;
                 model.fetch({
                     success: function (model) {
-                        new editView({model: model});
+                        new formView({model: model});
                     },
                     error: function () {
                         alert('Please refresh browser');
