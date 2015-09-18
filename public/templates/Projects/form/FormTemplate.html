@@ -6,8 +6,8 @@
             <li><a href="javascript:;" class="">Payments</a></li>
             <li><a href="javascript:;" class="">Invoices</a></li>
             <li><a href="javascript:;" class="">Comments</a></li>
-            <li><a href="javascript:;">Assignees</a></li>
             <li><a href="javascript:;" class="">Bonus</a></li>
+            <li><a href="javascript:;">Assignees</a></li>
 
         </ul>
         <div class="clearfix"></div>
@@ -38,14 +38,20 @@
                         <dd>
                             <a id="projectTypeDD" data-id="<%=model.projecttype?model.projecttype:''%>" class="current-selected disabled" href="javascript:;"><%=model.projecttype?model.projecttype:'Select'%></a>
                         </dd>
-                        <dt><label for="StartDate">Start Date </label></dt>
-                        <dd><input class="extrainfo blueback" type="text" name="StartDate" id="StartDate" value="<%=model.StartDate%>" readonly /></dd>
                         <dt>
                             <label for="customerDd">Project Customer </label>
                         </dt>
                         <dd>
                             <a id="customerDd" data-id="<%=model.customer?model.customer._id:''%>" class="current-selected disabled" href="javascript:;"><%=model.customer?(model.customer.name):'Select'%></a>
                         </dd>
+                        <dt><label for="StartDate">Start Date </label></dt>
+                        <dd><input class="extrainfo blueback" type="text" name="StartDate" id="StartDate" value="<%=model.StartDate%>" readonly /></dd>
+
+                        <dt><label for="EndDate">End Date </label></dt>
+                        <dd><input class="info blueback" type="text" name="EndDate" id="EndDate" value="<%=model.EndDate%>" readonly /></dd>
+                        <dt><label for="targetEndDate">Target End Date</label></dt>
+                        <dd><input class="info blueback" type="text" name="TargetEndtDate" id="EndDateTarget" value="<%=model.TargetEndDate%>" readonly /></dd>
+
                         <dt>
                             <label for="workflowsDd">Status</label>
                         </dt>
@@ -67,10 +73,6 @@
                                 </li>
                             </ul>
                         </dd>
-                        <dt><label for="EndDate">End Date </label></dt>
-                        <dd><input class="info blueback" type="text" name="EndDate" id="EndDate" value="<%=model.EndDate%>" readonly /></dd>
-                        <dt><label for="targetEndDate">Target End Date</label></dt>
-                        <dd><input class="info blueback" type="text" name="TargetEndtDate" id="EndDateTarget" value="<%=model.TargetEndDate%>" readonly /></dd>
                     </dl>
                 </div>
                 <div class="clearfix"></div>
@@ -78,33 +80,34 @@
             </div>
             <div class="clearfix"></div>
             <div class="dialog-tabs-item">
-                <div class="weTracks"></div>
+                <div id="weTracks"></div>
             </div>
             <div class="clearfix"></div>
             <div class="dialog-tabs-item">
-                <div class="payments"></div>
+                <div id="payments"></div>
             </div>
             <div class="clearfix"></div>
             <div class="dialog-tabs-item">
-                <div class="invoices"></div>
+                <div id="invoices"></div>
             </div>
             <div class="clearfix"></div>
             <div class="dialog-tabs-item">
                 <div class="textarea-wrapper">
                     <textarea type="text" class="projectDescriptionEdit" name="description" placeholder="Add a Description..." id="description" maxlength="500" readonly><%=model.description%></textarea>
                 </div>
-                <div class="divForNote"></div>
+                <div id="divForNote"></div>
 
             </div>
             <div class="clearfix"></div>
+
+            <div class="clearfix"></div>
             <div class="dialog-tabs-item">
-                <div class="assignees-container"></div>
+                <div id="bonus-container"></div>
             </div>
             <div class="clearfix"></div>
             <div class="dialog-tabs-item">
-                <div class="bonus-container"></div>
+                <div id="assignees-container"></div>
             </div>
-            <div class="clearfix"></div>
             </div>
     </form>
 </div>

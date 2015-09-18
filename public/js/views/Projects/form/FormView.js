@@ -94,11 +94,11 @@ define([
                     var bonusId = $(val).find("[data-content='bonus']").attr('data-id');
                     var value;
 
-                    if (!employeeId || !bonusId){
-                        if (!employeeId){
+                    if (!employeeId || !bonusId) {
+                        if (!employeeId) {
                             value = 'Employee';
                             alert('Please, choose ' + value + ' first.');
-                        } else if (!bonusId){
+                        } else if (!bonusId) {
                             value = 'Bonus';
                             alert('Please, choose ' + value + ' first.');
                         }
@@ -153,7 +153,7 @@ define([
                     health: health,
                     StartDate: startDate,
                     EndDate: endDate,
-                    TargetEndDate:  _targetEndDate,
+                    TargetEndDate: _targetEndDate,
                     bonus: bonus
                 };
                 var workflowStart = this.formModel.get('workflow');
@@ -303,7 +303,9 @@ define([
             },
 
             fileSizeIsAcceptable: function (file) {
-                if (!file) { return false; }
+                if (!file) {
+                    return false;
+                }
                 return file.size < App.File.MAXSIZE;
             },
 
@@ -350,7 +352,7 @@ define([
                             data.data.attachments.forEach(function (item) {
                                 var date = common.utcDateToLocaleDate(item.uploadDate);
                                 attachments.push(item);
-                                $('.attachContainer').prepend(_.template(addAttachTemplate, { data: item, date: date }));
+                                $('.attachContainer').prepend(_.template(addAttachTemplate, {data: item, date: date}));
                             });
                             addFrmAttach[0].reset();
                             status.hide();
@@ -377,7 +379,7 @@ define([
                             return attach;
                         }
                     });
-                    currentModel.save({ 'attachments': new_attachments },
+                    currentModel.save({'attachments': new_attachments},
                         {
                             headers: {
                                 mid: 39
@@ -402,6 +404,7 @@ define([
             render: function () {
                 var formModel = this.formModel.toJSON();
                 var assignees;
+                var bonus;
                 var paralellTasks;
                 var templ = _.template(ProjectsFormTemplate);
                 this.$el.html(templ({model: formModel}));
@@ -409,37 +412,39 @@ define([
                 populate.get("#projectTypeDD", "/projectType", {}, "name", this, false, true);
                 populate.get2name("#projectManagerDD", "/getPersonsForDd", {}, this);
                 populate.get2name("#customerDd", "/Customer", {}, this, false, false);
-                populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/WorkflowsForDd", { id: "Projects" }, "name", this);
+                populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/WorkflowsForDd", {id: "Projects"}, "name", this);
 
                 var model = this.formModel.toJSON();
 
-                var notDiv = this.$el.find('.divForNote');
+                var notDiv = this.$el.find('#divForNote');
                 notDiv.html(
                     new noteView({
                         model: this.formModel
                     }).render().el);
-                notDiv.html(
+                notDiv.append(
                     new attachView({
                         model: this.formModel,
-                        url:"/uploadProjectsFiles"
+                        url: "/uploadProjectsFiles"
                     }).render().el
                 );
-                assignees = this.$el.find('.assignees-container');
+                assignees = this.$el.find('#assignees-container');
                 assignees.html(
                     new AssigneesView({
                         model: this.formModel
                     }).render().el
                 );
-
-                new BonusView({
-                    model: this.formModel
-                });
+                bonus = this.$el.find('#bonus-container');
+                bonus.html(
+                    new BonusView({
+                        model: this.formModel
+                    }).render().el
+                );
 
                 $('#createBonus').hide();
 
                 paralellTasks = [this.getWTrack, this.getInvoice, this.getPayment];
 
-                async.parallel(paralellTasks, function(err, result){
+                async.parallel(paralellTasks, function (err, result) {
 
                 });
 
@@ -448,11 +453,8 @@ define([
                 return this;
             },
 
-            getWTrack: function(cb){
-                var self = this;
+            getWTrack: function (cb) {
                 var _id = window.location.hash.split('form/')[1];
-                var newResult;
-               var weTracks = $('.weTracks');
                 var filter = {
                     'projectName': {
                         key: 'project._id',
@@ -472,7 +474,6 @@ define([
                             return cb(response.error);
                         }
 
-                     //   newResult = new wTrackCollection(response);
                         new wTrackView({
                             model: response
                         });
@@ -481,30 +482,67 @@ define([
                     }, this);
 
             },
-            getInvoice: function(cb){
-              var invoices = $('.invoices');
+            getInvoice: function (cb) {
+                var _id = window.location.hash.split('form/')[1];
+                var filter = {
+                    'project': {
+                        key: 'project._id',
+                        value: [_id]
+                    }
+                };
 
-                //invoices.html(
-                //    new InvoiceView({
-                //        model: this.formModel
-                //    }).render().el
-                //);
+                dataService.getData('/Invoice/list',
+                    {
+                        count: 100,
+                        page: 1,
+                        forSales: true,
+                        contentType: 'salesInvoice',
+                        filter: filter
+                    }, function (response, context) {
 
+                        if (response.error) {
+                            return cb(response.error);
+                        }
+
+                        new InvoiceView({
+                            model: response
+                        });
+                        cb(null, response);
+
+                    }, this);
             },
-            getPayment: function(cb){
-               var payments = $('.payments');
+            getPayment: function (cb) {
+                var _id = window.location.hash.split('form/')[1];
+                var filter = {
+                    'projectName': {
+                        key: 'project._id',
+                        value: [_id]
+                    }
 
+                };
 
-                //payments.html(
-                //    new PaymentView({
-                //        model: this.formModel
-                //    }).render().el
-                //);
+                //dataService.getData('/salesInvoice/list',
+                //    {
+                //        count: 100,
+                //        page: 1,
+                //        filter: filter
+                //    }, function (response, context) {
+                //
+                //        if (response.error) {
+                //            return cb(response.error);
+                //        }
+                //
+                //        new InvoiceView({
+                //            model: response
+                //        });
+                //        cb(null, response);
+                //
+                //    }, this);
             },
 
             editItem: function () {
                 //create editView in dialog here
-               // new EditView({ model: this.formModel });
+                // new EditView({ model: this.formModel });
                 var self = this;
                 var inputs = $(':input[readonly="readonly"]');
                 var textArea = $('.projectDescriptionEdit');
@@ -556,7 +594,7 @@ define([
                         mid: mid
                     },
                     success: function () {
-                        Backbone.history.navigate("#easyErp/Projects/list", { trigger: true });
+                        Backbone.history.navigate("#easyErp/Projects/list", {trigger: true});
                     }
                 });
 

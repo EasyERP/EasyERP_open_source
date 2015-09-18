@@ -9,15 +9,13 @@ define([
 ], function (bonusTemplate, createView, currentModel, dataService, common, populate, moment) {
     var BonusView = Backbone.View.extend({
 
-        el: '.bonus-container',
-
         initialize: function (options) {
             this.model = options.model;
             this.responseObj = {};
             this.selectedBonus = [];
             this.startDate = this.model.get('StartDate');
             this.endDate = this.model.get('EndDate');
-            this.render();
+           // this.render();
         },
 
         template: _.template(bonusTemplate),

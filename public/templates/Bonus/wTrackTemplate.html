@@ -5,74 +5,74 @@
         <tr>
             <th><input type="checkbox" id="check_all" /></th>
             <th>N</th>
-            <th class="oe_sortable" data-sort="project.projectmanager.name">
-                Assigned<span class="arrow down">7</span><span class="arrow up">v</span>
+            <th >
+                Assigned
             </th>
-            <th class="oe_sortable sortDn" data-sort="project.projectName">
-                Project<span class="arrow down">7</span><span class="arrow up">v</span>
+            <th>
+                Project
             </th>
-            <th class="oe_sortable" data-sort="project.workflow">
-                Project Status<span class="arrow down">7</span><span class="arrow up">v</span>
+            <th >
+                Project Status
             </th>
-            <th class="oe_sortable" data-sort="project.customer">
-                Customer<span class="arrow down">7</span><span class="arrow up">v</span>
+            <th >
+                Customer
             </th>
-            <th class="oe_sortable" data-sort="employee.name">
-                Employee<span class="arrow down">7</span><span class="arrow up">v</span>
+            <th >
+                Employee
             </th>
-            <th class="oe_sortable" data-sort="department.departmentName">
-                Department<span class="arrow down">7</span><span class="arrow up">v</span>
+            <th >
+                Department
             </th>
-            <th class="oe_sortable" data-sort="year">
-                Year<span class="arrow down">7</span><span class="arrow up">v</span>
+            <th >
+                Year
             </th>
-            <th class="oe_sortable" data-sort="month">
-                Month<span class="arrow down">7</span><span class="arrow up">v</span>
+            <th >
+                Month
             </th>
-            <th class="oe_sortable" data-sort="week">
-                Week<span class="arrow down">7</span><span class="arrow up">v</span>
+            <th >
+                Week
             </th>
-            <th class="oe_sortable" data-sort="rate">
-                Rate<span class="arrow down">7</span><span class="arrow up">v</span>
+            <th >
+                Rate
             </th>
-            <th class="oe_sortable" data-sort="worked">
-                Hours<span class="arrow down">7</span><span class="arrow up">v</span>
+            <th >
+                Hours
             </th>
-            <th class="oe_sortable" data-sort="Mo">
-                Mo<span class="arrow down">7</span><span class="arrow up">v</span>
+            <th >
+                Mo
             </th>
-            <th class="oe_sortable" data-sort="Tu">
-                Tu<span class="arrow down">7</span><span class="arrow up">v</span>
+            <th >
+                Tu
             </th>
-            <th class="oe_sortable" data-sort="We">
-                We<span class="arrow down">7</span><span class="arrow up">v</span>
+            <th >
+                We
             </th>
-            <th class="oe_sortable" data-sort="Th">
-                Th<span class="arrow down">7</span><span class="arrow up">v</span>
+            <th>
+                Th
             </th>
-            <th class="oe_sortable" data-sort="Fr">
-                Fr<span class="arrow down">7</span><span class="arrow up">v</span>
+            <th >
+                Fr
             </th>
-            <th class="oe_sortable" data-sort="Sa">
-                Sa<span class="arrow down">7</span><span class="arrow up">v</span>
+            <th >
+                Sa
             </th>
-            <th class="oe_sortable" data-sort="Su">
-                Su<span class="arrow down">7</span><span class="arrow up">v</span>
+            <th >
+                Su
             </th>
-            <th class="oe_sortable" data-sort="isPaid">
-                Status<span class="arrow down">7</span><span class="arrow up">v</span>
+            <th >
+                Status
             </th>
-            <th class="oe_sortable" data-sort="revenue">
-                Revenue<span class="arrow down">7</span><span class="arrow up">v</span>
+            <th >
+                Revenue
             </th>
-            <th class="oe_sortable" data-sort="cost">
-                Cost<span class="arrow down">7</span><span class="arrow up">v</span>
+            <th >
+                Cost
             </th>
             <th>
                 Profit
             </th>
-            <th class="oe_sortable" data-sort="amount">
-                Amount<span class="arrow down">7</span><span class="arrow up">v</span>
+            <th >
+                Amount
             </th>
         </tr>
         </thead>
@@ -121,7 +121,7 @@
             <td><span class="<%=wTrack.isPaid ? 'done' : 'unDone'%>"><%=wTrack.isPaid ? 'Paid' : 'Unpaid'%></span></td>
             <td data-content="revenue" class="money"><%=(wTrack.revenue / 100).toFixed(2)%></td>
             <td data-content="cost" class="money"><%=(wTrack.cost / 100).toFixed(2)%></td>
-            <td data-content="profit" class="money"><%=wTrack.profit%></td>
+            <td data-content="profit" class="money"><%=((wTrack.revenue - wTrack.cost) / 100).toFixed(2)%></td>
             <td data-content="amount" class="money"><%=(wTrack.amount / 100).toFixed(2)%></td>
         </tr>
         <% }) %>
