@@ -406,6 +406,7 @@ define([
                 var assignees;
                 var bonus;
                 var paralellTasks;
+                var self = this;
                 var templ = _.template(ProjectsFormTemplate);
                 this.$el.html(templ({model: formModel}));
 
@@ -445,6 +446,17 @@ define([
                 paralellTasks = [this.getWTrack, this.getInvoice];
 
                 async.parallel(paralellTasks, function (err, result) {
+                    var wTRack = result[0];
+                    var payment = result[1]['payment'];
+                    var invoice = result[1]['invoice'];
+
+                    var container = self.$el.find('#forInfo');
+                    container.html(
+                        new DetailsView({
+                            model: result
+                        }).render().el
+                    );
+
 
                 });
 
@@ -513,16 +525,16 @@ define([
                         dataService.getData('/payment/getForProject',
                             {
                                 data: payments
-                            }, function (response, context) {
+                            }, function (result, context) {
 
-                                if (response.error) {
-                                    return cb(response.error);
+                                if (result.error) {
+                                    return cb(result.error);
                                 }
 
                                 new PaymentView({
-                                    model: response
+                                    model: result
                                 });
-                                cb(null, response);
+                                cb(null, {payment: result, invoice: response});
 
                             }, this);
 

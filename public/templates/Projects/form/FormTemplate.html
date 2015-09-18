@@ -2,7 +2,7 @@
     <form class="form employee" id="employeeForm" data-id="<%=model._id%>">
         <ul class="chart-tabs">
             <li><a class="active" href="javascript:;">Overview</a></li>
-            <li><a href="javascript:;" class="">wTrack</a></li>
+            <li><a href="javascript:;" class="">Timesheet</a></li>
             <li><a href="javascript:;" class="">Payments</a></li>
             <li><a href="javascript:;" class="">Invoices</a></li>
             <li><a href="javascript:;" class="">Comments</a></li>
@@ -13,7 +13,7 @@
         <div class="clearfix"></div>
         <div class="dialog-tabs-items">
             <div class="dialog-tabs-item active">
-                <div class="half-block roght">
+                <div class="half-block left">
                     <dl class="project-edit-info">
                         <dt>
                             <label for="projectName">Project Name </label>
@@ -77,7 +77,13 @@
                 </div>
                 <div class="clearfix"></div>
 
+                <div id="forInfo">
+                    <div class="half-block left" id="detailsLeft"></div>
+                    <div class="half-block right" id="detailsRight"></div>
+                </div>
+
             </div>
+
             <div class="clearfix"></div>
             <div class="dialog-tabs-item">
                 <div id="weTracks"></div>
