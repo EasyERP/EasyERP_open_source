@@ -4,9 +4,9 @@
 
 define([
     'text!templates/Bonus/invoiceTemplate.html',
-    'helpers'
+    'common'
 
-], function (invoiceTemplate, helpers) {
+], function (invoiceTemplate, common) {
     var invoiceView = Backbone.View.extend({
 
         el: '#invoices',
@@ -50,7 +50,7 @@ define([
             currentEl.append(template({
                 collection: this.collection,
                 startNumber: 0,
-                currencySplitter: helpers.currencySplitter
+                utcDateToLocaleDate: common.utcDateToLocaleDate
             }));
 
             $('#check_all').click(function () {

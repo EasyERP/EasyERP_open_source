@@ -442,7 +442,7 @@ define([
 
                 $('#createBonus').hide();
 
-                paralellTasks = [this.getWTrack, this.getInvoice, this.getPayment];
+                paralellTasks = [this.getWTrack, this.getInvoice];
 
                 async.parallel(paralellTasks, function (err, result) {
 
@@ -499,45 +499,40 @@ define([
                         contentType: 'salesInvoice',
                         filter: filter
                     }, function (response, context) {
-
+                        var payments = [];
                         if (response.error) {
                             return cb(response.error);
                         }
+                        response.forEach(function(element){
+                            element.payments.forEach(function(payment){
+                                payments.push(payment);
+                            });
+                        });
+
+
+                        dataService.getData('/payment/getForProject',
+                            {
+                                data: payments
+                            }, function (response, context) {
+
+                                if (response.error) {
+                                    return cb(response.error);
+                                }
+
+                                new PaymentView({
+                                    model: response
+                                });
+                                cb(null, response);
+
+                            }, this);
+
+
 
                         new InvoiceView({
                             model: response
                         });
-                        cb(null, response);
 
                     }, this);
-            },
-            getPayment: function (cb) {
-                var _id = window.location.hash.split('form/')[1];
-                var filter = {
-                    'projectName': {
-                        key: 'project._id',
-                        value: [_id]
-                    }
-
-                };
-
-                //dataService.getData('/salesInvoice/list',
-                //    {
-                //        count: 100,
-                //        page: 1,
-                //        filter: filter
-                //    }, function (response, context) {
-                //
-                //        if (response.error) {
-                //            return cb(response.error);
-                //        }
-                //
-                //        new InvoiceView({
-                //            model: response
-                //        });
-                //        cb(null, response);
-                //
-                //    }, this);
             },
 
             editItem: function () {
