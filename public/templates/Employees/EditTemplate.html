@@ -201,6 +201,28 @@
                     <% }); %>
                 </div>
 
+                <% if (model.transferred.length > 0) {%>
+                <div class="clearfix"></div>
+                <div class="formTitle">
+                    <h3 class="left">Transfer</h3>
+
+                    <div class="clearfix"></div>
+                </div>
+
+                  <div class="half-block left withPaddingLeft">
+                    <%_.each(model.transferred, function(obj, key){ %>
+                    <dt><label>Department</label></dt>
+                    <dd><input class="dep" type="text" name="dep" id="dep<%=key%>" value="<%=obj.department.name%>" required readonly/></dd>
+                    <% }); %>
+                  </div>
+                  <div class="half-block right withPaddingLeft">
+                    <%_.each(model.transferred, function(obj, key){ %>
+                    <dt><label>Date</label></dt>
+                    <dd><input class="date" type="text" name="date" id="date<%=key%>" value="<%=obj.date%>" required readonly/></dd>
+                    <% }); %>
+                  </div>
+                <% } %>
+
                 <div class="clearfix"></div>
                 <div class="formTitle">
 				<h3 class="left">Resume</h3>
