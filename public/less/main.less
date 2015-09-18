@@ -767,7 +767,7 @@ input::-ms-clear {
   display: block;
   width: 100%;
   height: @defaultHeight;
-  border-bottom: @thin-border @defaultBorderColor;
+  //border-bottom: @thin-border @defaultBorderColor;
  // background: @defaultBackground;
   clear: both;
   margin-top: 5px;
@@ -2670,7 +2670,7 @@ input, textarea, select {
   border-right: 0;
   border-bottom: 0;
   float: left;
-  margin: 5px 12px 0 5px;
+  margin: 5px 12px 2px 5px;
 
   li {
     border-right: @thin-border @border-color-main;
@@ -2688,7 +2688,7 @@ input, textarea, select {
   }
 
   .selected {
-    border-bottom: 3px solid @border-color-selected;
+    border-bottom: 2px solid @border-color-selected;
     color: @selected-filters-color;
 
     a {
@@ -4075,6 +4075,8 @@ ul.dialog-tabs {
 #timeRecivingDataFromServer {
   clear: both;
   text-align: center;
+  color: @mainText-color;
+  padding-bottom: 5px;
 }
 
 .tabs-items {
@@ -4602,7 +4604,8 @@ h3.dashboard {
     color: @mainText-color;
     text-align: center;
     .border-radius(4px);
-    padding: 2px 5px;
+    padding: 0 5px;
+    line-height: 18px;
   }
   &.unDone {
     background-color: @yellow-lights-color;
