@@ -469,25 +469,25 @@ define([
                 var objToSave = {};
                 var objForBudget = {};
                 var employees = [];
+                var uniqueProjectTeam;
+                var container = this.$el.find('#forInfo');
+                var template = _.template(DetailsTemplate);
+
                 budgetTotal.profitSum = 0;
                 budgetTotal.costSum = 0;
                 budgetTotal.rateSum = 0;
                 budgetTotal.revenueSum = 0;
                 budgetTotal.hoursSum = 0;
 
-                objToSave.resource = this.formModel.toJSON().projectmanager.name;
-                objToSave.department = 'BusinessDev';
-                employees[objToSave.resource] = objToSave.resource;
-                projectTeam.push(objToSave);
+
+                employees[this.formModel.toJSON().projectmanager._id] =this.formModel.toJSON().projectmanager.name;
 
                 wTRack.forEach(function(wTrack){
                     var obj = {};
                     var objForBudget = {};
 
-                    if (! employees[wTrack.employee.name]){
-                        obj.resource = wTrack.employee.name;
-                        obj.department = wTrack.department.departmentName;
-                        employees[obj.resource] = obj.resource;
+                    if (!( wTrack.employee._id in employees)){
+                        employees[wTrack.employee._id] =  obj.resource;
                         projectTeam.push(obj);
                     }
 
@@ -523,18 +523,24 @@ define([
                     bonus.push(objToSave);
                 });
 
+                var keys = Object.keys(employees);
 
-                var uniqueProjectTeam = _.uniq(projectTeam);
-                var container = this.$el.find('#forInfo');
-                var template = _.template(DetailsTemplate);
-                container.html(template({
-                        projectTeam: uniqueProjectTeam,
-                        bonus: bonus,
-                        budget: budget,
-                        projectValues: projectValues,
-                        budgetTotal: budgetTotal
-                    })
-                );
+                dataService.getData('/employee/getForProjectDetails',
+                    {
+                        data: keys
+                    }, function (response) {
+
+                        container.html(template({
+                                projectTeam: response,
+                                bonus: bonus,
+                                budget: budget,
+                                projectValues: projectValues,
+                                budgetTotal: budgetTotal
+                            })
+                        );
+
+                    }, this);
+
             },
 
             getWTrack: function (cb) {

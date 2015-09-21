@@ -5,15 +5,15 @@
         <tr>
             <th>Resource</th>
             <th>Department</th>
-            <th>Position</th>
+            <th>Job Position</th>
         </tr>
         </thead>
         <tbody id="projectTeam">
         <% projectTeam.forEach(function(element){ %>
         <tr>
-          <th><%=element.resource%></th>
-          <th><%=element.department%></th>
-          <th><%=element.position%></th>
+          <th><%=element.fullName%></th>
+          <th><%=element.department.name%></th>
+          <th><%=element.jobPosition.name%></th>
         </tr>
         <% })%>
         </tbody>
