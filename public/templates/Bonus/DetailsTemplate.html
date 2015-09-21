@@ -1,80 +1,102 @@
-<div class="half-block left" id="detailsLeft">
-<table  class="list task-list">
-    <thead>
-    <tr><th class="header">Client's Team</th></tr>
-    <tr>
-        <th>Position</th>
-        <th>Department</th>
-        <th>Resource</th>
-    </tr>
-    <tbody id="listTable"></tbody>
-</table>
-    <div class="clearfix"></div>
-    <table  class="list task-list">
-
-    <tr><th class="header">Project Team</th>
-    </tr>
-    <tr>
-        <th>Position</th>
-        <th>Department</th>
-        <th>Resource</th>
-    </tr>
-        <tbody id="ProjectTeam"></tbody>
-    </table>
-    <div class="clearfix"></div>
-    <table  class="list task-list">
-
-    <tr><th class="header">Bonus for Sales Managers</th>
-    </tr>
-    <tr>
-        <th>Resource</th>
-        <th>Percentage</th>
-        <th>Bonus</th>
-    </tr>
-        <tbody id="Bonus"></tbody>
-    </thead>
-
-</table>
-</div>
-<div class="half-block right" id="detailsRight">
-    <table  class="list task-list">
+<div class="half-block left">
+    <table class="list tableProjects">
         <thead>
-        <tr><th class="header">Project Info</th></tr>
+        <tr> Project Team</tr>
         <tr>
-            <th>Start Date</th>
-            <th>End Date</th>
-            <th>Days In</th>
-            <th>Days Lef</th>
+            <th>Resource</th>
+            <th>Department</th>
+            <th>Position</th>
         </tr>
-        <tbody id="ProjectInfo"></tbody>
+        </thead>
+        <tbody id="projectTeam">
+        <% projectTeam.forEach(function(element){ %>
+        <tr>
+          <th><%=element.resource%></th>
+          <th><%=element.department%></th>
+          <th><%=element.position%></th>
+        </tr>
+        <% })%>
+        </tbody>
     </table>
-    <div class="clearfix"></div>
-    <table  class="list task-list">
 
-        <tr><th class="header">Budget & Resources</th>
-        </tr>
+    <table class="list tableProjects">
+        <thead>
+        <tr> Bonus for Sales Managers</tr>
         <tr>
+            <th>Resource</th>
+            <th>Percentage</th>
+            <th>Bonus</th>
+        </tr>
+        </thead>
+        <tbody id="bonus">
+        <% bonus.forEach(function(element){ %>
+        <tr>
+          <th><%=element.resource%></th>
+          <th><%=element.percentage%></th>
+          <th><%=(element.bonus/100).toFixed(2)%></th>
+        </tr>
+        <% })%>
+        </tbody>
+    </table>
+</div>
+<div class="half-block right">
+    <table class="list tableProjects">
+        <thead>
+        <tr>Budget & Resources</tr>
+        <tr>
+            <th>Revenue</th>
             <th>Profit</th>
             <th>Cost</th>
             <th>Rate</th>
             <th>Hours</th>
-            <th>Revenue</th>
-        </tr>
-        <tbody id="Budget"></tbody>
-    </table>
-    <div class="clearfix"></div>
-    <table  class="list task-list">
 
-        <tr><th class="header">Project values</th>
         </tr>
+        </thead>
+        <tbody id="budget">
+        <% budget.forEach(function(element){ %>
+        <tr>
+            <th><%=element.revenue%></th>
+          <th><%=element.profit%></th>
+          <th><%=element.cost%></th>
+          <th><%=element.rate%></th>
+          <th><%=element.hours%></th>
+        </tr>
+        <% })%>
+        <tr>
+            <th><%='&nbsp'%></th>
+            <th><%='&nbsp'%></th>
+            <th><%='&nbsp'%></th>
+            <th><%='&nbsp'%></th>
+            <th><%='&nbsp'%></th>
+        </tr>
+        <tr>
+
+            <th><%=budgetTotal.revenueSum.toFixed(2)%></th>
+            <th><%=budgetTotal.profitSum.toFixed(2)%></th>
+            <th><%=budgetTotal.costSum.toFixed(2)%></th>
+            <th><%=budgetTotal.rateSum.toFixed(2)%></th>
+            <th><%=budgetTotal.hoursSum%></th>
+        </tr>
+        </tbody>
+    </table>
+
+    <table class="list tableProjects">
+        <thead>
+        <tr>Project Values</tr>
         <tr>
             <th>Revenue</th>
             <th>Profit</th>
             <th>MarkUp</th>
-            <th>Pr.Radio</th>
+            <th>Pr. Margin</th>
         </tr>
-        <tbody id="ProjectValues"></tbody>
         </thead>
-
+        <tbody id="project">
+        <tr>
+        <th><%=projectValues.revenue.toFixed(2)%></th>
+          <th><%=projectValues.profit.toFixed(2)%></th>
+          <th><%=projectValues.markUp + ' %'%></th>
+          <th><%=projectValues.radio + ' %'%></th>
+        </tr>
+        </tbody>
     </table>
 </div>

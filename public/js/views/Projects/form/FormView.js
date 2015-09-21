@@ -457,15 +457,82 @@ define([
             },
 
             getDataForDetails: function(result){
+                var projectTeam = [];
+                var bonus = [];
+                var budget = [];
+                var projectValues = {};
+                var budgetTotal = {};
                 var wTRack = result[0];
-                var payment = result[1]['payment'];
-                var invoice = result[1]['invoice'];
+                var payment = result[1]['payment'] ? result[1]['payment'] : [];
+                var invoice = result[1]['invoice'] ? result[1]['invoice'] : [];
+                var bonuses = this.formModel.toJSON().bonus;
+                var objToSave = {};
+                var objForBudget = {};
+                var employees = [];
+                budgetTotal.profitSum = 0;
+                budgetTotal.costSum = 0;
+                budgetTotal.rateSum = 0;
+                budgetTotal.revenueSum = 0;
+                budgetTotal.hoursSum = 0;
+
+                objToSave.resource = this.formModel.toJSON().projectmanager.name;
+                objToSave.department = 'BusinessDev';
+                employees[objToSave.resource] = objToSave.resource;
+                projectTeam.push(objToSave);
+
+                wTRack.forEach(function(wTrack){
+                    var obj = {};
+                    var objForBudget = {};
+
+                    if (! employees[wTrack.employee.name]){
+                        obj.resource = wTrack.employee.name;
+                        obj.department = wTrack.department.departmentName;
+                        employees[obj.resource] = obj.resource;
+                        projectTeam.push(obj);
+                    }
+
+                    objForBudget.profit = ((wTrack.revenue - wTrack.cost)/100).toFixed(2);
+                    objForBudget.cost = (wTrack.cost/100).toFixed(2);
+                    objForBudget.rate = wTrack.rate;
+                    objForBudget.hours = wTrack.worked;
+                    objForBudget.revenue = (wTrack.revenue/100).toFixed(2);
+
+                    budget.push(objForBudget);
+                });
+
+                budget.forEach(function(element){
+                    budgetTotal.profitSum += parseFloat(element.profit);
+                    budgetTotal.costSum += parseFloat(element.cost);
+                    budgetTotal.rateSum += parseFloat(element.rate);
+                    budgetTotal.hoursSum += parseFloat(element.hours);
+                    budgetTotal.revenueSum += parseFloat(element.revenue);
+                });
+
+                projectValues.revenue = budgetTotal.revenueSum;
+                projectValues.profit = budgetTotal.profitSum;
+                projectValues.markUp = ((budgetTotal.profitSum / budgetTotal.costSum) * 100).toFixed();
+                projectValues.radio = ((budgetTotal.revenueSum / budgetTotal.costSum) * 100).toFixed();
+
+                bonuses.forEach(function(element){
+                    var objToSave = {};
 
 
+                    objToSave.resource = element.employeeId.name.first + ' ' + element.employeeId.name.last;
+                    objToSave.percentage = element.bonusId.name;
+                    objToSave.bonus =  budgetTotal.revenueSum / element.bonusId.value * 100;
+                    bonus.push(objToSave);
+                });
+
+
+                var uniqueProjectTeam = _.uniq(projectTeam);
                 var container = this.$el.find('#forInfo');
                 var template = _.template(DetailsTemplate);
                 container.html(template({
-                        model: result
+                        projectTeam: uniqueProjectTeam,
+                        bonus: bonus,
+                        budget: budget,
+                        projectValues: projectValues,
+                        budgetTotal: budgetTotal
                     })
                 );
             },
@@ -485,7 +552,7 @@ define([
                         count: 100,
                         page: 1,
                         filter: filter
-                    }, function (response, context) {
+                    }, function (response) {
 
                         if (response.error) {
                             return cb(response.error);
@@ -515,7 +582,7 @@ define([
                         forSales: true,
                         contentType: 'salesInvoice',
                         filter: filter
-                    }, function (response, context) {
+                    }, function (response) {
                         var payments = [];
                         if (response.error) {
                             return cb(response.error);
@@ -530,7 +597,7 @@ define([
                         dataService.getData('/payment/getForProject',
                             {
                                 data: payments
-                            }, function (result, context) {
+                            }, function (result) {
 
                                 if (result.error) {
                                     return cb(result.error);

@@ -13,8 +13,6 @@ define([
             this.models = options.model;
 
             this.render();
-
-            this.render();
         },
 
         template: _.template(wTrackTemplate),
