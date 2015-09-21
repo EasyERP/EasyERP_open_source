@@ -621,6 +621,10 @@ input::-ms-clear {
 .kanban tr:last-child {
   border-right: 10px solid white;
 }
+.kanban .header {
+  background-color: #4d5a75;
+  width: 100%;
+}
 .kanban .column {
   border-left: 10px solid #fff;
   vertical-align: text-top;

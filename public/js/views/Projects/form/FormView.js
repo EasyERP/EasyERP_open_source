@@ -3,6 +3,7 @@
  */
 define([
         'text!templates/Projects/form/FormTemplate.html',
+        'text!templates/Bonus/DetailsTemplate.html',
         'views/Projects/EditView',
         'views/Notes/NoteView',
         'views/Notes/AttachView',
@@ -20,7 +21,7 @@ define([
         'async'
     ],
 
-    function (ProjectsFormTemplate, EditView, noteView, attachView, AssigneesView, BonusView, wTrackView, PaymentView, InvoiceView, wTrackCollection, addAttachTemplate, common, populate, custom, dataService, async) {
+    function (ProjectsFormTemplate, DetailsTemplate, EditView, noteView, attachView, AssigneesView, BonusView, wTrackView, PaymentView, InvoiceView, wTrackCollection, addAttachTemplate, common, populate, custom, dataService, async) {
         var FormEmployeesView = Backbone.View.extend({
             el: '#content-holder',
             initialize: function (options) {
@@ -446,23 +447,27 @@ define([
                 paralellTasks = [this.getWTrack, this.getInvoice];
 
                 async.parallel(paralellTasks, function (err, result) {
-                    var wTRack = result[0];
-                    var payment = result[1]['payment'];
-                    var invoice = result[1]['invoice'];
 
-                    var container = self.$el.find('#forInfo');
-                    container.html(
-                        new DetailsView({
-                            model: result
-                        }).render().el
-                    );
-
-
+                    self.getDataForDetails(result);
                 });
 
                 this.delegateEvents(this.events);
 
                 return this;
+            },
+
+            getDataForDetails: function(result){
+                var wTRack = result[0];
+                var payment = result[1]['payment'];
+                var invoice = result[1]['invoice'];
+
+
+                var container = this.$el.find('#forInfo');
+                var template = _.template(DetailsTemplate);
+                container.html(template({
+                        model: result
+                    })
+                );
             },
 
             getWTrack: function (cb) {
