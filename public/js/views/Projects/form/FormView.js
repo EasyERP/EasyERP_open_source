@@ -543,8 +543,11 @@ define([
 
                     objToSave.resource = element.employeeId.name.first + ' ' + element.employeeId.name.last;
                     objToSave.percentage = element.bonusId.name;
-                    objToSave.bonus = budgetTotal.revenueSum / element.bonusId.value * 100;
-                    bonus.push(objToSave);
+                    if (element.bonusId.isPercent){
+                        objToSave.bonus = (budgetTotal.revenueSum/100) * element.bonusId.value * 100;
+                        bonus.push(objToSave);
+                    }
+
                 });
 
                 var keys = Object.keys(employees);
