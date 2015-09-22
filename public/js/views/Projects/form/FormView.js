@@ -489,13 +489,15 @@ define([
                 var budget = [];
                 var projectValues = {};
                 var budgetTotal = {};
-                var wTRack = result[0];
+                var wTRack = result[0]  ? result[0]['wTrack'] : [];
+                var monthHours = result[0]  ? result[0]['monthHours'] : [];
                 var payment = result[1] ? result[1]['payment'] : [];
                 var invoice = result[1] ? result[1]['invoice'] : [];
                 var bonuses = this.formModel.toJSON().bonus;
                 var employees = [];
                 var container = this.$el.find('#forInfo');
                 var template = _.template(DetailsTemplate);
+                var hoursByMonth = {};
 
                 budgetTotal.profitSum = 0;
                 budgetTotal.costSum = 0;
@@ -513,6 +515,13 @@ define([
                     if (!( wTrack.employee._id in employees)) {
                         employees[wTrack.employee._id] = obj.resource;
                         projectTeam.push(obj);
+                    }
+
+                    var key = wTrack.year * 100 + wTrack.month;
+                    if (hoursByMonth[key]){
+                        hoursByMonth[key] +=  parseFloat(wTrack.worked);
+                    } else {
+                        hoursByMonth[key] =  parseFloat(wTrack.worked);
                     }
 
                     objForBudget.profit = ((wTrack.revenue - wTrack.cost) / 100).toFixed(2);
@@ -539,12 +548,17 @@ define([
 
                 bonuses.forEach(function (element) {
                     var objToSave = {};
-
-
+                    objToSave.bonus = 0;
                     objToSave.resource = element.employeeId.name.first + ' ' + element.employeeId.name.last;
                     objToSave.percentage = element.bonusId.name;
                     if (element.bonusId.isPercent){
-                        objToSave.bonus = (budgetTotal.revenueSum/100) * element.bonusId.value * 100;
+                        objToSave.bonus = (budgetTotal.revenueSum / 100) * element.bonusId.value * 100;
+                        bonus.push(objToSave);
+                    } else {
+                        monthHours.forEach(function(month){
+                            objToSave.bonus += (hoursByMonth[month._id] / month.value[0]) * element.bonusId.value;
+                        });
+                        objToSave.bonus = objToSave.bonus * 100;
                         bonus.push(objToSave);
                     }
 
@@ -580,10 +594,8 @@ define([
 
                 };
 
-                dataService.getData('/wTrack/list',
+                dataService.getData('/wTrack/getForProjects',
                     {
-                        count: 100,
-                        page: 1,
                         filter: filter
                     }, function (response) {
 
@@ -592,7 +604,7 @@ define([
                         }
 
                         new wTrackView({
-                            model: response
+                            model: response.wTrack
                         });
                         cb(null, response);
 
