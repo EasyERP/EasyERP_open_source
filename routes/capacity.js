@@ -6,6 +6,7 @@ module.exports = function (models) {
     var handler = new CapacityHandler(models);
 
     router.get('/', handler.getForType);
+    router.get('/create', handler.create);
 
     return router;
 };

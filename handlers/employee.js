@@ -11,8 +11,10 @@ var Employee = function (models) {
     var ProjectSchema = mongoose.Schemas['Project'];
     var _ = require('../node_modules/underscore');
 
-    this.getForDD = function (req, res, next) {
-        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+    this.getNameAndDepartment = getNameAndDepartment;
+
+    function getNameAndDepartment (db, callback) {
+        var Employee = models.get(db, 'Employees', EmployeeSchema);
 
         Employee
             .find()
@@ -22,10 +24,21 @@ var Employee = function (models) {
             .lean()
             .exec(function (err, employees) {
                 if (err) {
-                    return next(err);
+                    return callback(err);
                 }
-                res.status(200).send({data: employees})
+
+                callback(null, employees);
             });
+    };
+
+    this.getForDD = function (req, res, next) {
+        getNameAndDepartment(req.session.lastDb, function(err, result) {
+            if (err) {
+                return next(err)
+            }
+
+            res.status(200).send({data: result})
+        });
     };
 
     this.getBySales = function (req, res, next) {

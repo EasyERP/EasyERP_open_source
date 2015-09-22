@@ -378,7 +378,7 @@ var Vacation = function (models) {
     this.create = function (req, res, next) {
         var Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
         var body = req.body;
-        var Vacation;
+        var vacation;
         var vacationKeys;
         var result = 0;
 
@@ -392,9 +392,9 @@ var Vacation = function (models) {
 
         body.monthTotal = result;
 
-        Vacation = new Vacation(body);
+        vacation = new Vacation(body);
 
-        Vacation.save(function (err, Vacation) {
+        vacation.save(function (err, Vacation) {
             if (err) {
                 return next(err);
             }
