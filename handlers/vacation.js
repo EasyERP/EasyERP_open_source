@@ -8,16 +8,17 @@ var Vacation = function (models) {
     var async = require('async');
     var _ = require('lodash');
 
-    function calculateWeeks(array, year, month) {
-        var dateValue = moment([year, month]);
+    function calculateWeeks(array, month, year) {
+        var dateValue; // = moment([year, month - 1]);
         var resultObj = {};
         var weekKey;
         var dayNumber;
 
         for (var day = array.length; day >= 0; day--) {
             if (array[day]) {
-
-                dateValue.date(day + 1);
+                dateValue = moment([year, month - 1, day + 1]);
+                //dateValue.date(day + 1);
+               // weekKey = year * 100 + moment(dateValue).isoWeek();
                 weekKey = year * 100 + moment(dateValue).isoWeek();
 
                 dayNumber = moment(dateValue).day();
@@ -378,8 +379,18 @@ var Vacation = function (models) {
         var Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
         var body = req.body;
         var Vacation;
+        var vacationKeys;
+        var result = 0;
 
         body.vacations = calculateWeeks(body.vacArray, body.month, body.year);
+
+        vacationKeys = Object.keys(body.vacations);
+
+        vacationKeys.forEach(function(key){
+            result += body.vacations[key];
+        });
+
+        body.monthTotal = result;
 
         Vacation = new Vacation(body);
 

@@ -41,13 +41,19 @@
                 "click td.editable": "editRow",
                 'click .dialog-tabs a': 'changeTab',
                 "click .current-selected": "showNewSelect",
-                "change .editing": "changeValue"
+                "change .editing": "changeValue",
+                "click .newSelectList li:not(.miniStylePagination)": "chooseOption"
             },
 
             showNewSelect: function (e, prev, next) {
                 populate.showSelect(e, prev, next, this);
                 return false;
 
+            },
+
+            chooseOption: function (e) {
+                $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
+                $(".newSelectList").hide();
             },
 
             changeTotal: function (model, val) {

@@ -141,8 +141,8 @@ define([
                 var sourceId = $("#sourceDd").data("id");
                 var referredBy = $.trim($("#referredBy").val());
                 var departmentId = {
-                    _id: $("#departmentsDd").data("id"),
-                    name: $("#departmentsDd").text()
+                    _id: $("#departmentDd").data("id"),
+                    name: $("#departmentDd").text()
                 };
                 var jobPositionId = {
                     _id: $("#jobPositionDd").data("id"),

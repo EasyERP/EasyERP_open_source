@@ -2,7 +2,7 @@
 var mongoose = require('mongoose');
 var async = require('async');
 
-var MonthHours = function (models) {
+var MonthHours = function (event, models) {
     var MonthHoursSchema = mongoose.Schemas['MonthHours'];
     var access = require("../Modules/additions/access.js")(models);
 
@@ -18,6 +18,8 @@ var MonthHours = function (models) {
                     if (err) {
                         return next(err);
                     }
+
+                    event.emit('dropHoursCashes', req);
                     res.status(200).send(monthHours);
                 });
             } else {
@@ -44,6 +46,7 @@ var MonthHours = function (models) {
                             return next(err);
                         }
 
+                        event.emit('dropHoursCashes', req);
                         res.status(200).send({success: 'updated'});
                     });
                 } else {
@@ -140,10 +143,12 @@ var MonthHours = function (models) {
             if (access) {
                 MonthHoursModel.findByIdAndRemove(id, function (err, result) {
                     if (err) {
-                        next(err);
-                    } else {
-                        res.status(200).send({success: result});
+                        return next(err);
                     }
+
+                    event.emit('dropHoursCashes', req);
+                    res.status(200).send({success: result});
+
                 });
             } else {
                 res.status(403).send();

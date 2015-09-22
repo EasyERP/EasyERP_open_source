@@ -122,15 +122,15 @@ module.exports = (function () {
         visibility: { type: String, default: 'Public' },
         department: {
             _id: {type: ObjectId, ref: 'Department', default: null},
-            name: String
+            name: { type:String, default: '' }
         },
         jobPosition: {
             _id: {type: ObjectId, ref: 'JobPosition', default: null},
-            name: String
+            name: { type:String, default: '' }
         },
         manager: {
             _id: {type: ObjectId, ref: 'Employees', default: null},
-            name: String
+            name: { type:String, default: '' }
         },
         coach: { type: ObjectId, ref: 'Employees', default: null },
         nationality: { type: String, default: '' },
@@ -190,7 +190,8 @@ module.exports = (function () {
         },
         hire: {type: Array, default: []},
         fire: {type: Array, default: []},
-        lastFire: {type: Number, default: null}
+        lastFire: {type: Number, default: null},
+        transferred: [JSON]
     }, { collection: 'Employees' });
 
     employeeSchema.virtual('fullName').get(function(){

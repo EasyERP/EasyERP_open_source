@@ -8,7 +8,7 @@ define([
     function (ContentTopBarTemplate, Custom, Common, CONSTANTS, dataService) {
         var TopBarView = Backbone.View.extend({
             el: '#top-bar',
-            contentType: CONSTANTS.INVOICE,
+            contentType: CONSTANTS.SALESINVOICE,
             template: _.template(ContentTopBarTemplate),
 
             events: {

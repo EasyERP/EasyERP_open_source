@@ -1,4 +1,4 @@
-.list(@defaultColor: @list-color-text, @font-size: 13px, @defaultBgColorOdd: @defaultBgColorOdd-color, @defaultBgColorHover: @defaultBgHover-color, @defaultProgressColor: #f5f5f5, @defaultBorderColor: @list-border-color) {
+.list(@defaultColor: @list-color-text, @font-size: 11px, @defaultBgColorOdd: @defaultBgColorOdd-color, @defaultBgColorHover: @defaultBgHover-color, @defaultProgressColor: #f5f5f5, @defaultBorderColor: @list-border-color) {
   color: @defaultColor !important;
   font-family: @lucida-font;
   width: 100%;
@@ -12,7 +12,7 @@
     td {
       padding: 3px 6px;
       line-height: 18px;
-      .bold;
+      //.bold;
       font-size: @font-size;
       text-align: right;
     }
@@ -28,7 +28,7 @@
     th {
       padding: 3px 8px;
       line-height: 18px;
-      .bold;
+      //.bold;
       font-size: @font-size;
       text-align: right;
       // text-shadow: 0 1px 1px rgba(222, 222, 222, 0.5);
@@ -104,12 +104,15 @@
         .text-overflow;
         cursor: pointer;
         padding: 0 8px;
-        font-size: @font-size - 2;
+        font-size: @font-size;
         text-align: right;
         border-right: @thin-border @defaultBorderColor;
+        color: @list-caption-color;
+        line-height: 20px;
         &.red-border {
           color: red;
         }
+
 
         &:nth-child(1), &:nth-child(2) {
           text-align: center;
@@ -121,7 +124,7 @@
 
         &[data-content="workflow"] {
           position: relative;
-          padding: 4px 15px;
+          padding: 0 15px;
           overflow: visible;
 
           .newSelectList {
@@ -160,6 +163,9 @@
             cursor: pointer;
           }
         }
+      }
+      .icon {
+        line-height: 20px;
       }
     }
   }

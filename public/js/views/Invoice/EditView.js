@@ -24,6 +24,7 @@ define([
                 _.bindAll(this, "render", "deleteItem");
 
                 this.isWtrack = !!options.isWtrack;
+                this.filter = options.filter;
 
                 this.currentModel = (options.model) ? options.model : options.collection.getElement();
                 this.currentModel.urlRoot = "/Invoice";
@@ -307,14 +308,19 @@ define([
             },
 
             deleteItem: function (event) {
-                var redirectUrl = this.forSales ? "easyErp/salesInvoice" : "easyErp/Invoice";
+                var url = window.location.hash;
+
+               // var redirectUrl = this.forSales ? url : "easyErp/Invoice";
+
                 event.preventDefault();
-                var answer = confirm("Realy DELETE items ?!");
+
+                var answer = confirm("Really DELETE items ?!");
                 if (answer == true) {
                     this.currentModel.destroy({
                         success: function () {
                             $('.edit-invoice-dialog').remove();
-                            Backbone.history.navigate(redirectUrl, {trigger: true});
+                            Backbone.history.fragment = '';
+                            Backbone.history.navigate(url, {trigger: true});
                         },
                         error: function (model, err) {
                             if (err.status === 403) {

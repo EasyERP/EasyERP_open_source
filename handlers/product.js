@@ -167,8 +167,8 @@ var Products = function (models) {
         }
     };
 
-    function remove(req, res, next) {
-        models.get(req.session.lastDb, "Products", ProductSchema).remove({_id: _id}, function (err, product) {
+    function remove(req, res, next, id) {
+        models.get(req.session.lastDb, "Products", ProductSchema).remove({_id: id}, function (err, product) {
             if (err) {
                 return next(err);
             } else {
@@ -197,11 +197,11 @@ var Products = function (models) {
         var queryObject = {};
         var query = req.query;
 
-        if (query && query.canBeSold) {
-            queryObject.canBeSold = true;
-        } else {
-            queryObject.canBePurchased = true;
-        }
+        //if (query && query.canBeSold) {
+        //    queryObject.canBeSold = true;
+        //} else {
+        //    queryObject.canBePurchased = true;
+        //}
 
         Product.find(queryObject, function (err, products) {
             if (err) {
@@ -211,46 +211,68 @@ var Products = function (models) {
         });
     };
 
-    function caseFilter(queryObj, filter) {
-        if (filter.condition === 'or') {
-            queryObj['$or'] = []
-        }
-        if (filter.canBeSold) {
-            queryObj['canBeSold'] = true;
-        }
-        if (filter.canBePurchased) {
-            queryObj['canBePurchased'] = true;
-        }
-        if (filter.letter) {
-            queryObj['name'] = new RegExp('^[' + filter.letter.toLowerCase() + filter.letter.toUpperCase() + '].*');
-        }
-        if (filter.Name) {
-            if (filter.condition === 'or') {
-                queryObj.$or.push({name: {$in: filter.Name}});
-            } else {
-                queryObj['name'] = {$in: filter.Name};
-            }
-        }
-        if (filter['Can be sold']) {
-            filter['Can be sold'] = _.map(filter['Can be sold'], function (element) {
-                if (element === 'true') {
-                    return true;
-                }
-                return false;
-            });
-            queryObj['canBeSold'] = {$in: filter['Can be sold']}
-        }
-        if (filter['Creation Date']) {
-            if (filter.condition === 'or') {
-                queryObj.$or.push({creationDate: {$gte: new Date(filter['creationDate'][0].start), $lte: new Date(filter['creationDate'][0].end)}});
-            } else {
-                queryObj['creationDate'] = {
-                    $gte: new Date(filter['creationDate'][0].start),
-                    $lte: new Date(filter['creationDate'][0].end)
-                }
-            }
+    function caseFilter(filter) {
+        var condition;
+        var resArray = [];
+        var filtrElement = {};
+        var key;
 
+        for (var filterName in filter){
+            condition = filter[filterName]['value'];
+            key = filter[filterName]['key'];
+
+            switch (filterName) {
+                case 'letter':
+                    filtrElement['name'] = new RegExp('^[' + filter.letter.toLowerCase() + filter.letter.toUpperCase() + '].*');
+                    resArray.push(filtrElement);
+                    break;
+                case 'name':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'productType':
+                    filtrElement[key] = {$in: condition};
+                    resArray.push(filtrElement);
+                    break;
+                case 'canBeSold':
+                    condition = ConvertType(condition, 'boolean');
+                    filtrElement[key] = {$in: condition};
+                    resArray.push(filtrElement);
+                    break;
+                case 'canBeExpensed':
+                    condition = ConvertType(condition, 'boolean');
+                    filtrElement[key] = {$in: condition};
+                    resArray.push(filtrElement);
+                    break;
+                case 'canBePurchased':
+                    condition = ConvertType(condition, 'boolean');
+                    filtrElement[key] = {$in: condition};
+                    resArray.push(filtrElement);
+                    break;
+            }
+        };
+
+        return resArray;
+    };
+
+    function ConvertType(array, type) {
+        var result = [];
+        if (type === 'integer') {
+            for (var i = array.length - 1; i >= 0; i--) {
+                result[i] = parseInt(array[i]);
+            }
+        } else if (type === 'boolean') {
+            for (var i = array.length - 1; i >= 0; i--) {
+                if (array[i] === 'true') {
+                    result[i] = true;
+                } else if (array[i] === 'false') {
+                    result[i] = false;
+                } else {
+                    result[i] = null;
+                }
+            }
         }
+        return result;
     };
 
     function getProductsFilter(req, res, next) {
@@ -259,7 +281,7 @@ var Products = function (models) {
                 if (access) {
                     var Product = models.get(req.session.lastDb, 'Product', ProductSchema);
                     var query = req.query;
-                    var queryObject = {};
+                    var optionsObject = {};
                     var sort = {};
                     var count = query.count ? query.count : 100;
                     var page = req.query.page;
@@ -270,14 +292,18 @@ var Products = function (models) {
                     var contentSearcher;
                     var waterfallTasks;
 
-                    if (query && query.filter) {
-                        caseFilter(queryObject, query.filter);
-                    }
-
                     if (query && query.sort) {
                         sort = query.sort;
                     } else {
                         sort = {"name": 1};
+                    }
+
+                    if (query.filter && typeof query.filter === 'object') {
+                        if (query.filter.condition === 'or') {
+                            optionsObject['$or'] = caseFilter(query.filter);
+                        } else {
+                            optionsObject['$and'] = caseFilter(query.filter);
+                        }
                     }
 
                     departmentSearcher = function (waterfallCallback) {
@@ -291,6 +317,7 @@ var Products = function (models) {
                                     _id: 1
                                 }
                             },
+
                             waterfallCallback);
                     };
 
@@ -301,7 +328,7 @@ var Products = function (models) {
                             {
                                 $match: {
                                     $and: [
-                                        queryObject,
+                                        optionsObject,
                                         {
                                             $or: [
                                                 {
@@ -342,19 +369,21 @@ var Products = function (models) {
                     };
 
                     contentSearcher = function (productsIds, waterfallCallback) {
-                        queryObject._id = {$in: productsIds};
+                        var query;
+                        optionsObject._id = {$in: productsIds};
 
-                        var query = Product.find(queryObject).limit(count).skip(skip).sort(sort);
+                        query = Product.find(optionsObject);
                         query.exec(waterfallCallback);
                     };
 
                     waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
 
-                    async.waterfall(waterfallTasks, function (err, result) {
+                    async.waterfall(waterfallTasks, function (err, products) {
                         if (err) {
                             return next(err);
                         }
-                        res.status(200).send({success: result});
+                        res.status(200).send({success: products});
+
                     });
                 } else {
                     res.send(403);
@@ -512,15 +541,7 @@ var Products = function (models) {
         var queryObject = {};
         var query;
 
-        if (options && options.filter && options.filter.canBeSold) {
-            queryObject['canBeSold'] = true;
-        }
-
-        if (options && options.filter && options.filter.canBePurchased) {
-            queryObject['canBePurchased'] = true;
-        }
-
-        query = models.get(req.session.lastDb, "Products", ProductSchema).aggregate([{$match: queryObject}, {$project: {later: {$substr: ["$name", 0, 1]}}}, {$group: {_id: "$later"}}]);
+        query = models.get(req.session.lastDb, "Product", ProductSchema).aggregate([{$match: queryObject}, {$project: {later: {$substr: ["$name", 0, 1]}}}, {$group: {_id: "$later"}}]);
         query.exec(function (err, result) {
             if (err) {
                 next(err)
@@ -555,19 +576,13 @@ var Products = function (models) {
         var contentSearcher;
         var waterfallTasks;
 
-        /*if (data && data.filter && data.filter.canBeSold) {
-         optionsObject['canBeSold'] = true;
-         }
-
-         if (data && data.filter && data.filter.canBePurchased) {
-         optionsObject['canBePurchased'] = true;
-         }
-
-         if (data.filter && data.filter.letter) {
-         optionsObject['name'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
-         }*/
-
-        caseFilter(optionsObject, data.filter);
+        if (data.filter && typeof data.filter === 'object') {
+            if (data.filter.condition === 'or') {
+                optionsObject['$or'] = caseFilter(data.filter);
+            } else {
+                optionsObject['$and'] = caseFilter(data.filter);
+            }
+        }
 
         departmentSearcher = function (waterfallCallback) {
             models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
@@ -653,44 +668,6 @@ var Products = function (models) {
 
         });
     };
-
-    this.getFilterValues = function (req, res, next) {
-        var Product = models.get(req.session.lastDb, 'Product', ProductSchema);
-
-        Product
-            .aggregate([
-                {
-                    $group: {
-                        _id: null,/*
-                        'Can be sold': {
-                            $addToSet: '$canBeSold'
-                        },*/
-                        'Creation date': {
-                            $addToSet: '$creationDate'
-                        },
-                        'Name': {
-                            $addToSet: '$name'
-                        }
-                    }
-                }
-            ], function (err, prod) {
-                if (err) {
-                    return next(err)
-                }
-               // prod[0]['Name'] = underscore.sortBy(value, function (num) { return num});
-
-                _.map(prod[0], function(value, key) {
-                    switch (key) {
-                        case 'Name':
-                            prod[0][key] = _.sortBy(value, function (num) { return num});
-                            break;
-
-                    }
-                });
-
-                res.send(prod)
-            })
-    }
 
 };
 

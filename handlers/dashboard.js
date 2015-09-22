@@ -7,6 +7,15 @@ var wTrack = function (models) {
         var async = require('async');
 
         var CONSTANTS = require('../constants/mainConstants');
+        var constForView = [
+            'iOS',
+            'Android',
+            'Web',
+            'WP',
+            'QA',
+            'Design',
+            'PM'
+        ];
 
         var objectId = mongoose.Types.ObjectId;
 
@@ -73,6 +82,16 @@ var wTrack = function (models) {
 
                 function departmentMapper(department, departmentCb) {
                     var dashDepartment = _.find(dashBoardResult, function (deps) {
+                        if(deps.department == null){
+                            console.log('==================== deps =======================');
+                            console.log(deps);
+                            console.log('===========================================');
+                        }
+                        if(department.department == null){
+                            console.log('===================== department ======================');
+                            console.log(department);
+                            console.log('===========================================');
+                        }
                         return deps.department.toString() === department.department.toString();
                     });
 
@@ -88,7 +107,7 @@ var wTrack = function (models) {
                             if (dashResultByEmployee) {
                                 _employee.weekData = _.map(tempWeekArr, function (weekData) {
                                     var data;
-                                    var holidayCount;
+                                    var holidayCount = 0;
                                     var _vacations;
 
                                     data = _.find(dashResultByEmployee.weekData, function (d) {
@@ -105,7 +124,7 @@ var wTrack = function (models) {
                                     if (_vacations) {
                                         _vacations.vacations.forEach(function (vacation) {
                                             if (vacation.hasOwnProperty(weekData.dateByWeek)) {
-                                                holidayCount = vacation[weekData.dateByWeek];
+                                                holidayCount += vacation[weekData.dateByWeek];
                                             }
                                         });
                                     }
@@ -116,7 +135,7 @@ var wTrack = function (models) {
                                 });
                             } else {
                                 _employee.weekData = _.map(tempWeekArr, function (weekData) {
-                                    var holidayCount;
+                                    var holidayCount = 0;
                                     var _vacations;
 
                                     _vacations = _.find(vacations, function (vacationObject) {
@@ -126,7 +145,7 @@ var wTrack = function (models) {
                                     if (_vacations) {
                                         _vacations.vacations.forEach(function (vacation) {
                                             if (vacation.hasOwnProperty(weekData.dateByWeek)) {
-                                                holidayCount = vacation[weekData.dateByWeek];
+                                                holidayCount += vacation[weekData.dateByWeek];
                                             }
                                         });
                                     }
@@ -150,10 +169,20 @@ var wTrack = function (models) {
 
                 function sendResponse() {
                     Department.populate(employeesByDep, {
-                        path: 'department._id',
+                        path: 'department',
                         select: 'departmentName _id'
                     }, function () {
-                        res.status(200).send(employeesByDep);
+                        var sortDepartments = [];
+
+                        constForView.forEach(function (dep) {
+                            employeesByDep.forEach(function (department, index) {
+                                if (dep === employeesByDep[index].department.departmentName) {
+                                    sortDepartments.push(employeesByDep[index]);
+                                }
+                            });
+                        });
+
+                        res.status(200).send(sortDepartments);
                     });
                 };
 

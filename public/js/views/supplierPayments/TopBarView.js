@@ -17,7 +17,8 @@ define([
                 "click a.changeContentView": 'changeContentViewType',
                 "click #top-bar-deleteBtn": "deleteEvent",
                 "click #top-bar-editBtn": "editEvent",
-                "click #top-bar-createBtn": "createEvent"
+                "click #top-bar-createBtn": "createEvent",
+                "click #top-bar-saveBtn": "saveEvent"
             },
 
             changeContentViewType: function (e) {
@@ -51,8 +52,12 @@ define([
 
             deleteEvent: function (event) {
                 event.preventDefault();
-                var answer = confirm("Realy DELETE items ?!");
-                if (answer == true) this.trigger('deleteEvent');
+                this.trigger('deleteEvent');
+            },
+
+            saveEvent: function (event) {
+                event.preventDefault();
+                this.trigger('saveEvent');
             }
         });
 

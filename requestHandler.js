@@ -30,6 +30,8 @@ var requestHandler = function (event, mainDb) {
     var jobPositionSchema = mongoose.Schemas['JobPosition'];
     var opportunitiesSchema = mongoose.Schemas['Opportunitie'];
     var userSchema = mongoose.Schemas['User'];
+    var HoursCashesSchema = mongoose.Schemas['HoursCashes'];
+
 
     //binding for remove Workflow
     event.on('removeWorkflow', function (req, wId, id) {
@@ -62,14 +64,34 @@ var requestHandler = function (event, mainDb) {
             });
         }
     });
+
+    event.on('dropHoursCashes', function(req){
+        var HoursCashes = models.get(req.session.lastDb, 'HoursCashes', HoursCashesSchema);
+
+        HoursCashes.remove({}, function(err, result){
+            if (err){
+                return next(err);
+            }
+
+            console.log('HoursCashes removed');
+        });
+
+    });
     //if name was updated, need update related wTrack, or other models
 
-    event.on('updateName', function (id, targetModel, searchField, fieldName, fieldValue) {
+    event.on('updateName', function (id, targetModel, searchField, fieldName, fieldValue, fieldInArray) {
+        //fieldInArray(bool) added for update values in array. If true then fieldName contains .$.
         var sercObject = {};
         var updateObject = {};
 
         sercObject[searchField] = id;
-        updateObject[fieldName] = fieldValue;
+
+        if (fieldInArray) {
+            updateObject['$set'] = {};
+            updateObject['$set'][fieldName] = fieldValue;
+        } else {
+            updateObject[fieldName] = fieldValue;
+        }
 
         targetModel.update(sercObject, updateObject, {multi: true}, function(err){
             if(err){

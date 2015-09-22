@@ -8,6 +8,7 @@ var Filters = function (models) {
     var TaskSchema = mongoose.Schemas['Tasks'];
     var wTrackInvoiceSchema = mongoose.Schemas['wTrackInvoice'];
     var customerPaymentsSchema = mongoose.Schemas['Payment'];
+    var productSchema  = mongoose.Schemas['Products'];
     var _ = require('../node_modules/underscore');
     var async = require('async');
 
@@ -21,6 +22,7 @@ var Filters = function (models) {
         var Task = models.get(lastDB, 'Tasks', TaskSchema);
         var wTrackInvoice = models.get(lastDB, 'wTrackInvoice', wTrackInvoiceSchema);
         var customerPayments = models.get(lastDB, 'Payment', customerPaymentsSchema);
+        var Product = models.get(lastDB, 'Products', productSchema);
 
         async.parallel({
                 wTrack: getWtrackFiltersValues,
@@ -31,7 +33,9 @@ var Filters = function (models) {
                 Projects: getProjectFiltersValues,
                 Tasks: getTasksFiltersValues,
                 salesInvoice: getSalesInvoiceFiltersValues,
-                customerPayments: getCustomerPaymentsFiltersValues
+                customerPayments: getCustomerPaymentsFiltersValues,
+                supplierPayments: getSupplierPaymentsFiltersValues,
+                Product: getProductsFiltersValues
             },
             function (err, result) {
                 if (err) {
@@ -100,16 +104,18 @@ var Filters = function (models) {
 
                 result = result[0];
 
-                result['isPaid'] = [
-                    {
-                        _id: 'true',
-                        name: 'Paid'
-                    },
-                    {
-                        _id: 'false',
-                        name: 'Unpaid'
-                    }
-                ]
+                if (result){
+                    result['isPaid'] = [
+                        {
+                            _id: 'true',
+                            name: 'Paid'
+                        },
+                        {
+                            _id: 'false',
+                            name: 'Unpaid'
+                        }
+                    ]
+                };
 
                 callback(null, result);
             });
@@ -144,16 +150,18 @@ var Filters = function (models) {
 
                 result = result[0];
 
-                result['services'] = [
-                    {
-                        _id: 'isSupplier',
-                        name: 'Supplier'
-                    },
-                    {
-                        _id: 'isCustomer',
-                        name: 'Customer'
-                    }
-                ]
+                if (result){
+                    result['services'] = [
+                        {
+                            _id: 'isSupplier',
+                            name: 'Supplier'
+                        },
+                        {
+                            _id: 'isCustomer',
+                            name: 'Customer'
+                        }
+                    ]
+                }
 
                 callback(null, result);
             });
@@ -188,16 +196,18 @@ var Filters = function (models) {
 
                 result = result[0];
 
-                result['services'] = [
-                    {
-                        _id: 'isSupplier',
-                        name: 'Supplier'
-                    },
-                    {
-                        _id: 'isCustomer',
-                        name: 'Customer'
-                    }
-                ]
+                if (result) {
+                    result['services'] = [
+                        {
+                            _id: 'isSupplier',
+                            name: 'Supplier'
+                        },
+                        {
+                            _id: 'isCustomer',
+                            name: 'Customer'
+                        }
+                    ]
+                }
 
                 callback(null, result);
             });
@@ -468,6 +478,124 @@ var Filters = function (models) {
                 }
 
                 result = result[0];
+
+                callback(null, result);
+            });
+        };
+
+        function getSupplierPaymentsFiltersValues(callback) {
+            customerPayments.aggregate([
+                {
+                    $match: {
+                        forSale: false
+                    }
+                },
+                {
+                    $group: {
+                        _id: null,
+                        'supplier': {
+                            $addToSet: {
+                                _id: '$supplier._id',
+                                name: '$supplier.fullName'
+                            }
+                        },
+                        'paymentRef': {
+                            $addToSet: {
+                                _id: '$paymentRef',
+                                name: {'$ifNull': ['$paymentRef', 'None']}
+                            }
+                        },
+                        'year': {
+                            $addToSet: {
+                                _id: '$year',
+                                name: {'$ifNull': ['$year', 'None']}
+                            }
+                        },
+                        'month': {
+                            $addToSet: {
+                                _id: '$month',
+                                name: {'$ifNull': ['$month', 'None']}
+                            }
+                        },
+                        'workflow': {
+                            $addToSet: {
+                                _id: '$workflow',
+                                name: {'$ifNull': ['$workflow', 'None']}
+                            }
+                        }
+                    }
+                }
+            ], function (err, result) {
+                if (err) {
+                    callback(err);
+                }
+
+                result = result[0];
+
+                callback(null, result);
+            });
+        };
+
+        function getProductsFiltersValues(callback) {
+            Product.aggregate([
+                {
+                    $group: {
+                        _id: null,
+                        'name': {
+                            $addToSet: {
+                                _id: '$_id',
+                                name: '$name'
+                            }
+                        },
+                        'productType': {
+                            $addToSet: {
+                                _id: '$info.productType',
+                                name: {'$ifNull': ['$info.productType', 'None']}
+                            }
+                        }
+                    }
+                }
+            ], function (err, result) {
+                if (err) {
+                    callback(err);
+                }
+
+                result = result[0];
+
+                result['canBeSold'] = [
+                    {
+                        _id: 'true',
+                        name: 'True'
+                    },
+                    {
+                        _id: 'false',
+                        name: 'False'
+                    }
+                ];
+
+                result['canBeExpensed'] = [
+                    {
+                        _id: 'true',
+                        name: 'True'
+                    },
+                    {
+                        _id: 'false',
+                        name: 'False'
+                    }
+                ];
+
+                result['canBePurchased'] = [
+                    {
+                        _id: 'true',
+                        name: 'True'
+                    },
+                    {
+                        _id: 'false',
+                        name: 'False'
+                    }
+                ];
+
+
 
                 callback(null, result);
             });

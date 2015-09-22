@@ -111,9 +111,9 @@ define([
                 var reference = thisEl.find("#reference").val();
                 var language = thisEl.find("#language").text();
 
-                if (event) {
-                    event.preventDefault()
-                }
+                //if (event) {
+                //    event.preventDefault()
+                //}
                 if (salesPerson === '') {
                     salesPerson = null
                 }

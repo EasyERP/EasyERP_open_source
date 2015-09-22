@@ -2,8 +2,9 @@ define([
     'libs/date.format',
     'common',
     'constants',
-    'dataService'
-], function (dateformat, common, CONTENT_TYPES, dataService) {
+    'dataService',
+    'moment'
+], function (dateformat, common, CONTENT_TYPES, dataService, moment) {
 
     var runApplication = function (success) {
         if (!Backbone.history.fragment) {
@@ -298,6 +299,37 @@ define([
         }
     };
 
+    var getWeeks = function(month, year){
+        var result = [];
+        var startWeek;
+        var endWeek;
+        var diff;
+        var isoWeeks = moment(year).isoWeeksInYear();
+        var startDate = moment([year, parseInt(month) - 1]);
+        var endDate = moment([year, parseInt(month), -1 + 1]);
+
+        startWeek = moment(startDate).isoWeeks();
+        endWeek = moment(endDate).isoWeeks();
+
+        diff = endWeek - startWeek;
+
+        if (diff < 0){
+            diff = isoWeeks - startWeek;
+
+            for (var i = diff; i >=0; i--){
+                result.push(isoWeeks - i);
+            }
+        } else {
+            for (var i = diff; i >=0; i--){
+                result.push(endWeek - i);
+            }
+        }
+
+
+
+        return result;
+    };
+
     return {
         runApplication: runApplication,
         changeContentViewType: changeContentViewType,
@@ -311,6 +343,7 @@ define([
         retriveFromCash: retriveFromCash,
         savedFilters: savedFilters,
         getFiltersForContentType: getFiltersForContentType,
-        getFilterById: getFilterById
+        getFilterById: getFilterById,
+        getWeeks: getWeeks
     };
 });

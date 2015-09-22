@@ -1,7 +1,7 @@
 
 
 var mongoose = require('mongoose');
-var wTrack = function (models) {
+var wTrack = function (event, models) {
     var access = require("../Modules/additions/access.js")(models);
     var _ = require('../node_modules/underscore');
     var wTrackSchema = mongoose.Schemas['wTrack'];
@@ -28,6 +28,8 @@ var wTrack = function (models) {
                     if (err) {
                         return next(err);
                     }
+
+                   event.emit('dropHoursCashes', req);
                     res.status(200).send({success: wTrack});
                 });
             } else {
@@ -96,6 +98,7 @@ var wTrack = function (models) {
                             return next(err);
                         }
 
+                        event.emit('dropHoursCashes', req);
                         res.status(200).send({success: 'updated'});
                     });
                 } else {
@@ -300,9 +303,19 @@ var wTrack = function (models) {
         var contentIdsSearcher;
         var contentSearcher;
         var waterfallTasks;
+        var key;
+        var keyForDay;
+        var sortObj = {
+            "Mo": 1,
+            "Tu": 2,
+            "We": 3,
+            "Th": 4,
+            "Fr": 5,
+            "Sa": 6,
+            "Su": 7
+        };
 
         var sort = {};
-
 
         if (filter && typeof filter === 'object') {
             if (filter.condition === 'or') {
@@ -317,7 +330,14 @@ var wTrack = function (models) {
         var skip = (page - 1) > 0 ? (page - 1) * count : 0;
 
         if (query.sort) {
-            sort = query.sort;
+            key = Object.keys(query.sort)[0];
+            keyForDay = sortObj[key];
+
+            if (key in sortObj){
+                sort[keyForDay] = query.sort[key];
+            } else {
+                sort = query.sort;
+            }
         } else {
             sort = {"project.projectName": 1, "year": 1, "month": 1, "week": 1};
         }
@@ -554,6 +574,8 @@ var wTrack = function (models) {
                     if (err) {
                         return next(err);
                     }
+
+                    event.emit('dropHoursCashes', req);
                     res.status(200).send({success: product});
                 });
             } else {

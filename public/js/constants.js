@@ -191,6 +191,50 @@ define([], function () {
                 view: 'workflow',
                 backend: 'workflow'
             }
+        },
+        supplierPayments: {
+            'Employee':{
+                view: 'supplier',
+                backend: 'supplier._id'
+            },
+            'Bonus Type': {
+                view: 'paymentRef',
+                backend: 'paymentRef'
+            },
+            'Year': {
+                view: 'year',
+                backend: 'year'
+            },
+            'Month': {
+                view: 'month',
+                backend: 'month'
+            },
+            'Status': {
+                view: 'workflow',
+                backend: 'workflow'
+            }
+        },
+        Product: {
+            'Product Name':{
+                view: 'name',
+                backend: '_id'
+            },
+            'Product Type': {
+                view: 'productType',
+                backend: 'info.productType'
+            },
+            'Can be Sold': {
+                view: 'canBeSold',
+                backend: 'canBeSold'
+            },
+            'Can be Expensed': {
+                view: 'canBeExpensed',
+                backend: 'canBeExpensed'
+            },
+            'Can be Purchased': {
+                view: 'canBePurchased',
+                backend: 'canBePurchased'
+            }
         }
     };
 
@@ -233,11 +277,13 @@ define([], function () {
         ATTENDANCE: 'Attendance',
         DASHBOARD_VACATION: 'DashboardVacation',
         DASHBOARD_HR: 'HrDashboard',
+        HOURS: 'Hours',
 
         RESPONSES: {
             BAD_RESPONSE: 'Please try again',
             CREATE_QUOTATION: 'Please check at most one supplier or create one',
-            CONFIRM_ORDER: 'Please add at most one product to quotation'
+            CONFIRM_ORDER: 'Please add at most one product to quotation',
+            DOUBLE_EMPLOYEE_VACATION: 'Current Employee already has vacation line'
         },
 
         WTRACK_DB_NAME: 'weTrack',

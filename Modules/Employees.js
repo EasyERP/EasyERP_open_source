@@ -6,6 +6,8 @@ var Employee = function (event, models) {
     var objectId = mongoose.Types.ObjectId;
     var employeeSchema = mongoose.Schemas['Employee'];
     var fs = require('fs');
+    var moment = require('../public/js/libs/moment/moment');
+
 
     var CONSTANTS = require('../constants/mainConstants');
 
@@ -427,6 +429,7 @@ var Employee = function (event, models) {
                         }
                     });
                 });
+                event.emit('dropHoursCashes', req);
             }
         }
         catch (exception) {
@@ -1018,6 +1021,12 @@ var Employee = function (event, models) {
         var Invoice;
         var PaymentSchema;
         var Payment;
+        var SalaryCashSchema;
+        var SalaryCash;
+        var SalarySchema;
+        var Salary;
+        var VacationSchema;
+        var Vacation;
 
         var fullName;
 
@@ -1034,6 +1043,16 @@ var Employee = function (event, models) {
             PaymentSchema = mongoose.Schemas['wTrackPayment'];
             Payment = models.get(dbName, 'wTrackPayment', PaymentSchema);
 
+            SalarySchema = mongoose.Schemas['Salary'];
+            Salary = models.get(dbName, 'Salary', SalarySchema);
+
+            SalaryCashSchema = mongoose.Schemas['SalaryCash'];
+            SalaryCash = models.get(dbName, 'SalaryCash', SalaryCashSchema);
+
+            VacationSchema = mongoose.Schemas['Vacation'];
+            Vacation = models.get(dbName, 'Vacation', VacationSchema);
+
+
             fullName = result.name.last ? (result.name.first + ' ' + result.name.last) : result.name.first;
 
             event.emit('updateName', _id, EmployeeModel, 'manager._id', 'manager.name', fullName);
@@ -1041,7 +1060,9 @@ var Employee = function (event, models) {
             event.emit('updateName', _id, ProjectModel, 'customer._id', 'customer.name', fullName);
             event.emit('updateName', _id, Invoice, 'salesPerson._id', 'salesPerson.name', fullName);
             event.emit('updateName', _id, Payment, 'invoice.assigned._id', 'invoice.assigned.name', fullName);
-
+            event.emit('updateName', _id, Salary, 'employee._id', 'employee.name', fullName);
+            event.emit('updateName', _id, SalaryCash, 'employeesArray.employee._id', 'employeesArray.$.employee.name', fullName, true);
+            event.emit('updateName', _id, Vacation, 'employee._id', 'employee.name', fullName);
         }
     };
 
@@ -1053,6 +1074,9 @@ var Employee = function (event, models) {
         var fileName = data.fileName;
         var dataObj = {};
         var query = {};
+        var date = new Date();
+        var depForTransfer = data.depForTransfer;
+        delete data.depForTransfer;
         delete data.fileName;
 
         var updateObject = {};
@@ -1060,9 +1084,10 @@ var Employee = function (event, models) {
         for (var i in data) {
             if (i === 'contractEndReason') {
                 updateObject['isEmployee'] = false;
+                updateObject.lastFire = moment(date).year() * 100 + moment(date).isoWeek();
                 updateObject['contractEnd'] = {
                     reason: data[i],
-                    date: new Date()
+                    date: date
                 };
             } else {
                 updateObject[i] = data[i];
@@ -1129,9 +1154,17 @@ var Employee = function (event, models) {
 
             } else if (data.hired) {
                 dataObj = {'hire': new Date()};
+            } else if (data.department) {
+                dataObj = {'transferred': {
+                    department: depForTransfer,
+                    date: new Date()
+                }};
             }
 
-            if (dataObj.hire || dataObj.fire){
+            if (dataObj.hire || dataObj.fire ){
+                query = { $set: updateObject, $push: dataObj };
+            } else if (data.department){
+                delete updateObject.transferred;
                 query = { $set: updateObject, $push: dataObj };
             } else  if (data.relatedUser){
                 query = { $set: updateObject};
@@ -1186,6 +1219,7 @@ var Employee = function (event, models) {
                         });
 
                     }
+                    event.emit('dropHoursCashes', req);
                     res.send(200, { success: 'Employees updated', result: result });
 
                     updateRefs(result, dbName, _id);
@@ -1230,6 +1264,7 @@ var Employee = function (event, models) {
                     });
                 }
                 event.emit('recalculate', req);
+                event.emit('dropHoursCashes', req);
                 res.send(200, { success: 'Employees removed' });
             }
         });
