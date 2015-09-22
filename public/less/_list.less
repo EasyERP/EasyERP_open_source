@@ -2,7 +2,17 @@
   color: @defaultColor !important;
   font-family: @lucida-font;
   width: 100%;
-
+  caption {
+    text-align: left;
+    margin-top: 15px;
+    background-color: @forInfo-caption-color;
+    font-size: @font-size;
+    line-height: 20px;
+    padding-left: 10px;
+  }
+  .anotherColor {
+    background-color: @forInfo-caption-color2;
+  }
   tfoot {
     tr {
       border-bottom: 1px solid @defaultBorderColor;
@@ -177,6 +187,7 @@
   tr:hover {
     background-color: @defaultBgColorHover;
   }
+
 }
 
 .list2 {
@@ -205,4 +216,39 @@
 
 .margin(@t: 5px, @r: 5px, @b: 5px, @l: 5px) {
   margin: @arguments;
+}
+
+#forInfo {
+  .tableProjects {
+    width: 99%;
+    thead{
+      th {
+        text-align: right;
+      }
+      }
+    tbody {
+      td {
+        text-align: right;
+        &:first-child {
+          border-left: 1px solid @list-border-color;
+        }
+      }
+    }
+      tr {
+        .procent {
+          position: relative;
+          padding-right: 20px;
+          &::before {
+            content: '%';
+            display: block;
+            width: 5px;
+            height: 5px;
+            position: absolute;
+            right: 13px;
+
+          }
+        }
+      }
+
+  }
 }
