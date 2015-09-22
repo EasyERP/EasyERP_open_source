@@ -76,8 +76,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 .list2 tfoot td {
   padding: 3px 6px;
   line-height: 18px;
-  font-weight: bold;
-  font-size: 13px;
+  font-size: 11px;
   text-align: right;
 }
 .list2 thead tr {
@@ -88,8 +87,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 .list2 thead th {
   padding: 3px 8px;
   line-height: 18px;
-  font-weight: bold;
-  font-size: 13px;
+  font-size: 11px;
   text-align: right;
 }
 .list2 thead th:nth-child(1),
@@ -163,6 +161,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   text-align: right;
   border-right: 1px solid #7f7f80;
   color: #a9a9a9;
+  line-height: 20px;
 }
 .list2 tbody tr td.red-border {
   color: red;
@@ -176,7 +175,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 }
 .list2 tbody tr td[data-content="workflow"] {
   position: relative;
-  padding: 4px 15px;
+  padding: 0 15px;
   overflow: visible;
 }
 .list2 tbody tr td[data-content="workflow"] .newSelectList {
@@ -206,6 +205,9 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 }
 .list2 tbody tr td:first-of-type input {
   cursor: pointer;
+}
+.list2 tbody tr .icon {
+  line-height: 20px;
 }
 .list2 tr:nth-child(odd) {
   background-color: #242f36;
@@ -221,8 +223,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 .list2 tfoot td {
   padding: 3px 6px;
   line-height: 18px;
-  font-weight: bold;
-  font-size: 13px;
+  font-size: 11px;
   text-align: right;
 }
 .list2 thead tr {
@@ -233,8 +234,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 .list2 thead th {
   padding: 3px 8px;
   line-height: 18px;
-  font-weight: bold;
-  font-size: 13px;
+  font-size: 11px;
   text-align: right;
 }
 .list2 thead th:nth-child(1),
@@ -308,6 +308,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   text-align: right;
   border-right: 1px solid #7f7f80;
   color: #a9a9a9;
+  line-height: 20px;
 }
 .list2 tbody tr td.red-border {
   color: red;
@@ -321,7 +322,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 }
 .list2 tbody tr td[data-content="workflow"] {
   position: relative;
-  padding: 4px 15px;
+  padding: 0 15px;
   overflow: visible;
 }
 .list2 tbody tr td[data-content="workflow"] .newSelectList {
@@ -351,6 +352,9 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 }
 .list2 tbody tr td:first-of-type input {
   cursor: pointer;
+}
+.list2 tbody tr .icon {
+  line-height: 20px;
 }
 .list2 tr:nth-child(odd) {
   background-color: #242f36;
@@ -620,10 +624,6 @@ input::-ms-clear {
 }
 .kanban tr:last-child {
   border-right: 10px solid white;
-}
-.kanban .header {
-  background-color: #4d5a75;
-  width: 100%;
 }
 .kanban .column {
   border-left: 10px solid #fff;
@@ -1500,7 +1500,7 @@ select:not([type="checkbox"]):focus {
   border-right: 0;
   border-bottom: 0;
   float: left;
-  margin: 5px 12px 0 5px;
+  margin: 5px 12px 2px 5px;
 }
 .btn-list li {
   border-right: 1px solid #7f7f80;
@@ -1515,7 +1515,7 @@ select:not([type="checkbox"]):focus {
   text-decoration: none;
 }
 .btn-list .selected {
-  border-bottom: 3px solid #02a1f2;
+  border-bottom: 2px solid #02a1f2;
   color: #02a1f2;
 }
 .btn-list .selected a {
@@ -4404,7 +4404,6 @@ table#workflows tr td.edit-status {
   display: block;
   width: 100%;
   height: 30px;
-  border-bottom: 1px solid #7f7f80;
   clear: both;
   margin-top: 5px;
 }
@@ -4424,7 +4423,6 @@ table#workflows tr td.edit-status {
   display: block;
   width: 100%;
   height: 30px;
-  border-bottom: 1px solid #7f7f80;
   clear: both;
   margin-top: 5px;
 }
@@ -4876,8 +4874,7 @@ ul.dialog-tabs li.right button {
 .list tfoot td {
   padding: 3px 6px;
   line-height: 18px;
-  font-weight: bold;
-  font-size: 13px;
+  font-size: 11px;
   text-align: right;
 }
 .list thead tr {
@@ -4888,8 +4885,7 @@ ul.dialog-tabs li.right button {
 .list thead th {
   padding: 3px 8px;
   line-height: 18px;
-  font-weight: bold;
-  font-size: 13px;
+  font-size: 11px;
   text-align: right;
 }
 .list thead th:nth-child(1),
@@ -4963,6 +4959,7 @@ ul.dialog-tabs li.right button {
   text-align: right;
   border-right: 1px solid #7f7f80;
   color: #a9a9a9;
+  line-height: 20px;
 }
 .list tbody tr td.red-border {
   color: red;
@@ -4976,7 +4973,7 @@ ul.dialog-tabs li.right button {
 }
 .list tbody tr td[data-content="workflow"] {
   position: relative;
-  padding: 4px 15px;
+  padding: 0 15px;
   overflow: visible;
 }
 .list tbody tr td[data-content="workflow"] .newSelectList {
@@ -5006,6 +5003,9 @@ ul.dialog-tabs li.right button {
 }
 .list tbody tr td:first-of-type input {
   cursor: pointer;
+}
+.list tbody tr .icon {
+  line-height: 20px;
 }
 .list tr:nth-child(odd) {
   background-color: #242f36;
@@ -5904,6 +5904,8 @@ ul.dialog-tabs li.right button {
 #timeRecivingDataFromServer {
   clear: both;
   text-align: center;
+  color: #ffffff;
+  padding-bottom: 5px;
 }
 .tabs-items {
   margin-bottom: -29px;
@@ -6514,7 +6516,8 @@ span.unDone {
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   border-radius: 4px;
-  padding: 2px 5px;
+  padding: 0 5px;
+  line-height: 18px;
 }
 .stageSelect.unDone,
 span.unDone {
