@@ -194,8 +194,10 @@ define([
             var self = this;
             var selectedStart = '#' + name + 'StartDate';
             var selectedEnd = '#' + name + 'EndDate';
+            var startDate = $(selectedStart);
+            var endDate = $(selectedEnd);
 
-            $(selectedStart).datepicker({
+            startDate.datepicker({
                 dateFormat: "d M, yy",
                 changeMonth: true,
                 changeYear: true,
@@ -211,7 +213,7 @@ define([
                 }
             });
 
-            $(selectedEnd).datepicker({
+            endDate.datepicker({
                 dateFormat: "d M, yy",
                 changeMonth: true,
                 changeYear: true,

@@ -56,7 +56,7 @@ define([
             disableEdit: function(){
                 var self = this;
                 var inputs = $(':input');
-                var textArea = $('.projectDescriptionEdit');
+                var textArea = $('textArea');
                 var selects = $('.current-selected');
 
                 selects.addClass('disabled');
@@ -125,8 +125,8 @@ define([
                         validation = false;
                     }
 
-                    var startD = $(val).find(".startDate>div").text().trim() || $(val).find(".startDate input").val();
-                    var endD = $(val).find(".endDate>div").text().trim() || $(val).find(".endDate input").val();
+                    var startD = $(val).find(".startDate>div").text().trim() || $(val).find(".startDate input").val() || null;
+                    var endD = $(val).find(".endDate>div").text().trim() || $(val).find(".endDate input").val() || null;
 
                     bonus.push({
                         employeeId: employeeId,
@@ -464,6 +464,7 @@ define([
                 );
 
                 $('#createBonus').hide();
+                $('#noteArea').attr('readonly', true);
 
                 paralellTasks = [this.getWTrack, this.getInvoice];
 
