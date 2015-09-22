@@ -487,10 +487,7 @@ define([
                 var payment = result[1] ? result[1]['payment'] : [];
                 var invoice = result[1] ? result[1]['invoice'] : [];
                 var bonuses = this.formModel.toJSON().bonus;
-                var objToSave = {};
-                var objForBudget = {};
                 var employees = [];
-                var uniqueProjectTeam;
                 var container = this.$el.find('#forInfo');
                 var template = _.template(DetailsTemplate);
 
