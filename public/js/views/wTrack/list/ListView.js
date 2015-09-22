@@ -440,7 +440,7 @@ define([
                     profitVal = (parseFloat(revenueVal) - parseFloat(calc)).toFixed(2);
                     profit.text(profitVal);
 
-                    self.changedModels[wTrackId].cost = parseFloat(calc);
+                    self.changedModels[wTrackId].cost = parseFloat(calc) * 100;
                     self.changedModels[wTrackId].profit = parseFloat(profitVal) * 100;
 
                     return calc;

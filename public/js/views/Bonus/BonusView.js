@@ -188,6 +188,7 @@ define([
 
             self.selectedBonus = [];
             self.$el.find('#removeBonus').hide();
+            this.trigger('save');
         },
 
         setDatepicker: function (name) {

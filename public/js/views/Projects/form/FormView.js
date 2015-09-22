@@ -457,11 +457,16 @@ define([
                     }).render().el
                 );
                 bonus = this.$el.find('#bonus-container');
+                var bonusView = new BonusView({
+                    model: this.formModel
+                });
                 bonus.html(
-                    new BonusView({
-                        model: this.formModel
-                    }).render().el
+                    bonusView.render().el
                 );
+
+                bonusView.bind('save', function () {
+                    self.saveItem();
+                });
 
                 $('#createBonus').hide();
                 $('#noteArea').attr('readonly', true);
