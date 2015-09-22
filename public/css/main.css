@@ -62,11 +62,23 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 /*== Vocations ===================================*/
 /*=New User=======================================*/
 /*==DashBoard Vocation============================*/
+/*== forInfo ======================================*/
 .list2 {
   color: #ffffff !important;
   font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
   width: 100%;
   table-layout: fixed;
+}
+.list2 caption {
+  text-align: left;
+  margin-top: 15px;
+  background-color: #4d5a75;
+  font-size: 11px;
+  line-height: 20px;
+  padding-left: 10px;
+}
+.list2 .anotherColor {
+  background-color: #739e20;
 }
 .list2 tfoot tr {
   border-bottom: 1px solid #7f7f80;
@@ -214,6 +226,17 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 }
 .list2 tr:hover {
   background-color: #394a55;
+}
+.list2 caption {
+  text-align: left;
+  margin-top: 15px;
+  background-color: #4d5a75;
+  font-size: 11px;
+  line-height: 20px;
+  padding-left: 10px;
+}
+.list2 .anotherColor {
+  background-color: #739e20;
 }
 .list2 tfoot tr {
   border-bottom: 1px solid #7f7f80;
@@ -375,6 +398,30 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 .ui-dialog .list2 tbody tr td,
 .ui-dialog .list2 tfoot tr td {
   text-align: left;
+}
+#forInfo .tableProjects {
+  width: 99%;
+}
+#forInfo .tableProjects thead th {
+  text-align: right;
+}
+#forInfo .tableProjects tbody td {
+  text-align: right;
+}
+#forInfo .tableProjects tbody td:first-child {
+  border-left: 1px solid #7f7f80;
+}
+#forInfo .tableProjects tr .procent {
+  position: relative;
+  padding-right: 20px;
+}
+#forInfo .tableProjects tr .procent::before {
+  content: '%';
+  display: block;
+  width: 5px;
+  height: 5px;
+  position: absolute;
+  right: 13px;
 }
 /*------------------------Constants-----------------------------*/
 /*@body-font: "Segoe UI", sans-serif;*/
@@ -1664,6 +1711,9 @@ dl dd a.formLink {
   max-width: 100%;
   padding-right: 40px;
 }
+.form #forInfo {
+  overflow: hidden;
+}
 .form .compactList li {
   border-bottom: 1px solid #7f7f80;
 }
@@ -2234,6 +2284,9 @@ dl dd a.formLink {
   max-width: 100%;
   padding-right: 40px;
 }
+.formLeftColumn .form #forInfo {
+  overflow: hidden;
+}
 .formLeftColumn .form .compactList li {
   border-bottom: 1px solid #7f7f80;
 }
@@ -2588,6 +2641,9 @@ dl dd a.formLink {
   width: 100%;
   max-width: 100%;
   padding-right: 40px;
+}
+.formRightColumn .form #forInfo {
+  overflow: hidden;
 }
 .formRightColumn .form .compactList li {
   border-bottom: 1px solid #7f7f80;
@@ -4865,6 +4921,17 @@ ul.dialog-tabs li.right button {
   color: #ffffff !important;
   font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
   width: 100%;
+}
+.list caption {
+  text-align: left;
+  margin-top: 15px;
+  background-color: #4d5a75;
+  font-size: 11px;
+  line-height: 20px;
+  padding-left: 10px;
+}
+.list .anotherColor {
+  background-color: #739e20;
 }
 .list tfoot tr {
   border-bottom: 1px solid #7f7f80;
@@ -8754,4 +8821,7 @@ textarea#editInput {
   display: inline-block;
   padding-right: 17px;
   margin-right: 3px;
+}
+.forInfoWrap {
+  overflow: hidden;
 }
