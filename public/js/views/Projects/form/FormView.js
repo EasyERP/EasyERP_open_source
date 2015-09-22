@@ -52,8 +52,27 @@ define([
                 return false;
 
             },
-            saveItem: function (event) {
-                event.preventDefault();
+
+            disableEdit: function(){
+                var self = this;
+                var inputs = $(':input');
+                var textArea = $('.projectDescriptionEdit');
+                var selects = $('.current-selected');
+
+                selects.addClass('disabled');
+                inputs.attr('readonly', true);
+                textArea.attr('readonly', false);
+
+                $('#StartDate').datepicker( "option", "disabled", true );
+                $('#EndDate').datepicker( "option", "disabled", true );
+                $('#EndDateTarget').datepicker( "option", "disabled", true );
+
+                $("#top-bar-saveBtn").hide();
+                $("#createBonus").hide();
+            },
+
+            saveItem: function () {
+                //event.preventDefault();
 
                 var validation = true;
                 var self = this;
@@ -168,6 +187,8 @@ define([
                             $('.edit-project-dialog').remove();
                             $(".add-group-dialog").remove();
                             $(".add-user-dialog").remove();
+                            self.disableEdit();
+                            $("#top-bar-saveBtn").hide();
                             if (viewType == "list") {
                                 var tr_holder = $("tr[data-id='" + self.formModel.toJSON()._id + "'] td");
                                 $("a[data-id='" + self.formModel.toJSON()._id + "']").text(projectName);
@@ -456,15 +477,15 @@ define([
                 return this;
             },
 
-            getDataForDetails: function(result){
+            getDataForDetails: function (result) {
                 var projectTeam = [];
                 var bonus = [];
                 var budget = [];
                 var projectValues = {};
                 var budgetTotal = {};
                 var wTRack = result[0];
-                var payment = result[1]['payment'] ? result[1]['payment'] : [];
-                var invoice = result[1]['invoice'] ? result[1]['invoice'] : [];
+                var payment = result[1] ? result[1]['payment'] : [];
+                var invoice = result[1] ? result[1]['invoice'] : [];
                 var bonuses = this.formModel.toJSON().bonus;
                 var objToSave = {};
                 var objForBudget = {};
@@ -480,27 +501,27 @@ define([
                 budgetTotal.hoursSum = 0;
 
 
-                employees[this.formModel.toJSON().projectmanager._id] =this.formModel.toJSON().projectmanager.name;
+                employees[this.formModel.toJSON().projectmanager._id] = this.formModel.toJSON().projectmanager.name;
 
-                wTRack.forEach(function(wTrack){
+                wTRack.forEach(function (wTrack) {
                     var obj = {};
                     var objForBudget = {};
 
-                    if (!( wTrack.employee._id in employees)){
-                        employees[wTrack.employee._id] =  obj.resource;
+                    if (!( wTrack.employee._id in employees)) {
+                        employees[wTrack.employee._id] = obj.resource;
                         projectTeam.push(obj);
                     }
 
-                    objForBudget.profit = ((wTrack.revenue - wTrack.cost)/100).toFixed(2);
-                    objForBudget.cost = (wTrack.cost/100).toFixed(2);
+                    objForBudget.profit = ((wTrack.revenue - wTrack.cost) / 100).toFixed(2);
+                    objForBudget.cost = (wTrack.cost / 100).toFixed(2);
                     objForBudget.rate = wTrack.rate;
                     objForBudget.hours = wTrack.worked;
-                    objForBudget.revenue = (wTrack.revenue/100).toFixed(2);
+                    objForBudget.revenue = (wTrack.revenue / 100).toFixed(2);
 
                     budget.push(objForBudget);
                 });
 
-                budget.forEach(function(element){
+                budget.forEach(function (element) {
                     budgetTotal.profitSum += parseFloat(element.profit);
                     budgetTotal.costSum += parseFloat(element.cost);
                     budgetTotal.rateSum += parseFloat(element.rate);
@@ -513,13 +534,13 @@ define([
                 projectValues.markUp = ((budgetTotal.profitSum / budgetTotal.costSum) * 100).toFixed();
                 projectValues.radio = ((budgetTotal.revenueSum / budgetTotal.costSum) * 100).toFixed();
 
-                bonuses.forEach(function(element){
+                bonuses.forEach(function (element) {
                     var objToSave = {};
 
 
                     objToSave.resource = element.employeeId.name.first + ' ' + element.employeeId.name.last;
                     objToSave.percentage = element.bonusId.name;
-                    objToSave.bonus =  budgetTotal.revenueSum / element.bonusId.value * 100;
+                    objToSave.bonus = budgetTotal.revenueSum / element.bonusId.value * 100;
                     bonus.push(objToSave);
                 });
 
@@ -590,39 +611,48 @@ define([
                         filter: filter
                     }, function (response) {
                         var payments = [];
+                        var res;
                         if (response.error) {
                             return cb(response.error);
                         }
-                        response.forEach(function(element){
-                            element.payments.forEach(function(payment){
+                        response.forEach(function (element) {
+                            element.payments.forEach(function (payment) {
                                 payments.push(payment);
                             });
                         });
 
 
-                        dataService.getData('/payment/getForProject',
-                            {
-                                data: payments
-                            }, function (result) {
+                        if (payments.length > 0) {
+                            dataService.getData('/payment/getForProject',
+                                {
+                                    data: payments
+                                }, function (result) {
 
-                                if (result.error) {
-                                    return cb(result.error);
-                                }
+                                    if (result.error) {
+                                        return cb(result.error);
+                                    }
 
-                                new PaymentView({
-                                    model: result
-                                });
-                                cb(null, {payment: result, invoice: response});
-
-                            }, this);
+                                    new PaymentView({
+                                        model: result
+                                    });
 
 
+                                    res = result;
+                                }, this);
 
-                        new InvoiceView({
-                            model: response
-                        });
 
+                            new InvoiceView({
+                                model: response
+                            });
+
+                        }
+                        if (res){
+                            cb(null, {payment: res, invoice: response});
+                        } else  {
+                            cb(null, {payment: [], invoice: response});
+                        }
                     }, this);
+
             },
 
             editItem: function () {
@@ -666,6 +696,9 @@ define([
                     changeYear: true,
                     minDate: (self.formModel.StartDate) ? self.formModel.StartDate : 0
                 });
+                $('#StartDate').datepicker( "option", "disabled", false );
+                $('#EndDate').datepicker( "option", "disabled", false );
+                $('#EndDateTarget').datepicker( "option", "disabled", false );
 
                 $("#top-bar-saveBtn").show();
                 $("#createBonus").show();

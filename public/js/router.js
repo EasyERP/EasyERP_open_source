@@ -725,6 +725,7 @@ define([
 
                             topbarView.bind('deleteEvent', contentView.deleteItems, contentView);
                             topbarView.bind('editEvent', contentView.editItem, contentView);
+                            topbarView.bind('saveEvent', contentView.saveItem, contentView);
 
                             contentView.render();
                             self.changeView(contentView);
