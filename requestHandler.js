@@ -99,9 +99,8 @@ var requestHandler = function (event, mainDb) {
         var monthHours = models.get(req.session.lastDb, "MonthHours", MonthHoursSchema);
 
         if (monthFromSalary && yearFromSalary){
-            year = yearFromSalary;
-            month = monthFromSalary;
-            waterfallTasks = [getWTracks, getBaseSalary];
+            year = parseInt(yearFromSalary);
+            month = parseInt(monthFromSalary);
         }
 
         async.waterfall(waterfallTasks, function (err, result) {
@@ -124,13 +123,13 @@ var requestHandler = function (event, mainDb) {
                     if (monthFromSalary && yearFromSalary){
                         var query = monthHours.find({month: month, year: year}).lean();
 
-                        query.exec(function(err, result){
+                        query.exec(function(err, monthHour){
                             if (err){
                                 return console.log(err);
                             }
-                            fixedExpense = result.fixedExpense;
-                            expenseCoefficient = result.expenseCoefficient;
-                            hours = result.hours;
+                            fixedExpense = parseInt(monthHour[0].fixedExpense);
+                            expenseCoefficient = parseFloat(monthHour[0].expenseCoefficient);
+                            hours = parseInt(monthHour[0].hours);
 
                             result.forEach(function (element) {
                                 var id = element._id;
