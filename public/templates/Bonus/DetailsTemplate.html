@@ -10,43 +10,31 @@
             </tr>
             </thead>
             <tbody id="projectTeam">
+            <%var count = 0;%>
             <% projectTeam.forEach(function(element){ %>
             <tr>
                 <td><%=element.fullName%></td>
                 <td><%=element.department.name%></td>
                 <td><%=element.jobPosition.name%></td>
             </tr>
+            <% count++ %>
             <% })%>
+            <tr>
+                <td><%='&nbsp'%></td>
+                <td><%='&nbsp'%></td>
+                <td><%='&nbsp'%></td>
+            </tr>
+            <tr>
+                <td>Total</td>
+                <td><%='&nbsp'%></td>
+                <td><%=count%></td>
+            </tr>
             </tbody>
         </table>
     </div>
 
     <div class="half-block right">
 
-            <table class="list tableProjects">
-                <caption class="anotherColor">Project Values</caption>
-                <thead>
-                <tr>
-                    <th>Revenue</th>
-                    <th>Profit</th>
-                    <th>MarkUp</th>
-                    <th>Pr. Margin</th>
-                </tr>
-                </thead>
-                <tbody id="project">
-                <tr>
-                    <td><%=projectValues.revenue.toFixed(2)%></td>
-                    <td><%=projectValues.profit.toFixed(2)%></td>
-                    <td class="procent"><%=projectValues.markUp %></td>
-                    <td class="procent"><%=projectValues.radio%></td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-</div>
-
-<div class="forInfoWrap">
-    <div class="half-block right">
         <table class="list tableProjects">
             <caption class="anotherColor">Budget & Resources</caption>
             <thead>
@@ -94,6 +82,33 @@
             </tr>
             </tbody>
         </table>
+        </div>
+</div>
+
+<div class="forInfoWrap">
+    <div class="half-block right">
+
+        <table class="list tableProjects">
+            <caption class="anotherColor">Project Values</caption>
+            <thead>
+            <tr>
+                <th>Revenue</th>
+                <th>Profit</th>
+                <th>MarkUp</th>
+                <th>Pr. Margin</th>
+            </tr>
+            </thead>
+            <tbody id="project">
+            <tr>
+                <td><%=projectValues.revenue.toFixed(2)%></td>
+                <td><%=projectValues.profit.toFixed(2)%></td>
+                <td class="procent"><%=projectValues.markUp %></td>
+                <td class="procent"><%=projectValues.radio%></td>
+            </tr>
+            </tbody>
+        </table>
+
+
     </div>
     <div class="half-block left">
         <table class="list tableProjects">

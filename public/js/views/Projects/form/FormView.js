@@ -498,15 +498,13 @@ define([
                 var container = this.$el.find('#forInfo');
                 var template = _.template(DetailsTemplate);
                 var hoursByMonth = {};
+                var self = this;
 
                 budgetTotal.profitSum = 0;
                 budgetTotal.costSum = 0;
                 budgetTotal.rateSum = 0;
                 budgetTotal.revenueSum = 0;
                 budgetTotal.hoursSum = 0;
-
-
-                //employees[this.formModel.toJSON().projectmanager._id] = this.formModel.toJSON().projectmanager.name;
 
                 wTRack.forEach(function (wTrack) {
                     if (!( wTrack.employee._id in employees)) {
@@ -585,15 +583,20 @@ define([
                     {
                         data: keys
                     }, function (response) {
-
-                        container.html(template({
-                                projectTeam: response,
-                                bonus: bonus,
-                                budget: projectTeam,
-                                projectValues: projectValues,
-                                budgetTotal: budgetTotal
-                            })
-                        );
+                        dataService.getData('/employee/getForProjectDetails',
+                            {
+                                data: [self.formModel.toJSON().projectmanager._id]
+                            }, function (resp) {
+                                response.unshift(resp[0]);
+                                container.html(template({
+                                        projectTeam: response,
+                                        bonus: bonus,
+                                        budget: projectTeam,
+                                        projectValues: projectValues,
+                                        budgetTotal: budgetTotal
+                                    })
+                                );
+                            }, this);
 
                     }, this);
 
