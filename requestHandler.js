@@ -3,6 +3,8 @@ require('pmx').init();
 var requestHandler = function (event, mainDb) {
     var dbsObject = mainDb.dbsObject;
     var mongoose = require('mongoose');
+    var async = require('async');
+    var _ = require('./node_modules/underscore');
     var logWriter = require("./Modules/additions/logWriter.js")();
     var models = require("./models.js")(dbsObject);
     var department = require("./Modules/Department.js")(event, models);
@@ -31,6 +33,8 @@ var requestHandler = function (event, mainDb) {
     var opportunitiesSchema = mongoose.Schemas['Opportunitie'];
     var userSchema = mongoose.Schemas['User'];
     var HoursCashesSchema = mongoose.Schemas['HoursCashes'];
+    var wTrackSchema = mongoose.Schemas['wTrack'];
+    var SalarySchema = mongoose.Schemas['Salary'];
 
 
     //binding for remove Workflow
@@ -76,6 +80,90 @@ var requestHandler = function (event, mainDb) {
             console.log('HoursCashes removed');
         });
 
+    });
+
+    event.on('updateCost', function(req, year, month, fixedExpense, expenseCoefficient, hours){
+        var waterfallTasks = [getWTracks, getBaseSalary];
+        var wTrack = models.get(req.session.lastDb, "wTrack", wTrackSchema);
+
+        async.waterfall(waterfallTasks,function(err, result){
+            if (err){
+                return console.log(err);
+            }
+            var baseSalary = result;
+            var employees = Object.keys(baseSalary);
+            var calc;
+
+            employees.forEach(function(empId){
+                wTrack.find({month: month, year: year, 'employee._id': empId}, {worked: 1, revenue: 1, 'employee._id': 1, _id: 1}, function(err, result){
+                    if (err){
+                        return console.log(err);
+                    }
+
+                    result.forEach(function(element){
+                        var id = element._id;
+                        var calc = (((baseSalary[element.employee._id] * expenseCoefficient) + fixedExpense) / hours) * element.worked;
+
+                        wTrack.findByIdAndUpdate(id, {$set : {cost: calc}}, {new: true}, function(err, result){
+                            if (err){
+                                console.log(err);
+                            }
+
+                            console.dir(result);
+                        });
+
+                    });
+                });
+            });
+
+
+           // calc = ;
+
+        });
+
+
+
+        function getWTracks (cb){
+            wTrack.aggregate([{
+                $match: {
+                    year: year,
+                    month: month
+                }
+            }, {
+                $group: {
+                    _id: '$employee._id'
+                    }
+            }], function(err, wTracks) {
+                if (err) {
+                    return cb(err);
+                }
+
+                var result = _.pluck(wTracks, '_id');
+                cb(null, result)
+            });
+        };
+
+        function getBaseSalary (result, cb){
+            var Salary = models.get(req.session.lastDb, 'Salary', SalarySchema);
+//toDo FIND
+           var query = Salary.find({'employee._id': {$in: result}, month: month, year: year}, {baseSalary: 1, _id: 1}).lean();
+            query.exec(function(err, salary) {
+                if (err) {
+                    return cb(err);
+                }
+
+                var result = _.map(salary, function(element){
+                    var obj = {};
+
+                    obj[element._id] = element.baseSalary;
+                    return obj;
+                });
+
+                console.dir(result);
+                cb(null, result)
+            });
+
+        };
     });
     //if name was updated, need update related wTrack, or other models
 
