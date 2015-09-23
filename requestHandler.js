@@ -35,6 +35,7 @@ var requestHandler = function (event, mainDb) {
     var HoursCashesSchema = mongoose.Schemas['HoursCashes'];
     var wTrackSchema = mongoose.Schemas['wTrack'];
     var SalarySchema = mongoose.Schemas['Salary'];
+    var ObjectId = mongoose.Types.ObjectId;
 
 
     //binding for remove Workflow
@@ -91,33 +92,28 @@ var requestHandler = function (event, mainDb) {
                 return console.log(err);
             }
             var baseSalary = result;
-            var employees = Object.keys(baseSalary);
-            var calc;
 
-            employees.forEach(function(empId){
-                wTrack.find({month: month, year: year, 'employee._id': empId}, {worked: 1, revenue: 1, 'employee._id': 1, _id: 1}, function(err, result){
+            baseSalary.forEach(function(object){
+                var key = Object.keys(object)[0];
+                wTrack.find({month: month, year: year, 'employee._id': ObjectId(key)}, {worked: 1, revenue: 1, 'employee._id': 1, _id: 1}, function(err, result){
                     if (err){
                         return console.log(err);
                     }
 
                     result.forEach(function(element){
                         var id = element._id;
-                        var calc = (((baseSalary[element.employee._id] * expenseCoefficient) + fixedExpense) / hours) * element.worked;
+                        var calc = ((((object[key] * expenseCoefficient) + fixedExpense) / hours) * element.worked).toFixed(2);
+                        var profit = parseFloat(element.revenue) - parseFloat(calc) * 100;
 
-                        wTrack.findByIdAndUpdate(id, {$set : {cost: calc}}, {new: true}, function(err, result){
+                        wTrack.findByIdAndUpdate(id, {$set : {cost: parseFloat(calc) * 100, profit: profit}}, {new: true}, function(err, result){
                             if (err){
                                 console.log(err);
                             }
-
-                            console.dir(result);
                         });
 
                     });
                 });
             });
-
-
-           // calc = ;
 
         });
 
@@ -146,7 +142,7 @@ var requestHandler = function (event, mainDb) {
         function getBaseSalary (result, cb){
             var Salary = models.get(req.session.lastDb, 'Salary', SalarySchema);
 //toDo FIND
-           var query = Salary.find({'employee._id': {$in: result}, month: month, year: year}, {baseSalary: 1, _id: 1}).lean();
+           var query = Salary.find({'employee._id': {$in: result}, month: month, year: year}, {baseSalary: 1, 'employee._id': 1}).lean();
             query.exec(function(err, salary) {
                 if (err) {
                     return cb(err);
@@ -155,11 +151,10 @@ var requestHandler = function (event, mainDb) {
                 var result = _.map(salary, function(element){
                     var obj = {};
 
-                    obj[element._id] = element.baseSalary;
+                    obj[element.employee._id] = element.baseSalary;
                     return obj;
                 });
 
-                console.dir(result);
                 cb(null, result)
             });
 
