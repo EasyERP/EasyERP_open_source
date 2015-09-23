@@ -1,7 +1,7 @@
 
 var mongoose = require('mongoose');
 var moment = require('../public/js/libs/moment/moment');
-var Salary = function (models) {
+var Salary = function (event, models) {
 
     var access = require("../Modules/additions/access.js")(models);
     var SalarySchema = mongoose.Schemas['Salary'];
@@ -73,12 +73,18 @@ var Salary = function (models) {
                         user: req.session.uId,
                         date: new Date().toISOString()
                     };
-                    Salary.findByIdAndUpdate(id, {$set: data}, function (err, response) {
+                    Salary.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, response) {
                         if (err) {
                             return next(err);
                         }
                         self.recalculateCashSalary(req, function () {
                         });
+                        var params = {
+                            req: req,
+                            monthFromSalary: response.month,
+                            yearFromSalary: response.year
+                        };
+                        event.emit('updateCost', params);
                         res.status(200).send({success: 'updated'});
                     });
                 } else {
@@ -108,7 +114,19 @@ var Salary = function (models) {
                         };
                         delete data._id;
                         data.baseSalary = data.calc['salary'];
-                        Salary.findByIdAndUpdate(id, {$set: data}, cb);
+                        Salary.findByIdAndUpdate(id, {$set: data}, function(err, result){
+                            if(err){
+                                return cb(err);
+                            }
+                            var params = {
+                                req: req,
+                                monthFromSalary: result.month,
+                                yearFromSalary: result.year
+                            };
+                            event.emit('updateCost', params);
+                            cb(null, result);
+                        });
+
                     }, function (err) {
                         if (err) {
                             return next(err);
@@ -172,6 +190,12 @@ var Salary = function (models) {
                                 return next(err);
                             }
                             if (results[1]) {
+                                var params = {
+                                    req: req,
+                                    monthFromSalary: month,
+                                    yearFromSalary: year
+                                };
+                                event.emit('updateCost', params);
                                 res.status(200).send({success: results[1]});
                             }
                         }
