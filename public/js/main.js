@@ -1,43 +1,43 @@
 var App = App ||
-{
-    File: {
-        MAXSIZE: 10485760,  //size in kilobytes  = 3 MB
-        MaxFileSizeDisplay: "10 MB"
-    },
-    requestedURL: null,
-    Calendar: {
-        currentCalendarId: ""
-    },
-    savedFilters: {}
-};
+    {
+        File        : {
+            MAXSIZE           : 10485760,  //size in kilobytes  = 3 MB
+            MaxFileSizeDisplay: "10 MB"
+        },
+        requestedURL: null,
+        Calendar    : {
+            currentCalendarId: ""
+        },
+        savedFilters: {}
+    };
 
 require.config({
     paths: {
-        async: './libs/async/lib/async',
-        jQuery: './libs/jquery-2.1.0.min.map',
-        ajaxForm: './libs/jquery.form',
-        imageCrop: './libs/jquery.Jcrop.min',
-        jqueryui: './libs/jquery-ui.min',
-        Underscore: './libs/underscore-min.map.1.6.0',
-        Backbone: './libs/backbone-min.map.1.1.2',
-        less: './libs/less.min',
-        templates: '../templates',
-        text: './libs/text',
-        common: 'common',
-        helpers: 'helpers',
-        constants: 'constants',
-        dateFormat: './libs/date.format',
-        d3: './libs/d3.v3.min',
+        async        : './libs/async/lib/async',
+        jQuery       : './libs/jquery-2.1.0.min.map',
+        ajaxForm     : './libs/jquery.form',
+        imageCrop    : './libs/jquery.Jcrop.min',
+        jqueryui     : './libs/jquery-ui.min',
+        Underscore   : './libs/underscore-min.map.1.6.0',
+        Backbone     : './libs/backbone-min.map.1.1.2',
+        less         : './libs/less.min',
+        templates    : '../templates',
+        text         : './libs/text',
+        common       : 'common',
+        helpers      : 'helpers',
+        constants    : 'constants',
+        dateFormat   : './libs/date.format',
+        d3           : './libs/d3.v3.min',
         jqueryBarcode: './libs/jquery-barcode.min',
-        moment: './libs/moment/moment'
+        moment       : './libs/moment/moment'
     },
-    shim: {
-        'jqueryui': ['jQuery'],
-        'ajaxForm': ['jQuery'],
-        'imageCrop': ['jQuery'],
-        'Backbone': ['Underscore', 'jQuery'],
-        'app': ['Backbone', 'less', 'jqueryui', 'ajaxForm', 'imageCrop'],
-        'd3': {
+    shim : {
+        'jqueryui'  : ['jQuery'],
+        'ajaxForm'  : ['jQuery'],
+        'imageCrop' : ['jQuery'],
+        'Backbone'  : ['Underscore', 'jQuery'],
+        'app'       : ['Backbone', 'less', 'jqueryui', 'ajaxForm', 'imageCrop'],
+        'd3'        : {
             exports: 'd3'
         },
         'dateFormat': {
@@ -73,7 +73,7 @@ require(['app'], function (app) {
         if (xhr) {
             if (xhr.status === 401 || xhr.status === 403) {
                 if (xhr.status === 401) {
-                    Backbone.history.navigate("login", { trigger: true });
+                    Backbone.history.navigate("login", {trigger: true});
                 } else {
                     alert("You do not have permission to perform this action");
                 }
@@ -81,14 +81,20 @@ require(['app'], function (app) {
                 if (xhr.responseJSON) {
                     alert(xhr.responseJSON.error);
                 } else {
-                    Backbone.history.navigate("home", { trigger: true });
+                    Backbone.history.navigate("home", {trigger: true});
                 }
             }
         }
     };
     Backbone.View.prototype.pageElementRender = function (totalCount, itemsNumber, currentPage) {
         var itemsNumber = this.defaultItemsNumber;
-        $("#itemsNumber").text(itemsNumber);
+
+        if (itemsNumber === 'all') {
+            itemsNumber = totalCount;
+        }
+
+   //     $("#itemsNumber").text(itemsNumber); // element deleted
+
         var start = $("#grid-start");
         var end = $("#grid-end");
 
@@ -105,6 +111,7 @@ require(['app'], function (app) {
             $("#lastPage").text(0);
         } else {
             currentPage = currentPage || 1;
+
             start.text(currentPage * itemsNumber - itemsNumber + 1);
             if (totalCount <= itemsNumber || totalCount <= currentPage * itemsNumber) {
                 end.text(totalCount);
@@ -112,7 +119,6 @@ require(['app'], function (app) {
                 end.text(currentPage * itemsNumber);
             }
             $("#grid-count").text(totalCount);
-
             $("#pageList").empty();
             var pageNumber = Math.ceil(totalCount / itemsNumber);
             //number page show (Vasya)
@@ -165,16 +171,20 @@ require(['app'], function (app) {
         if (!count) {
             var thumbnails = location.split('thumbnails')[0];
             count = (location.split('/c=')[1]) ? location.split('/c=')[1].split('/')[0] : 100;
-            if (thumbnails && count < 100)
+            if (thumbnails && count < 100) {
                 count = 100;
+            }
         }
         var url = mainLocation;
-        if (pId)
+        if (pId) {
             url += '/pId=' + pId;
-        if (page)
+        }
+        if (page) {
             url += '/p=' + page;
-        if (count)
+        }
+        if (count) {
             url += '/c=' + count;
+        }
         if (!filter) {
             var locatioFilter = location.split('/filter=')[1];
             filter = (locatioFilter) ? JSON.parse(decodeURIComponent(locatioFilter)) : null;
@@ -188,7 +198,9 @@ require(['app'], function (app) {
             }
             if (notEmptyFilter) {
                 url += '/filter=' + encodeURIComponent(JSON.stringify(filter));
-            } else url += '';
+            } else {
+                url += '';
+            }
         }
 
         Backbone.history.navigate(url);
@@ -241,11 +253,13 @@ require(['app'], function (app) {
         $("#nextPage").prop("disabled", false);
         $("#lastShowPage").prop("disabled", false);
         var serchObject = {
-            count: itemsNumber,
-            page: page,
+            count : itemsNumber,
+            page  : page,
             letter: this.selectedLetter
         };
-        if (dataObject) _.extend(serchObject, dataObject);
+        if (dataObject) {
+            _.extend(serchObject, dataObject);
+        }
         this.collection.showMore(serchObject);
         this.changeLocationHash(page, itemsNumber);
     };
@@ -297,15 +311,14 @@ require(['app'], function (app) {
         $("#firstShowPage").prop("disabled", false);
 
         var serchObject = {
-            count: itemsNumber,
-            page: page,
+            count : itemsNumber,
+            page  : page,
             letter: this.selectedLetter
         };
 
         if (dataObject) {
             _.extend(serchObject, dataObject);
         }
-
         this.collection.showMore(serchObject);
         this.changeLocationHash(page, itemsNumber);
     };
@@ -344,11 +357,13 @@ require(['app'], function (app) {
         $("#nextPage").prop("disabled", false);
         $("#lastShowPage").prop("disabled", false);
         var serchObject = {
-            count: itemsNumber,
-            page: page,
+            count : itemsNumber,
+            page  : page,
             letter: this.selectedLetter
         };
-        if (dataObject) _.extend(serchObject, dataObject);
+        if (dataObject) {
+            _.extend(serchObject, dataObject);
+        }
         this.collection.showMore(serchObject);
         this.changeLocationHash(page, itemsNumber);
     };
@@ -385,11 +400,13 @@ require(['app'], function (app) {
         $("#previousPage").prop("disabled", false);
         $("#firstShowPage").prop("disabled", false);
         var serchObject = {
-            count: itemsNumber,
-            page: page,
+            count : itemsNumber,
+            page  : page,
             letter: this.selectedLetter
         };
-        if (dataObject) _.extend(serchObject, dataObject);
+        if (dataObject) {
+            _.extend(serchObject, dataObject);
+        }
         this.collection.showMore(serchObject);
         this.changeLocationHash(page, itemsNumber);
     };
@@ -414,7 +431,7 @@ require(['app'], function (app) {
             var itemsOnPage = 7;
             $("#pageList").empty();
             if (parseInt(lastPage) <= itemsOnPage) {
-                for (var i = 1; i <= parseInt(lastPage) ; i++) {
+                for (var i = 1; i <= parseInt(lastPage); i++) {
                     $("#pageList").append('<li class="showPage">' + i + '</li>');
                 }
             }
@@ -435,7 +452,7 @@ require(['app'], function (app) {
             }
 
             else if (page >= parseInt(lastPage) - 3) {
-                for (var i = lastPage - 6; i <= parseInt(lastPage) ; i++) {
+                for (var i = lastPage - 6; i <= parseInt(lastPage); i++) {
                     $("#pageList").append('<li class="showPage">' + i + '</li>');
                 }
             }
@@ -472,11 +489,13 @@ require(['app'], function (app) {
                 $("#lastShowPage").prop("disabled", true);
             }
             var serchObject = {
-                count: itemsNumber,
-                page: page,
+                count : itemsNumber,
+                page  : page,
                 letter: this.selectedLetter
             };
-            if (dataObject) _.extend(serchObject, dataObject);
+            if (dataObject) {
+                _.extend(serchObject, dataObject);
+            }
             this.collection.showMore(serchObject);
             this.changeLocationHash(page, itemsNumber);
         }
@@ -555,35 +574,38 @@ require(['app'], function (app) {
                 }
                 var serchObject = {
                     count: itemsNumber,
-                    page: deletePage
+                    page : deletePage
                 };
-                if (dataObject) _.extend(serchObject, dataObject);
+                if (dataObject) {
+                    _.extend(serchObject, dataObject);
+                }
                 this.collection.showMore(serchObject);
                 this.changeLocationHash(deletePage, itemsNumber);
             }
             $('#check_all').prop('checked', false);
         } else {
             var newFetchModels = new this.contentCollection({
-                viewType: 'list',
-                sort: this.sort,
-                page: deletePage,
-                count: this.defaultItemsNumber,
-                filter: this.filter,
+                viewType        : 'list',
+                sort            : this.sort,
+                page            : deletePage,
+                count           : this.defaultItemsNumber,
+                filter          : this.filter,
                 parrentContentId: this.parrentContentId,
-                contentType: this.contentType,
-                newCollection: this.newCollection
+                contentType     : this.contentType,
+                newCollection   : this.newCollection
             });
             var that = this;
             newFetchModels.bind('reset', function () {
-                that.collection.add(newFetchModels.models, { merge: true });
+                that.collection.add(newFetchModels.models, {merge: true});
                 that.showMoreContent(that.collection);//added two parameters page and items number
             });
-            
+
             $("#grid-start").text((deletePage - 1) * itemsNumber + 1);
-            if (itemsNumber === this.collectionLength && (deletePage * this.collectionLength <= this.listLength))
+            if (itemsNumber === this.collectionLength && (deletePage * this.collectionLength <= this.listLength)) {
                 $("#grid-end").text(deletePage * itemsNumber);
-            else
+            } else {
                 $("#grid-end").text((deletePage - 1) * itemsNumber + this.collectionLength - deleteCounter);
+            }
             $("#grid-count").text(this.listLength);
             $("#currentShowPage").val(deletePage);
 
@@ -642,7 +664,7 @@ require(['app'], function (app) {
                 $("#firstShowPage").prop("disabled", true);
                 $("#lastShowPage").prop("disabled", true);
             }
-            
+
             //$('#timeRecivingDataFromServer').remove();
             //this.$el.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
         }

@@ -330,6 +330,11 @@ define([
                     var page = context.page || 1;
                     var length = context.listLength = response.count || 0;
 
+                    if (itemsNumber === 'all') {
+                        itemsNumber = response.count;
+                    }
+
+
                     if (itemsNumber * (page - 1) > length) {
                         context.page = page = Math.ceil(length / itemsNumber);
                         context.fetchSortCollection(context.sort);
@@ -504,6 +509,11 @@ define([
                 event.preventDefault();
                 this.startTime = new Date();
                 var itemsNumber = event.target.textContent;
+
+                if (itemsNumber === 'all') {
+                    itemsNumber = this.listLength;
+                }
+
                 this.defaultItemsNumber = itemsNumber;
                 this.getTotalLength(null, itemsNumber, this.filter);
                 this.collection.showMore({
