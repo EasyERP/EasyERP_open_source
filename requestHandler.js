@@ -127,9 +127,16 @@ var requestHandler = function (event, mainDb) {
                             if (err){
                                 return console.log(err);
                             }
-                            fixedExpense = parseInt(monthHour[0].fixedExpense);
-                            expenseCoefficient = parseFloat(monthHour[0].expenseCoefficient);
-                            hours = parseInt(monthHour[0].hours);
+                            if (monthHour[0]){
+                                fixedExpense = parseInt(monthHour[0].fixedExpense);
+                                expenseCoefficient = parseFloat(monthHour[0].expenseCoefficient);
+                                hours = parseInt(monthHour[0].hours);
+                            } else {
+                                fixedExpense = 0;
+                                expenseCoefficient = 0;
+                                hours = 1;
+                            }
+
 
                             result.forEach(function (element) {
                                 var id = element._id;

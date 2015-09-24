@@ -161,11 +161,15 @@ define([
                     var _model;
                     var tdsArr;
                     var cid;
+                    var hours = model.get('worked');
+                    var rate = model.get('rate');
+                    var revenue = parseInt(hours) * parseFloat(rate);
 
                     $(selectedWtrack).attr('checked', false);
 
                     model.set({"isPaid": false});
                     model.set({"amount": 0});
+                    model.set({"revenue": revenue});
                     model = model.toJSON();
                     delete model._id;
                     _model = new currentModel(model);
@@ -187,6 +191,7 @@ define([
                     $(tdsArr[20]).find('span').text('Unpaid');
                     $(tdsArr[20]).find('span').addClass('unDone');
                     $(tdsArr[24]).text(0);
+                    $(tdsArr[21]).text(revenue.toFixed(2));
                     $(tdsArr[1]).text(cid);
                 }
             },
@@ -487,7 +492,7 @@ define([
                 var target = $(e.target);
                 var targetElement = target.parents("td");
                 var tr = target.parents("tr");
-                var modelId = tr.data('id');
+                var modelId = tr.attr('data-id');
                 var id = target.attr("id");
                 var attr = targetElement.attr("id") || targetElement.data("content");
                 var elementType = '#' + attr;
@@ -505,7 +510,7 @@ define([
                     return el._id === id;
                 });
 
-                var editWtrackModel = this.editCollection.get(modelId);
+                var editWtrackModel = this.editCollection.get(modelId) ? this.editCollection.get(modelId) : this.collection.get(modelId);
 
                 if (!this.changedModels[modelId]) {
                     if (!editWtrackModel.id) {
