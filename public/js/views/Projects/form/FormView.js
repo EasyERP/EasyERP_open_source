@@ -67,7 +67,7 @@ define([
 				thisEl.find('#EndDate').datepicker("option", "disabled", true);
 				thisEl.find('#EndDateTarget').datepicker("option", "disabled", true);
 
-				thisEl.find("#top-bar-saveBtn").hide();
+				$("#top-bar-saveBtn").hide();
 				thisEl.find("#createBonus").hide();
 			},
 
@@ -181,14 +181,16 @@ define([
 						},
 						success: function (model) {
 							self.disableEdit();
-							var filter = window.location.hash.split('filter=')[1];
-							var url = "#easyErp/Projects/thumbnails";
 
-							if (filter) {
-								url += '/filter=' + filter;
+							if (data.workflow._id != workflowStart._id) {
+								var filter = window.location.hash.split('filter=')[1];
+								var url = "#easyErp/Projects/thumbnails";
+								if (filter)
+									url += '/filter=' + filter;
+								Backbone.history.fragment = "";
+								Backbone.history.navigate(url, {trigger: true});
+
 							}
-							Backbone.history.fragment = "";
-							Backbone.history.navigate(url, {trigger: true});
 						},
 						error  : function (model, xhr) {
 							self.errorNotification(xhr);
