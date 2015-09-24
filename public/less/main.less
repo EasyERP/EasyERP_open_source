@@ -1114,6 +1114,7 @@ input::-ms-clear {
       .left {
         label {
           color: @grey;
+          line-height: 16px;
         }
       }
 
@@ -4609,12 +4610,16 @@ h3.dashboard {
   }
   &.closed, &.done, &.unDone {
     display: block;
-    //background-color: @green-lights-color;
+    background-color: @green-lights-color;
     color: @mainText-color;
     text-align: center;
     .border-radius(4px);
     padding: 0 5px;
-    line-height: 18px;
+    line-height: 16px;
+  }
+  &.projectClosed {
+    .closed;
+    background-color: inherit;
   }
   &.unDone {
     background-color: @yellow-lights-color;
@@ -5137,7 +5142,7 @@ textarea#editInput {
           background: pink;
         }
         &.red {
-          background-color: #fd0001;
+          background-color: @unpaid-wtrack;
           color: white;
           border-bottom: 1px solid @border-color-main;
           border-left: 1px solid @border-color-main;
@@ -5695,7 +5700,7 @@ textarea#editInput {
     border-spacing: 5px;
     &#tableBySales {
       .th {
-        border-bottom: 2px solid #ed9409;
+        border-bottom: 2px solid @revenue-by-sales;
       }
     }
     &#revenueTotal {
@@ -5740,7 +5745,7 @@ textarea#editInput {
     }
     &#tableUnpaidBySales {
       .th {
-        border-bottom: 2px solid #fd0001;
+        border-bottom: 2px solid @unpaid-wtrack;
       }
     }
     &#tableCancelledBySales {
@@ -5767,7 +5772,7 @@ textarea#editInput {
     display: table-row;
     width: auto;
     &.totalBySales {
-      background-color: #ed9409
+      background-color: @revenue-by-sales
     }
     &.revenueTotal {
       background-color: #289718
@@ -5791,13 +5796,13 @@ textarea#editInput {
       background-color: #9c827b
     }
     &.totalByDep, &.totalHoursByDep {
-      background-color: #00af00
+      background-color: @revenueByDepartment;
     }
     &.totalPaid {
       background-color: #a2a2a3
     }
     &.totalUnpaid {
-      background-color: #fd0001
+      background-color: @unpaid-wtrack
     }
     &.totalCancelled {
       background-color: #3d4bfd
@@ -5881,7 +5886,7 @@ textarea#editInput {
     width: 7.5%;
   }
   .th-green {
-    border-bottom: 2px solid #00af00;
+    border-bottom: 2px solid @revenueByDepartment;
   }
 }
 
