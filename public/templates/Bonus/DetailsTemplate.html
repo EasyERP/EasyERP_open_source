@@ -58,11 +58,11 @@
 
             <% budget.forEach(function(element){ %>
                <tr>
-                <td><%=element.revenue.toFixed(2)%></td>
-                <td><%=element.profit.toFixed(2)%></td>
-                <td><%=element.cost.toFixed(2)%></td>
-                <td><%=element.rate%></td>
-                <td><%=element.hours%></td>
+                <td><%=currencySplitter(element.revenue.toFixed(2))%></td>
+                <td><%=currencySplitter(element.profit.toFixed(2))%></td>
+                <td><%=currencySplitter(element.cost.toFixed(2))%></td>
+                <td><%=currencySplitter(element.rate.toFixed(2))%></td>
+                <td><%=currencySplitter(element.hours.toFixed())%></td>
                </tr>
             <% })%>
             <tr>
@@ -74,11 +74,11 @@
             </tr>
             <tr>
 
-                <td><%=budgetTotal.revenueSum.toFixed(2)%></td>
-                <td><%=budgetTotal.profitSum.toFixed(2)%></td>
-                <td><%=budgetTotal.costSum.toFixed(2)%></td>
-                <td><%=budgetTotal.rateSum.toFixed(2)%></td>
-                <td><%=budgetTotal.hoursSum%></td>
+                <td><%=currencySplitter(budgetTotal.revenueSum.toFixed(2))%></td>
+                <td><%=currencySplitter(budgetTotal.profitSum.toFixed(2))%></td>
+                <td><%=currencySplitter(budgetTotal.costSum.toFixed(2))%></td>
+                <td><%=currencySplitter(budgetTotal.rateSum.toFixed(2))%></td>
+                <td><%=currencySplitter(budgetTotal.hoursSum.toFixed())%></td>
             </tr>
             </tbody>
         </table>
@@ -100,8 +100,8 @@
             </thead>
             <tbody id="project">
             <tr>
-                <td><%=projectValues.revenue.toFixed(2)%></td>
-                <td><%=projectValues.profit.toFixed(2)%></td>
+                <td><%=currencySplitter(projectValues.revenue.toFixed(2))%></td>
+                <td><%=currencySplitter(projectValues.profit.toFixed(2))%></td>
                 <td class="procent"><%=projectValues.markUp %></td>
                 <td class="procent"><%=projectValues.radio%></td>
             </tr>
@@ -125,7 +125,7 @@
             <tr>
                 <td><%=element.resource%></td>
                 <td><%=element.percentage%></td>
-                <td><%=(element.bonus/100).toFixed(2)%></td>
+                <td><%=currencySplitter((element.bonus/100).toFixed(2))%></td>
             </tr>
             <% })%>
             </tbody>

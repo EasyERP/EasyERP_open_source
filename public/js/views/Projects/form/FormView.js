@@ -18,10 +18,11 @@ define([
 		'populate',
 		'custom',
 		'dataService',
-		'async'
+		'async',
+		'helpers'
 	],
 
-	function (ProjectsFormTemplate, DetailsTemplate, EditView, noteView, attachView, AssigneesView, BonusView, wTrackView, PaymentView, InvoiceView, wTrackCollection, addAttachTemplate, common, populate, custom, dataService, async) {
+	function (ProjectsFormTemplate, DetailsTemplate, EditView, noteView, attachView, AssigneesView, BonusView, wTrackView, PaymentView, InvoiceView, wTrackCollection, addAttachTemplate, common, populate, custom, dataService, async, helpers) {
 		var FormEmployeesView = Backbone.View.extend({
 			el        : '#content-holder',
 			initialize: function (options) {
@@ -411,10 +412,11 @@ define([
 				keys.forEach(function (key) {
 					budgetTotal.profitSum += parseFloat(projectTeam[key].profit);
 					budgetTotal.costSum += parseFloat(projectTeam[key].cost);
-					budgetTotal.rateSum += parseFloat(projectTeam[key].rate);
+					//budgetTotal.rateSum += parseFloat(projectTeam[key].rate);
 					budgetTotal.hoursSum += parseFloat(projectTeam[key].hours);
 					budgetTotal.revenueSum += parseFloat(projectTeam[key].revenue);
 				});
+				budgetTotal.rateSum = parseFloat(budgetTotal.revenueSum) / parseInt(budgetTotal.hoursSum);
 
                 projectValues.revenue = budgetTotal.revenueSum;
                 projectValues.profit = budgetTotal.profitSum;
@@ -447,7 +449,7 @@ define([
 										budget: sortBudget,
 										projectValues: projectValues,
 										budgetTotal: budgetTotal,
-										empSort: keys
+										currencySplitter: helpers.currencySplitter
 									})
 								);
 							}, this);
