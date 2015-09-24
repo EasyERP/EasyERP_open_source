@@ -174,16 +174,7 @@ var requestHandler = function (event, mainDb) {
             });
         });
 
-        function getMonthHours(){
-
-        };
-
         function getWTracks(cb) {
-            if (typeof(options) === 'function'){
-                cb = options
-            } else {
-                year
-            }
             wTrack.aggregate([{
                 $match: {
                     year: year,
