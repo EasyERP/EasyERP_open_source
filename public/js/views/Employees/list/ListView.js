@@ -25,7 +25,7 @@ define([
 
             events: {
                 "click"                    : "hideItemsNumber",
-                "click .letter:not(.empty)": "alpabeticalRender",
+                "click .letter:not(.empty)": "alpabeticalRender"
             },
 
             initialize: function (options) {
@@ -72,7 +72,7 @@ define([
                 currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
                 this.renderFilter(self);
-            },
+            }
 
         });
 

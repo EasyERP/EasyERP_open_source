@@ -433,6 +433,10 @@ define([
 
             alpabeticalRender: function (e) {
                 var selectedLetter = $(e.target).text();
+                var itemsNumber = $("#itemsNumber").text();
+
+                this.startTime = new Date();
+
                 this.filter = (this.filter) ? this.filter : {};
                 this.filter['letter'] = selectedLetter;
 
@@ -441,9 +445,9 @@ define([
                     this.filter = {};
                 }
 
-                var itemsNumber = $("#itemsNumber").text();
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
+
                 this.changeLocationHash(1, itemsNumber, this.filter);
                 this.collection.showMore({count: itemsNumber, page: 1, filter: this.filter});
                 this.getTotalLength(null, itemsNumber, this.filter);
