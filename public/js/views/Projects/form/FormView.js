@@ -44,64 +44,63 @@ define([
 				"click .current-selected:not(.disabled)"                          : "showNewSelect"
 			},
 
-			notHide      : function () {
+			notHide: function () {
 				return false;
 			},
 			showNewSelect: function (e, prev, next) {
 				populate.showSelect(e, prev, next, this);
-				return false;
 
+				return false;
 			},
 
 			disableEdit: function () {
-				var self = this;
-				var inputs = $(':input');
-				var textArea = $('textArea');
-				var selects = $('.current-selected');
+				var thisEl = this.$el;
+				var inputs = thisEl.find(':input');
+				var textArea = thisEl.find('textArea');
+				var selects = thisEl.find('.current-selected');
 
 				selects.addClass('disabled');
 				inputs.attr('readonly', true);
 				textArea.attr('readonly', false);
 
-				$('#StartDate').datepicker("option", "disabled", true);
-				$('#EndDate').datepicker("option", "disabled", true);
-				$('#EndDateTarget').datepicker("option", "disabled", true);
+				thisEl.find('#StartDate').datepicker("option", "disabled", true);
+				thisEl.find('#EndDate').datepicker("option", "disabled", true);
+				thisEl.find('#EndDateTarget').datepicker("option", "disabled", true);
 
-				$("#top-bar-saveBtn").hide();
-				$("#createBonus").hide();
+				thisEl.find("#top-bar-saveBtn").hide();
+				thisEl.find("#createBonus").hide();
 			},
 
 			saveItem: function () {
-				//event.preventDefault();
-
+				var thisEl = this.$el;
 				var validation = true;
 				var self = this;
-				var viewType = custom.getCurrentVT();
 				var mid = 39;
-				var projectName = $.trim(this.$el.find("#projectName").val());
-				var projectShortDesc = $.trim(this.$el.find("#projectShortDesc").val());
+				var projectName = $.trim(thisEl.find("#projectName").val());
+				var projectShortDesc = $.trim(thisEl.find("#projectShortDesc").val());
 				var customer = {};
 
-				customer._id = this.$el.find("#customerDd").data("id");
-				customer.name = this.$el.find("#customerDd").text();
+				customer._id = thisEl.find("#customerDd").data("id");
+				customer.name = thisEl.find("#customerDd").text();
 
 				var projectmanager = {};
-				projectmanager._id = this.$el.find("#projectManagerDD").data("id");
-				projectmanager.name = this.$el.find("#projectManagerDD").text();
+				projectmanager._id = thisEl.find("#projectManagerDD").data("id");
+				projectmanager.name = thisEl.find("#projectManagerDD").text();
 
 				var workflow = {};
-				workflow._id = this.$el.find("#workflowsDd").data("id");
-				workflow.name = this.$el.find("#workflowsDd").text();
+				workflow._id = thisEl.find("#workflowsDd").data("id");
+				workflow.name = thisEl.find("#workflowsDd").text();
 
 
-				var projecttype = this.$el.find("#projectTypeDD").data("id");
+				var projecttype = thisEl.find("#projectTypeDD").data("id");
 				var $userNodes = $("#usereditDd option:selected");
-				var startDate = $.trim(this.$el.find("#StartDate").val());
-				var endDate = $.trim(this.$el.find("#EndDate").val());
+				var startDate = $.trim(thisEl.find("#StartDate").val());
+				var endDate = $.trim(thisEl.find("#EndDate").val());
 				var users = [];
 				var bonusContainer = $('#bonusTable');
 				var bonusRow = bonusContainer.find('tr');
 				var bonus = [];
+
 				$userNodes.each(function (key, val) {
 					users.push({
 						id  : val.value,
@@ -147,12 +146,10 @@ define([
 					}
 
 				});
-				var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
-				var health = this.$el.find('#health a').data('value');
-				var _targetEndDate = $.trim(this.$el.find("#EndDateTarget").val());
-				var description = $.trim(this.$el.find("#description").val());
-				var currentTargetEndDate = this.formModel.get('TargetEndDate');
-				//var TargetEndDate = _targetEndDate || currentTargetEndDate;
+				var whoCanRW = thisEl.find("[name='whoCanRW']:checked").val();
+				var health = thisEl.find('#health a').data('value');
+				var _targetEndDate = $.trim(thisEl.find("#EndDateTarget").val());
+				var description = $.trim(thisEl.find("#description").val());
 				var data = {
 					projectName     : projectName,
 					projectShortDesc: projectShortDesc,
@@ -176,7 +173,6 @@ define([
 					TargetEndDate   : _targetEndDate,
 					bonus           : bonus
 				};
-				var workflowStart = this.formModel.get('workflow');
 
 				if (validation) {
 					this.formModel.save(data, {
@@ -184,6 +180,7 @@ define([
 							mid: mid
 						},
 						success: function (model) {
+							self.disableEdit();
 							var filter = window.location.hash.split('filter=')[1];
 							var url = "#easyErp/Projects/thumbnails";
 
@@ -259,43 +256,6 @@ define([
 				$(".add-user-dialog").remove();
 			},
 
-			deleteItem: function (event) {
-				var mid = 39;
-				event.preventDefault();
-				var self = this;
-				var answer = confirm("Realy DELETE items ?!");
-
-				if (answer) {
-					this.formModel.destroy({
-						headers: {
-							mid: mid
-						},
-						success: function (model) {
-							model = model.toJSON();
-							var viewType = custom.getCurrentVT();
-							switch (viewType) {
-								case 'list':
-								{
-									$("tr[data-id='" + model._id + "'] td").remove();
-								}
-									break;
-								case 'thumbnails':
-								{
-									$("#" + model._id).remove();
-									$('.edit-project-dialog').remove();
-									$(".add-group-dialog").remove();
-									$(".add-user-dialog").remove();
-								}
-							}
-							self.hideDialog();
-						},
-						error  : function (model, xhr) {
-							self.errorNotification(xhr);
-						}
-					});
-				}
-			},
-
 			fileSizeIsAcceptable: function (file) {
 				if (!file) {
 					return false;
@@ -303,7 +263,7 @@ define([
 				return file.size < App.File.MAXSIZE;
 			},
 
-			addAttach   : function (event) {
+			addAttach: function (event) {
 				event.preventDefault();
 				var currentModel = this.formModel;
 				var currentModelID = currentModel.id;
@@ -319,11 +279,11 @@ define([
 					var formURL = "http://" + window.location.host + "/uploadProjectsFiles";
 					e.preventDefault();
 					addFrmAttach.ajaxSubmit({
-						url        : formURL,
-						type       : "POST",
+						url: formURL,
+						type: "POST",
 						processData: false,
 						contentType: false,
-						data       : [addInptAttach],
+						data: [addInptAttach],
 
 						beforeSend: function (xhr) {
 							xhr.setRequestHeader("id", currentModelID);
@@ -351,7 +311,7 @@ define([
 							addFrmAttach[0].reset();
 							status.hide();
 						},
-						error  : function () {
+						error: function () {
 							console.log("Attach file error");
 						}
 					});
@@ -378,7 +338,7 @@ define([
 							headers: {
 								mid: 39
 							},
-							patch  : true,
+							patch: true,
 							success: function (model, response, options) {
 								$('.attachFile_' + id).remove();
 							}
@@ -425,6 +385,7 @@ define([
 						url  : "/uploadProjectsFiles"
 					}).render().el
 				);
+
 				assignees = thisEl.find('#assignees-container');
 				assignees.html(
 					new AssigneesView({
@@ -454,15 +415,13 @@ define([
 					self.getDataForDetails(result);
 				});
 
-				this.delegateEvents(this.events);
-
+				//this.delegateEvents(this.events);
 				return this;
 			},
 
 			getDataForDetails: function (result) {
 				var projectTeam = [];
 				var bonus = [];
-				var budget = [];
 				var projectValues = {};
 				var budgetTotal = {};
 				var wTRack = result[0] ? result[0]['wTrack'] : [];
@@ -475,6 +434,9 @@ define([
 				var template = _.template(DetailsTemplate);
 				var hoursByMonth = {};
 				var self = this;
+				var empKeys;
+				var keys;
+				var pMId = this.formModel.toJSON().projectmanager._id;
 
 				budgetTotal.profitSum = 0;
 				budgetTotal.costSum = 0;
@@ -483,11 +445,15 @@ define([
 				budgetTotal.hoursSum = 0;
 
 				wTRack.forEach(function (wTrack) {
-					if (!( wTrack.employee._id in employees)) {
-						employees[wTrack.employee._id] = wTrack.employee.name;
+					var key;
+					var employee = wTrack.employee;
+
+					if (!( employee._id in employees)) {
+						employees[employee._id] = employee.name;
 					}
 
-					var key = wTrack.year * 100 + wTrack.month;
+					key = wTrack.year * 100 + wTrack.month;
+
 					if (hoursByMonth[key]) {
 						hoursByMonth[key] += parseFloat(wTrack.worked);
 					} else {
@@ -495,7 +461,7 @@ define([
 					}
 				});
 
-				var empKeys = Object.keys(employees);
+				empKeys = Object.keys(employees);
 
 				empKeys.forEach(function (empId) {
 					wTRack.forEach(function (wTrack) {
@@ -521,7 +487,8 @@ define([
 				});
 
 
-				var keys = Object.keys(projectTeam);
+				keys = Object.keys(projectTeam);
+
 				keys.forEach(function (key) {
 					budgetTotal.profitSum += parseFloat(projectTeam[key].profit);
 					budgetTotal.costSum += parseFloat(projectTeam[key].cost);
@@ -539,74 +506,54 @@ define([
                     {
                         data: keys
                     }, function (response) {
-                        dataService.getData('/employee/getForProjectDetails',
-                            {
-                                data: [self.formModel.toJSON().projectmanager._id]
-                            }, function (resp) {
-                                var keysForPT = Object.keys(projectTeam);
-                                var sortBudget = [];
-
-                                response.forEach(function(employee){
-                                    keysForPT.forEach(function(id){
-                                        if (employee._id === id){
-                                            sortBudget.push(projectTeam[employee._id]);
-                                        }
-                                    })
-                                });
-
-                                response.unshift(resp[0]);
-                                container.html(template({
-                                        projectTeam: response,
-                                        bonus: bonus,
-                                        budget: sortBudget,
-                                        projectValues: projectValues,
-                                        budgetTotal: budgetTotal,
-                                        empSort: keys
-                                    })
-                                );
-                            }, this);
-
-				bonuses.forEach(function (element) {
-					var objToSave = {};
-					objToSave.bonus = 0;
-					objToSave.resource = element.employeeId.name.first + ' ' + element.employeeId.name.last;
-					objToSave.percentage = element.bonusId.name;
-					if (element.bonusId.isPercent) {
-						objToSave.bonus = (budgetTotal.revenueSum / 100) * element.bonusId.value * 100;
-						bonus.push(objToSave);
-					} else {
-						monthHours.forEach(function (month) {
-							objToSave.bonus += (hoursByMonth[month._id] / month.value[0]) * element.bonusId.value;
-						});
-						objToSave.bonus = objToSave.bonus * 100;
-						bonus.push(objToSave);
-					}
-
-				});
-
-				var keys = Object.keys(employees);
-
-				dataService.getData('/employee/getForProjectDetails',
-					{
-						data: keys
-					}, function (response) {
 						dataService.getData('/employee/getForProjectDetails',
 							{
-								data: [self.formModel.toJSON().projectmanager._id]
+								data: [pMId]
 							}, function (resp) {
+								var keysForPT = Object.keys(projectTeam);
+								var sortBudget = [];
+
+								response.forEach(function (employee) {
+									keysForPT.forEach(function (id) {
+										if (employee._id === id) {
+											sortBudget.push(projectTeam[employee._id]);
+										}
+									})
+								});
+
 								response.unshift(resp[0]);
 								container.html(template({
-										projectTeam  : response,
-										bonus        : bonus,
-										budget       : projectTeam,
+										projectTeam: response,
+										bonus: bonus,
+										budget: sortBudget,
 										projectValues: projectValues,
-										budgetTotal  : budgetTotal
+										budgetTotal: budgetTotal,
+										empSort: keys
 									})
 								);
 							}, this);
 
-					}, this);
+						bonuses.forEach(function (element) {
+							var objToSave = {};
 
+							objToSave.bonus = 0;
+							objToSave.resource = element.employeeId.name.first + ' ' + element.employeeId.name.last;
+							objToSave.percentage = element.bonusId.name;
+
+							if (element.bonusId.isPercent) {
+								objToSave.bonus = (budgetTotal.revenueSum / 100) * element.bonusId.value * 100;
+								bonus.push(objToSave);
+							} else {
+								monthHours.forEach(function (month) {
+									objToSave.bonus += (hoursByMonth[month._id] / month.value[0]) * element.bonusId.value;
+								});
+
+								objToSave.bonus = objToSave.bonus * 100;
+								bonus.push(objToSave);
+							}
+
+						});
+					}, this);
 			},
 
 			getWTrack : function (cb) {
@@ -699,8 +646,6 @@ define([
 			},
 
 			editItem: function () {
-				//create editView in dialog here
-				// new EditView({ model: this.formModel });
 				var self = this;
 				var inputs = $(':input[readonly="readonly"]');
 				var textArea = $('.projectDescriptionEdit');
@@ -716,7 +661,6 @@ define([
 					changeMonth: true,
 					changeYear : true,
 					onSelect   : function () {
-						//Setting minimum of endDate to picked startDate
 						var endDate = $('#StartDate').datepicker('getDate');
 						endDate.setDate(endDate.getDate());
 						$('#EndDateTarget').datepicker('option', 'minDate', endDate);
@@ -727,7 +671,6 @@ define([
 					changeMonth: true,
 					changeYear : true,
 					onSelect   : function () {
-						//Setting minimum of endDate to picked startDate
 						var endDate = $('#StartDate').datepicker('getDate');
 						endDate.setDate(endDate.getDate());
 						$('#EndDateTarget').datepicker('option', 'minDate', endDate);
@@ -755,7 +698,7 @@ define([
 						mid: mid
 					},
 					success: function () {
-						Backbone.history.navigate("#easyErp/Projects/list", {trigger: true});
+						Backbone.history.navigate("#easyErp/Projects/thumbnails", {trigger: true});
 					}
 				});
 
