@@ -63,6 +63,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 /*=New User=======================================*/
 /*==DashBoard Vocation============================*/
 /*== forInfo ======================================*/
+/*== Revenu ======================================*/
 .list2 {
   color: #ffffff !important;
   font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
@@ -5094,6 +5095,7 @@ ul.dialog-tabs li.right button {
 }
 .thumbnail .bottom .half-block .left label {
   color: #a9a9a9;
+  line-height: 16px;
 }
 .thumbnail span {
   font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
@@ -6519,13 +6521,27 @@ span.done,
 .stageSelect.unDone,
 span.unDone {
   display: block;
+  background-color: #96d085;
   color: #ffffff;
   text-align: center;
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   border-radius: 4px;
   padding: 0 5px;
-  line-height: 18px;
+  line-height: 16px;
+}
+.stageSelect.projectClosed,
+span.projectClosed {
+  display: block;
+  background-color: #96d085;
+  color: #ffffff;
+  text-align: center;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+  padding: 0 5px;
+  line-height: 16px;
+  background-color: inherit;
 }
 .stageSelect.unDone,
 span.unDone {
@@ -7618,7 +7634,7 @@ textarea#editInput {
   background: pink;
 }
 .grid tr td.dashboardWeek.red {
-  background-color: #fd0001;
+  background-color: #f13f3f;
   color: white;
   border-bottom: 1px solid #7f7f80;
   border-left: 1px solid #7f7f80;
@@ -8025,7 +8041,7 @@ textarea#editInput {
   border-spacing: 5px;
 }
 .grid-conatiner.revenue .divTable#tableBySales .th {
-  border-bottom: 2px solid #ed9409;
+  border-bottom: 2px solid #c46b00;
 }
 .grid-conatiner.revenue .divTable#revenueTotal .th {
   border-bottom: 2px solid #289718;
@@ -8052,7 +8068,7 @@ textarea#editInput {
   border-bottom: 2px solid #a2a2a3;
 }
 .grid-conatiner.revenue .divTable#tableUnpaidBySales .th {
-  border-bottom: 2px solid #fd0001;
+  border-bottom: 2px solid #f13f3f;
 }
 .grid-conatiner.revenue .divTable#tableCancelledBySales .th {
   border-bottom: 2px solid #3d4bfd;
@@ -8071,7 +8087,7 @@ textarea#editInput {
   width: auto;
 }
 .grid-conatiner.revenue .divRow.totalBySales {
-  background-color: #ed9409;
+  background-color: #c46b00;
 }
 .grid-conatiner.revenue .divRow.revenueTotal {
   background-color: #289718;
@@ -8096,13 +8112,13 @@ textarea#editInput {
 }
 .grid-conatiner.revenue .divRow.totalByDep,
 .grid-conatiner.revenue .divRow.totalHoursByDep {
-  background-color: #00af00;
+  background-color: #278227;
 }
 .grid-conatiner.revenue .divRow.totalPaid {
   background-color: #a2a2a3;
 }
 .grid-conatiner.revenue .divRow.totalUnpaid {
-  background-color: #fd0001;
+  background-color: #f13f3f;
 }
 .grid-conatiner.revenue .divRow.totalCancelled {
   background-color: #3d4bfd;
@@ -8203,7 +8219,7 @@ textarea#editInput {
   width: 7.5%;
 }
 .grid-conatiner.revenue .th-green {
-  border-bottom: 2px solid #00af00;
+  border-bottom: 2px solid #278227;
 }
 .hrTop tr td {
   vertical-align: top;

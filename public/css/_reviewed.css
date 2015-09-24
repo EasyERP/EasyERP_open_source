@@ -7301,7 +7301,7 @@ textarea#editInput {
   border-spacing: 5px;
 }
 .grid-conatiner.revenue .divTable#tableBySales .th {
-  border-bottom: 2px solid #ed9409;
+  border-bottom: 2px solid @revenue-by-sales;
 }
 .grid-conatiner.revenue .divTable#tableByDep .th-green {
   border-bottom: 2px solid #00af00;
@@ -7314,7 +7314,7 @@ textarea#editInput {
   width: auto;
 }
 .grid-conatiner.revenue .divRow.totalBySales {
-  background-color: #ed9409;
+  background-color: @revenue-by-sales;
 }
 .grid-conatiner.revenue .divRow.totalByDep {
   background-color: #00af00;
