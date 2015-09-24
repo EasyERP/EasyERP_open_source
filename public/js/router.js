@@ -255,7 +255,6 @@ define([
             }
         },
 
-
         attendance: function () {
             var self = this;
 

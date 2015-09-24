@@ -47,6 +47,8 @@ require.config({
 });
 
 require(['app'], function (app) {
+    localStorage.debug = '*';
+
     Backbone.Collection.prototype.getElement = function (id) {
         return (id) ? this.get(id) : ((this.currentElement) ? this.currentElement : this.at(0));
     };
