@@ -7,7 +7,7 @@
         var PersonsCollection = Backbone.Collection.extend({
             model: PersonModel,
             url: "/Persons/",
-            page:null,
+            page: null,
             namberToShow: null,
             viewType: null,
             contentType: null,
@@ -83,7 +83,7 @@
                     }
                 });
             },
-            parse: true,
+
             parse: function (response) {
                 return response.data;
             }
