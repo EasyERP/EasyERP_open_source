@@ -292,7 +292,7 @@ define([
                 var editedElementRowId;
                 var editedElementContent;
                 var editedElementValue;
-                var editWtrackModel;
+                var self = this;
 
                 if (/*wTrackId !== this.wTrackId &&*/ editedElement.length) {
                     editedCol = editedElement.closest('td');
@@ -306,10 +306,35 @@ define([
                         this.changedModels[editedElementRowId] = {};
                     }
 
-                    this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
 
-                    editedCol.text(editedElementValue);
-                    editedElement.remove();
+                    this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
+                    if (editedElementContent === 'month'){
+                        async.parallel([funcForWeek], function(err, result){
+                            if (err){
+                                console.log(err);
+                            }
+
+                            var weeks = result[0];
+                            editedElement.closest('tr').find('[data-content="week"]').text(weeks[0]);
+                            editedCol.text(editedElementValue);
+                            editedElement.remove();
+
+                            self.changedModels[editedElementRowId]['week'] = weeks[0];
+                        });
+                    } else {
+                        editedCol.text(editedElementValue);
+                        editedElement.remove();
+                    }
+
+                }
+                function funcForWeek(cb){
+                    var weeks;
+                    var month = editedElementValue;
+                    var year = editedElement.closest('tr').find('[data-content="year"]').text();
+
+                    weeks = custom.getWeeks(month, year);
+
+                    cb(null, weeks);
                 }
             },
 
@@ -323,9 +348,9 @@ define([
                 var content = el.data('content');
                 var isSelect = colType !== 'input' && el.prop("tagName") !== 'INPUT';
                 var isWeek = el.attr("data-content") === 'week';
+                var isMonth = el.attr("data-content") === 'month';
                 var tempContainer;
                 var width;
-                var editedElement;
                 var value;
                 var insertedInput;
                 var weeks;
@@ -335,7 +360,6 @@ define([
 
                 if (wTrackId && el.prop('tagName') !== 'INPUT') {
                     if (this.wTrackId) {
-                        editedElement = this.$listTable.find('.editing');
                         this.setChangedValueToModel();
                     }
                     this.wTrackId = wTrackId;
