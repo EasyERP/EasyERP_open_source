@@ -10,46 +10,106 @@
             </tr>
             </thead>
             <tbody id="projectTeam">
+            <%var count = 0;%>
             <% projectTeam.forEach(function(element){ %>
             <tr>
                 <td><%=element.fullName%></td>
                 <td><%=element.department.name%></td>
                 <td><%=element.jobPosition.name%></td>
             </tr>
+            <% count++ %>
             <% })%>
+            <tr>
+                <td><%='&nbsp'%></td>
+                <td><%='&nbsp'%></td>
+                <td><%='&nbsp'%></td>
+            </tr>
+            <tr>
+                <td>Total</td>
+                <td><%='&nbsp'%></td>
+                <td><%=count%></td>
+            </tr>
             </tbody>
         </table>
     </div>
 
     <div class="half-block right">
 
-            <table class="list tableProjects">
-                <caption class="anotherColor">Project Values</caption>
-                <thead>
-                <tr>
-                    <th>Revenue</th>
-                    <th>Profit</th>
-                    <th>MarkUp</th>
-                    <th>Pr. Margin</th>
-                </tr>
-                </thead>
-                <tbody id="project">
-                <tr>
-                    <td><%=projectValues.revenue.toFixed(2)%></td>
-                    <td><%=projectValues.profit.toFixed(2)%></td>
-                    <td class="procent"><%=projectValues.markUp %></td>
-                    <td class="procent"><%=projectValues.radio%></td>
-                </tr>
-                </tbody>
-            </table>
+        <table class="list tableProjects">
+            <caption class="anotherColor">Budget & Resources</caption>
+            <thead>
+            <tr>
+                <th>Revenue</th>
+                <th>Profit</th>
+                <th>Cost</th>
+                <th>Rate</th>
+                <th>Hours</th>
 
+            </tr>
+            </thead>
+            <tbody id="budget">
+            <tr>
+                <td><%='&nbsp'%></td>
+                <td><%='&nbsp'%></td>
+                <td><%='&nbsp'%></td>
+                <td><%='&nbsp'%></td>
+                <td><%='&nbsp'%></td>
+            </tr>
+            <%var keys = Object.keys(budget);%>
+            <% keys.forEach(function(key){ %>
+            <tr>
+                <td><%=budget[key].revenue.toFixed(2)%></td>
+                <td><%=budget[key].profit.toFixed(2)%></td>
+                <td><%=budget[key].cost.toFixed(2)%></td>
+                <td><%=budget[key].rate%></td>
+                <td><%=budget[key].hours%></td>
+            </tr>
+            <% })%>
+            <tr>
+                <td><%='&nbsp'%></td>
+                <td><%='&nbsp'%></td>
+                <td><%='&nbsp'%></td>
+                <td><%='&nbsp'%></td>
+                <td><%='&nbsp'%></td>
+            </tr>
+            <tr>
 
-
-
+                <td><%=budgetTotal.revenueSum.toFixed(2)%></td>
+                <td><%=budgetTotal.profitSum.toFixed(2)%></td>
+                <td><%=budgetTotal.costSum.toFixed(2)%></td>
+                <td><%=budgetTotal.rateSum.toFixed(2)%></td>
+                <td><%=budgetTotal.hoursSum%></td>
+            </tr>
+            </tbody>
+        </table>
         </div>
 </div>
 
 <div class="forInfoWrap">
+    <div class="half-block right">
+
+        <table class="list tableProjects">
+            <caption class="anotherColor">Project Values</caption>
+            <thead>
+            <tr>
+                <th>Revenue</th>
+                <th>Profit</th>
+                <th>MarkUp</th>
+                <th>Pr. Margin</th>
+            </tr>
+            </thead>
+            <tbody id="project">
+            <tr>
+                <td><%=projectValues.revenue.toFixed(2)%></td>
+                <td><%=projectValues.profit.toFixed(2)%></td>
+                <td class="procent"><%=projectValues.markUp %></td>
+                <td class="procent"><%=projectValues.radio%></td>
+            </tr>
+            </tbody>
+        </table>
+
+
+    </div>
     <div class="half-block left">
         <table class="list tableProjects">
             <caption>Bonus for Sales Managers</caption>
@@ -71,46 +131,6 @@
             </tbody>
         </table>
     </div>
-    <div class="half-block right">
-        <table class="list tableProjects">
-            <caption class="anotherColor">Budget & Resources</caption>
-            <thead>
-            <tr>
-                <th>Revenue</th>
-                <th>Profit</th>
-                <th>Cost</th>
-                <th>Rate</th>
-                <th>Hours</th>
 
-            </tr>
-            </thead>
-            <tbody id="budget">
-            <% budget.forEach(function(element){ %>
-            <tr>
-                <td><%=element.revenue%></td>
-                <td><%=element.profit%></td>
-                <td><%=element.cost%></td>
-                <td><%=element.rate%></td>
-                <td><%=element.hours%></td>
-            </tr>
-            <% })%>
-            <tr>
-                <td><%='&nbsp'%></td>
-                <td><%='&nbsp'%></td>
-                <td><%='&nbsp'%></td>
-                <td><%='&nbsp'%></td>
-                <td><%='&nbsp'%></td>
-            </tr>
-            <tr>
-
-                <td><%=budgetTotal.revenueSum.toFixed(2)%></td>
-                <td><%=budgetTotal.profitSum.toFixed(2)%></td>
-                <td><%=budgetTotal.costSum.toFixed(2)%></td>
-                <td><%=budgetTotal.rateSum.toFixed(2)%></td>
-                <td><%=budgetTotal.hoursSum%></td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
 </div>
 

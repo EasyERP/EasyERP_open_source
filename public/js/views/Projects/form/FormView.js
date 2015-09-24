@@ -489,13 +489,16 @@ define([
                 var budget = [];
                 var projectValues = {};
                 var budgetTotal = {};
-                var wTRack = result[0];
+                var wTRack = result[0]  ? result[0]['wTrack'] : [];
+                var monthHours = result[0]  ? result[0]['monthHours'] : [];
                 var payment = result[1] ? result[1]['payment'] : [];
                 var invoice = result[1] ? result[1]['invoice'] : [];
                 var bonuses = this.formModel.toJSON().bonus;
                 var employees = [];
                 var container = this.$el.find('#forInfo');
                 var template = _.template(DetailsTemplate);
+                var hoursByMonth = {};
+                var self = this;
 
                 budgetTotal.profitSum = 0;
                 budgetTotal.costSum = 0;
@@ -503,33 +506,52 @@ define([
                 budgetTotal.revenueSum = 0;
                 budgetTotal.hoursSum = 0;
 
-
-                employees[this.formModel.toJSON().projectmanager._id] = this.formModel.toJSON().projectmanager.name;
-
                 wTRack.forEach(function (wTrack) {
-                    var obj = {};
-                    var objForBudget = {};
-
                     if (!( wTrack.employee._id in employees)) {
-                        employees[wTrack.employee._id] = obj.resource;
-                        projectTeam.push(obj);
+                        employees[wTrack.employee._id] = wTrack.employee.name;
                     }
 
-                    objForBudget.profit = ((wTrack.revenue - wTrack.cost) / 100).toFixed(2);
-                    objForBudget.cost = (wTrack.cost / 100).toFixed(2);
-                    objForBudget.rate = wTrack.rate;
-                    objForBudget.hours = wTrack.worked;
-                    objForBudget.revenue = (wTrack.revenue / 100).toFixed(2);
-
-                    budget.push(objForBudget);
+                    var key = wTrack.year * 100 + wTrack.month;
+                    if (hoursByMonth[key]) {
+                        hoursByMonth[key] += parseFloat(wTrack.worked);
+                    } else {
+                        hoursByMonth[key] = parseFloat(wTrack.worked);
+                    }
                 });
 
-                budget.forEach(function (element) {
-                    budgetTotal.profitSum += parseFloat(element.profit);
-                    budgetTotal.costSum += parseFloat(element.cost);
-                    budgetTotal.rateSum += parseFloat(element.rate);
-                    budgetTotal.hoursSum += parseFloat(element.hours);
-                    budgetTotal.revenueSum += parseFloat(element.revenue);
+                var empKeys = Object.keys(employees);
+
+                empKeys.forEach(function(empId){
+                    wTRack.forEach(function (wTrack) {
+                        var emp = wTrack.employee._id;
+
+                        if (empId === emp){
+                            if (projectTeam[empId]){
+                                projectTeam[empId].profit += parseFloat(((wTrack.revenue - wTrack.cost) / 100).toFixed(2));
+                                projectTeam[empId].cost += parseFloat((wTrack.cost / 100).toFixed(2));
+                                projectTeam[empId].rate += parseFloat(wTrack.rate);
+                                projectTeam[empId].hours += parseFloat(wTrack.worked);
+                                projectTeam[empId].revenue += parseFloat((wTrack.revenue / 100).toFixed(2));
+                            } else {
+                                projectTeam[empId] = {};
+                                projectTeam[empId].profit = parseFloat(((wTrack.revenue - wTrack.cost) / 100).toFixed(2));
+                                projectTeam[empId].cost = parseFloat((wTrack.cost / 100).toFixed(2));
+                                projectTeam[empId].rate = parseFloat(wTrack.rate);
+                                projectTeam[empId].hours = parseFloat(wTrack.worked);
+                                projectTeam[empId].revenue = parseFloat((wTrack.revenue / 100).toFixed(2));
+                            }
+                        }
+                    });
+                });
+
+
+                var keys = Object.keys(projectTeam);
+                keys.forEach(function (key) {
+                    budgetTotal.profitSum += parseFloat(projectTeam[key].profit);
+                    budgetTotal.costSum += parseFloat(projectTeam[key].cost);
+                    budgetTotal.rateSum += parseFloat(projectTeam[key].rate);
+                    budgetTotal.hoursSum += parseFloat(projectTeam[key].hours);
+                    budgetTotal.revenueSum += parseFloat(projectTeam[key].revenue);
                 });
 
                 projectValues.revenue = budgetTotal.revenueSum;
@@ -539,12 +561,17 @@ define([
 
                 bonuses.forEach(function (element) {
                     var objToSave = {};
-
-
+                    objToSave.bonus = 0;
                     objToSave.resource = element.employeeId.name.first + ' ' + element.employeeId.name.last;
                     objToSave.percentage = element.bonusId.name;
                     if (element.bonusId.isPercent){
-                        objToSave.bonus = (budgetTotal.revenueSum/100) * element.bonusId.value * 100;
+                        objToSave.bonus = (budgetTotal.revenueSum / 100) * element.bonusId.value * 100;
+                        bonus.push(objToSave);
+                    } else {
+                        monthHours.forEach(function(month){
+                            objToSave.bonus += (hoursByMonth[month._id] / month.value[0]) * element.bonusId.value;
+                        });
+                        objToSave.bonus = objToSave.bonus * 100;
                         bonus.push(objToSave);
                     }
 
@@ -556,15 +583,20 @@ define([
                     {
                         data: keys
                     }, function (response) {
-
-                        container.html(template({
-                                projectTeam: response,
-                                bonus: bonus,
-                                budget: budget,
-                                projectValues: projectValues,
-                                budgetTotal: budgetTotal
-                            })
-                        );
+                        dataService.getData('/employee/getForProjectDetails',
+                            {
+                                data: [self.formModel.toJSON().projectmanager._id]
+                            }, function (resp) {
+                                response.unshift(resp[0]);
+                                container.html(template({
+                                        projectTeam: response,
+                                        bonus: bonus,
+                                        budget: projectTeam,
+                                        projectValues: projectValues,
+                                        budgetTotal: budgetTotal
+                                    })
+                                );
+                            }, this);
 
                     }, this);
 
@@ -580,10 +612,8 @@ define([
 
                 };
 
-                dataService.getData('/wTrack/list',
+                dataService.getData('/wTrack/getForProjects',
                     {
-                        count: 100,
-                        page: 1,
                         filter: filter
                     }, function (response) {
 
@@ -592,7 +622,7 @@ define([
                         }
 
                         new wTrackView({
-                            model: response
+                            model: response.wTrack
                         });
                         cb(null, response);
 
