@@ -284,6 +284,7 @@ require(['app'], function (app) {
         //end number page show (Vasya)
         $("#currentShowPage").val(page);
         $("#grid-start").text((page - 1) * itemsNumber + 1);
+
         if (this.listLength <= page * itemsNumber) {
             $("#grid-end").text(this.listLength);
             $("#nextPage").prop("disabled", true);
@@ -291,6 +292,7 @@ require(['app'], function (app) {
         } else {
             $("#grid-end").text(page * itemsNumber);
         }
+
         $("#previousPage").prop("disabled", false);
         $("#firstShowPage").prop("disabled", false);
 
@@ -300,7 +302,10 @@ require(['app'], function (app) {
             letter: this.selectedLetter
         };
 
-        if (dataObject) _.extend(serchObject, dataObject);
+        if (dataObject) {
+            _.extend(serchObject, dataObject);
+        }
+
         this.collection.showMore(serchObject);
         this.changeLocationHash(page, itemsNumber);
     };
