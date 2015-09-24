@@ -348,7 +348,6 @@ define([
                 var content = el.data('content');
                 var isSelect = colType !== 'input' && el.prop("tagName") !== 'INPUT';
                 var isWeek = el.attr("data-content") === 'week';
-                var isMonth = el.attr("data-content") === 'month';
                 var tempContainer;
                 var width;
                 var value;
