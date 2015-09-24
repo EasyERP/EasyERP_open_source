@@ -55,15 +55,15 @@
                 <td><%='&nbsp'%></td>
                 <td><%='&nbsp'%></td>
             </tr>
-            <%var keys = Object.keys(budget);%>
-            <% keys.forEach(function(key){ %>
-            <tr>
-                <td><%=budget[key].revenue.toFixed(2)%></td>
-                <td><%=budget[key].profit.toFixed(2)%></td>
-                <td><%=budget[key].cost.toFixed(2)%></td>
-                <td><%=budget[key].rate%></td>
-                <td><%=budget[key].hours%></td>
-            </tr>
+
+            <% budget.forEach(function(element){ %>
+               <tr>
+                <td><%=element.revenue.toFixed(2)%></td>
+                <td><%=element.profit.toFixed(2)%></td>
+                <td><%=element.cost.toFixed(2)%></td>
+                <td><%=element.rate%></td>
+                <td><%=element.hours%></td>
+               </tr>
             <% })%>
             <tr>
                 <td><%='&nbsp'%></td>
