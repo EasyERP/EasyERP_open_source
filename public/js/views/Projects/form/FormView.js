@@ -587,13 +587,25 @@ define([
                             {
                                 data: [self.formModel.toJSON().projectmanager._id]
                             }, function (resp) {
+                                var keysForPT = Object.keys(projectTeam);
+                                var sortBudget = [];
+
+                                response.forEach(function(employee){
+                                    keysForPT.forEach(function(id){
+                                        if (employee._id === id){
+                                            sortBudget.push(projectTeam[employee._id]);
+                                        }
+                                    })
+                                });
+
                                 response.unshift(resp[0]);
                                 container.html(template({
                                         projectTeam: response,
                                         bonus: bonus,
-                                        budget: projectTeam,
+                                        budget: sortBudget,
                                         projectValues: projectValues,
-                                        budgetTotal: budgetTotal
+                                        budgetTotal: budgetTotal,
+                                        empSort: keys
                                     })
                                 );
                             }, this);
