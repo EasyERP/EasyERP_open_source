@@ -10,10 +10,60 @@ var Capacity = function (models) {
     var error;
     var query;
 
-    function getCapacityFilter(modelId, req, res, next) {
+    function setVacations(array, Capacity, callback) {
         var vacArrayLength;
         var vacArray;
         var capacityArray;
+
+        async.eachLimit(array, 100, function (model, eachCB) {
+
+            function deleteCapacity(callback) {
+                Capacity.findOneAndRemove({_id: model._id}, function (err, resultModel) {
+                    if (err) {
+                        callback(err);
+                    }
+
+                    array.splice(model, 1);
+                    callback(null);
+                })
+            }
+
+            if (model.vacation && model.vacation._id) {
+                vacArray = model.vacation.vacArray;
+                capacityArray = model.capacityArray;
+
+                vacArrayLength = vacArray.length;
+
+                for (var i = vacArrayLength - 1; i >= 0; i--) {
+                    if (capacityArray[i]) {
+                        model.capacityMonthTotal -= capacityArray[i];
+                    }
+
+                    capacityArray[i] = vacArray[i];
+                }
+
+                if (model.capacityMonthTotal === 0) {
+                    deleteCapacity(function (err) {
+                        if (err) {
+                            return eachCB(err)
+                        }
+                    })
+                } else {
+                    model.capacityArray = capacityArray;
+                }
+            }
+
+            eachCB(null, 'Done');
+        }, function (err) {
+            if (err) {
+                return callback(err);
+            }
+
+            callback(null, 'Done');
+        });
+    };
+
+    function getCapacityFilter(modelId, req, res, next) {
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getReadAccess(req, req.session.uId, modelId, function (access) {
@@ -23,6 +73,7 @@ var Capacity = function (models) {
 
                     next(error);
                 }
+
                 var Capacity = models.get(req.session.lastDb, 'Capacity', CapacitySchema);
                 var options = req.query;
                 var queryObject = {};
@@ -47,22 +98,15 @@ var Capacity = function (models) {
                         return next(err);
                     }
 
-                    if (result.vacation && result.vacation._id) {
-                        vacArray = result.vacation.vacArray;
-                        capacityArray = result.capacityArray;
-
-                        vacArrayLength = vacArray.length();
-
-                        for (var i = vacArrayLength; i > 0; i--) {
-                            capacityArray[i] = vacArray[i];
+                    setVacations(result, Capacity, function (err) {
+                        if (err) {
+                            return next(err);
                         }
 
-                        result.capacityArray = capacityArray;
-                    }
+                        result = _.groupBy(result, 'department.name');
 
-                    result = _.groupBy(result, 'department.name');
-
-                    res.status(200).send(result);
+                        res.status(200).send(result);
+                    });
                 });
             });
 
@@ -150,7 +194,7 @@ var Capacity = function (models) {
                     modelObject.capacityArray = [];
                     modelObject.capacityMonthTotal = 0;
 
-                    for (var day = daysCount; day >= 0; day--) {
+                    for (var day = daysCount - 1; day >= 0; day--) {
 
                         dateValue = moment([year, month - 1, day + 1]);
 
@@ -168,7 +212,7 @@ var Capacity = function (models) {
 
                     query.exec(function (err, result) {
                         if (err) {
-                            return next(err);
+                            return cb(err);
                         }
 
                         result = result[0];
