@@ -1,48 +1,34 @@
-var logger = require('../helpers/logger');
+"use strict";
 var redis = require( 'redis' );
-var debug = require('debug')('handlers:socket');
 
 var io;
 
 function onError( err ) {
-    "use strict";
     if ( err ) {
-        return console.log( err.message || err );
+        console.log( err.message || err );
     }
 }
 
 module.exports = function ( server ) {
-    "use strict";
-
-    if ( io ) {
-        debug('Return cached socket.io');
-        return io;
-    }
-
-    debug('Initialize socket.io');
-
     var adapter = require('socket.io-redis');
     var pub = redis.createClient(
         parseInt( process.env.SOCKET_DB_PORT ),
-        process.env.SOCKET_DB_HOST,
-        {
-            return_buffers: true
-        }
+        process.env.SOCKET_DB_HOST
     );
     var sub = redis.createClient(
         parseInt( process.env.SOCKET_DB_PORT ),
-        process.env.SOCKET_DB_HOST,
-        {
-            return_buffers: true
-        }
+        process.env.SOCKET_DB_HOST
     );
 
     io = require('socket.io')(
-        server,
-        {
-            transports: ['websocket']
-        }
+        server
     );
+
+    io.set('transports', [
+        'websocket',
+        'polling',
+        'xhr-polling'
+    ]);
 
     pub.select( parseInt( process.env.SOCKET_DB ) );
     sub.select( parseInt( process.env.SOCKET_DB ) );
@@ -56,6 +42,14 @@ module.exports = function ( server ) {
 
     pub.on('error', onError );
     sub.on('error', onError );
+
+    io.use(function(socket, next) {
+        var handshake = socket.request;
+
+        next();
+    });
+
+    require('./ioHandler')(io);
 
     return io;
 };

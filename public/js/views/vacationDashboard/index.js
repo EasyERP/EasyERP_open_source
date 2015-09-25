@@ -1,6 +1,5 @@
 define([
     'text!templates/vacationDashboard/index.html',
-    'views/vacationDashboard/rowView',
     'collections/Dashboard/vacationDashboard',
     'dataService',
     'constants',
@@ -8,7 +7,7 @@ define([
     'custom',
     'moment',
     'constants'
-], function (mainTemplate, rowView, vacationDashboard, dataService, CONSTANTS, async, custom, moment, CONSTANTS) {
+], function (mainTemplate, vacationDashboard, dataService, CONSTANTS, async, custom, moment, CONSTANTS) {
     var View = Backbone.View.extend({
         el: '#content-holder',
 
@@ -29,6 +28,11 @@ define([
             var self = this;
             var year;
             var week;
+            var socket = App.socket;
+
+            if (socket){
+                socket.on('recollectVacationDash', self.fetchData);
+            }
 
             this.startTime = options.startTime;
 
@@ -50,10 +54,8 @@ define([
             dashCollection = this.dashCollection = custom.retriveFromCash('dashboardVacation');
 
             if (!dashCollection) {
-                dashCollection = this.dashCollection = new vacationDashboard();
+                dashCollection = this.dashCollection = this.fetchData();
                 dashCollection.on('reset sort', this.render, this);
-
-                custom.cashToApp('dashboardVacation', dashCollection);
             } else {
                 this.render();
             }
@@ -72,6 +74,15 @@ define([
                 self.startWeek = startWeek + 53;
                 self.year -= 1;
             }
+        },
+
+        fetchData: function(){
+            var dashCollection;
+
+            dashCollection = new vacationDashboard();
+            custom.cashToApp('dashboardVacation', dashCollection);
+
+            return dashCollection;
         },
 
         openAll: function (e) {

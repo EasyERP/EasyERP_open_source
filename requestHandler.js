@@ -78,7 +78,6 @@ var requestHandler = function (event, mainDb) {
 
     });
     //if name was updated, need update related wTrack, or other models
-
     event.on('updateName', function (id, targetModel, searchField, fieldName, fieldValue, fieldInArray) {
         //fieldInArray(bool) added for update values in array. If true then fieldName contains .$.
         var sercObject = {};
@@ -158,6 +157,27 @@ var requestHandler = function (event, mainDb) {
 
 
         }
+    });
+
+    event.on('recollectVacationDash', function (id, targetModel, searchField, fieldName, fieldValue, fieldInArray) {
+        //fieldInArray(bool) added for update values in array. If true then fieldName contains .$.
+        var sercObject = {};
+        var updateObject = {};
+
+        sercObject[searchField] = id;
+
+        if (fieldInArray) {
+            updateObject['$set'] = {};
+            updateObject['$set'][fieldName] = fieldValue;
+        } else {
+            updateObject[fieldName] = fieldValue;
+        }
+
+        targetModel.update(sercObject, updateObject, {multi: true}, function(err){
+            if(err){
+                logWriter.log('requestHandler_eventEmiter_updateName', err.message);
+            }
+        });
     });
 
     Array.prototype.objectID = function () {
