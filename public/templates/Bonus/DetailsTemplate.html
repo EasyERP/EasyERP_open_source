@@ -61,7 +61,7 @@
                 <td><%=currencySplitter(element.revenue.toFixed(2))%></td>
                 <td><%=currencySplitter(element.profit.toFixed(2))%></td>
                 <td><%=currencySplitter(element.cost.toFixed(2))%></td>
-                <td><%=currencySplitter(element.rate.toFixed(2))%></td>
+                <td><%=currencySplitter((element.revenue / element.hours).toFixed(2))%></td>
                 <td><%=currencySplitter(element.hours.toFixed())%></td>
                </tr>
             <% })%>

@@ -348,6 +348,7 @@ define([
                 var content = el.data('content');
                 var isSelect = colType !== 'input' && el.prop("tagName") !== 'INPUT';
                 var isWeek = el.attr("data-content") === 'week';
+                var isYear = el.attr("data-content") === 'year';
                 var tempContainer;
                 var width;
                 var value;
@@ -356,6 +357,9 @@ define([
                 var month = (tr.find('[data-content="month"]').text()) ? tr.find('[data-content="month"]').text() : tr.find('.editing').val();
                 var year = (tr.find('[data-content="year"]').text()) ? tr.find('[data-content="year"]').text() : tr.find('.editing').val();
                 var template;
+                var currentYear;
+                var previousYear;
+                var nextYear;
 
                 if (wTrackId && el.prop('tagName') !== 'INPUT') {
                     if (this.wTrackId) {
@@ -376,6 +380,13 @@ define([
                     el.append(template({
                         weeks: weeks
                     }));
+                } else if (isYear) {
+                    currentYear = parseInt(moment().year());
+                    previousYear = currentYear - 1;
+                    nextYear = currentYear + 1;
+
+                    width = el.width() - 6;
+                    el.append('<ul class="newSelectList"><li>' + previousYear + '</li><li>' + currentYear + '</li><li>' + nextYear + '</li></ul>');
                 } else {
                     tempContainer = el.text();
                     width = el.width() - 6;
@@ -527,7 +538,7 @@ define([
                 var changedAttr;
                 var wTrackId = tr.data('id');
                 var week;
-                var value;
+                var year;
 
                 var element = _.find(this.responseObj[elementType], function (el) {
                     return el._id === id;
@@ -596,6 +607,10 @@ define([
                     week = $(e.target).text();
 
                     changedAttr.week = week;
+                } else if (elementType === '#year') {
+                    year = $(e.target).text();
+
+                    changedAttr.year = year;
                 }
 
                 targetElement.removeClass('errorContent');
