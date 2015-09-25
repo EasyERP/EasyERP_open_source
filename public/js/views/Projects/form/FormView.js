@@ -181,16 +181,9 @@ define([
 						},
 						success: function (model) {
 							self.disableEdit();
-
-							if (data.workflow._id != workflowStart._id) {
-								var filter = window.location.hash.split('filter=')[1];
-								var url = "#easyErp/Projects/thumbnails";
-								if (filter)
-									url += '/filter=' + filter;
-								Backbone.history.fragment = "";
-								Backbone.history.navigate(url, {trigger: true});
-
-							}
+                            var url = window.location.hash;
+                            Backbone.history.fragment = "";
+                            Backbone.history.navigate(url, {trigger: true});
 						},
 						error  : function (model, xhr) {
 							self.errorNotification(xhr);
@@ -638,7 +631,10 @@ define([
 						mid: mid
 					},
 					success: function () {
-						Backbone.history.navigate("#easyErp/Projects/thumbnails", {trigger: true});
+                        self.disableEdit();
+                        var url = window.location.hash;
+                        Backbone.history.fragment = "";
+                        Backbone.history.navigate(url, {trigger: true});
 					}
 				});
 
