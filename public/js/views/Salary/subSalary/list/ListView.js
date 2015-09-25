@@ -57,7 +57,24 @@ function (listTemplate, cancelEdit, createView, listItemView, subSalaryTotalTemp
             "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
             "change .autoCalc": "autoCalc",
             "change .editable": "setEditable",
-            "click .oe_sortable_sub": "goSort"
+            "click .oe_sortable_sub": "goSort",
+            "keydown input.editing ": "keyDown"
+        },
+
+        keyDown: function (e) {
+            if (e.which === 13) {
+                var editedElement = this.bodyContainer.find('.editing');
+                var editedCol;
+                var editedElementValue;
+
+                if (editedElement.length) {
+                    editedCol = editedElement.closest('td');
+                    editedElementValue = editedElement.val();
+
+                    editedCol.text(editedElementValue);
+                    editedElement.remove();
+                }
+            }
         },
 
         goSort: function (e) {
@@ -254,13 +271,13 @@ function (listTemplate, cancelEdit, createView, listItemView, subSalaryTotalTemp
                 if ( name === 'onCard' || name === 'onCash' ) {
                     diffByNameElement = $('#subSalary-listTotal' + self.id).find('.total_diff_' + name);
 
-                    diffNameVal = $('#subSalary-listTotal' + self.id).find('.total_calc_' + name).text() - $('#subSalary-listTotal' + self.id).find('.total_paid_' + name).text();
+                    diffNameVal = parseFloat($('#subSalary-listTotal' + self.id).find('.total_calc_' + name).text()) - parseFloat($('#subSalary-listTotal' + self.id).find('.total_paid_' + name).text());
 
                     diffByNameElement.text(self.checkMoneyTd(diffByNameElement, diffNameVal));
                     $('tr[data-id="' + self.id + '"]').find('.total_diff_' + name).text(diffNameVal);
 
-                    diffOnCash = $('#subSalary-listTotal' + self.id).find('.total_diff_onCash').text();
-                    diffOnCard = $('#subSalary-listTotal' + self.id).find('.total_diff_onCard').text();
+                    diffOnCash = parseFloat($('#subSalary-listTotal' + self.id).find('.total_diff_onCash').text());
+                    diffOnCard = parseFloat($('#subSalary-listTotal' + self.id).find('.total_diff_onCard').text());
 
                     diffTotalVal = parseInt(diffOnCash) + parseInt(diffOnCard);
                     $('#subSalary-listTotal' + self.id).find('.total_diff').text(diffTotalVal);

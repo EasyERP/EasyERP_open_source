@@ -55,7 +55,24 @@ define([
                 "click #firstShowPage": "firstPage",
                 "click #lastShowPage": "lastPage",
                 "click .oe_sortable": "goSort",
-                "change .editable ": "setEditable"
+                "change .editable ": "setEditable",
+                "keydown input.editing ": "keyDown"
+            },
+
+            keyDown: function (e) {
+                if (e.which === 13) {
+                    var editedElement = $("#listTable").find('.editing');
+                    var editedCol;
+                    var editedElementValue;
+
+                    if (editedElement.length) {
+                        editedCol = editedElement.closest('td');
+                        editedElementValue = editedElement.val();
+
+                        editedCol.text(editedElementValue);
+                        editedElement.remove();
+                    }
+                }
             },
 
             saveItem: function () {
