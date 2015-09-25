@@ -67,10 +67,36 @@ function (listTemplate, cancelEdit, createView, listItemView, subSalaryTotalTemp
                 var editedElement = this.bodyContainer.find('.editing');
                 var editedCol;
                 var editedElementValue;
+                var editEmployeeModel;
+                var editedElementRowId = editedElement.closest('tr').data('id');
+                var editedElementContent;
+                var calc;
+                var paid;
 
                 if (editedElement.length) {
                     editedCol = editedElement.closest('td');
+                    editedElementContent = editedCol.data('content');
                     editedElementValue = editedElement.val();
+
+                    editEmployeeModel = this.editCollection.get(editedElementRowId);
+                    calc = _.clone(editEmployeeModel.get('calc'));
+                    paid = _.clone(editEmployeeModel.get('paid'));
+
+                    if (editedCol.hasClass('calc')) {
+                        if (editedCol.data('content') === 'salary') {
+                            this.whatToSet['baseSalary'] = editedElementValue;
+                        }
+                        calc[editedElementContent] = editedElementValue;
+                        this.whatToSet['calc'] = calc;
+
+                    } else if (editedCol.hasClass('paid')) {
+                        paid[editedElementContent] = editedElementValue;
+                        this.whatToSet['paid'] = paid;
+                    } else {
+                        this.whatToSet[editedElementContent] = editedElementValue;
+                    }
+
+                    editEmployeeModel.set(this.whatToSet);
 
                     editedCol.text(editedElementValue);
                     editedElement.remove();
@@ -723,7 +749,7 @@ function (listTemplate, cancelEdit, createView, listItemView, subSalaryTotalTemp
                 model: this.model
             }).render());//added two parameters page and items number
 
-            var temp = _.template(subSalaryTotalTemplate, modelJSON, helpers.currencySplitter);
+            var temp = _.template(subSalaryTotalTemplate, {model: modelJSON, currencySplitter: helpers.currencySplitter});
             currentEl.find('#subSalary-listTotal'  + this.model.id).append(temp);
             this.filterEmployeesForDD(this);
 
