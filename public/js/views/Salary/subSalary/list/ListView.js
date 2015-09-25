@@ -10,10 +10,11 @@ define([
         'populate',
         'dataService',
         'async',
-        'moment'
+        'moment',
+        'helpers'
 ],
 
-function (listTemplate, cancelEdit, createView, listItemView, subSalaryTotalTemplate, salaryEditableCollection, employeesCollection, currentModel, populate, dataService, async, moment) {
+function (listTemplate, cancelEdit, createView, listItemView, subSalaryTotalTemplate, salaryEditableCollection, employeesCollection, currentModel, populate, dataService, async, moment, helpers) {
     var subSalaryListView = Backbone.View.extend({
         viewType: 'list',//needs in view.prototype.changeLocationHash
         responseObj: {},
@@ -261,6 +262,9 @@ function (listTemplate, cancelEdit, createView, listItemView, subSalaryTotalTemp
                     input = $(this).find('input.editing');
                     tdVal = $(this).attr('data-value');
                     tdVal = tdVal ? tdVal : $(this).text();
+                    if (tdVal.length === 0){
+                        tdVal = '0';
+                    }
                     addVal = tdVal ? parseInt(tdVal) :  parseInt(input.val());
                     calcVal += addVal;
                 });
@@ -719,7 +723,8 @@ function (listTemplate, cancelEdit, createView, listItemView, subSalaryTotalTemp
                 model: this.model
             }).render());//added two parameters page and items number
 
-            currentEl.find('#subSalary-listTotal'  + this.model.id).append(_.template(subSalaryTotalTemplate, modelJSON));
+            var temp = _.template(subSalaryTotalTemplate, modelJSON, helpers.currencySplitter);
+            currentEl.find('#subSalary-listTotal'  + this.model.id).append(temp);
             this.filterEmployeesForDD(this);
 
             this.hideSaveCancelBtns();

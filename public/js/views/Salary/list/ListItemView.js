@@ -1,8 +1,9 @@
 ﻿define([
-    'text!templates/Salary/list/ListTemplate.html'
+    'text!templates/Salary/list/ListTemplate.html',
+        'helpers'
 ],
 
-function (listTemplate) {
+function (listTemplate, helpers) {
     var SalaryListItemView = Backbone.View.extend({
         el: '#listTable',
 
@@ -22,7 +23,7 @@ function (listTemplate) {
                 element.diff.onCard = Number(element.diff.onCard).toLocaleString('en');
             });*/
 
-            this.$el.append(_.template(listTemplate, { salaryCollection: result }));
+            this.$el.append(_.template(listTemplate, { salaryCollection: result,  currencySplitter: helpers.currencySplitter }));
         }
     });
 

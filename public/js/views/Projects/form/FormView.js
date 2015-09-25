@@ -427,33 +427,6 @@ define([
                     {
                         data: keys
                     }, function (response) {
-						dataService.getData('/employee/getForProjectDetails',
-							{
-								data: [pMId]
-							}, function (resp) {
-								var keysForPT = Object.keys(projectTeam);
-								var sortBudget = [];
-
-								response.forEach(function (employee) {
-									keysForPT.forEach(function (id) {
-										if (employee._id === id) {
-											sortBudget.push(projectTeam[employee._id]);
-										}
-									})
-								});
-
-								response.unshift(resp[0]);
-								container.html(template({
-										projectTeam: response,
-										bonus: bonus,
-										budget: sortBudget,
-										projectValues: projectValues,
-										budgetTotal: budgetTotal,
-										currencySplitter: helpers.currencySplitter
-									})
-								);
-							}, this);
-
 						bonuses.forEach(function (element) {
 							var objToSave = {};
 
@@ -474,6 +447,52 @@ define([
 							}
 
 						});
+						var keysForPT = Object.keys(projectTeam);
+						var sortBudget = [];
+						response.forEach(function (employee) {
+										keysForPT.forEach(function (id) {
+											if (employee._id === id) {
+												sortBudget.push(projectTeam[employee._id]);
+											}
+										})
+									});
+						container.html(template({
+								projectTeam: response,
+								bonus: bonus,
+								budget: sortBudget,
+								projectValues: projectValues,
+								budgetTotal: budgetTotal,
+								currencySplitter: helpers.currencySplitter
+							})
+						);
+						//dataService.getData('/employee/getForProjectDetails',
+						//	{
+						//		data: [pMId]
+						//	}, function (resp) {
+						//		var keysForPT = Object.keys(projectTeam);
+						//		var sortBudget = [];
+                        //
+						//		response.forEach(function (employee) {
+						//			keysForPT.forEach(function (id) {
+						//				if (employee._id === id) {
+						//					sortBudget.push(projectTeam[employee._id]);
+						//				}
+						//			})
+						//		});
+                        //
+						//		response.unshift(resp[0]);
+						//		container.html(template({
+						//				projectTeam: response,
+						//				bonus: bonus,
+						//				budget: sortBudget,
+						//				projectValues: projectValues,
+						//				budgetTotal: budgetTotal,
+						//				currencySplitter: helpers.currencySplitter
+						//			})
+						//		);
+						//	}, this);
+
+
 					}, this);
 			},
 
