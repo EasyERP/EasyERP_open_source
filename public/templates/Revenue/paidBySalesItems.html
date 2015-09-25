@@ -1,12 +1,12 @@
 <% monthArr.forEach(function(monthObject){ %>
 <div class="divCell">
     <span class="<%= byMonthData[monthObject.month] ? '' : ''%>">
-        <%= byMonthData[monthObject.month] ? currencySplitter((byMonthData[monthObject.month][0].revenue / 100).toFixed(2)) : '&nbsp'%>
+        <%= byMonthData[monthObject.month] ? currencySplitter((byMonthData[monthObject.month][0].revenue / 100).toFixed()) : '&nbsp'%>
     </span>
 </div>
 <% }) %>
 <div class="divCell">
     <span class="<%= total ? '' : '&nbsp'%>">
-        <%= total ? currencySplitter((total / 100).toFixed(2)) : '&nbsp'%>
+        <%= total ? currencySplitter((total / 100).toFixed()) : '&nbsp'%>
     </span>
 </div>

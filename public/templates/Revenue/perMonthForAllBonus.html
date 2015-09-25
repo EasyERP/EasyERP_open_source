@@ -11,7 +11,7 @@
     </span>
     <%} else {%>
     <span>
-        <%= perMonth[monthObject.year*100 + monthObject.month] ? currencySplitter(perMonth[monthObject.year*100 + monthObject.month].toFixed(2)) : '&nbsp'%>
+        <%= perMonth[monthObject.year*100 + monthObject.month] ? currencySplitter(perMonth[monthObject.year*100 + monthObject.month].toFixed()) : '&nbsp'%>
     </span>
     <% } %>
 </div>
@@ -23,7 +23,7 @@
       </span>
     <% } else { %>
       <span>
-        <%= globalTotal ? currencySplitter(globalTotal.toFixed(2)) : '&nbsp'%>
+        <%= globalTotal ? currencySplitter(globalTotal.toFixed()) : '&nbsp'%>
       </span>
     <% } %>
 </div>
