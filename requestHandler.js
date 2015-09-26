@@ -1,6 +1,6 @@
 require('pmx').init();
 
-var requestHandler = function (event, mainDb) {
+var requestHandler = function (app, event, mainDb) {
     var dbsObject = mainDb.dbsObject;
     var mongoose = require('mongoose');
     var logWriter = require("./Modules/additions/logWriter.js")();
@@ -31,6 +31,8 @@ var requestHandler = function (event, mainDb) {
     var opportunitiesSchema = mongoose.Schemas['Opportunitie'];
     var userSchema = mongoose.Schemas['User'];
     var HoursCashesSchema = mongoose.Schemas['HoursCashes'];
+
+    var io = app.get('io');
 
 
     //binding for remove Workflow
@@ -158,26 +160,9 @@ var requestHandler = function (event, mainDb) {
 
         }
     });
-
-    event.on('recollectVacationDash', function (id, targetModel, searchField, fieldName, fieldValue, fieldInArray) {
-        //fieldInArray(bool) added for update values in array. If true then fieldName contains .$.
-        var sercObject = {};
-        var updateObject = {};
-
-        sercObject[searchField] = id;
-
-        if (fieldInArray) {
-            updateObject['$set'] = {};
-            updateObject['$set'][fieldName] = fieldValue;
-        } else {
-            updateObject[fieldName] = fieldValue;
-        }
-
-        targetModel.update(sercObject, updateObject, {multi: true}, function(err){
-            if(err){
-                logWriter.log('requestHandler_eventEmiter_updateName', err.message);
-            }
-        });
+    //Emit UI event for information user about some changes
+    event.on('recollectVacationDash', function () {
+        io.emit('recollectVacationDash');
     });
 
     Array.prototype.objectID = function () {

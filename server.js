@@ -8,9 +8,6 @@ var dbsNames = {};
 var mainDb = mongoose.createConnection('localhost', 'mainDB');
 var sessionParser = require('./helpers/sessionParser');
 var app;
-var http = require('http');
-var httpServer;
-var io;
 
 //var open = require('open');
 
@@ -62,12 +59,8 @@ mainDb.once('open', function callback () {
     mainDb.mongoose = mongoose;
 
     app = require('./app')(mainDb, dbsNames);
-    httpServer = http.createServer(app);
-    io = require('./helpers/socket')(httpServer);
 
-    app.set('io', io);
-
-    httpServer.listen(port, function () {
+    app.listen(port, function () {
         console.log('==============================================================');
         console.log('|| server start success on port=' + port + ' in ' + process.env.NODE_ENV + ' version ||');
         console.log('==============================================================\n');

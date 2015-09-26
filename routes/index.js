@@ -51,7 +51,7 @@ module.exports = function (app, mainDb) {
         res.sendfile('index.html');
     });
 
-    var requestHandler = require("../requestHandler.js")(event, mainDb);
+    var requestHandler = require("../requestHandler.js")(app, event, mainDb);
 
     app.get('/', function (req, res) {
         res.sendfile('index.html');

@@ -20,6 +20,8 @@ module.exports = function (mainDb, dbsNames) {
     var consolidate = require('consolidate');
     var app = express();
     var dbsObject = mainDb.dbsObject;
+    var httpServer;
+    var io;
 
     var logWriter = require('./helpers/logWriter');
 
@@ -86,7 +88,11 @@ module.exports = function (mainDb, dbsNames) {
     app.use(allowCrossDomain);
     app.use(chackMobile);
 
+    httpServer = http.createServer(app);
+    io = require('./helpers/socket')(httpServer);
+    app.set('io', io);
+
     require('./routes/index')(app, mainDb);
 
-    return app;
+    return httpServer;
 };

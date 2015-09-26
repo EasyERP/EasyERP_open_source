@@ -47,11 +47,7 @@ require.config({
 	}
 });
 
-require(['app', 'socketio'], function (app, io) {
-	var socket = io.connect();
-
-	App.socket = socket;
-
+require(['app'], function (app) {
 	localStorage.debug = '*';
 
 	Backbone.Collection.prototype.getElement = function (id) {
