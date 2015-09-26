@@ -169,6 +169,7 @@ define([
 
                     model.set({"isPaid": false});
                     model.set({"amount": 0});
+                    model.set({"cost": 0});
                     model.set({"revenue": revenue});
                     model = model.toJSON();
                     delete model._id;
@@ -191,6 +192,7 @@ define([
                     $(tdsArr[20]).find('span').text('Unpaid');
                     $(tdsArr[20]).find('span').addClass('unDone');
                     $(tdsArr[24]).text(0);
+                    $(tdsArr[22]).text(0);
                     $(tdsArr[21]).text(revenue.toFixed(2));
                     $(tdsArr[1]).text(cid);
                 }
@@ -380,6 +382,8 @@ define([
                     el.append(template({
                         weeks: weeks
                     }));
+
+                    this.calculateCost(e, wTrackId);
                 } else if (isYear) {
                     currentYear = parseInt(moment().year());
                     previousYear = currentYear - 1;
@@ -387,6 +391,8 @@ define([
 
                     width = el.width() - 6;
                     el.append('<ul class="newSelectList"><li>' + previousYear + '</li><li>' + currentYear + '</li><li>' + nextYear + '</li></ul>');
+
+                    this.calculateCost(e, wTrackId);
                 } else {
                     tempContainer = el.text();
                     width = el.width() - 6;
@@ -459,7 +465,6 @@ define([
 
                         self.changedModels[wTrackId].cost = 0;
                         self.changedModels[wTrackId].profit = parseFloat(profitVal) * 100;
-                        ;
 
                         return 0;
                     }
@@ -479,7 +484,7 @@ define([
                     profitVal = (parseFloat(revenueVal) - parseFloat(calc)).toFixed(2);
                     profit.text(profitVal);
 
-                    self.changedModels[wTrackId].cost = parseFloat(calc) * 100;
+                    self.changedModels[wTrackId].cost = parseFloat(calc);
                     self.changedModels[wTrackId].profit = parseFloat(profitVal) * 100;
 
                     return calc;
@@ -629,7 +634,7 @@ define([
                 var errors = this.$el.find('.errorContent');
 
                 for (var id in this.changedModels) {
-                    model = this.editCollection.get(id);
+                    model = this.editCollection.get(id) ? this.editCollection.get(id) : this.collection.get(id);
                     model.changed = this.changedModels[id];
 
 

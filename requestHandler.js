@@ -85,148 +85,172 @@ var requestHandler = function (event, mainDb) {
     });
 
     event.on('updateCost', function (params) {
-        var req = params.req;
-        var year = params.year;
-        var month = params.month;
-        var fixedExpense = params.fixedExpense;
-        var expenseCoefficient = params.expenseCoefficient;
-        var hours = params.hours;
+        var update = _.debounce(updateWTrack, 500);
 
-        var monthFromSalary = params.monthFromSalary;
-        var yearFromSalary = params.yearFromSalary;
-        var waterfallTasks = [getWTracks, getBaseSalary];
-        var wTrack = models.get(req.session.lastDb, "wTrack", wTrackSchema);
-        var monthHours = models.get(req.session.lastDb, "MonthHours", MonthHoursSchema);
+        update();
 
-        if (monthFromSalary && yearFromSalary){
-            year = parseInt(yearFromSalary);
-            month = parseInt(monthFromSalary);
-        }
+        function updateWTrack (){
+            var req = params.req;
+            var year = params.year;
+            var month = params.month;
+            var fixedExpense = params.fixedExpense;
+            var expenseCoefficient = params.expenseCoefficient;
+            var hours = params.hours;
 
-        async.waterfall(waterfallTasks, function (err, result) {
-            if (err) {
-                return console.log(err);
+            var monthFromSalary = params.monthFromSalary;
+            var yearFromSalary = params.yearFromSalary;
+            var waterfallTasks = [getWTracks, getBaseSalary];
+            var wTrack = models.get(req.session.lastDb, "wTrack", wTrackSchema);
+            var monthHours = models.get(req.session.lastDb, "MonthHours", MonthHoursSchema);
+
+            if (monthFromSalary && yearFromSalary) {
+                year = parseInt(yearFromSalary);
+                month = parseInt(monthFromSalary);
             }
-            var baseSalary = result;
 
-            baseSalary.forEach(function (object) {
-                var key = Object.keys(object)[0];
-                wTrack.find({month: month, year: year, 'employee._id': ObjectId(key)}, {
-                    worked: 1,
-                    revenue: 1,
-                    'employee._id': 1,
-                    _id: 1
-                }, function (err, result) {
-                    if (err) {
-                        return console.log(err);
-                    }
-                    if (monthFromSalary && yearFromSalary){
-                        var query = monthHours.find({month: month, year: year}).lean();
+            async.waterfall(waterfallTasks, function (err, result) {
+                var baseSalary;
 
-                        query.exec(function(err, monthHour){
-                            if (err){
+                if (err) {
+                    return console.log(err);
+                }
+
+                baseSalary = result;
+
+                baseSalary.forEach(function (object) {
+                    var key = Object.keys(object)[0];
+
+                    wTrack
+                        .find({
+                            month: month,
+                            year: year,
+                            'employee._id': ObjectId(key)
+                        }, {
+                            worked: 1,
+                            revenue: 1,
+                            'employee._id': 1,
+                            _id: 1
+                        }, function (err, result) {
+                            if (err) {
                                 return console.log(err);
                             }
-                            if (monthHour[0]){
-                                fixedExpense = parseInt(monthHour[0].fixedExpense);
-                                expenseCoefficient = parseFloat(monthHour[0].expenseCoefficient);
-                                hours = parseInt(monthHour[0].hours);
+
+                            if (monthFromSalary && yearFromSalary) {
+                                var query = monthHours.find({month: month, year: year}).lean();
+
+                                query.exec(function (err, monthHour) {
+                                    if (err) {
+                                        return console.log(err);
+                                    }
+                                    if (monthHour[0]) {
+                                        fixedExpense = parseInt(monthHour[0].fixedExpense);
+                                        expenseCoefficient = parseFloat(monthHour[0].expenseCoefficient);
+                                        hours = parseInt(monthHour[0].hours);
+                                    } else {
+                                        fixedExpense = 0;
+                                        expenseCoefficient = 0;
+                                        hours = 1;
+                                    }
+
+
+                                    result.forEach(function (element) {
+                                        var id = element._id;
+                                        var calc = ((((object[key] * expenseCoefficient) + fixedExpense) / hours) * element.worked).toFixed(2);
+
+                                        wTrack.findByIdAndUpdate(id, {
+                                            $set: {
+                                                cost: parseFloat(calc) * 100
+                                            }
+                                        }, {
+                                            new: true
+                                        }, function (err, result) {
+                                            if (err) {
+                                                console.log(err);
+                                            }
+                                        });
+
+                                    });
+                                });
                             } else {
-                                fixedExpense = 0;
-                                expenseCoefficient = 0;
-                                hours = 1;
+                                result.forEach(function (element) {
+                                    var id = element._id;
+                                    var calc = ((((object[key] * expenseCoefficient) + fixedExpense) / hours) * element.worked).toFixed(2);
+                                    var profit = parseFloat(element.revenue) - parseFloat(calc) * 100;
+
+                                    wTrack.findByIdAndUpdate(id, {
+                                        $set: {
+                                            cost: parseFloat(calc) * 100,
+                                            profit: profit
+                                        }
+                                    }, {
+                                        new: true
+                                    }, function (err, result) {
+                                        if (err) {
+                                            console.log(err);
+                                        }
+                                    });
+
+                                });
                             }
 
 
-                            result.forEach(function (element) {
-                                var id = element._id;
-                                var calc = ((((object[key] * expenseCoefficient) + fixedExpense) / hours) * element.worked).toFixed(2);
-                                var profit = parseFloat(element.revenue) - parseFloat(calc) * 100;
-
-                                wTrack.findByIdAndUpdate(id, {
-                                    $set: {
-                                        cost: parseFloat(calc) * 100,
-                                        profit: profit
-                                    }
-                                }, {new: true}, function (err, result) {
-                                    if (err) {
-                                        console.log(err);
-                                    }
-                                });
-
-                            });
                         });
-                    } else {
-                        result.forEach(function (element) {
-                            var id = element._id;
-                            var calc = ((((object[key] * expenseCoefficient) + fixedExpense) / hours) * element.worked).toFixed(2);
-                            var profit = parseFloat(element.revenue) - parseFloat(calc) * 100;
+                });
+            });
 
-                            wTrack.findByIdAndUpdate(id, {
-                                $set: {
-                                    cost: parseFloat(calc) * 100,
-                                    profit: profit
-                                }
-                            }, {new: true}, function (err, result) {
-                                if (err) {
-                                    console.log(err);
-                                }
-                            });
+            function getWTracks(cb) {
+                wTrack.aggregate([{
+                    $match: {
+                        year: year,
+                        month: month
+                    }
+                }, {
+                    $group: {
+                        _id: '$employee._id'
+                    }
+                }], function (err, wTracks) {
+                    var result;
 
-                        });
+                    if (err) {
+                        return cb(err);
                     }
 
-
+                    result = _.pluck(wTracks, '_id');
+                    cb(null, result)
                 });
-            });
-        });
+            };
 
-        function getWTracks(cb) {
-            wTrack.aggregate([{
-                $match: {
-                    year: year,
-                    month: month
-                }
-            }, {
-                $group: {
-                    _id: '$employee._id'
-                }
-            }], function (err, wTracks) {
-                if (err) {
-                    return cb(err);
-                }
+            function getBaseSalary(result, cb) {
+                var Salary = models.get(req.session.lastDb, 'Salary', SalarySchema);
+                var query = Salary
+                    .find(
+                    {
+                        'employee._id': {$in: result},
+                        month: month,
+                        year: year
+                    }, {
+                        baseSalary: 1,
+                        'employee._id': 1
+                    })
+                    .lean();
+                query.exec(function (err, salary) {
+                    if (err) {
+                        return cb(err);
+                    }
+                    var result = _.map(salary, function (element) {
+                        var obj = {};
 
-                var result = _.pluck(wTracks, '_id');
-                cb(null, result)
-            });
-        };
+                        obj[element.employee._id] = element.baseSalary;
+                        return obj;
+                    });
 
-        function getBaseSalary(result, cb) {
-            var Salary = models.get(req.session.lastDb, 'Salary', SalarySchema);
-            var query = Salary.find(
-                {
-                    'employee._id': {$in: result},
-                    month: month,
-                    year: year
-                }, {
-                    baseSalary: 1,
-                    'employee._id': 1
-            }).lean();
-            query.exec(function (err, salary) {
-                if (err) {
-                    return cb(err);
-                }
-                var result = _.map(salary, function (element) {
-                    var obj = {};
-
-                    obj[element.employee._id] = element.baseSalary;
-                    return obj;
+                    cb(null, result)
                 });
-
-                cb(null, result)
-            });
+            };
         };
     });
+
+
     //if name was updated, need update related wTrack, or other models
 
     event.on('updateName', function (id, targetModel, searchField, fieldName, fieldValue, fieldInArray) {
