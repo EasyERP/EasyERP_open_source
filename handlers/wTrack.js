@@ -577,6 +577,8 @@ var wTrack = function (event, models) {
 					}
 
 					event.emit('dropHoursCashes', req);
+					event.emit('recollectVacationDash');
+					
 					res.status(200).send({success: product});
 				});
 			} else {

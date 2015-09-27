@@ -1,8 +1,9 @@
-
 var mongoose = require('mongoose');
 var moment = require('../public/js/libs/moment/moment');
 var objectId = mongoose.Types.ObjectId;
-var Vacation = function (models) {
+
+var Vacation = function (event, models) {
+    'use strict';
     var access = require("../Modules/additions/access.js")(models);
     var VacationSchema = mongoose.Schemas['Vacation'];
     var async = require('async');
@@ -305,6 +306,7 @@ var Vacation = function (models) {
                         }
 
                         res.status(200).send({success: 'updated'});
+                        event.emit('recollectVacationDash');
                     });
                 } else {
                     res.status(403).send();
@@ -344,6 +346,7 @@ var Vacation = function (models) {
                         }
 
                         res.status(200).send({success: 'updated'});
+                        event.emit('recollectVacationDash');
                     });
                 } else {
                     res.status(403).send();
@@ -368,6 +371,7 @@ var Vacation = function (models) {
                         return next(err);
                     }
                     res.status(200).send({success: vacation});
+                    event.emit('recollectVacationDash');
                 });
             } else {
                 res.status(403).send();
@@ -399,6 +403,7 @@ var Vacation = function (models) {
                 return next(err);
             }
             res.status(200).send({success: Vacation});
+            event.emit('recollectVacationDash');
         });
     };
 
