@@ -16,6 +16,8 @@ require('./config/' + mainAppConfig.NODE_ENV);
 process.env.NODE_ENV = mainAppConfig.NODE_ENV;
 mainDb.on('error', console.error.bind(console, 'connection error:'));
 mainDb.once('open', function callback () {
+    'use strict';
+
     var port = process.env.PORT || 8089;
     mainDb.dbsObject = dbsObject;
 

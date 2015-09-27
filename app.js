@@ -1,4 +1,3 @@
-
 /**
  * # This is myClass
  * @class MyClass
@@ -7,11 +6,11 @@
 
 
 module.exports = function (mainDb, dbsNames) {
+    'use strict';
     //mongoose is delegated because it encapsulated main connection
 
     var http = require('http');
     var path = require('path');
-    var fs = require("fs");
     var express = require('express');
     var session = require('express-session');
     var logger = require('morgan');
@@ -23,26 +22,18 @@ module.exports = function (mainDb, dbsNames) {
     var httpServer;
     var io;
 
-    var logWriter = require('./helpers/logWriter');
-
     var MemoryStore = require('connect-mongo')(session);
 
     var sessionConfig = {
-        db: mainDb.name,
-        host: mainDb.host,
-        port: mainDb.port,
+        db               : mainDb.name,
+        host             : mainDb.host,
+        port             : mainDb.port,
         saveUninitialized: false,
-        resave: false,
-        reapInterval: 500000
+        resave           : false,
+        reapInterval     : 500000
     };
 
     var allowCrossDomain = function (req, res, next) {
-
-        var allowedHost = [
-            '185.2.100.192:8088',
-            'localhost:8088',
-            '192.168.88.13:8088'
-        ];
         var browser = req.headers['user-agent'];
 
         if (/Trident/.test(browser)) {
@@ -52,11 +43,11 @@ module.exports = function (mainDb, dbsNames) {
         next();
     };
 
-    var chackMobile = function (req, res, next){
+    var chackMobile = function (req, res, next) {
         var client = req.headers['user-agent'];
         var regExp = /mobile/i;
 
-        if(req.session && !(req.session.isMobile === false || req.session.isMobile === true)) {
+        if (req.session && !(req.session.isMobile === false || req.session.isMobile === true)) {
             req.session.isMobile = regExp.test(client);
         }
 
@@ -77,12 +68,12 @@ module.exports = function (mainDb, dbsNames) {
     app.use(express.static(path.join(__dirname, 'public')));
 
     app.use(session({
-        name: 'crm',
-        key: "CRMkey",
-        secret: '1q2w3e4r5tdhgkdfhgejflkejgkdlgh8j0jge4547hh',
-        resave: false,
+        name             : 'crm',
+        key              : "CRMkey",
+        secret           : '1q2w3e4r5tdhgkdfhgejflkejgkdlgh8j0jge4547hh',
+        resave           : false,
         saveUninitialized: false,
-        store: new MemoryStore(sessionConfig)
+        store            : new MemoryStore(sessionConfig)
     }));
 
     app.use(allowCrossDomain);
