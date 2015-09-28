@@ -64,12 +64,12 @@ require(['app'], function (app) {
         }, 500, function () {
             var self = $(this);
 
-            self.removeClass('animate').delay(5000).animate({
-                left   : "100%",
-                opacity: 0
-            }, 1000, function () {
-                self.remove();
-            });
+            //self.removeClass('animate').delay(5000).animate({
+            //    left   : "100%",
+            //    opacity: 0
+            //}, 1000, function () {
+            //    self.remove();
+            //});
         });
     };
 
