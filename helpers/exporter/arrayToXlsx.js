@@ -96,7 +96,7 @@
         _.each(data, function (row, R) {
             var C;
             C = 0;
-            console.log(opts);
+
             _.each(opts.attributes, function (prop) {
                 var cell, cell_ref, r, val;
                 val = row[prop] || "";
@@ -174,7 +174,7 @@
         }
         if (!options.attributes) {
             attrs = getAttrs(data);
-            console.log(attrs);
+
             options.attributes = attrs;
         }
         if (!options.sheetName) {

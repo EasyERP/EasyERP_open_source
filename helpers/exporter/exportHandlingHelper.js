@@ -8,6 +8,14 @@ var arrayToXlsx = require('../exporter/arrayToXlsx');
  * @param map object with all model properties and their names
  */
 
+var setUpFirstElementForCorrectCsvExport = function (element, keys) {
+    for (var i = keys.length - 1; i >= 0; i--) {
+        var key = keys[i];
+        if (!element.hasOwnProperty(key)) {
+            element[key] = "";
+        }
+    }
+}
 var addExportToCsvFunctionToHandler = function (handler, getModel, map, fileName) {
     handler['exportToCsv'] = function (req, res, next) {
         var Model = getModel(req);
@@ -28,14 +36,21 @@ var addExportToCsvFunctionToHandler = function (handler, getModel, map, fileName
                 return next(err);
             }
 
-            var writableStream = fs.createWriteStream(fileName + ".csv");
+            setUpFirstElementForCorrectCsvExport(response[0], Object.keys(project));
+            writableStream = fs.createWriteStream(fileName + ".csv");
             writableStream.on('finish', function () {
                 console.log('done');
+                res.download(fileName + ".csv",fileName + ".csv",function(err){
+                    console.log(err);
+                });
+            });
+            writableStream.on('error', function (err) {
+                console.log(err);
                 res.sendfile('my.csv', {}, {});
             });
             csv
-                .write(response, {headers: true})
-                .pipe(ws);
+                .write(response, {headers: Object.keys(project)})
+                .pipe(writableStream);
 
         });
         query.exec();
@@ -57,7 +72,7 @@ var addExportToXlsxFunctionToHandler = function (handler, getModel, map, fileNam
             //todo remove some properties from map according to filter
             project[value] = '$' + key;
         }
-        project._id = 0;
+
         query = Model.aggregate({$project: project}, function (err, response) {
 
             if (err) {
@@ -68,9 +83,15 @@ var addExportToXlsxFunctionToHandler = function (handler, getModel, map, fileNam
 
             try {
                 arrayToXlsx.writeFile(fileName + '.xlsx', response, {sheetName: "data", headers: headers});
+                res.download(fileName + '.xlsx', fileName + '.xlsx', function (err) {
+                    if (err) {
+                        res.status(500).send();
+                    }
+                    fs.unlink(fileName + '.xlsx');
+                })
             }
             catch (ex) {
-                res.status(500).send();
+
             }
 
             res.status(200).send();

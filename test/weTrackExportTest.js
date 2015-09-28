@@ -10,7 +10,7 @@ var host = process.env.HOST;
 var url;
 var aggent;
 
-describe("BDD for revenue", function () {  // Runs once before all tests start.
+describe.only("BDD for wTrack", function () {  // Runs once before all tests start.
     before(function (done) {
         aggent = request.agent(host);
 
