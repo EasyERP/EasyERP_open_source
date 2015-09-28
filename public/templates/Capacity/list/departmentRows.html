@@ -1,13 +1,10 @@
 <% departments.forEach(function(department, index){ %>
-<tr data-key="<%=department.key%>" class="departmentRow">
-    <td>
+<tr data-id="<%=department ? department.id : ''%>" data-name="<%=department ? department.name : ''%>" data-key="<%=department.key%>" class="departmentRow">
+    <td colspan="2" style="text-align: left">
         <%=department ? department.name : ''%>
-    </td>
-    <td class="departmentBtns">
-        <a href="javascript;" class="icon add left" title="Create" id="top-bar-createBtn">5</a>
-        <!--<a href="javascript;" class="icon edit left" title="Edit" id="top-bar-editBtn">4</a>-->
-        <!--<a href="javascript;" class="icon save left" title="Copy" id="top-bar-saveBtn">c</a>-->
-        <a href="javascript;" class="icon remove left" title="Remove" id="top-bar-deleteBtn">x</a>
+        <div style="width: auto; float: right;">
+            <a href="javascript;" class="createBtn icon add left" title="Create">5</a>
+        </div>
     </td>
     <td colspan="<%=daysCount + 1%>"></td>
 </tr>

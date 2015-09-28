@@ -4,10 +4,10 @@ define([
         'text!templates/Vacation/list/ListTotal.html',
         'text!templates/Capacity/list/departmentRows.html',
         'text!templates/Capacity/list/ListTemplate.html',
-        'views/Vacation/CreateView',
-        'models/VacationModel',
+        "text!templates/Capacity/CreateTemplate.html",
+        'models/Capacity',
         'collections/Capacity/filterCollection',
-        'collections/Vacation/editCollection',
+        'collections/Capacity/editCollection',
         'common',
         'dataService',
         'constants',
@@ -16,7 +16,7 @@ define([
         'populate'
     ],
 
-    function (listHeaderTemplate, cancelEdit, listTotal, departmentListTemplate, listTemplate, createView, currentModel, filterCollection, editCollection, common, dataService, CONSTANTS, async, moment, populate) {
+    function (listHeaderTemplate, cancelEdit, listTotal, departmentListTemplate, listTemplate, createTemplate, currentModel, filterCollection, editCollection, common, dataService, CONSTANTS, async, moment, populate) {
         var CapacityListView = Backbone.View.extend({
             el                : '#content-holder',
             defaultItemsNumber: null,
@@ -33,6 +33,7 @@ define([
             responseObj       : {},
             monthElement      : null,
             yearElement       : null,
+            vacations         : null,
 
             initialize: function (options) {
                 this.startTime = options.startTime;
@@ -51,9 +52,9 @@ define([
             },
 
             events: {
+                "click .createBtn"                                                : "createItem",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                "blur td.editable input"                                          : "hideInput",
                 "click td.editable"                                               : "editRow",
                 "click .current-selected"                                         : "showNewCurrentSelect",
                 "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
@@ -91,18 +92,21 @@ define([
                 this.resetCollection(modelObject);
             },
 
-            bindingEventsToEditedCollection: function (context) {
-                if (context.editCollection) {
+            bindingEventsToEditedCollection: function (context, collection) {
+                if (!context.editCollection) {
+                    context.editCollection = new editCollection(collection);
+                } else {
                     context.editCollection.unbind();
+                    context.editCollection.add(collection);
                 }
-                context.editCollection = new editCollection(context.collection.toJSON());
+
                 context.editCollection.on('saved', context.savedNewModel, context);
                 context.editCollection.on('updated', context.updatedOptions, context);
             },
 
             resetCollection: function (model) {
                 if (model && model._id) {
-                    model = new vacationModel(model);
+                    model = new currentModel(model);
                     this.collection.add(model);
                 } else {
                     for (var id in this.changedModels) {
@@ -158,30 +162,79 @@ define([
             setChangedValueToModel: function () {
                 var editedElement = this.$listTable.find('.editing');
                 var editedCol;
+                var editedElementRow;
                 var editedElementRowId;
                 var editedElementContent;
                 var editedElementValue;
-                var editVacationModel;
+                var editCapacityModel;
+                var dayIndex;
+                var editedElementOldValue;
+                var changedAttr;
+                var tdTotalHours;
+                var tdTotalHoursValue;
 
                 if (editedElement.length) {
                     editedCol = editedElement.closest('td');
-                    editedElementRowId = editedElement.closest('tr').data('id');
+                    editedElementRow = editedElement.closest('tr');
+                    editedElementRowId = editedElementRow.attr('data-id');
+                    tdTotalHours = $(editedElementRow).find('.totalHours');
                     editedElementContent = editedCol.data('content');
-                    editedElementValue = editedElement.val();
+                    editedElementOldValue = parseInt(editedElement.attr('data-value'));
+                    editedElementValue = parseInt(editedElement.val());
 
-                    editVacationModel = this.editCollection.get(editedElementRowId);
+                    editedElementValue = isFinite(editedElementValue) ? editedElementValue : null;
+                    editedElementOldValue = isFinite(editedElementOldValue) ? editedElementOldValue : null;
+
+                    editCapacityModel = this.editCollection.get(editedElementRowId);
 
                     if (!this.changedModels[editedElementRowId]) {
-                        if (!editVacationModel.id) {
-                            this.changedModels[editedElementRowId] = editVacationModel.attributes;
+                        if (!editCapacityModel.id) {
+                            this.changedModels[editedElementRowId] = editCapacityModel.attributes;
                         } else {
                             this.changedModels[editedElementRowId] = {};
                         }
                     }
 
-                    this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
+                    if (editedElementContent === 'capacityValue') {
+                        dayIndex = editedCol.attr('data-dayID');
+                        //dayTotalElement = $('#day' + dayIndex);
 
-                    editedCol.text(editedElementValue);
+                        changedAttr = this.changedModels[editedElementRowId];
+
+                        editedCol.text(editedElementValue);
+
+                        if (changedAttr && !changedAttr.vacArray) {
+                            changedAttr.capacityArray = _.clone(editCapacityModel.toJSON().capacityArray);
+
+                            if (!changedAttr.capacityMonthTotal) {
+                                changedAttr.capacityMonthTotal = editCapacityModel.toJSON().capacityMonthTotal;
+                            }
+
+                            if (!changedAttr.capacityArray) {
+                                changedAttr.capacityArray = new Array(this.daysCount);
+                            }
+                        }
+
+                        changedAttr.capacityArray[dayIndex] = editedElementValue;
+                        if (editedElementOldValue !== editedElementValue) {
+                            changedAttr.capacityMonthTotal = changedAttr.capacityMonthTotal - editedElementOldValue + editedElementValue;
+                            tdTotalHours.text(changedAttr.capacityMonthTotal);
+                        }
+
+
+
+                        if (!isFinite(editedCol.text())) {
+                            /*if (!this.checkEmptyArray(changedAttr.capacityArray)) {
+                                checkDay(targetElement, element._id);
+                                delete(changedAttr.capacityArray[dayIndex]);
+                                if (this.checkEmptyArray(changedAttr.capacityArray)) {
+                                    this.deleteItem(modelId);
+                                }
+                            }*/
+                        }
+                    }
+
+                    //this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
                     editedElement.remove();
                 }
             },
@@ -219,12 +272,12 @@ define([
                 content.responseObj['#monthSelect'] = array;
 
             },
+
             yearForDD : function (content) {
                 dataService.getData('/vacation/getYears', {}, function (response, context) {
                     context.responseObj['#yearSelect'] = response;
                 }, content)
             },
-
 
             filterEmployeesForDD: function (content) {
                 dataService.getData("/employee/getForDD", null, function (employees) {
@@ -238,6 +291,14 @@ define([
                 });
             },
 
+            getVacations: function (content, month, year) {
+
+                dataService.getData("/vacation/list", {month: month, year: year}, function (vacations) {
+
+                    content.vacations = vacations;
+                });
+            },
+
             hideInput: function (e) {
                 var target = $(e.target);
 
@@ -245,17 +306,29 @@ define([
             },
 
             editRow: function (e, prev, next) {
-                var self = this;
                 var el = $(e.target);
-                var hasInput = el.find('input').length;
                 var isInput = el.prop("tagName") === 'INPUT';
+                var dataContent = el.attr('data-type');
                 var tr = $(e.target).closest('tr');
+                var capacityId = tr.attr('data-id');
+                var tempContainer;
+                var insertedInput;
 
-                if (!isInput && !hasInput) {
-                    populate.showSelect(e, prev, next, this);
-                } else if (hasInput) {
-                    el.find('input').show();
-                } else {
+                if (capacityId && el.prop('tagName') !== 'INPUT') {
+                    if (this.capacityId) {
+                        this.setChangedValueToModel();
+                    }
+                    this.capacityId = capacityId;
+                    this.setChangedValueToModel();
+                }
+
+                if (!isInput && dataContent === 'input') {
+                    tempContainer = el.text();
+                    el.html('<input class="editing" type="text" data-value="' + tempContainer + '" value="' + tempContainer + '"  maxLength="2" style="display: block; color: white;" \>');
+
+                    insertedInput = el.find('input');
+                    insertedInput.focus();
+                } else if (dataContent === 'employeeSelect') {
                     populate.showSelect(e, prev, next, this);
                 }
 
@@ -392,7 +465,7 @@ define([
 
                 daysRow = '<tr class="subHeaderHolder borders">' + daysRow + '</tr>';
 
-                daysNumRow = '<tr class="subHeaderHolder borders"><th class="oe_sortable" data-sort="department.name">Department</th><th></th>' + daysNumRow + '<th>Total Days</th></tr>';
+                daysNumRow = '<tr class="subHeaderHolder borders"><th>Department</th><th class="oe-sortable" data-sort="employee.name">Employee</th>' + daysNumRow + '<th>Total Hours</th></tr>';
 
                 this.daysCount = daysInMonth;
 
@@ -460,12 +533,12 @@ define([
                 var tdTotalDays = $(tr).find('.totalDays');
                 var modelId = tr.attr('data-id');
                 var id = target.attr("id");
-                var attr = targetElement.attr("id") || targetElement.data("content");
+                var attr = targetElement.attr("id") || targetElement.attr("data-content");
                 var elementType = '#' + attr;
                 var element = _.find(this.responseObj[elementType], function (el) {
                     return el._id === id;
                 });
-                var editVacationModel;
+                var editModel;
                 var employee;
                 var department;
                 var changedAttr;
@@ -474,12 +547,24 @@ define([
 
                 var findEmployee;
 
+                var vacArray = [];
+                var vacModel;
+                var capacityArrayLength;
+
+                var capacityArray = this.defCapacityArray;
+                var totalHours = this.defCapacityMonthTotal;
+
+                var month = parseInt(this.monthElement.attr('data-content'));
+                var year = parseInt(this.yearElement.text());
+
+                var currentTd;
+
                 if (modelId) {
-                    editVacationModel = this.editCollection.get(modelId);
+                    editModel = this.editCollection.get(modelId);
 
                     if (!this.changedModels[modelId]) {
-                        if (!editVacationModel.id) {
-                            this.changedModels[modelId] = editVacationModel.attributes;
+                        if (!editModel.id) {
+                            this.changedModels[modelId] = editModel.attributes;
                         } else {
                             this.changedModels[modelId] = {};
                         }
@@ -503,32 +588,67 @@ define([
                 }
 
                 if (elementType === '#employee') {
-                    findEmployee = self.collection.filter(function (model) {
-                        return model.get('employee')._id === element._id;
-                    });
+                    /*findEmployee = self.edit.filter(function (model) {
+                     return model.get('employee')._id === element._id;
+                     });
 
-                    if (findEmployee.length > 0) {
-                        tr.remove();
-                        self.hideSaveCancelBtns();
-                        self.changedModels[modelId]
-                        alert(CONSTANTS.RESPONSES.DOUBLE_EMPLOYEE_VACATION);
-                        return false;
-                    }
+                     if (findEmployee.length > 0) {
+                     tr.remove();
+                     self.hideSaveCancelBtns();
+                     self.changedModels[modelId]
+                     alert(CONSTANTS.RESPONSES.DOUBLE_EMPLOYEE_VACATION);
+                     return false;
+                     }*/
 
                     tr.find('[data-content="employee"]').text(element.name);
-                    tr.find('.department').text(element.department.name);
 
-                    employee = _.clone(editVacationModel.get('employee'));
-                    department = _.clone(editVacationModel.get('department'));
+                    employee = _.clone(editModel.get('employee'));
+
+                    if (editModel.get('department')) {
+                        department = _.clone(editModel.get('department'));
+                    } else {
+                        department = this.department;
+                    }
 
                     employee._id = element._id;
                     employee.name = target.text();
 
-                    department._id = element.department._id;
-                    department.name = element.department.name;
-
                     changedAttr.employee = employee;
                     changedAttr.department = department;
+
+                    vacModel = self.vacations.filter(function (model) {
+                        return model.employee._id === element._id && model.month === month && model.year === year;
+                    });
+
+                    if (vacModel.length) {
+                        vacModel = vacModel[0];
+                        changedAttr.vacation = vacModel._id;
+                        vacArray = vacModel.vacArray;
+                    }
+
+                    capacityArrayLength = capacityArray.length;
+
+                    for (var i = capacityArrayLength - 1; i >= 0; i--) {
+                        currentTd = tr.find('[data-dayID="' + i + '"]');
+
+                        if (vacArray && vacArray[i]) {
+                            if (capacityArray[i]) {
+                                totalHours -= capacityArray[i];
+                            }
+
+                            capacityArray[i] = vacArray[i];
+
+                            currentTd.text(vacArray[i])
+                            currentTd.addClass(vacArray[i]);
+                        } else {
+                            currentTd.text(capacityArray[i]);
+                        }
+                    }
+
+                    changedAttr.capacityArray = capacityArray;
+                    changedAttr.capacityMonthTotal = totalHours;
+
+                    tr.find('.totalHours').text(totalHours);
                 }
 
                 function checkDay(element, selectedClass) {
@@ -573,30 +693,30 @@ define([
 
                 }
 
-                if (elementType === '#vacType') {
+                if (elementType === '#capacityValue') {
                     dayIndex = targetElement.attr('data-dayID');
                     dayTotalElement = $('#day' + dayIndex);
 
                     targetElement.text(element._id);
 
                     if (changedAttr && !changedAttr.vacArray) {
-                        changedAttr.vacArray = _.clone(editVacationModel.toJSON().vacArray);
-                        if (!changedAttr.vacArray) {
-                            changedAttr.vacArray = new Array(this.daysCount);
+                        changedAttr.capacityArray = _.clone(editModel.toJSON().capacityArray);
+                        if (!changedAttr.capacityArray) {
+                            changedAttr.capacityArray = new Array(this.daysCount);
                         }
                     }
 
                     if (targetElement.text() === '') {
-                        if (!this.checkEmptyArray(changedAttr.vacArray)) {
+                        if (!this.checkEmptyArray(changedAttr.capacityArray)) {
                             checkDay(targetElement, element._id);
-                            delete(changedAttr.vacArray[dayIndex]);
-                            if (this.checkEmptyArray(changedAttr.vacArray)) {
+                            delete(changedAttr.capacityArray[dayIndex]);
+                            if (this.checkEmptyArray(changedAttr.capacityArray)) {
                                 this.deleteItem(modelId);
                             }
                         }
                     } else {
                         checkDay(targetElement, element._id);
-                        changedAttr.vacArray[dayIndex] = targetElement.text();
+                        changedAttr.capacityArray[dayIndex] = targetElement.text();
                     }
                 }
 
@@ -634,21 +754,23 @@ define([
             },
 
             showCapacity: function (e) {
-                var self = this;
                 var target = $(e.target);
                 var row = target.closest("tr");
                 var key = row.attr('data-key');
-                var subKey = "subRow" + key;
+                var subKeyClass = "subRows" + key;
 
-                var subRowCheck = $('#' + subKey);
+                var subRows = $('.' + subKeyClass);
                 var collection = this.capacityObject[key];
-                var subRow;
 
-                if (subRowCheck.length === 0) {
-                    subRow = $('<tr id=' + subKey + ' class="subRow"></tr>')
-                    subRow.insertAfter(row);
-                    this.$el.find('#' + subKey).append(_.template(listTemplate, {collection: collection}));
+                this.bindingEventsToEditedCollection(this, collection);
+
+                if (subRows.length === 0) {
+                    $(_.template(listTemplate, {collection: collection, subClass: subKeyClass})).insertAfter(row);
+                } else {
+                    subRows.toggle();
                 }
+
+                row.find(".icon.add").toggle();
             },
 
             render: function () {
@@ -661,8 +783,6 @@ define([
 
                 var year = this.startTime.getFullYear();
                 var month = {};
-
-                var listTotalEl;
 
                 month.number = this.startTime.getMonth() + 1;
                 month.name = moment(this.startTime).format('MMMM');
@@ -684,6 +804,7 @@ define([
                     return {
                         key : department,
                         name: departmentArray[0],
+                        id: departmentArray[1],
                     }
                 })
 
@@ -695,14 +816,16 @@ define([
                 //listTotalEl.append(_.template(listTotal, {array: this.getTotal(collection)}));
 
                 this.filterEmployeesForDD(this);
-                //this.vacationTypeForDD(this);
                 this.monthForDD(this);
                 this.yearForDD(this);
 
-                setTimeout(function () {
-                    self.bindingEventsToEditedCollection(self);
+                this.getVacations(this, month.number, year);
 
+                this.createDefValues(this, month.number, year);
+
+                setTimeout(function () {
                     self.$listTable = $('#listTable');
+                    self.$listTable.find(".icon.add").hide();
                 }, 10);
 
                 $(document).on("click", function (e) {
@@ -775,24 +898,59 @@ define([
                 holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             },
 
-            createItem: function () {
+            createDefValues: function (content, month, year) {
+                var dateValue;
+                var dayNumber;
+
+                content.defCapacityArray = [];
+                content.defCapacityMonthTotal = 0;
+
+                for (var day = this.daysCount - 1; day >= 0; day--) {
+
+                    dateValue = moment([year, month - 1, day + 1]);
+
+                    dayNumber = moment(dateValue).day();
+
+                    if (dayNumber !== 0 && dayNumber !== 6) {
+                        content.defCapacityArray[day] = 8;
+                        content.defCapacityMonthTotal += 8;
+                    } else {
+                        content.defCapacityArray[day] = null;
+                    }
+                }
+            },
+
+            createItem: function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                var template;
+
                 var startData = {
                     daysCount : this.daysCount,
                     employee  : {},
-                    department: {},
                     month     : this.monthElement.attr('data-content'),
-                    year      : this.yearElement.text()
+                    year      : this.yearElement.text(),
                 };
 
-                var model = new vacationModel(startData);
+                var model;
+                var tr = $(e.target).closest('tr');
+
+                this.department = {
+                    _id: tr.attr('data-id'),
+                    name: tr.attr('data-name'),
+                }
+
+                model = new currentModel(startData);
 
                 startData.cid = model.cid;
 
                 if (!this.isNewRow()) {
                     this.showSaveCancelBtns();
                     this.editCollection.add(model);
+                    template = _.template(createTemplate);
 
-                    new createView(startData);
+                    tr.after(template(startData));
                 }
             },
 

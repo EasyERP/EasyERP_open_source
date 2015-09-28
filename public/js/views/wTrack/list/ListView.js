@@ -21,24 +21,24 @@ define([
 
     function (paginationTemplate, listTemplate, cancelEdit, forWeek, createView, listItemView, editView, wTrackCreateView, currentModel, contentCollection, EditCollection, filterView, common, dataService, populate, async, custom, moment) {
         var wTrackListView = Backbone.View.extend({
-            el: '#content-holder',
-            defaultItemsNumber: null,
-            listLength: null,
-            filter: null,
-            sort: null,
-            newCollection: null,
-            page: null,
-            contentType: 'wTrack',
-            viewType: 'list',
-            responseObj: {},
-            wTrackId: null, //need for edit rows in listView
+            el                 : '#content-holder',
+            defaultItemsNumber : null,
+            listLength         : null,
+            filter             : null,
+            sort               : null,
+            newCollection      : null,
+            page               : null,
+            contentType        : 'wTrack',
+            viewType           : 'list',
+            responseObj        : {},
+            wTrackId           : null, //need for edit rows in listView
             collectionLengthUrl: '/wTrack/totalCollectionLength',
-            $listTable: null, //cashedJqueryEllemnt
-            editCollection: null,
-            selectedProjectId: [],
-            genInvoiceEl: null,
-            copyEl: null,
-            changedModels: {},
+            $listTable         : null, //cashedJqueryEllemnt
+            editCollection     : null,
+            selectedProjectId  : [],
+            genInvoiceEl       : null,
+            copyEl             : null,
+            changedModels      : {},
 
             initialize: function (options) {
                 this.startTime = options.startTime;
@@ -59,26 +59,26 @@ define([
             },
 
             events: {
-                "click .itemsNumber": "switchPageCounter",
-                "click .showPage": "showPage",
-                "change #currentShowPage": "showPage",
-                "click #previousPage": "previousPage",
-                "click #nextPage": "nextPage",
-                "click .checkbox": "checked",
-                "click .stageSelect": "showNewSelect",
+                "click .itemsNumber"                                              : "switchPageCounter",
+                "click .showPage"                                                 : "showPage",
+                "change #currentShowPage"                                         : "showPage",
+                "click #previousPage"                                             : "previousPage",
+                "click #nextPage"                                                 : "nextPage",
+                "click .checkbox"                                                 : "checked",
+                "click .stageSelect"                                              : "showNewSelect",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                "click td.editable": "editRow",
-                "mouseover .currentPageList": "itemsNumber",
-                "click": "hideItemsNumber",
-                "click #firstShowPage": "firstPage",
-                "click #lastShowPage": "lastPage",
-                "click .oe_sortable": "goSort",
-                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-                "change .autoCalc": "autoCalc",
-                "change .editable ": "setEditable",
-                "keydown input.editing ": "keyDown",
-                "change .listCB": "setAllTotalVals"
+                "click td.editable"                                               : "editRow",
+                "mouseover .currentPageList"                                      : "itemsNumber",
+                "click"                                                           : "hideItemsNumber",
+                "click #firstShowPage"                                            : "firstPage",
+                "click #lastShowPage"                                             : "lastPage",
+                "click .oe_sortable"                                              : "goSort",
+                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
+                "change .autoCalc"                                                : "autoCalc",
+                "change .editable "                                               : "setEditable",
+                "keydown input.editing "                                          : "keyDown",
+                "change .listCB"                                                  : "setAllTotalVals"
             },
 
             keyDown: function (e) {
@@ -127,11 +127,11 @@ define([
                 }, function (err) {
                     if (!err) {
                         new wTrackCreateView({
-                            wTracks: wTracks,
-                            project: project,
+                            wTracks : wTracks,
+                            project : project,
                             assigned: assigned,
                             customer: customer,
-                            total: total
+                            total   : total
                         });
                     }
                 });
@@ -345,7 +345,7 @@ define([
 
                 if (isSelect) {
                     populate.showSelect(e, prev, next, this);
-                } else if (isWeek){
+                } else if (isWeek) {
                     weeks = custom.getWeeks(month, year);
 
                     template = _.template(forWeek);
@@ -353,10 +353,10 @@ define([
                     el.append(template({
                         weeks: weeks
                     }));
-                } else if (isYear){
+                } else if (isYear) {
                     currentYear = parseInt(moment().year());
                     previousYear = currentYear - 1;
-                    nextYear = currentYear+1;
+                    nextYear = currentYear + 1;
 
                     width = el.width() - 6;
                     el.append('<ul class="newSelectList"><li>' + previousYear + '</li><li>' + currentYear + '</li><li>' + nextYear + '</li></ul>');
@@ -465,8 +465,8 @@ define([
                     dataService.getData('/salary/getByMonth',
                         {
                             month: month,
-                            year: year,
-                            _id: employeeId
+                            year : year,
+                            _id  : employeeId
                         }, function (response, context) {
 
                             if (response.error) {
@@ -577,11 +577,11 @@ define([
                     department.departmentName = element.departmentName;
 
                     changedAttr.department = department;
-                } else if (elementType === '#week'){
+                } else if (elementType === '#week') {
                     week = $(e.target).text();
 
                     changedAttr.week = week;
-                } else if (elementType === '#year'){
+                } else if (elementType === '#year') {
                     year = $(e.target).text();
 
                     changedAttr.year = year;
@@ -652,14 +652,14 @@ define([
             fetchSortCollection: function (sortObject) {
                 this.sort = sortObject;
                 this.collection = new contentCollection({
-                    viewType: 'list',
-                    sort: sortObject,
-                    page: this.page,
-                    count: this.defaultItemsNumber,
-                    filter: this.filter,
+                    viewType        : 'list',
+                    sort            : sortObject,
+                    page            : this.page,
+                    count           : this.defaultItemsNumber,
+                    filter          : this.filter,
                     parrentContentId: this.parrentContentId,
-                    contentType: this.contentType,
-                    newCollection: this.newCollection
+                    contentType     : this.contentType,
+                    newCollection   : this.newCollection
                 });
                 this.collection.bind('reset', this.renderContent, this);
                 this.collection.bind('showmore', this.showMoreContent, this);
@@ -736,7 +736,7 @@ define([
             getTotalLength: function (currentNumber, itemsNumber, filter) {
                 dataService.getData(this.collectionLengthUrl, {
                     currentNumber: currentNumber,
-                    filter: filter,
+                    filter       : filter,
                     newCollection: this.newCollection
                 }, function (response, context) {
                     var page = context.page || 1;
@@ -762,8 +762,8 @@ define([
                 currentEl.html('');
                 currentEl.append(_.template(listTemplate));
                 currentEl.append(new listItemView({
-                    collection: this.collection,
-                    page: this.page,
+                    collection : this.collection,
+                    page       : this.page,
                     itemsNumber: this.collection.namberToShow
                 }).render());//added two parameters page and items number
 
@@ -895,8 +895,8 @@ define([
                 tBody.empty();
 
                 itemView = new listItemView({
-                    collection: this.collection,
-                    page: currentEl.find("#currentShowPage").val(),
+                    collection : this.collection,
+                    page       : currentEl.find("#currentShowPage").val(),
                     itemsNumber: currentEl.find("span#itemsNumber").text()
                 });
 
@@ -918,14 +918,14 @@ define([
                 $("#top-bar-deleteBtn").hide();
 
                 this.prevP({
-                    sort: this.sort,
-                    filter: this.filter,
-                    newCollection: this.newCollection,
+                    sort            : this.sort,
+                    filter          : this.filter,
+                    newCollection   : this.newCollection,
                     parrentContentId: this.parrentContentId
                 });
                 dataService.getData(this.collectionLengthUrl, {
-                    filter: this.filter,
-                    newCollection: this.newCollection,
+                    filter          : this.filter,
+                    newCollection   : this.newCollection,
                     parrentContentId: this.parrentContentId
                 }, function (response, context) {
                     context.listLength = response.count || 0;
@@ -937,15 +937,15 @@ define([
                 $('#check_all').prop('checked', false);
                 $("#top-bar-deleteBtn").hide();
                 this.nextP({
-                    sort: this.sort,
-                    filter: this.filter,
-                    newCollection: this.newCollection,
+                    sort            : this.sort,
+                    filter          : this.filter,
+                    newCollection   : this.newCollection,
                     parrentContentId: this.parrentContentId
                 });
 
                 dataService.getData(this.collectionLengthUrl, {
-                    filter: this.filter,
-                    newCollection: this.newCollection,
+                    filter          : this.filter,
+                    newCollection   : this.newCollection,
                     parrentContentId: this.parrentContentId
                 }, function (response, context) {
                     context.listLength = response.count || 0;
@@ -957,12 +957,12 @@ define([
                 $('#check_all').prop('checked', false);
                 $("#top-bar-deleteBtn").hide();
                 this.firstP({
-                    sort: this.sort,
-                    filter: this.filter,
+                    sort         : this.sort,
+                    filter       : this.filter,
                     newCollection: this.newCollection
                 });
                 dataService.getData(this.collectionLengthUrl, {
-                    filter: this.filter,
+                    filter       : this.filter,
                     newCollection: this.newCollection
                 }, function (response, context) {
                     context.listLength = response.count || 0;
@@ -974,12 +974,12 @@ define([
                 $('#check_all').prop('checked', false);
                 $("#top-bar-deleteBtn").hide();
                 this.lastP({
-                    sort: this.sort,
-                    filter: this.filter,
+                    sort         : this.sort,
+                    filter       : this.filter,
                     newCollection: this.newCollection
                 });
                 dataService.getData(this.collectionLengthUrl, {
-                    filter: this.filter,
+                    filter       : this.filter,
                     newCollection: this.newCollection
                 }, function (response, context) {
                     context.listLength = response.count || 0;
@@ -993,9 +993,9 @@ define([
                 this.defaultItemsNumber = itemsNumber;
                 this.getTotalLength(null, itemsNumber, this.filter);
                 this.collection.showMore({
-                    count: itemsNumber,
-                    page: 1,
-                    filter: this.filter,
+                    count        : itemsNumber,
+                    page         : 1,
+                    filter       : this.filter,
                     newCollection: this.newCollection
                 });
                 this.page = 1;
@@ -1032,8 +1032,8 @@ define([
 
                 holder.find("#listTable").empty();
                 itemView = new listItemView({
-                    collection: newModels,
-                    page: holder.find("#currentShowPage").val(),
+                    collection : newModels,
+                    page       : holder.find("#currentShowPage").val(),
                     itemsNumber: holder.find("span#itemsNumber").text()
                 });//added two parameters page and items number
 
@@ -1070,7 +1070,7 @@ define([
                     success: function (model) {
                         new editView({model: model});
                     },
-                    error: function () {
+                    error  : function () {
                         alert('Please refresh browser');
                     }
                 });
@@ -1089,10 +1089,10 @@ define([
                 var week = now.getWeek();
                 var rate = 3;
                 var startData = {
-                    year: year,
+                    year : year,
                     month: month,
-                    week: week,
-                    rate: rate
+                    week : week,
+                    rate : rate
                 };
 
                 var model = new currentModel(startData);
@@ -1242,14 +1242,14 @@ define([
                 var holder;
 
                 dataService.getData(this.collectionLengthUrl, {
-                    filter: this.filter,
+                    filter       : this.filter,
                     newCollection: this.newCollection
                 }, function (response, context) {
                     context.listLength = response.count || 0;
                 }, this);
                 this.deleteRender(deleteCounter, deletePage, {
-                    filter: this.filter,
-                    newCollection: this.newCollection,
+                    filter          : this.filter,
+                    newCollection   : this.newCollection,
                     parrentContentId: this.parrentContentId
                 });
 
@@ -1258,8 +1258,8 @@ define([
                 if (deleteCounter !== this.collectionLength) {
                     var created = holder.find('#timeRecivingDataFromServer');
                     created.before(new listItemView({
-                        collection: this.collection,
-                        page: holder.find("#currentShowPage").val(),
+                        collection : this.collection,
+                        page       : holder.find("#currentShowPage").val(),
                         itemsNumber: holder.find("span#itemsNumber").text()
                     }).render());//added two parameters page and items number
                 }
@@ -1319,7 +1319,7 @@ define([
                                     headers: {
                                         mid: mid
                                     },
-                                    wait: true,
+                                    wait   : true,
                                     success: function () {
                                         that.listLength--;
                                         localCounter++;
@@ -1328,7 +1328,7 @@ define([
                                             that.triggerDeleteItemsRender(localCounter);
                                         }
                                     },
-                                    error: function (model, res) {
+                                    error  : function (model, res) {
                                         if (res.status === 403 && index === 0) {
                                             alert("You do not have permission to perform this action");
                                         }

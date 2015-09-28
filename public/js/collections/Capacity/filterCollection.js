@@ -57,7 +57,7 @@ define([
         initialize: function (options) {
             this.sortOrder = 1;
             this.startTime = new Date();
-            this.month = (this.startTime.getMonth() + 2).toString();
+            this.month = (this.startTime.getMonth() + 1).toString();
             this.year = (this.startTime.getFullYear()).toString();
             this.viewType = options.viewType;
             this.contentType = options.contentType;

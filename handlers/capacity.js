@@ -9,6 +9,7 @@ var Capacity = function (models) {
         var _ = require('lodash');
         var error;
         var query;
+        var mid = 77;
 
         function setVacations(model, vacation, db, callback) {
             var vacArrayLength;
@@ -92,7 +93,7 @@ var Capacity = function (models) {
 
             switch (viewType) {
                 case "list":
-                    getCapacityFilter(77, req, res, next);
+                    getCapacityFilter(mid, req, res, next);
                     break;
             }
         };
@@ -242,13 +243,13 @@ var Capacity = function (models) {
             }
         };
 
-        this.create = function (req, res, next) {
+        this.createAll = function (req, res, next) {
             var db = req.session.lastDb
 
             var date = moment(new Date());
 
             var year = parseInt(date.format('YYYY'));
-            var month = parseInt(date.format('M')) + 1;
+            var month = parseInt(date.format('M'));
 
             createCapacityOnMonth(db, month, year, function (err) {
                 if (err) {
@@ -257,7 +258,90 @@ var Capacity = function (models) {
 
                 res.status(200).send('ok');
             })
-        }
+        };
+
+        this.create = function (req, res, next) {
+            var Capacity = models.get(req.session.lastDb, 'Capacity', CapacitySchema);
+            var body = req.body;
+            var capacity;
+            var result = 0;
+
+            body.monthTotal = result;
+
+            capacity = new Capacity(body);
+
+            capacity.save(function (err, capacityResult) {
+                if (err) {
+                    return next(err);
+                }
+                res.status(200).send({success: capacityResult});
+            });
+        };
+
+        this.putchModel = function (req, res, next) {
+            var id = req.params.id;
+            var data = req.body;
+            var Capacity = models.get(req.session.lastDb, 'Capacity', CapacitySchema);
+
+            if (req.session && req.session.loggedIn && req.session.lastDb) {
+                access.getEditWritAccess(req, req.session.uId, mid, function (access) {
+                    if (access) {
+                        data.editedBy = {
+                            user: req.session.uId,
+                            date: new Date().toISOString()
+                        };
+
+                        Capacity.findByIdAndUpdate(id, {$set: data}, function (err, response) {
+                            if (err) {
+                                return next(err);
+                            }
+
+                            res.status(200).send({success: 'updated'});
+                        });
+                    } else {
+                        res.status(403).send();
+                    }
+                });
+            } else {
+                res.status(401).send();
+            }
+
+        };
+
+        this.putchBulk = function (req, res, next) {
+            var body = req.body;
+            var uId;
+            var Capacity = models.get(req.session.lastDb, 'Capacity', CapacitySchema);
+
+            if (req.session && req.session.loggedIn && req.session.lastDb) {
+                uId = req.session.uId;
+                access.getEditWritAccess(req, req.session.uId, mid, function (access) {
+                    if (access) {
+                        async.each(body, function (data, cb) {
+                            var id = data._id;
+
+                            data.editedBy = {
+                                user: uId,
+                                date: new Date().toISOString()
+                            };
+                            delete data._id;
+
+                            Capacity.findByIdAndUpdate(id, {$set: data}, cb);
+                        }, function (err) {
+                            if (err) {
+                                return next(err);
+                            }
+
+                            res.status(200).send({success: 'updated'});
+                        });
+                    } else {
+                        res.status(403).send();
+                    }
+                });
+            } else {
+                res.status(401).send();
+            }
+        };
     }
     ;
 
