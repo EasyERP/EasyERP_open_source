@@ -161,11 +161,16 @@ define([
                     var _model;
                     var tdsArr;
                     var cid;
+                    var hours = model.get('worked');
+                    var rate = model.get('rate');
+                    var revenue = parseInt(hours) * parseFloat(rate);
 
                     $(selectedWtrack).attr('checked', false);
 
                     model.set({"isPaid": false});
                     model.set({"amount": 0});
+                    model.set({"cost": 0});
+                    model.set({"revenue": revenue});
                     model = model.toJSON();
                     delete model._id;
                     _model = new currentModel(model);
@@ -187,6 +192,8 @@ define([
                     $(tdsArr[20]).find('span').text('Unpaid');
                     $(tdsArr[20]).find('span').addClass('unDone');
                     $(tdsArr[24]).text(0);
+                    $(tdsArr[22]).text(0);
+                    $(tdsArr[21]).text(revenue.toFixed(2));
                     $(tdsArr[1]).text(cid);
                 }
             },
@@ -287,7 +294,7 @@ define([
                 var editedElementRowId;
                 var editedElementContent;
                 var editedElementValue;
-                var editWtrackModel;
+                var self = this;
 
                 if (/*wTrackId !== this.wTrackId &&*/ editedElement.length) {
                     editedCol = editedElement.closest('td');
@@ -301,10 +308,35 @@ define([
                         this.changedModels[editedElementRowId] = {};
                     }
 
-                    this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
 
-                    editedCol.text(editedElementValue);
-                    editedElement.remove();
+                    this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
+                    if (editedElementContent === 'month'){
+                        async.parallel([funcForWeek], function(err, result){
+                            if (err){
+                                console.log(err);
+                            }
+
+                            var weeks = result[0];
+                            editedElement.closest('tr').find('[data-content="week"]').text(weeks[0]);
+                            editedCol.text(editedElementValue);
+                            editedElement.remove();
+
+                            self.changedModels[editedElementRowId]['week'] = weeks[0];
+                        });
+                    } else {
+                        editedCol.text(editedElementValue);
+                        editedElement.remove();
+                    }
+
+                }
+                function funcForWeek(cb){
+                    var weeks;
+                    var month = editedElementValue;
+                    var year = editedElement.closest('tr').find('[data-content="year"]').text();
+
+                    weeks = custom.getWeeks(month, year);
+
+                    cb(null, weeks);
                 }
             },
 
@@ -318,19 +350,21 @@ define([
                 var content = el.data('content');
                 var isSelect = colType !== 'input' && el.prop("tagName") !== 'INPUT';
                 var isWeek = el.attr("data-content") === 'week';
+                var isYear = el.attr("data-content") === 'year';
                 var tempContainer;
                 var width;
-                var editedElement;
                 var value;
                 var insertedInput;
                 var weeks;
                 var month = (tr.find('[data-content="month"]').text()) ? tr.find('[data-content="month"]').text() : tr.find('.editing').val();
                 var year = (tr.find('[data-content="year"]').text()) ? tr.find('[data-content="year"]').text() : tr.find('.editing').val();
                 var template;
+                var currentYear;
+                var previousYear;
+                var nextYear;
 
                 if (wTrackId && el.prop('tagName') !== 'INPUT') {
                     if (this.wTrackId) {
-                        editedElement = this.$listTable.find('.editing');
                         this.setChangedValueToModel();
                     }
                     this.wTrackId = wTrackId;
@@ -348,6 +382,17 @@ define([
                     el.append(template({
                         weeks: weeks
                     }));
+
+                    this.calculateCost(e, wTrackId);
+                } else if (isYear) {
+                    currentYear = parseInt(moment().year());
+                    previousYear = currentYear - 1;
+                    nextYear = currentYear + 1;
+
+                    width = el.width() - 6;
+                    el.append('<ul class="newSelectList"><li>' + previousYear + '</li><li>' + currentYear + '</li><li>' + nextYear + '</li></ul>');
+
+                    this.calculateCost(e, wTrackId);
                 } else {
                     tempContainer = el.text();
                     width = el.width() - 6;
@@ -420,7 +465,6 @@ define([
 
                         self.changedModels[wTrackId].cost = 0;
                         self.changedModels[wTrackId].profit = parseFloat(profitVal) * 100;
-                        ;
 
                         return 0;
                     }
@@ -440,7 +484,7 @@ define([
                     profitVal = (parseFloat(revenueVal) - parseFloat(calc)).toFixed(2);
                     profit.text(profitVal);
 
-                    self.changedModels[wTrackId].cost = parseFloat(calc) * 100;
+                    self.changedModels[wTrackId].cost = parseFloat(calc);
                     self.changedModels[wTrackId].profit = parseFloat(profitVal) * 100;
 
                     return calc;
@@ -487,7 +531,7 @@ define([
                 var target = $(e.target);
                 var targetElement = target.parents("td");
                 var tr = target.parents("tr");
-                var modelId = tr.data('id');
+                var modelId = tr.attr('data-id');
                 var id = target.attr("id");
                 var attr = targetElement.attr("id") || targetElement.data("content");
                 var elementType = '#' + attr;
@@ -499,13 +543,13 @@ define([
                 var changedAttr;
                 var wTrackId = tr.data('id');
                 var week;
-                var value;
+                var year;
 
                 var element = _.find(this.responseObj[elementType], function (el) {
                     return el._id === id;
                 });
 
-                var editWtrackModel = this.editCollection.get(modelId);
+                var editWtrackModel = this.editCollection.get(modelId) ? this.editCollection.get(modelId) : this.collection.get(modelId);
 
                 if (!this.changedModels[modelId]) {
                     if (!editWtrackModel.id) {
@@ -568,6 +612,10 @@ define([
                     week = $(e.target).text();
 
                     changedAttr.week = week;
+                } else if (elementType === '#year') {
+                    year = $(e.target).text();
+
+                    changedAttr.year = year;
                 }
 
                 targetElement.removeClass('errorContent');
@@ -586,7 +634,7 @@ define([
                 var errors = this.$el.find('.errorContent');
 
                 for (var id in this.changedModels) {
-                    model = this.editCollection.get(id);
+                    model = this.editCollection.get(id) ? this.editCollection.get(id) : this.collection.get(id);
                     model.changed = this.changedModels[id];
 
 

@@ -28,8 +28,9 @@ define([
     'async',
     'custom',
     'd3',
-    'constants'
-], function (mainTemplate, weeksArray, tableByDep, bySalesByDep, perWeek, paidBySales, paidBySalesItems, projectBySalesItems, unpaidBySales, monthsArray, perMonth, perMonthInt, tableSold, hoursByDepItem, hoursByDepTotal, bonusBySales, allBonus, allBonusByMonth, perMonthForAllBonus, hoursSold, RevenueModel, moment, dataService, async, custom, d3, CONSTANTS) {
+    'constants',
+    'helpers'
+], function (mainTemplate, weeksArray, tableByDep, bySalesByDep, perWeek, paidBySales, paidBySalesItems, projectBySalesItems, unpaidBySales, monthsArray, perMonth, perMonthInt, tableSold, hoursByDepItem, hoursByDepTotal, bonusBySales, allBonus, allBonusByMonth, perMonthForAllBonus, hoursSold, RevenueModel, moment, dataService, async, custom, d3, CONSTANTS, helpers) {
     var View = Backbone.View.extend({
         el: '#content-holder',
 
@@ -439,7 +440,8 @@ define([
                         weeksArr: weeksArr,
                         byWeekData: byWeekData,
                         total: total,
-                        bySalesByDepPerWeek: bySalesByDepPerWeek
+                        bySalesByDepPerWeek: bySalesByDepPerWeek,
+                        currencySplitter: helpers.currencySplitter
                     }));
                 }
                 cb();
@@ -465,7 +467,8 @@ define([
                 targetTotal.html(self.bySalesPerWeekTemplate({
                     weeksArr: weeksArr,
                     bySalesByDepPerWeek: bySalesByDepPerWeek,
-                    globalTotal: globalTotal
+                    globalTotal: globalTotal,
+                    currencySplitter: helpers.currencySplitter
                 }));
 
                 return false;
@@ -528,7 +531,8 @@ define([
                         weeksArr: weeksArr,
                         byWeekData: byWeekData,
                         total: total,
-                        bySalesByDepPerWeek: bySalesByDepPerWeek
+                        bySalesByDepPerWeek: bySalesByDepPerWeek,
+                        currencySplitter: helpers.currencySplitter
                     }));
                 }
                 cb();
@@ -540,7 +544,8 @@ define([
                 targetTotal.html(self.bySalesPerWeekTemplate({
                     weeksArr: weeksArr,
                     bySalesByDepPerWeek: bySalesByDepPerWeek,
-                    globalTotal: globalTotal
+                    globalTotal: globalTotal,
+                    currencySplitter: helpers.currencySplitter
                 }));
 
                 self.completeDep();
@@ -594,7 +599,8 @@ define([
                     employeeContainer.html(self.paidBySalesItemsTemplate({
                         monthArr: monthArr,
                         byMonthData: byMonthData,
-                        total: total
+                        total: total,
+                        currencySplitter: helpers.currencySplitter
                     }));
                 }
                 cb();
@@ -622,7 +628,8 @@ define([
                     monthArr: monthArr,
                     bySalesByDepPerWeek: bySalesByDepPerWeek,
                     globalTotal: globalTotal,
-                    totalName: 'Paid Total'
+                    totalName: 'Paid Total',
+                    currencySplitter: helpers.currencySplitter
                 }));
 
                 return false;
@@ -674,7 +681,8 @@ define([
                     employeeContainer.html(self.paidBySalesItemsTemplate({
                         monthArr: monthArr,
                         byMonthData: byMonthData,
-                        total: total
+                        total: total,
+                        currencySplitter: helpers.currencySplitter
                     }));
                 }
                 cb();
@@ -701,7 +709,8 @@ define([
                     monthArr: monthArr,
                     bySalesByDepPerWeek: bySalesByDepPerWeek,
                     globalTotal: globalTotal,
-                    totalName: 'Write Off Total'
+                    totalName: 'Write Off Total',
+                    currencySplitter: helpers.currencySplitter
                 }));
 
                 return false;
@@ -753,7 +762,8 @@ define([
                     employeeContainer.html(self.paidBySalesItemsTemplate({
                         monthArr: monthArr,
                         byMonthData: byMonthData,
-                        total: total
+                        total: total,
+                        currencySplitter: helpers.currencySplitter
                     }));
                 }
                 cb();
@@ -781,7 +791,8 @@ define([
                     monthArr: monthArr,
                     bySalesByDepPerWeek: bySalesByDepPerWeek,
                     globalTotal: globalTotal,
-                    totalName: 'UnPaid Total'
+                    totalName: 'UnPaid Total',
+                    currencySplitter: helpers.currencySplitter
                 }));
 
                 return false;
@@ -871,7 +882,8 @@ define([
                     employeeContainer.html(self.paidBySalesItemsTemplate({
                         monthArr: monthArr,
                         byMonthData: byMonthData,
-                        total: total
+                        total: total,
+                        currencySplitter: helpers.currencySplitter
                     }));
                 }
                 cb();
@@ -899,7 +911,8 @@ define([
                     monthArr: monthArr,
                     bySalesByDepPerWeek: bySalesByDepPerWeek,
                     globalTotal: globalTotal,
-                    totalName: 'Revenue Total'
+                    totalName: 'Revenue Total',
+                    currencySplitter: helpers.currencySplitter
                 }));
 
                 return false;
@@ -1144,7 +1157,8 @@ define([
                         bonus: employee,
                         monthArr: monthArr,
                         byMonthData: element,
-                        total: total
+                        total: total,
+                        currencySplitter: helpers.currencySplitter
                     }));
                 }
 
@@ -1175,8 +1189,9 @@ define([
                     content: 'totalAllBonus',
                     monthArr: monthArr,
                     perMonth: bySalesPerMonth,
-                    globalTotal: globalTotal.toFixed(2),
-                    totalName: 'Bonus Total'
+                    globalTotal: globalTotal,
+                    totalName: 'Bonus Total',
+                    currencySplitter: helpers.currencySplitter
                 }));
 
                 bonusRows = $.find("[data-val='totalAllBonus']");
@@ -1246,7 +1261,8 @@ define([
                         bonus: employee,
                         monthArr: monthArr,
                         byMonthData: element,
-                        total: total
+                        total: total,
+                        currencySplitter: helpers.currencySplitter
                     }));
                 }
 
@@ -1277,8 +1293,9 @@ define([
                     content: 'totalUncalcBonus',
                     monthArr: monthArr,
                     perMonth: bySalesPerMonth,
-                    globalTotal: globalTotal.toFixed(2),
-                    totalName: 'Uncalc Bonus Total'
+                    globalTotal: globalTotal,
+                    totalName: 'Uncalc Bonus Total',
+                    currencySplitter: helpers.currencySplitter
                 }));
 
                 bonusRows = $.find("[data-val='totalUncalcBonus']");
@@ -1348,7 +1365,8 @@ define([
                         bonus: employee,
                         monthArr: monthArr,
                         byMonthData: element,
-                        total: total
+                        total: total,
+                        currencySplitter: helpers.currencySplitter
                     }));
                 }
 
@@ -1379,8 +1397,9 @@ define([
                     content: 'totalCalcBonus',
                     monthArr: monthArr,
                     perMonth: bySalesPerMonth,
-                    globalTotal: globalTotal.toFixed(2),
-                    totalName: 'Calc Bonus Total'
+                    globalTotal: globalTotal,
+                    totalName: 'Calc Bonus Total',
+                    currencySplitter: helpers.currencySplitter
                 }));
 
                 bonusRows = $.find("[data-val='totalCalcBonus']");

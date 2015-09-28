@@ -1,15 +1,16 @@
 ﻿define([
-    'text!templates/Salary/subSalary/list/ListTemplate.html'
+    'text!templates/Salary/subSalary/list/ListTemplate.html',
+        'helpers'
 ],
 
-function (listTemplate) {
+function (listTemplate, helpers) {
     var SalaryListItemView = Backbone.View.extend({
         initialize: function(options) {
             this.model = options.model;
         },
         render: function() {
             var result = this.model.toJSON();
-            this.$el.append(_.template(listTemplate, { salaryModel: result }));
+            this.$el.append(_.template(listTemplate, { salaryModel: result , currencySplitter: helpers.currencySplitter}));
         }
     });
 

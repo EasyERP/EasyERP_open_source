@@ -21,8 +21,9 @@ define([
     'dataService',
     'async',
     'custom',
-    'constants'
-], function (mainTemplate, weeksArray, monthsArray, perMonth, perMonthInt, hoursByDepItem, hoursByDepTotal, tableTotalHours, totalHours, perMonthForTotalHours, tableHoursSold, hoursSold, perMonthForHoursSold, tableSold, RevenueModel, moment, dataService, async, custom, CONSTANTS) {
+    'constants',
+    'helpers'
+], function (mainTemplate, weeksArray, monthsArray, perMonth, perMonthInt, hoursByDepItem, hoursByDepTotal, tableTotalHours, totalHours, perMonthForTotalHours, tableHoursSold, hoursSold, perMonthForHoursSold, tableSold, RevenueModel, moment, dataService, async, custom, CONSTANTS, helpers) {
     var View = Backbone.View.extend({
         el: '#content-holder',
 
@@ -330,7 +331,8 @@ define([
                         weeksArr: weeksArr,
                         byWeekData: byWeekData,
                         total: total,
-                        bySalesByDepPerWeek: hoursByDepPerWeek
+                        bySalesByDepPerWeek: hoursByDepPerWeek,
+                        currencySplitter: helpers.currencySplitter
                     }));
                 }
                 cb();
@@ -342,7 +344,8 @@ define([
                 targetTotal.html(self.hoursByDepTotalTemplate({
                     weeksArr: weeksArr,
                     bySalesByDepPerWeek: hoursByDepPerWeek,
-                    globalTotal: globalTotal
+                    globalTotal: globalTotal,
+                    currencySplitter: helpers.currencySplitter
                 }));
 
                 return false;
@@ -387,7 +390,8 @@ define([
                 departments: totalHours,
                 content: 'totalTotalHours',
                 className: 'totalTotalHours',
-                headName: 'Total Hours'
+                headName: 'Total Hours',
+                currencySplitter: helpers.currencySplitter
             }));
             targetTotal = $(this.$el.find('[data-content="totalTotalHours"]'));
             monthContainer = target.find('.monthContainer');
@@ -404,7 +408,8 @@ define([
                     content: 'totalTotalHours',
                     monthArr: monthArr,
                     total: total,
-                    employees: element.employees
+                    employees: element.employees,
+                    currencySplitter: helpers.currencySplitter
                 }));
 
                 cb();
@@ -441,7 +446,8 @@ define([
                     monthArr: monthArr,
                     perMonth: bySalesPerMonth,
                     globalTotal: globalTotal,
-                    totalName: 'Total Hours'
+                    totalName: 'Total Hours',
+                    currencySplitter: helpers.currencySplitter
                 }));
 
                 bonusRows = $.find("[data-val='totalTotalHours']");
@@ -472,7 +478,8 @@ define([
                 departments: resultForUnsold,
                 content: 'totalHoursUnsold',
                 className: 'totalHoursUnsold',
-                headName: 'Unsold Hours'
+                headName: 'Unsold Hours',
+                currencySplitter: helpers.currencySplitter
             }));
             targetTotal = $(this.$el.find('[data-content="totalHoursUnsold"]'));
             monthContainer = target.find('.monthContainer');
@@ -489,7 +496,8 @@ define([
                     content: 'totalHoursUnsold',
                     monthArr: monthArr,
                     total: total,
-                    employees: element.employees
+                    employees: element.employees,
+                    currencySplitter: helpers.currencySplitter
                 }));
 
 
@@ -527,7 +535,8 @@ define([
                     monthArr: monthArr,
                     perMonth: bySalesPerMonth,
                     globalTotal: globalTotal,
-                    totalName: 'Total Hours'
+                    totalName: 'Total Hours',
+                    currencySplitter: helpers.currencySplitter
                 }));
 
                 bonusRows = $.find("[data-val='totalHoursUnsold']");
@@ -557,7 +566,8 @@ define([
                 departments: hoursSold,
                 content: 'totalHoursSold',
                 className: 'totalHoursSold',
-                headName: 'Sold Hours'
+                headName: 'Sold Hours',
+                currencySplitter: helpers.currencySplitter
             }));
             targetTotal = $(this.$el.find('[data-content="totalHoursSold"]'));
             monthContainer = target.find('.monthContainer');
@@ -575,7 +585,8 @@ define([
                     content: 'totalHoursSold',
                     monthArr: monthArr,
                     total: total,
-                    employees: element.employees
+                    employees: element.employees,
+                    currencySplitter: helpers.currencySplitter
                 }));
 
                 cb();
@@ -613,7 +624,8 @@ define([
                     monthArr: monthArr,
                     perMonth: bySalesPerMonth,
                     globalTotal: globalTotal,
-                    totalName: 'Total Hours'
+                    totalName: 'Total Hours',
+                    currencySplitter: helpers.currencySplitter
                 }));
 
                 bonusRows = $.find("[data-val='totalHoursSold']");
