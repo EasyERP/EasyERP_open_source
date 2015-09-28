@@ -2,13 +2,14 @@ var mongoose = require('mongoose');
 var async = require('async');
 
 var Employee = function (models) {
+    'use strict';
     /**
      * @module Employee
      */
-    var access = require("../Modules/additions/access.js")(models);
-    var EmployeeSchema = mongoose.Schemas['Employee'];
-    var ProjectSchema = mongoose.Schemas['Project'];
-    var _ = require('../node_modules/underscore');
+    //var access = require("../Modules/additions/access.js")(models);
+    var EmployeeSchema = mongoose.Schemas.Employee;
+    var ProjectSchema = mongoose.Schemas.Project;
+    //var _ = require('../node_modules/underscore');
 
     this.getForDD = function (req, res, next) {
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
@@ -23,7 +24,7 @@ var Employee = function (models) {
                 if (err) {
                     return next(err);
                 }
-                res.status(200).send({data: employees})
+                res.status(200).send({data: employees});
             });
     };
 
@@ -43,7 +44,7 @@ var Employee = function (models) {
                     _id: "$projectmanager._id"
                 }
             }], cb);
-        };
+        }
 
         function employeeFinder(assignedArr, cb) {
             Employee

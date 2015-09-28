@@ -48,7 +48,6 @@ require.config({
 });
 
 require(['app'], function (app) {
-    localStorage.debug = '*';
 
     App.render = function (data) {
         var container = this.errorContainer || $('#errorHandler');
