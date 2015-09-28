@@ -17,21 +17,18 @@ define([
             hasAlphabet       : false,
 
             events: {
-                "click .itemsNumber"     : "switchPageCounter",
-                "click .showPage"        : "showPage",
-                "change #currentShowPage": "showPage",
-                "click #previousPage"    : "previousPage",
-                "click #nextPage"        : "nextPage",
-                "click #firstShowPage"   : "firstPage",
-                "click #lastShowPage"    : "lastPage",
-
+                "click .itemsNumber"          : "switchPageCounter",
+                "click .showPage"             : "showPage",
+                "change #currentShowPage"     : "showPage",
+                "click #previousPage"         : "previousPage",
+                "click #nextPage"             : "nextPage",
+                "click #firstShowPage"        : "firstPage",
+                "click #lastShowPage"         : "lastPage",
                 "click .checkbox"             : "checked",
                 "click .list td:not(.notForm)": "gotoForm",
-
-                "mouseover .currentPageList": "showPagesPopup",
-                "click"                     : "hidePagesPopup",
-
-                "click .oe_sortable": "goSort"
+                "mouseover .currentPageList"  : "showPagesPopup",
+                "click"                       : "hidePagesPopup",
+                "click .oe_sortable"          : "goSort"
             },
 
             //<editor-fold desc="Logic">
@@ -298,19 +295,21 @@ define([
                 }, this);
             },
 
-            previouslySelected: undefined,
-
             switchPageCounter: function (event) {
                 event.preventDefault();
 
+                var targetEl = $(event.target);
+                var itemsNumber;
+
                 if (this.previouslySelected) {
-                    this.previouslySelected.classList.remove("selectedItemsNumber")
+                    this.previouslySelected.removeClass("selectedItemsNumber");
                 }
-                this.previouslySelected = event.target;
-                this.previouslySelected.classList.add("selectedItemsNumber");
+
+                this.previouslySelected = targetEl;
+                targetEl.addClass("selectedItemsNumber");
 
                 this.startTime = new Date();
-                var itemsNumber = event.target.textContent;
+                itemsNumber = targetEl.text();
 
                 if (itemsNumber === 'all') {
                     itemsNumber = this.listLength;
@@ -345,7 +344,6 @@ define([
                     $('.search-content').removeClass('fa-caret-up');
                     this.$el.find('.search-options').addClass('hidden');
                 }
-                ;
             },
 
             //</editor-fold>
