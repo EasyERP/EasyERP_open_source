@@ -155,7 +155,7 @@ define([
                 }
 
                 if (isSelect) {
-                    var ul= "<ul class='newSelectList'>" + "<li data-id='HR'>HR</li>" + "<li data-id='Sales'>Sales</li>" +
+                    var ul = "<ul class='newSelectList'>" + "<li data-id='HR'>HR</li>" + "<li data-id='Sales'>Sales</li>" +
                         "<li data-id='PM'>PM</li>" + "<li data-id='Developer'>Developer</li></ul>";
                     el.append(ul);
                 } else {
@@ -167,7 +167,7 @@ define([
                 return false;
             },
 
-            chooseOption: function(e){
+            chooseOption: function (e) {
                 var target = $(e.target);
                 var targetElement = target.parents("td");
                 this.setEditable(targetElement);
@@ -179,7 +179,7 @@ define([
                 var bonusType;
 
                 if (!this.changedModels[modelId]) {
-                    if(!model.id){
+                    if (!model.id) {
                         this.changedModels[modelId] = model.attributes;
                     } else {
                         this.changedModels[modelId] = {};
@@ -194,7 +194,7 @@ define([
                 changedAttr.bonusType = bonusType;
 
                 this.hideNewSelect();
-               // this.setChangedValueToModel();
+                // this.setChangedValueToModel();
                 this.setEditable(targetElement);
 
                 return false;
@@ -304,7 +304,8 @@ define([
                 this.$el.find(".allNumberPerPage, .newSelectList").hide();
                 if (!el.closest('.search-view')) {
                     $('.search-content').removeClass('fa-caret-up');
-                };
+                }
+                ;
             },
 
             showNewSelect: function (e, prev, next) {
@@ -598,12 +599,12 @@ define([
 
                 startData.cid = model.cid;
 
-                if (!this.isNewRow()) {
-                    this.showSaveCancelBtns();
-                    this.editCollection.add(model);
+                //if (!this.isNewRow()) {
+                this.showSaveCancelBtns();
+                this.editCollection.add(model);
 
-                    new createView(startData);
-                }
+                new createView(startData);
+                // }
             },
 
             showSaveCancelBtns: function () {
