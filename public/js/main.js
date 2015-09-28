@@ -50,6 +50,29 @@ require.config({
 require(['app'], function (app) {
     localStorage.debug = '*';
 
+    App.render = function (data) {
+        var container = this.errorContainer || $('#errorHandler');
+        var messageClass = data.type || 'error';
+        var text = data.message || 'Something went wrong';
+        var renderEl = '<div class="animate ' + messageClass + '">' + text + '</div>';
+
+        container.append(renderEl);
+
+        container.find('div.animate').delay(10).animate({
+            left   : "85%",
+            opacity: 1
+        }, 500, function () {
+            var self = $(this);
+
+            self.removeClass('animate').delay(5000).animate({
+                left   : "100%",
+                opacity: 0
+            }, 1000, function () {
+                self.remove();
+            });
+        });
+    };
+
     Backbone.Collection.prototype.getElement = function (id) {
         return (id) ? this.get(id) : ((this.currentElement) ? this.currentElement : this.at(0));
     };

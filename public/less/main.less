@@ -16,6 +16,38 @@
 @bold-border: 3px solid;
 @thin-border: 1px solid;
 
+.notification {
+  z-index: 20000;
+  position: fixed;
+  top: 5px;
+  width: 100vw;
+  margin: 0 auto;
+  //border: 1px solid darkgray;
+
+  .error {
+    left: 85%;
+    width: 15%;
+    position: relative;
+    background: darkred;
+  }
+
+  .animate {
+    position: absolute;
+    /*height: 100%;*/
+    width: 15%;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    margin-top: 0px;
+    margin-left: 0px;
+    left: 100%;
+    opacity: 0;
+
+    .error {
+      background: darkred;
+    }
+  }
+}
+
 .i(@name) {
   background-image: url("@{imagesfolder}/@{name}");
 }
