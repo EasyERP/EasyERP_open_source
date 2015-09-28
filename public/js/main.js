@@ -507,7 +507,11 @@ require(['app'], function (app) {
 	Backbone.View.prototype.deleteRender = function (deleteCounter, deletePage, dataObject) {
 		this.startTime = new Date();
 		$("#top-bar-deleteBtn").hide();
-		var itemsNumber = parseInt($("#itemsNumber").text());
+		var itemsNumber = this.defaultItemsNumber;
+
+		if (itemsNumber === 'all') {
+			throw('not implemented');
+		}
 		var pageNumber;
 		if (deleteCounter === this.collectionLength) {
 			pageNumber = Math.ceil(this.listLength / itemsNumber);
