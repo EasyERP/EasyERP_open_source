@@ -1,4 +1,5 @@
 define([
+        'views/listViewBase',
         'text!templates/Pagination/PaginationTemplate.html',
         'text!templates/Tasks/list/ListHeader.html',
         'text!templates/stages.html',
@@ -11,21 +12,28 @@ define([
         'collections/Tasks/filterCollection',
         'views/Filter/FilterView',
         'common',
-        'custom',
-        'dataService'
     ],
 
-    function (paginationTemplate, listTemplate, stagesTamplate, createView, listItemView, editView, currentModel, projectEditView, projectModel, contentCollection, filterView, common, custom, dataService) {
-        var TasksListView = Backbone.View.extend({
-            el: '#content-holder',
-            defaultItemsNumber: null,
-            listLength: null,
-            filter: null,
-            sort: null,
-            newCollection: null,
-            page: null, //if reload page, and in url is valid page
-            contentType: 'Tasks',//needs in view.prototype.changeLocationHash
-            viewType: 'list',//needs in view.prototype.changeLocationHash
+    function (listViewBase, paginationTemplate, listTemplate, stagesTamplate, createView, listItemView, editView, currentModel, projectEditView, projectModel, contentCollection, filterView, common) {
+        var TasksListView = listViewBase.extend({
+
+            createView              : createView,
+            listTemplate            : listTemplate,
+            listItemView            : listItemView,
+            contentCollection       : contentCollection,
+            filterView              : filterView,
+            contentType             : "Tasks",
+            viewType                : "list",
+            totalCollectionLengthUrl: '/totalCollectionLength/Tasks',
+            formUrl                 : "#easyErp/Tasks/form/",
+
+            events: {
+                /*  "click td:not(:has('input[type='checkbox']'))": "goToEditDialog",
+                 "click .project": "goToProject",*/
+                "click .stageSelect"     : "showNewSelect",
+                "click .stageSelectType" : "showNewSelectType",
+                "click .newSelectList li": "chooseOption"
+            },
 
             initialize: function (options) {
                 $(document).off("click");
@@ -47,159 +55,39 @@ define([
                 this.contentCollection = contentCollection;
             },
 
-            events: {
-                "click .itemsNumber": "switchPageCounter",
-                "click .showPage": "showPage",
-                "change #currentShowPage": "showPage",
-                "click #previousPage": "previousPage",
-                "click #nextPage": "nextPage",
-                "click .checkbox": "checked",
-                "click td:not(:has('input[type='checkbox']'))": "goToEditDialog",
-                "click .project": "goToProject",
-                "mouseover .currentPageList": "itemsNumber",
-                "click": "hideItemsNumber",
-                "click .stageSelect": "showNewSelect",
-                "click .stageSelectType": "showNewSelectType",
-                "click .newSelectList li": "chooseOption",
-                "click .filterButton": "showfilter",
-                "click .filter-check-list li": "checkCheckbox",
-                "click #firstShowPage": "firstPage",
-                "click #lastShowPage": "lastPage",
-                "click .oe_sortable": "goSort"
-            },
+            /* goToProject: function (e) {
+             var projectId = $(e.target).data('id');
+             var model = new projectModel({ validate: false });
+             model.urlRoot = '/Projects/form/' + projectId;
+             model.fetch({
+             success: function (model) {
+             new projectEditView({ model: model });
+             },
+             error: function () {
+             alert('Please refresh browser');
+             }
+             });
+             return false;
+             },*/
 
-            fetchSortCollection: function (sortObject) {
-                this.sort = sortObject;
-                this.collection = new contentCollection({
-                    viewType: 'list',
-                    sort: sortObject,
-                    page: this.page,
-                    count: this.defaultItemsNumber,
-                    filter: this.filter,
-                    parrentContentId: this.parrentContentId,
-                    contentType: this.contentType,
-                    newCollection: this.newCollection
-                });
-                this.collection.bind('reset', this.renderContent, this);
-                this.collection.bind('showmore', this.showMoreContent, this);
-            },
-
-            renderContent: function () {
-                var currentEl = this.$el;
-                var tBody = currentEl.find('#listTable');
-                tBody.empty();
-                var itemView = new listItemView({ collection: this.collection, page: this.page, itemsNumber: this.collection.namberToShow });
-                tBody.append(itemView.render());
-                var pagenation = this.$el.find('.pagination');
-                if (this.collection.length === 0) {
-                    pagenation.hide();
-                } else {
-                    pagenation.show();
-                }
-            },
-
-            goSort: function (e) {
-                this.collection.unbind('reset');
-                this.collection.unbind('showmore');
-                var target$ = $(e.target);
-                var currentParrentSortClass = target$.attr('class');
-                var sortClass = currentParrentSortClass.split(' ')[1];
-                var sortConst = 1;
-                var sortBy = target$.data('sort');
-                var sortObject = {};
-                if (!sortClass) {
-                    target$.addClass('sortDn');
-                    sortClass = "sortDn";
-                }
-                switch (sortClass) {
-                    case "sortDn":
-                    {
-                        target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
-                        target$.removeClass('sortDn').addClass('sortUp');
-                        sortConst = 1;
-                    }
-                        break;
-                    case "sortUp":
-                    {
-                        target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
-                        target$.removeClass('sortUp').addClass('sortDn');
-                        sortConst = -1;
-                    }
-                        break;
-                }
-                sortObject[sortBy] = sortConst;
-                this.fetchSortCollection(sortObject);
-                this.changeLocationHash(1, this.defaultItemsNumber);
-                this.getTotalLength(null, this.defaultItemsNumber, this.filter);
-            },
-
-            getTotalLength: function (currentNumber, itemsNumber, filter) {
-                dataService.getData('/totalCollectionLength/Tasks', {
-                    type: 'Tasks',
-                    currentNumber: currentNumber,
-                    filter: filter,
-                    newCollection: this.newCollection,
-                    parrentContentId: this.parrentContentId
-                }, function (response, context) {
-                    var page = context.page || 1;
-                    var length = context.listLength = response.count || 0;
-                    if (itemsNumber * (page - 1) > length) {
-                        context.page = page = Math.ceil(length / itemsNumber);
-                        context.fetchSortCollection(context.sort);
-                        context.changeLocationHash(page, context.defaultItemsNumber, filter);
-                    }
-                    context.pageElementRender(response.count, itemsNumber, page);//prototype in main.js
-                }, this);
-            },
-
-            goToProject: function (e) {
-                var projectId = $(e.target).data('id');
-                var model = new projectModel({ validate: false });
-                model.urlRoot = '/Projects/form/' + projectId;
-                model.fetch({
-                    success: function (model) {
-                        new projectEditView({ model: model });
-                    },
-                    error: function () {
-                        alert('Please refresh browser');
-                    }
-                });
-                return false;
-            },
-
-            goToEditDialog: function (e) {
-                e.preventDefault();
-                var id = $(e.target).closest('tr').data("id");
-                var model = new currentModel({ validate: false });
-                model.urlRoot = '/Tasks/form';
-                model.fetch({
-                    data: { id: id },
-                    success: function (model) {
-                        new editView({ model: model });
-                    },
-                    error: function () {
-                        alert('Please refresh browser');
-                    }
-                });
-            },
-
-            hideNewSelect: function (e) {
-                $(".newSelectList").hide();
-            },
-
-            showfilter: function (e) {
-                $(".filter-check-list").toggle();
-                return false;
-            },
+            /* goToEditDialog: function (e) {
+             e.preventDefault();
+             var id = $(e.target).closest('tr').data("id");
+             var model = new currentModel({ validate: false });
+             model.urlRoot = '/Tasks/form';
+             model.fetch({
+             data: { id: id },
+             success: function (model) {
+             new editView({ model: model });
+             },
+             error: function () {
+             alert('Please refresh browser');
+             }
+             });
+             },*/
 
             pushStages: function (stages) {
                 this.stages = stages;
-            },
-
-            checkCheckbox: function (e) {
-                if (!$(e.target).is("input")) {
-                    $(e.target).closest("li").find("input").prop("checked", !$(e.target).closest("li").find("input").prop("checked"));
-                }
             },
 
             showNewSelectType: function (e) {
@@ -218,7 +106,7 @@ define([
                     this.hideNewSelect();
                     return false;
                 } else {
-                    $(e.target).parent().append(_.template(stagesTamplate, { stagesCollection: this.stages}));
+                    $(e.target).parent().append(_.template(stagesTamplate, {stagesCollection: this.stages}));
                     return false;
                 }
             },
@@ -231,24 +119,24 @@ define([
                 var model;
                 var id;
                 if (selectType == 'stages') {
-                    if ($(target).attr('data-status') === 'done'){
+                    if ($(target).attr('data-status') === 'done') {
                         id = targetParrentElement.attr("id").replace("stages_", "");
                         model = this.collection.get(id);
                         model.urlRoot = '/Tasks';
                         model.save({
-                                workflow: target.attr("id"),
-                                sequence: -1,
+                                workflow     : target.attr("id"),
+                                sequence     : -1,
                                 sequenceStart: model.toJSON().sequence,
                                 workflowStart: model.toJSON().workflow ? model.toJSON().workflow._id : null,
-                                progress: 100
+                                progress     : 100
                             },
                             {
-                                headers: {
+                                headers : {
                                     mid: 39
                                 },
-                                patch: true,
+                                patch   : true,
                                 validate: false,
-                                success: function () {
+                                success : function () {
                                     that.showFilteredPage();
                                 }
                             });
@@ -257,20 +145,20 @@ define([
                         model = this.collection.get(id);
                         model.urlRoot = '/Tasks';
                         model.save({
-                                workflow: target.attr("id"),
-                                sequence: -1,
+                                workflow     : target.attr("id"),
+                                sequence     : -1,
                                 sequenceStart: model.toJSON().sequence,
                                 workflowStart: model.toJSON().workflow ? model.toJSON().workflow._id : null,
-                                estimated: model.toJSON().estimated,
-                                logged: model.toJSON().logged
+                                estimated    : model.toJSON().estimated,
+                                logged       : model.toJSON().logged
                             },
                             {
-                                headers: {
+                                headers : {
                                     mid: 39
                                 },
-                                patch: true,
+                                patch   : true,
                                 validate: false,
-                                success: function () {
+                                success : function () {
                                     that.showFilteredPage({});
                                 }
                             });
@@ -284,12 +172,12 @@ define([
                             type: type
                         },
                         {
-                            headers: {
+                            headers : {
                                 mid: 39
                             },
-                            patch: true,
+                            patch   : true,
                             validate: false,
-                            success: function (model) {
+                            success : function (model) {
                                 that.showFilteredPage({});//When add filter by Type, then uncoment this code
                             }
                         });
@@ -298,299 +186,39 @@ define([
                 return false;
             },
 
-            showFilteredPage: function (filter) {
-                var itemsNumber = $("#itemsNumber").text();
-
-                $("#top-bar-deleteBtn").hide();
-                $('#check_all').prop('checked', false);
-
-                this.startTime = new Date();
-                this.newCollection = false;
-
-                this.changeLocationHash(1, itemsNumber, filter);
-                this.collection.showMore({ count: itemsNumber, page: 1, filter: filter});
-                this.getTotalLength(null, itemsNumber, filter);
-            },
-
-            hideItemsNumber: function (e) {
-                var el = e.target;
-
-                this.$el.find(".allNumberPerPage, .newSelectList").hide();
-                if (!el.closest('.search-view')) {
-                    $('.search-content').removeClass('fa-caret-up');
-                    this.$el.find('.search-options').addClass('hidden');
-                };
-                //this.$el.find(".allNumberPerPage, .newSelectList").hide();
-                //if (!el.closest('.search-view')) {
-                //    $('.search-content').removeClass('fa-caret-up');
-                //};
-            },
-
-            itemsNumber: function (e) {
-                $(e.target).closest("button").next("ul").toggle();
-                return false;
-            },
-
-            deleteItemsRender: function (deleteCounter, deletePage) {
-                dataService.getData('/totalCollectionLength/Tasks', {
-                    type: 'Tasks',
-                    filter: this.filter,
-                    newCollection: this.newCollection,
-                    parrentContentId: this.parrentContentId
-                }, function (response, context) {
-                    context.listLength = response.count || 0;
-                }, this);
-
-                this.deleteRender(deleteCounter, deletePage, {
-                    filter: this.filter,
-                    newCollection: this.newCollection,
-                    parrentContentId: this.parrentContentId
-                });
-
-                var pagenation = this.$el.find('.pagination');
-
-                if (this.collection.length === 0) {
-                    pagenation.hide();
-                } else {
-                    pagenation.show();
-                }
-            },
-
             render: function () {
+                var self;
+                var currentEl;
+
                 $('.ui-dialog ').remove();
-                var self = this;
-                var currentEl = this.$el;
+
+                self = this;
+                currentEl = this.$el;
 
                 currentEl.html('');
                 currentEl.append(_.template(listTemplate));
-                var itemView = new listItemView({ collection: this.collection, page: this.page, itemsNumber: this.collection.namberToShow });
+                var itemView = new listItemView({
+                    collection : this.collection,
+                    page       : this.page,
+                    itemsNumber: this.collection.namberToShow
+                });
                 itemView.bind('incomingStages', this.pushStages, this);
                 currentEl.append(itemView.render());
 
-                $('#check_all').click(function () {
-                    $(':checkbox').prop('checked', this.checked);
-                    if ($("input.checkbox:checked").length > 0)
-                        $("#top-bar-deleteBtn").show();
-                    else
-                        $("#top-bar-deleteBtn").hide();
-                });
+                this.renderCheckboxes();
 
                 common.populateWorkflowsList("Tasks", ".filter-check-list", "#workflowNamesDd", "/Workflows", null, function (stages) {
                     var stage = (self.filter) ? self.filter.workflow || [] : [];
                     itemView.trigger('incomingStages', stages);
 
                 });
-
-               /* self.filterView = new filterView({
-                    contentType: self.contentType
-                });
-
-                self.filterView.bind('filter', function (filter) {
-                    self.showFilteredPage(filter)
-                });
-                self.filterView.bind('defaultFilter', function () {
-                    self.showFilteredPage({});
-                });
-
-                self.filterView.render();*/
-
-                $(document).on("click", function (e) {
-                    self.hideItemsNumber(e);
-                });
-                currentEl.append(_.template(paginationTemplate));
+                this.renderFilter(this);
+                this.renderPagination(currentEl, this);
 
                 currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
-                var pagenation = this.$el.find('.pagination');
-                if (this.collection.length === 0) {
-                    pagenation.hide();
-                } else {
-                    pagenation.show();
-                }
-            },
 
-            previousPage: function (event) {
-                $("#top-bar-deleteBtn").hide();
-                $('#check_all').prop('checked', false);
-                event.preventDefault();
-                this.prevP({
-                    sort: this.sort,
-                    filter: this.filter,
-                    newCollection: this.newCollection,
-                    parrentContentId: this.parrentContentId
-                });
-                dataService.getData('/totalCollectionLength/Tasks', {
-                    type: 'Tasks',
-                    filter: this.filter,
-                    newCollection: this.newCollection,
-                    parrentContentId: this.parrentContentId
-                }, function (response, context) {
-                    context.listLength = response.count || 0;
-                }, this);
-            },
-
-            nextPage: function (event) {
-                $("#top-bar-deleteBtn").hide();
-                $('#check_all').prop('checked', false);
-                event.preventDefault();
-                this.nextP({
-                    sort: this.sort,
-                    filter: this.filter,
-                    newCollection: this.newCollection,
-                    parrentContentId: this.parrentContentId
-                });
-                dataService.getData('/totalCollectionLength/Tasks', {
-                    type: 'Tasks',
-                    filter: this.filter,
-                    newCollection: this.newCollection,
-                    parrentContentId: this.parrentContentId
-                }, function (response, context) {
-                    context.listLength = response.count || 0;
-                }, this);
-            },
-
-            lastPage: function (event) {
-                $("#top-bar-deleteBtn").hide();
-                $('#check_all').prop('checked', false);
-                event.preventDefault();
-                this.lastP({
-                    sort: this.sort,
-                    filter: this.filter,
-                    newCollection: this.newCollection
-                });
-                dataService.getData('/totalCollectionLength/Tasks', {
-                    type: 'Tasks',
-                    filter: this.filter,
-                    newCollection: this.newCollection
-                }, function (response, context) {
-                    context.listLength = response.count || 0;
-                }, this);
-            },  //end first last page in paginations
-
-            firstPage: function (event) {
-                $("#top-bar-deleteBtn").hide();
-                $('#check_all').prop('checked', false);
-                event.preventDefault();
-                this.firstP({
-                    sort: this.sort,
-                    filter: this.filter,
-                    newCollection: this.newCollection
-                });
-                dataService.getData('/totalCollectionLength/Tasks', {
-                    type: 'Tasks',
-                    filter: this.filter,
-                    newCollection: this.newCollection
-                }, function (response, context) {
-                    context.listLength = response.count || 0;
-                }, this);
-            },
-
-            switchPageCounter: function (event) {
-                event.preventDefault();
-                this.startTime = new Date();
-                var itemsNumber = event.target.textContent;
-                this.defaultItemsNumber = itemsNumber;
-                this.getTotalLength(null, itemsNumber, this.filter);
-                this.collection.showMore({
-                    count: itemsNumber,
-                    page: 1,
-                    filter: this.filter,
-                    newCollection: this.newCollection,
-                    parrentContentId: this.parrentContentId
-                });
-                this.page = 1;
-                $("#top-bar-deleteBtn").hide();
-                $('#check_all').prop('checked', false);
-                this.changeLocationHash(1, itemsNumber, this.filter);
-            },
-
-            showPage: function (event) {
-                event.preventDefault();
-                this.showP(event, { filter: this.filter, newCollection: this.newCollection, parrentContentId: this.parrentContentId, sort: this.sort });
-            },
-
-            showMoreContent: function (newModels) {
-                var holder = this.$el;
-                holder.find("#listTable").empty();
-                var itemView = new listItemView({ collection: newModels, page: holder.find("#currentShowPage").val(), itemsNumber: holder.find("span#itemsNumber").text() });
-                holder.append(itemView.render());
-                itemView.undelegateEvents();
-                var pagenation = holder.find('.pagination');
-                if (newModels.length !== 0) {
-                    pagenation.show();
-                } else {
-                    pagenation.hide();
-                }
-                $("#top-bar-deleteBtn").hide();
-                $('#check_all').prop('checked', false);
-
-                //this.filterView.renderFilterContent();
-
-                holder.find('#timeRecivingDataFromServer').remove();
-                holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
-            },
-
-            createItem: function () {
-                //create editView in dialog here
-                new createView();
-            },
-
-            checked: function () {
-                if (this.collection.length > 0) {
-                    var checkLength = $("input.checkbox:checked").length;
-                    if ($("input.checkbox:checked").length > 0) {
-                        $("#top-bar-deleteBtn").show();
-                        if (checkLength == this.collection.length) {
-                            $('#check_all').prop('checked', true);
-                        }
-                    }
-                    else {
-                        $("#top-bar-deleteBtn").hide();
-                        $('#check_all').prop('checked', false);
-                    }
-                }
-            },
-
-            deleteItems: function () {
-                var that = this;
-                var mid = 39;
-                var model;
-                var localCounter = 0;
-                var count = $("#listTable input:checked").length;
-                this.collectionLength = this.collection.length;
-
-                $.each($("tbody input:checked"), function (index, checkbox) {
-                    model = that.collection.get(checkbox.value);
-                    model.destroy({
-                        headers: {
-                            mid: mid
-                        },
-                        wait: true,
-                        success: function () {
-                            that.listLength--;
-                            localCounter++;
-                            count--;
-                            if (count === 0) {
-                                that.deleteCounter = localCounter;
-                                that.deletePage = $("#currentShowPage").val();
-                                that.deleteItemsRender(that.deleteCounter, that.deletePage);
-
-                            }
-                        },
-                        error: function (model, res) {
-                            if (res.status === 403 && index === 0) {
-                                alert("You do not have permission to perform this action");
-                            }
-                            that.listLength--;
-                            count--;
-                            if (count === 0) {
-                                that.deleteCounter = localCounter;
-                                that.deletePage = $("#currentShowPage").val();
-                                that.deleteItemsRender(that.deleteCounter, that.deletePage);
-                            }
-                        }
-                    });
-                });
             }
+
         });
 
         return TasksListView;

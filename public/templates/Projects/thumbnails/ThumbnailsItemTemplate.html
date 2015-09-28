@@ -42,7 +42,7 @@
                 </p>
                 <div class="inner">
 				  <div class="left"><label>Status: </label>&nbsp;</div>
-				  <div class="left"><a href="javascript:;" class="stageSelect <%=(project.workflow) ? project.workflow.name.toLowerCase().replace(" ","") : ''%>"><%=(project.workflow) ? project.workflow.name : ''%></a></div>
+				  <div class="left"><a href="javascript:;" class="stageSelect <%=(project.workflow) ? (project.workflow.name.toLowerCase().replace(" ","") === "closed" ? 'projectClosed' : project.workflow.name.toLowerCase().replace(" ","") ) : ''%>"><%=(project.workflow) ? project.workflow.name : ''%></a></div>
 <!--<span class="status <%=(project.workflow && project.workflow.status) ? project.workflow.status.toLowerCase().split(' ').join('') : ''%>"><%=(project.workflow) ? project.workflow.status : ''%></span>--></div>
             </div>
             <div class="half-block right">

@@ -20,10 +20,19 @@ var MonthHours = function (event, models) {
                     }
 
                     event.emit('dropHoursCashes', req);
+                    var params = {
+                        req: req,
+                        year: monthHours.year,
+                        month: monthHours.month,
+                        fixedExpense: monthHours.fixedExpense,
+                        expenseCoefficient: monthHours.expenseCoefficient,
+                        hours: monthHours.hours
+                    };
+                    event.emit('updateCost', params);
                     res.status(200).send(monthHours);
                 });
             } else {
-
+                res.status(404);
             }
         });
     };
@@ -40,7 +49,22 @@ var MonthHours = function (event, models) {
                     async.each(body, function (data, cb) {
                         var id = data._id;
                         delete data._id;
-                        monthHoursModel.findByIdAndUpdate(id, {$set: data}, cb);
+                        monthHoursModel.findByIdAndUpdate(id, {$set: data}, {new: true}, function(err, result){
+                            if (err){
+                                return cb(err);
+                            }
+                            var params = {
+                                req: req,
+                                year: result.year,
+                                month: result.month,
+                                fixedExpense: result.fixedExpense,
+                                expenseCoefficient: result.expenseCoefficient,
+                                hours: result.hours
+                            };
+                            event.emit('updateCost', params);
+                            cb(null, result);
+                        });
+
                     }, function (err) {
                         if (err) {
                             return next(err);

@@ -1,8 +1,19 @@
-.list(@defaultColor: @list-color-text, @font-size: 13px, @defaultBgColorOdd: @defaultBgColorOdd-color, @defaultBgColorHover: @defaultBgHover-color, @defaultProgressColor: #f5f5f5, @defaultBorderColor: @list-border-color) {
+.list(@defaultColor: @list-color-text, @font-size: 12px, @defaultBgColorOdd: @defaultBgColorOdd-color, @defaultBgColorHover: @defaultBgHover-color, @defaultProgressColor: #f5f5f5, @defaultBorderColor: @list-border-color) {
   color: @defaultColor !important;
   font-family: @lucida-font;
   width: 100%;
-
+  caption {
+    text-align: left;
+    margin-top: 15px;
+    background-color: @forInfo-caption-color;
+    font-size: 14px;//!!!!!!!!!!!!!!!!!!!!!!!!!
+    line-height: 20px;
+    padding-left: 10px;
+    //color: #1EBBEA;//!!!!!!!!!!
+  }
+  .anotherColor {
+    background-color: @forInfo-caption-color2;
+  }
   tfoot {
     tr {
       border-bottom: 1px solid @defaultBorderColor;
@@ -12,7 +23,7 @@
     td {
       padding: 3px 6px;
       line-height: 18px;
-      .bold;
+      //.bold;
       font-size: @font-size;
       text-align: right;
     }
@@ -28,7 +39,7 @@
     th {
       padding: 3px 8px;
       line-height: 18px;
-      .bold;
+      //.bold;
       font-size: @font-size;
       text-align: right;
       // text-shadow: 0 1px 1px rgba(222, 222, 222, 0.5);
@@ -104,13 +115,15 @@
         .text-overflow;
         cursor: pointer;
         padding: 0 8px;
-        font-size: @font-size - 2;
+        font-size: @font-size;
         text-align: right;
         border-right: @thin-border @defaultBorderColor;
         color: @list-caption-color;
+        line-height: 20px;
         &.red-border {
           color: red;
         }
+
 
         &:nth-child(1), &:nth-child(2) {
           text-align: center;
@@ -122,7 +135,7 @@
 
         &[data-content="workflow"] {
           position: relative;
-          padding: 4px 15px;
+          padding: 0 15px;
           overflow: visible;
 
           .newSelectList {
@@ -136,7 +149,7 @@
         }
 
         a {
-          color: #1E8FC6 !important;
+          color: @tilte-color !important;
         }
         a.done {
           color: #00c60b !important;
@@ -156,11 +169,15 @@
 
         &:first-of-type {
           padding-left: 7px;
+          line-height: 10px;
 
           input {
             cursor: pointer;
           }
         }
+      }
+      .icon {
+        line-height: 20px;
       }
     }
   }
@@ -172,6 +189,7 @@
   tr:hover {
     background-color: @defaultBgColorHover;
   }
+
 }
 
 .list2 {
@@ -200,4 +218,39 @@
 
 .margin(@t: 5px, @r: 5px, @b: 5px, @l: 5px) {
   margin: @arguments;
+}
+
+#forInfo {
+  .tableProjects {
+    width: 99%;
+    thead{
+      th {
+        text-align: right;
+      }
+      }
+    tbody {
+      td {
+        text-align: right;
+        &:first-child {
+          border-left: 1px solid @list-border-color;
+        }
+      }
+    }
+      tr {
+        .procent {
+          position: relative;
+          padding-right: 20px;
+          &::before {
+            content: '%';
+            display: block;
+            width: 5px;
+            height: 5px;
+            position: absolute;
+            right: 13px;
+
+          }
+        }
+      }
+
+  }
 }

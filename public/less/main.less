@@ -1,29 +1,61 @@
 @import "_font";
 @import "_colors";
-@import "_darckColor";
+//@import "_darckColor";
+@import "_whiteColor";
 @import "_list";
 
 /*------------------------Constants-----------------------------*/
 @imagesfolder: '../images';
-/*@body-font: "Segoe UI", sans-serif;*/
 @body-font: 'Helvetica Neue','Segoe UI',Helvetica,Verdana,san-serif;
-/* @lucida-font: "Lucida Grande", Helvetica, Verdana, Arial, sans-serif; */
 @lucida-font: 'Helvetica Neue','Segoe UI',Helvetica,Verdana,san-serif;
 @icon-font: Icons;
 @title-font: Title;
-//@tilte-color: #36A9E1;
+
 @metroicon-font: "Metrize-Icons";
-//@blue: #4d5a75;
-//@defaultBorderColor: #ababab;
-//@lightmagenta: #7c7bad;
-//@lightgrey: #c8c8d3;
-//@lightblue: #008bbf;
-//@dark-blue: #444f67;
+
 @bold-border: 3px solid;
 @thin-border: 1px solid;
-//@taskBorderColor: #4d5a75;
-//@tabColor: #BDC3C7;
-//@birthdayColor: #555;
+
+.notification {
+  z-index: 20000;
+  position: fixed;
+  top: 5px;
+  width: 100%;
+  margin: 0 auto;
+
+  .error {
+    left: 85%;
+    width: 15%;
+    position: relative;
+    line-height: 17px;
+    padding-right: 10px;
+    padding-left: 10px;
+    background-color: @notifikation-error-color;
+  }
+  .notify {
+    left: 85%;
+    width: 15%;
+    position: relative;
+    line-height: 17px;
+    padding-right: 10px;
+    padding-left: 10px;
+    background-color: @notifikation-notify-color;
+  }
+
+  .animate {
+    position: absolute;
+    /*height: 100%;*/
+    width: 15%;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    margin-top: 0px;
+    margin-left: 0px;
+    left: 100%;
+    opacity: 0;
+
+  }
+}
+
 .i(@name) {
   background-image: url("@{imagesfolder}/@{name}");
 }
@@ -360,6 +392,11 @@ input::-ms-clear {
     width: 100%;
     max-width: 100%;
     padding-right: 40px;
+
+  }
+
+  #forInfo {
+    overflow: hidden;
   }
   .compactList {
     li {
@@ -710,7 +747,7 @@ input::-ms-clear {
         height: @height;
         width: 120px;
         text-align: center;
-        color: #fff;
+        color: @mainText-color;
         line-height: @height;
         overflow: hidden;
         .left;
@@ -719,7 +756,7 @@ input::-ms-clear {
 
         a {
           letter-spacing: 1.5px;
-          color: #fff;
+          color: @mainText-color;
           font-size: 0.75rem;
           text-decoration: none;
           display: block;
@@ -767,7 +804,7 @@ input::-ms-clear {
   display: block;
   width: 100%;
   height: @defaultHeight;
-  border-bottom: @thin-border @defaultBorderColor;
+  //border-bottom: @thin-border @defaultBorderColor;
  // background: @defaultBackground;
   clear: both;
   margin-top: 5px;
@@ -1109,6 +1146,7 @@ input::-ms-clear {
       .left {
         label {
           color: @grey;
+          line-height: 16px;
         }
       }
 
@@ -1312,7 +1350,7 @@ input::-ms-clear {
       text-align: left;
       color: #333333;
       font-size: 16px;
-      font-weight: bold;
+      //
       //text-shadow: 0 1px 0 white;
       white-space: nowrap;
 
@@ -1366,7 +1404,7 @@ input::-ms-clear {
           padding-left: 3px;
           font-family: Icons;
           line-height: 19px;
-          font-weight: bold;
+          //
           margin: 0 2px 0 4px;
           cursor: pointer;
           color: @kanab-text-color;
@@ -1558,14 +1596,16 @@ input::-ms-clear {
     }
     p {
       line-height: 15px;
-      color: @submenu-text-color;
+      color: @mainText-color;
+
+      a {
+        color: @mainText-color;
+      }
     }
   }
   h4 {
     color: @tilte-color;
     font-size: @font-size;
-    .bold;
-    //text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5) !important;
     line-height: 18px;
     font-family: @lucida-font;
     white-space: normal;
@@ -1618,6 +1658,7 @@ input::-ms-clear {
         a {
           word-break: break-all;
           word-wrap: break-word;
+
         }
       }
     }
@@ -1638,7 +1679,7 @@ input::-ms-clear {
 .thumbnail-text(@defaultColor: #4c4c4c, @font-size: 13px) {
   color: @defaultColor;
   font-size: @font-size;
-  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
+  //text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
 }
 
 .ui-datepicker {
@@ -2151,16 +2192,17 @@ input::-ms-clear {
   .countOnPage {
     float: left;
     color: @mainText-color;
+    margin-left: 5px;
+
+    .page-list {
+
+    }
   }
 
   .nextPrev {
     float: right;
     margin-right: 5px;
     color: @mainText-color;
-  }
-
-  .countOnPage {
-    margin-left: 5px;
   }
 
   #previousPage, #nextPage, .currentPageList, #firstShowPage, #lastShowPage {
@@ -2173,7 +2215,7 @@ input::-ms-clear {
     text-align: center;
     padding: 0;
     border-radius: 0;
-    font-weight: bold;
+    //
     background-position: 50% 50%;
     background-repeat: no-repeat;
     float: left;
@@ -2244,6 +2286,7 @@ input::-ms-clear {
         text-decoration: none;
       }
     }
+
   }
 
   .currentPageList {
@@ -2260,6 +2303,17 @@ input::-ms-clear {
 
   .pageList {
     position: relative;
+
+    .itemsNumber {
+      text-decoration: none;
+      display: inline-block;
+      padding: 0 5px;
+
+    }
+
+    a.selectedItemsNumber {
+      border-bottom: 1px solid blue;
+    }
 
     button {
       background-color: white;
@@ -2336,7 +2390,7 @@ input::-ms-clear {
       text-align: center;
       line-height: 35px;
       text-decoration: none;
-      color: @whiteText;
+      color: @mainText-color;
 
       &.active {
         height: 35px;
@@ -2575,9 +2629,9 @@ input, textarea, select {
 }
 
 .current-selected {
-  color: #1E8FC6 !important;
+ // color: @tilte-color !important;
   font-size: 12px;
-
+  text-decoration: none;
   line-height: 26px !important;
 }
 
@@ -2670,10 +2724,11 @@ input, textarea, select {
   border-right: 0;
   border-bottom: 0;
   float: left;
-  margin: 5px 12px 0 5px;
+  margin: 5px 12px 2px 5px;
 
   li {
     border-right: @thin-border @border-color-main;
+    border-bottom: @thin-border @border-color-main;
     .noPaddingMargin;
     display: block;
     .left;
@@ -2688,9 +2743,8 @@ input, textarea, select {
   }
 
   .selected {
-    border-bottom: 3px solid @border-color-selected;
+   // border-bottom: 2px solid @border-color-selected;
     color: @selected-filters-color;
-
     a {
       color: white;
       //text-shadow: 0 1px 2px black;
@@ -2748,7 +2802,7 @@ dl {
 }
 
 .bold {
-  font-weight: bold;
+  ////
 }
 
 .left {
@@ -2762,7 +2816,7 @@ dl {
     .totalAmount {
       border-top: 1px solid grey;
       label, span {
-        font-weight: bold;
+        //
       }
     }
     width: 50%;
@@ -2972,7 +3026,7 @@ dl {
 
       .noteTitle {
         word-break: break-word;
-        font-weight: bold;
+        //
       }
 
       .noteText {
@@ -3187,7 +3241,7 @@ dl {
   height: 12px;
   padding-top: 1px;
   text-align: center;
-  font-weight: bold;
+  //
   cursor: pointer;
  //text-shadow: 0 1px 1px white;
 }
@@ -4026,9 +4080,11 @@ ul.dialog-tabs {
 #showMoreDiv {
   clear: both;
   text-align: center;
+
     #showMore {
       color: @mainText-color;
       margin-top: 20px;
+      margin-bottom: 5px;
     }
 }
 
@@ -4075,6 +4131,8 @@ ul.dialog-tabs {
 #timeRecivingDataFromServer {
   clear: both;
   text-align: center;
+  color: @mainText-color;
+  padding-bottom: 5px;
 }
 
 .tabs-items {
@@ -4214,7 +4272,7 @@ ul.chart-tabs {
     fill: black;
     font: 18px sans-serif;
     text-anchor: end;
-    font-weight: bold;
+    //
   }
 
   .x .tick line {
@@ -4262,15 +4320,14 @@ ul.chart-tabs {
   &.label {
     fill: #57D0b5;
     font: 18px sans-serif;
-    font-weight: bold;
+    //
   }
 }
 
 .y2 {
   &.label {
-    fill: #26a7dd;
+    fill: @mainText-color-selected;
     font: 18px sans-serif;
-    font-weight: bold;
   }
 
   .tick line {
@@ -4303,7 +4360,7 @@ ul.chart-tabs {
     float: left;
     padding: 5px 10px;
     color: #939395;
-    font-weight: bold;
+    //
     background-color: #f4f4f4;
     border: @thin-border #dfdfdf;
     cursor: pointer;
@@ -4313,7 +4370,7 @@ ul.chart-tabs {
     }
 
     &.active {
-      background-color: #00a2d0;
+      background-color: @bg-main-menu-selected;
       color: white;
     }
   }
@@ -4419,7 +4476,7 @@ h3.dashboard {
   }
   h2 {
     text-align: center;
-    font-weight: bold;
+    //
     font-size: 18px;
     color: @mainText-color-selected;
     line-height: 40px;
@@ -4429,7 +4486,7 @@ h3.dashboard {
     tr {
       th {
         text-align: left;
-        font-weight: bold;
+        //
         padding-left: 3px;
         line-height: 25px;
         border-bottom: 2px solid @border-color-main;
@@ -4598,11 +4655,16 @@ h3.dashboard {
   }
   &.closed, &.done, &.unDone {
     display: block;
-    background-color: @green-lights-color;
+    background-color: @tilte-color;
     color: @mainText-color;
     text-align: center;
     .border-radius(4px);
-    padding: 2px 5px;
+    padding: 0 5px;
+    line-height: 16px;
+  }
+  &.projectClosed {
+    .closed;
+    background-color: inherit;
   }
   &.unDone {
     background-color: @yellow-lights-color;
@@ -4726,7 +4788,7 @@ h3.dashboard {
     margin: 2px 0;
     border: 1px solid #CCC;
     background: #F5F5F5;
-    font-weight: bold;
+
     cursor: pointer;
     div.name {
       .text-overflow;
@@ -5012,6 +5074,8 @@ textarea#editInput {
   }
 }
 
+
+
 .grid {
   min-width: 100%;
   font-size: 11px;
@@ -5086,7 +5150,7 @@ textarea#editInput {
     }
 
     &:hover td {
-      background: @dashBoard-bg-menu-hoverColor !important;
+      //background: @dashBoard-bg-menu-hoverColor !important;
       color: #ffffff;
     }
 
@@ -5123,7 +5187,7 @@ textarea#editInput {
           background: pink;
         }
         &.red {
-          background-color: #fd0001;
+          background-color: @unpaid-wtrack;
           color: white;
           border-bottom: 1px solid @border-color-main;
           border-left: 1px solid @border-color-main;
@@ -5285,7 +5349,7 @@ textarea#editInput {
         width: 30px;
         padding: 0;
         text-align: center;
-        border-right: 1px solid #d2d2d2;
+        border-right: 1px solid @border-color-main;
       }
     }
    /* tr.head-row {
@@ -5314,10 +5378,10 @@ textarea#editInput {
   }
 
   &.attendance {
-    border-bottom: 5px solid #4c5975;
+    border-bottom: 1px solid @border-color-main;
 
     .V {
-      background-color: #a32a2c;
+      background-color: @unpaid-wtrack;
       color: #ffffff;
     }
     .P {
@@ -5325,15 +5389,15 @@ textarea#editInput {
       color: #ffffff;
     }
     .S {
-      background-color: #228924;
+      background-color: @tilte-color;
       color: #ffffff;
     }
     .E {
-      background-color: #0000fd;
+      background-color: @forInfo-caption-color;
       color: #ffffff;
     }
     .borderRight {
-      border-right: 1px solid #4c5975;
+      border-right: 1px solid @border-color-main;
     }
     .weekend {
       color: #ccc;
@@ -5341,10 +5405,10 @@ textarea#editInput {
     }
 
     tr:first-child, .borderRight {
-      border-right: 1px solid #4c5975;
+      border-right: 1px solid @border-color-main;
     }
     th {
-      border: 1px solid #4c5975;
+      border: 1px solid @border-color-main;
       background-color: #4c5975;
       color: #fff;
     }
@@ -5357,17 +5421,17 @@ textarea#editInput {
       }
 
       td {
-        border-left: 1px solid #d2d2d2;
+        border-left: 1px solid @border-color-main;
       }
 
       td:first-child {
         min-width: 100px;
-        border-left: 1px solid #4c5975;
-        border-right: 1px solid #4c5975;
+        border-left: 1px solid @border-color-main;
+        border-right: 1px solid @border-color-main;
       }
 
       td:nth-child(7n+1) {
-        border-right: 1px solid #4c5975;
+        border-right: 1px solid @border-color-main;
       }
     }
 
@@ -5380,15 +5444,15 @@ textarea#editInput {
       color: #ffffff;
     }
     .sick {
-      background-color: #228924;
+      background-color: @tilte-color;
       color: #ffffff;
     }
     .education {
-      background-color: #0000fd;
+      background-color: @forInfo-caption-color;
       color: #ffffff;
     }
     .borderRight {
-      border-right: 1px solid #4c5975;
+      border-right: 1px solid @border-color-main;
     }
     .weekend {
       color: #ccc;
@@ -5409,7 +5473,7 @@ textarea#editInput {
       }
 
       #currentEmployee, #currentStatus, #currentTime {
-        color: @grey;
+        color: @mainText-color;
           option {
             background-color: @bg-main;
           }
@@ -5476,10 +5540,10 @@ textarea#editInput {
                 background-color: #f9a203;
               }
               &.sick {
-                background-color: #228825;
+                background-color: @tilte-color;
               }
               &.education {
-                background-color: #0000fc;
+                background-color: @forInfo-caption-color;
               }
             }
             .lastTime {
@@ -5681,7 +5745,7 @@ textarea#editInput {
     border-spacing: 5px;
     &#tableBySales {
       .th {
-        border-bottom: 2px solid #ed9409;
+        border-bottom: 2px solid @revenue-by-sales;
       }
     }
     &#revenueTotal {
@@ -5726,7 +5790,7 @@ textarea#editInput {
     }
     &#tableUnpaidBySales {
       .th {
-        border-bottom: 2px solid #fd0001;
+        border-bottom: 2px solid @unpaid-wtrack;
       }
     }
     &#tableCancelledBySales {
@@ -5753,7 +5817,7 @@ textarea#editInput {
     display: table-row;
     width: auto;
     &.totalBySales {
-      background-color: #ed9409
+      background-color: @revenue-by-sales
     }
     &.revenueTotal {
       background-color: #289718
@@ -5777,16 +5841,16 @@ textarea#editInput {
       background-color: #9c827b
     }
     &.totalByDep, &.totalHoursByDep {
-      background-color: #00af00
+      background-color: @revenueByDepartment;
     }
     &.totalPaid {
       background-color: #a2a2a3
     }
     &.totalUnpaid {
-      background-color: #fd0001
+      background-color: @unpaid-wtrack
     }
     &.totalCancelled {
-      background-color: #3d4bfd
+      background-color: @forInfo-caption-color;
     }
     &.totalProject {
       background-color: #5a9ad4
@@ -5867,7 +5931,7 @@ textarea#editInput {
     width: 7.5%;
   }
   .th-green {
-    border-bottom: 2px solid #00af00;
+    border-bottom: 2px solid @revenueByDepartment;
   }
 }
 
@@ -5884,7 +5948,7 @@ textarea#editInput {
   padding: 5px 8px 5px 8px;
   height: 40px;
   line-height: 15px;
-  border-bottom: 1px solid #d2d2d2;
+  border-bottom: 1px solid @border-color-main;
   position: relative;
   &.large {
     line-height: 29px;
@@ -6064,6 +6128,7 @@ textarea#editInput {
   .filter-dialog-tabs {
     box-sizing: border-box;
     border: 1px solid #c0c0c0;
+    border-bottom: 0;
     position: relative;
     float: left;
     display: flex;
@@ -6098,16 +6163,16 @@ textarea#editInput {
 .drop-down-filter {
   box-sizing: content-box;
   font-family: @lucida-font;
-  padding: 5px 10px;
+  padding: 5px 40px;
   position: absolute;
   z-index: 10;
-  width: ~"calc(100% - 22px)";
+  width: ~"calc(100% - 82px)";
   background-color: @bg-drop-down-color;
   border: 1px solid @filter-border-color;
   right: 0;
   top: ~"calc(100% - 3px)";
   #applyFilter {
-    font-weight: bold;
+
     text-align: center;
     width: ~"calc(100% - 30px)";
     margin: 10px 5px 5px 5px;
@@ -6120,19 +6185,21 @@ textarea#editInput {
     cursor: pointer;
     font-size: 12px;
     padding: 5px 10px;
+    color: @filter-text-color;
   }
   #filtersContent {
     .filterGroup {
       overflow: hidden;
       text-align: center;
       border: 1px solid @border-color-main;
-      background-color: white;
+      background-color: @bg-main;
       border-radius: 5px;
       margin: 5px;
       li {
         &.miniStylePagination {
           list-style: none;
-          background-color: @lightgrey;
+          //background-color: @lightgrey;
+          border-top: 1px solid @border-color-main;
           .prev.disabled,
           .next.disabled {
             display: none;
@@ -6148,16 +6215,16 @@ textarea#editInput {
           content: '\2713';
         }
         &:not(.checkedValue):hover:before {
-          color: @tilte-color;
+          color: @bg-hover-drop-down-color;
         }
         &:not(.checkedValue):before,
         &.checkedValue:before,
         &.checkedValue:hover:before {
-          color: white;
+          color: @bg-main;
         }
         &:hover, &.checkedValue {
-          background-color: @tilte-color;
-          color: white;
+          background-color: @bg-hover-drop-down-color;
+          color: @grey;
         }
       }
       .filterValues {
@@ -6171,8 +6238,8 @@ textarea#editInput {
       }
       &:not(.activeGroup) .groupName {
         &.checkedGroup{
-          color: white;
-          background-color: @lightmagenta;
+          color: @mainText-color;
+          background-color: @bg-hover-drop-down-color-active;
           span:before {
             text-align: center;
             height: 10px;
@@ -6182,16 +6249,23 @@ textarea#editInput {
           }
         };
       }
+      &.activeGroup {
+        .groupName {
+          border-bottom: 1px solid @border-color-main;
+        }
+
+      }
       &.activeGroup .groupName,
       & .groupName:hover {
-        color: white;
+        color: @grey;
         background-color: @bg-hover-drop-down-color;
       }
       .groupName {
         cursor: pointer;
-        font-weight: bolder;
+        //font-weight: bolder;
         font-size: 13px;
         padding: 10px;
+        color: @mainText-color;
         &:after {
           content: '\2335';
         }
@@ -6235,8 +6309,9 @@ textarea#editInput {
   margin-right: 90px;
 
   .btn {
-    background: #eeeeee;
+    background: @bg-main;
     padding: 6px;
+    color: @mainText-color;
   }
 
   .filter-check-list {
@@ -6266,7 +6341,7 @@ textarea#editInput {
   margin: 30px 1%;
   width: 98%;
   .V {
-    background-color: #a42a2b;
+    background-color: @unpaid-wtrack;
     color: #ffffff;
   }
   .P {
@@ -6274,11 +6349,11 @@ textarea#editInput {
     color: #ffffff;
   }
   .S {
-    background-color: #228a23;
+    background-color: @tilte-color;
     color: #ffffff;
   }
   .E {
-    background-color: #0000fe;
+    background-color: @forInfo-caption-color;
     color: #ffffff;
   }
   td, th {
@@ -6312,7 +6387,7 @@ textarea#editInput {
   }
   thead {
     th {
-      font-weight: bold;
+      //
       border: 1px solid @border-color-main;
       &#legandCaption {
         text-align: left;
@@ -6338,7 +6413,7 @@ textarea#editInput {
 
   tfoot {
     td {
-      font-weight: bold;
+      //
     }
   }
 
@@ -6351,7 +6426,7 @@ textarea#editInput {
         text-align: right;
       }
       &.totalDays {
-        font-weight: bold;
+        //
       }
     }
   }
@@ -6370,7 +6445,7 @@ textarea#editInput {
   }
 
   #caption, .borders, thead, tbody, tfoot {
-    border: 0.2em solid @border-color-main;
+    border: 1px solid @border-color-main;
   }
   #caption, .subHeaderHolder {
     th {
@@ -6448,6 +6523,9 @@ textarea#editInput {
     box-sizing: border-box;
     border-radius: 0 5px 5px 0;
     height: 28px;
+    background-color: @bg-main;
+    color: @kanab-text-color;
+    border-left: 1px solid #7f7f80;
   }
   .removeSavedFilter {
     float: right;
@@ -6457,7 +6535,7 @@ textarea#editInput {
   .line {
     height: 1px;
     width: 100%;
-    background-color: #e6e6e6;
+    background-color: @border-color-main;
     margin: 9px 0;
   }
   li {
@@ -6486,4 +6564,8 @@ textarea#editInput {
   display: inline-block;
   padding-right: 17px;
   margin-right: 3px;
+}
+
+.forInfoWrap {
+  overflow: hidden;
 }

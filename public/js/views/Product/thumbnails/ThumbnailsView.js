@@ -147,16 +147,16 @@
                     self.hideItemsNumber(e);
                 });
 
-                self.filterview = new filterView({ contentType: self.contentType });
+                self.filterView = new filterView({ contentType: self.contentType });
 
-                self.filterview.bind('filter', function (filter) {
+                self.filterView.bind('filter', function (filter) {
                     self.showFilteredPage(filter)
                 });
-                self.filterview.bind('defaultFilter', function () {
+                self.filterView.bind('defaultFilter', function () {
                     self.showFilteredPage({});
                 });
 
-                self.filterview.render();
+                self.filterView.render();
 
                 return this;
             },

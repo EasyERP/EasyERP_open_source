@@ -11,14 +11,14 @@
      <% } %>
   <% }) %>
 
-  <span id="totalForDep"><%= totalForDep ? totalForDep : '&nbsp' %></span>
+  <span id="totalForDep"><%= totalForDep ? currencySplitter(totalForDep.toFixed()) : '&nbsp' %></span>
 
   <% employees.forEach(function(employee, index){ %>
   <%var byMonthData = employee.hoursTotal%>
 
   <div class="divRow" data-val="<%=content%>">
     <%if (byMonthData) {%>
-       <span class="divCell forBonus" ><%= byMonthData[key] ? byMonthData[key] : '&nbsp'%></span>
+       <span class="divCell forBonus" ><%= byMonthData[key] ? currencySplitter(byMonthData[key].toFixed()) : '&nbsp'%></span>
     <% } else { %>
        <span class="divCell forBonus" ><%= '&nbsp'%></span>
     <% } %>
@@ -29,6 +29,6 @@
 
 <div class="divCell ">
       <span>
-        <%= total ? total : '&nbsp'%>
+        <%= total ? currencySplitter(total.toFixed()) : '&nbsp'%>
       </span>
 </div>
