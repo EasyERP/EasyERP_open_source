@@ -9,12 +9,10 @@ module.exports = (function () {
         projectShortDesc: { type: String, default: 'emptyProject' },
         projectName: { type: String, default: 'emptyProject', unique: true },
         task: [{ type: ObjectId, ref: 'Tasks', default: null }],
-        //customer: { type: ObjectId, ref: 'Customers', default: null },
         customer: {
             _id: {type: ObjectId, ref: 'Customers', default: null},
             name: String
         },
-        //projectmanager: { type: ObjectId, ref: 'Employees', default: null },
         projectmanager: {
             _id: {type: ObjectId, ref: 'Employees', default: null},
             name: String
@@ -31,7 +29,6 @@ module.exports = (function () {
         TargetEndDate: Date,
         sequence: { type: Number, default: 0 },
         parent: { type: String, default: null },
-        //workflow: { type: ObjectId, ref: 'workflows', default: null },
         workflow: {
             _id: {type: ObjectId, ref: 'workflows', default: null },
             name: String
@@ -69,7 +66,14 @@ module.exports = (function () {
             endDate: { type: Date, default: null },
             endWeek: Number,
             endYear: Number
-        }]
+        }],
+        budget: {
+            _id: false,
+            projectTeam: Array,
+            bonus: Array,
+            budget: Array,
+            projectValues: JSON
+        }
     }, { collection: 'Project' });
 
     mongoose.model('Project', projectSchema);

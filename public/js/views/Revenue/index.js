@@ -56,7 +56,6 @@ define([
         perMonthForAllBonus: _.template(perMonthForAllBonus),
         hoursSoldByMonth: _.template(hoursSold),
 
-
         paidUnpaidDateRange: {},
 
         $currentStartWeek: null,

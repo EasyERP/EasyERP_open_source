@@ -18,7 +18,9 @@ define([
                },
                populateProjectForDashboard:function (url, callback) {
                    dataService.getData(url, {}, function (response) {
-                       if (callback) callback(response);
+                       if (callback) {
+                           callback(response);
+                       }
                    });
                },
                renderProjectPM:function(){

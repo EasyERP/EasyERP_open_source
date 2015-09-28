@@ -182,7 +182,7 @@ define([
                             localCounter++;
                             count--;
                             if (count === 0) {
-                                if (this.hasAlphabet){
+                                if (this.hasAlphabet) {
                                     common.buildAphabeticArray(that.collection, function (arr) {
                                         $("#startLetter").remove();
                                         that.alphabeticArray = arr;
@@ -359,9 +359,7 @@ define([
                 context.startTime = new Date();
                 context.newCollection = false;
 
-                if (Object.keys(filter).length === 0) {
-                    this.filter = {};
-                }
+                this.filter = Object.keys(filter).length === 0 ? {} : filter;
 
                 context.changeLocationHash(1, itemsNumber, filter);
                 context.collection.showMore({count: itemsNumber, page: 1, filter: filter});
@@ -474,7 +472,7 @@ define([
             },
 
             renderAlphabeticalFilter: function () {
-                this.hasAlphabet=true;
+                this.hasAlphabet = true;
                 var self = this;
 
                 common.buildAphabeticArray(this.collection, function (arr) {
