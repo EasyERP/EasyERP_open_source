@@ -213,7 +213,11 @@ var Project = function (models) {
                         projectValues.markUp = ((budgetTotal.profitSum / budgetTotal.costSum) * 100).toFixed();
                         projectValues.radio = ((budgetTotal.revenueSum / budgetTotal.costSum) * 100).toFixed();
 
-                       var empQuery = Employee.find({_id: {$in: keys}}, {'name': 1, 'jobPosition.name': 1, 'department.name': 1}).lean();
+                        var empQuery = Employee.find({_id: {$in: keys}}, {
+                            'name': 1,
+                            'jobPosition.name': 1,
+                            'department.name': 1
+                        }).lean();
                         empQuery.exec(function (err, response) {
 
                             if (err) {
@@ -259,21 +263,36 @@ var Project = function (models) {
                                 budgetTotal: budgetTotal
                             };
 
-                            Project.update({_id: project._id}, {$set: {budget: budget}}, function(err, result){
-                                if (err){
+                            Project.update({_id: project._id}, {$set: {budget: budget}}, function (err, result) {
+                                if (err) {
                                     return next(err);
                                 }
 
-                               console.log('success');
+                                console.log('success');
                             })
                         });
                     }
                 });
             });
-             res.status(200).send('success');
+            res.status(200).send('success');
         });
 
     };
+
+    this.getForDashboard = function (req, res, next) {
+        var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
+
+        Project
+            .find()
+            .sort({projectName: 1})
+            .lean()
+            .exec(function (err, projects) {
+                if (err) {
+                    return next(err);
+                }
+                res.status(200).send(projects)
+            });
+    }
 };
 
 module.exports = Project;
