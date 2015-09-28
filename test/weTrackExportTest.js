@@ -9,7 +9,6 @@ var expect = require('chai').expect;
 var host = process.env.HOST;
 var url;
 var aggent;
-var queryString = '?week=23&year=2015';
 
 describe("BDD for revenue", function () {  // Runs once before all tests start.
     before(function (done) {
@@ -30,7 +29,7 @@ describe("BDD for revenue", function () {  // Runs once before all tests start.
         agent = null;
     });
 
-    it("bySales should return array result", function (done) {
+    it("export should return file", function (done) {
         aggent
             .get('wTrack/exportToXlsx')
             .expect(200)
