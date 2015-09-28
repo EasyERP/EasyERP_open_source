@@ -19,7 +19,6 @@ define([
             contentCollection       : contentCollection,
             filterView              : filterView,
             contentType             : "Employees",
-            viewType                : "list",
             totalCollectionLengthUrl: '/totalCollectionLength/Employees',
             formUrl                 : "#easyErp/Employees/form/",
 
