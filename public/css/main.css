@@ -8482,7 +8482,7 @@ textarea#editInput {
 .drop-down-filter #filtersContent .filterGroup li:hover,
 .drop-down-filter #filtersContent .filterGroup li.checkedValue {
   background-color: #f7f7f7;
-  color: white;
+  color: #595959;
 }
 .drop-down-filter #filtersContent .filterGroup .filterValues {
   text-align: left;
@@ -8549,6 +8549,7 @@ textarea#editInput {
 #searchContainer .btn {
   background: #eeeeee;
   padding: 6px;
+  color: #595959;
 }
 #searchContainer .filter-check-list {
   margin-top: -1px;
