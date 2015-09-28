@@ -246,8 +246,10 @@ define([
 
             nextPage: function (event) {
                 event.preventDefault();
+
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
+
                 this.nextP({
                     sort         : this.sort,
                     filter       : this.filter,
@@ -326,8 +328,10 @@ define([
                     newCollection: this.newCollection
                 });
                 this.page = 1;
+
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
+
                 this.changeLocationHash(1, itemsNumber, this.filter);
             },
 
