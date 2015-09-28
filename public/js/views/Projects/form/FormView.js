@@ -333,6 +333,7 @@ define([
 			},
 
 			getDataForDetails: function (result) {
+				var validation = true;
 				var projectTeam = [];
 				var bonus = [];
 				var projectValues = {};
@@ -401,92 +402,99 @@ define([
 
 
 				keys = Object.keys(projectTeam);
+				if (keys.length > 0){
 
-				keys.forEach(function (key) {
-					budgetTotal.profitSum += parseFloat(projectTeam[key].profit);
-					budgetTotal.costSum += parseFloat(projectTeam[key].cost);
-					//budgetTotal.rateSum += parseFloat(projectTeam[key].rate);
-					budgetTotal.hoursSum += parseFloat(projectTeam[key].hours);
-					budgetTotal.revenueSum += parseFloat(projectTeam[key].revenue);
-				});
-				budgetTotal.rateSum = parseFloat(budgetTotal.revenueSum) / parseInt(budgetTotal.hoursSum);
+					keys.forEach(function (key) {
+						budgetTotal.profitSum += parseFloat(projectTeam[key].profit);
+						budgetTotal.costSum += parseFloat(projectTeam[key].cost);
+						//budgetTotal.rateSum += parseFloat(projectTeam[key].rate);
+						budgetTotal.hoursSum += parseFloat(projectTeam[key].hours);
+						budgetTotal.revenueSum += parseFloat(projectTeam[key].revenue);
+					});
+					budgetTotal.rateSum = parseFloat(budgetTotal.revenueSum) / parseInt(budgetTotal.hoursSum);
 
-                projectValues.revenue = budgetTotal.revenueSum;
-                projectValues.profit = budgetTotal.profitSum;
-                projectValues.markUp = ((budgetTotal.profitSum / budgetTotal.costSum) * 100).toFixed();
-                projectValues.radio = ((budgetTotal.revenueSum / budgetTotal.costSum) * 100).toFixed();
-                
-                dataService.getData('/employee/getForProjectDetails',
-                    {
-                        data: keys
-                    }, function (response) {
-						bonuses.forEach(function (element) {
-							var objToSave = {};
+					projectValues.revenue = budgetTotal.revenueSum;
+					projectValues.profit = budgetTotal.profitSum;
+					projectValues.markUp = ((budgetTotal.profitSum / budgetTotal.costSum) * 100).toFixed();
+					projectValues.radio = ((budgetTotal.revenueSum / budgetTotal.costSum) * 100).toFixed();
 
-							objToSave.bonus = 0;
-							objToSave.resource = element.employeeId.name.first + ' ' + element.employeeId.name.last;
-							objToSave.percentage = element.bonusId.name;
-
-							if (element.bonusId.isPercent) {
-								objToSave.bonus = (budgetTotal.revenueSum / 100) * element.bonusId.value * 100;
-								bonus.push(objToSave);
-							} else {
-								monthHours.forEach(function (month) {
-									objToSave.bonus += (hoursByMonth[month._id] / month.value[0]) * element.bonusId.value;
-								});
-
-								objToSave.bonus = objToSave.bonus * 100;
-								bonus.push(objToSave);
+					dataService.getData('/employee/getForProjectDetails',
+						{
+							data: keys
+						}, function (response) {
+							if (response.error){
+								validation = false;
+								return false;
 							}
+							bonuses.forEach(function (element) {
+								var objToSave = {};
 
-						});
-						var keysForPT = Object.keys(projectTeam);
-						var sortBudget = [];
-						response.forEach(function (employee) {
-										keysForPT.forEach(function (id) {
-											if (employee._id === id) {
-												sortBudget.push(projectTeam[employee._id]);
-											}
-										})
+								objToSave.bonus = 0;
+								objToSave.resource = element.employeeId.name.first + ' ' + element.employeeId.name.last;
+								objToSave.percentage = element.bonusId.name;
+
+								if (element.bonusId.isPercent) {
+									objToSave.bonus = (budgetTotal.revenueSum / 100) * element.bonusId.value * 100;
+									bonus.push(objToSave);
+								} else {
+									monthHours.forEach(function (month) {
+										objToSave.bonus += (hoursByMonth[month._id] / month.value[0]) * element.bonusId.value;
 									});
-						container.html(template({
-								projectTeam: response,
-								bonus: bonus,
-								budget: sortBudget,
-								projectValues: projectValues,
-								budgetTotal: budgetTotal,
-								currencySplitter: helpers.currencySplitter
-							})
-						);
-						//dataService.getData('/employee/getForProjectDetails',
-						//	{
-						//		data: [pMId]
-						//	}, function (resp) {
-						//		var keysForPT = Object.keys(projectTeam);
-						//		var sortBudget = [];
-                        //
-						//		response.forEach(function (employee) {
-						//			keysForPT.forEach(function (id) {
-						//				if (employee._id === id) {
-						//					sortBudget.push(projectTeam[employee._id]);
-						//				}
-						//			})
-						//		});
-                        //
-						//		response.unshift(resp[0]);
-						//		container.html(template({
-						//				projectTeam: response,
-						//				bonus: bonus,
-						//				budget: sortBudget,
-						//				projectValues: projectValues,
-						//				budgetTotal: budgetTotal,
-						//				currencySplitter: helpers.currencySplitter
-						//			})
-						//		);
-						//	}, this);
+
+									objToSave.bonus = objToSave.bonus * 100;
+									bonus.push(objToSave);
+								}
+
+							});
+							var keysForPT = Object.keys(projectTeam);
+							var sortBudget = [];
+							response.forEach(function (employee) {
+								keysForPT.forEach(function (id) {
+									if (employee._id === id) {
+										sortBudget.push(projectTeam[employee._id]);
+									}
+								})
+							});
+							container.html(template({
+									projectTeam: response,
+									bonus: bonus,
+									budget: sortBudget,
+									projectValues: projectValues,
+									budgetTotal: budgetTotal,
+									currencySplitter: helpers.currencySplitter
+								})
+							);
+							//dataService.getData('/employee/getForProjectDetails',
+							//	{
+							//		data: [pMId]
+							//	}, function (resp) {
+							//		var keysForPT = Object.keys(projectTeam);
+							//		var sortBudget = [];
+							//
+							//		response.forEach(function (employee) {
+							//			keysForPT.forEach(function (id) {
+							//				if (employee._id === id) {
+							//					sortBudget.push(projectTeam[employee._id]);
+							//				}
+							//			})
+							//		});
+							//
+							//		response.unshift(resp[0]);
+							//		container.html(template({
+							//				projectTeam: response,
+							//				bonus: bonus,
+							//				budget: sortBudget,
+							//				projectValues: projectValues,
+							//				budgetTotal: budgetTotal,
+							//				currencySplitter: helpers.currencySplitter
+							//			})
+							//		);
+							//	}, this);
 
 
-					}, this);
+						}, this);
+				}
+
 			},
 
 			getWTrack : function (cb) {
@@ -625,6 +633,7 @@ define([
 
 			deleteItems: function () {
 				var mid = 39;
+				var self = this;
 				this.formModel.urlRoot = "/Projects";
 				this.formModel.destroy({
 					headers: {
