@@ -14,7 +14,6 @@ define([
             newCollection     : null,
             page              : null,
             viewType          : 'list',
-            hasAlphabet       : false,
 
             events: {
                 "click .itemsNumber"          : "switchPageCounter",
@@ -384,15 +383,20 @@ define([
 
             showMoreContent: function (newModels) {
                 var holder = this.$el;
-                holder.find("#listTable").empty();
                 var itemView;
+
+                holder.find("#listTable").empty();
+
                 itemView = new this.listItemView({
                     collection : newModels,
                     page       : holder.find("#currentShowPage").val(),
                     itemsNumber: holder.find("span#itemsNumber").text()
                 });
+
                 holder.append(itemView.render());
+
                 itemView.undelegateEvents();
+
                 var pagenation = holder.find('.pagination');
                 if (newModels.length !== 0) {
                     pagenation.show();
