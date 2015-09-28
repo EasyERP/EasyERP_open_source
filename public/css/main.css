@@ -432,14 +432,26 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   z-index: 20000;
   position: fixed;
   top: 5px;
-  width: 100vw;
+  width: 100%;
   margin: 0 auto;
 }
 .notification .error {
   left: 85%;
   width: 15%;
   position: relative;
-  background: darkred;
+  line-height: 17px;
+  padding-right: 10px;
+  padding-left: 10px;
+  background-color: #fe7e86;
+}
+.notification .notify {
+  left: 85%;
+  width: 15%;
+  position: relative;
+  line-height: 17px;
+  padding-right: 10px;
+  padding-left: 10px;
+  background-color: #00db30;
 }
 .notification .animate {
   position: absolute;
@@ -451,12 +463,6 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   margin-left: 0px;
   left: 100%;
   opacity: 0;
-}
-.notification .animate .error {
-  background-color: #fe7e86;
-}
-.notification .animate .notify {
-  background-color: #00db30;
 }
 html,
 body {
@@ -8485,7 +8491,7 @@ textarea#editInput {
   cursor: pointer;
   font-size: 12px;
   padding: 5px 10px;
-  color: #c1c1c1;
+  color: #595959;
 }
 .drop-down-filter #filtersContent .filterGroup {
   overflow: hidden;
@@ -8523,7 +8529,7 @@ textarea#editInput {
 .drop-down-filter #filtersContent .filterGroup li:hover,
 .drop-down-filter #filtersContent .filterGroup li.checkedValue {
   background-color: #ffffff;
-  color: #595959;
+  color: #c1c1c1;
 }
 .drop-down-filter #filtersContent .filterGroup .filterValues {
   text-align: left;
@@ -8767,7 +8773,7 @@ textarea#editInput {
   width: 84%;
   border-bottom-left-radius: 5px;
   border-top-left-radius: 5px;
-  color: #c1c1c1;
+  color: #595959;
 }
 #favoritesContent #saveFilterButton {
   border: 1px solid #7f7f80;
