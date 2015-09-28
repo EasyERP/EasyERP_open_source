@@ -15,18 +15,20 @@ define([
 
     function (listViewBase, listTemplate, stagesTamplate, createView, listItemView, listTotalView, editView, quotationModel, contentCollection, filterView, common, dataService) {
         var OrdersListView = listViewBase.extend({
-            createView       : createView,
-            listTemplate     : listTemplate,
-            listItemView     : listItemView,
-            contentCollection: contentCollection,
+            createView              : createView,
+
+            listTemplate            : listTemplate,
+            listItemView            : listItemView,
+            contentCollection       : contentCollection,
             totalCollectionLengthUrl: '/order/totalCollectionLength',
-            contentType      : 'Order',//needs in view.prototype.changeLocationHash
+            contentType             : 'Order',//needs in view.prototype.changeLocationHash
 
             events: {
                 "click .stageSelect"                : "showNewSelect",
                 "click .list tbody td:not(.notForm)": "goToEditDialog",
                 "click .newSelectList li"           : "chooseOption",
-            },
+            }
+            ,
 
             initialize: function (options) {
                 this.startTime = options.startTime;
@@ -42,7 +44,8 @@ define([
 
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
                 this.contentCollection = contentCollection;
-            },
+            }
+            ,
 
             chooseOption: function (e) {
                 var self = this;
@@ -64,7 +67,8 @@ define([
 
                 this.hideNewSelect();
                 return false;
-            },
+            }
+            ,
 
             showNewSelect: function (e) {
                 if ($(".newSelectList").is(":visible")) {
@@ -74,11 +78,13 @@ define([
                     $(e.target).parent().append(_.template(stagesTamplate, {stagesCollection: this.stages}));
                     return false;
                 }
-            },
+            }
+            ,
 
             hideNewSelect: function (e) {
                 $(".newSelectList").remove();
-            },
+            }
+            ,
 
             render: function () {
                 var self;
@@ -101,8 +107,8 @@ define([
                 this.renderCheckboxes();
 
                 this.renderPagination(currentEl, this);
-                this.renderAlphabeticalFilter(this);
-                this.renderFilter(self);
+                //    this.renderAlphabeticalFilter(this);
+            //    this.renderFilter(self);
 
                 currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
@@ -113,21 +119,9 @@ define([
                 }, function (stages) {
                     self.stages = stages;
 
-                    dataService.getData('/quotation/getFilterValues', null, function (values) {
-
-                        FilterView = new filterView({collection: stages, customCollection: values});
-                        // Filter custom event listen ------begin
-                        FilterView.bind('filter', function () {
-                            self.showFilteredPage()
-                        });
-                        FilterView.bind('defaultFilter', function () {
-                            self.showFilteredPage();
-                        });
-                        // Filter custom event listen ------end
-                    })
-
                 });
-            },
+            }
+            ,
 
             goToEditDialog: function (e) {
                 e.preventDefault();
@@ -149,4 +143,5 @@ define([
 
         });
         return OrdersListView;
-    });
+    })
+;

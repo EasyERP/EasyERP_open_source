@@ -14,6 +14,7 @@ define([
             newCollection     : null,
             page              : null,
             viewType          : 'list',
+            hasAlphabet       : false,
 
             events: {
                 "click .itemsNumber"     : "switchPageCounter",
@@ -24,7 +25,7 @@ define([
                 "click #firstShowPage"   : "firstPage",
                 "click #lastShowPage"    : "lastPage",
 
-                "click .checkbox"              : "checked",
+                "click .checkbox"             : "checked",
                 "click .list td:not(.notForm)": "gotoForm",
 
                 "mouseover .currentPageList": "showPagesPopup",
@@ -100,6 +101,7 @@ define([
                 dataService.getData(this.totalCollectionLengthUrl, {
                     currentNumber: currentNumber,
                     filter       : filter,
+                    contentType  : this.contentType,
                     newCollection: this.newCollection
                 }, function (response, context) {
 
@@ -121,7 +123,9 @@ define([
             },
 
             gotoForm: function (e) {
-                if (!this.formUrl) return;
+                if (!this.formUrl) {
+                    return;
+                }
                 App.ownContentType = true;
                 var id = $(e.target).closest("tr").data("id");
                 window.location.hash = this.formUrl + id;
@@ -178,25 +182,27 @@ define([
                             localCounter++;
                             count--;
                             if (count === 0) {
-                                var currentEl = that.$el;
-                                common.buildAphabeticArray(that.collection, function (arr) {
-                                    $("#startLetter").remove();
-                                    that.alphabeticArray = arr;
-                                    $('#searchContainer').after(_.template(aphabeticTemplate, {
-                                        alphabeticArray   : that.alphabeticArray,
-                                        selectedLetter    : (that.selectedLetter == "" ? "All" : that.selectedLetter),
-                                        allAlphabeticArray: that.allAlphabeticArray
-                                    }));
-                                    var currentLetter = (that.filter) ? that.filter.letter : null;
-                                    if (currentLetter) {
-                                        $('#startLetter').find('a').each(function () {
-                                            var target = $(this);
-                                            if (target.text() == currentLetter) {
-                                                target.addClass("current");
-                                            }
-                                        });
-                                    }
-                                });
+                                if (this.hasAlphabet){
+                                    common.buildAphabeticArray(that.collection, function (arr) {
+                                        $("#startLetter").remove();
+                                        that.alphabeticArray = arr;
+                                        $('#searchContainer').after(_.template(aphabeticTemplate, {
+                                            alphabeticArray   : that.alphabeticArray,
+                                            selectedLetter    : (that.selectedLetter == "" ? "All" : that.selectedLetter),
+                                            allAlphabeticArray: that.allAlphabeticArray
+                                        }));
+                                        var currentLetter = (that.filter) ? that.filter.letter : null;
+                                        if (currentLetter) {
+                                            $('#startLetter').find('a').each(function () {
+                                                var target = $(this);
+                                                if (target.text() == currentLetter) {
+                                                    target.addClass("current");
+                                                }
+                                            });
+                                        }
+                                    });
+                                }
+
                                 that.deleteCounter = localCounter;
                                 that.deletePage = $("#currentShowPage").val();
                                 that.deleteItemsRender(that.deleteCounter, that.deletePage);
@@ -234,6 +240,7 @@ define([
                 });
                 dataService.getData(this.totalCollectionLengthUrl, {
                     filter       : this.filter,
+                    contentType  : this.contentType,
                     newCollection: this.newCollection
                 }, function (response, context) {
                     context.listLength = response.count || 0;
@@ -386,7 +393,9 @@ define([
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
 
-                if (this.filterView) this.filterView.renderFilterContent();
+                if (this.filterView) {
+                    this.filterView.renderFilterContent();
+                }
 
                 holder.find('#timeRecivingDataFromServer').remove();
                 holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
@@ -465,6 +474,7 @@ define([
             },
 
             renderAlphabeticalFilter: function () {
+                this.hasAlphabet=true;
                 var self = this;
 
                 common.buildAphabeticArray(this.collection, function (arr) {
@@ -555,7 +565,9 @@ define([
 
             for (var i = 0, length = protoKeys.length; i < length; i++) {
                 key = protoKeys[i];
-                if (viewEvents.hasOwnProperty(key)) continue;
+                if (viewEvents.hasOwnProperty(key)) {
+                    continue;
+                }
                 viewEvents[key] = protoEvents[key];
             }
 
