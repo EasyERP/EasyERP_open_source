@@ -183,7 +183,9 @@ define([
 							self.disableEdit();
                             var url = window.location.hash;
                             Backbone.history.fragment = "";
-                            Backbone.history.navigate(url, {trigger: true});
+							setTimeout(function(){
+								Backbone.history.navigate(url, {trigger: true});
+							}, 500);
 						},
 						error  : function (model, xhr) {
 							self.errorNotification(xhr);
@@ -275,6 +277,7 @@ define([
 				var paralellTasks;
 				var self = this;
 				var templ = _.template(ProjectsFormTemplate);
+				var template = _.template(DetailsTemplate);
 				var thisEl = this.$el;
 				var notDiv;
 				var bonusView;
@@ -326,7 +329,7 @@ define([
 						bonus: formModel.budget.bonus,
 						budget: formModel.budget.budget,
 						projectValues: formModel.budget.projectValues,
-						//budgetTotal: formModel.budget.,
+						budgetTotal: formModel.budget.budgetTotal,
 						currencySplitter: helpers.currencySplitter
 					})
 				);
@@ -475,34 +478,6 @@ define([
 									currencySplitter: helpers.currencySplitter
 								})
 							);
-							//dataService.getData('/employee/getForProjectDetails',
-							//	{
-							//		data: [pMId]
-							//	}, function (resp) {
-							//		var keysForPT = Object.keys(projectTeam);
-							//		var sortBudget = [];
-							//
-							//		response.forEach(function (employee) {
-							//			keysForPT.forEach(function (id) {
-							//				if (employee._id === id) {
-							//					sortBudget.push(projectTeam[employee._id]);
-							//				}
-							//			})
-							//		});
-							//
-							//		response.unshift(resp[0]);
-							//		container.html(template({
-							//				projectTeam: response,
-							//				bonus: bonus,
-							//				budget: sortBudget,
-							//				projectValues: projectValues,
-							//				budgetTotal: budgetTotal,
-							//				currencySplitter: helpers.currencySplitter
-							//			})
-							//		);
-							//	}, this);
-
-
 						}, this);
 				}
 

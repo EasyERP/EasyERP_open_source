@@ -213,11 +213,9 @@ var Project = function (models) {
                         projectValues.markUp = ((budgetTotal.profitSum / budgetTotal.costSum) * 100).toFixed();
                         projectValues.radio = ((budgetTotal.revenueSum / budgetTotal.costSum) * 100).toFixed();
 
-                        Employee.find({_id: {$in: keys}}, {
-                            'name': 1,
-                            'jobPosition.name': 1,
-                            'department.name': 1
-                        }, function (err, response) {
+                       var empQuery = Employee.find({_id: {$in: keys}}, {'name': 1, 'jobPosition.name': 1, 'department.name': 1}).lean();
+                        empQuery.exec(function (err, response) {
+
                             if (err) {
                                 return next(err);
                             }
@@ -257,7 +255,8 @@ var Project = function (models) {
                                 projectTeam: response,
                                 bonus: bonus,
                                 budget: sortBudget,
-                                projectValues: projectValues
+                                projectValues: projectValues,
+                                budgetTotal: budgetTotal
                             };
 
                             Project.update({_id: project._id}, {$set: {budget: budget}}, function(err, result){
@@ -271,7 +270,7 @@ var Project = function (models) {
                     }
                 });
             });
-            // res.status(200).send('success');
+             res.status(200).send('success');
         });
 
     };

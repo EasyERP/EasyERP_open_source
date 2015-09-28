@@ -13,7 +13,7 @@
             <%var count = 0;%>
             <% projectTeam.forEach(function(element){ %>
             <tr>
-                <td><%=element.fullName%></td>
+                <td><%=element.name.first + ' ' + element.name.last%></td>
                 <td><%=element.department.name%></td>
                 <td><%=element.jobPosition.name%></td>
             </tr>

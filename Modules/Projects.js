@@ -314,6 +314,7 @@ var Project = function (models, event) {
                                 logWriter.log("Project.js saveProjectToDb _project.save" + err);
                                 res.send(500, {error: 'Project.save BD error'});
                             } else {
+                                event.emit('updateProjectDetails', {req: req, _id: result._id});
                                 res.send(201, {success: 'A new Project crate success', result: result, id: result._id});
                             }
                         }
@@ -1290,6 +1291,7 @@ var Project = function (models, event) {
                     InvoiceSchema = mongoose.Schemas['wTrackInvoice'];
                     Invoice = models.get(req.session.lastDb, 'wTrackInvoice', InvoiceSchema);
 
+                    event.emit('updateProjectDetails', {req: req, _id: project._id});
                     event.emit('updateName', _id, wTrackModel, 'project._id', 'project.projectName', project.projectName);
                     event.emit('updateName', _id, wTrackModel, 'project._id', 'project.customer._id', project.customer._id);
                     event.emit('updateName', _id, wTrackModel, 'project._id', 'project.customer.name', project.customer.name);
@@ -1319,7 +1321,7 @@ var Project = function (models, event) {
             obj.author = req.session.uName;
             data.notes[data.notes.length - 1] = obj;
         }
-        models.get(req.session.lastDb, 'Project', projectSchema).findByIdAndUpdate({_id: _id}, {$set: data}, function (err, projects) {
+        models.get(req.session.lastDb, 'Project', projectSchema).findByIdAndUpdate({_id: _id}, {$set: data}, {new: true}, function (err, projects) {
             if (err) {
                 console.log(err);
                 logWriter.log("Project.js update project.update " + err);
@@ -1364,6 +1366,7 @@ var Project = function (models, event) {
                     });
 
                 }
+                event.emit('updateProjectDetails', {req: req, _id: projects._id});
                 res.send(200, projects);
             }
         });
