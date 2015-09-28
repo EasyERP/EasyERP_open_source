@@ -9,15 +9,13 @@ define([
 ], function (bonusTemplate, createView, currentModel, dataService, common, populate, moment) {
     var BonusView = Backbone.View.extend({
 
-        el: '.bonus-container',
-
         initialize: function (options) {
             this.model = options.model;
             this.responseObj = {};
             this.selectedBonus = [];
             this.startDate = this.model.get('StartDate');
             this.endDate = this.model.get('EndDate');
-            this.render();
+           // this.render();
         },
 
         template: _.template(bonusTemplate),
@@ -190,14 +188,17 @@ define([
 
             self.selectedBonus = [];
             self.$el.find('#removeBonus').hide();
+            this.trigger('save');
         },
 
         setDatepicker: function (name) {
             var self = this;
             var selectedStart = '#' + name + 'StartDate';
             var selectedEnd = '#' + name + 'EndDate';
+            var startDate = $(selectedStart);
+            var endDate = $(selectedEnd);
 
-            $(selectedStart).datepicker({
+            startDate.datepicker({
                 dateFormat: "d M, yy",
                 changeMonth: true,
                 changeYear: true,
@@ -213,7 +214,7 @@ define([
                 }
             });
 
-            $(selectedEnd).datepicker({
+            endDate.datepicker({
                 dateFormat: "d M, yy",
                 changeMonth: true,
                 changeYear: true,

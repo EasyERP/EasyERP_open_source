@@ -187,7 +187,6 @@ var Customers = function (models) {
          * @instance
          */
 
-
         var Model = models.get(req.session.lastDb, 'Customers', CustomerSchema);
         var query = req.query;
         var type = query.type || 'Person';

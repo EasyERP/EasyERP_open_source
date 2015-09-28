@@ -7,6 +7,8 @@ module.exports = function (models) {
     var handler = new PaymentHandler(models);
 
     //router.get('/', handler.getAll);
+
+    router.get('/getForProject', handler.getForProject);
     router.get('/:byType/totalCollectionLength', handler.totalCollectionLength);
     router.get('/:byType/:viewType', handler.getForView);
     router.post('/', handler.create);

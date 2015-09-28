@@ -33,9 +33,11 @@ define([
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
                 // 'keydown': 'keydownHandler'
             },
+
             notHide: function (e) {
                 return false;
             },
+
             keydownHandler: function (e) {
                 switch (e.which) {
                     case 27:
@@ -45,9 +47,11 @@ define([
                         break;
                 }
             },
+
             nextSelect: function (e) {
                 this.showNewSelect(e, false, true);
             },
+
             prevSelect: function (e) {
                 this.showNewSelect(e, true, false);
             },
@@ -97,6 +101,7 @@ define([
             chooseUser: function (e) {
                 $(e.target).toggleClass("choosen");
             },
+
             changeTab: function (e) {
                 $(e.target).closest(".dialog-tabs").find("a.active").removeClass("active");
                 $(e.target).addClass("active");
@@ -104,9 +109,11 @@ define([
                 $(".dialog-tabs-items").find(".dialog-tabs-item.active").removeClass("active");
                 $(".dialog-tabs-items").find(".dialog-tabs-item").eq(n).addClass("active");
             },
+
             close: function () {
                 this._modelBinder.unbind();
             },
+
             addUsers: function (e) {
                 e.preventDefault();
                 var div = $(e.target).parents(".left");
@@ -115,6 +122,7 @@ define([
                 div = $(e.target).parents(".left");
                 this.updateAssigneesPagination(div);
             },
+
             removeUsers: function (e) {
                 e.preventDefault();
                 var div = $(e.target).parents(".left");
@@ -159,12 +167,15 @@ define([
                         }
                     });
             },
+
             hideDialog: function () {
                 $(".create-dialog").remove();
             },
+
             hideNewSelect: function (e) {
                 $(".newSelectList").hide();
             },
+
             showNewSelect: function (e, prev, next) {
                 populate.showSelect(e, prev, next, this);
                 return false;
@@ -198,6 +209,7 @@ define([
                         }]
 
                 });
+
                 populate.getParrentCategory("#parentCategory", "/category", {}, this, true);
                 this.delegateEvents(this.events);
                 return this;

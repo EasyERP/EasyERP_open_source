@@ -2,6 +2,7 @@
 require('pmx').init();
 
 module.exports = function (app, mainDb) {
+    'use strict';
 
     var events = require('events');
     var event = new events.EventEmitter();
@@ -34,13 +35,13 @@ module.exports = function (app, mainDb) {
     var departmentRouter = require('./department')(models);
     var revenueRouter = require('./revenue')(models);
     var wTrackRouter = require('./wTrack')(event, models);
-    var salaryRouter = require('./salary')(models);
+    var salaryRouter = require('./salary')(event, models);
     var opportunityRouter = require('./opportunity')(models);
     var taskRouter = require('./task')(models);
     var jobPositionRouter = require('./jobPosition')(models);
-    var holidayRouter = require('./holiday')(models);
+    var holidayRouter = require('./holiday')(event, models);
     var monthHoursRouter = require('./monthHours')(event, models);
-    var vacationRouter = require('./vacation')(models);
+    var vacationRouter = require('./vacation')(event, models);
     var bonusTypeRouter = require('./bonusType')(models);
     var dashboardRouter = require('./dashboard')(models);
     var filterRouter = require('./filter')(models);
@@ -52,7 +53,7 @@ module.exports = function (app, mainDb) {
         res.sendfile('index.html');
     });
 
-    var requestHandler = require("../requestHandler.js")(event, mainDb);
+    var requestHandler = require("../requestHandler.js")(app, event, mainDb);
 
     app.get('/', function (req, res) {
         res.sendfile('index.html');

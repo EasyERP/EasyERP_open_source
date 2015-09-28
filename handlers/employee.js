@@ -1,15 +1,15 @@
-
 var mongoose = require('mongoose');
 var async = require('async');
 
 var Employee = function (models) {
+    'use strict';
     /**
      * @module Employee
      */
-    var access = require("../Modules/additions/access.js")(models);
-    var EmployeeSchema = mongoose.Schemas['Employee'];
-    var ProjectSchema = mongoose.Schemas['Project'];
-    var _ = require('../node_modules/underscore');
+    //var access = require("../Modules/additions/access.js")(models);
+    var EmployeeSchema = mongoose.Schemas.Employee;
+    var ProjectSchema = mongoose.Schemas.Project;
+    //var _ = require('../node_modules/underscore');
 
     this.getNameAndDepartment = getNameAndDepartment;
 
@@ -57,7 +57,7 @@ var Employee = function (models) {
                     _id: "$projectmanager._id"
                 }
             }], cb);
-        };
+        }
 
         function employeeFinder(assignedArr, cb) {
             Employee
@@ -87,10 +87,12 @@ var Employee = function (models) {
             }, {
                 $group: {
                     _id: "$department._id",
-                    employees: {$push: {
-                        name: {$concat: ['$name.first', ' ', '$name.last']},
-                        _id: '$_id'
-                    }}
+                    employees: {
+                        $push: {
+                            name: {$concat: ['$name.first', ' ', '$name.last']},
+                            _id: '$_id'
+                        }
+                    }
                 }
             }, {
                 $project: {
@@ -99,12 +101,27 @@ var Employee = function (models) {
                     _id: 0
                 }
             }], function (err, employees) {
-                if(err){
+                if (err) {
                     return next(err);
                 }
 
                 res.status(200).send(employees);
             });
+    };
+
+    this.getForProjectDetails = function (req, res, next) {
+        var ids = req.query.data;
+        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+
+
+        Employee.find({_id: {$in: ids}}, {'name': 1,'jobPosition.name': 1, 'department.name': 1}, function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send(result);
+        });
+
     };
 
 };

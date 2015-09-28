@@ -1,8 +1,19 @@
-.list(@defaultColor: @list-color-text, @font-size: 11px, @defaultBgColorOdd: @defaultBgColorOdd-color, @defaultBgColorHover: @defaultBgHover-color, @defaultProgressColor: #f5f5f5, @defaultBorderColor: @list-border-color) {
+.list(@defaultColor: @list-color-text, @font-size: 12px, @defaultBgColorOdd: @defaultBgColorOdd-color, @defaultBgColorHover: @defaultBgHover-color, @defaultProgressColor: #f5f5f5, @defaultBorderColor: @list-border-color) {
   color: @defaultColor !important;
   font-family: @lucida-font;
   width: 100%;
-
+  caption {
+    text-align: left;
+    margin-top: 15px;
+    background-color: @forInfo-caption-color;
+    font-size: 14px;//!!!!!!!!!!!!!!!!!!!!!!!!!
+    line-height: 20px;
+    padding-left: 10px;
+    //color: #1EBBEA;//!!!!!!!!!!
+  }
+  .anotherColor {
+    background-color: @forInfo-caption-color2;
+  }
   tfoot {
     tr {
       border-bottom: 1px solid @defaultBorderColor;
@@ -138,7 +149,7 @@
         }
 
         a {
-          color: #1E8FC6 !important;
+          color: @tilte-color !important;
         }
         a.done {
           color: #00c60b !important;
@@ -158,6 +169,7 @@
 
         &:first-of-type {
           padding-left: 7px;
+          line-height: 10px;
 
           input {
             cursor: pointer;
@@ -177,6 +189,7 @@
   tr:hover {
     background-color: @defaultBgColorHover;
   }
+
 }
 
 .list2 {
@@ -205,4 +218,39 @@
 
 .margin(@t: 5px, @r: 5px, @b: 5px, @l: 5px) {
   margin: @arguments;
+}
+
+#forInfo {
+  .tableProjects {
+    width: 99%;
+    thead{
+      th {
+        text-align: right;
+      }
+      }
+    tbody {
+      td {
+        text-align: right;
+        &:first-child {
+          border-left: 1px solid @list-border-color;
+        }
+      }
+    }
+      tr {
+        .procent {
+          position: relative;
+          padding-right: 20px;
+          &::before {
+            content: '%';
+            display: block;
+            width: 5px;
+            height: 5px;
+            position: absolute;
+            right: 13px;
+
+          }
+        }
+      }
+
+  }
 }

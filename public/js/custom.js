@@ -5,6 +5,7 @@ define([
     'dataService',
     'moment'
 ], function (dateformat, common, CONTENT_TYPES, dataService, moment) {
+    'use strict';
 
     var runApplication = function (success) {
         if (!Backbone.history.fragment) {
@@ -216,6 +217,7 @@ define([
 
     function retriveFromCash(key) {
         App.cashedData = App.cashedData || {};
+
         return App.cashedData[key];
     }
 

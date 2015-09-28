@@ -12,8 +12,8 @@ define([
 
         var EditView = Backbone.View.extend({
             contentType: "Product",
-            imageSrc: '',
-            template: _.template(EditTemplate),
+            imageSrc   : '',
+            template   : _.template(EditTemplate),
 
             initialize: function (options) {
                 _.bindAll(this, "render", "saveItem");
@@ -25,23 +25,23 @@ define([
             },
 
             events: {
-                "click #saveBtn": "saveItem",
-                "click #cancelBtn": "hideDialog",
-                "click .current-selected": "showNewSelect",
-                "click": "hideNewSelect",
-                "mouseenter .avatar": "showEdit",
-                "mouseleave .avatar": "hideEdit",
-                'click .dialog-tabs a': 'changeTab',
-                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-                "click .newSelectList li.miniStylePagination": "notHide",
+                "click #saveBtn"                                                  : "saveItem",
+                "click #cancelBtn"                                                : "hideDialog",
+                "click .current-selected"                                         : "showNewSelect",
+                "click"                                                           : "hideNewSelect",
+                "mouseenter .avatar"                                              : "showEdit",
+                "mouseleave .avatar"                                              : "hideEdit",
+                'click .dialog-tabs a'                                            : 'changeTab',
+                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
+                "click .newSelectList li.miniStylePagination"                     : "notHide",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                "click .details": "showDetailsBox",
-                'keyup #barcode': 'drawBarcode',
-                'change #barcode': 'drawBarcode'
+                "click .details"                                                  : "showDetailsBox",
+                'keyup #barcode'                                                  : 'drawBarcode',
+                'change #barcode'                                                 : 'drawBarcode'
             },
 
-            drawBarcode: function() {
+            drawBarcode: function () {
                 var el = this.$el;
                 var content = el.find("#barcode").val();
 
@@ -55,12 +55,15 @@ define([
             showDetailsBox: function (e) {
                 $(e.target).parent().find(".details-box").toggle();
             },
+
             notHide: function () {
                 return false;
             },
+
             nextSelect: function (e) {
                 this.showNewSelect(e, false, true);
             },
+
             prevSelect: function (e) {
                 this.showNewSelect(e, true, false);
             },
@@ -88,27 +91,28 @@ define([
             chooseUser: function (e) {
                 $(e.target).toggleClass("choosen");
             },
+
             hideDialog: function () {
                 $('.edit-dialog').remove();
                 $(".crop-images-dialog").remove();
                 $(".add-group-dialog").remove();
                 $(".add-user-dialog").remove();
             },
-            showEdit: function () {
+            showEdit  : function () {
                 $(".upload").animate({
-                    height: "20px",
+                    height : "20px",
                     display: "block"
                 }, 250);
 
             },
-            hideEdit: function () {
+            hideEdit  : function () {
                 $(".upload").animate({
-                    height: "0px",
+                    height : "0px",
                     display: "block"
                 }, 250);
 
             },
-            saveItem: function () {
+            saveItem  : function () {
                 var self = this;
 
                 var name = $.trim(this.$el.find("#product").val());
@@ -137,48 +141,47 @@ define([
                 var productType = this.$el.find("#productType").data("id");
                 var categoryEl = this.$el.find('#productCategory');
                 var category = {
-                    _id: categoryEl.data('id'),
+                    _id : categoryEl.data('id'),
                     name: categoryEl.text()
                 };
                 var data = {
-                    canBeSold: canBeSold,
-                    canBeExpensed: canBeExpensed,
+                    canBeSold        : canBeSold,
+                    canBeExpensed    : canBeExpensed,
                     eventSubscription: eventSubscription,
-                    canBePurchased: canBePurchased,
-                    imageSrc: this.imageSrc,
-                    name: name,
-                    info: {
+                    canBePurchased   : canBePurchased,
+                    imageSrc         : this.imageSrc,
+                    name             : name,
+                    info             : {
                         productType: productType,
-                        salePrice: salePrice ? salePrice : 0,
-                        isActive: isActive,
-                        barcode: barcode,
+                        salePrice  : salePrice ? salePrice : 0,
+                        isActive   : isActive,
+                        barcode    : barcode,
                         description: description
                     },
-                    accounting: {
+                    accounting       : {
                         category: category
                     },
-                    groups: {
+                    groups           : {
                         owner: $("#allUsersSelect").data("id"),
                         users: usersId,
                         group: groupsId
                     },
-                    whoCanRW: whoCanRW
+                    whoCanRW         : whoCanRW
                 };
                 this.currentModel.set(data);
                 this.currentModel.save(this.currentModel.changed, {
                     headers: {
                         mid: 58
                     },
-                    patch: true,
+                    patch  : true,
                     success: function (model) {
                         Backbone.history.fragment = "";
                         Backbone.history.navigate(window.location.hash, {trigger: true});
                         self.hideDialog();
                     },
-                    error: function (model, xhr) {
+                    error  : function (model, xhr) {
                         self.errorNotification(xhr);
                     }
-
                 });
             },
 
@@ -191,10 +194,10 @@ define([
             hideNewSelect: function () {
                 $(".newSelectList").hide();
             },
-            chooseOption: function (e) {
+            chooseOption : function (e) {
                 $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
             },
-            deleteItem: function (event) {
+            deleteItem   : function (event) {
                 var mid = 58;
                 event.preventDefault();
                 var self = this;
@@ -208,7 +211,7 @@ define([
                             $('.edit-product-dialog').remove();
                             Backbone.history.navigate("easyErp/" + self.contentType, {trigger: true});
                         },
-                        error: function (model, err) {
+                        error  : function (model, err) {
                             if (err.status === 403) {
                                 alert("You do not have permission to perform this action");
                             }
@@ -217,31 +220,31 @@ define([
                 }
 
             },
-            render: function () {
+            render       : function () {
                 var self = this;
                 var formString = this.template({
                     model: this.currentModel.toJSON()
                 });
                 this.$el = $(formString).dialog({
                     closeOnEscape: false,
-                    autoOpen: true,
-                    resizable: true,
-                    dialogClass: "edit-dialog",
-                    title: "Edit Product",
-                    width: "900",
-                    buttons: {
-                        save: {
-                            text: "Save",
+                    autoOpen     : true,
+                    resizable    : true,
+                    dialogClass  : "edit-dialog",
+                    title        : "Edit Product",
+                    width        : "900",
+                    buttons      : {
+                        save  : {
+                            text : "Save",
                             class: "btn",
                             click: self.saveItem
                         },
                         cancel: {
-                            text: "Cancel",
+                            text : "Cancel",
                             class: "btn",
                             click: self.hideDialog
                         },
                         delete: {
-                            text: "Delete",
+                            text : "Delete",
                             class: "btn",
                             click: self.deleteItem
                         }
@@ -254,8 +257,8 @@ define([
 
                 var notDiv = this.$el.find('.attach-container');
                 this.attachView = new attachView({
-                    model: this.currentModel,
-                    url: "/product/uploadProductFiles",
+                    model   : this.currentModel,
+                    url     : "/product/uploadProductFiles",
                     isCreate: true
                 });
                 notDiv.append(this.attachView.render().el);
