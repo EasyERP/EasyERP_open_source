@@ -298,8 +298,17 @@ define([
                 }, this);
             },
 
+            previouslySelected: undefined,
+
             switchPageCounter: function (event) {
                 event.preventDefault();
+
+                if (this.previouslySelected) {
+                    this.previouslySelected.classList.remove("selectedItemsNumber")
+                }
+                this.previouslySelected = event.target;
+                this.previouslySelected.classList.add("selectedItemsNumber");
+
                 this.startTime = new Date();
                 var itemsNumber = event.target.textContent;
 
