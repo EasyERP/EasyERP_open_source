@@ -7632,7 +7632,7 @@ textarea#editInput {
   background: pink;
 }
 .grid tr td.dashboardWeek.red {
-  background-color: #f13f3f;
+  background-color: #e55253;
   color: white;
   border-bottom: 1px solid #7f7f80;
   border-left: 1px solid #7f7f80;
@@ -7778,7 +7778,7 @@ textarea#editInput {
   border-bottom: 1px solid #7f7f80;
 }
 .grid.attendance .V {
-  background-color: #f13f3f;
+  background-color: #e55253;
   color: #ffffff;
 }
 .grid.attendance .P {
@@ -8066,7 +8066,7 @@ textarea#editInput {
   border-bottom: 2px solid #a2a2a3;
 }
 .grid-conatiner.revenue .divTable#tableUnpaidBySales .th {
-  border-bottom: 2px solid #f13f3f;
+  border-bottom: 2px solid #e55253;
 }
 .grid-conatiner.revenue .divTable#tableCancelledBySales .th {
   border-bottom: 2px solid #3d4bfd;
@@ -8116,7 +8116,7 @@ textarea#editInput {
   background-color: #a2a2a3;
 }
 .grid-conatiner.revenue .divRow.totalUnpaid {
-  background-color: #f13f3f;
+  background-color: #e55253;
 }
 .grid-conatiner.revenue .divRow.totalCancelled {
   background-color: #1ebbea;
@@ -8574,7 +8574,7 @@ textarea#editInput {
   width: 98%;
 }
 .vacation-list .V {
-  background-color: #f13f3f;
+  background-color: #e55253;
   color: #ffffff;
 }
 .vacation-list .P {
