@@ -1,0 +1,101 @@
+
+@tilte-color: #3E88B9; //for hover
+@fontColor-2: #595959;
+//@mainText-color: #fff;
+@mainText-color: @fontColor-2;
+@mainText-color-selected: @tilte-color;
+@mainBlack-color: #808080;
+
+
+/*== Lights =========================*/
+@green-lights-color: @tilte-color;
+@yellow-lights-color: #FFA500;
+
+/*== Borders=========================*/
+@border-color-main: #7f7f80;
+@border-color: @border-color-main;
+@border-color-selected: @bg-main-menu-selected; //lighten(@border-color-main, 30%);
+
+/*==Main menu==========================*/
+
+@bg-main: #EBEBEA;
+@bg-main-menu: @bg-main;
+@bg-main-menu-selected: @tilte-color;
+//@bg-main-menu-selected: #b4b4b5;
+@span-color: @bg-main-menu-selected;
+@grey: @normal-submenu-text;
+
+/*==Sub MENU, Top-bar =========================*/
+
+@bg-submenu: @bg-main;
+@submenu-text-color: @mainText-color;
+@normal-submenu-text: #C1C1C1;
+@current-submenu-text: @tilte-color;
+@non-active-submenu-text: desaturate(@normal-submenu-text, 19%);
+@creatBtn-color: @mainText-color;
+
+/*== Filters ======================*/
+
+@selected-filters-color: @tilte-color;
+@filter-icon-color: @normal-submenu-text;
+@bg-drop-down-color: @bg-main;
+@bg-hover-drop-down-color: lighten(@bg-main, 5%);
+@bg-hover-drop-down-color-active: lighten(@bg-main, 15%);
+@filter-border-color: @border-color-main;
+@filter-text-color: @grey;
+
+/*== Customer ======================*/
+
+@link-color: desaturate(@bg-main-menu-selected, 15%);
+
+/*==LIST ============================*/
+
+@defaultBgColorOdd-color: lighten(@bg-main, 5%);
+@list-color-text: @submenu-text-color;
+@defaultBgHover-color: lighten(@bg-main, 15%);
+@list-border-color: @border-color-main;
+@list-caption-color: @mainText-color;
+
+/*==Form Colum=================================*/
+
+@formColum-main-text-color: @mainText-color;
+@formColum-main-subText-color: @submenu-text-color;
+@formColum-customer-info: @bg-main-menu-selected;
+@input-text-color: #A9A9A9;
+
+
+/*== TABS ======================================*/
+@whiteText: #fff;
+@bg-butt-color: @bg-main;
+@input-tab-text-color: @input-text-color;
+
+/*== Kanab Opportunities=========================*/
+@kanab-text-color: @input-text-color;
+
+/*== ProjectPM====================================*/
+@th-text-color: @grey;
+
+/*== Vocations ===================================*/
+@name-text-color: @grey;
+
+/*=New User=======================================*/
+@data-font-color: @grey;
+@selected-data-color: lighten(@bg-main, 15%);
+
+/*==DashBoard Vocation============================*/
+@captionsColor: @grey;
+@dashBoard-bg-group-color: lighten(@bg-main, 1%);
+@dashBoard-bg-color: @defaultBgColorOdd-color;
+@dashBoard-bg-menu-color: @bg-main-menu;
+@dashBoard-bg-menu-hoverColor: @defaultBgHover-color;
+
+/*== forInfo ======================================*/
+@forInfo-caption-color: #1EBBEA;
+@forInfo-caption-color2: @tilte-color;
+
+/*== Revenu ======================================*/
+//@revenue-by-sales: #ed9409;
+@revenue-by-sales: #C46B00;
+@revenueByDepartment: @tilte-color;
+//@unpaid-wtrack: #fd0001;
+@unpaid-wtrack: #E55253;
