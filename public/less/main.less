@@ -1,6 +1,7 @@
 @import "_font";
 @import "_colors";
-@import "_darckColor";
+//@import "_darckColor";
+@import "_whiteColor";
 @import "_list";
 
 /*------------------------Constants-----------------------------*/
@@ -715,7 +716,7 @@ input::-ms-clear {
         height: @height;
         width: 120px;
         text-align: center;
-        color: #fff;
+        color: @mainText-color;
         line-height: @height;
         overflow: hidden;
         .left;
@@ -724,7 +725,7 @@ input::-ms-clear {
 
         a {
           letter-spacing: 1.5px;
-          color: #fff;
+          color: @mainText-color;
           font-size: 0.75rem;
           text-decoration: none;
           display: block;
@@ -1564,10 +1565,10 @@ input::-ms-clear {
     }
     p {
       line-height: 15px;
-      color: @tilte-color;
+      color: @mainText-color;
 
       a {
-        color: @tilte-color;
+        color: @mainText-color;
       }
     }
   }
@@ -2345,7 +2346,7 @@ input::-ms-clear {
       text-align: center;
       line-height: 35px;
       text-decoration: none;
-      color: @whiteText;
+      color: @mainText-color;
 
       &.active {
         height: 35px;
@@ -2584,9 +2585,9 @@ input, textarea, select {
 }
 
 .current-selected {
-  color: @tilte-color !important;
+ // color: @tilte-color !important;
   font-size: 12px;
-
+  text-decoration: none;
   line-height: 26px !important;
 }
 
@@ -4610,7 +4611,7 @@ h3.dashboard {
   }
   &.closed, &.done, &.unDone {
     display: block;
-    background-color: @green-lights-color;
+    background-color: @tilte-color;
     color: @mainText-color;
     text-align: center;
     .border-radius(4px);
@@ -5333,10 +5334,10 @@ textarea#editInput {
   }
 
   &.attendance {
-    border-bottom: 5px solid @border-color-main;
+    border-bottom: 1px solid @border-color-main;
 
     .V {
-      background-color: #a32a2c;
+      background-color: @unpaid-wtrack;
       color: #ffffff;
     }
     .P {
@@ -5344,11 +5345,11 @@ textarea#editInput {
       color: #ffffff;
     }
     .S {
-      background-color: #228924;
+      background-color: @tilte-color;
       color: #ffffff;
     }
     .E {
-      background-color: #0000fd;
+      background-color: @forInfo-caption-color;
       color: #ffffff;
     }
     .borderRight {
@@ -5399,11 +5400,11 @@ textarea#editInput {
       color: #ffffff;
     }
     .sick {
-      background-color: #228924;
+      background-color: @tilte-color;
       color: #ffffff;
     }
     .education {
-      background-color: #0000fd;
+      background-color: @forInfo-caption-color;
       color: #ffffff;
     }
     .borderRight {
@@ -5495,10 +5496,10 @@ textarea#editInput {
                 background-color: #f9a203;
               }
               &.sick {
-                background-color: #228825;
+                background-color: @tilte-color;
               }
               &.education {
-                background-color: #0000fc;
+                background-color: @forInfo-caption-color;
               }
             }
             .lastTime {
@@ -5805,7 +5806,7 @@ textarea#editInput {
       background-color: @unpaid-wtrack
     }
     &.totalCancelled {
-      background-color: #3d4bfd
+      background-color: @forInfo-caption-color;
     }
     &.totalProject {
       background-color: #5a9ad4
@@ -6192,7 +6193,7 @@ textarea#editInput {
       }
       &:not(.activeGroup) .groupName {
         &.checkedGroup{
-          color: white;
+          color: @mainText-color;
           background-color: @bg-hover-drop-down-color-active;
           span:before {
             text-align: center;
@@ -6211,12 +6212,12 @@ textarea#editInput {
       }
       &.activeGroup .groupName,
       & .groupName:hover {
-        color: white;
+        color: @mainText-color;
         background-color: @bg-hover-drop-down-color;
       }
       .groupName {
         cursor: pointer;
-        font-weight: bolder;
+        //font-weight: bolder;
         font-size: 13px;
         padding: 10px;
         color: @filter-text-color;
@@ -6294,7 +6295,7 @@ textarea#editInput {
   margin: 30px 1%;
   width: 98%;
   .V {
-    background-color: #a42a2b;
+    background-color: @unpaid-wtrack;
     color: #ffffff;
   }
   .P {
@@ -6302,11 +6303,11 @@ textarea#editInput {
     color: #ffffff;
   }
   .S {
-    background-color: #228a23;
+    background-color: @tilte-color;
     color: #ffffff;
   }
   .E {
-    background-color: #0000fe;
+    background-color: @forInfo-caption-color;
     color: #ffffff;
   }
   td, th {
@@ -6398,7 +6399,7 @@ textarea#editInput {
   }
 
   #caption, .borders, thead, tbody, tfoot {
-    border: 0.2em solid @border-color-main;
+    border: 1px solid @border-color-main;
   }
   #caption, .subHeaderHolder {
     th {
