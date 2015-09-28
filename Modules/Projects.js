@@ -959,7 +959,7 @@ var Project = function (models, event) {
         //query.populate('customer', 'name _id');
         query.//populate('workflow._id').
             populate('bonus.employeeId', '_id name').
-            populate('bonus.bonusId', '_id name').
+            populate('bonus.bonusId', '_id name value isPercent').
             populate('createdBy.user', '_id login').
             populate('editedBy.user', '_id login').
             populate('groups.owner', '_id name').

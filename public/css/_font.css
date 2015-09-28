@@ -1,1 +1,25 @@
-@font-face{font-family:'Segoe UI';src:url("../font/segoeui.woff") format('woff')}@font-face{font-family:'Title';src:url("../font/title.woff") format('woff')}@font-face{font-family:'Icons';src:url("../font/easyERP.eot");src:url("../font/easyERP.eot?#iefix") format('embedded-opentype'),url("../font/easyERP.woff") format('woff'),url("../font/easyERP.ttf") format('truetype'),url("../font/easyERP.svg#quartzregular") format('svg')}@font-face{font-family:'Open Sans';font-style:normal;font-weight:300;src:local('Open Sans Light'),local('OpenSans-Light'),url(../font/Open-Sans-Light.woff) format('woff')}@font-face{font-family:'Open Sans';font-style:normal;font-weight:400;src:local('Open Sans'),local('OpenSans'),url(../font/Open-Sans.woff) format('woff')}
+@font-face {
+  font-family: 'Segoe UI';
+  src: url("../font/segoeui.woff") format('woff');
+}
+@font-face {
+  font-family: 'Title';
+  src: url("../font/title.woff") format('woff');
+}
+@font-face {
+  font-family: 'Icons';
+  src: url("../font/easyERP.eot");
+  src: url("../font/easyERP.eot?#iefix") format('embedded-opentype'), url("../font/easyERP.woff") format('woff'), url("../font/easyERP.ttf") format('truetype'), url("../font/easyERP.svg#quartzregular") format('svg');
+}
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 300;
+  src: local('Open Sans Light'), local('OpenSans-Light'), url(../font/Open-Sans-Light.woff) format('woff');
+}
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Open Sans'), local('OpenSans'), url(../font/Open-Sans.woff) format('woff');
+}

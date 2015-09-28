@@ -3,6 +3,7 @@
         'text!templates/stages.html',
         'views/Projects/EditView',
         'views/Projects/CreateView',
+        'views/Projects/form/FormView',
         'dataService',
         'models/ProjectsModel',
         'views/Filter/FilterView',
@@ -11,7 +12,7 @@
         'custom'
     ],
 
-    function (thumbnailsItemTemplate, stagesTamplate, editView, createView, dataService, currentModel, filterView, common, populate, custom) {
+    function (thumbnailsItemTemplate, stagesTamplate, editView, createView, formView, dataService, currentModel, filterView, common, populate, custom) {
         var ProjectThumbnalView = Backbone.View.extend({
             el: '#content-holder',
             countPerPage: 0,
@@ -260,22 +261,27 @@
             },
 
             gotoEditForm: function (e) {
-                var clas = $(e.target).parent().attr("class");
-                if ((clas === "dropDown") || (clas === "inner")) {
-                } else {
-                    e.preventDefault();
-                    var id = $(e.target).closest('.thumbnail').attr("id");
-                    var model = new currentModel({validate: false});
-                    model.urlRoot = '/Projects/form/' + id;
-                    model.fetch({
-                        success: function (model) {
-                            new editView({model: model});
-                        },
-                        error: function () {
-                            alert('Please refresh browser');
-                        }
-                    });
-                }
+                e.preventDefault();
+                App.ownContentType = true;
+                var id = $(e.target).closest('.thumbnail').attr("id");
+                window.location.hash = "#easyErp/Projects/form/" + id;
+
+                //var clas = $(e.target).parent().attr("class");
+                //if ((clas === "dropDown") || (clas === "inner")) {
+                //} else {
+                //    e.preventDefault();
+                //    var id = $(e.target).closest('.thumbnail').attr("id");
+                //    var model = new currentModel({validate: false});
+                //    model.urlRoot = '/Projects/form/' + id;
+                //    model.fetch({
+                //        success: function (model) {
+                //            new editView({model: model});
+                //        },
+                //        error: function () {
+                //            alert('Please refresh browser');
+                //        }
+                //    });
+                //}
             },
 
             showMore: function (event) {

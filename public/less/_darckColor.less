@@ -1,8 +1,9 @@
 
-@tilte-color: #02A1F2; //for hover
+//@tilte-color: #02A1F2; //for hover
+@tilte-color: #57D0b5; //for hover
 @fontColor-2: #4D5A75;
 @mainText-color: #fff;
-@mainText-color-selected: #02A1F2;
+@mainText-color-selected: #57D0b5;
 @mainBlack-color: #808080;
 
 
@@ -16,9 +17,11 @@
 @border-color-selected: @bg-main-menu-selected; //lighten(@border-color-main, 30%);
 
 /*==Main menu==========================*/
-@bg-main: #1a2227;
+//@bg-main: #1a2227;
+@bg-main: #303031;
 @bg-main-menu: #242b30;
-@bg-main-menu-selected: #02A1F2;
+@bg-main-menu-selected: #57D0b5;
+//@bg-main-menu-selected: #b4b4b5;
 @span-color: @bg-main-menu-selected;
 @grey: #A9A9A9;
 
@@ -26,18 +29,18 @@
 
 @bg-submenu: @bg-main;
 @submenu-text-color: @mainText-color;
-
 @normal-submenu-text: #D5D5D5;
 @current-submenu-text: #33FFFF;
 @non-active-submenu-text: desaturate(@normal-submenu-text, 19%);
-@creatBtn-color: #a3bb3a;
+@creatBtn-color: @mainText-color;
 
 /*== Filters ======================*/
 
 @selected-filters-color: @tilte-color;
 @filter-icon-color: @normal-submenu-text;
 @bg-drop-down-color: @bg-main;
-@bg-hover-drop-down-color: @bg-main-menu;
+@bg-hover-drop-down-color: lighten(@bg-main, 5%);
+@bg-hover-drop-down-color-active: lighten(@bg-main, 15%);
 @filter-border-color: @border-color-main;
 @filter-text-color: @grey;
 
@@ -67,7 +70,7 @@
 @input-tab-text-color: @input-text-color;
 
 /*== Kanab Opportunities=========================*/
-@kanab-text-color: @bg-main-menu-selected;
+@kanab-text-color: #a9a9a9;
 
 /*== ProjectPM====================================*/
 @th-text-color: @grey;
@@ -85,3 +88,14 @@
 @dashBoard-bg-color: @defaultBgColorOdd-color;
 @dashBoard-bg-menu-color: @bg-main-menu;
 @dashBoard-bg-menu-hoverColor: @defaultBgHover-color;
+
+/*== forInfo ======================================*/
+@forInfo-caption-color: #4d5a75;
+@forInfo-caption-color2: #739e20;
+
+/*== Revenu ======================================*/
+//@revenue-by-sales: #ed9409;
+@revenue-by-sales: #C46B00;
+@revenueByDepartment: #278227;
+@unpaid-wtrack: #fd0001;
+@unpaid-wtrack: #f13f3f;

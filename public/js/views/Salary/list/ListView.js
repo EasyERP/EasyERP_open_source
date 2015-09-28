@@ -46,12 +46,29 @@ define([
                 "click .stageSelect"                                                             : "showNewSelect",
                 "click td.editable"                                                              : "editRow",
                 "click .list tbody tr:not(.subRow, .disabled, .copy) td:not(.notForm, .editable)": "showSubSalary",
-                "mouseover .currentPageList"                                                     : "itemsNumber",
-                "click"                                                                          : "hideItemsNumber",
-                "click #firstShowPage"                                                           : "firstPage",
-                "click #lastShowPage"                                                            : "lastPage",
-                "click .oe_sortable"                                                             : "goSort",
-                "change .editable "                                                              : "setEditable"
+                "mouseover .currentPageList": "itemsNumber",
+                "click": "hideItemsNumber",
+                "click #firstShowPage": "firstPage",
+                "click #lastShowPage": "lastPage",
+                "click .oe_sortable": "goSort",
+                "change .editable ": "setEditable",
+                "keydown input.editing ": "keyDown"
+            },
+
+            keyDown: function (e) {
+                if (e.which === 13) {
+                    var editedElement = $("#listTable").find('.editing');
+                    var editedCol;
+                    var editedElementValue;
+
+                    if (editedElement.length) {
+                        editedCol = editedElement.closest('td');
+                        editedElementValue = editedElement.val();
+
+                        editedCol.text(editedElementValue);
+                        editedElement.remove();
+                    }
+                }
             },
 
             saveItem: function () {
