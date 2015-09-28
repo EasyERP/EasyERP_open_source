@@ -216,6 +216,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 }
 .list2 tbody tr td:first-of-type {
   padding-left: 7px;
+  line-height: 10px;
 }
 .list2 tbody tr td:first-of-type input {
   cursor: pointer;
@@ -224,7 +225,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   line-height: 20px;
 }
 .list2 tr:nth-child(odd) {
-  background-color: #f7f7f7;
+  background-color: #dbdbdb;
 }
 .list2 tr:hover {
   background-color: #ffffff;
@@ -374,6 +375,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 }
 .list2 tbody tr td:first-of-type {
   padding-left: 7px;
+  line-height: 10px;
 }
 .list2 tbody tr td:first-of-type input {
   cursor: pointer;
@@ -382,7 +384,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   line-height: 20px;
 }
 .list2 tr:nth-child(odd) {
-  background-color: #f7f7f7;
+  background-color: #dbdbdb;
 }
 .list2 tr:hover {
   background-color: #ffffff;
@@ -719,7 +721,7 @@ input::-ms-clear {
   min-height: 40px;
   text-align: left;
   border: 1px solid #7f7f80;
-  background-color: #ebebea;
+  background-color: #ffffff;
   color: #a9a9a9;
   cursor: move;
   transition: box-shadow 1s ease;
@@ -850,7 +852,7 @@ input::-ms-clear {
   font-size: 13px;
 }
 .kanban .column .columnNameDiv {
-  background: #ebebea;
+  background: #ffffff;
   height: 35px;
   position: relative;
 }
@@ -1030,7 +1032,7 @@ input::-ms-clear {
 }
 .ui-datepicker {
   padding: .2em .2em 0;
-  background-color: #ebebea;
+  background-color: #ffffff;
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-prev,
 .ui-datepicker .ui-datepicker-header .ui-datepicker-next {
@@ -1076,7 +1078,7 @@ input::-ms-clear {
 .ui-datepicker .ui-datepicker-header .ui-datepicker-title select {
   width: 49%;
   color: #c1c1c1;
-  background-color: #ebebea;
+  background-color: #ffffff;
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-title select option {
   background-color: #ffffff;
@@ -1145,14 +1147,12 @@ input::-ms-clear {
 .pagination .countOnPage {
   float: left;
   color: #595959;
+  margin-left: 5px;
 }
 .pagination .nextPrev {
   float: right;
   margin-right: 5px;
   color: #595959;
-}
-.pagination .countOnPage {
-  margin-left: 5px;
 }
 .pagination #previousPage,
 .pagination #nextPage,
@@ -1213,7 +1213,7 @@ input::-ms-clear {
   font-size: 12px !important;
 }
 .pagination #pageList {
-  background-color: #ebebea;
+  background-color: #ffffff;
   border: 1px solid #7f7f80;
   position: absolute;
   bottom: 17px;
@@ -1248,6 +1248,14 @@ input::-ms-clear {
 .pagination .pageList {
   position: relative;
 }
+.pagination .pageList .itemsNumber {
+  text-decoration: none;
+  display: inline-block;
+  padding: 0 5px;
+}
+.pagination .pageList a.selectedItemsNumber {
+  border-bottom: 1px solid blue;
+}
 .pagination .pageList button {
   background-color: white;
   background-image: none;
@@ -1266,7 +1274,7 @@ input::-ms-clear {
   border-left: none;
 }
 .pagination .pageList ul {
-  background-color: #ebebea;
+  background-color: #ffffff;
   border: 1px solid #7f7f80;
   position: absolute;
   bottom: 17px;
@@ -1494,7 +1502,7 @@ select:not([type="checkbox"]):focus {
 .newSelectList {
   position: absolute !important;
   border: solid 1px #7f7f80;
-  background-color: #ebebea;
+  background-color: #ffffff;
   padding: 3px 0;
   z-index: 100;
   box-shadow: 0 1px 3px rgba(150, 150, 150, 0.7);
@@ -1530,7 +1538,7 @@ select:not([type="checkbox"]):focus {
   background-color: #BEF624 !important;
 }
 .newSelectList li:hover {
-  background-color: #f7f7f7 !important;
+  background-color: #ffffff !important;
   border: 0 !important;
   color: #FF5A00 !important;
 }
@@ -1711,7 +1719,7 @@ dl dd a.formLink {
   width: 860px;
   max-width: 860px;
   margin: 0 auto;
-  background: #ebebea;
+  background: #ffffff;
   min-height: 130px;
   display: block;
   position: relative;
@@ -2276,7 +2284,7 @@ dl dd a.formLink {
   width: 98%;
   max-width: 98%;
   margin: 0 auto;
-  background: #ebebea;
+  background: #ffffff;
   min-height: 130px;
   display: block;
   position: relative;
@@ -2627,7 +2635,7 @@ dl dd a.formLink {
   width: 98%;
   max-width: 98%;
   margin: 0 auto;
-  background: #ebebea;
+  background: #ffffff;
   min-height: 130px;
   display: block;
   position: relative;
@@ -3148,7 +3156,7 @@ dl dd a.formLink {
   height: 100%;
 }
 #wrapper {
-  background-color: #ebebea;
+  background-color: #ffffff;
   width: 100%;
   height: 100%;
   min-width: 100%;
@@ -3177,7 +3185,7 @@ dl dd a.formLink {
   color: #3e88b9;
 }
 #startLetter .letter.empty {
-  color: #808080;
+  color: #dbdbdb;
   cursor: default;
 }
 #startLetter .letter.empty:hover {
@@ -3604,7 +3612,7 @@ dl dd a.formLink {
 }
 .btn {
   border: 1px solid #7f7f80;
-  color: #ebebea;
+  color: #ffffff;
   margin: 0;
   padding: 2px 6px;
   line-height: 13px;
@@ -3623,7 +3631,7 @@ dl dd a.formLink {
 }
 button {
   border: 1px solid #7f7f80;
-  color: #ebebea;
+  color: #ffffff;
   margin: 0;
   padding: 2px 6px;
   line-height: 13px;
@@ -3643,7 +3651,7 @@ button:hover {
 button.red,
 a.red {
   border: 1px solid #7f7f80;
-  color: #ebebea;
+  color: #ffffff;
   margin: 0;
   padding: 2px 6px;
   line-height: 13px;
@@ -3877,7 +3885,7 @@ a.red:hover {
   position: relative;
   z-index: 999;
   border: 1px solid #7f7f80;
-  background-color: #ebebea;
+  background-color: #ffffff;
 }
 #loginPanel .dropdown-button #loginSelect li {
   height: 20px;
@@ -4326,7 +4334,7 @@ table#workflows tr td.edit-status {
   right: auto;
   bottom: auto;
   width: 100%;
-  background: #ebebea;
+  background: #ffffff;
   height: 30px;
   padding: 0;
   margin: 0;
@@ -4334,7 +4342,7 @@ table#workflows tr td.edit-status {
 }
 #mainmenu-holder nav {
   float: left;
-  background: #ebebea;
+  background: #ffffff;
 }
 #mainmenu-holder nav ul {
   padding: 0;
@@ -4411,7 +4419,7 @@ table#workflows tr td.edit-status {
   width: 120px;
   height: 30px;
   text-align: center;
-  background: #ebebea;
+  background: #ffffff;
 }
 #submenu-holder nav ul li.hover {
   height: 30px;
@@ -5049,6 +5057,7 @@ ul.dialog-tabs li.right button {
 }
 .list tbody tr td:first-of-type {
   padding-left: 7px;
+  line-height: 10px;
 }
 .list tbody tr td:first-of-type input {
   cursor: pointer;
@@ -5057,7 +5066,7 @@ ul.dialog-tabs li.right button {
   line-height: 20px;
 }
 .list tr:nth-child(odd) {
-  background-color: #f7f7f7;
+  background-color: #dbdbdb;
 }
 .list tr:hover {
   background-color: #ffffff;
@@ -5068,7 +5077,7 @@ ul.dialog-tabs li.right button {
   margin-left: 4px;
   position: relative;
   display: block;
-  background: #ebebea !important;
+  background: #ffffff !important;
   border: 1px solid #7f7f80;
   -webkit-transition: -webkit-transform, -webkit-box-shadow, border 200ms linear;
   width: 280px;
@@ -5253,7 +5262,7 @@ ul.dialog-tabs li.right button {
 }
 .ui-datepicker {
   padding: .2em .2em 0;
-  background-color: #ebebea;
+  background-color: #ffffff;
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-prev,
 .ui-datepicker .ui-datepicker-header .ui-datepicker-next {
@@ -5299,7 +5308,7 @@ ul.dialog-tabs li.right button {
 .ui-datepicker .ui-datepicker-header .ui-datepicker-title select {
   width: 49%;
   color: #c1c1c1;
-  background-color: #ebebea;
+  background-color: #ffffff;
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-title select option {
   background-color: #ffffff;
@@ -5341,7 +5350,7 @@ ul.dialog-tabs li.right button {
 }
 .ui-dialog {
   border: 1px solid #7f7f80;
-  background: #ebebea;
+  background: #ffffff;
   color: #595959;
   z-index: 1000;
   margin: 0 auto;
@@ -5488,7 +5497,7 @@ ul.dialog-tabs li.right button {
 }
 .ui-dialog .inner {
   padding: 5px;
-  background: #ebebea;
+  background: #ffffff;
 }
 .ui-dialog .form-holder {
   position: relative;
@@ -5716,7 +5725,7 @@ ul.dialog-tabs li.right button {
 }
 .ui-dialog .ui-dialog-buttonpane {
   border: 1px solid #7f7f80;
-  background: #ebebea;
+  background: #ffffff;
   color: #595959;
   text-align: left;
   border-width: 1px 0 0;
@@ -5745,7 +5754,7 @@ ul.dialog-tabs li.right button {
   border: 1px solid #7f7f80;
   margin: .5em .4em .5em 0;
   cursor: pointer;
-  background-color: #ebebea;
+  background-color: #ffffff;
   font-size: 1.2em;
   display: inline-block;
   position: relative;
@@ -5759,12 +5768,12 @@ ul.dialog-tabs li.right button {
 .ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button span {
   display: block;
   line-height: normal;
-  background: #ebebea;
+  background: #ffffff;
   padding: .4em 1em;
   color: #3e88b9;
 }
 .ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button span:hover {
-  background: #d8d8d7 !important;
+  background: #ececec !important;
 }
 .ui-dialog .ui-helper-clearfix:before,
 .ui-dialog .ui-helper-clearfix:after {
@@ -6016,7 +6025,7 @@ ul.dialog-tabs .withEndContract .arrow {
   float: right;
   width: 80px;
   border: 1px solid #7f7f80;
-  color: #ebebea;
+  color: #ffffff;
   margin: 0;
   padding: 2px 6px;
   line-height: 13px;
@@ -6146,7 +6155,7 @@ ul.chart-tabs .withEndContract .arrow {
   float: right;
   width: 80px;
   border: 1px solid #7f7f80;
-  color: #ebebea;
+  color: #ffffff;
   margin: 0;
   padding: 2px 6px;
   line-height: 13px;
@@ -7558,7 +7567,7 @@ textarea#editInput {
   min-width: 100%;
   font-size: 11px;
   border-bottom: 1px solid #7f7f80;
-  background-color: #ebebea;
+  background-color: #ffffff;
 }
 .grid tr {
   color: #c1c1c1;
@@ -7636,7 +7645,7 @@ textarea#editInput {
 .grid tr td.dashboardWeek {
   width: 107px;
   min-width: 107px;
-  background-color: #ebebea;
+  background-color: #ffffff;
 }
 .grid tr td.dashboardWeek input {
   background-color: #bdd7ee;
@@ -7797,13 +7806,13 @@ textarea#editInput {
   cursor: pointer;
 }
 .grid tr.group td {
-  background-color: #ededed !important;
+  background-color: #ffffff !important;
 }
 .grid tr.group span {
   text-align: left;
 }
 .grid tr:nth-child(2n+1) td {
-  background-color: #f7f7f7;
+  background-color: #dbdbdb;
 }
 .grid.attendance {
   border-bottom: 1px solid #7f7f80;
@@ -7843,7 +7852,7 @@ textarea#editInput {
   border-bottom: none;
 }
 .grid.attendance tr:nth-child(even) {
-  background-color: #f7f7f7;
+  background-color: #dbdbdb;
 }
 .grid.attendance tr td {
   border-left: 1px solid #7f7f80;
@@ -7896,7 +7905,7 @@ textarea#editInput {
 .grid-conatiner .attendanceTop div #currentEmployee option,
 .grid-conatiner .attendanceTop div #currentStatus option,
 .grid-conatiner .attendanceTop div #currentTime option {
-  background-color: #ebebea;
+  background-color: #ffffff;
 }
 .grid-conatiner .attendanceTop div.pull-left {
   margin-right: 10px;
@@ -8422,6 +8431,7 @@ textarea#editInput {
 .search-options .filter-dialog-tabs {
   box-sizing: border-box;
   border: 1px solid #c0c0c0;
+  border-bottom: 0;
   position: relative;
   float: left;
   display: flex;
@@ -8457,7 +8467,7 @@ textarea#editInput {
   position: absolute;
   z-index: 10;
   width: calc(100% - 82px);
-  background-color: #ebebea;
+  background-color: #ffffff;
   border: 1px solid #7f7f80;
   right: 0;
   top: calc(100% - 3px);
@@ -8481,7 +8491,7 @@ textarea#editInput {
   overflow: hidden;
   text-align: center;
   border: 1px solid #7f7f80;
-  background-color: #ebebea;
+  background-color: #ffffff;
   border-radius: 5px;
   margin: 5px;
 }
@@ -8503,16 +8513,16 @@ textarea#editInput {
   content: '\2713';
 }
 .drop-down-filter #filtersContent .filterGroup li:not(.checkedValue):hover:before {
-  color: #f7f7f7;
+  color: #ffffff;
 }
 .drop-down-filter #filtersContent .filterGroup li:not(.checkedValue):before,
 .drop-down-filter #filtersContent .filterGroup li.checkedValue:before,
 .drop-down-filter #filtersContent .filterGroup li.checkedValue:hover:before {
-  color: #ebebea;
+  color: #ffffff;
 }
 .drop-down-filter #filtersContent .filterGroup li:hover,
 .drop-down-filter #filtersContent .filterGroup li.checkedValue {
-  background-color: #f7f7f7;
+  background-color: #ffffff;
   color: #595959;
 }
 .drop-down-filter #filtersContent .filterGroup .filterValues {
@@ -8538,14 +8548,14 @@ textarea#editInput {
 }
 .drop-down-filter #filtersContent .filterGroup.activeGroup .groupName,
 .drop-down-filter #filtersContent .filterGroup .groupName:hover {
-  color: #595959;
-  background-color: #f7f7f7;
+  color: #c1c1c1;
+  background-color: #ffffff;
 }
 .drop-down-filter #filtersContent .filterGroup .groupName {
   cursor: pointer;
   font-size: 13px;
   padding: 10px;
-  color: #c1c1c1;
+  color: #595959;
 }
 .drop-down-filter #filtersContent .filterGroup .groupName:after {
   content: '\2335';
@@ -8578,7 +8588,7 @@ textarea#editInput {
   margin-right: 90px;
 }
 #searchContainer .btn {
-  background: #eeeeee;
+  background: #ffffff;
   padding: 6px;
   color: #595959;
 }
@@ -8766,7 +8776,7 @@ textarea#editInput {
   box-sizing: border-box;
   border-radius: 0 5px 5px 0;
   height: 28px;
-  background-color: #ebebea;
+  background-color: #ffffff;
   color: #a9a9a9;
   border-left: 1px solid #7f7f80;
 }

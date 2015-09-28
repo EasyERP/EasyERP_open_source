@@ -2186,16 +2186,17 @@ input::-ms-clear {
   .countOnPage {
     float: left;
     color: @mainText-color;
+    margin-left: 5px;
+
+    .page-list {
+
+    }
   }
 
   .nextPrev {
     float: right;
     margin-right: 5px;
     color: @mainText-color;
-  }
-
-  .countOnPage {
-    margin-left: 5px;
   }
 
   #previousPage, #nextPage, .currentPageList, #firstShowPage, #lastShowPage {
@@ -2279,6 +2280,7 @@ input::-ms-clear {
         text-decoration: none;
       }
     }
+
   }
 
   .currentPageList {
@@ -2295,6 +2297,17 @@ input::-ms-clear {
 
   .pageList {
     position: relative;
+
+    .itemsNumber {
+      text-decoration: none;
+      display: inline-block;
+      padding: 0 5px;
+
+    }
+
+    a.selectedItemsNumber {
+      border-bottom: 1px solid blue;
+    }
 
     button {
       background-color: white;
@@ -6109,6 +6122,7 @@ textarea#editInput {
   .filter-dialog-tabs {
     box-sizing: border-box;
     border: 1px solid #c0c0c0;
+    border-bottom: 0;
     position: relative;
     float: left;
     display: flex;
@@ -6237,7 +6251,7 @@ textarea#editInput {
       }
       &.activeGroup .groupName,
       & .groupName:hover {
-        color: @mainText-color;
+        color: @filter-text-color;
         background-color: @bg-hover-drop-down-color;
       }
       .groupName {
@@ -6245,7 +6259,7 @@ textarea#editInput {
         //font-weight: bolder;
         font-size: 13px;
         padding: 10px;
-        color: @filter-text-color;
+        color: @mainText-color;
         &:after {
           content: '\2335';
         }
@@ -6289,7 +6303,7 @@ textarea#editInput {
   margin-right: 90px;
 
   .btn {
-    background: #eeeeee;
+    background: @bg-main;
     padding: 6px;
     color: @mainText-color;
   }
