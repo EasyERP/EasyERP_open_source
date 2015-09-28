@@ -13,11 +13,17 @@ module.exports = function ( server ) {
     var adapter = require('socket.io-redis');
     var pub = redis.createClient(
         parseInt( process.env.SOCKET_DB_PORT ),
-        process.env.SOCKET_DB_HOST
+        process.env.SOCKET_DB_HOST,
+        {
+            return_buffers: true
+        }
     );
     var sub = redis.createClient(
         parseInt( process.env.SOCKET_DB_PORT ),
-        process.env.SOCKET_DB_HOST
+        process.env.SOCKET_DB_HOST,
+        {
+            return_buffers: true
+        }
     );
 
     io = require('socket.io')(
