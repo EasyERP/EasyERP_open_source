@@ -211,7 +211,7 @@ require(['app'], function (app) {
 
     Backbone.View.prototype.prevP = function (dataObject) {
         this.startTime = new Date();
-        var itemsNumber = $("#itemsNumber").text();
+        var itemsNumber = this.defaultItemsNumber;
         var currentShowPage = $("#currentShowPage");
         var page = parseInt(currentShowPage.val()) - 1;
         this.startTime = new Date();
@@ -269,7 +269,7 @@ require(['app'], function (app) {
 
     Backbone.View.prototype.nextP = function (dataObject) {
         this.startTime = new Date();
-        var itemsNumber = $("#itemsNumber").text();
+        var itemsNumber = this.defaultItemsNumber;
         var page = parseInt($("#currentShowPage").val()) + 1;
 
         this.startTime = new Date();
@@ -328,7 +328,7 @@ require(['app'], function (app) {
 
     Backbone.View.prototype.firstP = function (dataObject) {
         this.startTime = new Date();
-        var itemsNumber = $("#itemsNumber").text();
+        var itemsNumber = this.defaultItemsNumber;
         var currentShowPage = $("#currentShowPage");
         var page = 1;
 
@@ -373,7 +373,7 @@ require(['app'], function (app) {
 
     Backbone.View.prototype.lastP = function (dataObject) {
         this.startTime = new Date();
-        var itemsNumber = $("#itemsNumber").text();
+        var itemsNumber = this.defaultItemsNumber;
         var page = $("#lastPage").text();
         $("#firstShowPage").prop("disabled", true);
         this.startTime = new Date();
@@ -419,14 +419,14 @@ require(['app'], function (app) {
         if (this.listLength == 0) {
             $("#currentShowPage").val(0);
         } else {
-            var itemsNumber = $("#itemsNumber").text();
+            var itemsNumber = this.defaultItemsNumber;
             var page = parseInt(event.target.textContent);
             if (!page) {
                 page = $(event.target).val();
             }
             var adr = /^\d+$/;
             var lastPage = parseInt($('#lastPage').text());
-            var itemsNumber = $("#itemsNumber").text();
+
             if (!adr.test(page) || (parseInt(page) <= 0) || (parseInt(page) > parseInt(lastPage))) {
                 page = 1;
             }
