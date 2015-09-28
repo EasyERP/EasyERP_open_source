@@ -67,13 +67,12 @@ module.exports = (function () {
             endWeek: Number,
             endYear: Number
         }],
-        budget: {
-            _id: false,
-            projectTeam: Array,
-            bonus: Array,
-            budget: Array,
-            projectValues: JSON
-        }
+        budget: {type: JSON}
+            //_id: false,
+            //projectTeam: Array,
+            //bonus: Array,
+            //budget: Array,
+            //projectValues: JSON}
     }, { collection: 'Project' });
 
     mongoose.model('Project', projectSchema);

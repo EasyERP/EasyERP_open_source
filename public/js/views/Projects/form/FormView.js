@@ -278,6 +278,7 @@ define([
 				var thisEl = this.$el;
 				var notDiv;
 				var bonusView;
+				var container;
 
 				thisEl.html(templ({model: formModel}));
 
@@ -318,14 +319,25 @@ define([
 					self.saveItem();
 				});
 
+				container = this.$el.find('#forInfo');
+
+				container.html(template({
+						projectTeam: formModel.budget.projectTeam,
+						bonus: formModel.budget.bonus,
+						budget: formModel.budget.budget,
+						projectValues: formModel.budget.projectValues,
+						//budgetTotal: formModel.budget.,
+						currencySplitter: helpers.currencySplitter
+					})
+				);
+
 				thisEl.find('#createBonus').hide();
 				thisEl.find('#noteArea').attr('readonly', true);
 
 				paralellTasks = [this.getWTrack, this.getInvoice];
 
 				async.parallel(paralellTasks, function (err, result) {
-
-					self.getDataForDetails(result);
+					//self.getDataForDetails(result);
 				});
 
 				//this.delegateEvents(this.events);
@@ -333,7 +345,6 @@ define([
 			},
 
 			getDataForDetails: function (result) {
-				var validation = true;
 				var projectTeam = [];
 				var bonus = [];
 				var projectValues = {};
@@ -504,7 +515,6 @@ define([
 						key  : 'project._id',
 						value: [_id]
 					}
-
 				};
 
 				dataService.getData('/wTrack/getForProjects',
