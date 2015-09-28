@@ -611,6 +611,27 @@ define([
                 return false;
             },
 
+            checked: function (e) {
+                var checkLength;
+
+                if (this.collection.length > 0) {
+                    checkLength = $("input.listCB:checked").length;
+
+                    this.checkProjectId(e, checkLength);
+
+                    if (checkLength > 0) {
+                        $("#top-bar-deleteBtn").show();
+                        $('#check_all').prop('checked', false);
+                        if (checkLength === this.collection.length) {
+                            $('#check_all').prop('checked', true);
+                        }
+                    } else {
+                        $("#top-bar-deleteBtn").hide();
+                        $('#check_all').prop('checked', false);
+                    }
+                }
+            },
+
             saveItem: function () {
                 var model;
 
