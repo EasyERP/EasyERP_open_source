@@ -22,7 +22,6 @@
   top: 5px;
   width: 100vw;
   margin: 0 auto;
-  //border: 1px solid darkgray;
 
   .error {
     left: 85%;
@@ -43,7 +42,10 @@
     opacity: 0;
 
     .error {
-      background: darkred;
+      background-color: @notifikation-error-color;
+    }
+    .notify {
+      background-color: @notifikation-notify-color;
     }
   }
 }
