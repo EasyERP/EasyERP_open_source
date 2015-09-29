@@ -68,6 +68,7 @@ var Project = function (models) {
         var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
         var paralellTasks;
+        var count = 0;
 
         var query = Project.find({}, {_id: 1, bonus: 1}).lean();
 
@@ -79,7 +80,9 @@ var Project = function (models) {
                 return next(err);
             }
 
-            result.forEach(function (project) {
+            async.eachLimit(result, 200, function (project) {
+                var pID = project._id;
+
                 paralellTasks = [getwTrackAndMonthHours];
 
                 function getwTrackAndMonthHours(cb) {
@@ -263,18 +266,19 @@ var Project = function (models) {
                                 budgetTotal: budgetTotal
                             };
 
-                            Project.update({_id: project._id}, {$set: {budget: budget}}, function (err, result) {
+
+                            Project.update({_id: pID}, {$set: {budget: budget}}, function (err, result) {
                                 if (err) {
                                     return next(err);
                                 }
 
-                                console.log('success');
+                                console.log(count++);
                             })
                         });
                     }
                 });
             });
-            res.status(200).send('success');
+           // res.status(200).send('success');
         });
 
     };
@@ -292,7 +296,24 @@ var Project = function (models) {
                 }
                 res.status(200).send(projects)
             });
-    }
+    };
+
+    this.getProjectPMForDashboard = function (req, res, next) {
+        var Project = models.get(req.session.lastDb, "Project", ProjectSchema);
+        var data = {};
+        var sort = req.query.sort ? req.query.sort : {projectName: 1};
+
+        var query = Project.find({}, {'projectName': 1, 'projectmanager': 1, '_id': 1, 'workflow': 1, 'budget': 1}).sort(sort);
+
+        query.exec(function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            data['data'] = result;
+            res.status(200).send(data);
+        })
+    };
 };
 
 module.exports = Project;

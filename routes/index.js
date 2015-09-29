@@ -757,9 +757,9 @@ module.exports = function (app, mainDb) {
 
     app.get('/getProjectsForDd', requestHandler.getProjectsForDd);
 
-    app.get('/getProjectPMForDashboard', function (req, res) {
-        requestHandler.getProjectPMForDashboard(req, res);
-    });
+    //app.get('/getProjectPMForDashboard', function (req, res) {
+    //    requestHandler.getProjectPMForDashboard(req, res);
+    //});
     app.get('/getProjectStatusCountForDashboard', function (req, res) {
         requestHandler.getProjectStatusCountForDashboard(req, res);
     });

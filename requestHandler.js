@@ -406,8 +406,8 @@ var requestHandler = function (app, event, mainDb) {
 
                             projectValues.revenue = budgetTotal.revenueSum;
                             projectValues.profit = budgetTotal.profitSum;
-                            projectValues.markUp = ((budgetTotal.profitSum / budgetTotal.costSum) * 100).toFixed();
-                            projectValues.radio = ((budgetTotal.revenueSum / budgetTotal.costSum) * 100).toFixed();
+                            projectValues.markUp = ((budgetTotal.profitSum / budgetTotal.costSum) * 100);
+                            projectValues.radio = ((budgetTotal.revenueSum / budgetTotal.costSum) * 100);
 
                             var empQuery = Employee.find({_id: {$in: keys}}, {
                                 'name': 1,
@@ -1055,19 +1055,19 @@ var requestHandler = function (app, event, mainDb) {
             res.send(401);
         }
     };
-    function getProjectPMForDashboard(req, res) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, 39, function (access) {
-                if (access) {
-                    project.getProjectPMForDashboard(req, res);
-                } else {
-                    res.send(403);
-                }
-            });
-        } else {
-            res.send(401);
-        }
-    };
+    //function getProjectPMForDashboard(req, res) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getReadAccess(req, req.session.uId, 39, function (access) {
+    //            if (access) {
+    //                project.getProjectPMForDashboard(req, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
     function getProjectByEndDateForDashboard(req, res) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -2383,7 +2383,7 @@ var requestHandler = function (app, event, mainDb) {
         updateProject: updateProject,
         uploadProjectsFiles: uploadProjectsFiles,
         removeProject: removeProject,
-        getProjectPMForDashboard: getProjectPMForDashboard,
+       // getProjectPMForDashboard: getProjectPMForDashboard,
         getProjectStatusCountForDashboard: getProjectStatusCountForDashboard,
         getProjectByEndDateForDashboard: getProjectByEndDateForDashboard,
         updateOnlySelectedFields: updateOnlySelectedFields,

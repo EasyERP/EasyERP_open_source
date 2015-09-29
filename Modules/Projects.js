@@ -339,93 +339,6 @@ var Project = function (models, event) {
         }
     };
 
-    function getProjectPMForDashboard(req, response) {
-        models.get(req.session.lastDb, "Workflows", workflow).findOne({
-            status: "In Progress",
-            "wId": "Projects"
-        }).exec(function (error, res) {
-            if (!error) {
-                models.get(req.session.lastDb, "Department", department).aggregate(
-                    {
-                        $match: {
-                            users: objectId(req.session.uId)
-                        }
-                    }, {
-                        $project: {
-                            _id: 1
-                        }
-                    },
-                    function (err, deps) {
-                        if (!err) {
-
-                            var arrOfObjectId = deps.objectID();
-                            models.get(req.session.lastDb, "Project", projectSchema).aggregate(
-                                {
-                                    $match: {
-                                        $and: [
-                                            //{'workflow._id': objectId(res._id.toString())},
-                                            {
-                                                $or: [
-                                                    {
-                                                        $or: [
-                                                            {
-                                                                $and: [
-                                                                    {whoCanRW: 'group'},
-                                                                    {'groups.users': objectId(req.session.uId)}
-                                                                ]
-                                                            },
-                                                            {
-                                                                $and: [
-                                                                    {whoCanRW: 'group'},
-                                                                    {'groups.group': {$in: arrOfObjectId}}
-                                                                ]
-                                                            }
-                                                        ]
-                                                    },
-                                                    {
-                                                        $and: [
-                                                            {whoCanRW: 'owner'},
-                                                            {'groups.owner': objectId(req.session.uId)}
-                                                        ]
-                                                    },
-                                                    {whoCanRW: "everyOne"}
-                                                ]
-                                            }
-                                        ]
-                                    }
-                                },
-                                {
-                                    $project: {
-                                        _id: 1
-                                    }
-                                },
-                                function (err, result) {
-                                    if (!err) {
-                                        var query = models.get(req.session.lastDb, "Project", projectSchema).find().where('_id').in(result);
-                                        query.select("projectName projectmanager _id health workflow budget").
-                                            // populate('projectmanager._id', 'name _id').
-                                            exec(function (error, _res) {
-                                                if (!error) {
-                                                    res = {}
-                                                    res['data'] = _res;
-                                                    response.send(res);
-                                                } else {
-                                                    console.log(error);
-                                                }
-                                            });
-                                    } else {
-                                        console.log(err);
-                                    }
-                                }
-                            );
-                        } else {
-                            console.log(error);
-                        }
-                    });
-            }
-        });
-
-    };
 
     function getProjectStatusCountForDashboard(req, response) {
         models.get(req.session.lastDb, "Workflows", workflow).find({"wId": "Projects"}).select("_id name").exec(function (error, resWorkflow) {
@@ -1978,7 +1891,7 @@ var Project = function (models, event) {
 
         getProjectsForList: getProjectsForList,
 
-        getProjectPMForDashboard: getProjectPMForDashboard,
+       // getProjectPMForDashboard: getProjectPMForDashboard,
 
         getProjectStatusCountForDashboard: getProjectStatusCountForDashboard,
 

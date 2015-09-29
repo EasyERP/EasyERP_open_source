@@ -8,15 +8,15 @@ define([
         var ProjectsCollection = Backbone.Collection.extend({
             model: ProjectModel,
             url: function () {
-                return "/getProjectPMForDashboard";
+                return "project/getProjectPMForDashboard";
             },
-            initialize: function () {
-                var mid = 39;
+            initialize: function (options) {
+                this.sort = options.sort;
 
                 this.fetch({
-                    data: $.param({
-                        mid: mid
-                    }),
+                    data: {
+                      sort: this.sort
+                    },
                     type: 'GET',
                     reset: true,
                     success: this.fetchSuccess,
@@ -24,7 +24,6 @@ define([
                 });
             },
 
-            parse: true,
             parse: function (response) {
                 return response.data;
             }
