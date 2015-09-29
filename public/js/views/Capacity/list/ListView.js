@@ -382,6 +382,28 @@ define([
                 return false;
             },
 
+            renderContent: function () {
+                var currentEl = this.$el;
+                var tBody = currentEl.find('#listTable');
+                $("#top-bar-deleteBtn").hide();
+                $('#check_all').prop('checked', false);
+                tBody.empty();
+                var itemView = new listItemView({
+                    collection : this.collection,
+                    page       : currentEl.find("#currentShowPage").val(),
+                    itemsNumber: currentEl.find("span#itemsNumber").text()
+                });
+                tBody.append(itemView.render());
+
+                var pagenation = this.$el.find('.pagination');
+
+                if (this.collection.length === 0) {
+                    pagenation.hide();
+                } else {
+                    pagenation.show();
+                }
+            },
+
             goSort: function (e) {
                 var target$ = $(e.target);
                 var currentParrentSortClass = target$.attr('class');
@@ -960,7 +982,7 @@ define([
                 return !!newRow.length;
             },
 
-            deleteItemsRender: function (deleteCounter, deletePage) {
+            deleteItemsRender: function () {
 
                 this.renderTable(this.collection.toJSON());
 
@@ -969,7 +991,21 @@ define([
             },
 
             deleteItems: function () {
-                if (this.changed) {
+                var that = this;
+
+                this.collectionLength = this.collection.length;
+
+                if (!this.changed) {
+                    var answer = confirm("Realy DELETE items ?!");
+                    var value;
+
+                    if (answer === true) {
+                        $.each(this.$el.find("input:not('.departmentCB'):checked"), function (index, checkbox) {
+                            value = checkbox.value;
+                            that.deleteItem(value);
+                        });
+                    }
+                } else {
                     this.cancelChanges();
                 }
             },
@@ -978,34 +1014,29 @@ define([
                 var self = this;
                 var model;
                 var mid = 39;
-
-                var answer = confirm("Do You want to DELETE item ?!");
-
-                if (answer === true) {
-                    if (id.length < 24) {
-                        this.editCollection.remove(id);
-                        delete this.changedModels[id];
-                        self.deleteItemsRender(1, 1);
-                    } else {
-                        model = this.collection.get(id);
-                        model.destroy({
-                            headers: {
-                                mid: mid
-                            },
-                            wait   : true,
-                            success: function () {
-                                delete self.changedModels[id];
-                                self.deleteItemsRender(1, 1);
-                            },
-                            error  : function (model, res) {
-                                if (res.status === 403 && index === 0) {
-                                    alert("You do not have permission to perform this action");
-                                }
-                                self.deleteItemsRender(1, 1);
-
+                if (id.length < 24) {
+                    this.editCollection.remove(id);
+                    delete this.changedModels[id];
+                    self.deleteItemsRender(1, 1);
+                } else {
+                    model = this.collection.get(id);
+                    model.destroy({
+                        headers: {
+                            mid: mid
+                        },
+                        wait   : true,
+                        success: function () {
+                            delete self.changedModels[id];
+                            self.deleteItemsRender(1, 1);
+                        },
+                        error  : function (model, res) {
+                            if (res.status === 403 && index === 0) {
+                                alert("You do not have permission to perform this action");
                             }
-                        });
-                    }
+                            self.deleteItemsRender(1, 1);
+
+                        }
+                    });
                 }
 
             },

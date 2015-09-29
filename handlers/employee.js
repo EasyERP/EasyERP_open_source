@@ -32,6 +32,7 @@ var Employee = function (models) {
     };
 
     this.getForDD = function (req, res, next) {
+
         getNameAndDepartment(req.session.lastDb, function(err, result) {
             if (err) {
                 return next(err)

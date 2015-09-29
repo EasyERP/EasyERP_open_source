@@ -2,7 +2,6 @@ var mongoose = require('mongoose');
 var moment = require('../public/js/libs/moment/moment');
 var objectId = mongoose.Types.ObjectId;
 var Capacity = function (models) {
-    var EmployeeHandler = require('../handlers/employee');
     var access = require("../Modules/additions/access.js")(models);
     var CapacitySchema = mongoose.Schemas['Capacity'];
     var async = require('async');
@@ -108,10 +107,13 @@ var Capacity = function (models) {
     };
 
     function createCapacityOnMonth(db, month, year, callback) {
-        var employeeHandler = new EmployeeHandler(models);
         var Capacity = models.get(db, 'Capacity', CapacitySchema);
+
         var VacationSchema = mongoose.Schemas['Vacation'];
         var Vacation = models.get(db, 'Vacation', VacationSchema);
+        var EmployeeSchema = mongoose.Schemas['Employees'];
+        var Employee = models.get(db, 'Employees', EmployeeSchema);
+
         var capacity;
         var waterfallTasks;
         var date = moment([year, month - 1]);
@@ -129,10 +131,31 @@ var Capacity = function (models) {
         })
 
         function getEmployees(callback) {
-            employeeHandler.getNameAndDepartment(db, function (err, result) {
+
+            var queryObject = {
+                isEmployee: true,
+                hire      : {
+                    $not: {$size: 0},
+                }
+            }
+
+            var query = Employee.find(queryObject);
+            var hire;
+            var fire;
+
+            query.exec(function (err, result) {
                 if (err) {
                     return callback(err);
                 }
+
+                result = _.filter(result, function(element) {
+                    hire = element.hire[0];
+                    fire = element.fire[0];
+
+                    console.log(moment(hire));
+
+                    return (moment(hire) <= date.endOf('month') && moment(fire) >= date.date(1)) === true;
+                })
 
                 callback(null, result);
             })
@@ -146,6 +169,8 @@ var Capacity = function (models) {
                 var query;
                 var queryObject = {};
                 var saveOrNot = true;
+                var fire;
+                var hire;
 
                 var modelObject = {
                     year : year,
@@ -168,17 +193,25 @@ var Capacity = function (models) {
                 modelObject.capacityArray = [];
                 modelObject.capacityMonthTotal = 0;
 
-                for (var day = daysCount - 1; day >= 0; day--) {
+                fire = employee.fire[0];
+                hire = employee.hire[0];
 
-                    dateValue = moment([year, month - 1, day + 1]);
+                if (modelObject.employee.name === 'Yuriy Bodak') {
 
-                    dayNumber = moment(dateValue).day();
+                    for (var day = daysCount - 1; day >= 0; day--) {
 
-                    if (dayNumber !== 0 && dayNumber !== 6) {
-                        modelObject.capacityArray[day] = 8;
-                        modelObject.capacityMonthTotal += 8;
-                    } else {
-                        modelObject.capacityArray[day] = null;
+                        dateValue = moment([year, month - 1, day + 1]);
+
+                        dayNumber = dateValue.day();
+
+                        if (dayNumber !== 0 && dayNumber !== 6) {
+                            if ((!fire && moment(hire) <= dateValue) || (moment(fire) >= dateValue && moment(hire) <= dateValue)) {
+                                modelObject.capacityArray[day] = 8;
+                                modelObject.capacityMonthTotal += 8;
+                            } else {
+                                modelObject.capacityArray[day] = null;
+                            }
+                        }
                     }
                 }
 
