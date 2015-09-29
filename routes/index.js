@@ -46,6 +46,8 @@ module.exports = function (app, mainDb) {
     var filterRouter = require('./filter')(models);
     var productCategoriesRouter = require('./productCategories')(models, event);
     var customersRouter = require('./customers')(models, event);
+    var importFileRouter = require('./importFile')(models);
+
 
     app.get('/', function (req, res, next) {
         res.sendfile('index.html');
@@ -73,6 +75,7 @@ module.exports = function (app, mainDb) {
     app.use('/period', periodRouter);
     app.use('/paymentMethod', paymentMethodRouter);
     app.use('/importData', importDataRouter);
+    app.use('/importFile', importFileRouter);
     app.use('/wTrack', wTrackRouter);
     app.use('/project', projectRouter);
     app.use('/employee', employeeRouter);

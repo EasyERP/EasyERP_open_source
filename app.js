@@ -74,6 +74,7 @@ module.exports = function (mainDb, dbsNames) {
     app.use(cookieParser("CRMkey"));
     app.use(express.static(path.join(__dirname, 'public')));
 
+
     app.use(session({
         name: 'crm',
         key: "CRMkey",
