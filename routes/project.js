@@ -8,7 +8,7 @@ module.exports = function (models) {
 
     router.post('/updateAllProjects', handler.updateAllProjects);
     router.get('/getProjectPMForDashboard', handler.getProjectPMForDashboard);
-    router.get('/getForDashboard', handler.getForDashboard);
+    //router.get('/getForDashboard', handler.getForDashboard);
     router.get('/getForWtrack', handler.getForWtrack);
     router.get('/getFilterValues', handler.getFilterValues);
 

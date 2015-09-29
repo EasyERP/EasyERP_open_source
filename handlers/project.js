@@ -277,8 +277,9 @@ var Project = function (models) {
                         });
                     }
                 });
+
             });
-           // res.status(200).send('success');
+            res.status(200).send('success');
         });
 
     };

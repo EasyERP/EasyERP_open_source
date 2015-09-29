@@ -53,8 +53,17 @@ function (Validation, common) {
                     projectTeam: [],
                     bonus: [],
                     budget: [],
-                    projectValues: {},
-                    budgetTotal: {}
+                    projectValues: {
+                        markUp: 0,
+                        radio: 0
+                    },
+                    budgetTotal: {
+                        revenueSum: 0,
+                        profitSum: 0,
+                        costSum: 0,
+                        rateSum: 0,
+                        hoursSum: 0
+                    }
                 }
             },
             parse: true,
