@@ -1,10 +1,12 @@
 var mongoose = require('mongoose');
 var moment = require('../public/js/libs/moment/moment');
+var CapacityHandler = require('./capacity');
 var objectId = mongoose.Types.ObjectId;
 
 var Vacation = function (event, models) {
     'use strict';
     var access = require("../Modules/additions/access.js")(models);
+    var capacityHandler = new CapacityHandler(models);
     var VacationSchema = mongoose.Schemas['Vacation'];
     var async = require('async');
     var _ = require('lodash');
@@ -19,7 +21,7 @@ var Vacation = function (event, models) {
             if (array[day]) {
                 dateValue = moment([year, month - 1, day + 1]);
                 //dateValue.date(day + 1);
-               // weekKey = year * 100 + moment(dateValue).isoWeek();
+                // weekKey = year * 100 + moment(dateValue).isoWeek();
                 weekKey = year * 100 + moment(dateValue).isoWeek();
 
                 dayNumber = moment(dateValue).day();
@@ -121,12 +123,12 @@ var Vacation = function (event, models) {
         workingDays = endYear.diff(startYear, 'days') - leaveDays - weekend;
 
         return {
-            leaveDays: leaveDays,
+            leaveDays  : leaveDays,
             workingDays: workingDays,
-            vacation: vacation,
-            personal: personal,
-            sick: sick,
-            education: education
+            vacation   : vacation,
+            personal   : personal,
+            sick       : sick,
+            education  : education
         }
     };
 
@@ -289,6 +291,9 @@ var Vacation = function (event, models) {
         var id = req.params.id;
         var data = req.body;
         var Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
+        var capData = {
+            db: req.session.lastDb,
+        }
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getEditWritAccess(req, req.session.uId, 70, function (access) {
@@ -304,6 +309,11 @@ var Vacation = function (event, models) {
                         if (err) {
                             return next(err);
                         }
+
+                        capacityHandler.vacationChanged(capData, next);
+                        capData.id = response.employee._id;
+                        capData.year = response.year;
+                        capData.month = response.month;
 
                         res.status(200).send({success: 'updated'});
                         event.emit('recollectVacationDash');
@@ -321,6 +331,7 @@ var Vacation = function (event, models) {
         var body = req.body;
         var uId;
         var Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
+        var capData = {db: req.session.lastDb};
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             uId = req.session.uId;
@@ -328,6 +339,8 @@ var Vacation = function (event, models) {
                 if (access) {
                     async.each(body, function (data, cb) {
                         var id = data._id;
+
+                        capData.id = id;
 
                         data.editedBy = {
                             user: uId,
@@ -339,7 +352,17 @@ var Vacation = function (event, models) {
                             data.vacations = calculateWeeks(data.vacArray, data.month, data.year);
                         }
 
-                        Vacation.findByIdAndUpdate(id, {$set: data}, cb);
+                        Vacation.findByIdAndUpdate(id, {$set: data}, function(err, result) {
+                            if (err) {
+                                return cb(err);
+                            }
+
+                            capData.vacation = result.toJSON();
+
+                            capacityHandler.vacationChanged(capData, next);
+
+                            cb(null, result);
+                        });
                     }, function (err) {
                         if (err) {
                             return next(err);
@@ -382,7 +405,7 @@ var Vacation = function (event, models) {
     this.create = function (req, res, next) {
         var Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
         var body = req.body;
-        var Vacation;
+        var vacation;
         var vacationKeys;
         var result = 0;
 
@@ -390,15 +413,15 @@ var Vacation = function (event, models) {
 
         vacationKeys = Object.keys(body.vacations);
 
-        vacationKeys.forEach(function(key){
+        vacationKeys.forEach(function (key) {
             result += body.vacations[key];
         });
 
         body.monthTotal = result;
 
-        Vacation = new Vacation(body);
+        vacation = new Vacation(body);
 
-        Vacation.save(function (err, Vacation) {
+        vacation.save(function (err, Vacation) {
             if (err) {
                 return next(err);
             }

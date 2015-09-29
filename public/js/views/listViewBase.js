@@ -245,8 +245,10 @@ define([
 
             nextPage: function (event) {
                 event.preventDefault();
+
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
+
                 this.nextP({
                     sort         : this.sort,
                     filter       : this.filter,
@@ -325,8 +327,10 @@ define([
                     newCollection: this.newCollection
                 });
                 this.page = 1;
+
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
+
                 this.changeLocationHash(1, itemsNumber, this.filter);
             },
 
@@ -432,16 +436,23 @@ define([
             renderContent: function () {
                 var currentEl = this.$el;
                 var tBody = currentEl.find('#listTable');
+                var itemView;
+                var pagenation;
+
                 tBody.empty();
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
-                var itemView = new this.listItemView({
-                    collection : this.collection,
-                    page       : this.page,
-                    itemsNumber: this.collection.namberToShow
-                });
-                tBody.append(itemView.render());
-                var pagenation = this.$el.find('.pagination');
+
+                if (this.collection.length > 0) {
+                    itemView = new this.listItemView({
+                        collection : this.collection,
+                        page       : this.page,
+                        itemsNumber: this.collection.namberToShow
+                    });
+                    tBody.append(itemView.render());
+                }
+
+                pagenation = this.$el.find('.pagination');
                 if (this.collection.length === 0) {
                     pagenation.hide();
                 } else {

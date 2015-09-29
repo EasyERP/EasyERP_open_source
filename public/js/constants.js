@@ -278,8 +278,9 @@ define([], function () {
         VACATION          : 'Vacation',
         ATTENDANCE        : 'Attendance',
         DASHBOARD_VACATION: 'DashboardVacation',
-        DASHBOARD_HR      : 'HrDashboard',
-        HOURS             : 'Hours',
+        DASHBOARD_HR: 'HrDashboard',
+        HOURS: 'Hours',
+        CAPACITY: 'Capacity',
 
         RESPONSES: {
             BAD_RESPONSE            : 'Please try again',

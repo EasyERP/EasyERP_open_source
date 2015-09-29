@@ -50,4 +50,5 @@ module.exports = (function () {
     require('./bonusType.js');
     require('./savedFilters.js');
     require('./hoursCash.js');
+    require('./capacity.js');
 })();
