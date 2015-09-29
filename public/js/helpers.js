@@ -15,10 +15,7 @@ define([], function(){
     }
 
     function weekSplitter(date){
-        var year = date.substr(0, 4);
-        var week = date.substr(4, 2);
-        var date = (year.concat('/')).concat(week);
-        return date;
+       return date.replace(/(\d{4})/, "$1/");
     }
 
     return {
