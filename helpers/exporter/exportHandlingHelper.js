@@ -5,6 +5,7 @@ var arrayToXlsx = require('../exporter/arrayToXlsx');
 var createProjection = function (map, options) {
     var project = {};
     var filter = options.filter;
+    var type = options.type;
     var arrayToAdd = options.putHeadersTo;
     var addHeaders = !!arrayToAdd;
     var value;
@@ -30,9 +31,10 @@ var addExportToCsvFunctionToHandler = function (handler, getModel, map, fileName
     handler['exportToCsv'] = function (req, res, next) {
         var Model = getModel(req);
         var filter = req.body;
-        var project = createProjection(map, {filter: filter});
+        var type = req.params.type;
+        var project = createProjection(map, {filter: filter, type: type});
 
-        Model.aggregate({$project: project}, function (err, response) {
+        Model.aggregate({$match: type ? {type: type} : {}}, {$project: project}, function (err, response) {
             var writableStream;
 
             if (err) {
@@ -69,16 +71,17 @@ var addExportToCsvFunctionToHandler = function (handler, getModel, map, fileName
  * @param {Object} handler - object to insert exportToXlsx method
  * @param {Function) getModel - function(req) that will return specified model
  * @param {Object} map - object with all model properties and their names
- * @param {string fileName - name that will be used for export file, without extension
+ * @param {string} fileName - name that will be used for export file, without extension
  */
 var addExportToXlsxFunctionToHandler = function (handler, getModel, map, fileName) {
     handler['exportToXlsx'] = function (req, res, next) {
         var Model = getModel(req);
         var filter = req.body;
+        var type = req.params.type;
         var headersArray = [];
-        var project = createProjection(map, {filter: filter, putHeadersTo: headersArray});
+        var project = createProjection(map, {filter: filter, putHeadersTo: headersArray, type: type});
 
-        Model.aggregate({$project: project}, function (err, response) {
+        Model.aggregate({$match: type ? {type: type} : {}}, {$project: project}, function (err, response) {
 
             if (err) {
                 return next(err);
@@ -118,7 +121,7 @@ exports.addExportToXlsxFunctionToHandler = addExportToXlsxFunctionToHandler;
  * @param {Object} handler - object to insert exportToXlsx and exportToCsv methods
  * @param {Function) getModel - function(req) that will return specified model
  * @param {Object} map - object with all model properties and their names
- * @param {string fileName - name that will be used for export file, without extension
+ * @param {string} fileName - name that will be used for export file, without extension
  */
 exports.addExportFunctionsToHandler = function (handler, getModel, map, fileName) {
     addExportToCsvFunctionToHandler(handler, getModel, map, fileName);

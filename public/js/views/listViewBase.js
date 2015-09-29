@@ -572,6 +572,24 @@ define([
                 }
             },
 
+            exportToCsv: function () {
+                if (this.exportToCsvUrl) {
+                    window.location = this.exportToCsvUrl;
+                }
+                else {
+                    alert("No url specified");
+                }
+            },
+
+            exportToXlsx: function () {
+                if (this.exportToXlsxUrl) {
+                    window.location = this.exportToXlsxUrl;
+                }
+                else {
+                    alert("No url specified");
+                }
+            }
+
             //</editor-fold>
 
         });

@@ -10,7 +10,7 @@ define([
         'views/Filter/FilterView',
         'common',
         'dataService'
-],
+    ],
 
     function (listViewBase, listTemplate, createView, listItemView, editView, productModel, aphabeticTemplate, contentCollection, filterView, common, dataService) {
         var ProductsListView = listViewBase.extend({
@@ -20,8 +20,10 @@ define([
             contentCollection       : contentCollection,
             filterView              : filterView,
             totalCollectionLengthUrl: '/product/totalCollectionLength',
-            page: null, //if reload page, and in url is valid page
-            contentType: 'Product',//needs in view.prototype.changeLocationHash
+            page                    : null, //if reload page, and in url is valid page
+            contentType             : 'Product',//needs in view.prototype.changeLocationHash
+            exportToXlsxUrl         : '/Product/exportToXlsx',
+            exportToCsvUrl          : '/Product/exportToCsv',
 
             initialize: function (options) {
                 this.startTime = options.startTime;
@@ -43,8 +45,8 @@ define([
 
             events: {
                 "click .list td:not(.notForm)": "goToEditDialog",
-                "click .letter:not(.empty)": "alpabeticalRender",
-                "click .oe_sortable": "goSort"
+                "click .letter:not(.empty)"   : "alpabeticalRender",
+                "click .oe_sortable"          : "goSort"
             },
 
             render: function () {
@@ -58,7 +60,11 @@ define([
 
                 currentEl.html('');
                 currentEl.append(_.template(listTemplate));
-                currentEl.append(new listItemView({ collection: this.collection, page: this.page, itemsNumber: this.collection.namberToShow }).render());
+                currentEl.append(new listItemView({
+                    collection : this.collection,
+                    page       : this.page,
+                    itemsNumber: this.collection.namberToShow
+                }).render());
 
                 this.renderCheckboxes();
                 this.renderPagination(currentEl, this);
@@ -72,14 +78,16 @@ define([
             goToEditDialog: function (e) {
                 e.preventDefault();
                 var id = $(e.target).closest('tr').data("id");
-                var model = new productModel({ validate: false });
+                var model = new productModel({validate: false});
                 model.urlRoot = '/Product/form';
                 model.fetch({
-                    data: { id: id },
+                    data   : {id: id},
                     success: function (model) {
-                        new editView({ model: model });
+                        new editView({model: model});
                     },
-                    error: function () { alert('Please refresh browser'); }
+                    error  : function () {
+                        alert('Please refresh browser');
+                    }
                 });
             },
         });
