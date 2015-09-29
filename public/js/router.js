@@ -578,13 +578,19 @@ define([
 
             function goList(context) {
                 var currentContentType = context.testContent(contentType);
+                var url;
+
                 if (contentType !== currentContentType) {
                     contentType = currentContentType;
-                    var url = '#easyErp/' + contentType + '/list';
-                    if (parrentContentId)
+                    url = '#easyErp/' + contentType + '/list';
+
+                    if (parrentContentId) {
                         url += '/' + parrentContentId;
+                    }
+
                     Backbone.history.navigate(url, {replace: true});
                 }
+
                 var newCollection = true;
                 var self = context;
                 var savedFilter;
@@ -648,6 +654,7 @@ define([
 
                     function createViews() {
                         collection.unbind('reset');
+
                         var topbarView = new topBarView({actionType: "Content", collection: collection});
                         var contentview = new contentView({
                             collection: collection,

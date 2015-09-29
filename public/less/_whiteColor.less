@@ -4,7 +4,7 @@
 //@mainText-color: #fff;
 @mainText-color: @fontColor-2;
 @mainText-color-selected: @tilte-color;
-@mainBlack-color: #808080;
+@mainBlack-color: #DBDBDB;
 
 
 /*== Lights =========================*/
@@ -18,7 +18,7 @@
 
 /*==Main menu==========================*/
 
-@bg-main: #EBEBEA;
+@bg-main: #fff;
 @bg-main-menu: @bg-main;
 @bg-main-menu-selected: @tilte-color;
 //@bg-main-menu-selected: #b4b4b5;
@@ -42,7 +42,8 @@
 @bg-hover-drop-down-color: lighten(@bg-main, 5%);
 @bg-hover-drop-down-color-active: lighten(@bg-main, 15%);
 @filter-border-color: @border-color-main;
-@filter-text-color: @grey;
+@filter-text-color: @mainText-color;
+@filter-text-color-hover: @grey;
 
 /*== Customer ======================*/
 
@@ -50,7 +51,7 @@
 
 /*==LIST ============================*/
 
-@defaultBgColorOdd-color: lighten(@bg-main, 5%);
+@defaultBgColorOdd-color: #DBDBDB;
 @list-color-text: @submenu-text-color;
 @defaultBgHover-color: lighten(@bg-main, 15%);
 @list-border-color: @border-color-main;
@@ -99,3 +100,8 @@
 @revenueByDepartment: @tilte-color;
 //@unpaid-wtrack: #fd0001;
 @unpaid-wtrack: #E55253;
+
+/*== Notifikation ===============================*/
+
+@notifikation-error-color: #FE7E86;
+@notifikation-notify-color: #00DB30;

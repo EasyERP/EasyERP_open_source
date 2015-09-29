@@ -37,10 +37,12 @@ var wTrack = function (models) {
             var currentStartWeek = currentWeek - 6;
             var currentYear = moment().weekYear();
 
+            var i;
+
             weeksArr = [];
             startDate = currentYear * 100 + currentStartWeek;
 
-            for (var i = 0; i <= 13; i++) {
+            for (i = 0; i <= 13; i++) {
                 if (currentStartWeek + i > 53) {
                     week = currentStartWeek + i - 53;
                     weeksArr.push({
@@ -51,7 +53,7 @@ var wTrack = function (models) {
                 } else {
                     week = currentStartWeek + i;
                     weeksArr.push({
-                        dateByWeek: (currentYear) * 100 + week,
+                        dateByWeek: currentYear * 100 + week,
                         week: week,
                         year: currentYear
                     });
@@ -59,7 +61,7 @@ var wTrack = function (models) {
             }
 
             weeksArr = _.sortBy(weeksArr, function (monthObject) {
-                return monthObject.dateByWeek
+                return monthObject.dateByWeek;
             });
 
             endDate = weeksArr[weeksArr.length - 1].dateByWeek;
@@ -87,7 +89,7 @@ var wTrack = function (models) {
                             console.log(deps);
                             console.log('===========================================');
                         }
-                        if(department.department == null){
+                        if(department.department === null){
                             console.log('===================== department ======================');
                             console.log(department);
                             console.log('===========================================');

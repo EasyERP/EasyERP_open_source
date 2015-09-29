@@ -14,24 +14,20 @@ define([
             newCollection     : null,
             page              : null,
             viewType          : 'list',
-            hasAlphabet       : false,
 
             events: {
-                "click .itemsNumber"     : "switchPageCounter",
-                "click .showPage"        : "showPage",
-                "change #currentShowPage": "showPage",
-                "click #previousPage"    : "previousPage",
-                "click #nextPage"        : "nextPage",
-                "click #firstShowPage"   : "firstPage",
-                "click #lastShowPage"    : "lastPage",
-
+                "click .itemsNumber"          : "switchPageCounter",
+                "click .showPage"             : "showPage",
+                "change #currentShowPage"     : "showPage",
+                "click #previousPage"         : "previousPage",
+                "click #nextPage"             : "nextPage",
+                "click #firstShowPage"        : "firstPage",
+                "click #lastShowPage"         : "lastPage",
                 "click .checkbox"             : "checked",
                 "click .list td:not(.notForm)": "gotoForm",
-
-                "mouseover .currentPageList": "showPagesPopup",
-                "click"                     : "hidePagesPopup",
-
-                "click .oe_sortable": "goSort"
+                "mouseover .currentPageList"  : "showPagesPopup",
+                "click"                       : "hidePagesPopup",
+                "click .oe_sortable"          : "goSort"
             },
 
             //<editor-fold desc="Logic">
@@ -182,7 +178,7 @@ define([
                             localCounter++;
                             count--;
                             if (count === 0) {
-                                if (this.hasAlphabet){
+                                if (this.hasAlphabet) {
                                     common.buildAphabeticArray(that.collection, function (arr) {
                                         $("#startLetter").remove();
                                         that.alphabeticArray = arr;
@@ -300,8 +296,19 @@ define([
 
             switchPageCounter: function (event) {
                 event.preventDefault();
+
+                var targetEl = $(event.target);
+                var itemsNumber;
+
+                if (this.previouslySelected) {
+                    this.previouslySelected.removeClass("selectedItemsNumber");
+                }
+
+                this.previouslySelected = targetEl;
+                targetEl.addClass("selectedItemsNumber");
+
                 this.startTime = new Date();
-                var itemsNumber = event.target.textContent;
+                itemsNumber = targetEl.text();
 
                 if (itemsNumber === 'all') {
                     itemsNumber = this.listLength;
@@ -336,7 +343,6 @@ define([
                     $('.search-content').removeClass('fa-caret-up');
                     this.$el.find('.search-options').addClass('hidden');
                 }
-                ;
             },
 
             //</editor-fold>
@@ -359,9 +365,7 @@ define([
                 context.startTime = new Date();
                 context.newCollection = false;
 
-                if (Object.keys(filter).length === 0) {
-                    this.filter = {};
-                }
+                this.filter = Object.keys(filter).length === 0 ? {} : filter;
 
                 context.changeLocationHash(1, itemsNumber, filter);
                 context.collection.showMore({count: itemsNumber, page: 1, filter: filter});
@@ -375,15 +379,20 @@ define([
 
             showMoreContent: function (newModels) {
                 var holder = this.$el;
-                holder.find("#listTable").empty();
                 var itemView;
+
+                holder.find("#listTable").empty();
+
                 itemView = new this.listItemView({
                     collection : newModels,
                     page       : holder.find("#currentShowPage").val(),
                     itemsNumber: holder.find("span#itemsNumber").text()
                 });
+
                 holder.append(itemView.render());
+
                 itemView.undelegateEvents();
+
                 var pagenation = holder.find('.pagination');
                 if (newModels.length !== 0) {
                     pagenation.show();
@@ -474,7 +483,7 @@ define([
             },
 
             renderAlphabeticalFilter: function () {
-                this.hasAlphabet=true;
+                this.hasAlphabet = true;
                 var self = this;
 
                 common.buildAphabeticArray(this.collection, function (arr) {
