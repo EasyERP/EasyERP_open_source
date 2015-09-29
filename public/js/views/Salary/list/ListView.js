@@ -19,11 +19,24 @@ define([
             contentCollection: contentCollection,
             filterView       : filterView,
 
-
             contentType             : 'Salary',//need
             totalCollectionLengthUrl: '/salary/totalCollectionLength',
             page                    : null, //if reload page, and in url is valid page
             contentType             : 'Salary',//needs in view.prototype.changeLocationHash
+
+            events: {
+                "click .mainCB"                                                                  : "checked",
+                "click .stageSelect"                                                             : "showNewSelect",
+                "click td.editable"                                                              : "editRow",
+                "click .list tbody tr:not(.subRow, .disabled, .copy) td:not(.notForm, .editable)": "showSubSalary",
+                "mouseover .currentPageList": "itemsNumber",
+                "click": "hideItemsNumber",
+                "click #firstShowPage": "firstPage",
+                "click #lastShowPage": "lastPage",
+                "click .oe_sortable": "goSort",
+                "change .editable ": "setEditable",
+                "keydown input.editing ": "keyDown"
+            },
 
             initialize: function (options) {
                 this.startTime = options.startTime;
@@ -39,20 +52,6 @@ define([
                 this.editCollection;
                 this.newCollection;
                 this.contentCollection = contentCollection;
-            },
-
-            events: {
-                "click .mainCB"                                                                  : "checked",
-                "click .stageSelect"                                                             : "showNewSelect",
-                "click td.editable"                                                              : "editRow",
-                "click .list tbody tr:not(.subRow, .disabled, .copy) td:not(.notForm, .editable)": "showSubSalary",
-                "mouseover .currentPageList": "itemsNumber",
-                "click": "hideItemsNumber",
-                "click #firstShowPage": "firstPage",
-                "click #lastShowPage": "lastPage",
-                "click .oe_sortable": "goSort",
-                "change .editable ": "setEditable",
-                "keydown input.editing ": "keyDown"
             },
 
             keyDown: function (e) {
@@ -74,7 +73,9 @@ define([
             saveItem: function () {
                 var self = this;
                 var modelToSave;
-                var row = $('#listTable').find('tr.copy');
+                var rowCopy = $('#listTable').find('tr.copy');
+                var row = rowCopy.length > 0 ? rowCopy : $('#listTable').find('tr.newRow');
+                var id = row.attr('data-id');
                 var modelJSON;
                 var input = row.find('input.editing');
                 var month;
@@ -82,6 +83,7 @@ define([
                 var dataKey;
                 var momentYear;
                 var momentMonth;
+                var model;
 
                 month = row.find('.month').text();
                 year = row.find('.year').text();
@@ -91,21 +93,33 @@ define([
                 momentMonth = moment().month(month - 1).format('MMM');
                 dataKey = momentMonth + "/" + momentYear;
 
+                if (id !== 'false') {
+                    model = this.collection.get(id)
+
+                    if (model.get('newModel')) {
+                        this.hideSaveCancelBtns();
+                        model.set({month: month, year: year, dataKey: momentMonth + '/' + momentYear});
+                    }
+                }
+
                 function save() {
                     self.newCollection = new salaryEditableCollection();
 
                     self.newCollection.on('saved', self.savedNewModel, self);
 
-                    self.editCollection.each(function (model, index) {
-                        modelJSON = model.toJSON();
+                    if (self.editCollection && self.editCollection.length !== 0) {
 
-                        delete modelJSON._id;
-                        modelJSON['month'] = month;
-                        modelJSON['year'] = year;
+                        self.editCollection.each(function (model, index) {
+                            modelJSON = model.toJSON();
 
-                        modelToSave = new salaryModel(modelJSON);
-                        self.newCollection.add(modelToSave);
-                    });
+                            delete modelJSON._id;
+                            modelJSON['month'] = month;
+                            modelJSON['year'] = year;
+
+                            modelToSave = new salaryModel(modelJSON);
+                            self.newCollection.add(modelToSave);
+                        });
+                    }
 
                     self.newCollection.save();
                 }
@@ -244,20 +258,52 @@ define([
             },
 
             render: function () {
-                var self;
-                var currentEl;
-
                 $('.ui-dialog ').remove();
-
-                self = this;
-                currentEl = this.$el;
+                var self = this;
+                var currentEl = this.$el;
+                var date = new Date();
+                var year = moment(date).format('YYYY');
+                var subYear = moment(date).format('YY');
+                var month = moment(date).format('M');
+                var subMonth = moment(date).format('MMM');
+                var model = {};
 
                 currentEl.html('');
                 currentEl.append(_.template(listTemplate));
+
+                if (this.collection.length === 0) {
+                    model = {
+                        month: month,
+                        year: year,
+                        dataKey: subMonth + '/' + subYear,
+                        calc: {
+                            onCard: 0,
+                            onCash: 0,
+                            salary: 0,
+                        },
+                        paid: {
+                            onCard: 0,
+                            onCash: 0,
+                        },
+                        diff: {
+                            onCard: 0,
+                            onCash: 0,
+                            total: 0,
+                        },
+                        employeesArray: [],
+                    }
+
+                    model = new salaryModel(model);
+                    model.set({_id: model.cid});
+                    model.set({newModel: true});
+
+                    this.collection.set([model]);
+                }
+
                 currentEl.append(new listItemView({
-                    collection : this.collection,
-                    page       : this.page,
-                    itemsNumber: this.collection.namberToShow
+                    collection: this.collection,
+                    page: this.page,
+                    itemsNumber: this.collection.namberToShow,
                 }).render());
 
                 $('#check_all').click(function () {
@@ -287,7 +333,7 @@ define([
                 var self = this;
 
                 var tr = $(e.target).closest('tr');
-                var id = $(tr).data("id");
+                var id = $(tr).attr("data-id");
                 var subId = "subSalary-row" + id
                 var subRowCheck = $('#' + subId);
                 var icon = $(tr).find('.icon');
