@@ -570,10 +570,16 @@ var wTrack = function (event, models) {
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
         access.getDeleteAccess(req, req.session.uId, 72, function (access) {
             if (access) {
-                event.emit('dropHoursCashes', req);
-                event.emit('recollectVacationDash');
+                WTrack.remove({_id: id}, function (err, wTrack) {
+                    if (err) {
+                        return next(err);
+                    }
 
-                res.status(200).send({success: product});
+                    event.emit('dropHoursCashes', req);
+                    event.emit('recollectVacationDash');
+
+                    res.status(200).send({success: wTrack});
+                });
             } else {
                 res.status(403).send();
             }

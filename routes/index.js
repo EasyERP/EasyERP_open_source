@@ -47,6 +47,7 @@ module.exports = function (app, mainDb) {
     var filterRouter = require('./filter')(models);
     var productCategoriesRouter = require('./productCategories')(models, event);
     var customersRouter = require('./customers')(models, event);
+    var capacityRouter = require('./capacity')(models);
 
     app.get('/', function (req, res, next) {
         res.sendfile('index.html');
@@ -90,6 +91,7 @@ module.exports = function (app, mainDb) {
     app.use('/dashboard', dashboardRouter);
     app.use('/category', productCategoriesRouter);
     app.use('/customers', customersRouter);
+    app.use('/capacity', capacityRouter);
     app.get('/getDBS', function (req, res) {
         res.send(200, {dbsNames: dbsNames});
     });

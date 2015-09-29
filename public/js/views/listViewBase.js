@@ -14,24 +14,20 @@ define([
             newCollection     : null,
             page              : null,
             viewType          : 'list',
-            hasAlphabet       : false,
 
             events: {
-                "click .itemsNumber"     : "switchPageCounter",
-                "click .showPage"        : "showPage",
-                "change #currentShowPage": "showPage",
-                "click #previousPage"    : "previousPage",
-                "click #nextPage"        : "nextPage",
-                "click #firstShowPage"   : "firstPage",
-                "click #lastShowPage"    : "lastPage",
-
+                "click .itemsNumber"          : "switchPageCounter",
+                "click .showPage"             : "showPage",
+                "change #currentShowPage"     : "showPage",
+                "click #previousPage"         : "previousPage",
+                "click #nextPage"             : "nextPage",
+                "click #firstShowPage"        : "firstPage",
+                "click #lastShowPage"         : "lastPage",
                 "click .checkbox"             : "checked",
                 "click .list td:not(.notForm)": "gotoForm",
-
-                "mouseover .currentPageList": "showPagesPopup",
-                "click"                     : "hidePagesPopup",
-
-                "click .oe_sortable": "goSort"
+                "mouseover .currentPageList"  : "showPagesPopup",
+                "click"                       : "hidePagesPopup",
+                "click .oe_sortable"          : "goSort"
             },
 
             //<editor-fold desc="Logic">
@@ -249,8 +245,10 @@ define([
 
             nextPage: function (event) {
                 event.preventDefault();
+
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
+
                 this.nextP({
                     sort         : this.sort,
                     filter       : this.filter,
@@ -300,8 +298,19 @@ define([
 
             switchPageCounter: function (event) {
                 event.preventDefault();
+
+                var targetEl = $(event.target);
+                var itemsNumber;
+
+                if (this.previouslySelected) {
+                    this.previouslySelected.removeClass("selectedItemsNumber");
+                }
+
+                this.previouslySelected = targetEl;
+                targetEl.addClass("selectedItemsNumber");
+
                 this.startTime = new Date();
-                var itemsNumber = event.target.textContent;
+                itemsNumber = targetEl.text();
 
                 if (itemsNumber === 'all') {
                     itemsNumber = this.listLength;
@@ -318,8 +327,10 @@ define([
                     newCollection: this.newCollection
                 });
                 this.page = 1;
+
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
+
                 this.changeLocationHash(1, itemsNumber, this.filter);
             },
 
@@ -336,7 +347,6 @@ define([
                     $('.search-content').removeClass('fa-caret-up');
                     this.$el.find('.search-options').addClass('hidden');
                 }
-                ;
             },
 
             //</editor-fold>
@@ -373,15 +383,20 @@ define([
 
             showMoreContent: function (newModels) {
                 var holder = this.$el;
-                holder.find("#listTable").empty();
                 var itemView;
+
+                holder.find("#listTable").empty();
+
                 itemView = new this.listItemView({
                     collection : newModels,
                     page       : holder.find("#currentShowPage").val(),
                     itemsNumber: holder.find("span#itemsNumber").text()
                 });
+
                 holder.append(itemView.render());
+
                 itemView.undelegateEvents();
+
                 var pagenation = holder.find('.pagination');
                 if (newModels.length !== 0) {
                     pagenation.show();
