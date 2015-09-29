@@ -48,7 +48,23 @@ function (Validation, common) {
                 remaining: 0,
                 progress: 0,
                 notes: [],
-                bonus: []
+                bonus: [],
+                budget: {
+                    projectTeam: [],
+                    bonus: [],
+                    budget: [],
+                    projectValues: {
+                        markUp: 0,
+                        radio: 0
+                    },
+                    budgetTotal: {
+                        revenueSum: 0,
+                        profitSum: 0,
+                        costSum: 0,
+                        rateSum: 0,
+                        hoursSum: 0
+                    }
+                }
             },
             parse: true,
             parse: function (response) {

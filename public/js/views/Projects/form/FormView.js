@@ -183,7 +183,9 @@ define([
 							self.disableEdit();
                             var url = window.location.hash;
                             Backbone.history.fragment = "";
-                            Backbone.history.navigate(url, {trigger: true});
+							setTimeout(function(){
+								Backbone.history.navigate(url, {trigger: true});
+							}, 500);
 						},
 						error  : function (model, xhr) {
 							self.errorNotification(xhr);
@@ -275,9 +277,11 @@ define([
 				var paralellTasks;
 				var self = this;
 				var templ = _.template(ProjectsFormTemplate);
+				var template = _.template(DetailsTemplate);
 				var thisEl = this.$el;
 				var notDiv;
 				var bonusView;
+				var container;
 
 				thisEl.html(templ({model: formModel}));
 
@@ -318,14 +322,25 @@ define([
 					self.saveItem();
 				});
 
+				container = this.$el.find('#forInfo');
+
+				container.html(template({
+						projectTeam: formModel.budget.projectTeam,
+						bonus: formModel.budget.bonus,
+						budget: formModel.budget.budget,
+						projectValues: formModel.budget.projectValues,
+						budgetTotal: formModel.budget.budgetTotal,
+						currencySplitter: helpers.currencySplitter
+					})
+				);
+
 				thisEl.find('#createBonus').hide();
 				thisEl.find('#noteArea').attr('readonly', true);
 
 				paralellTasks = [this.getWTrack, this.getInvoice];
 
 				async.parallel(paralellTasks, function (err, result) {
-
-					self.getDataForDetails(result);
+					//self.getDataForDetails(result);
 				});
 
 				//this.delegateEvents(this.events);
@@ -333,7 +348,6 @@ define([
 			},
 
 			getDataForDetails: function (result) {
-				var validation = true;
 				var projectTeam = [];
 				var bonus = [];
 				var projectValues = {};
@@ -464,34 +478,6 @@ define([
 									currencySplitter: helpers.currencySplitter
 								})
 							);
-							//dataService.getData('/employee/getForProjectDetails',
-							//	{
-							//		data: [pMId]
-							//	}, function (resp) {
-							//		var keysForPT = Object.keys(projectTeam);
-							//		var sortBudget = [];
-							//
-							//		response.forEach(function (employee) {
-							//			keysForPT.forEach(function (id) {
-							//				if (employee._id === id) {
-							//					sortBudget.push(projectTeam[employee._id]);
-							//				}
-							//			})
-							//		});
-							//
-							//		response.unshift(resp[0]);
-							//		container.html(template({
-							//				projectTeam: response,
-							//				bonus: bonus,
-							//				budget: sortBudget,
-							//				projectValues: projectValues,
-							//				budgetTotal: budgetTotal,
-							//				currencySplitter: helpers.currencySplitter
-							//			})
-							//		);
-							//	}, this);
-
-
 						}, this);
 				}
 
@@ -504,7 +490,6 @@ define([
 						key  : 'project._id',
 						value: [_id]
 					}
-
 				};
 
 				dataService.getData('/wTrack/getForProjects',
@@ -641,9 +626,7 @@ define([
 					},
 					success: function () {
                         self.disableEdit();
-                        var url = window.location.hash;
-                        Backbone.history.fragment = "";
-                        Backbone.history.navigate(url, {trigger: true});
+                        Backbone.history.navigate("#easyErp/Projects/thumbnails", {trigger: true});
 					}
 				});
 
