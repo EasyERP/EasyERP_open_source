@@ -159,10 +159,12 @@ var requestHandler = function (app, event, mainDb) {
                                     result.forEach(function (element) {
                                         var id = element._id;
                                         var calc = ((((object[key] * expenseCoefficient) + fixedExpense) / hours) * element.worked).toFixed(2);
+                                        var revenue = (element.worked * element.rate).toFixed(2);
 
                                         wTrack.findByIdAndUpdate(id, {
                                             $set: {
-                                                cost: parseFloat(calc) * 100
+                                                cost: parseFloat(calc) * 100,
+                                                revenue: parseFloat(revenue) * 100
                                             }
                                         }, {
                                             new: true

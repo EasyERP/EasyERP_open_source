@@ -11,6 +11,9 @@
     <td><%=(project.budget && project.budget.budgetTotal && project.budget.budgetTotal.hoursSum) ? currencySplitter(project.budget.budgetTotal.hoursSum.toFixed()) : '&nbsp'%></td>
     <td class="procent"><%=(project.budget && project.budget.projectValues) ? (project.budget.projectValues.markUp ? project.budget.projectValues.markUp.toFixed() : '') : '&nbsp'%></td>
     <td class="procent"><%=(project.budget && project.budget.projectValues) ? (project.budget.projectValues.radio ? project.budget.projectValues.radio.toFixed() : '') : '&nbsp'%></td>
+    <td><%=(project.budget && project.budget.budgetTotal && project.budget.budgetTotal.minDate) ? weekSplitter(project.budget.budgetTotal.minDate.toFixed()) : '&nbsp'%></td>
+    <td><%=(project.budget && project.budget.budgetTotal && project.budget.budgetTotal.maxDate) ? weekSplitter(project.budget.budgetTotal.maxDate.toFixed()) : '&nbsp'%></td>
+
 </tr>
 <% }) %>
 

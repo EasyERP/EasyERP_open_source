@@ -65,7 +65,9 @@ function (Validation, common) {
                             byDev: 0,
                             byQA: 0
                         },
-                        hoursSum: 0
+                        hoursSum: 0,
+                        maxDate: 0,
+                        minDate: 0
                     }
                 }
             },

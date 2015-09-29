@@ -102,6 +102,10 @@ dbObject.once('open', function callback() {
                 var keysForPT;
                 var sortBudget = [];
                 var budget = {};
+                var minDate = 1/0;
+                var maxDate = 0;
+                var nextDate;
+                var nextMaxDate;
 
                 budgetTotal.profitSum = 0;
                 budgetTotal.costSum = 0;
@@ -134,6 +138,17 @@ dbObject.once('open', function callback() {
                     wTRack.forEach(function (wTrack) {
                         var emp = (wTrack.employee._id).toString();
 
+                        nextDate = wTrack.dateByWeek;
+                        nextMaxDate = wTrack.dateByWeek;
+
+                        if (nextDate <= minDate){
+                            minDate = nextDate;
+                        }
+
+                        if (nextMaxDate > maxDate){
+                            maxDate = nextMaxDate;
+                        }
+
                         if (empId === emp) {
                             if (projectTeam[empId]) {
                                 if (wTrack.department._id.toString() === '55b92ace21e4b7c40f000011'){
@@ -162,6 +177,9 @@ dbObject.once('open', function callback() {
                             }
                         }
                     });
+
+                    budgetTotal.maxDate = maxDate;
+                    budgetTotal.minDate = minDate;
                 });
 
 

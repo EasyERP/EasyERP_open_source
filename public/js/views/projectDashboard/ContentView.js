@@ -88,7 +88,8 @@ define([
                     $("#ProjectPMContent").html(template({
                         collection: this.collection.toJSON(),
                         startNumber: 0,
-                        currencySplitter: helpers.currencySplitter
+                        currencySplitter: helpers.currencySplitter,
+                        weekSplitter: helpers.weekSplitter
                     }));
                     if (this.collection.length == 0) {
                         $(".projectInProgress").hide();
@@ -113,7 +114,8 @@ define([
                 $("#ProjectPMContent").html(template({
                     collection: this.collection.toJSON(),
                     startNumber: 0,
-                    currencySplitter: helpers.currencySplitter
+                    currencySplitter: helpers.currencySplitter,
+                    weekSplitter: helpers.weekSplitter
                 }));
                 if (this.collection.length == 0) {
                     $(".projectInProgress").hide();
