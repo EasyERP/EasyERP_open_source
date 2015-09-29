@@ -17,8 +17,8 @@ var createProjection = function (map, options) {
         //todo remove some properties from map according to filter
         project[value] = '$' + key;
     }
+    return project;
 };
-
 
 /**
  * @param {Object} handler - object to insert exportToCsv method
@@ -47,7 +47,13 @@ var addExportToCsvFunctionToHandler = function (handler, getModel, map, fileName
                         return next(err);
                     }
 
-                    fs.unlink(fileName + '.xlsx');
+                    fs.unlink(fileName + '.csv', function (err) {
+                        if (err) {
+                            console.log(err)
+                        } else {
+                            console.log('done');
+                        }
+                    });
                 });
             });
 
@@ -90,7 +96,13 @@ var addExportToXlsxFunctionToHandler = function (handler, getModel, map, fileNam
                     return next(err);
                 }
 
-                fs.unlink(fileName + '.xlsx');
+                fs.unlink(fileName + '.xlsx', function (err) {
+                    if (err) {
+                        console.log(err)
+                    } else {
+                        console.log('done');
+                    }
+                });
             })
 
         });
