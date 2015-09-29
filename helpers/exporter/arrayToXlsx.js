@@ -51,14 +51,14 @@
         var attrs, limit;
         limit = lookInFirst || 30;
         attrs = [];
-        _.each(data, function (r, i) {
-            var p;
-            for (p in r) {
-                if (!_.contains(attrs, p)) {
-                    attrs.push(p);
+        _.each(data, function (row, index) {
+            var property;
+            for (property in row) {
+                if (!_.contains(attrs, property)) {
+                    attrs.push(property);
                 }
             }
-            if (i === (limit - 1)) {
+            if (index === (limit - 1)) {
                 return false;
             }
         });
