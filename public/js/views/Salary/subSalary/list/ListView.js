@@ -23,9 +23,22 @@ function (listTemplate, cancelEdit, createView, listItemView, subSalaryTotalTemp
         bodyContainer: null,
         whatToSet: {},
 
+        events: {
+            "click td:not(.editable, .notForm)": "tdDisable",
+            "click .checkbox": "checked",
+            "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
+            "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
+            "click td.editable": "editRow",
+            "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
+            "change .autoCalc": "autoCalc",
+            "change .editable": "setEditable",
+            "click .oe_sortable_sub": "goSort",
+            "keydown input.editing ": "keyDown"
+        },
+
         initialize: function (options) {
             this.model = options.model;
-            this.id = this.model.id;
+            this.id = this.model.id ? this.model.id : this.model.cid;
 
             this.bodyContainerId = '#subSalary-listTable' + this.id;
 
@@ -47,19 +60,6 @@ function (listTemplate, cancelEdit, createView, listItemView, subSalaryTotalTemp
 
             this.render();
             this.contentCollection = salaryEditableCollection;
-        },
-
-        events: {
-            "click td:not(.editable, .notForm)": "tdDisable",
-            "click .checkbox": "checked",
-            "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-            "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-            "click td.editable": "editRow",
-            "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-            "change .autoCalc": "autoCalc",
-            "change .editable": "setEditable",
-            "click .oe_sortable_sub": "goSort",
-            "keydown input.editing ": "keyDown"
         },
 
         keyDown: function (e) {

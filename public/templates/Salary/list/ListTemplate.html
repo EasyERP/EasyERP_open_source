@@ -1,9 +1,20 @@
 <% salaryCollection.forEach(function(salary, index){ %>
 <tr data-id="<%=salary._id%>">
+    <%if (salary.newModel) {%>
+        class="newRow"
+    <%}%> >
     <td class = "notForm"><input type="checkbox" value="<%=salary._id%>" class="mainCB" /></td>
     <td class="icon left">5</td>
-    <td class="month"><%=salary.month%></td>
-    <td class="year"><%=salary.year%></td>
+    <td class="month
+    <%if (salary.newModel) {%>
+        editable
+    <%}%>
+    "><%=salary.month%></td>
+    <td class="year
+    <%if (salary.newModel) {%>
+        editable
+    <%}%>
+    "><%=salary.year%></td>
     <td class="total_calc_salary money"><%=currencySplitter(salary.calc.salary.toString())%></td>
     <td class="total_calc_onCard money"><%=currencySplitter(salary.calc.onCard.toString())%></td>
     <td class="total_paid_onCard money"><%=currencySplitter(salary.paid.onCard.toString())%></td>

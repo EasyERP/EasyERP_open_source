@@ -14,8 +14,16 @@ define([], function(){
         return currency.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1 ");
     }
 
+    function weekSplitter(date){
+        var year = date.substr(0, 4);
+        var week = date.substr(4, 2);
+        var date = (year.concat('/')).concat(week);
+        return date;
+    }
+
     return {
         minFromDates: minFromDates,
-        currencySplitter: currencySplitter
+        currencySplitter: currencySplitter,
+        weekSplitter: weekSplitter
     };
 });

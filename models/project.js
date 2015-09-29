@@ -72,8 +72,8 @@ module.exports = (function () {
             projectTeam: Array,
             bonus: Array,
             budget: Array,
-            projectValues: JSON
-        }
+            projectValues: JSON,
+            budgetTotal: JSON}
     }, { collection: 'Project' });
 
     mongoose.model('Project', projectSchema);
