@@ -10,23 +10,6 @@ var EmployeeSchema = mongoose.Schemas['Employee'];
 var _ = require('../node_modules/underscore');
 var async = require('async');
 
-/*var mongodb = require('mongodb').MongoClient;
-
-var url = 'mongodb://localhost:27017/weTrack';
-//var url = 'mongodb://localhost:27017/EasyERP';
-//var url = 'mongodb://localhost:27017/testCrm';
-var async = require('async');
-
-mongodb.connect(url, function (err, db) {
-
-    var Projects = db.collection('Project');
-
-    Projects.find().toArray(function(err, docs) {
-
-        db.close();
-    });
-});*/
-
 var dbObject = mongoose.createConnection('localhost', 'weTrack');
 dbObject.on('error', console.error.bind(console, 'connection error:'));
 dbObject.once('open', function callback() {
