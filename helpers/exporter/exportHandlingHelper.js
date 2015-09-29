@@ -21,10 +21,10 @@ var createProjection = function (map, options) {
 
 
 /**
- * @param handler : object to insert exportToCsv method
- * @param getModel : function(req) that will return specified model
- * @param map : object with all model properties and their names
- * @param fileName : name that will be used for export file, without extension
+ * @param {Object} handler - object to insert exportToCsv method
+ * @param {Function) getModel - function(req) that will return specified model
+ * @param {Object} map - object with all model properties and their names
+ * @param {string fileName - name that will be used for export file, without extension
  */
 var addExportToCsvFunctionToHandler = function (handler, getModel, map, fileName) {
     handler['exportToCsv'] = function (req, res, next) {
@@ -60,10 +60,10 @@ var addExportToCsvFunctionToHandler = function (handler, getModel, map, fileName
 };
 
 /**
- * @param handler : object to insert exportToXlsx method
- * @param getModel : function(req) that will return specified model
- * @param map : object with all model properties and their names
- * @param fileName : name that will be used for export file, without extension
+ * @param {Object} handler - object to insert exportToXlsx method
+ * @param {Function) getModel - function(req) that will return specified model
+ * @param {Object} map - object with all model properties and their names
+ * @param {string fileName - name that will be used for export file, without extension
  */
 var addExportToXlsxFunctionToHandler = function (handler, getModel, map, fileName) {
     handler['exportToXlsx'] = function (req, res, next) {
@@ -101,10 +101,12 @@ exports.addExportToCsvFunctionToHandler = addExportToCsvFunctionToHandler;
 exports.addExportToXlsxFunctionToHandler = addExportToXlsxFunctionToHandler;
 
 /**
- * @param handler : object to insert exportToCsv and exportToXlsx methods
- * @param getModel : function(req) that will return specified model
- * @param map : object with all model properties and their names
- * @param fileName : name that will be used for export file, without extension
+ *
+ * Inserts export methods to specific handler object
+ * @param {Object} handler - object to insert exportToXlsx and exportToCsv methods
+ * @param {Function) getModel - function(req) that will return specified model
+ * @param {Object} map - object with all model properties and their names
+ * @param {string fileName - name that will be used for export file, without extension
  */
 exports.addExportFunctionsToHandler = function (handler, getModel, map, fileName) {
     addExportToCsvFunctionToHandler(handler, getModel, map, fileName);

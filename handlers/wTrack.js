@@ -8,10 +8,11 @@ var wTrack = function (event, models) {
     /*var CustomerSchema = mongoose.Schemas['Customer'];
      var EmployeeSchema = mongoose.Schemas['Employee'];
      var WorkflowSchema = mongoose.Schemas['workflow'];*/
-    var exportHandlingHelper = require('../helpers/exporter/exportHandlingHelper');
     var objectId = mongoose.Types.ObjectId;
     var async = require('async');
     var mapObject = require('../helpers/bodyMaper');
+
+    var exportHandlingHelper = require('../helpers/exporter/exportHandlingHelper');
     var exportMap = require('../helpers/csvMap').wTrack.aliases;
     exportHandlingHelper.addExportFunctionsToHandler(this, function (req) {
         return models.get(req.session.lastDb, 'wTrack', wTrackSchema)

@@ -10,6 +10,13 @@ var Employee = function (models) {
     var ProjectSchema = mongoose.Schemas['Project'];
     var _ = require('../node_modules/underscore');
 
+    var exportHandlingHelper = require('../helpers/exporter/exportHandlingHelper');
+    var exportMap = require('../helpers/csvMap').Employees.aliases;
+    exportHandlingHelper.addExportFunctionsToHandler(this, function (req) {
+        return models.get(req.session.lastDb, 'Employee', EmployeeSchema)
+    }, exportMap, 'Employees');
+
+
     this.getForDD = function (req, res, next) {
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
 
