@@ -254,6 +254,7 @@ define([
 
                 currentEl.html('');
                 currentEl.append(_.template(listTemplate));
+                if ()
                 currentEl.append(new listItemView({
                     collection : this.collection,
                     page       : this.page,

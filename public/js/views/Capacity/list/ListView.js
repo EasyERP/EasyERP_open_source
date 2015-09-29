@@ -1,4 +1,5 @@
 define([
+        'views/listViewBase',
         'text!templates/Capacity/list/listHeader.html',
         'text!templates/Vacation/list/cancelEdit.html',
         'text!templates/Vacation/list/ListTotal.html',
@@ -16,8 +17,8 @@ define([
         'populate'
     ],
 
-    function (listHeaderTemplate, cancelEdit, listTotal, departmentListTemplate, listTemplate, createTemplate, currentModel, filterCollection, editCollection, common, dataService, CONSTANTS, async, moment, populate) {
-        var CapacityListView = Backbone.View.extend({
+    function (listViewBase, listHeaderTemplate, cancelEdit, listTotal, departmentListTemplate, listTemplate, createTemplate, currentModel, filterCollection, editCollection, common, dataService, CONSTANTS, async, moment, populate) {
+        var CapacityListView = listViewBase.extend({
             el                : '#content-holder',
             defaultItemsNumber: null,
             listLength        : null,
@@ -61,7 +62,7 @@ define([
                 "click .oe_sortable"                                              : "goSort",
                 "change .editable "                                               : "setEditable",
                 "click"                                                           : "hideNewSelect",
-                "click .departmentRow"                                            : "showCapacity",
+                "click .departmentRow td"                                         : "showCapacity",
             },
 
             showNewCurrentSelect: function (e, prev, next) {
@@ -222,15 +223,14 @@ define([
                         }
 
 
-
                         if (!isFinite(editedCol.text())) {
                             /*if (!this.checkEmptyArray(changedAttr.capacityArray)) {
-                                checkDay(targetElement, element._id);
-                                delete(changedAttr.capacityArray[dayIndex]);
-                                if (this.checkEmptyArray(changedAttr.capacityArray)) {
-                                    this.deleteItem(modelId);
-                                }
-                            }*/
+                             checkDay(targetElement, element._id);
+                             delete(changedAttr.capacityArray[dayIndex]);
+                             if (this.checkEmptyArray(changedAttr.capacityArray)) {
+                             this.deleteItem(modelId);
+                             }
+                             }*/
                         }
                     }
 
@@ -273,7 +273,7 @@ define([
 
             },
 
-            yearForDD : function (content) {
+            yearForDD: function (content) {
                 dataService.getData('/vacation/getYears', {}, function (response, context) {
                     context.responseObj['#yearSelect'] = response;
                 }, content)
@@ -324,7 +324,7 @@ define([
 
                 if (!isInput && dataContent === 'input') {
                     tempContainer = el.text();
-                    el.html('<input class="editing" type="text" data-value="' + tempContainer + '" value="' + tempContainer + '"  maxLength="2" style="display: block; color: white;" \>');
+                    el.html('<input class="editing" type="text" data-value="' + tempContainer + '" value="' + tempContainer + '"  maxLength="2" style="display: block;" \>');
 
                     insertedInput = el.find('input');
                     insertedInput.focus();
@@ -465,7 +465,7 @@ define([
 
                 daysRow = '<tr class="subHeaderHolder borders">' + daysRow + '</tr>';
 
-                daysNumRow = '<tr class="subHeaderHolder borders"><th>Department</th><th class="oe-sortable" data-sort="employee.name">Employee</th>' + daysNumRow + '<th>Total Hours</th></tr>';
+                daysNumRow = '<tr class="subHeaderHolder borders"><th colspan="2">Department</th><th class="oe-sortable" data-sort="employee.name">Employee</th>' + daysNumRow + '<th>Total Hours</th></tr>';
 
                 this.daysCount = daysInMonth;
 
@@ -755,6 +755,8 @@ define([
 
             showCapacity: function (e) {
                 var target = $(e.target);
+                var checkIfCB = target.hasClass("departmentCB");
+                var status;
                 var row = target.closest("tr");
                 var key = row.attr('data-key');
                 var subKeyClass = "subRows" + key;
@@ -762,15 +764,35 @@ define([
                 var subRows = $('.' + subKeyClass);
                 var collection = this.capacityObject[key];
 
+                if (checkIfCB) {
+                    status = target.prop("checked");
+                } else {
+                    status = row.find('.departmentCB').prop("checked");
+                }
+
+
                 this.bindingEventsToEditedCollection(this, collection);
 
                 if (subRows.length === 0) {
-                    $(_.template(listTemplate, {collection: collection, subClass: subKeyClass})).insertAfter(row);
+                    $(_.template(listTemplate, {
+                        status    : status,
+                        collection: collection,
+                        subClass  : subKeyClass
+                    })).insertAfter(row);
+                    row.find(".icon.add").toggle();
                 } else {
-                    subRows.toggle();
+                    subRows.find(".checkbox").prop("checked", status);
+                    if (!checkIfCB) {
+                        row.find(".icon.add").toggle();
+                        subRows.toggle();
+                    }
                 }
 
-                row.find(".icon.add").toggle();
+                if (this.$el.find("input.checkbox:not('.departmentCB'):checked").length > 0) {
+                    $("#top-bar-deleteBtn").show();
+                } else {
+                    $("#top-bar-deleteBtn").hide();
+                }
             },
 
             render: function () {
@@ -804,7 +826,7 @@ define([
                     return {
                         key : department,
                         name: departmentArray[0],
-                        id: departmentArray[1],
+                        id  : departmentArray[1],
                     }
                 })
 
@@ -833,28 +855,6 @@ define([
                 });
 
                 currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
-            },
-
-            renderContent: function () {
-                var currentEl = this.$el;
-                var tBody = currentEl.find('#listTable');
-                $("#top-bar-deleteBtn").hide();
-                $('#check_all').prop('checked', false);
-                tBody.empty();
-                var itemView = new listItemView({
-                    collection : this.collection,
-                    page       : currentEl.find("#currentShowPage").val(),
-                    itemsNumber: currentEl.find("span#itemsNumber").text()
-                });
-                tBody.append(itemView.render());
-
-                var pagenation = this.$el.find('.pagination');
-
-                if (this.collection.length === 0) {
-                    pagenation.hide();
-                } else {
-                    pagenation.show();
-                }
             },
 
             showFilteredPage: function () {
@@ -927,17 +927,17 @@ define([
                 var template;
 
                 var startData = {
-                    daysCount : this.daysCount,
-                    employee  : {},
-                    month     : this.monthElement.attr('data-content'),
-                    year      : this.yearElement.text(),
+                    daysCount: this.daysCount,
+                    employee : {},
+                    month    : this.monthElement.attr('data-content'),
+                    year     : this.yearElement.text(),
                 };
 
                 var model;
                 var tr = $(e.target).closest('tr');
 
                 this.department = {
-                    _id: tr.attr('data-id'),
+                    _id : tr.attr('data-id'),
                     name: tr.attr('data-name'),
                 }
 
