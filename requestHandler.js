@@ -421,7 +421,7 @@ var requestHandler = function (app, event, mainDb) {
                             budgetTotal.rateSum = {};
                             var value = budgetTotal.revenueByQA / budgetTotal.hoursByQA;
                             budgetTotal.rateSum.byQA = value? value : 0;
-                            budgetTotal.rateSum.byDev = (parseFloat(budgetTotal.revenueSum) / parseInt(budgetTotal.hoursSum)) - budgetTotal.rateSum.byQA;
+                            budgetTotal.rateSum.byDev = ((parseFloat(budgetTotal.revenueSum) - budgetTotal.revenueByQA)) / (budgetTotal.hoursSum - parseInt(budgetTotal.hoursByQA)) ;
 
                             projectValues.revenue = budgetTotal.revenueSum;
                             projectValues.profit = budgetTotal.profitSum;
@@ -429,7 +429,7 @@ var requestHandler = function (app, event, mainDb) {
                             if (!isFinite(projectValues.markUp)){
                                 projectValues.markUp = 0;
                             }
-                            projectValues.radio = ((budgetTotal.revenueSum / budgetTotal.costSum) * 100);
+                            projectValues.radio = ((budgetTotal.profitSum / budgetTotal.revenueSum) * 100);
                             if (!isFinite(projectValues.radio)){
                                 projectValues.radio = 0;
                             }
