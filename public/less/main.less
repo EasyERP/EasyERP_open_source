@@ -4519,8 +4519,22 @@ h3.dashboard {
       tr {
         td {
           color: @mainText-color;
+
           &:first-child {
             color: @th-text-color;
+          }
+        }
+        td.procent {
+          position: relative;
+          padding-right: 20px;
+          &::before {
+            content: '%';
+            display: block;
+            width: 5px;
+            height: 5px;
+            position: absolute;
+            right: 13px;
+
           }
         }
       }

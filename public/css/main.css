@@ -6438,6 +6438,18 @@ h3.dashboard {
 #projectPM table tbody tr td:first-child {
   color: #cdcdcd;
 }
+#projectPM table tbody tr td.procent {
+  position: relative;
+  padding-right: 20px;
+}
+#projectPM table tbody tr td.procent::before {
+  content: '%';
+  display: block;
+  width: 5px;
+  height: 5px;
+  position: absolute;
+  right: 13px;
+}
 .line {
   fill: none;
   stroke: #1ebbea;
