@@ -349,6 +349,8 @@ var requestHandler = function (app, event, mainDb) {
                         budgetTotal.rateSum = 0;
                         budgetTotal.revenueSum = 0;
                         budgetTotal.hoursSum = 0;
+                        budgetTotal.revenueByQA = 0;
+                        budgetTotal.hoursByQA = 0;
 
                         wTRack.forEach(function (wTrack) {
                             var key;
@@ -375,6 +377,10 @@ var requestHandler = function (app, event, mainDb) {
 
                                 if (empId === emp) {
                                     if (projectTeam[empId]) {
+                                        if (wTrack.department._id.toString() === '55b92ace21e4b7c40f000011'){
+                                            projectTeam[empId].byQA.revenue += parseFloat(wTrack.revenue);
+                                            projectTeam[empId].byQA.hours += parseFloat(wTrack.worked);
+                                        }
                                         projectTeam[empId].profit += parseFloat(((wTrack.revenue - wTrack.cost) / 100).toFixed(2));
                                         projectTeam[empId].cost += parseFloat((wTrack.cost / 100).toFixed(2));
                                         projectTeam[empId].rate += parseFloat(wTrack.rate);
@@ -382,6 +388,12 @@ var requestHandler = function (app, event, mainDb) {
                                         projectTeam[empId].revenue += parseFloat((wTrack.revenue / 100).toFixed(2));
                                     } else {
                                         projectTeam[empId] = {};
+
+                                        if (wTrack.department._id.toString() === '55b92ace21e4b7c40f000011'){
+                                            projectTeam[empId].byQA = {};
+                                            projectTeam[empId].byQA.revenue = parseFloat(wTrack.revenue);
+                                            projectTeam[empId].byQA.hours = parseFloat(wTrack.worked);
+                                        }
                                         projectTeam[empId].profit = parseFloat(((wTrack.revenue - wTrack.cost) / 100).toFixed(2));
                                         projectTeam[empId].cost = parseFloat((wTrack.cost / 100).toFixed(2));
                                         projectTeam[empId].rate = parseFloat(wTrack.rate);
@@ -401,13 +413,24 @@ var requestHandler = function (app, event, mainDb) {
                                 budgetTotal.costSum += parseFloat(projectTeam[key].cost);
                                 budgetTotal.hoursSum += parseFloat(projectTeam[key].hours);
                                 budgetTotal.revenueSum += parseFloat(projectTeam[key].revenue);
+                                budgetTotal.revenueByQA += parseFloat(projectTeam[key].byQA ? projectTeam[key].byQA.revenue / 100 : 0);
+                                budgetTotal.hoursByQA += parseFloat(projectTeam[key].byQA ? projectTeam[key].byQA.hours : 0);
                             });
-                            budgetTotal.rateSum = parseFloat(budgetTotal.revenueSum) / parseInt(budgetTotal.hoursSum);
+                            budgetTotal.rateSum = {};
+                            var value = budgetTotal.revenueByQA / budgetTotal.hoursByQA;
+                            budgetTotal.rateSum.byQA = value? value : 0;
+                            budgetTotal.rateSum.byDev = (parseFloat(budgetTotal.revenueSum) / parseInt(budgetTotal.hoursSum)) - budgetTotal.rateSum.byQA;
 
                             projectValues.revenue = budgetTotal.revenueSum;
                             projectValues.profit = budgetTotal.profitSum;
                             projectValues.markUp = ((budgetTotal.profitSum / budgetTotal.costSum) * 100);
+                            if (!isFinite(projectValues.markUp)){
+                                projectValues.markUp = 0;
+                            }
                             projectValues.radio = ((budgetTotal.revenueSum / budgetTotal.costSum) * 100);
+                            if (!isFinite(projectValues.radio)){
+                                projectValues.radio = 0;
+                            }
 
                             var empQuery = Employee.find({_id: {$in: keys}}, {
                                 'name': 1,
