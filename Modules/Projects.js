@@ -315,6 +315,7 @@ var Project = function (models, event) {
                                 res.send(500, {error: 'Project.save BD error'});
                             } else {
                                 event.emit('updateProjectDetails', {req: req, _id: result._id});
+                                event.emit('recollectProjectInfo');
                                 res.send(201, {success: 'A new Project crate success', result: result, id: result._id});
                             }
                         }
@@ -362,7 +363,7 @@ var Project = function (models, event) {
                                 {
                                     $match: {
                                         $and: [
-                                            {'workflow._id': objectId(res._id.toString())},
+                                            //{'workflow._id': objectId(res._id.toString())},
                                             {
                                                 $or: [
                                                     {
@@ -401,7 +402,7 @@ var Project = function (models, event) {
                                 function (err, result) {
                                     if (!err) {
                                         var query = models.get(req.session.lastDb, "Project", projectSchema).find().where('_id').in(result);
-                                        query.select("projectName projectmanager _id health workflow").
+                                        query.select("projectName projectmanager _id health workflow budget").
                                             // populate('projectmanager._id', 'name _id').
                                             exec(function (error, _res) {
                                                 if (!error) {
@@ -1292,6 +1293,7 @@ var Project = function (models, event) {
                     Invoice = models.get(req.session.lastDb, 'wTrackInvoice', InvoiceSchema);
 
                     event.emit('updateProjectDetails', {req: req, _id: project._id});
+                    event.emit('recollectProjectInfo');
                     event.emit('updateName', _id, wTrackModel, 'project._id', 'project.projectName', project.projectName);
                     event.emit('updateName', _id, wTrackModel, 'project._id', 'project.customer._id', project.customer._id);
                     event.emit('updateName', _id, wTrackModel, 'project._id', 'project.customer.name', project.customer.name);
@@ -1367,6 +1369,7 @@ var Project = function (models, event) {
 
                 }
                 event.emit('updateProjectDetails', {req: req, _id: projects._id});
+                event.emit('recollectProjectInfo');
                 res.send(200, projects);
             }
         });
@@ -1497,6 +1500,7 @@ var Project = function (models, event) {
                 logWriter.log("Project.js remove project.remove " + err);
                 res.send(500, {error: "Can't remove Project"});
             } else {
+                event.emit('recollectProjectInfo');
                 removeTasksByPorjectID(req, _id);
                 res.send(200, {success: 'Remove all tasks Starting...'});
             }

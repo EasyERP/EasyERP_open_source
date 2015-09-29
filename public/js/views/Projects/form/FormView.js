@@ -626,9 +626,7 @@ define([
 					},
 					success: function () {
                         self.disableEdit();
-                        var url = window.location.hash;
-                        Backbone.history.fragment = "";
-                        Backbone.history.navigate(url, {trigger: true});
+                        Backbone.history.navigate("#easyErp/Projects/thumbnails", {trigger: true});
 					}
 				});
 

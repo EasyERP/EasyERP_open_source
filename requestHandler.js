@@ -563,6 +563,11 @@ var requestHandler = function (app, event, mainDb) {
         io.emit('recollectVacationDash');
     });
 
+    event.on('recollectProjectInfo', function () {
+        io.emit('recollectProjectInfo');
+    });
+
+
     Array.prototype.objectID = function () {
 
         var _arrayOfID = [];

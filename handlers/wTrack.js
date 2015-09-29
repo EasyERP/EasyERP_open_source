@@ -30,6 +30,7 @@ var wTrack = function (event, models) {
                     event.emit('dropHoursCashes', req);
                     event.emit('recollectVacationDash');
                     event.emit('updateProjectDetails', {req: req, _id: wTrack.project._id});
+                    event.emit('recollectProjectInfo');
 
                     res.status(200).send({success: wTrack});
                 });
@@ -98,6 +99,7 @@ var wTrack = function (event, models) {
                                return cb(err);
                             }
                             event.emit('updateProjectDetails', {req: req, _id: wTrack.project._id});
+                            event.emit('recollectProjectInfo');
                             cb(null, wTrack);
                         });
                     }, function (err) {
@@ -584,6 +586,7 @@ var wTrack = function (event, models) {
                     event.emit('dropHoursCashes', req);
                     event.emit('recollectVacationDash');
                     event.emit('updateProjectDetails', {req: req, _id: result.project._id});
+                    event.emit('recollectProjectInfo');
 
                     res.status(200).send({success: result});
                 })
