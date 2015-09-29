@@ -7,9 +7,9 @@
 
     _ = require("lodash");
 
-    XLSX = require('xlsx');
+    //XLSX = require('xlsx');
 
-    isodate = require("isodate");
+    //isodate = require("isodate");
 
     datenum = function (v, date1904) {
         var epoch;
