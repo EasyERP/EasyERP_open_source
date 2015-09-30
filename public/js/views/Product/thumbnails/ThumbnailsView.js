@@ -263,6 +263,16 @@
 
             createItem: function () {
                 new createView();
+            },
+
+            exportToCsv: function () {
+                //todo change after routes refactoring
+                window.location = '/Product/exportToCsv'
+            },
+
+            exportToXlsx: function () {
+                //todo change after routes refactoring
+                window.location = '/Product/exportToXlsx'
             }
 
 
