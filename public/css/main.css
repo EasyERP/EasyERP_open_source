@@ -138,6 +138,11 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 .list2 thead th.oe_sortable_sub.sortDn .down {
   display: inline-block;
 }
+.list2 thead th.forCaption {
+  background-color: #1ebbea;
+  width: 50%;
+  text-align: right;
+}
 .list2 thead th:first-of-type {
   width: 12px;
 }
@@ -296,6 +301,11 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 .list2 thead th.oe_sortable.sortDn .down,
 .list2 thead th.oe_sortable_sub.sortDn .down {
   display: inline-block;
+}
+.list2 thead th.forCaption {
+  background-color: #1ebbea;
+  width: 50%;
+  text-align: right;
 }
 .list2 thead th:first-of-type {
   width: 12px;
@@ -4979,6 +4989,11 @@ ul.dialog-tabs li.right button {
 .list thead th.oe_sortable.sortDn .down,
 .list thead th.oe_sortable_sub.sortDn .down {
   display: inline-block;
+}
+.list thead th.forCaption {
+  background-color: #1ebbea;
+  width: 50%;
+  text-align: right;
 }
 .list thead th:first-of-type {
   width: 12px;
