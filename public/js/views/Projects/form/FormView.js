@@ -12,6 +12,7 @@ define([
 		'views/Projects/projectInfo/wTrackView',
 		'views/Projects/projectInfo/paymentView',
 		'views/Projects/projectInfo/invoiceView',
+		'views/Projects/projectInfo/generateWTrack',
 		'collections/wTrack/filterCollection',
 		'text!templates/Notes/AddAttachments.html',
 		"common",
@@ -22,14 +23,17 @@ define([
 		'helpers'
 	],
 
-	function (ProjectsFormTemplate, DetailsTemplate, EditView, noteView, attachView, AssigneesView, BonusView, wTrackView, PaymentView, InvoiceView, wTrackCollection, addAttachTemplate, common, populate, custom, dataService, async, helpers) {
+	function (ProjectsFormTemplate, DetailsTemplate, EditView, noteView, attachView, AssigneesView, BonusView, wTrackView, PaymentView, InvoiceView, generateWTrack, wTrackCollection, addAttachTemplate, common, populate, custom, dataService, async, helpers) {
 		var FormEmployeesView = Backbone.View.extend({
 			el        : '#content-holder',
+			contentType: 'Projects',
+
 			initialize: function (options) {
 				this.formModel = options.model;
 				this.formModel.urlRoot = '/Projects/';
 				this.responseObj = {};
 			},
+
 			events    : {
 				'click .chart-tabs'                                               : 'changeTab',
 				"click .deleteAttach"                                             : "deleteAttach",
@@ -41,7 +45,12 @@ define([
 				"click .newSelectList li.miniStylePagination"                     : "notHide",
 				"click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
 				"click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-				"click .current-selected:not(.disabled)"                          : "showNewSelect"
+				"click .current-selected:not(.disabled)"                          : "showNewSelect",
+				"click #createItem": "createDialog"
+			},
+
+			createDialog: function(){
+				new generateWTrack({model: this.formModel});
 			},
 
 			notHide: function () {
@@ -332,7 +341,8 @@ define([
 						budget: formModel.budget.budget,
 						projectValues: formModel.budget.projectValues,
 						budgetTotal: formModel.budget.budgetTotal,
-						currencySplitter: helpers.currencySplitter
+						currencySplitter: helpers.currencySplitter,
+						contentType: this.contentType
 					})
 				);
 
