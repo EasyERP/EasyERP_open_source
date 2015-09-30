@@ -296,6 +296,16 @@
                         });
                     }
                 });
+            },
+
+            exportToCsv: function () {
+                //todo change after routes refactoring
+                window.location = '/Customers/exportToCsv?type=Person'
+            },
+
+            exportToXlsx: function () {
+                //todo change after routes refactoring
+                window.location = '/Customers/exportToXlsx?type=Person'
             }
         });
 
