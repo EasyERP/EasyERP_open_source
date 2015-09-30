@@ -312,6 +312,16 @@
                     }
                 });
 
+            },
+
+            exportToCsv: function () {
+                //todo change after routes refactoring
+                window.location = '/employee/exportToCsv'
+            },
+
+            exportToXlsx: function () {
+                //todo change after routes refactoring
+                window.location = '/employee/exportToXlsx'
             }
         });
 

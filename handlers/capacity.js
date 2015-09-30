@@ -2,7 +2,6 @@ var mongoose = require('mongoose');
 var moment = require('../public/js/libs/moment/moment');
 var objectId = mongoose.Types.ObjectId;
 var Capacity = function (models) {
-    var EmployeeHandler = require('../handlers/employee');
     var access = require("../Modules/additions/access.js")(models);
     var CapacitySchema = mongoose.Schemas['Capacity'];
     var async = require('async');
@@ -17,7 +16,13 @@ var Capacity = function (models) {
         var capacityArray;
         var total;
 
+        var month = vacation.month;
+        var year = vacation.year;
+
         var Capacity = models.get(db, 'Capacity', CapacitySchema);
+
+        var dateValue;
+        var dayNumber;
 
         vacArray = vacation.vacArray;
         capacityArray = model.capacityArray;
@@ -27,6 +32,9 @@ var Capacity = function (models) {
             vacArrayLength = vacArray.length;
 
             for (var i = vacArrayLength - 1; i >= 0; i--) {
+                dateValue = moment([year, month - 1, i + 1]);
+                dayNumber = dateValue.day();
+
                 if (vacArray[i]) {
                     if (isFinite(capacityArray[i])) {
                         total -= capacityArray[i];
@@ -34,9 +42,13 @@ var Capacity = function (models) {
 
                     capacityArray[i] = vacArray[i];
                 } else {
-                    if (!isFinite(capacityArray[i])) {
-                        capacityArray[i] = 8;
-                        total += capacityArray[i];
+                    if (capacityArray[i] && !isFinite(capacityArray[i])) {
+                        if (dayNumber !== 0 && dayNumber !== 6) {
+                            capacityArray[i] = 8;
+                            total += capacityArray[i]
+                        } else {
+                            capacityArray[i] = null;
+                        }
                     }
                 }
             }
@@ -108,10 +120,13 @@ var Capacity = function (models) {
     };
 
     function createCapacityOnMonth(db, month, year, callback) {
-        var employeeHandler = new EmployeeHandler(models);
         var Capacity = models.get(db, 'Capacity', CapacitySchema);
+
         var VacationSchema = mongoose.Schemas['Vacation'];
         var Vacation = models.get(db, 'Vacation', VacationSchema);
+        var EmployeeSchema = mongoose.Schemas['Employees'];
+        var Employee = models.get(db, 'Employees', EmployeeSchema);
+
         var capacity;
         var waterfallTasks;
         var date = moment([year, month - 1]);
@@ -129,10 +144,26 @@ var Capacity = function (models) {
         })
 
         function getEmployees(callback) {
-            employeeHandler.getNameAndDepartment(db, function (err, result) {
+
+            var queryObject = {
+                hire      : {
+                    $not: {$size: 0},
+                }
+            }
+
+            var query = Employee.find(queryObject);
+
+            query.exec(function (err, result) {
                 if (err) {
                     return callback(err);
                 }
+
+                /*result = _.filter(result, function (element) {
+                 hire = element.hire[0];
+                 fire = element.fire[0];
+
+                 return (moment(hire) <= date.endOf('month') && moment(fire) >= date.date(1)) === true;
+                 })*/
 
                 callback(null, result);
             })
@@ -146,11 +177,17 @@ var Capacity = function (models) {
                 var query;
                 var queryObject = {};
                 var saveOrNot = true;
+                var fire;
+                var hire;
 
                 var modelObject = {
                     year : year,
                     month: month
                 }
+
+                var condition;
+
+                var date = moment([year, month - 1]);
 
                 queryObject.month = modelObject.month;
                 queryObject.year = modelObject.year;
@@ -168,19 +205,53 @@ var Capacity = function (models) {
                 modelObject.capacityArray = [];
                 modelObject.capacityMonthTotal = 0;
 
-                for (var day = daysCount - 1; day >= 0; day--) {
+                //if (modelObject.employee.name === 'Ivan Kornyk') {
 
-                    dateValue = moment([year, month - 1, day + 1]);
+                    for (var hireNum = 0; hireNum < employee.hire.length; hireNum++) {
 
-                    dayNumber = moment(dateValue).day();
+                        fire = employee.fire[hireNum];
 
-                    if (dayNumber !== 0 && dayNumber !== 6) {
-                        modelObject.capacityArray[day] = 8;
-                        modelObject.capacityMonthTotal += 8;
-                    } else {
-                        modelObject.capacityArray[day] = null;
+                        if (fire) {
+                            fire = moment([fire.getFullYear(), fire.getMonth(), fire.getDate()]);
+                        }
+
+                        hire = employee.hire[hireNum];
+                        hire = moment([hire.getFullYear(), hire.getMonth(), hire.getDate()])
+
+                        if (!fire) {
+                            condition = (hire <= date.date(1))
+                        } else {
+                            condition = (fire >= date.date(1) && hire <= date.date(1))
+                        }
+
+                        if (condition) {
+
+                            for (var day = daysCount - 1; day >= 0; day--) {
+
+                                dateValue = date.date(day + 1);
+
+                                dayNumber = dateValue.day();
+
+                                if (dayNumber !== 0 && dayNumber !== 6) {
+                                    if (!fire) {
+                                        condition = (hire <= dateValue)
+                                    } else {
+                                        (fire >= dateValue && hire <= dateValue)
+                                    }
+
+                                    if (condition) {
+                                        modelObject.capacityArray[day] = 8;
+                                        modelObject.capacityMonthTotal += 8;
+                                    } else {
+                                        modelObject.capacityArray[day] = null;
+                                    }
+                                } else {
+                                    modelObject.capacityArray[day] = null;
+                                }
+                            }
+                        }
                     }
-                }
+                //}
 
                 query = Vacation.find(queryObject).lean();
 
@@ -188,7 +259,9 @@ var Capacity = function (models) {
                     var seriesTasks = [saveModel];
 
                     function saveModel(seriaCB) {
-                        if (saveOrNot) {
+                        var length = modelObject.capacityArray.length;
+
+                        if (length) {
                             capacity = new Capacity(modelObject);
                             capacity.save(function (err, result) {
                                 if (err) {
@@ -211,8 +284,6 @@ var Capacity = function (models) {
                             if (result.total !== 0) {
                                 modelObject.capacityArray = result.array;
                                 modelObject.capacityMonthTotal = result.total;
-                            } else {
-                                saveOrNot = false;
                             }
 
                             seriaCB(null, 'Good');
@@ -252,7 +323,7 @@ var Capacity = function (models) {
         }
     };
 
-    this.createAll = function (req, res, next) {
+    this.createNextMonth = function (req, res, next) {
         var db = req.session.lastDb
 
         var date = moment(new Date());
@@ -268,6 +339,49 @@ var Capacity = function (models) {
             res.status(200).send('ok');
         })
     };
+
+    this.createAll = function (req, res, next) {
+        var db = req.session.lastDb
+
+        var date = moment(new Date());
+
+        var year = parseInt(date.format('YYYY'));
+        var month = parseInt(date.format('M'));
+
+        var parralelTasks = [createFor2014, createFor2015];
+
+        function createFor2014(callback) {
+            for (var monthCount = 1; monthCount <= 12; monthCount++) {
+                createCapacityOnMonth(db, monthCount, 2014, function (err) {
+                    if (err) {
+                        return callback(err);
+                    }
+                })
+            }
+
+            callback(null, 'ok');
+        }
+
+        function createFor2015(callback) {
+            for (var monthCount = 1; monthCount <= month; monthCount++) {
+                createCapacityOnMonth(db, monthCount, 2015, function (err) {
+                    if (err) {
+                        return callback(err);
+                    }
+                })
+            }
+
+            callback(null, 'ok');
+        }
+
+        async.parallel(parralelTasks, function (err, results) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send("ok");
+        })
+    }
 
     this.create = function (req, res, next) {
         var Capacity = models.get(req.session.lastDb, 'Capacity', CapacitySchema);

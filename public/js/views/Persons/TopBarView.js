@@ -1,19 +1,22 @@
 define([
-    'text!templates/Persons/TopBarTemplate.html',
-    'custom',
-    'common'
-],
+        'text!templates/Persons/TopBarTemplate.html',
+        'custom',
+        'common'
+    ],
     function (ContentTopBarTemplate, Custom, Common) {
         var TopBarView = Backbone.View.extend({
-            el: '#top-bar',
+            el         : '#top-bar',
             contentType: "Persons",
-            template: _.template(ContentTopBarTemplate),
+            template   : _.template(ContentTopBarTemplate),
 
             events: {
-                "click a.changeContentView": 'changeContentViewType',
-                "click #top-bar-deleteBtn": "deleteEvent",
-                "click #top-bar-editBtn": "editEvent",
-                "click #top-bar-createBtn": "createEvent"
+                "click a.changeContentView"     : 'changeContentViewType',
+                "click #top-bar-deleteBtn"      : "deleteEvent",
+                "click #top-bar-editBtn"        : "editEvent",
+                "click #top-bar-createBtn"      : "createEvent",
+                "click #top-bar-exportBtn"      : "export",
+                "click #top-bar-exportToCsvBtn" : "exportToCsv",
+                "click #top-bar-exportToXlsxBtn": "exportToXlsx",
             },
 
             changeContentViewType: function (e) {
@@ -21,9 +24,20 @@ define([
             },
 
             initialize: function (options) {
-                if (options.collection)
+                if (options.collection) {
                     this.collection = options.collection;
+                }
                 this.render();
+            },
+
+            exportToCsv: function (event) {
+                event.preventDefault();
+                this.trigger('exportToCsv');
+            },
+
+            exportToXlsx: function (event) {
+                event.preventDefault();
+                this.trigger('exportToXlsx');
             },
 
             createEvent: function (event) {
@@ -34,7 +48,7 @@ define([
             render: function () {
                 $('title').text(this.contentType);
                 var viewType = Custom.getCurrentVT();
-                this.$el.html(this.template({ viewType: viewType, contentType: this.contentType }));
+                this.$el.html(this.template({viewType: viewType, contentType: this.contentType}));
 
                 Common.displayControlBtnsByActionType('Content', viewType);
                 return this;
@@ -48,7 +62,9 @@ define([
             deleteEvent: function (event) {
                 event.preventDefault();
                 var answer = confirm("Realy DELETE items ?!");
-                if (answer == true) this.trigger('deleteEvent');
+                if (answer == true) {
+                    this.trigger('deleteEvent');
+                }
             }
         });
 
