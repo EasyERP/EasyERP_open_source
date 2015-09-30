@@ -584,7 +584,7 @@ var wTrack = function (event, models) {
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
         access.getDeleteAccess(req, req.session.uId, 72, function (access) {
             if (access) {
-                WTrack.remove({_id: id}, function (err, wTrack) {
+                WTrack.findByIdAndRemove(id, function (err, wTrack) {
                     if (err) {
                         return next(err);
                     }
