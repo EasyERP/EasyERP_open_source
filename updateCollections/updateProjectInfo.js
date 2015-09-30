@@ -102,12 +102,18 @@ dbObject.once('open', function callback() {
                 var keysForPT;
                 var sortBudget = [];
                 var budget = {};
+                var minDate = 1/0;
+                var maxDate = 0;
+                var nextDate;
+                var nextMaxDate;
 
                 budgetTotal.profitSum = 0;
                 budgetTotal.costSum = 0;
                 budgetTotal.rateSum = 0;
                 budgetTotal.revenueSum = 0;
                 budgetTotal.hoursSum = 0;
+                budgetTotal.revenueByQA = 0;
+                budgetTotal.hoursByQA = 0;
 
                 wTRack.forEach(function (wTrack) {
                     var key;
@@ -132,8 +138,23 @@ dbObject.once('open', function callback() {
                     wTRack.forEach(function (wTrack) {
                         var emp = (wTrack.employee._id).toString();
 
+                        nextDate = wTrack.dateByWeek;
+                        nextMaxDate = wTrack.dateByWeek;
+
+                        if (nextDate <= minDate){
+                            minDate = nextDate;
+                        }
+
+                        if (nextMaxDate > maxDate){
+                            maxDate = nextMaxDate;
+                        }
+
                         if (empId === emp) {
                             if (projectTeam[empId]) {
+                                if (wTrack.department._id.toString() === '55b92ace21e4b7c40f000011'){
+                                    projectTeam[empId].byQA.revenue += parseFloat(wTrack.revenue);
+                                    projectTeam[empId].byQA.hours += parseFloat(wTrack.worked);
+                                }
                                 projectTeam[empId].profit += parseFloat(((wTrack.revenue - wTrack.cost) / 100).toFixed(2));
                                 projectTeam[empId].cost += parseFloat((wTrack.cost / 100).toFixed(2));
                                 projectTeam[empId].rate += parseFloat(wTrack.rate);
@@ -141,6 +162,13 @@ dbObject.once('open', function callback() {
                                 projectTeam[empId].revenue += parseFloat((wTrack.revenue / 100).toFixed(2));
                             } else {
                                 projectTeam[empId] = {};
+
+                                if (wTrack.department._id.toString() === '55b92ace21e4b7c40f000011'){
+                                    projectTeam[empId].byQA = {};
+                                    projectTeam[empId].byQA.revenue = parseFloat(wTrack.revenue);
+                                    projectTeam[empId].byQA.hours = parseFloat(wTrack.worked);
+                                }
+
                                 projectTeam[empId].profit = parseFloat(((wTrack.revenue - wTrack.cost) / 100).toFixed(2));
                                 projectTeam[empId].cost = parseFloat((wTrack.cost / 100).toFixed(2));
                                 projectTeam[empId].rate = parseFloat(wTrack.rate);
@@ -149,6 +177,9 @@ dbObject.once('open', function callback() {
                             }
                         }
                     });
+
+                    budgetTotal.maxDate = maxDate;
+                    budgetTotal.minDate = minDate;
                 });
 
 
@@ -160,13 +191,24 @@ dbObject.once('open', function callback() {
                         budgetTotal.costSum += parseFloat(projectTeam[key].cost);
                         budgetTotal.hoursSum += parseFloat(projectTeam[key].hours);
                         budgetTotal.revenueSum += parseFloat(projectTeam[key].revenue);
+                        budgetTotal.revenueByQA += parseFloat(projectTeam[key].byQA ? projectTeam[key].byQA.revenue / 100 : 0);
+                        budgetTotal.hoursByQA += parseFloat(projectTeam[key].byQA ? projectTeam[key].byQA.hours : 0);
                     });
-                    budgetTotal.rateSum = parseFloat(budgetTotal.revenueSum) / parseInt(budgetTotal.hoursSum);
+                    budgetTotal.rateSum = {};
+                    var value = budgetTotal.revenueByQA / budgetTotal.hoursByQA;
+                    budgetTotal.rateSum.byQA = value? value : 0;
+                    budgetTotal.rateSum.byDev = ((parseFloat(budgetTotal.revenueSum) - budgetTotal.revenueByQA)) / (budgetTotal.hoursSum - parseInt(budgetTotal.hoursByQA)) ;
 
                     projectValues.revenue = budgetTotal.revenueSum;
                     projectValues.profit = budgetTotal.profitSum;
-                    projectValues.markUp = ((budgetTotal.profitSum / budgetTotal.costSum) * 100).toFixed();
-                    projectValues.radio = ((budgetTotal.revenueSum / budgetTotal.costSum) * 100).toFixed();
+                    projectValues.markUp = ((budgetTotal.profitSum / budgetTotal.costSum) * 100);
+                   if (!isFinite(projectValues.markUp)){
+                       projectValues.markUp = 0;
+                   }
+                    projectValues.radio = ((budgetTotal.profitSum / budgetTotal.revenueSum) * 100);
+                    if (!isFinite(projectValues.radio)){
+                        projectValues.radio = 0;
+                    }
 
                     var empQuery = Employee.find({_id: {$in: keys}}, {
                         'name': 1,
@@ -224,7 +266,7 @@ dbObject.once('open', function callback() {
                                 return next(err);
                             }
 
-                            console.log(count++);
+                            //console.log(count++);
                         })
                     });
                 }

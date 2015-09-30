@@ -19,8 +19,10 @@
     "express": "4.3.0",
     "express-session": "1.10.2",
     "express-subdomain": "1.0.3",
+    "fast-csv": "^0.6.0",
     "geoip-lite": "1.1.6",
     "googleapis": "0.4.6",
+    "isodate": "^0.1.4",
     "lodash": "^3.8.0",
     "mongodb": "*",
     "mongoose": "4.1.9",
@@ -36,6 +38,7 @@
     "socket.io-redis": "^0.1.4",
     "swig": "1.4.2",
     "underscore": "1.8.3",
+    "xlsx": "^0.8.0",
     "xml2js": "0.4.0"
   },
   "apidoc": {

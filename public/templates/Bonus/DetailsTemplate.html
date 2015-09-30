@@ -55,9 +55,9 @@
             <% budget.forEach(function(element){ %>
             <%if (element) {%>
                <tr>
-                <td><%=currencySplitter(element.revenue.toFixed(2))%></td>
-                <td><%=currencySplitter(element.profit.toFixed(2))%></td>
-                <td><%=currencySplitter(element.cost.toFixed(2))%></td>
+                <td><%=currencySplitter(element.revenue.toFixed())%></td>
+                <td><%=currencySplitter(element.profit.toFixed())%></td>
+                <td><%=currencySplitter(element.cost.toFixed())%></td>
                 <td><%=currencySplitter((element.revenue / element.hours).toFixed(2))%></td>
                 <td><%=currencySplitter(element.hours.toFixed())%></td>
                </tr>
@@ -72,10 +72,10 @@
                 <td><%='&nbsp'%></td>
             </tr>
             <tr>
-                <td><%=currencySplitter(budgetTotal.revenueSum.toFixed(2))%></td>
-                <td><%=currencySplitter(budgetTotal.profitSum.toFixed(2))%></td>
-                <td><%=currencySplitter(budgetTotal.costSum.toFixed(2))%></td>
-                <td><%=currencySplitter(budgetTotal.rateSum.toFixed(2))%></td>
+                <td><%=currencySplitter(budgetTotal.revenueSum.toFixed())%></td>
+                <td><%=currencySplitter(budgetTotal.profitSum.toFixed())%></td>
+                <td><%=currencySplitter(budgetTotal.costSum.toFixed())%></td>
+                <td><%=currencySplitter((budgetTotal.rateSum.byDev + budgetTotal.rateSum.byQA).toFixed(2))%></td>
                 <td><%=currencySplitter(budgetTotal.hoursSum.toFixed())%></td>
 
             </tr>
@@ -101,10 +101,10 @@
             <tbody id="project">
             <%if (projectValues) {%>
              <tr>
-                  <td><%=currencySplitter(projectValues.revenue.toFixed(2))%></td>
-                  <td><%=currencySplitter(projectValues.profit.toFixed(2))%></td>
-                  <td class="procent"><%=projectValues.markUp %></td>
-                  <td class="procent"><%=projectValues.radio%></td>
+                  <td><%=currencySplitter(projectValues.revenue.toFixed())%></td>
+                  <td><%=currencySplitter(projectValues.profit.toFixed())%></td>
+                  <td class="procent"><%=projectValues.markUp.toFixed() %></td>
+                  <td class="procent"><%=projectValues.radio.toFixed()%></td>
               </tr>
             <% } %>
             </tbody>

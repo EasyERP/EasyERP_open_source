@@ -4468,7 +4468,7 @@ h3.dashboard {
 #projectPM {
   > div {
     float: left;
-    width: 50%;
+    width: 100%;
 
     > div {
       padding: 0 20px;
@@ -4485,7 +4485,7 @@ h3.dashboard {
     width: 100%;
     tr {
       th {
-        text-align: left;
+        text-align: right;
         //
         padding-left: 3px;
         line-height: 25px;
@@ -4519,8 +4519,22 @@ h3.dashboard {
       tr {
         td {
           color: @mainText-color;
+
           &:first-child {
             color: @th-text-color;
+          }
+        }
+        td.procent {
+          position: relative;
+          padding-right: 20px;
+          &::before {
+            content: '%';
+            display: block;
+            width: 5px;
+            height: 5px;
+            position: absolute;
+            right: 13px;
+
           }
         }
       }
