@@ -971,9 +971,9 @@ var Employee = function (event, models) {
 							if (!err) {
 								models.get(req.session.lastDb, "Employees", employeeSchema).
 									where('_id').in(responseOpportunities).
-									select("_id name proposedSalary jobPosition nextAction workflow editedBy.date sequence").
+									select("_id name proposedSalary jobPosition nextAction workflow editedBy.date sequence fired").
 									populate('workflow', '_id').
-									sort({'sequence': -1}).
+									sort({lastFire:-1,'sequence': -1}).
 									limit(req.session.kanbanSettings.applications.countPerPage).
 									exec(function (err, result) {
 										if (!err) {
