@@ -1,21 +1,22 @@
-/**
- * Created by Roman on 04.05.2015.
- */
-
 var mongoose = require('mongoose');
-var wTrack = function (models) {
+var wTrack = function (event, models) {
     var access = require("../Modules/additions/access.js")(models);
     var _ = require('../node_modules/underscore');
     var wTrackSchema = mongoose.Schemas['wTrack'];
     var DepartmentSchema = mongoose.Schemas['Department'];
+    var MonthHoursSchema = mongoose.Schemas['MonthHours'];
     /*var CustomerSchema = mongoose.Schemas['Customer'];
      var EmployeeSchema = mongoose.Schemas['Employee'];
      var WorkflowSchema = mongoose.Schemas['workflow'];*/
-
     var objectId = mongoose.Types.ObjectId;
     var async = require('async');
     var mapObject = require('../helpers/bodyMaper');
 
+    var exportHandlingHelper = require('../helpers/exporter/exportHandlingHelper');
+    var exportMap = require('../helpers/csvMap').wTrack.aliases;
+    exportHandlingHelper.addExportFunctionsToHandler(this, function (req) {
+        return models.get(req.session.lastDb, 'wTrack', wTrackSchema)
+    }, exportMap, "wTrack");
 
     this.create = function (req, res, next) {
         access.getEditWritAccess(req, req.session.uId, 75, function (access) {
@@ -30,6 +31,12 @@ var wTrack = function (models) {
                     if (err) {
                         return next(err);
                     }
+
+                    event.emit('dropHoursCashes', req);
+                    event.emit('recollectVacationDash');
+                    event.emit('updateProjectDetails', {req: req, _id: wTrack.project._id});
+                    event.emit('recollectProjectInfo');
+
                     res.status(200).send({success: wTrack});
                 });
             } else {
@@ -92,12 +99,20 @@ var wTrack = function (models) {
                             date: new Date().toISOString()
                         };
                         delete data._id;
-                        WTrack.findByIdAndUpdate(id, {$set: data}, cb);
+                        WTrack.findByIdAndUpdate(id, {$set: data}, {new: true}, function(err, wTrack){
+                            if (err){
+                               return cb(err);
+                            }
+                            event.emit('updateProjectDetails', {req: req, _id: wTrack.project._id});
+                            event.emit('recollectProjectInfo');
+                            cb(null, wTrack);
+                        });
                     }, function (err) {
                         if (err) {
                             return next(err);
                         }
 
+                        event.emit('dropHoursCashes', req);
                         res.status(200).send({success: 'updated'});
                     });
                 } else {
@@ -133,7 +148,7 @@ var wTrack = function (models) {
         var filtrElement = {};
         var key;
 
-        for (var filterName in filter){
+        for (var filterName in filter) {
             condition = filter[filterName]['value'];
             key = filter[filterName]['key'];
 
@@ -179,7 +194,8 @@ var wTrack = function (models) {
                     resArray.push(filtrElement);
                     break;
             }
-        };
+        }
+        ;
 
         return resArray;
     };
@@ -302,9 +318,19 @@ var wTrack = function (models) {
         var contentIdsSearcher;
         var contentSearcher;
         var waterfallTasks;
+        var key;
+        var keyForDay;
+        var sortObj = {
+            "Mo": 1,
+            "Tu": 2,
+            "We": 3,
+            "Th": 4,
+            "Fr": 5,
+            "Sa": 6,
+            "Su": 7
+        };
 
         var sort = {};
-
 
         if (filter && typeof filter === 'object') {
             if (filter.condition === 'or') {
@@ -312,14 +338,21 @@ var wTrack = function (models) {
             } else {
                 queryObject['$and'] = caseFilter(filter);
             }
-       }
+        }
 
         var count = query.count ? query.count : 100;
         var page = query.page;
         var skip = (page - 1) > 0 ? (page - 1) * count : 0;
 
         if (query.sort) {
-            sort = query.sort;
+            key = Object.keys(query.sort)[0];
+            keyForDay = sortObj[key];
+
+            if (key in sortObj) {
+                sort[keyForDay] = query.sort[key];
+            } else {
+                sort = query.sort;
+            }
         } else {
             sort = {"project.projectName": 1, "year": 1, "month": 1, "week": 1};
         }
@@ -549,20 +582,210 @@ var wTrack = function (models) {
     this.remove = function (req, res, next) {
         var id = req.params.id;
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
-
         access.getDeleteAccess(req, req.session.uId, 72, function (access) {
             if (access) {
-                WTrack.remove({_id: id}, function (err, product) {
+                WTrack.remove({_id: id}, function (err, wTrack) {
                     if (err) {
                         return next(err);
                     }
-                    res.status(200).send({success: product});
+
+                    event.emit('dropHoursCashes', req);
+                    event.emit('recollectVacationDash');
+                    event.emit('updateProjectDetails', {req: req, _id: wTrack.project._id});
+                    event.emit('recollectProjectInfo');
+
+                    res.status(200).send({success: wTrack});
                 });
             } else {
                 res.status(403).send();
             }
         });
-    };    
-};
+    };
+
+    this.getForProjects = function (req, res, next) {
+        var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+        var monthHours = models.get(req.session.lastDb, 'MonthHours', MonthHoursSchema);
+
+        var query = req.query;
+        var queryObject = {};
+        var filter = query.filter;
+        var departmentSearcher;
+        var contentIdsSearcher;
+        var contentSearcher;
+        var waterfallTasks;
+        var key;
+        var keyForDay;
+        var months = [];
+        var years = [];
+        var uMonth;
+        var uYear;
+        var sortObj = {
+            "Mo": 1,
+            "Tu": 2,
+            "We": 3,
+            "Th": 4,
+            "Fr": 5,
+            "Sa": 6,
+            "Su": 7
+        };
+
+        var sort = {};
+
+        if (filter && typeof filter === 'object') {
+            if (filter.condition === 'or') {
+                queryObject['$or'] = caseFilter(filter);
+            } else {
+                queryObject['$and'] = caseFilter(filter);
+            }
+        }
+
+        var count = query.count ? query.count : 100;
+        var page = query.page ? query.page : 1;
+        ;
+        var skip = (page - 1) > 0 ? (page - 1) * count : 0;
+
+        if (query.sort) {
+            key = Object.keys(query.sort)[0];
+            keyForDay = sortObj[key];
+
+            if (key in sortObj) {
+                sort[keyForDay] = query.sort[key];
+            } else {
+                sort = query.sort;
+            }
+        } else {
+            sort = {"project.projectName": 1, "year": 1, "month": 1, "week": 1};
+        }
+
+        departmentSearcher = function (waterfallCallback) {
+            models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
+                {
+                    $match: {
+                        users: objectId(req.session.uId)
+                    }
+                }, {
+                    $project: {
+                        _id: 1
+                    }
+                },
+
+                waterfallCallback);
+        };
+
+        contentIdsSearcher = function (deps, waterfallCallback) {
+            var arrOfObjectId = deps.objectID();
+            var userId = req.session.uId;
+            var everyOne = {
+                whoCanRW: "everyOne"
+            };
+            var owner = {
+                $and: [
+                    {
+                        whoCanRW: 'owner'
+                    },
+                    {
+                        'groups.owner': objectId(userId)
+                    }
+                ]
+            };
+            var group = {
+                $or: [
+                    {
+                        $and: [
+                            {whoCanRW: 'group'},
+                            {'groups.users': objectId(userId)}
+                        ]
+                    },
+                    {
+                        $and: [
+                            {whoCanRW: 'group'},
+                            {'groups.group': {$in: arrOfObjectId}}
+                        ]
+                    }
+                ]
+            };
+            var whoCanRw = [everyOne, owner, group];
+            var matchQuery = {
+                $and: [
+
+                    queryObject,
+                    {
+                        $or: whoCanRw
+                    }
+                ]
+            };
+
+            WTrack.aggregate(
+                {
+                    $match: matchQuery
+                },
+                {
+                    $project: {
+                        _id: 1
+                    }
+                },
+                waterfallCallback
+            );
+        };
+
+        contentSearcher = function (wtrackIds, waterfallCallback) {
+            var queryObject = {_id: {$in: wtrackIds}};
+
+            WTrack
+                .find(queryObject)
+                .limit(count)
+                .skip(skip)
+                .sort(sort)
+                .lean()
+                .exec(waterfallCallback);
+        };
+
+        waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
+
+        access.getReadAccess(req, req.session.uId, 75, function (access) {
+            if (!access) {
+                return res.status(403).send();
+            }
+
+            async.waterfall(waterfallTasks, function (err, result) {
+                if (err) {
+                    return next(err);
+                }
+                result.forEach(function (res) {
+                    months.push(res.month);
+                    years.push(res.year);
+                });
+
+                uMonth = _.uniq(months);
+                uYear = _.uniq(years);
+
+                monthHours.aggregate([{
+                    $match: {
+                        year : {$in: uYear},
+                        month: {$in: uMonth}
+                    }
+                }, {
+                    $project: {
+                        date : {$add: [{$multiply: ["$year", 100]}, "$month"]},
+                        hours: '$hours'
+
+                    }
+                }, {
+                    $group: {
+                        _id  : '$date',
+                        value: {$addToSet: '$hours'}
+                    }
+                }], function (err, months) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    res.status(200).send({wTrack: result, monthHours: months});
+                });
+
+            });
+        });
+    };
+}
 
 module.exports = wTrack;

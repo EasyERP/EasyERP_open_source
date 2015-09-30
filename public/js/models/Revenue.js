@@ -1,9 +1,9 @@
 /**
  * Created by Roman on 17.06.2015.
  */
-define([], function(){
+define([], function () {
     var MainModel = Backbone.Model.extend({
-        defaults:{
+        defaults: {
             bySales: [],
             byProject: [],
             currentStartWeek: null,
@@ -18,7 +18,16 @@ define([], function(){
             cancelledBySales: [],
             projectBySales: [],
             employeeBySales: [],
-            hoursByDep: []
+            hoursByDep: [],
+            allBonus: [],
+            uncalcBonus: [],
+            calcBonus: [],
+            paidBonus: [],
+            balanceBonus: [],
+            allBonusByMonth: [],
+            totalHours: [],
+            hoursSold: [],
+            hoursUnsold: []
         }
     });
 

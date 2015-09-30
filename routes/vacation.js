@@ -1,12 +1,11 @@
-/**
- * Created by soundstorm on 30.06.15.
- */
+
 var express = require('express');
 var router = express.Router();
 var VocationHandler = require('../handlers/vacation');
 
-module.exports = function (models) {
-    var handler = new VocationHandler(models);
+module.exports = function (event, models) {
+    'use strict';
+    var handler = new VocationHandler(event, models);
 
     router.get('/getYears', handler.getYears);
     router.get('/:viewType', handler.getForView);

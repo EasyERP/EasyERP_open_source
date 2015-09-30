@@ -1,0 +1,8 @@
+var categories = [{
+                      name: 'All',
+                      fullName: 'All',
+                      parent: null,
+                      users: [],
+                      nestingLevel: 0,
+                      sequence: 0
+                  }];

@@ -18,7 +18,7 @@ define([
 
             initialize: function (options) {
                 if (options) {
-                    this.forSales = !!options.forSales;
+                    this.forSales = options.forSales;
                     this.invoiceModel = options.model;
                     this.totalAmount = this.invoiceModel.get('paymentInfo').balance || 0;
                 }
@@ -100,7 +100,7 @@ define([
 
                 var self = this;
                 //FixMe change mid value to proper number after inserting it into DB
-                var mid = 55;
+                var mid = 56;
                 var thisEl = this.$el;
                 var invoiceModel = this.invoiceModel.toJSON();
                 var supplier = thisEl.find('#supplierDd');
@@ -118,10 +118,11 @@ define([
                 period = period || null;
 
                 data = {
-                    forSale: this.forSale,
+                    mid: mid,
+                    forSale: this.forSales,
                     invoice: {
                         _id: invoiceModel._id,
-                        name: invoiceModel.name,
+                        name: invoiceModel.name ? invoiceModel.name: invoiceModel.sourceDocument,
                         assigned: {
                             _id: invoiceModel.salesPerson._id,
                             name: invoiceModel.salesPerson.name

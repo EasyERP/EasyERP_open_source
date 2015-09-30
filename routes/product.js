@@ -1,6 +1,4 @@
-/**
- * Created by Roman on 29.04.2015.
- */
+
 var express = require('express');
 var router = express.Router();
 var ProductHandler = require('../handlers/product');
@@ -12,10 +10,11 @@ module.exports = function (models) {
 
     router.get('/', handler.getAll);
     router.get('/getProductsAlphabet', handler.getProductsAlphabet);
-    router.get('/getFilterValues', handler.getFilterValues);
     router.get('/getProductsTypeForDd', handler.getProductsTypeForDd);
     router.get('/totalCollectionLength', handler.totalCollectionLength);
     router.get('/getProductsImages', handler.getProductsImages);
+    router.get('/exportToXlsx',handler.exportToXlsx);
+    router.get('/exportToCsv',handler.exportToCsv);
     router.get('/:viewType', handler.getForView);
     router.post('/', handler.create);
     /*router.post('/uploadProductFiles', multipartMiddleware, handler.uploadProductFiles);*///FixMe

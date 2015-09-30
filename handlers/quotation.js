@@ -1,6 +1,4 @@
-/**
- * Created by Roman on 04.05.2015.
- */
+
 
 var mongoose = require('mongoose');
 var Quotation = function (models) {

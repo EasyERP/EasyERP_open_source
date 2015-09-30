@@ -3,9 +3,9 @@
 
 <div class="half-block left">
   <div class="canReadAndWrite">
-    <input type="radio" name="whoCanRW" value="everyOne" checked="checked"/>Everyone<br>
-    <input type="radio" name="whoCanRW" value="owner"/>Owner<br>
-    <input type="radio" name="whoCanRW" value="group"/>Owner, Users and Users in Groups
+    <input type="radio" name="whoCanRW" value="everyOne" <%= (whoCanRW === 'everyOne') ?  ' checked': '' %> /> <label>Everyone</label><br>
+    <input type="radio" name="whoCanRW" value="owner" <%= (whoCanRW === 'owner') ?  ' checked' : '' %> /> <label>Owner</label><br>
+    <input type="radio" name="whoCanRW" value="group"  <%= (whoCanRW === 'group') ?  ' checked' : '' %> /> <label>Owner, Users and Users in Groups</label>
   </div>
 </div>
 <div class="half-block left">

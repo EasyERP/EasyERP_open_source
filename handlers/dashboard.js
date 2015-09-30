@@ -1,8 +1,5 @@
-/**
- * Created by Roman on 04.05.2015.
- */
-
 var mongoose = require('mongoose');
+
 var wTrack = function (models) {
         var access = require("../Modules/additions/access.js")(models);
         var _ = require('lodash');
@@ -10,6 +7,15 @@ var wTrack = function (models) {
         var async = require('async');
 
         var CONSTANTS = require('../constants/mainConstants');
+        var constForView = [
+            'iOS',
+            'Android',
+            'Web',
+            'WP',
+            'QA',
+            'Design',
+            'PM'
+        ];
 
         var objectId = mongoose.Types.ObjectId;
 
@@ -31,10 +37,12 @@ var wTrack = function (models) {
             var currentStartWeek = currentWeek - 6;
             var currentYear = moment().weekYear();
 
+            var i;
+
             weeksArr = [];
             startDate = currentYear * 100 + currentStartWeek;
 
-            for (var i = 0; i <= 13; i++) {
+            for (i = 0; i <= 13; i++) {
                 if (currentStartWeek + i > 53) {
                     week = currentStartWeek + i - 53;
                     weeksArr.push({
@@ -45,7 +53,7 @@ var wTrack = function (models) {
                 } else {
                     week = currentStartWeek + i;
                     weeksArr.push({
-                        dateByWeek: (currentYear) * 100 + week,
+                        dateByWeek: currentYear * 100 + week,
                         week: week,
                         year: currentYear
                     });
@@ -53,7 +61,7 @@ var wTrack = function (models) {
             }
 
             weeksArr = _.sortBy(weeksArr, function (monthObject) {
-                return monthObject.dateByWeek
+                return monthObject.dateByWeek;
             });
 
             endDate = weeksArr[weeksArr.length - 1].dateByWeek;
@@ -76,6 +84,16 @@ var wTrack = function (models) {
 
                 function departmentMapper(department, departmentCb) {
                     var dashDepartment = _.find(dashBoardResult, function (deps) {
+                        if(deps.department == null){
+                            console.log('==================== deps =======================');
+                            console.log(deps);
+                            console.log('===========================================');
+                        }
+                        if(department.department === null){
+                            console.log('===================== department ======================');
+                            console.log(department);
+                            console.log('===========================================');
+                        }
                         return deps.department.toString() === department.department.toString();
                     });
 
@@ -91,7 +109,7 @@ var wTrack = function (models) {
                             if (dashResultByEmployee) {
                                 _employee.weekData = _.map(tempWeekArr, function (weekData) {
                                     var data;
-                                    var holidayCount;
+                                    var holidayCount = 0;
                                     var _vacations;
 
                                     data = _.find(dashResultByEmployee.weekData, function (d) {
@@ -108,7 +126,7 @@ var wTrack = function (models) {
                                     if (_vacations) {
                                         _vacations.vacations.forEach(function (vacation) {
                                             if (vacation.hasOwnProperty(weekData.dateByWeek)) {
-                                                holidayCount = vacation[weekData.dateByWeek];
+                                                holidayCount += vacation[weekData.dateByWeek];
                                             }
                                         });
                                     }
@@ -119,7 +137,7 @@ var wTrack = function (models) {
                                 });
                             } else {
                                 _employee.weekData = _.map(tempWeekArr, function (weekData) {
-                                    var holidayCount;
+                                    var holidayCount = 0;
                                     var _vacations;
 
                                     _vacations = _.find(vacations, function (vacationObject) {
@@ -129,7 +147,7 @@ var wTrack = function (models) {
                                     if (_vacations) {
                                         _vacations.vacations.forEach(function (vacation) {
                                             if (vacation.hasOwnProperty(weekData.dateByWeek)) {
-                                                holidayCount = vacation[weekData.dateByWeek];
+                                                holidayCount += vacation[weekData.dateByWeek];
                                             }
                                         });
                                     }
@@ -156,7 +174,17 @@ var wTrack = function (models) {
                         path: 'department',
                         select: 'departmentName _id'
                     }, function () {
-                        res.status(200).send(employeesByDep);
+                        var sortDepartments = [];
+
+                        constForView.forEach(function (dep) {
+                            employeesByDep.forEach(function (department, index) {
+                                if (dep === employeesByDep[index].department.departmentName) {
+                                    sortDepartments.push(employeesByDep[index]);
+                                }
+                            });
+                        });
+
+                        res.status(200).send(sortDepartments);
                     });
                 };
 
@@ -333,7 +361,7 @@ var wTrack = function (models) {
                                 }
 
                                 employees = _.pluck(employees, '_id');
-                                //waterfallCb(null, employees);
+
                                 inerWaterfallCb(null, employees);
                             });
                     };

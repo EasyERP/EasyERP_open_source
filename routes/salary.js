@@ -1,12 +1,10 @@
-/**
- * Created by soundstorm on 15.06.15.
- */
+
 var express = require('express');
 var router = express.Router();
 var SalaryHandler = require('../handlers/salary');
 
-module.exports = function (models) {
-    var handler = new SalaryHandler(models);
+module.exports = function (event, models) {
+    var handler = new SalaryHandler(event, models);
 
     router.get('/getByMonth', handler.getByMonth);
     router.get('/checkDataKey', handler.checkDataKey);

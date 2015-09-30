@@ -12,17 +12,15 @@ module.exports = (function () {
             name: String
         },
         department: {
-            _id: {type: ObjectId, ref: 'Department', default: null},
+            _id: {type: ObjectId, ref: 'Department', default: null
+            },
             name: String
         },
         vacations: {},
-        //startDate: Date,
-        //endDate: Date,
         month: Number,
         year: Number,
-        //vacationType: String,
-        vacArray: Array
-
+        vacArray: Array,
+        monthTotal: Number
 
     }, {collection: 'Vacation'});
 

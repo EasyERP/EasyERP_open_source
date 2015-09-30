@@ -10,10 +10,11 @@ define([
         'populate',
         'dataService',
         'async',
-        'moment'
+        'moment',
+        'helpers'
 ],
 
-function (listTemplate, cancelEdit, createView, listItemView, subSalaryTotalTemplate, salaryEditableCollection, employeesCollection, currentModel, populate, dataService, async, moment) {
+function (listTemplate, cancelEdit, createView, listItemView, subSalaryTotalTemplate, salaryEditableCollection, employeesCollection, currentModel, populate, dataService, async, moment, helpers) {
     var subSalaryListView = Backbone.View.extend({
         viewType: 'list',//needs in view.prototype.changeLocationHash
         responseObj: {},
@@ -22,9 +23,22 @@ function (listTemplate, cancelEdit, createView, listItemView, subSalaryTotalTemp
         bodyContainer: null,
         whatToSet: {},
 
+        events: {
+            "click td:not(.editable, .notForm)": "tdDisable",
+            "click .checkbox": "checked",
+            "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
+            "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
+            "click td.editable": "editRow",
+            "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
+            "change .autoCalc": "autoCalc",
+            "change .editable": "setEditable",
+            "click .oe_sortable_sub": "goSort",
+            "keydown input.editing ": "keyDown"
+        },
+
         initialize: function (options) {
             this.model = options.model;
-            this.id = this.model.id;
+            this.id = this.model.id ? this.model.id : this.model.cid;
 
             this.bodyContainerId = '#subSalary-listTable' + this.id;
 
@@ -48,16 +62,46 @@ function (listTemplate, cancelEdit, createView, listItemView, subSalaryTotalTemp
             this.contentCollection = salaryEditableCollection;
         },
 
-        events: {
-            "click td:not(.editable, .notForm)": "tdDisable",
-            "click .checkbox": "checked",
-            "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-            "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-            "click td.editable": "editRow",
-            "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-            "change .autoCalc": "autoCalc",
-            "change .editable": "setEditable",
-            "click .oe_sortable_sub": "goSort"
+        keyDown: function (e) {
+            if (e.which === 13) {
+                var editedElement = this.bodyContainer.find('.editing');
+                var editedCol;
+                var editedElementValue;
+                var editEmployeeModel;
+                var editedElementRowId = editedElement.closest('tr').data('id');
+                var editedElementContent;
+                var calc;
+                var paid;
+
+                if (editedElement.length) {
+                    editedCol = editedElement.closest('td');
+                    editedElementContent = editedCol.data('content');
+                    editedElementValue = editedElement.val();
+
+                    editEmployeeModel = this.editCollection.get(editedElementRowId);
+                    calc = _.clone(editEmployeeModel.get('calc'));
+                    paid = _.clone(editEmployeeModel.get('paid'));
+
+                    if (editedCol.hasClass('calc')) {
+                        if (editedCol.data('content') === 'salary') {
+                            this.whatToSet['baseSalary'] = editedElementValue;
+                        }
+                        calc[editedElementContent] = editedElementValue;
+                        this.whatToSet['calc'] = calc;
+
+                    } else if (editedCol.hasClass('paid')) {
+                        paid[editedElementContent] = editedElementValue;
+                        this.whatToSet['paid'] = paid;
+                    } else {
+                        this.whatToSet[editedElementContent] = editedElementValue;
+                    }
+
+                    editEmployeeModel.set(this.whatToSet);
+
+                    editedCol.text(editedElementValue);
+                    editedElement.remove();
+                }
+            }
         },
 
         goSort: function (e) {
@@ -244,6 +288,9 @@ function (listTemplate, cancelEdit, createView, listItemView, subSalaryTotalTemp
                     input = $(this).find('input.editing');
                     tdVal = $(this).attr('data-value');
                     tdVal = tdVal ? tdVal : $(this).text();
+                    if (tdVal.length === 0){
+                        tdVal = '0';
+                    }
                     addVal = tdVal ? parseInt(tdVal) :  parseInt(input.val());
                     calcVal += addVal;
                 });
@@ -254,13 +301,13 @@ function (listTemplate, cancelEdit, createView, listItemView, subSalaryTotalTemp
                 if ( name === 'onCard' || name === 'onCash' ) {
                     diffByNameElement = $('#subSalary-listTotal' + self.id).find('.total_diff_' + name);
 
-                    diffNameVal = $('#subSalary-listTotal' + self.id).find('.total_calc_' + name).text() - $('#subSalary-listTotal' + self.id).find('.total_paid_' + name).text();
+                    diffNameVal = parseFloat($('#subSalary-listTotal' + self.id).find('.total_calc_' + name).text()) - parseFloat($('#subSalary-listTotal' + self.id).find('.total_paid_' + name).text());
 
                     diffByNameElement.text(self.checkMoneyTd(diffByNameElement, diffNameVal));
                     $('tr[data-id="' + self.id + '"]').find('.total_diff_' + name).text(diffNameVal);
 
-                    diffOnCash = $('#subSalary-listTotal' + self.id).find('.total_diff_onCash').text();
-                    diffOnCard = $('#subSalary-listTotal' + self.id).find('.total_diff_onCard').text();
+                    diffOnCash = parseFloat($('#subSalary-listTotal' + self.id).find('.total_diff_onCash').text());
+                    diffOnCard = parseFloat($('#subSalary-listTotal' + self.id).find('.total_diff_onCard').text());
 
                     diffTotalVal = parseInt(diffOnCash) + parseInt(diffOnCard);
                     $('#subSalary-listTotal' + self.id).find('.total_diff').text(diffTotalVal);
@@ -702,7 +749,8 @@ function (listTemplate, cancelEdit, createView, listItemView, subSalaryTotalTemp
                 model: this.model
             }).render());//added two parameters page and items number
 
-            currentEl.find('#subSalary-listTotal'  + this.model.id).append(_.template(subSalaryTotalTemplate, modelJSON));
+            var temp = _.template(subSalaryTotalTemplate, {model: modelJSON, currencySplitter: helpers.currencySplitter});
+            currentEl.find('#subSalary-listTotal'  + this.model.id).append(temp);
             this.filterEmployeesForDD(this);
 
             this.hideSaveCancelBtns();

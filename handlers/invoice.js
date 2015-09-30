@@ -1,6 +1,4 @@
-/**
- * Created by ANDREY on 29.04.2015.
- */
+
 
 var mongoose = require('mongoose');
 var WorkflowHandler = require('./workflow');
@@ -50,9 +48,11 @@ var Invoice = function (models) {
 
     this.receive = function (req, res, next) {
         var id = req.body.orderId;
-        var forSales = !!req.body.forSales;
+        var forSales = req.body.forSales;
         var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
         var Order = models.get(req.session.lastDb, 'Quotation', OrderSchema);
+        var Company = models.get(req.session.lastDb, 'Customer', CustomerSchema);
+
         var parallelTasks;
         var waterFallTasks;
 
@@ -70,7 +70,12 @@ var Invoice = function (models) {
         }
 
         function findOrder(callback) {
-            Order.findById(id).lean().exec(callback);
+            var query = Order.findById(id).lean();
+
+            query.populate('supplier', 'name')
+                .populate('products.product', 'name');
+
+            query.exec(callback)
         };
 
         function parallel(callback) {
@@ -82,6 +87,8 @@ var Invoice = function (models) {
             var workflow;
             var err;
             var invoice;
+            var supplier;
+            var company;
 
             if (parallelResponse && parallelResponse.length) {
                 order = parallelResponse[0];
@@ -103,10 +110,35 @@ var Invoice = function (models) {
 
             invoice.sourceDocument = order.name;
             invoice.paymentReference = order.name;
-            invoice.workflow = workflow._id;
+            invoice.workflow = {};
+            invoice.workflow._id = workflow._id;
+            invoice.workflow.name = workflow.name;
+            invoice.workflow.status = workflow.status;
             invoice.paymentInfo.balance = order.paymentInfo.total;
 
-            invoice.save(callback);
+            supplier = order['supplier'];
+
+            if (supplier) {
+                invoice.supplier.name = supplier.name.first + ' ' + supplier.name.last;
+            }
+
+            var query = Company.findById(invoice.supplier._id).lean();
+
+            query.populate('salesPurchases.salesPerson', 'name');
+
+            query.exec(function(err, result){
+                if (err){
+                    callback(err)
+                }
+
+                if (result.salesPurchases.salesPerson){
+                    invoice.salesPerson = {};
+                    invoice.salesPerson._id = result.salesPurchases.salesPerson._id;
+                    invoice.salesPerson.name = result.salesPurchases.salesPerson.name.first + ' ' + result.salesPurchases.salesPerson.name.last;
+                }
+
+                invoice.save(callback);
+            })
 
         };
 
@@ -220,6 +252,7 @@ var Invoice = function (models) {
     this.getForView = function (req, res, next) {
         var db = req.session.lastDb;
         var moduleId = 56;
+        var forSales = req.query.forSales;
 
         if (db === 'weTrack'){
             moduleId = 64
@@ -324,6 +357,13 @@ var Invoice = function (models) {
                             }
                         }
 
+                        if (forSales){
+                            optionsObject['$and'].push({forSales: true});
+                        } else {
+                            optionsObject['$and'].push({forSales: false});
+
+                        }
+
                         var query = Invoice.find(optionsObject).limit(count).skip(skip).sort(sort);
 
                         query
@@ -362,9 +402,23 @@ var Invoice = function (models) {
     this.getInvoiceById = function (req, res, next) {
         var isWtrack = req.session.lastDb === 'weTrack';
         var moduleId = 56;
+        var data = {};
+
+        for (var i in req.query) {
+            data[i] = req.query[i];
+        }
+
+        var id = data.id;
+        var forSales;
 
         if (isWtrack){
             moduleId = 64
+        }
+
+        if (data.forSales === 'false') {
+            forSales = false;
+        } else {
+            forSales = true;
         }
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -379,7 +433,11 @@ var Invoice = function (models) {
                     var waterfallTasks;
 
                     if(isWtrack){
-                        Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
+                        if (forSales){
+                            Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
+                        } else {
+                            Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
+                        }
                     } else {
                         Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
                     }
@@ -447,28 +505,24 @@ var Invoice = function (models) {
                     };
 
                     contentSearcher = function (invoicesIds, waterfallCallback) {
-                        var data = {};
-                        for (var i in req.query) {
-                            data[i] = req.query[i];
-                        }
-                        var id = data.id;
-                        optionsObject = {_id: id};
+
+
+                        optionsObject = {
+                            _id: id,
+                            forSales: forSales
+                        };
 
                         var query = Invoice.findOne(optionsObject);
 
-                        query//.populate('supplier', '_id name').
-                            //populate('salesPerson', 'name _id').
-                            //populate('project', '_id projectName').
-                            .populate('products.product').
-                            populate('payments', '_id name date paymentRef paidAmount').
-                            populate('department', '_id departmentName').
-                            populate('paymentTerms', '_id name').
-                            populate('createdBy.user').
-                            populate('editedBy.user').
-                            populate('groups.users').
-                            populate('groups.group').
-                            populate('groups.owner', '_id login');/*.
-                            populate('workflow._id', '-sequence');*/
+                        query.populate('products.product')
+                            .populate('payments', '_id name date paymentRef paidAmount')
+                            .populate('department', '_id departmentName')
+                            .populate('paymentTerms', '_id name')
+                            .populate('createdBy.user')
+                            .populate('editedBy.user')
+                            .populate('groups.users')
+                            .populate('groups.group')
+                            .populate('groups.owner', '_id login');
 
                         query.lean().exec(waterfallCallback);
                     };
@@ -622,6 +676,7 @@ var Invoice = function (models) {
     this.totalCollectionLength = function (req, res, next) {
         var data = req.query;
         var filter = data.filter;
+        var forSales = data.forSales;
 
         var optionsObject = {};
         var result = {};
@@ -641,6 +696,13 @@ var Invoice = function (models) {
             } else {
                 optionsObject['$and'] = caseFilter(filter);
             }
+        }
+
+        if (forSales){
+            optionsObject['$and'].push({forSales: false});
+        } else {
+            optionsObject['$and'].push({forSales: true });
+
         }
 
         departmentSearcher = function (waterfallCallback) {

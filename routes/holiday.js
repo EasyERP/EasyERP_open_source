@@ -1,12 +1,10 @@
-/**
- * Created by soundstorm on 29.06.15.
- */
+
 var express = require('express');
 var router = express.Router();
 var HolidayHandler = require('../handlers/holiday');
 
-module.exports = function (models) {
-    var handler = new HolidayHandler(models);
+module.exports = function (event, models) {
+    var handler = new HolidayHandler(models, event);
 
     router.get('/totalCollectionLength', handler.totalCollectionLength);
     router.get('/:viewType', handler.getForView);

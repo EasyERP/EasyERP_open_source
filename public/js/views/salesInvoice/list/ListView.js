@@ -84,10 +84,19 @@ define([
                 var self = this;
                 var target$ = $(e.target);
                 var targetElement = target$.parents("td");
+                var wId = target$.attr("id");
+                var status = _.find(this.stages, function(stage){
+                    return wId === stage._id;
+                });
+                var name = target$.text();
                 var id = targetElement.attr("id");
                 var model = this.collection.get(id);
 
-                model.save({workflow: target$.attr("id")}, {
+                model.save({
+                    'workflow._id': wId,
+                    'workflow.status': status.status,
+                    'workflow.name': name
+                }, {
                     headers: {
                         mid: 55
                     },
@@ -173,6 +182,11 @@ define([
                 }, function (response, context) {
                     var page = context.page || 1;
                     var length = context.listLength = response.count || 0;
+
+                    if (itemsNumber === 'all') {
+                        itemsNumber = response.count;
+                    }
+
                     if (itemsNumber * (page - 1) > length) {
                         context.page = page = Math.ceil(length / itemsNumber);
                         context.fetchSortCollection(context.sort);
@@ -361,6 +375,11 @@ define([
                 event.preventDefault();
                 this.startTime = new Date();
                 var itemsNumber = event.target.textContent;
+
+                if (itemsNumber === 'all') {
+                    itemsNumber = this.listLength;
+                }
+
                 this.defaultItemsNumber = itemsNumber;
                 this.getTotalLength(null, itemsNumber, this.filter);
                 this.collection.showMore({

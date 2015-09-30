@@ -1,0 +1,32 @@
+<% monthArr.forEach(function(monthObject){ %>
+<% var key = monthObject.year*100 + monthObject.month; %>
+<% var totalForDep = 0; %>
+
+<div class="divCell">
+    <% employees.forEach(function(employee){ %>
+    <%var byMonthData = employee.hoursSold%>
+    <% if (byMonthData && byMonthData[key]) {%>
+    <% totalForDep +=  byMonthData[key]; %>
+    <% } %>
+    <% }) %>
+    <span id="totalForDep"><%= totalForDep ? currencySplitter(totalForDep.toString()) : '&nbsp' %></span>
+
+    <% employees.forEach(function(employee){ %>
+    <%var byMonthData = employee.hoursSold%>
+    <div class="divRow" data-val="<%=content%>">
+        <% if (byMonthData && byMonthData[key]) {%>
+        <span class="divCell forBonus" ><%= byMonthData[key] ? currencySplitter(byMonthData[key].toString()) : '&nbsp'%></span>
+        <% } else {%>
+        <span class="divCell forBonus" ><%= '&nbsp'%></span>
+        <% }%>
+    </div>
+    <% }) %>
+
+</div>
+<% }) %>
+
+<div class="divCell ">
+      <span>
+        <%= total ? currencySplitter(total.toString()) : '&nbsp'%>
+      </span>
+</div>

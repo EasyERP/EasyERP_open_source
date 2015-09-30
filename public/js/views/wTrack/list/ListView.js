@@ -1,7 +1,8 @@
 define([
-        'text!templates/Pagination/PaginationTemplate.html',
+        'views/listViewBase',
         'text!templates/wTrack/list/ListHeader.html',
         'text!templates/wTrack/list/cancelEdit.html',
+        'text!templates/wTrack/list/forWeek.html',
         'views/wTrack/CreateView',
         'views/wTrack/list/ListItemView',
         'views/wTrack/EditView',
@@ -18,26 +19,24 @@ define([
         'moment'
     ],
 
-    function (paginationTemplate, listTemplate, cancelEdit, createView, listItemView, editView, wTrackCreateView, currentModel, contentCollection, EditCollection, filterView, common, dataService, populate, async, custom, moment) {
-        var wTrackListView = Backbone.View.extend({
-            el: '#content-holder',
-            defaultItemsNumber: null,
-            listLength: null,
-            filter: null,
-            sort: null,
-            newCollection: null,
-            page: null,
-            contentType: 'wTrack',
-            viewType: 'list',
-            responseObj: {},
-            wTrackId: null, //need for edit rows in listView
-            collectionLengthUrl: '/wTrack/totalCollectionLength',
-            $listTable: null, //cashedJqueryEllemnt
-            editCollection: null,
-            selectedProjectId: [],
-            genInvoiceEl: null,
-            copyEl: null,
-            changedModels: {},
+    function (listViewBase, listTemplate, cancelEdit, forWeek, createView, listItemView, editView, wTrackCreateView, currentModel, contentCollection, EditCollection, filterView, common, dataService, populate, async, custom, moment) {
+        var wTrackListView = listViewBase.extend({
+            createView              : createView,
+            listTemplate            : listTemplate,
+            listItemView            : listItemView,
+            contentCollection       : contentCollection,
+            filterView              : filterView,
+            contentType             : 'wTrack',
+            viewType                : 'list',
+            responseObj             : {},
+            wTrackId                : null, //need for edit rows in listView
+            totalCollectionLengthUrl: '/wTrack/totalCollectionLength',
+            $listTable              : null, //cashedJqueryEllemnt
+            editCollection          : null,
+            selectedProjectId       : [],
+            genInvoiceEl            : null,
+            copyEl                  : null,
+            changedModels           : {},
 
             initialize: function (options) {
                 this.startTime = options.startTime;
@@ -58,26 +57,15 @@ define([
             },
 
             events: {
-                "click .itemsNumber": "switchPageCounter",
-                "click .showPage": "showPage",
-                "change #currentShowPage": "showPage",
-                "click #previousPage": "previousPage",
-                "click #nextPage": "nextPage",
-                "click .checkbox": "checked",
-                "click .stageSelect": "showNewSelect",
+                "click .stageSelect"                                              : "showNewSelect",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                "click td.editable": "editRow",
-                "mouseover .currentPageList": "itemsNumber",
-                "click": "hideItemsNumber",
-                "click #firstShowPage": "firstPage",
-                "click #lastShowPage": "lastPage",
-                "click .oe_sortable": "goSort",
-                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-                "change .autoCalc": "autoCalc",
-                "change .editable ": "setEditable",
-                "keydown input.editing ": "keyDown",
-                "change .listCB": "setAllTotalVals"
+                "click td.editable"                                               : "editRow",
+                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
+                "change .autoCalc"                                                : "autoCalc",
+                "change .editable "                                               : "setEditable",
+                "keydown input.editing "                                          : "keyDown",
+                "change .listCB"                                                  : "setAllTotalVals"
             },
 
             keyDown: function (e) {
@@ -100,9 +88,18 @@ define([
                 async.each(selectedWtracks, function (el, cb) {
                     var id = $(el).val();
                     var model = self.collection.get(id);
-                    var revenue = model.get('revenue').replace('$', '');
+                    var reven = model.get('revenue');
+
+                    if (typeof(reven) != 'number') {
+                        model.set({revenue: parseFloat(reven) * 100});
+                    }
+
+                    var revenue = reven.toString().replace('$', '');
 
                     revenue = parseFloat(revenue);
+                    if (typeof(reven) === 'number') {
+                        revenue = revenue / 100;
+                    }
 
                     total += revenue;
 
@@ -117,63 +114,80 @@ define([
                 }, function (err) {
                     if (!err) {
                         new wTrackCreateView({
-                            wTracks: wTracks,
-                            project: project,
+                            wTracks : wTracks,
+                            project : project,
                             assigned: assigned,
                             customer: customer,
-                            total: total
+                            total   : total
                         });
                     }
                 });
             },
 
-            hideGenerateCopy: function(){
+            hideGenerateCopy: function () {
                 $('#top-bar-generateBtn').hide();
                 $('#top-bar-copyBtn').hide();
             },
 
             copyRow: function (e) {
-               this.hideGenerateCopy();
+                this.hideGenerateCopy();
 
                 this.changed = true;
                 this.createdCopied = true;
+                var checkedRows = this.$el.find('input.listCB:checked:not(#check_all)');
+                var length = checkedRows.length;
 
-                var selectedWtrack = this.$el.find('input.listCB:checked:not(#check_all)')[0];
-                var self = this;
-                var target = $(selectedWtrack);
-                var id = target.val();
-                var row = target.closest('tr');
-                var model = self.collection.get(id);
-                var _model;
-                var tdsArr;
-                var cid;
+                for (var i = length - 1; i >= 0; i--) {
+                    var selectedWtrack = checkedRows[i];
+                    var self = this;
+                    var target = $(selectedWtrack);
+                    var id = target.val();
+                    var row = target.closest('tr');
+                    var model = self.collection.get(id) ? self.collection.get(id) : self.editCollection.get(id);
+                    var _model;
+                    var tdsArr;
+                    var cid;
+                    var hours = model.get('worked');
+                    var rate = model.get('rate');
+                    var revenue = parseInt(hours) * parseFloat(rate);
 
-                $(selectedWtrack).attr('checked', false);
+                    $(selectedWtrack).attr('checked', false);
 
-                model = model.toJSON();
-                delete model._id;
-                _model = new currentModel(model);
+                    model.set({"isPaid": false});
+                    model.set({"amount": 0});
+                    model.set({"cost": 0});
+                    model.set({"revenue": revenue});
+                    model = model.toJSON();
+                    delete model._id;
+                    _model = new currentModel(model);
 
-                this.showSaveCancelBtns();
-                this.editCollection.add(_model);
+                    this.showSaveCancelBtns();
+                    this.editCollection.add(_model);
 
-                cid = _model.cid;
+                    cid = _model.cid;
 
-                if (!this.changedModels[cid]) {
-                    this.changedModels[cid] = model;
+                    if (!this.changedModels[cid]) {
+                        this.changedModels[cid] = model;
+                    }
+
+                    this.$el.find('#listTable').prepend('<tr id="false" data-id="' + cid + '">' + row.html() + '</tr>');
+                    row = this.$el.find('#false');
+
+                    tdsArr = row.find('td');
+                    $(tdsArr[0]).find('input').val(cid);
+                    $(tdsArr[20]).find('span').text('Unpaid');
+                    $(tdsArr[20]).find('span').addClass('unDone');
+                    $(tdsArr[24]).text(0);
+                    $(tdsArr[22]).text(0);
+                    $(tdsArr[21]).text(revenue.toFixed(2));
+                    $(tdsArr[1]).text(cid);
                 }
-
-                this.$el.find('#listTable').prepend('<tr id="false" data-id="' + cid + '">' + row.html() + '</tr>');
-                row = this.$el.find('#false');
-
-                tdsArr = row.find('td');
-                $(tdsArr[0]).find('input').val(cid);
-                $(tdsArr[1]).text(cid);
             },
 
             nextSelect: function (e) {
                 this.showNewSelect(e, false, true);
             },
+
             prevSelect: function (e) {
                 this.showNewSelect(e, true, false);
             },
@@ -194,7 +208,7 @@ define([
                 var rateVal;
                 var revenueVal;
 
-                function eplyDefaultValue(el){
+                function eplyDefaultValue(el) {
                     var value = el.text();
 
                     if (value === '') {
@@ -267,7 +281,7 @@ define([
                 var editedElementRowId;
                 var editedElementContent;
                 var editedElementValue;
-                var editWtrackModel;
+                var self = this;
 
                 if (/*wTrackId !== this.wTrackId &&*/ editedElement.length) {
                     editedCol = editedElement.closest('td');
@@ -281,10 +295,35 @@ define([
                         this.changedModels[editedElementRowId] = {};
                     }
 
-                    this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
 
-                    editedCol.text(editedElementValue);
-                    editedElement.remove();
+                    this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
+                    if (editedElementContent === 'month'){
+                        async.parallel([funcForWeek], function(err, result){
+                            if (err){
+                                console.log(err);
+                            }
+
+                            var weeks = result[0];
+                            editedElement.closest('tr').find('[data-content="week"]').text(weeks[0]);
+                            editedCol.text(editedElementValue);
+                            editedElement.remove();
+
+                            self.changedModels[editedElementRowId]['week'] = weeks[0];
+                        });
+                    } else {
+                        editedCol.text(editedElementValue);
+                        editedElement.remove();
+                    }
+
+                }
+                function funcForWeek(cb){
+                    var weeks;
+                    var month = editedElementValue;
+                    var year = editedElement.closest('tr').find('[data-content="year"]').text();
+
+                    weeks = custom.getWeeks(month, year);
+
+                    cb(null, weeks);
                 }
             },
 
@@ -297,24 +336,49 @@ define([
                 var colType = el.data('type');
                 var content = el.data('content');
                 var isSelect = colType !== 'input' && el.prop("tagName") !== 'INPUT';
+                var isWeek = el.attr("data-content") === 'week';
+                var isYear = el.attr("data-content") === 'year';
                 var tempContainer;
                 var width;
-                var editedElement;
                 var value;
                 var insertedInput;
+                var weeks;
+                var month = (tr.find('[data-content="month"]').text()) ? tr.find('[data-content="month"]').text() : tr.find('.editing').val();
+                var year = (tr.find('[data-content="year"]').text()) ? tr.find('[data-content="year"]').text() : tr.find('.editing').val();
+                var template;
+                var currentYear;
+                var previousYear;
+                var nextYear;
 
                 if (wTrackId && el.prop('tagName') !== 'INPUT') {
                     if (this.wTrackId) {
-                        editedElement = this.$listTable.find('.editing');
                         this.setChangedValueToModel();
                     }
                     this.wTrackId = wTrackId;
                     this.setChangedValueToModel();
                 }
 
-
                 if (isSelect) {
                     populate.showSelect(e, prev, next, this);
+                } else if (isWeek) {
+                    weeks = custom.getWeeks(month, year);
+
+                    template = _.template(forWeek);
+
+                    el.append(template({
+                        weeks: weeks
+                    }));
+
+                    this.calculateCost(e, wTrackId);
+                } else if (isYear) {
+                    currentYear = parseInt(moment().year());
+                    previousYear = currentYear - 1;
+                    nextYear = currentYear + 1;
+
+                    width = el.width() - 6;
+                    el.append('<ul class="newSelectList"><li>' + previousYear + '</li><li>' + currentYear + '</li><li>' + nextYear + '</li></ul>');
+
+                    this.calculateCost(e, wTrackId);
                 } else {
                     tempContainer = el.text();
                     width = el.width() - 6;
@@ -349,7 +413,6 @@ define([
                 var revenueVal = tr.find('[data-content="revenue"]').text();
                 var profitVal = tr.find('[data-content="profit"]').text();
 
-
                 if (!this.changedModels[wTrackId]) {
                     this.changedModels[wTrackId] = {};
                 }
@@ -364,7 +427,8 @@ define([
                     trackWeek = tr.find('[data-content="worked"]').text();
 
                 } else {
-                    editWtrackModel = this.editCollection.get(wTrackId);
+                    editWtrackModel = this.collection.get(wTrackId);
+                    this.editCollection.add(editWtrackModel);
 
                     employeeId = editWtrackModel.attributes.employee._id;
                     month = (tr.find('[data-content="month"]').text()) ? tr.find('[data-content="month"]').text() : tr.find('.editing').val();
@@ -376,17 +440,16 @@ define([
                     var baseSalary = results[0];
                     var coefficients = results[1][0];
 
-                    if (err  || !baseSalary || !coefficients) {
+                    if (err || !baseSalary || !coefficients) {
                         costElement.text('');
                         costElement.addClass('money');
                         costElement.text('0.00');
 
-                        profitVal =  (parseFloat(revenueVal) - 0).toFixed(2);
+                        profitVal = (parseFloat(revenueVal) - 0).toFixed(2);
                         profit.text(profitVal);
 
                         self.changedModels[wTrackId].cost = 0;
                         self.changedModels[wTrackId].profit = parseFloat(profitVal) * 100;
-;
 
                         return 0;
                     }
@@ -402,11 +465,10 @@ define([
                     costElement.addClass('money');
                     costElement.text(calc);
 
-
-                    profitVal =  (parseFloat(revenueVal) - parseFloat(calc)).toFixed(2);
+                    profitVal = (parseFloat(revenueVal) - parseFloat(calc)).toFixed(2);
                     profit.text(profitVal);
 
-                    self.changedModels[wTrackId].cost = parseFloat(calc) * 100;
+                    self.changedModels[wTrackId].cost = parseFloat(calc);
                     self.changedModels[wTrackId].profit = parseFloat(profitVal) * 100;
 
                     return calc;
@@ -417,18 +479,18 @@ define([
 
                     dataService.getData('/salary/getByMonth',
                         {
-                        month: month,
-                        year: year,
-                        _id: employeeId
-                    }, function (response, context) {
+                            month: month,
+                            year : year,
+                            _id  : employeeId
+                        }, function (response, context) {
 
-                        if (response.error) {
-                            return callback(response.error);
-                        }
+                            if (response.error) {
+                                return callback(response.error);
+                            }
 
-                        callback(null, response.data);
+                            callback(null, response.data);
 
-                    }, this);
+                        }, this);
 
                 }
 
@@ -445,7 +507,6 @@ define([
                     }, this);
                 }
 
-
                 return false;
             },
 
@@ -453,7 +514,7 @@ define([
                 var target = $(e.target);
                 var targetElement = target.parents("td");
                 var tr = target.parents("tr");
-                var modelId = tr.data('id');
+                var modelId = tr.attr('data-id');
                 var id = target.attr("id");
                 var attr = targetElement.attr("id") || targetElement.data("content");
                 var elementType = '#' + attr;
@@ -464,13 +525,14 @@ define([
                 var department;
                 var changedAttr;
                 var wTrackId = tr.data('id');
-                var value;
+                var week;
+                var year;
 
                 var element = _.find(this.responseObj[elementType], function (el) {
                     return el._id === id;
                 });
 
-                var editWtrackModel = this.editCollection.get(modelId);
+                var editWtrackModel = this.editCollection.get(modelId) ? this.editCollection.get(modelId) : this.collection.get(modelId);
 
                 if (!this.changedModels[modelId]) {
                     if (!editWtrackModel.id) {
@@ -529,6 +591,14 @@ define([
                     department.departmentName = element.departmentName;
 
                     changedAttr.department = department;
+                } else if (elementType === '#week') {
+                    week = $(e.target).text();
+
+                    changedAttr.week = week;
+                } else if (elementType === '#year') {
+                    year = $(e.target).text();
+
+                    changedAttr.year = year;
                 }
 
                 targetElement.removeClass('errorContent');
@@ -541,20 +611,44 @@ define([
                 return false;
             },
 
+            checked: function (e) {
+                var checkLength;
+
+                if (this.collection.length > 0) {
+                    checkLength = $("input.listCB:checked").length;
+
+                    this.checkProjectId(e, checkLength);
+
+                    if (checkLength > 0) {
+                        $("#top-bar-deleteBtn").show();
+                        $('#check_all').prop('checked', false);
+                        if (checkLength === this.collection.length) {
+                            $('#check_all').prop('checked', true);
+                        }
+                    } else {
+                        $("#top-bar-deleteBtn").hide();
+                        $('#check_all').prop('checked', false);
+                    }
+                }
+            },
+
             saveItem: function () {
                 var model;
 
                 var errors = this.$el.find('.errorContent');
 
                 for (var id in this.changedModels) {
-                    model = this.editCollection.get(id);
+                    model = this.editCollection.get(id) ? this.editCollection.get(id) : this.collection.get(id);
                     model.changed = this.changedModels[id];
+
                 }
 
                 if (errors.length) {
                     return
                 }
                 this.editCollection.save();
+                this.changedModels = {};
+                this.editCollection.remove(id);
             },
 
             savedNewModel: function (modelObject) {
@@ -589,74 +683,6 @@ define([
                 this.resetCollection();
             },
 
-            fetchSortCollection: function (sortObject) {
-                this.sort = sortObject;
-                this.collection = new contentCollection({
-                    viewType: 'list',
-                    sort: sortObject,
-                    page: this.page,
-                    count: this.defaultItemsNumber,
-                    filter: this.filter,
-                    parrentContentId: this.parrentContentId,
-                    contentType: this.contentType,
-                    newCollection: this.newCollection
-                });
-                this.collection.bind('reset', this.renderContent, this);
-                this.collection.bind('showmore', this.showMoreContent, this);
-            },
-
-            goSort: function (e) {
-                if (this.isNewRow()) {
-                    return false;
-                }
-
-                var target$ = $(e.target);
-                var currentParrentSortClass = target$.attr('class');
-                var sortClass = currentParrentSortClass.split(' ')[1];
-                var sortConst = 1;
-                var sortBy = target$.data('sort');
-                var sortObject = {};
-
-                this.collection.unbind('reset');
-                this.collection.unbind('showmore');
-
-                if (!sortClass) {
-                    target$.addClass('sortDn');
-                    sortClass = "sortDn";
-                }
-
-                switch (sortClass) {
-                    case "sortDn":
-                    {
-                        target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
-                        target$.removeClass('sortDn').addClass('sortUp');
-                        sortConst = 1;
-                    }
-                        break;
-                    case "sortUp":
-                    {
-                        target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
-                        target$.removeClass('sortUp').addClass('sortDn');
-                        sortConst = -1;
-                    }
-                        break;
-                }
-                sortObject[sortBy] = sortConst;
-                this.fetchSortCollection(sortObject);
-                this.changeLocationHash(1, this.defaultItemsNumber);
-                this.getTotalLength(null, this.defaultItemsNumber, this.filter);
-            },
-
-            hideItemsNumber: function (e) {
-                var el = e.target;
-
-                this.$el.find(".allNumberPerPage, .newSelectList").hide();
-                if (!el.closest('.search-view')) {
-                    $('.search-content').removeClass('fa-caret-up');
-                    this.$el.find('.search-options').addClass('hidden');
-                };
-            },
-
             showNewSelect: function (e, prev, next) {
                 populate.showSelect(e, prev, next, this);
 
@@ -665,30 +691,6 @@ define([
 
             hideNewSelect: function (e) {
                 $(".newSelectList").remove();
-            },
-
-            itemsNumber: function (e) {
-                $(e.target).closest("button").next("ul").toggle();
-                return false;
-            },
-
-            getTotalLength: function (currentNumber, itemsNumber, filter) {
-                dataService.getData(this.collectionLengthUrl, {
-                    currentNumber: currentNumber,
-                    filter: filter,
-                    newCollection: this.newCollection
-                }, function (response, context) {
-                    var page = context.page || 1;
-                    var length = context.listLength = response.count || 0;
-
-                    if (itemsNumber * (page - 1) > length) {
-                        context.page = page = Math.ceil(length / itemsNumber);
-                        context.fetchSortCollection(context.sort);
-                        context.changeLocationHash(page, context.defaultItemsNumber, filter);
-                    }
-
-                    context.pageElementRender(response.count, itemsNumber, page);//prototype in main.js
-                }, this);
             },
 
             render: function () {
@@ -701,40 +703,40 @@ define([
                 currentEl.html('');
                 currentEl.append(_.template(listTemplate));
                 currentEl.append(new listItemView({
-                    collection: this.collection,
-                    page: this.page,
+                    collection : this.collection,
+                    page       : this.page,
                     itemsNumber: this.collection.namberToShow
                 }).render());//added two parameters page and items number
 
-                $(document).on("click", function (e) {
-                    self.hideItemsNumber(e);
-                });
+                this.renderPagination(currentEl, this);
 
-                currentEl.append(_.template(paginationTemplate));
-
-                pagenation = this.$el.find('.pagination');
-
-                if (this.collection.length === 0) {
-                    pagenation.hide();
-                } else {
-                    pagenation.show();
-                }
                 currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
                 $('#check_all').click(function () {
+                    var checkLength;
+
                     allInputs = $('.listCB');
                     allInputs.prop('checked', this.checked);
                     checkedInputs = $("input.listCB:checked");
 
-                    if (checkedInputs.length > 0) {
-                        $("#top-bar-deleteBtn").show();
-                    } else {
-                        $("#top-bar-deleteBtn").hide();
+                    if (self.collection.length > 0) {
+                        checkLength = checkedInputs.length;
+
+                        self.checkProjectId($('#check_all'), checkLength);
+
+                        if (checkLength > 0) {
+                            $("#top-bar-deleteBtn").show();
+
+                            if (checkLength === self.collection.length) {
+                                $('#check_all').prop('checked', true);
+                            }
+                        } else {
+                            $("#top-bar-deleteBtn").hide();
+                            $('#check_all').prop('checked', false);
+                        }
                     }
 
                     self.setAllTotalVals();
-
-                    self.genInvoiceEl.hide();
                     self.copyEl.hide();
                 });
 
@@ -768,18 +770,7 @@ define([
                     self.responseObj['#department'] = departments;
                 });
 
-                self.filterView = new filterView({
-                    contentType: self.contentType
-                });
-
-                self.filterView.bind('filter', function(filter) {
-                    self.showFilteredPage(filter);
-                });
-                self.filterView.bind('defaultFilter', function () {
-                    self.showFilteredPage({});
-                });
-
-                self.filterView.render();
+                this.renderFilter(self);
 
                 setTimeout(function () {
                     /*self.editCollection = new EditCollection(self.collection.toJSON());
@@ -811,199 +802,6 @@ define([
                 }
             },
 
-            renderContent: function () {
-                var currentEl = this.$el;
-                var tBody = currentEl.find('#listTable');
-                var itemView;
-                var pagenation;
-
-                $("#top-bar-deleteBtn").hide();
-                $('#check_all').prop('checked', false);
-
-                tBody.empty();
-
-                itemView = new listItemView({
-                    collection: this.collection,
-                    page: currentEl.find("#currentShowPage").val(),
-                    itemsNumber: currentEl.find("span#itemsNumber").text()
-                });
-
-                tBody.append(itemView.render());
-
-                pagenation = this.$el.find('.pagination');
-
-                if (this.collection.length === 0) {
-                    pagenation.hide();
-                } else {
-                    pagenation.show();
-                    this.editCollection.reset(this.collection.models);
-                }
-            },
-
-            previousPage: function (event) {
-                event.preventDefault();
-                $('#check_all').prop('checked', false);
-                $("#top-bar-deleteBtn").hide();
-
-                this.prevP({
-                    sort: this.sort,
-                    filter: this.filter,
-                    newCollection: this.newCollection,
-                    parrentContentId: this.parrentContentId
-                });
-                dataService.getData(this.collectionLengthUrl, {
-                    filter: this.filter,
-                    newCollection: this.newCollection,
-                    parrentContentId: this.parrentContentId
-                }, function (response, context) {
-                    context.listLength = response.count || 0;
-                }, this);
-            },
-
-            nextPage: function (event) {
-                event.preventDefault();
-                $('#check_all').prop('checked', false);
-                $("#top-bar-deleteBtn").hide();
-                this.nextP({
-                    sort: this.sort,
-                    filter: this.filter,
-                    newCollection: this.newCollection,
-                    parrentContentId: this.parrentContentId
-                });
-
-                dataService.getData(this.collectionLengthUrl, {
-                    filter: this.filter,
-                    newCollection: this.newCollection,
-                    parrentContentId: this.parrentContentId
-                }, function (response, context) {
-                    context.listLength = response.count || 0;
-                }, this);
-            },
-
-            firstPage: function (event) {
-                event.preventDefault();
-                $('#check_all').prop('checked', false);
-                $("#top-bar-deleteBtn").hide();
-                this.firstP({
-                    sort: this.sort,
-                    filter: this.filter,
-                    newCollection: this.newCollection
-                });
-                dataService.getData(this.collectionLengthUrl, {
-                    filter: this.filter,
-                    newCollection: this.newCollection
-                }, function (response, context) {
-                    context.listLength = response.count || 0;
-                }, this);
-            },
-
-            lastPage: function (event) {
-                event.preventDefault();
-                $('#check_all').prop('checked', false);
-                $("#top-bar-deleteBtn").hide();
-                this.lastP({
-                    sort: this.sort,
-                    filter: this.filter,
-                    newCollection: this.newCollection
-                });
-                dataService.getData(this.collectionLengthUrl, {
-                    filter: this.filter,
-                    newCollection: this.newCollection
-                }, function (response, context) {
-                    context.listLength = response.count || 0;
-                }, this);
-            },  //end first last page in paginations
-
-            switchPageCounter: function (event) {
-                event.preventDefault();
-                this.startTime = new Date();
-                var itemsNumber = event.target.textContent;
-                this.defaultItemsNumber = itemsNumber;
-                this.getTotalLength(null, itemsNumber, this.filter);
-                this.collection.showMore({
-                    count: itemsNumber,
-                    page: 1,
-                    filter: this.filter,
-                    newCollection: this.newCollection
-                });
-                this.page = 1;
-                $("#top-bar-deleteBtn").hide();
-                $('#check_all').prop('checked', false);
-                this.changeLocationHash(1, itemsNumber, this.filter);
-            },
-
-            showFilteredPage: function (filter) {
-                var itemsNumber = $("#itemsNumber").text();
-                this.filter = filter;
-
-                this.startTime = new Date();
-                this.newCollection = false;
-                //this.filter = custom.getFiltersValues(chosen, defaultFilterStatus, logicAndStatus);
-
-                $("#top-bar-deleteBtn").hide();
-                $('#check_all').prop('checked', false);
-
-                this.changeLocationHash(1, itemsNumber, filter);
-                this.collection.showMore({count: itemsNumber, page: 1, filter: filter});
-                this.getTotalLength(null, itemsNumber, filter);
-            },
-
-            showPage: function (event) {
-                event.preventDefault();
-                this.showP(event, {filter: this.filter, newCollection: this.newCollection, sort: this.sort});
-            },
-
-            showMoreContent: function (newModels) {
-                var holder = this.$el;
-                var itemView;
-                var pagenation;
-
-                holder.find("#listTable").empty();
-                itemView = new listItemView({
-                    collection: newModels,
-                    page: holder.find("#currentShowPage").val(),
-                    itemsNumber: holder.find("span#itemsNumber").text()
-                });//added two parameters page and items number
-
-                holder.append(itemView.render());
-
-                itemView.undelegateEvents();
-
-                pagenation = holder.find('.pagination');
-
-                if (newModels.length !== 0) {
-                    pagenation.show();
-                } else {
-                    pagenation.hide();
-                }
-
-                $("#top-bar-deleteBtn").hide();
-                $('#check_all').prop('checked', false);
-
-                this.editCollection.reset(this.collection.models);
-                this.filterView.renderFilterContent();
-
-                holder.find('#timeRecivingDataFromServer').remove();
-                holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
-            },
-
-            goToEditDialog: function (e) {
-                e.preventDefault();
-
-                var id = $(e.target).closest("tr").data("id");
-                var model = new currentModel({validate: false});
-
-                model.urlRoot = '/quotation/form/' + id;
-                model.fetch({
-                    success: function (model) {
-                        new editView({model: model});
-                    },
-                    error: function () {
-                        alert('Please refresh browser');
-                    }
-                });
-            },
-
             isNewRow: function () {
                 var newRow = $('#false');
 
@@ -1017,10 +815,10 @@ define([
                 var week = now.getWeek();
                 var rate = 3;
                 var startData = {
-                    year: year,
+                    year : year,
                     month: month,
-                    week: week,
-                    rate: rate
+                    week : week,
+                    rate : rate
                 };
 
                 var model = new currentModel(startData);
@@ -1069,15 +867,15 @@ define([
             checkProjectId: function (e, checkLength) {
                 var totalCheckLength = $("input.checkbox:checked").length;
                 var ellement = e.target;
-                var checked = ellement.checked;
+                var checked = ellement ? ellement.checked : true;
                 var targetEl = $(ellement);
                 var tr = targetEl.closest('tr');
-                var wTrackId = tr.data('id');
+                var wTrackId = tr.attr('data-id');
                 var model = this.collection.get(wTrackId);
                 var projectContainer = tr.find('td[data-content="project"]');
                 var projectId = projectContainer.data('id');
 
-                if (checkLength === 1) {
+                if (checkLength >= 1) {
                     this.copyEl.show();
                 } else {
                     this.copyEl.hide();
@@ -1144,39 +942,19 @@ define([
                 this.getAutoCalcField('amount', 'amount', true);
             },
 
-            checked: function (e) {
-                var checkLength;
-
-                if (this.collection.length > 0) {
-                    checkLength = $("input.listCB:checked").length;
-
-                    this.checkProjectId(e, checkLength);
-
-                    if (checkLength > 0) {
-                        $("#top-bar-deleteBtn").show();
-                        if (checkLength === this.collection.length) {
-                            $('#check_all').prop('checked', true);
-                        }
-                    } else {
-                        $("#top-bar-deleteBtn").hide();
-                        $('#check_all').prop('checked', false);
-                    }
-                }
-            },
-
             deleteItemsRender: function (deleteCounter, deletePage) {
                 var pagenation;
                 var holder;
 
                 dataService.getData(this.collectionLengthUrl, {
-                    filter: this.filter,
+                    filter       : this.filter,
                     newCollection: this.newCollection
                 }, function (response, context) {
                     context.listLength = response.count || 0;
                 }, this);
                 this.deleteRender(deleteCounter, deletePage, {
-                    filter: this.filter,
-                    newCollection: this.newCollection,
+                    filter          : this.filter,
+                    newCollection   : this.newCollection,
                     parrentContentId: this.parrentContentId
                 });
 
@@ -1185,8 +963,8 @@ define([
                 if (deleteCounter !== this.collectionLength) {
                     var created = holder.find('#timeRecivingDataFromServer');
                     created.before(new listItemView({
-                        collection: this.collection,
-                        page: holder.find("#currentShowPage").val(),
+                        collection : this.collection,
+                        page       : holder.find("#currentShowPage").val(),
                         itemsNumber: holder.find("span#itemsNumber").text()
                     }).render());//added two parameters page and items number
                 }
@@ -1246,7 +1024,7 @@ define([
                                     headers: {
                                         mid: mid
                                     },
-                                    wait: true,
+                                    wait   : true,
                                     success: function () {
                                         that.listLength--;
                                         localCounter++;
@@ -1255,7 +1033,7 @@ define([
                                             that.triggerDeleteItemsRender(localCounter);
                                         }
                                     },
-                                    error: function (model, res) {
+                                    error  : function (model, res) {
                                         if (res.status === 403 && index === 0) {
                                             alert("You do not have permission to perform this action");
                                         }

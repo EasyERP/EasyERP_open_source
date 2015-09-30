@@ -21,6 +21,8 @@ define([
 
             events: {
                 "mouseover .search-content": 'showSearchContent',
+                "click .oe_searchview_input": 'showSearchContent',
+                "click .search-content": 'showSearchContent',
                 "click .filter-dialog-tabs .btn": 'showFilterContent',
                 'click #applyFilter': 'applyFilter',
                 'click .condition li': 'conditionClick',
@@ -302,9 +304,11 @@ define([
                         filterIc.addClass('active');
                         filterValues.append('<div class="forFilterIcons"><span class="fa fa-filter funnelIcon"></span><span data-value="' + key + '" class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
                     } else {
-                        groupName = 'Letter';
-                        filterIc.addClass('active');
-                        filterValues.append('<div class="forFilterIcons"><span class="fa fa-filter funnelIcon"></span><span data-value="' + 'letter' + '" class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
+                        if (key != 'forSales'){
+                            groupName = 'Letter';
+                            filterIc.addClass('active');
+                            filterValues.append('<div class="forFilterIcons"><span class="fa fa-filter funnelIcon"></span><span data-value="' + 'letter' + '" class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
+                        }
                     }});
             },
 
@@ -467,7 +471,8 @@ define([
                 searchOpt.removeClass('hidden');
 
                 if (el.hasClass(selector)) {
-                    el.removeClass(selector)
+                    el.removeClass(selector);
+                    this.$el.find('.search-options').addClass('hidden');
                 } else {
                     el.addClass(selector)
                 }

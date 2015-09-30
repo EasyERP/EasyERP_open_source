@@ -1,0 +1,29 @@
+<div class="divCell left-cell">
+    <span>
+        <%= totalName %>
+    </span>
+</div>
+<% monthArr.forEach(function(monthObject){ %>
+<div class="divCell">
+    <% if (perMonth[monthObject.year*100 + monthObject.month] === 0) {%>
+    <span>
+        <%='&nbsp'%>
+    </span>
+    <%} else {%>
+    <span>
+        <%= perMonth[monthObject.year*100 + monthObject.month] ? currencySplitter(perMonth[monthObject.year*100 + monthObject.month].toFixed()) : '&nbsp'%>
+    </span>
+    <% } %>
+</div>
+<% }) %>
+<div class="divCell">
+    <% if (globalTotal === 0) { %>
+      <span>
+        <%='&nbsp'%>
+      </span>
+    <% } else { %>
+      <span>
+        <%= globalTotal ? currencySplitter(globalTotal.toFixed()) : '&nbsp'%>
+      </span>
+    <% } %>
+</div>

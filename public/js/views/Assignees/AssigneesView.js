@@ -238,10 +238,14 @@ define([
         },
         render: function () {
 			var owner = "";
-			if (this.model&&this.model.toJSON().groups&&this.model.toJSON().groups.owner ){
-				owner = this.model.toJSON().groups.owner;
-			}
-            this.$el.html(this.template({owner:owner}));
+            var whoCanRW;
+
+            if (this.model && this.model.toJSON().groups && this.model.toJSON().groups.owner ){
+                owner = this.model.toJSON().groups.owner;
+                whoCanRW = this.model.toJSON().whoCanRW;
+            }
+
+            this.$el.html(this.template({owner:owner, whoCanRW: whoCanRW}));
 			if (this.model){
 				common.populateUsersForGroups( this.$el.find('#sourceUsers'), this.$el.find('#targetUsers'), this.model.toJSON(), 1);
                 common.populateDepartmentsList( this.$el.find("#sourceGroups"), this.$el.find("#targetGroups"), "/DepartmentsForDd",this.model.toJSON(),1);

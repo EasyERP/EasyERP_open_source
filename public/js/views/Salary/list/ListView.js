@@ -1,5 +1,5 @@
 define([
-        'text!templates/Pagination/PaginationTemplate.html',
+        'views/listViewBase',
         'text!templates/Salary/list/ListHeader.html',
         'views/Salary/list/ListItemView',
         'views/Salary/subSalary/list/ListView',
@@ -12,17 +12,31 @@ define([
         'moment'
     ],
 
-    function (paginationTemplate, listTemplate, listItemView, subSalaryView, salaryModel, contentCollection, salaryEditableCollection, filterView, common, dataService, moment) {
-        var SalaryListView = Backbone.View.extend({
-            el: '#content-holder',
-            defaultItemsNumber: null,
-            listLength: null,
-            filter: null,
-            sort: null,
-            newCollection: null,
-            page: null, //if reload page, and in url is valid page
-            contentType: 'Salary',//needs in view.prototype.changeLocationHash
-            viewType: 'list',//needs in view.prototype.changeLocationHash
+    function (listViewBase, listTemplate, listItemView, subSalaryView, salaryModel, contentCollection, salaryEditableCollection, filterView, common, dataService, moment) {
+        var SalaryListView = listViewBase.extend({
+            listTemplate     : listTemplate,
+            listItemView     : listItemView,
+            contentCollection: contentCollection,
+            filterView       : filterView,
+
+            contentType             : 'Salary',//need
+            totalCollectionLengthUrl: '/salary/totalCollectionLength',
+            page                    : null, //if reload page, and in url is valid page
+            contentType             : 'Salary',//needs in view.prototype.changeLocationHash
+
+            events: {
+                "click .mainCB"                                                                  : "checked",
+                "click .stageSelect"                                                             : "showNewSelect",
+                "click td.editable"                                                              : "editRow",
+                "click .list tbody tr:not(.subRow, .disabled, .copy) td:not(.notForm, .editable)": "showSubSalary",
+                "mouseover .currentPageList": "itemsNumber",
+                "click": "hideItemsNumber",
+                "click #firstShowPage": "firstPage",
+                "click #lastShowPage": "lastPage",
+                "click .oe_sortable": "goSort",
+                "change .editable ": "setEditable",
+                "keydown input.editing ": "keyDown"
+            },
 
             initialize: function (options) {
                 this.startTime = options.startTime;
@@ -40,28 +54,28 @@ define([
                 this.contentCollection = contentCollection;
             },
 
-            events: {
-                "click .itemsNumber": "switchPageCounter",
-                "click .showPage": "showPage",
-                "change #currentShowPage": "showPage",
-                "click #previousPage": "previousPage",
-                "click #nextPage": "nextPage",
-                "click .mainCB": "checked",
-                "click .stageSelect": "showNewSelect",
-                "click td.editable": "editRow",
-                "click .list tbody tr:not(.subRow, .disabled, .copy) td:not(.notForm, .editable)": "showSubSalary",
-                "mouseover .currentPageList": "itemsNumber",
-                "click": "hideItemsNumber",
-                "click #firstShowPage": "firstPage",
-                "click #lastShowPage": "lastPage",
-                "click .oe_sortable": "goSort",
-                "change .editable ": "setEditable"
+            keyDown: function (e) {
+                if (e.which === 13) {
+                    var editedElement = $("#listTable").find('.editing');
+                    var editedCol;
+                    var editedElementValue;
+
+                    if (editedElement.length) {
+                        editedCol = editedElement.closest('td');
+                        editedElementValue = editedElement.val();
+
+                        editedCol.text(editedElementValue);
+                        editedElement.remove();
+                    }
+                }
             },
 
             saveItem: function () {
                 var self = this;
                 var modelToSave;
-                var row = $('#listTable').find('tr.copy');
+                var rowCopy = $('#listTable').find('tr.copy');
+                var row = rowCopy.length > 0 ? rowCopy : $('#listTable').find('tr.newRow');
+                var id = row.attr('data-id');
                 var modelJSON;
                 var input = row.find('input.editing');
                 var month;
@@ -69,6 +83,7 @@ define([
                 var dataKey;
                 var momentYear;
                 var momentMonth;
+                var model;
 
                 month = row.find('.month').text();
                 year = row.find('.year').text();
@@ -78,21 +93,33 @@ define([
                 momentMonth = moment().month(month - 1).format('MMM');
                 dataKey = momentMonth + "/" + momentYear;
 
+                if (id !== 'false') {
+                    model = this.collection.get(id)
+
+                    if (model.get('newModel')) {
+                        this.hideSaveCancelBtns();
+                        model.set({month: month, year: year, dataKey: momentMonth + '/' + momentYear});
+                    }
+                }
+
                 function save() {
                     self.newCollection = new salaryEditableCollection();
 
                     self.newCollection.on('saved', self.savedNewModel, self);
 
-                    self.editCollection.each(function (model, index) {
-                        modelJSON = model.toJSON();
+                    if (self.editCollection && self.editCollection.length !== 0) {
 
-                        delete modelJSON._id;
-                        modelJSON['month'] = month;
-                        modelJSON['year'] = year;
+                        self.editCollection.each(function (model, index) {
+                            modelJSON = model.toJSON();
 
-                        modelToSave = new salaryModel(modelJSON);
-                        self.newCollection.add(modelToSave);
-                    });
+                            delete modelJSON._id;
+                            modelJSON['month'] = month;
+                            modelJSON['year'] = year;
+
+                            modelToSave = new salaryModel(modelJSON);
+                            self.newCollection.add(modelToSave);
+                        });
+                    }
 
                     self.newCollection.save();
                 }
@@ -219,94 +246,11 @@ define([
                     }
                 }
 
-
                 tempContainer = el.text();
                 width = el.width() - 6;
                 el.html('<input class="editing" type="text" value="' + tempContainer + '"  maxLength="4" style="width:' + width + 'px">');
 
-
                 return false;
-            },
-
-            fetchSortCollection: function (sortObject) {
-                this.sort = sortObject;
-                this.collection = new contentCollection({
-                    viewType: 'list',
-                    sort: sortObject,
-                    page: this.page,
-                    count: this.defaultItemsNumber,
-                    filter: this.filter,
-                    parrentContentId: this.parrentContentId,
-                    contentType: this.contentType,
-                    newCollection: this.newCollection
-                });
-                this.collection.bind('reset', this.renderContent, this);
-                this.collection.bind('showmore', this.showMoreContent, this);
-            },
-
-            goSort: function (e) {
-                var target$ = $(e.target);
-                var currentParrentSortClass = target$.attr('class');
-                var sortClass = currentParrentSortClass.split(' ')[1];
-                var sortConst = 1;
-                var sortBy = target$.data('sort');
-                var sortObject = {};
-
-                this.collection.unbind('reset');
-                this.collection.unbind('showmore');
-
-                if (!sortClass) {
-                    target$.addClass('sortDn');
-                    sortClass = "sortDn";
-                }
-                switch (sortClass) {
-                    case "sortDn":
-                    {
-                        target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
-                        target$.removeClass('sortDn').addClass('sortUp');
-                        sortConst = 1;
-                    }
-                        break;
-                    case "sortUp":
-                    {
-                        target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
-                        target$.removeClass('sortUp').addClass('sortDn');
-                        sortConst = -1;
-                    }
-                        break;
-                }
-                sortObject[sortBy] = sortConst;
-                this.fetchSortCollection(sortObject);
-                this.changeLocationHash(1, this.defaultItemsNumber);
-                this.getTotalLength(null, this.defaultItemsNumber, this.filter);
-            },
-
-            hideItemsNumber: function (e) {
-                $(".allNumberPerPage").hide();
-                $(".newSelectList").hide();
-            },
-
-            itemsNumber: function (e) {
-                $(e.target).closest("button").next("ul").toggle();
-                return false;
-            },
-
-            getTotalLength: function (currentNumber, itemsNumber, filter) {
-                dataService.getData('/salary/totalCollectionLength', {
-                    contentType: this.contentType,
-                    currentNumber: currentNumber,
-                    filter: filter,
-                    newCollection: this.newCollection
-                }, function (response, context) {
-                    var page = context.page || 1;
-                    var length = context.listLength = response.count || 0;
-                    if (itemsNumber * (page - 1) > length) {
-                        context.page = page = Math.ceil(length / itemsNumber);
-                        context.fetchSortCollection(context.sort);
-                        context.changeLocationHash(page, context.defaultItemsNumber, filter);
-                    }
-                    context.pageElementRender(response.count, itemsNumber, page);//prototype in main.js
-                }, this);
             },
 
             hideNewSelect: function () {
@@ -317,14 +261,49 @@ define([
                 $('.ui-dialog ').remove();
                 var self = this;
                 var currentEl = this.$el;
-                var FilterView;
+                var date = new Date();
+                var year = moment(date).format('YYYY');
+                var subYear = moment(date).format('YY');
+                var month = moment(date).format('M');
+                var subMonth = moment(date).format('MMM');
+                var model = {};
 
                 currentEl.html('');
                 currentEl.append(_.template(listTemplate));
+
+                if (this.collection.length === 0) {
+                    model = {
+                        month: month,
+                        year: year,
+                        dataKey: subMonth + '/' + subYear,
+                        calc: {
+                            onCard: 0,
+                            onCash: 0,
+                            salary: 0,
+                        },
+                        paid: {
+                            onCard: 0,
+                            onCash: 0,
+                        },
+                        diff: {
+                            onCard: 0,
+                            onCash: 0,
+                            total: 0,
+                        },
+                        employeesArray: [],
+                    }
+
+                    model = new salaryModel(model);
+                    model.set({_id: model.cid});
+                    model.set({newModel: true});
+
+                    this.collection.set([model]);
+                }
+
                 currentEl.append(new listItemView({
                     collection: this.collection,
                     page: this.page,
-                    itemsNumber: this.collection.namberToShow
+                    itemsNumber: this.collection.namberToShow,
                 }).render());
 
                 $('#check_all').click(function () {
@@ -332,179 +311,21 @@ define([
                     if ($("input.mainCb:checked").length > 0) {
                         $("#top-bar-deleteBtn").show();
                     }
-                    else
+                    else {
                         $("#top-bar-deleteBtn").hide();
+                    }
                 });
 
                 $("#top-bar-createBtn").hide();
 
                 $(document).on("click", function (e) {
-                    self.hideItemsNumber(e);
                     self.hideNewSelect();
-                 });
+                });
 
-                currentEl.append(_.template(paginationTemplate));
+                this.renderPagination(currentEl, this);
+              //  this.renderFilter(self);
 
-                var pagenation = this.$el.find('.pagination');
-
-                if (this.collection.length === 0) {
-                    pagenation.hide();
-                } else {
-                    pagenation.show();
-                }
                 currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
-            },
-
-            renderContent: function () {
-                var currentEl = this.$el;
-                var tBody = currentEl.find('#listTable');
-                $("#top-bar-deleteBtn").hide();
-                $("#top-bar-createBtn").hide();
-                $('#check_all').prop('checked', false);
-                tBody.empty();
-                var itemView = new listItemView({
-                    collection: this.collection,
-                    page: currentEl.find("#currentShowPage").val(),
-                    itemsNumber: currentEl.find("span#itemsNumber").text()
-                });
-                tBody.append(itemView.render());
-
-                var pagenation = this.$el.find('.pagination');
-                if (this.collection.length === 0) {
-                    pagenation.hide();
-                } else {
-                    pagenation.show();
-                }
-            },
-            previousPage: function (event) {
-                event.preventDefault();
-                $('#check_all').prop('checked', false);
-                $("#top-bar-deleteBtn").hide();
-                $("#top-bar-createBtn").hide();
-                this.prevP({
-                    sort: this.sort,
-                    filter: this.filter,
-                    newCollection: this.newCollection,
-                    parrentContentId: this.parrentContentId
-                });
-                dataService.getData('/salary/totalCollectionLength', {
-                    filter: this.filter,
-                    newCollection: this.newCollection,
-                    parrentContentId: this.parrentContentId,
-                    contentType: this.contentType
-                }, function (response, context) {
-                    context.listLength = response.count || 0;
-                }, this);
-            },
-
-            nextPage: function (event) {
-                event.preventDefault();
-                $('#check_all').prop('checked', false);
-                $("#top-bar-deleteBtn").hide();
-                $("#top-bar-createBtn").hide();
-                this.nextP({
-                    sort: this.sort,
-                    filter: this.filter,
-                    newCollection: this.newCollection,
-                    parrentContentId: this.parrentContentId
-
-                });
-
-                dataService.getData('/salary/totalCollectionLength', {
-                    contentType: this.contentType,
-                    filter: this.filter,
-                    newCollection: this.newCollection,
-                    parrentContentId: this.parrentContentId
-                }, function (response, context) {
-                    context.listLength = response.count || 0;
-                }, this);
-            },
-
-            firstPage: function (event) {
-                event.preventDefault();
-                $('#check_all').prop('checked', false);
-                $("#top-bar-deleteBtn").hide();
-                $("#top-bar-createBtn").hide();
-                this.firstP({
-                    sort: this.sort,
-                    filter: this.filter,
-                    newCollection: this.newCollection
-                });
-                dataService.getData('/salary/totalCollectionLength', {
-                    contentType: this.contentType,
-                    filter: this.filter,
-                    newCollection: this.newCollection
-                }, function (response, context) {
-                    context.listLength = response.count || 0;
-                }, this);
-            },
-
-            lastPage: function (event) {
-                event.preventDefault();
-                $('#check_all').prop('checked', false);
-                $("#top-bar-deleteBtn").hide();
-                $("#top-bar-createBtn").hide();
-                this.lastP({
-                    sort: this.sort,
-                    filter: this.filter,
-                    newCollection: this.newCollection
-                });
-                dataService.getData('/salary/totalCollectionLength', {
-                    contentType: this.contentType,
-                    filter: this.filter,
-                    newCollection: this.newCollection
-                }, function (response, context) {
-                    context.listLength = response.count || 0;
-                }, this);
-            },  //end first last page in paginations
-
-            switchPageCounter: function (event) {
-                event.preventDefault();
-                this.startTime = new Date();
-                var itemsNumber = event.target.textContent;
-                this.defaultItemsNumber = itemsNumber;
-                this.getTotalLength(null, itemsNumber, this.filter);
-                this.collection.showMore({
-                    count: itemsNumber,
-                    page: 1,
-                    filter: this.filter,
-                    newCollection: this.newCollection
-                });
-                this.page = 1;
-                $("#top-bar-deleteBtn").hide();
-                $("#top-bar-createBtn").hide();
-                $('#check_all').prop('checked', false);
-                this.changeLocationHash(1, itemsNumber, this.filter);
-            },
-
-            showPage: function (event) {
-                event.preventDefault();
-                this.showP(event, {filter: this.filter, newCollection: this.newCollection, sort: this.sort});
-            },
-
-            showMoreContent: function (newModels) {
-                var holder = this.$el;
-                var itemView = new listItemView({
-                    collection: newModels,
-                    page: holder.find("#currentShowPage").val(),
-                    itemsNumber: holder.find("span#itemsNumber").text()
-                });
-
-                holder.find("#listTable").html('');
-                holder.append(itemView.render());
-
-                itemView.undelegateEvents();
-                var pagenation = holder.find('.pagination');
-                if (newModels.length !== 0) {
-                    pagenation.show();
-                } else {
-                    pagenation.hide();
-                }
-                $("#top-bar-deleteBtn").hide();
-                $("#top-bar-createBtn").hide();
-                $('#check_all').prop('checked', false);
-                holder.find('#timeRecivingDataFromServer').remove();
-                holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             },
 
             showSubSalary: function (e) {
@@ -512,7 +333,7 @@ define([
                 var self = this;
 
                 var tr = $(e.target).closest('tr');
-                var id = $(tr).data("id");
+                var id = $(tr).attr("data-id");
                 var subId = "subSalary-row" + id
                 var subRowCheck = $('#' + subId);
                 var icon = $(tr).find('.icon');
@@ -524,12 +345,12 @@ define([
                     icon.html('-');
                     if (subRowCheck.length === 0) {
                         $('<tr id=' + subId + ' class="subRow">' +
-                        '<td colspan="3"></td>' +
-                        '<td colspan="6" id="subSalary-holder' + id + '"></td>' +
-                        '<td colspan="2"></td>' +
-                        '</tr>').insertAfter(tr);
+                            '<td colspan="3"></td>' +
+                            '<td colspan="6" id="subSalary-holder' + id + '"></td>' +
+                            '<td colspan="2"></td>' +
+                            '</tr>').insertAfter(tr);
                         $('#subSalary-holder' + id).append(new subSalaryView({
-                            el: '#subSalary-holder' + id,
+                            el   : '#subSalary-holder' + id,
                             model: self.collection.get(id)
                         }));
                     } else {
@@ -595,28 +416,6 @@ define([
                 }
             },
 
-            deleteItemsRender: function (deleteCounter, deletePage) {
-                dataService.getData('/salary/totalCollectionLength', {
-                    contentType: this.contentType,
-                    filter: this.filter,
-                    newCollection: this.newCollection
-                }, function (response, context) {
-                    context.listLength = response.count || 0;
-                }, this);
-                this.deleteRender(deleteCounter, deletePage, {
-                    filter: this.filter,
-                    newCollection: this.newCollection,
-                    parrentContentId: this.parrentContentId
-                });
-
-                var pagination = this.$el.find('.pagination');
-                if (this.collection.length === 0) {
-                    pagination.hide();
-                } else {
-                    pagination.show();
-                }
-            },
-
             triggerDeleteItemsRender: function (deleteCounter) {
                 var self = this;
 
@@ -646,11 +445,11 @@ define([
 
                         model.destroy({
                             headers: {
-                                mid: mid,
+                                mid  : mid,
                                 month: model.get('month'),
-                                year: model.get('year')
+                                year : model.get('year')
                             },
-                            wait: true,
+                            wait   : true,
                             success: function () {
                                 that.listLength--;
                                 localCounter++;
@@ -663,7 +462,7 @@ define([
                                     that.triggerDeleteItemsRender(localCounter);
                                 }
                             },
-                            error: function (model, res) {
+                            error  : function (model, res) {
                                 if (res.status === 403 && index === 0) {
                                     alert("You do not have permission to perform this action");
                                 }
@@ -684,7 +483,8 @@ define([
                             $(element).removeClass('disabled');
                             $(element).find('.mainCB').attr("disabled", false);
                         })
-                    };
+                    }
+                    ;
                 });
             }
         });

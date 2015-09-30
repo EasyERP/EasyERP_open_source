@@ -1,6 +1,4 @@
-/**
- * Created by Roman on 13.05.2015.
- */
+
 var mongoose = require('mongoose');
 var Incoterm = function (models) {
     var access = require("../Modules/additions/access.js")(models);

@@ -7,14 +7,12 @@ module.exports = (function () {
 
     var projectSchema = mongoose.Schema({
         projectShortDesc: { type: String, default: 'emptyProject' },
-        projectName: { type: String, default: 'emptyProject' },
+        projectName: { type: String, default: 'emptyProject', unique: true },
         task: [{ type: ObjectId, ref: 'Tasks', default: null }],
-        //customer: { type: ObjectId, ref: 'Customers', default: null },
         customer: {
             _id: {type: ObjectId, ref: 'Customers', default: null},
             name: String
         },
-        //projectmanager: { type: ObjectId, ref: 'Employees', default: null },
         projectmanager: {
             _id: {type: ObjectId, ref: 'Employees', default: null},
             name: String
@@ -31,7 +29,6 @@ module.exports = (function () {
         TargetEndDate: Date,
         sequence: { type: Number, default: 0 },
         parent: { type: String, default: null },
-        //workflow: { type: ObjectId, ref: 'workflows', default: null },
         workflow: {
             _id: {type: ObjectId, ref: 'workflows', default: null },
             name: String
@@ -54,6 +51,7 @@ module.exports = (function () {
         health: { type: Number, default: 1 },
         ID: Number,
         bonus: [{
+            //_id: false,
             employeeId: {
                 type: ObjectId,
                 ref: 'Employees'
@@ -62,9 +60,20 @@ module.exports = (function () {
                 type: ObjectId,
                 ref: 'bonusType'
             },
-            startDate: Date,
-            endDate: Date
-        }]
+            startDate: { type: Date, default: null },
+            startWeek: Number,
+            startYear: Number,
+            endDate: { type: Date, default: null },
+            endWeek: Number,
+            endYear: Number
+        }],
+        budget: {
+            _id: false,
+            projectTeam: Array,
+            bonus: Array,
+            budget: Array,
+            projectValues: JSON,
+            budgetTotal: JSON}
     }, { collection: 'Project' });
 
     mongoose.model('Project', projectSchema);

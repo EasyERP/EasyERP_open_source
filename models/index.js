@@ -25,6 +25,7 @@ module.exports = (function () {
     require('./priority.js');
     require('./period.js');
     require('./product.js');
+    require('./productCategory.js');
     require('./productTypes.js');
     require('./profile.js');
     require('./project.js');
@@ -42,9 +43,12 @@ module.exports = (function () {
     require('./wTrack.js');
     require('./wTrackInvoice.js');
     require('./wTrackPayment.js');
+    require('./wTrackPayOut.js');
     require('./monthHours.js');
     require('./holiday.js');
     require('./vacation.js');
     require('./bonusType.js');
     require('./savedFilters.js');
+    require('./hoursCash.js');
+    require('./capacity.js');
 })();
