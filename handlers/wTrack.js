@@ -6,6 +6,8 @@ var wTrack = function (event, models) {
     var DepartmentSchema = mongoose.Schemas['Department'];
     var MonthHoursSchema = mongoose.Schemas['MonthHours'];
     var SalarySchema = mongoose.Schemas['Salary'];
+    var HolidaySchema = mongoose.Schemas['Holiday'];
+    var VacationSchema = mongoose.Schemas['Vacation'];
     /*var CustomerSchema = mongoose.Schemas['Customer'];
      var EmployeeSchema = mongoose.Schemas['Employee'];
      var WorkflowSchema = mongoose.Schemas['workflow'];*/
@@ -798,11 +800,17 @@ var wTrack = function (event, models) {
         var department = data.department;
         var revenue = data.revenue;
         var totalHours = data.totalHours;
-        var trackWeek = data.trackWeek;
+        var weekDefault = data.trackWeek;
         var dateArray;
         var wTrackObj;
         var weekCount;
         var revenueForWeek;
+        var monthsArr = [];
+        var weeksArr = [];
+        var yearsArr = [];
+        var uniqMonths;
+        var uniqWeeks;
+        var uniqYears;
         var options = {
             startDate: data.startDate,
             endDate: data.endDate,
@@ -810,6 +818,16 @@ var wTrack = function (event, models) {
         };
 
         dateArray = this.calculateWeeks(options);
+
+        dateArray.forEach(function(obj){
+            monthsArr.push(obj.month);
+            weeksArr.push(obj.week);
+            yearsArr.push(obj.year);
+        });
+
+        uniqMonths = _.uniq(monthsArr);
+        uniqWeeks = _.uniq(weeksArr);
+        uniqYears = _.uniq(yearsArr);
 
         weekCount = dateArray.length;
         revenueForWeek = parseFloat(revenue) / weekCount;
@@ -820,10 +838,22 @@ var wTrack = function (event, models) {
             var week = element.week;
             var dateByWeek = year * 100 + week;
             var dateByMonth = year * 100 + month;
-            var parallelTasks = [calcCost];
+            var parallelTasks = [getHolidays, getVacations, calcCost];
+
 
             async.parallel(parallelTasks, function (err, result) {
-                var cost = result[0];
+                var holidays = result[0];
+                var vacations = result[1];
+                var cost = result[2];
+                var trackWeek = {
+                    1: ((vacations[dateByMonth] && vacations[dateByMonth]['1']) ? vacations[dateByMonth]['1'] : weekDefault['1']) ? ((holidays[dateByWeek] && holidays[dateByWeek]['1']) ? holidays[dateByWeek]['1'] : weekDefault['1']) : weekDefault['1'],
+                    2: ((vacations[dateByMonth] && vacations[dateByMonth]['2']) ? vacations[dateByMonth]['2'] : weekDefault['2']) ? ((holidays[dateByWeek] && holidays[dateByWeek]['2']) ? holidays[dateByWeek]['2'] : weekDefault['2']) : weekDefault['2'],
+                    3: ((vacations[dateByMonth] && vacations[dateByMonth]['3']) ? vacations[dateByMonth]['3'] : weekDefault['3']) ? ((holidays[dateByWeek] && holidays[dateByWeek]['3']) ? holidays[dateByWeek]['3'] : weekDefault['3']) : weekDefault['3'],
+                    4: ((vacations[dateByMonth] && vacations[dateByMonth]['4']) ? vacations[dateByMonth]['4'] : weekDefault['4']) ? ((holidays[dateByWeek] && holidays[dateByWeek]['4']) ? holidays[dateByWeek]['4'] : weekDefault['4']) : weekDefault['4'],
+                    5: ((vacations[dateByMonth] && vacations[dateByMonth]['5']) ? vacations[dateByMonth]['5'] : weekDefault['5']) ? ((holidays[dateByWeek] && holidays[dateByWeek]['5']) ? holidays[dateByWeek]['5'] : weekDefault['5']) : weekDefault['5'],
+                    6: weekDefault['6'],
+                    7: weekDefault['7']
+                };
 
                 wTrackObj = {
                     dateByWeek: dateByWeek,
@@ -847,14 +877,13 @@ var wTrack = function (event, models) {
                     7: trackWeek['7']
                 };
 
-
                 body = mapObject(req.body);
 
                 wTrack = new WTrack(body);
 
                 wTrack.save(function (err, wTrack) {
                     if (err) {
-                        console.log(err);
+                        return next(err);
                     }
                 });
             });
@@ -864,6 +893,69 @@ var wTrack = function (event, models) {
         event.emit('dropHoursCashes', req);
         event.emit('recollectVacationDash');
         event.emit('recollectProjectInfo');
+
+        function getHolidays(callback){
+            var Holiday = models.get(req.session.lastDb, 'Holiday', HolidaySchema);
+            var newResult = {};
+            var query = Holiday.find({year: {$in: uniqYears}, week: {$in: uniqWeeks}}).lean();
+
+            query.exec(function(err, result){
+                if (err){
+                    callback(err);
+                }
+
+                result.forEach(function (element) {
+                    var date = element.date;
+                    var year = element.year;
+                    var week = element.week;
+                    var key = year * 100 + week;
+                    var dayOfWeek = moment(date).day();
+
+                    if (!newResult[key]){
+                        newResult[key] = {};
+                    }
+                    newResult[key][dayOfWeek + 1] = dayOfWeek + 1;
+                });
+
+                callback(null, newResult);
+            });
+        };
+
+        function getVacations(callback){
+            var Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
+            var newResult = {};
+            var query = Vacation.find({month: {$in: monthsArr}, year: {$i: yearsArr}, "employee._id": employee._id}, {month: 1, year: 1, vacArr: 1}).lean();
+
+            query.exec(function(err, result){
+                if (err){
+                    callback(err);
+                }
+
+                result.forEach(function (element) {
+                    var vacArr = element.vacArr;
+                    var year = element.year;
+                    var month = element.month;
+                    var weekKey;
+                    var dayNumber;
+                    var dateValue;
+
+                    for (var day = vacArr.length; day >= 0; day--) {
+                        if (vacArr[day]) {
+                            dateValue = moment([year, month - 1, day + 1]);
+                            weekKey = year * 100 + moment(dateValue).isoWeek();
+
+                            dayNumber = moment(dateValue).day();
+
+                            if (dayNumber !== 0 && dayNumber !== 6) {
+                                newResult[weekKey] ? newResult[weekKey][dayNumber + 1] =  dayNumber + 1: newResult[weekKey] = {};
+                            }
+                        }
+                    }
+                });
+
+                callback(null, newResult);
+            });
+        }
 
         function calcCost(callback) {
             var req = req;
@@ -929,6 +1021,8 @@ var wTrack = function (event, models) {
 
             });
         }
+
+        res.status(200).send('success');
     },
 
         this.calculateWeeks = function (options) {
