@@ -8,10 +8,15 @@ var wTrack = function (event, models) {
     /*var CustomerSchema = mongoose.Schemas['Customer'];
      var EmployeeSchema = mongoose.Schemas['Employee'];
      var WorkflowSchema = mongoose.Schemas['workflow'];*/
-
     var objectId = mongoose.Types.ObjectId;
     var async = require('async');
     var mapObject = require('../helpers/bodyMaper');
+
+    var exportHandlingHelper = require('../helpers/exporter/exportHandlingHelper');
+    var exportMap = require('../helpers/csvMap').wTrack.aliases;
+    exportHandlingHelper.addExportFunctionsToHandler(this, function (req) {
+        return models.get(req.session.lastDb, 'wTrack', wTrackSchema)
+    }, exportMap, "wTrack");
 
     this.create = function (req, res, next) {
         access.getEditWritAccess(req, req.session.uId, 75, function (access) {
@@ -29,6 +34,8 @@ var wTrack = function (event, models) {
 
                     event.emit('dropHoursCashes', req);
                     event.emit('recollectVacationDash');
+                    event.emit('updateProjectDetails', {req: req, _id: wTrack.project._id});
+                    event.emit('recollectProjectInfo');
 
                     res.status(200).send({success: wTrack});
                 });
@@ -92,7 +99,14 @@ var wTrack = function (event, models) {
                             date: new Date().toISOString()
                         };
                         delete data._id;
-                        WTrack.findByIdAndUpdate(id, {$set: data}, cb);
+                        WTrack.findByIdAndUpdate(id, {$set: data}, {new: true}, function(err, wTrack){
+                            if (err){
+                               return cb(err);
+                            }
+                            event.emit('updateProjectDetails', {req: req, _id: wTrack.project._id});
+                            event.emit('recollectProjectInfo');
+                            cb(null, wTrack);
+                        });
                     }, function (err) {
                         if (err) {
                             return next(err);
@@ -570,10 +584,18 @@ var wTrack = function (event, models) {
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
         access.getDeleteAccess(req, req.session.uId, 72, function (access) {
             if (access) {
-                event.emit('dropHoursCashes', req);
-                event.emit('recollectVacationDash');
+                WTrack.findByIdAndRemove(id, function (err, wTrack) {
+                    if (err) {
+                        return next(err);
+                    }
 
-                res.status(200).send({success: product});
+                    event.emit('dropHoursCashes', req);
+                    event.emit('recollectVacationDash');
+                    event.emit('updateProjectDetails', {req: req, _id: wTrack.project._id});
+                    event.emit('recollectProjectInfo');
+
+                    res.status(200).send({success: wTrack});
+                });
             } else {
                 res.status(403).send();
             }

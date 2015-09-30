@@ -1,7 +1,7 @@
 @import "_font";
 @import "_colors";
-//@import "_darckColor";
-@import "_whiteColor";
+@import "_darckColor";
+//@import "_whiteColor";
 @import "_list";
 
 /*------------------------Constants-----------------------------*/
@@ -221,11 +221,11 @@ textarea {
 }
 
 .cash {
-  background-color: #fdd766;
+  //background-color: #fdd766;
 }
 
 .card {
-  background-color: #f2af84;
+  //background-color: #f2af84;
 }
 
 .label {
@@ -2619,7 +2619,7 @@ input, textarea, select {
     padding: 2px 4px;
     border: 1px solid @border-color-main;
     background-color: inherit;
-
+    color: @mainText-color;
     &:focus {
       .box-shadow(0, 0, 5px, rgba(82, 168, 236, 0.5));
       outline: none;
@@ -4468,7 +4468,7 @@ h3.dashboard {
 #projectPM {
   > div {
     float: left;
-    width: 33%;
+    width: 100%;
 
     > div {
       padding: 0 20px;
@@ -4485,7 +4485,7 @@ h3.dashboard {
     width: 100%;
     tr {
       th {
-        text-align: left;
+        text-align: right;
         //
         padding-left: 3px;
         line-height: 25px;
@@ -4519,8 +4519,22 @@ h3.dashboard {
       tr {
         td {
           color: @mainText-color;
+
           &:first-child {
             color: @th-text-color;
+          }
+        }
+        td.procent {
+          position: relative;
+          padding-right: 20px;
+          &::before {
+            content: '%';
+            display: block;
+            width: 5px;
+            height: 5px;
+            position: absolute;
+            right: 13px;
+
           }
         }
       }

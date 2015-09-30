@@ -14,8 +14,13 @@ define([], function(){
         return currency.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1 ");
     }
 
+    function weekSplitter(date){
+       return date.replace(/(\d{4})/, "$1/");
+    }
+
     return {
         minFromDates: minFromDates,
-        currencySplitter: currencySplitter
+        currencySplitter: currencySplitter,
+        weekSplitter: weekSplitter
     };
 });

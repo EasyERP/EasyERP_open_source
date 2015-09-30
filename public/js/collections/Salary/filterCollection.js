@@ -7,12 +7,12 @@ define([
     ],
     function (SalaryModel, common) {
         var SalaryCollection = Backbone.Collection.extend({
-            model: SalaryModel,
-            url: "/salary/",
-            page: null,
+            model       : SalaryModel,
+            url         : "/salary/",
+            page        : null,
             namberToShow: null,
-            viewType: null,
-            contentType: null,
+            viewType    : null,
+            contentType : null,
 
             showMore: function (options) {
                 var that = this;
@@ -22,13 +22,13 @@ define([
                 filterObject['viewType'] = (options && options.viewType) ? options.viewType : this.viewType;
                 filterObject['contentType'] = (options && options.contentType) ? options.contentType : this.contentType;
                 this.fetch({
-                    data: filterObject,
-                    waite: true,
+                    data   : filterObject,
+                    waite  : true,
                     success: function (models) {
                         that.page += 1;
                         that.trigger('showmore', models);
                     },
-                    error: function () {
+                    error  : function () {
                         alert('Some Error');
                     }
                 });
@@ -46,12 +46,12 @@ define([
                     this.url += options.viewType;
                 }
                 this.fetch({
-                    data: options,
-                    reset: true,
+                    data   : options,
+                    reset  : true,
                     success: function () {
                         that.page++;
                     },
-                    error: function (models, xhr) {
+                    error  : function (models, xhr) {
                         if (xhr.status == 401) Backbone.history.navigate('#login', {trigger: true});
                     }
                 });
@@ -59,8 +59,11 @@ define([
 
             parse: true,
             parse: function (response) {
-            return response;
-        }
+                if (!response.second) {
+                    return response;
+                }
+                return response.second;
+            }
         });
         return SalaryCollection;
     });

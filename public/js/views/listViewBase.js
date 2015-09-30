@@ -436,16 +436,23 @@ define([
             renderContent: function () {
                 var currentEl = this.$el;
                 var tBody = currentEl.find('#listTable');
+                var itemView;
+                var pagenation;
+
                 tBody.empty();
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
-                var itemView = new this.listItemView({
-                    collection : this.collection,
-                    page       : this.page,
-                    itemsNumber: this.collection.namberToShow
-                });
-                tBody.append(itemView.render());
-                var pagenation = this.$el.find('.pagination');
+
+                if (this.collection.length > 0) {
+                    itemView = new this.listItemView({
+                        collection : this.collection,
+                        page       : this.page,
+                        itemsNumber: this.collection.namberToShow
+                    });
+                    tBody.append(itemView.render());
+                }
+
+                pagenation = this.$el.find('.pagination');
                 if (this.collection.length === 0) {
                     pagenation.hide();
                 } else {
@@ -564,6 +571,28 @@ define([
                     pagenation.show();
                 }
             },
+
+            exportToCsv: function () {
+                //todo change after routes refactoring
+                if (this.exportToCsvUrl) {
+                    window.location = this.exportToCsvUrl;
+                } else {
+                    if (this.collection) {
+                        window.location = this.collection.url + '/exportToCsv';
+                    }
+                }
+            },
+
+            exportToXlsx: function () {
+                //todo change after routes refactoring
+                if (this.exportToXlsxUrl) {
+                    window.location = this.exportToXlsxUrl;
+                } else {
+                    if (this.collection) {
+                        window.location = this.collection.url + '/exportToXlsx';
+                    }
+                }
+            }
 
             //</editor-fold>
 

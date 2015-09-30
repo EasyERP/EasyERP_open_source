@@ -6,18 +6,20 @@ define([
     ],
     function (ContentTopBarTemplate, Custom, Common, CONSTANTS) {
         var TopBarView = Backbone.View.extend({
-            el: '#top-bar',
+            el         : '#top-bar',
             contentType: CONSTANTS.WTRACK,
-            template: _.template(ContentTopBarTemplate),
+            template   : _.template(ContentTopBarTemplate),
 
             events: {
-                "click a.changeContentView": 'changeContentViewType',
-                "click #top-bar-deleteBtn": "deleteEvent",
-                "click #top-bar-saveBtn": "saveEvent",
-                "click #top-bar-editBtn": "editEvent",
-                "click #top-bar-createBtn": "createEvent",
-                "click #top-bar-generateBtn": "generateInvoice",
-                "click #top-bar-copyBtn": "copyRow"
+                "click a.changeContentView"     : 'changeContentViewType',
+                "click #top-bar-deleteBtn"      : "deleteEvent",
+                "click #top-bar-saveBtn"        : "saveEvent",
+                "click #top-bar-editBtn"        : "editEvent",
+                "click #top-bar-createBtn"      : "createEvent",
+                "click #top-bar-generateBtn"    : "generateInvoice",
+                "click #top-bar-copyBtn"        : "copyRow",
+                "click #top-bar-exportToCsvBtn" : "exportToCsv",
+                "click #top-bar-exportToXlsxBtn": "exportToXlsx",
             },
 
             generateInvoice: function (e) {
@@ -30,6 +32,16 @@ define([
 
             changeContentViewType: function (e) {
                 Custom.changeContentViewType(e, this.contentType, this.collection);
+            },
+
+            exportToCsv: function (event) {
+                event.preventDefault();
+                this.trigger('exportToCsv');
+            },
+
+            exportToXlsx: function (event) {
+                event.preventDefault();
+                this.trigger('exportToXlsx');
             },
 
             initialize: function (options) {

@@ -188,8 +188,8 @@ module.exports = (function () {
             LI: { type: String, default: '' },
             GP: { type: String, default: '' }
         },
-        hire: {type: Array, default: []},
-        fire: {type: Array, default: []},
+        hire: [Date],
+        fire: [Date],
         lastFire: {type: Number, default: null},
         transferred: [JSON]
     }, { collection: 'Employees' });

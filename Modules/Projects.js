@@ -314,6 +314,8 @@ var Project = function (models, event) {
                                 logWriter.log("Project.js saveProjectToDb _project.save" + err);
                                 res.send(500, {error: 'Project.save BD error'});
                             } else {
+                                event.emit('updateProjectDetails', {req: req, _id: result._id});
+                                event.emit('recollectProjectInfo');
                                 res.send(201, {success: 'A new Project crate success', result: result, id: result._id});
                             }
                         }
@@ -337,93 +339,6 @@ var Project = function (models, event) {
         }
     };
 
-    function getProjectPMForDashboard(req, response) {
-        models.get(req.session.lastDb, "Workflows", workflow).findOne({
-            status: "In Progress",
-            "wId": "Projects"
-        }).exec(function (error, res) {
-            if (!error) {
-                models.get(req.session.lastDb, "Department", department).aggregate(
-                    {
-                        $match: {
-                            users: objectId(req.session.uId)
-                        }
-                    }, {
-                        $project: {
-                            _id: 1
-                        }
-                    },
-                    function (err, deps) {
-                        if (!err) {
-
-                            var arrOfObjectId = deps.objectID();
-                            models.get(req.session.lastDb, "Project", projectSchema).aggregate(
-                                {
-                                    $match: {
-                                        $and: [
-                                            {'workflow._id': objectId(res._id.toString())},
-                                            {
-                                                $or: [
-                                                    {
-                                                        $or: [
-                                                            {
-                                                                $and: [
-                                                                    {whoCanRW: 'group'},
-                                                                    {'groups.users': objectId(req.session.uId)}
-                                                                ]
-                                                            },
-                                                            {
-                                                                $and: [
-                                                                    {whoCanRW: 'group'},
-                                                                    {'groups.group': {$in: arrOfObjectId}}
-                                                                ]
-                                                            }
-                                                        ]
-                                                    },
-                                                    {
-                                                        $and: [
-                                                            {whoCanRW: 'owner'},
-                                                            {'groups.owner': objectId(req.session.uId)}
-                                                        ]
-                                                    },
-                                                    {whoCanRW: "everyOne"}
-                                                ]
-                                            }
-                                        ]
-                                    }
-                                },
-                                {
-                                    $project: {
-                                        _id: 1
-                                    }
-                                },
-                                function (err, result) {
-                                    if (!err) {
-                                        var query = models.get(req.session.lastDb, "Project", projectSchema).find().where('_id').in(result);
-                                        query.select("projectName projectmanager _id health workflow").
-                                            // populate('projectmanager._id', 'name _id').
-                                            exec(function (error, _res) {
-                                                if (!error) {
-                                                    res = {}
-                                                    res['data'] = _res;
-                                                    response.send(res);
-                                                } else {
-                                                    console.log(error);
-                                                }
-                                            });
-                                    } else {
-                                        console.log(err);
-                                    }
-                                }
-                            );
-                        } else {
-                            console.log(error);
-                        }
-                    });
-            }
-        });
-
-    };
 
     function getProjectStatusCountForDashboard(req, response) {
         models.get(req.session.lastDb, "Workflows", workflow).find({"wId": "Projects"}).select("_id name").exec(function (error, resWorkflow) {
@@ -1290,6 +1205,8 @@ var Project = function (models, event) {
                     InvoiceSchema = mongoose.Schemas['wTrackInvoice'];
                     Invoice = models.get(req.session.lastDb, 'wTrackInvoice', InvoiceSchema);
 
+                    event.emit('updateProjectDetails', {req: req, _id: project._id});
+                    event.emit('recollectProjectInfo');
                     event.emit('updateName', _id, wTrackModel, 'project._id', 'project.projectName', project.projectName);
                     event.emit('updateName', _id, wTrackModel, 'project._id', 'project.customer._id', project.customer._id);
                     event.emit('updateName', _id, wTrackModel, 'project._id', 'project.customer.name', project.customer.name);
@@ -1319,7 +1236,7 @@ var Project = function (models, event) {
             obj.author = req.session.uName;
             data.notes[data.notes.length - 1] = obj;
         }
-        models.get(req.session.lastDb, 'Project', projectSchema).findByIdAndUpdate({_id: _id}, {$set: data}, function (err, projects) {
+        models.get(req.session.lastDb, 'Project', projectSchema).findByIdAndUpdate({_id: _id}, {$set: data}, {new: true}, function (err, projects) {
             if (err) {
                 console.log(err);
                 logWriter.log("Project.js update project.update " + err);
@@ -1364,6 +1281,8 @@ var Project = function (models, event) {
                     });
 
                 }
+                event.emit('updateProjectDetails', {req: req, _id: projects._id});
+                event.emit('recollectProjectInfo');
                 res.send(200, projects);
             }
         });
@@ -1494,6 +1413,7 @@ var Project = function (models, event) {
                 logWriter.log("Project.js remove project.remove " + err);
                 res.send(500, {error: "Can't remove Project"});
             } else {
+                event.emit('recollectProjectInfo');
                 removeTasksByPorjectID(req, _id);
                 res.send(200, {success: 'Remove all tasks Starting...'});
             }
@@ -1971,7 +1891,7 @@ var Project = function (models, event) {
 
         getProjectsForList: getProjectsForList,
 
-        getProjectPMForDashboard: getProjectPMForDashboard,
+       // getProjectPMForDashboard: getProjectPMForDashboard,
 
         getProjectStatusCountForDashboard: getProjectStatusCountForDashboard,
 
