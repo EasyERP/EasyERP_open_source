@@ -155,15 +155,16 @@
                             <div class="half-block left">
                                 <dl class="edit-employee-info">
                                     <dt>
-                                        <label for="relatedUsersDd">Related User</label>
+                                        <label for="nextAction">Next Action </label>
                                     </dt>
                                     <dd>
-                                        <a id="relatedUsersDd"
-                                           data-id="<%=model.relatedUser?model.relatedUser._id:''%>"
-                                           class="current-selected"
-                                           href="javascript:;"><%=model.relatedUser?(model.relatedUser.login):'Select'%>
-                                        </a>
+                                        <input type="text"
+                                               id="nextAction"
+                                               maxlength="32"
+                                               value="<%=model.nextAction%>"
+                                               readonly/>
                                     </dd>
+
                                     <dt>
                                         <label for="jobPositionDd">Job position</label></dt>
                                     <dd>
@@ -248,15 +249,16 @@
                                     </dd>
 
                                     <dt>
-                                        <label for="nextAction">Next Action </label>
+                                        <label for="relatedUsersDd">Related User</label>
                                     </dt>
                                     <dd>
-                                        <input type="text"
-                                               id="nextAction"
-                                               maxlength="32"
-                                               value="<%=model.nextAction%>"
-                                               readonly/>
+                                        <a id="relatedUsersDd"
+                                           data-id="<%=model.relatedUser?model.relatedUser._id:''%>"
+                                           class="current-selected"
+                                           href="javascript:;"><%=model.relatedUser?(model.relatedUser.login):'Select'%>
+                                        </a>
                                     </dd>
+
                                 </dl>
 
                             </div>

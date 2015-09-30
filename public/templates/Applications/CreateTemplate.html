@@ -1,98 +1,442 @@
+﻿﻿
 <div class="form-holder">
   <form method="post" action="" id="createApplicationForm" class="form">
     <fieldset>
       <div class="inner">
+
         <ul class="dialog-tabs">
-          <li><a class="active" href="javascript:;">Main</a></li>
-          <li><a href="javascript:;">Assignees</a></li>
+          <li>
+            <a class="active"
+               href="javascript:;">
+              Main
+            </a>
+          </li>
+
+          <li>
+            <a href="javascript:;"
+               class="">
+              Personal Information
+            </a>
+          </li>
+
+          <li>
+            <a href="javascript:;">Assignees</a>
+          </li>
+
         </ul>
+
         <div class="clearfix"></div>
+
         <div class="dialog-tabs-items">
+
           <div class="dialog-tabs-item active">
-            <div class="app-block left">
-              <div class="avatar left">
-                <div class="upload">
-                  Edit
-                  <input type="file" value="Edit" id="inputImg" accept="image/*">
+
+            <div class="left">
+              <div class="avatar">
+                <div class="upload">Edit
+                  <input type="file" value="Edit" id="inputImg">
                 </div>
-                <canvas id="avatar" width="140" height="140"></canvas>
+                <canvas id="avatar"
+                        width="140"
+                        height="140">
+                </canvas>
               </div>
-              <div class="app-block left marginLeft">
-                <dl class="app-empty-info">
-                  <dt><input type="text" class="name" id="first" placeholder="First name" required maxlength="32"/></dt><dd>&nbsp;</dd>
-                  <dt><input type="text" class="name" id="last" placeholder="Last name" required maxlength="32"/></dt><dd>&nbsp;</dd>
-                  <dt><input type="text" id="expectedSalary" placeholder="Expected Salary" maxlength="32"/></dt><dd>&nbsp;</dd>
-                  <dt><input type="text" id="proposedSalary" placeholder="Proposed Salary" maxlength="32"/></dt><dd>&nbsp;</dd>
+
+            </div>
+
+            <div class="avatarInfoContainer employee">
+              <div class="half-block left">
+                <dl class="edit-employee-info">
+                  <dt>
+                    <label for="first">First Name</label>
+                  </dt>
+                  <dd><input type="text"
+                             class="blueback"
+                             id="first"
+                             required maxlength="32"/>
+                  </dd>
+                  <dt>
+                    <label for="last">Last Name</label>
+                  </dt>
+                  <dd><input type="text"
+                             class="blueback"
+                             id="last"
+                             required maxlength="32"/>
+                  </dd>
+
+                  <dt>
+                    <label for="expectedSalary">Expected Salary</label>
+                  </dt>
+                  <dd><input type="text"
+                             id="expectedSalary"
+                             maxlength="32"/>
+                  </dd>
+
+                  <dt>
+                    <label for="proposedSalary">Proposed Salary</label>
+                  </dt>
+                  <dd><input type="text"
+                             id="proposedSalary"
+                             maxlength="32"
+                             />
+                  </dd>
+
+                  <dt>
+                    <label for="dateBirth">Date of Birth</label>
+                  </dt>
+                  <dd><input type="text"
+                             name="dateBirth"
+                             id="dateBirth"
+                             required readonly/>
+                  </dd>
+                  <dt>
+                    <label for="mobile">Personal Mobile</label>
+                  </dt>
+                  <dd>
+                    <input type="text"
+                           name="mobile"
+                           id="mobile"
+                           maxlength="20"/>
+                  </dd>
+                  <dt>
+                    <label for="personalEmail">Personal Email</label>
+                  </dt>
+                  <dd><input type="text"
+                             id="personalEmail"
+                             required
+                             maxlength="48"/>
+                  </dd>
+                  <dt>
+                    <label for="skype">Skype</label>
+                  </dt>
+                  <dd><input type="text"
+                             id="skype"
+                             maxlength="32"/>
+                  </dd>
+                  <dt>
+                    <label for="LI">LinkedIn</label>
+                  </dt>
+                  <dd><input type="text"
+                             id="LI"
+                             placeholder="LingedIn"
+                             maxlength="32"/>
+                  </dd>
+                  <dt>
+                    <label for="LI">Facebook</label>
+                  </dt>
+                  <dd><input type="text"
+                             id="FB"
+                             placeholder="Facebook"
+                             maxlength="32"/>
+                  </dd>
+                </dl>
+              </div>
+
+              <div class="half-block left">
+                <dl class="edit-employee-info">
+                  <dt>
+                    <label for="nextAction">Next Action </label>
+                  </dt>
+                  <dd>
+                    <input type="text"
+                           id="nextAction"
+                           maxlength="32"
+                           readonly/>
+                  </dd>
+
+                  <dt>
+                    <label for="jobPositionDd">Job position</label></dt>
+                  <dd>
+                    <a id="jobPositionDd"
+                       class="current-selected"
+                       href="javascript:;"></a>
+                  </dd>
+
+                  <dt>
+                    <label for="departmentDd">Department</label>
+                  </dt>
+                  <dd>
+                    <a id="departmentDd"
+                       class="current-selected" href="javascript:;"></a>
+                  </dd>
+                  <dt>
+                    <label for="projectManagerDD">Manager</label>
+                  </dt>
+                  <dd>
+                    <a id="projectManagerDD"
+                       class="current-selected"
+                       href="javascript:;">
+                    </a>
+                  </dd>
+                  <dt>
+                    <label for="jobTypeDd">Job type</label>
+                  </dt>
+                  <dd>
+                    <a id="jobTypeDd"
+                       class="current-selected"
+                       href="javascript:;">
+                    </a>
+                  </dd>
+
+                  <dt>
+                    <label for="sourceDd">Source </label>
+                  </dt>
+                  <dd>
+                    <a id="sourceDd"
+                       class="current-selected"
+                       href="javascript:;">
+                    </a>
+                    <ul class="newSelectList hidden">
+                      <li id="www.rabota.ua">www.rabota.ua</li>
+                      <li id="www.work.ua">www.work.ua</li>
+                      <li id="www.ain.net">www.ain.net</li>
+                      <li id="other">other</li>
+                    </ul>
+                  </dd>
+
+                  <dt>
+                    <label for="workEmail">Work Email</label>
+                  </dt>
+                  <dd>
+                    <input type="text"
+                           id="workEmail"
+                           required
+                           maxlength="48"/>
+                  </dd>
+                  <dt>
+                    <label for="phone">Work Phone</label>
+                  </dt>
+                  <dd>
+                    <input type="text"
+                           name="phone"
+                           id="phone"
+                           required
+                           maxlength="32"/>
+                  </dd>
+
+                  <dt>
+                    <label for="workflowsDd">Stage</label>
+                  </dt>
+                  <dd id="selectWorkflow">
+                    <a id="workflowsDd"
+                       class="current-selected"
+                       href="javascript:;"></a>
+                  </dd>
+
+                  <dt>
+                    <label for="relatedUsersDd">Related User</label>
+                  </dt>
+                  <dd>
+                    <a id="relatedUsersDd"
+                       class="current-selected"
+                       href="javascript:;">
+                    </a>
+                  </dd>
+
                 </dl>
 
+              </div>
 
+              <div class="clearfix"></div>
+
+              <div class="clearfix"></div>
+
+              <div class="cropImages form" style="display:none;">
+                <div class="formTitle">
+                  <h3 class="left">Crop Images</h3>
+
+                  <div class="clearfix"></div>
+                </div>
+                <br/>
+
+                <div class="image_input" style="float: left;margin-right: 20px;"></div>
+                <img class="image_output"/>
+
+                <div class="clearfix"></div>
               </div>
             </div>
-            <div class="app-block right">
-              <dl class="app-normal-info">
-                <dt><label for="dateBirth">Date of Birth </label></dt><dd><input type="text" name="dateBirth" id="dateBirth" readonly placeholder="Birthday"/></dd>
-                <dt><label for="pemail">Email </label></dt><dd><input type="email" id="pemail" maxlength="48"placeholder="e.g.email@site.com"/></dd>
-                <dt><label for="phone">Phone </label></dt><dd><input type="text" id="phone" maxlength="20" placeholder="Phone"/></dd>
-                <dt><label for="tags">Tags </label></dt><dd><input type="text" id="tags" placeholder="Tags"/></dd>
-
-              </dl>
-            </div>
 
 
-            <div class="clearfix"></div>
-            <div class="app-block left bottom">
-              <textarea id="otherInfo" placeholder="Fedback of interviews..."  maxlength="500"></textarea>
 
-            </div>
-            <div class="app-block right bottom">
-              <dl class="person-info">
-                <dt><label for="nextAction">Next Action </label></dt><dd><input type="text" id="nextAction" maxlength="32" readonly placeholder="Next Action" /></dd>
-                <dt><label for="jobPositionDd">Applied Job </label></dt>
-                <dd>
-				  <a id="jobPositionDd" class="current-selected" href="javascript:;"></a>
-                </dd>
-                <dt><label for="departmentDd">Department</label></dt>
-                <dd>
-				  <a id="departmentDd" class="current-selected" href="javascript:;"></a>
-                </dd>
-                <dt><label for="sourceDd">Source </label></dt>
-                <dd>
-				  <a id="sourceDd" data-id="www.rabota.ua" class="current-selected" href="javascript:;">www.rabota.ua</a>
-				  <ul class="newSelectList hidden">
-                    <li id="www.rabota.ua">www.rabota.ua</li>
-                    <li id="www.work.ua">www.work.ua</li>
-                    <li id="www.ain.net">www.ain.net</li>
-                    <li id="other">other</li>
-				  </ul>
-
-                </dd>
-                <dt><label for="workflowsDd">Stage</label></dt><dd id="selectWorkflow">
-				  <a id="workflowsDd" class="current-selected" href="javascript:;"></a>
-				</dd>
-                <dt><label for="jobTypeDd">Job type</label></dt>
-                <dd>
-				  <a id="jobTypeDd" class="current-selected" href="javascript:;"></a>
-                </dd>
-
-              </dl>
-            </div>
-            <div class="clearfix"></div>
-			<div class="attach-container"></div>
-			<div class="cropImages form" style="display:none;">
-     		  <div class="formTitle">
-				<h3 class="left">Crop Images</h3>
-				<div class="clearfix"></div>
-	  		  </div><br />	
-      		  <div class="image_input" style="float: left;margin-right: 20px;"></div>
-      		  <img class="image_output" />
-      		  <div class="clearfix"></div>
-			</div>
           </div>
+
+
           <div class="dialog-tabs-item">
-			<div class="assignees-container"></div>
+            <div>
+              <div class="formTitle left">
+                <h3 class="left">Citizenship &amp; Other Info</h3>
+
+                <div class="clearfix"></div>
+              </div>
+              <div class="half-block left">
+                <dl class="edit-employee-info">
+                  <dt><label for="nationality">Nationality</label></dt>
+                  <dd>
+                    <a id="nationality"
+                       class="current-selected"
+                       href="javascript:;">
+                    </a>
+                  </dd>
+                  <dt><label for="identNo">Identification №</label></dt>
+                  <dd><input type="text"
+                             name="identNo"
+                             id="identNo"
+                             required
+                             maxlength="32"/>
+                  </dd>
+                  <dt>
+                    <label for="passportNo">Passport №</label>
+                  </dt>
+                  <dd><input type="text"
+                             name="passportNo"
+                             id="passportNo"
+                             required
+                             maxlength="32"/>
+                  </dd>
+                </dl>
+
+              </div>
+              <div class="half-block left">
+                <dl class="edit-employee-info">
+                  <dt><label for="bankAccountNo">Bank Account №</label></dt>
+                  <dd>
+                    <input type="text"
+                           id="bankAccountNo"
+                           name="bankAccountNo">
+                  </dd>
+                  <dt><label for="otherId">Other Id</label></dt>
+                  <dd><input type="text"
+                             name="otherId"
+                             id="otherId"
+                             required
+                             maxlength="32"/></dd>
+                </dl>
+              </div>
+              <div class="clearfix">
+              </div>
+              <div class="formTitle left">
+                <h3 class="left">Contact Information</h3>
+
+                <div class="clearfix"></div>
+              </div>
+              <div class="half-block left">
+                <dl class="edit-employee-info">
+                  <dt>
+                    <label>Street</label>
+                  </dt>
+                  <dd>
+                    <input type="text"
+                           class="homeAddress"
+                           name="street"
+                           maxlength="32"/>
+                  </dd>
+                  <dt>
+                    <label>City</label>
+                  </dt>
+                  <dd>
+                    <input type="text"
+                           class="homeAddress"
+                           name="city"
+                           maxlength="32"/>
+                  </dd>
+                  <dt>
+                    <label>State</label>
+                  </dt>
+                  <dd><input type="text"
+                             class="homeAddress"
+                             name="state"
+                             maxlength="32"/>
+                  </dd>
+                </dl>
+
+              </div>
+              <div class="half-block left">
+                <dl class="edit-employee-info">
+                  <dt>
+                    <label>Zip</label>
+                  </dt>
+                  <dd>
+                    <input type="text"
+                           class="homeAddress"
+                           name="zip"
+                           maxlength="32"/>
+                  </dd>
+                  <dt>
+                    <label>Country</label>
+                  </dt>
+                  <dd><input type="text"
+                             class="homeAddress"
+                             name="country"
+                             maxlength="32"/></dd>
+                </dl>
+              </div>
+              <div class="clearfix">
+              </div>
+              <div class="formTitle">
+                <h3 class="left">Status</h3>
+                <div class="clearfix"></div>
+              </div>
+              <div class="half-block left withPaddingLeft">
+                <dl class="edit-employee-info">
+                  <dt>
+                    <label for="genderDd">Gender</label>
+                  <dd>
+                    <a id="genderDd"
+                       class="current-selected"
+                       href="javascript:;">
+                    </a>
+                    <ul class="newSelectList hidden">
+                      <li id="male">male</li>
+                      <li id="female">female</li>
+                    </ul>
+                  </dd>
+                  </dt>
+                </dl>
+
+              </div>
+              <div class="half-block left withPaddingLeft">
+
+                <dl class="edit-employee-info">
+                  <dt>
+                    <label for="maritalDd">Marital status</label>
+                  <dd>
+                    <a id="maritalDd"
+                       class="current-selected"
+                       href="javascript:;">
+                     </a>
+                    <ul class="newSelectList hidden">
+                      <li id="married">married</li>
+                      <li id="unmarried">unmarried</li>
+                    </ul>
+                  </dd>
+                  </dt>
+                </dl>
+              </div>
+              <div class="clearfix"></div>
+              <div class="formTitle">
+                <h3 class="left">HiredFired</h3>
+
+                <div class="clearfix"></div>
+              </div>
+
+              <div class="clearfix"></div>
+              <div class="formTitle">
+                <h3 class="left">Resume</h3>
+
+                <div class="clearfix"></div>
+              </div>
+              <div class="attach-container">
+              </div>
+            </div>
           </div>
+
+          <div class="clearfix"></div>
+
+          <div class="dialog-tabs-item">
+            <div class="assignees-container"></div>
+          </div>
+
         </div>
-        <div class="clearfix"></div>
       </div>
     </fieldset>
   </form>
