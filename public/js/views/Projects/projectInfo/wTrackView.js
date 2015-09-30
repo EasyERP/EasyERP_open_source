@@ -2,7 +2,7 @@
  * Created by liliya on 17.09.15.
  */
 define([
-    'text!templates/Bonus/wTrackTemplate.html'
+    'text!templates/Projects/projectInfo/wTrackTemplate.html'
 
 ], function (wTrackTemplate) {
     var wTrackView = Backbone.View.extend({

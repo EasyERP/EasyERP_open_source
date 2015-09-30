@@ -3,15 +3,15 @@
  */
 define([
 		'text!templates/Projects/form/FormTemplate.html',
-		'text!templates/Bonus/DetailsTemplate.html',
+		'text!templates/Projects/projectInfo/DetailsTemplate.html',
 		'views/Projects/EditView',
 		'views/Notes/NoteView',
 		'views/Notes/AttachView',
 		'views/Assignees/AssigneesView',
 		'views/Bonus/BonusView',
-		'views/Bonus/wTrackView',
-		'views/Bonus/paymentView',
-		'views/Bonus/invoiceView',
+		'views/Projects/projectInfo/wTrackView',
+		'views/Projects/projectInfo/paymentView',
+		'views/Projects/projectInfo/invoiceView',
 		'collections/wTrack/filterCollection',
 		'text!templates/Notes/AddAttachments.html',
 		"common",
@@ -135,6 +135,7 @@ define([
 					});
 				});
 
+				var budget = self.formModel.toJSON().budget;
 				var usersId = [];
 				var groupsId = [];
 				$(".groupsAndUser tr").each(function () {
@@ -171,7 +172,8 @@ define([
 					StartDate       : startDate,
 					EndDate         : endDate,
 					TargetEndDate   : _targetEndDate,
-					bonus           : bonus
+					bonus           : bonus,
+					budget: budget
 				};
 
 				if (validation) {

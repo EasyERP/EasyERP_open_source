@@ -3,7 +3,7 @@
  */
 
 define([
-    'text!templates/Bonus/paymentTemplate.html',
+    'text!templates/Projects/projectInfo/paymentTemplate.html',
     'helpers',
     'common'
 
