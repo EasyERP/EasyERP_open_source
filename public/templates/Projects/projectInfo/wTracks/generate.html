@@ -6,7 +6,7 @@
                 <dl class="person-info">
                     <dt><label for="project">Project</label></dt>
                     <dd>
-                        <span id="project"><%= project.name %></span>
+                        <span id="project"><%= project.projectName %></span>
                     </dd>
                 </dl>
             </div>
@@ -15,9 +15,9 @@
                     <div class="avatar">
                         <canvas class="avatar" width="140" height="140"></canvas>
                     </div>
-                    <dt><label for="projectManager">Project</label></dt>
+                    <dt><label for="projectManager">Sales Manager</label></dt>
                     <dd>
-                        <span id="projectManager"><%= project.projectmanager %></span>
+                        <span id="projectManager"><%= project.projectmanager.name %></span>
                     </dd>
                 </dl>
             </div>
@@ -26,9 +26,9 @@
                     <div class="avatar">
                         <canvas class="avatar" width="140" height="140"></canvas>
                     </div>
-                    <dt><label for="customer">Project</label></dt>
+                    <dt><label for="customer">Customer</label></dt>
                     <dd>
-                        <span id="customer"><%= project.customer %></span>
+                        <span id="customer"><%= project.customer.name %></span>
                     </dd>
                 </dl>
             </div>
