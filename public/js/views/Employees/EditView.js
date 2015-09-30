@@ -183,8 +183,8 @@ define([
                 var newHireArray = [];
 
                 _.each(hireArray, function(hire, key) {
-
-                    newHireArray.push($.trim(self.$el.find("#hire" + key).val()));
+                    var date = new Date($.trim(self.$el.find("#hire" + key).val()));
+                    newHireArray.push(date);
                     return newHireArray;
                 });
 
@@ -192,8 +192,8 @@ define([
                 var newFireArray = [];
 
                 _.each(fireArray, function(hire, key) {
-
-                    newFireArray.push($.trim(self.$el.find("#fire" + key).val()));
+                    var date = new Date($.trim(self.$el.find("#fire" + key).val()));
+                    newFireArray.push(date);
                     return newFireArray;
                 });
 
