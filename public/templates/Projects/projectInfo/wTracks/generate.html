@@ -4,25 +4,20 @@
         <div class="topInputHolder">
             <div class="half-block left">
                 <dl class="person-info">
-                    <dt><label for="supplierDd">Supplier</label></dt>
+                    <dt><label for="project">Project</label></dt>
                     <dd>
-                        <a id="supplierDd" class="current-selected" href="javascript:;">Select</a>
+                        <span id="project"><%= project.name %></span>
                     </dd>
-                    <dt><label for="supplierReference">Supplier Reference</label></dt>
-                    <dd><input type="text" name="supplierReference" id="supplierReference"
-                               maxlength="32"/></dd>
                 </dl>
             </div>
             <div class="half-block left">
                 <dl class="person-info">
-                    <dt><label for="orderDate">Order Date</label></dt>
+                    <div class="avatar">
+                        <canvas class="avatar" width="140" height="140"></canvas>
+                    </div>
+                    <dt><label for="projectManager">Project</label></dt>
                     <dd>
-                        <input class="extrainfo" type="text" name="orderDate" id="orderDate" value=""
-                               readonly="" placeholder="Order Date">
-                    </dd>
-                    <dt><label for="deliveryDd">Deliver To</label></dt>
-                    <dd>
-                        <a id="deliveryDd" class="current-selected" href="javascript:;">YourCompany</a>
+                        <span id="projectManager"><%= project.name %></span>
                     </dd>
                 </dl>
             </div>
