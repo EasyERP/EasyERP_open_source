@@ -122,7 +122,9 @@
                 name: ''
             },
             dateBirth: null,
-            active: true
+            active: true,
+            hire: [],
+            fire: []
         },
         urlRoot: function () {
             return "/Employees";
