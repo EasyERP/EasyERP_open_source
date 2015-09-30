@@ -299,6 +299,28 @@
                         });
                     }
                 });
+            },
+
+            exportToCsv: function () {
+                //todo change after routes refactoring
+                if (this.exportToCsvUrl) {
+                    window.location = this.exportToCsvUrl;
+                } else {
+                    if (this.collection) {
+                        window.location = this.collection.url + '/exportToCsv';
+                    }
+                }
+            },
+
+            exportToXlsx: function () {
+                //todo change after routes refactoring
+                if (this.exportToXlsxUrl) {
+                    window.location = this.exportToXlsxUrl;
+                } else {
+                    if (this.collection) {
+                        window.location = this.collection.url + '/exportToXlsx';
+                    }
+                }
             }
         });
         return CompaniesThumbnalView;

@@ -264,6 +264,8 @@
             createItem: function () {
                 new createView();
             }
+
+
         });
 
         return ProductThumbnalView;
