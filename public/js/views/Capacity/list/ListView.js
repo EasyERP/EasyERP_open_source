@@ -823,7 +823,6 @@ define([
                 var self = this;
                 var currentEl = this.$el;
                 var collection;
-                var departments;
 
                 var year = this.startTime.getFullYear();
                 var month = {};
@@ -842,17 +841,7 @@ define([
                 collection = this.collection.toJSON();
                 this.capacityObject = collection[0];
 
-                departments = Object.keys(this.capacityObject);
-                departments = _.map(departments, function (department) {
-                    var departmentArray = department.split('_');
-                    return {
-                        key : department,
-                        name: departmentArray[0],
-                        id  : departmentArray[1],
-                    }
-                })
-
-                this.renderDepartmentRows(departments);
+                this.renderTable(this.capacityObject);
 
                 //listTotalEl = this.$el.find('#listTotal');
 
@@ -879,6 +868,24 @@ define([
                 currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             },
 
+            renderTable: function(collection) {
+                var departments;
+
+                this.$el.find("#listTable").html('');
+
+                departments = Object.keys(collection);
+                departments = _.map(departments, function (department) {
+                    var departmentArray = department.split('_');
+                    return {
+                        key : department,
+                        name: departmentArray[0],
+                        id  : departmentArray[1],
+                    }
+                })
+
+                this.renderDepartmentRows(departments);
+            },
+
             showFilteredPage: function () {
                 var itemsNumber;
 
@@ -903,18 +910,19 @@ define([
             showMoreContent: function (newModels) {
                 var holder = this.$el;
                 var collection = newModels.toJSON();
-                var listTotalEl;
 
-                this.editCollection = new editCollection(collection);
+                this.capacityObject = collection[0];
 
-                this.renderTable(collection);
+                this.renderTable(collection[0]);
 
-                listTotalEl = holder.find('#listTotal');
+                /*listTotalEl = holder.find('#listTotal');
 
                 listTotalEl.html('');
-                listTotalEl.append(_.template(listTotal, {array: this.getTotal(collection)}));
+                listTotalEl.append(_.template(listTotal, {array: this.getTotal(collection)}));*/
 
                 this.hideSaveCancelBtns();
+
+                this.$listTable.find(".icon.add").hide();
 
                 holder.find('#timeRecivingDataFromServer').remove();
                 holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
@@ -958,7 +966,7 @@ define([
                 var model;
                 var tr = $(e.target).closest('tr');
 
-                this.department = {
+                startData.department = {
                     _id : tr.attr('data-id'),
                     name: tr.attr('data-name'),
                 }
