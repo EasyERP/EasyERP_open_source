@@ -11,7 +11,7 @@ define([
                 return "project/getProjectPMForDashboard";
             },
             initialize: function (options) {
-                this.sort = options.sort;
+                this.sort = options.sort ? options.sort : {};
 
                 this.fetch({
                     data: {
