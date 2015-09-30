@@ -5,12 +5,14 @@ var wTrack = function (event, models) {
     var wTrackSchema = mongoose.Schemas['wTrack'];
     var DepartmentSchema = mongoose.Schemas['Department'];
     var MonthHoursSchema = mongoose.Schemas['MonthHours'];
+    var SalarySchema = mongoose.Schemas['Salary'];
     /*var CustomerSchema = mongoose.Schemas['Customer'];
      var EmployeeSchema = mongoose.Schemas['Employee'];
      var WorkflowSchema = mongoose.Schemas['workflow'];*/
     var objectId = mongoose.Types.ObjectId;
     var async = require('async');
     var mapObject = require('../helpers/bodyMaper');
+    var moment = require('../public/js/libs/moment/moment');
 
     var exportHandlingHelper = require('../helpers/exporter/exportHandlingHelper');
     var exportMap = require('../helpers/csvMap').wTrack.aliases;
@@ -99,9 +101,9 @@ var wTrack = function (event, models) {
                             date: new Date().toISOString()
                         };
                         delete data._id;
-                        WTrack.findByIdAndUpdate(id, {$set: data}, {new: true}, function(err, wTrack){
-                            if (err){
-                               return cb(err);
+                        WTrack.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, wTrack) {
+                            if (err) {
+                                return cb(err);
                             }
                             event.emit('updateProjectDetails', {req: req, _id: wTrack.project._id});
                             event.emit('recollectProjectInfo');
@@ -761,18 +763,18 @@ var wTrack = function (event, models) {
 
                 monthHours.aggregate([{
                     $match: {
-                        year : {$in: uYear},
+                        year: {$in: uYear},
                         month: {$in: uMonth}
                     }
                 }, {
                     $project: {
-                        date : {$add: [{$multiply: ["$year", 100]}, "$month"]},
+                        date: {$add: [{$multiply: ["$year", 100]}, "$month"]},
                         hours: '$hours'
 
                     }
                 }, {
                     $group: {
-                        _id  : '$date',
+                        _id: '$date',
                         value: {$addToSet: '$hours'}
                     }
                 }], function (err, months) {
@@ -786,6 +788,219 @@ var wTrack = function (event, models) {
             });
         });
     };
-}
+
+    this.generateWTrack = function (req, res, next) {
+        var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+        var body;
+        var data = req.query;
+        var employee = data.employee;
+        var project = data.project;
+        var department = data.department;
+        var revenue = data.revenue;
+        var totalHours = data.totalHours;
+        var trackWeek = data.trackWeek;
+        var dateArray;
+        var wTrackObj;
+        var weekCount;
+        var revenueForWeek;
+        var options = {
+            startDate: data.startDate,
+            endDate: data.endDate,
+            hours: data.hours
+        };
+
+        dateArray = this.calculateWeeks(options);
+
+        weekCount = dateArray.length;
+        revenueForWeek = parseFloat(revenue) / weekCount;
+
+        dateArray.forEach(function (element) {
+            var year = element.year;
+            var month = element.month;
+            var week = element.week;
+            var dateByWeek = year * 100 + week;
+            var dateByMonth = year * 100 + month;
+            var parallelTasks = [calcCost];
+
+            async.parallel(parallelTasks, function (err, result) {
+                var cost = result[0];
+
+                wTrackObj = {
+                    dateByWeek: dateByWeek,
+                    dateByMonth: dateByMonth,
+                    project: project,
+                    employee: employee,
+                    department: department,
+                    year: year,
+                    month: month,
+                    week: week,
+                    worked: totalHours,
+                    revenue: revenueForWeek,
+                    cost: cost,
+                    rate: (revenue / worked).toFixed(2),
+                    1: trackWeek['1'],
+                    2: trackWeek['2'],
+                    3: trackWeek['3'],
+                    4: trackWeek['4'],
+                    5: trackWeek['5'],
+                    6: trackWeek['6'],
+                    7: trackWeek['7']
+                };
+
+
+                body = mapObject(req.body);
+
+                wTrack = new WTrack(body);
+
+                wTrack.save(function (err, wTrack) {
+                    if (err) {
+                        console.log(err);
+                    }
+                });
+            });
+        });
+
+        event.emit('updateProjectDetails', {req: req, _id: project._id});
+        event.emit('dropHoursCashes', req);
+        event.emit('recollectVacationDash');
+        event.emit('recollectProjectInfo');
+
+        function calcCost(callback) {
+            var req = req;
+            var year = year;
+            var month = month;
+            var cost;
+
+            var waterfallTasks = [getBaseSalary];
+            var wTrack = models.get(req.session.lastDb, "wTrack", wTrackSchema);
+            var monthHours = models.get(req.session.lastDb, "MonthHours", MonthHoursSchema);
+
+            function getBaseSalary(cb) {
+                var Salary = models.get(req.session.lastDb, 'Salary', SalarySchema);
+                var query = Salary
+                    .find(
+                    {
+                        'employee._id': ObjectId(employee._id),
+                        month: month,
+                        year: year
+                    }, {
+                        baseSalary: 1,
+                        'employee._id': 1
+                    })
+                    .lean();
+                query.exec(function (err, salary) {
+                    if (err) {
+                        return cb(err);
+                    }
+
+                    cb(null, salary.toJSON().baseSalary)
+                });
+            };
+            async.waterfall(waterfallTasks, function (err, result) {
+                var baseSalary = result[0];
+                var fixedExpense;
+                var expenseCoefficient;
+                var hoursForMonth;
+
+                if (err) {
+                    return console.log(err);
+                }
+
+                var query = monthHours.find({month: month, year: year}).lean();
+
+                query.exec(function (err, monthHour) {
+                    if (err) {
+                        return console.log(err);
+                    }
+                    if (monthHour[0]) {
+                        fixedExpense = parseInt(monthHour[0].fixedExpense);
+                        expenseCoefficient = parseFloat(monthHour[0].expenseCoefficient);
+                        hoursForMonth = parseInt(monthHour[0].hours);
+                    } else {
+                        fixedExpense = 0;
+                        expenseCoefficient = 0;
+                        hours = 1;
+                    }
+
+                    cost = ((((baseSalary * expenseCoefficient) + fixedExpense) / hoursForMonth) * totalHours).toFixed(2);
+
+                    callback(null, parseFloat(cost) * 100);
+                });
+
+            });
+        }
+    },
+
+        this.calculateWeeks = function (options) {
+            var data = options;
+            var startDate = data.startDate;
+            var endDate = data.endDate;
+            var hours = data.hours;
+            var diff;
+            var result = [];
+            var endYear;
+            var endMonth;
+            var endWeek;
+            var weekNumber;
+            var newDate;
+            var startYear = moment(startDate).year();
+            var startWeek = moment(startDate).isoWeek();
+            var isoWeeks = moment(startYear).isoWeeksInYear();
+
+            if (endDate) {
+                endYear = moment(endDate).year();
+                endMonth = moment(endDate).month();
+                endWeek = moment(endDate).isoWeek();
+
+            } else {
+                var date = startDate;
+
+                endYear = startYear;
+                weekNumber = hours / 40;
+                endWeek = startWeek + Math.round(weekNumber) - 1;
+
+                if (endWeek > isoWeeks) {
+                    endWeek = endWeek - isoWeeks;
+                    endYear = startYear + 1;
+                    date = moment(startDate).year(startYear + 1);
+                }
+
+                newDate = moment(date).isoWeek(endWeek);
+                endMonth = moment(newDate).month();
+                endDate = moment().year(endYear).month(endMonth).isoWeek(endWeek);
+            }
+
+            diff = endWeek - startWeek;
+
+            if (diff < 0) {
+                diff = isoWeeks - startWeek;
+                result = result.concat(setObj(diff, isoWeeks, startDate, startYear));
+                diff = endWeek - 1;
+                result = result.concat(setObj(diff, endWeek, endDate, startYear + 1));
+            } else {
+                result = result.concat(setObj(diff, endWeek, startDate, startYear));
+            }
+
+            function setObj(diff, endWeek, date, year) {
+                var result = [];
+
+                for (var i = diff; i >= 0; i--) {
+                    var obj = {};
+                    var newDate;
+
+                    obj.week = endWeek - i;
+                    newDate = moment(date).isoWeek(obj.week);
+                    obj.month = moment(newDate).month() + 1;
+                    obj.year = year;
+
+                    result.push(obj);
+                }
+
+                return result;
+            }
+
+            return result;
+        }
+};
 
 module.exports = wTrack;
