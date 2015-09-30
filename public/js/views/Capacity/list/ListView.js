@@ -783,7 +783,7 @@ define([
                 var key = row.attr('data-key');
                 var subKeyClass = "subRows" + key;
 
-                var subRows = $('.' + subKeyClass);
+                var subRows = this.$el.find('.' + subKeyClass);
                 var collection = this.capacityObject[key];
 
                 if (checkIfCB) {
@@ -807,6 +807,9 @@ define([
                     if (!checkIfCB) {
                         row.find(".icon.add").toggle();
                         subRows.toggle();
+
+                        this.$el.find(".false").remove();
+                        this.hideSaveCancelBtns();
                     }
                 }
 
