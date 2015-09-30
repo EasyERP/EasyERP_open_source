@@ -21,8 +21,9 @@ define([
             contentType             : "Employees",
             totalCollectionLengthUrl: '/totalCollectionLength/Employees',
             formUrl                 : "#easyErp/Employees/form/",
-
-            events: {
+            exportToXlsxUrl         : '/employee/exportToXlsx',
+            exportToCsvUrl          : '/employee/exportToCsv',
+            events                  : {
                 "click"                    : "hideItemsNumber",
                 "click .letter:not(.empty)": "alpabeticalRender"
             },

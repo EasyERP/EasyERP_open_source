@@ -1,5 +1,6 @@
 <% collection.forEach(function(capacity, index){ %>
 <tr data-id="<%=capacity._id%>" class="<%=subClass%>">
+    <td class="notForm"><input style="display: block;" class="checkbox" type="checkbox" id="<%=capacity._id%>" <%=status ? checked : ''%> /></td>
     <td colspan="2" class="editable employee" data-content="employee" data-type="employeeSelect">
         <%=capacity.employee ? capacity.employee.name : ''%>
     </td>
