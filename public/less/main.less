@@ -3235,13 +3235,12 @@ dl {
   position: absolute;
   top: 3px;
   right: 3px;
-  color: #8786b7;
-  line-height: 8px;
+  color: @mainText-color-selected;
+  line-height: 11px;
   width: 12px;
   height: 12px;
   padding-top: 1px;
   text-align: center;
-  //
   cursor: pointer;
  //text-shadow: 0 1px 1px white;
 }
@@ -4489,7 +4488,7 @@ h3.dashboard {
         //
         padding-left: 3px;
         line-height: 25px;
-        border-bottom: 2px solid @border-color-main;
+        //border-bottom: 2px solid @border-color-main;
         height: 25px;
         color: @th-text-color;
         &.center {
@@ -4500,7 +4499,7 @@ h3.dashboard {
         height: 25px;
         padding-left: 3px;
         line-height: 25px;
-        border-bottom: 2px solid @border-color-main;
+        //border-bottom: 2px solid @border-color-main;
         @width: 10px;
 
         .green {
@@ -4669,7 +4668,7 @@ h3.dashboard {
   }
   &.closed, &.done, &.unDone {
     display: block;
-    background-color: @tilte-color;
+    //background-color: @tilte-color;
     color: @mainText-color;
     text-align: center;
     .border-radius(4px);
@@ -4681,7 +4680,7 @@ h3.dashboard {
     background-color: inherit;
   }
   &.unDone {
-    background-color: @yellow-lights-color;
+    //background-color: @yellow-lights-color;
   }
 
 }
@@ -6475,7 +6474,7 @@ textarea#editInput {
   tbody {
     tr:not(.subRow):hover {
       td:not(.selectedType) {
-        background-color: #333333;
+        //background-color: #333333;
         color: #ffffff;
       }
     }
@@ -6525,7 +6524,7 @@ textarea#editInput {
   padding-top: 5px;
   #forFilterName {
     height: 22px;
-    width: 84%;
+    width: 83%;
     border-bottom-left-radius: 5px;
     border-top-left-radius: 5px;
     color: @filter-text-color;
@@ -6545,6 +6544,8 @@ textarea#editInput {
     float: right;
     border: 1px solid @border-color-main;
     height: 21px;
+    background-color: transparent;
+    color: @mainText-color;
   }
   .line {
     height: 1px;
