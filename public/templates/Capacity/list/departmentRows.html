@@ -1,5 +1,5 @@
 <% departments.forEach(function(department, index){ %>
-<tr data-id="<%=department ? department.id : ''%>" data-name="<%=department ? department.name : ''%>" data-key="<%=department.key%>" class="departmentRow">
+<tr data-id="<%=department ? department.id : ''%>" data-name="<%=department ? department.name : ''%>" class="departmentRow">
     <td class="notForm "><input style="display: block;" type="checkbox" class="departmentCB" /></td>
     <td colspan="2" style="text-align: left">
         <%=department ? department.name : ''%>
