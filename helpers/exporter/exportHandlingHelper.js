@@ -1,6 +1,7 @@
-//var csv = require('fast-csv');
+var csv = require('fast-csv');
 var fs = require('fs');
 var arrayToXlsx = require('../exporter/arrayToXlsx');
+
 
 var createProjection = function (map, options) {
     var project = {};
