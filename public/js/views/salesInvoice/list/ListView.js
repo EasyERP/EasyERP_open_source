@@ -481,6 +481,8 @@ define([
                         $("#top-bar-deleteBtn").show();
                         if (checkLength == this.collection.length) {
                             $('#check_all').prop('checked', true);
+                        } else {
+                            $('#check_all').prop('checked', false);
                         }
                     }
                     else {
