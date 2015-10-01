@@ -1,10 +1,10 @@
 define([], function () {
-    var VacationModel = Backbone.Model.extend({
+    var CapacityModel = Backbone.Model.extend({
         idAttribute: "_id",
         urlRoot: function () {
             return "/Capacity";
         }
     });
 
-    return VacationModel;
+    return CapacityModel;
 });

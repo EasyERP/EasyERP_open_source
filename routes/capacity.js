@@ -7,9 +7,10 @@ module.exports = function (models) {
 
     router.get('/:viewType', handler.getForType);
     router.post('/', handler.create);
-    router.post('/create', handler.createAll);
+    router.post('/create', handler.createNextMonth);
     router.patch('/', handler.putchBulk);
     router.patch('/:id', handler.putchModel);
+    router.delete('/:id', handler.remove);
 
     return router;
 };
