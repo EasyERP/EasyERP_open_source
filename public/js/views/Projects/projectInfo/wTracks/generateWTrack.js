@@ -84,11 +84,102 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 			},
 
 			chooseOption: function (e) {
-				var targetEl = $(e.target);
-				var text = targetEl.text();
+				var target = $(e.target);
+				var targetElement = target.parents("td");
+				var tr = target.parents("tr");
+				var modelId = tr.attr('data-id');
+				var id = target.attr("id");
+				var attr = targetElement.attr("id") || targetElement.data("content");
+				var elementType = '#' + attr;
+				var projectManager;
+				var assignedContainer;
+				var project;
+				var employee;
+				var department;
+				var changedAttr;
+				var wTrackId = tr.data('id');
+				var week;
+				var year;
 
-				//targetEl.parents("dd").find(".current-selected").text(text).attr("data-id", targetEl.attr("id"));
-				$(".newSelectList").remove();
+				var element = _.find(this.responseObj[elementType], function (el) {
+					return el._id === id;
+				});
+
+				/*var editWtrackModel = this.editCollection.get(modelId) ? this.editCollection.get(modelId) : this.collection.get(modelId);
+
+				if (!this.changedModels[modelId]) {
+					if (!editWtrackModel.id) {
+						this.changedModels[modelId] = editWtrackModel.attributes;
+					} else {
+						this.changedModels[modelId] = {};
+					}
+				}
+
+				changedAttr = this.changedModels[modelId];*/
+
+				if (elementType === '#project') {
+
+					projectManager = element.projectmanager.name;
+					assignedContainer = tr.find('[data-content="assigned"]');
+					assignedContainer.text(projectManager);
+					targetElement.attr('data-id', id);
+
+					tr.find('[data-content="workflow"]').text(element.workflow.name);
+					tr.find('[data-content="customer"]').text(element.customer.name);
+
+					project = _.clone(editWtrackModel.get('project'));
+					project._id = element._id;
+					project.projectName = element.projectName;
+					project.workflow._id = element.workflow._id;
+					project.workflow.name = element.workflow.name;
+					project.customer._id = element.customer._id;
+					project.customer.name = element.customer.name;
+
+					project.projectmanager.name = element.projectmanager.name;
+					project.projectmanager._id = element.projectmanager._id;
+
+					//changedAttr.project = project;
+
+				} else if (elementType === '#employee') {
+					tr.find('[data-content="department"]').text(element.department.name);
+
+					/*employee = _.clone(editWtrackModel.get('employee'));
+					department = _.clone(editWtrackModel.get('department'));
+
+					employee._id = element._id;
+					employee.name = target.text();
+
+					department._id = element.department._id;
+					department.departmentName = element.department.name;
+
+					changedAttr.employee = employee;
+					changedAttr.department = department;*/
+
+					tr.find('[data-content="department"]').removeClass('errorContent');
+				} else if (elementType === '#department') {
+					department = _.clone(editWtrackModel.get('department'));
+					department._id = element._id;
+					department.departmentName = element.departmentName;
+
+					//changedAttr.department = department;
+				} else if (elementType === '#week') {
+					week = $(e.target).text();
+
+					//changedAttr.week = week;
+				} else if (elementType === '#year') {
+					year = $(e.target).text();
+
+					//changedAttr.year = year;
+				}
+
+				targetElement.removeClass('errorContent');
+
+				targetElement.text(target.text());
+
+				this.hideNewSelect();
+				//this.setEditable(targetElement);
+
+				return false;
 			},
 
 			hideNewSelect: function () {
