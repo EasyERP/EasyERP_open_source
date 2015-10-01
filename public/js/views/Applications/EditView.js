@@ -368,6 +368,12 @@
 
                 };
 
+                var depForTransfer = this.currentModel.get('department');
+
+                if (department._id !== depForTransfer._id) {
+                    data.depForTransfer=depForTransfer.name;
+                }
+
                 var workflowId = el.find("#workflowsDd").data("id");
                 var workflow = workflowId ? workflowId : null;
 
