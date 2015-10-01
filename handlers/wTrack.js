@@ -824,8 +824,6 @@ var wTrack = function (event, models) {
                 console.log(err);
             }
 
-            console.dir(dateArray);
-
             dateArray.forEach(function(obj){
                 monthsArr.push(obj.month);
                 weeksArr.push(obj.week);
@@ -948,8 +946,6 @@ var wTrack = function (event, models) {
 
                         var cost = result[0] ? result[0] : 0;
 
-                        console.dir(result);
-
                         wTrackObj = {
                             dateByWeek: dateByWeek,
                             dateByMonth: dateByMonth,
@@ -979,7 +975,6 @@ var wTrack = function (event, models) {
                                 return next(err);
                             }
 
-                            console.dir(wTrack);
                         });
                     });
                     });
