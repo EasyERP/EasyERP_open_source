@@ -10,6 +10,7 @@ module.exports = function (models) {
     router.post('/create', handler.createAll);
     router.patch('/', handler.putchBulk);
     router.patch('/:id', handler.putchModel);
+    router.delete('/:id', handler.remove);
 
     return router;
 };
