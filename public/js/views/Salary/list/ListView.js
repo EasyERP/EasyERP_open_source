@@ -279,19 +279,19 @@ define([
                         calc: {
                             onCard: 0,
                             onCash: 0,
-                            salary: 0,
+                            salary: 0
                         },
                         paid: {
                             onCard: 0,
-                            onCash: 0,
+                            onCash: 0
                         },
                         diff: {
                             onCard: 0,
                             onCash: 0,
-                            total: 0,
+                            total: 0
                         },
-                        employeesArray: [],
-                    }
+                        employeesArray: []
+                    };
 
                     model = new salaryModel(model);
                     model.set({_id: model.cid});
@@ -406,6 +406,8 @@ define([
 
                         if (checkLength == this.collection.length) {
                             $('#check_all').prop('checked', true);
+                        } else {
+                            $('#check_all').prop('checked', false);
                         }
                     }
                     else {

@@ -203,13 +203,13 @@ function (listTemplate, cancelEdit, createView, listItemView, subSalaryTotalTemp
             if ($(td).hasClass('cash')) {
                 calcKey = 'onCash';
                 tdForUpdate = diffOnCash;
-                paid = tr.find('.paid[data-content="onCash"]').text() ;
-                calc = tr.find('.calc[data-content="onCash"]').text();
+                paid = tr.find('.paid[data-content="onCash"]').attr('data-cash');
+                calc = tr.find('.calc[data-content="onCash"]').attr('data-cash');
             } else if ($(td).hasClass('card')) {
                 calcKey = 'onCard';
                 tdForUpdate = diffOnCard;
-                paid = tr.find('.paid[data-content="onCard"]').text();
-                calc = tr.find('.calc[data-content="onCard"]').text();
+                paid = tr.find('.paid[data-content="onCard"]').attr('data-cash');
+                calc = tr.find('.calc[data-content="onCard"]').attr('data-cash');
             }
 
             if (tdForUpdate) {
@@ -222,10 +222,10 @@ function (listTemplate, cancelEdit, createView, listItemView, subSalaryTotalTemp
                 tdForUpdate.text(this.checkMoneyTd(tdForUpdate, value));
 
                 diffOnCashRealValue = diffOnCash.attr('data-value');
-                diffOnCashRealValue = diffOnCashRealValue ? diffOnCashRealValue : diffOnCash.text();
+                diffOnCashRealValue = diffOnCashRealValue ? diffOnCashRealValue : diffOnCash.attr('data-cash');
 
                 diffOnCardRealValue = diffOnCard.attr('data-value');
-                diffOnCardRealValue = diffOnCardRealValue ? diffOnCardRealValue : diffOnCard.text();
+                diffOnCardRealValue = diffOnCardRealValue ? diffOnCardRealValue : diffOnCard.attr('data-cash');
 
                 totalValue = parseInt(diffOnCashRealValue) + parseInt(diffOnCardRealValue);
                 diffTotal.text(this.checkMoneyTd(diffTotal, totalValue));
@@ -275,6 +275,7 @@ function (listTemplate, cancelEdit, createView, listItemView, subSalaryTotalTemp
                 var addVal = 0;
                 var calcVal = 0;
                 var input;
+                var inputValue;
 
                 var diffNameVal = 0;
                 var diffTotalVal = 0;
@@ -286,22 +287,26 @@ function (listTemplate, cancelEdit, createView, listItemView, subSalaryTotalTemp
 
                 self.bodyContainer.find('.' + className + '[data-content="' + name +'"]').each(function() {
                     input = $(this).find('input.editing');
-                    tdVal = $(this).attr('data-value');
-                    tdVal = tdVal ? tdVal : $(this).text();
+                    inputValue = input.val();
+                    tdVal = inputValue ? inputValue : $(this).attr('data-value');
+                    tdVal = tdVal ? tdVal : $(this).attr('data-cash');
+
                     if (tdVal.length === 0){
                         tdVal = '0';
                     }
+
                     addVal = tdVal ? parseInt(tdVal) :  parseInt(input.val());
                     calcVal += addVal;
                 });
 
                 $('#subSalary-listTotal' + self.id).find('.total_' + className + '_' + name).text(calcVal);
+                $('#subSalary-listTotal' + self.id).find('.total_' + className + '_' + name).attr('data-cash', calcVal);
                 $('tr[data-id="' + self.id + '"]').find('.total_' + className + '_' + name).text(calcVal);
 
                 if ( name === 'onCard' || name === 'onCash' ) {
                     diffByNameElement = $('#subSalary-listTotal' + self.id).find('.total_diff_' + name);
 
-                    diffNameVal = parseFloat($('#subSalary-listTotal' + self.id).find('.total_calc_' + name).text()) - parseFloat($('#subSalary-listTotal' + self.id).find('.total_paid_' + name).text());
+                    diffNameVal = parseFloat($('#subSalary-listTotal' + self.id).find('.total_calc_' + name).attr('data-cash')) - parseFloat($('#subSalary-listTotal' + self.id).find('.total_paid_' + name).attr('data-cash'));
 
                     diffByNameElement.text(self.checkMoneyTd(diffByNameElement, diffNameVal));
                     $('tr[data-id="' + self.id + '"]').find('.total_diff_' + name).text(diffNameVal);
@@ -315,7 +320,7 @@ function (listTemplate, cancelEdit, createView, listItemView, subSalaryTotalTemp
             };
 
             if (td) {
-                setTotal(td.data('content'), className);
+                setTotal(td.attr('data-content'), className);
             } else {
                 setTotal('onCash', 'calc');
                 setTotal('onCash', 'paid');

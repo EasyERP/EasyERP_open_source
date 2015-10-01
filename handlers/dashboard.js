@@ -178,8 +178,10 @@ var wTrack = function (models) {
 
                         constForView.forEach(function (dep) {
                             employeesByDep.forEach(function (department, index) {
-                                if (dep === employeesByDep[index].department.departmentName) {
-                                    sortDepartments.push(employeesByDep[index]);
+                                if (employeesByDep[index].department){
+                                    if (dep === employeesByDep[index].department.departmentName) {
+                                        sortDepartments.push(employeesByDep[index]);
+                                    }
                                 }
                             });
                         });

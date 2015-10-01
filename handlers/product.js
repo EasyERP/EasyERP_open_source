@@ -378,7 +378,7 @@ var Products = function (models) {
                         var query;
                         optionsObject._id = {$in: productsIds};
 
-                        query = Product.find(optionsObject);
+                        query = Product.find(optionsObject).sort(sort);
                         query.exec(waterfallCallback);
                     };
 

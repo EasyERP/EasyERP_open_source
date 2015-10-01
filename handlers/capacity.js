@@ -72,6 +72,8 @@ var Capacity = function (models) {
                 var query = req.query;
                 var queryObject = {};
 
+                var departmentsObject = {};
+
                 if (query) {
                     if (query.employee) {
                         queryObject['employee._id'] = objectId(query.employee);
@@ -93,11 +95,17 @@ var Capacity = function (models) {
                     if (err) {
                         return next(err);
                     }
+
+                    _.map(result, function(model) {
+                        model = model.toJSON();
+                        departmentsObject[model.department.name] = model.department;
+                    })
+
                     result = _.groupBy(result, function (element) {
-                        return element.department.name + '_' + element.department._id;
+                        return element.department.name;
                     });
 
-                    res.status(200).send(result);
+                    res.status(200).send({capacityObject: result, departmentObject: departmentsObject});
                 });
             });
 
@@ -146,7 +154,7 @@ var Capacity = function (models) {
         function getEmployees(callback) {
 
             var queryObject = {
-                hire      : {
+                hire: {
                     $not: {$size: 0},
                 }
             }
@@ -207,50 +215,50 @@ var Capacity = function (models) {
 
                 //if (modelObject.employee.name === 'Ivan Kornyk') {
 
-                    for (var hireNum = 0; hireNum < employee.hire.length; hireNum++) {
+                for (var hireNum = 0; hireNum < employee.hire.length; hireNum++) {
 
-                        fire = employee.fire[hireNum];
+                    fire = employee.fire[hireNum];
 
-                        if (fire) {
-                            fire = moment([fire.getFullYear(), fire.getMonth(), fire.getDate()]);
-                        }
+                    if (fire) {
+                        fire = moment([fire.getFullYear(), fire.getMonth(), fire.getDate()]);
+                    }
 
-                        hire = employee.hire[hireNum];
-                        hire = moment([hire.getFullYear(), hire.getMonth(), hire.getDate()])
+                    hire = employee.hire[hireNum];
+                    hire = moment([hire.getFullYear(), hire.getMonth(), hire.getDate()])
 
-                        if (!fire) {
-                            condition = (hire <= date.date(1))
-                        } else {
-                            condition = (fire >= date.date(1) && hire <= date.date(1))
-                        }
+                    if (!fire) {
+                        condition = (hire <= date.date(1))
+                    } else {
+                        condition = (fire >= date.date(1) && hire <= date.date(1))
+                    }
 
-                        if (condition) {
+                    if (condition) {
 
-                            for (var day = daysCount - 1; day >= 0; day--) {
+                        for (var day = daysCount - 1; day >= 0; day--) {
 
-                                dateValue = date.date(day + 1);
+                            dateValue = date.date(day + 1);
 
-                                dayNumber = dateValue.day();
+                            dayNumber = dateValue.day();
 
-                                if (dayNumber !== 0 && dayNumber !== 6) {
-                                    if (!fire) {
-                                        condition = (hire <= dateValue)
-                                    } else {
-                                        (fire >= dateValue && hire <= dateValue)
-                                    }
+                            if (dayNumber !== 0 && dayNumber !== 6) {
+                                if (!fire) {
+                                    condition = (hire <= dateValue)
+                                } else {
+                                    (fire >= dateValue && hire <= dateValue)
+                                }
 
-                                    if (condition) {
-                                        modelObject.capacityArray[day] = 8;
-                                        modelObject.capacityMonthTotal += 8;
-                                    } else {
-                                        modelObject.capacityArray[day] = null;
-                                    }
+                                if (condition) {
+                                    modelObject.capacityArray[day] = 8;
+                                    modelObject.capacityMonthTotal += 8;
                                 } else {
                                     modelObject.capacityArray[day] = null;
                                 }
+                            } else {
+                                modelObject.capacityArray[day] = null;
                             }
                         }
                     }
+                }
                 //}
 
                 query = Vacation.find(queryObject).lean();
@@ -510,6 +518,18 @@ var Capacity = function (models) {
         } else {
             res.status(401).send();
         }
+    };
+
+    this.remove = function (req, res, next) {
+        var id = req.params.id;
+        var Capacity = models.get(req.session.lastDb, 'Capacity', CapacitySchema);
+
+        Capacity.remove({_id: id}, function (err, capacity) {
+            if (err) {
+                return next(err);
+            }
+            res.status(200).send({success: capacity});
+        });
     };
 };
 module.exports = Capacity;
