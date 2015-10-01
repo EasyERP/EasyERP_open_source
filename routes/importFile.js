@@ -7,6 +7,7 @@ var fs = require('fs');
 var importMap = require('../helpers/importer/map/csvMap');
 var multipart = require('connect-multiparty');
 var multipartMiddleware = multipart();
+var async = require('async');
 
 module.exports = function (models) {
 
@@ -17,11 +18,12 @@ module.exports = function (models) {
 
     function importFileToDb(req, res, next) {
         var body = req.body;
-        var modelName;
         var files = req.files;
+        var modelName;
         var filePath;
         var error;
         var task;
+        var rows = 0;
         var collection, schema, Model;
         var keysAliases = [];
         var expertedKey = [];
@@ -32,7 +34,7 @@ module.exports = function (models) {
             modelName = body.modelName;
 
             if (!modelName || !filePath) {
-                error = new Error((!modelName) ? 'Model name empty': 'File path empty');
+                error = new Error((!modelName) ? 'Model name empty' : 'File path empty');
                 error.status = 400;
                 next(error);
                 return;
@@ -45,6 +47,7 @@ module.exports = function (models) {
                 next(error);
                 return;
             }
+            aliases = task.aliases;
             collection = task.collection;
             schema = mongoose.Schemas[task.schema];
             Model = models.get(req.session.lastDb, collection, schema);
@@ -66,13 +69,29 @@ module.exports = function (models) {
                     error.status = 400;
                     next(error);
             }
+
         } else {
             res.status(400).send('Bad Request');
         }
 
         function importCsvToDb(res, next) {
             var headers;
-            var arrayKeys = task.arrayKeys;
+            var q = async.queue(function (data, callback) {
+                var tasksWaterflow;
+
+                function getData(callback) {
+                    callback(null, data);
+                }
+
+                tasksWaterflow = [getData, parse, findAndReplaceObjectId, saveToDbOrUpdate];
+
+                async.waterfall(tasksWaterflow, function (err) {
+                    if (err) {
+                        error = err;
+                    }
+                    callback();
+                });
+            }, 1000);
 
             csv
                 .fromPath(filePath)
@@ -89,6 +108,7 @@ module.exports = function (models) {
                         }
 
                         for (var i = expertedKey.length - 1; i >= 0; i--) {
+
                             if (headers[i] !== expertedKey[i]) {
                                 error = new Error('Field \"' + headers[i] + '\" not valid. Need ' + expertedKey[i]);
                                 error.status = 400;
@@ -96,63 +116,36 @@ module.exports = function (models) {
                                 return false;
                             }
                         }
-
                         return false;
                     }
-                    //TODO IF NEED VALIDATE IMPLEMENT HERE FOR CSV
+
+                    rows++;
                     return true;
                 })
-                .on("data-invalid", function (data) {
-                    //TODO maybe info and User
-                })
                 .on("data", function (data) {
-                    var insertObj = {};
-                    var id, objectToSave;
-
-                    Object.keys(data).forEach(function (key) {
-                        var val = data[key];
-
-                        if (arrayKeys && arrayKeys[keysAliases[key]] === true) {
-                            val = val.split(',');
-                        }
-                        if (!val) {
-                            insertObj[keysAliases[key]] = val;
+                    q.push([data], function (err) {
+                        if (err) {
+                            error = err;
                         }
                     });
-
-                    id = insertObj.ID;
-
-                    if (id) {
-                        Model.update({ID: id}, insertObj, {upsert: true}, function (err) {
-                            if (err) {
-                                next(err);
-                            }
-                        });
-                    } else {
-                        objectToSave = new Model(insertObj);
-                        objectToSave.save(function (err) {
-                            if (err) {
-                                next(err);
-                            }
-                        })
-                    }
-                })
-                .on("end", function () {
-                    if (!error) {
-                        res.status(200).send();
-                    } else {
-                        next(error);
-                    }
                 });
+
+            q.drain = function () {
+                var obj = {};
+
+                if (!error) {
+                    obj.countRows = rows;
+                    res.status(200).send(obj);
+                } else {
+                    next(error);
+                }
+            }
         }
 
         function importXlsxToDb(res, next) {
             var obj = xlsx.parse(filePath);
             var sheet;
-            var headers, data;
-            var arrayKeys = task.arrayKeys;
-            var insertObj = {};
-            var id, lengthData;
+            var headers;
 
             if (!obj) {
                 error = new Error('Parse Error');
@@ -162,65 +155,192 @@ module.exports = function (models) {
             sheet = obj[0];
 
             if (sheet && sheet.data) {
-                headers = sheet.data[0];
-                lengthData = sheet.data.length - 1;
+                async.eachLimit(sheet.data, 100, function (data, cb) {
+                        var error;
+                        var tasksWaterflow;
 
-                if (headers.length != expertedKey.length) {
-                    error = new Error('Different lengths headers');
-                    next(error);
-                    return;
-                }
+                        if (!headers) {
+                            headers = data;
 
-                for (var i = expertedKey.length - 1; i >= 0; i--) {
+                            if (headers.length != expertedKey.length) {
+                                error = new Error('Different lengths headers');
+                                error.status = 400;
+                                cb(error);
+                            }
 
-                    if (headers[i] !== expertedKey[i]) {
-                        error = new Error('Different lengths headers');
-                        next(error);
-                        res.status(400).send('Field \"' + headers[i] + '\" not valid. Need ' + expertedKey[i]);
-                        return;
-                    }
-                }
+                            for (var i = expertedKey.length - 1; i >= 0; i--) {
 
-                for (i = lengthData; i > 0; i--) {
-                    data = sheet.data[i];
-                    insertObj = {};
-                    for (var j = data.length - 1; j >= 0; j--) {
-                        var val = data[j];
+                                if (headers[i] !== expertedKey[i]) {
+                                    error = new Error('Field \"' + headers[i] + '\" not valid. Need \"' + expertedKey[i] + '\"');
+                                    error.status = 400;
+                                    cb(error);
+                                }
+                            }
+                            cb();
+                        } else {
+                            rows++;
 
-                        if (val && arrayKeys && arrayKeys[keysAliases[j]] === true) {
-                            val = val.split(',');
+                            function getData(callback) {
+                                callback(null, data);
+                            }
+
+                            tasksWaterflow = [getData, parse, findAndReplaceObjectId, saveToDbOrUpdate];
+
+                            async.waterfall(tasksWaterflow, function (err) {
+
+                                if (err) {
+                                    cb(err);
+                                } else {
+                                    cb();
+                                }
+                            });
                         }
+                    },
+                    function (err) {
+                        var obj = {};
+                        if (err) {
+                            next(err);
+                        } else {
+                            obj.countRows = row;
+                            res.status(200).send(obj);
+                        }
+                    }
+                );
+            } else {
+                res.status(400).send('Bad request');
+            }
+        }
+
+        function parse(data, callback) {
+            var insertObj = {};
+            var arrayKeys = task.arrayKeys;
+
+            Object.keys(data).forEach(function (key) {
+                var val = data[key];
+
+                if (val && arrayKeys && arrayKeys[keysAliases[key]] === true) {
+                    val = val.split(',');
+                }
+
+                if (val) {
+                    insertObj[keysAliases[key]] = val;
+                }
+            });
+            callback(null, insertObj);
+        }
+
+        function findAndReplaceObjectId(obj, callback) {
+            var findCollection;
+            var aliases;
+            var collection;
+            var schema;
+            var Model;
+            var replaceObj = obj;
+            var objectIdKeyList = task.objectIdList;
+            var error;
+
+            if (objectIdKeyList) {
+
+                async.each(Object.keys(objectIdKeyList), function (key, cb) {
+                        var val = obj[key];
 
                         if (val) {
-                            insertObj[keysAliases[j]] = val;
-                        }
-                    }
-                    id = insertObj.ID;
-                    insertObj = new Model(insertObj);
+                            findCollection = importMap[objectIdKeyList[key]];
+                            aliases = findCollection.aliases;
+                            collection = findCollection.collection;
+                            schema = mongoose.Schemas[findCollection.schema];
+                            Model = models.get(req.session.lastDb, collection, schema);
 
-                    if (id) {
-                        insertObj = insertObj.toObject();
-                        delete insertObj._id;
-                        Model.update({ID: id}, insertObj, {upsert: true}, function (err) {
-                            if (err) {
-                                next(err);
+                            if (Array.isArray(val)) {
+                                var objID = [];
+                                var length = val.length;
+                                if (length > 0) {
+                                    async.each(Object.keys(val), function (index, calb) {
+
+                                            Model.findOne({'ID': val[index]}, function (err, mod) {
+
+                                                if (err) {
+                                                    calb(err);
+                                                } else {
+                                                    if (mod) {
+                                                        objID.push(mod._id);
+                                                        calb();
+                                                    } else {
+                                                        error = new Error('ID = ' + val[index] + ' (' + key + ') not exist in BD');
+                                                        error.status = 400;
+                                                        calb(error);
+                                                    }
+                                                }
+                                            });
+                                        },
+                                        function (err) {
+                                            if (!err) {
+                                                replaceObj[key] = objID;
+                                                cb();
+                                            } else {
+                                                cb(err);
+                                            }
+                                        });
+                                } else {
+                                    cb();
+                                }
+                            } else {
+                                Model.findOne({'ID': val}, function (err, mod) {
+                                    if (err) {
+                                        cb(err);
+                                    } else {
+                                        if (mod) {
+                                            replaceObj[key] = mod._id;
+                                            cb();
+                                        } else {
+                                            error = new Error('ID = ' + val + ' (' + key + ') not exist in BD');
+                                            error.status = 400;
+                                            cb(error);
+                                        }
+                                    }
+                                });
                             }
-                        });
-                    } else {
-                        insertObj.save(function (err) {
-                            if (err) {
-                                next(err);
-                            }
-                        })
-                    }
-                }
-                if (!error) {
-                    res.status(200).send('Imported success');
-                } else {
-                    next(error);
-                }
+                        } else {
+                            cb();
+                        }
+                    },
+
+                    function (err) {
+                        if (!err) {
+                            callback(null, replaceObj);
+                        } else {
+                            callback(err);
+                        }
+                    });
+            } else {
+                callback(null, replaceObj);
             }
-            res.status(400).send('Parse Error');
+        }
+
+        function saveToDbOrUpdate(objectToDb, callback) {
+            var id = objectToDb.ID;
+            var objectForSave;
+
+            if (id) {
+                Model.update({ID: id}, objectToDb, {upsert: true}, function (err) {
+
+                    if (err) {
+                        callback(err);
+                    } else {
+                        callback();
+                    }
+
+                });
+            } else {
+                objectForSave = new Model(objectToDb);
+                objectForSave.save(function (err) {
+                    if (err) {
+                        callback(err);
+                    } else {
+                        callback();
+                    }
+                })
+            }
         }
     }
 
