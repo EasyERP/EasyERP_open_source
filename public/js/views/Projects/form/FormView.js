@@ -12,7 +12,7 @@ define([
 		'views/Projects/projectInfo/wTrackView',
 		'views/Projects/projectInfo/paymentView',
 		'views/Projects/projectInfo/invoiceView',
-		'views/Projects/projectInfo/generateWTrack',
+		'views/Projects/projectInfo/wTracks/generateWTrack',
 		'collections/wTrack/filterCollection',
 		'text!templates/Notes/AddAttachments.html',
 		"common",
@@ -23,7 +23,7 @@ define([
 		'helpers'
 	],
 
-	function (ProjectsFormTemplate, DetailsTemplate, EditView, noteView, attachView, AssigneesView, BonusView, wTrackView, PaymentView, InvoiceView, generateWTrack, wTrackCollection, addAttachTemplate, common, populate, custom, dataService, async, helpers) {
+	function (ProjectsFormTemplate, DetailsTemplate, EditView, noteView, attachView, AssigneesView, BonusView, wTrackView, PaymentView, InvoiceView, GenerateWTrack, wTrackCollection, addAttachTemplate, common, populate, custom, dataService, async, helpers) {
 		var FormEmployeesView = Backbone.View.extend({
 			el        : '#content-holder',
 			contentType: 'Projects',
@@ -50,7 +50,9 @@ define([
 			},
 
 			createDialog: function(){
-				new generateWTrack({model: this.formModel});
+				new GenerateWTrack({
+					model: this.formModel
+				});
 			},
 
 			notHide: function () {

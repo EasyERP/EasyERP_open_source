@@ -24,8 +24,11 @@ var wTrack = function (models) {
         var EmployeeSchema = mongoose.Schemas['Employee'];
         var HolidaySchema = mongoose.Schemas['Holiday'];
         var VacationSchema = mongoose.Schemas['Vacation'];
+        var vacationCacheSchema = mongoose.Schemas['vacationCacheSchema'];
 
         this.composeForVacation = function (req, res, next) {
+            console.time('vacCache');
+
             var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
             var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
             var weeksArr;
@@ -72,6 +75,11 @@ var wTrack = function (models) {
                 var dashBoardResult;
                 var holidays;
                 var vacations;
+
+                //======== tempVariables; =========
+                var VacationCache;
+                var cache;
+                //======== tempVariables ==========
 
                 if (err) {
                     return next(err);
@@ -185,6 +193,16 @@ var wTrack = function (models) {
                         });
 
                         res.status(200).send(sortDepartments);
+                        console.timeEnd('vacCache');
+
+                        VacationCache = models.get(req.session.lastDb, 'vacationCache', vacationCacheSchema);
+
+                        VacationCache.findByIdAndUpdate(1, {data: sortDepartments}, {upsert: true}, function(err, res){
+                            "use strict";
+                            if(err){
+                                console.error(err);
+                            }
+                        });
                     });
                 };
 
@@ -496,6 +514,19 @@ var wTrack = function (models) {
             };
 
             async.parallel([employeeByDepComposer, dashComposer, holidaysComposer, vacationComposer], resultMapper);
+        };
+
+        this.getFromCache = function (req, res, next) {
+            var VacationCache = models.get(req.session.lastDb, 'vacationCache', vacationCacheSchema);
+
+            VacationCache.findById(1, function(err, response){
+                "use strict";
+                if(err){
+                    return next(err);
+                }
+
+                res.status(200).send(response.data);
+            });
         };
 
         this.composeForHr = function (req, res, next) {

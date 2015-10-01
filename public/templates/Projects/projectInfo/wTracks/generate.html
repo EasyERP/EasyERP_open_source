@@ -2,7 +2,7 @@
     <div class="inner">
         <div class="clearfix"></div>
         <div class="topInputHolder">
-            <div class="half-block left">
+            <div class="thirdPartBlock left">
                 <dl class="person-info">
                     <dt><label for="project">Project</label></dt>
                     <dd>
@@ -10,26 +10,30 @@
                     </dd>
                 </dl>
             </div>
-            <div class="half-block left">
+            <div class="thirdPartBlock left">
                 <dl class="person-info">
-                    <div class="avatar">
-                        <canvas class="avatar" width="140" height="140"></canvas>
+                    <div class="miniAvatar">
+                        <canvas class="avatar" width="50" height="50"></canvas>
                     </div>
-                    <dt><label for="projectManager">Sales Manager</label></dt>
-                    <dd>
-                        <span id="projectManager"><%= project.projectmanager.name %></span>
-                    </dd>
+                    <div class="miniAvatarInfo">
+                        <dt><label for="projectManager">Sales Manager</label></dt>
+                        <dd>
+                            <span id="projectManager"><%= project.projectmanager.name %></span>
+                        </dd>
+                    </div>
                 </dl>
             </div>
-            <div class="half-block left">
+            <div class="thirdPartBlock left">
                 <dl class="person-info">
-                    <div class="avatar">
-                        <canvas class="avatar" width="140" height="140"></canvas>
+                    <div class="miniAvatar">
+                        <canvas class="avatar" width="50" height="50"></canvas>
                     </div>
-                    <dt><label for="customer">Customer</label></dt>
-                    <dd>
-                        <span id="customer"><%= project.customer.name %></span>
-                    </dd>
+                    <div class="miniAvatarInfo">
+                        <dt><label for="customer">Customer</label></dt>
+                        <dd>
+                            <span id="customer"><%= project.customer.name %></span>
+                        </dd>
+                    </div>
                 </dl>
             </div>
             <div class="clearfix"></div>
@@ -37,7 +41,73 @@
         <div class="clearfix"></div>
         <div class="topContentHolder">
             <div id="wTrackItemsHolder">
+                <table id="rawTable" class="list2">
+                    <thead>
+                    <tr>
+                        <th>
+                            Employee
+                        </th>
+                        <th>
+                            Department
+                        </th>
+                        <th>
+                            Year
+                        </th>
+                        <th>
+                            Month
+                        </th>
+                        <th>
+                            Week
+                        </th>
+                        <th>
+                            Rate
+                        </th>
+                        <th>
+                            Hours
+                        </th>
+                        <th>
+                            Mo
+                        </th>
+                        <th>
+                            Tu
+                        </th>
+                        <th>
+                            We
+                        </th>
+                        <th>
+                            Th
+                        </th>
+                        <th>
+                            Fr
+                        </th>
+                        <th>
+                            Sa
+                        </th>
+                        <th>
+                            Su
+                        </th>
+                        <th>
+                            Revenue
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td colspan="15">
+                            <a href="javascript:;" id="addNewEmployeeRow">Add an Item</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="15">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td colspan="15">&nbsp;</td>
+                    </tr>
+                    </tbody>
+                    <tfoot>
 
+                    </tfoot>
+                </table>
             </div>
         </div>
         <div class="clearfix"></div>
