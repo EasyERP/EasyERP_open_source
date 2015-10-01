@@ -6,14 +6,17 @@ define([
 
 ], function (template) {
 	var View = Backbone.View.extend({
-		el: '#wTrackItemsHolder',
-
-		events: {},
+		/*el: '#wTrackItemsHolder',*/
+		className: 'rawValue',
+		events   : {},
 
 		template: _.template(template),
 
 		render: function (options) {
-			this.$el.html(this.template(options));
+			var thisEl = this.$el;
+
+			thisEl.html(this.template(options));
+			thisEl.attr('data-id', 'rawValue');
 
 			return this;
 		}

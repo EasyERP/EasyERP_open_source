@@ -14,7 +14,10 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 			events: {
 				"click .newSelectList li:not(.miniStylePagination)": "chooseOption",
 				"click .current-selected"                          : "showNewSelect",
-				"click #addNewEmployeeRow"                          : "addNewEmployeeRow",
+				"click .newSelectList li.miniStylePagination": "notHide",
+				"click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
+				"click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
+				"click #addNewEmployeeRow"                         : "addNewEmployeeRow",
 				"click"                                            : "hideNewSelect"
 			},
 
@@ -26,18 +29,35 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
 			//ToDo remove this.default table after success generate
 
-			addNewEmployeeRow: function(){
-				var wTrackPerEmployeeContainer = this.$el.find('#productItemsHolder');
+			addNewEmployeeRow: function (e) {
+				e.preventDefault();
+				e.stopPropagation();
 
-				wTrackPerEmployeeContainer.append(
-					new wTrackPerEmployee().render({
-						employee: {
-							_id: 'testEmploee12345'
-						},
-						year    : 2015,
-						month   : 10,
-						week    : 40
-					}).el
+				var target = $(e.target);
+				var wTrackPerEmployeeContainer = this.$el.find('#wTrackItemsHolder');
+				var parrent = target.closest('tbody');
+				var parrentRow = parrent.find('.productItem').last();
+				var rowId = parrentRow.attr("data-id");
+				var trEll = parrent.find('tr.productItem');
+				var elem;
+
+				/*if (rowId === undefined || rowId !== 'false') {
+					if (!trEll.length) {
+						return parrent.prepend(_.template(ProductInputContent));
+					}
+					$(trEll[trEll.length - 1]).after(_.template(ProductInputContent));
+				}
+
+				this.default = wTrackPerEmployeeContainer.find('#rawTable');*/
+
+				elem = this.wTrackPerEmployeeTemplate({
+					year    : 2015,
+					month   : 10,
+					week    : 40
+				});
+
+				parrent.append(
+					elem
 				);
 			},
 
@@ -51,19 +71,28 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
 			showNewSelect: function (e, prev, next) {
 				populate.showSelect(e, prev, next, this);
+
 				return false;
+			},
+
+			nextSelect: function (e) {
+				this.showNewSelect(e, false, true);
+			},
+
+			prevSelect: function (e) {
+				this.showNewSelect(e, true, false);
 			},
 
 			chooseOption: function (e) {
 				var targetEl = $(e.target);
 				var text = targetEl.text();
 
-				targetEl.parents("dd").find(".current-selected").text(text).attr("data-id", targetEl.attr("id"));
-				$(".newSelectList").hide();
+				//targetEl.parents("dd").find(".current-selected").text(text).attr("data-id", targetEl.attr("id"));
+				$(".newSelectList").remove();
 			},
 
 			hideNewSelect: function () {
-				$(".newSelectList").hide();
+				$(".newSelectList").remove();
 			},
 
 			render: function () {
