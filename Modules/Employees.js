@@ -1141,7 +1141,7 @@ var Employee = function (event, models) {
                     delete data.sequenceStart;
                     delete data.workflowStart;
                     data.sequence = sequence;
-                    models.get(req.session.lastDb, 'Employees', employeeSchema).findByIdAndUpdate(_id, {$set: data},{new:true}, function (err, result) {
+                    models.get(req.session.lastDb, 'Employees', employeeSchema).findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
                         if (!err) {
                             res.send(200, {success: 'Employees updated'});
 
@@ -1246,7 +1246,9 @@ var Employee = function (event, models) {
     }
 
     function addAtach(req, _id, files, res) {//to be deleted
-        models.get(req.session.lastDb, "Employees", employeeSchema).findByIdAndUpdate(_id, {$push: {attachments: {$each: files}}}, {upsert: true}, function (err, result) {
+        models.get(req.session.lastDb, "Employees", employeeSchema).findByIdAndUpdate(_id, {$push: {attachments: {$each: files}}}, {upsert: true,
+            new: true
+        }, function (err, result) {
             try {
                 if (err) {
                     console.log(err);
