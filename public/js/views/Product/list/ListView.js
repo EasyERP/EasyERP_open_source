@@ -45,8 +45,7 @@ define([
 
             events: {
                 "click .list td:not(.notForm)": "goToEditDialog",
-                "click .letter:not(.empty)"   : "alpabeticalRender",
-                "click .oe_sortable"          : "goSort"
+                "click .letter:not(.empty)"   : "alpabeticalRender"
             },
 
             render: function () {
