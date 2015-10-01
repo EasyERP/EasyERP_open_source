@@ -856,15 +856,6 @@ var wTrack = function (event, models) {
                         trackWeek[i] =  weekDefault['1'];
                     }
                 }
-                //var trackWeek = {
-                //    1: ((vacations[dateByMonth] && vacations[dateByMonth]['1']) ? vacations[dateByMonth]['1'] : weekDefault['1']) ? ((holidays[dateByWeek] && holidays[dateByWeek]['1']) ? holidays[dateByWeek]['1'] : weekDefault['1']) : weekDefault['1'],
-                //    2: ((vacations[dateByMonth] && vacations[dateByMonth]['2']) ? vacations[dateByMonth]['2'] : weekDefault['2']) ? ((holidays[dateByWeek] && holidays[dateByWeek]['2']) ? holidays[dateByWeek]['2'] : weekDefault['2']) : weekDefault['2'],
-                //    3: ((vacations[dateByMonth] && vacations[dateByMonth]['3']) ? vacations[dateByMonth]['3'] : weekDefault['3']) ? ((holidays[dateByWeek] && holidays[dateByWeek]['3']) ? holidays[dateByWeek]['3'] : weekDefault['3']) : weekDefault['3'],
-                //    4: ((vacations[dateByMonth] && vacations[dateByMonth]['4']) ? vacations[dateByMonth]['4'] : weekDefault['4']) ? ((holidays[dateByWeek] && holidays[dateByWeek]['4']) ? holidays[dateByWeek]['4'] : weekDefault['4']) : weekDefault['4'],
-                //    5: ((vacations[dateByMonth] && vacations[dateByMonth]['5']) ? vacations[dateByMonth]['5'] : weekDefault['5']) ? ((holidays[dateByWeek] && holidays[dateByWeek]['5']) ? holidays[dateByWeek]['5'] : weekDefault['5']) : weekDefault['5'],
-                //    6: weekDefault['6'],
-                //    7: weekDefault['7']
-                //};
 
                 wTrackObj = {
                     dateByWeek: dateByWeek,
