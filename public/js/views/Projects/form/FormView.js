@@ -335,7 +335,6 @@ define([
 				);
 
 				thisEl.find('#createBonus').hide();
-				thisEl.find('#noteArea').attr('readonly', true);
 
 				paralellTasks = [this.getWTrack, this.getInvoice];
 
