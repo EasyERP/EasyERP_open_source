@@ -793,13 +793,19 @@ var wTrack = function (event, models) {
 
     this.generateWTrack = function (req, res, next) {
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
-        var body;
-        var data = req.body;
-        var employee = data.employee;
-        var project = data.project;
-        var department = data.department;
-        var revenue = data.revenue;
-        var weekDefault = data.weekDefault;
+        var data = req.query;
+
+        async.each(data, function(options){
+            generate(options);
+        });
+
+
+    function generate(opt) {
+        var employee = opt.employee;
+        var project = opt.project;
+        var department = opt.department;
+        var revenue = opt.revenue;
+        var weekDefault = opt.weekDefault;
         var dateArray;
         var wTrackObj;
         var weekCount;
@@ -812,9 +818,9 @@ var wTrack = function (event, models) {
         var uniqYears;
         var totalHours = 0;
         var options = {
-            startDate: data.startDate,
-            endDate: data.endDate,
-            hours: data.hours
+            startDate: opt.startDate,
+            endDate: opt.endDate,
+            hours: opt.hours
         };
 
         async.parallel([calculateWeeks], function(err, result){
@@ -1123,11 +1129,9 @@ var wTrack = function (event, models) {
             fCb(null, result);
         }
 
-
-
-        res.status(200).send('success');
     }
-
+        res.status(200).send('success');
+    };
 
 };
 
