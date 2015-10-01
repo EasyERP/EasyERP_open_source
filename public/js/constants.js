@@ -291,6 +291,15 @@ define([], function () {
 
         WTRACK_DB_NAME   : 'weTrack',
         FILTERS          : filters,
-        FILTERVALUESCOUNT: 7
+        FILTERVALUESCOUNT: 7,
+        DEPARTMENTS_ORDER: [
+            'iOS',
+            'Android',
+            'Web',
+            'WP',
+            'QA',
+            'Design',
+            'PM'
+        ],
     }
 });
