@@ -608,9 +608,11 @@ function (listTemplate, cancelEdit, createView, listItemView, subSalaryTotalTemp
                     if (checkLength == this.editCollection.length) {
                         $('#check_all' + this.id).prop('checked', true);
                     }
+                    else {
+                        $('#check_all' + this.id).prop('checked', false);
+                    }
                 } else {
                     $('#top-bar-deleteBtn' + this.id).hide();
-                    $('#check_all' + this.id).prop('checked', false);
                 }
             }
         },
