@@ -146,7 +146,8 @@ define([
 					});
 				});
 
-				var budget = self.formModel.toJSON().budget;
+				var budget = this.formModel.get('budget');
+
 				var usersId = [];
 				var groupsId = [];
 				$(".groupsAndUser tr").each(function () {

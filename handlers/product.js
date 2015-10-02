@@ -41,7 +41,7 @@ var Products = function (models) {
     function updateOnlySelectedFields(req, res, next, id, data) {
         var Product = models.get(req.session.lastDb, 'Product', ProductSchema);
 
-        Product.findByIdAndUpdate(id, {$set: data}, function (err, product) {
+        Product.findByIdAndUpdate(id, {$set: data},{new:true}, function (err, product) {
             if (err) {
                 next(err);
             } else {

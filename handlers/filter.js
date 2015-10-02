@@ -339,9 +339,12 @@ var Filters = function (models) {
                     callback(err);
                 }
 
-                result = result[0];
+                if (result){
+                    result = result[0];
 
-                callback(null, result);
+                    callback(null, result);
+                }
+
             });
         };
 

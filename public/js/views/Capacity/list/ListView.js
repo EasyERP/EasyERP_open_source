@@ -896,8 +896,8 @@ define([
             showMoreContent: function (newModels) {
                 var holder = this.$el;
 
-                this.capacityObject = options.collection.toJSON()[0].capacityObject;
-                this.departmentObject = options.collection.toJSON()[0].departmentObject;
+                this.capacityObject = newModels.toJSON()[0].capacityObject;
+                this.departmentObject = newModels.toJSON()[0].departmentObject;
 
                 this.$el.find("#listTable").html('');
 
