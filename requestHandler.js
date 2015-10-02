@@ -1,8 +1,10 @@
 require('pmx').init();
 
-var requestHandler = function (event, mainDb) {
+var requestHandler = function (app, event, mainDb) {
     var dbsObject = mainDb.dbsObject;
     var mongoose = require('mongoose');
+    var async = require('async');
+    var _ = require('./node_modules/underscore');
     var logWriter = require("./Modules/additions/logWriter.js")();
     var models = require("./models.js")(dbsObject);
     var department = require("./Modules/Department.js")(event, models);
@@ -31,6 +33,13 @@ var requestHandler = function (event, mainDb) {
     var opportunitiesSchema = mongoose.Schemas['Opportunitie'];
     var userSchema = mongoose.Schemas['User'];
     var HoursCashesSchema = mongoose.Schemas['HoursCashes'];
+    var wTrackSchema = mongoose.Schemas['wTrack'];
+    var SalarySchema = mongoose.Schemas['Salary'];
+    var MonthHoursSchema = mongoose.Schemas['MonthHours'];
+    var ProjectSchema = mongoose.Schemas['Project'];
+    var ObjectId = mongoose.Types.ObjectId;
+
+    var io = app.get('io');
 
 
     //binding for remove Workflow
@@ -56,7 +65,7 @@ var requestHandler = function (event, mainDb) {
 
         }
         if (query) {
-            query.update({ workflow: id }, { workflow: null }, { multi: true }).exec(function (err, result) {
+            query.update({workflow: id}, {workflow: null}, {multi: true}).exec(function (err, result) {
                 if (err) {
                     console.log(err);
                     logWriter.log("Removed workflow update " + err);
@@ -65,11 +74,11 @@ var requestHandler = function (event, mainDb) {
         }
     });
 
-    event.on('dropHoursCashes', function(req){
+    event.on('dropHoursCashes', function (req) {
         var HoursCashes = models.get(req.session.lastDb, 'HoursCashes', HoursCashesSchema);
 
-        HoursCashes.remove({}, function(err, result){
-            if (err){
+        HoursCashes.remove({}, function (err, result) {
+            if (err) {
                 return next(err);
             }
 
@@ -77,8 +86,423 @@ var requestHandler = function (event, mainDb) {
         });
 
     });
-    //if name was updated, need update related wTrack, or other models
 
+    event.on('updateCost', function (params) {
+        var update = _.debounce(updateWTrack, 500);
+
+        update();
+
+        function updateWTrack() {
+            var req = params.req;
+            var year = params.year;
+            var month = params.month;
+            var fixedExpense = params.fixedExpense;
+            var expenseCoefficient = params.expenseCoefficient;
+            var hours = params.hours;
+
+            var monthFromSalary = params.monthFromSalary;
+            var yearFromSalary = params.yearFromSalary;
+            var waterfallTasks = [getWTracks, getBaseSalary];
+            var wTrack = models.get(req.session.lastDb, "wTrack", wTrackSchema);
+            var monthHours = models.get(req.session.lastDb, "MonthHours", MonthHoursSchema);
+
+            if (monthFromSalary && yearFromSalary) {
+                year = parseInt(yearFromSalary);
+                month = parseInt(monthFromSalary);
+            }
+
+            async.waterfall(waterfallTasks, function (err, result) {
+                var baseSalary;
+
+                if (err) {
+                    return console.log(err);
+                }
+
+                baseSalary = result;
+
+                baseSalary.forEach(function (object) {
+                    var key = Object.keys(object)[0];
+
+                    wTrack
+                        .find({
+                            month: month,
+                            year: year,
+                            'employee._id': ObjectId(key)
+                        }, {
+                            worked: 1,
+                            revenue: 1,
+                            'employee._id': 1,
+                            _id: 1
+                        }, function (err, result) {
+                            if (err) {
+                                return console.log(err);
+                            }
+
+                            if (monthFromSalary && yearFromSalary) {
+                                var query = monthHours.find({month: month, year: year}).lean();
+
+                                query.exec(function (err, monthHour) {
+                                    if (err) {
+                                        return console.log(err);
+                                    }
+                                    if (monthHour[0]) {
+                                        fixedExpense = parseInt(monthHour[0].fixedExpense);
+                                        expenseCoefficient = parseFloat(monthHour[0].expenseCoefficient);
+                                        hours = parseInt(monthHour[0].hours);
+                                    } else {
+                                        fixedExpense = 0;
+                                        expenseCoefficient = 0;
+                                        hours = 1;
+                                    }
+
+
+                                    result.forEach(function (element) {
+                                        var id = element._id;
+                                        var calc = ((((object[key] * expenseCoefficient) + fixedExpense) / hours) * element.worked).toFixed(2);
+                                        var revenue = (element.worked * element.rate).toFixed(2);
+
+                                        wTrack.findByIdAndUpdate(id, {
+                                            $set: {
+                                                cost: parseFloat(calc) * 100,
+                                                revenue: parseFloat(revenue) * 100
+                                            }
+                                        }, {
+                                            new: true
+                                        }, function (err, result) {
+                                            if (err) {
+                                                console.log(err);
+                                            }
+                                        });
+
+                                    });
+                                });
+                            } else {
+                                result.forEach(function (element) {
+                                    var id = element._id;
+                                    var calc = ((((object[key] * expenseCoefficient) + fixedExpense) / hours) * element.worked).toFixed(2);
+                                    var profit = parseFloat(element.revenue) - parseFloat(calc) * 100;
+
+                                    wTrack.findByIdAndUpdate(id, {
+                                        $set: {
+                                            cost: parseFloat(calc) * 100,
+                                            profit: profit
+                                        }
+                                    }, {
+                                        new: true
+                                    }, function (err, result) {
+                                        if (err) {
+                                            console.log(err);
+                                        }
+                                    });
+
+                                });
+                            }
+
+
+                        });
+                });
+            });
+
+            function getWTracks(cb) {
+                wTrack.aggregate([{
+                    $match: {
+                        year: year,
+                        month: month
+                    }
+                }, {
+                    $group: {
+                        _id: '$employee._id'
+                    }
+                }], function (err, wTracks) {
+                    var result;
+
+                    if (err) {
+                        return cb(err);
+                    }
+
+                    result = _.pluck(wTracks, '_id');
+                    cb(null, result)
+                });
+            };
+
+            function getBaseSalary(result, cb) {
+                var Salary = models.get(req.session.lastDb, 'Salary', SalarySchema);
+                var query = Salary
+                    .find(
+                    {
+                        'employee._id': {$in: result},
+                        month: month,
+                        year: year
+                    }, {
+                        baseSalary: 1,
+                        'employee._id': 1
+                    })
+                    .lean();
+                query.exec(function (err, salary) {
+                    if (err) {
+                        return cb(err);
+                    }
+                    var result = _.map(salary, function (element) {
+                        var obj = {};
+
+                        obj[element.employee._id] = element.baseSalary;
+                        return obj;
+                    });
+
+                    cb(null, result)
+                });
+            };
+        };
+    });
+
+    event.on('updateProjectDetails', function (options) {
+        var updateProject = _.debounce(updateProjectDet, 500);
+
+        updateProject();
+
+        function updateProjectDet() {
+            var req = options.req;
+            var pId = options._id;
+            var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
+            var Employee = models.get(req.session.lastDb, 'Employees', employeeSchema);
+            var paralellTasks;
+
+            var query = Project.find({_id: pId}, {_id: 1, bonus: 1}).lean();
+
+            query.populate('bonus.employeeId', '_id name')
+                .populate('bonus.bonusId', '_id name value isPercent');
+
+            query.exec(function (err, result) {
+                if (err) {
+                    return console.log(err);
+                }
+
+                result.forEach(function (project) {
+                    paralellTasks = [getwTrackAndMonthHours];
+
+                    function getwTrackAndMonthHours(cb) {
+                        var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+                        var monthHours = models.get(req.session.lastDb, 'MonthHours', MonthHoursSchema);
+
+                        var query = WTrack.find({'project._id': project._id}).lean();
+                        var months = [];
+                        var years = [];
+                        var uMonth;
+                        var uYear;
+
+                        query.exec(function (err, result) {
+                            if (err) {
+                                return cb(err);
+                            }
+
+                            result.forEach(function (res) {
+                                months.push(res.month);
+                                years.push(res.year);
+                            });
+
+                            uMonth = _.uniq(months);
+                            uYear = _.uniq(years);
+
+                            monthHours.aggregate([{
+                                $match: {
+                                    year: {$in: uYear},
+                                    month: {$in: uMonth}
+                                }
+                            }, {
+                                $project: {
+                                    date: {$add: [{$multiply: ["$year", 100]}, "$month"]},
+                                    hours: '$hours'
+
+                                }
+                            }, {
+                                $group: {
+                                    _id: '$date',
+                                    value: {$addToSet: '$hours'}
+                                }
+                            }], function (err, months) {
+                                if (err) {
+                                    return cb(err);
+                                }
+
+                                cb(null, {wTrack: result, monthHours: months});
+                            });
+
+
+                        });
+                    };
+                    async.parallel(paralellTasks, function (err, result) {
+                        var projectTeam = {};
+                        var bonus = [];
+                        var projectValues = {};
+                        var budgetTotal = {};
+                        var wTRack = result[0] ? result[0]['wTrack'] : [];
+                        var monthHours = result[0] ? result[0]['monthHours'] : [];
+                        var bonuses = project.bonus;
+                        var empKeys;
+                        var keys;
+                        var hoursByMonth = {};
+                        var employees = {};
+                        var keysForPT;
+                        var sortBudget = [];
+                        var budget = {};
+
+                        budgetTotal.profitSum = 0;
+                        budgetTotal.costSum = 0;
+                        budgetTotal.rateSum = 0;
+                        budgetTotal.revenueSum = 0;
+                        budgetTotal.hoursSum = 0;
+                        budgetTotal.revenueByQA = 0;
+                        budgetTotal.hoursByQA = 0;
+
+                        wTRack.forEach(function (wTrack) {
+                            var key;
+                            var employee = wTrack.employee;
+
+                            if (!( employee._id in employees)) {
+                                employees[employee._id] = employee.name;
+                            }
+
+                            key = wTrack.year * 100 + wTrack.month;
+
+                            if (hoursByMonth[key]) {
+                                hoursByMonth[key] += parseFloat(wTrack.worked);
+                            } else {
+                                hoursByMonth[key] = parseFloat(wTrack.worked);
+                            }
+                        });
+
+                        empKeys = Object.keys(employees);
+
+                        empKeys.forEach(function (empId) {
+                            wTRack.forEach(function (wTrack) {
+                                var emp = (wTrack.employee._id).toString();
+
+                                if (empId === emp) {
+                                    if (projectTeam[empId]) {
+                                        if (wTrack.department._id.toString() === '55b92ace21e4b7c40f000011'){
+                                            projectTeam[empId].byQA.revenue += parseFloat(wTrack.revenue);
+                                            projectTeam[empId].byQA.hours += parseFloat(wTrack.worked);
+                                        }
+                                        projectTeam[empId].profit += parseFloat(((wTrack.revenue - wTrack.cost) / 100).toFixed(2));
+                                        projectTeam[empId].cost += parseFloat((wTrack.cost / 100).toFixed(2));
+                                        projectTeam[empId].rate += parseFloat(wTrack.rate);
+                                        projectTeam[empId].hours += parseFloat(wTrack.worked);
+                                        projectTeam[empId].revenue += parseFloat((wTrack.revenue / 100).toFixed(2));
+                                    } else {
+                                        projectTeam[empId] = {};
+
+                                        if (wTrack.department._id.toString() === '55b92ace21e4b7c40f000011'){
+                                            projectTeam[empId].byQA = {};
+                                            projectTeam[empId].byQA.revenue = parseFloat(wTrack.revenue);
+                                            projectTeam[empId].byQA.hours = parseFloat(wTrack.worked);
+                                        }
+                                        projectTeam[empId].profit = parseFloat(((wTrack.revenue - wTrack.cost) / 100).toFixed(2));
+                                        projectTeam[empId].cost = parseFloat((wTrack.cost / 100).toFixed(2));
+                                        projectTeam[empId].rate = parseFloat(wTrack.rate);
+                                        projectTeam[empId].hours = parseFloat(wTrack.worked);
+                                        projectTeam[empId].revenue = parseFloat((wTrack.revenue / 100).toFixed(2));
+                                    }
+                                }
+                            });
+                        });
+
+
+                        keys = Object.keys(projectTeam);
+                        if (keys.length > 0) {
+
+                            keys.forEach(function (key) {
+                                budgetTotal.profitSum += parseFloat(projectTeam[key].profit);
+                                budgetTotal.costSum += parseFloat(projectTeam[key].cost);
+                                budgetTotal.hoursSum += parseFloat(projectTeam[key].hours);
+                                budgetTotal.revenueSum += parseFloat(projectTeam[key].revenue);
+                                budgetTotal.revenueByQA += parseFloat(projectTeam[key].byQA ? projectTeam[key].byQA.revenue / 100 : 0);
+                                budgetTotal.hoursByQA += parseFloat(projectTeam[key].byQA ? projectTeam[key].byQA.hours : 0);
+                            });
+                            budgetTotal.rateSum = {};
+                            var value = budgetTotal.revenueByQA / budgetTotal.hoursByQA;
+                            budgetTotal.rateSum.byQA = value? value : 0;
+                            budgetTotal.rateSum.byDev = ((parseFloat(budgetTotal.revenueSum) - budgetTotal.revenueByQA)) / (budgetTotal.hoursSum - parseInt(budgetTotal.hoursByQA)) ;
+
+                            projectValues.revenue = budgetTotal.revenueSum;
+                            projectValues.profit = budgetTotal.profitSum;
+                            projectValues.markUp = ((budgetTotal.profitSum / budgetTotal.costSum) * 100);
+                            if (!isFinite(projectValues.markUp)){
+                                projectValues.markUp = 0;
+                            }
+                            projectValues.radio = ((budgetTotal.profitSum / budgetTotal.revenueSum) * 100);
+                            if (!isFinite(projectValues.radio)){
+                                projectValues.radio = 0;
+                            }
+
+                            var empQuery = Employee.find({_id: {$in: keys}}, {
+                                'name': 1,
+                                'jobPosition.name': 1,
+                                'department.name': 1
+                            }).lean();
+                            empQuery.exec(function (err, response) {
+
+                                if (err) {
+                                    console.log(err);
+                                }
+
+                                bonuses.forEach(function (element) {
+                                    var objToSave = {};
+
+                                    objToSave.bonus = 0;
+                                    objToSave.resource = element.employeeId.name.first + ' ' + element.employeeId.name.last;
+                                    objToSave.percentage = element.bonusId.name;
+
+                                    if (element.bonusId.isPercent) {
+                                        objToSave.bonus = (budgetTotal.revenueSum / 100) * element.bonusId.value * 100;
+                                        bonus.push(objToSave);
+                                    } else {
+                                        monthHours.forEach(function (month) {
+                                            objToSave.bonus += (hoursByMonth[month._id] / month.value[0]) * element.bonusId.value;
+                                        });
+
+                                        objToSave.bonus = objToSave.bonus * 100;
+                                        bonus.push(objToSave);
+                                    }
+
+                                });
+
+                                keysForPT = Object.keys(projectTeam);
+
+                                response.forEach(function (employee) {
+                                    keysForPT.forEach(function (id) {
+                                        if ((employee._id).toString() === id) {
+                                            sortBudget.push(projectTeam[id]);
+                                        }
+                                    })
+                                });
+
+                                budget = {
+                                    projectTeam: response,
+                                    bonus: bonus,
+                                    budget: sortBudget,
+                                    projectValues: projectValues,
+                                    budgetTotal: budgetTotal
+                                };
+
+                                Project.update({_id: project._id}, {$set: {budget: budget}}, function (err, result) {
+                                    if (err) {
+                                        console.log(err);
+                                    }
+
+                                    //console.log('success');
+                                })
+                            });
+                        }
+                    });
+                });
+                console.log('success');
+            });
+
+        };
+    });
+
+
+    //if name was updated, need update related wTrack, or other models
     event.on('updateName', function (id, targetModel, searchField, fieldName, fieldValue, fieldInArray) {
         //fieldInArray(bool) added for update values in array. If true then fieldName contains .$.
         var sercObject = {};
@@ -93,8 +517,8 @@ var requestHandler = function (event, mainDb) {
             updateObject[fieldName] = fieldValue;
         }
 
-        targetModel.update(sercObject, updateObject, {multi: true}, function(err){
-            if(err){
+        targetModel.update(sercObject, updateObject, {multi: true}, function (err) {
+            if (err) {
                 logWriter.log('requestHandler_eventEmiter_updateName', err.message);
             }
         });
@@ -117,25 +541,25 @@ var requestHandler = function (event, mainDb) {
                     end -= 1;
                 }
                 objChange = {};
-                objFind = { "workflow": workflowStart };
-                objFind[sequenceField] = { $gte: start, $lte: end };
+                objFind = {"workflow": workflowStart};
+                objFind[sequenceField] = {$gte: start, $lte: end};
                 objChange[sequenceField] = inc;
-                query = model.update(objFind, { $inc: objChange }, { multi: true });
+                query = model.update(objFind, {$inc: objChange}, {multi: true});
                 query.exec(function (err, res) {
                     if (callback) callback((inc == -1) ? end : start);
                 });
             } else {
                 if (isCreate) {
-                    query = model.count({ "workflow": workflowStart }).exec(function (err, res) {
+                    query = model.count({"workflow": workflowStart}).exec(function (err, res) {
                         if (callback) callback(res);
                     });
                 }
                 if (isDelete) {
                     objChange = {};
-                    objFind = { "workflow": workflowStart };
-                    objFind[sequenceField] = { $gt: start };
+                    objFind = {"workflow": workflowStart};
+                    objFind[sequenceField] = {$gt: start};
                     objChange[sequenceField] = -1;
-                    query = model.update(objFind, { $inc: objChange }, { multi: true });
+                    query = model.update(objFind, {$inc: objChange}, {multi: true});
                     query.exec(function (err, res) {
                         if (callback) callback(res);
                     });
@@ -143,15 +567,15 @@ var requestHandler = function (event, mainDb) {
             }
         } else {//between workflow
             objChange = {};
-            objFind = { "workflow": workflowStart };
-            objFind[sequenceField] = { $gte: start };
+            objFind = {"workflow": workflowStart};
+            objFind[sequenceField] = {$gte: start};
             objChange[sequenceField] = -1;
-            query = model.update(objFind, { $inc: objChange }, { multi: true });
+            query = model.update(objFind, {$inc: objChange}, {multi: true});
             query.exec();
-            objFind = { "workflow": workflowEnd };
-            objFind[sequenceField] = { $gte: end };
+            objFind = {"workflow": workflowEnd};
+            objFind[sequenceField] = {$gte: end};
             objChange[sequenceField] = 1;
-            query = model.update(objFind, { $inc: objChange }, { multi: true });
+            query = model.update(objFind, {$inc: objChange}, {multi: true});
             query.exec(function (err, res) {
                 if (callback) callback(end);
             });
@@ -159,6 +583,15 @@ var requestHandler = function (event, mainDb) {
 
         }
     });
+    //Emit UI event for information user about some changes
+    event.on('recollectVacationDash', function () {
+        io.emit('recollectVacationDash');
+    });
+
+    event.on('recollectProjectInfo', function () {
+        io.emit('recollectProjectInfo');
+    });
+
 
     Array.prototype.objectID = function () {
 
@@ -306,13 +739,13 @@ var requestHandler = function (event, mainDb) {
 
     function updateCurrentUser(req, res, data) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
-           /* access.getEditWritAccess(req, req.session.uId, 7, function (access) {
-                if (access) {*/
-                    users.updateUser(req, req.session.uId, req.body, res, data);
-               /* } else {
-                    res.send(403);
-                }
-            });*/
+            /* access.getEditWritAccess(req, req.session.uId, 7, function (access) {
+             if (access) {*/
+            users.updateUser(req, req.session.uId, req.body, res, data);
+            /* } else {
+             res.send(403);
+             }
+             });*/
         } else {
             res.send(401);
         }
@@ -487,7 +920,7 @@ var requestHandler = function (event, mainDb) {
         }
         catch (Exception) {
             errorLog("requestHandler.js  " + Exception);
-            res.send(500, { error: Exception });
+            res.send(500, {error: Exception});
         }
     };
 
@@ -560,11 +993,11 @@ var requestHandler = function (event, mainDb) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getEditWritAccess(req, req.session.uId, 49, function (access) {
                 if (access) {
-                    models.get(req.session.lastDb, "Customers", customer.schema).findByIdAndUpdate(id, { $push: { attachments: { $each: file } } }, function (err, response) {
+                    models.get(req.session.lastDb, "Customers", customer.schema).findByIdAndUpdate(id, {$push: {attachments: {$each: file}}}, function (err, response) {
                         if (err) {
                             res.send(401);
                         } else {
-                            res.send(200, { success: 'Customers updated success', data: response });
+                            res.send(200, {success: 'Customers updated success', data: response});
                         }
                     });
                 } else {
@@ -610,16 +1043,16 @@ var requestHandler = function (event, mainDb) {
     function updateOnlySelectedFields(req, res, id, data) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getEditWritAccess(req, req.session.uId, 39, function (access) {
-				if (access) {
-					data.editedBy = {
-						user: req.session.uId,
-						date: new Date().toISOString()
-					};
-					project.updateOnlySelectedFields(req, id, data, res);
-				} else {
-					res.send(403);
-				}
-			});
+                if (access) {
+                    data.editedBy = {
+                        user: req.session.uId,
+                        date: new Date().toISOString()
+                    };
+                    project.updateOnlySelectedFields(req, id, data, res);
+                } else {
+                    res.send(403);
+                }
+            });
         } else {
             res.send(401);
         }
@@ -647,19 +1080,19 @@ var requestHandler = function (event, mainDb) {
             res.send(401);
         }
     };
-    function getProjectPMForDashboard(req, res) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, 39, function (access) {
-                if (access) {
-                    project.getProjectPMForDashboard(req, res);
-                } else {
-                    res.send(403);
-                }
-            });
-        } else {
-            res.send(401);
-        }
-    };
+    //function getProjectPMForDashboard(req, res) {
+    //    if (req.session && req.session.loggedIn && req.session.lastDb) {
+    //        access.getReadAccess(req, req.session.uId, 39, function (access) {
+    //            if (access) {
+    //                project.getProjectPMForDashboard(req, res);
+    //            } else {
+    //                res.send(403);
+    //            }
+    //        });
+    //    } else {
+    //        res.send(401);
+    //    }
+    //};
 
     function getProjectByEndDateForDashboard(req, res) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -749,7 +1182,7 @@ var requestHandler = function (event, mainDb) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getEditWritAccess(req, req.session.uId, 39, function (access) {
                 if (access) {
-                    project.update(req, id, { $push: { attachments: { $each: file } } }, res);
+                    project.update(req, id, {$push: {attachments: {$each: file}}}, res);
                 } else {
                     res.send(403);
                 }
@@ -897,7 +1330,7 @@ var requestHandler = function (event, mainDb) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getEditWritAccess(req, req.session.uId, 40, function (access) {
                 if (access) {
-                    project.addAtachments(req, id, { $push: { attachments: { $each: file } } }, res);
+                    project.addAtachments(req, id, {$push: {attachments: {$each: file}}}, res);
                 } else {
                     res.send(403);
                 }
@@ -928,12 +1361,12 @@ var requestHandler = function (event, mainDb) {
     function getWorkflow(req, res, data) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             /*access.getReadAccess(req, req.session.uId, 44, function (access) {
-                if (access) {*/
-                    workflow.get(req, data, res);
-               /* } else {
-                    res.send(403);
-                }
-            });*/
+             if (access) {*/
+            workflow.get(req, data, res);
+            /* } else {
+             res.send(403);
+             }
+             });*/
         } else {
             res.send(401);
         }
@@ -1121,12 +1554,12 @@ var requestHandler = function (event, mainDb) {
     function getCustomersImages(req, res) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             /*access.getReadAccess(req, req.session.uId, 43, function (access) {
-                if (access) {
-                    customer.getCustomersImages(req, res);
-                } else {
-                    res.send(403);
-                }
-            });*/
+             if (access) {
+             customer.getCustomersImages(req, res);
+             } else {
+             res.send(403);
+             }
+             });*/
             customer.getCustomersImages(req, res);
         } else {
             res.send(401);
@@ -1177,6 +1610,7 @@ var requestHandler = function (event, mainDb) {
             res.send(401);
         }
     }
+
     function getNationality(req, res) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             nationality.getForDd(req, res);
@@ -1198,7 +1632,7 @@ var requestHandler = function (event, mainDb) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getReadAccess(req, req.session.uId, 14, function (access) {
                 if (access) {
-                   // jobPosition.getFilter(req, res);
+                    // jobPosition.getFilter(req, res);
                     jobPosition.get(req, res);
                 } else {
                     res.send(403);
@@ -1262,6 +1696,7 @@ var requestHandler = function (event, mainDb) {
     function employeesTotalCollectionLength(req, res) {
         employee.getTotalCount(req, res);
     }
+
     function createEmployee(req, res, data) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getEditWritAccess(req, req.session.uId, 42, function (access) {
@@ -1361,6 +1796,7 @@ var requestHandler = function (event, mainDb) {
             res.send(401);
         }
     }
+
     function removeEmployees(req, res, id) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getDeleteAccess(req, req.session.uId, 42, function (access) {
@@ -1387,7 +1823,6 @@ var requestHandler = function (event, mainDb) {
             console.log("requestHandler.js  " + Exception);
         }
     };
-
 
 
     //---------------------Application--------------------------------
@@ -1506,6 +1941,7 @@ var requestHandler = function (event, mainDb) {
             res.send(401);
         }
     }
+
     function removeApplication(req, res, id) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getDeleteAccess(req, req.session.uId, 43, function (access) {
@@ -1629,8 +2065,8 @@ var requestHandler = function (event, mainDb) {
         }
 
     };
-    
-	//---------------------Deegree--------------------------------
+
+    //---------------------Deegree--------------------------------
     function createDegree(req, res, data) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             degrees.create(req, data.degree, res);
@@ -1662,6 +2098,7 @@ var requestHandler = function (event, mainDb) {
             res.send(401);
         }
     }
+
     //-----------------Campaigns--------------------------------------
     function getCampaigns(req, res) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -1749,6 +2186,7 @@ var requestHandler = function (event, mainDb) {
             res.send(401);
         }
     }
+
     //-------------------Opportunities---------------------------
 
     // Get  Leads or Opportunities for List
@@ -1892,7 +2330,7 @@ var requestHandler = function (event, mainDb) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getEditWritAccess(req, req.session.uId, 39, function (access) {
                 if (access) {
-                    opportunities.update(req, id, { $push: { attachments: { $each: file } } }, res);
+                    opportunities.update(req, id, {$push: {attachments: {$each: file}}}, res);
                 } else {
                     res.send(403);
                 }
@@ -1909,6 +2347,7 @@ var requestHandler = function (event, mainDb) {
             res.send(401);
         }
     }
+
     function getLanguages(req, res) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             languages.getForDd(req, res);
@@ -1921,9 +2360,11 @@ var requestHandler = function (event, mainDb) {
     function customerTotalCollectionLength(req, res) {
         customer.getTotalCount(req, res);
     }
+
     function projectsTotalCollectionLength(req, res) {
         project.getTotalCount(req, res);
     }
+
     return {
 
         mongoose: mongoose,
@@ -1967,7 +2408,7 @@ var requestHandler = function (event, mainDb) {
         updateProject: updateProject,
         uploadProjectsFiles: uploadProjectsFiles,
         removeProject: removeProject,
-        getProjectPMForDashboard: getProjectPMForDashboard,
+       // getProjectPMForDashboard: getProjectPMForDashboard,
         getProjectStatusCountForDashboard: getProjectStatusCountForDashboard,
         getProjectByEndDateForDashboard: getProjectByEndDateForDashboard,
         updateOnlySelectedFields: updateOnlySelectedFields,
@@ -2071,7 +2512,7 @@ var requestHandler = function (event, mainDb) {
         getSources: getSources,
         getLanguages: getLanguages,
         getJobType: getJobType,
-		getNationality: getNationality,
+        getNationality: getNationality,
         customerTotalCollectionLength: customerTotalCollectionLength
     }
 }

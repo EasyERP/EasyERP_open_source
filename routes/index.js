@@ -2,6 +2,7 @@
 require('pmx').init();
 
 module.exports = function (app, mainDb) {
+    'use strict';
 
     var events = require('events');
     var event = new events.EventEmitter();
@@ -34,18 +35,19 @@ module.exports = function (app, mainDb) {
     var departmentRouter = require('./department')(models);
     var revenueRouter = require('./revenue')(models);
     var wTrackRouter = require('./wTrack')(event, models);
-    var salaryRouter = require('./salary')(models);
+    var salaryRouter = require('./salary')(event, models);
     var opportunityRouter = require('./opportunity')(models);
     var taskRouter = require('./task')(models);
     var jobPositionRouter = require('./jobPosition')(models);
-    var holidayRouter = require('./holiday')(models);
+    var holidayRouter = require('./holiday')(event, models);
     var monthHoursRouter = require('./monthHours')(event, models);
-    var vacationRouter = require('./vacation')(models);
+    var vacationRouter = require('./vacation')(event, models);
     var bonusTypeRouter = require('./bonusType')(models);
     var dashboardRouter = require('./dashboard')(models);
     var filterRouter = require('./filter')(models);
     var productCategoriesRouter = require('./productCategories')(models, event);
     var customersRouter = require('./customers')(models, event);
+    var capacityRouter = require('./capacity')(models);
     var importFileRouter = require('./importFile')(models);
 
 
@@ -53,7 +55,7 @@ module.exports = function (app, mainDb) {
         res.sendfile('index.html');
     });
 
-    var requestHandler = require("../requestHandler.js")(event, mainDb);
+    var requestHandler = require("../requestHandler.js")(app, event, mainDb);
 
     app.get('/', function (req, res) {
         res.sendfile('index.html');
@@ -92,6 +94,7 @@ module.exports = function (app, mainDb) {
     app.use('/dashboard', dashboardRouter);
     app.use('/category', productCategoriesRouter);
     app.use('/customers', customersRouter);
+    app.use('/capacity', capacityRouter);
     app.get('/getDBS', function (req, res) {
         res.send(200, {dbsNames: dbsNames});
     });
@@ -759,9 +762,9 @@ module.exports = function (app, mainDb) {
 
     app.get('/getProjectsForDd', requestHandler.getProjectsForDd);
 
-    app.get('/getProjectPMForDashboard', function (req, res) {
-        requestHandler.getProjectPMForDashboard(req, res);
-    });
+    //app.get('/getProjectPMForDashboard', function (req, res) {
+    //    requestHandler.getProjectPMForDashboard(req, res);
+    //});
     app.get('/getProjectStatusCountForDashboard', function (req, res) {
         requestHandler.getProjectStatusCountForDashboard(req, res);
     });

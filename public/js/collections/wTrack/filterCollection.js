@@ -14,15 +14,15 @@
             initialize: function (options) {
                 this.startTime = new Date();
                 var that = this;
-                this.namberToShow = options.count;
+                this.namberToShow = options.count || 100;
 
                 if (options && options.viewType) {
-                    this.viewType = options.viewType;
-                    this.url += options.viewType;
+                    this.viewType = options.viewType || 'wTrack';
+                    this.url += this.viewType;
                 }
 
-                this.contentType = options.contentType;
-                this.count = options.count;
+                this.contentType = options.contentType || 'list';
+                this.count = options.count || 100;
                 this.page = options.page || 1;
                 this.filter = options.filter;
 

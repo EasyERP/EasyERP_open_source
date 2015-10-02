@@ -11,8 +11,14 @@ var Customers = function (models) {
 
     var CONSTANTS = require('../constants/mainConstants');
 
+    var exportHandlingHelper = require('../helpers/exporter/exportHandlingHelper');
+    var exportMap = require('../helpers/csvMap').Customers.aliases;
+    exportHandlingHelper.addExportFunctionsToHandler(this, function (req) {
+        return models.get(req.session.lastDb, 'Customer', CustomerSchema)
+    }, exportMap);
+
     this.getSuppliersForDD = function (req, res, next) {
-         /**
+        /**
          * __Type__ `GET`
          *
          * This __method__ allows get _Suppliers_
@@ -43,11 +49,11 @@ var Customers = function (models) {
         opportunity.aggregate([
             {
                 $group: {
-                    _id: null,
-                    name: {
+                    _id    : null,
+                    name   : {
                         $addToSet: {
                             name: '$name.first',
-                            _id: '$_id'
+                            _id : '$_id'
                         }
                     },
                     country: {
@@ -64,13 +70,13 @@ var Customers = function (models) {
                     case 'name':
                         result[0][key] = {
                             displayName: 'Name',
-                            values: _.sortBy(value, 'name')
+                            values     : _.sortBy(value, 'name')
                         };
                         break;
                     case  'country':
                         result[0][key] = {
                             displayName: 'Country',
-                            values: _.sortBy(value, function (num) {
+                            values     : _.sortBy(value, function (num) {
                                 return num
                             })
                         };
@@ -80,7 +86,10 @@ var Customers = function (models) {
 
             result[0]['services'] = {
                 displayName: 'Services',
-                values: [{displayName: 'Supplier', _id: 'isSupplier'}, {displayName: 'Customer', _id: 'isCustomer'}]
+                values     : [{displayName: 'Supplier', _id: 'isSupplier'}, {
+                    displayName: 'Customer',
+                    _id        : 'isCustomer'
+                }]
             };
 
             res.status(200).send(result);
@@ -187,7 +196,6 @@ var Customers = function (models) {
          * @instance
          */
 
-
         var Model = models.get(req.session.lastDb, 'Customers', CustomerSchema);
         var query = req.query;
         var type = query.type || 'Person';
@@ -262,7 +270,6 @@ var Customers = function (models) {
             }
         });
     };
-
 
 };
 

@@ -1,6 +1,6 @@
 
 var mongoose = require('mongoose');
-var Holiday = function (models) {
+var Holiday = function (models, event) {
     var access = require("../Modules/additions/access.js")(models);
     var HolidaySchema = mongoose.Schemas['Holiday'];
     var async = require('async');
@@ -88,6 +88,7 @@ var Holiday = function (models) {
                         }
 
                         res.status(200).send({success: 'updated'});
+                        event.emit('recollectVacationDash');
                     });
                 } else {
                     res.status(403).send();
@@ -122,6 +123,7 @@ var Holiday = function (models) {
                         }
 
                         res.status(200).send({success: 'updated'});
+                        event.emit('recollectVacationDash');
                     });
                 } else {
                     res.status(403).send();
@@ -144,6 +146,7 @@ var Holiday = function (models) {
                         return next(err);
                     }
                     res.status(200).send({success: holiday});
+                    event.emit('recollectVacationDash');
                 });
             } else {
                 res.status(403).send();
@@ -162,6 +165,7 @@ var Holiday = function (models) {
                         return next(err);
                     }
                     res.status(200).send({success: Holiday});
+                    event.emit('recollectVacationDash');
                 });
             } else {
                 res.status(403).send();

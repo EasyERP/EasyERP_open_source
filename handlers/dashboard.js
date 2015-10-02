@@ -1,5 +1,5 @@
-
 var mongoose = require('mongoose');
+
 var wTrack = function (models) {
         var access = require("../Modules/additions/access.js")(models);
         var _ = require('lodash');
@@ -24,8 +24,11 @@ var wTrack = function (models) {
         var EmployeeSchema = mongoose.Schemas['Employee'];
         var HolidaySchema = mongoose.Schemas['Holiday'];
         var VacationSchema = mongoose.Schemas['Vacation'];
+        var vacationCacheSchema = mongoose.Schemas['vacationCacheSchema'];
 
         this.composeForVacation = function (req, res, next) {
+            console.time('vacCache');
+
             var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
             var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
             var weeksArr;
@@ -37,10 +40,12 @@ var wTrack = function (models) {
             var currentStartWeek = currentWeek - 6;
             var currentYear = moment().weekYear();
 
+            var i;
+
             weeksArr = [];
             startDate = currentYear * 100 + currentStartWeek;
 
-            for (var i = 0; i <= 13; i++) {
+            for (i = 0; i <= 13; i++) {
                 if (currentStartWeek + i > 53) {
                     week = currentStartWeek + i - 53;
                     weeksArr.push({
@@ -51,7 +56,7 @@ var wTrack = function (models) {
                 } else {
                     week = currentStartWeek + i;
                     weeksArr.push({
-                        dateByWeek: (currentYear) * 100 + week,
+                        dateByWeek: currentYear * 100 + week,
                         week: week,
                         year: currentYear
                     });
@@ -59,7 +64,7 @@ var wTrack = function (models) {
             }
 
             weeksArr = _.sortBy(weeksArr, function (monthObject) {
-                return monthObject.dateByWeek
+                return monthObject.dateByWeek;
             });
 
             endDate = weeksArr[weeksArr.length - 1].dateByWeek;
@@ -70,6 +75,11 @@ var wTrack = function (models) {
                 var dashBoardResult;
                 var holidays;
                 var vacations;
+
+                //======== tempVariables; =========
+                var VacationCache;
+                var cache;
+                //======== tempVariables ==========
 
                 if (err) {
                     return next(err);
@@ -87,7 +97,7 @@ var wTrack = function (models) {
                             console.log(deps);
                             console.log('===========================================');
                         }
-                        if(department.department == null){
+                        if(department.department === null){
                             console.log('===================== department ======================');
                             console.log(department);
                             console.log('===========================================');
@@ -176,13 +186,25 @@ var wTrack = function (models) {
 
                         constForView.forEach(function (dep) {
                             employeesByDep.forEach(function (department, index) {
-                                if (dep === employeesByDep[index].department.departmentName) {
-                                    sortDepartments.push(employeesByDep[index]);
+                                if (employeesByDep[index].department){
+                                    if (dep === employeesByDep[index].department.departmentName) {
+                                        sortDepartments.push(employeesByDep[index]);
+                                    }
                                 }
                             });
                         });
 
                         res.status(200).send(sortDepartments);
+                        console.timeEnd('vacCache');
+
+                        VacationCache = models.get(req.session.lastDb, 'vacationCache', vacationCacheSchema);
+
+                        VacationCache.findByIdAndUpdate(1, {data: sortDepartments}, {upsert: true}, function(err, res){
+                            "use strict";
+                            if(err){
+                                console.error(err);
+                            }
+                        });
                     });
                 };
 
@@ -494,6 +516,19 @@ var wTrack = function (models) {
             };
 
             async.parallel([employeeByDepComposer, dashComposer, holidaysComposer, vacationComposer], resultMapper);
+        };
+
+        this.getFromCache = function (req, res, next) {
+            var VacationCache = models.get(req.session.lastDb, 'vacationCache', vacationCacheSchema);
+
+            VacationCache.findById(1, function(err, response){
+                "use strict";
+                if(err){
+                    return next(err);
+                }
+
+                res.status(200).send(response.data);
+            });
         };
 
         this.composeForHr = function (req, res, next) {

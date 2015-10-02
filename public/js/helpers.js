@@ -1,6 +1,3 @@
-/**
- * Created by Roman on 13.05.2015.
- */
 define([], function(){
     function minFromDates(arrayOfDates){
         arrayOfDates = _.map(arrayOfDates, function(date){
@@ -14,8 +11,13 @@ define([], function(){
         return currency.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1 ");
     }
 
+    function weekSplitter(date){
+       return date.replace(/(\d{4})/, "$1/");
+    }
+
     return {
         minFromDates: minFromDates,
-        currencySplitter: currencySplitter
+        currencySplitter: currencySplitter,
+        weekSplitter: weekSplitter
     };
 });

@@ -12,6 +12,12 @@ var Products = function (models) {
 
     var fs = require("fs");
 
+    var exportHandlingHelper = require('../helpers/exporter/exportHandlingHelper');
+    var exportMap = require('../helpers/csvMap').Products.aliases;
+    exportHandlingHelper.addExportFunctionsToHandler(this, function (req) {
+        return models.get(req.session.lastDb, 'Product', ProductSchema)
+    }, exportMap, 'Products');
+
     this.create = function (req, res, next) {
         var Product = models.get(req.session.lastDb, 'Product', ProductSchema);
         var body = req.body;
@@ -35,7 +41,7 @@ var Products = function (models) {
     function updateOnlySelectedFields(req, res, next, id, data) {
         var Product = models.get(req.session.lastDb, 'Product', ProductSchema);
 
-        Product.findByIdAndUpdate(id, {$set: data}, function (err, product) {
+        Product.findByIdAndUpdate(id, {$set: data},{new:true}, function (err, product) {
             if (err) {
                 next(err);
             } else {
@@ -372,7 +378,7 @@ var Products = function (models) {
                         var query;
                         optionsObject._id = {$in: productsIds};
 
-                        query = Product.find(optionsObject);
+                        query = Product.find(optionsObject).sort(sort);
                         query.exec(waterfallCallback);
                     };
 

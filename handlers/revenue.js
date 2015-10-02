@@ -991,12 +991,16 @@ var wTrack = function (models) {
 
                                 for (var l = groupedEmployee.root[m].projects.length; l--;) {
                                     if (groupedWtracks[j].root[k]._id.toString() === groupedEmployee.root[m].projects[l]._id.toString()) {
-                                        totalByBonus += (groupedEmployee.root[m].bonus.value * groupedWtracks[j].root[k].revenue / 100) / 100;
+                                        if (groupedEmployee.root[m].bonus){
+                                            totalByBonus += (groupedEmployee.root[m].bonus.value * groupedWtracks[j].root[k].revenue / 100) / 100;
+                                        }
                                     }
                                 }
 
                             }
-                            bonusObject[groupedEmployee.root[m].bonus.name] = totalByBonus;
+                            if (groupedEmployee.root[m].bonus) {
+                                bonusObject[groupedEmployee.root[m].bonus.name] = totalByBonus;
+                            }
                             bonusObject.total += totalByBonus;
                             bonusObject.total = parseFloat(bonusObject.total.toFixed(2));
                             /*employee[dateStr].push(bonusObject);*/
@@ -1305,12 +1309,16 @@ var wTrack = function (models) {
 
                                 for (var l = groupedEmployee.root[m].projects.length; l--;) {
                                     if (groupedWtracks[j].root[k]._id.toString() === groupedEmployee.root[m].projects[l]._id.toString()) {
-                                        totalByBonus += (groupedEmployee.root[m].bonus.value * groupedWtracks[j].root[k].revenue / 100) / 100;
+                                        if (groupedEmployee.root[m].bonus) {
+                                            totalByBonus += (groupedEmployee.root[m].bonus.value * groupedWtracks[j].root[k].revenue / 100) / 100;
+                                        }
                                     }
                                 }
 
                             }
-                            bonusObject[groupedEmployee.root[m].bonus.name] = totalByBonus;
+                            if (groupedEmployee.root[m].bonus) {
+                                bonusObject[groupedEmployee.root[m].bonus.name] = totalByBonus;
+                            }
                             bonusObject.total += totalByBonus;
                             bonusObject.total = parseFloat(bonusObject.total.toFixed(2));
                             /*employee[dateStr].push(bonusObject);*/
@@ -1619,12 +1627,16 @@ var wTrack = function (models) {
 
                                 for (var l = groupedEmployee.root[m].projects.length; l--;) {
                                     if (groupedWtracks[j].root[k]._id.toString() === groupedEmployee.root[m].projects[l]._id.toString()) {
-                                        totalByBonus += (groupedEmployee.root[m].bonus.value * groupedWtracks[j].root[k].revenue / 100) / 100;
+                                        if (groupedEmployee.root[m].bonus) {
+                                            totalByBonus += (groupedEmployee.root[m].bonus.value * groupedWtracks[j].root[k].revenue / 100) / 100;
+                                        }
                                     }
                                 }
 
                             }
-                            bonusObject[groupedEmployee.root[m].bonus.name] = totalByBonus;
+                            if (groupedEmployee.root[m].bonus) {
+                                bonusObject[groupedEmployee.root[m].bonus.name] = totalByBonus;
+                            }
                             bonusObject.total += totalByBonus;
                             bonusObject.total = parseFloat(bonusObject.total.toFixed(2));
                             /*employee[dateStr].push(bonusObject);*/

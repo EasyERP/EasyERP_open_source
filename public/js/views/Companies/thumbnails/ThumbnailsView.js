@@ -11,16 +11,16 @@
 
     function (common, editView, createView, AphabeticTemplate, ThumbnailsItemTemplate, dataService, filterView, custom) {
         var CompaniesThumbnalView = Backbone.View.extend({
-            el: '#content-holder',
-            countPerPage: 0,
-            template: _.template(ThumbnailsItemTemplate),
+            el                : '#content-holder',
+            countPerPage      : 0,
+            template          : _.template(ThumbnailsItemTemplate),
             defaultItemsNumber: null,
-            listLength: null,
-            filter: null,
-            newCollection: null,
-            page: null,
-            contentType: 'Companies',
-            viewType: 'thumbnails',
+            listLength        : null,
+            filter            : null,
+            newCollection     : null,
+            page              : null,
+            contentType       : 'Companies',
+            viewType          : 'thumbnails',
 
             initialize: function (options) {
                 this.asyncLoadImgs(this.collection);
@@ -44,10 +44,10 @@
             },
 
             events: {
-                "click #showMore": "showMore",
+                "click #showMore"          : "showMore",
                 "click .letter:not(.empty)": "alpabeticalRender",
-                "click .gotoForm": "gotoForm",
-                "click .saveFilterButton": "saveFilter",
+                "click .gotoForm"          : "gotoForm",
+                "click .saveFilterButton"  : "saveFilter",
                 "click .removeFilterButton": "removeFilter"
             },
 
@@ -61,7 +61,7 @@
             getTotalLength: function (currentNumber, filter, newCollection) {
                 dataService.getData('/totalCollectionLength/Companies', {
                     currentNumber: currentNumber,
-                    filter: this.filter,
+                    filter       : this.filter,
                     newCollection: this.newCollection
                 }, function (response, context) {
                     var showMore = context.$el.find('#showMoreDiv');
@@ -135,8 +135,8 @@
                     $("#startLetter").remove();
                     self.alphabeticArray = arr;
                     $("#searchContainer").after(_.template(AphabeticTemplate, {
-                        alphabeticArray: self.alphabeticArray,
-                        selectedLetter: (self.selectedLetter == "" ? "All" : self.selectedLetter),
+                        alphabeticArray   : self.alphabeticArray,
+                        selectedLetter    : (self.selectedLetter == "" ? "All" : self.selectedLetter),
                         allAlphabeticArray: self.allAlphabeticArray
                     }));
                     var currentLetter = (self.filter) ? self.filter.letter : null
@@ -153,25 +153,24 @@
                 filterObject = [
                     {
                         name: 'isCustomer',
-                        _id: 'isCustomer'
+                        _id : 'isCustomer'
                     },
                     {
                         name: 'isSupplier',
-                        _id: 'isSupplier'
+                        _id : 'isSupplier'
                     }
                 ];
 
+                self.filterView = new filterView({contentType: self.contentType});
 
-                self.filterview = new filterView({contentType: self.contentType});
-
-                self.filterview.bind('filter', function (filter) {
+                self.filterView.bind('filter', function (filter) {
                     self.showFilteredPage(filter, self)
                 });
-                self.filterview.bind('defaultFilter', function () {
+                self.filterView.bind('defaultFilter', function () {
                     self.showFilteredPage({}, self);
                 });
 
-                self.filterview.render();
+                self.filterView.render();
 
                 $(document).on("click", function (e) {
                     self.hideItemsNumber(e);
@@ -197,24 +196,25 @@
                 //    }
                 //}
 
-                if (Object.keys(filter).length === 0){
+                if (Object.keys(filter).length === 0) {
                     this.filter = {};
                 }
 
                 context.$el.find('.thumbnailwithavatar').remove();
 
                 context.changeLocationHash(null, context.defaultItemsNumber, filter);
-                context.collection.showMoreAlphabet({ count: context.defaultItemsNumber, page: 1, filter: filter });
+                context.collection.showMoreAlphabet({count: context.defaultItemsNumber, page: 1, filter: filter});
                 context.getTotalLength(this.defaultItemsNumber, filter);
             },
-            hideItemsNumber: function (e) {
+            hideItemsNumber : function (e) {
                 var el = e.target;
 
                 this.$el.find(".allNumberPerPage, .newSelectList").hide();
                 if (!el.closest('.search-view')) {
                     $('.search-content').removeClass('fa-caret-up');
                     this.$el.find('.search-options').addClass('hidden');
-                };
+                }
+                ;
 
                 //this.$el.find(".allNumberPerPage, .newSelectList").hide();
                 //if (!el.closest('.search-view')) {
@@ -285,8 +285,8 @@
                     $("#startLetter").remove();
                     self.alphabeticArray = arr;
                     $("#searchContainer").after(_.template(AphabeticTemplate, {
-                        alphabeticArray: self.alphabeticArray,
-                        selectedLetter: (self.selectedLetter == "" ? "All" : self.selectedLetter),
+                        alphabeticArray   : self.alphabeticArray,
+                        selectedLetter    : (self.selectedLetter == "" ? "All" : self.selectedLetter),
                         allAlphabeticArray: self.allAlphabeticArray
                     }));
                     var currentLetter = (self.filter) ? self.filter.letter : null
@@ -299,6 +299,16 @@
                         });
                     }
                 });
+            },
+
+            exportToCsv: function () {
+                //todo change after routes refactoring
+                window.location = '/Customers/exportToCsv?type=Company'
+            },
+
+            exportToXlsx: function () {
+                //todo change after routes refactoring
+                window.location = '/Customers/exportToXlsx?type=Company'
             }
         });
         return CompaniesThumbnalView;

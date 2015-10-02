@@ -18,7 +18,10 @@ module.exports = function (models) {
     }
 
     router.get('/', checkAuth, handler.getAll);
+    router.get('/exportToXlsx',handler.exportToXlsx);
+    router.get('/exportToCsv',handler.exportToCsv);
     router.get('/:id', checkAuth, handler.getById);
+
     //router.post('/', handler.create);
 
     return router;

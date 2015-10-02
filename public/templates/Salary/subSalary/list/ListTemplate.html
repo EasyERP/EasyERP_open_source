@@ -4,44 +4,44 @@
     <td class="notForm"><input type="checkbox" value="<%=employee._id%>" class="checkbox" /></td>
     <td class="editable" data-content="employee"><%=employee.employee ? employee.employee.name : ''%></td>
     <td><%=salaryModel.dataKey%></td>
-    <td data-type="input" class="editable autoCalc calc money" data-content="salary"><%=employee.baseSalary%></td>
-    <td data-type="input" class="editable autoCalc cash calc money" data-content="onCash"><%=employee.calc.onCash%></td>
+    <td data-type="input" class="editable autoCalc calc money" data-content="salary" data-cash="<%=employee.baseSalary%>"><%=currencySplitter(employee.baseSalary.toString())%></td>
+    <td data-type="input" class="editable autoCalc cash calc money" data-content="onCash" data-cash="<%=employee.calc.onCash%>"><%=currencySplitter(employee.calc.onCash.toString())%></td>
 
-    <td data-type="input" class="editable autoCalc cash paid
+    <td data-type="input" data-content="onCash" data-cash="<%=employee.paid.onCash%>" class="editable autoCalc cash paid
     <%if (employee.paid.onCash) {%>
-        money" data-content="onCash"><%=employee.paid.onCash%></td>
+        money"><%=currencySplitter(employee.paid.onCash.toString())%></td>
     <%} else {%>
-        " data-content="onCash"></td>
+        "></td>
     <%}%>
 
-    <td data-content="onCash" class="diff
+    <td data-content="onCash" data-cash="<%=employee.diff.onCash%>" class="diff
     <%if (employee.diff.onCash < 0) {%>
-        negativeMoney"><%=Number(employee.diff.onCash * (-1)).toLocaleString('en')%></td>
+        negativeMoney"><%=currencySplitter((employee.diff.onCash * (-1)).toString())%></td>
     <%} else {%>
-        money"><%=Number(employee.diff.onCash).toLocaleString('en')%></td>
+        money"><%=currencySplitter(employee.diff.onCash.toString())%></td>
     <%}%>
 
-    <td data-type="input" class="editable autoCalc card calc money" data-content="onCard"><%=employee.calc.onCard%></td>
+    <td data-type="input" class="editable autoCalc card calc money" data-content="onCard"><%=currencySplitter(employee.calc.onCard.toString())%></td>
 
-    <td data-type="input" class="editable autoCalc card paid
+    <td data-content="onCard" data-cash="<%=employee.paid.onCard%>" data-type="input" class="editable autoCalc card paid
     <%if (employee.paid.onCard) {%>
-        money" data-content="onCard"><%=employee.paid.onCard%></td>
+        money"><%=currencySplitter(employee.paid.onCard.toString())%></td>
     <%} else {%>
-        " data-content="onCard"></td>
+        "></td>
     <%}%>
 
-    <td data-content="onCard" class="diff
+    <td data-content="onCard" data-cash="<%=employee.diff.onCard%>" class="diff
     <%if (employee.diff.onCard < 0) {%>
-        negativeMoney"><%=Number(employee.diff.onCard * (-1)).toLocaleString('en')%></td>
+        negativeMoney"><%=currencySplitter((employee.diff.onCard * (-1)).toString())%></td>
     <%} else {%>
-        money"><%=Number(employee.diff.onCard).toLocaleString('en')%></td>
+        money"><%=currencySplitter(employee.diff.onCard.toString())%></td>
     <%}%>
 
-    <td data-content="total" class="diff
+    <td data-content="total" data-cash="<%=employee.diff.total%>" class="diff
     <%if (employee.diff.total < 0) {%>
-        negativeMoney"><%=Number(employee.diff.total * (-1)).toLocaleString('en')%></td>
+        negativeMoney"><%=currencySplitter((employee.diff.total * (-1)).toString())%></td>
     <%} else {%>
-        money"><%=Number(employee.diff.total).toLocaleString('en')%></td>
+        money"><%=currencySplitter(employee.diff.total.toString())%></td>
     <%}%>
 </tr>
 <% }) %>

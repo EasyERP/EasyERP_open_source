@@ -1,0 +1,12 @@
+<% departments.forEach(function(department, index){ %>
+<tr data-id="<%=department ? department.id : ''%>" data-name="<%=department ? department.name : ''%>" class="departmentRow">
+    <td class="notForm "><input style="display: block;" type="checkbox" class="departmentCB" /></td>
+    <td colspan="2" style="text-align: left">
+        <%=department ? department.name : ''%>
+        <div style="width: auto; float: right;">
+            <a href="javascript;" class="createBtn icon add left" title="Create">5</a>
+        </div>
+    </td>
+    <td colspan="<%=daysCount + 1%>"></td>
+</tr>
+<% }) %>

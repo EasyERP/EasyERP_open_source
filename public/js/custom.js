@@ -5,6 +5,7 @@ define([
     'dataService',
     'moment'
 ], function (dateformat, common, CONTENT_TYPES, dataService, moment) {
+    'use strict';
 
     var runApplication = function (success) {
         if (!Backbone.history.fragment) {
@@ -92,6 +93,7 @@ define([
                     case CONTENT_TYPES.BONUSTYPE:
                     case CONTENT_TYPES.HOLIDAY:
                     case CONTENT_TYPES.VACATION:
+                    case CONTENT_TYPES.CAPACITY:
                         App.currentViewType = 'list';
                         break;
                     case CONTENT_TYPES.APPLICATIONS:
@@ -135,6 +137,7 @@ define([
                     case CONTENT_TYPES.BONUSTYPE:
                     case CONTENT_TYPES.HOLIDAY:
                     case CONTENT_TYPES.VACATION:
+                    case CONTENT_TYPES.CAPACITY:
                         App.currentViewType = 'list';
                         break;
                     case CONTENT_TYPES.APPLICATIONS:
@@ -214,6 +217,7 @@ define([
 
     function retriveFromCash(key) {
         App.cashedData = App.cashedData || {};
+
         return App.cashedData[key];
     }
 

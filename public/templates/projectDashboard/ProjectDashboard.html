@@ -1,0 +1,19 @@
+<% collection.forEach(function(project, index){ %>
+<tr>
+    <td><%=startNumber + index + 1 %></td>
+    <td><a href='#easyErp/Employees/form/<%=project.projectmanager._id%>'><%=project.projectmanager.name%></a></td>
+    <td><a href='#easyErp/Projects/form/<%=project._id%>'><%=project.projectName%></a></td>
+    <td><%=(project.budget && project.budget.budgetTotal && project.budget.budgetTotal.revenueSum) ? currencySplitter(project.budget.budgetTotal.revenueSum.toFixed()) : '&nbsp'%></td>
+    <td><%=(project.budget && project.budget.budgetTotal && project.budget.budgetTotal.costSum) ? currencySplitter(project.budget.budgetTotal.costSum.toFixed()) : '&nbsp'%></td>
+    <td><%=(project.budget && project.budget.budgetTotal && project.budget.budgetTotal.profitSum) ? currencySplitter(project.budget.budgetTotal.profitSum.toFixed()) : '&nbsp'%></td>
+    <td><%=(project.budget && project.budget.budgetTotal && project.budget.budgetTotal.rateSum) ? currencySplitter(project.budget.budgetTotal.rateSum.byDev ? project.budget.budgetTotal.rateSum.byDev.toFixed(2) : '') : '&nbsp'%></td>
+    <td><%=(project.budget && project.budget.budgetTotal && project.budget.budgetTotal.rateSum) ? currencySplitter(project.budget.budgetTotal.rateSum.byQA ? project.budget.budgetTotal.rateSum.byQA.toFixed(2) : '') : '&nbsp'%></td>
+    <td><%=(project.budget && project.budget.budgetTotal && project.budget.budgetTotal.hoursSum) ? currencySplitter(project.budget.budgetTotal.hoursSum.toFixed()) : '&nbsp'%></td>
+    <td class="procent"><%=(project.budget && project.budget.projectValues) ? (project.budget.projectValues.markUp ? project.budget.projectValues.markUp.toFixed()  : '&nbsp') : '&nbsp'%></td>
+    <td class="procent"><%=(project.budget && project.budget.projectValues) ? (project.budget.projectValues.radio ? project.budget.projectValues.radio.toFixed() : '&nbsp') : '&nbsp'%></td>
+    <td><%=(project.budget && project.budget.budgetTotal && project.budget.budgetTotal.minDate) ? weekSplitter(project.budget.budgetTotal.minDate.toFixed()) : '&nbsp'%></td>
+    <td><%=(project.budget && project.budget.budgetTotal && project.budget.budgetTotal.maxDate) ? weekSplitter(project.budget.budgetTotal.maxDate.toFixed()) : '&nbsp'%></td>
+
+</tr>
+<% }) %>
+

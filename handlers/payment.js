@@ -717,6 +717,26 @@ var Payment = function (models) {
 
     };
 
+    this.getForProject = function(req, res, next){
+        var ids = req.query.data;
+        var Payment = models.get(req.session.lastDb, 'wTrackPayment', wTrackPaymentSchema);
+        var moduleId = req.headers.mId || returnModuleId(req);
+
+        access.getDeleteAccess(req, req.session.uId, moduleId, function (access) {
+            if (access) {
+                Payment.find({_id : {$in: ids}}, function (err, result) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    res.status(200).send(result);
+                });
+            } else {
+                res.send(403);
+            }
+        });
+    }
+
 };
 
 module.exports = Payment;

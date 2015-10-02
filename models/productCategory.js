@@ -5,7 +5,7 @@
     var CategorySchema = mongoose.Schema({
         name: { type: String, default: 'All' },
         fullName: { type: String, default: 'All' },
-        parentCategory: { type: ObjectId, ref: 'ProductCategory', default: null },
+        parent: { type: ObjectId, ref: 'ProductCategory', default: null },
         users: [{ type: ObjectId, ref: 'Users', default: null }],
         createdBy: {
             user: { type: ObjectId, ref: 'Users', default: null },

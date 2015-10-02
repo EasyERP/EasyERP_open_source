@@ -6,7 +6,7 @@
         <%='&nbsp'%>
     </span>
       <%} else {%>
-    <span><%= byMonthData[key] ? byMonthData[key]['total'] : '&nbsp'%></span>
+    <span><%= byMonthData[key] ? currencySplitter(byMonthData[key]['total'].toFixed()) : '&nbsp'%></span>
       <% } %>
      <% bonus.forEach(function(oneBonus){ %>
       <% if (byMonthData._id === oneBonus._id) { %>
@@ -16,7 +16,7 @@
          <% if (byMonthData[key] && byMonthData[key][bon] === 0) { %>
            <span class="divCell forBonus" ><%='&nbsp'%></span>
          <% } else { %>
-           <span class="divCell forBonus" ><%= byMonthData[key] ? byMonthData[key][bon].toFixed(2) : '&nbsp'%></span>
+           <span class="divCell forBonus" ><%= byMonthData[key] ? currencySplitter(byMonthData[key][bon].toFixed()) : '&nbsp'%></span>
          <% } %>
         </div>
       <% }) %>
@@ -31,7 +31,7 @@
       </span>
     <% } else { %>
       <span>
-        <%= total ? total : '&nbsp'%>
+        <%= total ? currencySplitter(total.toFixed()) : '&nbsp'%>
       </span>
     <% } %>
 </div>

@@ -15,7 +15,9 @@ var app;
 require('./config/' + mainAppConfig.NODE_ENV);
 process.env.NODE_ENV = mainAppConfig.NODE_ENV;
 mainDb.on('error', console.error.bind(console, 'connection error:'));
-mainDb.once('open', function callback () {
+mainDb.once('open', function callback() {
+    'use strict';
+
     var port = process.env.PORT || 8089;
     mainDb.dbsObject = dbsObject;
 
@@ -32,6 +34,7 @@ mainDb.once('open', function callback () {
     }, { collection: 'easyErpDBS' });
 
     var main = mainDb.model('easyErpDBS', mainDBSchema);
+
     main.find().exec(function (err, result) {
         if (!err) {
             result.forEach(function (_db, index) {
@@ -58,7 +61,6 @@ mainDb.once('open', function callback () {
     mainDb.mongoose = mongoose;
 
     app = require('./app')(mainDb, dbsNames);
-
 
     app.listen(port, function () {
         console.log('==============================================================');

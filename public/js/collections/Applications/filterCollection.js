@@ -60,7 +60,7 @@
                 });
 
             },
-            parse: true,
+
             parse: function (response) {
                 return response.data;
             }

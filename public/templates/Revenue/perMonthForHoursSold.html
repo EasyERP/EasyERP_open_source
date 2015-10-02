@@ -7,7 +7,7 @@
 <div class="divCell">
     <% if (perMonth[monthObject.year*100 + monthObject.month]){%>
     <span>
-        <%= perMonth[monthObject.year*100 + monthObject.month] ? perMonth[monthObject.year*100 + monthObject.month] : '&nbsp'%>
+        <%= perMonth[monthObject.year*100 + monthObject.month] ? currencySplitter(perMonth[monthObject.year*100 + monthObject.month].toFixed()) : '&nbsp'%>
     </span>
     <%} else {%>
     <span><%= '&nbsp'%></span>
@@ -17,7 +17,7 @@
 <div class="divCell">
 
       <span>
-        <%= globalTotal ? globalTotal : '&nbsp'%>
+        <%= globalTotal ? currencySplitter(globalTotal.toFixed()) : '&nbsp'%>
       </span>
 
 </div>

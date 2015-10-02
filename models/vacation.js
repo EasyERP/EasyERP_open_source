@@ -17,11 +17,8 @@ module.exports = (function () {
             name: String
         },
         vacations: {},
-        //startDate: Date,
-        //endDate: Date,
         month: Number,
         year: Number,
-        //vacationType: String,
         vacArray: Array,
         monthTotal: Number
 

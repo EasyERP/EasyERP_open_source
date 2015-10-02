@@ -8,7 +8,6 @@ var Employee = function (event, models) {
     var fs = require('fs');
     var moment = require('../public/js/libs/moment/moment');
 
-
     var CONSTANTS = require('../constants/mainConstants');
 
     function getTotalCount(req, response) {
@@ -20,7 +19,6 @@ var Employee = function (event, models) {
         var filtrElement = {};
         var key;
 
-
         for (var i in req.query) {
             data[i] = req.query[i];
         }
@@ -28,22 +26,22 @@ var Employee = function (event, models) {
 
         var contentType = req.params.contentType;
         var optionsObject = {};
-        if (data.filter && data.filter.letter)
+        if (data.filter && data.filter.letter) {
             optionsObject['name.last'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
-
+        }
 
         if (data.filter && data.filter.workflow) {
             data.filter.workflow = data.filter.workflow.map(function (item) {
                 return item === "null" ? null : item;
             });
-            optionsObject['workflow'] = { $in: data.filter.workflow.objectID() };
+            optionsObject['workflow'] = {$in: data.filter.workflow.objectID()};
         } else if (data && !data.newCollection) {
-            optionsObject['workflow'] = { $in: [] };
+            optionsObject['workflow'] = {$in: []};
         }
 
-
         switch (contentType) {
-            case ('Employees'): {
+            case ('Employees'):
+            {
 
                 for (var filterName in data.filter) {
                     condition = data.filter[filterName]['value'];
@@ -71,7 +69,8 @@ var Employee = function (event, models) {
                             resArray.push(filtrElement);
                             break;
                     }
-                };
+                }
+                ;
 
                 resArray.push({'isEmployee': true});
 
@@ -85,7 +84,8 @@ var Employee = function (event, models) {
                 }
             }
                 break;
-            case ('Applications'): {
+            case ('Applications'):
+            {
                 for (var filterName in data.filter) {
                     condition = data.filter[filterName]['value'];
                     key = data.filter[filterName]['key'];
@@ -112,7 +112,8 @@ var Employee = function (event, models) {
                             resArray.push(filtrElement);
                             break;
                     }
-                };
+                }
+                ;
 
                 resArray.push({'isEmployee': false});
 
@@ -127,7 +128,6 @@ var Employee = function (event, models) {
             }
                 break;
         }
-
 
         models.get(req.session.lastDb, "Department", department).aggregate(
             {
@@ -153,25 +153,25 @@ var Employee = function (event, models) {
                                                 $or: [
                                                     {
                                                         $and: [
-                                                            { whoCanRW: 'group' },
-                                                            { 'groups.users': objectId(req.session.uId) }
+                                                            {whoCanRW: 'group'},
+                                                            {'groups.users': objectId(req.session.uId)}
                                                         ]
                                                     },
                                                     {
                                                         $and: [
-                                                            { whoCanRW: 'group' },
-                                                            { 'groups.group': { $in: arrOfObjectId } }
+                                                            {whoCanRW: 'group'},
+                                                            {'groups.group': {$in: arrOfObjectId}}
                                                         ]
                                                     }
                                                 ]
                                             },
                                             {
                                                 $and: [
-                                                    { whoCanRW: 'owner' },
-                                                    { 'groups.owner': objectId(req.session.uId) }
+                                                    {whoCanRW: 'owner'},
+                                                    {'groups.owner': objectId(req.session.uId)}
                                                 ]
                                             },
-                                            { whoCanRW: "everyOne" }
+                                            {whoCanRW: "everyOne"}
                                         ]
                                     }
                                 ]
@@ -193,7 +193,7 @@ var Employee = function (event, models) {
                             } else {
                                 console.log(err);
                                 logWriter.log("Employees.js getTotalCount " + err);
-                                response.send(500, { error: 'Server Eroor' });
+                                response.send(500, {error: 'Server Eroor'});
                             }
                         }
                     );
@@ -201,7 +201,7 @@ var Employee = function (event, models) {
                 } else {
                     console.log(err);
                     logWriter.log("Employees.js getTotalCount " + err);
-                    response.send(500, { error: 'Server Eroor' });
+                    response.send(500, {error: 'Server Eroor'});
                 }
             });
     };
@@ -233,7 +233,7 @@ var Employee = function (event, models) {
         try {
             if (!data) {
                 logWriter.log('Employees.create Incorrect Incoming Data');
-                res.send(400, { error: 'Employees.create Incorrect Incoming Data' });
+                res.send(400, {error: 'Employees.create Incorrect Incoming Data'});
                 return;
             } else {
                 savetoDb(data);
@@ -421,23 +421,25 @@ var Employee = function (event, models) {
                         if (err) {
                             console.log(err);
                             logWriter.log("Employees.js create savetoBd _employee.save " + err);
-                            res.send(500, { error: 'Employees.save BD error' });
+                            res.send(500, {error: 'Employees.save BD error'});
                         } else {
-                            res.send(201, { success: 'A new Employees create success', result: result, id: result._id });
-                            if (result.isEmployee)
+                            res.send(201, {success: 'A new Employees create success', result: result, id: result._id});
+                            if (result.isEmployee) {
                                 event.emit('recalculate', req);
+                            }
                         }
                     });
                 });
                 event.emit('dropHoursCashes', req);
+                event.emit('recollectVacationDash');
             }
         }
         catch (exception) {
             console.log(exception);
             logWriter.log("Employees.js  " + exception);
-            res.send(500, { error: 'Employees.save  error' });
+            res.send(500, {error: 'Employees.save  error'});
         }
-    };//End create 
+    };//End create
 
     function get(req, response) {
         var res = {};
@@ -445,12 +447,12 @@ var Employee = function (event, models) {
         var query = models.get(req.session.lastDb, "Employees", employeeSchema).find();
         query.where('isEmployee', true);
         query.select('_id name').
-            sort({ 'name.first': 1 });
+            sort({'name.first': 1});
         query.exec(function (err, result) {
             if (err) {
                 console.log(err);
                 logWriter.log('Employees.js get Employee.find ' + err);
-                response.send(500, { error: "Can't find JobPosition" });
+                response.send(500, {error: "Can't find JobPosition"});
             } else {
                 res['data'] = result;
                 response.send(res);
@@ -488,25 +490,25 @@ var Employee = function (event, models) {
                                                 $or: [
                                                     {
                                                         $and: [
-                                                            { whoCanRW: 'group' },
-                                                            { 'groups.users': objectId(req.session.uId) }
+                                                            {whoCanRW: 'group'},
+                                                            {'groups.users': objectId(req.session.uId)}
                                                         ]
                                                     },
                                                     {
                                                         $and: [
-                                                            { whoCanRW: 'group' },
-                                                            { 'groups.group': { $in: arrOfObjectId } }
+                                                            {whoCanRW: 'group'},
+                                                            {'groups.group': {$in: arrOfObjectId}}
                                                         ]
                                                     }
                                                 ]
                                             },
                                             {
                                                 $and: [
-                                                    { whoCanRW: 'owner' },
-                                                    { 'groups.owner': objectId(req.session.uId) }
+                                                    {whoCanRW: 'owner'},
+                                                    {'groups.owner': objectId(req.session.uId)}
                                                 ]
                                             },
-                                            { whoCanRW: "everyOne" }
+                                            {whoCanRW: "everyOne"}
                                         ]
                                     }
                                 ]
@@ -514,14 +516,14 @@ var Employee = function (event, models) {
                         },
                         {
                             $project: {
-                                _id: 1,
+                                _id     : 1,
                                 workflow: 1
                             }
                         },
                         {
                             $group: {
-                                _id: "$workflow",
-                                count: { $sum: 1 }
+                                _id  : "$workflow",
+                                count: {$sum: 1}
                             }
                         },
                         function (err, responseOpportunities) {
@@ -546,12 +548,12 @@ var Employee = function (event, models) {
     }
 
     function getEmployeesAlphabet(req, response) {
-        var query = models.get(req.session.lastDb, "Employees", employeeSchema).aggregate([{ $match: { isEmployee: true } }, { $project: { later: { $substr: ["$name.last", 0, 1] } } }, { $group: { _id: "$later" } }]);
+        var query = models.get(req.session.lastDb, "Employees", employeeSchema).aggregate([{$match: {isEmployee: true}}, {$project: {later: {$substr: ["$name.last", 0, 1]}}}, {$group: {_id: "$later"}}]);
         query.exec(function (err, result) {
             if (err) {
                 console.log(err);
                 logWriter.log("employees.js get employees alphabet " + err);
-                response.send(500, { error: "Can't find employees" });
+                response.send(500, {error: "Can't find employees"});
             } else {
                 var res = {};
                 res['data'] = result;
@@ -583,7 +585,8 @@ var Employee = function (event, models) {
         res['data'] = [];
 
         switch (contentType) {
-            case ('Employees'): {
+            case ('Employees'):
+            {
 
                 for (var filterName in data.filter) {
                     condition = data.filter[filterName]['value'];
@@ -611,7 +614,8 @@ var Employee = function (event, models) {
                             resArray.push(filtrElement);
                             break;
                     }
-                };
+                }
+                ;
 
                 resArray.push({'isEmployee': true});
 
@@ -625,7 +629,8 @@ var Employee = function (event, models) {
                 }
             }
                 break;
-            case ('Applications'): {
+            case ('Applications'):
+            {
                 for (var filterName in data.filter) {
                     condition = data.filter[filterName]['value'];
                     key = data.filter[filterName]['key'];
@@ -652,7 +657,8 @@ var Employee = function (event, models) {
                             resArray.push(filtrElement);
                             break;
                     }
-                };
+                }
+                ;
 
                 resArray.push({'isEmployee': false});
 
@@ -693,25 +699,25 @@ var Employee = function (event, models) {
                                                 $or: [
                                                     {
                                                         $and: [
-                                                            { whoCanRW: 'group' },
-                                                            { 'groups.users': objectId(req.session.uId) }
+                                                            {whoCanRW: 'group'},
+                                                            {'groups.users': objectId(req.session.uId)}
                                                         ]
                                                     },
                                                     {
                                                         $and: [
-                                                            { whoCanRW: 'group' },
-                                                            { 'groups.group': { $in: arrOfObjectId } }
+                                                            {whoCanRW: 'group'},
+                                                            {'groups.group': {$in: arrOfObjectId}}
                                                         ]
                                                     }
                                                 ]
                                             },
                                             {
                                                 $and: [
-                                                    { whoCanRW: 'owner' },
-                                                    { 'groups.owner': objectId(req.session.uId) }
+                                                    {whoCanRW: 'owner'},
+                                                    {'groups.owner': objectId(req.session.uId)}
                                                 ]
                                             },
-                                            { whoCanRW: "everyOne" }
+                                            {whoCanRW: "everyOne"}
                                         ]
                                     }
                                 ]
@@ -728,11 +734,12 @@ var Employee = function (event, models) {
                                 switch (contentType) {
                                     case ('Employees'):
                                         switch (viewType) {
-                                            case ('list'): {
+                                            case ('list'):
+                                            {
                                                 if (data.sort) {
                                                     query.sort(data.sort);
                                                 } else {
-                                                    query.sort({ "editedBy.date": -1 });
+                                                    query.sort({"editedBy.date": -1});
                                                 }
 
                                                 query.select('_id name createdBy editedBy department jobPosition manager dateBirth skype workEmail workPhones jobType').
@@ -740,7 +747,8 @@ var Employee = function (event, models) {
                                                     populate('editedBy.user', 'login');
                                             }
                                                 break;
-                                            case ('thumbnails'): {
+                                            case ('thumbnails'):
+                                            {
                                                 query.select('_id name dateBirth age jobPosition relatedUser workPhones.mobile').
                                                     populate('relatedUser', 'login')
                                             }
@@ -750,7 +758,8 @@ var Employee = function (event, models) {
                                         break;
                                     case ('Applications'):
                                         switch (viewType) {
-                                            case ('list'): {
+                                            case ('list'):
+                                            {
                                                 if (data && data.filter && data.filter.workflow) {
                                                     data.filter.workflow = data.filter.workflow.map(function (item) {
                                                         return item === "null" ? null : item;
@@ -763,7 +772,7 @@ var Employee = function (event, models) {
                                                 if (data.sort) {
                                                     query.sort(data.sort);
                                                 } else {
-                                                    query.sort({ "editedBy.date": -1 });
+                                                    query.sort({"editedBy.date": -1});
                                                 }
                                                 query.select('_id name createdBy editedBy jobPosition manager workEmail workPhones creationDate workflow personalEmail department jobType sequence').
                                                     populate('createdBy.user', 'login').
@@ -771,7 +780,8 @@ var Employee = function (event, models) {
                                                     populate('workflow', 'name status');
                                             }
                                                 break;
-                                            case ('thumbnails'): {
+                                            case ('thumbnails'):
+                                            {
 
                                             }
                                                 break;
@@ -811,12 +821,12 @@ var Employee = function (event, models) {
         var query = models.get(req.session.lastDb, 'Employees', employeeSchema).find();
         query.where('isEmployee', true);
         query.select('_id name ');
-        query.sort({ 'name.first': 1 });
+        query.sort({'name.first': 1});
         query.exec(function (err, result) {
             if (err) {
                 console.log(err);
                 logWriter.log('Employees.js get Employee.find' + err);
-                response.send(500, { error: "Can't find Employee" });
+                response.send(500, {error: "Can't find Employee"});
             } else {
                 res['data'] = result;
                 response.send(res);
@@ -827,15 +837,15 @@ var Employee = function (event, models) {
     function getForDdByRelatedUser(req, uId, response) {
         var res = {};
         res['data'] = [];
-        var query = models.get(req.session.lastDb, "Employees", employeeSchema).find({ relatedUser: uId });
+        var query = models.get(req.session.lastDb, "Employees", employeeSchema).find({relatedUser: uId});
         query.where('isEmployee', true);
         query.select('_id name ');
-        query.sort({ 'name.first': 1 });
+        query.sort({'name.first': 1});
         query.exec(function (err, result) {
             if (err) {
                 console.log(err);
                 logWriter.log('Employees.js get Employee.find' + err);
-                response.send(500, { error: "Can't find Employee" });
+                response.send(500, {error: "Can't find Employee"});
             } else {
                 res['data'] = result;
                 response.send(res);
@@ -853,12 +863,12 @@ var Employee = function (event, models) {
             populate('createdBy.user').
             populate('editedBy.user');
 
-        query.sort({ 'name.first': 1 });
+        query.sort({'name.first': 1});
         query.exec(function (err, applications) {
             if (err) {
                 console.log(err);
                 logWriter.log('Employees.js get Application.find' + err);
-                response.send(500, { error: "Can't find Application" });
+                response.send(500, {error: "Can't find Application"});
             } else {
                 res['data'] = applications;
                 response.send(res);
@@ -892,7 +902,7 @@ var Employee = function (event, models) {
                     filterObj['$and'].push({isEmployee: false});
                     filterObj['$and'].push({workflow: objectId(data.workflowId)});
                     /*filterObj['$and'].push({$or: []});
-                    or = filterObj['$and'][2]['$or'];*/
+                     or = filterObj['$and'][2]['$or'];*/
 
                     if (data && data.filter) {
                         if (data.filter.condition === 'or') {
@@ -924,25 +934,25 @@ var Employee = function (event, models) {
                                                 $or: [
                                                     {
                                                         $and: [
-                                                            { whoCanRW: 'group' },
-                                                            { 'groups.users': objectId(req.session.uId) }
+                                                            {whoCanRW: 'group'},
+                                                            {'groups.users': objectId(req.session.uId)}
                                                         ]
                                                     },
                                                     {
                                                         $and: [
-                                                            { whoCanRW: 'group' },
-                                                            { 'groups.group': { $in: arrOfObjectId } }
+                                                            {whoCanRW: 'group'},
+                                                            {'groups.group': {$in: arrOfObjectId}}
                                                         ]
                                                     }
                                                 ]
                                             },
                                             {
                                                 $and: [
-                                                    { whoCanRW: 'owner' },
-                                                    { 'groups.owner': objectId(req.session.uId) }
+                                                    {whoCanRW: 'owner'},
+                                                    {'groups.owner': objectId(req.session.uId)}
                                                 ]
                                             },
-                                            { whoCanRW: "everyOne" }
+                                            {whoCanRW: "everyOne"}
                                         ]
                                     }
                                 ]
@@ -957,9 +967,9 @@ var Employee = function (event, models) {
                             if (!err) {
                                 models.get(req.session.lastDb, "Employees", employeeSchema).
                                     where('_id').in(responseOpportunities).
-                                    select("_id name proposedSalary jobPosition nextAction workflow editedBy.date sequence").
+                                    select("_id name proposedSalary jobPosition nextAction workflow editedBy.date sequence fired").
                                     populate('workflow', '_id').
-                                    sort({ 'sequence': -1 }).
+                                    sort({lastFire: -1, 'sequence': -1}).
                                     limit(req.session.kanbanSettings.applications.countPerPage).
                                     exec(function (err, result) {
                                         if (!err) {
@@ -971,12 +981,12 @@ var Employee = function (event, models) {
                                             response.send(res);
                                         } else {
                                             logWriter.log("Employees.js getApplicationsForKanban opportunitie.find" + err);
-                                            response.send(500, { error: "Can't find Applications" });
+                                            response.send(500, {error: "Can't find Applications"});
                                         }
                                     });
                             } else {
                                 logWriter.log("Employees.js getApplicationsForKanban task.find " + err);
-                                response.send(500, { error: "Can't group Applications" });
+                                response.send(500, {error: "Can't group Applications"});
                             }
                         });
                 } else {
@@ -1004,7 +1014,7 @@ var Employee = function (event, models) {
         query.exec(function (err, findedEmployee) {
             if (err) {
                 logWriter.log("Employees.js getById employee.find " + err);
-                response.send(500, { error: "Can't find Employee" });
+                response.send(500, {error: "Can't find Employee"});
             } else {
                 response.send(findedEmployee);
             }
@@ -1012,7 +1022,7 @@ var Employee = function (event, models) {
 
     }
 
-    function updateRefs (result, dbName, _id) {
+    function updateRefs(result, dbName, _id) {
         var EmployeeSchema;
         var EmployeeModel;
         var ProjectSchema;
@@ -1052,7 +1062,6 @@ var Employee = function (event, models) {
             VacationSchema = mongoose.Schemas['Vacation'];
             Vacation = models.get(dbName, 'Vacation', VacationSchema);
 
-
             fullName = result.name.last ? (result.name.first + ' ' + result.name.last) : result.name.first;
 
             event.emit('updateName', _id, EmployeeModel, 'manager._id', 'manager.name', fullName);
@@ -1069,7 +1078,7 @@ var Employee = function (event, models) {
     function updateOnlySelectedFields(req, _id, data, res) {
         var dbName = req.session.lastDb;
         var UsersSchema = mongoose.Schemas['User'];
-        var UsersModel = models.get(dbName, 'Users',  UsersSchema);
+        var UsersModel = models.get(dbName, 'Users', UsersSchema);
 
         var fileName = data.fileName;
         var dataObj = {};
@@ -1087,7 +1096,7 @@ var Employee = function (event, models) {
                 updateObject.lastFire = moment(date).year() * 100 + moment(date).isoWeek();
                 updateObject['contractEnd'] = {
                     reason: data[i],
-                    date: date
+                    date  : date
                 };
             } else {
                 updateObject[i] = data[i];
@@ -1099,7 +1108,7 @@ var Employee = function (event, models) {
                 event.emit('updateSequence', models.get(req.session.lastDb, 'Employees', employeeSchema), "sequence", data.sequenceStart, data.sequence, data.workflowStart, data.workflowStart, false, true, function (sequence) {
                     event.emit('updateSequence', models.get(req.session.lastDb, 'Employees', employeeSchema), "sequence", data.sequenceStart, data.sequence, data.workflow, data.workflow, true, false, function (sequence) {
                         data.sequence = sequence;
-                        if (data.workflow == data.workflowStart){
+                        if (data.workflow == data.workflowStart) {
                             data.sequence -= 1;
                         }
 
@@ -1109,19 +1118,19 @@ var Employee = function (event, models) {
                             dataObj = {'hire': new Date()};
                         }
 
-                        if (dataObj.hire || dataObj.fire){
-                            query = { $set: updateObject, $push: dataObj };
+                        if (dataObj.hire || dataObj.fire) {
+                            query = {$set: updateObject, $push: dataObj};
                         } else {
-                            query = { $set: updateObject};
+                            query = {$set: updateObject};
                         }
 
                         models.get(req.session.lastDb, 'Employees', employeeSchema).findByIdAndUpdate(_id, query, function (err, result) {
                             if (!err) {
-                                res.send(200, { success: 'Employees updated', sequence: result.sequence });
+                                res.send(200, {success: 'Employees updated', sequence: result.sequence});
 
                                 updateRefs(result, dbName, _id);
                             } else {
-                                res.send(500, { error: "Can't update Employees" });
+                                res.send(500, {error: "Can't update Employees"});
                             }
 
                         });
@@ -1132,13 +1141,13 @@ var Employee = function (event, models) {
                     delete data.sequenceStart;
                     delete data.workflowStart;
                     data.sequence = sequence;
-                    models.get(req.session.lastDb, 'Employees', employeeSchema).findByIdAndUpdate(_id, { $set: data }, function (err, result) {
+                    models.get(req.session.lastDb, 'Employees', employeeSchema).findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
                         if (!err) {
-                            res.send(200, { success: 'Employees updated' });
+                            res.send(200, {success: 'Employees updated'});
 
                             updateRefs(result, dbName, _id);
                         } else {
-                            res.send(500, { error: "Can't update Employees" });
+                            res.send(500, {error: "Can't update Employees"});
                         }
 
                     });
@@ -1154,21 +1163,23 @@ var Employee = function (event, models) {
 
             } else if (data.hired) {
                 dataObj = {'hire': new Date()};
-            } else if (data.department) {
-                dataObj = {'transferred': {
-                    department: depForTransfer,
-                    date: new Date()
-                }};
+            } else if (depForTransfer) {
+                dataObj = {
+                    'transferred': {
+                        department: depForTransfer,
+                        date      : new Date()
+                    }
+                };
             }
 
-            if (dataObj.hire || dataObj.fire ){
-                query = { $set: updateObject, $push: dataObj };
-            } else if (data.department){
+            if (dataObj.hire || dataObj.fire) {
+                query = {$set: updateObject, $push: dataObj};
+            } else if (depForTransfer) {
                 delete updateObject.transferred;
-                query = { $set: updateObject, $push: dataObj };
-            } else  if (data.relatedUser){
-                query = { $set: updateObject};
-                event.emit('updateName', data.relatedUser, UsersModel, '_id', 'RelatedEmployee',  _id);
+                query = {$set: updateObject, $push: dataObj};
+            } else if (data.relatedUser) {
+                query = {$set: updateObject};
+                event.emit('updateName', data.relatedUser, UsersModel, '_id', 'RelatedEmployee', _id);
             } else if (data.currentUser) {
                 event.emit('updateName', data.currentUser, UsersModel, '_id', 'RelatedEmployee', null);
                 delete data.currentUser;
@@ -1213,18 +1224,21 @@ var Employee = function (event, models) {
                             console.log(err);
                             fs.readdir(dir, function (err, files) {
                                 if (files && files.length === 0) {
-                                    fs.rmdir(dir, function () { });
+                                    fs.rmdir(dir, function () {
+                                    });
                                 }
                             });
                         });
 
                     }
                     event.emit('dropHoursCashes', req);
-                    res.send(200, { success: 'Employees updated', result: result });
+                    event.emit('recollectVacationDash');
+
+                    res.send(200, {success: 'Employees updated', result: result});
 
                     updateRefs(result, dbName, _id);
-                }  else {
-                    res.send(500, { error: "Can't update Employees" });
+                } else {
+                    res.send(500, {error: "Can't update Employees"});
                 }
 
             });
@@ -1232,14 +1246,16 @@ var Employee = function (event, models) {
     }
 
     function addAtach(req, _id, files, res) {//to be deleted
-        models.get(req.session.lastDb, "Employees", employeeSchema).findByIdAndUpdate(_id, { $push: { attachments: { $each: files } } }, { upsert: true }, function (err, result) {
+        models.get(req.session.lastDb, "Employees", employeeSchema).findByIdAndUpdate(_id, {$push: {attachments: {$each: files}}}, {upsert: true,
+            new: true
+        }, function (err, result) {
             try {
                 if (err) {
                     console.log(err);
                     logWriter.log("Employees.js update employee.update " + err);
-                    res.send(500, { error: "Can't update Employees" });
+                    res.send(500, {error: "Can't update Employees"});
                 } else {
-                    res.send(200, { success: 'Employees updated success', data: result });
+                    res.send(200, {success: 'Employees updated success', data: result});
                     if (data.recalculate) {
                         event.emit('recalculate', req);
                     }
@@ -1256,7 +1272,7 @@ var Employee = function (event, models) {
             if (err) {
                 console.log(err);
                 logWriter.log("Employees.js remove employee.remove " + err);
-                res.send(500, { error: "Can't remove Employees" });
+                res.send(500, {error: "Can't remove Employees"});
             } else {
                 if (result && !result.isEmployee) {
                     event.emit('updateSequence', models.get(req.session.lastDb, "Employees", employeeSchema), "sequence", result.sequence, 0, result.workflow, result.workflow, false, true, function () {
@@ -1265,41 +1281,45 @@ var Employee = function (event, models) {
                 }
                 event.emit('recalculate', req);
                 event.emit('dropHoursCashes', req);
-                res.send(200, { success: 'Employees removed' });
+                event.emit('recollectVacationDash', req);
+
+                res.send(200, {success: 'Employees removed'});
             }
         });
     }// end remove
 
     function getEmployeesImages(req, data, res) {
-        var query = models.get(req.session.lastDb, "Employees", employeeSchema).find({ isEmployee: true });
+        var query = models.get(req.session.lastDb, "Employees", employeeSchema).find({isEmployee: true});
         query.where('_id').in(data.ids).
             select('_id imageSrc name').
             exec(function (error, response) {
                 if (error) {
                     console.log(error);
                     logWriter.log("Employees.js remove employee.remove " + error);
-                    res.send(500, { error: "Can't find Employees Imgs" });
-                } else res.send(200, { data: response });
+                    res.send(500, {error: "Can't find Employees Imgs"});
+                } else {
+                    res.send(200, {data: response});
+                }
             });
 
     };
 
     return {
-        getTotalCount: getTotalCount,
-        create: create,
-        get: get,
+        getTotalCount                 : getTotalCount,
+        create                        : create,
+        get                           : get,
         getCollectionLengthByWorkflows: getCollectionLengthByWorkflows,
-        getFilter: getFilter,
-        getEmployeesAlphabet: getEmployeesAlphabet,
-        getForDd: getForDd,
-        getForDdByRelatedUser: getForDdByRelatedUser,
-        addAtach: addAtach,
-        updateOnlySelectedFields: updateOnlySelectedFields,
-        remove: remove,
-        getApplications: getApplications,
-        getApplicationsForKanban: getApplicationsForKanban,
-        getEmployeesImages: getEmployeesImages,
-        getById: getById
+        getFilter                     : getFilter,
+        getEmployeesAlphabet          : getEmployeesAlphabet,
+        getForDd                      : getForDd,
+        getForDdByRelatedUser         : getForDdByRelatedUser,
+        addAtach                      : addAtach,
+        updateOnlySelectedFields      : updateOnlySelectedFields,
+        remove                        : remove,
+        getApplications               : getApplications,
+        getApplicationsForKanban      : getApplicationsForKanban,
+        getEmployeesImages            : getEmployeesImages,
+        getById                       : getById
     };
 };
 

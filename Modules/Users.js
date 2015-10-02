@@ -141,6 +141,7 @@ var Users = function (mainDb, models) {
             result.send(500, {error: 'User.create save error'});
         }
     }
+
     /**
      * __Type__ `GET`
      *
@@ -361,12 +362,12 @@ var Users = function (mainDb, models) {
                 var savedFilters = models.get(req.session.lastDb, 'savedFilters', savedFiltersSchema);
                 var filterModel = new savedFilters();
 
-
                 if (data.changePass) {
                     query = {$set: data};
 
-                    updateThisUser(_id, query);
-                } else if (data.deleteId) {
+                    return updateThisUser(_id, query);
+                }
+                if (data.deleteId) {
                     savedFilters.findByIdAndRemove(deleteId, function (err, result) {
                         if (err) {
                             console.log(err);
@@ -378,7 +379,10 @@ var Users = function (mainDb, models) {
                             updateThisUser(_id, query);
                         }
                     });
-                } else if (data.filter && data.key) {
+                    return;
+                }
+
+                if (data.filter && data.key) {
 
                     filterModel.contentView = key;
                     filterModel.filter = data.filter;
@@ -386,22 +390,24 @@ var Users = function (mainDb, models) {
                     filterModel.save(function (err, result) {
                         if (err) {
                             return console.log('error save filter');
-                        };
+                        }
+                        ;
 
-                        if (result){
+                        if (result) {
                             id = result.get('_id');
                             query = {$push: {'savedFilters': id}};
 
                             updateThisUser(_id, query);
                         }
                     });
-                } else {
-                    query = {$set: data};
-                    updateThisUser(_id, query);
+                    return;
                 }
 
+                query = {$set: data};
+                updateThisUser(_id, query);
+
                 function updateThisUser(_id, query) {
-                    models.get(req.session.lastDb, 'Users', userSchema).findByIdAndUpdate(_id, query, function (err, result) {
+                    models.get(req.session.lastDb, 'Users', userSchema).findByIdAndUpdate(_id, query, {new: true}, function (err, result) {
                         //if (err) {
                         //    logWriter.log("User.js update profile.update" + err);
                         //    res.send(500, {error: 'User.update DB error'});
@@ -428,7 +434,9 @@ var Users = function (mainDb, models) {
 
             }
         }
-        catch (exception) {
+
+        catch
+            (exception) {
             logWriter.log("Profile.js update " + exception);
             res.send(500, {error: 'User.update BD error'});
         }
@@ -438,7 +446,7 @@ var Users = function (mainDb, models) {
         if (req.session.uId == _id) {
             res.send(400, {error: 'You cannot delete current user'});
         }
-        else
+        else {
             models.get(req.session.lastDb, 'Users', userSchema).remove({_id: _id}, function (err, result) {
                 if (err) {
                     logWriter.log("Users.js remove user.remove " + err);
@@ -448,6 +456,7 @@ var Users = function (mainDb, models) {
                     res.send(200, {success: 'User remove success'});
                 }
             });
+        }
     }
 
     return {
