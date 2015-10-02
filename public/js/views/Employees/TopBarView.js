@@ -16,7 +16,8 @@ define([
             	"click #top-bar-deleteBtn": "deleteEvent",
             	"click #top-bar-discardBtn": "discardEvent",
                 "click #top-bar-editBtn": "editEvent",
-                "click #top-bar-createBtn": "createEvent"
+                "click #top-bar-createBtn": "createEvent",
+                "click #top-bar-importBtn": "importEvent"
             },
             
             changeContentViewType: function (e) {
@@ -55,6 +56,10 @@ define([
             createEvent: function (event) {
                 event.preventDefault();
                 this.trigger('createEvent');
+            },
+            importEvent: function (event) {
+                event.preventDefault();
+                this.trigger('importEvent');
             },
             deleteEvent: function(event)
             {
