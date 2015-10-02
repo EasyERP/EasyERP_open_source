@@ -215,15 +215,18 @@ define([
                     calcTD = tr.find('.calc[data-content="onCard"]');
                 }
 
-                paid = paidTD.attr('data-cash');
-                calc = calcTD.attr('data-cash');
-
                 if (tdForUpdate) {
+
+                    paid = paidTD.attr('data-cash');
+                    calc = calcTD.attr('data-cash');
 
                     paid = paidTD.text() ? parseInt(paid) : input.val();
                     calc = calcTD.text() ? parseInt(calc) : input.val();
 
                     value = paid - calc;
+
+                    paidTD.attr('data-cash', paid);
+                    calcTD.attr('data-cash', calc);
 
                     tdForUpdate.text(this.checkMoneyTd(tdForUpdate, value));
 
@@ -242,6 +245,7 @@ define([
 
                     this.whatToSet['diff'] = diffObj;
                 }
+
 
                 this.getTotal(td);
             },
