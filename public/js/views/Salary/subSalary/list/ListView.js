@@ -424,7 +424,18 @@ function (listTemplate, cancelEdit, createView, listItemView, subSalaryTotalTemp
             } else {
                 this.model.set({"employeesArray": this.editCollection.toJSON()}, {remove: false});
             }
+
+            this.bindingEventsToEditedCollection(this);
         },
+        bindingEventsToEditedCollection: function (context) {
+            if (context.editCollection) {
+                context.editCollection.unbind();
+            }
+            context.editCollection = new salaryEditableCollection(context.employeesStartCollection.toJSON());
+            context.editCollection.on('saved', context.savedNewModel, context);
+            context.editCollection.on('updated', context.updatedOptions, context);
+        },
+
 
         deleterender: function() {
             this.resetCollection();
@@ -597,9 +608,11 @@ function (listTemplate, cancelEdit, createView, listItemView, subSalaryTotalTemp
                     if (checkLength == this.editCollection.length) {
                         $('#check_all' + this.id).prop('checked', true);
                     }
+                    else {
+                        $('#check_all' + this.id).prop('checked', false);
+                    }
                 } else {
                     $('#top-bar-deleteBtn' + this.id).hide();
-                    $('#check_all' + this.id).prop('checked', false);
                 }
             }
         },

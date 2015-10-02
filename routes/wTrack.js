@@ -13,6 +13,7 @@ module.exports = function (event, models) {
     router.get('/totalCollectionLength', handler.totalCollectionLength);
     router.get('/:viewType', handler.getByViewType);
     router.post('/', handler.create);
+    router.post('/generateWTrack', handler.generateWTrack);
     router.delete('/:id', handler.remove);
     router.patch('/', handler.putchBulk);
     router.patch('/:id', handler.putchModel);

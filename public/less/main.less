@@ -3235,13 +3235,12 @@ dl {
   position: absolute;
   top: 3px;
   right: 3px;
-  color: #8786b7;
-  line-height: 8px;
+  color: @mainText-color-selected;
+  line-height: 11px;
   width: 12px;
   height: 12px;
   padding-top: 1px;
   text-align: center;
-  //
   cursor: pointer;
  //text-shadow: 0 1px 1px white;
 }
@@ -3333,7 +3332,7 @@ dl {
   text-align: center;
   text-decoration: none;
   //.gradient(#d7d7d7);
-  .border-radius(3px);
+  //.border-radius(3px);
  // -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(255, 255, 255, 0.8) inset;
  // -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(255, 255, 255, 0.8) inset;
  // box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(255, 255, 255, 0.8) inset;
@@ -3353,14 +3352,16 @@ button {
 
 button.red, a.red {
   .btn;
-  .gradient(#c02c2c);
+  background-color: @btn-main-color;
   -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(155, 155, 155, 0.4) inset;
   -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(155, 155, 155, 0.4) inset;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(155, 155, 155, 0.4) inset;
-  color: white;
+  color: @fontColor-2;
+  line-height: 20px;
 
   &:hover {
-    .gradient(#c63939);
+    background-color: @tilte-color;
+    color: #fff;
   }
 }
 
@@ -4359,10 +4360,9 @@ ul.chart-tabs {
     margin-left: 5px;
     float: left;
     padding: 5px 10px;
-    color: #939395;
-    //
+    color: @fontColor-2;
     background-color: #f4f4f4;
-    border: @thin-border #dfdfdf;
+    border: @thin-border @border-color-main;
     cursor: pointer;
 
     &:first-child {
@@ -4489,7 +4489,7 @@ h3.dashboard {
         //
         padding-left: 3px;
         line-height: 25px;
-        border-bottom: 2px solid @border-color-main;
+        //border-bottom: 2px solid @border-color-main;
         height: 25px;
         color: @th-text-color;
         &.center {
@@ -4500,7 +4500,7 @@ h3.dashboard {
         height: 25px;
         padding-left: 3px;
         line-height: 25px;
-        border-bottom: 2px solid @border-color-main;
+        //border-bottom: 2px solid @border-color-main;
         @width: 10px;
 
         .green {
@@ -4669,8 +4669,8 @@ h3.dashboard {
   }
   &.closed, &.done, &.unDone {
     display: block;
-    background-color: @tilte-color;
-    color: @mainText-color;
+    //background-color: @tilte-color;
+    color: @notifikation-notify-color;
     text-align: center;
     .border-radius(4px);
     padding: 0 5px;
@@ -4681,7 +4681,7 @@ h3.dashboard {
     background-color: inherit;
   }
   &.unDone {
-    background-color: @yellow-lights-color;
+    //background-color: @yellow-lights-color;
   }
 
 }
@@ -5043,6 +5043,32 @@ input::-webkit-inner-spin-button {
   margin-bottom: 10px;
   padding-bottom: 10px;
   border-bottom: @thin-border #DDD;
+
+  .thirdPartBlock {
+    width: 33.33%;
+
+    .person-info {
+      overflow: hidden;
+
+      dd {
+        line-height: 1;
+      }
+
+      .miniAvatar {
+        float: left;
+        width: 20%;
+        .avatar{
+          width: 50px;
+          height: 50px;
+        }
+      }
+      .miniAvatarInfo {
+        float: left;
+        width: 80%;
+
+      }
+    }
+  }
 }
 
 .list2 .width20 {
@@ -6475,7 +6501,7 @@ textarea#editInput {
   tbody {
     tr:not(.subRow):hover {
       td:not(.selectedType) {
-        background-color: #333333;
+        //background-color: #333333;
         color: #ffffff;
       }
     }
@@ -6525,7 +6551,7 @@ textarea#editInput {
   padding-top: 5px;
   #forFilterName {
     height: 22px;
-    width: 84%;
+    width: 83%;
     border-bottom-left-radius: 5px;
     border-top-left-radius: 5px;
     color: @filter-text-color;
@@ -6545,6 +6571,8 @@ textarea#editInput {
     float: right;
     border: 1px solid @border-color-main;
     height: 21px;
+    background-color: transparent;
+    color: @mainText-color;
   }
   .line {
     height: 1px;

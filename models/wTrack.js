@@ -15,16 +15,16 @@ module.exports = (function () {
             },
             projectName: String,
             projectmanager: {
-                _id: { type: ObjectId, ref: 'Project', default: null },
+                _id: {type: ObjectId, ref: 'Project', default: null},
                 name: String
             },
             workflow: {
-                _id: { type: ObjectId, ref: 'workflows', default: null },
+                _id: {type: ObjectId, ref: 'workflows', default: null},
                 name: String,
                 status: String
             },
             customer: {
-                _id: { type: ObjectId, ref: 'Customers', default: null },
+                _id: {type: ObjectId, ref: 'Customers', default: null},
                 name: String
             },
             bonus: [{
@@ -70,7 +70,7 @@ module.exports = (function () {
         isPaid: {type: Boolean, default: false},
         invoice: {type: ObjectId, ref: 'Invoice', default: null},
         info: {
-            productType: { type: String, ref: 'productTypes', default: 'wTrack' },
+            productType: {type: String, ref: 'productTypes', default: 'wTrack'},
             salePrice: {type: Number, default: 100, set: setPrice}
         },
         whoCanRW: {type: String, enum: ['owner', 'group', 'everyOne'], default: 'everyOne'},
@@ -90,8 +90,8 @@ module.exports = (function () {
     }, {collection: 'wTrack'});
 
     /*function getPrice(num) {
-        return (num / 100).toFixed(2);
-    }*/
+     return (num / 100).toFixed(2);
+     }*/
 
     function setPrice(num) {
         return num * 100;

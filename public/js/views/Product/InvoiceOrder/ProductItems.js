@@ -33,6 +33,7 @@ define([
 
             this.responseObj = {};
             this.taxesRate = 0.15;
+
             if (options && options.editable) {
                 this.editable = options.editable;
             };

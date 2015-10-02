@@ -59,12 +59,14 @@ function (Validation, common) {
                     },
                     budgetTotal: {
                         revenueSum: 0,
+                        revenueByQa: 0,
                         profitSum: 0,
                         costSum: 0,
                         rateSum: {
                             byDev: 0,
                             byQA: 0
                         },
+                        hoursByQa: 0,
                         hoursSum: 0,
                         maxDate: 0,
                         minDate: 0

@@ -1,8 +1,11 @@
 <div class="forInfoWrap">
     <div class="half-block left">
         <table class="list tableProjects">
-            <caption>Project Team</caption>
             <thead>
+            <tr>
+                <th class="forCaption">Project Team</th>
+                <th class="forCaption"><a href="javascript:;" class="icon add left" title="Create Item"  id="createItem">+</a></th>
+            </tr>
             <tr>
                 <th>Resource</th>
                 <th>Department</th>
@@ -40,8 +43,10 @@
     <div class="half-block right">
 
         <table class="list tableProjects">
-            <caption class="anotherColor">Budget & Resources</caption>
             <thead>
+            <tr>
+                <th class="forCaption">Budget & Resources</th>
+            </tr>
             <tr>
                 <th>Revenue</th>
                 <th>Profit</th>
@@ -54,13 +59,13 @@
             <tbody id="budget">
             <% budget.forEach(function(element){ %>
             <%if (element) {%>
-               <tr>
+            <tr>
                 <td><%=currencySplitter(element.revenue.toFixed())%></td>
                 <td><%=currencySplitter(element.profit.toFixed())%></td>
                 <td><%=currencySplitter(element.cost.toFixed())%></td>
                 <td><%=currencySplitter((element.revenue / element.hours).toFixed(2))%></td>
                 <td><%=currencySplitter(element.hours.toFixed())%></td>
-               </tr>
+            </tr>
             <% } %>
             <% })%>
             <% if (budgetTotal) {%>
@@ -82,15 +87,17 @@
             <% } %>
             </tbody>
         </table>
-        </div>
+    </div>
 </div>
 
 <div class="forInfoWrap">
     <div class="half-block right">
 
         <table class="list tableProjects">
-            <caption class="anotherColor">Project Values</caption>
             <thead>
+            <tr>
+                <th class="forCaption">Project Values</th>
+            </tr>
             <tr>
                 <th>Revenue</th>
                 <th>Profit</th>
@@ -100,12 +107,12 @@
             </thead>
             <tbody id="project">
             <%if (projectValues) {%>
-             <tr>
-                  <td><%=currencySplitter(projectValues.revenue.toFixed())%></td>
-                  <td><%=currencySplitter(projectValues.profit.toFixed())%></td>
-                  <td class="procent"><%=projectValues.markUp.toFixed() %></td>
-                  <td class="procent"><%=projectValues.radio.toFixed()%></td>
-              </tr>
+            <tr>
+                <td><%=currencySplitter(projectValues.revenue.toFixed())%></td>
+                <td><%=currencySplitter(projectValues.profit.toFixed())%></td>
+                <td class="procent"><%=projectValues.markUp.toFixed() %></td>
+                <td class="procent"><%=projectValues.radio.toFixed()%></td>
+            </tr>
             <% } %>
             </tbody>
         </table>
@@ -114,8 +121,10 @@
     </div>
     <div class="half-block left">
         <table class="list tableProjects">
-            <caption>Bonus for Sales Managers</caption>
             <thead>
+            <tr>
+                <th class="forCaption">Bonus for Sales Managers</th>
+            </tr>
             <tr>
                 <th>Resource</th>
                 <th>Percentage</th>

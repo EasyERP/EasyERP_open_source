@@ -3,7 +3,7 @@
  */
 
 define([
-    'text!templates/Bonus/invoiceTemplate.html',
+    'text!templates/Projects/projectInfo/invoiceTemplate.html',
     'common'
 
 ], function (invoiceTemplate, common) {

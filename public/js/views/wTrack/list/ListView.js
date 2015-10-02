@@ -295,11 +295,10 @@ define([
                         this.changedModels[editedElementRowId] = {};
                     }
 
-
                     this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
-                    if (editedElementContent === 'month'){
-                        async.parallel([funcForWeek], function(err, result){
-                            if (err){
+                    if (editedElementContent === 'month') {
+                        async.parallel([funcForWeek], function (err, result) {
+                            if (err) {
                                 console.log(err);
                             }
 
@@ -316,7 +315,7 @@ define([
                     }
 
                 }
-                function funcForWeek(cb){
+                function funcForWeek(cb) {
                     var weeks;
                     var month = editedElementValue;
                     var year = editedElement.closest('tr').find('[data-content="year"]').text();
@@ -896,7 +895,7 @@ define([
 
                 this.selectedProjectId = _.uniq(this.selectedProjectId);
 
-                if (this.selectedProjectId.length !== 1) {
+                if (this.selectedProjectId.length !== 1 || totalCheckLength > 1) {
                     this.genInvoiceEl.hide();
                 } else {
                     this.genInvoiceEl.show();

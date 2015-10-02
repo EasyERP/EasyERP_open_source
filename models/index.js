@@ -47,6 +47,7 @@ module.exports = (function () {
     require('./monthHours.js');
     require('./holiday.js');
     require('./vacation.js');
+    require('./vacationDashCache.js');
     require('./bonusType.js');
     require('./savedFilters.js');
     require('./hoursCash.js');
