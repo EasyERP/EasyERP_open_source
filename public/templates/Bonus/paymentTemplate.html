@@ -1,7 +1,6 @@
 <div>
     <table class="list payment-list">
         <col width="2%">
-        <col width="2%">
         <col width="12%">
         <col width="12%">
         <col width="12%">
@@ -13,7 +12,6 @@
 
         <thead>
         <tr>
-            <th><input type="checkbox" id="check_all"/></th>
             <th>N</th>
             <th>Assigned</th>
             <th>Company</th>
@@ -30,7 +28,6 @@
 
         <% paymentCollection.forEach(function(payment, index) {%>
         <tr data-id="<%=payment._id%>">
-            <td class = "notForm"><input type="checkbox" value="<%=payment._id%>" class="checkbox" /></td>
             <td><%=startNumber + index + 1%></td>
             <td><%=(payment.invoice && payment.invoice.assigned) ? payment.invoice.assigned.name: ''%></td>
             <td><%=payment.supplier.fullName%></td>

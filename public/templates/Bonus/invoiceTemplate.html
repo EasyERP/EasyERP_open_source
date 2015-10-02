@@ -2,7 +2,6 @@
 <div>
     <table class="list task-list">
         <col width="2%">
-        <col width="2%">
         <col width="10%">
         <col width="10%">
         <col width="10%">
@@ -15,7 +14,6 @@
 
         <thead>
         <tr>
-            <th><input type="checkbox" id="check_all"/></th>
             <th>N</th>
             <th>Customer</th>
             <th>Invoice Date</th>
@@ -33,7 +31,6 @@
 
 <% collection.forEach(function(invoice, index){ %>
 <tr data-id="<%=invoice._id%>">
-    <td class = "notForm"><input type="checkbox" value="<%=invoice._id%>" class="checkbox" /></td>
     <td><%=startNumber + index + 1%></td>
     <td><%=(invoice.supplier && invoice.supplier.name) ? invoice.supplier.name : ''%></td>
     <td><%=utcDateToLocaleDate(invoice.invoiceDate)%></td>
