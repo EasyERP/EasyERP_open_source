@@ -201,7 +201,7 @@ module.exports = function (models) {
                         if (err) {
                             next(err);
                         } else {
-                            obj.countRows = row;
+                            obj.countRows = rows;
                             res.status(200).send(obj);
                         }
                     }
@@ -219,7 +219,13 @@ module.exports = function (models) {
                 var val = data[key];
 
                 if (val && arrayKeys && arrayKeys[keysAliases[key]] === true) {
-                    val = val.split(',');
+                    if (typeof val == 'number') {
+                        var arr = [];
+                        arr.push(val);
+                        val = arr;
+                    }  else {
+                        val = val.split(',');
+                    }
                 }
 
                 if (val) {

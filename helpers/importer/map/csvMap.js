@@ -1,9 +1,9 @@
 module.exports = (function () {
 
     var department = {
-        collection: 'Department',
-        schema    : 'Department',
-        aliases   : {
+        collection  : 'Department',
+        schema      : 'Department',
+        aliases     : {
             ID               : 'ID',
             departmentName   : 'Department Name',
             parentDepartment : 'Parent Department',
@@ -16,8 +16,15 @@ module.exports = (function () {
             nestingLevel     : 'Nesting Level',
             sequence         : 'Sequence'
         },
-        arrayKeys : {
+        arrayKeys   : {
             users: true
+        },
+        objectIdList: {
+            parentDepartment : 'Department',
+            departmentManager: 'Employees',
+            users            : 'Users',
+            'createdBy.user' : 'Users',
+            'editedBy.user'  : 'Users'
         }
 
     };
