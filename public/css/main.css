@@ -65,6 +65,10 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 /*== forInfo ======================================*/
 /*== Revenu ======================================*/
 /*== Notifikation ===============================*/
+/*== Btn Color=====================================*/
+.salary-list tbody#listTable .subRow:hover {
+  background-color: transparent;
+}
 .list2 {
   color: #cdcdcd !important;
   font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
@@ -74,13 +78,13 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 .list2 caption {
   text-align: left;
   margin-top: 15px;
-  background-color: #1ebbea;
+  background-color: #66b5d4;
   font-size: 14px;
   line-height: 20px;
   padding-left: 10px;
 }
 .list2 .anotherColor {
-  background-color: #57d0b5;
+  background-color: #66b5d4;
 }
 .list2 tfoot tr {
   border-bottom: 1px solid #7f7f80;
@@ -97,6 +101,9 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   border-top: 0;
   background: inherit !important;
   vertical-align: top;
+}
+.list2 thead .subSalaryHead {
+  border-top: none;
 }
 .list2 thead th {
   padding: 3px 8px;
@@ -200,7 +207,10 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   width: 100%;
 }
 .list2 tbody tr td a {
-  color: #57d0b5 !important;
+  color: #cdcdcd;
+}
+.list2 tbody tr td a.stageSelect {
+  color: #cdcdcd;
 }
 .list2 tbody tr td a.done {
   color: #00c60b !important;
@@ -233,13 +243,13 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 .list2 caption {
   text-align: left;
   margin-top: 15px;
-  background-color: #1ebbea;
+  background-color: #66b5d4;
   font-size: 14px;
   line-height: 20px;
   padding-left: 10px;
 }
 .list2 .anotherColor {
-  background-color: #57d0b5;
+  background-color: #66b5d4;
 }
 .list2 tfoot tr {
   border-bottom: 1px solid #7f7f80;
@@ -256,6 +266,9 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   border-top: 0;
   background: inherit !important;
   vertical-align: top;
+}
+.list2 thead .subSalaryHead {
+  border-top: none;
 }
 .list2 thead th {
   padding: 3px 8px;
@@ -359,7 +372,10 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   width: 100%;
 }
 .list2 tbody tr td a {
-  color: #57d0b5 !important;
+  color: #cdcdcd;
+}
+.list2 tbody tr td a.stageSelect {
+  color: #cdcdcd;
 }
 .list2 tbody tr td a.done {
   color: #00c60b !important;
@@ -889,7 +905,7 @@ input::-ms-clear {
   color: #a9a9a9;
 }
 .kanban .column .columnNameDiv .columnName .text {
-  color: #57d0b5;
+  color: #66b5d4;
 }
 .kanban .column .columnNameDiv.cancelled .columnName {
   border-bottom: 2px solid #FF5454 !important;
@@ -979,7 +995,7 @@ input::-ms-clear {
   position: absolute;
   width: 40px;
   border: 0;
-  color: #57d0b5;
+  color: #66b5d4;
   font-size: 18px;
   line-height: 26px;
   float: none;
@@ -990,7 +1006,7 @@ input::-ms-clear {
   padding: 0;
 }
 .kanban .column.fold .columnNameDiv .columnName .text {
-  color: #57d0b5;
+  color: #66b5d4;
   margin: 0 auto;
   text-align: center;
   position: absolute;
@@ -1009,7 +1025,7 @@ input::-ms-clear {
 }
 .kanban .column.fold:hover .columnNameDiv .columnName .totalCount,
 .kanban .column.fold:hover .columnNameDiv .columnName .text {
-  color: #6de6cb;
+  color: #7ccbea;
 }
 .kanban .column.fold:hover .text {
   color: white;
@@ -1132,7 +1148,7 @@ input::-ms-clear {
   padding: 5px 15px;
 }
 .dialog-buttons input:hover {
-  border: 1px solid #57d0b5 !important;
+  border: 1px solid #66b5d4 !important;
   color: #cdcdcd !important;
 }
 .pagination {
@@ -1230,7 +1246,7 @@ input::-ms-clear {
   cursor: pointer;
 }
 .pagination #pageList li:hover {
-  background-color: #57d0b5;
+  background-color: #66b5d4;
   color: white;
   text-decoration: none;
 }
@@ -1290,7 +1306,7 @@ input::-ms-clear {
   text-align: center;
 }
 .pagination .pageList ul li a:hover {
-  background-color: #57d0b5;
+  background-color: #66b5d4;
   color: white;
   text-decoration: none;
 }
@@ -1467,7 +1483,7 @@ input::-ms-clear {
   line-height: 20px;
   height: 20px;
   cursor: pointer;
-  color: #57d0b5;
+  color: #66b5d4;
 }
 .input-file input {
   position: absolute;
@@ -1493,7 +1509,7 @@ select:not([type="checkbox"]):focus {
   -moz-box-shadow: 0 0 5px rgba(82, 168, 236, 0.5);
   -webkit-box-shadow: 0 0 5px rgba(82, 168, 236, 0.5);
   outline: none;
-  border: 1px solid #57d0b5 !important;
+  border: 1px solid #66b5d4 !important;
 }
 .current-selected {
   font-size: 12px;
@@ -1596,7 +1612,7 @@ select:not([type="checkbox"]):focus {
   text-decoration: none;
 }
 .btn-list .selected {
-  color: #57d0b5;
+  color: #66b5d4;
 }
 .btn-list .selected a {
   color: white;
@@ -2031,7 +2047,7 @@ dl dd a.formLink {
 .form #cancelSpan a,
 .form #saveSpan a,
 .form #editSpan a {
-  color: #57d0b5;
+  color: #cdcdcd;
 }
 .form label {
   display: block;
@@ -2597,7 +2613,7 @@ dl dd a.formLink {
 .formLeftColumn .form #cancelSpan a,
 .formLeftColumn .form #saveSpan a,
 .formLeftColumn .form #editSpan a {
-  color: #57d0b5;
+  color: #cdcdcd;
 }
 .formLeftColumn .form label {
   display: block;
@@ -2948,7 +2964,7 @@ dl dd a.formLink {
 .formRightColumn .form #cancelSpan a,
 .formRightColumn .form #saveSpan a,
 .formRightColumn .form #editSpan a {
-  color: #57d0b5;
+  color: #cdcdcd;
 }
 .formRightColumn .form label {
   display: block;
@@ -3067,7 +3083,7 @@ dl dd a.formLink {
   padding: 5px 15px;
 }
 .noteWrapper .addNote.active .buttons input:hover {
-  border: 1px solid #57d0b5 !important;
+  border: 1px solid #66b5d4 !important;
   color: #cdcdcd !important;
 }
 .noteWrapper .addNote.active .buttons input {
@@ -3086,7 +3102,7 @@ dl dd a.formLink {
 }
 .noteWrapper .addNote.active .buttons #cancelNote:hover {
   text-decoration: none;
-  border: 1px solid #57d0b5;
+  border: 1px solid #66b5d4;
 }
 .noteWrapper .addNote.active label {
   display: block;
@@ -3183,7 +3199,7 @@ dl dd a.formLink {
   color: #d5d5d5;
 }
 #startLetter .letter.current {
-  color: #57d0b5;
+  color: #66b5d4;
 }
 #startLetter .letter.empty {
   color: #808080;
@@ -3254,7 +3270,7 @@ dl dd a.formLink {
 .person-info span,
 .customer-info span {
   padding: 0 !important;
-  color: #57d0b5;
+  color: #cdcdcd;
 }
 .settings-info {
   clear: both;
@@ -3535,8 +3551,8 @@ dl dd a.formLink {
   position: absolute;
   top: 3px;
   right: 3px;
-  color: #8786b7;
-  line-height: 8px;
+  color: #66b5d4;
+  line-height: 11px;
   width: 12px;
   height: 12px;
   padding-top: 1px;
@@ -3620,9 +3636,6 @@ dl dd a.formLink {
   font-size: 13px;
   text-align: center;
   text-decoration: none;
-  -moz-border-radius: 3px;
-  -webkit-border-radius: 3px;
-  border-radius: 3px;
   -webkit-font-smoothing: antialiased;
   outline: none;
 }
@@ -3639,9 +3652,6 @@ button {
   font-size: 13px;
   text-align: center;
   text-decoration: none;
-  -moz-border-radius: 3px;
-  -webkit-border-radius: 3px;
-  border-radius: 3px;
   -webkit-font-smoothing: antialiased;
   outline: none;
 }
@@ -3659,22 +3669,14 @@ a.red {
   font-size: 13px;
   text-align: center;
   text-decoration: none;
-  -moz-border-radius: 3px;
-  -webkit-border-radius: 3px;
-  border-radius: 3px;
   -webkit-font-smoothing: antialiased;
   outline: none;
-  background-color: #af1b1b;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#d13d3d), to(#af1b1b));
-  background-image: -webkit-linear-gradient(top, #d13d3d, #af1b1b);
-  background-image: -moz-linear-gradient(top, #d13d3d, #af1b1b);
-  background-image: -ms-linear-gradient(top, #d13d3d, #af1b1b);
-  background-image: -o-linear-gradient(top, #d13d3d, #af1b1b);
-  background-image: linear-gradient(to bottom, #d13d3d, #af1b1b);
+  background-color: #f4f4f4;
   -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(155, 155, 155, 0.4) inset;
   -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(155, 155, 155, 0.4) inset;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(155, 155, 155, 0.4) inset;
-  color: white;
+  color: #4d5a75;
+  line-height: 20px;
 }
 button.red:hover,
 a.red:hover {
@@ -3683,13 +3685,8 @@ a.red:hover {
 }
 button.red:hover,
 a.red:hover {
-  background-color: #b52828;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#d74a4a), to(#b52828));
-  background-image: -webkit-linear-gradient(top, #d74a4a, #b52828);
-  background-image: -moz-linear-gradient(top, #d74a4a, #b52828);
-  background-image: -ms-linear-gradient(top, #d74a4a, #b52828);
-  background-image: -o-linear-gradient(top, #d74a4a, #b52828);
-  background-image: linear-gradient(to bottom, #d74a4a, #b52828);
+  background-color: #66b5d4;
+  color: #fff;
 }
 #birthdaysList {
   padding-bottom: 20px;
@@ -3911,7 +3908,7 @@ a.red:hover {
   color: #fff;
 }
 #loginPanel .dropdown-button:hover {
-  background: #57d0b5;
+  background: #66b5d4;
   color: #fff;
 }
 .ui-widget-overlay {
@@ -4385,7 +4382,7 @@ table#workflows tr td.edit-status {
   display: block;
 }
 #mainmenu-holder nav ul li.selected {
-  background-color: #57d0b5;
+  background-color: #66b5d4;
   height: 30px;
   border: 0;
   -webkit-transition: all ease .5s;
@@ -4736,7 +4733,7 @@ ul.dialog-tabs li a.active {
   height: 35px;
   line-height: 34px;
   border-bottom: none;
-  background-color: #57d0b5;
+  background-color: #66b5d4;
   color: #ffffff;
 }
 ul.dialog-tabs li.right {
@@ -4795,7 +4792,7 @@ ul.dialog-tabs li.right button {
   color: #cdcdcd;
 }
 .thumbnailwithavatar h4 {
-  color: #57d0b5;
+  color: #66b5d4;
   font-size: 13px;
   line-height: 18px;
   font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
@@ -4813,7 +4810,7 @@ ul.dialog-tabs li.right button {
   cursor: pointer;
 }
 .thumbnailwithavatar .title {
-  color: #57d0b5;
+  color: #66b5d4;
   font-size: 13px;
   line-height: 18px;
   font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
@@ -4906,7 +4903,7 @@ ul.dialog-tabs li.right button {
 }
 .thumbnailwithavatar .email,
 .thumbnailwithavatar .company {
-  color: #67c0ac;
+  color: #75afc5;
 }
 .list {
   color: #cdcdcd !important;
@@ -4916,13 +4913,13 @@ ul.dialog-tabs li.right button {
 .list caption {
   text-align: left;
   margin-top: 15px;
-  background-color: #1ebbea;
+  background-color: #66b5d4;
   font-size: 14px;
   line-height: 20px;
   padding-left: 10px;
 }
 .list .anotherColor {
-  background-color: #57d0b5;
+  background-color: #66b5d4;
 }
 .list tfoot tr {
   border-bottom: 1px solid #7f7f80;
@@ -4939,6 +4936,9 @@ ul.dialog-tabs li.right button {
   border-top: 0;
   background: inherit !important;
   vertical-align: top;
+}
+.list thead .subSalaryHead {
+  border-top: none;
 }
 .list thead th {
   padding: 3px 8px;
@@ -5042,7 +5042,10 @@ ul.dialog-tabs li.right button {
   width: 100%;
 }
 .list tbody tr td a {
-  color: #57d0b5 !important;
+  color: #cdcdcd;
+}
+.list tbody tr td a.stageSelect {
+  color: #cdcdcd;
 }
 .list tbody tr td a.done {
   color: #00c60b !important;
@@ -5093,7 +5096,7 @@ ul.dialog-tabs li.right button {
   position: absolute;
 }
 .thumbnail .dropDown a:hover {
-  color: #57d0b5;
+  color: #66b5d4;
 }
 .thumbnail .viewswitch {
   position: absolute;
@@ -5177,9 +5180,9 @@ ul.dialog-tabs li.right button {
 }
 .thumbnail:hover {
   border: 1px solid #cdcdcd;
-  box-shadow: 0 0 4px #57d0b5;
-  -moz-box-shadow: 0 0 4px #57d0b5;
-  -webkit-box-shadow: 0 0 4px #57d0b5;
+  box-shadow: 0 0 4px #66b5d4;
+  -moz-box-shadow: 0 0 4px #66b5d4;
+  -webkit-box-shadow: 0 0 4px #66b5d4;
 }
 .thumbnail .avatar {
   display: block;
@@ -5360,7 +5363,7 @@ ul.dialog-tabs li.right button {
   border-radius: 0px;
 }
 .ui-dialog .ui-widget-content a {
-  color: #57d0b5;
+  color: #66b5d4;
 }
 .ui-dialog .avatar {
   display: block;
@@ -5751,7 +5754,7 @@ ul.dialog-tabs li.right button {
 }
 .ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button {
   background-image: none;
-  color: #57d0b5;
+  color: #66b5d4;
   border: 1px solid #cdcdcd;
   margin: .5em .4em .5em 0;
   cursor: pointer;
@@ -5771,7 +5774,7 @@ ul.dialog-tabs li.right button {
   line-height: normal;
   background: #303031;
   padding: .4em 1em;
-  color: #57d0b5;
+  color: #66b5d4;
 }
 .ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button span:hover {
   background: #1d1d1e !important;
@@ -5836,7 +5839,7 @@ ul.dialog-tabs li.right button {
   padding: 5px 15px;
 }
 .form-holder form .buttons input:hover {
-  border: 1px solid #57d0b5 !important;
+  border: 1px solid #66b5d4 !important;
   color: #cdcdcd !important;
 }
 .form-holder form label {
@@ -5925,11 +5928,11 @@ ul.dialog-tabs li.right button {
   color: #a9a9a9;
 }
 .form-holder form input:not([type=checkbox]):focus {
-  box-shadow: 0 0 5px #57d0b5;
-  -moz-box-shadow: 0 0 5px #57d0b5;
-  -webkit-box-shadow: 0 0 5px #57d0b5;
+  box-shadow: 0 0 5px #66b5d4;
+  -moz-box-shadow: 0 0 5px #66b5d4;
+  -webkit-box-shadow: 0 0 5px #66b5d4;
   outline: medium none;
-  border: 1px solid #57d0b5 !important;
+  border: 1px solid #66b5d4 !important;
 }
 .form-holder form .mainInfo {
   width: auto;
@@ -5999,7 +6002,7 @@ ul.dialog-tabs li a.active {
   height: 35px;
   line-height: 34px;
   border-bottom: none;
-  background-color: #57d0b5;
+  background-color: #66b5d4;
   color: #ffffff;
 }
 ul.dialog-tabs li.right {
@@ -6033,9 +6036,6 @@ ul.dialog-tabs .withEndContract .arrow {
   font-size: 13px;
   text-align: center;
   text-decoration: none;
-  -moz-border-radius: 3px;
-  -webkit-border-radius: 3px;
-  border-radius: 3px;
   -webkit-font-smoothing: antialiased;
   outline: none;
   height: 15px;
@@ -6126,7 +6126,7 @@ ul.chart-tabs li a.active {
   height: 35px;
   line-height: 34px;
   border-bottom: none;
-  background-color: #57d0b5;
+  background-color: #66b5d4;
   color: #ffffff;
 }
 ul.chart-tabs li.right {
@@ -6163,9 +6163,6 @@ ul.chart-tabs .withEndContract .arrow {
   font-size: 13px;
   text-align: center;
   text-decoration: none;
-  -moz-border-radius: 3px;
-  -webkit-border-radius: 3px;
-  border-radius: 3px;
   -webkit-font-smoothing: antialiased;
   outline: none;
   height: 15px;
@@ -6279,7 +6276,7 @@ ul.chart-tabs .withEndContract .arrow {
   font: 18px sans-serif;
 }
 .y2.label {
-  fill: #57d0b5;
+  fill: #66b5d4;
   font: 18px sans-serif;
 }
 .y2 .tick line {
@@ -6309,9 +6306,9 @@ ul.chart-tabs .withEndContract .arrow {
   margin-left: 5px;
   float: left;
   padding: 5px 10px;
-  color: #939395;
+  color: #4d5a75;
   background-color: #f4f4f4;
-  border: 1px solid #dfdfdf;
+  border: 1px solid #cdcdcd;
   cursor: pointer;
 }
 .choseDateRange .item:first-child,
@@ -6322,7 +6319,7 @@ ul.chart-tabs .withEndContract .arrow {
 .choseDateRange .item.active,
 .choseDateItem .item.active,
 .choseDateRangeSource .item.active {
-  background-color: #57d0b5;
+  background-color: #66b5d4;
   color: white;
 }
 .legend-box {
@@ -6372,7 +6369,7 @@ ul.chart-tabs .withEndContract .arrow {
 h3.dashboard {
   text-align: center;
   line-height: 50px;
-  color: #57d0b5;
+  color: #66b5d4;
 }
 .leadChart text,
 .chart text {
@@ -6397,7 +6394,7 @@ h3.dashboard {
 #projectPM h2 {
   text-align: center;
   font-size: 18px;
-  color: #57d0b5;
+  color: #66b5d4;
   line-height: 40px;
 }
 #projectPM table {
@@ -6407,7 +6404,6 @@ h3.dashboard {
   text-align: right;
   padding-left: 3px;
   line-height: 25px;
-  border-bottom: 2px solid #cdcdcd;
   height: 25px;
   color: #cdcdcd;
 }
@@ -6418,7 +6414,6 @@ h3.dashboard {
   height: 25px;
   padding-left: 3px;
   line-height: 25px;
-  border-bottom: 2px solid #cdcdcd;
 }
 #projectPM table tr td .green {
   width: 10px;
@@ -6466,11 +6461,11 @@ h3.dashboard {
 }
 #health a.health1,
 .health-wrapper a.health1 {
-  background-color: #57d0b5;
+  background-color: #66b5d4;
 }
 #health a.health2,
 .health-wrapper a.health2 {
-  background-color: #ffa500;
+  background-color: #ffea00;
 }
 #health a.health3,
 .health-wrapper a.health3 {
@@ -6552,7 +6547,7 @@ h3.dashboard {
   margin-top: 8px;
 }
 .avatarInfoContainer.employee .half-block dt {
-  color: #57d0b5;
+  color: #66b5d4;
 }
 .avatarInfoContainer.employee .half-block dd {
   color: #cdcdcd;
@@ -6563,7 +6558,7 @@ span.pending {
 }
 .stageSelect.inprogress,
 span.inprogress {
-  color: #57d0b5;
+  color: #66b5d4;
 }
 .stageSelect.closed,
 span.closed,
@@ -6572,8 +6567,7 @@ span.done,
 .stageSelect.unDone,
 span.unDone {
   display: block;
-  background-color: #57d0b5;
-  color: #cdcdcd;
+  color: #00db30;
   text-align: center;
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
@@ -6584,8 +6578,7 @@ span.unDone {
 .stageSelect.projectClosed,
 span.projectClosed {
   display: block;
-  background-color: #57d0b5;
-  color: #cdcdcd;
+  color: #00db30;
   text-align: center;
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
@@ -6593,10 +6586,6 @@ span.projectClosed {
   padding: 0 5px;
   line-height: 16px;
   background-color: inherit;
-}
-.stageSelect.unDone,
-span.unDone {
-  background-color: #ffa500;
 }
 .form-holder form .task-info {
   clear: both;
@@ -7446,7 +7435,7 @@ span.ui-spinner .ui-spinner-up {
 }
 span.ui-spinner .ui-spinner-up:hover {
   text-decoration: none;
-  color: #8affe8;
+  color: #99e8ff;
 }
 span.ui-spinner .ui-spinner-down {
   position: absolute;
@@ -7459,10 +7448,10 @@ span.ui-spinner .ui-spinner-down {
 }
 span.ui-spinner .ui-spinner-down:hover {
   text-decoration: none;
-  color: #8affe8;
+  color: #99e8ff;
 }
 .blue {
-  color: #57d0b5;
+  color: #66b5d4;
 }
 .floatAvatar {
   margin-left: 160px;
@@ -7555,7 +7544,7 @@ input::-webkit-inner-spin-button {
   display: none;
 }
 .h2 {
-  color: #57d0b5;
+  color: #66b5d4;
   font-size: 1.3em;
   padding: 5px 0;
 }
@@ -7648,7 +7637,7 @@ textarea#editInput {
 }
 .grid tr td.activeHead,
 .grid tr th.activeHead {
-  border: 1px solid #57d0b5;
+  border: 1px solid #66b5d4;
   border-bottom: none;
   display: table-cell;
 }
@@ -7691,8 +7680,8 @@ textarea#editInput {
   border-left: 1px solid #cdcdcd;
 }
 .grid tr td.dashboardWeek.active {
-  border-left: 1px solid #57d0b5 !important;
-  border-right: 1px solid #57d0b5 !important;
+  border-left: 1px solid #66b5d4 !important;
+  border-right: 1px solid #66b5d4 !important;
   display: table-cell;
 }
 .grid tr td.dashboardWeek.inactive span.view {
@@ -7839,11 +7828,11 @@ textarea#editInput {
   color: #ffffff;
 }
 .grid.attendance .S {
-  background-color: #57d0b5;
+  background-color: #66b5d4;
   color: #ffffff;
 }
 .grid.attendance .E {
-  background-color: #1ebbea;
+  background-color: #66b5d4;
   color: #ffffff;
 }
 .grid.attendance .borderRight {
@@ -7887,11 +7876,11 @@ textarea#editInput {
   color: #ffffff;
 }
 .grid.attendance .sick {
-  background-color: #57d0b5;
+  background-color: #66b5d4;
   color: #ffffff;
 }
 .grid.attendance .education {
-  background-color: #1ebbea;
+  background-color: #66b5d4;
   color: #ffffff;
 }
 .grid.attendance .borderRight {
@@ -7975,10 +7964,10 @@ textarea#editInput {
   background-color: #f9a203;
 }
 .grid-conatiner .statisticsAtten table tr td .item .countDays.sick {
-  background-color: #57d0b5;
+  background-color: #66b5d4;
 }
 .grid-conatiner .statisticsAtten table tr td .item .countDays.education {
-  background-color: #1ebbea;
+  background-color: #66b5d4;
 }
 .grid-conatiner .statisticsAtten table tr td .item .lastTime {
   text-align: center;
@@ -8163,7 +8152,7 @@ textarea#editInput {
 }
 .grid-conatiner.revenue .divRow.totalByDep,
 .grid-conatiner.revenue .divRow.totalHoursByDep {
-  background-color: #57d0b5;
+  background-color: #66b5d4;
 }
 .grid-conatiner.revenue .divRow.totalPaid {
   background-color: #a2a2a3;
@@ -8172,7 +8161,7 @@ textarea#editInput {
   background-color: #f13f3f;
 }
 .grid-conatiner.revenue .divRow.totalCancelled {
-  background-color: #1ebbea;
+  background-color: #66b5d4;
 }
 .grid-conatiner.revenue .divRow.totalProject {
   background-color: #5a9ad4;
@@ -8270,7 +8259,7 @@ textarea#editInput {
   width: 7.5%;
 }
 .grid-conatiner.revenue .th-green {
-  border-bottom: 2px solid #57d0b5;
+  border-bottom: 2px solid #66b5d4;
 }
 .hrTop tr td {
   vertical-align: top;
@@ -8637,11 +8626,11 @@ textarea#editInput {
   color: #ffffff;
 }
 .vacation-list .S {
-  background-color: #57d0b5;
+  background-color: #66b5d4;
   color: #ffffff;
 }
 .vacation-list .E {
-  background-color: #1ebbea;
+  background-color: #66b5d4;
   color: #ffffff;
 }
 .vacation-list td,
@@ -8666,7 +8655,7 @@ textarea#editInput {
   outline-offset: 0;
   display: none;
   cursor: pointer;
-  border: 1px solid #57d0b5;
+  border: 1px solid #66b5d4;
 }
 .vacation-list td input:focus,
 .vacation-list th input:focus {
@@ -8737,7 +8726,6 @@ textarea#editInput {
 .vacation-list tbody tr:not(.subRow):hover td:not(.selectedType),
 .salary-list tbody tr:not(.subRow):hover td:not(.selectedType),
 .subSalary-list tbody tr:not(.subRow):hover td:not(.selectedType) {
-  background-color: #333333;
   color: #ffffff;
 }
 .filtersActive {
@@ -8777,7 +8765,7 @@ textarea#editInput {
 }
 #favoritesContent #forFilterName {
   height: 22px;
-  width: 84%;
+  width: 83%;
   border-bottom-left-radius: 5px;
   border-top-left-radius: 5px;
   color: #cdcdcd;
@@ -8797,6 +8785,8 @@ textarea#editInput {
   float: right;
   border: 1px solid #cdcdcd;
   height: 21px;
+  background-color: transparent;
+  color: #cdcdcd;
 }
 #favoritesContent .line {
   height: 1px;
@@ -8815,11 +8805,11 @@ textarea#editInput {
 }
 #favoritesContent .filters:hover {
   color: white;
-  background-color: #57d0b5;
+  background-color: #66b5d4;
 }
 #favoritesContent .checkedValue {
   color: white;
-  background-color: #57d0b5;
+  background-color: #66b5d4;
 }
 .forFilterIcons {
   float: left;
