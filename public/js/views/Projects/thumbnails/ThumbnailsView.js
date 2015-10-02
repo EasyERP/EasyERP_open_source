@@ -45,7 +45,7 @@
 
             events: {
                 "click #showMore": "showMore",
-                "click .thumbnail": "gotoEditForm",
+                "click .thumbnail div:not(.dropDown)": "gotoEditForm",
                 "click .filterButton": "showfilter",
                 "click .health-wrapper .health-container": "showHealthDd",
                 "click .health-wrapper ul li div": "chooseHealthDd",

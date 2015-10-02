@@ -900,7 +900,7 @@ var Project = function (models, event) {
         }
         res['showMore'] = false;
 
-        if (data && data.type !== 'Tasks' && data.filter) {
+        if (data && data.contentType !== 'Tasks' && data.filter) {
 
             addObj['$and'] = caseFilter(data.filter);
 
@@ -991,7 +991,7 @@ var Project = function (models, event) {
                         },
                         function (err, projectsId) {
                             if (!err) {
-                                if (data && data.type == 'Tasks') {
+                                if (data && data.contentType == 'Tasks') {
                                     var query = models.get(req.session.lastDb, 'Tasks', tasksSchema).
                                         where('project').in(projectsId.objectID());
                                     /*if (data && data.filter && data.filter.workflow) {

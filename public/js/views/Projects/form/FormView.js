@@ -135,6 +135,8 @@ define([
 					});
 				});
 
+				var budget = this.formModel.get('budget');
+
 				var usersId = [];
 				var groupsId = [];
 				$(".groupsAndUser tr").each(function () {
@@ -171,7 +173,8 @@ define([
 					StartDate       : startDate,
 					EndDate         : endDate,
 					TargetEndDate   : _targetEndDate,
-					bonus           : bonus
+					bonus           : bonus,
+					budget: budget
 				};
 
 				if (validation) {
@@ -335,7 +338,6 @@ define([
 				);
 
 				thisEl.find('#createBonus').hide();
-				thisEl.find('#noteArea').attr('readonly', true);
 
 				paralellTasks = [this.getWTrack, this.getInvoice];
 
