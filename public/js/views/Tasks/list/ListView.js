@@ -137,7 +137,7 @@ define([
                                 patch   : true,
                                 validate: false,
                                 success : function () {
-                                    that.showFilteredPage();
+                                    that.showFilteredPage({}, that);
                                 }
                             });
                     } else {
@@ -159,7 +159,7 @@ define([
                                 patch   : true,
                                 validate: false,
                                 success : function () {
-                                    that.showFilteredPage({});
+                                    that.showFilteredPage({}, that);
                                 }
                             });
                     }
@@ -178,12 +178,16 @@ define([
                             patch   : true,
                             validate: false,
                             success : function (model) {
-                                that.showFilteredPage({});//When add filter by Type, then uncoment this code
+                                that.showFilteredPage({}, that);//When add filter by Type, then uncoment this code
                             }
                         });
                 }
                 this.hideNewSelect();
                 return false;
+            },
+
+            hideNewSelect: function () {
+                $(".newSelectList").hide();
             },
 
             render: function () {
