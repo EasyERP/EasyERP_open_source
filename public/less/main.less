@@ -3332,7 +3332,7 @@ dl {
   text-align: center;
   text-decoration: none;
   //.gradient(#d7d7d7);
-  .border-radius(3px);
+  //.border-radius(3px);
  // -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(255, 255, 255, 0.8) inset;
  // -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(255, 255, 255, 0.8) inset;
  // box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(255, 255, 255, 0.8) inset;
@@ -3352,14 +3352,16 @@ button {
 
 button.red, a.red {
   .btn;
-  .gradient(#c02c2c);
+  background-color: @btn-main-color;
   -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(155, 155, 155, 0.4) inset;
   -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(155, 155, 155, 0.4) inset;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(155, 155, 155, 0.4) inset;
-  color: white;
+  color: @fontColor-2;
+  line-height: 20px;
 
   &:hover {
-    .gradient(#c63939);
+    background-color: @tilte-color;
+    color: #fff;
   }
 }
 
@@ -4358,10 +4360,9 @@ ul.chart-tabs {
     margin-left: 5px;
     float: left;
     padding: 5px 10px;
-    color: #939395;
-    //
+    color: @fontColor-2;
     background-color: #f4f4f4;
-    border: @thin-border #dfdfdf;
+    border: @thin-border @border-color-main;
     cursor: pointer;
 
     &:first-child {
@@ -4669,7 +4670,7 @@ h3.dashboard {
   &.closed, &.done, &.unDone {
     display: block;
     //background-color: @tilte-color;
-    color: @mainText-color;
+    color: @notifikation-notify-color;
     text-align: center;
     .border-radius(4px);
     padding: 0 5px;
