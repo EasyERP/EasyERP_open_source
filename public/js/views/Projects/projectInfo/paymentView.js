@@ -25,20 +25,23 @@ define([
         },
 
         checked: function (e) {
-            if (this.models.length > 0) {
-                var checkLength = $("input.checkbox:checked").length;
+            if (this.model.length > 0) {
+                var el = $(this.el);
+                var checkLength = el.find("input.checkbox:checked").length;
+                var checkAll$=el.find('#check_all')
 
-                if ($("input.checkbox:checked").length > 0) {
+                if (checkLength > 0) {
                     $("#top-bar-deleteBtn").show();
-                    $('#check_all').prop('checked', false);
+                    checkAll$.prop('checked', false);
 
-                    if (checkLength == this.models.length) {
-                        $('#check_all').prop('checked', true);
+                    if (checkLength == this.model.length) {
+
+                        checkAll$.prop('checked', true);
                     }
                 }
                 else {
                     $("#top-bar-deleteBtn").hide();
-                    $('#check_all').prop('checked', false);
+                    checkAll$.prop('checked', false);
                 }
             }
         },
@@ -54,6 +57,15 @@ define([
                 startNumber: 0,
                 utcDateToLocaleDate: common.utcDateToLocaleDate
             }));
+
+            currentEl.find('#check_all').click(function () {
+                currentEl.find(':checkbox').prop('checked', this.checked);
+                //if (currentEl.find("input.checkbox:checked").length > 0) {
+                //    currentEl.find("#top-bar-deleteBtn").show();
+                //} else {
+                //    currentEl.find("#top-bar-deleteBtn").hide();
+                //}
+            });
 
         }
     });
