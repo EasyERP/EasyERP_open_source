@@ -477,6 +477,8 @@ define([
 
                 daysNumRow = '<tr class="subHeaderHolder borders"><th colspan="2">Department</th><th class="oe-sortable" data-sort="employee.name">Employee</th>' + daysNumRow + '<th>Total Hours</th></tr>';
 
+                weeksRow = '<tr class="subHeaderHolder borders">' + weeksRow + '</tr>';
+
                 this.daysCount = daysInMonth;
 
                 columnContainer = $('#columnForDays');
@@ -761,7 +763,9 @@ define([
                 var self = this;
 
                 CONSTANTS.DEPARTMENTS_ORDER.forEach(function(element) {
-                    departments.push(self.departmentObject[element]);
+                    if (self.departmentObject[element]) {
+                        departments.push(self.departmentObject[element]);
+                    }
                 })
 
                 listTable.html('');

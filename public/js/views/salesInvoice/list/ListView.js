@@ -15,15 +15,15 @@ define([
 
     function (paginationTemplate, listTemplate, stagesTemplate, createView, editView, invoiceModel, listItemView, contentCollection, filterView, common, dataService, CONSTANTS) {
         var InvoiceListView = Backbone.View.extend({
-            el: '#content-holder',
+            el                : '#content-holder',
             defaultItemsNumber: null,
-            listLength: null,
-            filter: null,
-            sort: null,
-            newCollection: null,
-            page: null, //if reload page, and in url is valid page
-            contentType:'salesInvoice', //'Invoice',//needs in view.prototype.changeLocationHash
-            viewType: 'list',//needs in view.prototype.changeLocationHash
+            listLength        : null,
+            filter            : null,
+            sort              : null,
+            newCollection     : null,
+            page              : null, //if reload page, and in url is valid page
+            contentType       : 'salesInvoice', //'Invoice',//needs in view.prototype.changeLocationHash
+            viewType          : 'list',//needs in view.prototype.changeLocationHash
 
             initialize: function (options) {
                 this.startTime = options.startTime;
@@ -47,34 +47,34 @@ define([
             },
 
             events: {
-                "click .itemsNumber": "switchPageCounter",
-                "click .showPage": "showPage",
-                "change #currentShowPage": "showPage",
-                "click #previousPage": "previousPage",
-                "click #nextPage": "nextPage",
-                "click .checkbox": "checked",
-                "click .stageSelect": "showNewSelect",
+                "click .itemsNumber"           : "switchPageCounter",
+                "click .showPage"              : "showPage",
+                "change #currentShowPage"      : "showPage",
+                "click #previousPage"          : "previousPage",
+                "click #nextPage"              : "nextPage",
+                "click .checkbox"              : "checked",
+                "click .stageSelect"           : "showNewSelect",
                 //"click  .list td:not(.notForm)": "gotoForm",
                 "click  .list td:not(.notForm)": "goToEditDialog",
-                "mouseover .currentPageList": "itemsNumber",
-                "click": "hideItemsNumber",
-                "click #firstShowPage": "firstPage",
-                "click #lastShowPage": "lastPage",
-                "click .oe_sortable": "goSort",
-                "click .newSelectList li": "chooseOption"
+                "mouseover .currentPageList"   : "itemsNumber",
+                "click"                        : "hideItemsNumber",
+                "click #firstShowPage"         : "firstPage",
+                "click #lastShowPage"          : "lastPage",
+                "click .oe_sortable"           : "goSort",
+                "click .newSelectList li"      : "chooseOption"
             },
 
             fetchSortCollection: function (sortObject) {
                 this.sort = sortObject;
                 this.collection = new contentCollection({
-                    viewType: 'list',
-                    sort: sortObject,
-                    page: this.page,
-                    count: this.defaultItemsNumber,
-                    filter: this.filter,
+                    viewType        : 'list',
+                    sort            : sortObject,
+                    page            : this.page,
+                    count           : this.defaultItemsNumber,
+                    filter          : this.filter,
                     parrentContentId: this.parrentContentId,
-                    contentType: this.contentType,
-                    newCollection: this.newCollection
+                    contentType     : this.contentType,
+                    newCollection   : this.newCollection
                 });
                 this.collection.bind('reset', this.renderContent, this);
                 this.collection.bind('showmore', this.showMoreContent, this);
@@ -85,7 +85,7 @@ define([
                 var target$ = $(e.target);
                 var targetElement = target$.parents("td");
                 var wId = target$.attr("id");
-                var status = _.find(this.stages, function(stage){
+                var status = _.find(this.stages, function (stage) {
                     return wId === stage._id;
                 });
                 var name = target$.text();
@@ -93,16 +93,16 @@ define([
                 var model = this.collection.get(id);
 
                 model.save({
-                    'workflow._id': wId,
+                    'workflow._id'   : wId,
                     'workflow.status': status.status,
-                    'workflow.name': name
+                    'workflow.name'  : name
                 }, {
-                    headers: {
+                    headers : {
                         mid: 55
                     },
-                    patch: true,
+                    patch   : true,
                     validate: false,
-                    success: function () {
+                    success : function () {
                         self.showFilteredPage();
                     }
                 });
@@ -152,7 +152,8 @@ define([
                 this.$el.find(".allNumberPerPage, .newSelectList").hide();
                 if (!el.closest('.search-view')) {
                     $('.search-content').removeClass('fa-caret-up');
-                };
+                }
+                ;
             },
 
             itemsNumber: function (e) {
@@ -177,7 +178,7 @@ define([
             getTotalLength: function (currentNumber, itemsNumber, filter) {
                 dataService.getData('/Invoice/totalCollectionLength', {
                     currentNumber: currentNumber,
-                    filter: filter,
+                    filter       : filter,
                     newCollection: this.newCollection
                 }, function (response, context) {
                     var page = context.page || 1;
@@ -222,10 +223,10 @@ define([
                 });
 
                 dataService.getData("/workflow/fetch", {
-                        wId: 'Sales Invoice',
-                        source: 'purchase',
-                        targetSource: 'invoice'
-                    }, function (stages) {
+                    wId         : 'Sales Invoice',
+                    source      : 'purchase',
+                    targetSource: 'invoice'
+                }, function (stages) {
                     self.stages = stages;
                 });
 
@@ -234,19 +235,21 @@ define([
                 });
 
                 self.filterView.bind('filter', function (filter) {
+                    filter.forSales = true;
                     self.showFilteredPage(filter)
                 });
-                self.filterView.bind('defaultFilter', function () {
-                    self.showFilteredPage({});
+                self.filterView.bind('defaultFilter', function (filter) {
+                    filter.forSales = true;
+                    self.showFilteredPage();
                 });
 
                 self.filterView.render();
 
-                function currentEllistRenderer(){
+                function currentEllistRenderer() {
                     currentEl.append(_.template(listTemplate, {currentDb: App.currentDb}));
                     currentEl.append(new listItemView({
-                        collection: self.collection,
-                        page: self.page,
+                        collection : self.collection,
+                        page       : self.page,
                         itemsNumber: self.collection.namberToShow
                     }).render());//added two parameters page and items number
 
@@ -277,8 +280,8 @@ define([
                 var tBody = currentEl.find('#listTable');
                 tBody.empty();
                 var itemView = new listItemView({
-                    collection: this.collection,
-                    page: currentEl.find("#currentShowPage").val(),
+                    collection : this.collection,
+                    page       : currentEl.find("#currentShowPage").val(),
                     itemsNumber: currentEl.find("span#itemsNumber").text()
                 });
                 $("#top-bar-deleteBtn").hide();
@@ -299,14 +302,14 @@ define([
                 $('#check_all').prop('checked', false);
                 $("#top-bar-deleteBtn").hide();
                 this.prevP({
-                    sort: this.sort,
-                    filter: this.filter,
-                    newCollection: this.newCollection,
+                    sort            : this.sort,
+                    filter          : this.filter,
+                    newCollection   : this.newCollection,
                     parrentContentId: this.parrentContentId
                 });
                 dataService.getData('/Invoice/totalCollectionLength', {
-                    filter: this.filter,
-                    newCollection: this.newCollection,
+                    filter          : this.filter,
+                    newCollection   : this.newCollection,
                     parrentContentId: this.parrentContentId
                 }, function (response, context) {
                     context.listLength = response.count || 0;
@@ -319,16 +322,16 @@ define([
                 $('#check_all').prop('checked', false);
                 $("#top-bar-deleteBtn").hide();
                 this.nextP({
-                    sort: this.sort,
-                    filter: this.filter,
-                    newCollection: this.newCollection,
+                    sort            : this.sort,
+                    filter          : this.filter,
+                    newCollection   : this.newCollection,
                     parrentContentId: this.parrentContentId
 
                 });
 
                 dataService.getData('/Invoice/totalCollectionLength', {
-                    filter: this.filter,
-                    newCollection: this.newCollection,
+                    filter          : this.filter,
+                    newCollection   : this.newCollection,
                     parrentContentId: this.parrentContentId
                 }, function (response, context) {
                     context.listLength = response.count || 0;
@@ -342,12 +345,12 @@ define([
                 $('#check_all').prop('checked', false);
                 $("#top-bar-deleteBtn").hide();
                 this.firstP({
-                    sort: this.sort,
-                    filter: this.filter,
+                    sort         : this.sort,
+                    filter       : this.filter,
                     newCollection: this.newCollection
                 });
                 dataService.getData('/Invoice/totalCollectionLength', {
-                    filter: this.filter,
+                    filter       : this.filter,
                     newCollection: this.newCollection
                 }, function (response, context) {
                     context.listLength = response.count || 0;
@@ -359,12 +362,12 @@ define([
                 $('#check_all').prop('checked', false);
                 $("#top-bar-deleteBtn").hide();
                 this.lastP({
-                    sort: this.sort,
-                    filter: this.filter,
+                    sort         : this.sort,
+                    filter       : this.filter,
                     newCollection: this.newCollection
                 });
                 dataService.getData('/Invoice/totalCollectionLength', {
-                    filter: this.filter,
+                    filter       : this.filter,
                     newCollection: this.newCollection
                 }, function (response, context) {
                     context.listLength = response.count || 0;
@@ -383,9 +386,9 @@ define([
                 this.defaultItemsNumber = itemsNumber;
                 this.getTotalLength(null, itemsNumber, this.filter);
                 this.collection.showMore({
-                    count: itemsNumber,
-                    page: 1,
-                    filter: this.filter,
+                    count        : itemsNumber,
+                    page         : 1,
+                    filter       : this.filter,
                     newCollection: this.newCollection
                 });
                 this.page = 1;
@@ -418,8 +421,8 @@ define([
                 var holder = this.$el;
                 holder.find("#listTable").empty();
                 var itemView = new listItemView({
-                    collection: newModels,
-                    page: holder.find("#currentShowPage").val(),
+                    collection : newModels,
+                    page       : holder.find("#currentShowPage").val(),
                     itemsNumber: holder.find("span#itemsNumber").text()
                 });//added two parameters page and items number
                 holder.append(itemView.render());
@@ -454,8 +457,8 @@ define([
 
                 model.urlRoot = '/Invoice/form';
                 model.fetch({
-                    data: {
-                        id: id,
+                    data   : {
+                        id       : id,
                         currentDb: App.currentDb
                     },
                     success: function (model) {
@@ -463,7 +466,7 @@ define([
 
                         new editView({model: model, isWtrack: isWtrack});
                     },
-                    error: function () {
+                    error  : function () {
                         alert('Please refresh browser');
                     }
                 });
@@ -494,22 +497,22 @@ define([
 
             deleteItemsRender: function (deleteCounter, deletePage) {
                 dataService.getData('/Invoice/totalCollectionLength', {
-                    filter: this.filter,
+                    filter       : this.filter,
                     newCollection: this.newCollection
                 }, function (response, context) {
                     context.listLength = response.count || 0;
                 }, this);
                 this.deleteRender(deleteCounter, deletePage, {
-                    filter: this.filter,
-                    newCollection: this.newCollection,
+                    filter          : this.filter,
+                    newCollection   : this.newCollection,
                     parrentContentId: this.parrentContentId
                 });
                 if (deleteCounter !== this.collectionLength) {
                     var holder = this.$el;
                     var created = holder.find('#timeRecivingDataFromServer');
                     created.before(new listItemView({
-                        collection: this.collection,
-                        page: holder.find("#currentShowPage").val(),
+                        collection : this.collection,
+                        page       : holder.find("#currentShowPage").val(),
                         itemsNumber: holder.find("span#itemsNumber").text()
                     }).render());//added two parameters page and items number
                 }
@@ -536,7 +539,7 @@ define([
                         headers: {
                             mid: mid
                         },
-                        wait: true,
+                        wait   : true,
                         success: function () {
                             that.listLength--;
                             localCounter++;
@@ -548,7 +551,7 @@ define([
 
                             }
                         },
-                        error: function (model, res) {
+                        error  : function (model, res) {
                             if (res.status === 403 && index === 0) {
                                 alert("You do not have permission to perform this action");
                             }
