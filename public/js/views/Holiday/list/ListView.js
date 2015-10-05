@@ -380,6 +380,7 @@ define([
                     if (answer === true) {
                         $.each($("#listTable input:checked"), function (index, checkbox) {
                             value = checkbox.value;
+                            that.changedModels = {};;
 
                             if (value.length < 24) {
                                 that.editCollection.remove(value);

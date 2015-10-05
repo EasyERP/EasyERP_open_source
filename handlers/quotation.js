@@ -25,7 +25,7 @@ var Quotation = function (models) {
     function updateOnlySelectedFields(req, res, next, id, data) {
         var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
 
-        Quotation.findByIdAndUpdate(id, {$set: data}, function (err, quotation) {
+        Quotation.findByIdAndUpdate(id, {$set: data},{new:true}, function (err, quotation) {
             if (err) {
                 next(err);
             } else {

@@ -36,6 +36,10 @@
       vertical-align: top;
     }
 
+    .subSalaryHead {
+      border-top: none;
+    }
+
     th {
       padding: 3px 8px;
       line-height: 18px;
@@ -154,7 +158,11 @@
         }
 
         a {
-          color: @tilte-color !important;
+          color: @mainText-color;
+        }
+
+        a.stageSelect {
+          color: @mainText-color;
         }
         a.done {
           color: #00c60b !important;
@@ -195,6 +203,17 @@
     background-color: @defaultBgColorHover;
   }
 
+}
+
+
+.salary-list {
+  tbody#listTable {
+    .subRow {
+      &:hover {
+        background-color: transparent;
+      }
+    }
+  }
 }
 
 .list2 {

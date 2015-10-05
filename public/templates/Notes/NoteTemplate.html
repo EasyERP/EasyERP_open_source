@@ -1,49 +1,56 @@
 <div class="noteWrapper">
-  <label>Note</label>
-  <div class="addNote">
-	<div>
-      <label>Note Content</label>
-      <textarea id="noteArea" placeholder="Add a Note..." maxlength="500"></textarea>
-	  <a class="addTitle" href="javascript:;">Add a title</a>
-      <div class="title-wrapper">
-		<label>Note Title</label>
-		<input type="text" id="noteTitleArea" value="" maxlength="64">
-	  </div>
-      <div class="buttons">
-		<input type="submit" id="addNote" class="btn" value="Save">
-		<a href="javascript:;" id="cancelNote">Cancel</a>
-        <div class="clearfix">
+    <label>Note</label>
+
+    <div class="addNote">
+        <div>
+            <label>Note Content</label>
+            <textarea id="noteArea" placeholder="Add a Note..." maxlength="500"></textarea>
+            <a class="addTitle" href="javascript:;">Add a title</a>
+
+            <div class="title-wrapper">
+                <label>Note Title</label>
+                <input type="text" id="noteTitleArea" value="" maxlength="64">
+            </div>
+            <div class="buttons">
+                <input type="submit" id="addNote" class="btn" value="Save">
+                <a href="javascript:;" id="cancelNote">Cancel</a>
+
+                <div class="clearfix">
+                </div>
+            </div>
+            <input type="hidden" id="getNoteKey" value="">
         </div>
-	  </div>
-      <input type="hidden" id="getNoteKey" value="">
-	</div>
-  <div class="clearfix"></div>
+        <div class="clearfix"></div>
 
-  </div>
-  <div class="clearfix"></div>
+    </div>
+    <div class="clearfix"></div>
 
-  <div id="noteBody">
-    <% notes.reverse();
-       _.each(notes, function(val,key){ %>
-    <div id="<%=val['_id'] %>" class="noteContainer">
-      <div class="noteTitle"><%=val['title'].replace(/</g,"&#60;").replace(/>/g,"&#62;")  %></div>
-      <div class="noteText"><%=val['note'].replace(/</g,"&#60;").replace(/>/g,"&#62;").replace(/\n/g,"<br/>") %></div>
-      <div>
-		<!--<a class="name" href="javascript:;"><%=val['author'] %></a>--><a class="name" href="javascript:;"><%=val['author']%> </a><span class="date"><%=val['date'] %></span>
-        <div class="right">
+    <div id="noteBody">
+        <% notes.reverse();
+        _.each(notes, function(val,key){ %>
+        <div id="<%=val['_id'] %>" class="noteContainer">
+            <div class="noteTitle"><%=val['title'].replace(/</g,"&#60;").replace(/>/g,"&#62;") %></div>
+            <div class="noteText"><%=val['note'].replace(/</g,"&#60;").replace(/>/g,"&#62;").replace(/\n/g,"<br/>") %>
+            </div>
+            <div>
+                <!--<a class="name" href="javascript:;"><%=val['author'] %></a>--><a class="name" href="javascript:;"><%=val['author']%> </a><span
+                    class="date"><%=val['date'] %></span>
+
+                <div class="right">
           <span>
-            <a href="javascript:;" id="edit_<%=val['_id']%>" data-id="<%=val['_id']%>" class="editDelNote editNote" >Edit</a>
+            <a href="javascript:;" id="edit_<%=val['_id']%>" data-id="<%=val['_id']%>"
+               class="editDelNote editNote">Edit</a>
           </span>
-          <span  class="sep" >|</span>
+                    <span class="sep">|</span>
           <span>
             <a href="javascript:;" id="del_<%=val['_id']%>" data-id="<%=val['_id']%>" class="editDelNote">Del</a>
           </span>
 
+                </div>
+            </div>
         </div>
-	  </div>
-    </div>
-  <div class="clearfix"></div>
+        <div class="clearfix"></div>
 
-    <% }); notes.reverse(); %>
-  </div>
+        <% }); notes.reverse(); %>
+    </div>
 </div>
