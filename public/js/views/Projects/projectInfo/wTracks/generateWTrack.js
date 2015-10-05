@@ -27,8 +27,6 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 				this.render();
 			},
 
-			//ToDo remove this.default table after success generate
-
 			addNewEmployeeRow: function (e) {
 				e.preventDefault();
 				e.stopPropagation();
@@ -66,6 +64,26 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 			},
 
 			showNewSelect: function (e, prev, next) {
+				var targetEl = $(e.target);
+				var content = targetEl.closest('td').attr('data-content');
+				var tr;
+				var department;
+
+				if(content === 'employee'){
+					tr = targetEl.closest('tr');
+					department = tr.find('td[data-content="department"]').attr('data-id');
+
+					populate.employeesByDep({
+						e: e,
+						prev: prev,
+						next: next,
+						context: this,
+						department: department
+					});
+
+					return false;
+				}
+
 				populate.showSelect(e, prev, next, this);
 
 				return false;
@@ -91,13 +109,12 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 					return el._id === id;
 				});
 
-				tr.attr('data-id', id);
+				targetElement.attr('data-id', id);
 
-				if (elementType === '#employee') {
+				/*if (elementType === '#employee') {
 					tr.find('[data-content="department"]').text(element.department.name);
-
-					tr.find('[data-content="department"]').removeClass('errorContent');
-				}
+					//tr.find('[data-content="department"]').removeClass('errorContent');
+				}*/
 
 				targetElement.removeClass('errorContent');
 
