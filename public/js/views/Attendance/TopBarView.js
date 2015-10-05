@@ -16,6 +16,7 @@ define([
             },
 
             render: function () {
+                $('title').text(this.contentType);
                 this.$el.html(this.template({contentType: this.contentType}));
                 return this;
             }

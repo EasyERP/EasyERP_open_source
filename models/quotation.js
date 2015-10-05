@@ -84,10 +84,10 @@ module.exports = (function () {
                 if (err) {
                     return next(err);
                 }
+               // quotation.name = 'PO' + rate.seq; //it was working before mongoose and mongo update
+                quotation.name = 'PO' + rate.value.seq;
 
-                quotation.name = 'PO' + rate.seq;
-
-                next()
+                next();
             });
     });
 
