@@ -18,7 +18,7 @@ define([
             listTemplate            : listTemplate,
             listItemView            : listItemView,
             contentCollection       : contentCollection,
-            filterView              : filterView,
+            filterView              : null,
             totalCollectionLengthUrl: '/totalCollectionLength/Opportunities',
             formUrl                 : "#easyErp/Opportunities/form/",
             contentType             : 'Opportunities',//needs in view.prototype.changeLocationHash
@@ -67,7 +67,7 @@ define([
                     },
                     patch  : true,
                     success: function (err, model) {
-                        self.showFilteredPage(_.pluck(self.stages, '_id'));
+                        self.showFilteredPage({}, self);
                     }
                 });
 
