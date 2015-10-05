@@ -231,13 +231,16 @@ define([
 
             onChangeInput: function (e) {
                 var element = e.target;
+                var max = parseInt(element.max);
+                var min = parseInt(element.min);
+                var value = parseInt(element.value);
 
-                if (element.max && element.value > element.max) {
-                    element.value = element.max;
+                if (max && value > max) {
+                    element.value = max;
                 }
 
-                if (element.min && element.value < element.min) {
-                    element.value = element.min;
+                if (min && value < min) {
+                    element.value = min;
                 }
             },
 
