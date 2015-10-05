@@ -46,18 +46,27 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
 				if ((rowId === undefined || rowId !== 'false') && errors.length === 0) {
 					if (!trEll.length) {
-						return parrent.prepend(elem);
+						parrent.prepend(elem);
+						return this.bindDataPicker(elem);
 					}
-					$(trEll[trEll.length - 1]).after(elem);
 
-					$(elem).find('.hasDatepicker').datepicker({
+					$(trEll[trEll.length - 1]).after(elem);
+					this.bindDataPicker(elem);
+				}
+
+
+			},
+
+			bindDataPicker: function(){
+				var dataPickerContainers = $('.datapicker');
+
+				dataPickerContainers.each(function(){
+					$(this).datepicker({
 						dateFormat : "d M, yy",
 						changeMonth: true,
 						changeYear : true
-					});
-				}
-
-				//this.default = wTrackPerEmployeeContainer.find('#rawTable');
+					}).removeClass('datapicker');
+				});
 			},
 
 			generateItems: function () {
