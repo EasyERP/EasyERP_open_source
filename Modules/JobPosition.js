@@ -225,7 +225,7 @@ var JobPosition = function (event, models) {
                 var aggregate = models.get(req.session.lastDb, 'Employees', employee).aggregate(
                     {
                         $match: {
-                            jobPosition: objectId(id)
+                            "jobPosition._id": objectId(id)
                         }
                     },
                     function (err, result) {
@@ -411,7 +411,7 @@ var JobPosition = function (event, models) {
                                             res['data'] = _res;
                                             if (_res.length !== 0) {
                                                 _res.forEach(function (ellement, index) {
-                                                    models.get(req.session.lastDb, 'Employees', employee).find({jobPosition: ellement._id}).count(function (err, count) {
+                                                    models.get(req.session.lastDb, 'Employees', employee).find({"jobPosition._id": ellement._id}).count(function (err, count) {
                                                         if (count) {
                                                             ellement.numberOfEmployees = count;
                                                             ellement.totalForecastedEmployees = ellement.numberOfEmployees + ellement.expectedRecruitment;
