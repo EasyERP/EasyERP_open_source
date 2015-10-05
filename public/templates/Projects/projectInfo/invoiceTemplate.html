@@ -28,7 +28,9 @@
         </thead>
         <tbody id="listTable"></tbody>
         <tfoot id="listTotal"></tfoot>
-
+        <%var balance = 0;%>
+        <%var paid = 0;%>
+        <%var total = 0;%>
 <% collection.forEach(function(invoice, index){ %>
 <tr data-id="<%=invoice._id%>">
     <td><%=startNumber + index + 1%></td>
@@ -51,7 +53,18 @@
         <span> </span>
         <%}%>
     </td>
+
+    <%balance += parseFloat(invoice.paymentInfo.balance)%>
+    <%paid += parseFloat(invoice.paymentInfo.unTaxed)%>
+    <%total += parseFloat(invoice.paymentInfo.total)%>
 </tr>
 <% }) %>
+        <tr>
+            <td colspan="6"></td>
+            <td><span id="balance" class="money"><%=currencySplitter((balance / 100).toFixed(2))%></span></td>
+            <td><span id="paid" class="money"><%=currencySplitter((paid / 100).toFixed(2))%></span></td>
+            <td><span id="total" class="money"><%=currencySplitter((total / 100).toFixed(2))%></span></td>
+            <td></td>
+        </tr>
     </table>
 </div>
