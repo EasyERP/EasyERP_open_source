@@ -12,9 +12,9 @@ define([
     function (CreateTemplate, InvoiceModel, common, populate, InvoiceItemView, AssigneesView, listHederInvoice, dataService, CONSTANTS) {
 
         var CreateView = Backbone.View.extend({
-            el: "#content-holder",
+            el         : "#content-holder",
             contentType: "Invoice",
-            template: _.template(CreateTemplate),
+            template   : _.template(CreateTemplate),
 
             initialize: function (options) {
                 _.bindAll(this, "saveItem", "render");
@@ -23,14 +23,14 @@ define([
                 this.render();
             },
 
-            events: {
-                'keydown': 'keydownHandler',
-                'click .dialog-tabs a': 'changeTab',
-                "click .details": "showDetailsBox",
-                "click .current-selected": "showNewSelect",
-                "click": "hideNewSelect",
-                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-                "click .newSelectList li.miniStylePagination": "notHide",
+            events       : {
+                'keydown'                                                         : 'keydownHandler',
+                'click .dialog-tabs a'                                            : 'changeTab',
+                "click .details"                                                  : "showDetailsBox",
+                "click .current-selected"                                         : "showNewSelect",
+                "click"                                                           : "hideNewSelect",
+                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
+                "click .newSelectList li.miniStylePagination"                     : "notHide",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect"
             },
@@ -39,21 +39,21 @@ define([
                 return false;
 
             },
-            notHide: function () {
+            notHide      : function () {
                 return false;
             },
             hideNewSelect: function () {
                 $(".newSelectList").hide();
             },
-            chooseOption: function (e) {
+            chooseOption : function (e) {
                 var holder = $(e.target).parents("dd").find(".current-selected");
                 holder.text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
             },
 
-            nextSelect: function (e) {
+            nextSelect    : function (e) {
                 this.showNewSelect(e, false, true);
             },
-            prevSelect: function (e) {
+            prevSelect    : function (e) {
                 this.showNewSelect(e, true, false);
             },
             showDetailsBox: function (e) {
@@ -120,7 +120,7 @@ define([
                 var balance = parseFloat(this.$("#balance").text());
 
                 var payments = {
-                    total: total,
+                    total  : total,
                     unTaxed: unTaxed,
                     balance: balance
                 };
@@ -137,12 +137,12 @@ define([
                             amount = targetEl.find('.amount').text();
 
                             products.push({
-                                product: productId,
+                                product    : productId,
                                 description: description,
-                                unitPrice: price,
-                                quantity: quantity,
-                                taxes: taxes,
-                                subTotal: amount
+                                unitPrice  : price,
+                                quantity   : quantity,
+                                taxes      : taxes,
+                                subTotal   : amount
                             });
                         }
                     }
@@ -164,29 +164,29 @@ define([
                 var data = {
                     forSales: forSales,
 
-                    supplier: {
-                        _id: supplier,
+                    supplier             : {
+                        _id : supplier,
                         name: supplierName
                     },
-                    fiscalPosition: null,
-                    sourceDocument: $.trim($('#source_document').val()),
+                    fiscalPosition       : null,
+                    sourceDocument       : $.trim($('#source_document').val()),
                     supplierInvoiceNumber: $.trim($('#supplier_invoice_num').val()),
-                    paymentReference: $.trim($('#payment_reference').val()),
-                    invoiceDate: invoiceDate,
-                    dueDate: dueDate,
-                    account: null,
-                    journal: null,
+                    paymentReference     : $.trim($('#payment_reference').val()),
+                    invoiceDate          : invoiceDate,
+                    dueDate              : dueDate,
+                    account              : null,
+                    journal              : null,
 
-                    salesPerson: {
-                        _id: salesPersonId,
+                    salesPerson : {
+                        _id : salesPersonId,
                         name: salesPersonName
                     },
                     paymentTerms: paymentTermId,
 
-                    products: products,
+                    products   : products,
                     paymentInfo: payments,
 
-                    groups: {
+                    groups  : {
                         owner: $("#allUsersSelect").data("id"),
                         users: usersId,
                         group: groupsId
@@ -202,14 +202,14 @@ define([
                         headers: {
                             mid: mid
                         },
-                        wait: true,
-                        success: function () {
+                        wait   : true,
+                        success: function (resdfg) {
                             var redirectUrl = self.forSales ? "easyErp/salesInvoice" : "easyErp/Invoice";
 
                             self.hideDialog();
                             Backbone.history.navigate(redirectUrl, {trigger: true});
                         },
-                        error: function (model, xhr) {
+                        error  : function (model, xhr) {
                             self.errorNotification(xhr);
                         }
                     });
@@ -235,23 +235,23 @@ define([
 
                 this.$el = $(formString).dialog({
                     closeOnEscape: false,
-                    autoOpen: true,
-                    resizable: true,
-                    dialogClass: "edit-dialog",
-                    title: "Create Invoice",
-                    width: "900px",
-                    position: {within: $("#wrapper")},
-                    buttons: [
+                    autoOpen     : true,
+                    resizable    : true,
+                    dialogClass  : "edit-dialog",
+                    title        : "Create Invoice",
+                    width        : "900px",
+                    position     : {within: $("#wrapper")},
+                    buttons      : [
                         {
-                            id: "create-invoice-dialog",
-                            text: "Create",
+                            id   : "create-invoice-dialog",
+                            text : "Create",
                             click: function () {
                                 self.saveItem();
                             }
                         },
 
                         {
-                            text: "Cancel",
+                            text : "Cancel",
                             click: function () {
                                 self.hideDialog();
                             }
@@ -276,28 +276,26 @@ define([
                     new listHederInvoice().render().el
                 );
 
-
                 populate.get2name("#supplier", "/supplier", {}, this, false, true);
                 populate.get("#payment_terms", "/paymentTerm", {}, 'name', this, true, true);
                 populate.get2name("#salesPerson", "/getForDdByRelatedUser", {}, this, true, true);
                 populate.fetchWorkflow({wId: 'Purchase Invoice'}, function (response) {
                     if (!response.error) {
-                        self.defaultWorkflow = response._id;
+                        self.defaultWorkflow = {_id: response._id, name: response.name, status: response.status};
                     }
                 });
 
                 this.$el.find('#invoice_date').datepicker({
-                    dateFormat: "d M, yy",
+                    dateFormat : "d M, yy",
                     changeMonth: true,
-                    changeYear: true
+                    changeYear : true
                 }).datepicker('setDate', new Date());
 
                 this.$el.find('#due_date').datepicker({
-                    dateFormat: "d M, yy",
+                    dateFormat : "d M, yy",
                     changeMonth: true,
-                    changeYear: true
+                    changeYear : true
                 });
-
 
                 this.delegateEvents(this.events);
 

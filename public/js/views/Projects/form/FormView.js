@@ -135,8 +135,8 @@ define([
 						validation = false;
 					}
 
-					var startD = $(val).find(".startDate>div").text().trim() || $(val).find(".startDate input").val() || null;
-					var endD = $(val).find(".endDate>div").text().trim() || $(val).find(".endDate input").val() || null;
+					var startD =  $(val).find(".startDate input").val() || null;
+					var endD =  $(val).find(".endDate input").val() || null;
 
 					bonus.push({
 						employeeId: employeeId,
