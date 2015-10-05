@@ -808,7 +808,6 @@ var wTrack = function (event, models) {
         var weekDefault = opt.weekDefault;
         var dateArray;
         var wTrackObj;
-        var weekCount;
         var revenueForWeek;
         var monthsArr = [];
         var weeksArr = [];
@@ -839,9 +838,6 @@ var wTrack = function (event, models) {
             uniqMonths = _.uniq(monthsArr);
             uniqWeeks = _.uniq(weeksArr);
             uniqYears = _.uniq(yearsArr);
-
-            weekCount = dateArray.length;
-            revenueForWeek = (parseFloat(revenue) / weekCount).toFixed(2);
 
             dateArray.forEach(function (element) {
                 var year = element.year;
@@ -962,7 +958,7 @@ var wTrack = function (event, models) {
                             month: month,
                             week: week,
                             worked: totalHours,
-                            revenue: parseFloat(revenueForWeek),
+                            revenue: parseFloat(revenue),
                             cost: cost,
                             rate: (parseFloat(revenueForWeek) / totalHours).toFixed(2),
                             1: trackWeek['1'],

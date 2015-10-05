@@ -232,26 +232,6 @@ define([
                 }
             },
 
-            vacationTypeForDD: function (content) {
-                var array = ['&nbsp', 'Vacation', 'Personal', 'Sick', 'Education'];
-                var firstChar;
-
-                array = _.map(array, function (element) {
-                    element = {
-                        name: element
-                    };
-                    firstChar = element.name.charAt(0);
-                    if (firstChar !== '&') {
-                        element._id = firstChar;
-                    } else {
-                        element._id = '';
-                    }
-
-                    return element;
-                });
-                content.responseObj['#vacType'] = array;
-            },
-
             monthForDD: function (content) {
                 var array = [];
 
@@ -452,7 +432,7 @@ define([
                 }, this);
             },
 
-            renderdSubHeader: function (currentEl) {
+            renderSubHeader: function (currentEl) {
                 var subHeaderContainer;
 
                 var month;
@@ -601,7 +581,7 @@ define([
                     }
                     this.startTime = new Date();
                     this.changedDataOptions();
-                    this.renderdSubHeader(this.$el);
+                    this.renderSubHeader(this.$el);
                 }
 
                 if (elementType === '#employee') {
@@ -760,7 +740,7 @@ define([
                 return totalArray;
             },
 
-            renderDepartmentRows: function (departments) {
+            renderDepartmentRows: function () {
                 var listTable = this.$el.find("#listTable");
                 var departments = [];
 
@@ -841,7 +821,7 @@ define([
                 this.monthElement = currentEl.find('#monthSelect');
                 this.yearElement = currentEl.find('#yearSelect');
 
-                this.renderdSubHeader(currentEl);
+                this.renderSubHeader(currentEl);
 
                 this.$el.find("#listTable").html('');
 
@@ -969,6 +949,7 @@ define([
                     template = _.template(createTemplate);
 
                     tr.after(template(startData));
+                    this.createDefValues(this, this.monthElement.attr('data-content'), this.yearElement.text());
                 }
             },
 

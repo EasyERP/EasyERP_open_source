@@ -42,17 +42,31 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 					month: 10,
 					week : 40
 				});
+				var errors = this.$el.find('.errorContent');
 
-
-
-				if (rowId === undefined || rowId !== 'false') {
+				if ((rowId === undefined || rowId !== 'false') && errors.length === 0) {
 					if (!trEll.length) {
-						return parrent.prepend(elem);
+						parrent.prepend(elem);
+						return this.bindDataPicker(elem);
 					}
+
 					$(trEll[trEll.length - 1]).after(elem);
+					this.bindDataPicker(elem);
 				}
 
-				//this.default = wTrackPerEmployeeContainer.find('#rawTable');
+
+			},
+
+			bindDataPicker: function(){
+				var dataPickerContainers = $('.datapicker');
+
+				dataPickerContainers.each(function(){
+					$(this).datepicker({
+						dateFormat : "d M, yy",
+						changeMonth: true,
+						changeYear : true
+					}).removeClass('datapicker');
+				});
 			},
 
 			generateItems: function () {
@@ -69,20 +83,20 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 				var tr;
 				var department;
 
-				if(content === 'employee'){
-					tr = targetEl.closest('tr');
-					department = tr.find('td[data-content="department"]').attr('data-id');
+				/*if(content === 'employee'){
+				 tr = targetEl.closest('tr');
+				 department = tr.find('td[data-content="department"]').attr('data-id');
 
-					populate.employeesByDep({
-						e: e,
-						prev: prev,
-						next: next,
-						context: this,
-						department: department
-					});
+				 populate.employeesByDep({
+				 e: e,
+				 prev: prev,
+				 next: next,
+				 context: this,
+				 department: department
+				 });
 
-					return false;
-				}
+				 return false;
+				 }*/
 
 				populate.showSelect(e, prev, next, this);
 
@@ -104,21 +118,27 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 				var id = target.attr("id");
 				var attr = targetElement.attr("id") || targetElement.data("content");
 				var elementType = '#' + attr;
+				var departmentContainer;
+				var selectorContainer;
 
 				var element = _.find(this.responseObj[elementType], function (el) {
 					return el._id === id;
 				});
 
 				targetElement.attr('data-id', id);
+				selectorContainer = targetElement.find('a.current-selected');
 
-				/*if (elementType === '#employee') {
-					tr.find('[data-content="department"]').text(element.department.name);
-					//tr.find('[data-content="department"]').removeClass('errorContent');
-				}*/
+				if (elementType === '#employee') {
+					departmentContainer = tr.find('[data-content="department"]');
+					departmentContainer.find('a.current-selected').text(element.department.name);
+					departmentContainer.removeClass('errorContent');
+
+					tr.attr('data-id', id);
+				}
 
 				targetElement.removeClass('errorContent');
 
-				targetElement.text(target.text());
+				selectorContainer.text(target.text());
 
 				this.hideNewSelect();
 
@@ -130,6 +150,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 			},
 
 			render: function () {
+				var thisEl = this.$el;
 				var project = this.model.toJSON();
 				var dialog = this.template({
 					project: project
@@ -178,6 +199,11 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 					self.responseObj['#department'] = departments;
 				});
 
+				thisEl.find('#expectedDate').datepicker({
+					dateFormat : "d M, yy",
+					changeMonth: true,
+					changeYear : true
+				});
 			}
 		});
 		return CreateView;

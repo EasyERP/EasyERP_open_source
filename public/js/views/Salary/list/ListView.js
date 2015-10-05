@@ -419,11 +419,8 @@ define([
             },
 
             triggerDeleteItemsRender: function (deleteCounter) {
-                var self = this;
-
                 this.deleteCounter = deleteCounter;
                 this.deletePage = $("#currentShowPage").val();
-                self.deleteItemsRender(deleteCounter, self.deletePage);
             },
 
             deleteItems: function () {
@@ -457,12 +454,12 @@ define([
                                 localCounter++;
 
                                 $('#listTable').find(checkbox)
-                                    .closest('row')
+                                    .closest('tr')
                                     .html('');
 
-                                if (index === checkCount - 1) {
+                                /*if (index === checkCount - 1) {
                                     that.triggerDeleteItemsRender(localCounter);
-                                }
+                                }*/
                             },
                             error  : function (model, res) {
                                 if (res.status === 403 && index === 0) {

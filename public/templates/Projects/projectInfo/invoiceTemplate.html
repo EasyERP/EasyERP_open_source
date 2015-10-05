@@ -2,7 +2,6 @@
 <div>
     <table class="list task-list">
         <col width="2%">
-        <col width="2%">
         <col width="10%">
         <col width="10%">
         <col width="10%">
@@ -15,7 +14,6 @@
 
         <thead>
         <tr>
-            <th><input type="checkbox" id="check_all"/></th>
             <th>N</th>
             <th>Customer</th>
             <th>Invoice Date</th>
@@ -30,10 +28,11 @@
         </thead>
         <tbody id="listTable"></tbody>
         <tfoot id="listTotal"></tfoot>
-
+        <%var balance = 0;%>
+        <%var paid = 0;%>
+        <%var total = 0;%>
 <% collection.forEach(function(invoice, index){ %>
 <tr data-id="<%=invoice._id%>">
-    <td class = "notForm"><input type="checkbox" value="<%=invoice._id%>" class="checkbox" /></td>
     <td><%=startNumber + index + 1%></td>
     <td><%=(invoice.supplier && invoice.supplier.name) ? invoice.supplier.name : ''%></td>
     <td><%=utcDateToLocaleDate(invoice.invoiceDate)%></td>
@@ -54,7 +53,18 @@
         <span> </span>
         <%}%>
     </td>
+
+    <%balance += parseFloat(invoice.paymentInfo.balance)%>
+    <%paid += parseFloat(invoice.paymentInfo.unTaxed)%>
+    <%total += parseFloat(invoice.paymentInfo.total)%>
 </tr>
 <% }) %>
+        <tr>
+            <td colspan="6"></td>
+            <td><span id="balance" class="money"><%=currencySplitter((balance / 100).toFixed(2))%></span></td>
+            <td><span id="paid" class="money"><%=currencySplitter((paid / 100).toFixed(2))%></span></td>
+            <td><span id="total" class="money"><%=currencySplitter((total / 100).toFixed(2))%></span></td>
+            <td></td>
+        </tr>
     </table>
 </div>
