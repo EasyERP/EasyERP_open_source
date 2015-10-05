@@ -303,11 +303,11 @@ define([
                             }
 
                             var weeks = result[0];
-                            editedElement.closest('tr').find('[data-content="week"]').text(weeks[0]);
+                            editedElement.closest('tr').find('[data-content="week"]').text(weeks[0].week);
                             editedCol.text(editedElementValue);
                             editedElement.remove();
 
-                            self.changedModels[editedElementRowId]['week'] = weeks[0];
+                            self.changedModels[editedElementRowId]['week'] = weeks[0].week;
                         });
                     } else {
                         editedCol.text(editedElementValue);
