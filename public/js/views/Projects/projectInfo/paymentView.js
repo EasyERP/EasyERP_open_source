@@ -55,7 +55,8 @@ define([
             currentEl.append(template({
                 paymentCollection: this.collection,
                 startNumber: 0,
-                utcDateToLocaleDate: common.utcDateToLocaleDate
+                utcDateToLocaleDate: common.utcDateToLocaleDate,
+                currencySplitter: helpers.currencySplitter
             }));
 
             currentEl.find('#check_all').click(function () {
