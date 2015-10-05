@@ -14,10 +14,11 @@ define([
         'constants',
         'async',
         'moment',
-        'populate'
+        'populate',
+        'custom'
     ],
 
-    function (listViewBase, listHeaderTemplate, cancelEdit, listTotal, departmentListTemplate, listTemplate, createTemplate, currentModel, filterCollection, editCollection, common, dataService, CONSTANTS, async, moment, populate) {
+    function (listViewBase, listHeaderTemplate, cancelEdit, listTotal, departmentListTemplate, listTemplate, createTemplate, currentModel, filterCollection, editCollection, common, dataService, CONSTANTS, async, moment, populate, custom) {
         var CapacityListView = listViewBase.extend({
             el                : '#content-holder',
             defaultItemsNumber: null,
@@ -444,6 +445,11 @@ define([
                 var dateDay;
                 var daysRow = '';
                 var daysNumRow = '';
+                var columnContainer;
+                var width;
+                var weeks;
+                var weeksRow = '';
+                var curWeek;
 
                 subHeaderContainer = currentEl.find('.subHeaderHolder');
 
@@ -460,14 +466,21 @@ define([
                     dateDay = date.add(1, 'd');
                 }
 
+                weeks = custom.getWeeks(month, year);
+
+                for (var i = 0; i <= weeks.length - 1; i++) {
+                    curWeek = weeks[i];
+                    weeksRow += '<th colspan="' + curWeek.daysCount + '">' + curWeek.week + '</th>';
+                }
+
                 daysRow = '<tr class="subHeaderHolder borders">' + daysRow + '</tr>';
 
                 daysNumRow = '<tr class="subHeaderHolder borders"><th colspan="2">Department</th><th class="oe-sortable" data-sort="employee.name">Employee</th>' + daysNumRow + '<th>Total Hours</th></tr>';
 
                 this.daysCount = daysInMonth;
 
-                var columnContainer = $('#columnForDays');
-                var width = 80 / daysInMonth;
+                columnContainer = $('#columnForDays');
+                width = 80 / daysInMonth;
 
                 columnContainer.html('');
 
@@ -476,8 +489,9 @@ define([
                 }
 
                 $(subHeaderContainer[0]).attr('colspan', daysInMonth - 12);
-                $(subHeaderContainer[1]).replaceWith(daysRow);
-                $(subHeaderContainer[2]).replaceWith(daysNumRow);
+                $(subHeaderContainer[1]).replaceWith(weeksRow);
+                $(subHeaderContainer[2]).replaceWith(daysRow);
+                $(subHeaderContainer[3]).replaceWith(daysNumRow);
             },
 
             nextSelect: function (e) {
