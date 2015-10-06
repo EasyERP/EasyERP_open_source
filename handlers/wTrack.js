@@ -805,7 +805,7 @@ var wTrack = function (event, models) {
         var project = opt.project;
         var department = opt.department;
         var revenue = opt.revenue;
-        var weekDefault = opt.weekDefault;
+       // var weekDefault = opt.weekDefault;
         var dateArray;
         var wTrackObj;
         var revenueForWeek;
@@ -865,7 +865,7 @@ var wTrack = function (event, models) {
                             trackWeek[i] = holidays[dateByWeek][i];
                             totalHours += trackWeek[i];
                         } else {
-                            trackWeek[i] =  weekDefault[i];
+                            trackWeek[i] =  opt[i];
                             totalHours += trackWeek[i];
                         }
                     }
