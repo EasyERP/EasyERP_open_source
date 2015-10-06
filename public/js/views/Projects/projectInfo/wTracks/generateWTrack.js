@@ -4,9 +4,10 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
         'models/GenerateWtrack',
         'collections/generateWtrack/filterCollection',
         'populate',
-        'dataService'
+        'dataService',
+        'moment'
     ],
-    function (generateTemplate, wTrackPerEmployeeTemplate, wTrackPerEmployee, currentModel, currentCollection, populate, dataService) {
+    function (generateTemplate, wTrackPerEmployeeTemplate, wTrackPerEmployee, currentModel, currentCollection, populate, dataService, moment) {
         "use strict";
         var CreateView = Backbone.View.extend({
             template                 : _.template(generateTemplate),
@@ -36,7 +37,15 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
             initialize: function (options) {
                 this.model = options.model;
 
+                this.collection.on('saved', this.savedNewModel, this);
+
                 this.render();
+            },
+
+            savedNewModel: function (modelObject) {
+                if (modelObject.success) {
+
+                }
             },
 
             generateType: function (e) {
@@ -58,12 +67,21 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                 var parrentRow = parrent.find('.productItem').last();
                 var rowId = parrentRow.attr("data-id");
                 var trEll = parrent.find('tr.productItem');
+                var date = moment(new Date());
+                var year = date.year();
+                var month = date.month();
+                var week = date.isoWeek();
+                var newModel = new currentModel();
+
                 var elem = this.wTrackPerEmployeeTemplate({
-                    year : 2015,
-                    month: 10,
-                    week : 40
+                    year : year,
+                    month: month,
+                    week : week,
+                    id   : newModel.cid
                 });
                 var errors = this.$el.find('.errorContent');
+
+                this.collection.add(newModel);
 
                 if ((rowId === undefined || rowId !== 'false') && errors.length === 0) {
 
@@ -75,6 +93,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     }
 
                     $(trEll[trEll.length - 1]).after(elem);
+                    $(".generateTypeUl").hide();
                     this.bindDataPicker();
                 }
             },
@@ -153,7 +172,6 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
             setChangedValue: function () {
                 if (!this.changed) {
                     this.changed = true;
-                    this.showSaveCancelBtns()
                 }
             },
 
@@ -166,8 +184,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
             },
 
             setChangedValueToModel: function () {
-                var listTable = $('#rawTable tbody');
-                var editedElement = listTable.find('.editing');
+                var editedElement = this.$listTable.find('.editing');
                 var editedCol;
                 var editedElementRowId;
                 var editedElementContent;
@@ -193,7 +210,20 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
             },
 
             generateItems: function () {
+                var model;
 
+                var errors = this.$el.find('.errorContent');
+
+                for (var id in this.changedModels) {
+                    model = this.collection.get(id);
+                    model.changed = this.changedModels[id];
+
+                }
+
+                if (errors.length) {
+                    return
+                }
+                this.collection.save();
             },
 
             hideDialog: function () {
@@ -238,6 +268,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                 var target = $(e.target);
                 var targetElement = target.parents("td");
                 var tr = target.parents("tr");
+                var modelId = tr.attr('data-id');
                 var id = target.attr("id");
                 var attr = targetElement.attr("id") || targetElement.data("content");
                 var elementType = '#' + attr;
@@ -245,10 +276,23 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                 var selectorContainer;
                 var endDateDP;
                 var endDateInput;
+                var changedAttr;
 
                 var element = _.find(this.responseObj[elementType], function (el) {
                     return el._id === id;
                 });
+
+                var editWtrackModel = this.collection.get(modelId);
+
+                if (!this.changedModels[modelId]) {
+                    if (!editWtrackModel.id) {
+                        this.changedModels[modelId] = editWtrackModel.attributes;
+                    } else {
+                        this.changedModels[modelId] = {};
+                    }
+                }
+
+                changedAttr = this.changedModels[modelId];
 
                 targetElement.attr('data-id', id);
                 selectorContainer = targetElement.find('a.current-selected');
@@ -258,7 +302,12 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     departmentContainer.find('a.current-selected').text(element.department.name);
                     departmentContainer.removeClass('errorContent');
 
-                    tr.attr('data-id', id);
+                    changedAttr.employee = {
+                        _id: element._id,
+                        name: element.name
+                    }
+                    changedAttr.department = element.department;
+
                 } else {
                     targetElement.find('a').text(target.text());
                     endDateDP = tr.find('.endDateDP');
@@ -342,6 +391,8 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     changeMonth: true,
                     changeYear : true
                 });
+
+                this.$listTable = $('#rawTable tbody');
             }
         });
         return CreateView;
