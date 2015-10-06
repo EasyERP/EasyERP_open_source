@@ -1,16 +1,19 @@
 define(["text!templates/Projects/projectInfo/wTracks/generate.html",
         "text!templates/Projects/projectInfo/wTracks/wTrackPerEmployee.html",
         'views/Projects/projectInfo/wTracks/wTrackPerEmployee',
+        'models/GenerateWtrack',
+        'collections/generateWtrack/filterCollection',
         'populate',
         'dataService'
     ],
-    function (generateTemplate, wTrackPerEmployeeTemplate, wTrackPerEmployee, populate, dataService) {
+    function (generateTemplate, wTrackPerEmployeeTemplate, wTrackPerEmployee, currentModel, currentCollection, populate, dataService) {
         "use strict";
         var CreateView = Backbone.View.extend({
             template                 : _.template(generateTemplate),
             wTrackPerEmployeeTemplate: _.template(wTrackPerEmployeeTemplate),
             responseObj              : {},
             changedModels            : {},
+            collection               : new currentCollection(),
 
             events: {
                 "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
@@ -72,7 +75,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     }
 
                     $(trEll[trEll.length - 1]).after(elem);
-                    this.bindDataPicker(elem);
+                    this.bindDataPicker();
                 }
             },
 
