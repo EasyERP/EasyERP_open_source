@@ -45,12 +45,19 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
             },
 
             asyncLoadImgs: function (model) {
-                common.getImagesPM([model.toJSON().projectmanager._id], "/getEmployeesImages", "#" + model.toJSON()._id, function(result){
-                    $(".miniAvatarPM").attr("data-id", result.data[0]._id).find("img").attr("src", result.data[0].imageSrc);
+                var currentModel = model.toJSON();
+                var id = currentModel._id;
+
+                common.getImagesPM([currentModel.projectmanager._id], "/getEmployeesImages", "#" + id, function(result){
+                    var res = result.data[0];
+
+                    $(".miniAvatarPM").attr("data-id", res._id).find("img").attr("src", res.imageSrc);
                 });
 
-                common.getImagesPM([model.toJSON().customer._id], "/getCustomersImages", "#" + model.toJSON()._id, function(result){
-                    $(".miniAvatarCustomer").attr("data-id", result.data[0]._id).find("img").attr("src", result.data[0].imageSrc);
+                common.getImagesPM([currentModel.customer._id], "/getCustomersImages", "#" + id, function(result){
+                    var res = result.data[0];
+
+                    $(".miniAvatarCustomer").attr("data-id", res._id).find("img").attr("src", res.imageSrc);
                 });
             },
 
