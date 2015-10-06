@@ -37,15 +37,6 @@ define([
             yearElement       : null,
             vacations         : null,
 
-            initialize: function (options) {
-                this.startTime = options.startTime;
-                this.capacityObject = options.collection.toJSON()[0].capacityObject;
-                this.departmentObject = options.collection.toJSON()[0].departmentObject;
-                _.bind(this.collection.showMore, this.collection);
-                this.render();
-                this.daysCount;
-            },
-
             events: {
                 "click .createBtn"                                                : "createItem",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
@@ -57,6 +48,15 @@ define([
                 "change .editable "                                               : "setEditable",
                 "click"                                                           : "hideNewSelect",
                 "click .departmentRow td"                                         : "showCapacity",
+            },
+
+            initialize: function (options) {
+                this.startTime = options.startTime;
+                this.capacityObject = options.collection.toJSON()[0].capacityObject;
+                this.departmentObject = options.collection.toJSON()[0].departmentObject;
+                _.bind(this.collection.showMore, this.collection);
+                this.render();
+                this.daysCount;
             },
 
             showNewCurrentSelect: function (e, prev, next) {
@@ -166,7 +166,6 @@ define([
                 var editedElementOldValue;
                 var changedAttr;
                 var tdTotalHours;
-                var tdTotalHoursValue;
 
                 if (editedElement.length) {
                     editedCol = editedElement.closest('td');
@@ -192,13 +191,12 @@ define([
 
                     if (editedElementContent === 'capacityValue') {
                         dayIndex = editedCol.attr('data-dayID');
-                        //dayTotalElement = $('#day' + dayIndex);
 
                         changedAttr = this.changedModels[editedElementRowId];
 
                         editedCol.text(editedElementValue);
 
-                        if (changedAttr && !changedAttr.vacArray) {
+                        if (changedAttr && !changedAttr.capacityArray) {
                             changedAttr.capacityArray = _.clone(editCapacityModel.toJSON().capacityArray);
 
                             if (!changedAttr.capacityMonthTotal) {
@@ -211,24 +209,13 @@ define([
                         }
 
                         changedAttr.capacityArray[dayIndex] = editedElementValue;
+
                         if (editedElementOldValue !== editedElementValue) {
                             changedAttr.capacityMonthTotal = changedAttr.capacityMonthTotal - editedElementOldValue + editedElementValue;
                             tdTotalHours.text(changedAttr.capacityMonthTotal);
                         }
-
-
-                        if (!isFinite(editedCol.text())) {
-                            /*if (!this.checkEmptyArray(changedAttr.capacityArray)) {
-                             checkDay(targetElement, element._id);
-                             delete(changedAttr.capacityArray[dayIndex]);
-                             if (this.checkEmptyArray(changedAttr.capacityArray)) {
-                             this.deleteItem(modelId);
-                             }
-                             }*/
-                        }
                     }
 
-                    //this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
                     editedElement.remove();
                 }
             },
@@ -288,7 +275,7 @@ define([
                 var tempContainer;
                 var insertedInput;
 
-                if (capacityId && el.prop('tagName') !== 'INPUT') {
+                if (capacityId && !isInput) {
                     if (this.capacityId) {
                         this.setChangedValueToModel();
                     }

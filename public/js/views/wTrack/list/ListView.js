@@ -283,6 +283,10 @@ define([
                 var editedElementValue;
                 var self = this;
 
+                if(navigator.userAgent.indexOf("Firefox") > -1) {
+                    this.setEditable(editedElement);
+                }
+
                 if (/*wTrackId !== this.wTrackId &&*/ editedElement.length) {
                     editedCol = editedElement.closest('td');
                     editedElementRowId = editedElement.closest('tr').data('id');
