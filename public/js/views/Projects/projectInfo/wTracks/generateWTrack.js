@@ -115,14 +115,15 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     this.setChangedValueToModel();
                 }
 
+                if (!isInput) {
+                    tempContainer = el.text();
+                    width = el.width() - 6;
+                    el.html('<input class="editing" type="text" value="' + tempContainer + '"  maxLength="4" style="width:' + width + 'px">');
 
-                tempContainer = el.text();
-                width = el.width() - 6;
-                el.html('<input class="editing" type="text" value="' + tempContainer + '"  maxLength="4" style="width:' + width + 'px">');
-
-                insertedInput = el.find('input');
-                insertedInput.focus();
-                insertedInput[0].setSelectionRange(0, insertedInput.val().length);
+                    insertedInput = el.find('input');
+                    insertedInput.focus();
+                    insertedInput[0].setSelectionRange(0, insertedInput.val().length);
+                }
 
                 return false;
             },
@@ -256,6 +257,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                     tr.attr('data-id', id);
                 } else {
+                    targetElement.find('a').text(target.text());
                     endDateDP = tr.find('#endDateDP');
                     endDateInput = tr.find('#endDateInput');
 
