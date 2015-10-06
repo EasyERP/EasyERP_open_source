@@ -258,8 +258,8 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     tr.attr('data-id', id);
                 } else {
                     targetElement.find('a').text(target.text());
-                    endDateDP = tr.find('#endDateDP');
-                    endDateInput = tr.find('#endDateInput');
+                    endDateDP = tr.find('.endDateDP');
+                    endDateInput = tr.find('.endDateInput');
 
                     if (target.attr('data-content') === 'byDate') {
                         endDateDP.removeClass('hidden');
