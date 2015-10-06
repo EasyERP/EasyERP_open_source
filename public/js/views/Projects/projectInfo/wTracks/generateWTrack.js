@@ -12,29 +12,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                 template                 : _.template(generateTemplate),
                 wTrackPerEmployeeTemplate: _.template(wTrackPerEmployeeTemplate),
                 responseObj              : {},
-                changedModels            : {},
                 resultArray              : [],
-                defaultObject            : {
-                    startDate : '',
-                    endDate   : '',
-                    hours     : '',
-                    project   : {
-                        projectName   : '',
-                        workflow      : {},
-                        customer      : {},
-                        projectmanager: {}
-                    },
-                    employee  : {},
-                    department: {},
-                    1         : 8,
-                    2         : 8,
-                    3         : 8,
-                    4         : 8,
-                    5         : 8,
-                    6         : 0,
-                    7         : 0,
-                    revenue   : 120
-                },
 
                 events: {
                     "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
@@ -59,6 +37,28 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     this.asyncLoadImgs(this.model);
 
                     _.bindAll(this, 'generateItems');
+
+                    this.defaultObject = {
+                        startDate : '',
+                        endDate   : '',
+                        hours     : '',
+                        project   : {
+                            projectName   : '',
+                            workflow      : {},
+                            customer      : {},
+                            projectmanager: {}
+                        },
+                        employee  : {},
+                        department: {},
+                        1         : 8,
+                        2         : 8,
+                        3         : 8,
+                        4         : 8,
+                        5         : 8,
+                        6         : 0,
+                        7         : 0,
+                        revenue   : 120
+                    };
 
                     this.render();
                 },
@@ -134,10 +134,10 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     var dataPickerEndContainers = $('.endDateDP.datapicker');
 
                     dataPickerStartContainers.datepicker({
-                        dateFormat: "d M, yy",
+                        dateFormat : "d M, yy",
                         changeMonth: true,
-                        changeYear: true,
-                        onSelect: function (text, datPicker) {
+                        changeYear : true,
+                        onSelect   : function (text, datPicker) {
                             var targetInput = $(this);
                             var td = targetInput.closest('tr');
                             var endDatePicker = td.find('.endDateDP');
@@ -154,9 +154,9 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     }).removeClass('datapicker');
 
                     dataPickerEndContainers.datepicker({
-                        dateFormat: "d M, yy",
+                        dateFormat : "d M, yy",
                         changeMonth: true,
-                        changeYear: true
+                        changeYear : true
                     }).removeClass('datapicker');
 
                 },
