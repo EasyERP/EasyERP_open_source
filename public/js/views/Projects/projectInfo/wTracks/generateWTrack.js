@@ -38,15 +38,17 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                     _.bindAll(this, 'generateItems');
 
+                    this.modelJSON = this.model.toJSON();
+
                     this.defaultObject = {
                         startDate : '',
                         endDate   : '',
                         hours     : '',
                         project   : {
-                            projectName   : '',
-                            workflow      : {},
-                            customer      : {},
-                            projectmanager: {}
+                            projectName   : this.modelJSON.projectName,
+                            workflow      : this.modelJSON.workflow,
+                            customer      : this.modelJSON.customer,
+                            projectmanager: this.modelJSON.projectmanager
                         },
                         employee  : {},
                         department: {},
@@ -252,6 +254,9 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                 generateItems: function () {
                     var errors = this.$el.find('.errorContent');
+                    var url;
+                    var filter;
+                    var self = this;
 
                     if (errors.length) {
                         return
@@ -262,7 +267,15 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                         url    : '/wTrack/generateWTrack',
                         data   : this.resultArray,
                         success: function () {
-                            alert('good');
+                            filter = {
+                                'projectName': {
+                                    key: 'project._id',
+                                    value: [self.modelJSON['_id']]
+                                }
+                            }
+                            url = '#easyErp/wTrack/list';
+                            url += '/filter=' + encodeURIComponent(JSON.stringify(filter));
+                            window.location.hash = url;
                         },
                         error  : function () {
                             alert('error');
@@ -330,6 +343,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                     var editWtrackModel = this.resultArray[modelId];
                     var employee;
+                    var department;
 
                     targetElement.attr('data-id', id);
                     selectorContainer = targetElement.find('a.current-selected');
@@ -343,9 +357,13 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                             _id : element._id,
                             name: element.name
                         };
+                        department = {
+                            _id           : element.department._id,
+                            departmentName: element.department.name
+                        }
 
                         editWtrackModel.employee = employee;
-                        editWtrackModel.department = element.department;
+                        editWtrackModel.department = department;
 
                     } else {
                         targetElement.find('a').text(target.text());
