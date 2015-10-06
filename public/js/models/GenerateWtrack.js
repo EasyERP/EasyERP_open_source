@@ -3,29 +3,27 @@ define(['Validation', 'common', 'moment'], function (Validation, common, moment)
         idAttribute: "_id",
 
         defaults: {
-            startDate: new Date(),
-            endDate: '',
-            hours: '',
-            project: {
-                projectName: '',
-                workflow: {},
-                customer: {},
+            startDate : new Date(),
+            endDate   : '',
+            hours     : '',
+            project   : {
+                projectName   : '',
+                workflow      : {},
+                customer      : {},
                 projectmanager: {}
             },
-            employee: {},
+            employee  : {},
             department: {},
-            weekDefault: {
-                1: 8,
-                2: 8,
-                3: 8,
-                4: 8,
-                5: 8,
-                6: 0,
-                7: 0
-            },
-            revenue: 120
+            1         : 8,
+            2         : 8,
+            3         : 8,
+            4         : 8,
+            5         : 8,
+            6         : 0,
+            7         : 0,
+            revenue   : 120
         },
-        validate: function(attrs){
+        validate: function (attrs) {
             var errors = [];
 
             Validation.checkNumberField(errors, true, attrs.weekDefault['1'], "First day value");
@@ -37,7 +35,7 @@ define(['Validation', 'common', 'moment'], function (Validation, common, moment)
             Validation.checkNumberField(errors, true, attrs.weekDefault['7'], "Seventh day value");
             Validation.checkMoneyField(errors, false, attrs.revenue, "Revenue");
 
-            if(errors.length > 0)
+            if (errors.length > 0)
                 return errors;
         },
     });
