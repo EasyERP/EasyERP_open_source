@@ -39,7 +39,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                 this.model = options.model;
                 this.asyncLoadImgs(this.model);
 
-                this.collection.on('saved', this.savedNewModel, this);
+                _.bindAll(this, 'generateItems');
 
                 this.render();
             },
@@ -236,19 +236,33 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
             generateItems: function () {
                 var model;
+                var data;
 
                 var errors = this.$el.find('.errorContent');
 
                 for (var id in this.changedModels) {
                     model = this.collection.get(id);
                     model.changed = this.changedModels[id];
-
                 }
 
                 if (errors.length) {
                     return
                 }
-                this.collection.save();
+                //this.collection.save();
+                data = this.collection.toJSON();
+
+                $.ajax({
+                    type: 'Post',
+                    url: '/wTrack/generateWTrack',
+                    success: function(){
+                        alert('good');
+                    },
+                    error: function(){
+                        alert('error');
+                    }
+                });
+
+                return false;
             },
 
             hideDialog: function () {
@@ -330,7 +344,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     changedAttr.employee = {
                         _id: element._id,
                         name: element.name
-                    }
+                    };
                     changedAttr.department = element.department;
 
                 } else {
@@ -378,7 +392,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                             text: "Generate",
                             class: "btn",
                             id: "generateBtn",
-                            click: self.generateItems()
+                            click: self.generateItems
                         },
                         cancel: {
                             text: "Cancel",
@@ -390,8 +404,6 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     }
                 });
 
-                //ToDo Refactor hardcoded Employee ...
-
                 dataService.getData("/employee/getForDD", null, function (employees) {
                     employees = _.map(employees.data, function (employee) {
                         employee.name = employee.name.first + ' ' + employee.name.last;
@@ -401,6 +413,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                     self.responseObj['#employee'] = employees;
                 });
+
                 dataService.getData("/department/getForDD", null, function (departments) {
                     departments = _.map(departments.data, function (department) {
                         department.name = department.departmentName;
@@ -411,13 +424,9 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     self.responseObj['#department'] = departments;
                 });
 
-                thisEl.find('#expectedDate').datepicker({
-                    dateFormat: "d M, yy",
-                    changeMonth: true,
-                    changeYear: true
-                });
-
                 this.$listTable = $('#rawTable tbody');
+
+                return this;
             }
         });
         return CreateView;
