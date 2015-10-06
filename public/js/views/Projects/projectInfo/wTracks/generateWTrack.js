@@ -135,7 +135,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 				bindDataPicker: function (elem) {
 					var dataPickerStartContainers = $('.datapicker.startDate');
 					var dataPickerEndContainers = $('.endDateDP.datapicker');
-					var hoursInput = $(elem).find('endDateInput');
+					var hoursInput = $(elem).find('.endDateInput');
 					var self = this;
 
 					dataPickerStartContainers.datepicker({
@@ -280,11 +280,15 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 					}
 				},
 
-				generateItems: function () {
+				generateItems: function (e) {
+
 					var errors = this.$el.find('.errorContent');
 					var url;
 					var filter;
 					var self = this;
+                    var data = JSON.stringify(this.resultArray);
+
+                    this.stopDefaultEvents(e);
 
 					if (errors.length) {
 						return
@@ -293,7 +297,8 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 					$.ajax({
 						type   : 'Post',
 						url    : '/wTrack/generateWTrack',
-						data   : this.resultArray,
+                        contentType : "application/json",
+                        data: data,
 						success: function () {
 							filter = {
 								'projectName': {
@@ -473,7 +478,6 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 					});
 
 					this.$listTable = $('#rawTable tbody');
-
 
 					return this;
 				}
