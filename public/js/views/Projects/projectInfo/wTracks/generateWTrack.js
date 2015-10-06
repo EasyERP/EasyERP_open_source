@@ -7,22 +7,22 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
     function (generateTemplate, wTrackPerEmployeeTemplate, wTrackPerEmployee, populate, dataService) {
         "use strict";
         var CreateView = Backbone.View.extend({
-            template                 : _.template(generateTemplate),
+            template: _.template(generateTemplate),
             wTrackPerEmployeeTemplate: _.template(wTrackPerEmployeeTemplate),
-            responseObj              : {},
-            changedModels            : {},
+            responseObj: {},
+            changedModels: {},
 
             events: {
-                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
-                "click .current-selected"                                         : "showNewSelect",
-                "click .newSelectList li.miniStylePagination"                     : "notHide",
+                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
+                "click .current-selected": "showNewSelect",
+                "click .newSelectList li.miniStylePagination": "notHide",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                "click #addNewEmployeeRow"                                        : "addNewEmployeeRow",
-                "click a.generateType"                                            : "generateType",
-                "click td.editable"                                               : "editRow",
-                "change .editable "                                               : "setEditable",
-                "click"                                                           : "hideNewSelect"
+                "click #addNewEmployeeRow": "addNewEmployeeRow",
+                "click a.generateType": "generateType",
+                "click td.editable": "editRow",
+                "change .editable ": "setEditable",
+                "click": "hideNewSelect"
             },
 
             stopDefaultEvents: function (e) {
@@ -56,9 +56,9 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                 var rowId = parrentRow.attr("data-id");
                 var trEll = parrent.find('tr.productItem');
                 var elem = this.wTrackPerEmployeeTemplate({
-                    year : 2015,
+                    year: 2015,
                     month: 10,
-                    week : 40
+                    week: 40
                 });
                 var errors = this.$el.find('.errorContent');
 
@@ -77,21 +77,30 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
             },
 
             bindDataPicker: function () {
-                var dataPickerContainers = $('.datapicker');
+                var dataPickerStartContainers = $('.datapicker.startDate');
+                var dataPickerEndContainers = $('.endDateDP.datapicker');
 
-                dataPickerContainers.datepicker({
-                    dateFormat : "d M, yy",
+                dataPickerStartContainers.datepicker({
+                    dateFormat: "d M, yy",
                     changeMonth: true,
-                    changeYear : true
+                    changeYear: true,
+                    onSelect: function (text, datPicker) {
+                        var td = $(this).closest('td');
+                        var endDatePicker = td.find('.endDateDP');
+                        var endDate = text;
+
+                        $(endDatePicker).datepicker('option', 'minDate', endDate);
+
+                        return false;
+                    }
                 }).removeClass('datapicker');
 
-                /*dataPickerContainers.each(function(){
-                 $(this).datepicker({
-                 dateFormat : "d M, yy",
-                 changeMonth: true,
-                 changeYear : true
-                 }).removeClass('datapicker');
-                 });*/
+                dataPickerEndContainers.datepicker({
+                    dateFormat: "d M, yy",
+                    changeMonth: true,
+                    changeYear: true
+                }).removeClass('datapicker');
+
             },
 
             editRow: function (e) {
@@ -294,17 +303,17 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                 this.$el = $(dialog).dialog({
                     dialogClass: "edit-dialog",
-                    width      : 1200,
-                    title      : "Generate weTrack",
-                    buttons    : {
-                        save  : {
-                            text : "Generate",
+                    width: 1200,
+                    title: "Generate weTrack",
+                    buttons: {
+                        save: {
+                            text: "Generate",
                             class: "btn",
-                            id   : "generateBtn",
+                            id: "generateBtn",
                             click: self.generateItems()
                         },
                         cancel: {
-                            text : "Cancel",
+                            text: "Cancel",
                             class: "btn",
                             click: function () {
                                 self.hideDialog();
@@ -335,9 +344,9 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                 });
 
                 thisEl.find('#expectedDate').datepicker({
-                    dateFormat : "d M, yy",
+                    dateFormat: "d M, yy",
                     changeMonth: true,
-                    changeYear : true
+                    changeYear: true
                 });
             }
         });
