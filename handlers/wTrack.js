@@ -814,9 +814,7 @@ var wTrack = function (event, models) {
             var department = opt.department;
             var revenue = opt.revenue;
             // var weekDefault = opt.weekDefault;
-            var createdBy = opt.createdBy;
-            var editedBy = opt.editedBy;
-            var groups = opt.groups;
+            var currentUser = req.session.uId;
             var dateArray;
             var wTrackObj;
             var monthsArr = [];
@@ -979,9 +977,19 @@ var wTrack = function (event, models) {
                                 5: trackWeek['5'],
                                 6: trackWeek['6'],
                                 7: trackWeek['7'],
-                                "createdBy": createdBy,
-                                "editedBy": editedBy,
-                                "groups": groups
+                                "createdBy" : {
+                                    "date" : new Date(),
+                                    "user" : currentUser
+                                },
+                                "editedBy" : {
+                                    "user" : currentUser
+                                },
+                                "groups" : {
+                                    "group" : [ ],
+                                    "users" : [ ],
+                                    "owner" : currentUser
+                                },
+
                             };
 
                             wTrack = new WTrack(wTrackObj);
