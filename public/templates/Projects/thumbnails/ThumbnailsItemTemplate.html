@@ -2,117 +2,53 @@
 <div id="thumbnailContent">
     <% collection.forEach(function(project){ %>
     <div class="thumbnail" id="<%=project._id%>">
-        <div class="leftThumb">
-            <div class="top">
-                <div class="project-text left">
+        <div class="dropDown">
+            <a href="#easyErp/Tasks/kanban/<%= project._id %>" class="icon icon-btn">r</a>
+            <a href="#easyErp/Tasks/list/pId=<%= project._id %>" class="icon icon-btn">i</a>
+        </div>
+        <div class="inner">
+            <div class="project-text left">
+              <span class="bold blockLeft" title="<%=project.projectName%>"><%=project.projectName%></span>
+			  <div class="health-wrapper left">
+				<span class="health-container">
+				  <a href="javascript:;" data-value="<%=project.health%>" class="health<%=project.health%>"></a>
+				  <ul>
+                    <li>
+                      <div class="health1"></div>
+                    </li>
+                    <li>
+                      <div class="health2"></div>
+                    </li>
+                    <li>
+                      <div class="health3"></div>
+                    </li>
+                  </ul>
 
-                    <span class="bold blockLeft"
-                          title="<%=project.projectName%>">
-                        <%=project.projectName%>
-                    </span>
-
-                    <div class="health-wrapper left">
-                        <span class="health-container">
-                            <a href="javascript:;"
-                               data-value="<%=project.health%>"
-                               class="health<%=project.health%>">
-                            </a>
-                            <ul>
-                                <li>
-                                    <div class="health1"></div>
-                                </li>
-                                <li>
-                                    <div class="health2"></div>
-                                </li>
-                                <li>
-                                    <div class="health3"></div>
-                                </li>
-                            </ul>
-                        </span>
-                    </div>
-
-                </div>
-
-                <div>
-                    <span title="<%=(project.customer) ? project.customer.name: ' ' %>">
-                         <%=(project.customer)?project.customer.name: ' '%>
-                    </span>
-                </div>
-
+				</span>
+			  </div>
+            <div class="clearfix">
             </div>
-            <div class="bottom">
-                <div class="half-block left">
-                    <div class="avatar left"
-                         data-id="<%=(project.projectmanager._id) ? project.projectmanager._id: ''%>">
-                        <img alt="" src=""/>
-                    </div>
 
-                    <div>
-                        <span>
-                            <%=(project.projectmanager.name) ? project.projectmanager.name.first: ''%>
-                        </span>
-                    </div>
-
-                    <div class="left">
-                        <label>Status: </label>
-                    </div>
-
-                    <div class="left">
-                        <a href="javascript:;"
-                           class="stageSelect <%=(project.workflow)
-                                        ?
-                                        (project.workflow.name.toLowerCase().replace(' ','') === 'closed'
-                                            ?
-                                            'projectClosed'
-                                            :
-                                            project.workflow.name.toLowerCase().replace(' ','') )
-                                        :
-                                        ''%>">
-                            <%=(project.workflow) ? project.workflow.name : ''%>
-                        </a>
-                    </div>
-
-                </div>
+                <span title="<%=(project.customer) ? project.customer.name: ' ' %>"><%=(project.customer)?project.customer.name: ' '%></span>
+            </div>
+            <div class="clearfix">
             </div>
         </div>
-
-        <div class="rightThumb">
-            <div>
+        <div class="bottom">
+            <div class="half-block left">
                 <p class="inner">
-                    <a id="<%=project._id%>"
-                       class="tasksByProject"
-                       href="#easyErp/Tasks/kanban/<%= project._id %>">
-                        <%=project.task.length%> Tasks
-                    </a>
+
+                    <a id="<%=project._id%>" class="tasksByProject" href="#easyErp/Tasks/kanban/<%= project._id %>"><%=project.task.length%> Tasks</a>
                 </p>
-
-                <div>
-                    <a href="#easyErp/Tasks/kanban/<%= project._id %>"
-                       class="icon icon-btn">
-                        r
-                    </a>
-                    <a href="#easyErp/Tasks/list/pId=<%= project._id %>"
-                       class="icon icon-btn">
-                        i
-                    </a>
+                <div class="inner">
+				  <div class="left"><label>Status: </label>&nbsp;</div>
+				  <div class="left"><a href="javascript:;" class="stageSelect <%=(project.workflow) ? (project.workflow.name.toLowerCase().replace(" ","") === "closed" ? 'projectClosed' : project.workflow.name.toLowerCase().replace(" ","") ) : ''%>"><%=(project.workflow) ? project.workflow.name : ''%></a></div>
+<!--<span class="status <%=(project.workflow && project.workflow.status) ? project.workflow.status.toLowerCase().split(' ').join('') : ''%>"><%=(project.workflow) ? project.workflow.status : ''%></span>--></div>
+            </div>
+            <div class="half-block right">
+                <div class="avatar right" data-id="<%=(project.projectmanager._id) ? project.projectmanager._id: ''%>">
+                    <img alt="" src="" />
                 </div>
-
-                <div>
-                    <p class="inner">
-                        <a class="ganttByProject"
-                           href="#easyErp/Gantt/<%= project._id %>">
-                            <%=project.employees?project.employees.length:0%> Employees
-                        </a>
-                    </p>
-
-                    <div>
-                        <a href="#easyErp/Tasks/kanban/<%= project._id %>"
-                           class="icon icon-btn">
-                            r
-                        </a>
-                    </div>
-                </div>
-
             </div>
         </div>
     </div>
