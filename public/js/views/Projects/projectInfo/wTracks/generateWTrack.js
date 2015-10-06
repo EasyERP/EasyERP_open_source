@@ -5,7 +5,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
         'collections/generateWtrack/filterCollection',
         'populate',
         'dataService',
-        'moment'
+        'moment',
         'common'
     ],
     function (generateTemplate, wTrackPerEmployeeTemplate, wTrackPerEmployee, currentModel, currentCollection, populate, dataService, moment, common) {
