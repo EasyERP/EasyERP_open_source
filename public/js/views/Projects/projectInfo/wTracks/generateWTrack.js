@@ -59,7 +59,19 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                         5         : 8,
                         6         : 0,
                         7         : 0,
-                        revenue   : 120
+                        revenue   : 120,
+                        "createdBy" : {
+                            "date" : new Date(),
+                            "user" : App.currentUser._id
+                        },
+                        "editedBy" : {
+                            "user" : App.currentUser._id
+                        },
+                        "groups" : {
+                            "group" : [ ],
+                            "users" : [ ],
+                            "owner" : App.currentUser._id
+                        }
                     };
 
                     this.render();
