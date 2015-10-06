@@ -40,27 +40,27 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
 					this.modelJSON = this.model.toJSON();
 
-					this.defaultObject = {
-						startDate : '',
-						endDate   : '',
-						hours     : '',
-						project   : {
-							projectName   : this.modelJSON.projectName,
-							workflow      : this.modelJSON.workflow,
-							customer      : this.modelJSON.customer,
-							projectmanager: this.modelJSON.projectmanager
-						},
-						employee  : {},
-						department: {},
-						1         : 8,
-						2         : 8,
-						3         : 8,
-						4         : 8,
-						5         : 8,
-						6         : 0,
-						7         : 0,
-						revenue   : 120
-					};
+                    this.defaultObject = {
+                        startDate : '',
+                        endDate   : '',
+                        hours     : '',
+                        project   : {
+                            projectName   : this.modelJSON.projectName,
+                            workflow      : this.modelJSON.workflow,
+                            customer      : this.modelJSON.customer,
+                            projectmanager: this.modelJSON.projectmanager
+                        },
+                        employee  : {},
+                        department: {},
+                        1         : 8,
+                        2         : 8,
+                        3         : 8,
+                        4         : 8,
+                        5         : 8,
+                        6         : 0,
+                        7         : 0,
+                        revenue   : 120
+                    };
 
 					this.render();
 				},

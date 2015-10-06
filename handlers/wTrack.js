@@ -8,6 +8,7 @@ var wTrack = function (event, models) {
     var SalarySchema = mongoose.Schemas['Salary'];
     var HolidaySchema = mongoose.Schemas['Holiday'];
     var VacationSchema = mongoose.Schemas['Vacation'];
+    var WorkflowSchema = mongoose.Schemas['workflow'];
     /*var CustomerSchema = mongoose.Schemas['Customer'];
      var EmployeeSchema = mongoose.Schemas['Employee'];
      var WorkflowSchema = mongoose.Schemas['workflow'];*/
@@ -793,340 +794,375 @@ var wTrack = function (event, models) {
 
     this.generateWTrack = function (req, res, next) {
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
-        var data = req.query;
+        var data = req.body;
 
-        async.each(data, function(options){
-            generate(options);
+        async.each(data, function (options, cb) {
+            generate(options, cb);
+        }, function (err) {
+            if (err) {
+                return next(err);
+            }
+            res.status(200).send("success");
+
         });
 
 
-    function generate(opt) {
-        var employee = opt.employee;
-        var project = opt.project;
-        var department = opt.department;
-        var revenue = opt.revenue;
-       // var weekDefault = opt.weekDefault;
-        var dateArray;
-        var wTrackObj;
-        var revenueForWeek;
-        var monthsArr = [];
-        var weeksArr = [];
-        var yearsArr = [];
-        var uniqMonths;
-        var uniqWeeks;
-        var uniqYears;
-        var totalHours = 0;
-        var options = {
-            startDate: opt.startDate,
-            endDate: opt.endDate,
-            hours: opt.hours
-        };
+        function generate(opt, CB) {
+            var employee = opt.employee;
+            var project = opt.project;
+            var projectWorkflowId = project.workflow._id;
+            var department = opt.department;
+            var revenue = opt.revenue;
+            // var weekDefault = opt.weekDefault;
+            var createdBy = opt.createdBy;
+            var editedBy = opt.editedBy;
+            var groups = opt.groups;
+            var dateArray;
+            var wTrackObj;
+            var monthsArr = [];
+            var weeksArr = [];
+            var yearsArr = [];
+            var uniqMonths;
+            var uniqWeeks;
+            var uniqYears;
+            var totalHours = 0;
+            var options = {
+                startDate: opt.startDate,
+                endDate: opt.endDate,
+                hours: opt.hours
+            };
 
-        async.parallel([calculateWeeks], function(err, result){
-            dateArray = result[0];
+            async.parallel([calculateWeeks, getWorkflowStatus], function (err, result) {
+                dateArray = result[0];
+                project.workflow.status = result[1];
 
-            if (err){
-                console.log(err);
-            }
+                if (err) {
+                    console.log(err);
+                }
 
-            dateArray.forEach(function(obj){
-                monthsArr.push(obj.month);
-                weeksArr.push(obj.week);
-                yearsArr.push(obj.year);
-            });
+                dateArray.forEach(function (obj) {
+                    monthsArr.push(obj.month);
+                    weeksArr.push(obj.week);
+                    yearsArr.push(obj.year);
+                });
 
-            uniqMonths = _.uniq(monthsArr);
-            uniqWeeks = _.uniq(weeksArr);
-            uniqYears = _.uniq(yearsArr);
+                uniqMonths = _.uniq(monthsArr);
+                uniqWeeks = _.uniq(weeksArr);
+                uniqYears = _.uniq(yearsArr);
 
-            dateArray.forEach(function (element) {
-                var year = element.year;
-                var month = element.month;
-                var week = element.week;
-                var dateByWeek = year * 100 + week;
-                var dateByMonth = year * 100 + month;
-                var parallelTasks = [getHolidays, getVacations];
-
-
-                async.parallel(parallelTasks, function (err, result) {
-                    var holidays = result[0];
-                    var vacations = result[1];
-                    var trackWeek = {};
+                dateArray.forEach(function (element) {
                     var year = element.year;
                     var month = element.month;
                     var week = element.week;
-                    totalHours = 0;
+                    var dateByWeek = year * 100 + week;
+                    var dateByMonth = year * 100 + month;
+                    var parallelTasks = [getHolidays, getVacations];
 
-                    for(var i = 7; i > 0; i--){
-                        if ((vacations && vacations[dateByMonth] && vacations[dateByMonth][i])){
-                            trackWeek[i] = vacations[dateByMonth][i];
-                            totalHours += trackWeek[i];
-                        } else if (( holidays && holidays[dateByWeek] && holidays[dateByWeek][i])){
-                            trackWeek[i] = holidays[dateByWeek][i];
-                            totalHours += trackWeek[i];
-                        } else {
-                            trackWeek[i] =  opt[i];
-                            totalHours += trackWeek[i];
-                        }
-                    }
 
-                    function calcCost(callB) {
-                        var cost;
-                        var m = element.month;
-                        var y = element.year;
+                    async.parallel(parallelTasks, function (err, result) {
+                        var holidays = result[0];
+                        var vacations = result[1];
+                        var trackWeek = {};
+                        var year = element.year;
+                        var month = element.month;
+                        var week = element.week;
+                        totalHours = 0;
 
-                        var waterfallTasks = [getBaseSalary];
-                        var wTrack = models.get(req.session.lastDb, "wTrack", wTrackSchema);
-                        var monthHours = models.get(req.session.lastDb, "MonthHours", MonthHoursSchema);
-
-                        function getBaseSalary(cb) {
-                            var Salary = models.get(req.session.lastDb, 'Salary', SalarySchema);
-                            var query = Salary
-                                .find(
-                                {
-                                    'employee._id': objectId(employee._id),
-                                    month: m,
-                                    year: y
-                                }, {
-                                    baseSalary: 1,
-                                    'employee._id': 1
-                                })
-                                .lean();
-                            query.exec(function (err, salary) {
-                                if (err) {
-                                    return cb(err);
-                                }
-
-                                if (salary){
-                                    cb(null, salary[0].baseSalary)
-                                } else {
-                                    cb(null, 0)
-                                }
-
-                            });
-                        };
-                        async.waterfall(waterfallTasks, function (err, result) {
-                            var baseSalary = result;
-                            var fixedExpense;
-                            var expenseCoefficient;
-                            var hoursForMonth;
-
-                            if (err) {
-                                callB(err);
+                        for (var i = 7; i > 0; i--) {
+                            if ((vacations && vacations[dateByMonth] && vacations[dateByMonth][i])) {
+                                trackWeek[i] = vacations[dateByMonth][i];
+                                totalHours += trackWeek[i];
+                            } else if (( holidays && holidays[dateByWeek] && holidays[dateByWeek][i])) {
+                                trackWeek[i] = holidays[dateByWeek][i];
+                                totalHours += trackWeek[i];
+                            } else {
+                                trackWeek[i] = opt[i];
+                                totalHours += trackWeek[i];
                             }
+                        }
 
-                            var query = monthHours.find({month: month, year: year}).lean();
+                        function calcCost(callB) {
+                            var cost;
+                            var m = element.month;
+                            var y = element.year;
 
-                            query.exec(function (err, monthHour) {
+                            var waterfallTasks = [getBaseSalary];
+                            var wTrack = models.get(req.session.lastDb, "wTrack", wTrackSchema);
+                            var monthHours = models.get(req.session.lastDb, "MonthHours", MonthHoursSchema);
+
+                            function getBaseSalary(cb) {
+                                var Salary = models.get(req.session.lastDb, 'Salary', SalarySchema);
+                                var query = Salary
+                                    .find(
+                                    {
+                                        'employee._id': objectId(employee._id),
+                                        month: m,
+                                        year: y
+                                    }, {
+                                        baseSalary: 1,
+                                        'employee._id': 1
+                                    })
+                                    .lean();
+                                query.exec(function (err, salary) {
+                                    if (err) {
+                                        return cb(err);
+                                    }
+
+                                    if (salary.length > 0) {
+                                        cb(null, salary[0].baseSalary)
+                                    } else {
+                                        cb(null, 0)
+                                    }
+
+                                });
+                            };
+                            async.waterfall(waterfallTasks, function (err, result) {
+                                var baseSalary = result;
+                                var fixedExpense;
+                                var expenseCoefficient;
+                                var hoursForMonth;
+
                                 if (err) {
                                     callB(err);
                                 }
-                                if (monthHour[0]) {
-                                    fixedExpense = parseInt(monthHour[0].fixedExpense);
-                                    expenseCoefficient = parseFloat(monthHour[0].expenseCoefficient);
-                                    hoursForMonth = parseInt(monthHour[0].hours);
-                                } else {
-                                    fixedExpense = 0;
-                                    expenseCoefficient = 0;
-                                    hours = 1;
-                                }
 
-                                cost = ((((baseSalary * expenseCoefficient) + fixedExpense) / hoursForMonth) * totalHours).toFixed(2);
+                                var query = monthHours.find({month: month, year: year}).lean();
 
-                                callB(null, parseFloat(cost));
+                                query.exec(function (err, monthHour) {
+                                    if (err) {
+                                        callB(err);
+                                    }
+                                    if (monthHour[0]) {
+                                        fixedExpense = parseInt(monthHour[0].fixedExpense);
+                                        expenseCoefficient = parseFloat(monthHour[0].expenseCoefficient);
+                                        hoursForMonth = parseInt(monthHour[0].hours);
+                                    } else {
+                                        fixedExpense = 0;
+                                        expenseCoefficient = 0;
+                                        hours = 1;
+                                    }
+
+                                    cost = ((((baseSalary * expenseCoefficient) + fixedExpense) / hoursForMonth) * totalHours).toFixed(2);
+
+                                    callB(null, parseFloat(cost));
+                                });
+
                             });
-
-                        });
-                    }
-
-                    var tasks = [calcCost];
-
-                    async.parallel(tasks, function(err, result){
-                        if (err){
-                            console.log(err);
                         }
 
-                        var cost = result[0] ? result[0] : 0;
+                        var tasks = [calcCost];
 
-                        wTrackObj = {
-                            dateByWeek: dateByWeek,
-                            dateByMonth: dateByMonth,
-                            project: project,
-                            employee: employee,
-                            department: department,
-                            year: year,
-                            month: month,
-                            week: week,
-                            worked: totalHours,
-                            revenue: parseFloat(revenue),
-                            cost: cost,
-                            rate: (parseFloat(revenueForWeek) / totalHours).toFixed(2),
-                            1: trackWeek['1'],
-                            2: trackWeek['2'],
-                            3: trackWeek['3'],
-                            4: trackWeek['4'],
-                            5: trackWeek['5'],
-                            6: trackWeek['6'],
-                            7: trackWeek['7']
-                        };
-
-                        wTrack = new WTrack(wTrackObj);
-
-                        wTrack.save(function (err, wTrack) {
+                        async.parallel(tasks, function (err, result) {
                             if (err) {
-                                return next(err);
+                                console.log(err);
                             }
 
+                            var cost = result[0] ? result[0] : 0;
+
+                            wTrackObj = {
+                                dateByWeek: dateByWeek,
+                                dateByMonth: dateByMonth,
+                                project: project,
+                                employee: employee,
+                                department: department,
+                                year: year,
+                                month: month,
+                                week: week,
+                                worked: totalHours,
+                                revenue: parseFloat(revenue),
+                                cost: cost,
+                                rate: parseFloat((parseFloat(revenue) / parseFloat(totalHours)).toFixed(2)),
+                                1: trackWeek['1'],
+                                2: trackWeek['2'],
+                                3: trackWeek['3'],
+                                4: trackWeek['4'],
+                                5: trackWeek['5'],
+                                6: trackWeek['6'],
+                                7: trackWeek['7'],
+                                "createdBy": createdBy,
+                                "editedBy": editedBy,
+                                "groups": groups
+                            };
+
+                            wTrack = new WTrack(wTrackObj);
+
+                            wTrack.save(function (err, wTrack) {
+                                if (err) {
+                                    return next(err);
+                                }
+
+
+                            });
                         });
                     });
-                    });
-            });
-
-            //event.emit('updateProjectDetails', {req: req, _id: project._id});
-            //event.emit('dropHoursCashes', req);
-            //event.emit('recollectVacationDash');
-            //event.emit('recollectProjectInfo');
-
-        });
-
-
-        function getHolidays(callback){
-            var Holiday = models.get(req.session.lastDb, 'Holiday', HolidaySchema);
-            var newResult = {};
-            var query = Holiday.find({year: {$in: uniqYears}, week: {$in: uniqWeeks}}).lean();
-
-            query.exec(function(err, result){
-                if (err){
-                    callback(err);
-                }
-
-                result.forEach(function (element) {
-                    var date = element.date;
-                    var year = element.year;
-                    var week = element.week;
-                    var key = year * 100 + week;
-                    var dayOfWeek = moment(date).day();
-
-                    if (!newResult[key]){
-                        newResult[key] = {};
-                    }
-                    newResult[key][dayOfWeek + 1] = dayOfWeek + 1;
                 });
+                CB();
+                event.emit('updateProjectDetails', {req: req, _id: project._id});
+                event.emit('dropHoursCashes', req);
+                event.emit('recollectVacationDash');
+                event.emit('recollectProjectInfo');
 
-                callback(null, newResult);
             });
-        };
 
-        function getVacations(callback){
-            var Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
-            var newResult = {};
-            var query = Vacation.find({month: {$in: uniqMonths}, year: {$i: uniqYears}, "employee._id": employee._id}, {month: 1, year: 1, vacArr: 1}).lean();
 
-            query.exec(function(err, result){
-                if (err){
-                    callback(err);
-                }
+            function getHolidays(callback) {
+                var Holiday = models.get(req.session.lastDb, 'Holiday', HolidaySchema);
+                var newResult = {};
+                var query = Holiday.find({year: {$in: uniqYears}, week: {$in: uniqWeeks}}).lean();
 
-                if (result){
+                query.exec(function (err, result) {
+                    if (err) {
+                        callback(err);
+                    }
+
                     result.forEach(function (element) {
-                        var vacArr = element.vacArr;
+                        var date = element.date;
                         var year = element.year;
-                        var month = element.month;
-                        var weekKey;
-                        var dayNumber;
-                        var dateValue;
+                        var week = element.week;
+                        var key = year * 100 + week;
+                        var dayOfWeek = moment(date).day();
 
-                        for (var day = vacArr.length; day >= 0; day--) {
-                            if (vacArr[day]) {
-                                dateValue = moment([year, month - 1, day + 1]);
-                                weekKey = year * 100 + moment(dateValue).isoWeek();
+                        if (!newResult[key]) {
+                            newResult[key] = {};
+                        }
+                        newResult[key][dayOfWeek + 1] = dayOfWeek + 1;
+                    });
 
-                                dayNumber = moment(dateValue).day();
+                    callback(null, newResult);
+                });
+            };
 
-                                if (dayNumber !== 0 && dayNumber !== 6) {
-                                    newResult[weekKey] ? newResult[weekKey][dayNumber + 1] =  dayNumber + 1: newResult[weekKey] = {};
+            function getVacations(callback) {
+                var Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
+                var newResult = {};
+                var query = Vacation.find({
+                    month: {$in: uniqMonths},
+                    year: {$i: uniqYears},
+                    "employee._id": employee._id
+                }, {month: 1, year: 1, vacArr: 1}).lean();
+
+                query.exec(function (err, result) {
+                    if (err) {
+                        callback(err);
+                    }
+
+                    if (result) {
+                        result.forEach(function (element) {
+                            var vacArr = element.vacArr;
+                            var year = element.year;
+                            var month = element.month;
+                            var weekKey;
+                            var dayNumber;
+                            var dateValue;
+
+                            for (var day = vacArr.length; day >= 0; day--) {
+                                if (vacArr[day]) {
+                                    dateValue = moment([year, month - 1, day + 1]);
+                                    weekKey = year * 100 + moment(dateValue).isoWeek();
+
+                                    dayNumber = moment(dateValue).day();
+
+                                    if (dayNumber !== 0 && dayNumber !== 6) {
+                                        newResult[weekKey] ? newResult[weekKey][dayNumber + 1] = dayNumber + 1 : newResult[weekKey] = {};
+                                    }
                                 }
                             }
-                        }
-                    });
-                    callback(null, newResult);
-                }
-            });
-        }
-
-        function calculateWeeks (fCb) {
-            var data = options;
-            var startDate = data.startDate;
-            var endDate = data.endDate;
-            var hours = data.hours;
-            var diff;
-            var result = [];
-            var endYear;
-            var endMonth;
-            var endWeek;
-            var weekNumber;
-            var newDate;
-            var startYear = moment(startDate).year();
-            var startWeek = moment(startDate).isoWeek();
-            var isoWeeks = moment(startYear).isoWeeksInYear();
-
-            if (endDate) {
-                endYear = moment(endDate).year();
-                endMonth = moment(endDate).month();
-                endWeek = moment(endDate).isoWeek();
-
-            } else {
-                var date = startDate;
-
-                endYear = startYear;
-                weekNumber = hours / 40;
-                endWeek = startWeek + Math.round(weekNumber) - 1;
-
-                if (endWeek > isoWeeks) {
-                    endWeek = endWeek - isoWeeks;
-                    endYear = startYear + 1;
-                    date = moment(startDate).year(startYear + 1);
-                }
-
-                newDate = moment(date).isoWeek(endWeek);
-                endMonth = moment(newDate).month();
-                endDate = moment().year(endYear).month(endMonth).isoWeek(endWeek);
+                        });
+                        callback(null, newResult);
+                    }
+                });
             }
 
-            diff = endWeek - startWeek;
+            function getWorkflowStatus(fCb) {
+                var workflow = models.get(req.session.lastDb, 'workflows', WorkflowSchema);
 
-            if (diff < 0) {
-                diff = isoWeeks - startWeek;
-                result = result.concat(setObj(diff, isoWeeks, startDate, startYear));
-                diff = endWeek - 1;
-                result = result.concat(setObj(diff, endWeek, endDate, startYear + 1));
-            } else {
-                result = result.concat(setObj(diff, endWeek, startDate, startYear));
+                var query = workflow.find({_id: objectId(projectWorkflowId)}, {status: 1}).lean();
+
+                query.exec(function (err, result) {
+                    if (err) {
+                        return fCb(err);
+                    }
+
+                    if (result.length > 0) {
+                        fCb(null, result[0].status);
+                    }
+
+                });
             }
 
-            function setObj(diff, endWeek, date, year) {
+            function calculateWeeks(fCb) {
+                var data = options;
+                var startDate = data.startDate;
+                var endDate = data.endDate;
+                var hours = data.hours;
+                var diff;
                 var result = [];
+                var endYear;
+                var endMonth;
+                var endWeek;
+                var weekNumber;
+                var newDate;
+                var startYear = moment(startDate).year();
+                var startWeek = moment(startDate).isoWeek();
+                var isoWeeks = moment(startYear).isoWeeksInYear();
 
-                for (var i = diff; i >= 0; i--) {
-                    var obj = {};
-                    var newDate;
+                if (endDate) {
+                    endYear = moment(endDate).year();
+                    endMonth = moment(endDate).month();
+                    endWeek = moment(endDate).isoWeek();
 
-                    obj.week = endWeek - i;
-                    newDate = moment(date).isoWeek(obj.week);
-                    obj.month = moment(newDate).month() + 1;
-                    obj.year = year;
+                } else {
+                    var date = startDate;
 
-                    result.push(obj);
+                    endYear = startYear;
+                    weekNumber = hours / 40;
+                    endWeek = startWeek + Math.round(weekNumber) - 1;
+
+                    if (endWeek > isoWeeks) {
+                        endWeek = endWeek - isoWeeks;
+                        endYear = startYear + 1;
+                        date = moment(startDate).year(startYear + 1);
+                    }
+
+                    newDate = moment(date).isoWeek(endWeek);
+                    endMonth = moment(newDate).month();
+                    endDate = moment().year(endYear).month(endMonth).isoWeek(endWeek);
                 }
 
-                return result;
-            }
+                diff = endWeek - startWeek;
 
-            fCb(null, result);
+                if (diff < 0) {
+                    diff = isoWeeks - startWeek;
+                    result = result.concat(setObj(diff, isoWeeks, startDate, startYear));
+                    diff = endWeek - 1;
+                    result = result.concat(setObj(diff, endWeek, endDate, startYear + 1));
+                } else {
+                    result = result.concat(setObj(diff, endWeek, startDate, startYear));
+                }
+
+                function setObj(diff, endWeek, date, year) {
+                    var result = [];
+
+                    for (var i = diff; i >= 0; i--) {
+                        var obj = {};
+                        var newDate;
+
+                        obj.week = endWeek - i;
+                        newDate = moment(date).isoWeek(obj.week);
+                        obj.month = moment(newDate).month() + 1;
+                        obj.year = year;
+
+                        result.push(obj);
+                    }
+
+                    return result;
+                }
+
+                fCb(null, result);
+            }
         }
 
-    }
-        res.status(200).send('success');
+        // res.status(200).send('success');
     };
 
 };
