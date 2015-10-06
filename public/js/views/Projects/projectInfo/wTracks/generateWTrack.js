@@ -6,8 +6,9 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
         'populate',
         'dataService',
         'moment'
+        'common'
     ],
-    function (generateTemplate, wTrackPerEmployeeTemplate, wTrackPerEmployee, currentModel, currentCollection, populate, dataService, moment) {
+    function (generateTemplate, wTrackPerEmployeeTemplate, wTrackPerEmployee, currentModel, currentCollection, populate, dataService, moment, common) {
         "use strict";
         var CreateView = Backbone.View.extend({
             template                 : _.template(generateTemplate),
@@ -36,10 +37,21 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
             initialize: function (options) {
                 this.model = options.model;
+                this.asyncLoadImgs(this.model);
 
                 this.collection.on('saved', this.savedNewModel, this);
 
                 this.render();
+            },
+
+            asyncLoadImgs: function (model) {
+                common.getImagesPM([model.toJSON().projectmanager._id], "/getEmployeesImages", "#" + model.toJSON()._id, function(result){
+                    $(".miniAvatarPM").attr("data-id", result.data[0]._id).find("img").attr("src", result.data[0].imageSrc);
+                });
+
+                common.getImagesPM([model.toJSON().customer._id], "/getCustomersImages", "#" + model.toJSON()._id, function(result){
+                    $(".miniAvatarCustomer").attr("data-id", result.data[0]._id).find("img").attr("src", result.data[0].imageSrc);
+                });
             },
 
             savedNewModel: function (modelObject) {
