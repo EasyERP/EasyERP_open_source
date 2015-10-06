@@ -2,15 +2,6 @@
   color: @defaultColor !important;
   font-family: @lucida-font;
   width: 100%;
-  caption {
-    text-align: left;
-    margin-top: 15px;
-    background-color: @forInfo-caption-color;
-    font-size: 14px;//!!!!!!!!!!!!!!!!!!!!!!!!!
-    line-height: 20px;
-    padding-left: 10px;
-    //color: #1EBBEA;//!!!!!!!!!!
-  }
   .anotherColor {
     background-color: @forInfo-caption-color2;
   }
@@ -127,6 +118,7 @@
         font-size: @font-size;
         text-align: right;
         border-right: @thin-border @defaultBorderColor;
+        border-bottom: @thin-border @defaultBorderColor;
         color: @list-caption-color;
         line-height: 20px;
         &.red-border {
@@ -247,9 +239,32 @@
 #forInfo {
   .tableProjects {
     width: 99%;
+    margin-bottom: 10px;
     thead{
       th {
         text-align: right;
+
+        &.forCaption {
+          text-align: left;
+          margin-top: 15px;
+          background-color: @forInfo-caption-color;
+          font-size: 12px;
+          line-height: 28px;
+          padding: 0 0  0 10px;
+          //width: 41%;
+          color: @overiewText-color;
+          position: relative;
+          border-right: 1px solid @forInfo-caption-color;
+
+          a {
+            text-align: right;
+            color: @overiewText-color;
+            position: absolute;
+            right: 10px;
+            top: 0;
+            display: block;
+          }
+        }
       }
       }
     tbody {
