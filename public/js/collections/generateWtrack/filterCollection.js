@@ -1,5 +1,5 @@
 define([
-        'models/generateWtrack'
+        'models/GenerateWtrack'
     ],
     function (wTrackModel) {
         var wTrackCollection = Backbone.Collection.extend({
@@ -9,26 +9,41 @@ define([
             contentType: null,
 
             initialize: function (options) {
-                this.startTime = new Date();
+            },
 
-                if (options && options.viewType) {
-                    this.viewType = options.viewType || 'wTrack';
-                    this.url += this.viewType;
+            save: function() {
+                var self = this;
+                var model;
+                var newModel;
+                var dateByWeek;
+                var dateByMonth;
+                var year;
+                var month;
+                var week;
+
+                for (var i = this.models.length - 1; i >=0; i--) {
+                    model = this.models[i];
+
+                    var saveObject = {
+                        trigger: this.trigger,
+                        url    : this.url,
+                        toJSON : function () {
+                            return newModel;
+                        }
+                    };
+
+                    var options = {
+                        success: function (model, resp, xhr) {
+                            self.trigger('saved', model);
+                        }
+                    };
+
+                    newModel = model.changed;
+                    newModel._id = model.id;
+
+                    Backbone.sync("create", saveObject, options);
                 }
 
-                this.contentType = options.contentType || 'list';
-
-                this.fetch({
-                    data: options,
-                    reset: true,
-                    success: function () {
-                    },
-                    error: function (models, xhr) {
-                        if (xhr.status == 401) {
-                            Backbone.history.navigate('#login', {trigger: true});
-                        }
-                    }
-                });
             }
         });
         return wTrackCollection;
