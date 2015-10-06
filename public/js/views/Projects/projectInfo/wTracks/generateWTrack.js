@@ -12,13 +12,19 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 			responseObj              : {},
 
 			events: {
-				"click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
+				"click .newSelectList li:not(.miniStylePagination,.generateType)" : "chooseOption",
 				"click .current-selected"                                         : "showNewSelect",
 				"click .newSelectList li.miniStylePagination"                     : "notHide",
 				"click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
 				"click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
 				"click #addNewEmployeeRow"                                        : "addNewEmployeeRow",
+				"click a.generateType"                                            : "generateType",
 				"click"                                                           : "hideNewSelect"
+			},
+
+			stopDefaultEvents: function (e) {
+				e.stopPropagation();
+				e.preventDefault();
 			},
 
 			initialize: function (options) {
@@ -27,9 +33,21 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 				this.render();
 			},
 
+			generateType: function (e) {
+				var targetEl = $(e.target);
+				var td = targetEl.closest('td');
+				var ul = td.find('.generateType');
+
+				ul.removeClass('hidden');
+				ul.addClass('newSelectList');
+
+				this.stopDefaultEvents(e);
+
+
+			},
+
 			addNewEmployeeRow: function (e) {
-				e.preventDefault();
-				e.stopPropagation();
+				this.stopDefaultEvents(e);
 
 				var target = $(e.target);
 				//var wTrackPerEmployeeContainer = this.$el.find('#wTrackItemsHolder');
@@ -57,16 +75,22 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
 			},
 
-			bindDataPicker: function(){
+			bindDataPicker: function () {
 				var dataPickerContainers = $('.datapicker');
 
-				dataPickerContainers.each(function(){
-					$(this).datepicker({
-						dateFormat : "d M, yy",
-						changeMonth: true,
-						changeYear : true
-					}).removeClass('datapicker');
-				});
+				dataPickerContainers.datepicker({
+					dateFormat : "d M, yy",
+					changeMonth: true,
+					changeYear : true
+				}).removeClass('datapicker');
+
+				/*dataPickerContainers.each(function(){
+				 $(this).datepicker({
+				 dateFormat : "d M, yy",
+				 changeMonth: true,
+				 changeYear : true
+				 }).removeClass('datapicker');
+				 });*/
 			},
 
 			generateItems: function () {
