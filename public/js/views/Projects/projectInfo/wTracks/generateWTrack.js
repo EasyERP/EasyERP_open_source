@@ -63,16 +63,17 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                 var errors = this.$el.find('.errorContent');
 
                 if ((rowId === undefined || rowId !== 'false') && errors.length === 0) {
+
                     if (!trEll.length) {
                         parrent.prepend(elem);
+                        $(".generateTypeUl").hide();
+
                         return this.bindDataPicker(elem);
                     }
 
                     $(trEll[trEll.length - 1]).after(elem);
                     this.bindDataPicker(elem);
                 }
-
-
             },
 
             bindDataPicker: function () {
@@ -336,8 +337,6 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     changeMonth: true,
                     changeYear : true
                 });
-
-                $(".generateTypeUl").hide();
             }
         });
         return CreateView;
