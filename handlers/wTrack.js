@@ -795,17 +795,23 @@ var wTrack = function (event, models) {
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
         var data = req.query;
 
-        async.each(data, function(options){
-            generate(options);
+        async.each(data, function(options, cb){
+            generate(options, cb);
+        }, function(err){
+            if(err){
+               return next(err) ;
+            }
+            res.status(200).send("success");
+
         });
 
 
-    function generate(opt) {
+    function generate(opt, CB) {
         var employee = opt.employee;
         var project = opt.project;
         var department = opt.department;
         var revenue = opt.revenue;
-       // var weekDefault = opt.weekDefault;
+        var weekDefault = opt.weekDefault;
         var dateArray;
         var wTrackObj;
         var revenueForWeek;
@@ -865,7 +871,7 @@ var wTrack = function (event, models) {
                             trackWeek[i] = holidays[dateByWeek][i];
                             totalHours += trackWeek[i];
                         } else {
-                            trackWeek[i] =  opt[i];
+                            trackWeek[i] =  weekDefault[i];
                             totalHours += trackWeek[i];
                         }
                     }
@@ -897,7 +903,7 @@ var wTrack = function (event, models) {
                                     return cb(err);
                                 }
 
-                                if (salary){
+                                if (salary.length > 0){
                                     cb(null, salary[0].baseSalary)
                                 } else {
                                     cb(null, 0)
@@ -960,7 +966,7 @@ var wTrack = function (event, models) {
                             worked: totalHours,
                             revenue: parseFloat(revenue),
                             cost: cost,
-                            rate: (parseFloat(revenueForWeek) / totalHours).toFixed(2),
+                            rate: parseFloat((parseFloat(revenue) / parseFloat(totalHours)).toFixed(2)),
                             1: trackWeek['1'],
                             2: trackWeek['2'],
                             3: trackWeek['3'],
@@ -977,15 +983,19 @@ var wTrack = function (event, models) {
                                 return next(err);
                             }
 
+
+
                         });
                     });
-                    });
-            });
 
-            //event.emit('updateProjectDetails', {req: req, _id: project._id});
-            //event.emit('dropHoursCashes', req);
-            //event.emit('recollectVacationDash');
-            //event.emit('recollectProjectInfo');
+                    });
+
+            });
+            CB();
+            event.emit('updateProjectDetails', {req: req, _id: project._id});
+            event.emit('dropHoursCashes', req);
+            event.emit('recollectVacationDash');
+            event.emit('recollectProjectInfo');
 
         });
 
@@ -1124,9 +1134,8 @@ var wTrack = function (event, models) {
 
             fCb(null, result);
         }
-
     }
-        res.status(200).send('success');
+       // res.status(200).send('success');
     };
 
 };
