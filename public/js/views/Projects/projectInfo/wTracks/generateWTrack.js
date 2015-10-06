@@ -13,9 +13,9 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
         var CreateView = Backbone.View.extend({
             template: _.template(generateTemplate),
             wTrackPerEmployeeTemplate: _.template(wTrackPerEmployeeTemplate),
-            responseObj              : {},
-            changedModels            : {},
-            collection               : new currentCollection(),
+            responseObj: {},
+            changedModels: {},
+            collection: new currentCollection(),
 
             events: {
                 "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
@@ -48,13 +48,13 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                 var currentModel = model.toJSON();
                 var id = currentModel._id;
 
-                common.getImagesPM([currentModel.projectmanager._id], "/getEmployeesImages", "#" + id, function(result){
+                common.getImagesPM([currentModel.projectmanager._id], "/getEmployeesImages", "#" + id, function (result) {
                     var res = result.data[0];
 
                     $(".miniAvatarPM").attr("data-id", res._id).find("img").attr("src", res.imageSrc);
                 });
 
-                common.getImagesPM([currentModel.customer._id], "/getCustomersImages", "#" + id, function(result){
+                common.getImagesPM([currentModel.customer._id], "/getCustomersImages", "#" + id, function (result) {
                     var res = result.data[0];
 
                     $(".miniAvatarCustomer").attr("data-id", res._id).find("img").attr("src", res.imageSrc);
@@ -93,10 +93,10 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                 var newModel = new currentModel();
 
                 var elem = this.wTrackPerEmployeeTemplate({
-                    year : year,
+                    year: year,
                     month: month,
-                    week : week,
-                    id   : newModel.cid
+                    week: week,
+                    id: newModel.cid
                 });
                 var errors = this.$el.find('.errorContent');
 
@@ -126,11 +126,16 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     changeMonth: true,
                     changeYear: true,
                     onSelect: function (text, datPicker) {
-                        var td = $(this).closest('td');
+                        var targetInput = $(this);
+                        var td = targetInput.closest('tr');
                         var endDatePicker = td.find('.endDateDP');
-                        var endDate = text;
+                        var endDate = moment(targetInput.datepicker('getDate'));
+                        var endContainer = $(endDatePicker);
 
-                        $(endDatePicker).datepicker('option', 'minDate', endDate);
+                        endDate.add(7, 'days');
+                        endDate = endDate.toDate();
+
+                        endContainer.datepicker('option', 'minDate', endDate);
 
                         return false;
                     }
@@ -261,10 +266,10 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                 $.ajax({
                     type: 'Post',
                     url: '/wTrack/generateWTrack',
-                    success: function(){
+                    success: function () {
                         alert('good');
                     },
-                    error: function(){
+                    error: function () {
                         alert('error');
                     }
                 });
