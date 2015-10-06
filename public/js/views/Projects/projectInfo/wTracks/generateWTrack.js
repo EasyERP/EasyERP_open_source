@@ -214,7 +214,11 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                         this.changedModels[editedElementRowId] = {};
                     }
 
-                    this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
+                    if (!isFinite(editedElementContent)) {
+                        this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
+                    } else {
+                        this.changedModels[editedElementRowId].weekDefault[editedElementContent] = parseInt(editedElementValue);
+                    }
 
                     editedCol.text(editedElementValue);
                     editedElement.remove();
