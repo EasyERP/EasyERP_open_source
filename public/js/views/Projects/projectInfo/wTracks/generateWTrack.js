@@ -12,142 +12,139 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
             responseObj              : {},
             changedModels            : {},
 
-			events: {
-				"click .newSelectList li:not(.miniStylePagination,.generateType)" : "chooseOption",
-				"click .current-selected"                                         : "showNewSelect",
-				"click .newSelectList li.miniStylePagination"                     : "notHide",
-				"click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-				"click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-				"click #addNewEmployeeRow"                                        : "addNewEmployeeRow",
-				"click a.generateType"                                            : "generateType",
-				"click td.editable"                                               : "editRow",
-				"change .editable "                                               : "setEditable",
-				"click"                                                           : "hideNewSelect"
-			},
+            events: {
+                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
+                "click .current-selected"                                         : "showNewSelect",
+                "click .newSelectList li.miniStylePagination"                     : "notHide",
+                "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
+                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
+                "click #addNewEmployeeRow"                                        : "addNewEmployeeRow",
+                "click a.generateType"                                            : "generateType",
+                "click td.editable"                                               : "editRow",
+                "change .editable "                                               : "setEditable",
+                "click"                                                           : "hideNewSelect"
+            },
 
-			stopDefaultEvents: function (e) {
-				e.stopPropagation();
-				e.preventDefault();
-			},
+            stopDefaultEvents: function (e) {
+                e.stopPropagation();
+                e.preventDefault();
+            },
 
-			initialize: function (options) {
-				this.model = options.model;
+            initialize: function (options) {
+                this.model = options.model;
 
                 this.render();
             },
 
-			generateType: function (e) {
-				var targetEl = $(e.target);
-				var td = targetEl.closest('td');
-				var ul = td.find('.generateType');
+            generateType: function (e) {
+                var targetEl = $(e.target);
+                var td = targetEl.closest('td');
+                var ul = td.find('.newSelectList');
 
-				ul.removeClass('hidden');
-				ul.addClass('newSelectList');
+                ul.show();
 
-				this.stopDefaultEvents(e);
+                this.stopDefaultEvents(e);
+            },
 
+            addNewEmployeeRow: function (e) {
+                this.stopDefaultEvents(e);
 
-			},
+                var target = $(e.target);
+                //var wTrackPerEmployeeContainer = this.$el.find('#wTrackItemsHolder');
+                var parrent = target.closest('tbody');
+                var parrentRow = parrent.find('.productItem').last();
+                var rowId = parrentRow.attr("data-id");
+                var trEll = parrent.find('tr.productItem');
+                var elem = this.wTrackPerEmployeeTemplate({
+                    year : 2015,
+                    month: 10,
+                    week : 40
+                });
+                var errors = this.$el.find('.errorContent');
 
-			addNewEmployeeRow: function (e) {
-				this.stopDefaultEvents(e);
+                if ((rowId === undefined || rowId !== 'false') && errors.length === 0) {
+                    if (!trEll.length) {
+                        parrent.prepend(elem);
+                        return this.bindDataPicker(elem);
+                    }
 
-				var target = $(e.target);
-				//var wTrackPerEmployeeContainer = this.$el.find('#wTrackItemsHolder');
-				var parrent = target.closest('tbody');
-				var parrentRow = parrent.find('.productItem').last();
-				var rowId = parrentRow.attr("data-id");
-				var trEll = parrent.find('tr.productItem');
-				var elem = this.wTrackPerEmployeeTemplate({
-					year : 2015,
-					month: 10,
-					week : 40
-				});
-				var errors = this.$el.find('.errorContent');
-
-				if ((rowId === undefined || rowId !== 'false') && errors.length === 0) {
-					if (!trEll.length) {
-						parrent.prepend(elem);
-						return this.bindDataPicker(elem);
-					}
-
-					$(trEll[trEll.length - 1]).after(elem);
-					this.bindDataPicker(elem);
-				}
+                    $(trEll[trEll.length - 1]).after(elem);
+                    this.bindDataPicker(elem);
+                }
 
 
-			},
+            },
 
-			bindDataPicker: function () {
-				var dataPickerContainers = $('.datapicker');
+            bindDataPicker: function () {
+                var dataPickerContainers = $('.datapicker');
 
-				dataPickerContainers.datepicker({
-					dateFormat : "d M, yy",
-					changeMonth: true,
-					changeYear : true
-				}).removeClass('datapicker');
+                dataPickerContainers.datepicker({
+                    dateFormat : "d M, yy",
+                    changeMonth: true,
+                    changeYear : true
+                }).removeClass('datapicker');
 
-				/*dataPickerContainers.each(function(){
-				 $(this).datepicker({
-				 dateFormat : "d M, yy",
-				 changeMonth: true,
-				 changeYear : true
-				 }).removeClass('datapicker');
-				 });*/
-			},
+                /*dataPickerContainers.each(function(){
+                 $(this).datepicker({
+                 dateFormat : "d M, yy",
+                 changeMonth: true,
+                 changeYear : true
+                 }).removeClass('datapicker');
+                 });*/
+            },
 
-			editRow: function (e) {
-				$(".newSelectList").hide();
+            editRow: function (e) {
+                $(".newSelectList").hide();
 
-				var el = $(e.target);
-				var isInput = el.prop('tagName') === 'INPUT';
-				var tr = $(e.target).closest('tr');
-				var wTrackId = tr.attr('data-id');
-				var content = el.data('content');
-				var tempContainer;
-				var width;
-				var value;
-				var insertedInput;
+                var el = $(e.target);
+                var isInput = el.prop('tagName') === 'INPUT';
+                var tr = $(e.target).closest('tr');
+                var wTrackId = tr.attr('data-id');
+                var content = el.data('content');
+                var tempContainer;
+                var width;
+                var value;
+                var insertedInput;
 
-				if (wTrackId && !isInput) {
-					if (this.wTrackId) {
-						this.setChangedValueToModel();
-					}
-					this.wTrackId = wTrackId;
-					this.setChangedValueToModel();
-				}
+                if (wTrackId && !isInput) {
+                    if (this.wTrackId) {
+                        this.setChangedValueToModel();
+                    }
+                    this.wTrackId = wTrackId;
+                    this.setChangedValueToModel();
+                }
 
 
-				tempContainer = el.text();
-				width = el.width() - 6;
-				el.html('<input class="editing" type="text" value="' + tempContainer + '"  maxLength="4" style="width:' + width + 'px">');
+                tempContainer = el.text();
+                width = el.width() - 6;
+                el.html('<input class="editing" type="text" value="' + tempContainer + '"  maxLength="4" style="width:' + width + 'px">');
 
-				insertedInput = el.find('input');
-				insertedInput.focus();
-				insertedInput[0].setSelectionRange(0, insertedInput.val().length);
+                insertedInput = el.find('input');
+                insertedInput.focus();
+                insertedInput[0].setSelectionRange(0, insertedInput.val().length);
 
-				return false;
-			},
+                return false;
+            },
 
-			setEditable: function (td) {
-				var tr;
+            setEditable: function (td) {
+                var tr;
 
-				if (!td.parents) {
-					td = $(td.target).closest('td');
-				}
+                if (!td.parents) {
+                    td = $(td.target).closest('td');
+                }
 
-				tr = td.parents('tr');
+                tr = td.parents('tr');
 
-				/*tr.addClass('edited');*/
-				td.addClass('edited');
+                /*tr.addClass('edited');*/
+                td.addClass('edited');
 
-				if (this.isEditRows()) {
-					this.setChangedValue();
-				}
+                if (this.isEditRows()) {
+                    this.setChangedValue();
+                }
 
-				return false;
-			},
-			
+                return false;
+            },
+
             setChangedValue: function () {
                 if (!this.changed) {
                     this.changed = true;
@@ -241,6 +238,8 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                 var elementType = '#' + attr;
                 var departmentContainer;
                 var selectorContainer;
+                var endDateDP;
+                var endDateInput;
 
                 var element = _.find(this.responseObj[elementType], function (el) {
                     return el._id === id;
@@ -255,6 +254,17 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     departmentContainer.removeClass('errorContent');
 
                     tr.attr('data-id', id);
+                } else {
+                    endDateDP = tr.find('#endDateDP');
+                    endDateInput = tr.find('#endDateInput');
+
+                    if (target.attr('data-content') === 'byDate') {
+                        endDateDP.removeClass('hidden');
+                        endDateInput.addClass('hidden');
+                    } else if (target.attr('data-content') === 'byHours') {
+                        endDateInput.removeClass('hidden');
+                        endDateDP.addClass('hidden');
+                    }
                 }
 
                 targetElement.removeClass('errorContent');
@@ -267,7 +277,8 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
             },
 
             hideNewSelect: function () {
-                $(".newSelectList").remove();
+                $(".newSelectList:not('.generateTypeUl')").remove();
+                $(".generateTypeUl").hide();
             },
 
             render: function () {
@@ -325,6 +336,8 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     changeMonth: true,
                     changeYear : true
                 });
+
+                $(".generateTypeUl").hide();
             }
         });
         return CreateView;
