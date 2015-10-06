@@ -190,48 +190,6 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                 }
             },
 
-            addNewEmployeeRow: function (e) {
-                e.preventDefault();
-                e.stopPropagation();
-
-                var target = $(e.target);
-                //var wTrackPerEmployeeContainer = this.$el.find('#wTrackItemsHolder');
-                var parrent = target.closest('tbody');
-                var parrentRow = parrent.find('.productItem').last();
-                var rowId = parrentRow.attr("data-id");
-                var trEll = parrent.find('tr.productItem');
-                var elem = this.wTrackPerEmployeeTemplate({
-                    year : 2015,
-                    month: 10,
-                    week : 40
-                });
-                var errors = this.$el.find('.errorContent');
-
-                if ((rowId === undefined || rowId !== 'false') && errors.length === 0) {
-                    if (!trEll.length) {
-                        parrent.prepend(elem);
-                        return this.bindDataPicker(elem);
-                    }
-
-                    $(trEll[trEll.length - 1]).after(elem);
-                    this.bindDataPicker(elem);
-                }
-
-
-            },
-
-            bindDataPicker: function () {
-                var dataPickerContainers = $('.datapicker');
-
-                dataPickerContainers.each(function () {
-                    $(this).datepicker({
-                        dateFormat : "d M, yy",
-                        changeMonth: true,
-                        changeYear : true
-                    }).removeClass('datapicker');
-                });
-            },
-
             generateItems: function () {
 
             },
