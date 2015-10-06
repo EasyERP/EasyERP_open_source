@@ -1,210 +1,307 @@
 define(["text!templates/Projects/projectInfo/wTracks/generate.html",
-		"text!templates/Projects/projectInfo/wTracks/wTrackPerEmployee.html",
-		'views/Projects/projectInfo/wTracks/wTrackPerEmployee',
-		'populate',
-		'dataService'
-	],
-	function (generateTemplate, wTrackPerEmployeeTemplate, wTrackPerEmployee, populate, dataService) {
-		"use strict";
-		var CreateView = Backbone.View.extend({
-			template                 : _.template(generateTemplate),
-			wTrackPerEmployeeTemplate: _.template(wTrackPerEmployeeTemplate),
-			responseObj              : {},
+        "text!templates/Projects/projectInfo/wTracks/wTrackPerEmployee.html",
+        'views/Projects/projectInfo/wTracks/wTrackPerEmployee',
+        'populate',
+        'dataService'
+    ],
+    function (generateTemplate, wTrackPerEmployeeTemplate, wTrackPerEmployee, populate, dataService) {
+        "use strict";
+        var CreateView = Backbone.View.extend({
+            template                 : _.template(generateTemplate),
+            wTrackPerEmployeeTemplate: _.template(wTrackPerEmployeeTemplate),
+            responseObj              : {},
+            changedModels            : {},
 
-			events: {
-				"click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
-				"click .current-selected"                                         : "showNewSelect",
-				"click .newSelectList li.miniStylePagination"                     : "notHide",
-				"click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-				"click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-				"click #addNewEmployeeRow"                                        : "addNewEmployeeRow",
-				"click"                                                           : "hideNewSelect"
-			},
+            events: {
+                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
+                "click .current-selected"                                         : "showNewSelect",
+                "click .newSelectList li.miniStylePagination"                     : "notHide",
+                "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
+                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
+                "click #addNewEmployeeRow"                                        : "addNewEmployeeRow",
+                "click"                                                           : "hideNewSelect",
+                "click td.editable"                                               : "editRow",
+                "change .editable "                                               : "setEditable",
+            },
 
-			initialize: function (options) {
-				this.model = options.model;
+            initialize: function (options) {
+                this.model = options.model;
 
-				this.render();
-			},
+                this.render();
+            },
 
-			addNewEmployeeRow: function (e) {
-				e.preventDefault();
-				e.stopPropagation();
+            editRow: function (e) {
+                $(".newSelectList").hide();
 
-				var target = $(e.target);
-				//var wTrackPerEmployeeContainer = this.$el.find('#wTrackItemsHolder');
-				var parrent = target.closest('tbody');
-				var parrentRow = parrent.find('.productItem').last();
-				var rowId = parrentRow.attr("data-id");
-				var trEll = parrent.find('tr.productItem');
-				var elem = this.wTrackPerEmployeeTemplate({
-					year : 2015,
-					month: 10,
-					week : 40
-				});
-				var errors = this.$el.find('.errorContent');
+                var el = $(e.target);
+                var isInput = el.prop('tagName') === 'INPUT';
+                var tr = $(e.target).closest('tr');
+                var wTrackId = tr.attr('data-id');
+                var content = el.data('content');
+                var tempContainer;
+                var width;
+                var value;
+                var insertedInput;
 
-				if ((rowId === undefined || rowId !== 'false') && errors.length === 0) {
-					if (!trEll.length) {
-						parrent.prepend(elem);
-						return this.bindDataPicker(elem);
-					}
-
-					$(trEll[trEll.length - 1]).after(elem);
-					this.bindDataPicker(elem);
-				}
+                if (wTrackId && !isInput) {
+                    if (this.wTrackId) {
+                        this.setChangedValueToModel();
+                    }
+                    this.wTrackId = wTrackId;
+                    this.setChangedValueToModel();
+                }
 
 
-			},
+                tempContainer = el.text();
+                width = el.width() - 6;
+                el.html('<input class="editing" type="text" value="' + tempContainer + '"  maxLength="4" style="width:' + width + 'px">');
 
-			bindDataPicker: function(){
-				var dataPickerContainers = $('.datapicker');
+                insertedInput = el.find('input');
+                insertedInput.focus();
+                insertedInput[0].setSelectionRange(0, insertedInput.val().length);
 
-				dataPickerContainers.each(function(){
-					$(this).datepicker({
-						dateFormat : "d M, yy",
-						changeMonth: true,
-						changeYear : true
-					}).removeClass('datapicker');
-				});
-			},
+                return false;
+            },
 
-			generateItems: function () {
+            setEditable: function (td) {
+                var tr;
 
-			},
+                if (!td.parents) {
+                    td = $(td.target).closest('td');
+                }
 
-			hideDialog: function () {
-				$(".edit-dialog").remove();
-			},
+                tr = td.parents('tr');
 
-			showNewSelect: function (e, prev, next) {
-				var targetEl = $(e.target);
-				var content = targetEl.closest('td').attr('data-content');
-				var tr;
-				var department;
+                /*tr.addClass('edited');*/
+                td.addClass('edited');
 
-				/*if(content === 'employee'){
-				 tr = targetEl.closest('tr');
-				 department = tr.find('td[data-content="department"]').attr('data-id');
+                if (this.isEditRows()) {
+                    this.setChangedValue();
+                }
 
-				 populate.employeesByDep({
-				 e: e,
-				 prev: prev,
-				 next: next,
-				 context: this,
-				 department: department
-				 });
+                return false;
+            },
 
-				 return false;
-				 }*/
+            setChangedValue: function () {
+                if (!this.changed) {
+                    this.changed = true;
+                    this.showSaveCancelBtns()
+                }
+            },
 
-				populate.showSelect(e, prev, next, this);
+            isEditRows: function () {
+                var edited = this.$listTable.find('.edited');
 
-				return false;
-			},
+                this.edited = edited;
 
-			nextSelect: function (e) {
-				this.showNewSelect(e, false, true);
-			},
+                return !!edited.length;
+            },
 
-			prevSelect: function (e) {
-				this.showNewSelect(e, true, false);
-			},
+            setChangedValueToModel: function () {
+                var listTable = $('#rawTable tbody');
+                var editedElement = listTable.find('.editing');
+                var editedCol;
+                var editedElementRowId;
+                var editedElementContent;
+                var editedElementValue;
 
-			chooseOption: function (e) {
-				var target = $(e.target);
-				var targetElement = target.parents("td");
-				var tr = target.parents("tr");
-				var id = target.attr("id");
-				var attr = targetElement.attr("id") || targetElement.data("content");
-				var elementType = '#' + attr;
-				var departmentContainer;
-				var selectorContainer;
+                if (/*wTrackId !== this.wTrackId &&*/ editedElement.length) {
+                    editedCol = editedElement.closest('td');
+                    editedElementRowId = editedElement.closest('tr').data('id');
+                    editedElementContent = editedCol.data('content');
+                    editedElementValue = editedElement.val();
 
-				var element = _.find(this.responseObj[elementType], function (el) {
-					return el._id === id;
-				});
+                    //editWtrackModel = this.editCollection.get(editedElementRowId);
 
-				targetElement.attr('data-id', id);
-				selectorContainer = targetElement.find('a.current-selected');
+                    if (!this.changedModels[editedElementRowId]) {
+                        this.changedModels[editedElementRowId] = {};
+                    }
 
-				if (elementType === '#employee') {
-					departmentContainer = tr.find('[data-content="department"]');
-					departmentContainer.find('a.current-selected').text(element.department.name);
-					departmentContainer.removeClass('errorContent');
+                    this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
 
-					tr.attr('data-id', id);
-				}
+                    editedCol.text(editedElementValue);
+                    editedElement.remove();
+                }
+            },
 
-				targetElement.removeClass('errorContent');
+            addNewEmployeeRow: function (e) {
+                e.preventDefault();
+                e.stopPropagation();
 
-				selectorContainer.text(target.text());
+                var target = $(e.target);
+                //var wTrackPerEmployeeContainer = this.$el.find('#wTrackItemsHolder');
+                var parrent = target.closest('tbody');
+                var parrentRow = parrent.find('.productItem').last();
+                var rowId = parrentRow.attr("data-id");
+                var trEll = parrent.find('tr.productItem');
+                var elem = this.wTrackPerEmployeeTemplate({
+                    year : 2015,
+                    month: 10,
+                    week : 40
+                });
+                var errors = this.$el.find('.errorContent');
 
-				this.hideNewSelect();
+                if ((rowId === undefined || rowId !== 'false') && errors.length === 0) {
+                    if (!trEll.length) {
+                        parrent.prepend(elem);
+                        return this.bindDataPicker(elem);
+                    }
 
-				return false;
-			},
+                    $(trEll[trEll.length - 1]).after(elem);
+                    this.bindDataPicker(elem);
+                }
 
-			hideNewSelect: function () {
-				$(".newSelectList").remove();
-			},
 
-			render: function () {
-				var thisEl = this.$el;
-				var project = this.model.toJSON();
-				var dialog = this.template({
-					project: project
-				});
-				var self = this;
+            },
 
-				this.$el = $(dialog).dialog({
-					dialogClass: "edit-dialog",
-					width      : 1200,
-					title      : "Generate weTrack",
-					buttons    : {
-						save  : {
-							text : "Generate",
-							class: "btn",
-							id   : "generateBtn",
-							click: self.generateItems()
-						},
-						cancel: {
-							text : "Cancel",
-							class: "btn",
-							click: function () {
-								self.hideDialog();
-							}
-						}
-					}
-				});
+            bindDataPicker: function () {
+                var dataPickerContainers = $('.datapicker');
 
-				//ToDo Refactor hardcoded Employee ...
+                dataPickerContainers.each(function () {
+                    $(this).datepicker({
+                        dateFormat : "d M, yy",
+                        changeMonth: true,
+                        changeYear : true
+                    }).removeClass('datapicker');
+                });
+            },
 
-				dataService.getData("/employee/getForDD", null, function (employees) {
-					employees = _.map(employees.data, function (employee) {
-						employee.name = employee.name.first + ' ' + employee.name.last;
+            generateItems: function () {
 
-						return employee;
-					});
+            },
 
-					self.responseObj['#employee'] = employees;
-				});
-				dataService.getData("/department/getForDD", null, function (departments) {
-					departments = _.map(departments.data, function (department) {
-						department.name = department.departmentName;
+            hideDialog: function () {
+                $(".edit-dialog").remove();
+            },
 
-						return department;
-					});
+            showNewSelect: function (e, prev, next) {
+                var targetEl = $(e.target);
+                var content = targetEl.closest('td').attr('data-content');
+                var tr;
+                var department;
 
-					self.responseObj['#department'] = departments;
-				});
+                /*if(content === 'employee'){
+                 tr = targetEl.closest('tr');
+                 department = tr.find('td[data-content="department"]').attr('data-id');
 
-				thisEl.find('#expectedDate').datepicker({
-					dateFormat : "d M, yy",
-					changeMonth: true,
-					changeYear : true
-				});
-			}
-		});
-		return CreateView;
-	});
+                 populate.employeesByDep({
+                 e: e,
+                 prev: prev,
+                 next: next,
+                 context: this,
+                 department: department
+                 });
+
+                 return false;
+                 }*/
+
+                populate.showSelect(e, prev, next, this);
+
+                return false;
+            },
+
+            nextSelect: function (e) {
+                this.showNewSelect(e, false, true);
+            },
+
+            prevSelect: function (e) {
+                this.showNewSelect(e, true, false);
+            },
+
+            chooseOption: function (e) {
+                var target = $(e.target);
+                var targetElement = target.parents("td");
+                var tr = target.parents("tr");
+                var id = target.attr("id");
+                var attr = targetElement.attr("id") || targetElement.data("content");
+                var elementType = '#' + attr;
+                var departmentContainer;
+                var selectorContainer;
+
+                var element = _.find(this.responseObj[elementType], function (el) {
+                    return el._id === id;
+                });
+
+                targetElement.attr('data-id', id);
+                selectorContainer = targetElement.find('a.current-selected');
+
+                if (elementType === '#employee') {
+                    departmentContainer = tr.find('[data-content="department"]');
+                    departmentContainer.find('a.current-selected').text(element.department.name);
+                    departmentContainer.removeClass('errorContent');
+
+                    tr.attr('data-id', id);
+                }
+
+                targetElement.removeClass('errorContent');
+
+                selectorContainer.text(target.text());
+
+                this.hideNewSelect();
+
+                return false;
+            },
+
+            hideNewSelect: function () {
+                $(".newSelectList").remove();
+            },
+
+            render: function () {
+                var thisEl = this.$el;
+                var project = this.model.toJSON();
+                var dialog = this.template({
+                    project: project
+                });
+                var self = this;
+
+                this.$el = $(dialog).dialog({
+                    dialogClass: "edit-dialog",
+                    width      : 1200,
+                    title      : "Generate weTrack",
+                    buttons    : {
+                        save  : {
+                            text : "Generate",
+                            class: "btn",
+                            id   : "generateBtn",
+                            click: self.generateItems()
+                        },
+                        cancel: {
+                            text : "Cancel",
+                            class: "btn",
+                            click: function () {
+                                self.hideDialog();
+                            }
+                        }
+                    }
+                });
+
+                //ToDo Refactor hardcoded Employee ...
+
+                dataService.getData("/employee/getForDD", null, function (employees) {
+                    employees = _.map(employees.data, function (employee) {
+                        employee.name = employee.name.first + ' ' + employee.name.last;
+
+                        return employee;
+                    });
+
+                    self.responseObj['#employee'] = employees;
+                });
+                dataService.getData("/department/getForDD", null, function (departments) {
+                    departments = _.map(departments.data, function (department) {
+                        department.name = department.departmentName;
+
+                        return department;
+                    });
+
+                    self.responseObj['#department'] = departments;
+                });
+
+                thisEl.find('#expectedDate').datepicker({
+                    dateFormat : "d M, yy",
+                    changeMonth: true,
+                    changeYear : true
+                });
+            }
+        });
+        return CreateView;
+    });
