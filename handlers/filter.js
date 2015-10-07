@@ -562,7 +562,7 @@ var Filters = function (models) {
                 if (err) {
                     callback(err);
                 }
-
+                if (result.length===0) return  callback(null, result);
                 result = result[0];
 
                 result['canBeSold'] = [
