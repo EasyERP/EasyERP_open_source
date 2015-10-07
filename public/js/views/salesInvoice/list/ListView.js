@@ -29,7 +29,7 @@ define([
                 _.bind(this.collection.showMore, this.collection);
                 this.parrentContentId = options.collection.parrentContentId;
                 this.filter = options.filter ? options.filter : {};
-                this.filter.forSales = true;
+                this.filter.forSales = {key:'forSales',value:true};
                 this.sort = options.sort;
                 this.defaultItemsNumber = this.collection.namberToShow || 100;
                 this.newCollection = options.newCollection;
@@ -81,7 +81,6 @@ define([
                 return false;
             },
 
-
             showNewSelect: function (e) {
                 if ($(".newSelectList").is(":visible")) {
                     this.hideNewSelect();
@@ -130,18 +129,17 @@ define([
                     self.stages = stages;
                 });
 
-
                 this.renderCheckboxes();
 
-                this.renderFilter(self, {name: 'forSales', value: true});
+                this.renderFilter(self, {name: 'forSales', value: {key:'forSales',value:true}});
 
                 this.renderPagination(currentEl, this);
+
                 currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
-
-                function currentEllistRenderer(self){
+                function currentEllistRenderer(self) {
                     currentEl.append(_.template(listTemplate, {currentDb: App.currentDb}));
-                    itemView = new listItemView({
+                    var itemView = new listItemView({
                         collection : self.collection,
                         page       : self.page,
                         itemsNumber: self.collection.namberToShow
