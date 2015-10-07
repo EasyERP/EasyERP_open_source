@@ -12,7 +12,6 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                 template                 : _.template(generateTemplate),
                 wTrackPerEmployeeTemplate: _.template(wTrackPerEmployeeTemplate),
                 responseObj              : {},
-                resultArray              : [],
 
                 events: {
                     "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
@@ -39,6 +38,8 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     _.bindAll(this, 'generateItems');
 
                     this.modelJSON = this.model.toJSON();
+
+                    this.resultArray = [];
 
                     this.defaultObject = {
                         startDate : '',
