@@ -947,11 +947,8 @@ var wTrack = function (event, models) {
                             totalHours = 0;
 
                             for (var i = 7; i > 0; i--) {
-                                if ((vacations && vacations[dateByMonth] && vacations[dateByMonth][i])) {
-                                    trackWeek[i] = vacations[dateByMonth][i];
-                                    totalHours += trackWeek[i];
-                                } else if (( holidays && holidays[dateByWeek] && holidays[dateByWeek][i])) {
-                                    trackWeek[i] = holidays[dateByWeek][i];
+                                if ((vacations && vacations[dateByWeek] && vacations[dateByWeek][i]) || (( holidays && holidays[dateByWeek] && holidays[dateByWeek][i]))) {
+                                    trackWeek[i] = 0;
                                     totalHours += trackWeek[i];
                                 } else {
                                     trackWeek[i] = weekArray[i];
@@ -1035,7 +1032,7 @@ var wTrack = function (event, models) {
                         if (!newResult[key]) {
                             newResult[key] = {};
                         }
-                        newResult[key][dayOfWeek + 1] = dayOfWeek + 1;
+                        newResult[key][dayOfWeek] = dayOfWeek;
                     });
 
                     callback(null, newResult);
@@ -1047,9 +1044,9 @@ var wTrack = function (event, models) {
                 var newResult = {};
                 var query = Vacation.find({
                     month: {$in: uniqMonths},
-                    year: {$i: uniqYears},
+                    year: {$in: uniqYears},
                     "employee._id": employee._id
-                }, {month: 1, year: 1, vacArr: 1}).lean();
+                }, {month: 1, year: 1, vacArray: 1}).lean();
 
                 query.exec(function (err, result) {
                     if (err) {
@@ -1058,14 +1055,14 @@ var wTrack = function (event, models) {
 
                     if (result) {
                         result.forEach(function (element) {
-                            var vacArr = element.vacArr;
+                            var vacArr = element.vacArray;
                             var year = element.year;
                             var month = element.month;
                             var weekKey;
                             var dayNumber;
                             var dateValue;
 
-                            for (var day = vacArr.length; day >= 0; day--) {
+                            for (var day = vacArr.length - 1; day >= 0; day--) {
                                 if (vacArr[day]) {
                                     dateValue = moment([year, month - 1, day + 1]);
                                     weekKey = year * 100 + moment(dateValue).isoWeek();
@@ -1073,7 +1070,10 @@ var wTrack = function (event, models) {
                                     dayNumber = moment(dateValue).day();
 
                                     if (dayNumber !== 0 && dayNumber !== 6) {
-                                        newResult[weekKey] ? newResult[weekKey][dayNumber + 1] = dayNumber + 1 : newResult[weekKey] = {};
+                                        if (!newResult[weekKey]){
+                                            newResult[weekKey] = {};
+                                        }
+                                        newResult[weekKey][dayNumber] = dayNumber;
                                     }
                                 }
                             }
