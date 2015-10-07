@@ -4,7 +4,7 @@ var JobPosition = function (event, models) {
     var logWriter = require('../helpers/logWriter');
     var employee = mongoose.Schemas['Employee'];
     var department = mongoose.Schemas['Department'];
-
+    var async = require('async');
     var CONSTANTS = require('../constants/mainConstants');
 
     var jobPositionSchema = mongoose.Schemas['JobPosition'];
@@ -225,7 +225,7 @@ var JobPosition = function (event, models) {
                 var aggregate = models.get(req.session.lastDb, 'Employees', employee).aggregate(
                     {
                         $match: {
-                            jobPosition: objectId(id)
+                            "jobPosition._id": objectId(id)
                         }
                     },
                     function (err, result) {
@@ -275,14 +275,30 @@ var JobPosition = function (event, models) {
         query.sort(sort)
             .skip((data.page - 1) * data.count)
             .limit(data.count)
+            .lean()
        .exec(function (err, result) {
             if (err) {
                 console.log(err);
                 logWriter.log('JobPosition.js get job.find' + err);
                 response.send(500, {error: "Can't find JobPosition"});
             } else {
-                res['data'] = result;
-                response.send(res);
+                async.each(result, function(jp, cb){
+                    models.get(req.session.lastDb, 'Employees', employee).find({"jobPosition._id": jp._id}).count(function(err, count){
+                        if (err){
+                            return cb(err);
+                        } else {
+                            jp.numberOfEmployees = count;
+                            jp.totalForecastedEmployees = count + jp.expectedRecruitment;
+                            cb();
+                        }
+                    });
+                }, function (err) {
+                    if (err){
+                       return response.send(500, {error: "Can't find JobPosition"});
+                    }
+                    res['data'] = result;
+                    response.send(res);
+                });
             }
         });
     }; //end get
@@ -389,7 +405,7 @@ var JobPosition = function (event, models) {
 
                                 }
 
-                                var query = models.get(req.session.lastDb, "JobPosition", jobPositionSchema).find(filterObj);
+                                var query = models.get(req.session.lastDb, "JobPosition", jobPositionSchema).find();
                                 if (data.sort && (!data.sort.totalForecastedEmployees && !data.sort.numberOfEmployees)) {
                                     query.sort(data.sort);
                                 } else {
@@ -403,15 +419,15 @@ var JobPosition = function (event, models) {
                                     populate('editedBy.user', 'login').
                                     populate('department', 'departmentName').
                                     populate('workflow', 'name _id status').
-                                    skip((data.page - 1) * data.count).
-                                    limit(data.count).
+                                    //skip((data.page - 1) * data.count).
+                                    //limit(data.count).
                                     exec(function (error, _res) {
 
                                         if (!error) {
                                             res['data'] = _res;
                                             if (_res.length !== 0) {
                                                 _res.forEach(function (ellement, index) {
-                                                    models.get(req.session.lastDb, 'Employees', employee).find({jobPosition: ellement._id}).count(function (err, count) {
+                                                    models.get(req.session.lastDb, 'Employees', employee).find({"jobPosition._id": ellement._id}).count(function (err, count) {
                                                         if (count) {
                                                             ellement.numberOfEmployees = count;
                                                             ellement.totalForecastedEmployees = ellement.numberOfEmployees + ellement.expectedRecruitment;

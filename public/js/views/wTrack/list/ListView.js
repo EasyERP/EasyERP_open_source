@@ -283,6 +283,10 @@ define([
                 var editedElementValue;
                 var self = this;
 
+                if(navigator.userAgent.indexOf("Firefox") > -1) {
+                    this.setEditable(editedElement);
+                }
+
                 if (/*wTrackId !== this.wTrackId &&*/ editedElement.length) {
                     editedCol = editedElement.closest('td');
                     editedElementRowId = editedElement.closest('tr').data('id');
@@ -303,11 +307,11 @@ define([
                             }
 
                             var weeks = result[0];
-                            editedElement.closest('tr').find('[data-content="week"]').text(weeks[0]);
+                            editedElement.closest('tr').find('[data-content="week"]').text(weeks[0].week);
                             editedCol.text(editedElementValue);
                             editedElement.remove();
 
-                            self.changedModels[editedElementRowId]['week'] = weeks[0];
+                            self.changedModels[editedElementRowId]['week'] = weeks[0].week;
                         });
                     } else {
                         editedCol.text(editedElementValue);

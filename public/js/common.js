@@ -3,7 +3,9 @@
     ],
     function (dataService) {
         var checkBackboneFragment = function (url) {
-            if (Backbone.history.fragment == url) Backbone.history.fragment = "";
+            if (Backbone.history.fragment == url) {
+                Backbone.history.fragment = "";
+            }
             Backbone.history.navigate(url, {trigger: true});
         };
 
@@ -84,15 +86,15 @@
                         /*btoa(fr.result);*/
                         $('.image_input').html(['<img src="', src, '"/>'].join(''));
                         $('.image_input img').Jcrop({
-                            bgColor: 'white',
-                            bgOpacity: .6,
-                            setSelect: [0, 0, 100, 100],
+                            bgColor    : 'white',
+                            bgOpacity  : .6,
+                            setSelect  : [0, 0, 100, 100],
                             aspectRatio: 1,
-                            onSelect: imgSelect,
-                            onChange: imgSelect,
-                            boxWidth: 650,
-                            boxHeight: 650,
-                            minSize: [10, 10]
+                            onSelect   : imgSelect,
+                            onChange   : imgSelect,
+                            boxWidth   : 650,
+                            boxHeight  : 650,
+                            minSize    : [10, 10]
                             //maxSize: [140, 140]
                         });
 
@@ -110,15 +112,15 @@
                         }
 
                         $(".cropImages").dialog({
-                            dialogClass: "crop-images-dialog",
+                            dialogClass  : "crop-images-dialog",
                             closeOnEscape: false,
-                            autoOpen: true,
-                            resizable: true,
-                            title: "Crop Images",
-                            width: "900px",
-                            buttons: {
-                                save: {
-                                    text: "Crop",
+                            autoOpen     : true,
+                            resizable    : true,
+                            title        : "Crop Images",
+                            width        : "900px",
+                            buttons      : {
+                                save  : {
+                                    text : "Crop",
                                     class: "btn",
 
                                     click: function () {
@@ -136,7 +138,7 @@
 
                                 },
                                 cancel: {
-                                    text: "Cancel",
+                                    text : "Cancel",
                                     class: "btn",
                                     click: function () {
                                         $(this).dialog("close");
@@ -210,8 +212,9 @@
             }
         };
         var deleteFromLocalStorage = function (key) {
-            if (window.localStorage)
+            if (window.localStorage) {
                 window.localStorage.removeItem(key);
+            }
         };
         var saveToLocalStorage = function (key, value) {
             if (window.localStorage) {
@@ -239,7 +242,9 @@
                     });
                 }
                 selectList.append(options);
-                if (callback) callback();
+                if (callback) {
+                    callback();
+                }
 
             });
         };
@@ -289,7 +294,9 @@
                     });
                 }
                 selectList.append(options);
-                if (callback) callback();
+                if (callback) {
+                    callback();
+                }
             });
         }
 
@@ -311,7 +318,9 @@
                     });
                 }
                 selectList.append(options);
-                if (callback) callback();
+                if (callback) {
+                    callback();
+                }
             });
         };
 
@@ -335,10 +344,11 @@
                     });
                 }
                 selectList.append(options);
-                if (callback) callback();
+                if (callback) {
+                    callback();
+                }
             });
         };
-
 
         var populateTitle = function (selectId, url, model, callback) {
             var selectList = $(selectId);
@@ -358,7 +368,9 @@
                     });
                 }
                 selectList.append(options);
-                if (callback) callback();
+                if (callback) {
+                    callback();
+                }
             });
         };
 
@@ -380,15 +392,18 @@
                     });
                 }
                 selectList.append(options);
-                if (callback) callback();
+                if (callback) {
+                    callback();
+                }
             });
         };
 
         var populateDepartments = function (selectId, url, model, callback, removeSelect) {
             var selectList = $(selectId);
             var self = this;
-            if (!removeSelect)
+            if (!removeSelect) {
                 selectList.append($("<option/>").val('').text('Select...'));
+            }
             var id = (model) ? (model._id) : null;
             dataService.getData(url, {mid: 39, id: id}, function (response) {
                 var options = [];
@@ -404,14 +419,16 @@
                     });
                 }
                 selectList.append(options);
-                if (callback) callback();
+                if (callback) {
+                    callback();
+                }
             });
         };
         var getLeadsForChart = function (source, dataRange, dataItem, callback) {
             dataService.getData("/LeadsForChart", {
-                source: source,
+                source   : source,
                 dataRange: dataRange,
-                dataItem: dataItem
+                dataItem : dataItem
             }, function (response) {
                 callback(response.data);
             });
@@ -486,7 +503,9 @@
                 selectList.attr("data-page", 1);
                 targetList.attr("data-page", 1);
                 $(targetId).after("<div class='userPagination targetPagination'><span class='text'>0-0 of 0</span></div>");
-                if (callback) callback();
+                if (callback) {
+                    callback();
+                }
             });
         };
 
@@ -510,7 +529,9 @@
                     });
                 }
                 selectList.append(options);
-                if (callback) callback();
+                if (callback) {
+                    callback();
+                }
             });
         };
 
@@ -535,7 +556,9 @@
                 var selectList = $(selectId);
                 selectList.append(options);
 
-                if (callback) callback();
+                if (callback) {
+                    callback();
+                }
             });
         };
 
@@ -557,7 +580,9 @@
                     });
                 }
                 selectList.append(options);
-                if (callback) callback();
+                if (callback) {
+                    callback();
+                }
             });
         };
 
@@ -580,7 +605,9 @@
                 }
                 selectList.append(options);
             });
-            if (callback) callback();
+            if (callback) {
+                callback();
+            }
         };
 
         var populateWorkflows = function (workflowType, selectId, workflowNamesDd, url, model, callback) {
@@ -618,7 +645,9 @@
                 });
                 workflowNamesDd.append(wfNamesOption);
                 selectList.append(options);
-                if (callback) callback(selectId);
+                if (callback) {
+                    callback(selectId);
+                }
             });
         }
         var populateWorkflowsList = function (workflowType, selectId, workflowNamesDd, url, model, callback) {
@@ -660,24 +689,29 @@
                 });
                 workflowNamesDd.append(wfNamesOption);
 
-                if(selectList) {
+                if (selectList) {
                     selectList.append(options);
                 }
-                if (callback) callback(response.data);
+                if (callback) {
+                    callback(response.data);
+                }
             });
         }
 
         var getWorkflowContractEnd = function (workflowType, selectId, workflowNamesDd, url, model, wfNmae, callback) {
             dataService.getData(url, {mid: 39, id: workflowType, name: wfNmae}, function (response) {
-                if (callback) callback(response.data);
+                if (callback) {
+                    callback(response.data);
+                }
             });
         }
 
         var populateUsers = function (selectId, url, model, callback, removeSelect) {
             var selectList = $(selectId);
             var self = this;
-            if (!removeSelect)
+            if (!removeSelect) {
                 selectList.append($("<option/>").val('').text('Select...'));
+            }
             dataService.getData(url, {mid: 39}, function (response) {
                 var options = [];
                 if (model && (model.relatedUser || (model.groups && model.groups.owner))) {
@@ -703,7 +737,9 @@
                     });
                 }
                 selectList.append(options);
-                if (callback) callback();
+                if (callback) {
+                    callback();
+                }
             });
         }
         var populateUsersForGroups = function (selectId, targetId, model, page, callback) {
@@ -778,7 +814,9 @@
                 targetList.attr("data-page", 1);
                 $(targetId).after("<div class='userPagination targetPagination'><span class='text'>0-0 of 0</span></div>");
 
-                if (callback) callback();
+                if (callback) {
+                    callback();
+                }
             });
         }
 
@@ -800,22 +838,26 @@
                     });
                 }
                 selectList.append(options);
-                if (callback) callback();
+                if (callback) {
+                    callback();
+                }
             });
         };
         var populateOpportunitiesForMiniView = function (url, personId, companyId, page, count, onlyCount, callback) {
             var self = this;
             dataService.getData(url, {
-                person: personId,
-                company: companyId,
-                page: page,
-                count: count,
+                person   : personId,
+                company  : companyId,
+                page     : page,
+                count    : count,
                 onlyCount: onlyCount
             }, function (response) {
                 options = $.map(response.data, function (item) {
                     item.nextAction.date = utcDateToLocaleDate(item.nextAction.date);
                 });
-                if (callback) callback(response);
+                if (callback) {
+                    callback(response);
+                }
             });
         };
 
@@ -857,7 +899,9 @@
                     });
                 }
                 selectList.append(options);
-                if (callback) callback();
+                if (callback) {
+                    callback();
+                }
             });
 
         }
@@ -879,7 +923,9 @@
                     });
                 }
                 selectList.append(options);
-                if (callback) callback();
+                if (callback) {
+                    callback();
+                }
             });
 
         };
@@ -894,12 +940,15 @@
                         }
                         return item._id.toUpperCase();
                     });
-                    if (filtered.length)
+                    if (filtered.length) {
                         filtered.push("All");
+                    }
                     var letterArr = _.sortBy(_.uniq(filtered), function (a) {
                         return a
                     });
-                    if (callback) callback(letterArr);
+                    if (callback) {
+                        callback(letterArr);
+                    }
                 });
             }
             return [];
@@ -913,16 +962,17 @@
 
         var getListLength = function (workflowType, filterLetter, filterArray, url, isConverted, callback) {
             dataService.getData(url, {
-                mid: 39,
-                type: workflowType,
-                letter: filterLetter,
-                status: filterArray,
+                mid        : 39,
+                type       : workflowType,
+                letter     : filterLetter,
+                status     : filterArray,
                 isConverted: isConverted
             }, function (response) {
-                if (callback) callback(response);
+                if (callback) {
+                    callback(response);
+                }
             });
         }
-
 
         var buildAllAphabeticArray = function () {
             var associateArray = ["All", "0-9"];
@@ -936,17 +986,22 @@
             dataService.getData(url, {ids: ids}, function (response) {
                 if (response.data !== undefined) {
                     response.data.forEach(function (item) {
-                        if (ids['task_id'])
+                        if (ids['task_id']) {
                             $("#" + ids['task_id'] + " img").attr("src", item.imageSrc);
+                        }
                         $("#" + item._id + " img").attr("src", item.imageSrc);
                         $("#monthList #" + item._id + " img").attr("src", item.imageSrc);
                         $(".avatar.right[data-id='" + item._id + "'] img").attr("src", item.imageSrc);
+                        $(".avatar.left[data-id='" + item._id + "'] img").attr("src", item.imageSrc);
                         $(".avatar-small.right[data-id='" + item._id + "'] img").attr("src", item.imageSrc);
-                        if (item.imageSrc == "")
+                        if (item.imageSrc == "") {
                             $(".avatar-small.right[data-id='" + item._id + "'] img").hide();
+                        }
                     });
                 }
-                if (callback) callback(response);
+                if (callback) {
+                    callback(response);
+                }
             });
         };
         var getImagesPM = function (id, url, thumbID, callback) {
@@ -954,51 +1009,53 @@
                 if (response.data !== undefined) {
                     $(thumbID).find(".avatar").attr("data-id", response.data[0]._id).find("img").attr("src", response.data[0].imageSrc);
                 }
-                if (callback) callback(response);
+                if (callback) {
+                    callback(response);
+                }
             });
         };
 
         return {
-            deleteFromLocalStorage: deleteFromLocalStorage,
-            populateProfilesDd: populateProfilesDd,
-            buildAllAphabeticArray: buildAllAphabeticArray,
-            buildAphabeticArray: buildAphabeticArray,
-            buildPagination: buildPagination,
-            getListLength: getListLength,
-            populateDegrees: populateDegrees,
-            populateSourceApplicants: populateSourceApplicants,
-            populateSourceDd: populateSourceDd,
-            populateJobTypeDd: populateJobTypeDd,
-            populateJobPositions: populateJobPositions,
-            populateUsers: populateUsers,
-            utcDateToLocaleFullDateTime: utcDateToLocaleFullDateTime,
-            utcDateToLocaleDateTime: utcDateToLocaleDateTime,
-            utcDateToLocaleDate: utcDateToLocaleDate,
-            populateProjectsDd: populateProjectsDd,
-            populatePriority: populatePriority,
-            populateDepartments: populateDepartments,
-            populateCompanies: populateCompanies,
-            populateWorkflows: populateWorkflows,
-            populateWorkflowsList: populateWorkflowsList,
-            getWorkflowContractEnd: getWorkflowContractEnd,
-            populateCustomers: populateCustomers,
-            populateEmployeesDd: populateEmployeesDd,
-            populateCoachDd: populateCoachDd,
-            populateRelatedStatuses: populateRelatedStatuses,
-            checkBackboneFragment: checkBackboneFragment,
-            displayControlBtnsByActionType: displayControlBtnsByActionType,
-            ISODateToDate: ISODateToDate,
-            hexToRgb: hexToRgb,
-            deleteEvent: deleteEvent,
-            canvasDraw: canvasDraw,
-            saveToLocalStorage: saveToLocalStorage,
-            getFromLocalStorage: getFromLocalStorage,
-            populateUsersForGroups: populateUsersForGroups,
-            populateParentDepartments: populateParentDepartments,
-            populateDepartmentsList: populateDepartmentsList,
-            getLeadsForChart: getLeadsForChart,
-            getImages: getImages,
-            getImagesPM: getImagesPM,
+            deleteFromLocalStorage          : deleteFromLocalStorage,
+            populateProfilesDd              : populateProfilesDd,
+            buildAllAphabeticArray          : buildAllAphabeticArray,
+            buildAphabeticArray             : buildAphabeticArray,
+            buildPagination                 : buildPagination,
+            getListLength                   : getListLength,
+            populateDegrees                 : populateDegrees,
+            populateSourceApplicants        : populateSourceApplicants,
+            populateSourceDd                : populateSourceDd,
+            populateJobTypeDd               : populateJobTypeDd,
+            populateJobPositions            : populateJobPositions,
+            populateUsers                   : populateUsers,
+            utcDateToLocaleFullDateTime     : utcDateToLocaleFullDateTime,
+            utcDateToLocaleDateTime         : utcDateToLocaleDateTime,
+            utcDateToLocaleDate             : utcDateToLocaleDate,
+            populateProjectsDd              : populateProjectsDd,
+            populatePriority                : populatePriority,
+            populateDepartments             : populateDepartments,
+            populateCompanies               : populateCompanies,
+            populateWorkflows               : populateWorkflows,
+            populateWorkflowsList           : populateWorkflowsList,
+            getWorkflowContractEnd          : getWorkflowContractEnd,
+            populateCustomers               : populateCustomers,
+            populateEmployeesDd             : populateEmployeesDd,
+            populateCoachDd                 : populateCoachDd,
+            populateRelatedStatuses         : populateRelatedStatuses,
+            checkBackboneFragment           : checkBackboneFragment,
+            displayControlBtnsByActionType  : displayControlBtnsByActionType,
+            ISODateToDate                   : ISODateToDate,
+            hexToRgb                        : hexToRgb,
+            deleteEvent                     : deleteEvent,
+            canvasDraw                      : canvasDraw,
+            saveToLocalStorage              : saveToLocalStorage,
+            getFromLocalStorage             : getFromLocalStorage,
+            populateUsersForGroups          : populateUsersForGroups,
+            populateParentDepartments       : populateParentDepartments,
+            populateDepartmentsList         : populateDepartmentsList,
+            getLeadsForChart                : getLeadsForChart,
+            getImages                       : getImages,
+            getImagesPM                     : getImagesPM,
             populateOpportunitiesForMiniView: populateOpportunitiesForMiniView
         }
     });

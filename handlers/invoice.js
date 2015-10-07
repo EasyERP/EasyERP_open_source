@@ -676,7 +676,7 @@ var Invoice = function (models) {
     this.totalCollectionLength = function (req, res, next) {
         var data = req.query;
         var filter = data.filter;
-        var forSales = data.forSales;
+        //var forSales = data.forSales;
 
         var optionsObject = {};
         var result = {};
@@ -698,12 +698,12 @@ var Invoice = function (models) {
             }
         }
 
-        if (forSales){
-            optionsObject['$and'].push({forSales: false});
-        } else {
-            optionsObject['$and'].push({forSales: true });
-
-        }
+        //if (forSales){
+        //    optionsObject['$and'].push({forSales: false});
+        //} else {
+        //    optionsObject['$and'].push({forSales: true });
+        //
+        //}
 
         departmentSearcher = function (waterfallCallback) {
             models.get(req.session.lastDb, "Invoice", InvoiceSchema).aggregate(
@@ -794,18 +794,19 @@ var Invoice = function (models) {
         var db = currentDbName ? models.connection(currentDbName) : null;
         var date = moment().format('DD/MM/YYYY');
 
-        db.collection('settings').findAndModify({
+        db.collection('settings').findOneAndUpdate({
                 dbName: currentDbName,
                 name: 'invoice',
                 project: project
             },
-            [['name', 1]],
+
             {
                 $inc: {seq: 1}
             },
             {
                 new: true,
                 upsert: true
+
             },
             function (err, rate) {
                 var resultName;
@@ -814,7 +815,7 @@ var Invoice = function (models) {
                     return next(err);
                 }
 
-                resultName = rate.seq + '-' + date;
+                resultName = rate.value.seq + '-' + date;
                 res.status(200).send(resultName) ;
             });
     };
