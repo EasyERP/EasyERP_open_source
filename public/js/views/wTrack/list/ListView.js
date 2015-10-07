@@ -283,6 +283,10 @@ define([
                 var editedElementValue;
                 var self = this;
 
+                if(navigator.userAgent.indexOf("Firefox") > -1) {
+                    this.setEditable(editedElement);
+                }
+
                 if (/*wTrackId !== this.wTrackId &&*/ editedElement.length) {
                     editedCol = editedElement.closest('td');
                     editedElementRowId = editedElement.closest('tr').data('id');
@@ -303,11 +307,11 @@ define([
                             }
 
                             var weeks = result[0];
-                            editedElement.closest('tr').find('[data-content="week"]').text(weeks[0]);
+                            editedElement.closest('tr').find('[data-content="week"]').text(weeks[0].week);
                             editedCol.text(editedElementValue);
                             editedElement.remove();
 
-                            self.changedModels[editedElementRowId]['week'] = weeks[0];
+                            self.changedModels[editedElementRowId]['week'] = weeks[0].week;
                         });
                     } else {
                         editedCol.text(editedElementValue);
@@ -721,16 +725,19 @@ define([
                     if (self.collection.length > 0) {
                         checkLength = checkedInputs.length;
 
-                        self.checkProjectId($('#check_all'), checkLength);
-
                         if (checkLength > 0) {
                             $("#top-bar-deleteBtn").show();
 
                             if (checkLength === self.collection.length) {
+                                checkedInputs.each(function(index, element) {
+                                    self.checkProjectId(element, checkLength);
+                                });
+
                                 $('#check_all').prop('checked', true);
                             }
                         } else {
                             $("#top-bar-deleteBtn").hide();
+                            self.genInvoiceEl.hide();
                             $('#check_all').prop('checked', false);
                         }
                     }
@@ -865,9 +872,9 @@ define([
 
             checkProjectId: function (e, checkLength) {
                 var totalCheckLength = $("input.checkbox:checked").length;
-                var ellement = e.target;
-                var checked = ellement ? ellement.checked : true;
-                var targetEl = $(ellement);
+                var element = e.target ? e.target : e;
+                var checked = element ? element.checked : true;
+                var targetEl = $(element);
                 var tr = targetEl.closest('tr');
                 var wTrackId = tr.attr('data-id');
                 var model = this.collection.get(wTrackId);
@@ -895,7 +902,7 @@ define([
 
                 this.selectedProjectId = _.uniq(this.selectedProjectId);
 
-                if (this.selectedProjectId.length !== 1 || totalCheckLength > 1) {
+                if (this.selectedProjectId.length !== 1) {
                     this.genInvoiceEl.hide();
                 } else {
                     this.genInvoiceEl.show();

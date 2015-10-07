@@ -84,6 +84,10 @@ define([
                 var editedElementValue;
                 var editModel;
 
+                if(navigator.userAgent.indexOf("Firefox") > -1) {
+                    this.setEditable(editedElement);
+                }
+
                 if (editedElement.length) {
                     editedCol = editedElement.closest('td');
                     editedElementRowId = editedElement.closest('tr').data('id');

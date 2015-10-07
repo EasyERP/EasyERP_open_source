@@ -392,7 +392,7 @@ define([
                 itemView = new this.listItemView({
                     collection : newModels,
                     page       : holder.find("#currentShowPage").val(),
-                    itemsNumber: holder.find("span#itemsNumber").text()
+                    itemsNumber: this.defaultItemsNumber
                 });
 
                 holder.append(itemView.render());

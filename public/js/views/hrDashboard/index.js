@@ -39,6 +39,7 @@ define([
         render: function () {
             var self = this;
             var currentEl = this.$el;
+            $('title').text(this.contentType);
 
             var start = moment().subtract(11, 'month').date(1);
             var startMonth = start.month() + 1;

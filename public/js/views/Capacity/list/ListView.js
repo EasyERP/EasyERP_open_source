@@ -14,10 +14,11 @@ define([
         'constants',
         'async',
         'moment',
-        'populate'
+        'populate',
+        'custom'
     ],
 
-    function (listViewBase, listHeaderTemplate, cancelEdit, listTotal, departmentListTemplate, listTemplate, createTemplate, currentModel, filterCollection, editCollection, common, dataService, CONSTANTS, async, moment, populate) {
+    function (listViewBase, listHeaderTemplate, cancelEdit, listTotal, departmentListTemplate, listTemplate, createTemplate, currentModel, filterCollection, editCollection, common, dataService, CONSTANTS, async, moment, populate, custom) {
         var CapacityListView = listViewBase.extend({
             el                : '#content-holder',
             defaultItemsNumber: null,
@@ -36,15 +37,6 @@ define([
             yearElement       : null,
             vacations         : null,
 
-            initialize: function (options) {
-                this.startTime = options.startTime;
-                this.capacityObject = options.collection.toJSON()[0].capacityObject;
-                this.departmentObject = options.collection.toJSON()[0].departmentObject;
-                _.bind(this.collection.showMore, this.collection);
-                this.render();
-                this.daysCount;
-            },
-
             events: {
                 "click .createBtn"                                                : "createItem",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
@@ -56,6 +48,15 @@ define([
                 "change .editable "                                               : "setEditable",
                 "click"                                                           : "hideNewSelect",
                 "click .departmentRow td"                                         : "showCapacity",
+            },
+
+            initialize: function (options) {
+                this.startTime = options.startTime;
+                this.capacityObject = options.collection.toJSON()[0].capacityObject;
+                this.departmentObject = options.collection.toJSON()[0].departmentObject;
+                _.bind(this.collection.showMore, this.collection);
+                this.render();
+                this.daysCount;
             },
 
             showNewCurrentSelect: function (e, prev, next) {
@@ -165,7 +166,6 @@ define([
                 var editedElementOldValue;
                 var changedAttr;
                 var tdTotalHours;
-                var tdTotalHoursValue;
 
                 if (editedElement.length) {
                     editedCol = editedElement.closest('td');
@@ -191,13 +191,12 @@ define([
 
                     if (editedElementContent === 'capacityValue') {
                         dayIndex = editedCol.attr('data-dayID');
-                        //dayTotalElement = $('#day' + dayIndex);
 
                         changedAttr = this.changedModels[editedElementRowId];
 
                         editedCol.text(editedElementValue);
 
-                        if (changedAttr && !changedAttr.vacArray) {
+                        if (changedAttr && !changedAttr.capacityArray) {
                             changedAttr.capacityArray = _.clone(editCapacityModel.toJSON().capacityArray);
 
                             if (!changedAttr.capacityMonthTotal) {
@@ -210,46 +209,15 @@ define([
                         }
 
                         changedAttr.capacityArray[dayIndex] = editedElementValue;
+
                         if (editedElementOldValue !== editedElementValue) {
                             changedAttr.capacityMonthTotal = changedAttr.capacityMonthTotal - editedElementOldValue + editedElementValue;
                             tdTotalHours.text(changedAttr.capacityMonthTotal);
                         }
-
-
-                        if (!isFinite(editedCol.text())) {
-                            /*if (!this.checkEmptyArray(changedAttr.capacityArray)) {
-                             checkDay(targetElement, element._id);
-                             delete(changedAttr.capacityArray[dayIndex]);
-                             if (this.checkEmptyArray(changedAttr.capacityArray)) {
-                             this.deleteItem(modelId);
-                             }
-                             }*/
-                        }
                     }
 
-                    //this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
                     editedElement.remove();
                 }
-            },
-
-            vacationTypeForDD: function (content) {
-                var array = ['&nbsp', 'Vacation', 'Personal', 'Sick', 'Education'];
-                var firstChar;
-
-                array = _.map(array, function (element) {
-                    element = {
-                        name: element
-                    };
-                    firstChar = element.name.charAt(0);
-                    if (firstChar !== '&') {
-                        element._id = firstChar;
-                    } else {
-                        element._id = '';
-                    }
-
-                    return element;
-                });
-                content.responseObj['#vacType'] = array;
             },
 
             monthForDD: function (content) {
@@ -307,7 +275,7 @@ define([
                 var tempContainer;
                 var insertedInput;
 
-                if (capacityId && el.prop('tagName') !== 'INPUT') {
+                if (capacityId && !isInput) {
                     if (this.capacityId) {
                         this.setChangedValueToModel();
                     }
@@ -452,7 +420,7 @@ define([
                 }, this);
             },
 
-            renderdSubHeader: function (currentEl) {
+            renderSubHeader: function (currentEl) {
                 var subHeaderContainer;
 
                 var month;
@@ -464,6 +432,11 @@ define([
                 var dateDay;
                 var daysRow = '';
                 var daysNumRow = '';
+                var columnContainer;
+                var width;
+                var weeks;
+                var weeksRow = '';
+                var curWeek;
 
                 subHeaderContainer = currentEl.find('.subHeaderHolder');
 
@@ -480,14 +453,23 @@ define([
                     dateDay = date.add(1, 'd');
                 }
 
+                weeks = custom.getWeeks(month, year);
+
+                for (var i = 0; i <= weeks.length - 1; i++) {
+                    curWeek = weeks[i];
+                    weeksRow += '<th colspan="' + curWeek.daysCount + '">' + curWeek.week + '</th>';
+                }
+
                 daysRow = '<tr class="subHeaderHolder borders">' + daysRow + '</tr>';
 
                 daysNumRow = '<tr class="subHeaderHolder borders"><th colspan="2">Department</th><th class="oe-sortable" data-sort="employee.name">Employee</th>' + daysNumRow + '<th>Total Hours</th></tr>';
 
+                weeksRow = '<tr class="subHeaderHolder borders">' + weeksRow + '</tr>';
+
                 this.daysCount = daysInMonth;
 
-                var columnContainer = $('#columnForDays');
-                var width = 80 / daysInMonth;
+                columnContainer = $('#columnForDays');
+                width = 80 / daysInMonth;
 
                 columnContainer.html('');
 
@@ -496,8 +478,9 @@ define([
                 }
 
                 $(subHeaderContainer[0]).attr('colspan', daysInMonth - 12);
-                $(subHeaderContainer[1]).replaceWith(daysRow);
-                $(subHeaderContainer[2]).replaceWith(daysNumRow);
+                $(subHeaderContainer[1]).replaceWith(weeksRow);
+                $(subHeaderContainer[2]).replaceWith(daysRow);
+                $(subHeaderContainer[3]).replaceWith(daysNumRow);
             },
 
             nextSelect: function (e) {
@@ -601,7 +584,7 @@ define([
                     }
                     this.startTime = new Date();
                     this.changedDataOptions();
-                    this.renderdSubHeader(this.$el);
+                    this.renderSubHeader(this.$el);
                 }
 
                 if (elementType === '#employee') {
@@ -760,14 +743,16 @@ define([
                 return totalArray;
             },
 
-            renderDepartmentRows: function (departments) {
+            renderDepartmentRows: function () {
                 var listTable = this.$el.find("#listTable");
                 var departments = [];
 
                 var self = this;
 
                 CONSTANTS.DEPARTMENTS_ORDER.forEach(function(element) {
-                    departments.push(self.departmentObject[element]);
+                    if (self.departmentObject[element]) {
+                        departments.push(self.departmentObject[element]);
+                    }
                 })
 
                 listTable.html('');
@@ -841,7 +826,7 @@ define([
                 this.monthElement = currentEl.find('#monthSelect');
                 this.yearElement = currentEl.find('#yearSelect');
 
-                this.renderdSubHeader(currentEl);
+                this.renderSubHeader(currentEl);
 
                 this.$el.find("#listTable").html('');
 
@@ -969,6 +954,7 @@ define([
                     template = _.template(createTemplate);
 
                     tr.after(template(startData));
+                    this.createDefValues(this, this.monthElement.attr('data-content'), this.yearElement.text());
                 }
             },
 

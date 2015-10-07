@@ -794,18 +794,19 @@ var Invoice = function (models) {
         var db = currentDbName ? models.connection(currentDbName) : null;
         var date = moment().format('DD/MM/YYYY');
 
-        db.collection('settings').findAndModify({
+        db.collection('settings').findOneAndUpdate({
                 dbName: currentDbName,
                 name: 'invoice',
                 project: project
             },
-            [['name', 1]],
+
             {
                 $inc: {seq: 1}
             },
             {
                 new: true,
                 upsert: true
+
             },
             function (err, rate) {
                 var resultName;
@@ -814,7 +815,7 @@ var Invoice = function (models) {
                     return next(err);
                 }
 
-                resultName = rate.seq + '-' + date;
+                resultName = rate.value.seq + '-' + date;
                 res.status(200).send(resultName) ;
             });
     };

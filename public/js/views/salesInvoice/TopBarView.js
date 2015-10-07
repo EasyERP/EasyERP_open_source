@@ -34,7 +34,7 @@ define([
             },
 
             render: function () {
-                $('title').text(this.contentType);
+                $('title').text("Invoice");
 
                 var viewType = Custom.getCurrentVT();
                 var self = this;

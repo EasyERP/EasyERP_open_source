@@ -303,51 +303,60 @@ define([
         }
     };
 
-    var getWeeks = function(month, year){
+    var getWeeks = function (month, year) {
         var result = [];
         var startWeek;
         var endWeek;
         var diff;
-        var isoWeeks = moment(year).isoWeeksInYear();
+        var isoWeeks = moment(parseInt(year)).isoWeeksInYear();
         var startDate = moment([year, parseInt(month) - 1]);
-        var endDate = moment([year, parseInt(month), -1 + 1]);
+        var endDate = moment(startDate).endOf('month');
+        var daysCount;
+        var curWeek;
 
         startWeek = moment(startDate).isoWeeks();
         endWeek = moment(endDate).isoWeeks();
 
         diff = endWeek - startWeek;
 
-        if (diff < 0){
+        if (diff < 0) {
             diff = isoWeeks - startWeek;
-
-            for (var i = diff; i >=0; i--){
-                result.push(isoWeeks - i);
-            }
+            endWeek = isoWeeks;
         } else {
-            for (var i = diff; i >=0; i--){
-                result.push(endWeek - i);
-            }
+            endWeek = endWeek;
         }
 
+        for (var i = diff; i >= 0; i--) {
+            curWeek = endWeek - i;
 
+            if (i === diff) {
+                daysCount = moment(startDate).endOf('isoWeek').date();
+            } else if (i === 0) {
+                daysCount = (moment(endDate).date() - moment(endDate).startOf('isoWeek').date() + 1);
+            } else {
+                daysCount = 7;
+            }
+
+            result.push({week: curWeek, daysCount: daysCount});
+        }
 
         return result;
     };
 
     return {
-        runApplication: runApplication,
-        changeContentViewType: changeContentViewType,
+        runApplication          : runApplication,
+        changeContentViewType   : changeContentViewType,
         //getCurrentII: getCurrentII,
         //setCurrentII: setCurrentII,
-        getCurrentVT: getCurrentVT,
-        setCurrentVT: setCurrentVT,
-        getCurrentCL: getCurrentCL,
-        setCurrentCL: setCurrentCL,
-        cashToApp: cashToApp,
-        retriveFromCash: retriveFromCash,
-        savedFilters: savedFilters,
+        getCurrentVT            : getCurrentVT,
+        setCurrentVT            : setCurrentVT,
+        getCurrentCL            : getCurrentCL,
+        setCurrentCL            : setCurrentCL,
+        cashToApp               : cashToApp,
+        retriveFromCash         : retriveFromCash,
+        savedFilters            : savedFilters,
         getFiltersForContentType: getFiltersForContentType,
-        getFilterById: getFilterById,
-        getWeeks: getWeeks
+        getFilterById           : getFilterById,
+        getWeeks                : getWeeks
     };
 });
