@@ -50,7 +50,6 @@ module.exports = function (app, mainDb) {
     var capacityRouter = require('./capacity')(models);
     var importFileRouter = require('./importFile')(models);
 
-
     app.get('/', function (req, res, next) {
         res.sendfile('index.html');
     });
