@@ -1120,6 +1120,7 @@ var wTrack = function (event, models) {
                 var startD;
                 var dayNumber;
                 var endDay;
+                var dayOfWeek;
 
                 if (endDate) {
                     endYear = moment(endDate).year();
@@ -1134,16 +1135,22 @@ var wTrack = function (event, models) {
                     startD = moment(date).date();
 
                     if (hours % 8 === 0){
-                        dayNumber = hours / 8;
+                       dayNumber = hours / 8;
                     } else{
                         dayNumber = Math.ceil(hours / 8);
                     }
 
-                    endDay = startD + dayNumber + 2 * Math.round(weekNumber) + 1;
+                    endDay = startD + dayNumber + 2 * Math.round(weekNumber) - 3;
 
-                    if ((startD !== 1) && (Math.round(weekNumber) !== 1)){
-                        weekNumber = weekNumber + 1;
+                    if (dayNumber < startD){
                         endDay = startD + dayNumber + 2 * Math.round(weekNumber) - 1;
+                    }
+
+                    dayOfWeek = moment(date).day();
+
+                    if ((dayOfWeek !== 1) && (Math.ceil(weekNumber) >= 1) && (hours >= 40)){
+                        weekNumber = Math.round(weekNumber) + 1;
+                        endDay = startD + dayNumber + 2 * weekNumber - 3;
                     }
 
                     endWeek = startWeek + Math.ceil(weekNumber) - 1;
@@ -1157,7 +1164,7 @@ var wTrack = function (event, models) {
                     newDate = moment(date).isoWeek(endWeek);
                     endMonth = moment(newDate).month();
                     endDate = moment().year(endYear).month(endMonth).isoWeek(endWeek);
-                    endDate.day(endDay);
+                    endDate.date(endDay);
                 }
 
                 diff = endWeek - startWeek;
