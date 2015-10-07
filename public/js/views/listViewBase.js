@@ -1,11 +1,13 @@
 define([
         'text!templates/Pagination/PaginationTemplate.html',
         'text!templates/Alpabet/AphabeticTemplate.html',
+        'text!templates/Notes/importTemplate.html',
+        'views/Notes/AttachView',
         'common',
         'dataService',
     ],
 
-    function (paginationTemplate, aphabeticTemplate, common, dataService) {
+    function (paginationTemplate, aphabeticTemplate, importForm, attachView, common, dataService) {
         var ListViewBase = Backbone.View.extend({
             el                : '#content-holder',
             defaultItemsNumber: null,
@@ -583,7 +585,7 @@ define([
                 }
             },
 
-            exportToXlsx: function () {
+            exportToXlsx        : function () {
                 //todo change after routes refactoring
                 if (this.exportToXlsxUrl) {
                     window.location = this.exportToXlsxUrl;
@@ -592,11 +594,24 @@ define([
                         window.location = this.collection.url + '/exportToXlsx';
                     }
                 }
+            },
+            fileSizeIsAcceptable: function (file) {
+                if (!file) {
+                    return false;
+                }
+                return file.size < App.File.MAXSIZE;
+            },
+
+
+            importFiles: function (context) {
+                new attachView({
+                    modelName: context.contentType,
+                    import: true
+                });
             }
 
-            //</editor-fold>
-
         });
+
 
         ListViewBase.extend = function (child) {
             var view = Backbone.View.extend.apply(this, arguments);

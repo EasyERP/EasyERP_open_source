@@ -902,6 +902,7 @@ define([
                         topbarView.bind('deleteEvent', contentview.deleteItems, contentview);
                         topbarView.bind('exportToCsv',contentview.exportToCsv,contentview);
                         topbarView.bind('exportToXlsx',contentview.exportToXlsx,contentview);
+                        topbarView.bind('importEvent', contentview.importFiles, contentview);
                         collection.bind('showmore', contentview.showMoreContent, contentview);
                         collection.bind('showmoreAlphabet', contentview.showMoreAlphabet, contentview);
 

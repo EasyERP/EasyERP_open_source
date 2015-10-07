@@ -622,8 +622,10 @@ module.exports = (function () {
         Project     : project,
         Industry    : industry,
         Tasks       : task,
-        Products    : product
+        Products    : product,
+        Product     : product,
+        Companies   : customers,
+        Persons     : customers
     }
-
 
 })();
