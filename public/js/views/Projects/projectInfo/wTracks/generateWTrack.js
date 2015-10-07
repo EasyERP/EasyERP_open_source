@@ -97,6 +97,8 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                 addNewEmployeeRow: function (e) {
                     this.stopDefaultEvents(e);
 
+                    var self = this;
+
                     var target = $(e.target);
                     //var wTrackPerEmployeeContainer = this.$el.find('#wTrackItemsHolder');
                     var parrent = target.closest('tbody');
@@ -124,20 +126,19 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                             parrent.prepend(elem);
                             $(".generateTypeUl").hide();
 
-                            return this.bindDataPicker(elem);
+                            return this.bindDataPicker();
                         }
 
                         $(trEll[trEll.length - 1]).after(elem);
                         $(".generateTypeUl").hide();
 
-                        this.bindDataPicker(elem);
+                        this.bindDataPicker();
                     }
                 },
 
-                bindDataPicker: function (elem) {
+                bindDataPicker: function () {
                     var dataPickerStartContainers = $('.datapicker.startDate');
                     var dataPickerEndContainers = $('.endDateDP.datapicker');
-                    var hoursInput = $(elem).find('.endDateInput');
                     var self = this;
 
                     dataPickerStartContainers.datepicker({
@@ -174,21 +175,6 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                             return false;
                         }
                     }).removeClass('datapicker');
-
-                    hoursInput.on('change', function () {
-                        var targetInput = $(this);
-
-                        self.setChangedValueToModel(targetInput);
-                    });
-
-                    hoursInput.on('keydown', function (e) {
-                        var targetInput = $(this);
-
-                        if (e.which === 13) {
-                            self.setChangedValueToModel(targetInput);
-                        }
-                    });
-
                 },
 
                 editRow: function (e) {
@@ -205,9 +191,6 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     var insertedInput;
 
                     if (wTrackId && !isInput) {
-                        if (this.wTrackId) {
-                            this.setChangedValueToModel();
-                        }
                         this.wTrackId = wTrackId;
                         this.setChangedValueToModel();
                     }
@@ -276,8 +259,8 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                         this.resultArray[editedElementRowId][editedElementContent] = editedElementValue;
 
                         if (!elem) {
-                            editedCol.text(editedElementValue);
-                            editedElement.remove();
+                            editedCol.not('.endDateTD').text(editedElementValue);
+                            editedElement.not('.endDateInput').remove();
                         }
                     }
                 },
@@ -373,12 +356,13 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     var tr = target.parents("tr");
                     var modelId = tr.attr('data-id');
                     var id = target.attr("id");
-                    var attr = targetElement.attr("id") || targetElement.data("content");
+                    var attr = targetElement.attr("id") || targetElement.attr("data-content");
                     var elementType = '#' + attr;
                     var departmentContainer;
                     var selectorContainer;
                     var endDateDP;
                     var endDateInput;
+                    var endDateTD;
 
                     var element = _.find(this.responseObj[elementType], function (el) {
                         return el._id === id;
@@ -410,15 +394,18 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                     } else {
                         targetElement.find('a').text(target.text());
-                        endDateDP = tr.find('.endDateDP');
-                        endDateInput = tr.find('.endDateInput');
+                        endDateTD = tr.find('.endDateTD');
+                        endDateDP = endDateTD.find('.endDateDP');
+                        endDateInput = endDateTD.find('.endDateInput');
 
                         if (target.attr('data-content') === 'byDate') {
                             endDateDP.removeClass('hidden');
                             endDateInput.addClass('hidden');
+                            endDateTD.attr('data-content', 'endDate');
                         } else if (target.attr('data-content') === 'byHours') {
                             endDateInput.removeClass('hidden');
                             endDateDP.addClass('hidden');
+                            endDateTD.attr('data-content', 'hours');
                         }
                     }
 
