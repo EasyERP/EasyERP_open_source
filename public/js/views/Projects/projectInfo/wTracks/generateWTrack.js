@@ -302,6 +302,8 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                         contentType: "application/json",
                         data       : data,
                         success    : function () {
+
+                            /*TODO change if needed*/
                             dataService.getData('/filter/getFiltersValues', null, function (response) {
                                 if (response && !response.error) {
                                     App.filtersValues = response;
