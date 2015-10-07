@@ -534,15 +534,21 @@ define([
                 });
             },
 
-            renderFilter: function (self) {
+            renderFilter: function (self, baseFilter) {
                 self.filterView = new this.filterView({
                     contentType: self.contentType
                 });
 
                 self.filterView.bind('filter', function (filter) {
+                    if (baseFilter) {
+                        filter[baseFilter.name] = baseFilter.value;
+                    }
                     self.showFilteredPage(filter, self)
                 });
                 self.filterView.bind('defaultFilter', function () {
+                    if (baseFilter) {
+                        filter[baseFilter.name] = baseFilter.value;
+                    }
                     self.showFilteredPage({}, self);
                 });
 
