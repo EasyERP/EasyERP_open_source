@@ -864,20 +864,6 @@ var wTrack = function (event, models) {
                         var year = element.year;
                         var month = element.month;
                         var week = element.week;
-                        totalHours = 0;
-
-                        for (var i = 7; i > 0; i--) {
-                            if ((vacations && vacations[dateByMonth] && vacations[dateByMonth][i])) {
-                                trackWeek[i] = vacations[dateByMonth][i];
-                                totalHours += trackWeek[i];
-                            } else if (( holidays && holidays[dateByWeek] && holidays[dateByWeek][i])) {
-                                trackWeek[i] = holidays[dateByWeek][i];
-                                totalHours += trackWeek[i];
-                            } else {
-                                trackWeek[i] = opt[i];
-                                totalHours += trackWeek[i];
-                            }
-                        }
 
                         function calcCost(callB) {
                             var cost;
@@ -957,6 +943,22 @@ var wTrack = function (event, models) {
 
                             var cost = result[0] ? result[0] : 0;
 
+                            var weekArray = element.weekValues;
+                            totalHours = 0;
+
+                            for (var i = 7; i > 0; i--) {
+                                if ((vacations && vacations[dateByMonth] && vacations[dateByMonth][i])) {
+                                    trackWeek[i] = vacations[dateByMonth][i];
+                                    totalHours += trackWeek[i];
+                                } else if (( holidays && holidays[dateByWeek] && holidays[dateByWeek][i])) {
+                                    trackWeek[i] = holidays[dateByWeek][i];
+                                    totalHours += trackWeek[i];
+                                } else {
+                                    trackWeek[i] = weekArray[i];
+                                    totalHours += trackWeek[i];
+                                }
+                            }
+
                             wTrackObj = {
                                 dateByWeek: dateByWeek,
                                 dateByMonth: dateByMonth,
@@ -977,18 +979,18 @@ var wTrack = function (event, models) {
                                 5: trackWeek['5'],
                                 6: trackWeek['6'],
                                 7: trackWeek['7'],
-                                "createdBy" : {
-                                    "date" : new Date(),
-                                    "user" : currentUser
+                                "createdBy": {
+                                    "date": new Date(),
+                                    "user": currentUser
                                 },
-                                "editedBy" : {
-                                    "user" : currentUser
+                                "editedBy": {
+                                    "user": currentUser
                                 },
-                                "groups" : {
-                                    "group" : [ ],
-                                    "users" : [ ],
-                                    "owner" : currentUser
-                                },
+                                "groups": {
+                                    "group": [],
+                                    "users": [],
+                                    "owner": currentUser
+                                }
 
                             };
 
@@ -1154,13 +1156,78 @@ var wTrack = function (event, models) {
                     for (var i = diff; i >= 0; i--) {
                         var obj = {};
                         var newDate;
+                        var day;
+                        var day0;
+                        obj.weekValues = {};
 
-                        obj.week = endWeek - i;
-                        newDate = moment(date).isoWeek(obj.week);
-                        obj.month = moment(newDate).month() + 1;
-                        obj.year = year;
+                        if (i === 0) {
+                            obj.week = endWeek - i;
 
-                        result.push(obj);
+                            newDate = moment(date).isoWeek(obj.week);
+
+                            var d = moment(endDate);
+
+                            day = moment(d).day();
+
+                            for (var j = 5; j >= 1; j--) {
+                                if (day >= j) {
+                                    if ( (obj.week  === endWeek) && (diff === 0)){
+                                        var day2 = moment(startDate).day();
+                                        if (day2 > j) {
+                                            obj.weekValues[j] = 0;
+                                        } else {
+                                            obj.weekValues[j] = 8;
+                                        }
+                                    } else {
+                                        obj.weekValues[j] = 8;
+                                    }
+                                } else {
+                                    obj.weekValues[j] = 0;
+                                }
+                            }
+                            obj.weekValues[6] = 0;
+                            obj.weekValues[7] = 0;
+
+                            obj.month = moment(newDate).month() + 1;
+                            obj.year = year;
+
+                            result.push(obj);
+                        } else if (i === diff) {
+                            obj.week = endWeek - i;
+
+                            newDate = moment(date).isoWeek(obj.week);
+
+                            day = moment(newDate).day();
+                            for (var j = 5; j >= 1; j--) {
+                                if (day <= j) {
+                                    obj.weekValues[j] = 8;
+                                } else {
+                                    obj.weekValues[j] = 0;
+                                }
+                            }
+                            obj.weekValues[6] = 0;
+                            obj.weekValues[7] = 0;
+
+                            obj.month = moment(newDate).month() + 1;
+                            obj.year = year;
+
+                            result.push(obj);
+                        } else {
+                            obj.week = endWeek - i;
+
+                            newDate = moment(date).isoWeek(obj.week);
+                            day = moment(date).day();
+                            for (var k = 5; k >= 1; k--) {
+                                obj.weekValues[k] = 8;
+                            }
+                            obj.weekValues[6] = 0;
+                            obj.weekValues[7] = 0;
+
+                            obj.month = moment(newDate).month() + 1;
+                            obj.year = year;
+
+                            result.push(obj);
+                        }
                     }
 
                     return result;
