@@ -76,7 +76,7 @@ module.exports = function (app, mainDb) {
     app.use('/employee', employeeRouter);
     app.use('/department', departmentRouter);
     app.use('/revenue', revenueRouter);
-    app.use('/salary', salaryRouter);
+    app.use('/payroll', salaryRouter);
     app.use('/opportunity', opportunityRouter);
     app.use('/task', taskRouter);
     app.use('/jobPosition', jobPositionRouter);
