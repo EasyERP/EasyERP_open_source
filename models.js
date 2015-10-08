@@ -4,11 +4,12 @@
     };
     function connection(id) {
         return dbsObject[id];
-    }
+    };
+
     return {
         get: get,
         connection: connection
-    }
+    };
 };
 
 module.exports = models;

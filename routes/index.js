@@ -49,13 +49,9 @@ module.exports = function (app, mainDb) {
     var customersRouter = require('./customers')(models, event);
     var capacityRouter = require('./capacity')(models);
 
-    app.get('/', function (req, res, next) {
-        res.sendfile('index.html');
-    });
-
     var requestHandler = require("../requestHandler.js")(app, event, mainDb);
 
-    app.get('/', function (req, res) {
+    app.get('/', function (req, res, next) {
         res.sendfile('index.html');
     });
 

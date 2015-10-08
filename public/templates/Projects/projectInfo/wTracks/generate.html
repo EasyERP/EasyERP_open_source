@@ -12,21 +12,8 @@
             </div>
             <div class="thirdPartBlock left">
                 <dl class="person-info">
-                    <div class="miniAvatar">
-                        <canvas class="avatar" width="50" height="50"></canvas>
-                    </div>
-                    <div class="miniAvatarInfo">
-                        <dt><label for="projectManager">Sales Manager</label></dt>
-                        <dd>
-                            <span id="projectManager"><%= project.projectmanager.name %></span>
-                        </dd>
-                    </div>
-                </dl>
-            </div>
-            <div class="thirdPartBlock left">
-                <dl class="person-info">
-                    <div class="miniAvatar">
-                        <canvas class="avatar" width="50" height="50"></canvas>
+                    <div class="miniAvatarCustomer miniAvatar" data-id="<%=(project.customer._id) ? project.customer._id: ''%>">
+                        <img alt="" src="" class="avatar"/>
                     </div>
                     <div class="miniAvatarInfo">
                         <dt><label for="customer">Customer</label></dt>
@@ -35,6 +22,20 @@
                         </dd>
                     </div>
                 </dl>
+            </div>
+            <div class="thirdPartBlock left">
+                <dl class="person-info">
+                    <div class="miniAvatarPM miniAvatar" data-id="<%=(project.projectmanager._id) ? project.projectmanager._id: ''%>">
+                            <img alt="" src="" class="avatar"/>
+                    </div>
+                    <div class="miniAvatarInfo">
+                        <dt><label for="projectManager">Sales Manager</label></dt>
+                        <dd>
+                            <span id="projectManager"><%= project.projectmanager.name %></span>
+                        </dd>
+                    </div>
+                </dl>
+
             </div>
             <div class="clearfix"></div>
         </div>

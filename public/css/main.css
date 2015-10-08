@@ -75,14 +75,6 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   width: 100%;
   table-layout: fixed;
 }
-.list2 caption {
-  text-align: left;
-  margin-top: 15px;
-  background-color: #66b5d4;
-  font-size: 14px;
-  line-height: 20px;
-  padding-left: 10px;
-}
 .list2 .anotherColor {
   background-color: #66b5d4;
 }
@@ -186,6 +178,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   font-size: 12px;
   text-align: right;
   border-right: 1px solid #7f7f80;
+  border-bottom: 1px solid #7f7f80;
   color: #cdcdcd;
   line-height: 20px;
 }
@@ -245,14 +238,6 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 .list2 tr:hover {
   background-color: #565658;
 }
-.list2 caption {
-  text-align: left;
-  margin-top: 15px;
-  background-color: #66b5d4;
-  font-size: 14px;
-  line-height: 20px;
-  padding-left: 10px;
-}
 .list2 .anotherColor {
   background-color: #66b5d4;
 }
@@ -356,6 +341,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   font-size: 12px;
   text-align: right;
   border-right: 1px solid #7f7f80;
+  border-bottom: 1px solid #7f7f80;
   color: #cdcdcd;
   line-height: 20px;
 }
@@ -431,9 +417,29 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 }
 #forInfo .tableProjects {
   width: 99%;
+  margin-bottom: 10px;
 }
 #forInfo .tableProjects thead th {
   text-align: right;
+}
+#forInfo .tableProjects thead th.forCaption {
+  text-align: left;
+  margin-top: 15px;
+  background-color: #66b5d4;
+  font-size: 12px;
+  line-height: 28px;
+  padding: 0 0  0 10px;
+  color: #ffffff;
+  position: relative;
+  border-right: 1px solid #66b5d4;
+}
+#forInfo .tableProjects thead th.forCaption a {
+  text-align: right;
+  color: #ffffff;
+  position: absolute;
+  right: 10px;
+  top: 0;
+  display: block;
 }
 #forInfo .tableProjects tbody td {
   text-align: right;
@@ -663,7 +669,7 @@ textarea {
   content: "$";
 }
 .errorContent {
-  border: 1px solid red;
+  border: 1px solid red !important;
 }
 .red {
   color: #ff0000;
@@ -4920,14 +4926,6 @@ ul.dialog-tabs li.right button {
   font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
   width: 100%;
 }
-.list caption {
-  text-align: left;
-  margin-top: 15px;
-  background-color: #66b5d4;
-  font-size: 14px;
-  line-height: 20px;
-  padding-left: 10px;
-}
 .list .anotherColor {
   background-color: #66b5d4;
 }
@@ -5031,6 +5029,7 @@ ul.dialog-tabs li.right button {
   font-size: 12px;
   text-align: right;
   border-right: 1px solid #7f7f80;
+  border-bottom: 1px solid #7f7f80;
   color: #cdcdcd;
   line-height: 20px;
 }
