@@ -1411,6 +1411,9 @@ module.exports = function (app, mainDb) {
         }
     };
 
+
+    requestHandler.initScheduler();
+
     app.use(notFound);
     app.use(errorHandler);
 };
