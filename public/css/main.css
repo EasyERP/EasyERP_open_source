@@ -4547,6 +4547,29 @@ table#workflows tr td.edit-status {
 #createBtnHolder a:hover {
   color: #ffffff;
 }
+.createBtnHolder ul,
+#createBtnHolder ul {
+  overflow: hidden;
+  padding: 0 10px;
+}
+.createBtnHolder ul li,
+#createBtnHolder ul li {
+  float: left;
+  margin-right: 10px;
+  border: 1px solid #7f7f80;
+}
+.createBtnHolder ul li a,
+#createBtnHolder ul li a {
+  display: inline-block;
+  line-height: 20px;
+  width: 100%;
+  padding: 0 5px;
+  margin: 0;
+}
+.createBtnHolder ul li a:hover,
+#createBtnHolder ul li a:hover {
+  text-decoration: none;
+}
 /*----------------------------- Login Form --------------------------------*/
 #loginForm {
   display: block;
