@@ -676,7 +676,7 @@ var Invoice = function (models) {
     this.totalCollectionLength = function (req, res, next) {
         var data = req.query;
         var filter = data.filter;
-        var forSales = data.forSales;
+        //var forSales = data.forSales;
 
         var optionsObject = {};
         var result = {};
@@ -698,12 +698,12 @@ var Invoice = function (models) {
             }
         }
 
-        if (forSales){
-            optionsObject['$and'].push({forSales: false});
-        } else {
-            optionsObject['$and'].push({forSales: true });
-
-        }
+        //if (forSales){
+        //    optionsObject['$and'].push({forSales: false});
+        //} else {
+        //    optionsObject['$and'].push({forSales: true });
+        //
+        //}
 
         departmentSearcher = function (waterfallCallback) {
             models.get(req.session.lastDb, "Invoice", InvoiceSchema).aggregate(

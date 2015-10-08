@@ -5,5 +5,5 @@
 process.env.MAIN_SUB_DOMAIN = 'live';
 process.env.HOST = 'http://localhost:8089/';
 process.env.SOCKET_DB_PORT = 6379;
-process.env.SOCKET_DB_HOST = '192.168.88.250';
+process.env.SOCKET_DB_HOST = '78.46.185.131';
 process.env.SOCKET_DB = 9;
