@@ -10,12 +10,12 @@
             <col span="1">
             <col span="1">
         </colgroup>
+
         <thead>
         <tr>
             <th colspan="8"
                 class="forCaption">
                 Team & Resources
-
             </th>
         </tr>
         <tr>
@@ -29,6 +29,7 @@
             <th>Rate</th>
         </tr>
         </thead>
+
         <tbody id="projectTeam">
         <%var count = 0;%>
         <% projectTeam.forEach(function(element,i){ %>
@@ -48,12 +49,13 @@
         <% count++ %>
         <% } %>
         <% })%>
+
+        </tbody>
         <%if (count) {%>
 
         <tfoot>
-
-        <tr style="height: 20px; border-bottom: 0px">
-            <td style="vertical-align: top">
+        <tr>
+            <td>
                 <a href="javascript:;"
                    title="Create Item"
                    id="createItem">
@@ -69,19 +71,21 @@
             <td>&nbsp</td>
             <td>&nbsp</td>
         </tr>
-        <tr style="border-bottom: 2px solid #66B5D4">
-            <td style="font-weight: bold">Total:</td>
+        <tr>
+            <td>Total:</td>
             <td><%='&nbsp'%></td>
-            <td style="font-weight: bold"><%=count%></td>
-            <td style="font-weight: bold"><%=currencySplitter(budgetTotal.hoursSum.toFixed())%></td>
-            <td style="font-weight: bold"><%=currencySplitter(budgetTotal.costSum.toFixed())%></td>
-            <td style="font-weight: bold"><%=currencySplitter(budgetTotal.revenueSum.toFixed())%></td>
-            <td style="font-weight: bold"><%=currencySplitter(budgetTotal.profitSum.toFixed())%></td>
-            <td style="font-weight: bold"><%=currencySplitter((budgetTotal.rateSum.byDev + budgetTotal.rateSum.byQA).toFixed(2))%></td>
+            <td><%=count%></td>
+            <td><%=currencySplitter(budgetTotal.hoursSum.toFixed())%></td>
+            <td><%=currencySplitter(budgetTotal.costSum.toFixed())%></td>
+            <td><%=currencySplitter(budgetTotal.revenueSum.toFixed())%></td>
+            <td><%=currencySplitter(budgetTotal.profitSum.toFixed())%></td>
+            <td><%=currencySplitter((budgetTotal.rateSum.byDev +
+                budgetTotal.rateSum.byQA).toFixed(2))%>
+            </td>
         </tr>
         </tfoot>
+
         <% } %>
-        </tbody>
     </table>
 </div>
 
