@@ -2134,15 +2134,14 @@ input::-ms-clear {
   }
   input:not([type=checkbox]) {
     .border-radius(0px);
-    border: @thin-border @border-color;
-    //border-top-color: #CBD3E2;
+    border: @thin-border @list-border-color;
     max-width: 280px;
     height: 18px;
     background-color: transparent;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 12px;
     padding: 2px;
-    color: @input-text-color;
+    color: @mainText-color;
 
     &:focus {
       .box-shadow(0, 0, 5px, @border-color-selected);
@@ -6234,7 +6233,7 @@ textarea#editInput {
       text-align: center;
       border: 1px solid @border-color-main;
       background-color: @bg-main;
-      border-radius: 5px;
+
       margin: 5px;
       li {
         &.miniStylePagination {
