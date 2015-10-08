@@ -591,21 +591,21 @@ define([
             getQuotations: function (cb) {
                 var _id = window.location.hash.split('form/')[1];
                 var filter = {
-                    'project' : {
-                        key  : 'project._id',
+                    'condition'  : 'and',
+                    'projectName': {
+                        key  : 'project',
                         value: [_id]
                     }/*,
-                    'forSales': {
-                        key  : 'forSales',
-                        value: true
-                    }*/
+                     'forSales': {
+                     key  : 'forSales',
+                     value: true
+                     }*/
                 };
 
-                dataService.getData('/Quotation/list',
+                dataService.getData('/quotation/list',
                     {
                         count      : 100,
                         page       : 1,
-                        forSales   : true,
                         contentType: 'salesQuotation',
                         filter     : filter
                     }, function (response) {
@@ -615,7 +615,7 @@ define([
 
                         new QuotationView({
                             model: response
-                        }).renderAll();
+                        }).render();
 
                         cb(null, response);
 

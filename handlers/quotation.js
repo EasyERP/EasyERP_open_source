@@ -88,10 +88,18 @@ var Quotation = function (models) {
 
         var optionsObject = {};
 
-        if (data && data.filter && data.filter.forSales) {
+        /*if (data && data.filter && data.filter.forSales) {
             optionsObject['forSales'] = true;
         } else {
             optionsObject['forSales'] = false;
+        }*/
+
+        if (filter && typeof filter === 'object') {
+            if (filter.condition === 'or') {
+                optionsObject['$or'] = caseFilter(filter);
+            } else {
+                optionsObject['$and'] = caseFilter(filter);
+            }
         }
 
         departmentSearcher = function (waterfallCallback) {
@@ -182,7 +190,7 @@ var Quotation = function (models) {
         });
     };
 
-    function caseFilter (queryObject, data) {
+    /*function caseFilter (queryObject, data) {
         var filter = data.filter;
 
         if (data && filter) {
@@ -192,9 +200,9 @@ var Quotation = function (models) {
             if (filter.workflow) {
                 queryObject.$and.push({workflow: {$in: filter.workflow.objectID()}});
             }
-            /*if (filter.Reference) {
+            /!*if (filter.Reference) {
                 queryObject.$and.push({supplierReference: {$in: filter.Reference}});
-            }*/
+            }*!/
             if (filter.supplier) {
                 queryObject.$and.push({supplier: {$in: filter.supplier}});
             }
@@ -207,6 +215,55 @@ var Quotation = function (models) {
 
             }
         }
+    };*/
+
+    function ConvertType(array, type) {
+        if (type === 'integer') {
+            for (var i = array.length - 1; i >= 0; i--) {
+                array[i] = parseInt(array[i]);
+            }
+        } else if (type === 'boolean') {
+            for (var i = array.length - 1; i >= 0; i--) {
+                if (array[i] === 'true') {
+                    array[i] = true;
+                } else if (array[i] === 'false') {
+                    array[i] = false;
+                } else {
+                    array[i] = null;
+                }
+            }
+        }
+    };
+
+    function caseFilter(filter) {
+        var condition;
+        var resArray = [];
+        var filtrElement = {};
+        var key;
+
+        for (var filterName in filter) {
+            condition = filter[filterName]['value'];
+            key = filter[filterName]['key'];
+
+            switch (filterName) {
+                case 'projectName':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'forSales':
+                    ConvertType(condition, 'boolean');
+                    filtrElement[key] = {$in: condition};
+                    resArray.push(filtrElement);
+                    break;
+                case 'canBeSold':
+                    ConvertType(condition, 'boolean');
+                    filtrElement[key] = {$in: condition};
+                    resArray.push(filtrElement);
+                    break;
+            }
+        };
+
+        return resArray;
     };
 
     this.getByViewType = function (req, res, next) {
@@ -226,12 +283,21 @@ var Quotation = function (models) {
         var count = query.count ? query.count : 100;
         var page = query.page;
         var skip = (page - 1) > 0 ? (page - 1) * count : 0;
+        var filter = query.filter;
 
-        if (query && query.filter && query.filter.forSales) {
+        if (filter && typeof filter === 'object') {
+            if (filter.condition === 'or') {
+                queryObject['$or'] = caseFilter(filter);
+            } else {
+                queryObject['$and'] = caseFilter(filter);
+            }
+        }
+
+        /*if (query && query.filter && query.filter.forSales) {
             queryObject['forSales'] = true;
         } else {
             queryObject['forSales'] = false;
-        }
+        }*/
 
         if (query.sort) {
             sort = query.sort;
@@ -305,12 +371,11 @@ var Quotation = function (models) {
             var data = req.query;
             var query;
             var queryObject = {};
-            queryObject['$and'] = [];
+
+            queryObject.$and = [];
 
             queryObject.$and.push({_id: {$in: quotationsIds}});
             queryObject.$and.push({isOrder: isOrder});
-
-            caseFilter(queryObject, data);
 
             query = Quotation
                 .find(queryObject)

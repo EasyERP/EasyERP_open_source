@@ -199,8 +199,7 @@ var wTrack = function (event, models) {
                     resArray.push(filtrElement);
                     break;
             }
-        }
-        ;
+        };
 
         return resArray;
     };

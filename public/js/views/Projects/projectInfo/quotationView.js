@@ -39,13 +39,21 @@ define([
             }
         },
 
-        renderAll: function () {
+        render: function () {
             var currentEl = this.$el;
-            //this.render();
 
             currentEl.prepend(this.templateHeader);
 
-            currentEl.find('#listTableQuotation').html(this.templateList({quotations: this.collection, startNumber: 1, dateToLocal: common.utcDateToLocaleDate}));
+            currentEl.find('#listTableQuotation').html(this.templateList({quotations: this.collection, startNumber: 0, dateToLocal: common.utcDateToLocaleDate}));
+
+            $('#check_all').click(function () {
+                $(':checkbox').prop('checked', this.checked);
+                if ($("input.checkbox:checked").length > 0) {
+                    $("#top-bar-deleteBtn").show();
+                } else {
+                    $("#top-bar-deleteBtn").hide();
+                }
+            });
         }
 
         /*render: function () {
