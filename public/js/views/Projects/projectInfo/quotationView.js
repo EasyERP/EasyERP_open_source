@@ -2,10 +2,11 @@ define([
     'text!templates/Projects/projectInfo/quotations/quotationTemplate.html',
     'text!templates/Projects/projectInfo/quotations/ListTemplate.html',
     'views/listViewBase',
+    'views/Projects/projectInfo/quotations/CreateView',
     'common',
     'helpers'
 
-], function (quotationTopBar, ListTemplate, listView, common, helpers) {
+], function (quotationTopBar, ListTemplate, listView, quotationCreateView, common, helpers) {
     var quotationView = listView.extend({
 
         el            : '#quotations',
@@ -13,11 +14,13 @@ define([
         templateList  : _.template(ListTemplate),
 
         events: {
-            "click .checkbox": "checked"
+            "click .checkbox": "checked",
+            "click #createQuotation": "createQuotation"
         },
 
         initialize: function (options) {
             this.collection = options.model;
+            this.projectID = options.projectId;
         },
 
         checked: function (e) {
@@ -39,6 +42,11 @@ define([
             }
         },
 
+        createQuotation: function(e) {
+            e.preventDefault();
+            new quotationCreateView({projectId: this.projectID});
+        },
+
         renderAll: function () {
             var currentEl = this.$el;
             //this.render();
@@ -48,22 +56,7 @@ define([
             currentEl.find('#listTableQuotation').html(this.templateList({quotations: this.collection, startNumber: 1, dateToLocal: common.utcDateToLocaleDate}));
         }
 
-        /*render: function () {
-         var currentEl = this.$el;
 
-         new listView({collection: this.collection, el: currentEl});
-
-         currentEl.find('#searchContainer').append(this.template);
-
-         $('#check_all').click(function () {
-         $(':checkbox').prop('checked', this.checked);
-         if ($("input.checkbox:checked").length > 0) {
-         $("#top-bar-deleteBtn").show();
-         } else {
-         $("#top-bar-deleteBtn").hide();
-         }
-         });
-         }*/
     });
 
     return quotationView;
