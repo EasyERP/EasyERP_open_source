@@ -1,4 +1,3 @@
-
 var mongoose = require('mongoose');
 var Filters = function (models) {
     var wTrackSchema = mongoose.Schemas['wTrack'];
@@ -8,7 +7,7 @@ var Filters = function (models) {
     var TaskSchema = mongoose.Schemas['Tasks'];
     var wTrackInvoiceSchema = mongoose.Schemas['wTrackInvoice'];
     var customerPaymentsSchema = mongoose.Schemas['Payment'];
-    var productSchema  = mongoose.Schemas['Products'];
+    var productSchema = mongoose.Schemas['Products'];
     var _ = require('../node_modules/underscore');
     var async = require('async');
 
@@ -25,17 +24,17 @@ var Filters = function (models) {
         var Product = models.get(lastDB, 'Products', productSchema);
 
         async.parallel({
-                wTrack: getWtrackFiltersValues,
-                Persons: getPersonFiltersValues,
-                Companies: getCompaniesFiltersValues,
-                Employees: getEmployeeFiltersValues,
-                Applications: getApplicationFiltersValues,
-                Projects: getProjectFiltersValues,
-                Tasks: getTasksFiltersValues,
-                salesInvoice: getSalesInvoiceFiltersValues,
+                wTrack          : getWtrackFiltersValues,
+                Persons         : getPersonFiltersValues,
+                Companies       : getCompaniesFiltersValues,
+                Employees       : getEmployeeFiltersValues,
+                Applications    : getApplicationFiltersValues,
+                Projects        : getProjectFiltersValues,
+                Tasks           : getTasksFiltersValues,
+                salesInvoice    : getSalesInvoiceFiltersValues,
                 customerPayments: getCustomerPaymentsFiltersValues,
                 supplierPayments: getSupplierPaymentsFiltersValues,
-                Product: getProductsFiltersValues
+                Product         : getProductsFiltersValues
             },
             function (err, result) {
                 if (err) {
@@ -49,49 +48,49 @@ var Filters = function (models) {
             WTrack.aggregate([
                 {
                     $group: {
-                        _id: null,
+                        _id             : null,
                         'projectManager': {
                             $addToSet: {
-                                _id: '$project.projectmanager._id',
+                                _id : '$project.projectmanager._id',
                                 name: '$project.projectmanager.name'
                             }
                         },
-                        'projectName': {
+                        'projectName'   : {
                             $addToSet: {
-                                _id: '$project._id',
+                                _id : '$project._id',
                                 name: '$project.projectName'
                             }
                         },
-                        'customer': {
+                        'customer'      : {
                             $addToSet: {
-                                _id: '$project.customer._id',
+                                _id : '$project.customer._id',
                                 name: '$project.customer.name'
                             }
                         },
-                        'employee': {
+                        'employee'      : {
                             $addToSet: '$employee'
                         },
-                        'department': {
+                        'department'    : {
                             $addToSet: {
-                                _id: '$department._id',
+                                _id : '$department._id',
                                 name: '$department.departmentName'
                             }
                         },
-                        'year': {
+                        'year'          : {
                             $addToSet: {
-                                _id: '$year',
+                                _id : '$year',
                                 name: '$year'
                             }
                         },
-                        'month': {
+                        'month'         : {
                             $addToSet: {
-                                _id: '$month',
+                                _id : '$month',
                                 name: '$month'
                             }
                         },
-                        'week': {
+                        'week'          : {
                             $addToSet: {
-                                _id: '$week',
+                                _id : '$week',
                                 name: '$week'
                             }
                         }
@@ -104,18 +103,18 @@ var Filters = function (models) {
 
                 result = result[0];
 
-                if (result){
+                if (result) {
                     result['isPaid'] = [
                         {
-                            _id: 'true',
+                            _id : 'true',
                             name: 'Paid'
                         },
                         {
-                            _id: 'false',
+                            _id : 'false',
                             name: 'Unpaid'
                         }
                     ]
-                };
+                }
 
                 callback(null, result);
             });
@@ -128,16 +127,16 @@ var Filters = function (models) {
                 },
                 {
                     $group: {
-                        _id: null,
-                        'name': {
+                        _id      : null,
+                        'name'   : {
                             $addToSet: {
-                                _id: '$_id',
+                                _id : '$_id',
                                 name: {$concat: ['$name.first', ' ', '$name.last']}
                             }
                         },
                         'country': {
                             $addToSet: {
-                                _id: '$address.country',
+                                _id : '$address.country',
                                 name: {'$ifNull': ['$address.country', 'None']}
                             }
                         }
@@ -150,14 +149,14 @@ var Filters = function (models) {
 
                 result = result[0];
 
-                if (result){
+                if (result) {
                     result['services'] = [
                         {
-                            _id: 'isSupplier',
+                            _id : 'isSupplier',
                             name: 'Supplier'
                         },
                         {
-                            _id: 'isCustomer',
+                            _id : 'isCustomer',
                             name: 'Customer'
                         }
                     ]
@@ -174,16 +173,16 @@ var Filters = function (models) {
                 },
                 {
                     $group: {
-                        _id: null,
-                        'name': {
+                        _id      : null,
+                        'name'   : {
                             $addToSet: {
-                                _id: '$_id',
+                                _id : '$_id',
                                 name: {$concat: ['$name.first', ' ', '$name.last']}
                             }
                         },
                         'country': {
                             $addToSet: {
-                                _id: '$address.country',
+                                _id : '$address.country',
                                 name: {'$ifNull': ['$address.country', 'None']}
                             }
                         }
@@ -199,11 +198,11 @@ var Filters = function (models) {
                 if (result) {
                     result['services'] = [
                         {
-                            _id: 'isSupplier',
+                            _id : 'isSupplier',
                             name: 'Supplier'
                         },
                         {
-                            _id: 'isCustomer',
+                            _id : 'isCustomer',
                             name: 'Customer'
                         }
                     ]
@@ -216,32 +215,32 @@ var Filters = function (models) {
         function getEmployeeFiltersValues(callback) {
             Employee.aggregate([
                 {
-                  $match: {'isEmployee': true}
+                    $match: {'isEmployee': true}
                 },
                 {
                     $group: {
-                        _id: null,
-                        'name': {
+                        _id          : null,
+                        'name'       : {
                             $addToSet: {
-                                _id: '$_id',
+                                _id : '$_id',
                                 name: {$concat: ['$name.first', ' ', '$name.last']}
                             }
                         },
-                        'department': {
+                        'department' : {
                             $addToSet: {
-                                _id: '$department._id',
+                                _id : '$department._id',
                                 name: {'$ifNull': ['$department.name', 'None']}
                             }
                         },
                         'jobPosition': {
                             $addToSet: {
-                                _id: '$jobPosition._id',
+                                _id : '$jobPosition._id',
                                 name: {'$ifNull': ['$jobPosition.name', 'None']}
                             }
                         },
-                        'manager': {
+                        'manager'    : {
                             $addToSet: {
-                                _id: '$manager._id',
+                                _id : '$manager._id',
                                 name: {'$ifNull': ['$manager.name', 'None']}
                             }
                         }
@@ -265,28 +264,28 @@ var Filters = function (models) {
                 },
                 {
                     $group: {
-                        _id: null,
-                        'name': {
+                        _id          : null,
+                        'name'       : {
                             $addToSet: {
-                                _id: '$_id',
+                                _id : '$_id',
                                 name: {$concat: ['$name.first', ' ', '$name.last']}
                             }
                         },
-                        'department': {
+                        'department' : {
                             $addToSet: {
-                                _id: '$department._id',
+                                _id : '$department._id',
                                 name: {'$ifNull': ['$department.name', 'None']}
                             }
                         },
                         'jobPosition': {
                             $addToSet: {
-                                _id: '$jobPosition._id',
+                                _id : '$jobPosition._id',
                                 name: {'$ifNull': ['$jobPosition.name', 'None']}
                             }
                         },
-                        'manager': {
+                        'manager'    : {
                             $addToSet: {
-                                _id: '$manager._id',
+                                _id : '$manager._id',
                                 name: {'$ifNull': ['$manager.name', 'None']}
                             }
                         }
@@ -307,28 +306,28 @@ var Filters = function (models) {
             Project.aggregate([
                 {
                     $group: {
-                        _id: null,
-                        'name': {
+                        _id             : null,
+                        'name'          : {
                             $addToSet: {
-                                _id: '$_id',
+                                _id : '$_id',
                                 name: '$projectName'
                             }
                         },
-                        'customer': {
+                        'customer'      : {
                             $addToSet: {
-                                _id: '$customer._id',
+                                _id : '$customer._id',
                                 name: {'$ifNull': ['$customer.name', 'None']}
                             }
                         },
-                        'workflow': {
+                        'workflow'      : {
                             $addToSet: {
-                                _id: '$workflow._id',
+                                _id : '$workflow._id',
                                 name: {'$ifNull': ['$workflow.name', 'None']}
                             }
                         },
                         'projectmanager': {
                             $addToSet: {
-                                _id: '$projectmanager._id',
+                                _id : '$projectmanager._id',
                                 name: {'$ifNull': ['$projectmanager.name', 'None']}
                             }
                         }
@@ -339,7 +338,7 @@ var Filters = function (models) {
                     callback(err);
                 }
 
-                if (result){
+                if (result) {
                     result = result[0];
 
                     callback(null, result);
@@ -352,28 +351,28 @@ var Filters = function (models) {
             Task.aggregate([
                 {
                     $group: {
-                        _id: null,
-                        'project': {
+                        _id         : null,
+                        'project'   : {
                             $addToSet: {
-                                _id: '$project._id',
+                                _id : '$project._id',
                                 name: '$project.projectName'
                             }
                         },
                         'assignedTo': {
                             $addToSet: {
-                                _id: '$assignedTo._id',
+                                _id : '$assignedTo._id',
                                 name: {'$ifNull': ['$assignedTo.name', 'None']}
                             }
                         },
-                        'workflow': {
+                        'workflow'  : {
                             $addToSet: {
-                                _id: '$workflow._id',
+                                _id : '$workflow._id',
                                 name: {'$ifNull': ['$workflow.name', 'None']}
                             }
                         },
-                        'type': {
+                        'type'      : {
                             $addToSet: {
-                                _id: '$type',
+                                _id : '$type',
                                 name: '$type'
                             }
                         }
@@ -395,34 +394,34 @@ var Filters = function (models) {
             wTrackInvoice.aggregate([
                 {
                     $match: {
-                        forSales: true,
+                        forSales   : true,
                         invoiceType: 'wTrack'
                     }
                 },
                 {
                     $group: {
-                        _id: null,
-                        'project': {
+                        _id          : null,
+                        'project'    : {
                             $addToSet: {
-                                _id: '$project._id',
+                                _id : '$project._id',
                                 name: '$project.name'
                             }
                         },
                         'salesPerson': {
                             $addToSet: {
-                                _id: '$salesPerson._id',
+                                _id : '$salesPerson._id',
                                 name: {'$ifNull': ['$salesPerson.name', 'None']}
                             }
                         },
-                        'supplier': {
+                        'supplier'   : {
                             $addToSet: {
-                                _id: '$supplier._id',
+                                _id : '$supplier._id',
                                 name: {'$ifNull': ['$supplier.name', 'None']}
                             }
                         },
-                        'workflow': {
+                        'workflow'   : {
                             $addToSet: {
-                                _id: '$workflow._id',
+                                _id : '$workflow._id',
                                 name: {'$ifNull': ['$workflow.name', 'None']}
                             }
                         }
@@ -448,28 +447,28 @@ var Filters = function (models) {
                 },
                 {
                     $group: {
-                        _id: null,
-                        'assigned': {
+                        _id            : null,
+                        'assigned'     : {
                             $addToSet: {
-                                _id: '$invoice.assigned._id',
+                                _id : '$invoice.assigned._id',
                                 name: '$invoice.assigned.name'
                             }
                         },
-                        'supplier': {
+                        'supplier'     : {
                             $addToSet: {
-                                _id: '$supplier._id',
+                                _id : '$supplier._id',
                                 name: {'$ifNull': ['$supplier.fullName', 'None']}
                             }
                         },
                         'paymentMethod': {
                             $addToSet: {
-                                _id: '$paymentMethod._id',
+                                _id : '$paymentMethod._id',
                                 name: {'$ifNull': ['$paymentMethod.name', 'None']}
                             }
                         },
-                        'workflow': {
+                        'workflow'     : {
                             $addToSet: {
-                                _id: '$workflow',
+                                _id : '$workflow',
                                 name: {'$ifNull': ['$workflow', 'None']}
                             }
                         }
@@ -495,34 +494,34 @@ var Filters = function (models) {
                 },
                 {
                     $group: {
-                        _id: null,
-                        'supplier': {
+                        _id         : null,
+                        'supplier'  : {
                             $addToSet: {
-                                _id: '$supplier._id',
+                                _id : '$supplier._id',
                                 name: '$supplier.fullName'
                             }
                         },
                         'paymentRef': {
                             $addToSet: {
-                                _id: '$paymentRef',
+                                _id : '$paymentRef',
                                 name: {'$ifNull': ['$paymentRef', 'None']}
                             }
                         },
-                        'year': {
+                        'year'      : {
                             $addToSet: {
-                                _id: '$year',
+                                _id : '$year',
                                 name: {'$ifNull': ['$year', 'None']}
                             }
                         },
-                        'month': {
+                        'month'     : {
                             $addToSet: {
-                                _id: '$month',
+                                _id : '$month',
                                 name: {'$ifNull': ['$month', 'None']}
                             }
                         },
-                        'workflow': {
+                        'workflow'  : {
                             $addToSet: {
-                                _id: '$workflow',
+                                _id : '$workflow',
                                 name: {'$ifNull': ['$workflow', 'None']}
                             }
                         }
@@ -543,16 +542,16 @@ var Filters = function (models) {
             Product.aggregate([
                 {
                     $group: {
-                        _id: null,
-                        'name': {
+                        _id          : null,
+                        'name'       : {
                             $addToSet: {
-                                _id: '$_id',
+                                _id : '$_id',
                                 name: '$name'
                             }
                         },
                         'productType': {
                             $addToSet: {
-                                _id: '$info.productType',
+                                _id : '$info.productType',
                                 name: {'$ifNull': ['$info.productType', 'None']}
                             }
                         }
@@ -562,43 +561,43 @@ var Filters = function (models) {
                 if (err) {
                     callback(err);
                 }
-                if (result.length===0) return  callback(null, result);
+                if (result.length === 0) {
+                    return callback(null, result);
+                }
                 result = result[0];
 
                 result['canBeSold'] = [
                     {
-                        _id: 'true',
+                        _id : 'true',
                         name: 'True'
                     },
                     {
-                        _id: 'false',
+                        _id : 'false',
                         name: 'False'
                     }
                 ];
 
                 result['canBeExpensed'] = [
                     {
-                        _id: 'true',
+                        _id : 'true',
                         name: 'True'
                     },
                     {
-                        _id: 'false',
+                        _id : 'false',
                         name: 'False'
                     }
                 ];
 
                 result['canBePurchased'] = [
                     {
-                        _id: 'true',
+                        _id : 'true',
                         name: 'True'
                     },
                     {
-                        _id: 'false',
+                        _id : 'false',
                         name: 'False'
                     }
                 ];
-
-
 
                 callback(null, result);
             });
