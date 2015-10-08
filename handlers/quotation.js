@@ -1,5 +1,3 @@
-
-
 var mongoose = require('mongoose');
 var Quotation = function (models) {
     var access = require("../Modules/additions/access.js")(models);

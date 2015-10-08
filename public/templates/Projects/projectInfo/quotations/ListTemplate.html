@@ -1,0 +1,18 @@
+<% quotations.forEach(function(quotation, index){ %>
+<tr data-id="<%=quotation._id%>"
+<%if (quotation.workflow && quotation.workflow.status === 'Cancelled') { %>
+class="canceledListItem"
+<%}%>>
+    <td class = "notForm"><input type="checkbox" value="<%=quotation._id%>" class="checkbox" /></td>
+    <td><%=startNumber + index + 1%></td>
+    <td><%=quotation.name%></td>
+    <td><%=dateToLocal(quotation.orderDate)%></td>
+    <td><%=(quotation.supplier) ? quotation.supplier.fullName : ''%></td>
+    <td><%=dateToLocal(quotation.expectedDate)%></td>
+    F<td class="unTaxed"><%=(quotation.paymentInfo) ? quotation.paymentInfo.unTaxed.toFixed(2) : '0'%></td>
+    <td class="total"><%=(quotation.paymentInfo) ? quotation.paymentInfo.total.toFixed(2) : '0'%></td>
+    <td id='<%=quotation._id%>'>
+        <a href="javascript:;" class="stageSelect"><%=quotation.workflow ? quotation.workflow.name: 'Undefinded'%></a>
+    </td>
+</tr>
+<% }) %>
