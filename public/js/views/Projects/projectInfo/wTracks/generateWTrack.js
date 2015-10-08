@@ -242,7 +242,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                 },
 
                 setChangedValueToModel: function (elem) {
-                    var editedElement = elem || this.$listTable.find('.editing');
+                    var editedElement = elem || this.$listTable.find('.editing:not(".endDateInput")');
                     var editedCol;
                     var editedElementRowId;
                     var editedElementContent;
