@@ -16,7 +16,7 @@ var BonusType = function (models) {
                     if (err) {
                         return next(err);
                     }
-                    res.status(200).send(bonusType);
+                    res.status(200).send({success:bonusType});
                 });
             } else {
                 res.status(403).send();
