@@ -1081,9 +1081,9 @@ var wTrack = function (event, models) {
                                     }
                                 }
 
-                                if (opt.hours && (addHours > 0)) {
-                                    generateAddWeeks((totalHolidays + totalVacations) * 8, dateArray[dateArray.length - 1], lastwTrackObj, dateByWeek);
-                                }
+                                //if (opt.hours && (addHours > 0)) {
+                                //    generateAddWeeks((totalHolidays + totalVacations) * 8, dateArray[dateArray.length - 1], lastwTrackObj, dateByWeek);
+                                //}
                             });
 
                         });
