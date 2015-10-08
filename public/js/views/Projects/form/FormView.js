@@ -352,6 +352,7 @@ define([
                 );
 
                 thisEl.find('#createBonus').hide();
+                _.bindAll(this, 'getQuotations');
 
                 paralellTasks = [this.getWTrack, this.getInvoice, this.getQuotations];
 
@@ -601,6 +602,7 @@ define([
                      value: true
                      }*/
                 };
+                var self = this;
 
                 dataService.getData('/quotation/list',
                     {
@@ -614,7 +616,8 @@ define([
                         }
 
                         new QuotationView({
-                            model: response
+                            model: response,
+                            projectId: self.formModel.id
                         }).render();
 
                         cb(null, response);
