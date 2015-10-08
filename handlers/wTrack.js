@@ -968,7 +968,7 @@ var wTrack = function (event, models) {
                                 if ((diff > 0) && (diff < 8)) {
                                     var index;
 
-                                    for (var i = 7; i >= 1; i--) {
+                                    for (var i = 1; i <= 7; i++) {
                                         if (trackWeek[i] !== 0) {
                                             index = i;
                                         }
