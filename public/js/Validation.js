@@ -52,6 +52,7 @@ define(
         var validateGroupsName = function(validatedString){
             return groupsNameRegExp.test(validatedString);
         }
+
         var validateWorkflowName = function(validatedString){
             return workflowRegExp.test(validatedString);
         }
@@ -110,7 +111,6 @@ define(
             invalidZipMsg: "field should contain only letters, numbers and '-' sing",
             passwordsNotMatchMsg: "Password and confirm password field do not match"
         }
-
 
         var checkNameField = function(errorArray, required, fieldValue, fieldName){
             if(required){
@@ -200,7 +200,6 @@ define(
             }
         }
 
-
         var checkGroupsNameField = function(errorArray, required, fieldValue, fieldName){
             if(required){
                 if(!fieldValue){
@@ -287,7 +286,6 @@ define(
                }
 
         };
-
 
         var checkWorkflowNameField = function(errorArray, required, fieldValue, fieldName){
             if(required){
@@ -533,6 +531,7 @@ define(
             }
 
         }
+
         return {
             comparePasswords:comparePasswords,
             checkPasswordField:checkPasswordField,
