@@ -23,7 +23,14 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     "click a.generateType"                                            : "generateType",
                     "click td.editable"                                               : "editRow",
                     "change .editable "                                               : "setEditable",
-                    "click"                                                           : "hideNewSelect"
+                    "click"                                                           : "hideNewSelect",
+                    'keydown input.editing'                                           : 'keyDown'
+                },
+
+                keyDown: function (e) {
+                    if (e.which === 13) {
+                        this.setChangedValueToModel();
+                    }
                 },
 
                 stopDefaultEvents: function (e) {
