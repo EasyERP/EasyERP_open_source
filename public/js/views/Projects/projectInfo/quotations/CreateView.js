@@ -14,9 +14,9 @@ define([
 
         var CreateView = createView.extend({
 
-            el: "#content-holder",
+            el         : "#content-holder",
             contentType: "Quotation",
-            template: _.template(CreateTemplate),
+            template   : _.template(CreateTemplate),
 
             initialize: function (options) {
                 if (options) {
@@ -47,6 +47,23 @@ define([
                 );
 
             },
+
+            redirectAfterSave: function (content) {
+                content.hideDialog();
+                content.rerenderTable();
+            },
+
+            rerenderTable: function () {
+                var currentEl = this.$el.find('#quotationTable');
+
+                currentEl.html('');
+                currentEl.append(_.template(this.listTemplate));
+                currentEl.append(new this.listItemView({
+                    collection : this.collection,
+                    page       : 1,
+                    itemsNumber: 100
+                }).render());
+            }
 
         });
 

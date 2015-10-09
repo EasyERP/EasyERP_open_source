@@ -105,14 +105,14 @@ define([
 
                 var forSales = (this.forSales) ? true : false;
 
-                var supplier = thisEl.find('#supplierDd').data('id');
-                var destination = $.trim(thisEl.find('#destination').data('id'));
-                var deliverTo = $.trim(thisEl.find('#deliveryDd').data('id'));
-                var incoterm = $.trim(thisEl.find('#incoterm').data('id'));
-                var invoiceControl = $.trim(thisEl.find('#invoicingControl').data('id'));
-                var paymentTerm = $.trim(thisEl.find('#paymentTerm').data('id'));
-                var fiscalPosition = $.trim(thisEl.find('#fiscalPosition').data('id'));
-                var supplierReference = thisEl.find('#supplierReference').val();
+                var supplier = thisEl.find('#supplierDd').attr('data-id');
+                var destination = $.trim(thisEl.find('#destination').attr('data-id'));
+                var deliverTo = $.trim(thisEl.find('#deliveryDd').attr('data-id'));
+                var incoterm = $.trim(thisEl.find('#incoterm').attr('data-id'));
+                var invoiceControl = $.trim(thisEl.find('#invoicingControl').attr('data-id'));
+                var paymentTerm = $.trim(thisEl.find('#paymentTerm').attr('data-id'));
+                var fiscalPosition = $.trim(thisEl.find('#fiscalPosition').attr('data-id'));
+                var project = thisEl.find('#projectDd').attr('data-id');
                 var orderDate = thisEl.find('#orderDate').val();
                 var expectedDate = thisEl.find('#expectedDate').val() || thisEl.find('#minScheduleDate').text();
 
@@ -165,30 +165,30 @@ define([
 
 
                 data = {
-                    forSales         : forSales,
-                    supplier         : supplier,
-                    supplierReference: supplierReference,
-                    deliverTo        : deliverTo,
-                    products         : products,
-                    orderDate        : orderDate,
-                    expectedDate     : expectedDate,
-                    destination      : destination,
-                    incoterm         : incoterm,
-                    invoiceControl   : invoiceControl,
-                    paymentTerm      : paymentTerm,
-                    fiscalPosition   : fiscalPosition,
-                    paymentInfo      : {
+                    forSales      : forSales,
+                    supplier      : supplier,
+                    project       : project,
+                    deliverTo     : deliverTo,
+                    products      : products,
+                    orderDate     : orderDate,
+                    expectedDate  : expectedDate,
+                    destination   : destination,
+                    incoterm      : incoterm,
+                    invoiceControl: invoiceControl,
+                    paymentTerm   : paymentTerm,
+                    fiscalPosition: fiscalPosition,
+                    paymentInfo   : {
                         total  : total,
                         unTaxed: unTaxed,
                         taxes  : totalTaxes
                     },
-                    groups           : {
+                    groups        : {
                         owner: $("#allUsersSelect").data("id"),
                         users: usersId,
                         group: groupsId
                     },
-                    whoCanRW         : whoCanRW,
-                    workflow         : this.defaultWorkflow
+                    whoCanRW      : whoCanRW,
+                    workflow      : this.defaultWorkflow
                 };
 
                 if (supplier) {
@@ -198,10 +198,7 @@ define([
                         },
                         wait   : true,
                         success: function () {
-                            var redirectUrl = self.forSales ? "easyErp/salesQuotation" : "easyErp/Quotation";
-
-                            self.hideDialog();
-                            Backbone.history.navigate(redirectUrl, {trigger: true});
+                            self.redirectAfterSave(self);
                         },
                         error  : function (model, xhr) {
                             self.errorNotification(xhr);
@@ -211,6 +208,13 @@ define([
                 } else {
                     alert(CONSTANTS.RESPONSES.CREATE_QUOTATION);
                 }
+            },
+
+            redirectAfterSave: function(content) {
+                var redirectUrl = content.forSales ? "easyErp/salesQuotation" : "easyErp/Quotation";
+
+                content.hideDialog();
+                Backbone.history.navigate(redirectUrl, {trigger: true});
             },
 
             hideDialog: function () {
