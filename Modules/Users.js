@@ -283,7 +283,7 @@ var Users = function (mainDb, models) {
 
         query.populate('profile')
             .populate('RelatedEmployee', 'imageSrc name fullName')
-            .populate('savedFilters');
+            .populate('savedFilters._id');
 
         query.exec(function (err, result) {
             if (err) {
@@ -292,7 +292,7 @@ var Users = function (mainDb, models) {
             } else {
                 if (result && result.toJSON().savedFilters) {
                     savedFilters = result.toJSON().savedFilters;
-                    newUserResult = _.groupBy(savedFilters, 'contentView');
+                    newUserResult = _.groupBy(savedFilters, '_id.contentView');
                 }
                 response.send({user: result, savedFilters: newUserResult});
             }
@@ -374,7 +374,7 @@ var Users = function (mainDb, models) {
                         }
                         if (result) {
                             id = result.get('_id');
-                            query = {$pull: {'savedFilters': deleteId}};
+                            query = {$pull: {'savedFilters': {_id: deleteId}}};
 
                             updateThisUser(_id, query);
                         }
@@ -387,17 +387,51 @@ var Users = function (mainDb, models) {
                     filterModel.contentView = key;
                     filterModel.filter = data.filter;
 
+                   var byDefault = data.useByDefault;
+                    var newSavedFilters = [];
+
                     filterModel.save(function (err, result) {
                         if (err) {
                             return console.log('error save filter');
-                        }
-                        ;
+                        };
 
                         if (result) {
                             id = result.get('_id');
-                            query = {$push: {'savedFilters': id}};
 
-                            updateThisUser(_id, query);
+                            if (byDefault){
+                                models.get(req.session.lastDb, 'Users', userSchema).findById(_id, {savedFilters: 1}, function (err, result) {
+                                    if (err){
+                                        return next(err);
+                                    }
+                                    var savedFilters = result.toJSON().savedFilters ? result.toJSON().savedFilters : [];
+
+                                    savedFilters.forEach(function(filter){
+                                        if (filter.byDefault === byDefault){
+                                            filter.byDefault = '';
+                                        }
+                                    });
+
+                                    savedFilters.push({
+                                        _id : id,
+                                        byDefault: byDefault
+                                    });
+
+                                    query = {$set: {'savedFilters': savedFilters}};
+
+                                    updateThisUser(_id, query);
+                                });
+                            } else {
+                                newSavedFilters ={
+                                    _id : id,
+                                    byDefault: byDefault
+                                };
+
+                                query = {$push: {'savedFilters': newSavedFilters}};
+
+                                updateThisUser(_id, query);
+                            }
+
+
                         }
                     });
                     return;
@@ -421,7 +455,7 @@ var Users = function (mainDb, models) {
                         //       // res.send(200, {success: 'User updated success'});
                         //}
                         if (err) {
-                            return next(err);
+                            return console.log(err);
                         }
                         req.session.kanbanSettings = result.kanbanSettings;
                         if (data.profile && (result._id == req.session.uId)) {
