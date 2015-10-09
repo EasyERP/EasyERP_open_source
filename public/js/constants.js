@@ -139,20 +139,20 @@ define([], function () {
             }
         },
         Projects        : {
-            'Project Name'   : {
+            'Project Name' : {
                 view   : 'name',
                 backend: '_id'
             },
-            'Contact'        : {
+            'Contact'      : {
                 view   : 'customer',
                 backend: 'customer._id'
             },
-            'Status'         : {
+            'Status'       : {
                 view   : 'workflow',
                 backend: 'workflow._id'
             },
             'Sales Manager': {
-                view: 'projectmanager',
+                view   : 'projectmanager',
                 backend: 'projectmanager._id'
             }
         },
@@ -237,6 +237,20 @@ define([], function () {
                 view   : 'canBePurchased',
                 backend: 'canBePurchased'
             }
+        },
+        Quotation       : {
+            'Reference': {
+                view   : 'referenceView',
+                backend: 'name'
+            },
+            'Supplier' : {
+                view   : 'supplierView',
+                backend: 'deliverTo'
+            },
+            'Status'   : {
+                view   : 'statusView',
+                backend: 'workflows'
+            }
         }
     };
 
@@ -278,9 +292,9 @@ define([], function () {
         VACATION          : 'Vacation',
         ATTENDANCE        : 'Attendance',
         DASHBOARD_VACATION: 'DashboardVacation',
-        DASHBOARD_HR: 'HrDashboard',
-        HOURS: 'Hours',
-        CAPACITY: 'Capacity',
+        DASHBOARD_HR      : 'HrDashboard',
+        HOURS             : 'Hours',
+        CAPACITY          : 'Capacity',
 
         RESPONSES: {
             BAD_RESPONSE            : 'Please try again',

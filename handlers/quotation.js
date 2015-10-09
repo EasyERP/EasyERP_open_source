@@ -192,9 +192,12 @@ var Quotation = function (models) {
             if (filter.workflow) {
                 queryObject.$and.push({workflow: {$in: filter.workflow.objectID()}});
             }
-            /*if (filter.Reference) {
-                queryObject.$and.push({supplierReference: {$in: filter.Reference}});
-            }*/
+            if (filter.name) {
+                queryObject.$and.push({name: {$in: filter.name}});
+            }
+            if (filter.deliverTo) {
+                queryObject.$and.push({deliverTo: {$in: filter.deliverTo.objectID()}});
+            }
             if (filter.supplier) {
                 queryObject.$and.push({supplier: {$in: filter.supplier}});
             }
