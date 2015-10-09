@@ -179,7 +179,7 @@ define([
                                 updatedInfo = model.get('success');
                                 filters = updatedInfo['savedFilters'];
                                 length = filters.length;
-                                id = filters[length - 1];
+                                id = filters[length - 1]['_id'];
                                 App.savedFilters[self.parentContentType].push(
                                     {
                                         _id: {
@@ -192,6 +192,7 @@ define([
                                 );
                                 favouritesContent.append('<li class="filters"  id ="' + id + '">' + filterName + '</li><button class="removeSavedFilter" id="' + id + '">' + 'x' + '</button>');
                                 self.$el.find('.defaultFilter').attr('checked', false);
+                                self.selectedFilter(id);
                             },
                             error   : function (model, xhr) {
                                 console.error(xhr);
@@ -474,11 +475,15 @@ define([
                                 self.renderFilterContent();
                                 self.showFilterIcons(App.filter);
                                 filterId = this.savedFilters[j]['_id']['_id'];
+
+                                if (typeof (filterId) === 'object'){
+                                    filterId = filterId._id;
+                                }
                             }
 
                             keys = Object.keys(this.savedFilters[j]['_id']['filter']);
                             for (var i = keys.length - 1; i >= 0; i--) {
-                                content.append('<li class="filters"  id ="' + this.savedFilters[j]['_id']['_id'] + '">' + keys[i] + '</li><button class="removeSavedFilter" id="' + this.savedFilters[j]['_id']['_id'] + '">' + 'x' + '</button>');
+                                content.append('<li class="filters"  id ="' + filterId + '">' + keys[i] + '</li><button class="removeSavedFilter" id="' + filterId + '">' + 'x' + '</button>');
                             }
                         }
                     }
