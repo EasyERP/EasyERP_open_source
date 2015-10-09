@@ -796,6 +796,8 @@ var wTrack = function (event, models) {
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
         var data = req.body;
         var addHours = 0;
+        var savedwTrack = [];
+        var globalTotal = 0;
 
         async.each(data, function (options, call) {
             generate(options, call);
@@ -989,6 +991,8 @@ var wTrack = function (event, models) {
                                     }
                                 }
 
+                                globalTotal += totalHours;
+
 
                                 wTrackObj = {
                                     dateByWeek: dateByWeek,
@@ -1024,12 +1028,11 @@ var wTrack = function (event, models) {
                                     }
 
                                 };
-                                var lastwTrackObj = wTrackObj;
 
                                 wTrack = new WTrack(wTrackObj);
+                                savedwTrack.push(wTrackObj);
 
                                 if (totalHours > 0) {
-                                    lastwTrackObj = wTrackObj;
                                     wTrack.save(function (err, wTrack) {
                                         if (err) {
                                             return next(err);
@@ -1037,24 +1040,40 @@ var wTrack = function (event, models) {
                                     });
                                 }
 
-                                function generateAddWeeks(addHours, lastWeek, wTrackObj, dateByWeek) {
-                                    if (dateByWeek === (lastWeek.year * 100 + lastWeek.week)) {
-                                        var wTrack = models.get(req.session.lastDb, "wTrack", wTrackSchema);
+                                if (opt.hours && (globalTotal < opt.hours) &&(savedwTrack.length === dateArray.length) && ((totalHolidays + totalVacations) * 8 > 0)) {
+                                    generateAddWeeks(opt.hours - globalTotal, dateArray[dateArray.length - 1], savedwTrack);
+                                }
+
+                                function generateAddWeeks(addHours, lastWeek, savedwTrack) {
+                                    // if (dateByWeek === (lastWeek.year * 100 + lastWeek.week)) {
+                                    var wTrack = models.get(req.session.lastDb, "wTrack", wTrackSchema);
+                                    var lastwTrack;
+                                    var total = 0;
+
+                                    savedwTrack.forEach(function (element) {
+                                        if ((lastWeek.year * 100 + lastWeek.week) === element.dateByWeek) {
+                                            lastwTrack = element;
+                                            if (lastwTrack[1] === 0){
+                                                for (var i = 7; i >= 1; i--){
+                                                    lastwTrack[i] = opt[i];
+                                                }
+                                            }
+                                        }
+
+                                    });
+
+                                    if (lastwTrack){
                                         var hours = 0;
-                                        var newObj = _.clone(wTrackObj);
+                                        var newObj = _.clone(lastwTrack);
 
                                         for (var i = 7; i > 0; i--) {
-                                            hours +=  parseInt(opt[i]);
-                                            newObj[i] =  parseInt(opt[i]);
+                                            hours += parseInt(opt[i]);
+                                            newObj[i] = parseInt(opt[i]);
                                         }
                                         var weekCount = addHours / hours;
 
-                                        if (hours < 40){
-                                            weekCount +=  (hours * Math.ceil(weekCount) - addHours) * Math.ceil(weekCount);
-                                        }
-
-                                        for (var i = Math.ceil(weekCount) ; i > 0 ; i--) {
-                                            var newWeek = wTrackObj.week + i;
+                                        for (var i = Math.round(weekCount) - 1; i > 0; i--) {
+                                            var newWeek = lastwTrack.week + i;
                                             var newYear = newObj.year;
                                             if (newWeek > moment([newObj.year, newObj.month]).isoWeeksInYear()) {
                                                 newYear++;
@@ -1070,16 +1089,105 @@ var wTrack = function (event, models) {
                                             newObj.dateByWeek = dateByWeek;
                                             newObj.dateByMonth = dateByMonth;
 
+                                            total += hours;
+
                                             wTrack = new WTrack(newObj);
 
                                             wTrack.save(function (err, wTrack) {
                                                 if (err) {
-                                                    return next(err);
+                                                    return console.log(err);
                                                 }
                                             });
                                         }
+                                        lastwTrack = newObj;
+                                        var diff = addHours - total;
+                                        if (diff > 0){
+                                            var h = total / (Math.round(weekCount) - 1);
+
+                                            if (diff <= h){
+                                                var newWeek = lastwTrack.week + 1;
+                                                var newYear = newObj.year;
+                                                if (newWeek > moment([newObj.year, newObj.month]).isoWeeksInYear()) {
+                                                    newYear++;
+                                                }
+                                                var newMonth = moment().isoWeek(newWeek).get('month') + 1;
+
+                                                var dateByWeek = newYear * 100 + newWeek;
+                                                var dateByMonth = newYear * 100 + newMonth;
+
+                                                newObj.month = newMonth;
+                                                newObj.week = newWeek;
+                                                newObj.dateByWeek = dateByWeek;
+                                                newObj.dateByMonth = dateByMonth;
+
+                                                var i = 1;
+                                                var hoursInWeek = 0;
+
+                                                while (hoursInWeek < diff) {
+                                                    if (i <= 7){
+                                                        newObj[i] = lastwTrack[i];
+                                                        hoursInWeek += lastwTrack[i];
+                                                    }
+                                                    ++i;
+                                                }
+
+                                                hoursInWeek -= newObj[i - 1 - 2];
+
+                                                newObj[i - 2] = diff - hoursInWeek;
+
+                                                for (var j = i; j <= 7; j++){
+                                                    newObj[j] = 0;
+                                                }
+
+                                                hoursInWeek = 0;
+                                                for (var j = 7; j >= 1; j--){
+                                                    hoursInWeek += newObj[j];
+                                                }
+
+                                                newObj.worked = hoursInWeek;
+
+                                                wTrack = new WTrack(newObj);
+
+                                                wTrack.save(function (err, wTrack) {
+                                                    if (err) {
+                                                        return console.log(err);
+                                                    }
+                                                });
+                                            } else {
+                                                for (var i = 2; i >= 1; i--) {
+                                                    var newWeek = lastwTrack.week + i;
+                                                    var newYear = newObj.year;
+                                                    if (newWeek > moment([newObj.year, newObj.month]).isoWeeksInYear()) {
+                                                        newYear++;
+                                                    }
+                                                    var newMonth = moment().isoWeek(newWeek).get('month') + 1;
+
+                                                    var dateByWeek = newYear * 100 + newWeek;
+                                                    var dateByMonth = newYear * 100 + newMonth;
+
+                                                    newObj.month = newMonth;
+                                                    newObj.worked = hours;
+                                                    newObj.week = newWeek;
+                                                    newObj.dateByWeek = dateByWeek;
+                                                    newObj.dateByMonth = dateByMonth;
+
+
+                                                    wTrack = new WTrack(newObj);
+
+                                                    wTrack.save(function (err, wTrack) {
+                                                        if (err) {
+                                                            return console.log(err);
+                                                        }
+                                                    });
+                                                }
+                                            }
+                                        }
                                     }
+
+
                                 }
+
+                                // }
 
                                 //if (opt.hours && (addHours > 0)) {
                                 //    generateAddWeeks((totalHolidays + totalVacations) * 8, dateArray[dateArray.length - 1], lastwTrackObj, dateByWeek);
@@ -1122,7 +1230,7 @@ var wTrack = function (event, models) {
                                 newResult[key] = {};
                             }
                             newResult[key][dayOfWeek] = dayOfWeek;
-                            total ++;
+                            total++;
                         });
 
                         callback(null, {holidays: newResult, total: total});
@@ -1166,7 +1274,7 @@ var wTrack = function (event, models) {
                                                 newResult[weekKey] = {};
                                             }
                                             newResult[weekKey][dayNumber] = dayNumber;
-                                            total ++;
+                                            total++;
                                         }
                                     }
                                 }
@@ -1305,21 +1413,21 @@ var wTrack = function (event, models) {
                                                 obj.weekValues[j] = 0;
                                             } else {
                                                 obj.weekValues[j] = parseInt(opt[j]);
-                                                total +=  parseInt(opt[j]);
+                                                total += parseInt(opt[j]);
                                             }
                                         } else {
-                                            obj.weekValues[j] =  parseInt(opt[j]);
-                                            total +=  parseInt(opt[j]);
+                                            obj.weekValues[j] = parseInt(opt[j]);
+                                            total += parseInt(opt[j]);
                                         }
                                     } else {
                                         obj.weekValues[j] = opt.hours - total - obj.weekValues[j - 1];
                                         obj.weekValues[j] = 0;
                                     }
                                 }
-                                obj.weekValues[6] =  parseInt(opt['6']);
-                                obj.weekValues[7] =  parseInt(opt['7']);
-                                total +=  parseInt(opt['6']);
-                                total +=  parseInt(opt['7']);
+                                obj.weekValues[6] = parseInt(opt['6']);
+                                obj.weekValues[7] = parseInt(opt['7']);
+                                total += parseInt(opt['6']);
+                                total += parseInt(opt['7']);
 
                                 obj.month = moment(newDate).month() + 1;
                                 obj.year = year;
@@ -1333,16 +1441,16 @@ var wTrack = function (event, models) {
                                 day = moment(newDate).day();
                                 for (var j = 5; j >= 1; j--) {
                                     if (day <= j) {
-                                        obj.weekValues[j] =  parseInt(opt[j]);
-                                        total +=  parseInt(opt[j]);
+                                        obj.weekValues[j] = parseInt(opt[j]);
+                                        total += parseInt(opt[j]);
                                     } else {
                                         obj.weekValues[j] = 0;
                                     }
                                 }
-                                obj.weekValues[6] =  parseInt(opt['6']);
-                                obj.weekValues[7] =  parseInt(opt['7']);
-                                total +=  parseInt(opt['6']);
-                                total +=  parseInt(opt['7']);
+                                obj.weekValues[6] = parseInt(opt['6']);
+                                obj.weekValues[7] = parseInt(opt['7']);
+                                total += parseInt(opt['6']);
+                                total += parseInt(opt['7']);
 
                                 obj.month = moment(newDate).month() + 1;
                                 obj.year = year;
@@ -1354,13 +1462,13 @@ var wTrack = function (event, models) {
                                 newDate = moment(date).isoWeek(obj.week);
                                 day = moment(date).day();
                                 for (var k = 5; k >= 1; k--) {
-                                    obj.weekValues[k] =  parseInt(opt[k]);
-                                    total +=  parseInt(opt[k]);
+                                    obj.weekValues[k] = parseInt(opt[k]);
+                                    total += parseInt(opt[k]);
                                 }
-                                obj.weekValues[6] =  parseInt(opt['6']);
-                                obj.weekValues[7] =  parseInt(opt['7']);
-                                total +=  parseInt(opt['6']);
-                                total +=  parseInt(opt['7']);
+                                obj.weekValues[6] = parseInt(opt['6']);
+                                obj.weekValues[7] = parseInt(opt['7']);
+                                total += parseInt(opt['6']);
+                                total += parseInt(opt['7']);
 
                                 obj.month = moment(newDate).month() + 1;
                                 obj.year = year;
