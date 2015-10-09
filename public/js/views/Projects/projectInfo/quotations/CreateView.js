@@ -24,6 +24,10 @@ define([
                 if (options) {
                     this.visible = options.visible;
                 }
+
+                if (options.collection) {
+                    this.collection = options.collection;
+                }
                 _.bindAll(this, "saveItem", "render");
                 this.model = new QuotationModel();
                 this.responseObj = {};
@@ -52,11 +56,18 @@ define([
 
             redirectAfterSave: function (content, model) {
                 var currentEl = $('#listTableQuotation');
-
                 var number = currentEl.find('.countNumber');
+                var numberLength = number.length ? number.length : 0;
+                var lastNumber = number.length ? $(number[numberLength-1]).html() : 0;
+
+                var currentNumber = parseInt(lastNumber) + 1;
+
+                this.collection.push(model);
 
                 currentEl.append(this.templateNewRow({
-                    quotation: model.toJSON()
+                    quotation: model.toJSON(),
+                    startNumber: currentNumber,
+                    dateToLocal: common.utcDateToLocaleDate
                 }))
 
                 content.hideDialog();

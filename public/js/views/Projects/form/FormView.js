@@ -15,6 +15,7 @@ define([
         'views/Projects/projectInfo/quotationView',
         'views/Projects/projectInfo/wTracks/generateWTrack',
         'collections/wTrack/filterCollection',
+        'collections/Quotation/filterCollection',
         'text!templates/Notes/AddAttachments.html',
         "common",
         'populate',
@@ -24,7 +25,7 @@ define([
         'helpers'
     ],
 
-    function (ProjectsFormTemplate, DetailsTemplate, EditView, noteView, attachView, AssigneesView, BonusView, wTrackView, PaymentView, InvoiceView, QuotationView, GenerateWTrack, wTrackCollection, addAttachTemplate, common, populate, custom, dataService, async, helpers) {
+    function (ProjectsFormTemplate, DetailsTemplate, EditView, noteView, attachView, AssigneesView, BonusView, wTrackView, PaymentView, InvoiceView, QuotationView, GenerateWTrack, wTrackCollection, quotationCollection, addAttachTemplate, common, populate, custom, dataService, async, helpers) {
         var FormEmployeesView = Backbone.View.extend({
             el         : '#content-holder',
             contentType: 'Projects',
@@ -590,9 +591,8 @@ define([
             },
 
             getQuotations: function (cb) {
-                var _id = window.location.hash.split('form/')[1];
+                var _id = this.formModel._id;
                 var filter = {
-                    'condition'  : 'and',
                     'projectName': {
                         key  : 'project',
                         value: [_id]
@@ -604,25 +604,37 @@ define([
                 };
                 var self = this;
 
-                dataService.getData('/quotation/list',
-                    {
-                        count      : 100,
-                        page       : 1,
-                        contentType: 'salesQuotation',
-                        filter     : filter
-                    }, function (response) {
-                        if (response.error) {
-                            return cb(response.error);
-                        }
+                var collection = new quotationCollection({
+                    count : 50,
+                    viewType: 'list',
+                    contentType: 'Quotation',
+                    filter: filter
+                });
 
-                        new QuotationView({
-                            model: response,
-                            projectId: self.formModel.id
-                        }).render();
+                new QuotationView({
+                    collection: collection,
+                    projectId : self.formModel.id
+                }).render();
 
-                        cb(null, response);
+                /*dataService.getData('/quotation/list',
+                 {
+                 count      : 100,
+                 page       : 1,
+                 contentType: 'salesQuotation',
+                 filter     : filter
+                 }, function (response) {
+                 if (response.error) {
+                 return cb(response.error);
+                 }
 
-                    }, this);
+                 new QuotationView({
+                 model    : response,
+                 projectId: self.formModel.id
+                 }).render();
+
+                 cb(null, response);
+
+                 }, this);*/
 
             },
 
