@@ -393,7 +393,6 @@ var Filters = function (models) {
             });
         };
 
-
         function getSalesInvoiceFiltersValues(callback) {
             wTrackInvoice.aggregate([
                 {
@@ -617,23 +616,27 @@ var Filters = function (models) {
                                 _id : '$deliverTo',
                                 name: '$supplierView'
                             }
+                        },
+                        'statusView': {
+                            $addToSet: {
+                                _id : '$workflows',
+                                name: '$statusView'
+                            }
                         }
                     }
                 }
             ], function (err, result) {
+                var resObj = {};
+
                 if (err) {
                     callback(err);
                 }
 
-                //f (result && result.length > 0) {
-                //result = result[0];
+                if (result && result.length > 0) {
+                    resObj = result[0];
+                }
 
-                console.log('===================FILTER===================');
-                console.log(result);
-                //callback(null, result);
-
-
-                callback(null, result);
+                callback(null, resObj);
             });
         };
 
