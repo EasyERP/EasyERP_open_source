@@ -488,14 +488,15 @@ define([
             },
 
             selectedFilter: function(filterId){
-               var filterName = this.$el.find('#' + filterId);
-
+                var filterName = this.$el.find('#' + filterId);
                 var filterNames = this.$el.find('.filters');
 
-                filterNames.removeClass('checkedValue');
+                if (filterId){
 
-                filterName.addClass('checkedValue');
+                    filterNames.removeClass('checkedValue');
 
+                    filterName.addClass('checkedValue');
+                }
             },
 
             parseFilter: function () {
