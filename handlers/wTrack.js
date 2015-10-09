@@ -1044,8 +1044,8 @@ var wTrack = function (event, models) {
                                         var newObj = _.clone(wTrackObj);
 
                                         for (var i = 7; i > 0; i--) {
-                                            hours += opt[i];
-                                            newObj[i] = opt[i];
+                                            hours +=  parseInt(opt[i]);
+                                            newObj[i] =  parseInt(opt[i]);
                                         }
                                         var weekCount = addHours / hours;
 
@@ -1225,7 +1225,7 @@ var wTrack = function (event, models) {
                         var totalForWeek = 0;
 
                         for (var i = 7; i >= 1; i--) {
-                            totalForWeek += opt[i];
+                            totalForWeek += parseInt(opt[i]);
                         }
 
                         endYear = startYear;
@@ -1304,22 +1304,22 @@ var wTrack = function (event, models) {
                                             if (day2 > j) {
                                                 obj.weekValues[j] = 0;
                                             } else {
-                                                obj.weekValues[j] = opt[j];
-                                                total += opt[j];
+                                                obj.weekValues[j] = parseInt(opt[j]);
+                                                total +=  parseInt(opt[j]);
                                             }
                                         } else {
-                                            obj.weekValues[j] = opt[j];
-                                            total += opt[j];
+                                            obj.weekValues[j] =  parseInt(opt[j]);
+                                            total +=  parseInt(opt[j]);
                                         }
                                     } else {
                                         obj.weekValues[j] = opt.hours - total - obj.weekValues[j - 1];
                                         obj.weekValues[j] = 0;
                                     }
                                 }
-                                obj.weekValues[6] = opt['6'];
-                                obj.weekValues[7] = opt['7'];
-                                total += opt['6'];
-                                total += opt['7'];
+                                obj.weekValues[6] =  parseInt(opt['6']);
+                                obj.weekValues[7] =  parseInt(opt['7']);
+                                total +=  parseInt(opt['6']);
+                                total +=  parseInt(opt['7']);
 
                                 obj.month = moment(newDate).month() + 1;
                                 obj.year = year;
@@ -1333,16 +1333,16 @@ var wTrack = function (event, models) {
                                 day = moment(newDate).day();
                                 for (var j = 5; j >= 1; j--) {
                                     if (day <= j) {
-                                        obj.weekValues[j] = opt[j];
-                                        total += opt[j];
+                                        obj.weekValues[j] =  parseInt(opt[j]);
+                                        total +=  parseInt(opt[j]);
                                     } else {
                                         obj.weekValues[j] = 0;
                                     }
                                 }
-                                obj.weekValues[6] = opt['6'];
-                                obj.weekValues[7] = opt['7'];
-                                total += opt['6'];
-                                total += opt['7'];
+                                obj.weekValues[6] =  parseInt(opt['6']);
+                                obj.weekValues[7] =  parseInt(opt['7']);
+                                total +=  parseInt(opt['6']);
+                                total +=  parseInt(opt['7']);
 
                                 obj.month = moment(newDate).month() + 1;
                                 obj.year = year;
@@ -1354,13 +1354,13 @@ var wTrack = function (event, models) {
                                 newDate = moment(date).isoWeek(obj.week);
                                 day = moment(date).day();
                                 for (var k = 5; k >= 1; k--) {
-                                    obj.weekValues[k] = opt[k];
-                                    total += opt[k];
+                                    obj.weekValues[k] =  parseInt(opt[k]);
+                                    total +=  parseInt(opt[k]);
                                 }
-                                obj.weekValues[6] = opt['6'];
-                                obj.weekValues[7] = opt['7'];
-                                total += opt['6'];
-                                total += opt['7'];
+                                obj.weekValues[6] =  parseInt(opt['6']);
+                                obj.weekValues[7] =  parseInt(opt['7']);
+                                total +=  parseInt(opt['6']);
+                                total +=  parseInt(opt['7']);
 
                                 obj.month = moment(newDate).month() + 1;
                                 obj.year = year;
