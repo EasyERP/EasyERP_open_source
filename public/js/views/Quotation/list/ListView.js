@@ -22,6 +22,7 @@ define([
             contentType             : 'Quotation',//needs in view.prototype.changeLocationHash
             viewType                : 'list',//needs in view.prototype.changeLocationHash
             totalCollectionLengthUrl: '/quotation/totalCollectionLength',
+            filterView              : filterView,
 
             initialize: function (options) {
                 this.startTime = options.startTime;
@@ -106,6 +107,9 @@ define([
 
 
                 currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+
+
+                this.renderFilter(self);
 
                 dataService.getData("/workflow/fetch", {
                     wId         : 'Purchase Order',
