@@ -358,6 +358,7 @@ var Users = function (mainDb, models) {
                 var query = {};
                 var key = data.key;
                 var deleteId = data.deleteId;
+                var byDefault = data.byDefault;
                 var id;
                 var savedFilters = models.get(req.session.lastDb, 'savedFilters', savedFiltersSchema);
                 var filterModel = new savedFilters();
@@ -374,7 +375,7 @@ var Users = function (mainDb, models) {
                         }
                         if (result) {
                             id = result.get('_id');
-                            query = {$pull: {'savedFilters': {_id: deleteId}}};
+                            query = {$pull: {'savedFilters': {_id: deleteId, byDefault: byDefault}}};
 
                             updateThisUser(_id, query);
                         }

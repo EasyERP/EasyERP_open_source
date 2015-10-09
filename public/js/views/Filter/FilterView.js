@@ -212,6 +212,7 @@ define([
                 var i = 0;
 
                 filterObj['deleteId'] = filterID;
+                filterObj['byDefault'] = this.parentContentType;
 
                 currentUser.changed = filterObj;
 
@@ -237,7 +238,7 @@ define([
                 $.find('#' + filterID)[0].remove();
 
                 for (var i = savedFilters.length - 1; i >= 0; i--) {
-                    if (savedFilters[i]['_id'] === filterID) {
+                    if (savedFilters[i]['_id']['_id'] === filterID) {
                         App.savedFilters[this.parentContentType].splice(i, 1);
                     }
                 }
