@@ -261,6 +261,7 @@ define([
                 return el.find(search).length;
             };
             var self=this;
+
             async.parallel({
                 free: function (callback) {
                     var free = count('.red.active');
@@ -285,7 +286,7 @@ define([
 
             },function(err,result){
                 result.startTime=startTime;
-                self.$el.html(self.statisticsView$.render(result));
+                self.statisticsView$.render(result);
             });
 
 
