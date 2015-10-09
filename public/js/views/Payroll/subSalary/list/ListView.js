@@ -350,7 +350,7 @@ define([
                 this.editCollection.on('saved', this.savedNewModel, this);
                 this.editCollection.on('updated', this.updatedOptions, this);
 
-                dataService.getData('/salary/recalculateSalaryCash', {}, function (response, context) {
+                dataService.getData('/payroll/recalculateSalaryCash', {}, function (response, context) {
                     context.listLength = response.count || 0;
                 }, this);
             },
@@ -453,7 +453,7 @@ define([
                 this.bodyContainer = $(this.bodyContainerId);
                 this.getTotal();
 
-                dataService.getData('/salary/recalculateSalaryCash', {}, function (response, context) {
+                dataService.getData('/payroll/recalculateSalaryCash', {}, function (response, context) {
                     context.listLength = response.count || 0;
                 }, this);
             },

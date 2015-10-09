@@ -480,7 +480,7 @@ define([
                 function getBaseSalary(callback) {
                     var employeeSalary;
 
-                    dataService.getData('/salary/getByMonth',
+                    dataService.getData('/payroll/getByMonth',
                         {
                             month: month,
                             year : year,

@@ -124,7 +124,7 @@ define([
                     self.newCollection.save();
                 }
 
-                dataService.getData('/salary/checkDataKey', {'dataKey': dataKey}, function (response) {
+                dataService.getData('/payroll/checkDataKey', {'dataKey': dataKey}, function (response) {
                     if (!response.count) {
                         save();
                     } else {
