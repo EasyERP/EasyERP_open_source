@@ -197,8 +197,8 @@ define([
                             mid: mid
                         },
                         wait   : true,
-                        success: function () {
-                            self.redirectAfterSave(self);
+                        success: function (model) {
+                            self.redirectAfterSave(self, model);
                         },
                         error  : function (model, xhr) {
                             self.errorNotification(xhr);
@@ -210,7 +210,7 @@ define([
                 }
             },
 
-            redirectAfterSave: function(content) {
+            redirectAfterSave: function(content, model) {
                 var redirectUrl = content.forSales ? "easyErp/salesQuotation" : "easyErp/Quotation";
 
                 content.hideDialog();

@@ -1,6 +1,7 @@
 define([
         "views/Quotation/CreateView",
         "text!templates/Projects/projectInfo/quotations/CreateTemplate.html",
+        "text!templates/Projects/projectInfo/quotations/newRow.html",
         "collections/Persons/PersonsCollection",
         "collections/Departments/DepartmentsCollection",
         'views/Product/InvoiceOrder/ProductItems',
@@ -10,13 +11,14 @@ define([
         'constants',
         'views/Assignees/AssigneesView'
     ],
-    function (createView, CreateTemplate, PersonsCollection, DepartmentsCollection, ProductItemView, QuotationModel, common, populate, CONSTANTS, AssigneesView) {
+    function (createView, CreateTemplate, newRow, PersonsCollection, DepartmentsCollection, ProductItemView, QuotationModel, common, populate, CONSTANTS, AssigneesView) {
 
         var CreateView = createView.extend({
 
             el         : "#content-holder",
             contentType: "Quotation",
             template   : _.template(CreateTemplate),
+            templateNewRow: _.template(newRow),
 
             initialize: function (options) {
                 if (options) {
@@ -48,23 +50,17 @@ define([
 
             },
 
-            redirectAfterSave: function (content) {
+            redirectAfterSave: function (content, model) {
+                var currentEl = $('#listTableQuotation');
+
+                var number = currentEl.find('.countNumber');
+
+                currentEl.append(this.templateNewRow({
+                    quotation: model.toJSON()
+                }))
+
                 content.hideDialog();
-                content.rerenderTable();
-            },
-
-            rerenderTable: function () {
-                var currentEl = this.$el.find('#quotationTable');
-
-                currentEl.html('');
-                currentEl.append(_.template(this.listTemplate));
-                currentEl.append(new this.listItemView({
-                    collection : this.collection,
-                    page       : 1,
-                    itemsNumber: 100
-                }).render());
             }
-
         });
 
         return CreateView;
