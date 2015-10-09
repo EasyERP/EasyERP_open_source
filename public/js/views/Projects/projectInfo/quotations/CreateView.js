@@ -36,7 +36,17 @@ define([
                 } else {
                     populate.get("#projectDd", "/getProjectsForDd", {}, "projectName", this, true, true);
                 }
-            }
+            },
+
+            createProductView: function () {
+                var productItemContainer;
+
+                productItemContainer = this.$el.find('#productItemsHolder');
+                productItemContainer.append(
+                    new ProductItemView({canBeSold: true}).render().el
+                );
+
+            },
 
         });
 

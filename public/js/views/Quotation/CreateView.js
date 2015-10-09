@@ -12,9 +12,9 @@ define([
     function (CreateTemplate, PersonsCollection, DepartmentsCollection, ProductItemView, QuotationModel, common, populate, CONSTANTS, AssigneesView) {
 
         var CreateView = Backbone.View.extend({
-            el: "#content-holder",
+            el         : "#content-holder",
             contentType: "Quotation",
-            template: _.template(CreateTemplate),
+            template   : _.template(CreateTemplate),
 
             initialize: function (options) {
                 if (options) {
@@ -27,12 +27,12 @@ define([
             },
 
             events: {
-                'keydown': 'keydownHandler',
-                'click .dialog-tabs a': 'changeTab',
-                "click .current-selected": "showNewSelect",
-                "click": "hideNewSelect",
-                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-                "click .newSelectList li.miniStylePagination": "notHide",
+                'keydown'                                                         : 'keydownHandler',
+                'click .dialog-tabs a'                                            : 'changeTab',
+                "click .current-selected"                                         : "showNewSelect",
+                "click"                                                           : "hideNewSelect",
+                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
+                "click .newSelectList li.miniStylePagination"                     : "notHide",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect"
             },
@@ -42,19 +42,19 @@ define([
                 return false;
 
             },
-            notHide: function () {
+            notHide      : function () {
                 return false;
             },
             hideNewSelect: function () {
                 $(".newSelectList").hide();
             },
-            chooseOption: function (e) {
+            chooseOption : function (e) {
                 $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
             },
-            nextSelect: function (e) {
+            nextSelect   : function (e) {
                 this.showNewSelect(e, false, true);
             },
-            prevSelect: function (e) {
+            prevSelect   : function (e) {
                 this.showNewSelect(e, true, false);
             },
 
@@ -151,13 +151,13 @@ define([
                             subTotal = targetEl.find('.subtotal').text();
 
                             products.push({
-                                product: productId,
-                                unitPrice: price,
-                                quantity: quantity,
+                                product      : productId,
+                                unitPrice    : price,
+                                quantity     : quantity,
                                 scheduledDate: scheduledDate,
-                                taxes: taxes,
-                                description: description,
-                                subTotal: subTotal
+                                taxes        : taxes,
+                                description  : description,
+                                subTotal     : subTotal
                             });
                         }
                     }
@@ -165,30 +165,30 @@ define([
 
 
                 data = {
-                    forSales: forSales,
-                    supplier: supplier,
+                    forSales         : forSales,
+                    supplier         : supplier,
                     supplierReference: supplierReference,
-                    deliverTo: deliverTo,
-                    products: products,
-                    orderDate: orderDate,
-                    expectedDate: expectedDate,
-                    destination: destination,
-                    incoterm: incoterm,
-                    invoiceControl: invoiceControl,
-                    paymentTerm: paymentTerm,
-                    fiscalPosition: fiscalPosition,
-                    paymentInfo: {
-                        total: total,
+                    deliverTo        : deliverTo,
+                    products         : products,
+                    orderDate        : orderDate,
+                    expectedDate     : expectedDate,
+                    destination      : destination,
+                    incoterm         : incoterm,
+                    invoiceControl   : invoiceControl,
+                    paymentTerm      : paymentTerm,
+                    fiscalPosition   : fiscalPosition,
+                    paymentInfo      : {
+                        total  : total,
                         unTaxed: unTaxed,
-                        taxes: totalTaxes
+                        taxes  : totalTaxes
                     },
-                    groups: {
+                    groups           : {
                         owner: $("#allUsersSelect").data("id"),
                         users: usersId,
                         group: groupsId
                     },
-                    whoCanRW: whoCanRW,
-                    workflow: this.defaultWorkflow
+                    whoCanRW         : whoCanRW,
+                    workflow         : this.defaultWorkflow
                 };
 
                 if (supplier) {
@@ -196,14 +196,14 @@ define([
                         headers: {
                             mid: mid
                         },
-                        wait: true,
+                        wait   : true,
                         success: function () {
                             var redirectUrl = self.forSales ? "easyErp/salesQuotation" : "easyErp/Quotation";
 
                             self.hideDialog();
                             Backbone.history.navigate(redirectUrl, {trigger: true});
                         },
-                        error: function (model, xhr) {
+                        error  : function (model, xhr) {
                             self.errorNotification(xhr);
                         }
                     });
@@ -220,29 +220,38 @@ define([
                 $(".crop-images-dialog").remove();
             },
 
+            createProductView: function () {
+                var productItemContainer;
+
+                productItemContainer = this.$el.find('#productItemsHolder');
+                productItemContainer.append(
+                    new ProductItemView({canBeSold: this.forSales}).render().el
+                );
+
+            },
+
             render: function () {
                 var formString = this.template({visible: this.visible});
                 var self = this;
-                var productItemContainer;
 
                 this.$el = $(formString).dialog({
                     closeOnEscape: false,
-                    autoOpen: true,
-                    resizable: true,
-                    dialogClass: "edit-dialog",
-                    title: "Create Quotation",
-                    width: "900px",
-                    buttons: [
+                    autoOpen     : true,
+                    resizable    : true,
+                    dialogClass  : "edit-dialog",
+                    title        : "Create Quotation",
+                    width        : "900px",
+                    buttons      : [
                         {
-                            id: "create-person-dialog",
-                            text: "Create",
+                            id   : "create-person-dialog",
+                            text : "Create",
                             click: function () {
                                 self.saveItem();
                             }
                         },
 
                         {
-                            text: "Cancel",
+                            text : "Cancel",
                             click: function () {
                                 self.hideDialog();
                             }
@@ -257,10 +266,7 @@ define([
                     }).render().el
                 );
 
-                productItemContainer = this.$el.find('#productItemsHolder');
-                productItemContainer.append(
-                    new ProductItemView({canBeSold: this.forSales}).render().el
-                );
+                this.createProductView();
 
                 populate.get("#destination", "/destination", {}, 'name', this, true, true);
                 populate.get("#incoterm", "/incoterm", {}, 'name', this, true, true);
@@ -270,8 +276,8 @@ define([
                 populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
 
                 populate.fetchWorkflow({
-                    wId: 'Purchase Order',
-                    source: 'purchase',
+                    wId         : 'Purchase Order',
+                    source      : 'purchase',
                     targetSource: 'quotation'
                 }, function (response) {
                     if (!response.error) {
@@ -280,9 +286,9 @@ define([
                 });
 
                 this.$el.find('#orderDate').datepicker({
-                    dateFormat: "d M, yy",
+                    dateFormat : "d M, yy",
                     changeMonth: true,
-                    changeYear: true
+                    changeYear : true
                 }).datepicker('setDate', new Date());
 
                 /*this.$el.find('#bidValidUntill').datepicker({
@@ -292,9 +298,9 @@ define([
                  });*/
 
                 this.$el.find('#expectedDate').datepicker({
-                    dateFormat: "d M, yy",
+                    dateFormat : "d M, yy",
                     changeMonth: true,
-                    changeYear: true
+                    changeYear : true
                 });
 
                 this.delegateEvents(this.events);

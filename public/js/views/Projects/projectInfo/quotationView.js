@@ -54,12 +54,14 @@ define([
 
             currentEl.find('#listTableQuotation').html(this.templateList({quotations: this.collection, startNumber: 0, dateToLocal: common.utcDateToLocaleDate}));
 
-            $('#check_all').click(function () {
+            this.$el.find('.icon').hide();
+
+            $('#check_all_quotations').click(function () {
                 $(':checkbox').prop('checked', this.checked);
                 if ($("input.checkbox:checked").length > 0) {
-                    $("#top-bar-deleteBtn").show();
+                    $("#removeQuotation").show();
                 } else {
-                    $("#top-bar-deleteBtn").hide();
+                    $("#removeQuotation").hide();
                 }
             });
         }

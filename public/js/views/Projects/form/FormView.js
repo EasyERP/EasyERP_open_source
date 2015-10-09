@@ -668,6 +668,7 @@ define([
                 $('#EndDateTarget').datepicker("option", "disabled", false);
 
                 $("#top-bar-saveBtn").show();
+                $("#createQuotation").show();
                 $("#createBonus").show();
             },
 
