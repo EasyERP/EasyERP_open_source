@@ -1,14 +1,13 @@
-define(["text!templates/Projects/projectInfo/wTracks/generate.html",
+define(["text!templates/wTrack/dashboard/vacationDashEdit.html",
 		'populate',
 		'dataService',
 		'moment',
 		'common'
 	],
-	function (generateTemplate, populate, dataService, moment, common) {
+	function (template, populate, dataService, moment, common) {
 		"use strict";
 		var CreateView = Backbone.View.extend({
-				template                 : _.template(generateTemplate),
-				wTrackPerEmployeeTemplate: _.template(wTrackPerEmployeeTemplate),
+				template                 : _.template(template),
 				responseObj              : {},
 
 				events: {
@@ -27,7 +26,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 				},
 
 				initialize: function (options) {
-					this.render();
+					this.render(options);
 				},
 
 				hideDialog: function () {
@@ -71,7 +70,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 						department = {
 							_id           : element.department._id,
 							departmentName: element.department.name
-						}
+						};
 
 						editWtrackModel.employee = employee;
 						editWtrackModel.department = department;
@@ -109,56 +108,35 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 				}
 				,
 
-				render: function () {
-					var thisEl = this.$el;
-					var project = this.model.toJSON();
-					var dialog = this.template({
-						project: project
-					});
+				render: function (data) {
+					var formString = this.template(data);
 					var self = this;
 
-					this.$el = $(dialog).dialog({
-						dialogClass: "edit-dialog",
-						width      : 1200,
-						title      : "Generate weTrack",
-						buttons    : {
-							save  : {
-								text : "Generate",
+					this.$el = $(formString).dialog({
+						closeOnEscape: false,
+						autoOpen: true,
+						resizable: false,
+						title: "Edit Project",
+						dialogClass: "edit-project-dialog",
+						width: "900px",
+						buttons: {
+							save: {
+								text: "Save",
 								class: "btn",
-								id   : "generateBtn",
-								click: self.generateItems
+								click: self.saveItem
 							},
 							cancel: {
-								text : "Cancel",
+								text: "Cancel",
 								class: "btn",
-								click: function () {
-									self.hideDialog();
-								}
+								click: self.hideDialog
+							},
+							delete: {
+								text: "Delete",
+								class: "btn",
+								click: self.deleteItem
 							}
 						}
 					});
-
-					dataService.getData("/employee/getForDD", null, function (employees) {
-						employees = _.map(employees.data, function (employee) {
-							employee.name = employee.name.first + ' ' + employee.name.last;
-
-							return employee;
-						});
-
-						self.responseObj['#employee'] = employees;
-					});
-
-					dataService.getData("/department/getForDD", null, function (departments) {
-						departments = _.map(departments.data, function (department) {
-							department.name = department.departmentName;
-
-							return department;
-						});
-
-						self.responseObj['#department'] = departments;
-					});
-
-					this.$listTable = $('#rawTable tbody');
 
 					return this;
 				}

@@ -1,12 +1,13 @@
 define([
 	'text!templates/vacationDashboard/index.html',
 	'collections/Dashboard/vacationDashboard',
+	'views/wTrack/dashboard/vacationDashEdit',
 	'dataService',
 	'async',
 	'custom',
 	'moment',
 	'constants'
-], function (mainTemplate, vacationDashboard, dataService, async, custom, moment, CONSTANTS) {
+], function (mainTemplate, vacationDashboard, VacationDashEdit, dataService, async, custom, moment, CONSTANTS) {
 	"use strict";
 
 	var View = Backbone.View.extend({
@@ -270,8 +271,16 @@ define([
 			};
 
 			dataService.getData('/wTrack/dash', queryData, function(response){
+				var year = dateByWeek.slice(0, 4);
+				var week = dateByWeek.slice(4, 6);
+
 				if (!response.error){
-					console.dir(response);
+					return new VacationDashEdit({
+						projectName: projectName,
+						customer: response.customer,
+						projectmanager: response.projectmanager,
+						wTracks: response.wTracks
+					});
 				}
 			});
 		},
