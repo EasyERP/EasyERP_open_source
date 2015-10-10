@@ -2,12 +2,13 @@ define([
 	'text!templates/vacationDashboard/index.html',
 	'collections/Dashboard/vacationDashboard',
 	'dataService',
-	'constants',
 	'async',
 	'custom',
 	'moment',
 	'constants'
-], function (mainTemplate, vacationDashboard, dataService, CONSTANTS, async, custom, moment, CONSTANTS) {
+], function (mainTemplate, vacationDashboard, dataService, async, custom, moment, CONSTANTS) {
+	"use strict";
+
 	var View = Backbone.View.extend({
 		el: '#content-holder',
 
@@ -19,7 +20,8 @@ define([
 		events: {
 			"click .openAll"     : "openAll",
 			"click .employeesRow": "openEmployee",
-			"click .group"       : "openDepartment"
+			"click .group"       : "openDepartment",
+			"click .wTrackInfo"  : "getWtrackInfo"
 		},
 
 		initialize: function (options) {
@@ -251,6 +253,27 @@ define([
 
 		getDate: function (num) {
 			return moment().day("Monday").week(num).format("DD.MM");
+		},
+
+		getWtrackInfo: function (e) {
+			var targetEl = $(e.target);
+			var td = targetEl.closest('td');
+			var tr = td.closest('tr');
+			var projectName = td.attr('data-project');
+			var dateByWeek = td.attr('data-date');
+			var employee = tr.attr('data-employee');
+
+			var queryData = {
+				projectName: projectName,
+				dateByWeek: dateByWeek,
+				employee: employee
+			};
+
+			dataService.getData('/wTrack/dash', queryData, function(response){
+				if (!response.error){
+					console.dir(response);
+				}
+			});
 		},
 
 		render: function () {

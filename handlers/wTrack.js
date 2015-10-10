@@ -1,5 +1,7 @@
 var mongoose = require('mongoose');
 var wTrack = function (event, models) {
+    "use strict";
+
     var access = require("../Modules/additions/access.js")(models);
     var _ = require('../node_modules/underscore');
     var wTrackSchema = mongoose.Schemas['wTrack'];
@@ -462,6 +464,25 @@ var wTrack = function (event, models) {
         });
     };
 
+    this.getForDashVacation = function (req, res, next) {
+        var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+
+        var query = req.query;
+        var mongoQuery = {
+            dateByWeek: query.dateByWeek,
+            'project.projectName': query.projectName,
+            'employee._id': query.employee
+        };
+
+        WTrack.find(mongoQuery, function(err, wTrack){
+            if(err){
+                return next(err);
+            }
+
+            res.status(200).send(wTrack);
+        });
+    };
+
     this.getById = function (req, res, next) {
         var id = req.params.id;
         var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
@@ -859,7 +880,7 @@ var wTrack = function (event, models) {
                             var holidays = result[0].holidays;
                             var vacations = result[1].vacations;
                             var totalVacations = result[1].total;
-                            var totalHolidays = result[0].total
+                            var totalHolidays = result[0].total;
                             var trackWeek = {};
                             var year = element.year;
                             var month = element.month;

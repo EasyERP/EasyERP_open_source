@@ -1,0 +1,131 @@
+<div class="form-holder">
+    <div class="inner">
+        <div class="clearfix"></div>
+        <div class="topInputHolder">
+            <div class="thirdPartBlock left">
+                <dl class="person-info">
+                    <dt><label for="project">Project</label></dt>
+                    <dd>
+                        <span id="project"><%= project.projectName %></span>
+                    </dd>
+                </dl>
+            </div>
+            <div class="thirdPartBlock left">
+                <dl class="person-info">
+                    <div class="miniAvatarCustomer miniAvatar" data-id="<%=(project.customer._id) ? project.customer._id: ''%>">
+                        <img alt="" src="" class="avatar"/>
+                    </div>
+                    <div class="miniAvatarInfo">
+                        <dt><label for="customer">Customer</label></dt>
+                        <dd>
+                            <span id="customer"><%= project.customer.name %></span>
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+            <div class="thirdPartBlock left">
+                <dl class="person-info">
+                    <div class="miniAvatarPM miniAvatar" data-id="<%=(project.projectmanager._id) ? project.projectmanager._id: ''%>">
+                        <img alt="" src="" class="avatar"/>
+                    </div>
+                    <div class="miniAvatarInfo">
+                        <dt><label for="projectManager">Sales Manager</label></dt>
+                        <dd>
+                            <span id="projectManager"><%= project.projectmanager.name %></span>
+                        </dd>
+                    </div>
+                </dl>
+
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="clearfix"></div>
+        <div class="topContentHolder">
+            <div id="wTrackItemsHolder">
+                <table id="rawTable" class="list2">
+                    <thead>
+                    <tr>
+                        <th>
+                            Employee
+                        </th>
+                        <th>
+                            Department
+                        </th>
+                        <th>
+                            Generate&nbspBy
+                        </th>
+                        <th>
+                            Start&nbspDate
+                        </th>
+                        <th>
+                            End&nbspDate / Hours
+                        </th>
+                        <th>
+                            Revenue
+                        </th>
+                        <th>
+                            Mo
+                        </th>
+                        <th>
+                            Tu
+                        </th>
+                        <th>
+                            We
+                        </th>
+                        <th>
+                            Th
+                        </th>
+                        <th>
+                            Fr
+                        </th>
+                        <th>
+                            Sa
+                        </th>
+                        <th>
+                            Su
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <%wTracks.forEach(function(){%>
+                        <tr data-id="" class="productItem">
+                            <td data-content="employee" class="errorContent">
+                                <a class="current-selected" href="javascript:;">select</a>
+                            </td>
+                            <td class="errorContent" data-content="department">
+                                <a class="current-selected" href="javascript:;">select</a>
+                            </td>
+                            <td data-content="generateType"><a class="generateType" href="javascript:;">Date</a>
+                                <ul class="generateTypeUl newSelectList">
+                                    <li data-content="byDate">Date</li>
+                                    <li data-content="byHours">Hours</li>
+                                </ul>
+                            </td>
+                            <td data-type="input" class="editable" data-content="startDate">
+                                <input type="text" class="datapicker startDate" readonly>
+                            </td>
+                            <td data-type="input" class="editable endDateTD" data-content="endDate">
+                                <input type="text" class="endDateDP datapicker" readonly>
+                                <input type="text" class="editing endDateInput hidden">
+                            </td>
+                            <td data-type="input" class="editable money" data-content="revenue">120.00</td>
+                            <td data-type="input" class="editable autoCalc" data-content="1">8</td>
+                            <td data-type="input" class="editable autoCalc" data-content="2">8</td>
+                            <td data-type="input" class="editable autoCalc" data-content="3">8</td>
+                            <td data-type="input" class="editable autoCalc" data-content="4">8</td>
+                            <td data-type="input" class="editable autoCalc" data-content="5">8</td>
+                            <td data-type="input" class="editable autoCalc" data-content="6">0</td>
+                            <td data-type="input" class="editable autoCalc" data-content="7">0</td>
+                        </tr>
+                    <%})%>
+                    </tbody>
+                    <tfoot>
+
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="clearfix"></div>
+</div>
