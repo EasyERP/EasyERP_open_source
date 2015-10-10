@@ -454,6 +454,7 @@ define([
                 var self = this;
                 var keys;
                 var filterId;
+                var filterByDefault;
 
                 this.$el.find('#favoritesContent').append(_.template(savedFilterTemplate));
 
@@ -477,9 +478,11 @@ define([
                                 filterId = this.savedFilters[j]['_id']['_id'];
 
                                 if (typeof (filterId) === 'object'){
-                                    filterId = filterId._id;
+                                    filterByDefault = filterId._id;
                                 }
                             }
+
+                            filterId = this.savedFilters[j]['_id']['_id'];
 
                             keys = Object.keys(this.savedFilters[j]['_id']['filter']);
                             for (var i = keys.length - 1; i >= 0; i--) {
@@ -490,7 +493,7 @@ define([
                 }
 
                 this.$el.find('#favoritesContent').append(content);
-                self.selectedFilter(filterId);
+                self.selectedFilter(filterByDefault);
             },
 
             selectedFilter: function(filterId){
