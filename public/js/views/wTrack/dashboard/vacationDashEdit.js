@@ -105,8 +105,7 @@ define(["text!templates/wTrack/dashboard/vacationDashEdit.html",
 				hideNewSelect: function () {
 					$(".newSelectList:not('.generateTypeUl')").remove();
 					$(".generateTypeUl").hide();
-				}
-				,
+				},
 
 				render: function (data) {
 					var formString = this.template(data);
@@ -117,7 +116,7 @@ define(["text!templates/wTrack/dashboard/vacationDashEdit.html",
 						autoOpen: true,
 						resizable: false,
 						title: "Edit Project",
-						dialogClass: "edit-project-dialog",
+						dialogClass: "edit-dialog",
 						width: "900px",
 						buttons: {
 							save: {
@@ -129,11 +128,6 @@ define(["text!templates/wTrack/dashboard/vacationDashEdit.html",
 								text: "Cancel",
 								class: "btn",
 								click: self.hideDialog
-							},
-							delete: {
-								text: "Delete",
-								class: "btn",
-								click: self.deleteItem
 							}
 						}
 					});
