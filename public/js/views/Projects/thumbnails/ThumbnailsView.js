@@ -152,7 +152,7 @@
 
             },
 
-            showFilteredPage: function (filter) {
+            showFilteredPage: function (filter, viewType) {
                 this.$el.find('.thumbnail').remove();
                 this.startTime = new Date();
                 this.newCollection = true;
@@ -163,7 +163,7 @@
                     this.filter = {};
                 }
 
-                this.changeLocationHash(null, this.defaultItemsNumber, filter);
+                this.changeLocationHash(null, this.defaultItemsNumber, filter, viewType);
                 this.collection.showMore({count: this.defaultItemsNumber, page: 1, filter: filter});
             },
 
@@ -234,8 +234,8 @@
 
                 self.filterView = new filterView({contentType: self.contentType});
 
-                self.filterView.bind('filter', function (filter) {
-                    self.showFilteredPage(filter)
+                self.filterView.bind('filter', function (filter, viewType) {
+                    self.showFilteredPage(filter, viewType)
                 });
                 self.filterView.bind('defaultFilter', function () {
                     self.showFilteredPage({});

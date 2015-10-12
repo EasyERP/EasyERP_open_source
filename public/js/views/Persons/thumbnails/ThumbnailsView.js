@@ -118,7 +118,7 @@
                 window.location.hash = "#easyErp/Companies/form/" + id;
             },
 
-            showFilteredPage: function (filter, context) {
+            showFilteredPage: function (filter, context, viewType) {
                 var itemsNumber = $("#itemsNumber").text();
 
                 var alphaBet = this.$el.find('#startLetter');
@@ -142,7 +142,7 @@
 
                 context.$el.find('.thumbnailwithavatar').remove();
 
-                context.changeLocationHash(null, context.defaultItemsNumber, filter);
+                context.changeLocationHash(null, context.defaultItemsNumber, filter, viewType);
                 context.collection.showMoreAlphabet({ count: context.defaultItemsNumber, page: 1, filter: filter });
                 context.getTotalLength(this.defaultItemsNumber, filter);
             },
@@ -181,8 +181,8 @@
 
                 self.filterView = new filterView({ contentType: self.contentType });
 
-                self.filterView.bind('filter', function (filter) {
-                    self.showFilteredPage(filter, self)
+                self.filterView.bind('filter', function (filter, viewType) {
+                    self.showFilteredPage(filter, self, viewType)
                 });
                 self.filterView.bind('defaultFilter', function () {
                     self.showFilteredPage({}, self);

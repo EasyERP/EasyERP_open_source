@@ -138,8 +138,8 @@
 
                 self.filterView = new filterView({ contentType: self.contentType });
 
-                self.filterView.bind('filter', function (filter) {
-                    self.showFilteredPage(filter)
+                self.filterView.bind('filter', function (filter, viewType) {
+                    self.showFilteredPage(filter, viewType)
                 });
                 self.filterView.bind('defaultFilter', function () {
                     self.showFilteredPage({});
@@ -150,7 +150,7 @@
                 return this;
             },
 
-            showFilteredPage: function (filter) {
+            showFilteredPage: function (filter, viewType) {
                 var itemsNumber = $("#itemsNumber").text();
 
                 var alphaBet = this.$el.find('#startLetter');
@@ -168,7 +168,7 @@
                 this.defaultItemsNumber = 0;
                 this.$el.find('.thumbnailwithavatar').remove();
 
-                this.changeLocationHash(null, this.defaultItemsNumber, filter);
+                this.changeLocationHash(null, this.defaultItemsNumber, filter, viewType);
                 this.collection.showMoreAlphabet({ count: this.defaultItemsNumber, page: 1, filter: filter });
                 this.getTotalLength(this.defaultItemsNumber, filter);
             },
