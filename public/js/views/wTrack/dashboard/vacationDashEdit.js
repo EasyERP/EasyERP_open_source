@@ -1,177 +1,160 @@
 define(["text!templates/wTrack/dashboard/vacationDashEdit.html",
-		'populate',
-		'dataService',
-		'moment',
-		'common'
-	],
-	function (template, populate, dataService, moment, common) {
-		"use strict";
-		var CreateView = Backbone.View.extend({
-				template                 : _.template(template),
-				responseObj              : {},
+        //todo load model and save changed values
+        'async'
+    ],
+    function (template, async) {
+        "use strict";
+        var CreateView = Backbone.View.extend({
+                template: _.template(template),
+                responseObj: {},
 
-				events: {
-					"click td.editable"     : "editRow",
-					"change .autoCalc"      : "autoCalc",
-					"change .editable "     : "setEditable",
-					"keydown input.editing ": "keyDown"
-				},
+                events: {
+                    "click td.editable": "editRow",
+                    "keydown input.editing ": "keyDown"
+                },
 
-				keyDown: function (e) {
-					if (e.which === 13) {
-						this.autoCalc(e);
-					}
-				},
+                initialize: function (options) {
+                    _.bindAll(this, "saveItem");
 
-				stopDefaultEvents: function (e) {
-					e.stopPropagation();
-					e.preventDefault();
-				},
+                    this.render(options);
+                },
 
-				initialize: function (options) {
-					this.render(options);
-				},
+                keyDown: function (e) {
+                    if (e.which === 13) {
+                        this.autoCalc(e);
+                    }
+                },
 
-				hideDialog: function () {
-					$(".edit-dialog").remove();
-				},
+                stopDefaultEvents: function (e) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                },
 
-				hideNewSelect: function () {
-					$(".newSelectList:not('.generateTypeUl')").remove();
-					$(".generateTypeUl").hide();
-				},
+                hideDialog: function () {
+                    $(".edit-dialog").remove();
+                },
 
-				autoCalc: function (e) {
-					/*var el = $(e.target);
-					 var tr = $(e.target).closest('tr');
-					 var input = tr.find('input.editing');
-					 var days = tr.find('.autoCalc');
-					 var wTrackId = tr.data('id');
-					 var worked = 0;
-					 var value;
-					 var calcEl;
-					 var editWtrackModel;
-					 var workedEl = tr.find('[data-content="worked"]');
-					 var revenueEl = tr.find('[data-content="revenue"]');
-					 var rateEl = tr.find('[data-content="rate"]');
-					 var rateVal;
-					 var revenueVal;
+                saveItem: function () {
+                    var thisEl = this.$el;
 
-					 function eplyDefaultValue(el) {
-					 var value = el.text();
 
-					 if (value === '') {
-					 if (el.children('input').length) {
-					 value = input.val();
-					 } else {
-					 value = '0';
-					 }
-					 }
+                },
 
-					 return value;
-					 };
+                hideNewSelect: function () {
+                    $(".newSelectList:not('.generateTypeUl')").remove();
+                    $(".generateTypeUl").hide();
+                },
 
-					 for (var i = days.length - 1; i >= 0; i--) {
-					 calcEl = $(days[i]);
+                autoCalc: function (e) {
+                    var targetEl = $(e.target);
+                    var isInput = targetEl.prop("tagName") === 'INPUT';
+                    var tr = targetEl.closest('tr');
+                    var edited = tr.find('input.edited');
+                    var days = tr.find('.autoCalc');
+                    var editedCol = edited.closest('td');
+                    var worked = 0;
+                    var value;
+                    var calcEl;
+                    var workedEl = tr.find('[data-content="worked"]');
 
-					 value = eplyDefaultValue(calcEl);
+                    function eplyDefaultValue(el) {
+                        var value = el.text();
+                        var children = el.children('input');
 
-					 worked += parseInt(value);
-					 }
+                        if (value === '' || undefined) {
+                            if (children.length) {
+                                value = children.val();
+                            } else {
+                                value = '0';
+                            }
+                        }
 
-					 rateVal = parseFloat(eplyDefaultValue(rateEl));
-					 revenueVal = parseFloat(worked * rateVal).toFixed(2);
+                        return value;
+                    };
 
-					 revenueEl.text(revenueVal);
+                    for (var i = days.length - 1; i >= 0; i--) {
+                        calcEl = $(days[i]);
 
-					 editWtrackModel = this.editCollection.get(wTrackId);
+                        value = eplyDefaultValue(calcEl);
 
-					 workedEl.text(worked);
-					 //editWtrackModel.set('worked', worked);
+                        if (value === undefined && isInput) {
+                            editedCol = targetEl.closest('td');
+                            edited = targetEl;
+                        }
 
-					 if (!this.changedModels[wTrackId]) {
-					 this.changedModels[wTrackId] = {};
-					 }
+                        worked += parseInt(value);
+                    }
 
-					 this.changedModels[wTrackId].worked = worked;
-					 this.changedModels[wTrackId].revenue = revenueVal;*/
+                    editedCol.text(edited.val());
+                    edited.remove();
 
-					alert('autocalc');
-				},
+                    workedEl.text(worked);
+                },
 
-				editRow: function (e) {
-					$(".newSelectList").hide();
+                editRow: function (e) {
+                    $(".newSelectList").hide();
 
-					var el = $(e.target);
-					var tr = $(e.target).closest('tr');
-					var wTrackId = tr.data('id');
-					var content = el.data('content');
-					var tempContainer;
-					var width;
-					var value;
-					var insertedInput;
+                    var el = $(e.target);
+                    var tr = $(e.target).closest('tr');
+                    var input = tr.find('input.editing');
+                    var wTrackId = tr.data('id');
+                    var content = el.data('content');
+                    var tempContainer;
+                    var width;
+                    var value;
+                    var insertedInput;
 
-					tempContainer = el.text();
-					width = el.width() - 6;
-					el.html('<input class="editing" type="text" value="' + tempContainer + '"  maxLength="4" style="width:' + width + 'px">');
+                    input.removeClass('editing');
+                    input.addClass('edited');
 
-					insertedInput = el.find('input');
-					insertedInput.focus();
-					insertedInput[0].setSelectionRange(0, insertedInput.val().length);
+                    tempContainer = el.text();
+                    width = el.width() - 6;
+                    el.html('<input class="editing" type="text" value="' + tempContainer + '"  maxLength="4" style="width:' + width + 'px">');
 
-					this.autoCalc(e);
+                    insertedInput = el.find('input');
+                    insertedInput.focus();
+                    insertedInput[0].setSelectionRange(0, insertedInput.val().length);
 
-					return false;
-				},
+                    if (input.length) {
+                        if (!input.val()) {
+                            input.val(0);
+                        }
 
-				setEditable: function (td) {
-					var tr;
+                        this.autoCalc(e);
+                    }
 
-					if (!td.parents) {
-						td = $(td.target).closest('td');
-					}
+                    return false;
+                },
 
-					tr = td.parents('tr');
+                render: function (data) {
+                    var formString = this.template(data);
+                    var self = this;
 
-					/*tr.addClass('edited');*/
-					td.addClass('edited');
+                    this.$el = $(formString).dialog({
+                        closeOnEscape: false,
+                        autoOpen: true,
+                        resizable: false,
+                        title: "Edit Project",
+                        dialogClass: "edit-dialog",
+                        width: "900px",
+                        buttons: {
+                            save: {
+                                text: "Save",
+                                class: "btn",
+                                click: self.saveItem
+                            },
+                            cancel: {
+                                text: "Cancel",
+                                class: "btn",
+                                click: self.hideDialog
+                            }
+                        }
+                    });
 
-					if (this.isEditRows()) {
-						this.setChangedValue();
-					}
-
-					return false;
-				},
-
-				render: function (data) {
-					var formString = this.template(data);
-					var self = this;
-
-					this.$el = $(formString).dialog({
-						closeOnEscape: false,
-						autoOpen: true,
-						resizable: false,
-						title: "Edit Project",
-						dialogClass: "edit-dialog",
-						width: "900px",
-						buttons: {
-							save: {
-								text: "Save",
-								class: "btn",
-								click: self.saveItem
-							},
-							cancel: {
-								text: "Cancel",
-								class: "btn",
-								click: self.hideDialog
-							}
-						}
-					});
-
-					return this;
-				}
-			})
-			;
-		return CreateView;
-	})
+                    return this;
+                }
+            })
+            ;
+        return CreateView;
+    })
 ;
