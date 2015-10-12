@@ -353,7 +353,7 @@ define([
 
             //<editor-fold desc="Show">
 
-            showFilteredPage: function (filter, context) {
+            showFilteredPage: function (filter, context, viewType) {
                 var itemsNumber = $("#itemsNumber").text();
 
                 var alphaBet = this.$el.find('#startLetter');
@@ -371,7 +371,7 @@ define([
 
                 this.filter = Object.keys(filter).length === 0 ? {} : filter;
 
-                context.changeLocationHash(1, itemsNumber, filter);
+                context.changeLocationHash(1, itemsNumber, filter, viewType);
                 context.collection.showMore({count: itemsNumber, page: 1, filter: filter});
                 context.getTotalLength(null, itemsNumber, filter);
             },
@@ -539,11 +539,11 @@ define([
                     contentType: self.contentType
                 });
 
-                self.filterView.bind('filter', function (filter) {
+                self.filterView.bind('filter', function (filter, viewType) {
                     if (baseFilter) {
                         filter[baseFilter.name] = baseFilter.value;
                     }
-                    self.showFilteredPage(filter, self)
+                    self.showFilteredPage(filter, self, viewType)
                 });
                 self.filterView.bind('defaultFilter', function () {
                     if (baseFilter) {

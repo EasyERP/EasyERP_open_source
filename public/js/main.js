@@ -185,8 +185,13 @@ require(['app'], function (app) {
         }
     };
 
-    Backbone.View.prototype.changeLocationHash = function (page, count, filter) {
+    Backbone.View.prototype.changeLocationHash = function (page, count, filter, viewType) {
         var location = window.location.hash;
+
+        if (viewType){
+            this.viewType = viewType;
+        }
+
         var mainLocation = '#easyErp/' + this.contentType + '/' + this.viewType;
         var pId = (location.split('/pId=')[1]) ? location.split('/pId=')[1].split('/')[0] : '';
         if (!page && this.viewType == 'list') {

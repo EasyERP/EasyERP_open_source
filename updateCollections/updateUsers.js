@@ -80,7 +80,8 @@ query.exec(function (error, _res) {
             user.savedFilters.forEach(function(filter){
                 obj = {
                     _id: filter,
-                    byDefault: ""
+                    byDefault: "",
+                    viewType: ""
                 };
 
                 newSavedFilters.push(obj);
