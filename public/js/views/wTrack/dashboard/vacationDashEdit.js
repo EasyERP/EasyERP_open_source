@@ -11,12 +11,15 @@ define(["text!templates/wTrack/dashboard/vacationDashEdit.html",
 				responseObj              : {},
 
 				events: {
-
+					"click td.editable"     : "editRow",
+					"change .autoCalc"      : "autoCalc",
+					"change .editable "     : "setEditable",
+					"keydown input.editing ": "keyDown"
 				},
 
 				keyDown: function (e) {
 					if (e.which === 13) {
-						this.setChangedValueToModel();
+						this.autoCalc(e);
 					}
 				},
 
@@ -33,78 +36,111 @@ define(["text!templates/wTrack/dashboard/vacationDashEdit.html",
 					$(".edit-dialog").remove();
 				},
 
-				chooseOption: function (e) {
-					var target = $(e.target);
-					var targetElement = target.parents("td");
-					var tr = target.parents("tr");
-					var modelId = tr.attr('data-id');
-					var id = target.attr("id");
-					var attr = targetElement.attr("id") || targetElement.attr("data-content");
-					var elementType = '#' + attr;
-					var departmentContainer;
-					var selectorContainer;
-					var endDateDP;
-					var endDateInput;
-					var endDateTD;
-
-					var element = _.find(this.responseObj[elementType], function (el) {
-						return el._id === id;
-					});
-
-					var editWtrackModel = this.resultArray[modelId];
-					var employee;
-					var department;
-
-					targetElement.attr('data-id', id);
-					selectorContainer = targetElement.find('a.current-selected');
-
-					if (elementType === '#employee') {
-						departmentContainer = tr.find('[data-content="department"]');
-						departmentContainer.find('a.current-selected').text(element.department.name);
-						departmentContainer.removeClass('errorContent');
-
-						employee = {
-							_id : element._id,
-							name: element.name
-						};
-						department = {
-							_id           : element.department._id,
-							departmentName: element.department.name
-						};
-
-						editWtrackModel.employee = employee;
-						editWtrackModel.department = department;
-
-					} else {
-						targetElement.find('a').text(target.text());
-						endDateTD = tr.find('.endDateTD');
-						endDateDP = endDateTD.find('.endDateDP');
-						endDateInput = endDateTD.find('.endDateInput');
-
-						if (target.attr('data-content') === 'byDate') {
-							endDateDP.removeClass('hidden');
-							endDateInput.addClass('hidden');
-							endDateTD.attr('data-content', 'endDate');
-						} else if (target.attr('data-content') === 'byHours') {
-							endDateInput.removeClass('hidden');
-							endDateDP.addClass('hidden');
-							endDateTD.attr('data-content', 'hours');
-						}
-					}
-
-					targetElement.removeClass('errorContent');
-
-					selectorContainer.text(target.text());
-
-					this.hideNewSelect();
-
-					return false;
-				}
-				,
-
 				hideNewSelect: function () {
 					$(".newSelectList:not('.generateTypeUl')").remove();
 					$(".generateTypeUl").hide();
+				},
+
+				autoCalc: function (e) {
+					/*var el = $(e.target);
+					 var tr = $(e.target).closest('tr');
+					 var input = tr.find('input.editing');
+					 var days = tr.find('.autoCalc');
+					 var wTrackId = tr.data('id');
+					 var worked = 0;
+					 var value;
+					 var calcEl;
+					 var editWtrackModel;
+					 var workedEl = tr.find('[data-content="worked"]');
+					 var revenueEl = tr.find('[data-content="revenue"]');
+					 var rateEl = tr.find('[data-content="rate"]');
+					 var rateVal;
+					 var revenueVal;
+
+					 function eplyDefaultValue(el) {
+					 var value = el.text();
+
+					 if (value === '') {
+					 if (el.children('input').length) {
+					 value = input.val();
+					 } else {
+					 value = '0';
+					 }
+					 }
+
+					 return value;
+					 };
+
+					 for (var i = days.length - 1; i >= 0; i--) {
+					 calcEl = $(days[i]);
+
+					 value = eplyDefaultValue(calcEl);
+
+					 worked += parseInt(value);
+					 }
+
+					 rateVal = parseFloat(eplyDefaultValue(rateEl));
+					 revenueVal = parseFloat(worked * rateVal).toFixed(2);
+
+					 revenueEl.text(revenueVal);
+
+					 editWtrackModel = this.editCollection.get(wTrackId);
+
+					 workedEl.text(worked);
+					 //editWtrackModel.set('worked', worked);
+
+					 if (!this.changedModels[wTrackId]) {
+					 this.changedModels[wTrackId] = {};
+					 }
+
+					 this.changedModels[wTrackId].worked = worked;
+					 this.changedModels[wTrackId].revenue = revenueVal;*/
+
+					alert('autocalc');
+				},
+
+				editRow: function (e) {
+					$(".newSelectList").hide();
+
+					var el = $(e.target);
+					var tr = $(e.target).closest('tr');
+					var wTrackId = tr.data('id');
+					var content = el.data('content');
+					var tempContainer;
+					var width;
+					var value;
+					var insertedInput;
+
+					tempContainer = el.text();
+					width = el.width() - 6;
+					el.html('<input class="editing" type="text" value="' + tempContainer + '"  maxLength="4" style="width:' + width + 'px">');
+
+					insertedInput = el.find('input');
+					insertedInput.focus();
+					insertedInput[0].setSelectionRange(0, insertedInput.val().length);
+
+					this.autoCalc(e);
+
+					return false;
+				},
+
+				setEditable: function (td) {
+					var tr;
+
+					if (!td.parents) {
+						td = $(td.target).closest('td');
+					}
+
+					tr = td.parents('tr');
+
+					/*tr.addClass('edited');*/
+					td.addClass('edited');
+
+					if (this.isEditRows()) {
+						this.setChangedValue();
+					}
+
+					return false;
 				},
 
 				render: function (data) {
