@@ -68,16 +68,16 @@
             <%})%>
         </tr>
         <% for(var i = employee.get('maxProjects'); i > 0; i-- ){%>
-        <tr class="projectsFor<%= department.department ? department.department._id: '' %> employeeProjects <%= employee.get('_id')%>" data-content="project">
+        <tr class="projectsFor<%= department.department ? department.department._id: '' %> employeeProjects <%= employee.get('_id')%>" data-content="project" data-employee="<%=employee.get('_id')%>">
             <td>&nbsp;</td>
             <td>&nbsp;</td>
             <td>&nbsp;</td>
             <%employee.get('weekData').forEach(function(week){%>
             <% if(week.projectRoot) {%>
-            <td>
-                <span class="projectHours"><%=week.projectRoot[i-1] ? week.projectRoot[i-1].hours : ''%></span>
-                <span class="projectItem"><%=week.projectRoot[i-1] ? week.projectRoot[i-1].project: ''%></span>
-            </td>
+                <td data-date="<%=week.dateByWeek%>" data-project="<%=week.projectRoot[i-1] ? week.projectRoot[i-1].project : ''%>" class="wTrackInfo">
+                    <span class="projectHours"><%=week.projectRoot[i-1] ? week.projectRoot[i-1].hours : ''%></span>
+                    <span class="projectItem"><%=week.projectRoot[i-1] ? week.projectRoot[i-1].project: ''%></span>
+                </td>
             <% } else { %>
             <td >
                 &nbsp
