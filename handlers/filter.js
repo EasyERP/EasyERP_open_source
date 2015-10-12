@@ -37,7 +37,7 @@ var Filters = function (models) {
                 customerPayments: getCustomerPaymentsFiltersValues,
                 supplierPayments: getSupplierPaymentsFiltersValues,
                 Product         : getProductsFiltersValues,
-                salesProduct         : getProductsFiltersValues
+                salesProduct    : getProductsFiltersValues,
                 Quotation       : getQuotationFiltersValues
             },
             function (err, result) {
@@ -118,7 +118,8 @@ var Filters = function (models) {
                             name: 'Unpaid'
                         }
                     ]
-                };
+                }
+                ;
 
                 callback(null, result);
             });
@@ -618,7 +619,7 @@ var Filters = function (models) {
                                 name: '$supplierView'
                             }
                         },
-                        'statusView': {
+                        'statusView'  : {
                             $addToSet: {
                                 _id : '$workflows',
                                 name: '$statusView'
