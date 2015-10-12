@@ -8892,8 +8892,15 @@ textarea#editInput {
   background-color: #66b5d4;
 }
 #favoritesContent .checkedValue {
-  color: white;
+  color: #cdcdcd;
   background-color: #66b5d4;
+}
+#favoritesContent .useByDefault {
+  margin-top: 10px;
+}
+#favoritesContent .useByDefault span {
+  color: #cdcdcd;
+  margin-left: 10px;
 }
 .forFilterIcons {
   float: left;
