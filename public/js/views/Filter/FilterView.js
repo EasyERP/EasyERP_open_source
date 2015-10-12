@@ -36,6 +36,7 @@ define([
 
             initialize: function (options) {
                 this.parentContentType = options.contentType;
+                this.viewType = options.viewType;
                 this.constantsObject = CONSTANTS.FILTERS[this.parentContentType];
 
                 App.filter = {};

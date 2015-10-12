@@ -631,7 +631,8 @@ define([
                 }
 
 
-                savedFilter = custom.savedFilters(contentType, filter);
+                //savedFilter = custom.savedFilters(contentType, filter);
+                savedFilter = filter;
 
                 if (context.mainView === null) {
                     context.main(contentType);
@@ -819,9 +820,10 @@ define([
 
             function goThumbnails(context) {
                 var currentContentType = context.testContent(contentType);
+                var viewType = custom.getCurrentVT({contentType: contentType});
                 if (contentType !== currentContentType) {
                     contentType = currentContentType;
-                    var url = '#easyErp/' + contentType + '/thumbnails';
+                    var url = '#easyErp/' + contentType + '/' + viewType;
                     Backbone.history.navigate(url, {replace: true});
                 }
                 var newCollection = true;
@@ -860,7 +862,7 @@ define([
                     filter = JSON.parse(filter);
                 }
 
-                savedFilter = custom.savedFilters(contentType, filter);
+                //savedFilter = custom.savedFilters(contentType, filter);
 
                 if (context.mainView === null) {
                     context.main(contentType);

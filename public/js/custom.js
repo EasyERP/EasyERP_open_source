@@ -158,6 +158,23 @@ define([
         } else {
             viewType = App.currentViewType;
         }
+
+        //for default filter && defaultViewType
+        if (option && option.contentType && App.savedFilters[option.contentType]) {
+            this.savedFilters = App.savedFilters[option.contentType];
+
+            for (var j = this.savedFilters.length - 1; j >= 0; j--) {
+                if (this.savedFilters[j]) {
+                    if (this.savedFilters[j].byDefault === option.contentType){
+
+                        if (this.savedFilters[j].viewType){
+                            viewType = this.savedFilters[j].viewType;
+                        }
+                    }
+                }
+            }
+        }
+
         return viewType;
     };
 

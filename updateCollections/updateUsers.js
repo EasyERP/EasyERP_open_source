@@ -38,7 +38,11 @@ var userSchema = mongoose.Schema({
             foldWorkflows: [{type: String, default: ''}]
         }
     },
-    savedFilters: [{type: ObjectId, ref: 'savedFilters', default: []}],
+    savedFilters: [
+        {
+            _id: {type: ObjectId, ref: 'savedFilters', default: null},
+            byDefault: {type: String, default: ''}
+        }],
     RelatedEmployee: {type: ObjectId, ref: 'Employees', default: null}
 }, {collection: 'Users'});
 
@@ -79,8 +83,8 @@ query.exec(function (error, _res) {
         if (user) {
             user.savedFilters.forEach(function(filter){
                 obj = {
-                    _id: filter,
-                    byDefault: "",
+                    _id: filter._id,
+                    byDefault: filter.byDefault,
                     viewType: ""
                 };
 
