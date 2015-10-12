@@ -37,8 +37,9 @@ define([
             genInvoiceEl            : null,
             copyEl                  : null,
             changedModels           : {},
-            exportToCsvUrl:'/wTrack/exportToCsv',
-            exportToXlsxUrl:'/wTrack/exportToXlsx',
+            exportToCsvUrl          : '/wTrack/exportToCsv',
+            exportToXlsxUrl         : '/wTrack/exportToXlsx',
+
             initialize: function (options) {
                 this.startTime = options.startTime;
                 this.collection = options.collection;
@@ -284,7 +285,7 @@ define([
                 var editedElementValue;
                 var self = this;
 
-                if(navigator.userAgent.indexOf("Firefox") > -1) {
+                if (navigator.userAgent.indexOf("Firefox") > -1) {
                     this.setEditable(editedElement);
                 }
 
@@ -730,7 +731,7 @@ define([
                             $("#top-bar-deleteBtn").show();
 
                             if (checkLength === self.collection.length) {
-                                checkedInputs.each(function(index, element) {
+                                checkedInputs.each(function (index, element) {
                                     self.checkProjectId(element, checkLength);
                                 });
 
