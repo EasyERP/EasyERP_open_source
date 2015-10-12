@@ -1494,6 +1494,38 @@ var wTrack = function (event, models) {
 
     };
 
+    this.getForDashVacation = function (req, res, next) {
+        var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+
+        var query = req.query;
+        var mongoQuery = {
+            dateByWeek           : query.dateByWeek,
+            'project.projectName': query.projectName,
+            'employee._id'       : query.employee
+        };
+
+        WTrack.find(mongoQuery, function (err, wTrack) {
+            var firstWtrack;
+            var customer;
+            var projectmanager;
+
+            if (err) {
+                return next(err);
+            }
+
+            firstWtrack = wTrack[0];
+
+            customer = firstWtrack ? firstWtrack.project.customer : null;
+            projectmanager = firstWtrack ? firstWtrack.project.projectmanager : null;
+
+            res.status(200).send({
+                customer: customer,
+                projectmanager: projectmanager,
+                wTracks: wTrack
+            });
+        });
+    };
+
 };
 
 module.exports = wTrack;
