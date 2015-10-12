@@ -177,6 +177,7 @@ define([
                     invoiceControl: invoiceControl,
                     paymentTerm   : paymentTerm,
                     fiscalPosition: fiscalPosition,
+                    populate      : true,
                     paymentInfo   : {
                         total  : total,
                         unTaxed: unTaxed,
@@ -210,7 +211,7 @@ define([
                 }
             },
 
-            redirectAfterSave: function(content, model) {
+            redirectAfterSave: function (content, model) {
                 var redirectUrl = content.forSales ? "easyErp/salesQuotation" : "easyErp/Quotation";
 
                 content.hideDialog();

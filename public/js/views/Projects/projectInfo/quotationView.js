@@ -25,8 +25,8 @@ define([
         },
 
         removeItems: function (event) {
-
             event.preventDefault();
+
             var answer = confirm("Realy DELETE items ?!");
 
             var that = this;
@@ -43,15 +43,14 @@ define([
 
             if (answer == true) {
                 $.each(listTableCheckedInput, function (index, checkbox) {
-                    model = _.findWhere(that.collection, {_id: checkbox.value});
+                    model = that.collection.get(checkbox.value);
                     model.destroy({
                         headers: {
                             mid: mid
                         },
                         wait   : true,
-                        success: function (result) {
-                            var model = result.success;
-                            var id = model._id;
+                        success: function (model) {
+                            var id = model.get('_id');
 
                             table.find('[data-id="' + id + '"]').remove();
 
@@ -76,20 +75,20 @@ define([
         },
 
         checked: function (e) {
-            if (this.models.length > 0) {
+            if (this.collection.length > 0) {
                 var checkLength = $("input.checkbox:checked").length;
 
                 if ($("input.checkbox:checked").length > 0) {
-                    $("#top-bar-deleteBtn").show();
-                    $('#check_all').prop('checked', false);
+                    $("#removeQuotation").show();
+                    $('#check_all_quotations').prop('checked', false);
 
-                    if (checkLength == this.models.length) {
-                        $('#check_all').prop('checked', true);
+                    if (checkLength == this.collection.length) {
+                        $('#check_all_quotations').prop('checked', true);
                     }
                 }
                 else {
-                    $("#top-bar-deleteBtn").hide();
-                    $('#check_all').prop('checked', false);
+                    $("#removeQuotation").hide();
+                    $('#check_all_quotations').prop('checked', false);
                 }
             }
         },
@@ -109,7 +108,7 @@ define([
             currentEl.prepend(this.templateHeader);
 
             currentEl.find('#listTableQuotation').html(this.templateList({
-                quotations : this.collection,
+                quotations : this.collection.toJSON(),
                 startNumber: 0,
                 dateToLocal: common.utcDateToLocaleDate
             }));

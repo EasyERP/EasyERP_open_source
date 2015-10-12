@@ -25,6 +25,8 @@ define([
                     this.visible = options.visible;
                 }
 
+                this.populate = true;
+
                 if (options.collection) {
                     this.collection = options.collection;
                 }
@@ -34,6 +36,8 @@ define([
                 this.projectId = options.projectId;
                 this.render();
                 this.getForDd(this.projectId);
+                this.forSales = true;
+                this.populate = true;
             },
 
             getForDd: function (projectID) {
@@ -62,7 +66,7 @@ define([
 
                 var currentNumber = parseInt(lastNumber) + 1;
 
-                this.collection.push(model);
+                this.collection.add(model);
 
                 currentEl.append(this.templateNewRow({
                     quotation: model.toJSON(),

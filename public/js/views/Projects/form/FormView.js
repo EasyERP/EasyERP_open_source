@@ -591,30 +591,30 @@ define([
             },
 
             getQuotations: function (cb) {
-                var _id = this.formModel._id;
+                var _id = this.formModel.id;
                 var filter = {
                     'projectName': {
                         key  : 'project',
                         value: [_id]
-                    }/*,
-                     'forSales': {
-                     key  : 'forSales',
-                     value: true
-                     }*/
+                    }
                 };
-                var self = this;
 
-                var collection = new quotationCollection({
+                var qCollection = new quotationCollection({
                     count : 50,
                     viewType: 'list',
                     contentType: 'Quotation',
                     filter: filter
                 });
 
-                new QuotationView({
-                    collection: collection,
-                    projectId : self.formModel.id
-                }).render();
+
+                function createView() {
+                    new QuotationView({
+                        collection: qCollection,
+                        projectId : _id
+                    }).render();
+                }
+
+                qCollection.bind('reset', createView);
 
                 /*dataService.getData('/quotation/list',
                  {

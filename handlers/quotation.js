@@ -3,15 +3,21 @@ var Quotation = function (models) {
     var access = require("../Modules/additions/access.js")(models);
     var QuotationSchema = mongoose.Schemas['Quotation'];
     var CustomerSchema = mongoose.Schemas['Customer'];
+    var WorkflowSchema = mongoose.Schemas['workflow'];
     var DepartmentSchema = mongoose.Schemas['Department'];
     var objectId = mongoose.Types.ObjectId;
     var async = require('async');
     var mapObject = require('../helpers/bodyMaper');
 
     this.create = function (req, res, next) {
-        var Customer = models.get(req.session.lastDb, 'Customers', CustomerSchema);
-        var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
+        var db = req.session.lastDb;
+
+        var Customer = models.get(db, 'Customers', CustomerSchema);
+        var Workflow = models.get(db, 'workflows', WorkflowSchema);
+        var Quotation = models.get(db, 'Quotation', QuotationSchema);
+
         var body = mapObject(req.body);
+        var isPopulate = req.body.populate;
         var quotation = new Quotation(body);
 
         quotation.save(function (err, _quotation) {
@@ -19,16 +25,42 @@ var Quotation = function (models) {
                 return next(err);
             }
 
-            Customer.populate(_quotation, {
-                path  : 'supplier',
-                select: '_id name fullName'
-            }, function (err, resp) {
-                if (err) {
-                    return next(err);
-                }
+            if (isPopulate) {
+                async.parallel([
+                    function (callback) {
+                        Customer.populate(_quotation, {
+                            path  : 'supplier',
+                            select: '_id name fullName'
+                        }, function (err, resp) {
+                            if (err) {
+                                return callback(err);
+                            }
 
-                res.status(200).send(resp);
-            });
+                            callback(null, resp);
+                        });
+                    },
+                    function (callback) {
+                        Workflow.populate(_quotation, {
+                            path  : 'workflow',
+                            select: '-sequence',
+                        }, function (err, resp) {
+                            if (err) {
+                                return callback(err);
+                            }
+
+                            callback(null, resp);
+                        });
+                    }
+                ], function (err, results) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    res.status(200).send(_quotation);
+                })
+            } else {
+                res.status(200).send(_quotation);
+            }
         });
     };
 
