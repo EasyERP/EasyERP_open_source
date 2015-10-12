@@ -238,6 +238,28 @@ define([], function () {
                 backend: 'canBePurchased'
             }
         },
+        salesProduct    : {
+            'Product Name'    : {
+                view   : 'name',
+                backend: '_id'
+            },
+            'Product Type'    : {
+                view   : 'productType',
+                backend: 'info.productType'
+            },
+            'Can be Sold'     : {
+                view   : 'canBeSold',
+                backend: 'canBeSold'
+            },
+            'Can be Expensed' : {
+                view   : 'canBeExpensed',
+                backend: 'canBeExpensed'
+            },
+            'Can be Purchased': {
+                view   : 'canBePurchased',
+                backend: 'canBePurchased'
+            }
+        },
         Quotation       : {
             'Reference': {
                 view   : 'referenceView',

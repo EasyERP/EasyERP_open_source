@@ -4,23 +4,24 @@
         'views/Product/CreateView',
         'dataService',
         'models/ProductModel',
+        'views/Filter/FilterView',
         'common',
         'text!templates/Alpabet/AphabeticTemplate.html',
         'constants'
     ],
 
-    function (thumbnailsItemTemplate, editView, createView, dataService, currentModel, common, AphabeticTemplate, CONSTANTS) {
+    function (thumbnailsItemTemplate, editView, createView, dataService, currentModel, filterView, common, AphabeticTemplate, CONSTANTS) {
         var ProductThumbnalView = Backbone.View.extend({
-            el: '#content-holder',
-            countPerPage: 0,
-            template: _.template(thumbnailsItemTemplate),
+            el                : '#content-holder',
+            countPerPage      : 0,
+            template          : _.template(thumbnailsItemTemplate),
             defaultItemsNumber: null,
-            listLength: null,
-            filter: null,
-            newCollection: null,
+            listLength        : null,
+            filter            : null,
+            newCollection     : null,
             //page: null, //if reload page, and in url is valid page
-            contentType: CONSTANTS.SALESPRODUCT,//needs in view.prototype.changeLocationHash
-            viewType: 'thumbnails',//needs in view.prototype.changeLocationHash
+            contentType       : CONSTANTS.SALESPRODUCT,//needs in view.prototype.changeLocationHash
+            viewType          : 'thumbnails',//needs in view.prototype.changeLocationHash
 
             initialize: function (options) {
                 this.startTime = options.startTime;
@@ -39,16 +40,19 @@
             },
 
             events: {
-                "click #showMore": "showMore",
+                "click #showMore"           : "showMore",
+                /*"click .thumbnailwithavatar": "gotoForm",*/
                 "click .thumbnailwithavatar": "gotoEditForm",
-                "click .letter:not(.empty)": "alpabeticalRender"
+                "click .letter:not(.empty)" : "alpabeticalRender",
+                "click .saveFilterButton"   : "saveFilter",
+                "click .removeFilterButton" : "removeFilter",
             },
 
             //modified for filter Vasya
             getTotalLength: function (currentNumber, filter, newCollection) {
                 dataService.getData('/product/totalCollectionLength', {
                     currentNumber: currentNumber,
-                    filter: filter,
+                    filter       : filter,
                     newCollection: newCollection
                 }, function (response, context) {
                     var showMore = context.$el.find('#showMoreDiv');
@@ -74,19 +78,29 @@
 
             //modified for filter Vasya
             alpabeticalRender: function (e) {
-                this.$el.find('.thumbnailwithavatar').remove();
+                var selectedLetter;
+                var target;
+
+                this.filter = {};
+                if (e && e.target) {
+                    target = $(e.target);
+                    selectedLetter = $(e.target).text();
+
+                    this.filter['letter'] = selectedLetter;
+
+                    target.parent().find(".current").removeClass("current");
+                    target.addClass("current");
+                    if ($(e.target).text() == "All") {
+                        selectedLetter = "";
+                        this.filter = {};
+                    }
+                }
+                ;
+
                 this.startTime = new Date();
                 this.newCollection = false;
-                var target = $(e.target);
-                target.parent().find(".current").removeClass("current");
-                target.addClass("current");
-                var selectedLetter = $(e.target).text();
-                if ($(e.target).text() == "All") {
-                    selectedLetter = "";
-                }
-                this.filter = (this.filter) ? this.filter : {};
-                this.filter['letter'] = selectedLetter;
-                this.filter['canBeSold'] = true;
+                this.$el.find('.thumbnailwithavatar').remove();
+
                 this.defaultItemsNumber = 0;
                 this.changeLocationHash(null, this.defaultItemsNumber, this.filter);
                 this.collection.showMoreAlphabet({count: this.defaultItemsNumber, filter: this.filter});
@@ -102,12 +116,8 @@
                 common.buildAphabeticArray(this.collection, function (arr) {
                     $("#startLetter").remove();
                     self.alphabeticArray = arr;
-                    $('#searchContainer').after(_.template(AphabeticTemplate, {
-                        alphabeticArray: self.alphabeticArray,
-                        selectedLetter: (self.selectedLetter == "" ? "All" : self.selectedLetter),
-                        allAlphabeticArray: self.allAlphabeticArray
-                    }));
-                    var currentLetter = (self.filter) ? self.filter.letter : null
+                    $('#searchContainer').after(_.template(AphabeticTemplate, { alphabeticArray: self.alphabeticArray, selectedLetter: (self.selectedLetter == "" ? "All" : self.selectedLetter), allAlphabeticArray: self.allAlphabeticArray }));
+                    var currentLetter = (self.filter) ? self.filter.letter : null;
                     if (currentLetter) {
                         $('#startLetter a').each(function () {
                             var target = $(this);
@@ -118,13 +128,49 @@
                     }
                 });
 
-                if (this.collection.length > 0) {
-                    currentEl.append(this.template({collection: this.collection.toJSON()}));
-                } else {
-                    currentEl.html('<h2>No Products found</h2>');
-                }
+                currentEl.append(this.template({collection: this.collection.toJSON()}));
+
                 currentEl.append(createdInTag);
+
+                $(document).on("click", function (e) {
+                    self.hideItemsNumber(e);
+                });
+
+                self.filterView = new filterView({ contentType: self.contentType });
+
+                self.filterView.bind('filter', function (filter) {
+                    self.showFilteredPage(filter)
+                });
+                self.filterView.bind('defaultFilter', function () {
+                    self.showFilteredPage({});
+                });
+
+                self.filterView.render();
+
                 return this;
+            },
+
+            showFilteredPage: function (filter) {
+                var itemsNumber = $("#itemsNumber").text();
+
+                var alphaBet = this.$el.find('#startLetter');
+                var selectedLetter = $(alphaBet).find('.current').length ? $(alphaBet).find('.current')[0].text : '';
+
+                $("#top-bar-deleteBtn").hide();
+                $('#check_all').prop('checked', false);
+
+                this.startTime = new Date();
+                this.newCollection = false;
+
+                if (Object.keys(filter).length === 0){
+                    this.filter = {};
+                }
+                this.defaultItemsNumber = 0;
+                this.$el.find('.thumbnailwithavatar').remove();
+
+                this.changeLocationHash(null, this.defaultItemsNumber, filter);
+                this.collection.showMoreAlphabet({ count: this.defaultItemsNumber, page: 1, filter: filter });
+                this.getTotalLength(this.defaultItemsNumber, filter);
             },
 
             gotoForm: function (e) {
@@ -147,11 +193,11 @@
                     var model = new currentModel({validate: false});
                     model.urlRoot = '/product/form/';
                     model.fetch({
-                        data: {id: id},
+                        data   : {id: id},
                         success: function (model) {
                             new editView({model: model});
                         },
-                        error: function () {
+                        error  : function () {
                             alert('Please refresh browser');
                         }
                     });
@@ -183,28 +229,41 @@
 
                 }
                 this.asyncLoadImgs(newModels);
+
+                this.filterView.renderFilterContent();
             },
+
             //modified for filter Vasya
             showMoreAlphabet: function (newModels) {
-
                 var holder = this.$el;
-                var alphaBet = holder.find('#startLetter');
                 var created = holder.find('#timeRecivingDataFromServer');
                 var showMore = holder.find('#showMoreDiv');
-                var content = holder.find(".thumbnailwithavatar");
+
                 this.defaultItemsNumber += newModels.length;
+
                 this.changeLocationHash(null, (this.defaultItemsNumber < 100) ? 100 : this.defaultItemsNumber, this.filter);
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
+
                 holder.append(this.template({collection: newModels.toJSON()}));
-                //holder.prepend(alphaBet);
                 holder.append(created);
                 created.before(showMore);
+
                 this.asyncLoadImgs(newModels);
             },
 
             createItem: function () {
                 //create editView in dialog here
                 new createView({contentType: this.contentType});
+            },
+
+            exportToCsv: function () {
+                //todo change after routes refactoring
+                window.location = '/Product/exportToCsv'
+            },
+
+            exportToXlsx: function () {
+                //todo change after routes refactoring
+                window.location = '/Product/exportToXlsx'
             }
         });
 

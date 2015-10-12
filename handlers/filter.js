@@ -7,8 +7,8 @@ var Filters = function (models) {
     var TaskSchema = mongoose.Schemas['Tasks'];
     var wTrackInvoiceSchema = mongoose.Schemas['wTrackInvoice'];
     var customerPaymentsSchema = mongoose.Schemas['Payment'];
-    var productSchema = mongoose.Schemas['Products'];
     var QuotationSchema = mongoose.Schemas['Quotation'];
+    var productSchema = mongoose.Schemas['Products'];
     var _ = require('../node_modules/underscore');
     var async = require('async');
 
@@ -37,6 +37,7 @@ var Filters = function (models) {
                 customerPayments: getCustomerPaymentsFiltersValues,
                 supplierPayments: getSupplierPaymentsFiltersValues,
                 Product         : getProductsFiltersValues,
+                salesProduct         : getProductsFiltersValues
                 Quotation       : getQuotationFiltersValues
             },
             function (err, result) {
@@ -117,8 +118,7 @@ var Filters = function (models) {
                             name: 'Unpaid'
                         }
                     ]
-                }
-                ;
+                };
 
                 callback(null, result);
             });
@@ -564,7 +564,9 @@ var Filters = function (models) {
                 if (err) {
                     callback(err);
                 }
-
+                if (result.length === 0) {
+                    return callback(null, result);
+                }
                 result = result[0];
 
                 result['canBeSold'] = [
@@ -599,7 +601,6 @@ var Filters = function (models) {
                         name: 'False'
                     }
                 ];
-
 
                 callback(null, result);
             });

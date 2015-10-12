@@ -1,0 +1,31 @@
+<tr data-id="<%=model._id%>">
+    <td class="notForm">
+        <input type="checkbox"
+               value="<%=model._id%>"
+               class="checkbox"/>
+    </td>
+
+    <td data-type="input"
+        data-content="number">
+        <%=model.startNumber%>
+    </td>
+    <td data-type="input"
+        data-content="name"
+        class="editable">
+        <%=model.name%>
+    </td>
+    <td data-content="bonusType"
+        class="editable">
+        <%=model.bonusType%>
+    </td>
+    <td data-type="input"
+        data-content="value"
+        class="editable">
+        <%=model.value%>
+    </td>
+    <td data-type="input"
+        data-content="isPercent"
+        class="editable">
+        <%=model.isPercent%>
+    </td>
+</tr>
