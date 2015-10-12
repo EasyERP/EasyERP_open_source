@@ -1131,34 +1131,37 @@ var wTrack = function (event, models) {
                                                     if (i <= 7) {
                                                         newObj[i] = lastwTrack[i];
                                                         hoursInWeek += parseInt(lastwTrack[i]);
+                                                        globalTotal += lastwTrack[i];
                                                     }
-                                                    ++i;
+                                                    i++;
                                                 }
 
-                                                if (newObj[i - 1 - 2]) {
-                                                    hoursInWeek -= newObj[i - 1 - 2];
-                                                    newObj[i - 2] = diff - hoursInWeek;
-                                                }
+                                                newObj[i - 1] = newObj[i - 1] - (globalTotal - opt.hours);
+
+                                                //if (newObj[i - 1 - 2]) {
+                                                //    hoursInWeek -= newObj[i - 1 - 2];
+                                                //    newObj[i - 2] = diff - hoursInWeek;
+                                                //}
 
 
                                                 for (var j = i; j <= 7; j++) {
                                                     newObj[j] = 0;
                                                 }
 
-                                                if (diff - hoursInWeek < 0) {
-                                                    var hour = 0;
-                                                    var i = 1;
-
-                                                    while (hour < diff) {
-                                                        hour += newObj[i];
-                                                        if (hour > diff) {
-                                                            newObj[i] = newObj[i] - (hour - diff);
-                                                        }
-                                                        i++;
-                                                    }
-
-
-                                                }
+                                                //if (diff - hoursInWeek < 0) {
+                                                //    var hour = 0;
+                                                //    var i = 1;
+                                                //
+                                                //    while (hour < diff) {
+                                                //        hour += newObj[i];
+                                                //        if (hour > diff) {
+                                                //            newObj[i] = newObj[i] - (hour - diff);
+                                                //        }
+                                                //        i++;
+                                                //    }
+                                                //
+                                                //
+                                                //}
 
 
                                                 hoursInWeek = 0;
@@ -1435,57 +1438,55 @@ var wTrack = function (event, models) {
                                 var endOfMonth = moment(newDate).endOf('month').date();
 
                                 if (moment(newDate).date() + 7 > endOfMonth) {
-                                    if ((dayOfWeek <= 5) && (dayOfWeek >= 1)) {
 
-                                        for (var j = 1; j <= 5; j++) {
-                                            if (day >= j) {
-                                                if ((obj.week === endWeek)) {
+                                    for (var j = 1; j <= 5; j++) {
+                                        if (day >= j) {
+                                            if ((obj.week === endWeek)) {
 
-                                                    if (day2 > j) {
-                                                        obj.weekValues[j] = 0;
-                                                        objNext.weekValues[k] = parseInt(opt[k]);
-                                                    } else {
-                                                        if (total <= opt.hours) {
-                                                            obj.weekValues[j] = parseInt(opt[j]);
-                                                            objNext.weekValues[k] = 0;
-                                                            total += parseInt(opt[j]);
-                                                        } else {
-                                                            if (obj.weekValues[j - 1]) {
-                                                                obj.weekValues[j - 1] = parseInt(opt[j - 1]) + (opt.hours - total);
-                                                                obj.weekValues[j] = 0;
-                                                                total += parseInt(obj.weekValues[j - 1]);
-                                                            }
-
-                                                        }
-                                                    }
+                                                if (day2 > j) {
+                                                    obj.weekValues[j] = 0;
+                                                    objNext.weekValues[k] = parseInt(opt[k]);
                                                 } else {
-                                                    obj.weekValues[j] = parseInt(opt[j]);
-                                                    objNext.weekValues[k] = 0;
-                                                    total += parseInt(opt[j]);
+                                                    if (total <= opt.hours) {
+                                                        obj.weekValues[j] = parseInt(opt[j]);
+                                                        objNext.weekValues[k] = 0;
+                                                        total += parseInt(opt[j]);
+                                                    } else {
+                                                        if (obj.weekValues[j - 1]) {
+                                                            obj.weekValues[j - 1] = parseInt(opt[j - 1]) + (opt.hours - total);
+                                                            obj.weekValues[j] = 0;
+                                                            total += parseInt(obj.weekValues[j - 1]);
+                                                        }
+
+                                                    }
                                                 }
                                             } else {
-                                                obj.weekValues[j] = 0;
-                                                objNext.weekValues[k] = parseInt(opt[k]);
+                                                obj.weekValues[j] = parseInt(opt[j]);
+                                                objNext.weekValues[k] = 0;
                                                 total += parseInt(opt[j]);
                                             }
+                                        } else {
+                                            obj.weekValues[j] = 0;
+                                            objNext.weekValues[k] = parseInt(opt[k]);
+                                            total += parseInt(opt[j]);
                                         }
-                                        obj.weekValues[6] = parseInt(opt['6']);
-                                        obj.weekValues[7] = parseInt(opt['7']);
-                                        total += parseInt(opt['6']);
-                                        total += parseInt(opt['7']);
-
-                                        obj.month = moment(newDate).month() + 1;
-                                        obj.year = year;
-
-                                        var lastMonth = obj.month;
-
-                                        objNext.month = lastMonth + 1;
-                                        objNext.week = obj.week;
-                                        objNext.year = year;
-
-                                        result.push(obj);
-                                        result.push(objNext);
                                     }
+                                    obj.weekValues[6] = parseInt(opt['6']);
+                                    obj.weekValues[7] = parseInt(opt['7']);
+                                    total += parseInt(opt['6']);
+                                    total += parseInt(opt['7']);
+
+                                    obj.month = moment(newDate).month() + 1;
+                                    obj.year = year;
+
+                                    var lastMonth = obj.month;
+
+                                    objNext.month = lastMonth + 1;
+                                    objNext.week = obj.week;
+                                    objNext.year = year;
+
+                                    result.push(obj);
+                                    result.push(objNext);
                                 } else {
                                     if (obj.week === endWeek) {
                                         var i = 1;
@@ -1518,46 +1519,45 @@ var wTrack = function (event, models) {
 
                                 newDate = moment(date).isoWeek(obj.week);
 
-                                dayOfWeek = moment(newDate).day();
+                                dayOfWeek = moment(newDate).day(1);
 
+                                if ((dayOfWeek !== 0) && (dayOfWeek !== 6)){
 
                                 var endOfMonth = moment(newDate).endOf('month').date();
 
                                 if (moment(newDate).date() + 7 > endOfMonth) {
-                                    if ((dayOfWeek <= 5) && (dayOfWeek >= 1)) {
-                                        day = moment(date).day();
+                                    day = moment(date).day();
 
-                                        for (var k = 5; k >= 1; k--) {
-                                            if (k <= moment(newDate).endOf('month').day()) {
-                                                obj.weekValues[k] = parseInt(opt[k]);
-                                                objNext.weekValues[k] = 0;
-                                                total += parseInt(opt[k]);
-                                            } else {
-                                                obj.weekValues[k] = 0;
-                                                objNext.weekValues[k] = parseInt(opt[k]);
-                                                total += parseInt(opt[k]);
-                                            }
-
+                                    for (var k = 5; k >= 1; k--) {
+                                        if (k <= moment(newDate).endOf('month').day()) {
+                                            obj.weekValues[k] = parseInt(opt[k]);
+                                            objNext.weekValues[k] = 0;
+                                            total += parseInt(opt[k]);
+                                        } else {
+                                            obj.weekValues[k] = 0;
+                                            objNext.weekValues[k] = parseInt(opt[k]);
+                                            total += parseInt(opt[k]);
                                         }
-                                        obj.weekValues[6] = 0;
-                                        obj.weekValues[7] = 0;
-                                        objNext.weekValues[6] = parseInt(opt['6']);
-                                        objNext.weekValues[7] = parseInt(opt['7']);
-                                        total += parseInt(opt['6']);
-                                        total += parseInt(opt['7']);
 
-                                        obj.month = moment(newDate).month() + 1;
-                                        obj.year = year;
-
-                                        var lastMonth = obj.month;
-
-                                        objNext.month = lastMonth + 1;
-                                        objNext.week = obj.week;
-                                        objNext.year = year;
-
-                                        result.push(obj);
-                                        result.push(objNext);
                                     }
+                                    obj.weekValues[6] = 0;
+                                    obj.weekValues[7] = 0;
+                                    objNext.weekValues[6] = parseInt(opt['6']);
+                                    objNext.weekValues[7] = parseInt(opt['7']);
+                                    total += parseInt(opt['6']);
+                                    total += parseInt(opt['7']);
+
+                                    obj.month = moment(newDate).month() + 1;
+                                    obj.year = year;
+
+                                    var lastMonth = obj.month;
+
+                                    objNext.month = lastMonth + 1;
+                                    objNext.week = obj.week;
+                                    objNext.year = year;
+
+                                    result.push(obj);
+                                    result.push(objNext);
                                 } else {
                                     day = moment(newDate).day();
                                     for (var j = 5; j >= 1; j--) {
@@ -1578,6 +1578,8 @@ var wTrack = function (event, models) {
 
                                     result.push(obj);
                                 }
+
+                                }
                             } else {
                                 var dayOfWeek;
 
@@ -1590,40 +1592,38 @@ var wTrack = function (event, models) {
                                 var endOfMonth = moment(newDate).endOf('month').date();
 
                                 if (moment(newDate).date() + 7 > endOfMonth) {
-                                    if ((dayOfWeek <= 5) && (dayOfWeek >= 1)) {
-                                        day = moment(date).day();
+                                    day = moment(date).day();
 
-                                        for (var k = 5; k >= 1; k--) {
-                                            if (k <= moment(newDate).endOf('month').day()) {
-                                                obj.weekValues[k] = parseInt(opt[k]);
-                                                objNext.weekValues[k] = 0;
-                                                total += parseInt(opt[k]);
-                                            } else {
-                                                obj.weekValues[k] = 0;
-                                                objNext.weekValues[k] = parseInt(opt[k]);
-                                                total += parseInt(opt[k]);
-                                            }
-
+                                    for (var k = 5; k >= 1; k--) {
+                                        if (k <= moment(newDate).endOf('month').day()) {
+                                            obj.weekValues[k] = parseInt(opt[k]);
+                                            objNext.weekValues[k] = 0;
+                                            total += parseInt(opt[k]);
+                                        } else {
+                                            obj.weekValues[k] = 0;
+                                            objNext.weekValues[k] = parseInt(opt[k]);
+                                            total += parseInt(opt[k]);
                                         }
-                                        obj.weekValues[6] = 0;
-                                        obj.weekValues[7] = 0;
-                                        objNext.weekValues[6] = parseInt(opt['6']);
-                                        objNext.weekValues[7] = parseInt(opt['7']);
-                                        total += parseInt(opt['6']);
-                                        total += parseInt(opt['7']);
 
-                                        obj.month = moment(newDate).month() + 1;
-                                        obj.year = year;
-
-                                        var lastMonth = obj.month;
-
-                                        objNext.month = lastMonth + 1;
-                                        objNext.week = obj.week;
-                                        objNext.year = year;
-
-                                        result.push(obj);
-                                        result.push(objNext);
                                     }
+                                    obj.weekValues[6] = 0;
+                                    obj.weekValues[7] = 0;
+                                    objNext.weekValues[6] = parseInt(opt['6']);
+                                    objNext.weekValues[7] = parseInt(opt['7']);
+                                    total += parseInt(opt['6']);
+                                    total += parseInt(opt['7']);
+
+                                    obj.month = moment(newDate).month() + 1;
+                                    obj.year = year;
+
+                                    var lastMonth = obj.month;
+
+                                    objNext.month = lastMonth + 1;
+                                    objNext.week = obj.week;
+                                    objNext.year = year;
+
+                                    result.push(obj);
+                                    result.push(objNext);
                                 } else {
                                     day = moment(date).day();
 
