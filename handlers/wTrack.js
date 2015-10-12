@@ -1519,7 +1519,7 @@ var wTrack = function (event, models) {
 
                                 newDate = moment(date).isoWeek(obj.week);
 
-                                dayOfWeek = moment(newDate).day(1);
+                                dayOfWeek = moment(newDate).day();
 
                                 if ((dayOfWeek !== 0) && (dayOfWeek !== 6)){
 
@@ -1585,7 +1585,7 @@ var wTrack = function (event, models) {
 
                                 obj.week = endWeek - i;
 
-                                newDate = moment(date).isoWeek(obj.week);
+                                newDate = moment(date).isoWeek(obj.week).day(1);
 
                                 dayOfWeek = moment(newDate).day();
 
