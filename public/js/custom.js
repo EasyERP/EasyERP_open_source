@@ -61,6 +61,8 @@ define([
 
     var getCurrentVT = function (option) {
         var viewType;
+        var savedFilter;
+
         if (option && (option.contentType != App.contentType)) {
             App.ownContentType = false;
         }
@@ -161,14 +163,14 @@ define([
 
         //for default filter && defaultViewType
         if (option && option.contentType && App.savedFilters[option.contentType]) {
-            this.savedFilters = App.savedFilters[option.contentType];
+            savedFilter = App.savedFilters[option.contentType];
 
-            for (var j = this.savedFilters.length - 1; j >= 0; j--) {
-                if (this.savedFilters[j]) {
-                    if (this.savedFilters[j].byDefault === option.contentType){
+            for (var j = savedFilter.length - 1; j >= 0; j--) {
+                if (savedFilter[j]) {
+                    if (savedFilter[j].byDefault === option.contentType){
 
-                        if (this.savedFilters[j].viewType){
-                            viewType = this.savedFilters[j].viewType;
+                        if (savedFilter[j].viewType){
+                            viewType = savedFilter[j].viewType;
                         }
                     }
                 }

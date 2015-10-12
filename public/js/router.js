@@ -820,7 +820,8 @@ define([
 
             function goThumbnails(context) {
                 var currentContentType = context.testContent(contentType);
-                var viewType = custom.getCurrentVT({contentType: contentType});
+                var viewType = custom.getCurrentVT({contentType: contentType}); //for default filter && defaultViewType
+
                 if (contentType !== currentContentType) {
                     contentType = currentContentType;
                     var url = '#easyErp/' + contentType + '/' + viewType;
