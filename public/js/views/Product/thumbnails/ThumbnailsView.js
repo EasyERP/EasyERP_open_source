@@ -49,17 +49,6 @@
                 "click .removeFilterButton": "removeFilter",
             },
 
-            hideItemsNumber: function (e) {
-                var el = e.target;
-
-                this.$el.find(".allNumberPerPage, .newSelectList").hide();
-                if (!el.closest('.search-view')) {
-                    $('.search-content').removeClass('fa-caret-up');
-                    this.$el.find('.search-options').addClass('hidden');
-                };
-            },
-
-
             //modified for filter Vasya
             getTotalLength: function (currentNumber, filter, newCollection) {
                 dataService.getData('/product/totalCollectionLength', {
@@ -243,6 +232,7 @@
 
                 this.filterView.renderFilterContent();
             },
+
             //modified for filter Vasya
             showMoreAlphabet: function (newModels) {
                 var holder = this.$el;

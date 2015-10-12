@@ -23,7 +23,14 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     "click a.generateType"                                            : "generateType",
                     "click td.editable"                                               : "editRow",
                     "change .editable "                                               : "setEditable",
-                    "click"                                                           : "hideNewSelect"
+                    "click"                                                           : "hideNewSelect",
+                    'keydown input.editing'                                           : 'keyDown'
+                },
+
+                keyDown: function (e) {
+                    if (e.which === 13) {
+                        this.setChangedValueToModel();
+                    }
                 },
 
                 stopDefaultEvents: function (e) {
@@ -40,29 +47,6 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     this.modelJSON = this.model.toJSON();
 
                     this.resultArray = [];
-
-                    this.defaultObject = {
-                        startDate : '',
-                        endDate   : '',
-                        hours     : '',
-                        project   : {
-                            projectName   : this.modelJSON.projectName,
-                            workflow      : this.modelJSON.workflow,
-                            customer      : this.modelJSON.customer,
-                            projectmanager: this.modelJSON.projectmanager,
-                            _id           : this.modelJSON._id
-                        },
-                        employee  : {},
-                        department: {},
-                        1         : 8,
-                        2         : 8,
-                        3         : 8,
-                        4         : 8,
-                        5         : 8,
-                        6         : 0,
-                        7         : 0,
-                        revenue   : 120
-                    };
 
                     this.render();
                 },
@@ -99,6 +83,29 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                     var self = this;
 
+                    var defaultObject = {
+                        startDate : '',
+                        endDate   : '',
+                        hours     : '',
+                        project   : {
+                            projectName   : this.modelJSON.projectName,
+                            workflow      : this.modelJSON.workflow,
+                            customer      : this.modelJSON.customer,
+                            projectmanager: this.modelJSON.projectmanager,
+                            _id           : this.modelJSON._id
+                        },
+                        employee  : {},
+                        department: {},
+                        1         : 8,
+                        2         : 8,
+                        3         : 8,
+                        4         : 8,
+                        5         : 8,
+                        6         : 0,
+                        7         : 0,
+                        revenue   : 120
+                    };
+
                     var target = $(e.target);
                     //var wTrackPerEmployeeContainer = this.$el.find('#wTrackItemsHolder');
                     var parrent = target.closest('tbody');
@@ -118,7 +125,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     });
                     var errors = this.$el.find('.errorContent');
 
-                    this.resultArray.push(this.defaultObject);
+                    this.resultArray.push(defaultObject);
 
                     if ((rowId === undefined || rowId !== 'false') && errors.length === 0) {
 
@@ -343,8 +350,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                 nextSelect: function (e) {
                     this.showNewSelect(e, false, true);
-                }
-                ,
+                },
 
                 prevSelect: function (e) {
                     this.showNewSelect(e, true, false);
@@ -387,7 +393,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                         department = {
                             _id           : element.department._id,
                             departmentName: element.department.name
-                        }
+                        };
 
                         editWtrackModel.employee = employee;
                         editWtrackModel.department = department;
@@ -416,14 +422,12 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     this.hideNewSelect();
 
                     return false;
-                }
-                ,
+                },
 
                 hideNewSelect: function () {
                     $(".newSelectList:not('.generateTypeUl')").remove();
                     $(".generateTypeUl").hide();
-                }
-                ,
+                },
 
                 render: function () {
                     var thisEl = this.$el;

@@ -34,7 +34,8 @@ var Filters = function (models) {
                 salesInvoice    : getSalesInvoiceFiltersValues,
                 customerPayments: getCustomerPaymentsFiltersValues,
                 supplierPayments: getSupplierPaymentsFiltersValues,
-                Product         : getProductsFiltersValues
+                Product         : getProductsFiltersValues,
+                salesProduct         : getProductsFiltersValues
             },
             function (err, result) {
                 if (err) {
