@@ -6179,7 +6179,7 @@ textarea#editInput {
 .search-options {
   height: 30px;
   position: absolute;
-  width: 70%;
+  width: 75%;
   top: ~"calc(100% - 1px)";
   right: 0;
   z-index: 500;
@@ -6421,14 +6421,7 @@ textarea#editInput {
     cursor: pointer;
 
     input, input:focus {
-      position: absolute;
-      width: 95%;
-      height: 100%;
-      top: 0;
-      left: 0;
       text-align: center;
-      padding: 0;
-      border: none;
       outline: none;
       outline-offset: 0;
       display: none;
@@ -6446,7 +6439,6 @@ textarea#editInput {
   }
   thead {
     th {
-      //
       border: 1px solid @border-color-main;
       &#legandCaption {
         text-align: left;
@@ -6470,23 +6462,24 @@ textarea#editInput {
     }
   }
 
-  tfoot {
-    td {
-      //
-    }
-  }
-
   tbody, tfoot {
     td {
       border: 1px solid @border-color-main;
       text-align: center;
+      color: @mainText-color;
 
-      &.employee, &.department {
-        text-align: right;
-      }
+
       &.totalDays {
         //
       }
+      &.notForm {
+        padding-left: 10px;
+        line-height: 10px;
+        input {
+          display: block;
+        }
+      }
+      &.employee{}
     }
   }
 
@@ -6501,6 +6494,10 @@ textarea#editInput {
     .employee, .department, .totalDays {
       color: @name-text-color;
     }
+    .employee {
+        text-align: right !important;
+    }
+
   }
 
   #caption, .borders, thead, tbody, tfoot {
@@ -6518,11 +6515,29 @@ textarea#editInput {
     color: #000;
   }
   tbody {
-    tr:not(.subRow):hover {
-      td:not(.selectedType) {
-        //background-color: #333333;
-        color: #ffffff;
+    tr {
+      &:not(.subRow):hover {
+        td {
+          &:not(.selectedType) {
+            color: #ffffff;
+          }
+        }
       }
+      td {
+        &>div {
+          float: right;
+          a {
+            font-size: 12px;
+            line-height: 15px;
+          }
+        }
+        &:nth-child(2) {
+          text-align: left;
+          font-size: 12px;
+          line-height: 15px;
+        }
+      }
+
     }
   }
 }
@@ -6573,18 +6588,19 @@ textarea#editInput {
     width: 83%;
     border-bottom-left-radius: 5px;
     border-top-left-radius: 5px;
+    border-right: none;
     color: @filter-text-color;
   }
   #saveFilterButton {
     border: 1px solid @border-color-main;
-    border-left: 0;
-    margin-left: -7px;
+    //border-left: 0;
+    margin-left: -3px;
     box-sizing: border-box;
     border-radius: 0 5px 5px 0;
-    height: 28px;
+    line-height: 16px;
+    padding-top: 4px;
     background-color: @bg-main;
     color: @kanab-text-color;
-    border-left: 1px solid #7f7f80;
   }
   .removeSavedFilter {
     float: right;

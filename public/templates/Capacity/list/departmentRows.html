@@ -1,9 +1,9 @@
 <% departments.forEach(function(department, index){ %>
 <tr data-id="<%=department ? department._id : ''%>" data-name="<%=department ? department.name : ''%>" class="departmentRow">
-    <td class="notForm "><input style="display: block;" type="checkbox" class="departmentCB" /></td>
-    <td colspan="2" style="text-align: left">
+    <td class="notForm "><input type="checkbox" class="departmentCB" /></td>
+    <td colspan="2">
         <%=department ? department.name : ''%>
-        <div style="width: auto; float: right;">
+        <div >
             <a href="javascript;" class="createBtn icon add left" title="Create">5</a>
         </div>
     </td>

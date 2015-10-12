@@ -1251,7 +1251,7 @@ input::-ms-clear {
   font-size: 12px !important;
 }
 .pagination #pageList {
-  background-color: #242b30;
+  background-color: #303031;
   border: 1px solid #7f7f80;
   position: absolute;
   bottom: 17px;
@@ -1312,7 +1312,7 @@ input::-ms-clear {
   border-left: none;
 }
 .pagination .pageList ul {
-  background-color: #242b30;
+  background-color: #303031;
   border: 1px solid #7f7f80;
   position: absolute;
   bottom: 17px;
@@ -3651,7 +3651,7 @@ dl dd a.formLink {
 }
 .btn {
   border: 1px solid #7f7f80;
-  color: #242b30;
+  color: #303031;
   margin: 0;
   padding: 2px 6px;
   line-height: 13px;
@@ -3667,7 +3667,7 @@ dl dd a.formLink {
 }
 button {
   border: 1px solid #7f7f80;
-  color: #242b30;
+  color: #303031;
   margin: 0;
   padding: 2px 6px;
   line-height: 13px;
@@ -3684,7 +3684,7 @@ button:hover {
 button.red,
 a.red {
   border: 1px solid #7f7f80;
-  color: #242b30;
+  color: #303031;
   margin: 0;
   padding: 2px 6px;
   line-height: 13px;
@@ -4354,7 +4354,7 @@ table#workflows tr td.edit-status {
   right: auto;
   bottom: auto;
   width: 100%;
-  background: #242b30;
+  background: #303031;
   height: 30px;
   padding: 0;
   margin: 0;
@@ -4362,7 +4362,7 @@ table#workflows tr td.edit-status {
 }
 #mainmenu-holder nav {
   float: left;
-  background: #242b30;
+  background: #303031;
 }
 #mainmenu-holder nav ul {
   padding: 0;
@@ -5127,7 +5127,7 @@ ul.dialog-tabs li.right button {
   margin-left: 4px;
   position: relative;
   display: block;
-  background: #242b30 !important;
+  background: #303031 !important;
   border: 1px solid #7f7f80;
   -webkit-transition: -webkit-transform, -webkit-box-shadow, border 200ms linear;
   width: 280px;
@@ -5400,7 +5400,7 @@ ul.dialog-tabs li.right button {
 }
 .ui-dialog {
   border: 1px solid #7f7f80;
-  background: #242b30;
+  background: #303031;
   color: #cdcdcd;
   z-index: 1000;
   margin: 0 auto;
@@ -5547,7 +5547,7 @@ ul.dialog-tabs li.right button {
 }
 .ui-dialog .inner {
   padding: 5px;
-  background: #242b30;
+  background: #303031;
 }
 .ui-dialog .form-holder {
   position: relative;
@@ -5775,7 +5775,7 @@ ul.dialog-tabs li.right button {
 }
 .ui-dialog .ui-dialog-buttonpane {
   border: 1px solid #7f7f80;
-  background: #242b30;
+  background: #303031;
   color: #cdcdcd;
   text-align: left;
   border-width: 1px 0 0;
@@ -6075,7 +6075,7 @@ ul.dialog-tabs .withEndContract .arrow {
   float: right;
   width: 80px;
   border: 1px solid #7f7f80;
-  color: #242b30;
+  color: #303031;
   margin: 0;
   padding: 2px 6px;
   line-height: 13px;
@@ -6202,7 +6202,7 @@ ul.chart-tabs .withEndContract .arrow {
   float: right;
   width: 80px;
   border: 1px solid #7f7f80;
-  color: #242b30;
+  color: #303031;
   margin: 0;
   padding: 2px 6px;
   line-height: 13px;
@@ -8492,7 +8492,7 @@ textarea#editInput {
 .search-options {
   height: 30px;
   position: absolute;
-  width: 70%;
+  width: 75%;
   top: calc(100% - 1px);
   right: 0;
   z-index: 500;
@@ -8709,14 +8709,7 @@ textarea#editInput {
 .vacation-list th input,
 .vacation-list td input:focus,
 .vacation-list th input:focus {
-  position: absolute;
-  width: 95%;
-  height: 100%;
-  top: 0;
-  left: 0;
   text-align: center;
-  padding: 0;
-  border: none;
   outline: none;
   outline-offset: 0;
   display: none;
@@ -8758,12 +8751,16 @@ textarea#editInput {
 .vacation-list tfoot td {
   border: 1px solid #7f7f80;
   text-align: center;
+  color: #cdcdcd;
 }
-.vacation-list tbody td.employee,
-.vacation-list tfoot td.employee,
-.vacation-list tbody td.department,
-.vacation-list tfoot td.department {
-  text-align: right;
+.vacation-list tbody td.notForm,
+.vacation-list tfoot td.notForm {
+  padding-left: 10px;
+  line-height: 10px;
+}
+.vacation-list tbody td.notForm input,
+.vacation-list tfoot td.notForm input {
+  display: block;
 }
 .vacation-list tfoot tr td {
   color: #cdcdcd;
@@ -8772,6 +8769,9 @@ textarea#editInput {
 .vacation-list tbody .department,
 .vacation-list tbody .totalDays {
   color: #cdcdcd;
+}
+.vacation-list tbody .employee {
+  text-align: right !important;
 }
 .vacation-list #caption,
 .vacation-list .borders,
@@ -8793,6 +8793,24 @@ textarea#editInput {
 .salary-list tbody tr:not(.subRow):hover td:not(.selectedType),
 .subSalary-list tbody tr:not(.subRow):hover td:not(.selectedType) {
   color: #ffffff;
+}
+.vacation-list tbody tr td > div,
+.salary-list tbody tr td > div,
+.subSalary-list tbody tr td > div {
+  float: right;
+}
+.vacation-list tbody tr td > div a,
+.salary-list tbody tr td > div a,
+.subSalary-list tbody tr td > div a {
+  font-size: 12px;
+  line-height: 15px;
+}
+.vacation-list tbody tr td:nth-child(2),
+.salary-list tbody tr td:nth-child(2),
+.subSalary-list tbody tr td:nth-child(2) {
+  text-align: left;
+  font-size: 12px;
+  line-height: 15px;
 }
 .filtersActive {
   float: right;
@@ -8834,18 +8852,18 @@ textarea#editInput {
   width: 83%;
   border-bottom-left-radius: 5px;
   border-top-left-radius: 5px;
+  border-right: none;
   color: #cdcdcd;
 }
 #favoritesContent #saveFilterButton {
   border: 1px solid #7f7f80;
-  border-left: 0;
-  margin-left: -7px;
+  margin-left: -3px;
   box-sizing: border-box;
   border-radius: 0 5px 5px 0;
-  height: 28px;
+  line-height: 16px;
+  padding-top: 4px;
   background-color: #303031;
   color: #a9a9a9;
-  border-left: 1px solid #7f7f80;
 }
 #favoritesContent .removeSavedFilter {
   float: right;
