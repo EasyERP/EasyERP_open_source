@@ -231,10 +231,10 @@ define([
                     tdForUpdate.text(this.checkMoneyTd(tdForUpdate, value));
 
                     diffOnCashRealValue = diffOnCash.attr('data-value');
-                    diffOnCashRealValue = diffOnCashRealValue ? diffOnCashRealValue : diffOnCash.attr('data-cash');
+                    diffOnCashRealValue = diffOnCashRealValue ? diffOnCashRealValue : diffOnCash.text();
 
                     diffOnCardRealValue = diffOnCard.attr('data-value');
-                    diffOnCardRealValue = diffOnCardRealValue ? diffOnCardRealValue : diffOnCard.attr('data-cash');
+                    diffOnCardRealValue = diffOnCardRealValue ? diffOnCardRealValue : diffOnCard.text();
 
                     totalValue = parseInt(diffOnCashRealValue) + parseInt(diffOnCardRealValue);
                     diffTotal.text(this.checkMoneyTd(diffTotal, totalValue));
