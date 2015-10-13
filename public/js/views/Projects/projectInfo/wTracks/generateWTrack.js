@@ -276,12 +276,19 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                 generateItems: function (e) {
                     var errors = this.$el.find('.errorContent');
                     var url;
-                    var filter;
+                    //var filter;
                     var self = this;
                     var data = JSON.stringify(this.resultArray);
                     var tabs;
                     var activeTab;
                     var dialogHolder;
+
+                    var filter = {
+                        'projectName': {
+                            key  : 'project._id',
+                            value: [this.modelJSON._id]
+                        }
+                    };
 
                     this.stopDefaultEvents(e);
 
@@ -299,7 +306,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                             //$('#weTracks').html('');
                             self.hideDialog();
 
-                            self.wTrackCollection.showMore({count: 50, page: 1});
+                            self.wTrackCollection.showMore({count: 50, page: 1, filter: filter});
 
                             tabs = $(".chart-tabs");
                             activeTab = tabs.find('.active');

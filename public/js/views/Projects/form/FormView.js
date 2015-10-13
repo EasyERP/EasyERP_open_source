@@ -525,11 +525,15 @@ define([
                     new wTrackView({
                         model: self.wCollection
                     }).render();
-                }
+                };
+
+                function showMoreContent(newModels) {
+                    self.wCollection.reset(newModels.toJSON());
+                };
 
                 this.wCollection.unbind();
                 this.wCollection.bind('reset', createView);
-                this.wCollection.bind('showmore', this.showMoreContent, this);
+                this.wCollection.bind('showmore', showMoreContent);
             },
 
             getInvoice: function (cb) {
