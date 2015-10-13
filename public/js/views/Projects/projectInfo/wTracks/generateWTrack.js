@@ -299,7 +299,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                             //$('#weTracks').html('');
                             self.hideDialog();
 
-                            self.wTrackCollection.showMore({reset: true, page: 1});
+                            self.wTrackCollection.showMore({count: 50, page: 1});
 
                             tabs = $(".chart-tabs");
                             activeTab = tabs.find('.active');

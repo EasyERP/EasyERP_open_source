@@ -529,6 +529,7 @@ define([
 
                 this.wCollection.unbind();
                 this.wCollection.bind('reset', createView);
+                this.wCollection.bind('showmore', this.showMoreContent, this);
             },
 
             getInvoice: function (cb) {
