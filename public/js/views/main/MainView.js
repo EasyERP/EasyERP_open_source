@@ -69,6 +69,7 @@ define([
                 dataService.getData('/currentUser', null, function (response, context) {
                     currentUser = response.user;
                     App.currentUser = currentUser;
+                    App.savedFilters = response.savedFilters;
 
                     if (currentUser && currentUser.profile && currentUser.profile.profileName == 'baned') {
                         $('title').text("EasyERP");
