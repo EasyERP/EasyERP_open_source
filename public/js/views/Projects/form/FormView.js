@@ -47,13 +47,15 @@ define([
 
             initialize: function (options) {
                 this.formModel = options.model;
+                this.id = this.formModel.id;
                 this.formModel.urlRoot = '/Projects/';
                 this.responseObj = {};
             },
 
             createDialog: function () {
                 new GenerateWTrack({
-                    model: this.formModel
+                    model           : this.formModel,
+                    wTrackCollection: this.wCollection
                 });
             },
 
@@ -354,8 +356,9 @@ define([
 
                 thisEl.find('#createBonus').hide();
                 _.bindAll(this, 'getQuotations');
+                _.bindAll(this, 'getWTrack');
 
-                paralellTasks = [this.getWTrack, this.getInvoice, this.getQuotations];
+                paralellTasks = [this.getInvoice, this.getWTrack, this.getQuotations];
 
                 async.parallel(paralellTasks, function (err, result) {
                     //self.getDataForDetails(result);
@@ -502,30 +505,30 @@ define([
             },
 
             getWTrack: function (cb) {
-                var _id = window.location.hash.split('form/')[1];
+                //var _id = this.formModel.id;
+                var self = this;
+
                 var filter = {
                     'projectName': {
                         key  : 'project._id',
-                        value: [_id]
+                        value: [this.id]
                     }
                 };
 
-                dataService.getData('/wTrack/getForProjects',
-                    {
-                        filter: filter
-                    }, function (response) {
+                this.wCollection = new wTrackCollection({
+                    viewType: 'list',
+                    filter  : filter
+                });
 
-                        if (response.error) {
-                            return cb(response.error);
-                        }
 
-                        new wTrackView({
-                            model: response.wTrack
-                        });
-                        cb(null, response);
+                function createView() {
+                    new wTrackView({
+                        model: self.wCollection
+                    }).render();
+                }
 
-                    }, this);
-
+                this.wCollection.unbind();
+                this.wCollection.bind('reset', createView);
             },
 
             getInvoice: function (cb) {
@@ -591,26 +594,28 @@ define([
             },
 
             getQuotations: function (cb) {
-                var _id = this.formModel.id;
+                //var _id = this.formModel.id;
+                var self = this;
+
                 var filter = {
                     'projectName': {
                         key  : 'project',
-                        value: [_id]
+                        value: [this.id]
                     }
                 };
 
                 var qCollection = new quotationCollection({
-                    count : 50,
-                    viewType: 'list',
+                    count      : 50,
+                    viewType   : 'list',
                     contentType: 'Quotation',
-                    filter: filter
+                    filter     : filter
                 });
 
 
                 function createView() {
                     new QuotationView({
                         collection: qCollection,
-                        projectId : _id
+                        projectId : self.id
                     }).render();
                 }
 
