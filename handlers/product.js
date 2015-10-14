@@ -205,6 +205,10 @@ var Products = function (models) {
 
         if (query && query.canBeSold) {
             queryObject.canBeSold = true;
+
+            if (query.service){
+                queryObject.info.service = 'Service';
+            }
         } else {
             queryObject.canBePurchased = true;
         }

@@ -53,7 +53,7 @@ define([
 
                 productItemContainer = this.$el.find('#productItemsHolder');
                 productItemContainer.append(
-                    new ProductItemView({canBeSold: true}).render().el
+                    new ProductItemView({canBeSold: true, service: 'Service'}).render().el
                 );
 
             },
@@ -72,7 +72,7 @@ define([
                     quotation: model.toJSON(),
                     startNumber: currentNumber,
                     dateToLocal: common.utcDateToLocaleDate
-                }))
+                }));
 
                 content.hideDialog();
             }
