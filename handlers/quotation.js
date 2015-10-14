@@ -455,6 +455,7 @@ var Quotation = function (models) {
             query.populate('paymentTerm');
             query.populate('products.product', '_id, name');
             query.populate('workflow', '-sequence');
+            query.populate('project', 'projectName projectmanager customer');
 
             query.exec(waterfallCallback);
         };
