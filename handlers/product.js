@@ -207,7 +207,8 @@ var Products = function (models) {
             queryObject.canBeSold = true;
 
             if (query.service){
-                queryObject.info.service = 'Service';
+                var key = 'info.productType';
+                queryObject[key] = 'Service';
             }
         } else {
             queryObject.canBePurchased = true;
