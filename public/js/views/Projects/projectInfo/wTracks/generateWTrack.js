@@ -9,22 +9,22 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
     function (generateTemplate, wTrackPerEmployeeTemplate, wTrackPerEmployee, populate, dataService, moment, common) {
         "use strict";
         var CreateView = Backbone.View.extend({
-                template                 : _.template(generateTemplate),
+                template: _.template(generateTemplate),
                 wTrackPerEmployeeTemplate: _.template(wTrackPerEmployeeTemplate),
-                responseObj              : {},
+                responseObj: {},
 
                 events: {
-                    "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
-                    "click .current-selected"                                         : "showNewSelect",
-                    "click .newSelectList li.miniStylePagination"                     : "notHide",
+                    "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
+                    "click .current-selected": "showNewSelect",
+                    "click .newSelectList li.miniStylePagination": "notHide",
                     "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                     "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                    "click #addNewEmployeeRow"                                        : "addNewEmployeeRow",
-                    "click a.generateType"                                            : "generateType",
-                    "click td.editable"                                               : "editRow",
-                    "change .editable "                                               : "setEditable",
-                    "click"                                                           : "hideNewSelect",
-                    'keydown input.editing'                                           : 'keyDown'
+                    "click #addNewEmployeeRow": "addNewEmployeeRow",
+                    "click a.generateType": "generateType",
+                    "click td.editable": "editRow",
+                    "change .editable ": "setEditable",
+                    "click": "hideNewSelect",
+                    'keydown input.editing': 'keyDown'
                 },
 
                 keyDown: function (e) {
@@ -85,26 +85,26 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     var self = this;
 
                     var defaultObject = {
-                        startDate : '',
-                        endDate   : '',
-                        hours     : '',
-                        project   : {
-                            projectName   : this.modelJSON.projectName,
-                            workflow      : this.modelJSON.workflow,
-                            customer      : this.modelJSON.customer,
+                        startDate: '',
+                        endDate: '',
+                        hours: '',
+                        project: {
+                            projectName: this.modelJSON.projectName,
+                            workflow: this.modelJSON.workflow,
+                            customer: this.modelJSON.customer,
                             projectmanager: this.modelJSON.projectmanager,
-                            _id           : this.modelJSON._id
+                            _id: this.modelJSON._id
                         },
-                        employee  : {},
+                        employee: {},
                         department: {},
-                        1         : 8,
-                        2         : 8,
-                        3         : 8,
-                        4         : 8,
-                        5         : 8,
-                        6         : 0,
-                        7         : 0,
-                        revenue   : 120
+                        1: 8,
+                        2: 8,
+                        3: 8,
+                        4: 8,
+                        5: 8,
+                        6: 0,
+                        7: 0,
+                        revenue: 120
                     };
 
                     var target = $(e.target);
@@ -119,10 +119,10 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     var week = date.isoWeek();
 
                     var elem = this.wTrackPerEmployeeTemplate({
-                        year : year,
+                        year: year,
                         month: month,
-                        week : week,
-                        id   : this.resultArray.length
+                        week: week,
+                        id: this.resultArray.length
                     });
                     var errors = this.$el.find('.errorContent');
 
@@ -150,10 +150,10 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     var self = this;
 
                     dataPickerStartContainers.datepicker({
-                        dateFormat : "d M, yy",
+                        dateFormat: "d M, yy",
                         changeMonth: true,
-                        changeYear : true,
-                        onSelect   : function (text, datPicker) {
+                        changeYear: true,
+                        onSelect: function (text, datPicker) {
                             var targetInput = $(this);
                             var td = targetInput.closest('tr');
                             var endDatePicker = td.find('.endDateDP');
@@ -172,10 +172,10 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     }).removeClass('datapicker');
 
                     dataPickerEndContainers.datepicker({
-                        dateFormat : "d M, yy",
+                        dateFormat: "d M, yy",
                         changeMonth: true,
-                        changeYear : true,
-                        onSelect   : function (text, datPicker) {
+                        changeYear: true,
+                        onSelect: function (text, datPicker) {
                             var targetInput = $(this);
 
                             self.setChangedValueToModel(targetInput);
@@ -250,19 +250,22 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                 },
 
                 setChangedValueToModel: function (elem) {
-                    var editedElement = elem || this.$listTable.find('.editing:not(".endDateInput")');
+                    var editedElement = elem || this.$listTable.find('.editing');
                     var editedCol;
                     var editedElementRowId;
                     var editedElementContent;
                     var editedElementValue;
 
-                    if (/*wTrackId !== this.wTrackId &&*/ editedElement.length) {
+                    if (editedElement.length) {
+
+                        if (editedElement.length > 1) {
+                            editedElement = $(editedElement[1]);
+                        }
+
                         editedCol = editedElement.closest('td');
                         editedElementRowId = editedElement.closest('tr').data('id');
                         editedElementContent = editedCol.data('content');
                         editedElementValue = editedElement.val();
-
-                        //editWtrackModel = this.editCollection.get(editedElementRowId);
 
                         this.resultArray[editedElementRowId][editedElementContent] = editedElementValue;
 
@@ -297,11 +300,11 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     }
 
                     $.ajax({
-                        type       : 'Post',
-                        url        : '/wTrack/generateWTrack',
+                        type: 'Post',
+                        url: '/wTrack/generateWTrack',
                         contentType: "application/json",
-                        data       : data,
-                        success    : function () {
+                        data: data,
+                        success: function () {
 
                             //$('#weTracks').html('');
                             self.hideDialog();
@@ -327,7 +330,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                                     filter = {
                                         'projectName': {
-                                            key  : 'project._id',
+                                            key: 'project._id',
                                             value: [self.modelJSON['_id']]
                                         }
                                     };
@@ -339,7 +342,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                                 }
                             });*/
                         },
-                        error      : function () {
+                        error: function () {
                             alert('error');
                         }
                     });
@@ -414,11 +417,11 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                         departmentContainer.removeClass('errorContent');
 
                         employee = {
-                            _id : element._id,
+                            _id: element._id,
                             name: element.name
                         };
                         department = {
-                            _id           : element.department._id,
+                            _id: element.department._id,
                             departmentName: element.department.name
                         };
 
@@ -466,17 +469,17 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                     this.$el = $(dialog).dialog({
                         dialogClass: "edit-dialog",
-                        width      : 1200,
-                        title      : "Generate weTrack",
-                        buttons    : {
-                            save  : {
-                                text : "Generate",
+                        width: 1200,
+                        title: "Generate weTrack",
+                        buttons: {
+                            save: {
+                                text: "Generate",
                                 class: "btn",
-                                id   : "generateBtn",
+                                id: "generateBtn",
                                 click: self.generateItems
                             },
                             cancel: {
-                                text : "Cancel",
+                                text: "Cancel",
                                 class: "btn",
                                 click: function () {
                                     self.hideDialog();

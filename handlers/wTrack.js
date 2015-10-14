@@ -824,7 +824,7 @@ var wTrack = function (event, models) {
                 var options = {
                     startDate: opt.startDate,
                     endDate: opt.endDate,
-                    hours: opt.hours
+                    hours: parseInt(opt.hours)
                 };
 
                 async.parallel([calculateWeeks, getWorkflowStatus], function (err, result) {
@@ -1060,7 +1060,7 @@ var wTrack = function (event, models) {
                                             lastwTrack = element;
                                             if (lastwTrack[1] === 0) {
                                                 for (var i = 7; i >= 1; i--) {
-                                                    lastwTrack[i] = opt[i];
+                                                    lastwTrack[i] = parseInt(opt[i]);
                                                 }
                                             }
                                         }
@@ -1139,30 +1139,9 @@ var wTrack = function (event, models) {
 
                                                 newObj[i - 1] = newObj[i - 1] - (globalTotal - opt.hours);
 
-                                                //if (newObj[i - 1 - 2]) {
-                                                //    hoursInWeek -= newObj[i - 1 - 2];
-                                                //    newObj[i - 2] = diff - hoursInWeek;
-                                                //}
-
-
                                                 for (var j = i; j <= 7; j++) {
                                                     newObj[j] = 0;
                                                 }
-
-                                                //if (diff - hoursInWeek < 0) {
-                                                //    var hour = 0;
-                                                //    var i = 1;
-                                                //
-                                                //    while (hour < diff) {
-                                                //        hour += newObj[i];
-                                                //        if (hour > diff) {
-                                                //            newObj[i] = newObj[i] - (hour - diff);
-                                                //        }
-                                                //        i++;
-                                                //    }
-                                                //
-                                                //
-                                                //}
 
 
                                                 hoursInWeek = 0;
@@ -1210,15 +1189,8 @@ var wTrack = function (event, models) {
                                             }
                                         }
                                     }
-
-
                                 }
 
-                                // }
-
-                                //if (opt.hours && (addHours > 0)) {
-                                //    generateAddWeeks((totalHolidays + totalVacations) * 8, dateArray[dateArray.length - 1], lastwTrackObj, dateByWeek);
-                                //}
                             });
 
                         });
@@ -1331,8 +1303,8 @@ var wTrack = function (event, models) {
                 function calculateWeeks(fCb) {
                     var data = options;
                     var startDate = moment(data.startDate);
-                    var endDate = moment(data.endDate);
-                    var hours = data.hours;
+                    var endDate = data.endDate ? moment(data.endDate) : '';
+                    var hours = parseInt(data.hours);
                     var diff;
                     var result = [];
                     var endYear;
@@ -1505,7 +1477,7 @@ var wTrack = function (event, models) {
                                         if (opt.hours) {
                                             while (opt.hours - total >= hoursInWeek) {
                                                 if (i <= 5) {
-                                                    obj.weekValues[i] = opt[i];
+                                                    obj.weekValues[i] = parseInt(opt[i]);
                                                     hoursInWeek += parseInt(opt[i]);
                                                     total += parseInt(opt[i]);
                                                     i++;
@@ -1514,11 +1486,11 @@ var wTrack = function (event, models) {
 
                                             if (opt.hours - total > 0) {
                                                 if (i !== 6 && i !== 7) {
-                                                    if (opt.hours - total <= opt[i]) {
+                                                    if (opt.hours - total <= parseInt(opt[i])) {
                                                         obj.weekValues[i] = opt.hours - total;
                                                         i++;
                                                     } else {
-                                                        obj.weekValues[i] = opt[i];
+                                                        obj.weekValues[i] = parseInt(opt[i]);
                                                         total += parseInt(opt[i]);
                                                         i++;
                                                         obj.weekValues[i] = opt.hours - total;
@@ -1533,7 +1505,7 @@ var wTrack = function (event, models) {
                                         } else {
                                             for (var k = 1; k <= 7; k++) {
                                                 if (k <= day) {
-                                                    obj.weekValues[k] = opt[k];
+                                                    obj.weekValues[k] = parseInt(opt[k]);
                                                 } else {
                                                     obj.weekValues[k] = 0;
                                                 }
