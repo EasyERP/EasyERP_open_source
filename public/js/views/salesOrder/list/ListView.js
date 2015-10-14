@@ -22,7 +22,7 @@ define([
             sort: null,
             newCollection: null,
             page: null, //if reload page, and in url is valid page
-            contentType: 'Order',//needs in view.prototype.changeLocationHash
+            contentType: 'salesOrder',//needs in view.prototype.changeLocationHash
             viewType: 'list',//needs in view.prototype.changeLocationHash
 
             initialize: function (options) {
@@ -30,7 +30,10 @@ define([
                 this.collection = options.collection;
 
                 this.filter = options.filter ? options.filter : {};
-                this.filter.forSales = true;
+                this.filter.forSales = {
+                    key: 'forSales',
+                    value: ['true']
+                };
 
                 this.sort = options.sort;
                 this.defaultItemsNumber = this.collection.namberToShow || 100;
