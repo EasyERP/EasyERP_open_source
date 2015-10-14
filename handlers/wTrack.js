@@ -1303,8 +1303,8 @@ var wTrack = function (event, models) {
 
                 function calculateWeeks(fCb) {
                     var data = options;
-                    var startDate = moment(data.startDate);
-                    var endDate = data.endDate ? moment(data.endDate) : '';
+                    var startDate = new Date(data.startDate);
+                    var endDate = data.endDate ? new Date(data.endDate) : '';
                     var hours = parseInt(data.hours);
                     var diff;
                     var result = [];
