@@ -203,11 +203,16 @@ var Products = function (models) {
         var queryObject = {};
         var query = req.query;
 
-        //if (query && query.canBeSold) {
-        //    queryObject.canBeSold = true;
-        //} else {
-        //    queryObject.canBePurchased = true;
-        //}
+        if (query && query.canBeSold) {
+            queryObject.canBeSold = true;
+
+            if (query.service){
+                var key = 'info.productType';
+                queryObject[key] = 'Service';
+            }
+        } else {
+            queryObject.canBePurchased = true;
+        }
 
         Product.find(queryObject, function (err, products) {
             if (err) {

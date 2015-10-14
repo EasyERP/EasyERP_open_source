@@ -40,6 +40,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                 initialize: function (options) {
                     this.model = options.model;
+                    this.wTrackCollection = options.wTrackCollection;
                     this.asyncLoadImgs(this.model);
 
                     _.bindAll(this, 'generateItems');
@@ -276,12 +277,21 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                 },
 
                 generateItems: function (e) {
-
                     var errors = this.$el.find('.errorContent');
                     var url;
-                    var filter;
+                    //var filter;
                     var self = this;
                     var data = JSON.stringify(this.resultArray);
+                    var tabs;
+                    var activeTab;
+                    var dialogHolder;
+
+                    var filter = {
+                        'projectName': {
+                            key  : 'project._id',
+                            value: [this.modelJSON._id]
+                        }
+                    };
 
                     this.stopDefaultEvents(e);
 
@@ -296,8 +306,25 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                         data: data,
                         success: function () {
 
+                            //$('#weTracks').html('');
+                            self.hideDialog();
+
+                            self.wTrackCollection.showMore({count: 50, page: 1, filter: filter});
+
+                            tabs = $(".chart-tabs");
+                            activeTab = tabs.find('.active');
+
+                            activeTab.removeClass('active');
+                            tabs.find('#wTrackTab').addClass("active");
+
+
+                            dialogHolder = $(".dialog-tabs-items");
+                            dialogHolder.find(".dialog-tabs-item.active").removeClass("active");
+                            dialogHolder.find('#weTracks').closest('.dialog-tabs-item').addClass("active");
+
+
                             /*TODO change if needed*/
-                            dataService.getData('/filter/getFiltersValues', null, function (response) {
+                           /* dataService.getData('/filter/getFiltersValues', null, function (response) {
                                 if (response && !response.error) {
                                     App.filtersValues = response;
 
@@ -313,7 +340,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                                     return false;
                                 }
-                            });
+                            });*/
                         },
                         error: function () {
                             alert('error');

@@ -199,8 +199,7 @@ var wTrack = function (event, models) {
                     resArray.push(filtrElement);
                     break;
             }
-        }
-        ;
+        };
 
         return resArray;
     };
@@ -1306,8 +1305,8 @@ var wTrack = function (event, models) {
                     var startDate = new Date(data.startDate);
                     var endDate = data.endDate ? new Date(data.endDate) : '';
                     var hours = parseInt(data.hours);
+                    var resultArray = [];
                     var diff;
-                    var result = [];
                     var endYear;
                     var endMonth;
                     var endWeek;
@@ -1316,11 +1315,8 @@ var wTrack = function (event, models) {
                     var startYear = moment(startDate).year();
                     var startWeek = moment(startDate).isoWeek();
                     var isoWeeks = moment(startYear).isoWeeksInYear();
-                    var endDay;
-                    var dayNumber;
                     var startD;
                     var dayNumber;
-                    var endDay;
                     var dayOfWeek;
                     var parallelTasks;
 
@@ -1377,17 +1373,17 @@ var wTrack = function (event, models) {
                         parallelTasks = [firstPart, secondPart];
 
                         async.parallel(parallelTasks, function (err, result) {
-                            result = result[0].concat(result[1]);
+                            resultArray = result[0].concat(result[1]);
 
-                            fCb(null, result);
+                            fCb(null, resultArray);
                         });
                     } else {
                         parallelTasks = [thirdPart];
 
                         async.parallel(parallelTasks, function (err, result) {
-                            result = result[0];
+                            resultArray = result[0];
 
-                            fCb(null, result);
+                            fCb(null, resultArray);
                         });
                     }
 

@@ -7,6 +7,7 @@ var Filters = function (models) {
     var TaskSchema = mongoose.Schemas['Tasks'];
     var wTrackInvoiceSchema = mongoose.Schemas['wTrackInvoice'];
     var customerPaymentsSchema = mongoose.Schemas['Payment'];
+    var QuotationSchema = mongoose.Schemas['Quotation'];
     var productSchema = mongoose.Schemas['Products'];
     var _ = require('../node_modules/underscore');
     var async = require('async');
@@ -22,6 +23,7 @@ var Filters = function (models) {
         var wTrackInvoice = models.get(lastDB, 'wTrackInvoice', wTrackInvoiceSchema);
         var customerPayments = models.get(lastDB, 'Payment', customerPaymentsSchema);
         var Product = models.get(lastDB, 'Products', productSchema);
+        var Quotation = models.get(lastDB, 'Quotation', QuotationSchema);
 
         async.parallel({
                 wTrack          : getWtrackFiltersValues,
@@ -35,7 +37,8 @@ var Filters = function (models) {
                 customerPayments: getCustomerPaymentsFiltersValues,
                 supplierPayments: getSupplierPaymentsFiltersValues,
                 Product         : getProductsFiltersValues,
-                salesProduct         : getProductsFiltersValues
+                salesProduct    : getProductsFiltersValues,
+                Quotation       : getQuotationFiltersValues
             },
             function (err, result) {
                 if (err) {
@@ -116,6 +119,7 @@ var Filters = function (models) {
                         }
                     ]
                 }
+                ;
 
                 callback(null, result);
             });
@@ -390,7 +394,6 @@ var Filters = function (models) {
             });
         };
 
-
         function getSalesInvoiceFiltersValues(callback) {
             wTrackInvoice.aggregate([
                 {
@@ -601,6 +604,41 @@ var Filters = function (models) {
                 ];
 
                 callback(null, result);
+            });
+        };
+
+
+        function getQuotationFiltersValues(callback) {
+            Quotation.aggregate([
+                {
+                    $group: {
+                        _id           : null,
+                        'supplierView': {
+                            $addToSet: {
+                                _id : '$deliverTo',
+                                name: '$supplierView'
+                            }
+                        },
+                        'statusView'  : {
+                            $addToSet: {
+                                _id : '$workflows',
+                                name: '$statusView'
+                            }
+                        }
+                    }
+                }
+            ], function (err, result) {
+                var resObj = {};
+
+                if (err) {
+                    callback(err);
+                }
+
+                if (result && result.length > 0) {
+                    resObj = result[0];
+                }
+
+                callback(null, resObj);
             });
         };
 

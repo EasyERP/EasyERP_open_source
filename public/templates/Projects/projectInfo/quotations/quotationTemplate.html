@@ -1,0 +1,43 @@
+<div id="top-bar-quotations">
+    <div id="createBtnHolder">
+        <a href="javascript;" class="icon add left" title="Create" id="createQuotation">5</a>
+        <a href="javascript;" class="icon remove left" title="Remove" id="removeQuotation">x</a>
+    </div>
+</div>
+<div id="quotationTable">
+    <table class="list task-list">
+        <col width="2%">
+        <col width="2%">
+        <col width="10%">
+        <col width="10%">
+        <col width="15%">
+        <col width="10%">
+        <col width="10%">
+        <col width="10%">
+        <col width="10%">
+
+        <thead>
+        <tr>
+            <th><input type="checkbox" id="check_all_quotations"/></th>
+            <th>N</th>
+            <th class="oe_sortable" data-sort="name">Reference<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="orderDate">Order Date<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="supplier">Supplier<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="expectedDate">Expected Date<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="paymentInfo.unTaxed">Untaxed<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <th class="oe_sortable sortDn" data-sort="paymentInfo.total">Total<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="workflow">Status<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+        </tr>
+        </thead>
+        <tbody id="listTableQuotation"></tbody>
+        <tfoot id="listTotalQuotation"></tfoot>
+    </table>
+
+</div>

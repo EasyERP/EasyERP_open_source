@@ -1,31 +1,73 @@
-
-
 var mongoose = require('mongoose');
 var Quotation = function (models) {
     var access = require("../Modules/additions/access.js")(models);
     var QuotationSchema = mongoose.Schemas['Quotation'];
+    var CustomerSchema = mongoose.Schemas['Customer'];
+    var WorkflowSchema = mongoose.Schemas['workflow'];
     var DepartmentSchema = mongoose.Schemas['Department'];
     var objectId = mongoose.Types.ObjectId;
     var async = require('async');
     var mapObject = require('../helpers/bodyMaper');
 
     this.create = function (req, res, next) {
-        var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
+        var db = req.session.lastDb;
+
+        var Customer = models.get(db, 'Customers', CustomerSchema);
+        var Workflow = models.get(db, 'workflows', WorkflowSchema);
+        var Quotation = models.get(db, 'Quotation', QuotationSchema);
+
         var body = mapObject(req.body);
+        var isPopulate = req.body.populate;
         var quotation = new Quotation(body);
 
         quotation.save(function (err, _quotation) {
             if (err) {
                 return next(err);
             }
-            res.status(200).send({success: _quotation});
+
+            if (isPopulate) {
+                async.parallel([
+                    function (callback) {
+                        Customer.populate(_quotation, {
+                            path  : 'supplier',
+                            select: '_id name fullName'
+                        }, function (err, resp) {
+                            if (err) {
+                                return callback(err);
+                            }
+
+                            callback(null, resp);
+                        });
+                    },
+                    function (callback) {
+                        Workflow.populate(_quotation, {
+                            path  : 'workflow',
+                            select: '-sequence',
+                        }, function (err, resp) {
+                            if (err) {
+                                return callback(err);
+                            }
+
+                            callback(null, resp);
+                        });
+                    }
+                ], function (err, results) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    res.status(200).send(_quotation);
+                })
+            } else {
+                res.status(200).send(_quotation);
+            }
         });
     };
 
     function updateOnlySelectedFields(req, res, next, id, data) {
         var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
 
-        Quotation.findByIdAndUpdate(id, {$set: data},{new:true}, function (err, quotation) {
+        Quotation.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, quotation) {
             if (err) {
                 next(err);
             } else {
@@ -90,10 +132,18 @@ var Quotation = function (models) {
 
         var optionsObject = {};
 
-        if (data && data.filter && data.filter.forSales) {
-            optionsObject['forSales'] = true;
-        } else {
-            optionsObject['forSales'] = false;
+        /*if (data && data.filter && data.filter.forSales) {
+         optionsObject['forSales'] = true;
+         } else {
+         optionsObject['forSales'] = false;
+         }*/
+
+        if (filter && typeof filter === 'object') {
+            if (filter.condition === 'or') {
+                optionsObject['$or'] = caseFilter(filter);
+            } else {
+                optionsObject['$and'] = caseFilter(filter);
+            }
         }
 
         departmentSearcher = function (waterfallCallback) {
@@ -184,31 +234,81 @@ var Quotation = function (models) {
         });
     };
 
-    function caseFilter (queryObject, data) {
-        var filter = data.filter;
+    /*function caseFilter (queryObject, data) {
+     var filter = data.filter;
 
-        if (data && filter) {
-            if (filter.condition === 'or') {
-                queryObject['$or'] = []
+     if (data && filter) {
+     if (filter.condition === 'or') {
+     queryObject['$or'] = []
+     }
+     if (filter.workflow) {
+     queryObject.$and.push({workflow: {$in: filter.workflow.objectID()}});
+     }
+     /!*if (filter.Reference) {
+     queryObject.$and.push({supplierReference: {$in: filter.Reference}});
+     }*!/
+     if (filter.supplier) {
+     queryObject.$and.push({supplier: {$in: filter.supplier}});
+     }
+     if (filter['Order date']) {
+     if (filter.condition === 'or') {
+     queryObject.$or.push({orderDate: {$gte: new Date(filter['Order date'][0].start), $lte: new Date(filter['Order date'][0].end)}});
+     } else {
+     queryObject.$and.push({orderDate: {$gte: new Date(filter['Order date'][0].start), $lte: new Date(filter['Order date'][0].end)}});
+     }
+
+     }
+     }
+     };*/
+
+    function ConvertType(array, type) {
+        if (type === 'integer') {
+            for (var i = array.length - 1; i >= 0; i--) {
+                array[i] = parseInt(array[i]);
             }
-            if (filter.workflow) {
-                queryObject.$and.push({workflow: {$in: filter.workflow.objectID()}});
-            }
-            /*if (filter.Reference) {
-                queryObject.$and.push({supplierReference: {$in: filter.Reference}});
-            }*/
-            if (filter.supplier) {
-                queryObject.$and.push({supplier: {$in: filter.supplier}});
-            }
-            if (filter['Order date']) {
-                if (filter.condition === 'or') {
-                    queryObject.$or.push({orderDate: {$gte: new Date(filter['Order date'][0].start), $lte: new Date(filter['Order date'][0].end)}});
+        } else if (type === 'boolean') {
+            for (var i = array.length - 1; i >= 0; i--) {
+                if (array[i] === 'true') {
+                    array[i] = true;
+                } else if (array[i] === 'false') {
+                    array[i] = false;
                 } else {
-                    queryObject.$and.push({orderDate: {$gte: new Date(filter['Order date'][0].start), $lte: new Date(filter['Order date'][0].end)}});
+                    array[i] = null;
                 }
-
             }
         }
+    };
+
+    function caseFilter(filter) {
+        var condition;
+        var resArray = [];
+        var filtrElement = {};
+        var key;
+
+        for (var filterName in filter) {
+            condition = filter[filterName]['value'];
+            key = filter[filterName]['key'];
+
+            switch (filterName) {
+                case 'projectName':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'forSales':
+                    ConvertType(condition, 'boolean');
+                    filtrElement[key] = {$in: condition};
+                    resArray.push(filtrElement);
+                    break;
+                case 'canBeSold':
+                    ConvertType(condition, 'boolean');
+                    filtrElement[key] = {$in: condition};
+                    resArray.push(filtrElement);
+                    break;
+            }
+        }
+        ;
+
+        return resArray;
     };
 
     this.getByViewType = function (req, res, next) {
@@ -228,12 +328,21 @@ var Quotation = function (models) {
         var count = query.count ? query.count : 100;
         var page = query.page;
         var skip = (page - 1) > 0 ? (page - 1) * count : 0;
+        var filter = query.filter;
 
-        if (query && query.filter && query.filter.forSales) {
-            queryObject['forSales'] = true;
-        } else {
-            queryObject['forSales'] = false;
+        if (filter && typeof filter === 'object') {
+            if (filter.condition === 'or') {
+                queryObject['$or'] = caseFilter(filter);
+            } else {
+                queryObject['$and'] = caseFilter(filter);
+            }
         }
+
+        /*if (query && query.filter && query.filter.forSales) {
+         queryObject['forSales'] = true;
+         } else {
+         queryObject['forSales'] = false;
+         }*/
 
         if (query.sort) {
             sort = query.sort;
@@ -307,12 +416,11 @@ var Quotation = function (models) {
             var data = req.query;
             var query;
             var queryObject = {};
-            queryObject['$and'] = [];
+
+            queryObject.$and = [];
 
             queryObject.$and.push({_id: {$in: quotationsIds}});
             queryObject.$and.push({isOrder: isOrder});
-
-            caseFilter(queryObject, data);
 
             query = Quotation
                 .find(queryObject)
@@ -483,11 +591,11 @@ var Quotation = function (models) {
                 Quotation
                     .aggregate([
                         {
-                            $group:{
-                                _id: null,
+                            $group: {
+                                _id         : null,
                                 /*'Reference': {
-                                    $addToSet: '$supplierReference'
-                                },*/
+                                 $addToSet: '$supplierReference'
+                                 },*/
                                 'Order date': {
                                     $addToSet: '$orderDate'
                                 }
@@ -504,9 +612,9 @@ var Quotation = function (models) {
             },
             function (quot, cb) {
                 Customers
-                    .populate(quot , {
-                        path: 'supplier',
-                        model: Customers,
+                    .populate(quot, {
+                        path  : 'supplier',
+                        model : Customers,
                         select: 'name _id'
                     },
                     function (err, quot) {
@@ -514,7 +622,7 @@ var Quotation = function (models) {
                             return cb(err)
 
                         }
-                            cb(null, quot)
+                        cb(null, quot)
 
                     })
             }
