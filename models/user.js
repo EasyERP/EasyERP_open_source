@@ -66,7 +66,8 @@ module.exports = (function () {
         savedFilters: [
             {
                 _id: {type: ObjectId, ref: 'savedFilters', default: null},
-                byDefault: {type: String, default: ''}
+                byDefault: {type: String, default: ''},
+                viewType: {type: String, default: ''}
             }
         ],
         RelatedEmployee: {type: ObjectId, ref: 'Employees', default: null}
