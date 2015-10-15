@@ -22,6 +22,7 @@ define([
         initialize: function (options) {
             this.collection = options.collection;
             this.projectID = options.projectId;
+            this.customerId = options.customerId;
         },
 
         removeItems: function (event) {
@@ -97,6 +98,7 @@ define([
             e.preventDefault();
             new quotationCreateView({
                 projectId: this.projectID,
+                customerId: this.customerId,
                 collection: this.collection
             });
         },

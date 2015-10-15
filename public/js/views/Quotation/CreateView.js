@@ -229,10 +229,15 @@ define([
                 var productItemContainer;
 
                 productItemContainer = this.$el.find('#productItemsHolder');
-                productItemContainer.append(
-                    new ProductItemView({canBeSold: this.forSales}).render().el
-                );
-
+                if (App.currentDb === 'weTrack') {
+                    productItemContainer.append(
+                        new ProductItemView({canBeSold: true, service: 'Service'}).render().el
+                    );
+                } else {
+                    productItemContainer.append(
+                        new ProductItemView({canBeSold: this.forSales}).render().el
+                    );
+                }
             },
 
             render: function () {
@@ -278,7 +283,15 @@ define([
                 populate.get("#invoicingControl", "/invoicingControl", {}, 'name', this, true, true);
                 populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, true, true);
                 populate.get("#deliveryDd", "/deliverTo", {}, 'name', this, true);
-                populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
+
+                if (App.currentDb !== 'weTrack'){
+                    populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
+                } else {
+                    populate.get("#supplierDd", "/Customer", {}, "fullName", this, false, false);
+
+                    populate.get("#projectDd", "/getProjectsForDd", {}, "projectName", this, false, false);
+                }
+
 
                 populate.fetchWorkflow({
                     wId         : 'Purchase Order',

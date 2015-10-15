@@ -620,7 +620,8 @@ define([
                 function createView() {
                     new QuotationView({
                         collection: qCollection,
-                        projectId : self.id
+                        projectId : self.id,
+                        customerId: self.formModel.toJSON().customer._id
                     }).render();
                 }
 
