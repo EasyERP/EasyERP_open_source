@@ -69,6 +69,8 @@ define([
 
                 var currentNumber = parseInt(lastNumber) + 1;
 
+                content.hideDialog();
+
                 this.collection.add(model);
 
                 currentEl.append(this.templateNewRow({
@@ -76,8 +78,6 @@ define([
                     startNumber: currentNumber,
                     dateToLocal: common.utcDateToLocaleDate
                 }));
-
-                content.hideDialog();
             }
         });
 
