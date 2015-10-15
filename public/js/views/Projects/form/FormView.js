@@ -608,7 +608,7 @@ define([
 
                 var filter = {
                     'projectName': {
-                        key  : 'project',
+                        key  : 'project._id',
                         value: [this.id]
                     }
                 };
@@ -624,7 +624,8 @@ define([
                     new QuotationView({
                         collection: self.qCollection,
                         projectId : self.id,
-                        customerId: self.formModel.toJSON().customer._id
+                        customerId: self.formModel.toJSON().customer._id,
+                        projectManager: self.formModel.toJSON().projectmanager
                     }).render();
 
                     self.renderProformRevenue();

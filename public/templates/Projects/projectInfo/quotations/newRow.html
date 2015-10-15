@@ -6,7 +6,7 @@ class="canceledListItem"
 <td class="countNumber"><%=startNumber%></td>
 <td><%=quotation.name%></td>
 <td><%=dateToLocal(quotation.orderDate)%></td>
-<td><%=(quotation.supplier) ? quotation.supplier.fullName : ''%></td>
+<td><%=(quotation.supplier) ? quotation.supplier.name : ''%></td>
 <td><%=dateToLocal(quotation.expectedDate)%></td>
 <td class="unTaxed"><%=(quotation.paymentInfo) ? quotation.paymentInfo.unTaxed : '0'%></td>
 <td class="total"><%=(quotation.paymentInfo) ? quotation.paymentInfo.total : '0'%></td>

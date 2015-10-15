@@ -7,7 +7,7 @@ class="canceledListItem"
 <td><%=startNumber + index + 1%></td>
 <td><%=quotation.project ? quotation.project.projectName : '-------'%></td>
 <td><%=quotation.orderDate%></td>
-<td><%=(quotation.project) ? quotation.project.customer.name : '-------'%></td>
+<td><%=(quotation.supplier) ? quotation.supplier.name : '-------'%></td>
 <td><%=(quotation.project) ? quotation.project.projectmanager.name : '-------'%></td>
 <td class="total"><%=(quotation.paymentInfo) ? quotation.paymentInfo.total.toFixed(2) : '0'%></td>
 <td id='<%=quotation._id%>'>

@@ -27,7 +27,7 @@ mainDb.on('error', console.error.bind(console, 'connection error:'));
 mainDb.once('open', function callback() {
     'use strict';
 
-    var port = process.env.PORT || 8089;
+    var port = process.env.PORT || 8090;
     mainDb.dbsObject = dbsObject;
 
     console.log("Connection to mainDB is success");

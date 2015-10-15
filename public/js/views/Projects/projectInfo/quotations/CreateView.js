@@ -1,5 +1,5 @@
 define([
-        "views/Quotation/CreateView",
+        "views/salesQuotation/CreateView",
         "text!templates/Projects/projectInfo/quotations/CreateTemplate.html",
         "text!templates/Projects/projectInfo/quotations/newRow.html",
         "collections/Persons/PersonsCollection",
@@ -35,10 +35,142 @@ define([
                 this.responseObj = {};
                 this.projectId = options.projectId;
                 this.customerId = options.customerId;
+                this.projectManager = options.projectManager;
                 this.render();
                 this.getForDd(this.projectId, this.customerId);
                 this.forSales = true;
                 this.populate = true;
+            },
+
+            saveItem: function () {
+
+                var self = this;
+                var mid = 55;
+                var thisEl = this.$el;
+                var selectedProducts = thisEl.find('.productItem');
+                var products = [];
+                var data;
+                var selectedLength = selectedProducts.length;
+                var targetEl;
+                var productId;
+                var quantity;
+                var price;
+                var scheduledDate;
+
+                var forSales = (this.forSales) ? true : false;
+
+                var supplier = {};
+                supplier._id = thisEl.find('#supplierDd').attr('data-id');
+                supplier.name = thisEl.find('#supplierDd').text();
+
+                var project = {};
+                project._id = thisEl.find('#projectDd').attr('data-id');
+                project.projectName = thisEl.find('#projectDd').text();
+                project.projectmanager = this.projectManager;
+
+                var destination = $.trim(thisEl.find('#destination').attr('data-id'));
+                var deliverTo = $.trim(thisEl.find('#deliveryDd').attr('data-id'));
+                var incoterm = $.trim(thisEl.find('#incoterm').attr('data-id'));
+                var invoiceControl = $.trim(thisEl.find('#invoicingControl').attr('data-id'));
+                var paymentTerm = $.trim(thisEl.find('#paymentTerm').attr('data-id'));
+                var fiscalPosition = $.trim(thisEl.find('#fiscalPosition').attr('data-id'));
+
+                var orderDate = thisEl.find('#orderDate').val();
+                var expectedDate = thisEl.find('#expectedDate').val() || thisEl.find('#minScheduleDate').text();
+
+                var total = $.trim(thisEl.find('#totalAmount').text());
+                var totalTaxes = $.trim(thisEl.find('#taxes').text());
+                var taxes;
+                var description;
+                var unTaxed = $.trim(thisEl.find('#totalUntaxes').text());
+                var subTotal;
+
+                var usersId = [];
+                var groupsId = [];
+
+                $(".groupsAndUser tr").each(function () {
+                    if ($(this).data("type") == "targetUsers") {
+                        usersId.push($(this).data("id"));
+                    }
+                    if ($(this).data("type") == "targetGroups") {
+                        groupsId.push($(this).data("id"));
+                    }
+
+                });
+
+                var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
+
+                if (selectedLength) {
+                    for (var i = selectedLength - 1; i >= 0; i--) {
+                        targetEl = $(selectedProducts[i]);
+                        productId = targetEl.data('id');
+                        if (productId) {
+                            quantity = targetEl.find('[data-name="quantity"]').text();
+                            price = targetEl.find('[data-name="price"]').text();
+                            scheduledDate = targetEl.find('[data-name="scheduledDate"]').text();
+                            taxes = targetEl.find('.taxes').text();
+                            description = targetEl.find('[data-name="productDescr"]').text();
+                            subTotal = targetEl.find('.subtotal').text();
+
+                            products.push({
+                                product      : productId,
+                                unitPrice    : price,
+                                quantity     : quantity,
+                                scheduledDate: scheduledDate,
+                                taxes        : taxes,
+                                description  : description,
+                                subTotal     : subTotal
+                            });
+                        }
+                    }
+                }
+
+
+                data = {
+                    forSales      : forSales,
+                    supplier      : supplier,
+                    project       : project,
+                    deliverTo     : deliverTo,
+                    products      : products,
+                    orderDate     : orderDate,
+                    expectedDate  : expectedDate,
+                    destination   : destination,
+                    incoterm      : incoterm,
+                    invoiceControl: invoiceControl,
+                    paymentTerm   : paymentTerm,
+                    fiscalPosition: fiscalPosition,
+                    populate      : true,
+                    paymentInfo   : {
+                        total  : total,
+                        unTaxed: unTaxed,
+                        taxes  : totalTaxes
+                    },
+                    groups        : {
+                        owner: $("#allUsersSelect").data("id"),
+                        users: usersId,
+                        group: groupsId
+                    },
+                    whoCanRW      : whoCanRW,
+                    workflow      : this.defaultWorkflow
+                };
+
+                if (supplier) {
+                    this.model.save(data, {
+                        headers: {
+                            mid: mid
+                        },
+                        wait   : true,
+                        success: function (model) {
+                            self.redirectAfterSave(self, model);
+                        },
+                        error  : function (model, xhr) {
+                            self.errorNotification(xhr);
+                        }
+                    });
+
+                } else {
+                    alert(CONSTANTS.RESPONSES.CREATE_QUOTATION);
+                }
             },
 
             getForDd: function (projectID, customerId) {

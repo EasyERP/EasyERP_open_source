@@ -23,6 +23,7 @@ define([
             this.collection = options.collection;
             this.projectID = options.projectId;
             this.customerId = options.customerId;
+            this.projectManager = options.projectManager;
         },
 
         removeItems: function (event) {
@@ -99,7 +100,8 @@ define([
             new quotationCreateView({
                 projectId: this.projectID,
                 customerId: this.customerId,
-                collection: this.collection
+                collection: this.collection,
+                projectManager: this.projectManager
             });
         },
 
