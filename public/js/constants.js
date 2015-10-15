@@ -262,16 +262,34 @@ define([], function () {
         },
         Quotation       : {
             'Reference': {
-                view   : 'referenceView',
-                backend: 'name'
+                view   : 'reference',
+                backend: 'reference'
             },
             'Supplier' : {
-                view   : 'supplierView',
-                backend: 'deliverTo'
+                view   : 'supplier',
+                backend: 'supplier'
             },
             'Status'   : {
-                view   : 'statusView',
-                backend: 'workflows'
+                view   : 'workflow',
+                backend: 'workflow'
+            }
+        },
+        salesQuotation: {
+            'Project': {
+                view   : 'reference',
+                backend: 'reference'
+            },
+            'Customer' : {
+                view   : 'supplier',
+                backend: 'supplier'
+            },
+            'Sales Manager'   : {
+                view   : 'project.projectmanager._id',
+                backend: 'projectmanager'
+            },
+            'Status'   : {
+                view   : 'workflow',
+                backend: 'workflow'
             }
         }
     };

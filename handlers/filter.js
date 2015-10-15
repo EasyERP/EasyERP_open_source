@@ -38,7 +38,8 @@ var Filters = function (models) {
                 supplierPayments: getSupplierPaymentsFiltersValues,
                 Product         : getProductsFiltersValues,
                 salesProduct    : getProductsFiltersValues,
-                Quotation       : getQuotationFiltersValues
+                Quotation       : getQuotationFiltersValues,
+                salesQuotation       : getSalesQuotation
             },
             function (err, result) {
                 if (err) {
@@ -611,18 +612,29 @@ var Filters = function (models) {
         function getQuotationFiltersValues(callback) {
             Quotation.aggregate([
                 {
+                    $match: {
+                        forSales: false
+                    }
+                },
+                {
                     $group: {
                         _id           : null,
-                        'supplierView': {
+                        'reference'  : {
                             $addToSet: {
-                                _id : '$deliverTo',
-                                name: '$supplierView'
+                                _id : '$reference',
+                                name: '$reference'
                             }
                         },
-                        'statusView'  : {
+                        'supplier': {
                             $addToSet: {
-                                _id : '$workflows',
-                                name: '$statusView'
+                                _id : '$supplier',
+                                name: '$supplier'
+                            }
+                        },
+                        'workflow'  : {
+                            $addToSet: {
+                                _id : '$workflow',
+                                name: '$workflow'
                             }
                         }
                     }
@@ -641,6 +653,53 @@ var Filters = function (models) {
                 callback(null, resObj);
             });
         };
+
+        function getSalesQuotation(callback){
+            Quotation.aggregate([
+                {
+                    $match: {
+                        forSales: true
+                    }
+                },
+                {
+                    $group: {
+                        _id         : null,
+                        'reference'  : {
+                            $addToSet: {
+                                _id : '$reference',
+                                name: '$reference.projectName'
+                            }
+                        },
+                        'supplier': {
+                            $addToSet: {
+                                _id : '$supplier',
+                                name: '$supplier.fullName'
+                            }
+                        },
+                        'projectmanager'      : {
+                            $addToSet: {
+                                _id : '$project.projectmanager._id',
+                                name: '$project.projectmanager.fullName'
+                            }
+                        },
+                        'workflow'  : {
+                            $addToSet: {
+                                _id : '$workflow',
+                                name: '$workflow.name'
+                            }
+                        }
+                    }
+                }
+            ], function (err, result) {
+                if (err) {
+                    callback(err);
+                }
+
+                result = result[0];
+
+                callback(null, result);
+            });
+        }
 
     };
 

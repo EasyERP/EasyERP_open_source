@@ -298,7 +298,19 @@ var Quotation = function (models) {
             key = filter[filterName]['key'];
 
             switch (filterName) {
-                case 'projectName':
+                case 'reference':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'supplier':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'workflow':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'projectmanager':
                     filtrElement[key] = {$in: condition.objectID()};
                     resArray.push(filtrElement);
                     break;
