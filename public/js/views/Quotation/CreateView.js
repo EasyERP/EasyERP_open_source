@@ -7,9 +7,10 @@ define([
         "common",
         "populate",
         'constants',
-        'views/Assignees/AssigneesView'
+        'views/Assignees/AssigneesView',
+        'dataService'
     ],
-    function (CreateTemplate, PersonsCollection, DepartmentsCollection, ProductItemView, QuotationModel, common, populate, CONSTANTS, AssigneesView) {
+    function (CreateTemplate, PersonsCollection, DepartmentsCollection, ProductItemView, QuotationModel, common, populate, CONSTANTS, AssigneesView, dataService) {
 
         var CreateView = Backbone.View.extend({
             el         : "#content-holder",
@@ -49,7 +50,26 @@ define([
                 $(".newSelectList").hide();
             },
             chooseOption : function (e) {
+                var target = $(e.target);
+                var id = target.attr("id");
+                var type = target.attr('data-level');
+
+                var element = _.find(this.responseObj['#project'], function (el) {
+                    return el._id === id;
+                });
+
+                if (type === 'emptyProject'){
+                    this.projectManager = element.projectmanager;
+
+                    this.$el.find('#supplierDd').text(element.customer.name);
+                    this.$el.find('#supplierDd').attr('data-id', element.customer._id);
+                }
+
                 $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
+
+                this.hideNewSelect();
+
+                return false;
             },
             nextSelect   : function (e) {
                 this.showNewSelect(e, false, true);
@@ -105,14 +125,22 @@ define([
 
                 var forSales = (this.forSales) ? true : false;
 
-                var supplier = thisEl.find('#supplierDd').attr('data-id');
+                var supplier = {};
+                supplier._id = thisEl.find('#supplierDd').attr('data-id');
+                supplier.name = thisEl.find('#supplierDd').text();
+
+                var project = {};
+                project._id = thisEl.find('#projectDd').attr('data-id');
+                project.projectName = thisEl.find('#projectDd').text();
+                project.projectmanager = this.projectManager;
+
                 var destination = $.trim(thisEl.find('#destination').attr('data-id'));
                 var deliverTo = $.trim(thisEl.find('#deliveryDd').attr('data-id'));
                 var incoterm = $.trim(thisEl.find('#incoterm').attr('data-id'));
                 var invoiceControl = $.trim(thisEl.find('#invoicingControl').attr('data-id'));
                 var paymentTerm = $.trim(thisEl.find('#paymentTerm').attr('data-id'));
                 var fiscalPosition = $.trim(thisEl.find('#fiscalPosition').attr('data-id'));
-                var project = thisEl.find('#projectDd').attr('data-id');
+
                 var orderDate = thisEl.find('#orderDate').val();
                 var expectedDate = thisEl.find('#expectedDate').val() || thisEl.find('#minScheduleDate').text();
 
@@ -229,10 +257,15 @@ define([
                 var productItemContainer;
 
                 productItemContainer = this.$el.find('#productItemsHolder');
-                productItemContainer.append(
-                    new ProductItemView({canBeSold: this.forSales}).render().el
-                );
-
+                if (App.currentDb === 'weTrack') {
+                    productItemContainer.append(
+                        new ProductItemView({canBeSold: true, service: 'Service'}).render().el
+                    );
+                } else {
+                    productItemContainer.append(
+                        new ProductItemView({canBeSold: this.forSales}).render().el
+                    );
+                }
             },
 
             render: function () {
@@ -278,7 +311,24 @@ define([
                 populate.get("#invoicingControl", "/invoicingControl", {}, 'name', this, true, true);
                 populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, true, true);
                 populate.get("#deliveryDd", "/deliverTo", {}, 'name', this, true);
-                populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
+
+                if (App.currentDb === 'weTrack'){
+                    this.$el.find('#supplierDd').removeClass('current-selected');
+                    populate.get("#projectDd", "/getProjectsForDd", {}, "projectName", this, false, false);
+                    //populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
+                } else {
+                    populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
+                }
+
+                dataService.getData("/project/getForWtrack", null, function (projects) {
+                    projects = _.map(projects.data, function (project) {
+                        project.name = project.projectName;
+
+                        return project
+                    });
+
+                    self.responseObj['#project'] = projects;
+                });
 
                 populate.fetchWorkflow({
                     wId         : 'Purchase Order',
@@ -286,7 +336,9 @@ define([
                     targetSource: 'quotation'
                 }, function (response) {
                     if (!response.error) {
-                        self.defaultWorkflow = response._id;
+                        self.defaultWorkflow = {};
+                        self.defaultWorkflow._id = response._id;
+                        self.defaultWorkflow.name = response.name;
                     }
                 });
 

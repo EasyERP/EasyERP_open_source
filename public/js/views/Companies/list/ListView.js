@@ -21,7 +21,7 @@ define([
             contentCollection       : contentCollection,
             filterView              : filterView,
             contentType             : "Companies",
-            viewType                : "list",
+
             totalCollectionLengthUrl: '/totalCollectionLength/Companies',
             formUrl                 : "#easyErp/Companies/form/",
             exportToXlsxUrl         : '/Customers/exportToXlsx?type=Company',

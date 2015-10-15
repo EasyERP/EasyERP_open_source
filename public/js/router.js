@@ -684,7 +684,19 @@ define([
             var self = this;
             this.checkLogin(function (success) {
                 if (success) {
-                    goForm(self);
+                    if (!App || !App.currentDb) {
+                        dataService.getData('/currentDb', null, function (response) {
+                            if (response && !response.error) {
+                                App.currentDb = response;
+                            } else {
+                                console.log('can\'t fetch current db');
+                            }
+
+                            goForm(self);
+                        });
+                    } else {
+                        goForm(self);
+                    }
                 } else {
                     self.redirectTo();
                 }
@@ -812,7 +824,19 @@ define([
             var self = this;
             this.checkLogin(function (success) {
                 if (success) {
-                    goThumbnails(self);
+                    if (!App || !App.currentDb) {
+                        dataService.getData('/currentDb', null, function (response) {
+                            if (response && !response.error) {
+                                App.currentDb = response;
+                            } else {
+                                console.log('can\'t fetch current db');
+                            }
+
+                            goThumbnails(self);
+                        });
+                    } else {
+                        goThumbnails(self);
+                    }
                 } else {
                     self.redirectTo();
                 }

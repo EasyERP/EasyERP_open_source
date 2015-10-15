@@ -602,6 +602,38 @@ define([
 
             },
 
+            getQuotations: function (cb) {
+                //var _id = this.formModel.id;
+                var self = this;
+
+                var filter = {
+                    'projectName': {
+                        key  : 'project',
+                        value: [this.id]
+                    }
+                };
+
+                this.qCollection = new quotationCollection({
+                    count      : 50,
+                    viewType   : 'list',
+                    contentType: 'Quotation',
+                    filter     : filter
+                });
+
+                function createView() {
+                    new QuotationView({
+                        collection: self.qCollection,
+                        projectId : self.id,
+                        customerId: self.formModel.toJSON().customer._id
+                    }).render();
+
+                    self.renderProformRevenue();
+                };
+
+                this.qCollection.bind('reset', createView);
+                this.qCollection.bind('add', self.renderProformRevenue);
+            },
+
             renderProformRevenue: function () {
                 var self = this;
                 var proformContainer = this.$el.find('#proformRevenueContainer');
@@ -629,35 +661,6 @@ define([
                         currencySplitter: helpers.currencySplitter
                     })
                 );
-            },
-
-            getQuotations: function (cb) {
-                var self = this;
-                var filter = {
-                    'projectName': {
-                        key  : 'project',
-                        value: [this.id]
-                    }
-                };
-
-                this.qCollection = new quotationCollection({
-                    count      : 50,
-                    viewType   : 'list',
-                    contentType: 'Quotation',
-                    filter     : filter
-                });
-
-                function createView() {
-                    new QuotationView({
-                        collection: self.qCollection,
-                        projectId : self.id
-                    }).render();
-
-                    self.renderProformRevenue();
-                };
-
-                this.qCollection.bind('reset', createView);
-                this.qCollection.bind('add', self.renderProformRevenue);
             },
 
             editItem: function () {

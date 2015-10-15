@@ -24,6 +24,7 @@ define([
             contentType             : CONSTANTS.SALESQUOTATION, //needs in view.prototype.changeLocationHash
             viewType                : 'list',//needs in view.prototype.changeLocationHash
             totalCollectionLengthUrl: '/quotation/totalCollectionLength',
+            filterView              : filterView,
 
             initialize: function (options) {
                 this.startTime = options.startTime;
@@ -55,6 +56,34 @@ define([
                 "click .newSelectList li"            : "chooseOption"
             },
 
+            showFilteredPage: function (filter, context) {
+                var itemsNumber = $("#itemsNumber").text();
+
+                var alphaBet = this.$el.find('#startLetter');
+                var selectedLetter = $(alphaBet).find('.current').length ? $(alphaBet).find('.current')[0].text : '';
+
+                $("#top-bar-deleteBtn").hide();
+                $('#check_all').prop('checked', false);
+
+                if (selectedLetter === "All") {
+                    selectedLetter = '';
+                }
+
+                context.startTime = new Date();
+                context.newCollection = false;
+
+                this.filter = Object.keys(filter).length === 0 ? {} : filter;
+
+                this.filter.forSales = {
+                    key: 'forSales',
+                    value: ['true']
+                };
+
+                context.changeLocationHash(1, itemsNumber, filter);
+                context.collection.showMore({count: itemsNumber, page: 1, filter: filter});
+                context.getTotalLength(null, itemsNumber, filter);
+            },
+
             chooseOption: function (e) {
                 var self = this;
                 var target$ = $(e.target);
@@ -62,14 +91,18 @@ define([
                 var id = targetElement.attr("id");
                 var model = this.collection.get(id);
 
-                model.save({workflow: target$.attr("id")}, {
+                model.save({workflow: {
+                    _id: target$.attr("id"),
+                    name:target$.text()
+                }}, {
                     headers : {
                         mid: 55
                     },
                     patch   : true,
                     validate: false,
+                    waite: true,
                     success : function () {
-                        self.showFilteredPage();
+                        self.showFilteredPage({}, self);
                     }
                 });
 
@@ -128,6 +161,7 @@ define([
 
                 this.renderCheckboxes();
                 this.renderPagination(currentEl, this);
+                this.renderFilter(self);
 
                 currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
@@ -137,22 +171,8 @@ define([
                     targetSource: 'quotation'
                 }, function (stages) {
                     self.stages = stages;
-
-                    dataService.getData('/quotation/getFilterValues', null, function (values) {
-                        FilterView = new filterView({collection: stages, customCollection: values});
-                        // Filter custom event listen ------begin
-                        FilterView.bind('filter', function () {
-                            //showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
-                            self.showFilteredPage()
-                        });
-                        FilterView.bind('defaultFilter', function () {
-                            var showList = _.pluck(self.stages, '_id');
-                            self.showFilteredPage(showList);
-                        });
-                        // Filter custom event listen ------end
-                    })
-
                 });
+
                 return this
             },
 

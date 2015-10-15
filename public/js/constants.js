@@ -261,17 +261,63 @@ define([], function () {
             }
         },
         Quotation       : {
-            'Reference': {
-                view   : 'referenceView',
-                backend: 'name'
-            },
             'Supplier' : {
-                view   : 'supplierView',
-                backend: 'deliverTo'
+                view   : 'supplier',
+                backend: 'supplier._id'
             },
             'Status'   : {
-                view   : 'statusView',
-                backend: 'workflows'
+                view   : 'workflow',
+                backend: 'workflow._id'
+            }
+        },
+        salesQuotation: {
+            'Project': {
+                view   : 'project',
+                backend: 'project._id'
+            },
+            'Customer' : {
+                view   : 'supplier',
+                backend: 'supplier._id'
+            },
+            'Sales Manager'   : {
+                view   : 'projectmanager',
+                backend: 'project.projectmanager._id'
+            },
+            'Status'   : {
+                view   : 'workflow',
+                backend: 'workflow._id'
+            }
+        },
+        salesOrder: {
+            'Project': {
+                view   : 'project',
+                backend: 'project._id'
+            },
+            'Customer' : {
+                view   : 'supplier',
+                backend: 'supplier._id'
+            },
+            'Sales Manager'   : {
+                view   : 'projectmanager',
+                backend: 'project.projectmanager._id'
+            },
+            'Status'   : {
+                view   : 'workflow',
+                backend: 'workflow._id'
+            }
+        },
+        Order: {
+            'Supplier' : {
+                view   : 'supplier',
+                backend: 'supplier._id'
+            },
+            'Sales Manager'   : {
+                view   : 'projectmanager',
+                backend: 'project.projectmanager._id'
+            },
+            'Status'   : {
+                view   : 'workflow',
+                backend: 'workflow._id'
             }
         }
     };

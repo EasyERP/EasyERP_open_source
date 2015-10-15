@@ -29,7 +29,7 @@ var Quotation = function (models) {
                 async.parallel([
                     function (callback) {
                         Customer.populate(_quotation, {
-                            path  : 'supplier',
+                            path  : 'supplier._id',
                             select: '_id name fullName'
                         }, function (err, resp) {
                             if (err) {
@@ -41,7 +41,7 @@ var Quotation = function (models) {
                     },
                     function (callback) {
                         Workflow.populate(_quotation, {
-                            path  : 'workflow',
+                            path  : 'workflow._id',
                             select: '-sequence',
                         }, function (err, resp) {
                             if (err) {
@@ -140,12 +140,6 @@ var Quotation = function (models) {
 
         var optionsObject = {};
 
-        /*if (data && data.filter && data.filter.forSales) {
-         optionsObject['forSales'] = true;
-         } else {
-         optionsObject['forSales'] = false;
-         }*/
-
         if (filter && typeof filter === 'object') {
             if (filter.condition === 'or') {
                 optionsObject['$or'] = caseFilter(filter);
@@ -242,33 +236,6 @@ var Quotation = function (models) {
         });
     };
 
-    /*function caseFilter (queryObject, data) {
-     var filter = data.filter;
-
-     if (data && filter) {
-     if (filter.condition === 'or') {
-     queryObject['$or'] = []
-     }
-     if (filter.workflow) {
-     queryObject.$and.push({workflow: {$in: filter.workflow.objectID()}});
-     }
-     /!*if (filter.Reference) {
-     queryObject.$and.push({supplierReference: {$in: filter.Reference}});
-     }*!/
-     if (filter.supplier) {
-     queryObject.$and.push({supplier: {$in: filter.supplier}});
-     }
-     if (filter['Order date']) {
-     if (filter.condition === 'or') {
-     queryObject.$or.push({orderDate: {$gte: new Date(filter['Order date'][0].start), $lte: new Date(filter['Order date'][0].end)}});
-     } else {
-     queryObject.$and.push({orderDate: {$gte: new Date(filter['Order date'][0].start), $lte: new Date(filter['Order date'][0].end)}});
-     }
-
-     }
-     }
-     };*/
-
     function ConvertType(array, type) {
         if (type === 'integer') {
             for (var i = array.length - 1; i >= 0; i--) {
@@ -298,16 +265,23 @@ var Quotation = function (models) {
             key = filter[filterName]['key'];
 
             switch (filterName) {
-                case 'projectName':
+                case 'reference':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'supplier':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'workflow':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'projectmanager':
                     filtrElement[key] = {$in: condition.objectID()};
                     resArray.push(filtrElement);
                     break;
                 case 'forSales':
-                    ConvertType(condition, 'boolean');
-                    filtrElement[key] = {$in: condition};
-                    resArray.push(filtrElement);
-                    break;
-                case 'canBeSold':
                     ConvertType(condition, 'boolean');
                     filtrElement[key] = {$in: condition};
                     resArray.push(filtrElement);
@@ -318,8 +292,7 @@ var Quotation = function (models) {
                     resArray.push(filtrElement);
                     break;
             }
-        }
-        ;
+        };
 
         return resArray;
     };
@@ -448,14 +421,14 @@ var Quotation = function (models) {
                 .skip(skip)
                 .sort(sort);
 
-            query.populate('supplier', '_id name fullName');
+            //query.populate('supplier', '_id name fullName');
             query.populate('destination');
             query.populate('incoterm');
             query.populate('invoiceControl');
             query.populate('paymentTerm');
             query.populate('products.product', '_id, name');
-            query.populate('workflow', '-sequence');
-            query.populate('project', 'projectName projectmanager customer');
+            //query.populate('workflow', '-sequence');
+            //query.populate('project', 'projectName projectmanager customer');
 
             query.exec(waterfallCallback);
         };
@@ -474,25 +447,13 @@ var Quotation = function (models) {
     this.getById = function (req, res, next) {
         var id = req.params.id;
         var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
-        /* var queryParams = {};
-
-         for (var i in req.query) {
-         queryParams[i] = req.query[i];
-         }*/
-
         var departmentSearcher;
         var contentIdsSearcher;
         var contentSearcher;
         var waterfallTasks;
 
         var contentType = req.query.contentType;
-        var isOrder = !!(contentType === 'Order');
-
-        /* var data = {};
-
-         for (var i in req.query) {
-         data[i] = req.query[i];
-         }*/
+        var isOrder = ((contentType === 'Order') || (contentType === 'salesOrder'));
 
         departmentSearcher = function (waterfallCallback) {
             models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
@@ -516,7 +477,6 @@ var Quotation = function (models) {
                 {
                     $match: {
                         $and: [
-                            /*optionsObject,*/
                             {
                                 $or: [
                                     {
@@ -563,7 +523,7 @@ var Quotation = function (models) {
             queryObject.isOrder = isOrder;
             query = Quotation.findOne(queryObject);
 
-            query.populate('supplier', '_id name fullName');
+           // query.populate('supplier', '_id name fullName');
             query.populate('destination');
             query.populate('incoterm');
             query.populate('invoiceControl');
@@ -572,8 +532,9 @@ var Quotation = function (models) {
             query.populate('groups.users');
             query.populate('groups.group');
             query.populate('groups.owner', '_id login');
-            query.populate('workflow', '-sequence');
+            //query.populate('workflow', '-sequence');
             query.populate('deliverTo', '_id, name');
+            //query.populate('project', '_id projectName');
 
             query.exec(waterfallCallback);
         };
@@ -632,20 +593,21 @@ var Quotation = function (models) {
                     })
             },
             function (quot, cb) {
-                Customers
-                    .populate(quot, {
-                        path  : 'supplier',
-                        model : Customers,
-                        select: 'name _id'
-                    },
-                    function (err, quot) {
-                        if (err) {
-                            return cb(err)
-
-                        }
-                        cb(null, quot)
-
-                    })
+                //Customers
+                //    .populate(quot, {
+                //        path  : 'supplier',
+                //        model : Customers,
+                //        select: 'name _id'
+                //    },
+                //    function (err, quot) {
+                //        if (err) {
+                //            return cb(err)
+                //
+                //        }
+                //        cb(null, quot)
+                //
+                //    })
+                cb(null, quot)
             }
 
         ], function (err, result) {

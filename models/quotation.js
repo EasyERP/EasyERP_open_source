@@ -30,8 +30,21 @@ module.exports = (function () {
     var quotationSchema = new Schema({
         forSales      : {type: Boolean, default: true},
         isOrder       : {type: Boolean, default: false},
-        supplier      : {type: ObjectId, ref: 'Customers', default: null},
-        project       : {type: ObjectId, ref: 'Project', default: null},
+        //supplier      : {type: ObjectId, ref: 'Customers', default: null},
+        //project       : {type: ObjectId, ref: 'Project', default: null},
+        supplier      : {
+            _id: {type: ObjectId, ref: 'Customers', default: null},
+            name: {type: String, default: ''}
+        },
+        project       : {
+            _id: {type: ObjectId, ref: 'Project', default: null},
+            //projectnamager: {
+            //    _id: {type: String, default: ''},
+            //    name: {type: String, default: ''}
+            //},
+            projectmanager: {},
+            projectName: {type: String, default: ''}
+        },
         deliverTo     : {type: ObjectId, ref: 'DeliverTo', default: null},
         orderDate     : {type: Date, default: Date.now},
         expectedDate  : Date,
@@ -44,7 +57,11 @@ module.exports = (function () {
         paymentInfo   : payments,
         /* fiscalPosition: {type: ObjectId, ref: 'FiscalPosition', default: null},*/
         products      : [products],
-        workflow      : {type: ObjectId, ref: 'workflows', default: null},
+       // workflow      : {type: ObjectId, ref: 'workflows', default: null},
+        workflow      : {
+            _id: {type: ObjectId, ref: 'workflows', default: null},
+            name: {type: String, default: ''}
+        },
         whoCanRW      : {type: String, enum: ['owner', 'group', 'everyOne'], default: 'everyOne'},
         groups        : {
             owner: {type: ObjectId, ref: 'Users', default: null},

@@ -27,7 +27,11 @@ define([
             initialize: function (options) {
                 this.startTime = options.startTime;
                 this.collection = options.collection;
-                this.filter = options.filter;
+                this.filter = options.filter ? options.filter : {};
+                this.filter.forSales = {
+                    key: 'forSales',
+                    value: ['false']
+                };
                 this.sort = options.sort;
                 this.defaultItemsNumber = this.collection.namberToShow || 100;
                 this.newCollection = options.newCollection;
@@ -54,7 +58,11 @@ define([
                 var id = targetElement.attr("id");
                 var model = this.collection.get(id);
 
-                model.save({workflow: target$.attr("id")}, {
+                model.save({
+                    workflow: {
+                        _id: target$.attr("id"),
+                        name:target$.text()
+                    }}, {
                     headers : {
                         mid: 55
                     },
@@ -116,18 +124,6 @@ define([
                     targetSource: 'quotation'
                 }, function (stages) {
                     self.stages = stages;
-                    dataService.getData('/quotation/getFilterValues', null, function (values) {
-                        FilterView = new filterView({collection: stages, customCollection: values});
-                        // Filter custom event listen ------begin
-                        FilterView.bind('filter', function () {
-                            self.showFilteredPage()
-                        });
-                        FilterView.bind('defaultFilter', function () {
-                            self.showFilteredPage();
-                        });
-                        // Filter custom event listen ------end
-                    })
-
                 });
             },
 

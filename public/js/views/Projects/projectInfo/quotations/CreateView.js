@@ -34,13 +34,16 @@ define([
                 this.model = new QuotationModel();
                 this.responseObj = {};
                 this.projectId = options.projectId;
+                this.customerId = options.customerId;
                 this.render();
-                this.getForDd(this.projectId);
+                this.getForDd(this.projectId, this.customerId);
                 this.forSales = true;
                 this.populate = true;
             },
 
-            getForDd: function (projectID) {
+            getForDd: function (projectID, customerId) {
+                populate.get("#supplierDd", "/Customer", {}, "fullName", this, false, false, customerId);
+
                 if (projectID) {
                     populate.get("#projectDd", "/getProjectsForDd", {}, "projectName", this, false, false, projectID);
                 } else {
