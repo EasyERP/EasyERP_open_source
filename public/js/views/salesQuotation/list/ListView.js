@@ -24,6 +24,7 @@ define([
             contentType             : CONSTANTS.SALESQUOTATION, //needs in view.prototype.changeLocationHash
             viewType                : 'list',//needs in view.prototype.changeLocationHash
             totalCollectionLengthUrl: '/quotation/totalCollectionLength',
+            filterView              : filterView,
 
             initialize: function (options) {
                 this.startTime = options.startTime;
@@ -68,8 +69,9 @@ define([
                     },
                     patch   : true,
                     validate: false,
+                    waite: true,
                     success : function () {
-                        self.showFilteredPage();
+                        self.showFilteredPage({}, self);
                     }
                 });
 
@@ -128,6 +130,7 @@ define([
 
                 this.renderCheckboxes();
                 this.renderPagination(currentEl, this);
+                this.renderFilter(self);
 
                 currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
@@ -137,22 +140,8 @@ define([
                     targetSource: 'quotation'
                 }, function (stages) {
                     self.stages = stages;
-
-                    dataService.getData('/quotation/getFilterValues', null, function (values) {
-                        FilterView = new filterView({collection: stages, customCollection: values});
-                        // Filter custom event listen ------begin
-                        FilterView.bind('filter', function () {
-                            //showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
-                            self.showFilteredPage()
-                        });
-                        FilterView.bind('defaultFilter', function () {
-                            var showList = _.pluck(self.stages, '_id');
-                            self.showFilteredPage(showList);
-                        });
-                        // Filter custom event listen ------end
-                    })
-
                 });
+
                 return this
             },
 

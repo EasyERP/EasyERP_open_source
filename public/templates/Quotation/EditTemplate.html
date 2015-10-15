@@ -30,19 +30,35 @@
                             <%}%>
                             <div class="half-block left">
                                 <dl class="person-info">
-                                    <dt><label for="supplierDd">Supplier</label></dt>
-                                    <dd>
+                                    <dt><label for="supplierDd">
+
                                         <%if(model.supplier){%>
-                                            <a id="supplierDd" class="current-selected" href="javascript:;" data-id="<%=model.supplier._id%>"><%=model.supplier.fullName%></a>
-                                        <%} else {%>
-                                            <a id="supplierDd" class="current-selected" href="javascript:;" data-id="">Select</a>
-                                        <%}%>
+                                        <%if (App.currentDb === 'weTrack') {%>
+                                        Customer
+                                        <% } else { %>
+                                        Supplier
+                                        <% } %>
+                                    </label></dt>
+                                    <dd>
+                                        <a id="supplierDd" class="current-selected" href="javascript:;" data-id="<%=model.supplier._id%>"><%=model.supplier.fullName%></a>
                                     </dd>
-                                    <dt><label for="supplierReference">Supplier Reference</label></dt>
+
+                                    <%if (App.currentDb === 'weTrack') {%>
+                                    <dt><label for="projectDd">Project</label></dt>
+                                    <dd>
+                                        <a id="projectDd" class="current-selected" href="javascript:;" data-id="<%=model.project._id%>"><%=model.project.projectName%></a>
+                                    </dd>
+                                    <% } %>
+                                            <!--<a id="supplierDd" class="current-selected" href="javascript:;" data-id="<%=model.supplier._id%>"><%=model.supplier.fullName%></a>-->
+                                        <!--<%} else {%>-->
+                                            <!--<a id="supplierDd" class="current-selected" href="javascript:;" data-id="">Select</a>-->
+                                        <!--<%}%>-->
+
+                                   <!-- <dt><label for="supplierReference">Supplier Reference</label></dt>
                                     <dd>
                                         <input type="text" name="supplierReference" id="supplierReference"
                                                maxlength="32" value="<%=model.supplierReference%>"/>
-                                    </dd>
+                                    </dd>-->
                                 </dl>
                             </div>
                             <div class="half-block left">

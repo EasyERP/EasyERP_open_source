@@ -179,7 +179,7 @@ define([
                 var self = this;
 
                 populate.fetchWorkflow({
-                    wId: 'Quotation'
+                    wId: 'Sales Order'
                 }, function (workflow) {
                     var redirectUrl = self.forSales ? "easyErp/salesQuotation" : "easyErp/Quotation";
 
@@ -405,7 +405,14 @@ define([
                 populate.get("#invoicingControl", "/invoicingControl", {}, 'name', this, false, true);
                 populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, false, true);
                 populate.get("#deliveryDd", "/deliverTo", {}, 'name', this, false, true);
-                populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
+
+                if (App.currentDb !== 'weTrack'){
+                    populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
+                } else {
+                    populate.get("#supplierDd", "/Customer", {}, "fullName", this, false, false);
+
+                    populate.get("#projectDd", "/getProjectsForDd", {}, "projectName", this, false, false);
+                }
 
                 this.$el.find('#orderDate').datepicker({
                     dateFormat: "d M, yy",
