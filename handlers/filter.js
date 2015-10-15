@@ -39,7 +39,9 @@ var Filters = function (models) {
                 Product         : getProductsFiltersValues,
                 salesProduct    : getProductsFiltersValues,
                 Quotation       : getQuotationFiltersValues,
-                salesQuotation       : getSalesQuotation
+                salesQuotation       : getSalesQuotation,
+                salesOrder      : getSalesOrders,
+                Order      : getOrdersFiltersValues
             },
             function (err, result) {
                 if (err) {
@@ -619,22 +621,22 @@ var Filters = function (models) {
                 {
                     $group: {
                         _id           : null,
-                        'reference'  : {
+                        'name'  : {
                             $addToSet: {
-                                _id : '$reference',
-                                name: '$reference'
+                                _id : '$_id',
+                                name: '$name'
                             }
                         },
                         'supplier': {
                             $addToSet: {
-                                _id : '$supplier',
-                                name: '$supplier'
+                                _id : '$supplier._id',
+                                name: '$supplier.name'
                             }
                         },
                         'workflow'  : {
                             $addToSet: {
-                                _id : '$workflow',
-                                name: '$workflow'
+                                _id : '$workflow._id',
+                                name: '$workflow.name'
                             }
                         }
                     }
@@ -659,6 +661,106 @@ var Filters = function (models) {
                 {
                     $match: {
                         forSales: true
+                    }
+                },
+                {
+                    $group: {
+                        _id         : null,
+                        'project'  : {
+                            $addToSet: {
+                                _id : '$project._id',
+                                name: '$project.projectName'
+                            }
+                        },
+                        'supplier': {
+                            $addToSet: {
+                                _id : '$supplier._id',
+                                name: '$supplier.name'
+                            }
+                        },
+                        'projectmanager'      : {
+                            $addToSet: {
+                                _id : '$project.projectmanager._id',
+                                name: '$project.projectmanager.name'
+                            }
+                        },
+                        'workflow'  : {
+                            $addToSet: {
+                                _id : '$workflow._id',
+                                name: '$workflow.name'
+                            }
+                        }
+                    }
+                }
+            ], function (err, result) {
+                if (err) {
+                    callback(err);
+                }
+
+                if (result && result.length){
+                    result = result[0];
+                    callback(null, result);
+                }
+
+            });
+        }
+
+        function getSalesOrders(callback){
+            Quotation.aggregate([
+                {
+                    $match: {
+                        forSales: true,
+                        isOrder: true
+                    }
+                },
+                {
+                    $group: {
+                        _id         : null,
+                        'project'  : {
+                            $addToSet: {
+                                _id : '$project._id',
+                                name: '$project.projectName'
+                            }
+                        },
+                        'supplier': {
+                            $addToSet: {
+                                _id : '$supplier._id',
+                                name: '$supplier.name'
+                            }
+                        },
+                        'projectmanager'      : {
+                            $addToSet: {
+                                _id : '$project.projectmanager._id',
+                                name: '$project.projectmanager.name'
+                            }
+                        },
+                        'workflow'  : {
+                            $addToSet: {
+                                _id : '$workflow._id',
+                                name: '$workflow.name'
+                            }
+                        }
+                    }
+                }
+            ], function (err, result) {
+                if (err) {
+                    callback(err);
+                }
+
+                if (result && result.length){
+                    result = result[0];
+                    callback(null, result);
+                }
+
+            });
+        }
+
+        function getOrdersFiltersValues(callback){
+            Quotation.aggregate([
+                {
+                    $match: {
+                        forSales: false,
+                        isOrder: true
                     }
                 },
                 {

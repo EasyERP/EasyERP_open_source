@@ -137,15 +137,15 @@ define([
                     orderId: this.currentModel.id
                 };
 
-                dataService.postData(url, data, function (err, response) {
-                    var redirectUrl = self.forSales ? "easyErp/salesInvoice" : "easyErp/Invoice";
-
-                    if (err) {
-                        alert('Can\'t receive invoice');
-                    } else {
-                        Backbone.history.navigate(redirectUrl, {trigger: true});
-                    }
-                });
+                //dataService.postData(url, data, function (err, response) {
+                //    var redirectUrl = self.forSales ? "easyErp/salesInvoice" : "easyErp/Invoice";
+                //
+                //    if (err) {
+                //        alert('Can\'t receive invoice');
+                //    } else {
+                //        Backbone.history.navigate(redirectUrl, {trigger: true});
+                //    }
+                //});
             },
 
             setDraft: function (e) {
