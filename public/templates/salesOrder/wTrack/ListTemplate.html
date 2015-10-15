@@ -7,7 +7,7 @@ class="canceledListItem"
 <td><%=startNumber + index + 1%></td>
 <td><%=order.project ? order.project.projectName : '------'%></td>
 <td><%=order.orderDate%></td>
-<td><%=(order.project) ? order.project.customer.name : '------'%></td>
+<td><%=(order.supplier) ? order.supplier.name : '------'%></td>
 <td><%=(order.project) ? order.project.projectmanager.name : '------'%></td>
 <td class="total"><%=(order.paymentInfo) ? order.paymentInfo.total.toFixed(2) : '0'%></td>
 <td id='<%=order._id%>'>

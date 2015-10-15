@@ -54,7 +54,10 @@ define([
                 var id = targetElement.attr("id");
                 var model = this.collection.get(id);
 
-                model.save({workflow: target$.attr("id")}, {
+                model.save({ workflow: {
+                    _id: target$.attr("id"),
+                    name:target$.text()
+                }}, {
                     headers : {
                         mid: 55
                     },

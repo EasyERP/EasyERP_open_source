@@ -29,7 +29,7 @@ var Quotation = function (models) {
                 async.parallel([
                     function (callback) {
                         Customer.populate(_quotation, {
-                            path  : 'supplier',
+                            path  : 'supplier._id',
                             select: '_id name fullName'
                         }, function (err, resp) {
                             if (err) {
@@ -41,7 +41,7 @@ var Quotation = function (models) {
                     },
                     function (callback) {
                         Workflow.populate(_quotation, {
-                            path  : 'workflow',
+                            path  : 'workflow._id',
                             select: '-sequence',
                         }, function (err, resp) {
                             if (err) {
@@ -460,14 +460,14 @@ var Quotation = function (models) {
                 .skip(skip)
                 .sort(sort);
 
-            query.populate('supplier', '_id name fullName');
+            //query.populate('supplier', '_id name fullName');
             query.populate('destination');
             query.populate('incoterm');
             query.populate('invoiceControl');
             query.populate('paymentTerm');
             query.populate('products.product', '_id, name');
-            query.populate('workflow', '-sequence');
-            query.populate('project', 'projectName projectmanager customer');
+            //query.populate('workflow', '-sequence');
+            //query.populate('project', 'projectName projectmanager customer');
 
             query.exec(waterfallCallback);
         };
@@ -575,7 +575,7 @@ var Quotation = function (models) {
             queryObject.isOrder = isOrder;
             query = Quotation.findOne(queryObject);
 
-            query.populate('supplier', '_id name fullName');
+           // query.populate('supplier', '_id name fullName');
             query.populate('destination');
             query.populate('incoterm');
             query.populate('invoiceControl');
@@ -584,9 +584,9 @@ var Quotation = function (models) {
             query.populate('groups.users');
             query.populate('groups.group');
             query.populate('groups.owner', '_id login');
-            query.populate('workflow', '-sequence');
+            //query.populate('workflow', '-sequence');
             query.populate('deliverTo', '_id, name');
-            query.populate('project', '_id projectName');
+            //query.populate('project', '_id projectName');
 
             query.exec(waterfallCallback);
         };
@@ -645,20 +645,21 @@ var Quotation = function (models) {
                     })
             },
             function (quot, cb) {
-                Customers
-                    .populate(quot, {
-                        path  : 'supplier',
-                        model : Customers,
-                        select: 'name _id'
-                    },
-                    function (err, quot) {
-                        if (err) {
-                            return cb(err)
-
-                        }
-                        cb(null, quot)
-
-                    })
+                //Customers
+                //    .populate(quot, {
+                //        path  : 'supplier',
+                //        model : Customers,
+                //        select: 'name _id'
+                //    },
+                //    function (err, quot) {
+                //        if (err) {
+                //            return cb(err)
+                //
+                //        }
+                //        cb(null, quot)
+                //
+                //    })
+                cb(null, quot)
             }
 
         ], function (err, result) {

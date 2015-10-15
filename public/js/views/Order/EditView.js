@@ -111,7 +111,10 @@ define([
                     }
 
                     self.currentModel.save({
-                        workflow: workflow._id
+                        workflow: {
+                            _id: workflow._id,
+                            name : workflow.name
+                        }
                     }, {
                         headers: {
                             mid: 57
@@ -160,7 +163,10 @@ define([
                     }
 
                     self.currentModel.save({
-                        workflow: workflow._id
+                        workflow: {
+                            _id: workflow._id,
+                            name : workflow.name
+                        }
                     }, {
                         headers: {
                             mid: 57

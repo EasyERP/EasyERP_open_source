@@ -123,7 +123,10 @@ define([
                     if (products && products.length) {
                         self.currentModel.save({
                             isOrder: true,
-                            workflow: workflow._id
+                            workflow: {
+                                _id: workflow._id,
+                                name: workflow.name
+                            }
                         }, {
                             headers: {
                                 mid: 57
@@ -160,7 +163,10 @@ define([
                     }
 
                     self.currentModel.save({
-                        workflow: workflow._id
+                        workflow: {
+                            _id: workflow._id,
+                            name: workflow.name
+                        }
                     }, {
                         headers: {
                             mid: 57
@@ -188,7 +194,10 @@ define([
                     }
 
                     self.currentModel.save({
-                        workflow: workflow._id
+                        workflow: {
+                            _id: workflow._id,
+                            name: workflow.name
+                        }
                     }, {
                         headers: {
                             mid: 57
@@ -215,7 +224,15 @@ define([
                 var quantity;
                 var price;
 
-                var supplier = thisEl.find('#supplierDd').data('id');
+                var supplier = {};
+                supplier._id = thisEl.find('#supplierDd').attr('data-id');
+                supplier.name = thisEl.find('#supplierDd').text();
+
+                var project = {};
+                project._id = thisEl.find('#projectDd').attr('data-id');
+                project.projectName = thisEl.find('#projectDd').text();
+                project.projectmanager = this.projectManager;
+
                 var destination = $.trim(thisEl.find('#destination').data('id'));
                 var deliverTo = $.trim(thisEl.find('#deliveryDd').data('id'));
                 var incoterm = $.trim(thisEl.find('#incoterm').data('id'));
@@ -236,8 +253,10 @@ define([
                 var usersId = [];
                 var groupsId = [];
 
-                var workflow = this.currentModel.get('workflow');
-                workflow = workflow ? workflow._id : null;
+                var wF = this.currentModel.get('workflow');
+                var workflow = {};
+                workflow._id =  wF._id;
+                workflow.name =  wF.name;
 
                 $(".groupsAndUser tr").each(function () {
                     if ($(this).data("type") == "targetUsers") {
@@ -283,6 +302,7 @@ define([
                     supplierReference: supplierReference,
                     deliverTo: deliverTo,
                     products: products,
+                    project       : project,
                     orderDate: orderDate,
                     expectedDate: expectedDate,
                     destination: destination,

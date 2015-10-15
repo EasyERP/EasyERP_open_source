@@ -276,20 +276,20 @@ define([], function () {
         },
         salesQuotation: {
             'Project': {
-                view   : 'reference',
-                backend: 'reference'
+                view   : 'project',
+                backend: 'project._id'
             },
             'Customer' : {
                 view   : 'supplier',
-                backend: 'supplier'
+                backend: 'supplier._id'
             },
             'Sales Manager'   : {
-                view   : 'project.projectmanager._id',
-                backend: 'projectmanager'
+                view   : 'project',
+                backend: 'project.projectmanager._id'
             },
             'Status'   : {
                 view   : 'workflow',
-                backend: 'workflow'
+                backend: 'workflow._id'
             }
         }
     };
