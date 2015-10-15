@@ -54,13 +54,32 @@ var wTrack = function (event, models) {
         var id = req.params.id;
         var data = mapObject(req.body);
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+        var department;
+        var employee;
+        var project;
+
+        if(data){
+            department = data.department;
+            employee = data.employee;
+            project = data.project;
+
+            if(department && !department._id){
+                delete data.department;
+            }
+            if(employee && !employee._id){
+                delete data.employee;
+            }
+            if(project && !project._id){
+                delete data.project;
+            }
+        }
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getEditWritAccess(req, req.session.uId, 75, function (access) {
                 if (access) {
                     data.editedBy = {
                         user: req.session.uId,
-                        date: new Date().toISOString()
+                        date: new Date()
                     };
 
                     if (data && data.revenue) {
