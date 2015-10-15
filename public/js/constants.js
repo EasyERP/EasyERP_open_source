@@ -284,7 +284,7 @@ define([], function () {
                 backend: 'supplier._id'
             },
             'Sales Manager'   : {
-                view   : 'project',
+                view   : 'projectmanager',
                 backend: 'project.projectmanager._id'
             },
             'Status'   : {

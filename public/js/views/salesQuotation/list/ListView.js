@@ -56,6 +56,34 @@ define([
                 "click .newSelectList li"            : "chooseOption"
             },
 
+            showFilteredPage: function (filter, context) {
+                var itemsNumber = $("#itemsNumber").text();
+
+                var alphaBet = this.$el.find('#startLetter');
+                var selectedLetter = $(alphaBet).find('.current').length ? $(alphaBet).find('.current')[0].text : '';
+
+                $("#top-bar-deleteBtn").hide();
+                $('#check_all').prop('checked', false);
+
+                if (selectedLetter === "All") {
+                    selectedLetter = '';
+                }
+
+                context.startTime = new Date();
+                context.newCollection = false;
+
+                this.filter = Object.keys(filter).length === 0 ? {} : filter;
+
+                this.filter.forSales = {
+                    key: 'forSales',
+                    value: ['true']
+                };
+
+                context.changeLocationHash(1, itemsNumber, filter);
+                context.collection.showMore({count: itemsNumber, page: 1, filter: filter});
+                context.getTotalLength(null, itemsNumber, filter);
+            },
+
             chooseOption: function (e) {
                 var self = this;
                 var target$ = $(e.target);

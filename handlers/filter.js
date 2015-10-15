@@ -664,27 +664,27 @@ var Filters = function (models) {
                 {
                     $group: {
                         _id         : null,
-                        'reference'  : {
+                        'project'  : {
                             $addToSet: {
-                                _id : '$reference',
-                                name: '$reference.projectName'
+                                _id : '$project._id',
+                                name: '$project.projectName'
                             }
                         },
                         'supplier': {
                             $addToSet: {
-                                _id : '$supplier',
-                                name: '$supplier.fullName'
+                                _id : '$supplier._id',
+                                name: '$supplier.name'
                             }
                         },
                         'projectmanager'      : {
                             $addToSet: {
                                 _id : '$project.projectmanager._id',
-                                name: '$project.projectmanager.fullName'
+                                name: '$project.projectmanager.name'
                             }
                         },
                         'workflow'  : {
                             $addToSet: {
-                                _id : '$workflow',
+                                _id : '$workflow._id',
                                 name: '$workflow.name'
                             }
                         }
@@ -695,9 +695,11 @@ var Filters = function (models) {
                     callback(err);
                 }
 
-                result = result[0];
+                if (result && result.length){
+                    result = result[0];
+                    callback(null, result);
+                }
 
-                callback(null, result);
             });
         }
 

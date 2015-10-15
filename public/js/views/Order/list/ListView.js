@@ -34,6 +34,10 @@ define([
                 this.startTime = options.startTime;
                 this.collection = options.collection;
                 this.filter = options.filter;
+                this.filter.forSales = {
+                    key: 'forSales',
+                    value: ['false']
+                };
                 this.sort = options.sort;
                 this.defaultItemsNumber = this.collection.namberToShow || 100;
                 this.newCollection = options.newCollection;

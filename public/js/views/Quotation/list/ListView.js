@@ -30,7 +30,7 @@ define([
                 this.filter = options.filter ? options.filter : {};
                 this.filter.forSales = {
                     key: 'forSales',
-                    value: ['true']
+                    value: ['false']
                 };
                 this.sort = options.sort;
                 this.defaultItemsNumber = this.collection.namberToShow || 100;

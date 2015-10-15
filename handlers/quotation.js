@@ -292,8 +292,7 @@ var Quotation = function (models) {
                     resArray.push(filtrElement);
                     break;
             }
-        }
-        ;
+        };
 
         return resArray;
     };
