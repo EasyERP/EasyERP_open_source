@@ -771,7 +771,7 @@ define([
                 var subNameClass = "subRows" + name;
 
                 var subRows = this.$el.find('.' + subNameClass);
-                var collection = this.capacityObject[name];
+                var collection = new filterCollection(this.capacityObject[name]).toJSON();
 
                 if (checkIfCB) {
                     status = target.prop("checked");
