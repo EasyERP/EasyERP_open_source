@@ -261,10 +261,6 @@ define([], function () {
             }
         },
         Quotation       : {
-            'Reference': {
-                view   : 'name',
-                backend: '_id'
-            },
             'Supplier' : {
                 view   : 'supplier',
                 backend: 'supplier._id'

@@ -38,10 +38,10 @@ var Filters = function (models) {
                 supplierPayments: getSupplierPaymentsFiltersValues,
                 Product         : getProductsFiltersValues,
                 salesProduct    : getProductsFiltersValues,
-                Quotation       : getQuotationFiltersValues,
-                salesQuotation       : getSalesQuotation,
-                salesOrder      : getSalesOrders,
-                Order      : getOrdersFiltersValues
+               // Quotation       : getQuotationFiltersValues,
+               // salesQuotation       : getSalesQuotation,
+               // salesOrder      : getSalesOrders,
+               // Order      : getOrdersFiltersValues
             },
             function (err, result) {
                 if (err) {
@@ -621,12 +621,6 @@ var Filters = function (models) {
                 {
                     $group: {
                         _id           : null,
-                        'name'  : {
-                            $addToSet: {
-                                _id : '$_id',
-                                name: '$name'
-                            }
-                        },
                         'supplier': {
                             $addToSet: {
                                 _id : '$supplier._id',
@@ -642,17 +636,17 @@ var Filters = function (models) {
                     }
                 }
             ], function (err, result) {
-                var resObj = {};
 
                 if (err) {
                     callback(err);
                 }
 
                 if (result && result.length > 0) {
-                    resObj = result[0];
+                    result = result[0];
+                    callback(null, result);
                 }
 
-                callback(null, resObj);
+
             });
         };
 
