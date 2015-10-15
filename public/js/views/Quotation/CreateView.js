@@ -24,6 +24,7 @@ define([
                 _.bindAll(this, "saveItem", "render");
                 this.model = new QuotationModel();
                 this.responseObj = {};
+                this.forSales = true;
                 this.render();
             },
 
