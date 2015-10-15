@@ -51,6 +51,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 /*== Lights =========================*/
 /*== Borders=========================*/
 /*==Main menu==========================*/
+/*== login panel ====================*/
 /*==Sub MENU, Top-bar =========================*/
 /*== Filters ======================*/
 /*== Customer ======================*/
@@ -69,6 +70,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 /*== Lights =========================*/
 /*== Borders=========================*/
 /*==Main menu==========================*/
+/*== login panel ====================*/
 /*==Sub MENU, Top-bar =========================*/
 /*== Filters ======================*/
 /*== Customer ======================*/
@@ -256,7 +258,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   background-color: #dbdbdb;
 }
 .list2 tr:hover {
-  background-color: #ffffff;
+  background-color: #cccccc;
 }
 .list2 .anotherColor {
   background-color: #3e88b9;
@@ -422,7 +424,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   background-color: #dbdbdb;
 }
 .list2 tr:hover {
-  background-color: #ffffff;
+  background-color: #cccccc;
 }
 .list2 thead th:first-of-type {
   width: 15%;
@@ -452,13 +454,13 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   font-size: 12px;
   line-height: 28px;
   padding: 0 0  0 10px;
-  color: #ffffff;
+  color: #393939;
   position: relative;
   border-right: 1px solid #1ebbea;
 }
 #forInfo .tableProjects thead th.forCaption a {
   text-align: right;
-  color: #ffffff;
+  color: #393939;
   position: absolute;
   right: 10px;
   top: 0;
@@ -3929,7 +3931,7 @@ a.red:hover {
   line-height: 20px;
 }
 #loginPanel .dropdown-button #loginSelect li a {
-  color: #c1c1c1;
+  color: #393939;
 }
 #loginPanel .dropdown-button img {
   float: left;
@@ -3941,7 +3943,7 @@ a.red:hover {
 #loginPanel .dropdown-button span {
   display: block;
   line-height: 30px;
-  color: #c1c1c1;
+  color: #393939;
 }
 #loginPanel .dropdown-button span:hover {
   color: #fff;
@@ -5136,7 +5138,7 @@ ul.dialog-tabs li.right button {
   background-color: #dbdbdb;
 }
 .list tr:hover {
-  background-color: #ffffff;
+  background-color: #cccccc;
 }
 .thumbnail {
   float: left;
@@ -8516,7 +8518,7 @@ textarea#editInput {
 }
 .search-options .filter-dialog-tabs {
   box-sizing: border-box;
-  border: 1px solid #c0c0c0;
+  border: 1px solid #7f7f80;
   border-bottom: 0;
   position: relative;
   float: left;
@@ -8529,7 +8531,7 @@ textarea#editInput {
   border: none;
 }
 .search-options .filter-dialog-tabs li:nth-child(2) {
-  border-left: 1px solid #c0c0c0;
+  border-left: 1px solid #7f7f80;
 }
 .search-options .filter-check-list {
   right: auto;
@@ -8815,7 +8817,7 @@ textarea#editInput {
 .vacation-list tbody tr:not(.subRow):hover td:not(.selectedType),
 .salary-list tbody tr:not(.subRow):hover td:not(.selectedType),
 .subSalary-list tbody tr:not(.subRow):hover td:not(.selectedType) {
-  color: #ffffff;
+  color: #393939;
 }
 .vacation-list tbody tr td > div,
 .salary-list tbody tr td > div,
