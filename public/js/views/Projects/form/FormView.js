@@ -360,6 +360,7 @@ define([
                 thisEl.find('#createBonus').hide();
                 _.bindAll(this, 'getQuotations');
                 _.bindAll(this, 'getWTrack');
+                _.bindAll(this, 'renderProformRevenue');
 
                 paralellTasks = [this.getInvoice, this.getWTrack, this.getQuotations];
 
@@ -603,7 +604,7 @@ define([
 
             renderProformRevenue: function () {
                 var self = this;
-                var proformContainer = self.$el.find('#proformRevenueContainer');
+                var proformContainer = this.$el.find('#proformRevenueContainer');
 
                 var qCollectionJSON = this.qCollection.toJSON();
 
@@ -656,6 +657,7 @@ define([
                 };
 
                 this.qCollection.bind('reset', createView);
+                this.qCollection.bind('add', self.renderProformRevenue);
             },
 
             editItem: function () {
