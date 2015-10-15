@@ -3,7 +3,7 @@ define([
         'text!templates/salesQuotation/list/ListHeader.html',
         'text!templates/salesOrder/wTrack/ListHeader.html',
         'text!templates/stages.html',
-        'views/Quotation/CreateView',
+        'views/salesQuotation/CreateView',
         'views/salesOrder/list/ListItemView',
         'views/supplierPayments/list/ListTotalView',
         'views/salesOrder/EditView',

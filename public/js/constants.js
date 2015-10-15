@@ -272,7 +272,7 @@ define([], function () {
         },
         salesQuotation: {
             'Project': {
-                view   : 'project',
+                view   : 'projectName',
                 backend: 'project._id'
             },
             'Customer' : {
@@ -290,7 +290,7 @@ define([], function () {
         },
         salesOrder: {
             'Project': {
-                view   : 'project',
+                view   : 'projectName',
                 backend: 'project._id'
             },
             'Customer' : {

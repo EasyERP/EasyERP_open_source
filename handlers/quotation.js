@@ -521,7 +521,7 @@ var Quotation = function (models) {
         };
 
         contentSearcher = function (quotationsIds, waterfallCallback) {
-            var queryObject = {_id: id};
+            var queryObject = {_id: objectId(id)};
             var query;
 
             queryObject.isOrder = isOrder;

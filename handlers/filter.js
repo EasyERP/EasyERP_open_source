@@ -38,10 +38,10 @@ var Filters = function (models) {
                 supplierPayments: getSupplierPaymentsFiltersValues,
                 Product         : getProductsFiltersValues,
                 salesProduct    : getProductsFiltersValues,
-               // Quotation       : getQuotationFiltersValues,
-               // salesQuotation       : getSalesQuotation,
-               // salesOrder      : getSalesOrders,
-               // Order      : getOrdersFiltersValues
+                Quotation       : getQuotationFiltersValues,
+                salesQuotation       : getSalesQuotation,
+                salesOrder      : getSalesOrders,
+                Order      : getOrdersFiltersValues
             },
             function (err, result) {
                 if (err) {
@@ -660,7 +660,7 @@ var Filters = function (models) {
                 {
                     $group: {
                         _id         : null,
-                        'project'  : {
+                        'projectName'  : {
                             $addToSet: {
                                 _id : '$project._id',
                                 name: '$project.projectName'
@@ -710,7 +710,7 @@ var Filters = function (models) {
                 {
                     $group: {
                         _id         : null,
-                        'project'  : {
+                        'projectName'  : {
                             $addToSet: {
                                 _id : '$project._id',
                                 name: '$project.projectName'
@@ -760,7 +760,7 @@ var Filters = function (models) {
                 {
                     $group: {
                         _id         : null,
-                        'project'  : {
+                        'projectName'  : {
                             $addToSet: {
                                 _id : '$project._id',
                                 name: '$project.projectName'
