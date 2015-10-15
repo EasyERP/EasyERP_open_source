@@ -4,6 +4,7 @@
 define([
         'text!templates/Projects/form/FormTemplate.html',
         'text!templates/Projects/projectInfo/DetailsTemplate.html',
+        'text!templates/Projects/projectInfo/proformRevenue.html',
         'views/Projects/EditView',
         'views/Notes/NoteView',
         'views/Notes/AttachView',
@@ -25,10 +26,11 @@ define([
         'helpers'
     ],
 
-    function (ProjectsFormTemplate, DetailsTemplate, EditView, noteView, attachView, AssigneesView, BonusView, wTrackView, PaymentView, InvoiceView, QuotationView, GenerateWTrack, wTrackCollection, quotationCollection, addAttachTemplate, common, populate, custom, dataService, async, helpers) {
+    function (ProjectsFormTemplate, DetailsTemplate, ProformRevenueTemplate, EditView, noteView, attachView, AssigneesView, BonusView, wTrackView, PaymentView, InvoiceView, QuotationView, GenerateWTrack, wTrackCollection, quotationCollection, addAttachTemplate, common, populate, custom, dataService, async, helpers) {
         var FormEmployeesView = Backbone.View.extend({
-            el         : '#content-holder',
-            contentType: 'Projects',
+            el            : '#content-holder',
+            contentType   : 'Projects',
+            proformRevenue: _.template(ProformRevenueTemplate),
 
             events: {
                 'click .chart-tabs'                                               : 'changeTab',
@@ -50,6 +52,7 @@ define([
                 this.id = this.formModel.id;
                 this.formModel.urlRoot = '/Projects/';
                 this.responseObj = {};
+                this.proformValues = {};
             },
 
             createDialog: function () {
@@ -598,10 +601,32 @@ define([
 
             },
 
-            getQuotations: function (cb) {
-                //var _id = this.formModel.id;
+            renderProformRevenue: function () {
                 var self = this;
+                var proformContainer = self.$el.find('#proformRevenueContainer');
 
+                var qCollectionJSON = this.qCollection.toJSON();
+
+                var sum = 0;
+
+                qCollectionJSON.forEach(function(element) {
+                    sum += element.paymentInfo.total;
+                });
+
+                this.proformValues.quotations = {
+                    count: qCollectionJSON.length,
+                    sum  : sum
+                };
+
+                proformContainer.html(this.proformRevenue({
+                        proformValues   : self.proformValues,
+                        currencySplitter: helpers.currencySplitter
+                    })
+                );
+            },
+
+            getQuotations: function (cb) {
+                var self = this;
                 var filter = {
                     'projectName': {
                         key  : 'project',
@@ -609,43 +634,23 @@ define([
                     }
                 };
 
-                var qCollection = new quotationCollection({
+                this.qCollection = new quotationCollection({
                     count      : 50,
                     viewType   : 'list',
                     contentType: 'Quotation',
                     filter     : filter
                 });
 
-
                 function createView() {
                     new QuotationView({
-                        collection: qCollection,
+                        collection: self.qCollection,
                         projectId : self.id
                     }).render();
-                }
 
-                qCollection.bind('reset', createView);
+                    self.renderProformRevenue();
+                };
 
-                /*dataService.getData('/quotation/list',
-                 {
-                 count      : 100,
-                 page       : 1,
-                 contentType: 'salesQuotation',
-                 filter     : filter
-                 }, function (response) {
-                 if (response.error) {
-                 return cb(response.error);
-                 }
-
-                 new QuotationView({
-                 model    : response,
-                 projectId: self.formModel.id
-                 }).render();
-
-                 cb(null, response);
-
-                 }, this);*/
-
+                this.qCollection.bind('reset', createView);
             },
 
             editItem: function () {

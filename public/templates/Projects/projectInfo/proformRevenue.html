@@ -1,0 +1,41 @@
+<table class="list tableProform">
+
+    <colgroup>
+        <col width="60%">
+        <col width="20%">
+        <col width="20%">
+    </colgroup>
+
+    <thead>
+    <tr>
+        <th colspan="3" class="forCaption">Proform Revenue</th>
+    </tr>
+    <tr>
+        <th>Resource</th>
+        <th>Summary</th>
+        <th>Count</th>
+    </tr>
+    </thead>
+    <tbody id="proformRevenue">
+    <tr>
+        <td>Quotations</td>
+        <%if (proformValues && proformValues.quotations) {%>
+        <td><%=currencySplitter(proformValues.quotations.sum.toFixed(2))%></td>
+        <td><%=proformValues.quotations.count%></td>
+        <% } else { %>
+        <td>0</td>
+        <td>0</td>
+        <% } %>
+    </tr>
+    <tr>
+        <td>Orders</td>
+        <%if (proformValues && proformValues.orders) {%>
+        <td><%=currencySplitter(proformValues.orders.sumtoFixed(2))%></td>
+        <td><%=proformValues.orders.count%></td>
+        <% } else { %>
+        <td>0</td>
+        <td>0</td>
+        <% } %>
+    </tr>
+    </tbody>
+</table>
