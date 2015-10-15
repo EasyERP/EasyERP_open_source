@@ -486,25 +486,13 @@ var Quotation = function (models) {
     this.getById = function (req, res, next) {
         var id = req.params.id;
         var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
-        /* var queryParams = {};
-
-         for (var i in req.query) {
-         queryParams[i] = req.query[i];
-         }*/
-
         var departmentSearcher;
         var contentIdsSearcher;
         var contentSearcher;
         var waterfallTasks;
 
         var contentType = req.query.contentType;
-        var isOrder = !!(contentType === 'Order');
-
-        /* var data = {};
-
-         for (var i in req.query) {
-         data[i] = req.query[i];
-         }*/
+        var isOrder = ((contentType === 'Order') || (contentType === 'salesOrder'));
 
         departmentSearcher = function (waterfallCallback) {
             models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
@@ -528,7 +516,6 @@ var Quotation = function (models) {
                 {
                     $match: {
                         $and: [
-                            /*optionsObject,*/
                             {
                                 $or: [
                                     {
