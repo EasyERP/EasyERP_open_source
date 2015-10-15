@@ -618,6 +618,11 @@ define([
                     sum  : sum
                 };
 
+                this.proformValues.orders = {
+                    count: 0,
+                    sum  : 0
+                };
+
                 proformContainer.html(this.proformRevenue({
                         proformValues   : self.proformValues,
                         currencySplitter: helpers.currencySplitter

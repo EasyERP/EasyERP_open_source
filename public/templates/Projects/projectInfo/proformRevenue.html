@@ -30,7 +30,7 @@
     <tr>
         <td>Orders</td>
         <%if (proformValues && proformValues.orders) {%>
-        <td><%=currencySplitter(proformValues.orders.sumtoFixed(2))%></td>
+        <td><%=currencySplitter(proformValues.orders.sum.toFixed(2))%></td>
         <td><%=proformValues.orders.count%></td>
         <% } else { %>
         <td>0</td>
@@ -38,4 +38,12 @@
         <% } %>
     </tr>
     </tbody>
+    <tfoot>
+    <tr>
+        <td>Total:</td>
+        <td><%=currencySplitter((proformValues.quotations.sum + proformValues.orders.sum).toFixed(2))%></td>
+        <td><%=currencySplitter((proformValues.orders.count + proformValues.quotations.count).toString())%></td>
+    </tr>
+
+    </tfoot>
 </table>
