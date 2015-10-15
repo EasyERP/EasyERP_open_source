@@ -17,7 +17,7 @@
                             <div class="half-block left">
                                 <dl class="person-info">
                                     <dt><label for="supplierDd">
-                                        <%if (App.currentDb === 'weTrack') {%>
+                                        <%if ((App.currentDb === 'weTrack') && forSales) {%>
                                            Customer
                                         <% } else { %>
                                           Supplier
@@ -31,7 +31,7 @@
                                     <dd><input type="text" name="supplierReference" id="supplierReference"
                                                maxlength="32"/></dd>-->
 
-                                    <%if (App.currentDb === 'weTrack') {%>
+                                    <%if ((App.currentDb === 'weTrack') && forSales) {%>
                                       <dt><label for="projectDd">Project</label></dt>
                                       <dd>
                                           <a id="projectDd" class="current-selected" href="javascript:;">Select</a>

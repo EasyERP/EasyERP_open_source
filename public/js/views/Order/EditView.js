@@ -25,6 +25,7 @@ define([
                 this.currentModel = (options.model) ? options.model : options.collection.getElement();
                 this.currentModel.urlRoot = "/order";
                 this.responseObj = {};
+                this.forSales = false;
                 this.render(options);
             },
 

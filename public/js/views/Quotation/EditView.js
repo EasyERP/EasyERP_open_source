@@ -26,6 +26,7 @@ define([
                 this.currentModel = (options.model) ? options.model : options.collection.getElement();
                 this.currentModel.urlRoot = "/quotation";
                 this.responseObj = {};
+                this.forSales = false;
                 this.render(options);
             },
 
@@ -426,7 +427,7 @@ define([
                 populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, false, true);
                 populate.get("#deliveryDd", "/deliverTo", {}, 'name', this, false, true);
 
-                if (App.currentDb !== 'weTrack'){
+                if ((App.currentDb !== 'weTrack') && this.forSales){
                     populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
                 } else {
                     populate.get("#supplierDd", "/Customer", {}, "fullName", this, false, false);

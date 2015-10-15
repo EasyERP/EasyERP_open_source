@@ -24,7 +24,7 @@ define([
                 _.bindAll(this, "saveItem", "render");
                 this.model = new QuotationModel();
                 this.responseObj = {};
-                this.forSales = true;
+                this.forSales = false;
                 this.render();
             },
 
@@ -258,7 +258,7 @@ define([
                 var productItemContainer;
 
                 productItemContainer = this.$el.find('#productItemsHolder');
-                if (App.currentDb === 'weTrack') {
+                if ((App.currentDb === 'weTrack') && this.forSales) {
                     productItemContainer.append(
                         new ProductItemView({canBeSold: true, service: 'Service'}).render().el
                     );
@@ -270,7 +270,7 @@ define([
             },
 
             render: function () {
-                var formString = this.template({visible: this.visible});
+                var formString = this.template({visible: this.visible, forSales: this.forSales});
                 var self = this;
 
                 this.$el = $(formString).dialog({
@@ -313,7 +313,7 @@ define([
                 populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, true, true);
                 populate.get("#deliveryDd", "/deliverTo", {}, 'name', this, true);
 
-                if (App.currentDb === 'weTrack'){
+                if ((App.currentDb === 'weTrack') && this.forSales){
                     this.$el.find('#supplierDd').removeClass('current-selected');
                     populate.get("#projectDd", "/getProjectsForDd", {}, "projectName", this, false, false);
                     //populate.get2name("#supplierDd", "/supplier", {}, this, false, true);

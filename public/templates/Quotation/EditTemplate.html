@@ -33,7 +33,7 @@
                                     <dt><label for="supplierDd">
 
                                         <%if(model.supplier){%>
-                                          <%if (App.currentDb === 'weTrack') {%>
+                                          <%if ((App.currentDb !== 'weTrack') && this.forSales) {%>
                                             Customer
                                           <% } else { %>
                                             Supplier
@@ -44,7 +44,7 @@
                                         <a id="supplierDd" class="current-selected" href="javascript:;" data-id="<%=model.supplier._id%>"><%=model.supplier.name%></a>
                                     </dd>
 
-                                    <%if (App.currentDb === 'weTrack') {%>
+                                    <%if ((App.currentDb !== 'weTrack') && this.forSales) {%>
                                     <dt><label for="projectDd">Project</label></dt>
                                     <dd>
                                         <a id="projectDd" class="current-selected" href="javascript:;" data-id="<%=model.project._id%>"><%=model.project.projectName%></a>

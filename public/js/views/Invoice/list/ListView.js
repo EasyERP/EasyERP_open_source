@@ -35,7 +35,7 @@ define([
                 this.deleteCounter = 0;
                 this.page = options.collection.page;
                 this.forSales = false;
-                this.filter = {'forSales' : {key:'forSales',value:false}};
+                this.filter = {'forSales' : {key:'forSales',value:['false']}};
 
                 this.render();
 

@@ -37,6 +37,7 @@ define([
                     key: 'forSales',
                     value: ['false']
                 };
+                this.forSales = false;
                 this.sort = options.sort;
                 this.defaultItemsNumber = this.collection.namberToShow || 100;
                 this.newCollection = options.newCollection;

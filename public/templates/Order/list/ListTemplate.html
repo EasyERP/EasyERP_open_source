@@ -7,7 +7,7 @@ class="canceledListItem"
     <td><%=startNumber + index + 1%></td>
     <td><%=quotation.name%></td>
     <td><%=quotation.orderDate%></td>
-    <td><%=(quotation.supplier) ? quotation.supplier.fullName : ''%></td>
+    <td><%=(quotation.supplier) ? quotation.supplier.name : ''%></td>
     <td><%=quotation.expectedDate%></td>
     <td class="unTaxed"><%=(quotation.paymentInfo) ? quotation.paymentInfo.unTaxed.toFixed(2) : '0.00'%></td>
     <td class="total"><%=(quotation.paymentInfo) ? quotation.paymentInfo.total.toFixed(2) : '0.00'%></td>
