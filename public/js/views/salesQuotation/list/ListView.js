@@ -1,6 +1,7 @@
 define([
         'views/listViewBase',
         'text!templates/salesQuotation/list/ListHeader.html',
+        'text!templates/salesQuotation/wTrack/ListHeader.html',
         'text!templates/stages.html',
         'views/salesQuotation/CreateView',
         'views/salesQuotation/list/ListItemView',
@@ -14,7 +15,7 @@ define([
         'constants'
     ],
 
-    function (listViewBase, listTemplate, stagesTemplate, createView, listItemView, listTotalView, editView, currentModel, contentCollection, filterView, common, dataService, CONSTANTS) {
+    function (listViewBase, listTemplate, listForWTrack, stagesTemplate, createView, listItemView, listTotalView, editView, currentModel, contentCollection, filterView, common, dataService, CONSTANTS) {
         var QuotationListView = listViewBase.extend({
             createView              : createView,
             listTemplate            : listTemplate,
@@ -29,7 +30,11 @@ define([
                 this.collection = options.collection;
 
                 this.filter = options.filter ? options.filter : {};
-                this.filter.forSales = true;
+                //this.filter.forSales = true;
+                this.filter.forSales = {
+                        key: 'forSales',
+                        value: ['true']
+                    };
 
                 this.sort = options.sort;
                 this.defaultItemsNumber = this.collection.namberToShow || 100;
@@ -90,20 +95,36 @@ define([
                 var self;
                 var currentEl;
                 var FilterView = filterView;
+                var templ;
+
                 $('.ui-dialog ').remove();
 
                 self = this;
                 currentEl = this.$el;
 
                 currentEl.html('');
-                currentEl.append(_.template(listTemplate));
-                currentEl.append(new listItemView({
-                    collection : this.collection,
-                    page       : this.page,
-                    itemsNumber: this.collection.namberToShow
-                }).render());//added two parameters page and items number
 
-                currentEl.append(new listTotalView({element: currentEl.find("#listTable"), cellSpan: 6}).render());
+                if (App.currentDb === 'weTrack'){
+                    templ = _.template(listForWTrack);
+                    currentEl.append(templ);
+                    currentEl.append(new listItemView({
+                        collection : this.collection,
+                        page       : this.page,
+                        itemsNumber: this.collection.namberToShow
+                    }).render());//added two parameters page and items number
+
+                    currentEl.append(new listTotalView({element: currentEl.find("#listTable"), cellSpan: 6}).render());
+                } else {
+                    currentEl.append(_.template(listTemplate));
+                    currentEl.append(new listItemView({
+                        collection : this.collection,
+                        page       : this.page,
+                        itemsNumber: this.collection.namberToShow
+                    }).render());//added two parameters page and items number
+
+                    currentEl.append(new listTotalView({element: currentEl.find("#listTable"), cellSpan: 6}).render());
+                }
+
 
                 this.renderCheckboxes();
                 this.renderPagination(currentEl, this);

@@ -1,6 +1,7 @@
 define([
         'text!templates/Pagination/PaginationTemplate.html',
         'text!templates/salesQuotation/list/ListHeader.html',
+        'text!templates/salesOrder/wTrack/ListHeader.html',
         'text!templates/stages.html',
         'views/Quotation/CreateView',
         'views/salesOrder/list/ListItemView',
@@ -13,7 +14,7 @@ define([
         'dataService'
     ],
 
-    function (paginationTemplate, listTemplate, stagesTamplate, createView, listItemView, listTotalView, editView, quotationModel, contentCollection, filterView, common, dataService) {
+    function (paginationTemplate, listTemplate, listForWTrack, stagesTamplate, createView, listItemView, listTotalView, editView, quotationModel, contentCollection, filterView, common, dataService) {
         var OrdersListView = Backbone.View.extend({
             el: '#content-holder',
             defaultItemsNumber: null,
@@ -22,7 +23,7 @@ define([
             sort: null,
             newCollection: null,
             page: null, //if reload page, and in url is valid page
-            contentType: 'Order',//needs in view.prototype.changeLocationHash
+            contentType: 'salesOrder',//needs in view.prototype.changeLocationHash
             viewType: 'list',//needs in view.prototype.changeLocationHash
 
             initialize: function (options) {
@@ -30,7 +31,10 @@ define([
                 this.collection = options.collection;
 
                 this.filter = options.filter ? options.filter : {};
-                this.filter.forSales = true;
+                this.filter.forSales = {
+                    key: 'forSales',
+                    value: ['true']
+                };
 
                 this.sort = options.sort;
                 this.defaultItemsNumber = this.collection.namberToShow || 100;
@@ -190,12 +194,22 @@ define([
                 var FilterView;
 
                 currentEl.html('');
-                currentEl.append(_.template(listTemplate));
-                currentEl.append(new listItemView({
-                    collection: this.collection,
-                    page: this.page,
-                    itemsNumber: this.collection.namberToShow
-                }).render());//added two parameters page and items number
+                if (App.currentDb === 'weTrack') {
+                    currentEl.append(_.template(listForWTrack));
+                    currentEl.append(new listItemView({
+                        collection: this.collection,
+                        page: this.page,
+                        itemsNumber: this.collection.namberToShow
+                    }).render());
+                }else {
+                    currentEl.append(_.template(listTemplate));
+                    currentEl.append(new listItemView({
+                        collection: this.collection,
+                        page: this.page,
+                        itemsNumber: this.collection.namberToShow
+                    }).render());
+                }
+                //added two parameters page and items number
                 currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 6}).render());
 
                 $('#check_all').click(function () {

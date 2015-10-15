@@ -128,7 +128,15 @@ var Quotation = function (models) {
 
         var waterfallTasks;
         var contentType = data.contentType;
+        var filter = data.filter || {};
         var isOrder = (contentType === 'Order' || contentType === 'salesOrder');
+
+        if (isOrder) {
+            filter.isOrder = {
+                    key: 'isOrder',
+                    value: ['true']
+            }
+        }
 
         var optionsObject = {};
 
@@ -215,7 +223,7 @@ var Quotation = function (models) {
             queryObject['$and'] = [];
 
             queryObject.$and.push({_id: {$in: quotationsIds}});
-            queryObject.$and.push({isOrder: isOrder});
+            //queryObject.$and.push({isOrder: isOrder});
 
             caseFilter(queryObject, data);
 
@@ -304,6 +312,11 @@ var Quotation = function (models) {
                     filtrElement[key] = {$in: condition};
                     resArray.push(filtrElement);
                     break;
+                case 'isOrder':
+                    ConvertType(condition, 'boolean');
+                    filtrElement[key] = {$in: condition};
+                    resArray.push(filtrElement);
+                    break;
             }
         }
         ;
@@ -328,7 +341,14 @@ var Quotation = function (models) {
         var count = query.count ? query.count : 100;
         var page = query.page;
         var skip = (page - 1) > 0 ? (page - 1) * count : 0;
-        var filter = query.filter;
+        var filter = query.filter || {};
+
+        if (isOrder){
+            filter.isOrder = {
+                key: 'isOrder',
+                value: ['true']
+            }
+        }
 
         if (filter && typeof filter === 'object') {
             if (filter.condition === 'or') {
@@ -420,7 +440,7 @@ var Quotation = function (models) {
             queryObject.$and = [];
 
             queryObject.$and.push({_id: {$in: quotationsIds}});
-            queryObject.$and.push({isOrder: isOrder});
+            //queryObject.$and.push({isOrder: isOrder});
 
             query = Quotation
                 .find(queryObject)
@@ -435,6 +455,7 @@ var Quotation = function (models) {
             query.populate('paymentTerm');
             query.populate('products.product', '_id, name');
             query.populate('workflow', '-sequence');
+            query.populate('project', 'projectName projectmanager customer');
 
             query.exec(waterfallCallback);
         };

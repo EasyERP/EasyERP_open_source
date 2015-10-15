@@ -7,6 +7,6 @@
 <% }) %>
 <div class="divCell">
     <span>
-        <%= total ? total : '&nbsp'%>
+        <%= total ? currencySplitter(total.toFixed()) : '&nbsp'%>
     </span>
 </div>
