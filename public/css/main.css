@@ -66,17 +66,34 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 /*== Revenu ======================================*/
 /*== Notifikation ===============================*/
 /*== Btn Color=====================================*/
+/*== Lights =========================*/
+/*== Borders=========================*/
+/*==Main menu==========================*/
+/*==Sub MENU, Top-bar =========================*/
+/*== Filters ======================*/
+/*== Customer ======================*/
+/*==LIST ============================*/
+/*==Form Colum=================================*/
+/*== TABS ======================================*/
+/*== Kanab Opportunities=========================*/
+/*== ProjectPM====================================*/
+/*== Vocations ===================================*/
+/*=New User=======================================*/
+/*==DashBoard Vocation============================*/
+/*== forInfo ======================================*/
+/*== Revenu ======================================*/
+/*== Notifikation ===============================*/
 .salary-list tbody#listTable .subRow:hover {
   background-color: transparent;
 }
 .list2 {
-  color: #cdcdcd !important;
+  color: #393939 !important;
   font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
   width: 100%;
   table-layout: fixed;
 }
 .list2 .anotherColor {
-  background-color: #66b5d4;
+  background-color: #3e88b9;
 }
 .list2 tfoot tr {
   border-bottom: 1px solid #7f7f80;
@@ -182,7 +199,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   text-align: right;
   border-right: 1px solid #7f7f80;
   border-bottom: 1px solid #7f7f80;
-  color: #cdcdcd;
+  color: #393939;
   line-height: 20px;
 }
 .list2 tbody tr td.red-border {
@@ -208,10 +225,10 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   width: 100%;
 }
 .list2 tbody tr td a {
-  color: #cdcdcd;
+  color: #393939;
 }
 .list2 tbody tr td a.stageSelect {
-  color: #cdcdcd;
+  color: #393939;
 }
 .list2 tbody tr td a.done {
   color: #00c60b !important;
@@ -236,13 +253,13 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   line-height: 20px;
 }
 .list2 tr:nth-child(odd) {
-  background-color: #3d3d3e;
+  background-color: #dbdbdb;
 }
 .list2 tr:hover {
-  background-color: #565658;
+  background-color: #ffffff;
 }
 .list2 .anotherColor {
-  background-color: #66b5d4;
+  background-color: #3e88b9;
 }
 .list2 tfoot tr {
   border-bottom: 1px solid #7f7f80;
@@ -348,7 +365,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   text-align: right;
   border-right: 1px solid #7f7f80;
   border-bottom: 1px solid #7f7f80;
-  color: #cdcdcd;
+  color: #393939;
   line-height: 20px;
 }
 .list2 tbody tr td.red-border {
@@ -374,10 +391,10 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   width: 100%;
 }
 .list2 tbody tr td a {
-  color: #cdcdcd;
+  color: #393939;
 }
 .list2 tbody tr td a.stageSelect {
-  color: #cdcdcd;
+  color: #393939;
 }
 .list2 tbody tr td a.done {
   color: #00c60b !important;
@@ -402,10 +419,10 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   line-height: 20px;
 }
 .list2 tr:nth-child(odd) {
-  background-color: #3d3d3e;
+  background-color: #dbdbdb;
 }
 .list2 tr:hover {
-  background-color: #565658;
+  background-color: #ffffff;
 }
 .list2 thead th:first-of-type {
   width: 15%;
@@ -431,13 +448,13 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 #forInfo .tableProjects thead th.forCaption {
   text-align: left;
   margin-top: 15px;
-  background-color: #66b5d4;
+  background-color: #1ebbea;
   font-size: 12px;
   line-height: 28px;
   padding: 0 0  0 10px;
   color: #ffffff;
   position: relative;
-  border-right: 1px solid #66b5d4;
+  border-right: 1px solid #1ebbea;
 }
 #forInfo .tableProjects thead th.forCaption a {
   text-align: right;
@@ -759,7 +776,7 @@ input::-ms-clear {
   min-height: 40px;
   text-align: left;
   border: 1px solid #7f7f80;
-  background-color: #303031;
+  background-color: #ffffff;
   color: #a9a9a9;
   cursor: move;
   transition: box-shadow 1s ease;
@@ -890,7 +907,7 @@ input::-ms-clear {
   font-size: 13px;
 }
 .kanban .column .columnNameDiv {
-  background: #303031;
+  background: #ffffff;
   height: 35px;
   position: relative;
 }
@@ -927,7 +944,7 @@ input::-ms-clear {
   color: #a9a9a9;
 }
 .kanban .column .columnNameDiv .columnName .text {
-  color: #66b5d4;
+  color: #3e88b9;
 }
 .kanban .column .columnNameDiv.cancelled .columnName {
   border-bottom: 2px solid #FF5454 !important;
@@ -1017,7 +1034,7 @@ input::-ms-clear {
   position: absolute;
   width: 40px;
   border: 0;
-  color: #66b5d4;
+  color: #3e88b9;
   font-size: 18px;
   line-height: 26px;
   float: none;
@@ -1028,7 +1045,7 @@ input::-ms-clear {
   padding: 0;
 }
 .kanban .column.fold .columnNameDiv .columnName .text {
-  color: #66b5d4;
+  color: #3e88b9;
   margin: 0 auto;
   text-align: center;
   position: absolute;
@@ -1047,7 +1064,7 @@ input::-ms-clear {
 }
 .kanban .column.fold:hover .columnNameDiv .columnName .totalCount,
 .kanban .column.fold:hover .columnNameDiv .columnName .text {
-  color: #7ccbea;
+  color: #549ecf;
 }
 .kanban .column.fold:hover .text {
   color: white;
@@ -1070,7 +1087,7 @@ input::-ms-clear {
 }
 .ui-datepicker {
   padding: .2em .2em 0;
-  background-color: #303031;
+  background-color: #ffffff;
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-prev,
 .ui-datepicker .ui-datepicker-header .ui-datepicker-next {
@@ -1115,19 +1132,19 @@ input::-ms-clear {
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-title select {
   width: 49%;
-  color: #cdcdcd;
-  background-color: #303031;
+  color: #c1c1c1;
+  background-color: #ffffff;
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-title select option {
-  background-color: #565658;
+  background-color: #ffffff;
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-title select option:hover {
-  background-color: #565658;
+  background-color: #ffffff;
 }
 .ui-datepicker table.ui-datepicker-calendar tr th {
   padding: .7em .3em;
   text-align: center;
-  color: #cdcdcd;
+  color: #393939;
 }
 .ui-datepicker table.ui-datepicker-calendar tr td {
   width: 15px;
@@ -1135,7 +1152,7 @@ input::-ms-clear {
   padding: 1px;
 }
 .ui-datepicker table.ui-datepicker-calendar tr td a {
-  color: #cdcdcd;
+  color: #c1c1c1;
 }
 .ui-datepicker table.ui-datepicker-calendar tr td a,
 .ui-datepicker table.ui-datepicker-calendar tr td span {
@@ -1147,11 +1164,11 @@ input::-ms-clear {
 .ui-datepicker table.ui-datepicker-calendar tr td a:hover,
 .ui-datepicker table.ui-datepicker-calendar tr td span:hover {
   text-decoration: none;
-  background-color: #565658;
+  background-color: #ffffff;
 }
 .ui-datepicker table.ui-datepicker-calendar tr td a.ui-state-active,
 .ui-datepicker table.ui-datepicker-calendar tr td span.ui-state-active {
-  background-color: #565658;
+  background-color: #ffffff;
 }
 .ui-datepicker table.ui-datepicker-calendar tr td.ui-state-disabled {
   opacity: .35;
@@ -1165,13 +1182,13 @@ input::-ms-clear {
   background-color: inherit !important;
   font-size: 11px;
   font-family: Tahoma, Arial, Helvetica, sans-serif;
-  color: #cdcdcd !important;
+  color: #393939 !important;
   border: 1px solid #7f7f80 !important;
   padding: 5px 15px;
 }
 .dialog-buttons input:hover {
-  border: 1px solid #66b5d4 !important;
-  color: #cdcdcd !important;
+  border: 1px solid #3e88b9 !important;
+  color: #393939 !important;
 }
 .pagination {
   width: 100%;
@@ -1184,13 +1201,13 @@ input::-ms-clear {
 }
 .pagination .countOnPage {
   float: left;
-  color: #cdcdcd;
+  color: #393939;
   margin-left: 5px;
 }
 .pagination .nextPrev {
   float: right;
   margin-right: 5px;
-  color: #cdcdcd;
+  color: #393939;
 }
 .pagination #previousPage,
 .pagination #nextPage,
@@ -1251,7 +1268,7 @@ input::-ms-clear {
   font-size: 12px !important;
 }
 .pagination #pageList {
-  background-color: #303031;
+  background-color: #ffffff;
   border: 1px solid #7f7f80;
   position: absolute;
   bottom: 17px;
@@ -1268,7 +1285,7 @@ input::-ms-clear {
   cursor: pointer;
 }
 .pagination #pageList li:hover {
-  background-color: #66b5d4;
+  background-color: #3e88b9;
   color: white;
   text-decoration: none;
 }
@@ -1312,7 +1329,7 @@ input::-ms-clear {
   border-left: none;
 }
 .pagination .pageList ul {
-  background-color: #303031;
+  background-color: #ffffff;
   border: 1px solid #7f7f80;
   position: absolute;
   bottom: 17px;
@@ -1328,7 +1345,7 @@ input::-ms-clear {
   text-align: center;
 }
 .pagination .pageList ul li a:hover {
-  background-color: #66b5d4;
+  background-color: #3e88b9;
   color: white;
   text-decoration: none;
 }
@@ -1407,7 +1424,7 @@ input::-ms-clear {
 }
 .workflow-list li:hover:not(.quickEdit),
 .workflow-sub-list li:hover:not(.quickEdit) {
-  background-color: #565658;
+  background-color: #ffffff;
 }
 .workflow-list li:hover:not(.quickEdit) a,
 .workflow-sub-list li:hover:not(.quickEdit) a {
@@ -1505,7 +1522,7 @@ input::-ms-clear {
   line-height: 20px;
   height: 20px;
   cursor: pointer;
-  color: #66b5d4;
+  color: #3e88b9;
 }
 .input-file input {
   position: absolute;
@@ -1522,7 +1539,7 @@ select:not([type="checkbox"]) {
   padding: 2px 4px;
   border: 1px solid #7f7f80;
   background-color: inherit;
-  color: #cdcdcd;
+  color: #393939;
 }
 input:not([type="checkbox"]):focus,
 textarea:not([type="checkbox"]):focus,
@@ -1531,7 +1548,7 @@ select:not([type="checkbox"]):focus {
   -moz-box-shadow: 0 0 5px rgba(82, 168, 236, 0.5);
   -webkit-box-shadow: 0 0 5px rgba(82, 168, 236, 0.5);
   outline: none;
-  border: 1px solid #66b5d4 !important;
+  border: 1px solid #3e88b9 !important;
 }
 .current-selected {
   font-size: 12px;
@@ -1541,7 +1558,7 @@ select:not([type="checkbox"]):focus {
 .newSelectList {
   position: absolute !important;
   border: solid 1px #7f7f80;
-  background-color: #303031;
+  background-color: #ffffff;
   padding: 3px 0;
   z-index: 100;
   box-shadow: 0 1px 3px rgba(150, 150, 150, 0.7);
@@ -1554,7 +1571,7 @@ select:not([type="checkbox"]):focus {
   cursor: pointer;
   font-size: 12px;
   text-align: left;
-  color: #cdcdcd;
+  color: #c1c1c1;
 }
 .newSelectList li.testing,
 .newSelectList li.analysis {
@@ -1577,7 +1594,7 @@ select:not([type="checkbox"]):focus {
   background-color: #BEF624 !important;
 }
 .newSelectList li:hover {
-  background-color: #3d3d3e !important;
+  background-color: #ffffff !important;
   border: 0 !important;
   color: #FF5A00 !important;
 }
@@ -1634,13 +1651,13 @@ select:not([type="checkbox"]):focus {
   text-decoration: none;
 }
 .btn-list .selected {
-  color: #66b5d4;
+  color: #3e88b9;
 }
 .btn-list .selected a {
   color: white;
 }
 a {
-  color: #cdcdcd;
+  color: #393939;
   text-decoration: none;
 }
 a:hover {
@@ -1758,7 +1775,7 @@ dl dd a.formLink {
   width: 860px;
   max-width: 860px;
   margin: 0 auto;
-  background: #303031;
+  background: #ffffff;
   min-height: 130px;
   display: block;
   position: relative;
@@ -1786,7 +1803,7 @@ dl dd a.formLink {
   padding: 4px 10px;
 }
 .form .compactList li.inner:hover p {
-  color: #cdcdcd;
+  color: #393939;
 }
 .form .compactList li p {
   line-height: 20px !important;
@@ -1814,7 +1831,7 @@ dl dd a.formLink {
   border-top: 1px solid grey;
 }
 .form .formTitle h3 {
-  color: #cdcdcd !important;
+  color: #393939 !important;
   margin: 0;
   font-family: Title;
   font-size: 18px;
@@ -1828,12 +1845,12 @@ dl dd a.formLink {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  color: #cdcdcd;
+  color: #393939;
 }
 .form h3 {
   margin-bottom: 10px;
   display: block;
-  color: #cdcdcd;
+  color: #393939;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -1853,7 +1870,7 @@ dl dd a.formLink {
   display: block;
 }
 .form .mainInfo h3 {
-  color: #cdcdcd;
+  color: #393939;
   font-size: 24px;
   line-height: 30px;
   min-height: 24px;
@@ -2069,7 +2086,7 @@ dl dd a.formLink {
 .form #cancelSpan a,
 .form #saveSpan a,
 .form #editSpan a {
-  color: #cdcdcd;
+  color: #3e88b9;
 }
 .form label {
   display: block;
@@ -2077,7 +2094,7 @@ dl dd a.formLink {
   width: 90%;
   height: 30px;
   line-height: 26px;
-  color: #cdcdcd;
+  color: #393939;
 }
 .form input {
   margin: 2px 2px 2px 0;
@@ -2323,7 +2340,7 @@ dl dd a.formLink {
   width: 98%;
   max-width: 98%;
   margin: 0 auto;
-  background: #303031;
+  background: #ffffff;
   min-height: 130px;
   display: block;
   position: relative;
@@ -2352,7 +2369,7 @@ dl dd a.formLink {
   padding: 4px 10px;
 }
 .formLeftColumn .form .compactList li.inner:hover p {
-  color: #cdcdcd;
+  color: #393939;
 }
 .formLeftColumn .form .compactList li p {
   line-height: 20px !important;
@@ -2380,7 +2397,7 @@ dl dd a.formLink {
   border-top: 1px solid grey;
 }
 .formLeftColumn .form .formTitle h3 {
-  color: #cdcdcd !important;
+  color: #393939 !important;
   margin: 0;
   font-family: Title;
   font-size: 18px;
@@ -2394,12 +2411,12 @@ dl dd a.formLink {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  color: #cdcdcd;
+  color: #393939;
 }
 .formLeftColumn .form h3 {
   margin-bottom: 10px;
   display: block;
-  color: #cdcdcd;
+  color: #393939;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -2419,7 +2436,7 @@ dl dd a.formLink {
   display: block;
 }
 .formLeftColumn .form .mainInfo h3 {
-  color: #cdcdcd;
+  color: #393939;
   font-size: 24px;
   line-height: 30px;
   min-height: 24px;
@@ -2635,7 +2652,7 @@ dl dd a.formLink {
 .formLeftColumn .form #cancelSpan a,
 .formLeftColumn .form #saveSpan a,
 .formLeftColumn .form #editSpan a {
-  color: #cdcdcd;
+  color: #3e88b9;
 }
 .formLeftColumn .form label {
   display: block;
@@ -2643,7 +2660,7 @@ dl dd a.formLink {
   width: 90%;
   height: 30px;
   line-height: 26px;
-  color: #cdcdcd;
+  color: #393939;
 }
 .formLeftColumn .form input {
   margin: 2px 2px 2px 0;
@@ -2660,7 +2677,7 @@ dl dd a.formLink {
 }
 .formLeftColumn .edited-block p,
 .formLeftColumn .edited-block span {
-  color: #cdcdcd;
+  color: #393939;
 }
 #details-dialog {
   display: none;
@@ -2674,7 +2691,7 @@ dl dd a.formLink {
   width: 98%;
   max-width: 98%;
   margin: 0 auto;
-  background: #303031;
+  background: #ffffff;
   min-height: 130px;
   display: block;
   position: relative;
@@ -2703,7 +2720,7 @@ dl dd a.formLink {
   padding: 4px 10px;
 }
 .formRightColumn .form .compactList li.inner:hover p {
-  color: #cdcdcd;
+  color: #393939;
 }
 .formRightColumn .form .compactList li p {
   line-height: 20px !important;
@@ -2731,7 +2748,7 @@ dl dd a.formLink {
   border-top: 1px solid grey;
 }
 .formRightColumn .form .formTitle h3 {
-  color: #cdcdcd !important;
+  color: #393939 !important;
   margin: 0;
   font-family: Title;
   font-size: 18px;
@@ -2745,12 +2762,12 @@ dl dd a.formLink {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  color: #cdcdcd;
+  color: #393939;
 }
 .formRightColumn .form h3 {
   margin-bottom: 10px;
   display: block;
-  color: #cdcdcd;
+  color: #393939;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -2770,7 +2787,7 @@ dl dd a.formLink {
   display: block;
 }
 .formRightColumn .form .mainInfo h3 {
-  color: #cdcdcd;
+  color: #393939;
   font-size: 24px;
   line-height: 30px;
   min-height: 24px;
@@ -2986,7 +3003,7 @@ dl dd a.formLink {
 .formRightColumn .form #cancelSpan a,
 .formRightColumn .form #saveSpan a,
 .formRightColumn .form #editSpan a {
-  color: #cdcdcd;
+  color: #3e88b9;
 }
 .formRightColumn .form label {
   display: block;
@@ -2994,7 +3011,7 @@ dl dd a.formLink {
   width: 90%;
   height: 30px;
   line-height: 26px;
-  color: #cdcdcd;
+  color: #393939;
 }
 .formRightColumn .form input {
   margin: 2px 2px 2px 0;
@@ -3031,7 +3048,7 @@ dl dd a.formLink {
 }
 .noteWrapper > label {
   font-size: 16px;
-  color: #cdcdcd;
+  color: #393939;
 }
 .noteWrapper .addNote {
   margin-top: 6px;
@@ -3100,13 +3117,13 @@ dl dd a.formLink {
   background-color: inherit !important;
   font-size: 11px;
   font-family: Tahoma, Arial, Helvetica, sans-serif;
-  color: #cdcdcd !important;
+  color: #393939 !important;
   border: 1px solid #7f7f80 !important;
   padding: 5px 15px;
 }
 .noteWrapper .addNote.active .buttons input:hover {
-  border: 1px solid #66b5d4 !important;
-  color: #cdcdcd !important;
+  border: 1px solid #3e88b9 !important;
+  color: #393939 !important;
 }
 .noteWrapper .addNote.active .buttons input {
   width: auto;
@@ -3124,11 +3141,11 @@ dl dd a.formLink {
 }
 .noteWrapper .addNote.active .buttons #cancelNote:hover {
   text-decoration: none;
-  border: 1px solid #66b5d4;
+  border: 1px solid #3e88b9;
 }
 .noteWrapper .addNote.active label {
   display: block;
-  color: #cdcdcd;
+  color: #393939;
 }
 .noteWrapper .addNote.active textarea {
   height: 60px;
@@ -3195,7 +3212,7 @@ dl dd a.formLink {
   height: 100%;
 }
 #wrapper {
-  background-color: #303031;
+  background-color: #ffffff;
   width: 100%;
   height: 100%;
   min-width: 100%;
@@ -3218,13 +3235,13 @@ dl dd a.formLink {
 }
 #startLetter .letter {
   padding: 5px 10px;
-  color: #d5d5d5;
+  color: #c1c1c1;
 }
 #startLetter .letter.current {
-  color: #66b5d4;
+  color: #3e88b9;
 }
 #startLetter .letter.empty {
-  color: #808080;
+  color: #dbdbdb;
   cursor: default;
 }
 #startLetter .letter.empty:hover {
@@ -3292,7 +3309,7 @@ dl dd a.formLink {
 .person-info span,
 .customer-info span {
   padding: 0 !important;
-  color: #cdcdcd;
+  color: #3e88b9;
 }
 .settings-info {
   clear: both;
@@ -3348,7 +3365,7 @@ dl dd a.formLink {
   line-height: 20px;
 }
 .customer-info dt {
-  color: #cdcdcd;
+  color: #393939;
 }
 .project-edit-info {
   clear: both;
@@ -3573,7 +3590,7 @@ dl dd a.formLink {
   position: absolute;
   top: 3px;
   right: 3px;
-  color: #66b5d4;
+  color: #3e88b9;
   line-height: 11px;
   width: 12px;
   height: 12px;
@@ -3611,7 +3628,7 @@ dl dd a.formLink {
   height: 24px;
   width: 24px;
   font-family: Icons;
-  color: #4d5a75;
+  color: #393939;
   font-weight: 900;
   font-size: 14px;
   line-height: 30px;
@@ -3651,7 +3668,7 @@ dl dd a.formLink {
 }
 .btn {
   border: 1px solid #7f7f80;
-  color: #303031;
+  color: #ffffff;
   margin: 0;
   padding: 2px 6px;
   line-height: 13px;
@@ -3667,7 +3684,7 @@ dl dd a.formLink {
 }
 button {
   border: 1px solid #7f7f80;
-  color: #303031;
+  color: #ffffff;
   margin: 0;
   padding: 2px 6px;
   line-height: 13px;
@@ -3684,7 +3701,7 @@ button:hover {
 button.red,
 a.red {
   border: 1px solid #7f7f80;
-  color: #303031;
+  color: #ffffff;
   margin: 0;
   padding: 2px 6px;
   line-height: 13px;
@@ -3697,7 +3714,7 @@ a.red {
   -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(155, 155, 155, 0.4) inset;
   -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(155, 155, 155, 0.4) inset;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(155, 155, 155, 0.4) inset;
-  color: #4d5a75;
+  color: #393939;
   line-height: 20px;
 }
 button.red:hover,
@@ -3707,7 +3724,7 @@ a.red:hover {
 }
 button.red:hover,
 a.red:hover {
-  background-color: #66b5d4;
+  background-color: #3e88b9;
   color: #fff;
 }
 #birthdaysList {
@@ -3905,14 +3922,14 @@ a.red:hover {
   position: relative;
   z-index: 999;
   border: 1px solid #7f7f80;
-  background-color: #303031;
+  background-color: #ffffff;
 }
 #loginPanel .dropdown-button #loginSelect li {
   height: 20px;
   line-height: 20px;
 }
 #loginPanel .dropdown-button #loginSelect li a {
-  color: #cdcdcd;
+  color: #c1c1c1;
 }
 #loginPanel .dropdown-button img {
   float: left;
@@ -3924,13 +3941,13 @@ a.red:hover {
 #loginPanel .dropdown-button span {
   display: block;
   line-height: 30px;
-  color: #cdcdcd;
+  color: #c1c1c1;
 }
 #loginPanel .dropdown-button span:hover {
   color: #fff;
 }
 #loginPanel .dropdown-button:hover {
-  background: #66b5d4;
+  background: #3e88b9;
   color: #fff;
 }
 .ui-widget-overlay {
@@ -4283,7 +4300,7 @@ a.red:hover {
   font-size: 30px;
   line-height: 30px;
   padding-top: 15px;
-  color: #cdcdcd;
+  color: #393939;
 }
 table#workflows {
   width: 40%;
@@ -4354,7 +4371,7 @@ table#workflows tr td.edit-status {
   right: auto;
   bottom: auto;
   width: 100%;
-  background: #303031;
+  background: #ffffff;
   height: 30px;
   padding: 0;
   margin: 0;
@@ -4362,7 +4379,7 @@ table#workflows tr td.edit-status {
 }
 #mainmenu-holder nav {
   float: left;
-  background: #303031;
+  background: #ffffff;
 }
 #mainmenu-holder nav ul {
   padding: 0;
@@ -4374,7 +4391,7 @@ table#workflows tr td.edit-status {
   height: 30px;
   width: 120px;
   text-align: center;
-  color: #cdcdcd;
+  color: #393939;
   line-height: 30px;
   overflow: hidden;
   float: left;
@@ -4383,7 +4400,7 @@ table#workflows tr td.edit-status {
 }
 #mainmenu-holder nav ul li a {
   letter-spacing: 1.5px;
-  color: #cdcdcd;
+  color: #393939;
   font-size: 0.75rem;
   text-decoration: none;
   display: block;
@@ -4404,7 +4421,7 @@ table#workflows tr td.edit-status {
   display: block;
 }
 #mainmenu-holder nav ul li.selected {
-  background-color: #66b5d4;
+  background-color: #3e88b9;
   height: 30px;
   border: 0;
   -webkit-transition: all ease .5s;
@@ -4432,26 +4449,26 @@ table#workflows tr td.edit-status {
 #submenu-holder nav ul li {
   list-style: none;
   font-size: 14px;
-  color: #cdcdcd;
+  color: #393939;
   line-height: 30px;
   float: left;
   display: block;
   width: 120px;
   height: 30px;
   text-align: center;
-  background: #303031;
+  background: #ffffff;
 }
 #submenu-holder nav ul li.hover {
   height: 30px;
   line-height: 30px;
 }
 #submenu-holder nav ul li.hover a {
-  color: #cdcdcd;
+  color: #393939;
   text-decoration: underline;
 }
 #submenu-holder nav ul li a {
   font-family: 'Lato', Helvetica, Arial, sans-serif;
-  color: #cdcdcd;
+  color: #393939;
   font-size: 12px;
   line-height: 30px;
   display: block;
@@ -4479,7 +4496,7 @@ table#workflows tr td.edit-status {
 #top-bar h3 {
   margin: 6px 0 0 0;
   padding: 0 10px;
-  color: #cdcdcd !important;
+  color: #393939 !important;
   font-family: Title;
   font-weight: normal;
   float: left;
@@ -4498,7 +4515,7 @@ table#workflows tr td.edit-status {
 #top-bar-bonus h3 {
   margin: 6px 0 0 0;
   padding: 0 10px;
-  color: #cdcdcd !important;
+  color: #393939 !important;
   font-family: Title;
   font-weight: normal;
   float: left;
@@ -4541,11 +4558,11 @@ table#workflows tr td.edit-status {
   margin-right: 2px;
   cursor: pointer;
   vertical-align: baseline;
-  color: #cdcdcd;
+  color: #393939;
 }
 .createBtnHolder a:hover,
 #createBtnHolder a:hover {
-  color: #ffffff;
+  color: #6c6c6c;
 }
 .createBtnHolder ul,
 #createBtnHolder ul {
@@ -4772,13 +4789,13 @@ ul.dialog-tabs li a {
   text-align: center;
   line-height: 35px;
   text-decoration: none;
-  color: #cdcdcd;
+  color: #393939;
 }
 ul.dialog-tabs li a.active {
   height: 35px;
   line-height: 34px;
   border-bottom: none;
-  background-color: #66b5d4;
+  background-color: #3e88b9;
   color: #ffffff;
 }
 ul.dialog-tabs li.right {
@@ -4831,13 +4848,13 @@ ul.dialog-tabs li.right button {
 }
 .thumbnailwithavatar .info p {
   line-height: 15px;
-  color: #cdcdcd;
+  color: #393939;
 }
 .thumbnailwithavatar .info p a {
-  color: #cdcdcd;
+  color: #393939;
 }
 .thumbnailwithavatar h4 {
-  color: #66b5d4;
+  color: #3e88b9;
   font-size: 13px;
   line-height: 18px;
   font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
@@ -4855,7 +4872,7 @@ ul.dialog-tabs li.right button {
   cursor: pointer;
 }
 .thumbnailwithavatar .title {
-  color: #66b5d4;
+  color: #3e88b9;
   font-size: 13px;
   line-height: 18px;
   font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
@@ -4948,15 +4965,15 @@ ul.dialog-tabs li.right button {
 }
 .thumbnailwithavatar .email,
 .thumbnailwithavatar .company {
-  color: #75afc5;
+  color: #5184a6;
 }
 .list {
-  color: #cdcdcd !important;
+  color: #393939 !important;
   font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
   width: 100%;
 }
 .list .anotherColor {
-  background-color: #66b5d4;
+  background-color: #3e88b9;
 }
 .list tfoot tr {
   border-bottom: 1px solid #7f7f80;
@@ -5062,7 +5079,7 @@ ul.dialog-tabs li.right button {
   text-align: right;
   border-right: 1px solid #7f7f80;
   border-bottom: 1px solid #7f7f80;
-  color: #cdcdcd;
+  color: #393939;
   line-height: 20px;
 }
 .list tbody tr td.red-border {
@@ -5088,10 +5105,10 @@ ul.dialog-tabs li.right button {
   width: 100%;
 }
 .list tbody tr td a {
-  color: #cdcdcd;
+  color: #393939;
 }
 .list tbody tr td a.stageSelect {
-  color: #cdcdcd;
+  color: #393939;
 }
 .list tbody tr td a.done {
   color: #00c60b !important;
@@ -5116,10 +5133,10 @@ ul.dialog-tabs li.right button {
   line-height: 20px;
 }
 .list tr:nth-child(odd) {
-  background-color: #3d3d3e;
+  background-color: #dbdbdb;
 }
 .list tr:hover {
-  background-color: #565658;
+  background-color: #ffffff;
 }
 .thumbnail {
   float: left;
@@ -5127,7 +5144,7 @@ ul.dialog-tabs li.right button {
   margin-left: 4px;
   position: relative;
   display: block;
-  background: #303031 !important;
+  background: #ffffff !important;
   border: 1px solid #7f7f80;
   -webkit-transition: -webkit-transform, -webkit-box-shadow, border 200ms linear;
   width: 280px;
@@ -5142,7 +5159,7 @@ ul.dialog-tabs li.right button {
   position: absolute;
 }
 .thumbnail .dropDown a:hover {
-  color: #66b5d4;
+  color: #3e88b9;
 }
 .thumbnail .viewswitch {
   position: absolute;
@@ -5182,7 +5199,7 @@ ul.dialog-tabs li.right button {
   text-align: right;
 }
 .thumbnail .bottom .half-block .left label {
-  color: #cdcdcd;
+  color: #c1c1c1;
   line-height: 16px;
 }
 .thumbnail span {
@@ -5226,9 +5243,9 @@ ul.dialog-tabs li.right button {
 }
 .thumbnail:hover {
   border: 1px solid #7f7f80;
-  box-shadow: 0 0 4px #66b5d4;
-  -moz-box-shadow: 0 0 4px #66b5d4;
-  -webkit-box-shadow: 0 0 4px #66b5d4;
+  box-shadow: 0 0 4px #3e88b9;
+  -moz-box-shadow: 0 0 4px #3e88b9;
+  -webkit-box-shadow: 0 0 4px #3e88b9;
 }
 .thumbnail .avatar {
   display: block;
@@ -5279,7 +5296,7 @@ ul.dialog-tabs li.right button {
   width: 180px;
 }
 .thumbnail .project-text span {
-  color: #cdcdcd;
+  color: #393939;
 }
 .thumbnail .project-text span.bold {
   display: block;
@@ -5293,7 +5310,7 @@ ul.dialog-tabs li.right button {
   text-align: center;
 }
 #showMoreDiv #showMore {
-  color: #cdcdcd;
+  color: #393939;
   margin-top: 20px;
   margin-bottom: 5px;
 }
@@ -5312,7 +5329,7 @@ ul.dialog-tabs li.right button {
 }
 .ui-datepicker {
   padding: .2em .2em 0;
-  background-color: #303031;
+  background-color: #ffffff;
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-prev,
 .ui-datepicker .ui-datepicker-header .ui-datepicker-next {
@@ -5357,19 +5374,19 @@ ul.dialog-tabs li.right button {
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-title select {
   width: 49%;
-  color: #cdcdcd;
-  background-color: #303031;
+  color: #c1c1c1;
+  background-color: #ffffff;
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-title select option {
-  background-color: #565658;
+  background-color: #ffffff;
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-title select option:hover {
-  background-color: #565658;
+  background-color: #ffffff;
 }
 .ui-datepicker table.ui-datepicker-calendar tr th {
   padding: .7em .3em;
   text-align: center;
-  color: #cdcdcd;
+  color: #393939;
 }
 .ui-datepicker table.ui-datepicker-calendar tr td {
   width: 15px;
@@ -5377,7 +5394,7 @@ ul.dialog-tabs li.right button {
   padding: 1px;
 }
 .ui-datepicker table.ui-datepicker-calendar tr td a {
-  color: #cdcdcd;
+  color: #c1c1c1;
 }
 .ui-datepicker table.ui-datepicker-calendar tr td a,
 .ui-datepicker table.ui-datepicker-calendar tr td span {
@@ -5389,19 +5406,19 @@ ul.dialog-tabs li.right button {
 .ui-datepicker table.ui-datepicker-calendar tr td a:hover,
 .ui-datepicker table.ui-datepicker-calendar tr td span:hover {
   text-decoration: none;
-  background-color: #565658;
+  background-color: #ffffff;
 }
 .ui-datepicker table.ui-datepicker-calendar tr td a.ui-state-active,
 .ui-datepicker table.ui-datepicker-calendar tr td span.ui-state-active {
-  background-color: #565658;
+  background-color: #ffffff;
 }
 .ui-datepicker table.ui-datepicker-calendar tr td.ui-state-disabled {
   opacity: .35;
 }
 .ui-dialog {
   border: 1px solid #7f7f80;
-  background: #303031;
-  color: #cdcdcd;
+  background: #ffffff;
+  color: #393939;
   z-index: 1000;
   margin: 0 auto;
   -moz-border-radius: 0px;
@@ -5409,7 +5426,7 @@ ul.dialog-tabs li.right button {
   border-radius: 0px;
 }
 .ui-dialog .ui-widget-content a {
-  color: #66b5d4;
+  color: #3e88b9;
 }
 .ui-dialog .avatar {
   display: block;
@@ -5547,7 +5564,7 @@ ul.dialog-tabs li.right button {
 }
 .ui-dialog .inner {
   padding: 5px;
-  background: #303031;
+  background: #ffffff;
 }
 .ui-dialog .form-holder {
   position: relative;
@@ -5775,8 +5792,8 @@ ul.dialog-tabs li.right button {
 }
 .ui-dialog .ui-dialog-buttonpane {
   border: 1px solid #7f7f80;
-  background: #303031;
-  color: #cdcdcd;
+  background: #ffffff;
+  color: #393939;
   text-align: left;
   border-width: 1px 0 0;
   background-image: none;
@@ -5800,11 +5817,11 @@ ul.dialog-tabs li.right button {
 }
 .ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button {
   background-image: none;
-  color: #66b5d4;
+  color: #3e88b9;
   border: 1px solid #7f7f80;
   margin: .5em .4em .5em 0;
   cursor: pointer;
-  background-color: #303031;
+  background-color: #ffffff;
   font-size: 1.2em;
   display: inline-block;
   position: relative;
@@ -5818,12 +5835,12 @@ ul.dialog-tabs li.right button {
 .ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button span {
   display: block;
   line-height: normal;
-  background: #303031;
+  background: #ffffff;
   padding: .4em 1em;
-  color: #66b5d4;
+  color: #3e88b9;
 }
 .ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button span:hover {
-  background: #1d1d1e !important;
+  background: #ececec !important;
 }
 .ui-dialog .ui-helper-clearfix:before,
 .ui-dialog .ui-helper-clearfix:after {
@@ -5880,13 +5897,13 @@ ul.dialog-tabs li.right button {
   background-color: inherit !important;
   font-size: 11px;
   font-family: Tahoma, Arial, Helvetica, sans-serif;
-  color: #cdcdcd !important;
+  color: #393939 !important;
   border: 1px solid #7f7f80 !important;
   padding: 5px 15px;
 }
 .form-holder form .buttons input:hover {
-  border: 1px solid #66b5d4 !important;
-  color: #cdcdcd !important;
+  border: 1px solid #3e88b9 !important;
+  color: #393939 !important;
 }
 .form-holder form label {
   font-weight: normal;
@@ -5971,14 +5988,14 @@ ul.dialog-tabs li.right button {
   font-family: Arial, Helvetica, sans-serif;
   font-size: 12px;
   padding: 2px;
-  color: #cdcdcd;
+  color: #393939;
 }
 .form-holder form input:not([type=checkbox]):focus {
-  box-shadow: 0 0 5px #66b5d4;
-  -moz-box-shadow: 0 0 5px #66b5d4;
-  -webkit-box-shadow: 0 0 5px #66b5d4;
+  box-shadow: 0 0 5px #3e88b9;
+  -moz-box-shadow: 0 0 5px #3e88b9;
+  -webkit-box-shadow: 0 0 5px #3e88b9;
   outline: medium none;
-  border: 1px solid #66b5d4 !important;
+  border: 1px solid #3e88b9 !important;
 }
 .form-holder form .mainInfo {
   width: auto;
@@ -5997,7 +6014,7 @@ ul.dialog-tabs li.right button {
   line-height: 17px;
   float: left;
   max-width: 95%;
-  color: #cdcdcd;
+  color: #393939;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -6009,7 +6026,7 @@ ul.dialog-tabs li.right button {
 #timeRecivingDataFromServer {
   clear: both;
   text-align: center;
-  color: #cdcdcd;
+  color: #393939;
   padding-bottom: 5px;
 }
 .tabs-items {
@@ -6042,13 +6059,13 @@ ul.dialog-tabs li a {
   text-align: center;
   line-height: 35px;
   text-decoration: none;
-  color: #cdcdcd;
+  color: #393939;
 }
 ul.dialog-tabs li a.active {
   height: 35px;
   line-height: 34px;
   border-bottom: none;
-  background-color: #66b5d4;
+  background-color: #3e88b9;
   color: #ffffff;
 }
 ul.dialog-tabs li.right {
@@ -6075,7 +6092,7 @@ ul.dialog-tabs .withEndContract .arrow {
   float: right;
   width: 80px;
   border: 1px solid #7f7f80;
-  color: #303031;
+  color: #ffffff;
   margin: 0;
   padding: 2px 6px;
   line-height: 13px;
@@ -6166,13 +6183,13 @@ ul.chart-tabs li a {
   text-align: center;
   line-height: 35px;
   text-decoration: none;
-  color: #cdcdcd;
+  color: #393939;
 }
 ul.chart-tabs li a.active {
   height: 35px;
   line-height: 34px;
   border-bottom: none;
-  background-color: #66b5d4;
+  background-color: #3e88b9;
   color: #ffffff;
 }
 ul.chart-tabs li.right {
@@ -6202,7 +6219,7 @@ ul.chart-tabs .withEndContract .arrow {
   float: right;
   width: 80px;
   border: 1px solid #7f7f80;
-  color: #303031;
+  color: #ffffff;
   margin: 0;
   padding: 2px 6px;
   line-height: 13px;
@@ -6322,7 +6339,7 @@ ul.chart-tabs .withEndContract .arrow {
   font: 18px sans-serif;
 }
 .y2.label {
-  fill: #66b5d4;
+  fill: #3e88b9;
   font: 18px sans-serif;
 }
 .y2 .tick line {
@@ -6352,7 +6369,7 @@ ul.chart-tabs .withEndContract .arrow {
   margin-left: 5px;
   float: left;
   padding: 5px 10px;
-  color: #4d5a75;
+  color: #393939;
   background-color: #f4f4f4;
   border: 1px solid #7f7f80;
   cursor: pointer;
@@ -6365,7 +6382,7 @@ ul.chart-tabs .withEndContract .arrow {
 .choseDateRange .item.active,
 .choseDateItem .item.active,
 .choseDateRangeSource .item.active {
-  background-color: #66b5d4;
+  background-color: #3e88b9;
   color: white;
 }
 .legend-box {
@@ -6374,7 +6391,7 @@ ul.chart-tabs .withEndContract .arrow {
   height: 32px;
   padding: 3px 0 0;
   margin: -39px auto 0;
-  color: #cdcdcd;
+  color: #393939;
 }
 .legend-box.small {
   width: 255px;
@@ -6415,11 +6432,11 @@ ul.chart-tabs .withEndContract .arrow {
 h3.dashboard {
   text-align: center;
   line-height: 50px;
-  color: #66b5d4;
+  color: #3e88b9;
 }
 .leadChart text,
 .chart text {
-  fill: #cdcdcd;
+  fill: #393939;
 }
 #modulesAccessTable tr th {
   text-align: center;
@@ -6440,7 +6457,7 @@ h3.dashboard {
 #projectPM h2 {
   text-align: center;
   font-size: 18px;
-  color: #66b5d4;
+  color: #3e88b9;
   line-height: 40px;
 }
 #projectPM table {
@@ -6451,7 +6468,7 @@ h3.dashboard {
   padding-left: 3px;
   line-height: 25px;
   height: 25px;
-  color: #cdcdcd;
+  color: #c1c1c1;
 }
 #projectPM table tr th.center {
   text-align: center;
@@ -6469,10 +6486,10 @@ h3.dashboard {
   background-color: green;
 }
 #projectPM table tbody tr td {
-  color: #cdcdcd;
+  color: #393939;
 }
 #projectPM table tbody tr td:first-child {
-  color: #cdcdcd;
+  color: #c1c1c1;
 }
 #projectPM table tbody tr td.procent {
   position: relative;
@@ -6507,11 +6524,11 @@ h3.dashboard {
 }
 #health a.health1,
 .health-wrapper a.health1 {
-  background-color: #66b5d4;
+  background-color: #3e88b9;
 }
 #health a.health2,
 .health-wrapper a.health2 {
-  background-color: #ffea00;
+  background-color: #ffa500;
 }
 #health a.health3,
 .health-wrapper a.health3 {
@@ -6593,10 +6610,10 @@ h3.dashboard {
   margin-top: 8px;
 }
 .avatarInfoContainer.employee .half-block dt {
-  color: #66b5d4;
+  color: #3e88b9;
 }
 .avatarInfoContainer.employee .half-block dd {
-  color: #cdcdcd;
+  color: #393939;
 }
 .stageSelect.pending,
 span.pending {
@@ -6604,7 +6621,7 @@ span.pending {
 }
 .stageSelect.inprogress,
 span.inprogress {
-  color: #66b5d4;
+  color: #3e88b9;
 }
 .stageSelect.closed,
 span.closed,
@@ -7481,7 +7498,7 @@ span.ui-spinner .ui-spinner-up {
 }
 span.ui-spinner .ui-spinner-up:hover {
   text-decoration: none;
-  color: #99e8ff;
+  color: #71bbec;
 }
 span.ui-spinner .ui-spinner-down {
   position: absolute;
@@ -7494,10 +7511,10 @@ span.ui-spinner .ui-spinner-down {
 }
 span.ui-spinner .ui-spinner-down:hover {
   text-decoration: none;
-  color: #99e8ff;
+  color: #71bbec;
 }
 .blue {
-  color: #66b5d4;
+  color: #3e88b9;
 }
 .floatAvatar {
   margin-left: 160px;
@@ -7611,7 +7628,7 @@ input::-webkit-inner-spin-button {
   display: none;
 }
 .h2 {
-  color: #66b5d4;
+  color: #3e88b9;
   font-size: 1.3em;
   padding: 5px 0;
 }
@@ -7636,10 +7653,10 @@ textarea#editInput {
   min-width: 100%;
   font-size: 11px;
   border-bottom: 1px solid #7f7f80;
-  background-color: #303031;
+  background-color: #ffffff;
 }
 .grid tr {
-  color: #cdcdcd;
+  color: #c1c1c1;
   /* tr.head-row {
       td {
         span {
@@ -7654,7 +7671,7 @@ textarea#editInput {
   height: 25px;
   line-height: 25px;
   display: block;
-  color: #cdcdcd;
+  color: #393939;
 }
 .grid tr td {
   border-top: 1px solid #7f7f80;
@@ -7704,7 +7721,7 @@ textarea#editInput {
 }
 .grid tr td.activeHead,
 .grid tr th.activeHead {
-  border: 1px solid #66b5d4;
+  border: 1px solid #3e88b9;
   border-bottom: none;
   display: table-cell;
 }
@@ -7714,7 +7731,7 @@ textarea#editInput {
 .grid tr td.dashboardWeek {
   width: 107px;
   min-width: 107px;
-  background-color: #303031;
+  background-color: #ffffff;
 }
 .grid tr td.dashboardWeek input {
   background-color: #bdd7ee;
@@ -7741,14 +7758,14 @@ textarea#editInput {
   background: pink;
 }
 .grid tr td.dashboardWeek.red {
-  background-color: #f13f3f;
+  background-color: #e55253;
   color: white;
   border-bottom: 1px solid #7f7f80;
   border-left: 1px solid #7f7f80;
 }
 .grid tr td.dashboardWeek.active {
-  border-left: 1px solid #66b5d4 !important;
-  border-right: 1px solid #66b5d4 !important;
+  border-left: 1px solid #3e88b9 !important;
+  border-right: 1px solid #3e88b9 !important;
   display: table-cell;
 }
 .grid tr td.dashboardWeek.inactive span.view {
@@ -7803,7 +7820,7 @@ textarea#editInput {
   float: left;
   padding: 0;
   padding-right: 3px;
-  color: #cdcdcd;
+  color: #393939;
   text-align: center;
 }
 .grid tr td.withVacation span span.vacation.size40 {
@@ -7871,23 +7888,23 @@ textarea#editInput {
 }
 .grid tr.group {
   /*color: black;*/
-  color: #cdcdcd;
+  color: #393939;
   cursor: pointer;
 }
 .grid tr.group td {
-  background-color: #333334 !important;
+  background-color: #ffffff !important;
 }
 .grid tr.group span {
   text-align: left;
 }
 .grid tr:nth-child(2n+1) td {
-  background-color: #3d3d3e;
+  background-color: #dbdbdb;
 }
 .grid.attendance {
   border-bottom: 1px solid #7f7f80;
 }
 .grid.attendance .V {
-  background-color: #f13f3f;
+  background-color: #e55253;
   color: #ffffff;
 }
 .grid.attendance .P {
@@ -7895,11 +7912,11 @@ textarea#editInput {
   color: #ffffff;
 }
 .grid.attendance .S {
-  background-color: #66b5d4;
+  background-color: #3e88b9;
   color: #ffffff;
 }
 .grid.attendance .E {
-  background-color: #66b5d4;
+  background-color: #1ebbea;
   color: #ffffff;
 }
 .grid.attendance .borderRight {
@@ -7921,7 +7938,7 @@ textarea#editInput {
   border-bottom: none;
 }
 .grid.attendance tr:nth-child(even) {
-  background-color: #3d3d3e;
+  background-color: #dbdbdb;
 }
 .grid.attendance tr td {
   border-left: 1px solid #7f7f80;
@@ -7943,11 +7960,11 @@ textarea#editInput {
   color: #ffffff;
 }
 .grid.attendance .sick {
-  background-color: #66b5d4;
+  background-color: #3e88b9;
   color: #ffffff;
 }
 .grid.attendance .education {
-  background-color: #66b5d4;
+  background-color: #1ebbea;
   color: #ffffff;
 }
 .grid.attendance .borderRight {
@@ -7964,17 +7981,17 @@ textarea#editInput {
   padding: 5px;
 }
 .grid-conatiner .attendanceTop div span {
-  color: #cdcdcd;
+  color: #393939;
 }
 .grid-conatiner .attendanceTop div #currentEmployee,
 .grid-conatiner .attendanceTop div #currentStatus,
 .grid-conatiner .attendanceTop div #currentTime {
-  color: #cdcdcd;
+  color: #393939;
 }
 .grid-conatiner .attendanceTop div #currentEmployee option,
 .grid-conatiner .attendanceTop div #currentStatus option,
 .grid-conatiner .attendanceTop div #currentTime option {
-  background-color: #303031;
+  background-color: #ffffff;
 }
 .grid-conatiner .attendanceTop div.pull-left {
   margin-right: 10px;
@@ -8010,7 +8027,7 @@ textarea#editInput {
   text-align: center;
   font-size: 16px;
   margin-bottom: 10px;
-  color: #cdcdcd;
+  color: #393939;
 }
 .grid-conatiner .statisticsAtten table tr td .item .countDays {
   font-size: 52px;
@@ -8031,15 +8048,15 @@ textarea#editInput {
   background-color: #f9a203;
 }
 .grid-conatiner .statisticsAtten table tr td .item .countDays.sick {
-  background-color: #66b5d4;
+  background-color: #3e88b9;
 }
 .grid-conatiner .statisticsAtten table tr td .item .countDays.education {
-  background-color: #66b5d4;
+  background-color: #1ebbea;
 }
 .grid-conatiner .statisticsAtten table tr td .item .lastTime {
   text-align: center;
   margin-top: 10px;
-  color: #cdcdcd;
+  color: #393939;
 }
 .grid-conatiner .statisticsAtten table tr td .item .percent {
   text-align: center;
@@ -8175,7 +8192,7 @@ textarea#editInput {
   border-bottom: 2px solid #a2a2a3;
 }
 .grid-conatiner.revenue .divTable#tableUnpaidBySales .th {
-  border-bottom: 2px solid #f13f3f;
+  border-bottom: 2px solid #e55253;
 }
 .grid-conatiner.revenue .divTable#tableCancelledBySales .th {
   border-bottom: 2px solid #3d4bfd;
@@ -8219,16 +8236,16 @@ textarea#editInput {
 }
 .grid-conatiner.revenue .divRow.totalByDep,
 .grid-conatiner.revenue .divRow.totalHoursByDep {
-  background-color: #66b5d4;
+  background-color: #3e88b9;
 }
 .grid-conatiner.revenue .divRow.totalPaid {
   background-color: #a2a2a3;
 }
 .grid-conatiner.revenue .divRow.totalUnpaid {
-  background-color: #f13f3f;
+  background-color: #e55253;
 }
 .grid-conatiner.revenue .divRow.totalCancelled {
-  background-color: #66b5d4;
+  background-color: #1ebbea;
 }
 .grid-conatiner.revenue .divRow.totalProject {
   background-color: #5a9ad4;
@@ -8326,7 +8343,7 @@ textarea#editInput {
   width: 7.5%;
 }
 .grid-conatiner.revenue .th-green {
-  border-bottom: 2px solid #66b5d4;
+  border-bottom: 2px solid #3e88b9;
 }
 .hrTop tr td {
   vertical-align: top;
@@ -8380,7 +8397,7 @@ textarea#editInput {
   padding: 2px 24px;
   font-size: 14px;
   line-height: 1.42857143;
-  color: #cdcdcd;
+  color: #c1c1c1;
   background: inherit;
   border: 1px solid #7f7f80;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
@@ -8396,7 +8413,7 @@ textarea#editInput {
   left: 5px;
 }
 .search-field span:before {
-  color: #d5d5d5;
+  color: #c1c1c1;
 }
 .search-field .search-content {
   position: absolute;
@@ -8536,7 +8553,7 @@ textarea#editInput {
   position: absolute;
   z-index: 10;
   width: calc(100% - 82px);
-  background-color: #303031;
+  background-color: #ffffff;
   border: 1px solid #7f7f80;
   right: 0;
   top: calc(100% - 3px);
@@ -8554,13 +8571,13 @@ textarea#editInput {
   cursor: pointer;
   font-size: 12px;
   padding: 5px 10px;
-  color: #cdcdcd;
+  color: #393939;
 }
 .drop-down-filter #filtersContent .filterGroup {
   overflow: hidden;
   text-align: center;
   border: 1px solid #7f7f80;
-  background-color: #303031;
+  background-color: #ffffff;
   margin: 5px;
 }
 .drop-down-filter #filtersContent .filterGroup li.miniStylePagination {
@@ -8581,17 +8598,17 @@ textarea#editInput {
   content: '\2713';
 }
 .drop-down-filter #filtersContent .filterGroup li:not(.checkedValue):hover:before {
-  color: #3d3d3e;
+  color: #ffffff;
 }
 .drop-down-filter #filtersContent .filterGroup li:not(.checkedValue):before,
 .drop-down-filter #filtersContent .filterGroup li.checkedValue:before,
 .drop-down-filter #filtersContent .filterGroup li.checkedValue:hover:before {
-  color: #303031;
+  color: #ffffff;
 }
 .drop-down-filter #filtersContent .filterGroup li:hover,
 .drop-down-filter #filtersContent .filterGroup li.checkedValue {
-  background-color: #3d3d3e;
-  color: #cdcdcd;
+  background-color: #ffffff;
+  color: #c1c1c1;
 }
 .drop-down-filter #filtersContent .filterGroup .filterValues {
   text-align: left;
@@ -8601,8 +8618,8 @@ textarea#editInput {
   content: ' ';
 }
 .drop-down-filter #filtersContent .filterGroup:not(.activeGroup) .groupName.checkedGroup {
-  color: #cdcdcd;
-  background-color: #565658;
+  color: #393939;
+  background-color: #ffffff;
 }
 .drop-down-filter #filtersContent .filterGroup:not(.activeGroup) .groupName.checkedGroup span:before {
   text-align: center;
@@ -8616,14 +8633,14 @@ textarea#editInput {
 }
 .drop-down-filter #filtersContent .filterGroup.activeGroup .groupName,
 .drop-down-filter #filtersContent .filterGroup .groupName:hover {
-  color: #cdcdcd;
-  background-color: #3d3d3e;
+  color: #c1c1c1;
+  background-color: #ffffff;
 }
 .drop-down-filter #filtersContent .filterGroup .groupName {
   cursor: pointer;
   font-size: 13px;
   padding: 10px;
-  color: #cdcdcd;
+  color: #393939;
 }
 .drop-down-filter #filtersContent .filterGroup .groupName:after {
   content: '\2335';
@@ -8656,9 +8673,9 @@ textarea#editInput {
   margin-right: 90px;
 }
 #searchContainer .btn {
-  background: #303031;
+  background: #ffffff;
   padding: 6px;
-  color: #cdcdcd;
+  color: #393939;
 }
 #searchContainer .filter-check-list {
   margin-top: -1px;
@@ -8684,7 +8701,7 @@ textarea#editInput {
   width: 98%;
 }
 .vacation-list .V {
-  background-color: #f13f3f;
+  background-color: #e55253;
   color: #ffffff;
 }
 .vacation-list .P {
@@ -8692,11 +8709,11 @@ textarea#editInput {
   color: #ffffff;
 }
 .vacation-list .S {
-  background-color: #66b5d4;
+  background-color: #3e88b9;
   color: #ffffff;
 }
 .vacation-list .E {
-  background-color: #66b5d4;
+  background-color: #1ebbea;
   color: #ffffff;
 }
 .vacation-list td,
@@ -8714,7 +8731,7 @@ textarea#editInput {
   outline-offset: 0;
   display: none;
   cursor: pointer;
-  border: 1px solid #66b5d4;
+  border: 1px solid #3e88b9;
 }
 .vacation-list td input:focus,
 .vacation-list th input:focus {
@@ -8751,7 +8768,7 @@ textarea#editInput {
 .vacation-list tfoot td {
   border: 1px solid #7f7f80;
   text-align: center;
-  color: #cdcdcd;
+  color: #393939;
 }
 .vacation-list tbody td.notForm,
 .vacation-list tfoot td.notForm {
@@ -8763,12 +8780,12 @@ textarea#editInput {
   display: block;
 }
 .vacation-list tfoot tr td {
-  color: #cdcdcd;
+  color: #393939;
 }
 .vacation-list tbody .employee,
 .vacation-list tbody .department,
 .vacation-list tbody .totalDays {
-  color: #cdcdcd;
+  color: #c1c1c1;
 }
 .vacation-list tbody .employee {
   text-align: right !important;
@@ -8782,7 +8799,7 @@ textarea#editInput {
 }
 .vacation-list #caption th,
 .vacation-list .subHeaderHolder th {
-  color: #cdcdcd;
+  color: #393939;
 }
 .vacation-list .newSelectList,
 .salary-list .newSelectList,
@@ -8810,7 +8827,8 @@ textarea#editInput {
 .subSalary-list tbody tr td:nth-child(2) {
   text-align: left;
   font-size: 12px;
-  line-height: 15px;
+  line-height: 20px;
+  border: none;
 }
 .filtersActive {
   float: right;
@@ -8853,7 +8871,7 @@ textarea#editInput {
   border-bottom-left-radius: 5px;
   border-top-left-radius: 5px;
   border-right: none;
-  color: #cdcdcd;
+  color: #393939;
 }
 #favoritesContent #saveFilterButton {
   border: 1px solid #7f7f80;
@@ -8862,7 +8880,7 @@ textarea#editInput {
   border-radius: 0 5px 5px 0;
   line-height: 16px;
   padding-top: 4px;
-  background-color: #303031;
+  background-color: #ffffff;
   color: #a9a9a9;
 }
 #favoritesContent .removeSavedFilter {
@@ -8870,7 +8888,7 @@ textarea#editInput {
   border: 1px solid #7f7f80;
   height: 21px;
   background-color: transparent;
-  color: #cdcdcd;
+  color: #393939;
 }
 #favoritesContent .line {
   height: 1px;
@@ -8889,11 +8907,18 @@ textarea#editInput {
 }
 #favoritesContent .filters:hover {
   color: white;
-  background-color: #66b5d4;
+  background-color: #3e88b9;
 }
 #favoritesContent .checkedValue {
-  color: white;
-  background-color: #66b5d4;
+  color: #393939;
+  background-color: #3e88b9;
+}
+#favoritesContent .useByDefault {
+  margin-top: 10px;
+}
+#favoritesContent .useByDefault span {
+  color: #393939;
+  margin-left: 10px;
 }
 .forFilterIcons {
   float: left;
