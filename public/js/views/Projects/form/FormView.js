@@ -12,8 +12,10 @@ define([
         'views/Projects/projectInfo/wTrackView',
         'views/Projects/projectInfo/paymentView',
         'views/Projects/projectInfo/invoiceView',
+        'views/Projects/projectInfo/quotationView',
         'views/Projects/projectInfo/wTracks/generateWTrack',
         'collections/wTrack/filterCollection',
+        'collections/Quotation/filterCollection',
         'text!templates/Notes/AddAttachments.html',
         "common",
         'populate',
@@ -23,16 +25,10 @@ define([
         'helpers'
     ],
 
-    function (ProjectsFormTemplate, DetailsTemplate, EditView, noteView, attachView, AssigneesView, BonusView, wTrackView, PaymentView, InvoiceView, GenerateWTrack, wTrackCollection, addAttachTemplate, common, populate, custom, dataService, async, helpers) {
+    function (ProjectsFormTemplate, DetailsTemplate, EditView, noteView, attachView, AssigneesView, BonusView, wTrackView, PaymentView, InvoiceView, QuotationView, GenerateWTrack, wTrackCollection, quotationCollection, addAttachTemplate, common, populate, custom, dataService, async, helpers) {
         var FormEmployeesView = Backbone.View.extend({
             el         : '#content-holder',
             contentType: 'Projects',
-
-            initialize: function (options) {
-                this.formModel = options.model;
-                this.formModel.urlRoot = '/Projects/';
-                this.responseObj = {};
-            },
 
             events: {
                 'click .chart-tabs'                                               : 'changeTab',
@@ -49,15 +45,24 @@ define([
                 "click #createItem"                                               : "createDialog"
             },
 
+            initialize: function (options) {
+                this.formModel = options.model;
+                this.id = this.formModel.id;
+                this.formModel.urlRoot = '/Projects/';
+                this.responseObj = {};
+            },
+
             createDialog: function () {
                 new GenerateWTrack({
-                    model: this.formModel
+                    model           : this.formModel,
+                    wTrackCollection: this.wCollection
                 });
             },
 
-            notHide      : function () {
+            notHide: function () {
                 return false;
             },
+
             showNewSelect: function (e, prev, next) {
                 populate.showSelect(e, prev, next, this);
 
@@ -101,6 +106,7 @@ define([
                 var workflow = {};
                 workflow._id = thisEl.find("#workflowsDd").data("id");
                 workflow.name = thisEl.find("#workflowsDd").text();
+
 
                 var projecttype = thisEl.find("#projectTypeDD").data("id");
                 var $userNodes = $("#usereditDd option:selected");
@@ -303,6 +309,7 @@ define([
                 populate.get2name("#customerDd", "/Customer", {}, this, false, false);
                 populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/WorkflowsForDd", {id: "Projects"}, "name", this);
 
+
                 notDiv = this.$el.find('#divForNote');
                 notDiv.html(
                     new noteView({
@@ -335,12 +342,7 @@ define([
                 });
 
                 container = this.$el.find('#forInfo');
-                //var projectTeam=[];
-                //for (var i = formModel.budget.projectTeam.length - 1; i >= 0; i--) {
-                //    var team = formModel.budget.projectTeam[i];
-                //    var budget = formModel.budget.budget[i];
-                //    projectTeam.push({team: team, budget: budget});
-                //}
+
                 container.html(template({
                         projectTeam     : formModel.budget.projectTeam,
                         bonus           : formModel.budget.bonus,
@@ -353,8 +355,10 @@ define([
                 );
 
                 thisEl.find('#createBonus').hide();
+                _.bindAll(this, 'getQuotations');
+                _.bindAll(this, 'getWTrack');
 
-                paralellTasks = [this.getWTrack, this.getInvoice];
+                paralellTasks = [this.getInvoice, this.getWTrack, this.getQuotations];
 
                 async.parallel(paralellTasks, function (err, result) {
                     //self.getDataForDetails(result);
@@ -431,6 +435,7 @@ define([
                     });
                 });
 
+
                 keys = Object.keys(projectTeam);
                 if (keys.length > 0) {
 
@@ -499,32 +504,38 @@ define([
 
             },
 
-            getWTrack : function (cb) {
-                var _id = window.location.hash.split('form/')[1];
+            getWTrack: function (cb) {
+                //var _id = this.formModel.id;
+                var self = this;
+
                 var filter = {
                     'projectName': {
                         key  : 'project._id',
-                        value: [_id]
+                        value: [this.id]
                     }
                 };
 
-                dataService.getData('/wTrack/getForProjects',
-                    {
-                        filter: filter
-                    }, function (response) {
+                this.wCollection = new wTrackCollection({
+                    viewType: 'list',
+                    filter  : filter
+                });
 
-                        if (response.error) {
-                            return cb(response.error);
-                        }
 
-                        new wTrackView({
-                            model: response.wTrack
-                        });
-                        cb(null, response);
+                function createView() {
+                    new wTrackView({
+                        model: self.wCollection
+                    }).render();
+                };
 
-                    }, this);
+                function showMoreContent(newModels) {
+                    self.wCollection.reset(newModels.toJSON());
+                };
 
+                this.wCollection.unbind();
+                this.wCollection.bind('reset', createView);
+                this.wCollection.bind('showmore', showMoreContent);
             },
+
             getInvoice: function (cb) {
                 var _id = window.location.hash.split('form/')[1];
                 var filter = {
@@ -553,6 +564,7 @@ define([
                             });
                         });
 
+
                         if (payments.length > 0) {
                             dataService.getData('/payment/getForProject',
                                 {
@@ -567,8 +579,10 @@ define([
                                         model: result
                                     });
 
+
                                     res = result;
                                 }, this);
+
 
                             new InvoiceView({
                                 model: response
@@ -581,6 +595,56 @@ define([
                             cb(null, {payment: [], invoice: response});
                         }
                     }, this);
+
+            },
+
+            getQuotations: function (cb) {
+                //var _id = this.formModel.id;
+                var self = this;
+
+                var filter = {
+                    'projectName': {
+                        key  : 'project',
+                        value: [this.id]
+                    }
+                };
+
+                var qCollection = new quotationCollection({
+                    count      : 50,
+                    viewType   : 'list',
+                    contentType: 'Quotation',
+                    filter     : filter
+                });
+
+
+                function createView() {
+                    new QuotationView({
+                        collection: qCollection,
+                        projectId : self.id
+                    }).render();
+                }
+
+                qCollection.bind('reset', createView);
+
+                /*dataService.getData('/quotation/list',
+                 {
+                 count      : 100,
+                 page       : 1,
+                 contentType: 'salesQuotation',
+                 filter     : filter
+                 }, function (response) {
+                 if (response.error) {
+                 return cb(response.error);
+                 }
+
+                 new QuotationView({
+                 model    : response,
+                 projectId: self.formModel.id
+                 }).render();
+
+                 cb(null, response);
+
+                 }, this);*/
 
             },
 
@@ -626,6 +690,7 @@ define([
                 $('#EndDateTarget').datepicker("option", "disabled", false);
 
                 $("#top-bar-saveBtn").show();
+                $("#createQuotation").show();
                 $("#createBonus").show();
             },
 

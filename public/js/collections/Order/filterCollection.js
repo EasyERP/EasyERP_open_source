@@ -46,7 +46,12 @@
                 options.filter = {};
 
                 if (regex.test(this.contentType)) {
-                    options.filter.forSales = true;
+                    options.filter = {
+                        'forSales': {
+                            key: 'forSales',
+                            value: ['true']
+                        }
+                    }
                 }
 
                 if (options && options.viewType) {

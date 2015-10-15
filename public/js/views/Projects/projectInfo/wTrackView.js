@@ -2,10 +2,11 @@
  * Created by liliya on 17.09.15.
  */
 define([
-    'text!templates/Projects/projectInfo/wTrackTemplate.html'
+    'text!templates/Projects/projectInfo/wTrackTemplate.html',
+    'views/listViewBase'
 
-], function (wTrackTemplate) {
-    var wTrackView = Backbone.View.extend({
+], function (wTrackTemplate, listView) {
+    var wTrackView = listView.extend({
 
         el: '#weTracks',
 
@@ -82,7 +83,7 @@ define([
 
         render: function () {
             var self = this;
-            var wTracks = this.models;
+            var wTracks = this.models.toJSON();
             var allInputs;
             var checkedInputs;
 

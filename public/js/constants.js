@@ -259,6 +259,20 @@ define([], function () {
                 view   : 'canBePurchased',
                 backend: 'canBePurchased'
             }
+        },
+        Quotation       : {
+            'Reference': {
+                view   : 'referenceView',
+                backend: 'name'
+            },
+            'Supplier' : {
+                view   : 'supplierView',
+                backend: 'deliverTo'
+            },
+            'Status'   : {
+                view   : 'statusView',
+                backend: 'workflows'
+            }
         }
     };
 
