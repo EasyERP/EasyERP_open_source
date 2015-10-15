@@ -27,7 +27,11 @@ define([
             initialize: function (options) {
                 this.startTime = options.startTime;
                 this.collection = options.collection;
-                this.filter = options.filter;
+                this.filter = options.filter ? options.filter : {};
+                this.filter.forSales = {
+                    key: 'forSales',
+                    value: ['true']
+                };
                 this.sort = options.sort;
                 this.defaultItemsNumber = this.collection.namberToShow || 100;
                 this.newCollection = options.newCollection;

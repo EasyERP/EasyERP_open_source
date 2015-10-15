@@ -33,6 +33,13 @@
                                 value: ['true']
                             }
                         }
+                    } else {
+                        options.filter = {
+                            'forSales': {
+                                key: 'forSales',
+                                value: ['false']
+                            }
+                        }
                     }
                 }
 
@@ -72,6 +79,13 @@
                             'forSales': {
                                 key: 'forSales',
                                 value: ['true']
+                            }
+                        }
+                    } else {
+                        options.filter = {
+                            'forSales': {
+                                key: 'forSales',
+                                value: ['false']
                             }
                         }
                     }

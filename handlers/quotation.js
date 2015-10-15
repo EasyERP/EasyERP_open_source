@@ -140,12 +140,6 @@ var Quotation = function (models) {
 
         var optionsObject = {};
 
-        /*if (data && data.filter && data.filter.forSales) {
-         optionsObject['forSales'] = true;
-         } else {
-         optionsObject['forSales'] = false;
-         }*/
-
         if (filter && typeof filter === 'object') {
             if (filter.condition === 'or') {
                 optionsObject['$or'] = caseFilter(filter);
@@ -242,33 +236,6 @@ var Quotation = function (models) {
         });
     };
 
-    /*function caseFilter (queryObject, data) {
-     var filter = data.filter;
-
-     if (data && filter) {
-     if (filter.condition === 'or') {
-     queryObject['$or'] = []
-     }
-     if (filter.workflow) {
-     queryObject.$and.push({workflow: {$in: filter.workflow.objectID()}});
-     }
-     /!*if (filter.Reference) {
-     queryObject.$and.push({supplierReference: {$in: filter.Reference}});
-     }*!/
-     if (filter.supplier) {
-     queryObject.$and.push({supplier: {$in: filter.supplier}});
-     }
-     if (filter['Order date']) {
-     if (filter.condition === 'or') {
-     queryObject.$or.push({orderDate: {$gte: new Date(filter['Order date'][0].start), $lte: new Date(filter['Order date'][0].end)}});
-     } else {
-     queryObject.$and.push({orderDate: {$gte: new Date(filter['Order date'][0].start), $lte: new Date(filter['Order date'][0].end)}});
-     }
-
-     }
-     }
-     };*/
-
     function ConvertType(array, type) {
         if (type === 'integer') {
             for (var i = array.length - 1; i >= 0; i--) {
@@ -315,11 +282,6 @@ var Quotation = function (models) {
                     resArray.push(filtrElement);
                     break;
                 case 'forSales':
-                    ConvertType(condition, 'boolean');
-                    filtrElement[key] = {$in: condition};
-                    resArray.push(filtrElement);
-                    break;
-                case 'canBeSold':
                     ConvertType(condition, 'boolean');
                     filtrElement[key] = {$in: condition};
                     resArray.push(filtrElement);

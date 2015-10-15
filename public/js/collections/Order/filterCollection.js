@@ -52,6 +52,13 @@
                             value: ['true']
                         }
                     }
+                } else {
+                    options.filter = {
+                        'forSales': {
+                            key: 'forSales',
+                            value: ['false']
+                        }
+                    }
                 }
 
                 if (options && options.viewType) {
