@@ -631,7 +631,8 @@ define([
                 }
 
 
-                savedFilter = custom.savedFilters(contentType, filter);
+                //savedFilter = custom.savedFilters(contentType, filter);
+                savedFilter = filter;
 
                 if (context.mainView === null) {
                     context.main(contentType);
@@ -683,7 +684,19 @@ define([
             var self = this;
             this.checkLogin(function (success) {
                 if (success) {
-                    goForm(self);
+                    if (!App || !App.currentDb) {
+                        dataService.getData('/currentDb', null, function (response) {
+                            if (response && !response.error) {
+                                App.currentDb = response;
+                            } else {
+                                console.log('can\'t fetch current db');
+                            }
+
+                            goForm(self);
+                        });
+                    } else {
+                        goForm(self);
+                    }
                 } else {
                     self.redirectTo();
                 }
@@ -811,7 +824,19 @@ define([
             var self = this;
             this.checkLogin(function (success) {
                 if (success) {
-                    goThumbnails(self);
+                    if (!App || !App.currentDb) {
+                        dataService.getData('/currentDb', null, function (response) {
+                            if (response && !response.error) {
+                                App.currentDb = response;
+                            } else {
+                                console.log('can\'t fetch current db');
+                            }
+
+                            goThumbnails(self);
+                        });
+                    } else {
+                        goThumbnails(self);
+                    }
                 } else {
                     self.redirectTo();
                 }
@@ -819,9 +844,11 @@ define([
 
             function goThumbnails(context) {
                 var currentContentType = context.testContent(contentType);
+                var viewType = custom.getCurrentVT({contentType: contentType}); //for default filter && defaultViewType
+
                 if (contentType !== currentContentType) {
                     contentType = currentContentType;
-                    var url = '#easyErp/' + contentType + '/thumbnails';
+                    var url = '#easyErp/' + contentType + '/' + viewType;
                     Backbone.history.navigate(url, {replace: true});
                 }
                 var newCollection = true;
@@ -860,7 +887,7 @@ define([
                     filter = JSON.parse(filter);
                 }
 
-                savedFilter = custom.savedFilters(contentType, filter);
+                //savedFilter = custom.savedFilters(contentType, filter);
 
                 if (context.mainView === null) {
                     context.main(contentType);

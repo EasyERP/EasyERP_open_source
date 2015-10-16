@@ -25,6 +25,7 @@ define([
                 this.currentModel = (options.model) ? options.model : options.collection.getElement();
                 this.currentModel.urlRoot = "/order";
                 this.responseObj = {};
+                this.forSales = false;
                 this.render(options);
             },
 
@@ -111,7 +112,10 @@ define([
                     }
 
                     self.currentModel.save({
-                        workflow: workflow._id
+                        workflow: {
+                            _id: workflow._id,
+                            name : workflow.name
+                        }
                     }, {
                         headers: {
                             mid: 57
@@ -160,7 +164,10 @@ define([
                     }
 
                     self.currentModel.save({
-                        workflow: workflow._id
+                        workflow: {
+                            _id: workflow._id,
+                            name : workflow.name
+                        }
                     }, {
                         headers: {
                             mid: 57

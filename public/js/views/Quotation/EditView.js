@@ -26,6 +26,7 @@ define([
                 this.currentModel = (options.model) ? options.model : options.collection.getElement();
                 this.currentModel.urlRoot = "/quotation";
                 this.responseObj = {};
+                this.forSales = false;
                 this.render(options);
             },
 
@@ -123,7 +124,10 @@ define([
                     if (products && products.length) {
                         self.currentModel.save({
                             isOrder: true,
-                            workflow: workflow._id
+                            workflow: {
+                                _id: workflow._id,
+                                name: workflow.name
+                            }
                         }, {
                             headers: {
                                 mid: 57
@@ -160,7 +164,10 @@ define([
                     }
 
                     self.currentModel.save({
-                        workflow: workflow._id
+                        workflow: {
+                            _id: workflow._id,
+                            name: workflow.name
+                        }
                     }, {
                         headers: {
                             mid: 57
@@ -179,7 +186,7 @@ define([
                 var self = this;
 
                 populate.fetchWorkflow({
-                    wId: 'Quotation'
+                    wId: 'Sales Order'
                 }, function (workflow) {
                     var redirectUrl = self.forSales ? "easyErp/salesQuotation" : "easyErp/Quotation";
 
@@ -188,7 +195,10 @@ define([
                     }
 
                     self.currentModel.save({
-                        workflow: workflow._id
+                        workflow: {
+                            _id: workflow._id,
+                            name: workflow.name
+                        }
                     }, {
                         headers: {
                             mid: 57
@@ -215,7 +225,15 @@ define([
                 var quantity;
                 var price;
 
-                var supplier = thisEl.find('#supplierDd').data('id');
+                var supplier = {};
+                supplier._id = thisEl.find('#supplierDd').attr('data-id');
+                supplier.name = thisEl.find('#supplierDd').text();
+
+                var project = {};
+                project._id = thisEl.find('#projectDd').attr('data-id');
+                project.projectName = thisEl.find('#projectDd').text();
+                project.projectmanager = this.projectManager;
+
                 var destination = $.trim(thisEl.find('#destination').data('id'));
                 var deliverTo = $.trim(thisEl.find('#deliveryDd').data('id'));
                 var incoterm = $.trim(thisEl.find('#incoterm').data('id'));
@@ -236,8 +254,10 @@ define([
                 var usersId = [];
                 var groupsId = [];
 
-                var workflow = this.currentModel.get('workflow');
-                workflow = workflow ? workflow._id : null;
+                var wF = this.currentModel.get('workflow');
+                var workflow = {};
+                workflow._id =  wF._id;
+                workflow.name =  wF.name;
 
                 $(".groupsAndUser tr").each(function () {
                     if ($(this).data("type") == "targetUsers") {
@@ -283,6 +303,7 @@ define([
                     supplierReference: supplierReference,
                     deliverTo: deliverTo,
                     products: products,
+                    project       : project,
                     orderDate: orderDate,
                     expectedDate: expectedDate,
                     destination: destination,
@@ -405,7 +426,14 @@ define([
                 populate.get("#invoicingControl", "/invoicingControl", {}, 'name', this, false, true);
                 populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, false, true);
                 populate.get("#deliveryDd", "/deliverTo", {}, 'name', this, false, true);
-                populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
+
+                if ((App.currentDb !== 'weTrack') && this.forSales){
+                    populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
+                } else {
+                    populate.get("#supplierDd", "/Customer", {}, "fullName", this, false, false);
+
+                    populate.get("#projectDd", "/getProjectsForDd", {}, "projectName", this, false, false);
+                }
 
                 this.$el.find('#orderDate').datepicker({
                     dateFormat: "d M, yy",

@@ -187,6 +187,7 @@ require(['app'], function (app) {
 
     Backbone.View.prototype.changeLocationHash = function (page, count, filter) {
         var location = window.location.hash;
+
         var mainLocation = '#easyErp/' + this.contentType + '/' + this.viewType;
         var pId = (location.split('/pId=')[1]) ? location.split('/pId=')[1].split('/')[0] : '';
         if (!page && this.viewType == 'list') {
@@ -229,6 +230,7 @@ require(['app'], function (app) {
         }
 
         Backbone.history.navigate(url);
+
     };
 
     Backbone.View.prototype.prevP = function (dataObject) {

@@ -3,9 +3,10 @@
  */
 define([
         'text!templates/Filter/filterFavourites.html',
-        'models/UsersModel'
+        'models/UsersModel',
+        'custom'
     ],
-    function (ContentFilterTemplate, usersModel) {
+    function (ContentFilterTemplate, usersModel, custom) {
         var FilterView;
         FilterView = Backbone.View.extend({
             el: '#favoritesContent',
@@ -30,9 +31,20 @@ define([
 
                     for (var j = this.savedFilters.length - 1; j >= 0; j--) {
                         if (this.savedFilters[j]) {
-                            var keys = Object.keys(this.savedFilters[j]['filter']);
+                            if (this.savedFilters[j].byDefault === this.contentType){
+                               var keys = Object.keys(this.savedFilters[j]['_id']['filter']);
+
+                               filter = this.savedFilters[j]['_id']['filter'][keys[0]];
+
+                                //url += '/filter=' + encodeURI(JSON.stringify(filter));
+                                //Backbone.history.fragment = "";
+                                //Backbone.history.navigate(url, {trigger: true});
+
+                                self.useFilter(filter);
+                            }
+                            var keys = Object.keys(this.savedFilters[j]['_id']['filter']);
                             for (var i = keys.length - 1; i >= 0; i--) {
-                                this.$el.append('<li class="filters"  id ="' + this.savedFilters[j]['_id'] + '">' + keys[i] + '</li><button class="removeSavedFilter" id="' + this.savedFilters[j]['_id'] + '">' + 'x' + '</button>');
+                                this.$el.append('<li class="filters"  id ="' + this.savedFilters[j]['_id']['_id'] + '">' + keys[i] + '</li><button class="removeSavedFilter" id="' + this.savedFilters[j]['_id']['_id'] + '">' + 'x' + '</button>');
                             }
                         }
                     }
