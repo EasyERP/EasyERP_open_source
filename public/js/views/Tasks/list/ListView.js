@@ -23,13 +23,12 @@ define([
             contentCollection       : contentCollection,
             filterView              : filterView,
             contentType             : "Tasks",
-            viewType                : "list",
             totalCollectionLengthUrl: '/totalCollectionLength/Tasks',
-            formUrl                 : "#easyErp/Tasks/form/",
+            // formUrl                 : "#easyErp/Tasks/form/",
 
             events: {
-                /*  "click td:not(:has('input[type='checkbox']'))": "goToEditDialog",
-                 "click .project": "goToProject",*/
+                "click td:not(:has('input[type='checkbox']'))": "goToEditDialog",
+                 "click .project": "goToProject",
                 "click .stageSelect"     : "showNewSelect",
                 "click .stageSelectType" : "showNewSelectType",
                 "click .newSelectList li": "chooseOption"
@@ -55,7 +54,7 @@ define([
                 this.contentCollection = contentCollection;
             },
 
-            /* goToProject: function (e) {
+             goToProject: function (e) {
              var projectId = $(e.target).data('id');
              var model = new projectModel({ validate: false });
              model.urlRoot = '/Projects/form/' + projectId;
@@ -68,9 +67,9 @@ define([
              }
              });
              return false;
-             },*/
+             },
 
-            /* goToEditDialog: function (e) {
+             goToEditDialog: function (e) {
              e.preventDefault();
              var id = $(e.target).closest('tr').data("id");
              var model = new currentModel({ validate: false });
@@ -84,7 +83,7 @@ define([
              alert('Please refresh browser');
              }
              });
-             },*/
+             },
 
             pushStages: function (stages) {
                 this.stages = stages;

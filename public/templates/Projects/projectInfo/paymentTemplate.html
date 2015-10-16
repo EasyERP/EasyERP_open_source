@@ -23,8 +23,7 @@
             <th>Status</th>
         </tr>
         </thead>
-        <tbody id="listTable"></tbody>
-        <tfoot id="listTotal"></tfoot>
+        <tbody id="listTable">
         <%var total = 0;%>
         <%var totalPaidAmount = 0;%>
         <% paymentCollection.forEach(function(payment, index) {%>
@@ -44,11 +43,15 @@
             <%totalPaidAmount += parseFloat(payment.paidAmount)%>
         </tr>
         <%})%>
-        <tr>
-            <td colspan="6"></td>
-            <td><span id="total" class="money"><%=currencySplitter((total / 100).toFixed(2))%></span></td>
-            <td><span id="totalPaidAmount" class="money"><%=currencySplitter((totalPaidAmount / 100).toFixed(2))%></span></td>
-            <td></td>
-        </tr>
+
+        <tfoot id="listTotal">
+             <tr>
+                 <td colspan="6"></td>
+                 <td><span id="total" class="money"><%=currencySplitter((total / 100).toFixed(2))%></span></td>
+                 <td><span id="totalPaidAmount" class="money"><%=currencySplitter((totalPaidAmount / 100).toFixed(2))%></span></td>
+                 <td></td>
+             </tr>
+        </tfoot>
+        </tbody>
     </table>
 </div>

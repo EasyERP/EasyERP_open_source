@@ -23,7 +23,14 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     "click a.generateType"                                            : "generateType",
                     "click td.editable"                                               : "editRow",
                     "change .editable "                                               : "setEditable",
-                    "click"                                                           : "hideNewSelect"
+                    "click"                                                           : "hideNewSelect",
+                    'keydown input.editing'                                           : 'keyDown'
+                },
+
+                keyDown: function (e) {
+                    if (e.which === 13) {
+                        this.setChangedValueToModel();
+                    }
                 },
 
                 stopDefaultEvents: function (e) {
@@ -242,7 +249,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                 },
 
                 setChangedValueToModel: function (elem) {
-                    var editedElement = elem || this.$listTable.find('.editing');
+                    var editedElement = elem || this.$listTable.find('.editing:not(".endDateInput")');
                     var editedCol;
                     var editedElementRowId;
                     var editedElementContent;
