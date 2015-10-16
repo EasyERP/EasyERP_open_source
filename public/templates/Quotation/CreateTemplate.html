@@ -16,13 +16,27 @@
                             <%}%>
                             <div class="half-block left">
                                 <dl class="person-info">
-                                    <dt><label for="supplierDd">Supplier</label></dt>
+                                    <dt><label for="supplierDd">
+                                        <%if ((App.currentDb === 'weTrack') && forSales) {%>
+                                           Customer
+                                        <% } else { %>
+                                          Supplier
+                                        <% } %>
+
+                                    </label></dt>
                                     <dd>
                                         <a id="supplierDd" class="current-selected" href="javascript:;">Select</a>
                                     </dd>
-                                    <dt><label for="supplierReference">Supplier Reference</label></dt>
+                                    <!--<dt><label for="supplierReference">Supplier Reference</label></dt>
                                     <dd><input type="text" name="supplierReference" id="supplierReference"
-                                               maxlength="32"/></dd>
+                                               maxlength="32"/></dd>-->
+
+                                    <%if ((App.currentDb === 'weTrack') && forSales) {%>
+                                      <dt><label for="projectDd">Project</label></dt>
+                                      <dd>
+                                          <a id="projectDd" class="current-selected" href="javascript:;">Select</a>
+                                      </dd>
+                                    <% } %>
                                 </dl>
                             </div>
                             <div class="half-block left">

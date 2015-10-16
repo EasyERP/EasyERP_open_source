@@ -9,6 +9,7 @@ define([
         'models/Capacity',
         'collections/Capacity/filterCollection',
         'collections/Capacity/editCollection',
+        'collections/Capacity/departmentCollection',
         'common',
         'dataService',
         'constants',
@@ -18,7 +19,7 @@ define([
         'custom'
     ],
 
-    function (listViewBase, listHeaderTemplate, cancelEdit, listTotal, departmentListTemplate, listTemplate, createTemplate, currentModel, filterCollection, editCollection, common, dataService, CONSTANTS, async, moment, populate, custom) {
+    function (listViewBase, listHeaderTemplate, cancelEdit, listTotal, departmentListTemplate, listTemplate, createTemplate, currentModel, filterCollection, editCollection, departmentCollection, common, dataService, CONSTANTS, async, moment, populate, custom) {
         var CapacityListView = listViewBase.extend({
             el                : '#content-holder',
             defaultItemsNumber: null,
@@ -44,10 +45,10 @@ define([
                 "click td.editable"                                               : "editRow",
                 "click .current-selected"                                         : "showNewCurrentSelect",
                 "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
-                "click .oe_sortable"                                              : "goSort",
+                "click .oe-sortable"                                              : "goSort",
                 "change .editable "                                               : "setEditable",
                 "click"                                                           : "hideNewSelect",
-                "click .departmentRow td"                                         : "showCapacity",
+                "click .departmentRow td"                                         : "capacityClick",
             },
 
             initialize: function (options) {
@@ -57,6 +58,8 @@ define([
                 _.bind(this.collection.showMore, this.collection);
                 this.render();
                 this.daysCount;
+                this.departmentsCollections = {};
+                this.sortConst = 1;
             },
 
             showNewCurrentSelect: function (e, prev, next) {
@@ -366,40 +369,47 @@ define([
             },
 
             goSort: function (e) {
+                var self = this;
                 var target$ = $(e.target);
                 var currentParrentSortClass = target$.attr('class');
                 var sortClass = currentParrentSortClass.split(' ')[1];
-                var sortConst = 1;
-                var collection;
+                var keys = Object.keys(this.departmentsCollections);
+                var context = {};
+                var currentCollection;
 
-                //collection = this.collection.toJSON();
+                keys.forEach(function (key) {
+                    currentCollection = self.departmentsCollections[key];
 
-                if (!sortClass) {
-                    target$.addClass('sortDn');
-                    sortClass = "sortDn";
-                }
-                switch (sortClass) {
-                    case "sortDn":
-                    {
-                        target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
-                        target$.removeClass('sortDn').addClass('sortUp');
-                        sortConst = -1;
+                    if (!sortClass) {
+                        target$.addClass('sortDn');
+                        sortClass = "sortDn";
                     }
-                        break;
-                    case "sortUp":
-                    {
-                        target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
-                        target$.removeClass('sortUp').addClass('sortDn');
-                        sortConst = 1;
+
+                    switch (sortClass) {
+                        case "sortDn":
+                        {
+                            target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
+                            target$.removeClass('sortDn').addClass('sortUp');
+                            self.sortConst = -1;
+                        }
+                            break;
+                        case "sortUp":
+                        {
+                            target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
+                            target$.removeClass('sortUp').addClass('sortDn');
+                            self.sortConst = 1;
+                        }
+                            break;
                     }
-                        break;
-                }
 
-                //this.collection.sortByOrder(sortConst);
+                    context.self = self;
+                    context.key = key;
+                    context.currentCollection = currentCollection;
 
-                this.$el.find("#listTable").html('');
+                    currentCollection.on('sort', self.reRenderCapacity, context);
 
-                this.renderDepartmentRows(this.departmentObject);
+                    currentCollection.sortByOrder(self.sortConst);
+                })
             },
 
             getTotalLength: function (currentNumber, itemsNumber, filter) {
@@ -749,7 +759,7 @@ define([
 
                 var self = this;
 
-                CONSTANTS.DEPARTMENTS_ORDER.forEach(function(element) {
+                CONSTANTS.DEPARTMENTS_ORDER.forEach(function (element) {
                     if (self.departmentObject[element]) {
                         departments.push(self.departmentObject[element]);
                     }
@@ -762,35 +772,65 @@ define([
                 }));
             },
 
-            showCapacity: function (e) {
+            renderCapacity: function (row, subNameClass, name) {
+                var collection;
+                var status = row.find('.departmentCB').prop("checked");
+
+                if (!this.departmentsCollections[name]) {
+                    this.departmentsCollections[name] = new departmentCollection(this.capacityObject[name]);
+                }
+
+                this.departmentsCollections[name].sortByOrder(this.sortConst);
+
+                collection = this.departmentsCollections[name].toJSON();
+
+                this.bindingEventsToEditedCollection(this, collection);
+
+                $(_.template(listTemplate, {
+                    status    : status,
+                    collection: collection,
+                    subClass  : subNameClass,
+                    depName   : name,
+                })).insertAfter(row);
+            },
+
+            reRenderCapacity: function () {
+                var that = this.self;
+                var name = that.departmentObject[this.key].name;
+                var row = that.$el.find('#' + that.departmentObject[this.key]._id);
+                var subNameClass = "subRows" + name;
+                var subRows = that.$el.find('.' + subNameClass);
+                var checkIfVisible = subRows.is(":visible");
+
+                subRows.remove();
+
+                this.currentCollection.off('sort');
+                that.renderCapacity(row, subNameClass, name);
+
+                if (!checkIfVisible) {
+                    subRows = that.$el.find('.' + subNameClass);
+                    subRows.toggle();
+
+                    that.$el.find(".false").remove();
+                    that.hideSaveCancelBtns();
+                }
+            },
+
+            capacityClick: function (e) {
                 var target = $(e.target);
                 var checkIfCB = target.hasClass("departmentCB");
-                var status;
                 var row = target.closest("tr");
+
                 var name = row.attr('data-name');
                 var subNameClass = "subRows" + name;
 
                 var subRows = this.$el.find('.' + subNameClass);
-                var collection = this.capacityObject[name];
-
-                if (checkIfCB) {
-                    status = target.prop("checked");
-                } else {
-                    status = row.find('.departmentCB').prop("checked");
-                }
-
-                this.bindingEventsToEditedCollection(this, collection);
 
                 if (subRows.length === 0) {
-                    $(_.template(listTemplate, {
-                        status    : status,
-                        collection: collection,
-                        subClass  : subNameClass,
-                        depName    : name,
-                    })).insertAfter(row);
+                    this.renderCapacity(row, subNameClass, name);
+
                     row.find(".icon.add").toggle();
                 } else {
-                    subRows.find(".checkbox").prop("checked", status);
                     if (!checkIfCB) {
                         row.find(".icon.add").toggle();
                         subRows.toggle();
@@ -940,7 +980,7 @@ define([
                 var tr = $(e.target).closest('tr');
 
                 startData.department = {
-                    _id : tr.attr('data-id'),
+                    _id : tr.attr('id'),
                     name: tr.attr('data-name'),
                 }
 
@@ -1066,7 +1106,7 @@ define([
                     tr.replaceWith(template({
                         capacity: model,
                         subClass: subNameClass,
-                        depName  : depName,
+                        depName : depName,
                     }));
                     cb();
                 }, function (err) {

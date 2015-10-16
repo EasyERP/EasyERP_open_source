@@ -36,6 +36,7 @@ define([
 
             initialize: function (options) {
                 this.parentContentType = options.contentType;
+                this.viewType = options.viewType;
                 this.constantsObject = CONSTANTS.FILTERS[this.parentContentType];
 
                 App.filter = {};
@@ -124,6 +125,7 @@ define([
                 var mid = 39;
                 var filterName = this.$el.find('#forFilterName').val();
                 var byDefault = this.$el.find('.defaultFilter').prop('checked') ? this.parentContentType : "";
+                var viewType = this.viewType ? this.viewType : "";
                 var bool = true;
                 var self = this;
                 var filters;
@@ -163,6 +165,7 @@ define([
                     filterObj['filter'][filterName] = App.filter;
                     filterObj['key'] = key;
                     filterObj['useByDefault'] = byDefault;
+                    filterObj['viewType'] = viewType;
 
                     currentUser.changed = filterObj;
 
@@ -187,7 +190,8 @@ define([
                                             contentView: key,
                                             filter     : filterForSave
                                         },
-                                        byDefault: byDefault
+                                        byDefault: byDefault,
+                                        viewType: viewType
                                     }
                                 );
                                 favouritesContent.append('<li class="filters"  id ="' + id + '">' + filterName + '</li><button class="removeSavedFilter" id="' + id + '">' + 'x' + '</button>');
@@ -455,6 +459,7 @@ define([
                 var keys;
                 var filterId;
                 var filterByDefault;
+                var viewType;
 
                 this.$el.find('#favoritesContent').append(_.template(savedFilterTemplate));
 
@@ -472,7 +477,11 @@ define([
 
                                 App.filter = filter;
 
-                                self.trigger('filter', App.filter);
+                                if (this.savedFilters[j].viewType){
+                                    viewType = this.savedFilters[j].viewType;
+                                }
+
+                                self.trigger('filter', App.filter, viewType);
                                 self.renderFilterContent();
                                 self.showFilterIcons(App.filter);
                                 filterId = this.savedFilters[j]['_id']['_id'];

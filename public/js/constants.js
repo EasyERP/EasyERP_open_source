@@ -152,7 +152,7 @@ define([], function () {
                 backend: 'workflow._id'
             },
             'Sales Manager': {
-                view   : 'projectmanager',
+                view   : 'projectManager',
                 backend: 'projectmanager._id'
             }
         },
@@ -258,6 +258,66 @@ define([], function () {
             'Can be Purchased': {
                 view   : 'canBePurchased',
                 backend: 'canBePurchased'
+            }
+        },
+        Quotation       : {
+            'Supplier' : {
+                view   : 'supplier',
+                backend: 'supplier._id'
+            },
+            'Status'   : {
+                view   : 'workflow',
+                backend: 'workflow._id'
+            }
+        },
+        salesQuotation: {
+            'Project': {
+                view   : 'projectName',
+                backend: 'project._id'
+            },
+            'Customer' : {
+                view   : 'supplier',
+                backend: 'supplier._id'
+            },
+            'Sales Manager'   : {
+                view   : 'projectManager',
+                backend: 'project.projectmanager._id'
+            },
+            'Status'   : {
+                view   : 'workflow',
+                backend: 'workflow._id'
+            }
+        },
+        salesOrder: {
+            'Project': {
+                view   : 'projectName',
+                backend: 'project._id'
+            },
+            'Customer' : {
+                view   : 'supplier',
+                backend: 'supplier._id'
+            },
+            'Sales Manager'   : {
+                view   : 'projectManager',
+                backend: 'project.projectmanager._id'
+            },
+            'Status'   : {
+                view   : 'workflow',
+                backend: 'workflow._id'
+            }
+        },
+        Order: {
+            'Supplier' : {
+                view   : 'supplier',
+                backend: 'supplier._id'
+            },
+            'Sales Manager'   : {
+                view   : 'projectManager',
+                backend: 'project.projectmanager._id'
+            },
+            'Status'   : {
+                view   : 'workflow',
+                backend: 'workflow._id'
             }
         }
     };

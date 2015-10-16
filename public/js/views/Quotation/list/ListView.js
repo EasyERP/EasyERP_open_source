@@ -22,11 +22,17 @@ define([
             contentType             : 'Quotation',//needs in view.prototype.changeLocationHash
             viewType                : 'list',//needs in view.prototype.changeLocationHash
             totalCollectionLengthUrl: '/quotation/totalCollectionLength',
+            filterView              : filterView,
 
             initialize: function (options) {
                 this.startTime = options.startTime;
                 this.collection = options.collection;
-                this.filter = options.filter;
+                this.filter = options.filter ? options.filter : {};
+                this.filter.forSales = {
+                    key: 'forSales',
+                    value: ['false']
+                };
+                this.forSales = false;
                 this.sort = options.sort;
                 this.defaultItemsNumber = this.collection.namberToShow || 100;
                 this.newCollection = options.newCollection;
@@ -53,7 +59,11 @@ define([
                 var id = targetElement.attr("id");
                 var model = this.collection.get(id);
 
-                model.save({workflow: target$.attr("id")}, {
+                model.save({
+                    workflow: {
+                        _id: target$.attr("id"),
+                        name:target$.text()
+                    }}, {
                     headers : {
                         mid: 55
                     },
@@ -92,8 +102,8 @@ define([
                 currentEl = this.$el;
 
                 currentEl.html('');
-                currentEl.append(_.template(listTemplate));
-                currentEl.append(new listItemView({
+                currentEl.append(_.template(this.listTemplate));
+                currentEl.append(new this.listItemView({
                     collection : this.collection,
                     page       : this.page,
                     itemsNumber: this.collection.namberToShow
@@ -106,24 +116,15 @@ define([
 
                 currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
+
+                this.renderFilter(self);
+
                 dataService.getData("/workflow/fetch", {
                     wId         : 'Purchase Order',
                     source      : 'purchase',
                     targetSource: 'quotation'
                 }, function (stages) {
                     self.stages = stages;
-                    dataService.getData('/quotation/getFilterValues', null, function (values) {
-                        FilterView = new filterView({collection: stages, customCollection: values});
-                        // Filter custom event listen ------begin
-                        FilterView.bind('filter', function () {
-                            self.showFilteredPage()
-                        });
-                        FilterView.bind('defaultFilter', function () {
-                            self.showFilteredPage();
-                        });
-                        // Filter custom event listen ------end
-                    })
-
                 });
             },
 

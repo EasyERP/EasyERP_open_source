@@ -1,7 +1,7 @@
 @import "_font";
 @import "_colors";
 @import "_darckColor";
-//@import "_whiteColor";
+@import "_whiteColor";
 @import "_list";
 
 /*------------------------Constants-----------------------------*/
@@ -3539,7 +3539,7 @@ button.red, a.red {
         line-height: 20px;
 
         a {
-          color: @grey;
+          color: @login-text;
         }
       }
     }
@@ -3558,7 +3558,7 @@ button.red, a.red {
     span {
       display: block;
       line-height: 30px;
-      color: @grey;
+      color: @login-text;
         &:hover {
           color: #fff;
         }
@@ -6186,7 +6186,7 @@ textarea#editInput {
 
   .filter-dialog-tabs {
     box-sizing: border-box;
-    border: 1px solid #c0c0c0;
+    border: 1px solid @border-color-main;
     border-bottom: 0;
     position: relative;
     float: left;
@@ -6197,7 +6197,7 @@ textarea#editInput {
       border-radius: 0px;
       border: none;
       &:nth-child(2) {
-        border-left: 1px solid #c0c0c0;
+        border-left: 1px solid @border-color-main;
       }
     }
   }
@@ -6421,12 +6421,18 @@ textarea#editInput {
     cursor: pointer;
 
     input, input:focus {
+      width: 50%;
       text-align: center;
       outline: none;
       outline-offset: 0;
       display: none;
       cursor: pointer;
       border: 1px solid @border-color-selected;
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 5px;
+      margin: 0 auto;
     }
 
     input:focus {
@@ -6519,7 +6525,7 @@ textarea#editInput {
       &:not(.subRow):hover {
         td {
           &:not(.selectedType) {
-            color: #ffffff;
+            color: @overiewText-color;
           }
         }
       }
@@ -6534,7 +6540,8 @@ textarea#editInput {
         &:nth-child(2) {
           text-align: left;
           font-size: 12px;
-          line-height: 15px;
+          line-height: 20px;
+          border: none;
         }
       }
 
