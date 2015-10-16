@@ -314,6 +314,8 @@ define([
 
 				if (!response.error) {
 					return new VacationDashEdit({
+						tr: tr,
+						dateByWeek: dateByWeek,
 						projectName   : projectName,
 						customer      : response.customer,
 						projectmanager: response.projectmanager,

@@ -1,12 +1,15 @@
 define(["text!templates/wTrack/dashboard/vacationDashEdit.html",
 		'models/wTrackModel',
+		'moment',
 		'async'
 	],
-	function (template, wTrackModel, async) {
+	function (template, wTrackModel, moment, async) {
 		"use strict";
 		var CreateView = Backbone.View.extend({
 				template   : _.template(template),
 				responseObj: {},
+				dateByWeek : null,
+				row        : null,
 
 				events: {
 					"click td.editable"     : "editRow",
@@ -16,6 +19,8 @@ define(["text!templates/wTrack/dashboard/vacationDashEdit.html",
 				initialize: function (options) {
 					_.bindAll(this, "saveItem");
 
+					this.dateByWeek = options.dateByWeek;
+					this.row = options.tr;
 					this.render(options);
 				},
 
@@ -45,8 +50,7 @@ define(["text!templates/wTrack/dashboard/vacationDashEdit.html",
 					var data = [];
 					var rows = table.find('tr');
 					var totalWorked = 0;
-					var employee;
-					var project = thisEl.find('#');
+					var project = thisEl.find('#project').text();
 
 					function retriveText(el) {
 						var child = el.children('input');
@@ -79,12 +83,12 @@ define(["text!templates/wTrack/dashboard/vacationDashEdit.html",
 						var su = retriveText(sunEl);
 						var wTrack;
 
-						if (!employee) {
-							employee = target.find('[data-content="employee"]').text();
-						}
+						/*if (!employee) {
+						 employee = target.find('[data-content="employee"]').text();
+						 }*/
 
 						worked = retriveText(worked);
-						totalWorked += worked;
+						totalWorked += parseInt(worked);
 						wTrack = {
 							_id   : id,
 							1     : mo,
@@ -115,7 +119,7 @@ define(["text!templates/wTrack/dashboard/vacationDashEdit.html",
 						if (!err) {
 							self.updateDashRow({
 								totalWorked: totalWorked,
-								employee   : employee
+								project    : project
 							});
 
 							return self.hideDialog();
@@ -129,7 +133,15 @@ define(["text!templates/wTrack/dashboard/vacationDashEdit.html",
 				},
 
 				updateDashRow: function (options) {
+					var totalHours = options.totalWorked;
+					var targetEmployeeContainer = this.row.find('td.wTrackInfo[data-date="' + this.dateByWeek + '"]');
+					var hoursContainer = targetEmployeeContainer.find('span.projectHours');
+					var targetTdIndex = this.row.find('td').index(targetEmployeeContainer);
+					var employeeId = this.row.attr('data-employee');
 
+					hoursContainer.text(totalHours);
+
+					this.getDataForCellClass(targetTdIndex, employeeId, totalHours);
 				},
 
 				hideNewSelect: function () {
@@ -149,7 +161,7 @@ define(["text!templates/wTrack/dashboard/vacationDashEdit.html",
 					var calcEl;
 					var workedEl = tr.find('[data-content="worked"]');
 
-					function eplyDefaultValue(el) {
+					function appplyDefaultValue(el) {
 						var value = el.text();
 						var children = el.children('input');
 
@@ -167,7 +179,7 @@ define(["text!templates/wTrack/dashboard/vacationDashEdit.html",
 					for (var i = days.length - 1; i >= 0; i--) {
 						calcEl = $(days[i]);
 
-						value = eplyDefaultValue(calcEl);
+						value = appplyDefaultValue(calcEl);
 
 						if (value === undefined && isInput) {
 							editedCol = targetEl.closest('td');
@@ -257,6 +269,79 @@ define(["text!templates/wTrack/dashboard/vacationDashEdit.html",
 					 }*/
 
 					return false;
+				},
+
+				getDataForCellClass: function(updatedTdIndex, employeeId, totalHours){
+					var table = $('#dashboardBody');
+					var targetRow = table.find('[data-id="'+ employeeId +'"]');
+					var targetTd = targetRow.find('td').eq(updatedTdIndex);
+					var hoursSpan = targetTd.find('span.vacationHours');
+					var vacationSpan = targetTd.find('span.vacation');
+					var holidaysSpan = targetTd.find('span.viewCount');
+					var prevText = hoursSpan.text();
+					var slashPos = prevText.indexOf('/');
+					var text = totalHours + ' ' + prevText.substring(slashPos);
+					var vacationHours = vacationSpan.text();
+					var holidays = holidaysSpan.text();
+
+					var year = moment().isoWeekYear();
+					var week = moment().isoWeek();
+					var dateByWeek = year * 100 + week;
+
+					var classString;
+
+					var isInActiveClass = targetTd.hasClass('inactive');
+
+					if (vacationHours){
+						vacationHours = parseInt(vacationHours);
+
+						if (isNaN(vacationHours)){
+							vacationHours = 0;
+						}
+					}
+
+					if (holidays){
+						holidays = parseInt(holidays);
+					}
+
+					hoursSpan.text(text);
+
+					classString = this.getCellClass(dateByWeek, vacationHours, holidays, totalHours, isInActiveClass);
+
+					targetTd.removeClass();
+					targetTd.addClass(classString);
+				},
+
+				getCellClass: function (dateByWeek, vacations, holidays, hours, isInActiveClass) {
+					var s = "dashboardWeek ";
+					var startHours;
+
+					hours = hours || 0;
+					holidays = holidays || 0;
+					vacations = vacations || 0;
+
+					startHours = hours;
+					hours = hours + vacations + holidays * 8;
+
+					if (hours > 40) {
+						s += "dgreen ";
+					} else if (hours > 35) {
+						s += "green ";
+					} else if (hours > 19) {
+						s += "yellow ";
+					} else if (hours > 8) {
+						s += startHours ? "pink " : ((dateByWeek >= this.dateByWeek) ? "red" : "");
+					} else if (dateByWeek >= this.dateByWeek) {
+						s += "red ";
+					}
+					if (dateByWeek === this.dateByWeek) {
+						s += "active ";
+					}
+					if (isInActiveClass) {
+						s += "inactive ";
+					}
+
+					return s;
 				},
 
 				render: function (data) {
