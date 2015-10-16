@@ -47,10 +47,15 @@ define(["text!templates/wTrack/dashboard/vacationDashEdit.html",
 					var self = this;
 					var thisEl = this.$el;
 					var table = thisEl.find('#wTrackEditTable');
+					var inputEditing = table.find('input.editing');
 					var data = [];
 					var rows = table.find('tr');
 					var totalWorked = 0;
 					var project = thisEl.find('#project').text();
+
+					if (inputEditing.length){
+						this.autoCalc(null, inputEditing);
+					}
 
 					function retriveText(el) {
 						var child = el.children('input');
@@ -82,10 +87,6 @@ define(["text!templates/wTrack/dashboard/vacationDashEdit.html",
 						var sa = retriveText(satEl);
 						var su = retriveText(sunEl);
 						var wTrack;
-
-						/*if (!employee) {
-						 employee = target.find('[data-content="employee"]').text();
-						 }*/
 
 						worked = retriveText(worked);
 						totalWorked += parseInt(worked);
@@ -149,8 +150,9 @@ define(["text!templates/wTrack/dashboard/vacationDashEdit.html",
 					$(".generateTypeUl").hide();
 				},
 
-				autoCalc: function (e) {
-					var targetEl = $(e.target);
+				autoCalc: function (e, targetEl) {
+					targetEl = targetEl || $(e.target);
+
 					var isInput = targetEl.prop("tagName") === 'INPUT';
 					var tr = targetEl.closest('tr');
 					var edited = tr.find('input.edited');
@@ -271,9 +273,9 @@ define(["text!templates/wTrack/dashboard/vacationDashEdit.html",
 					return false;
 				},
 
-				getDataForCellClass: function(updatedTdIndex, employeeId, totalHours){
+				getDataForCellClass: function (updatedTdIndex, employeeId, totalHours) {
 					var table = $('#dashboardBody');
-					var targetRow = table.find('[data-id="'+ employeeId +'"]');
+					var targetRow = table.find('[data-id="' + employeeId + '"]');
 					var targetTd = targetRow.find('td').eq(updatedTdIndex);
 					var hoursSpan = targetTd.find('span.vacationHours');
 					var vacationSpan = targetTd.find('span.vacation');
@@ -283,6 +285,8 @@ define(["text!templates/wTrack/dashboard/vacationDashEdit.html",
 					var text = totalHours + ' ' + prevText.substring(slashPos);
 					var vacationHours = vacationSpan.text();
 					var holidays = holidaysSpan.text();
+					var vacationSpanClass = 'vacation ';
+					var hoursSpanClass = 'vacationHours ';
 
 					var year = moment().isoWeekYear();
 					var week = moment().isoWeek();
@@ -291,30 +295,43 @@ define(["text!templates/wTrack/dashboard/vacationDashEdit.html",
 					var classString;
 
 					var isInActiveClass = targetTd.hasClass('inactive');
+					var isVacationClass = targetTd.hasClass('withVacation');
 
-					if (vacationHours){
+					if (vacationHours) {
 						vacationHours = parseInt(vacationHours);
 
-						if (isNaN(vacationHours)){
+						if (isNaN(vacationHours)) {
 							vacationHours = 0;
 						}
 					}
 
-					if (holidays){
+					if (holidays) {
 						holidays = parseInt(holidays);
 					}
 
 					hoursSpan.text(text);
 
-					classString = this.getCellClass(dateByWeek, vacationHours, holidays, totalHours, isInActiveClass);
+					classString = this.getCellClass(dateByWeek, vacationHours, holidays, totalHours, isInActiveClass, isVacationClass);
+					vacationSpanClass += this.getCellSize(totalHours, vacationHours, true);
+					hoursSpanClass += this.getCellSize(totalHours, vacationHours);
+
+					hoursSpan.removeClass();
+					vacationSpan.removeClass();
+					hoursSpan.addClass(hoursSpanClass);
+					vacationSpan.addClass(vacationSpanClass);
+
 
 					targetTd.removeClass();
 					targetTd.addClass(classString);
 				},
 
-				getCellClass: function (dateByWeek, vacations, holidays, hours, isInActiveClass) {
+				getCellClass: function (dateByWeek, vacations, holidays, hours, isInActiveClass, isVacationClass) {
 					var s = "dashboardWeek ";
 					var startHours;
+
+					if (isVacationClass) {
+						s += 'withVacation ';
+					}
 
 					hours = hours || 0;
 					holidays = holidays || 0;
@@ -342,6 +359,34 @@ define(["text!templates/wTrack/dashboard/vacationDashEdit.html",
 					}
 
 					return s;
+				},
+
+				getCellSize: function (workedHours, vacationHours, inVacation) {
+					var v = '';
+					var w = '';
+
+					vacationHours = vacationHours || 0;
+					workedHours = workedHours || 0;
+
+					if (vacationHours > 16) {
+						v = workedHours ? "size40" : "sizeFull";
+						w = workedHours ? "size40" : "size0";
+					} else if (vacationHours > 8) {
+						v = workedHours ? "size16" : "size40";
+						w = workedHours ? "size24" : "size40";
+					} else if (vacationHours > 0) {
+						v = workedHours ? "size8" : "size8";
+						w = "sizeFull";
+					} else {
+						v = "size0";
+						w = "sizeFull";
+					}
+
+					if (inVacation && vacationHours) {
+						return v;
+					} else {
+						return w;
+					}
 				},
 
 				render: function (data) {
