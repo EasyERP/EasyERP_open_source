@@ -25,6 +25,8 @@ var requestHandler = function (app, event, mainDb) {
     var jobType = require("./Modules/JobType.js")(models);
     var nationality = require("./Modules/Nationality.js")(models);
     var birthdays = require("./Modules/Birthdays.js")(models, event);
+    var Scheduler = require("./Modules/Scheduler.js")(dbsObject, models);
+    var scheduler = new Scheduler();
 
     var tasksSchema = mongoose.Schemas['Task'];
     var projectSchema = mongoose.Schemas['Project'];
@@ -2365,6 +2367,10 @@ var requestHandler = function (app, event, mainDb) {
         project.getTotalCount(req, res);
     }
 
+    function initScheduler() {
+        scheduler.initEveryDayScheduler();
+    }
+
     return {
 
         mongoose: mongoose,
@@ -2513,7 +2519,9 @@ var requestHandler = function (app, event, mainDb) {
         getLanguages: getLanguages,
         getJobType: getJobType,
         getNationality: getNationality,
-        customerTotalCollectionLength: customerTotalCollectionLength
+        customerTotalCollectionLength: customerTotalCollectionLength,
+
+        initScheduler: initScheduler
     }
 }
 //---------EXPORTS----------------------------------------
