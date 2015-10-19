@@ -18,7 +18,13 @@ var Quotation = function (models) {
 
         var body = mapObject(req.body);
         var isPopulate = req.body.populate;
+
         var quotation = new Quotation(body);
+
+        if (req.session.uId) {
+            quotation.createdBy.user = req.session.uId;
+            quotation.editedBy.user = req.session.uId;
+        }
 
         quotation.save(function (err, _quotation) {
             if (err) {
@@ -125,204 +131,12 @@ var Quotation = function (models) {
         var contentIdsSearcher;
         var contentSearcher;
         var data = req.query;
+        var queryObject = {};
 
         var waterfallTasks;
         var contentType = data.contentType;
         var filter = data.filter || {};
         var isOrder = (contentType === 'Order' || contentType === 'salesOrder');
-
-        if (isOrder) {
-            filter.isOrder = {
-                    key: 'isOrder',
-                    value: ['true']
-            }
-        }
-
-        var optionsObject = {};
-
-        if (filter && typeof filter === 'object') {
-            if (filter.condition === 'or') {
-                optionsObject['$or'] = caseFilter(filter);
-            } else {
-                optionsObject['$and'] = caseFilter(filter);
-            }
-        }
-
-        departmentSearcher = function (waterfallCallback) {
-            models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
-                {
-                    $match: {
-                        users: objectId(req.session.uId)
-                    }
-                }, {
-                    $project: {
-                        _id: 1
-                    }
-                },
-
-                waterfallCallback);
-        };
-
-        contentIdsSearcher = function (deps, waterfallCallback) {
-            var arrOfObjectId = deps.objectID();
-
-            Quotation.aggregate(
-                {
-                    $match: {
-                        $and: [
-                            optionsObject,
-                            {
-                                $or: [
-                                    {
-                                        $or: [
-                                            {
-                                                $and: [
-                                                    {whoCanRW: 'group'},
-                                                    {'groups.users': objectId(req.session.uId)}
-                                                ]
-                                            },
-                                            {
-                                                $and: [
-                                                    {whoCanRW: 'group'},
-                                                    {'groups.group': {$in: arrOfObjectId}}
-                                                ]
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        $and: [
-                                            {whoCanRW: 'owner'},
-                                            {'groups.owner': objectId(req.session.uId)}
-                                        ]
-                                    },
-                                    {whoCanRW: "everyOne"}
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    $project: {
-                        _id: 1
-                    }
-                },
-                waterfallCallback
-            );
-        };
-
-        contentSearcher = function (quotationsIds, waterfallCallback) {
-            var data = req.query;
-            var query;
-            var queryObject = {};
-            queryObject['$and'] = [];
-
-            queryObject.$and.push({_id: {$in: quotationsIds}});
-            //queryObject.$and.push({isOrder: isOrder});
-
-            caseFilter(queryObject, data);
-
-            query = Quotation.count(queryObject);
-            query.count(waterfallCallback);
-        };
-
-        waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
-
-        async.waterfall(waterfallTasks, function (err, result) {
-            if (err) {
-                return next(err);
-            }
-
-            res.status(200).send({count: result});
-        });
-    };
-
-    function ConvertType(array, type) {
-        if (type === 'integer') {
-            for (var i = array.length - 1; i >= 0; i--) {
-                array[i] = parseInt(array[i]);
-            }
-        } else if (type === 'boolean') {
-            for (var i = array.length - 1; i >= 0; i--) {
-                if (array[i] === 'true') {
-                    array[i] = true;
-                } else if (array[i] === 'false') {
-                    array[i] = false;
-                } else {
-                    array[i] = null;
-                }
-            }
-        }
-    };
-
-    function caseFilter(filter) {
-        var condition;
-        var resArray = [];
-        var filtrElement = {};
-        var key;
-
-        for (var filterName in filter) {
-            condition = filter[filterName]['value'];
-            key = filter[filterName]['key'];
-
-            switch (filterName) {
-                case 'reference':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'projectName':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'project':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'supplier':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'workflow':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'projectManager':
-                    filtrElement[key] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'forSales':
-                    ConvertType(condition, 'boolean');
-                    filtrElement[key] = {$in: condition};
-                    resArray.push(filtrElement);
-                    break;
-                case 'isOrder':
-                    ConvertType(condition, 'boolean');
-                    filtrElement[key] = {$in: condition};
-                    resArray.push(filtrElement);
-                    break;
-            }
-        };
-
-        return resArray;
-    };
-
-    this.getByViewType = function (req, res, next) {
-        var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
-
-        var query = req.query;
-        var queryObject = {};
-
-        var departmentSearcher;
-        var contentIdsSearcher;
-        var contentSearcher;
-        var waterfallTasks;
-
-        var contentType = query.contentType;
-        var isOrder = (contentType === 'Order' || contentType === 'salesOrder');
-        var sort = {};
-        var count = query.count ? query.count : 100;
-        var page = query.page;
-        var skip = (page - 1) > 0 ? (page - 1) * count : 0;
-        var filter = query.filter || {};
 
         if (isOrder){
             filter.isOrder = {
@@ -338,12 +152,6 @@ var Quotation = function (models) {
                 queryObject['$and'] = caseFilter(filter);
             }
         }
-
-        /*if (query && query.filter && query.filter.forSales) {
-         queryObject['forSales'] = true;
-         } else {
-         queryObject['forSales'] = false;
-         }*/
 
         if (query.sort) {
             sort = query.sort;
@@ -414,17 +222,213 @@ var Quotation = function (models) {
         };
 
         contentSearcher = function (quotationsIds, waterfallCallback) {
-            var data = req.query;
             var query;
-            var queryObject = {};
+            var newQueryObj = {};
 
-            queryObject.$and = [];
+            newQueryObj.$and = [];
 
-            queryObject.$and.push({_id: {$in: quotationsIds}});
-            //queryObject.$and.push({isOrder: isOrder});
+            newQueryObj.$and.push({_id: {$in: quotationsIds}});
 
             query = Quotation
-                .find(queryObject)
+                .count(newQueryObj);
+
+
+            query.exec(waterfallCallback);
+        };
+
+        waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
+
+        async.waterfall(waterfallTasks, function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({count: result});
+        });
+    };
+
+    function ConvertType(array, type) {
+        if (type === 'integer') {
+            for (var i = array.length - 1; i >= 0; i--) {
+                array[i] = parseInt(array[i]);
+            }
+        } else if (type === 'boolean') {
+            for (var i = array.length - 1; i >= 0; i--) {
+                if (array[i] === 'true') {
+                    array[i] = true;
+                } else if (array[i] === 'false') {
+                    array[i] = false;
+                } else {
+                    array[i] = null;
+                }
+            }
+        }
+    };
+
+    function caseFilter(filter) {
+        var condition;
+        var resArray = [];
+        var filtrElement = {};
+        var key;
+
+        for (var filterName in filter) {
+            condition = filter[filterName]['value'];
+            key = filter[filterName]['key'];
+
+            switch (filterName) {
+                case 'reference':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'projectName':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'project':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'supplier':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'workflow':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'projectmanager':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'forSales':
+                    ConvertType(condition, 'boolean');
+                    filtrElement[key] = {$in: condition};
+                    resArray.push(filtrElement);
+                    break;
+                case 'isOrder':
+                    ConvertType(condition, 'boolean');
+                    filtrElement[key] = {$in: condition};
+                    resArray.push(filtrElement);
+                    break;
+            }
+        };
+
+        return resArray;
+    };
+
+    this.getByViewType = function (req, res, next) {
+        var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
+
+        var query = req.query;
+        var queryObject = {};
+
+        var departmentSearcher;
+        var contentIdsSearcher;
+        var contentSearcher;
+        var waterfallTasks;
+
+        var contentType = query.contentType;
+        var isOrder = (contentType === 'Order' || contentType === 'salesOrder');
+        var sort = {};
+        var count = query.count ? query.count : 100;
+        var page = query.page;
+        var skip = (page - 1) > 0 ? (page - 1) * count : 0;
+        var filter = query.filter || {};
+
+        if (isOrder){
+            filter.isOrder = {
+                key: 'isOrder',
+                value: ['true']
+            }
+        }
+
+        if (filter && typeof filter === 'object') {
+            if (filter.condition === 'or') {
+                queryObject['$or'] = caseFilter(filter);
+            } else {
+                queryObject['$and'] = caseFilter(filter);
+            }
+        }
+
+        if (query.sort) {
+            sort = query.sort;
+        } else {
+            sort = {"name": 1};
+        }
+
+        departmentSearcher = function (waterfallCallback) {
+            models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
+                {
+                    $match: {
+                        users: objectId(req.session.uId)
+                    }
+                }, {
+                    $project: {
+                        _id: 1
+                    }
+                },
+
+                waterfallCallback);
+        };
+
+        contentIdsSearcher = function (deps, waterfallCallback) {
+            var arrOfObjectId = deps.objectID();
+
+            models.get(req.session.lastDb, "Quotation", QuotationSchema).aggregate(
+                {
+                    $match: {
+                        $and: [
+                            queryObject,
+                            {
+                                $or: [
+                                    {
+                                        $or: [
+                                            {
+                                                $and: [
+                                                    {whoCanRW: 'group'},
+                                                    {'groups.users': objectId(req.session.uId)}
+                                                ]
+                                            },
+                                            {
+                                                $and: [
+                                                    {whoCanRW: 'group'},
+                                                    {'groups.group': {$in: arrOfObjectId}}
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        $and: [
+                                            {whoCanRW: 'owner'},
+                                            {'groups.owner': objectId(req.session.uId)}
+                                        ]
+                                    },
+                                    {whoCanRW: "everyOne"}
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    $project: {
+                        _id: 1
+                    }
+                },
+                waterfallCallback
+            );
+        };
+
+        contentSearcher = function (quotationsIds, waterfallCallback) {
+            var query;
+            var newQueryObj = {};
+
+            newQueryObj.$and = [];
+            //
+            newQueryObj.$and.push({_id: {$in: quotationsIds}});
+            //newQueryObj.$and.push({isOrder: isOrder});
+
+            query = Quotation
+                .find(newQueryObj)
                 .limit(count)
                 .skip(skip)
                 .sort(sort);

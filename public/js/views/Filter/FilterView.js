@@ -460,9 +460,9 @@ define([
 
                 this.$el.html(this.template({filterCollection: this.constantsObject}));
 
-                this.showFilterIcons(App.filter);
-                this.renderFilterContent();
 
+                this.renderFilterContent();
+                this.showFilterIcons(App.filter);
                 this.renderSavedFilters();
 
                 return this;
