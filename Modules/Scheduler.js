@@ -6,8 +6,8 @@ module.exports = function (db, model) {
     var logWriter = require('../helpers/logWriter');
 
     var rule = {
-        hour  : 1,
-        minute: 0
+        hour  : 0,
+        minute: 1
     };
 
     var Scheduler = function () {
