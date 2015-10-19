@@ -152,7 +152,7 @@ define([], function () {
                 backend: 'workflow._id'
             },
             'Sales Manager': {
-                view   : 'projectManager',
+                view   : 'projectmanager',
                 backend: 'projectmanager._id'
             }
         },
@@ -280,7 +280,7 @@ define([], function () {
                 backend: 'supplier._id'
             },
             'Sales Manager'   : {
-                view   : 'projectManager',
+                view   : 'projectmanager',
                 backend: 'project.projectmanager._id'
             },
             'Status'   : {
@@ -298,7 +298,7 @@ define([], function () {
                 backend: 'supplier._id'
             },
             'Sales Manager'   : {
-                view   : 'projectManager',
+                view   : 'projectmanager',
                 backend: 'project.projectmanager._id'
             },
             'Status'   : {
@@ -310,10 +310,6 @@ define([], function () {
             'Supplier' : {
                 view   : 'supplier',
                 backend: 'supplier._id'
-            },
-            'Sales Manager'   : {
-                view   : 'projectManager',
-                backend: 'project.projectmanager._id'
             },
             'Status'   : {
                 view   : 'workflow',
@@ -352,7 +348,7 @@ define([], function () {
         SALESINVOICE      : 'salesInvoice',
         SALESPRODUCT      : 'salesProduct',
         WTRACK            : 'wTrack',
-        SALARY            : 'Salary',
+        PAYROLL            : 'Payroll',
         REVENUE           : 'Revenue',
         MONTHHOURS        : 'monthHours',
         BONUSTYPE         : 'bonusType',
@@ -366,7 +362,7 @@ define([], function () {
 
         RESPONSES: {
             BAD_RESPONSE            : 'Please try again',
-            CREATE_QUOTATION        : 'Please check at most one supplier or create one',
+            CREATE_QUOTATION        : 'Please check at most one supplier/project or create one',
             CONFIRM_ORDER           : 'Please add at most one product to quotation',
             DOUBLE_EMPLOYEE_VACATION: 'Current Employee already has vacation line'
         },

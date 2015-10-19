@@ -1,9 +1,9 @@
 module.exports = (function () {
 
     var department = {
-        collection: 'Department',
-        schema    : 'Department',
-        aliases   : {
+        collection  : 'Department',
+        schema      : 'Department',
+        aliases     : {
             ID               : 'ID',
             departmentName   : 'Department Name',
             parentDepartment : 'Parent Department',
@@ -16,16 +16,23 @@ module.exports = (function () {
             nestingLevel     : 'Nesting Level',
             sequence         : 'Sequence'
         },
-        arrayKeys : {
+        arrayKeys   : {
             users: true
+        },
+        objectIdList: {
+            parentDepartment : 'Department',
+            departmentManager: 'Employees',
+            users            : 'Users',
+            'createdBy.user' : 'Users',
+            'editedBy.user'  : 'Users'
         }
 
     };
 
     var employees = {
-        collection: 'Employees',
-        schema    : 'Employee',
-        aliases   : {
+        collection  : 'Employees',
+        schema      : 'Employee',
+        aliases     : {
             isEmployee           : 'Is Employee',
             imageSrc             : 'Photo',
             subject              : 'Subject',
@@ -75,8 +82,8 @@ module.exports = (function () {
             'groups.users'       : 'Groups Users',
             'groups.group'       : 'Groups Group',
             otherInfo            : 'Other Info',
-            expectedSalary       : 'Expected Payroll',
-            proposedSalary       : 'Proposed Payroll',
+            expectedSalary       : 'Expected Salary',
+            proposedSalary       : 'Proposed Salary',
             color                : 'Color',
             creationDate         : 'Creation Date',
             'createdBy.user'     : 'Created User',
@@ -100,12 +107,25 @@ module.exports = (function () {
             lastFire             : 'LastFire',
             transferred          : 'Transferred'
         },
-        arrayKeys : {
+        arrayKeys   : {
             'groups.users': true,
             'groups.group': true,
             hire          : true,
             fire          : true,
             attachments   : true
+        },
+        objectIdList: {
+            relatedUser      : 'Users',
+            'department._id' : 'Department',
+            'jobPosition._id': 'JobPosition',
+            'manager._id'    : 'Employees',
+            coach            : 'Employees',
+            workflow         : 'workflows',
+            'groups.owner'   : 'Users',
+            'groups.users'   : 'Users',
+            'groups.group'   : 'Department',
+            'createdBy.user' : 'User',
+            'editedBy.user'  : 'User'
         }
     };
 
@@ -113,7 +133,8 @@ module.exports = (function () {
         collection: 'Users',
         schema    : 'User',
         aliases   : {
-            imageSrc                                    : 'ImageSrc',
+            ID                                          : 'Id',
+            imageSrc                                    : 'Photo',
             login                                       : 'Login',
             email                                       : 'Email',
             pass                                        : 'Pass',
@@ -136,6 +157,7 @@ module.exports = (function () {
         collection: 'savedFilters',
         schema    : 'savedFilters',
         aliases   : {
+            ID         : 'Id',
             contentView: 'ContentView',
             filter     : 'Filter'
         }
@@ -145,7 +167,7 @@ module.exports = (function () {
         collection: 'Profile',
         schema    : 'Profile',
         aliases   : {
-            _id                             : '_id',
+            ID                              : 'Id',
             profileName                     : 'Profile Name',
             profileDescription              : 'Profile Description',
             'profileAccess.module'          : 'Profile Access Module',
@@ -159,7 +181,7 @@ module.exports = (function () {
         collection: 'modules',
         schema    : 'module',
         aliases   : {
-            _id      : 'id',
+            ID       : 'Id',
             mname    : 'Name',
             href     : 'Href',
             ancestors: 'ancestors',
@@ -174,6 +196,7 @@ module.exports = (function () {
         collection: 'workflows',
         schema    : 'workflow',
         aliases   : {
+            ID      : 'ID',
             wId     : 'wId',
             wName   : 'wName',
             status  : 'Status',
@@ -214,10 +237,9 @@ module.exports = (function () {
     };
 
     var wTrack = {
-        collection: 'wTrack',
-        schema    : 'wTrack',
-        aliases   : {
-            _id                          : 'ID',
+        collection  : 'wTrack',
+        schema      : 'wTrack',
+        aliases     : {
             1                            : 'Mon',
             2                            : 'Tue',
             3                            : 'Wed',
@@ -225,9 +247,11 @@ module.exports = (function () {
             5                            : 'Fri',
             6                            : 'Sat',
             7                            : 'Sun',
+            ID                           : 'ID',
+            project                      : 'Project',
             dateByWeek                   : 'Date By Week',
             dateByMonth                  : 'Date By Month',
-            'project.id'                      : 'Project ID',
+            'project._id'                : 'Project Id',
             'project.projectName'        : 'Project Name',
             'project.projectmanager._id' : 'Project Manager Id',
             'project.projectmanager.name': 'Project Manager Name',
@@ -236,8 +260,8 @@ module.exports = (function () {
             'project.workflow.status'    : 'Workflow Status',
             'project.customer._id'       : 'Customer Id',
             'project.customer.Name'      : 'Customer Name',
-            'employee._id'               : 'Employee Id',
-            'employee.name'              : 'Employee Name',
+            'employee._id'               : 'Employees',
+            'employee.name'              : 'Employees Name',
             'department._id'             : 'Department Id',
             'department.departmentName'  : 'Department Name',
             year                         : 'Year',
@@ -261,16 +285,33 @@ module.exports = (function () {
             'createdBy.user'             : 'Created By User',
             'createdBy.date'             : 'Created By Date'
         },
-        arrayKeys : {
+        arrayKeys   : {
             'groups.users': true,
             'groups.group': true
+        },
+        objectIdList: {
+            'project._id'               : 'Project',
+            'project.projectmanager._id': 'Project',
+            'project.workflow._id'      : 'workflows',
+            'project.customer._id'      : 'Customers',
+            'employee._id'              : 'Employees',
+            'department._id'            : 'Department',
+            invoice                     : 'Invoice',
+            'info.productType'          : 'productTypes',
+            'groups.owner'              : 'Users',
+            'groups.users'              : 'Users',
+            'groups.group'              : 'Department',
+            'createdBy.user'            : 'User',
+            'editedBy.user'             : 'User'
         }
     };
 
+
     var invoice = {
-        collection: 'Invoice',
-        schema    : 'Invoice',
-        aliases   : {
+        collection  : 'Invoice',
+        schema      : 'Invoice',
+        aliases     : {
+            ID                   : 'Id',
             forSales             : 'ForSales',
             'supplier._id'       : 'Supplier ID',
             'supplier.name'      : 'Supplier Name',
@@ -301,17 +342,30 @@ module.exports = (function () {
             'editedBy.user'      : 'Edited By User',
             'editedBy.date'      : 'Edited By Date'
         },
-        arrayKeys : {
+        arrayKeys   : {
             'groups.users': true,
             'groups.group': true
+        },
+        objectIdList: {
+            'supplier._id'   : 'Customers',
+            'salesPerson._id': 'Employees',
+            paymentTerms     : 'PaymentTerm',
+            payments         : 'Payment',
+            'workflow._id'   : 'workflows',
+            'groups.owner'   : 'Users',
+            'groups.users'   : 'Users',
+            'groups.group'   : 'Department',
+            'createdBy.user' : 'User',
+            'editedBy.user'  : 'User'
         }
+
 
     };
 
     var customers = {
-        collection: 'Customers',
-        schema    : 'Customers',
-        aliases   : {
+        collection  : 'Customers',
+        schema      : 'Customers',
+        aliases     : {
             type                            : 'Type',
             isOwn                           : 'Is Owner',
             'name.first'                    : 'First Name',
@@ -363,17 +417,33 @@ module.exports = (function () {
             'companyInfo.size'              : 'Company Size',
             'companyInfo.industry'          : 'Company Industry',
             ID                              : 'Id'
+        },
+        arrayKeys   : {
+            'groups.users': true,
+            'groups.group': true
+        },
+        objectIdList: {
+            wTrack                   : 'wTrack',
+            'info.productType'       : 'productType',
+            'accounting.category._id': 'ProductCategory',
+            workflow                 : 'workflows',
+            'groups.owner'           : 'Users',
+            'groups.users'           : 'Users',
+            'groups.group'           : 'Department',
+            'createdBy.user'         : 'User',
+            'editedBy.user'          : 'User'
         }
+
     };
 
     var project = {
-        collections: 'Project',
-        schema     : 'Project',
-        aliases    : {
+        collections : 'Project',
+        schema      : 'Project',
+        aliases     : {
             projectShortDesc     : 'Project Short Desc',
             projectName          : 'Project Name',
             task                 : 'Task',
-            'customer_id'        : 'Customers Id',
+            'customer._id'       : 'Customers Id',
             'customername'       : 'Customer Name',
             'projectmanager._id' : 'Project Manager Id',
             'projectmanager.name': 'Project Manager Name',
@@ -409,12 +479,28 @@ module.exports = (function () {
             'bonus.startYear'    : 'Bonus Start Year',
             'bonus.endDate'      : 'Bonus End Date',
             'bonus.endWeek'      : 'Bonus End Week',
-            'bonus.endYear'      : 'Bonus End Year',
+            'bonus.endYear'      : 'Bonus End Year'
 
         },
-        arrayKeys  : {
+        arrayKeys   : {
             'groups.users': true,
-            'groups.group': true
+            'groups.group': true,
+            'bonus'       : true,
+            task          : true
+        },
+        objectIdList: {
+            task                : 'Task',
+            'customer._id'      : 'Customers',
+            'projectmanager._id': 'Employees',
+            'groups.owner'      : 'Users',
+            'groups.users'      : 'Users',
+            'groups.group'      : 'Department',
+            'workflow._id'      : 'workflows',
+            'bonus.employeeId'  : 'Employees',
+            'bonus.bonusId'     : 'bonusType',
+            'createdBy.user'    : 'User',
+            'editedBy.user'     : 'User'
+
         }
     };
 
@@ -428,9 +514,10 @@ module.exports = (function () {
     };
 
     var task = {
-        collections: 'Tasks',
-        schema     : 'Tasks',
-        aliases    : {
+        collections : 'Tasks',
+        schema      : 'Tasks',
+        aliases     : {
+            ID              : 'Id',
             summary         : 'Summary',
             taskCount       : 'Task Count',
             project         : 'Project',
@@ -455,13 +542,27 @@ module.exports = (function () {
             attachments     : 'Attachments',
             'editedBy.user' : 'Edited By User',
             'editedBy.date' : 'Edited By Date'
+        },
+        arrayKeys   : {
+            'groups.users': true,
+            'groups.group': true,
+            tags          : true
+        },
+        objectIdList: {
+            project         : 'Project',
+            assignedTo      : 'Employees',
+            workflow        : 'workflows',
+            'createdBy.user': 'User',
+            'editedBy.user' : 'User',
+            customer        : 'Customers'
+
         }
     };
 
     var product = {
-        collections: 'Products',
-        schema     : 'Products',
-        aliases    : {
+        collections : 'Products',
+        schema      : 'Products',
+        aliases     : {
             wTrack                    : 'wTrack',
             canBeSold                 : 'Can Be Sold',
             canBeExpensed             : 'Can Be Expensed',
@@ -488,10 +589,22 @@ module.exports = (function () {
             'editedBy.date'           : 'Edited By Date',
             ID                        : 'Id'
         },
-        arrayKeys  : {
+        arrayKeys   : {
             'groups.users': true,
             'groups.group': true
+        },
+        objectIdList: {
+            wTrack                   : 'wTrack',
+            'info.productType'       : 'productType',
+            'accounting.category._id': 'ProductCategory',
+            workflow                 : 'workflows',
+            'groups.owner'           : 'Users',
+            'groups.users'           : 'Users',
+            'groups.group'           : 'Department',
+            'createdBy.user'         : 'User',
+            'editedBy.user'          : 'User'
         }
+
     };
 
     return {
@@ -509,7 +622,10 @@ module.exports = (function () {
         Project     : project,
         Industry    : industry,
         Tasks       : task,
-        Products    : product
+        Products    : product,
+        Product     : product,
+        Companies   : customers,
+        Persons     : customers
     }
 
 })();

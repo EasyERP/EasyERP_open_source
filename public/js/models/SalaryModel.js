@@ -5,7 +5,7 @@ define(['Validation','common'],function () {
     var SalaryModel = Backbone.Model.extend({
         idAttribute: "_id",
         urlRoot: function () {
-            return "/Salary";
+            return "/Payroll";
         }
     });
     return SalaryModel;

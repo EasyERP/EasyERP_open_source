@@ -1,9 +1,11 @@
 define([
         'text!templates/Companies/TopBarTemplate.html',
+        'text!templates/Notes/importTemplate.html',
+        'views/Notes/AttachView',
         'custom',
         "common"
     ],
-    function (ContentTopBarTemplate, Custom, Common) {
+    function (ContentTopBarTemplate, importTemplate, attachView, Custom, Common) {
         var TopBarView = Backbone.View.extend({
             el         : '#top-bar',
             contentType: "Companies",
@@ -18,6 +20,8 @@ define([
                 "click #top-bar-createBtn"      : "createEvent",
                 "click #top-bar-exportToCsvBtn" : "exportToCsv",
                 "click #top-bar-exportToXlsxBtn": "exportToXlsx",
+                "click #top-bar-importBtn"      : "importEvent",
+                "change .inputAttach"           : "importFiles"
             },
 
             changeContentViewType: function (e) {
@@ -66,6 +70,22 @@ define([
                 this.$el.html(this.template({viewType: viewType, contentType: this.contentType}));
                 Common.displayControlBtnsByActionType(this.actionType, viewType);
                 return this;
+            },
+
+            importEvent: function (event) {
+                var template = _.template(importTemplate);
+                this.$el.find('#forImport').html(template);
+                event.preventDefault();
+                this.$el.find('#inputAttach').click();
+                this.trigger('importEvent');
+            },
+
+            importFiles: function (e) {
+                var importFile = new attachView({});
+
+                this.import = true;
+
+                importFile.sendToServer(e, null, this);
             },
 
             deleteEvent: function (event) {
