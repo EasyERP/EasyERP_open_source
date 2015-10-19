@@ -418,7 +418,7 @@ define([
                 this.filterObject = App.filtersValues[this.parentContentType];
 
                 mapData = _.map(this.filterObject[filterView], function (dataItem) {
-                    return {category: key, value: dataItem.name, data: dataItem._id};
+                    return {category: key, label: dataItem.name, value: dataItem.name, data: dataItem._id};
                 })
 
                 this.searchRessult = this.searchRessult.concat(mapData);
@@ -481,7 +481,15 @@ define([
                 searchInput = currentEl.find("#mainSearch");
 
                 searchInput.catcomplete({
-                    source   : this.searchRessult
+                    source   : this.searchRessult,
+                    focus: function( event, ui ) {
+                        $( "#mainSearch" ).val( ui.item.label );
+                        return false;
+                    },
+                    select: function( event, ui ) {
+                        $( "#mainSearch" ).text( ui.item.label );
+                        return false;
+                    }
                 });
 
                 return this;
