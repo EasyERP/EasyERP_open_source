@@ -106,7 +106,7 @@ define([
                     patch   : true,
                     validate: false,
                     success : function () {
-                        self.showFilteredPage({}/*_.pluck(self.stages, '_id')*/);
+                        self.showFilteredPage({}, self/*_.pluck(self.stages, '_id')*/);
                     }
                 });
 
