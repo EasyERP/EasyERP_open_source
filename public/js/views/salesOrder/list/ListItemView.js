@@ -1,8 +1,9 @@
 ﻿define([
-    'text!templates/salesOrder/list/ListTemplate.html'
+    'text!templates/salesOrder/list/ListTemplate.html',
+    'text!templates/salesOrder/wTrack/ListTemplate.html'
 ],
 
-    function (listTemplate) {
+    function (listTemplate, listForWTrack) {
         var OrderListItemView = Backbone.View.extend({
             el: '#listTable',
 
@@ -11,7 +12,11 @@
                 this.startNumber = (options.page - 1 ) * options.itemsNumber;
             },
             render: function() {
-                this.$el.append(_.template(listTemplate, { orderCollection: this.collection.toJSON(), startNumber: this.startNumber }));
+                if (App.currentDb === 'weTrack'){
+                    this.$el.append(_.template(listForWTrack, { orderCollection: this.collection.toJSON(), startNumber: this.startNumber }));
+                } else {
+                    this.$el.append(_.template(listTemplate, { orderCollection: this.collection.toJSON(), startNumber: this.startNumber }));
+                }
             }
         });
 

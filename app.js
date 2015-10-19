@@ -21,16 +21,12 @@ module.exports = function (mainDb, dbsNames) {
     var dbsObject = mainDb.dbsObject;
     var httpServer;
     var io;
+    var mongoose = require('mongoose');
 
     var MemoryStore = require('connect-mongo')(session);
 
     var sessionConfig = {
-        db               : mainDb.name,
-        host             : mainDb.host,
-        port             : mainDb.port,
-        saveUninitialized: false,
-        resave           : false,
-        reapInterval     : 500000
+        mongooseConnection: mainDb
     };
 
     var allowCrossDomain = function (req, res, next) {
@@ -66,6 +62,7 @@ module.exports = function (mainDb, dbsNames) {
     app.use(bodyParser.urlencoded({extended: false, limit: 1024 * 1024 * 200}));
     app.use(cookieParser("CRMkey"));
     app.use(express.static(path.join(__dirname, 'public')));
+
 
     app.use(session({
         name             : 'crm',

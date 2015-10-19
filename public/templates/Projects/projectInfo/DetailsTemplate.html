@@ -1,5 +1,97 @@
-<div class="forInfoWrap">
-    <div class="half-block left">
+<div class="half-block left">
+    <table class="list tableProjects">
+        <colgroup span="8">
+            <col span="1">
+            <col span="1">
+            <col span="1">
+            <col span="1">
+            <col span="1">
+            <col span="1">
+            <col span="1">
+            <col span="1">
+        </colgroup>
+
+        <thead>
+        <tr>
+            <th colspan="8"
+                class="forCaption">
+                Team & Resources
+            </th>
+        </tr>
+        <tr>
+            <th>Resource</th>
+            <th>Department</th>
+            <th>Job Position</th>
+            <th>Hours</th>
+            <th>Cost</th>
+            <th>Revenue</th>
+            <th>Profit</th>
+            <th>Rate</th>
+        </tr>
+        </thead>
+
+        <tbody id="projectTeam">
+        <%var count = 0;%>
+        <% projectTeam.forEach(function(element,i){ %>
+        <%if (element) {%>
+        <tr>
+
+            <td><%=element.name.first + ' ' + element.name.last%></td>
+            <td><%=element.department.name%></td>
+            <td><%=element.jobPosition.name%></td>
+            <td><%=currencySplitter(budget[i].hours.toFixed())%></td>
+            <td><%=currencySplitter(budget[i].cost.toFixed())%></td>
+            <td><%=currencySplitter(budget[i].revenue.toFixed())%></td>
+            <td><%=currencySplitter(budget[i].profit.toFixed())%></td>
+            <td><%=currencySplitter((budget[i].revenue / budget[i].hours).toFixed(2))%></td>
+
+        </tr>
+        <% count++ %>
+        <% } %>
+        <% })%>
+
+        </tbody>
+        <%if (count) {%>
+
+        <tfoot>
+        <tr>
+            <td>
+                <a href="javascript:;"
+                   title="Create Item"
+                   id="createItem">
+                    Add team member
+                </a>
+            </td>
+
+            <td>&nbsp</td>
+            <td>&nbsp</td>
+            <td>&nbsp</td>
+            <td>&nbsp</td>
+            <td>&nbsp</td>
+            <td>&nbsp</td>
+            <td>&nbsp</td>
+        </tr>
+        <tr>
+            <td>Total:</td>
+            <td><%='&nbsp'%></td>
+            <td><%=count%></td>
+            <td><%=currencySplitter(budgetTotal.hoursSum.toFixed())%></td>
+            <td><%=currencySplitter(budgetTotal.costSum.toFixed())%></td>
+            <td><%=currencySplitter(budgetTotal.revenueSum.toFixed())%></td>
+            <td><%=currencySplitter(budgetTotal.profitSum.toFixed())%></td>
+            <td><%=currencySplitter((budgetTotal.rateSum.byDev +
+                budgetTotal.rateSum.byQA).toFixed(2))%>
+            </td>
+        </tr>
+        </tfoot>
+
+        <% } %>
+    </table>
+</div>
+
+
+<div class="half-block right">
+    <div>
         <table class="list tableProjects">
             <colgroup span="3">
                 <col span="1">
@@ -8,102 +100,26 @@
             </colgroup>
             <thead>
             <tr>
-                <th colspan="3" class="forCaption">Project Team <a href="javascript:;" class="icon add left" title="Create Item"  id="createItem">+</a></th>
+                <th colspan="3" class="forCaption">Bonus for Sales Managers</th>
             </tr>
             <tr>
                 <th>Resource</th>
-                <th>Department</th>
-                <th>Job Position</th>
+                <th>Percentage</th>
+                <th>Bonus</th>
             </tr>
             </thead>
-            <tbody id="projectTeam">
-            <%var count = 0;%>
-            <% projectTeam.forEach(function(element){ %>
-            <%if (element) {%>
+            <tbody id="bonus">
+            <% bonus.forEach(function(element){ %>
             <tr>
-                <td><%=element.name.first + ' ' + element.name.last%></td>
-                <td><%=element.department.name%></td>
-                <td><%=element.jobPosition.name%></td>
+                <td><%=element.resource%></td>
+                <td><%=element.percentage%></td>
+                <td><%=currencySplitter((element.bonus/100).toFixed(2))%></td>
             </tr>
-            <% count++ %>
-            <% } %>
             <% })%>
-            <%if (count) {%>
-            <tr>
-                <td><%='&nbsp'%></td>
-                <td><%='&nbsp'%></td>
-                <td><%='&nbsp'%></td>
-            </tr>
-            <tr>
-                <td>Total</td>
-                <td><%='&nbsp'%></td>
-                <td><%=count%></td>
-            </tr>
-            <% } %>
             </tbody>
         </table>
     </div>
-
-    <div class="half-block right">
-
-        <table class="list tableProjects">
-            <colgroup span="5">
-                <col span="1">
-                <col span="1">
-                <col span="1">
-                <col span="1">
-                <col span="1">
-            </colgroup>
-            <thead>
-            <tr>
-                <th colspan="5" class="forCaption">Budget & Resources</th>
-            </tr>
-            <tr>
-                <th>Revenue</th>
-                <th>Profit</th>
-                <th>Cost</th>
-                <th>Rate</th>
-                <th>Hours</th>
-
-            </tr>
-            </thead>
-            <tbody id="budget">
-            <% budget.forEach(function(element){ %>
-            <%if (element) {%>
-            <tr>
-                <td><%=currencySplitter(element.revenue.toFixed())%></td>
-                <td><%=currencySplitter(element.profit.toFixed())%></td>
-                <td><%=currencySplitter(element.cost.toFixed())%></td>
-                <td><%=currencySplitter((element.revenue / element.hours).toFixed(2))%></td>
-                <td><%=currencySplitter(element.hours.toFixed())%></td>
-            </tr>
-            <% } %>
-            <% })%>
-            <% if (budgetTotal) {%>
-            <tr>
-                <td><%='&nbsp'%></td>
-                <td><%='&nbsp'%></td>
-                <td><%='&nbsp'%></td>
-                <td><%='&nbsp'%></td>
-                <td><%='&nbsp'%></td>
-            </tr>
-            <tr>
-                <td><%=currencySplitter(budgetTotal.revenueSum.toFixed())%></td>
-                <td><%=currencySplitter(budgetTotal.profitSum.toFixed())%></td>
-                <td><%=currencySplitter(budgetTotal.costSum.toFixed())%></td>
-                <td><%=currencySplitter((budgetTotal.rateSum.byDev + budgetTotal.rateSum.byQA).toFixed(2))%></td>
-                <td><%=currencySplitter(budgetTotal.hoursSum.toFixed())%></td>
-
-            </tr>
-            <% } %>
-            </tbody>
-        </table>
-    </div>
-</div>
-
-<div class="forInfoWrap">
-    <div class="half-block right">
-
+    <div>
         <table class="list tableProjects">
             <colgroup span="4">
                 <col span="1">
@@ -133,37 +149,8 @@
             <% } %>
             </tbody>
         </table>
-
-
     </div>
-    <div class="half-block left">
-        <table class="list tableProjects">
-            <colgroup span="3">
-                <col span="1">
-                <col span="1">
-                <col span="1">
-            </colgroup>
-            <thead>
-            <tr>
-                <th colspan="3" class="forCaption">Bonus for Sales Managers</th>
-            </tr>
-            <tr>
-                <th>Resource</th>
-                <th>Percentage</th>
-                <th>Bonus</th>
-            </tr>
-            </thead>
-            <tbody id="bonus">
-            <% bonus.forEach(function(element){ %>
-            <tr>
-                <td><%=element.resource%></td>
-                <td><%=element.percentage%></td>
-                <td><%=currencySplitter((element.bonus/100).toFixed(2))%></td>
-            </tr>
-            <% })%>
-            </tbody>
-        </table>
+    <div id="proformRevenueContainer">
     </div>
-
 </div>
 

@@ -47,3 +47,4 @@ EasyErp-Desktop.sln
 routes/uploads
 EasyErp-Desktop.iml
 config/development.js
+public/css/main.css

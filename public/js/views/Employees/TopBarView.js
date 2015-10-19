@@ -1,25 +1,29 @@
 define([
         'text!templates/Employees/TopBarTemplate.html',
+        'text!templates/Notes/importTemplate.html',
+        'views/Notes/AttachView',
         'custom',
         'common'
     ],
-    function (ContentTopBarTemplate, Custom, Common) {
+    function (ContentTopBarTemplate, importTemplate, attachView, Custom, Common) {
         var TopBarView = Backbone.View.extend({
             el         : '#top-bar',
             contentType: "Employees",
-            actionType : null, //Content, Edit, Create
-            template   : _.template(ContentTopBarTemplate),
-
-            events: {
-                "click a.changeContentView"     : 'changeContentViewType',
-                "click ul.changeContentIndex a" : 'changeItemIndex',
-                "click #top-bar-deleteBtn"      : "deleteEvent",
-                "click #top-bar-discardBtn"     : "discardEvent",
-                "click #top-bar-editBtn"        : "editEvent",
-                "click #top-bar-createBtn"      : "createEvent",
+            actionType: null, //Content, Edit, Create
+            template: _.template(ContentTopBarTemplate),
+            
+            events:{
+            	"click a.changeContentView": 'changeContentViewType',
+            	"click ul.changeContentIndex a": 'changeItemIndex',
+            	"click #top-bar-deleteBtn": "deleteEvent",
+            	"click #top-bar-discardBtn": "discardEvent",
+                "click #top-bar-editBtn": "editEvent",
+                "click #top-bar-createBtn": "createEvent",
+                "click #top-bar-importBtn": "importEvent",
                 "click #top-bar-exportBtn"      : "export",
                 "click #top-bar-exportToCsvBtn" : "exportToCsv",
                 "click #top-bar-exportToXlsxBtn": "exportToXlsx",
+                "change .inputAttach": "importFiles"
             },
 
             changeContentViewType: function (e) {
@@ -70,6 +74,22 @@ define([
                 event.preventDefault();
                 this.trigger('createEvent');
             },
+            importEvent: function (event) {
+                var template = _.template(importTemplate);
+                this.$el.find('#forImport').html(template);
+                event.preventDefault();
+                this.$el.find('#inputAttach').click();
+                this.trigger('importEvent');
+            },
+
+            importFiles: function (e) {
+                var importFile = new attachView({});
+
+                this.import = true;
+
+                importFile.sendToServer(e, null, this);
+            },
+
             deleteEvent: function (event) {
                 event.preventDefault();
                 var answer = confirm("Realy DELETE items ?!");

@@ -72,7 +72,7 @@ var Invoice = function (models) {
         function findOrder(callback) {
             var query = Order.findById(id).lean();
 
-            query.populate('supplier', 'name')
+            query//.populate('supplier', 'name')
                 .populate('products.product', 'name');
 
             query.exec(callback)
@@ -118,9 +118,9 @@ var Invoice = function (models) {
 
             supplier = order['supplier'];
 
-            if (supplier) {
-                invoice.supplier.name = supplier.name.first + ' ' + supplier.name.last;
-            }
+            //if (supplier) {
+            //    invoice.supplier.name = supplier.name.first + ' ' + supplier.name.last;
+            //}
 
             var query = Company.findById(invoice.supplier._id).lean();
 
@@ -131,7 +131,7 @@ var Invoice = function (models) {
                     callback(err)
                 }
 
-                if (result.salesPurchases.salesPerson){
+                if (result && result.salesPurchases.salesPerson){
                     invoice.salesPerson = {};
                     invoice.salesPerson._id = result.salesPurchases.salesPerson._id;
                     invoice.salesPerson.name = result.salesPurchases.salesPerson.name.first + ' ' + result.salesPurchases.salesPerson.name.last;

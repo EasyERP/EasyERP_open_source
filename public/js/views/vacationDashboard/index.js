@@ -1,13 +1,14 @@
 define([
 	'text!templates/vacationDashboard/index.html',
+	'views/vacationDashboard/statisticsView',
 	'collections/Dashboard/vacationDashboard',
+	'views/wTrack/dashboard/vacationDashEdit',
 	'dataService',
-	'constants',
 	'async',
 	'custom',
 	'moment',
 	'constants'
-], function (mainTemplate, vacationDashboard, dataService, CONSTANTS, async, custom, moment, CONSTANTS) {
+], function (mainTemplate, StatisticsView, vacationDashboard, VacationDashEdit, dataService, async, custom, moment, CONSTANTS) {
 	var View = Backbone.View.extend({
 		el: '#content-holder',
 
@@ -17,9 +18,10 @@ define([
 		expandAll: false,
 
 		events: {
-			"click .openAll"     : "openAll",
-			"click .employeesRow": "openEmployee",
-			"click .group"       : "openDepartment"
+			"click .openAll"        : "openAll",
+			"click .employeesRow"   : "openEmployee",
+			"click .group"          : "openDepartment",
+			"click .wTrackInfo"     : "getWtrackInfo"
 		},
 
 		initialize: function (options) {
@@ -38,6 +40,7 @@ define([
 			this.dateByWeek = year * 100 + week;
 			this.week = week;
 			this.year = year;
+
 			startWeek = self.week - 6;
 
 			if (startWeek >= 0) {
@@ -253,6 +256,75 @@ define([
 			return moment().day("Monday").week(num).format("DD.MM");
 		},
 
+		calculateStatistics: function () {
+			var el = this.$el;
+			var startTime = new Date();
+			var count = function (search) {
+				return el.find(search).length;
+			};
+			var self = this;
+
+			async.parallel({
+				free         : function (callback) {
+					var free = count('.red.active');
+					callback(null, free);
+				},
+				almostFree   : function (callback) {
+					var almostFree = count('.pink.active');
+					callback(null, almostFree);
+				},
+				partiallyBusy: function (callback) {
+					var partiallyBusy = count('.yellow.active');
+					callback(null, partiallyBusy);
+				},
+				fullyBusy    : function (callback) {
+					var busy = count('.green.active');
+					callback(null, busy);
+				},
+				overworked   : function (callback) {
+					var overworked = count('.dgreen.active');
+					callback(null, overworked);
+				}
+
+			}, function (err, result) {
+				result.startTime = startTime;
+				self.statisticsView$.render(result);
+			});
+
+
+		},
+
+		getWtrackInfo: function (e) {
+			var targetEl = $(e.target);
+			var td = targetEl.closest('td');
+			var tr = td.closest('tr');
+			var projectName = td.attr('data-project');
+			var dateByWeek = td.attr('data-date');
+			var employee = tr.attr('data-employee');
+
+			var queryData = {
+				projectName: projectName,
+				dateByWeek : dateByWeek,
+				employee   : employee
+			};
+
+			dataService.getData('/wTrack/dash', queryData, function (response) {
+				var year = dateByWeek.slice(0, 4);
+				var week = dateByWeek.slice(4, 6);
+
+				if (!response.error) {
+					return new VacationDashEdit({
+						tr: tr,
+						dateByWeek: dateByWeek,
+						projectName   : projectName,
+						customer      : response.customer,
+						projectmanager: response.projectmanager,
+						wTracks       : response.wTracks
+					});
+				}
+			});
+		},
+
 		render: function () {
 			$('title').text(this.contentType);
 			this.dashCollection.unbind();
@@ -296,7 +368,10 @@ define([
 				self          : self
 			}));
 
+			var statictics = new StatisticsView({});
+			this.statisticsView$ = statictics;
 			currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+			this.calculateStatistics();
 
 			return this;
 		}

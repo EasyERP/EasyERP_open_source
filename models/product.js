@@ -41,7 +41,8 @@ module.exports = (function () {
         editedBy: {
             user: { type: ObjectId, ref: 'Users', default: null },
             date: { type: Date, default: Date.now }
-        }
+        },
+        ID: Number
     }, { collection: 'Products' });
 
     mongoose.model('Product', productSchema);
