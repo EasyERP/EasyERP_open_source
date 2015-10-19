@@ -4,22 +4,22 @@ var Department = function (event, models) {
     var DepartmentSchema = mongoose.Schemas['Department'];
 
     var CONSTANTS = require('../constants/mainConstants');
-    
+
     function create(req, data, res) {
         try {
             if (!data) {
                 logWriter.log('JobPosition.create Incorrect Incoming Data');
-                res.send(400, { error: 'JobPosition.create Incorrect Incoming Data' });
+                res.send(400, {error: 'JobPosition.create Incorrect Incoming Data'});
                 return;
             } else {
-                models.get(req.session.lastDb, 'Department', DepartmentSchema).find({ departmentName: data.departmentName }, function (error, doc) {
+                models.get(req.session.lastDb, 'Department', DepartmentSchema).find({departmentName: data.departmentName}, function (error, doc) {
                     if (error) {
                         console.log(error);
                         logWriter.log("Department.js create Department.find ");
-                        res.send(500, { error: 'Department.create find error' });
+                        res.send(500, {error: 'Department.create find error'});
                     }
                     if (doc.length > 0) {
-                        res.send(400, { error: 'An Department with the same Name already exists' });
+                        res.send(400, {error: 'An Department with the same Name already exists'});
                     }
                     else {
                         if (doc.length === 0) {
@@ -60,37 +60,37 @@ var Department = function (event, models) {
                         if (err) {
                             console.log(err);
                             logWriter.log("Department.js saveDepartmentToDb _department.save" + err);
-                            res.send(500, { error: 'Department.save BD error' });
+                            res.send(500, {error: 'Department.save BD error'});
                         } else {
-                            res.send(201, { success: 'A new Department create success', id: result._id });
+                            res.send(201, {success: 'A new Department create success', id: result._id});
                         }
                     });
                 }
                 catch (error) {
                     console.log(error);
                     logWriter.log("Department.js saveDepartmentToDb " + error);
-                    res.send(500, { error: 'Department.save  error' });
+                    res.send(500, {error: 'Department.save  error'});
                 }
             }
         }
         catch (exception) {
             console.log(exception);
             logWriter.log("Department.js  create " + exception);
-            res.send(500, { error: 'Department.save  error' });
+            res.send(500, {error: 'Department.save  error'});
         }
     };
 
     function getDepartmentById(req, id, res) {
         var query = models.get(req.session.lastDb, 'Department', DepartmentSchema).findById(id);
         query.populate('departmentManager parentDepartment').
-			populate('createdBy.user').
-			populate('users').
+            populate('createdBy.user').
+            populate('users').
             populate('editedBy.user');
         query.exec(function (err, responce) {
             if (err) {
                 console.log(err);
                 logWriter.log('JobPosition.js get job.find' + err);
-                res.send(500, { error: "Can't find JobPosition" });
+                res.send(500, {error: "Can't find JobPosition"});
             } else {
                 res.send(responce);
             }
@@ -103,12 +103,12 @@ var Department = function (event, models) {
         res['data'] = [];
         var query = models.get(req.session.lastDb, 'Department', DepartmentSchema).find();
         query.select('_id departmentName nestingLevel parentDepartment');
-        query.sort({ departmentName: 1 });
+        query.sort({departmentName: 1});
         query.exec(function (err, departments) {
             if (err) {
                 console.log(err);
                 logWriter.log("Department.js getDepartments Department.find " + err);
-                response.send(500, { error: "Can't find Department" });
+                response.send(500, {error: "Can't find Department"});
             } else {
                 res['data'] = departments;
                 response.send(res);
@@ -117,7 +117,7 @@ var Department = function (event, models) {
     };
 
     function getAllChildIds(req, id, callback, trueCallback) {
-        models.get(req.session.lastDb, 'Department', DepartmentSchema).find({ parentDepartment: id }).exec(function (err, result) {
+        models.get(req.session.lastDb, 'Department', DepartmentSchema).find({parentDepartment: id}).exec(function (err, result) {
             var n = 0;
             if (result.length != 0) {
                 result.forEach(function (item) {
@@ -140,15 +140,17 @@ var Department = function (event, models) {
         res['data'] = [];
         var query = models.get(req.session.lastDb, 'Department', DepartmentSchema).find({});
         query.select('_id departmentName nestingLevel parentDepartment');
-        query.sort({ departmentName: 1 });
+        query.sort({departmentName: 1});
         query.exec(function (err, departments) {
             if (err) {
                 console.log(err);
                 logWriter.log("Department.js getDepartments Department.find " + err);
-                response.send(500, { error: "Can't find Department" });
+                response.send(500, {error: "Can't find Department"});
             } else {
                 var ids = [id];
-                getAllChildIds(req, id, function (id) { ids.push(id.toString()) }, function () {
+                getAllChildIds(req, id, function (id) {
+                    ids.push(id.toString())
+                }, function () {
                     var result = [];
                     for (var i = 0; i < departments.length; i++) {
                         if (ids.indexOf(departments[i]._id.toString()) == -1) {
@@ -169,12 +171,12 @@ var Department = function (event, models) {
         var query = models.get(req.session.lastDb, 'Department', DepartmentSchema).find({});
 
         query.select('_id departmentName');
-        query.sort({ departmentName: 1 });
+        query.sort({departmentName: 1});
         query.exec(function (err, departments) {
             if (err) {
                 console.log(err);
                 logWriter.log("Department.js getDepartments Department.find " + err);
-                response.send(500, { error: "Can't find Department" });
+                response.send(500, {error: "Can't find Department"});
             } else {
                 res['data'] = departments;
 
@@ -190,12 +192,12 @@ var Department = function (event, models) {
         query.populate("parentDepartment", "departmentName _id");
         query.populate("departmentManager", "name _id");
         query.populate("users", "login _id");
-        query.sort({ nestingLevel: 1, sequence: -1 });
+        query.sort({nestingLevel: 1, sequence: -1});
         query.exec(function (err, departments) {
             if (err) {
                 console.log(err);
                 logWriter.log("Department.js getDepartments Department.find " + err);
-                response.send(500, { error: "Can't find Department" });
+                response.send(500, {error: "Can't find Department"});
             } else {
                 res['data'] = departments;
 
@@ -205,13 +207,13 @@ var Department = function (event, models) {
     };
 
     function updateNestingLevel(req, id, nestingLevel, callback) {
-        models.get(req.session.lastDb, 'Department', DepartmentSchema).find({ parentDepartment: id }).exec(function (err, result) {
+        models.get(req.session.lastDb, 'Department', DepartmentSchema).find({parentDepartment: id}).exec(function (err, result) {
             var n = 0;
             if (result.length != 0) {
                 result.forEach(function (item) {
                     n++;
 
-                    models.get(req.session.lastDb, 'Department', DepartmentSchema).findByIdAndUpdate(item._id, { nestingLevel: nestingLevel + 1 }, function (err, res) {
+                    models.get(req.session.lastDb, 'Department', DepartmentSchema).findByIdAndUpdate(item._id, {nestingLevel: nestingLevel + 1}, function (err, res) {
                         if (result.length == n) {
                             updateNestingLevel(req, res._id, res.nestingLevel + 1, function () {
                                 callback();
@@ -244,25 +246,25 @@ var Department = function (event, models) {
                     end -= 1;
                 }
                 objChange = {};
-                objFind = { "parentDepartment": parentDepartmentStart };
-                objFind[sequenceField] = { $gte: start, $lte: end };
+                objFind = {"parentDepartment": parentDepartmentStart};
+                objFind[sequenceField] = {$gte: start, $lte: end};
                 objChange[sequenceField] = inc;
-                query = model.update(objFind, { $inc: objChange }, { multi: true });
+                query = model.update(objFind, {$inc: objChange}, {multi: true});
                 query.exec(function (err, res) {
                     if (callback) callback((inc == -1) ? end : start);
                 });
             } else {
                 if (isCreate) {
-                    query = model.count({ "parentDepartment": parentDepartmentStart }).exec(function (err, res) {
+                    query = model.count({"parentDepartment": parentDepartmentStart}).exec(function (err, res) {
                         if (callback) callback(res);
                     });
                 }
                 if (isDelete) {
                     objChange = {};
-                    objFind = { "parentDepartment": parentDepartmentStart };
-                    objFind[sequenceField] = { $gt: start };
+                    objFind = {"parentDepartment": parentDepartmentStart};
+                    objFind[sequenceField] = {$gt: start};
                     objChange[sequenceField] = -1;
-                    query = model.update(objFind, { $inc: objChange }, { multi: true });
+                    query = model.update(objFind, {$inc: objChange}, {multi: true});
                     query.exec(function (err, res) {
                         if (callback) callback(res);
                     });
@@ -270,15 +272,15 @@ var Department = function (event, models) {
             }
         } else {//between workflow
             objChange = {};
-            objFind = { "parentDepartment": parentDepartmentStart };
-            objFind[sequenceField] = { $gte: start };
+            objFind = {"parentDepartment": parentDepartmentStart};
+            objFind[sequenceField] = {$gte: start};
             objChange[sequenceField] = -1;
-            query = model.update(objFind, { $inc: objChange }, { multi: true });
+            query = model.update(objFind, {$inc: objChange}, {multi: true});
             query.exec();
-            objFind = { "parentDepartment": parentDepartmentEnd };
-            objFind[sequenceField] = { $gte: end };
+            objFind = {"parentDepartment": parentDepartmentEnd};
+            objFind[sequenceField] = {$gte: end};
             objChange[sequenceField] = 1;
-            query = model.update(objFind, { $inc: objChange }, { multi: true });
+            query = model.update(objFind, {$inc: objChange}, {multi: true});
             query.exec(function (err, res) {
                 if (callback) callback(end);
             });
@@ -300,22 +302,57 @@ var Department = function (event, models) {
                     return item._id;
                 });
             }
-            if (data.sequenceStart) {
-                updateSequence(models.get(req.session.lastDb, "Department", DepartmentSchema), "sequence", data.sequenceStart, data.sequence, data.parentDepartmentStart, data.parentDepartment, false, false, function (sequence) {
-                    data.sequence = sequence;
-                    models.get(req.session.lastDb, 'Department', DepartmentSchema).findByIdAndUpdate({ _id: _id }, data, {new: true}, function (err, result) {
+            models.get(req.session.lastDb, 'Department', DepartmentSchema).find({departmentName: data.departmentName}, function (error, doc) {
+
+                if (error) {
+                    console.log(error);
+                    logWriter.log("Department.js update Department.find ");
+                    res.send(500, {error: 'Department.update find error'});
+                } else if (doc.length > 0 && doc[0]._id.toString() !== _id) {
+                    console.log(doc);
+                    res.send(400, {error: 'An Department with the same Name already exists'});
+                } else if (data.sequenceStart) {
+                    updateSequence(models.get(req.session.lastDb, "Department", DepartmentSchema), "sequence", data.sequenceStart, data.sequence, data.parentDepartmentStart, data.parentDepartment, false, false, function (sequence) {
+                        data.sequence = sequence;
+                        models.get(req.session.lastDb, 'Department', DepartmentSchema).findByIdAndUpdate({_id: _id}, data, {new: true}, function (err, result) {
+
+                            if (err) {
+                                console.log(err);
+                                logWriter.log("Department.js update Department.update " + err);
+                                res.send(500, {error: "Can't update Department"});
+                            } else {
+
+                                if (data.isAllUpdate) {
+                                    updateNestingLevel(req, _id, data.nestingLevel, function () {
+                                        res.send(200, {success: 'Department updated success'});
+                                    });
+                                } else {
+                                    res.send(200, {success: 'Department updated success'});
+
+                                    if (dbName === CONSTANTS.WTRACK_DB_NAME) {
+                                        EmployeeSchema = mongoose.Schemas['Employee'];
+                                        EmployeeModel = models.get(dbName, 'Employee', EmployeeSchema);
+
+                                        event.emit('updateName', _id, EmployeeModel, 'department._id', 'department.name', result.departmentName);
+                                    }
+                                }
+                            }
+                        });
+                    });
+                } else {
+                    models.get(req.session.lastDb, 'Department', DepartmentSchema).findByIdAndUpdate({_id: _id}, data, {new: true}, function (err, result) {
                         if (err) {
                             console.log(err);
                             logWriter.log("Department.js update Department.update " + err);
-                            res.send(500, { error: "Can't update Department" });
+                            res.send(500, {error: "Can't update Department"});
                         } else {
+
                             if (data.isAllUpdate) {
                                 updateNestingLevel(req, _id, data.nestingLevel, function () {
-                                    res.send(200, { success: 'Department updated success' });
+                                    res.send(200, {success: 'Department updated success'});
                                 });
-                            }
-                            else {
-                                res.send(200, { success: 'Department updated success' });
+                            } else {
+                                res.send(200, {success: 'Department updated success'});
 
                                 if (dbName === CONSTANTS.WTRACK_DB_NAME) {
                                     EmployeeSchema = mongoose.Schemas['Employee'];
@@ -326,33 +363,9 @@ var Department = function (event, models) {
                             }
                         }
                     });
-                });
-            } else {
-                models.get(req.session.lastDb, 'Department', DepartmentSchema).findByIdAndUpdate({ _id: _id }, data, {new: true}, function (err, result) {
-                    if (err) {
-                        console.log(err);
-                        logWriter.log("Department.js update Department.update " + err);
-                        res.send(500, { error: "Can't update Department" });
-                    } else {
-                        if (data.isAllUpdate) {
-                            updateNestingLevel(req, _id, data.nestingLevel, function () {
-                                res.send(200, { success: 'Department updated success' });
-                            });
-                        }
-                        else {
-                            res.send(200, { success: 'Department updated success' });
 
-                            if (dbName === CONSTANTS.WTRACK_DB_NAME) {
-                                EmployeeSchema = mongoose.Schemas['Employee'];
-                                EmployeeModel = models.get(dbName, 'Employee', EmployeeSchema);
-
-                                event.emit('updateName', _id, EmployeeModel, 'department._id', 'department.name', result.departmentName);
-                            }
-                        }
-                    }
-                });
-
-            }
+                }
+            })
         }
         catch (exception) {
             console.log(exception);
@@ -363,8 +376,8 @@ var Department = function (event, models) {
 
     function removeAllChild(req, arrId, callback) {
         if (arrId.length > 0) {
-            models.get(req.session.lastDb, 'Department', DepartmentSchema).find({ parentDepartment: { $in: arrId } }, { _id: 1 }, function (err, res) {
-                models.get(req.session.lastDb, 'Department', DepartmentSchema).find({ parentDepartment: { $in: arrId } }, { multi: true }).remove().exec(function (err, result) {
+            models.get(req.session.lastDb, 'Department', DepartmentSchema).find({parentDepartment: {$in: arrId}}, {_id: 1}, function (err, res) {
+                models.get(req.session.lastDb, 'Department', DepartmentSchema).find({parentDepartment: {$in: arrId}}, {multi: true}).remove().exec(function (err, result) {
                     arrId = res.map(function (item) {
                         return item._id;
                     });
@@ -378,14 +391,14 @@ var Department = function (event, models) {
     }
 
     function remove(req, _id, res) {
-        models.get(req.session.lastDb, 'Department', DepartmentSchema).remove({ _id: _id }, function (err, result) {
+        models.get(req.session.lastDb, 'Department', DepartmentSchema).remove({_id: _id}, function (err, result) {
             if (err) {
                 console.log(err);
                 logWriter.log("Department.js remove department.remove " + err);
-                res.send(500, { error: "Can't remove Department" });
+                res.send(500, {error: "Can't remove Department"});
             } else {
                 removeAllChild(req, [_id].objectID(), function () {
-                    res.send(200, { success: 'Department removed' });
+                    res.send(200, {success: 'Department removed'});
                 });
             }
         });
@@ -394,14 +407,14 @@ var Department = function (event, models) {
 
     return {
 
-        create: create,
-        getDepartmentById: getDepartmentById,
-        getForDd: getForDd,
-        getForEditDd: getForEditDd,
-        get: get,
+        create             : create,
+        getDepartmentById  : getDepartmentById,
+        getForDd           : getForDd,
+        getForEditDd       : getForEditDd,
+        get                : get,
         getCustomDepartment: getCustomDepartment,
-        update: update,
-        remove: remove
+        update             : update,
+        remove             : remove
     };
 };
 

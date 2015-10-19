@@ -8,7 +8,7 @@ define([
     function (SalaryModel, common) {
         var SalaryCollection = Backbone.Collection.extend({
             model       : SalaryModel,
-            url         : "/salary/",
+            url         : "/payroll/",
             page        : null,
             namberToShow: null,
             viewType    : null,

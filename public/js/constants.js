@@ -352,7 +352,7 @@ define([], function () {
         SALESINVOICE      : 'salesInvoice',
         SALESPRODUCT      : 'salesProduct',
         WTRACK            : 'wTrack',
-        SALARY            : 'Salary',
+        PAYROLL            : 'Payroll',
         REVENUE           : 'Revenue',
         MONTHHOURS        : 'monthHours',
         BONUSTYPE         : 'bonusType',

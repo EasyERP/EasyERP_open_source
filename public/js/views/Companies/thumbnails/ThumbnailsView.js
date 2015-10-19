@@ -2,6 +2,7 @@
         'common',
         'views/Companies/EditView',
         'views/Companies/CreateView',
+        'views/Notes/AttachView',
         'text!templates/Alpabet/AphabeticTemplate.html',
         "text!templates/Companies/thumbnails/ThumbnailsItemTemplate.html",
         'dataService',
@@ -9,7 +10,7 @@
         'custom'
     ],
 
-    function (common, editView, createView, AphabeticTemplate, ThumbnailsItemTemplate, dataService, filterView, custom) {
+    function (common, editView, createView, attachView, AphabeticTemplate, ThumbnailsItemTemplate, dataService, filterView, custom) {
         var CompaniesThumbnalView = Backbone.View.extend({
             el                : '#content-holder',
             countPerPage      : 0,
@@ -49,6 +50,13 @@
                 "click .gotoForm"          : "gotoForm",
                 "click .saveFilterButton"  : "saveFilter",
                 "click .removeFilterButton": "removeFilter"
+            },
+
+            importFiles: function () {
+                new attachView({
+                    modelName: this.contentType,
+                    import: true
+                });
             },
 
             asyncLoadImgs: function (collection) {

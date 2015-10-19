@@ -19,11 +19,17 @@ var Employee = function (models) {
     
     this.getNameAndDepartment = getNameAndDepartment;
 
-    function getNameAndDepartment (db, callback) {
+    function getNameAndDepartment (db, isEmployee, callback) {
         var Employee = models.get(db, 'Employees', EmployeeSchema);
+        var query;
 
-        Employee
-            .find()
+        if (isEmployee){
+            query =  Employee.find({isEmployee: true});
+        } else {
+            query =  Employee.find();
+        }
+
+        query
             .select('_id name department')
             //.populate('department._id', '_id departmentName')
             .sort({'name.first': 1})
@@ -38,8 +44,9 @@ var Employee = function (models) {
     };
 
     this.getForDD = function (req, res, next) {
+        var isEmployee = req.query.isEmployee;
 
-        getNameAndDepartment(req.session.lastDb, function(err, result) {
+        getNameAndDepartment(req.session.lastDb, isEmployee,  function(err, result) {
             if (err) {
                 return next(err)
             }
