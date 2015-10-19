@@ -333,7 +333,7 @@ define([
                 filterValues.empty();
 
                 filterIc.addClass('active');
-                filterValues.append('<div class="forFilterIcons"><span class="fa fa-filter funnelIcon"></span><span class="filterValues">' + filterName + '</span><span class="removeValues">x</span></div>');
+                filterValues.append('<div class="forFilterIcons"><span class="fa fa-star funnelIcon"></span><span class="filterValues">' + filterName + '</span><span class="removeValues">x</span></div>');
 
 
             },
