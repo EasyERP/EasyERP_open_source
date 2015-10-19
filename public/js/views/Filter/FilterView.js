@@ -483,11 +483,11 @@ define([
                 searchInput.catcomplete({
                     source   : this.searchRessult,
                     focus: function( event, ui ) {
-                        $( "#mainSearch" ).val( ui.item.label );
+                        $(this).closest("#mainSearch").text( ui.item.label );
                         return false;
                     },
                     select: function( event, ui ) {
-                        $( "#mainSearch" ).text( ui.item.label );
+                        $(this).closest("#mainSearch").text( ui.item.label );
                         return false;
                     }
                 });
