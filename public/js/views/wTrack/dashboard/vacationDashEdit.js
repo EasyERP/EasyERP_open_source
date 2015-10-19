@@ -20,6 +20,7 @@ define(["text!templates/wTrack/dashboard/vacationDashEdit.html",
 					_.bindAll(this, "saveItem");
 
 					this.dateByWeek = options.dateByWeek;
+					this.tds = options.tds;
 					this.row = options.tr;
 					this.render(options);
 				},
@@ -282,7 +283,7 @@ define(["text!templates/wTrack/dashboard/vacationDashEdit.html",
 					var holidaysSpan = targetTd.find('span.viewCount');
 					var prevText = hoursSpan.text();
 					var slashPos = prevText.indexOf('/');
-					var text = totalHours + ' ' + prevText.substring(slashPos);
+					var text;
 					var vacationHours = vacationSpan.text();
 					var holidays = holidaysSpan.text();
 					var vacationSpanClass = 'vacation ';
@@ -297,6 +298,14 @@ define(["text!templates/wTrack/dashboard/vacationDashEdit.html",
 					var isInActiveClass = targetTd.hasClass('inactive');
 					var isVacationClass = targetTd.hasClass('withVacation');
 
+					var otherHours = this.tds.find('span.projectHours');
+
+					otherHours.each(function(){
+						var el = $(this);
+
+						totalHours += parseInt(el.text()) || 0;
+					});
+
 					if (vacationHours) {
 						vacationHours = parseInt(vacationHours);
 
@@ -309,6 +318,7 @@ define(["text!templates/wTrack/dashboard/vacationDashEdit.html",
 						holidays = parseInt(holidays);
 					}
 
+					text = totalHours + ' ' + prevText.substring(slashPos);
 					hoursSpan.text(text);
 
 					classString = this.getCellClass(dateByWeek, vacationHours, holidays, totalHours, isInActiveClass, isVacationClass);
