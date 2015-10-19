@@ -48,6 +48,7 @@ module.exports = function (app, mainDb) {
     var productCategoriesRouter = require('./productCategories')(models, event);
     var customersRouter = require('./customers')(models, event);
     var capacityRouter = require('./capacity')(models);
+    var importFileRouter = require('./importFile')(models);
 
     var requestHandler = require("../requestHandler.js")(app, event, mainDb);
 
@@ -70,7 +71,8 @@ module.exports = function (app, mainDb) {
     app.use('/payment', paymentRouter);
     app.use('/period', periodRouter);
     app.use('/paymentMethod', paymentMethodRouter);
-    //app.use('/importData', importDataRouter);
+    app.use('/importData', importDataRouter);
+    app.use('/importFile', importFileRouter);
     app.use('/wTrack', wTrackRouter);
     app.use('/project', projectRouter);
     app.use('/employee', employeeRouter);

@@ -31,7 +31,8 @@ module.exports = (function () {
         editedBy: {
             user: { type: ObjectId, ref: 'Users', default: null },
             date: { type: Date }
-        }
+        },
+        ID: Number
     }, { collection: 'Tasks' });
 
     mongoose.model('Tasks', tasksSchema);

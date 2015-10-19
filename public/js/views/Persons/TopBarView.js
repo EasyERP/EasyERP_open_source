@@ -1,9 +1,11 @@
 define([
         'text!templates/Persons/TopBarTemplate.html',
+        'text!templates/Notes/importTemplate.html',
+        'views/Notes/AttachView',
         'custom',
         'common'
     ],
-    function (ContentTopBarTemplate, Custom, Common) {
+    function (ContentTopBarTemplate, importTemplate, attachView, Custom, Common) {
         var TopBarView = Backbone.View.extend({
             el         : '#top-bar',
             contentType: "Persons",
@@ -17,6 +19,8 @@ define([
                 "click #top-bar-exportBtn"      : "export",
                 "click #top-bar-exportToCsvBtn" : "exportToCsv",
                 "click #top-bar-exportToXlsxBtn": "exportToXlsx",
+                "click #top-bar-importBtn"      : "importEvent",
+                "change .inputAttach"           : "importFiles"
             },
 
             changeContentViewType: function (e) {
@@ -57,6 +61,22 @@ define([
             editEvent: function (event) {
                 event.preventDefault();
                 this.trigger('editEvent');
+            },
+
+            importEvent: function (event) {
+                var template = _.template(importTemplate);
+                this.$el.find('#forImport').html(template);
+                event.preventDefault();
+                this.$el.find('#inputAttach').click();
+                this.trigger('importEvent');
+            },
+
+            importFiles: function (e) {
+                var importFile = new attachView({});
+
+                this.import = true;
+
+                importFile.sendToServer(e, null, this);
             },
 
             deleteEvent: function (event) {
