@@ -1,7 +1,7 @@
 @import "_font";
 @import "_colors";
 @import "_darckColor";
-@import "_whiteColor";
+//@import "_whiteColor";
 @import "_list";
 
 /*------------------------Constants-----------------------------*/
@@ -1124,7 +1124,7 @@ input::-ms-clear {
       border: @thin-border transparent;
       margin-left: 3px;
       &:hover {
-        border-bottom: @thin-border @blue;
+        border-bottom: @thin-border @tilte-color;
       }
     }
   }
@@ -2307,11 +2307,14 @@ input::-ms-clear {
       text-decoration: none;
       display: inline-block;
       padding: 0 5px;
+      &::hover {
+        border-bottom: 1px solid @border-color-selected;
+      }
 
     }
 
     a.selectedItemsNumber {
-      border-bottom: 1px solid blue;
+      border-bottom: 1px solid @border-color-selected;
     }
 
     button {
@@ -2765,7 +2768,7 @@ a {
 }
 
 h3 {
-  color: @blue;
+  color: @tilte-color;
   font-size: 18px;
   .text-overflow;
 }
@@ -3397,13 +3400,13 @@ button.red, a.red {
       font-weight: 300;
       font-size: 30px;
       line-height: 38px;
-      color: @birthdayColor;
+      color: @fontColor-2;
     }
   }
 
   .info {
     color: #FFF;
-    background: @birthdayColor;
+    background: @fontColor-2;
     margin-left: 160px;
     margin-right: 40px;
     position: relative;
@@ -3423,7 +3426,7 @@ button.red, a.red {
       width: 0;
       position: absolute;
       pointer-events: none;
-      border-right-color: @birthdayColor;
+      border-right-color: @fontColor-2;
       border-width: 10px;
       top: 19px;
     }
@@ -3683,7 +3686,7 @@ button.red, a.red {
       content: '0';
       font-family: @icon-font;
       font-size: 40px;
-      color: @blue;
+      color: @tilte-color;
     }
   }
 }
@@ -3827,7 +3830,7 @@ button.red, a.red {
             content: '2';
             font-size: 20px;
             line-height: 24px;
-            color: @blue;
+            color: @tilte-color;
             .position(absolute, 2px, 2px);
           }
         }
@@ -3849,7 +3852,7 @@ button.red, a.red {
       display: none;
       width: 16px;
       height: @linh;
-      color: @blue;
+      color: @tilte-color;
       font-size: 16px;
       background: no-repeat 0 50%;
       float: right;
@@ -3864,7 +3867,7 @@ button.red, a.red {
       display: none;
       width: 13px;
       height: @linh;
-      color: @blue;
+      color: @tilte-color;
       font-size: 16px;
       background: no-repeat 0 50%;
       float: right;
@@ -4051,6 +4054,7 @@ table#workflows {
   ul {
     overflow: hidden;
     padding: 0 10px;
+    float: left;
     li {
       float: left;
       margin-right: 10px;
@@ -6179,7 +6183,7 @@ textarea#editInput {
 .search-options {
   height: 30px;
   position: absolute;
-  width: 75%;
+  width: 91%;
   top: ~"calc(100% - 1px)";
   right: 0;
   z-index: 500;
@@ -6236,7 +6240,7 @@ textarea#editInput {
     width: ~"calc(100% - 30px)";
     margin: 10px 5px 5px 5px;
     color: white;
-    background-color: @blue;
+    background-color: @tilte-color;
     padding: 10px;
     border-radius: 5px;
   }
@@ -6304,7 +6308,7 @@ textarea#editInput {
             height: 10px;
             width: 10px;
             border-radius: 50%;
-            background-color: @birthdayColor;
+            background-color: @fontColor-2;
           }
         };
       }
