@@ -41,6 +41,7 @@ module.exports = function (models) {
                     error.status = 400;
                     logWriter.log("importFile.js importFileToDb " + error);
                     next(error);
+
                     return;
                 }
                 task = importMap[modelName];
@@ -50,6 +51,7 @@ module.exports = function (models) {
                     error.status = 400;
                     logWriter.log("importFile.js importFileToDb " + error);
                     next(error);
+
                     return;
                 }
                 aliases = task.aliases;
@@ -271,6 +273,8 @@ module.exports = function (models) {
 
                 async.each(Object.keys(objectIdKeyList), function (key, cb) {
                         var val = obj[key];
+                        var objID = [];
+                        var length;
 
                         findCollection = importMap[objectIdKeyList[key]];
 
@@ -280,11 +284,10 @@ module.exports = function (models) {
                             Model = models.get(req.session.lastDb, collection, schema);
 
                             if (Array.isArray(val)) {
-                                var objID = [];
-                                var length = val.length;
+                                length = val.length;
+
                                 if (length > 0) {
                                     async.each(Object.keys(val), function (index, calb) {
-
                                             Model.findOne({'ID': val[index]}, function (err, mod) {
 
                                                 if (err) {
@@ -319,18 +322,18 @@ module.exports = function (models) {
                                 Model.findOne({'ID': val}, function (err, mod) {
                                     if (err) {
                                         logWriter.log("importFile.js findAndReplaceObjectId " + err);
-                                        cb(err);
-                                    } else {
-                                        if (mod) {
-                                            replaceObj[key] = mod._id;
-                                            cb();
-                                        } else {
-                                            error = new Error('ID = ' + val + ' (' + key + ') not exist in BD');
-                                            error.status = 400;
-                                            logWriter.log("importFile.js findAndReplaceObjectId " + error);
-                                            cb(error);
-                                        }
+                                        return cb(err);
                                     }
+
+                                    if (!mod) {
+                                        error = new Error('ID = ' + val + ' (' + key + ') not exist in BD');
+                                        error.status = 400;
+                                        logWriter.log("importFile.js findAndReplaceObjectId " + error);
+                                        return cb(error);
+                                    }
+
+                                    replaceObj[key] = mod._id;
+                                    cb();
                                 });
                             }
                         } else {
