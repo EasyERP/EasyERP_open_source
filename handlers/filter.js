@@ -615,7 +615,8 @@ var Filters = function (models) {
             Quotation.aggregate([
                 {
                     $match: {
-                        forSales: false
+                        forSales: false,
+                        isOrder: false
                     }
                 },
                 {
@@ -654,7 +655,8 @@ var Filters = function (models) {
             Quotation.aggregate([
                 {
                     $match: {
-                        forSales: true
+                        forSales: true,
+                        isOrder: false
                     }
                 },
                 {
