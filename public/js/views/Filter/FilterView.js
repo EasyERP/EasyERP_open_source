@@ -249,6 +249,7 @@ define([
                 }
             },
 
+
             selectValue: function (e) {
                 var currentElement = $(e.target);
                 var currentValue = currentElement.attr('data-value');
@@ -418,7 +419,7 @@ define([
                 this.filterObject = App.filtersValues[this.parentContentType];
 
                 mapData = _.map(this.filterObject[filterView], function (dataItem) {
-                    return {category: key, label: dataItem.name, value: dataItem.name, data: dataItem._id};
+                    return {category: key, categoryClass: filterView, label: dataItem.name, value: dataItem.name, data: dataItem._id};
                 })
 
                 this.searchRessult = this.searchRessult.concat(mapData);
@@ -446,7 +447,18 @@ define([
                 container.html(itemView.render());
             },
 
+            toggleSearchResultGroup: function (e) {
+                var target = $(e.target);
+                var name = target.attr('data-content');
+                var container = target.closest('.ui-autocomplete');
+                var elements = container.find('.' + name);
+
+                elements.toggle();
+
+            },
+
             render: function () {
+                var self = this;
                 var currentEl = this.$el;
                 var searchInput;
 
@@ -462,17 +474,24 @@ define([
                         this.widget().menu("option", "items", "> :not(.ui-autocomplete-category)");
                     },
                     _renderMenu: function (ul, items) {
-                        var that = this,
-                            currentCategory = "";
+                        var that = this;
+                        var currentCategory = "";
+
                         $.each(items, function (index, item) {
                             var li;
+                            var categoryLi = $("<li data-content='" + item.categoryClass + "' class='ui-autocomplete-category'>" + item.category + "</li>");
+
                             if (item.category != currentCategory) {
-                                ul.append("<li class='ui-autocomplete-category'>" + item.category + "</li>");
+                                ul.append(categoryLi);
+                                /*categoryLi.click(function (e) {
+                                    self.toggleSearchResultGroup(e);
+                                });*/
                                 currentCategory = item.category;
                             }
                             li = that._renderItemData(ul, item);
                             if (item.category) {
-                                li.attr("aria-label", item.category + " : " + item.label);
+                                //li.toggle();
+                                li.attr("class", item.categoryClass);
                             }
                         });
                     }
@@ -481,13 +500,13 @@ define([
                 searchInput = currentEl.find("#mainSearch");
 
                 searchInput.catcomplete({
-                    source   : this.searchRessult,
-                    focus: function( event, ui ) {
-                        $(this).closest("#mainSearch").text( ui.item.label );
+                    source: this.searchRessult,
+                    /*focus : function (event, ui) {
+                        $(this).closest("#mainSearch").text(ui.item.label);
                         return false;
-                    },
-                    select: function( event, ui ) {
-                        $(this).closest("#mainSearch").text( ui.item.label );
+                    },*/
+                    select: function (event, ui) {
+                        $(this).closest("#mainSearch").text(ui.item.label);
                         return false;
                     }
                 });
