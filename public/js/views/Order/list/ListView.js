@@ -68,7 +68,7 @@ define([
                     patch   : true,
                     validate: false,
                     success : function () {
-                        self.showFilteredPage();
+                        self.showFilteredPage(self.filter, self);
                     }
                 });
 

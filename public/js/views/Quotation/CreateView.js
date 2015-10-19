@@ -221,7 +221,7 @@ define([
                     workflow      : this.defaultWorkflow
                 };
 
-                if (supplier) {
+                if (supplier._id && selectedLength) {
                     this.model.save(data, {
                         headers: {
                             mid: mid

@@ -157,7 +157,8 @@ define([
                     status: 'Cancelled',
                     order: 1
                 }, function (workflow) {
-                    var redirectUrl = self.forSales ? "easyErp/salesQuotation" : "easyErp/Quotation";
+                    //var redirectUrl = self.forSales ? "easyErp/salesQuotation" : "easyErp/Quotation";
+                    var redirectUrl = window.location.hash;
 
                     if (workflow && workflow.error) {
                         return alert(workflow.error.statusText);
@@ -174,6 +175,8 @@ define([
                         },
                         patch: true,
                         success: function () {
+                            $(".edit-dialog").remove();
+                            Backbone.history.fragment = '';
                             Backbone.history.navigate(redirectUrl, {trigger: true});
                         }
                     });
@@ -188,7 +191,8 @@ define([
                 populate.fetchWorkflow({
                     wId: 'Sales Order'
                 }, function (workflow) {
-                    var redirectUrl = self.forSales ? "easyErp/salesQuotation" : "easyErp/Quotation";
+                   // var redirectUrl = self.forSales ? "easyErp/salesQuotation" : "easyErp/Quotation";
+                    var redirectUrl = window.location.hash;
 
                     if (workflow && workflow.error) {
                         return alert(workflow.error.statusText);
@@ -205,6 +209,8 @@ define([
                         },
                         patch: true,
                         success: function () {
+                            $(".edit-dialog").remove();
+                            Backbone.history.fragment = '';
                             Backbone.history.navigate(redirectUrl, {trigger: true});
                         }
                     });
@@ -325,7 +331,7 @@ define([
                     workflow: workflow
                 };
 
-                if (supplier) {
+                if (supplier._id) {
                     this.model.save(data, {
                         headers: {
                             mid: mid
@@ -427,12 +433,13 @@ define([
                 populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, false, true);
                 populate.get("#deliveryDd", "/deliverTo", {}, 'name', this, false, true);
 
-                if ((App.currentDb !== 'weTrack') && this.forSales){
-                    populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
-                } else {
+                if ((App.currentDb === 'weTrack') && this.forSales){
                     populate.get("#supplierDd", "/Customer", {}, "fullName", this, false, false);
 
                     populate.get("#projectDd", "/getProjectsForDd", {}, "projectName", this, false, false);
+
+                } else {
+                    populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
                 }
 
                 this.$el.find('#orderDate').datepicker({
