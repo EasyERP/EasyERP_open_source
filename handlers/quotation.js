@@ -131,32 +131,32 @@ var Quotation = function (models) {
         var contentIdsSearcher;
         var contentSearcher;
         var data = req.query;
-        var queryObject = {};
 
         var waterfallTasks;
         var contentType = data.contentType;
         var filter = data.filter || {};
         var isOrder = (contentType === 'Order' || contentType === 'salesOrder');
 
-        if (isOrder){
+        if (isOrder) {
             filter.isOrder = {
                 key: 'isOrder',
                 value: ['true']
             }
-        }
-
-        if (filter && typeof filter === 'object') {
-            if (filter.condition === 'or') {
-                queryObject['$or'] = caseFilter(filter);
-            } else {
-                queryObject['$and'] = caseFilter(filter);
+        } else {
+            filter.isOrder = {
+                key: 'isOrder',
+                value: ['false']
             }
         }
 
-        if (query.sort) {
-            sort = query.sort;
-        } else {
-            sort = {"name": 1};
+        var optionsObject = {};
+
+        if (filter && typeof filter === 'object') {
+            if (filter.condition === 'or') {
+                optionsObject['$or'] = caseFilter(filter);
+            } else {
+                optionsObject['$and'] = caseFilter(filter);
+            }
         }
 
         departmentSearcher = function (waterfallCallback) {
@@ -177,11 +177,11 @@ var Quotation = function (models) {
         contentIdsSearcher = function (deps, waterfallCallback) {
             var arrOfObjectId = deps.objectID();
 
-            models.get(req.session.lastDb, "Quotation", QuotationSchema).aggregate(
+            Quotation.aggregate(
                 {
                     $match: {
                         $and: [
-                            queryObject,
+                            optionsObject,
                             {
                                 $or: [
                                     {
@@ -222,18 +222,17 @@ var Quotation = function (models) {
         };
 
         contentSearcher = function (quotationsIds, waterfallCallback) {
+            var data = req.query;
             var query;
-            var newQueryObj = {};
+            var queryObject = {};
+            queryObject['$and'] = [];
 
-            newQueryObj.$and = [];
-
-            newQueryObj.$and.push({_id: {$in: quotationsIds}});
-
-            query = Quotation
-                .count(newQueryObj);
+            queryObject.$and.push({_id: {$in: quotationsIds}});
+            //queryObject.$and.push({isOrder: isOrder});
 
 
-            query.exec(waterfallCallback);
+            query = Quotation.count(queryObject);
+            query.count(waterfallCallback);
         };
 
         waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
@@ -246,6 +245,7 @@ var Quotation = function (models) {
             res.status(200).send({count: result});
         });
     };
+
 
     function ConvertType(array, type) {
         if (type === 'integer') {
@@ -339,6 +339,11 @@ var Quotation = function (models) {
             filter.isOrder = {
                 key: 'isOrder',
                 value: ['true']
+            }
+        } else {
+            filter.isOrder = {
+                key: 'isOrder',
+                value: ['false']
             }
         }
 

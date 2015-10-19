@@ -311,10 +311,6 @@ define([], function () {
                 view   : 'supplier',
                 backend: 'supplier._id'
             },
-            'Sales Manager'   : {
-                view   : 'projectmanager',
-                backend: 'project.projectmanager._id'
-            },
             'Status'   : {
                 view   : 'workflow',
                 backend: 'workflow._id'
@@ -366,7 +362,7 @@ define([], function () {
 
         RESPONSES: {
             BAD_RESPONSE            : 'Please try again',
-            CREATE_QUOTATION        : 'Please check at most one supplier or create one',
+            CREATE_QUOTATION        : 'Please check at most one supplier/project or create one',
             CONFIRM_ORDER           : 'Please add at most one product to quotation',
             DOUBLE_EMPLOYEE_VACATION: 'Current Employee already has vacation line'
         },
