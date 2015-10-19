@@ -8941,6 +8941,9 @@ textarea#editInput {
 .forInfoWrap {
   overflow: hidden;
 }
+#searchInputContainer {
+  width: 100%;
+}
 * html .ui-autocomplete {
   width: 1px;
 }
@@ -8970,7 +8973,6 @@ textarea#editInput {
   padding: .2em .4em;
 }
 .ui-menu .ui-autocomplete-category {
-  font-weight: bold;
   margin: .5em 0 .2em;
   padding: 0;
   line-height: 1.5;

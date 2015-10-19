@@ -249,13 +249,12 @@ define([
                 }
             },
 
-
             selectValue: function (e) {
                 var currentElement = $(e.target);
                 var currentValue = currentElement.attr('data-value');
                 var filterGroupElement = currentElement.closest('.filterGroup');
                 var groupType = filterGroupElement.attr('data-value');
-                var groupNameElement = filterGroupElement.find('.groupName')
+                var groupNameElement = filterGroupElement.find('.groupName');
                 var constantsName = $.trim(groupNameElement.text());
                 var filterObjectName = this.constantsObject[constantsName].view;
                 var currentCollection = this.currentCollection[filterObjectName];
@@ -306,7 +305,7 @@ define([
 
             showFilterIcons: function (filter) {
                 var filterIc = this.$el.find('.filter-icons');
-                var filterValues = this.$el.find('.search-field .oe_searchview_input');
+                var filterValues = this.$el.find('.search-field #searchInputContainer');
                 var filter = Object.keys(filter);
                 var self = this;
                 var groupName;
@@ -394,15 +393,14 @@ define([
                         if (!self.$el.find('#' + filterView).length) {
                             filtersGroupContainer.append(containerString);
                         }
-                        self.renderGroup(key, filterView, groupStatus);
+                        self.renderGroup(key, filterView, filterBackend, groupStatus);
                     });
                 }
-                ;
 
                 this.showFilterIcons(App.filter);
             },
 
-            renderGroup: function (key, filterView, groupStatus) {
+            renderGroup: function (key, filterView, filterBackend, groupStatus) {
                 var itemView;
                 var idString = '#' + filterView + 'FullContainer';
                 var container = this.$el.find(idString);
@@ -419,7 +417,13 @@ define([
                 this.filterObject = App.filtersValues[this.parentContentType];
 
                 mapData = _.map(this.filterObject[filterView], function (dataItem) {
-                    return {category: key, categoryClass: filterView, label: dataItem.name, value: dataItem.name, data: dataItem._id};
+                    return {
+                        category: key,
+                        categoryView: filterView,
+                        categoryBackend: filterBackend,
+                        label: dataItem.name,
+                        value: dataItem.name,
+                        data: dataItem._id};
                 })
 
                 this.searchRessult = this.searchRessult.concat(mapData);
@@ -457,6 +461,32 @@ define([
 
             },
 
+            clickSearchResult: function (e) {
+                var currentElement = $(e.target);
+                var container = currentElement.closest('.ui-autocomplete');
+                var groupSearchResultElement = currentElement.hasClass('searchGroupResult') ? currentElement : currentElement.closest('.searchGroupResult');
+                var filterObjectName = groupSearchResultElement.attr('data-view');
+                var groupType = groupSearchResultElement.attr('data-back');
+                var elements = container.find('.' + filterObjectName);
+
+
+
+                if (!App.filter[filterObjectName]) {
+                    App.filter[filterObjectName] = {
+                        key  : groupType,
+                        value: []
+                    };
+                }
+
+                $.each(elements, function (index, element) {
+                    App.filter[filterObjectName]['value'].push($(element).attr('data-content'));
+                });
+
+                this.setDbOnce();
+                this.showFilterIcons(App.filter);
+
+            },
+
             render: function () {
                 var self = this;
                 var currentEl = this.$el;
@@ -479,28 +509,36 @@ define([
 
                         $.each(items, function (index, item) {
                             var li;
-                            var categoryLi = $("<li data-content='" + item.categoryClass + "' class='ui-autocomplete-category'>" + item.category + "</li>");
+                            var categoryLi = $('<li class="ui-autocomplete-category" >' +
+                                '<span class="searchGroupDropDown" data-content="' + item.categoryView + '">C</span>' +
+                                '<span class="searchGroupResult" data-back="' + item.categoryBackend + '" data-view="' + item.categoryView + '">Search <em>' + item.category + '</em> for: <strong>' + that.element.text() + '</strong></span>' +
+                                '</li>');
 
                             if (item.category != currentCategory) {
                                 ul.append(categoryLi);
-                                /*categoryLi.click(function (e) {
+                                categoryLi.find('.searchGroupDropDown').click(function (e) {
                                     self.toggleSearchResultGroup(e);
-                                });*/
+                                });
+                                categoryLi.find('.searchGroupResult').click(function (e) {
+                                    self.clickSearchResult(e);
+                                });
                                 currentCategory = item.category;
                             }
                             li = that._renderItemData(ul, item);
                             if (item.category) {
-                                //li.toggle();
-                                li.attr("class", item.categoryClass);
+                                li.toggle();
+                                li.attr("class", item.categoryView);
+                                li.attr("data-content", item.data);
                             }
                         });
                     }
                 });
 
-                searchInput = currentEl.find("#mainSearch");
+                searchInput = currentEl.find("#searchInput");
 
                 searchInput.catcomplete({
                     source: this.searchRessult,
+                    appendTo: searchInput.closest('div'),
                     /*focus : function (event, ui) {
                         $(this).closest("#mainSearch").text(ui.item.label);
                         return false;
@@ -599,10 +637,6 @@ define([
                     collectionElement.set({status: true});
                 }
             },
-
-            //applyFilter: function () {
-            //    this.trigger('filter', App.filter);
-            //},
 
             showSearchContent: function () {
                 var el = this.$el.find('.search-content');
