@@ -279,224 +279,233 @@ var requestHandler = function (app, event, mainDb) {
                     return console.log(err);
                 }
 
-                result.forEach(function (project) {
-                    paralellTasks = [getwTrackAndMonthHours];
+                    result.forEach(function (project) {
+                        paralellTasks = [getwTrackAndMonthHours];
 
-                    function getwTrackAndMonthHours(cb) {
-                        var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
-                        var monthHours = models.get(req.session.lastDb, 'MonthHours', MonthHoursSchema);
+                        function getwTrackAndMonthHours(cb) {
+                            var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+                            var monthHours = models.get(req.session.lastDb, 'MonthHours', MonthHoursSchema);
 
-                        var query = WTrack.find({'project._id': project._id}).lean();
-                        var months = [];
-                        var years = [];
-                        var uMonth;
-                        var uYear;
+                            var query = WTrack.find({'project._id': project._id}).lean();
+                            var months = [];
+                            var years = [];
+                            var uMonth;
+                            var uYear;
 
-                        query.exec(function (err, result) {
-                            if (err) {
-                                return cb(err);
-                            }
-
-                            result.forEach(function (res) {
-                                months.push(res.month);
-                                years.push(res.year);
-                            });
-
-                            uMonth = _.uniq(months);
-                            uYear = _.uniq(years);
-
-                            monthHours.aggregate([{
-                                $match: {
-                                    year: {$in: uYear},
-                                    month: {$in: uMonth}
-                                }
-                            }, {
-                                $project: {
-                                    date: {$add: [{$multiply: ["$year", 100]}, "$month"]},
-                                    hours: '$hours'
-
-                                }
-                            }, {
-                                $group: {
-                                    _id: '$date',
-                                    value: {$addToSet: '$hours'}
-                                }
-                            }], function (err, months) {
+                            query.exec(function (err, result) {
                                 if (err) {
                                     return cb(err);
                                 }
+                                if (result.length) {
+                                    result.forEach(function (res) {
+                                        months.push(res.month);
+                                        years.push(res.year);
+                                    });
 
-                                cb(null, {wTrack: result, monthHours: months});
-                            });
+                                    uMonth = _.uniq(months);
+                                    uYear = _.uniq(years);
 
-
-                        });
-                    };
-                    async.parallel(paralellTasks, function (err, result) {
-                        var projectTeam = {};
-                        var bonus = [];
-                        var projectValues = {};
-                        var budgetTotal = {};
-                        var wTRack = result[0] ? result[0]['wTrack'] : [];
-                        var monthHours = result[0] ? result[0]['monthHours'] : [];
-                        var bonuses = project.bonus;
-                        var empKeys;
-                        var keys;
-                        var hoursByMonth = {};
-                        var employees = {};
-                        var keysForPT;
-                        var sortBudget = [];
-                        var budget = {};
-
-                        budgetTotal.profitSum = 0;
-                        budgetTotal.costSum = 0;
-                        budgetTotal.rateSum = 0;
-                        budgetTotal.revenueSum = 0;
-                        budgetTotal.hoursSum = 0;
-                        budgetTotal.revenueByQA = 0;
-                        budgetTotal.hoursByQA = 0;
-
-                        wTRack.forEach(function (wTrack) {
-                            var key;
-                            var employee = wTrack.employee;
-
-                            if (!( employee._id in employees)) {
-                                employees[employee._id] = employee.name;
-                            }
-
-                            key = wTrack.year * 100 + wTrack.month;
-
-                            if (hoursByMonth[key]) {
-                                hoursByMonth[key] += parseFloat(wTrack.worked);
-                            } else {
-                                hoursByMonth[key] = parseFloat(wTrack.worked);
-                            }
-                        });
-
-                        empKeys = Object.keys(employees);
-
-                        empKeys.forEach(function (empId) {
-                            wTRack.forEach(function (wTrack) {
-                                var emp = (wTrack.employee._id).toString();
-
-                                if (empId === emp) {
-                                    if (projectTeam[empId]) {
-                                        if (wTrack.department._id.toString() === '55b92ace21e4b7c40f000011'){
-                                            projectTeam[empId].byQA.revenue += parseFloat(wTrack.revenue);
-                                            projectTeam[empId].byQA.hours += parseFloat(wTrack.worked);
+                                    monthHours.aggregate([{
+                                        $match: {
+                                            year: {$in: uYear},
+                                            month: {$in: uMonth}
                                         }
-                                        projectTeam[empId].profit += parseFloat(((wTrack.revenue - wTrack.cost) / 100).toFixed(2));
-                                        projectTeam[empId].cost += parseFloat((wTrack.cost / 100).toFixed(2));
-                                        projectTeam[empId].rate += parseFloat(wTrack.rate);
-                                        projectTeam[empId].hours += parseFloat(wTrack.worked);
-                                        projectTeam[empId].revenue += parseFloat((wTrack.revenue / 100).toFixed(2));
-                                    } else {
-                                        projectTeam[empId] = {};
+                                    }, {
+                                        $project: {
+                                            date: {$add: [{$multiply: ["$year", 100]}, "$month"]},
+                                            hours: '$hours'
 
-                                        if (wTrack.department._id.toString() === '55b92ace21e4b7c40f000011'){
-                                            projectTeam[empId].byQA = {};
-                                            projectTeam[empId].byQA.revenue = parseFloat(wTrack.revenue);
-                                            projectTeam[empId].byQA.hours = parseFloat(wTrack.worked);
                                         }
-                                        projectTeam[empId].profit = parseFloat(((wTrack.revenue - wTrack.cost) / 100).toFixed(2));
-                                        projectTeam[empId].cost = parseFloat((wTrack.cost / 100).toFixed(2));
-                                        projectTeam[empId].rate = parseFloat(wTrack.rate);
-                                        projectTeam[empId].hours = parseFloat(wTrack.worked);
-                                        projectTeam[empId].revenue = parseFloat((wTrack.revenue / 100).toFixed(2));
-                                    }
-                                }
-                            });
-                        });
-
-
-                        keys = Object.keys(projectTeam);
-                        if (keys.length > 0) {
-
-                            keys.forEach(function (key) {
-                                budgetTotal.profitSum += parseFloat(projectTeam[key].profit);
-                                budgetTotal.costSum += parseFloat(projectTeam[key].cost);
-                                budgetTotal.hoursSum += parseFloat(projectTeam[key].hours);
-                                budgetTotal.revenueSum += parseFloat(projectTeam[key].revenue);
-                                budgetTotal.revenueByQA += parseFloat(projectTeam[key].byQA ? projectTeam[key].byQA.revenue / 100 : 0);
-                                budgetTotal.hoursByQA += parseFloat(projectTeam[key].byQA ? projectTeam[key].byQA.hours : 0);
-                            });
-                            budgetTotal.rateSum = {};
-                            var value = budgetTotal.revenueByQA / budgetTotal.hoursByQA;
-                            budgetTotal.rateSum.byQA = value? value : 0;
-                            budgetTotal.rateSum.byDev = ((parseFloat(budgetTotal.revenueSum) - budgetTotal.revenueByQA)) / (budgetTotal.hoursSum - parseInt(budgetTotal.hoursByQA)) ;
-
-                            projectValues.revenue = budgetTotal.revenueSum;
-                            projectValues.profit = budgetTotal.profitSum;
-                            projectValues.markUp = ((budgetTotal.profitSum / budgetTotal.costSum) * 100);
-                            if (!isFinite(projectValues.markUp)){
-                                projectValues.markUp = 0;
-                            }
-                            projectValues.radio = ((budgetTotal.profitSum / budgetTotal.revenueSum) * 100);
-                            if (!isFinite(projectValues.radio)){
-                                projectValues.radio = 0;
-                            }
-
-                            var empQuery = Employee.find({_id: {$in: keys}}, {
-                                'name': 1,
-                                'jobPosition.name': 1,
-                                'department.name': 1
-                            }).lean();
-                            empQuery.exec(function (err, response) {
-
-                                if (err) {
-                                    console.log(err);
-                                }
-
-                                bonuses.forEach(function (element) {
-                                    var objToSave = {};
-
-                                    objToSave.bonus = 0;
-                                    objToSave.resource = element.employeeId.name.first + ' ' + element.employeeId.name.last;
-                                    objToSave.percentage = element.bonusId.name;
-
-                                    if (element.bonusId.isPercent) {
-                                        objToSave.bonus = (budgetTotal.revenueSum / 100) * element.bonusId.value * 100;
-                                        bonus.push(objToSave);
-                                    } else {
-                                        monthHours.forEach(function (month) {
-                                            objToSave.bonus += (hoursByMonth[month._id] / month.value[0]) * element.bonusId.value;
-                                        });
-
-                                        objToSave.bonus = objToSave.bonus * 100;
-                                        bonus.push(objToSave);
-                                    }
-
-                                });
-
-                                keysForPT = Object.keys(projectTeam);
-
-                                response.forEach(function (employee) {
-                                    keysForPT.forEach(function (id) {
-                                        if ((employee._id).toString() === id) {
-                                            sortBudget.push(projectTeam[id]);
+                                    }, {
+                                        $group: {
+                                            _id: '$date',
+                                            value: {$addToSet: '$hours'}
                                         }
+                                    }], function (err, months) {
+                                        if (err) {
+                                            return cb(err);
+                                        }
+
+                                        cb(null, {wTrack: result, monthHours: months});
+                                    });
+                                } else {
+                                    Project.update({_id: project._id}, {$set: {budget: {}}}, function (err, result) {
+                                        if (err) {
+                                            console.log(err);
+                                        }
+                                        
                                     })
+                                }
+
+
+                            });
+                        };
+                        async.parallel(paralellTasks, function (err, result) {
+                            var projectTeam = {};
+                            var bonus = [];
+                            var projectValues = {};
+                            var budgetTotal = {};
+                            var wTRack = result[0] ? result[0]['wTrack'] : [];
+                            var monthHours = result[0] ? result[0]['monthHours'] : [];
+                            var bonuses = project.bonus;
+                            var empKeys;
+                            var keys;
+                            var hoursByMonth = {};
+                            var employees = {};
+                            var keysForPT;
+                            var sortBudget = [];
+                            var budget = {};
+
+                            budgetTotal.profitSum = 0;
+                            budgetTotal.costSum = 0;
+                            budgetTotal.rateSum = 0;
+                            budgetTotal.revenueSum = 0;
+                            budgetTotal.hoursSum = 0;
+                            budgetTotal.revenueByQA = 0;
+                            budgetTotal.hoursByQA = 0;
+
+                            wTRack.forEach(function (wTrack) {
+                                var key;
+                                var employee = wTrack.employee;
+
+                                if (!( employee._id in employees)) {
+                                    employees[employee._id] = employee.name;
+                                }
+
+                                key = wTrack.year * 100 + wTrack.month;
+
+                                if (hoursByMonth[key]) {
+                                    hoursByMonth[key] += parseFloat(wTrack.worked);
+                                } else {
+                                    hoursByMonth[key] = parseFloat(wTrack.worked);
+                                }
+                            });
+
+                            empKeys = Object.keys(employees);
+
+                            empKeys.forEach(function (empId) {
+                                wTRack.forEach(function (wTrack) {
+                                    var emp = (wTrack.employee._id).toString();
+
+                                    if (empId === emp) {
+                                        if (projectTeam[empId]) {
+                                            if (wTrack.department._id.toString() === '55b92ace21e4b7c40f000011'){
+                                                projectTeam[empId].byQA.revenue += parseFloat(wTrack.revenue);
+                                                projectTeam[empId].byQA.hours += parseFloat(wTrack.worked);
+                                            }
+                                            projectTeam[empId].profit += parseFloat(((wTrack.revenue - wTrack.cost) / 100).toFixed(2));
+                                            projectTeam[empId].cost += parseFloat((wTrack.cost / 100).toFixed(2));
+                                            projectTeam[empId].rate += parseFloat(wTrack.rate);
+                                            projectTeam[empId].hours += parseFloat(wTrack.worked);
+                                            projectTeam[empId].revenue += parseFloat((wTrack.revenue / 100).toFixed(2));
+                                        } else {
+                                            projectTeam[empId] = {};
+
+                                            if (wTrack.department._id.toString() === '55b92ace21e4b7c40f000011'){
+                                                projectTeam[empId].byQA = {};
+                                                projectTeam[empId].byQA.revenue = parseFloat(wTrack.revenue);
+                                                projectTeam[empId].byQA.hours = parseFloat(wTrack.worked);
+                                            }
+                                            projectTeam[empId].profit = parseFloat(((wTrack.revenue - wTrack.cost) / 100).toFixed(2));
+                                            projectTeam[empId].cost = parseFloat((wTrack.cost / 100).toFixed(2));
+                                            projectTeam[empId].rate = parseFloat(wTrack.rate);
+                                            projectTeam[empId].hours = parseFloat(wTrack.worked);
+                                            projectTeam[empId].revenue = parseFloat((wTrack.revenue / 100).toFixed(2));
+                                        }
+                                    }
                                 });
+                            });
 
-                                budget = {
-                                    projectTeam: response,
-                                    bonus: bonus,
-                                    budget: sortBudget,
-                                    projectValues: projectValues,
-                                    budgetTotal: budgetTotal
-                                };
 
-                                Project.update({_id: project._id}, {$set: {budget: budget}}, function (err, result) {
+                            keys = Object.keys(projectTeam);
+                            if (keys.length > 0) {
+
+                                keys.forEach(function (key) {
+                                    budgetTotal.profitSum += parseFloat(projectTeam[key].profit);
+                                    budgetTotal.costSum += parseFloat(projectTeam[key].cost);
+                                    budgetTotal.hoursSum += parseFloat(projectTeam[key].hours);
+                                    budgetTotal.revenueSum += parseFloat(projectTeam[key].revenue);
+                                    budgetTotal.revenueByQA += parseFloat(projectTeam[key].byQA ? projectTeam[key].byQA.revenue / 100 : 0);
+                                    budgetTotal.hoursByQA += parseFloat(projectTeam[key].byQA ? projectTeam[key].byQA.hours : 0);
+                                });
+                                budgetTotal.rateSum = {};
+                                var value = budgetTotal.revenueByQA / budgetTotal.hoursByQA;
+                                budgetTotal.rateSum.byQA = value? value : 0;
+                                budgetTotal.rateSum.byDev = ((parseFloat(budgetTotal.revenueSum) - budgetTotal.revenueByQA)) / (budgetTotal.hoursSum - parseInt(budgetTotal.hoursByQA)) ;
+
+                                projectValues.revenue = budgetTotal.revenueSum;
+                                projectValues.profit = budgetTotal.profitSum;
+                                projectValues.markUp = ((budgetTotal.profitSum / budgetTotal.costSum) * 100);
+                                if (!isFinite(projectValues.markUp)){
+                                    projectValues.markUp = 0;
+                                }
+                                projectValues.radio = ((budgetTotal.profitSum / budgetTotal.revenueSum) * 100);
+                                if (!isFinite(projectValues.radio)){
+                                    projectValues.radio = 0;
+                                }
+
+                                var empQuery = Employee.find({_id: {$in: keys}}, {
+                                    'name': 1,
+                                    'jobPosition.name': 1,
+                                    'department.name': 1
+                                }).lean();
+                                empQuery.exec(function (err, response) {
+
                                     if (err) {
                                         console.log(err);
                                     }
 
-                                    //console.log('success');
-                                })
-                            });
-                        }
+                                    bonuses.forEach(function (element) {
+                                        var objToSave = {};
+
+                                        objToSave.bonus = 0;
+                                        objToSave.resource = element.employeeId.name.first + ' ' + element.employeeId.name.last;
+                                        objToSave.percentage = element.bonusId.name;
+
+                                        if (element.bonusId.isPercent) {
+                                            objToSave.bonus = (budgetTotal.revenueSum / 100) * element.bonusId.value * 100;
+                                            bonus.push(objToSave);
+                                        } else {
+                                            monthHours.forEach(function (month) {
+                                                objToSave.bonus += (hoursByMonth[month._id] / month.value[0]) * element.bonusId.value;
+                                            });
+
+                                            objToSave.bonus = objToSave.bonus * 100;
+                                            bonus.push(objToSave);
+                                        }
+
+                                    });
+
+                                    keysForPT = Object.keys(projectTeam);
+
+                                    response.forEach(function (employee) {
+                                        keysForPT.forEach(function (id) {
+                                            if ((employee._id).toString() === id) {
+                                                sortBudget.push(projectTeam[id]);
+                                            }
+                                        })
+                                    });
+
+                                    budget = {
+                                        projectTeam: response,
+                                        bonus: bonus,
+                                        budget: sortBudget,
+                                        projectValues: projectValues,
+                                        budgetTotal: budgetTotal
+                                    };
+
+                                    Project.update({_id: project._id}, {$set: {budget: budget}}, function (err, result) {
+                                        if (err) {
+                                            console.log(err);
+                                        }
+
+                                        //console.log('success');
+                                    })
+                                });
+                            }
+                        });
                     });
-                });
+
                 console.log('success');
             });
 

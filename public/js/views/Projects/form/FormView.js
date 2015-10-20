@@ -364,9 +364,11 @@ define([
                 _.bindAll(this, 'getWTrack');
                 _.bindAll(this, 'renderProformRevenue');
 
+
                 paralellTasks = [this.getInvoice, this.getWTrack, this.getQuotations, this.getOrders];
 
                 async.parallel(paralellTasks, function (err, result) {
+                    self.renderProformRevenue();
                     //self.getDataForDetails(result);
                 });
 
@@ -526,8 +528,11 @@ define([
                     filter  : filter
                 });
 
+                var callback = _.once(cb);
+
 
                 function createView() {
+                    callback();
                     new wTrackView({
                         model: self.wCollection
                     }).render();
@@ -623,6 +628,8 @@ define([
                 });
 
                 function createView() {
+
+                    cb();
                     new QuotationView({
                         collection: self.qCollection,
                         projectId : self.id,
@@ -630,9 +637,9 @@ define([
                         projectManager: self.formModel.toJSON().projectmanager
                     }).render();
 
-                    self.renderProformRevenue();
-                };
 
+                   // self.renderProformRevenue();
+                };
                 this.qCollection.bind('reset', createView);
                 this.qCollection.bind('add', self.renderProformRevenue);
             },
@@ -659,6 +666,7 @@ define([
                 });
 
                 function createView() {
+                    cb();
                     new oredrView({
                         collection: self.ordersCollection,
                         projectId : self.id,
@@ -666,9 +674,7 @@ define([
                         projectManager: self.formModel.toJSON().projectmanager
                     }).render();
 
-                    self.renderProformRevenue();
                 };
-
                 this.ordersCollection.bind('reset', createView);
                 this.ordersCollection.bind('add', self.renderProformRevenue);
             },
