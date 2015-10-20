@@ -32,6 +32,33 @@ define([
             this.projectManager = options.projectManager;
         },
 
+        chooseOption: function (e) {
+            var target$ = $(e.target);
+            var targetElement = target$.closest("tr");
+            var parentTd = target$.closest("td");
+            var a = parentTd.find("a");
+            var id = targetElement.attr("data-id");
+            var model = this.collection.get(id);
+
+            model.save({
+                workflow: {
+                    _id: target$.attr("id"),
+                    name:target$.text()
+                }}, {
+                headers : {
+                    mid: 55
+                },
+                patch   : true,
+                validate: false,
+                success : function () {
+                    a.text(target$.text())
+                }
+            });
+
+            this.hideNewSelect();
+            return false;
+        },
+
         removeItems: function (event) {
             event.preventDefault();
 
@@ -148,9 +175,9 @@ define([
             });
 
             dataService.getData("/workflow/fetch", {
-                wId         : 'Purchase Order',
-                source      : 'purchase',
-                targetSource: 'quotation'
+                wId: 'Sales Order',
+                source: 'purchase',
+                targetSource: 'order'
             }, function (stages) {
                 self.stages = stages;
             });
