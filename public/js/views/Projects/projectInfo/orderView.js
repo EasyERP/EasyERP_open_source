@@ -14,7 +14,7 @@ define([
 ], function (ListTemplate, lisHeader, stagesTemplate, editView, listView, orderModel, dataService, common) {
     var orderView = listView.extend({
 
-        el: '#oredrs',
+        el: '#orders',
         templateList: _.template(ListTemplate),
         templateHeader: _.template(lisHeader),
 
