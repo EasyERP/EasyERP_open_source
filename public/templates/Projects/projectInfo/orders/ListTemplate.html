@@ -1,51 +1,18 @@
-<div>
-    <table class="list task-list">
-        <col width="2%">
-        <col width="2%">
-        <col width="10%">
-        <col width="10%">
-        <col width="10%">
-        <col width="15%">
-        <col width="10%">
-        <col width="10%">
+<% orderCollection.forEach(function(order, index){ %>
+  <tr data-id="<%=order._id%>"
+  <%if (order.workflow && order.workflow.status === 'Cancelled') { %>
+   class="canceledListItem"
+  <%}%>>
+  <td class = "notForm"><input type="checkbox" value="<%=order._id%>" class="checkbox" /></td>
+  <td><%=startNumber + index + 1%></td>
+  <td><%=order.project ? order.project.projectName : '------'%></td>
+  <td><%=order.orderDate%></td>
+  <td><%=(order.supplier) ? order.supplier.name : '------'%></td>
+  <td><%=(order.project) ? order.project.projectmanager.name : '------'%></td>
+  <td class="total"><%=(order.paymentInfo) ? order.paymentInfo.total.toFixed(2) : '0'%></td>
+  <td id='<%=order._id%>'>
+    <a href="javascript:;" class="stageSelect"><%=order.workflow ? order.workflow.name: 'Undefinded'%></a>
+  </td>
+  </tr>
+<% }) %>
 
-        <thead>
-        <tr>
-            <th><input type="checkbox" id="check_all"/></th>
-            <th>N</th>
-            <th class="oe_sortable" data-sort="name">Project<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
-            <th class="oe_sortable" data-sort="orderDate">Date<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
-            <th class="oe_sortable" data-sort="supplier">Customer<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
-            <th class="oe_sortable" data-sort="salesPerson">Sales Person<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
-            <th class="oe_sortable sortDn" data-sort="paymentInfo.total">Total<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
-            <th class="oe_sortable" data-sort="workflow">Status<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
-        </tr>
-        </thead>
-        <tbody id="listTable">
-
-        <% orderCollection.forEach(function(order, index){ %>
-          <tr data-id="<%=order._id%>"
-          <%if (order.workflow && order.workflow.status === 'Cancelled') { %>
-            class="canceledListItem"
-          <%}%>>
-          <td class = "notForm"><input type="checkbox" value="<%=order._id%>" class="checkbox" /></td>
-          <td><%=startNumber + index + 1%></td>
-          <td><%=order.project ? order.project.projectName : '------'%></td>
-          <td><%=order.orderDate%></td>
-          <td><%=(order.supplier) ? order.supplier.name : '------'%></td>
-          <td><%=(order.project) ? order.project.projectmanager.name : '------'%></td>
-          <td class="total"><%=(order.paymentInfo) ? order.paymentInfo.total.toFixed(2) : '0'%></td>
-          <td id='<%=order._id%>'>
-            <a href="javascript:;" class="stageSelect"><%=order.workflow ? order.workflow.name: 'Undefinded'%></a>
-          </td>
-          </tr>
-        <% }) %>
-        </tbody>
-    </table>
-</div>

@@ -360,10 +360,11 @@ define([
 
                 thisEl.find('#createBonus').hide();
                 _.bindAll(this, 'getQuotations');
+                _.bindAll(this, 'getOrders');
                 _.bindAll(this, 'getWTrack');
                 _.bindAll(this, 'renderProformRevenue');
 
-                paralellTasks = [this.getInvoice, this.getWTrack, this.getQuotations];
+                paralellTasks = [this.getInvoice, this.getWTrack, this.getQuotations, this.getOrders];
 
                 async.parallel(paralellTasks, function (err, result) {
                     //self.getDataForDetails(result);
@@ -617,7 +618,7 @@ define([
                 this.qCollection = new quotationCollection({
                     count      : 50,
                     viewType   : 'list',
-                    contentType: 'Quotation',
+                    contentType: 'salesQuotation',
                     filter     : filter
                 });
 
@@ -653,12 +654,12 @@ define([
                 this.ordersCollection = new quotationCollection({
                     count      : 50,
                     viewType   : 'list',
-                    contentType: 'Quotation',
+                    contentType: 'salesOrder',
                     filter     : filter
                 });
 
                 function createView() {
-                    new QuotationView({
+                    new oredrView({
                         collection: self.ordersCollection,
                         projectId : self.id,
                         customerId: self.formModel.toJSON().customer._id,
@@ -684,7 +685,7 @@ define([
                 var orderSum = 0;
 
                 ordersCollectionJSON.forEach(function(element) {
-                    orderSum += element.paymentInfo.total;
+                   // orderSum += element.paymentInfo.total;
                 });
 
                 qCollectionJSON.forEach(function(element) {
