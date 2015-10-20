@@ -1,10 +1,10 @@
 define([
-        'text!templates/Salary/subSalary/list/ListHeader.html',
-        'text!templates/Salary/subSalary/list/cancelEdit.html',
-        'views/Salary/subSalary/CreateView',
-        'views/Salary/subSalary/list/ListItemView',
-        'text!templates/Salary/subSalary/list/ListTotal.html',
-        'collections/Salary/editCollection',
+        'text!templates/Payroll/subSalary/list/ListHeader.html',
+        'text!templates/Payroll/subSalary/list/cancelEdit.html',
+        'views/Payroll/subSalary/CreateView',
+        'views/Payroll/subSalary/list/ListItemView',
+        'text!templates/Payroll/subSalary/list/ListTotal.html',
+        'collections/Payroll/editCollection',
         'collections/Employees/employee',
         'models/SalaryModel',
         'populate',
@@ -350,7 +350,7 @@ define([
                 this.editCollection.on('saved', this.savedNewModel, this);
                 this.editCollection.on('updated', this.updatedOptions, this);
 
-                dataService.getData('/salary/recalculateSalaryCash', {}, function (response, context) {
+                dataService.getData('/payroll/recalculateSalaryCash', {}, function (response, context) {
                     context.listLength = response.count || 0;
                 }, this);
             },
@@ -453,7 +453,7 @@ define([
                 this.bodyContainer = $(this.bodyContainerId);
                 this.getTotal();
 
-                dataService.getData('/salary/recalculateSalaryCash', {}, function (response, context) {
+                dataService.getData('/payroll/recalculateSalaryCash', {}, function (response, context) {
                     context.listLength = response.count || 0;
                 }, this);
             },

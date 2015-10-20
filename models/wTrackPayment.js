@@ -88,7 +88,7 @@ module.exports = (function () {
         db.collection('Invoice').findOneAndUpdate({
                 _id: doc.invoice._id
             },
-            //[['name', 1]],
+            [['name', 1]],
             {
                 $set: {paymentDate: new Date()}
             },

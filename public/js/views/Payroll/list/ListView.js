@@ -1,11 +1,11 @@
 define([
         'views/listViewBase',
-        'text!templates/Salary/list/ListHeader.html',
-        'views/Salary/list/ListItemView',
-        'views/Salary/subSalary/list/ListView',
+        'text!templates/Payroll/list/ListHeader.html',
+        'views/Payroll/list/ListItemView',
+        'views/Payroll/subSalary/list/ListView',
         'models/SalaryModel',
-        'collections/Salary/filterCollection',
-        'collections/Salary/editCollection',
+        'collections/Payroll/filterCollection',
+        'collections/Payroll/editCollection',
         'views/Filter/FilterView',
         'common',
         'dataService',
@@ -19,10 +19,10 @@ define([
             contentCollection: contentCollection,
             filterView       : filterView,
 
-            contentType             : 'Salary',//need
-            totalCollectionLengthUrl: '/salary/totalCollectionLength',
+            contentType             : 'Payroll',//need
+            totalCollectionLengthUrl: '/payroll/totalCollectionLength',
             page                    : null, //if reload page, and in url is valid page
-            contentType             : 'Salary',//needs in view.prototype.changeLocationHash
+            contentType             : 'Payroll',//needs in view.prototype.changeLocationHash
 
             events: {
                 "click .mainCB"                                                                  : "checked",
@@ -124,7 +124,7 @@ define([
                     self.newCollection.save();
                 }
 
-                dataService.getData('/salary/checkDataKey', {'dataKey': dataKey}, function (response) {
+                dataService.getData('/payroll/checkDataKey', {'dataKey': dataKey}, function (response) {
                     if (!response.count) {
                         save();
                     } else {

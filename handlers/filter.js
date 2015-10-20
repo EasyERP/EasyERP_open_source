@@ -38,10 +38,10 @@ var Filters = function (models) {
                 supplierPayments: getSupplierPaymentsFiltersValues,
                 Product         : getProductsFiltersValues,
                 salesProduct    : getProductsFiltersValues,
-                Quotation       : getQuotationFiltersValues,
+               // Quotation       : getQuotationFiltersValues,
                 salesQuotation       : getSalesQuotation,
-                salesOrder      : getSalesOrders,
-                Order      : getOrdersFiltersValues
+                salesOrder      : getSalesOrders
+               // Order      : getOrdersFiltersValues
             },
             function (err, result) {
                 if (err) {
@@ -615,7 +615,8 @@ var Filters = function (models) {
             Quotation.aggregate([
                 {
                     $match: {
-                        forSales: false
+                        forSales: false,
+                        isOrder: false
                     }
                 },
                 {
@@ -654,7 +655,8 @@ var Filters = function (models) {
             Quotation.aggregate([
                 {
                     $match: {
-                        forSales: true
+                        forSales: true,
+                        isOrder: false
                     }
                 },
                 {

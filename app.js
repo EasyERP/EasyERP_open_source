@@ -32,7 +32,9 @@ module.exports = function (mainDb, dbsNames) {
     var allowCrossDomain = function (req, res, next) {
         var browser = req.headers['user-agent'];
 
-        if (/Trident/.test(browser)) {
+       /* console.log(browser);*/
+
+        if (/Trident|Edge/.test(browser)) {
             res.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
         }
 
@@ -62,6 +64,7 @@ module.exports = function (mainDb, dbsNames) {
     app.use(bodyParser.urlencoded({extended: false, limit: 1024 * 1024 * 200}));
     app.use(cookieParser("CRMkey"));
     app.use(express.static(path.join(__dirname, 'public')));
+
 
     app.use(session({
         name             : 'crm',
