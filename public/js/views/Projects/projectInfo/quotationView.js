@@ -42,7 +42,7 @@ define([
             model.urlRoot = '/quotation/form/' + id;
             model.fetch({
                 success: function (model) {
-                    new editView({model: model});
+                    new editView({model: model, redirect: true, pId: self.projectID, customerId: self.customerId});
                 },
                 error  : function () {
                     alert('Please refresh browser');

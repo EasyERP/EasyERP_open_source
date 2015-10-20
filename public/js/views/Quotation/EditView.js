@@ -2,13 +2,15 @@ define([
         "text!templates/Quotation/EditTemplate.html",
         'views/Assignees/AssigneesView',
         'views/Product/InvoiceOrder/ProductItems',
+        'views/Projects/projectInfo/orderView',
+        'collections/Quotation/filterCollection',
         "common",
         "custom",
         "dataService",
         "populate",
         'constants'
     ],
-    function (EditTemplate, AssigneesView, ProductItemView, common, Custom, dataService, populate, CONSTANTS) {
+    function (EditTemplate, AssigneesView, ProductItemView, ordersView, quotationCollection, common, Custom, dataService, populate, CONSTANTS) {
 
         var EditView = Backbone.View.extend({
             contentType: "Quotation",
@@ -137,7 +139,45 @@ define([
                             success: function () {
                                 var redirectUrl = self.forSales ? "easyErp/salesOrder" : "easyErp/Order";
 
-                                Backbone.history.navigate(redirectUrl, {trigger: true});
+                                if (self.redirect){
+                                    //var url = window.location.hash;
+                                    //
+                                    //Backbone.history.fragment = '';
+                                    //Backbone.history.navigate(url, {trigger: true});
+                                    var filter = {
+                                        'projectName': {
+                                            key  : 'project._id',
+                                            value: [self.pId]
+                                        },
+                                        'isOrder': {
+                                            key  : 'isOrder',
+                                            value: ['true']
+                                        }
+                                    };
+
+                                    self.ordersCollection = new quotationCollection({
+                                        count      : 50,
+                                        viewType   : 'list',
+                                        contentType: 'salesOrder',
+                                        filter     : filter
+                                    });
+
+                                    function createView() {
+
+                                        new ordersView({
+                                            collection: self.ordersCollection,
+                                            projectId : self.pId,
+                                            customerId: self.customerId,
+                                            projectManager: self.projectManager
+                                        }).render({activeTab: true});
+                                    };
+
+                                    self.ordersCollection.bind('reset', createView);
+
+                                } else {
+                                    Backbone.history.navigate(redirectUrl, {trigger: true});
+                                }
+
                             }
                         });
                     } else {

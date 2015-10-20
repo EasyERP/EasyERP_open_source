@@ -33,10 +33,102 @@ define([
             this.projectManager = options.projectManager;
         },
 
-        render: function () {
+        removeItems: function (event) {
+            event.preventDefault();
+
+            var answer = confirm("Realy DELETE items ?!");
+
+            var that = this;
+            var mid = 39;
+            var model;
+            var localCounter = 0;
+            var listTableCheckedInput;
+            var count;
+            var table = $("#oredTable")
+
+            listTableCheckedInput = table.find("input:not('#check_all_orders'):checked");
+            count = listTableCheckedInput.length;
+            this.collectionLength = this.collection.length;
+
+            if (answer == true) {
+                $.each(listTableCheckedInput, function (index, checkbox) {
+                    model = that.collection.get(checkbox.value);
+                    model.destroy({
+                        headers: {
+                            mid: mid
+                        },
+                        wait   : true,
+                        success: function (model) {
+                            var id = model.get('_id');
+
+                            table.find('[data-id="' + id + '"]').remove();
+
+                            //that.deleteItemsRender(that.deleteCounter, that.deletePage);
+                        },
+                        error  : function (model, res) {
+                            if (res.status === 403 && index === 0) {
+                                alert("You do not have permission to perform this action");
+                            }
+                            that.listLength--;
+                            count--;
+                            if (count === 0) {
+                                that.deleteCounter = localCounter;
+                                that.deletePage = $("#currentShowPage").val();
+                                that.deleteItemsRender(that.deleteCounter, that.deletePage);
+                            }
+                        }
+                    });
+                });
+            }
+
+        },
+
+        checked: function (e) {
+            if (this.collection.length > 0) {
+                var checkLength = $("input.checkbox:checked").length;
+
+                if ($("input.checkbox:checked").length > 0) {
+                    $("#removeOrder").show();
+                    $('#check_all_orders').prop('checked', false);
+
+                    if (checkLength == this.collection.length) {
+                        $('#check_all_orders').prop('checked', true);
+                    }
+                }
+                else {
+                    $("#removeOrder").hide();
+                    $('#check_all_orders').prop('checked', false);
+                }
+            }
+        },
+
+        hideDialog: function () {
+            $(".edit-dialog").remove();
+        },
+
+        render: function (options) {
             var currentEl = this.$el;
             var self  = this;
+            var tabs;
+            var dialogHolder;
+            var n;
+            var target;
 
+            if (options && options.activeTab){
+                self.hideDialog();
+
+                tabs = $(".chart-tabs");
+                target =  tabs.find('#ordersTab');
+
+                target.closest(".chart-tabs").find("a.active").removeClass("active");
+                target.addClass("active");
+                n = target.parents(".chart-tabs").find("li").index(target.parent());
+                dialogHolder = $(".dialog-tabs-items");
+                dialogHolder.find(".dialog-tabs-item.active").removeClass("active");
+                dialogHolder.find(".dialog-tabs-item").eq(n).addClass("active");
+            }
+
+            currentEl.html('');
             currentEl.prepend(this.templateHeader);
 
             currentEl.find('#listTableOrder').html(this.templateList({
@@ -50,9 +142,9 @@ define([
             $('#check_all_orders').click(function () {
                 $(':checkbox').prop('checked', this.checked);
                 if ($("input.checkbox:checked").length > 0) {
-                    $("#removeOredr").show();
+                    $("#removeOrder").show();
                 } else {
-                    $("#removeOredr").hide();
+                    $("#removeOrder").hide();
                 }
             });
 
@@ -63,6 +155,9 @@ define([
             }, function (stages) {
                 self.stages = stages;
             });
+
+
+
         }
     });
 
