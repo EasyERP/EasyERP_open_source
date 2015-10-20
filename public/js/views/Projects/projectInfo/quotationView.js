@@ -1,12 +1,16 @@
 define([
     'text!templates/Projects/projectInfo/quotations/quotationTemplate.html',
     'text!templates/Projects/projectInfo/quotations/ListTemplate.html',
-    'views/listViewBase',
+    'text!templates/stages.html',
+    'views/salesQuotation/EditView',
+    'views/salesQuotation/list/ListView',
     'views/Projects/projectInfo/quotations/CreateView',
+    'models/QuotationModel',
     'common',
-    'helpers'
+    'helpers',
+    'dataService'
 
-], function (quotationTopBar, ListTemplate, listView, quotationCreateView, common, helpers) {
+], function (quotationTopBar, ListTemplate, stagesTemplate, editView, listView, quotationCreateView, currentModel, common, helpers, dataService) {
     var quotationView = listView.extend({
 
         el            : '#quotations',
@@ -16,7 +20,9 @@ define([
         events: {
             "click .checkbox"       : "checked",
             "click #createQuotation": "createQuotation",
-            "click #removeQuotation": "removeItems"
+            "click #removeQuotation": "removeItems",
+            "click  .list tbody td:not(.notForm)": "goToEditDialog",
+            "click .stageSelect"                 : "showNewSelect"
         },
 
         initialize: function (options) {
@@ -24,6 +30,24 @@ define([
             this.projectID = options.projectId;
             this.customerId = options.customerId;
             this.projectManager = options.projectManager;
+        },
+
+        goToEditDialog: function (e) {
+            e.preventDefault();
+            var self = this;
+
+            var id = $(e.target).closest("tr").attr("data-id");
+            var model = new currentModel({validate: false});
+
+            model.urlRoot = '/quotation/form/' + id;
+            model.fetch({
+                success: function (model) {
+                    new editView({model: model});
+                },
+                error  : function () {
+                    alert('Please refresh browser');
+                }
+            });
         },
 
         removeItems: function (event) {
@@ -108,6 +132,7 @@ define([
 
         render: function () {
             var currentEl = this.$el;
+            var self  = this;
 
             currentEl.prepend(this.templateHeader);
 
@@ -126,6 +151,14 @@ define([
                 } else {
                     $("#removeQuotation").hide();
                 }
+            });
+
+            dataService.getData("/workflow/fetch", {
+                wId         : 'Purchase Order',
+                source      : 'purchase',
+                targetSource: 'quotation'
+            }, function (stages) {
+                self.stages = stages;
             });
         }
 
