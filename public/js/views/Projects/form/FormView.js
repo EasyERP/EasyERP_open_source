@@ -685,7 +685,7 @@ define([
                 var orderSum = 0;
 
                 ordersCollectionJSON.forEach(function(element) {
-                   // orderSum += element.paymentInfo.total;
+                    orderSum += element.paymentInfo.total;
                 });
 
                 qCollectionJSON.forEach(function(element) {
