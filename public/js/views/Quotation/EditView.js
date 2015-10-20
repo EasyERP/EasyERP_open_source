@@ -342,7 +342,7 @@ define([
                             var url = window.location.hash;
 
                             self.hideDialog();
-                            
+
                             Backbone.history.fragment = '';
                             Backbone.history.navigate(url, {trigger: true});
                         },
