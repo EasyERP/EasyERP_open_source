@@ -38,10 +38,10 @@ var Filters = function (models) {
                 supplierPayments: getSupplierPaymentsFiltersValues,
                 Product         : getProductsFiltersValues,
                 salesProduct    : getProductsFiltersValues,
-               // Quotation       : getQuotationFiltersValues,
+                Quotation       : getQuotationFiltersValues,
                 salesQuotation       : getSalesQuotation,
-                salesOrder      : getSalesOrders
-               // Order      : getOrdersFiltersValues
+                salesOrder      : getSalesOrders,
+                Order      : getOrdersFiltersValues
             },
             function (err, result) {
                 if (err) {
@@ -645,6 +645,8 @@ var Filters = function (models) {
                 if (result && result.length > 0) {
                     result = result[0];
                     callback(null, result);
+                } else {
+                    callback(null, []);
                 }
 
 
@@ -696,6 +698,8 @@ var Filters = function (models) {
                 if (result && result.length){
                     result = result[0];
                     callback(null, result);
+                } else {
+                    callback(null, []);
                 }
 
             });
@@ -746,6 +750,8 @@ var Filters = function (models) {
                 if (result && result.length){
                     result = result[0];
                     callback(null, result);
+                } else {
+                    callback(null, []);
                 }
 
             });
@@ -796,6 +802,8 @@ var Filters = function (models) {
                 if (result && result.length){
                     result = result[0];
                     callback(null, result);
+                } else {
+                    callback(null, []);
                 }
 
             });
