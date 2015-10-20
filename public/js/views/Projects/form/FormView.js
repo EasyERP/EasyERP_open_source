@@ -619,24 +619,6 @@ define([
                         value: [this.id]
                     }
                 };
-                var filterOrder = {
-                    'projectName': {
-                        key  : 'project._id',
-                        value: [this.id]
-                    },
-                    'isOrder': {
-                        key  : 'isOrder',
-                        value: ['true']
-                    }
-                };
-
-                this.ordersCollection = new quotationCollection({
-                    count      : 50,
-                    viewType   : 'list',
-                    contentType: 'salesOrder',
-                    filter     : filterOrder
-                });
-
 
                 this.qCollection = new quotationCollection({
                     count      : 50,

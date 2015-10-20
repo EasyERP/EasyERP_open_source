@@ -43,6 +43,10 @@ define([
             model.fetch({
                 success: function (model) {
                     new editView({model: model, redirect: true, pId: self.projectID, customerId: self.customerId});
+
+                    self.collection.remove(id);
+                    self.render();
+
                 },
                 error  : function () {
                     alert('Please refresh browser');
@@ -134,6 +138,7 @@ define([
             var currentEl = this.$el;
             var self  = this;
 
+            currentEl.html('');
             currentEl.prepend(this.templateHeader);
 
             currentEl.find('#listTableQuotation').html(this.templateList({

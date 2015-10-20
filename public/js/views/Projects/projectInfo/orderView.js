@@ -20,8 +20,7 @@ define([
 
         events: {
             "click .checkbox": "checked",
-            "click #createQuotation": "createQuotation",
-            "click #removeQuotation": "removeItems",
+            "click #removeOrder": "removeItems",
             "click  .list tbody td:not(.notForm)": "goToEditDialog",
             "click .stageSelect": "showNewSelect"
         },
@@ -44,7 +43,7 @@ define([
             var localCounter = 0;
             var listTableCheckedInput;
             var count;
-            var table = $("#oredTable")
+            var table = $("#ordersTable");
 
             listTableCheckedInput = table.find("input:not('#check_all_orders'):checked");
             count = listTableCheckedInput.length;
