@@ -4543,8 +4543,8 @@ table#workflows tr td.edit-status {
 .createBtnHolder,
 #createBtnHolder {
   float: left;
-  margin-top: 4px;
-  margin-left: 10px;
+  margin-top: 6px;
+  margin-left: 5px;
   /*.add {
         font-size: 22px !important;
         font-weight: 900;
@@ -4553,23 +4553,36 @@ table#workflows tr td.edit-status {
 }
 .createBtnHolder a,
 #createBtnHolder a {
+  float: left;
   display: block;
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   overflow: hidden;
-  margin-right: 2px;
+  margin-right: 3px;
   cursor: pointer;
   vertical-align: baseline;
   color: #393939;
+  line-height: 18px;
 }
 .createBtnHolder a:hover,
 #createBtnHolder a:hover {
   color: #6c6c6c;
 }
+.createBtnHolder .fa,
+#createBtnHolder .fa {
+  font-size: 16px;
+  text-decoration: none;
+  text-align: center;
+}
+.createBtnHolder .fa:before,
+#createBtnHolder .fa:before {
+  line-height: 18px;
+}
 .createBtnHolder ul,
 #createBtnHolder ul {
   overflow: hidden;
-  padding: 0 10px;
+  padding: 0 0 0 10px;
+  float: left;
 }
 .createBtnHolder ul li,
 #createBtnHolder ul li {
@@ -4580,7 +4593,7 @@ table#workflows tr td.edit-status {
 .createBtnHolder ul li a,
 #createBtnHolder ul li a {
   display: inline-block;
-  line-height: 20px;
+  line-height: 18px;
   width: 100%;
   padding: 0 5px;
   margin: 0;

@@ -4027,37 +4027,49 @@ table#workflows {
 
 .createBtnHolder, #createBtnHolder {
   float: left;
-  margin-top: 4px;
-  margin-left: 10px;
+  margin-top: 6px;
+  margin-left: 5px;
   /*.add {
         font-size: 22px !important;
         font-weight: 900;
         line-height: 22px;
     }*/
   a {
+    float: left;
     display: block;
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
     overflow: hidden;
-    margin-right: 2px;
+    margin-right: 3px;
     cursor: pointer;
     vertical-align: baseline;
     color: @creatBtn-color;
+    line-height: 18px;
 
     &:hover {
       color: @creatBtn-color + #333;
     }
   }
+  .fa {
+    font-size: 16px;
+    text-decoration: none;
+    text-align: center;
+    &:before {
+      //vertical-align: baseline;
+      line-height: 18px;
+    }
+  }
   ul {
     overflow: hidden;
-    padding: 0 10px;
+    padding: 0 0 0 10px;
+    float: left;
     li {
       float: left;
       margin-right: 10px;
       border: 1px solid @border-color-main;
       a {
         display: inline-block;
-        line-height: 20px;
+        line-height: 18px;
         width: 100%;
         padding: 0 5px;
         margin: 0;
