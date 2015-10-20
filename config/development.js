@@ -8,6 +8,6 @@ process.env.DB_USER = 'easyErp';
 process.env.DB_PASS = '1q2w3e!@#';
 
 process.env.SOCKET_DB_PORT = 6379;
-process.env.SOCKET_DB_HOST = '192.168.88.250';
-//process.env.SOCKET_DB_HOST = 'localhost';
+//process.env.SOCKET_DB_HOST = '192.168.88.250';
+process.env.SOCKET_DB_HOST = 'localhost';
 process.env.SOCKET_DB = 9;
