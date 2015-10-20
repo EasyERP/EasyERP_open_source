@@ -203,7 +203,7 @@ define([
                             mid: mid
                         },
                         success: function (model) {
-                            self.disableEdit();
+                           // self.disableEdit();
                             var url = window.location.hash;
                             Backbone.history.fragment = "";
                             setTimeout(function () {
@@ -305,6 +305,10 @@ define([
                 var notDiv;
                 var bonusView;
                 var container;
+
+                $("#top-bar-saveBtn").show();
+                $("#createQuotation").show();
+                $("#createBonus").show();
 
                 thisEl.html(templ({model: formModel}));
 
@@ -776,7 +780,7 @@ define([
                         mid: mid
                     },
                     success: function () {
-                        self.disableEdit();
+                       // self.disableEdit();
                         Backbone.history.navigate("#easyErp/Projects/thumbnails", {trigger: true});
                     }
                 });
