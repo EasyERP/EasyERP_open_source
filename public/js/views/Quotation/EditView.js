@@ -27,6 +27,7 @@ define([
                 this.currentModel.urlRoot = "/quotation";
                 this.responseObj = {};
                 this.forSales = false;
+
                 this.render(options);
             },
 
@@ -338,8 +339,12 @@ define([
                         },
                         wait: true,
                         success: function () {
+                            var url = window.location.hash;
+
                             self.hideDialog();
-                            Backbone.history.navigate("easyErp/Quotation", {trigger: true});
+                            
+                            Backbone.history.fragment = '';
+                            Backbone.history.navigate(url, {trigger: true});
                         },
                         error: function (model, xhr) {
                             self.errorNotification(xhr);
