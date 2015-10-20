@@ -67,35 +67,17 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 /*== Revenu ======================================*/
 /*== Notifikation ===============================*/
 /*== Btn Color=====================================*/
-/*== Lights =========================*/
-/*== Borders=========================*/
-/*==Main menu==========================*/
-/*== login panel ====================*/
-/*==Sub MENU, Top-bar =========================*/
-/*== Filters ======================*/
-/*== Customer ======================*/
-/*==LIST ============================*/
-/*==Form Colum=================================*/
-/*== TABS ======================================*/
-/*== Kanab Opportunities=========================*/
-/*== ProjectPM====================================*/
-/*== Vocations ===================================*/
-/*=New User=======================================*/
-/*==DashBoard Vocation============================*/
-/*== forInfo ======================================*/
-/*== Revenu ======================================*/
-/*== Notifikation ===============================*/
 .salary-list tbody#listTable .subRow:hover {
   background-color: transparent;
 }
 .list2 {
-  color: #393939 !important;
+  color: #cdcdcd !important;
   font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
   width: 100%;
   table-layout: fixed;
 }
 .list2 .anotherColor {
-  background-color: #3e88b9;
+  background-color: #66b5d4;
 }
 .list2 tfoot tr {
   border-bottom: 1px solid #7f7f80;
@@ -201,7 +183,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   text-align: right;
   border-right: 1px solid #7f7f80;
   border-bottom: 1px solid #7f7f80;
-  color: #393939;
+  color: #cdcdcd;
   line-height: 20px;
 }
 .list2 tbody tr td.red-border {
@@ -227,10 +209,10 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   width: 100%;
 }
 .list2 tbody tr td a {
-  color: #393939;
+  color: #cdcdcd;
 }
 .list2 tbody tr td a.stageSelect {
-  color: #393939;
+  color: #cdcdcd;
 }
 .list2 tbody tr td a.done {
   color: #00c60b !important;
@@ -255,13 +237,13 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   line-height: 20px;
 }
 .list2 tr:nth-child(odd) {
-  background-color: #dbdbdb;
+  background-color: #3d3d3e;
 }
 .list2 tr:hover {
-  background-color: #cccccc;
+  background-color: #565658;
 }
 .list2 .anotherColor {
-  background-color: #3e88b9;
+  background-color: #66b5d4;
 }
 .list2 tfoot tr {
   border-bottom: 1px solid #7f7f80;
@@ -367,7 +349,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   text-align: right;
   border-right: 1px solid #7f7f80;
   border-bottom: 1px solid #7f7f80;
-  color: #393939;
+  color: #cdcdcd;
   line-height: 20px;
 }
 .list2 tbody tr td.red-border {
@@ -393,10 +375,10 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   width: 100%;
 }
 .list2 tbody tr td a {
-  color: #393939;
+  color: #cdcdcd;
 }
 .list2 tbody tr td a.stageSelect {
-  color: #393939;
+  color: #cdcdcd;
 }
 .list2 tbody tr td a.done {
   color: #00c60b !important;
@@ -421,10 +403,10 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   line-height: 20px;
 }
 .list2 tr:nth-child(odd) {
-  background-color: #dbdbdb;
+  background-color: #3d3d3e;
 }
 .list2 tr:hover {
-  background-color: #cccccc;
+  background-color: #565658;
 }
 .list2 thead th:first-of-type {
   width: 15%;
@@ -450,17 +432,17 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 #forInfo .tableProjects thead th.forCaption {
   text-align: left;
   margin-top: 15px;
-  background-color: #1ebbea;
+  background-color: #66b5d4;
   font-size: 12px;
   line-height: 28px;
   padding: 0 0  0 10px;
-  color: #393939;
+  color: #ffffff;
   position: relative;
-  border-right: 1px solid #1ebbea;
+  border-right: 1px solid #66b5d4;
 }
 #forInfo .tableProjects thead th.forCaption a {
   text-align: right;
-  color: #393939;
+  color: #ffffff;
   position: absolute;
   right: 10px;
   top: 0;
@@ -778,7 +760,7 @@ input::-ms-clear {
   min-height: 40px;
   text-align: left;
   border: 1px solid #7f7f80;
-  background-color: #ffffff;
+  background-color: #303031;
   color: #a9a9a9;
   cursor: move;
   transition: box-shadow 1s ease;
@@ -909,7 +891,7 @@ input::-ms-clear {
   font-size: 13px;
 }
 .kanban .column .columnNameDiv {
-  background: #ffffff;
+  background: #303031;
   height: 35px;
   position: relative;
 }
@@ -946,7 +928,7 @@ input::-ms-clear {
   color: #a9a9a9;
 }
 .kanban .column .columnNameDiv .columnName .text {
-  color: #3e88b9;
+  color: #66b5d4;
 }
 .kanban .column .columnNameDiv.cancelled .columnName {
   border-bottom: 2px solid #FF5454 !important;
@@ -1036,7 +1018,7 @@ input::-ms-clear {
   position: absolute;
   width: 40px;
   border: 0;
-  color: #3e88b9;
+  color: #66b5d4;
   font-size: 18px;
   line-height: 26px;
   float: none;
@@ -1047,7 +1029,7 @@ input::-ms-clear {
   padding: 0;
 }
 .kanban .column.fold .columnNameDiv .columnName .text {
-  color: #3e88b9;
+  color: #66b5d4;
   margin: 0 auto;
   text-align: center;
   position: absolute;
@@ -1066,7 +1048,7 @@ input::-ms-clear {
 }
 .kanban .column.fold:hover .columnNameDiv .columnName .totalCount,
 .kanban .column.fold:hover .columnNameDiv .columnName .text {
-  color: #549ecf;
+  color: #7ccbea;
 }
 .kanban .column.fold:hover .text {
   color: white;
@@ -1089,7 +1071,7 @@ input::-ms-clear {
 }
 .ui-datepicker {
   padding: .2em .2em 0;
-  background-color: #ffffff;
+  background-color: #303031;
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-prev,
 .ui-datepicker .ui-datepicker-header .ui-datepicker-next {
@@ -1134,19 +1116,19 @@ input::-ms-clear {
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-title select {
   width: 49%;
-  color: #c1c1c1;
-  background-color: #ffffff;
+  color: #cdcdcd;
+  background-color: #303031;
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-title select option {
-  background-color: #ffffff;
+  background-color: #565658;
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-title select option:hover {
-  background-color: #ffffff;
+  background-color: #565658;
 }
 .ui-datepicker table.ui-datepicker-calendar tr th {
   padding: .7em .3em;
   text-align: center;
-  color: #393939;
+  color: #cdcdcd;
 }
 .ui-datepicker table.ui-datepicker-calendar tr td {
   width: 15px;
@@ -1154,7 +1136,7 @@ input::-ms-clear {
   padding: 1px;
 }
 .ui-datepicker table.ui-datepicker-calendar tr td a {
-  color: #c1c1c1;
+  color: #cdcdcd;
 }
 .ui-datepicker table.ui-datepicker-calendar tr td a,
 .ui-datepicker table.ui-datepicker-calendar tr td span {
@@ -1166,11 +1148,11 @@ input::-ms-clear {
 .ui-datepicker table.ui-datepicker-calendar tr td a:hover,
 .ui-datepicker table.ui-datepicker-calendar tr td span:hover {
   text-decoration: none;
-  background-color: #ffffff;
+  background-color: #565658;
 }
 .ui-datepicker table.ui-datepicker-calendar tr td a.ui-state-active,
 .ui-datepicker table.ui-datepicker-calendar tr td span.ui-state-active {
-  background-color: #ffffff;
+  background-color: #565658;
 }
 .ui-datepicker table.ui-datepicker-calendar tr td.ui-state-disabled {
   opacity: .35;
@@ -1184,13 +1166,13 @@ input::-ms-clear {
   background-color: inherit !important;
   font-size: 11px;
   font-family: Tahoma, Arial, Helvetica, sans-serif;
-  color: #393939 !important;
+  color: #cdcdcd !important;
   border: 1px solid #7f7f80 !important;
   padding: 5px 15px;
 }
 .dialog-buttons input:hover {
-  border: 1px solid #3e88b9 !important;
-  color: #393939 !important;
+  border: 1px solid #66b5d4 !important;
+  color: #cdcdcd !important;
 }
 .pagination {
   width: 100%;
@@ -1203,13 +1185,13 @@ input::-ms-clear {
 }
 .pagination .countOnPage {
   float: left;
-  color: #393939;
+  color: #cdcdcd;
   margin-left: 5px;
 }
 .pagination .nextPrev {
   float: right;
   margin-right: 5px;
-  color: #393939;
+  color: #cdcdcd;
 }
 .pagination #previousPage,
 .pagination #nextPage,
@@ -1270,7 +1252,7 @@ input::-ms-clear {
   font-size: 12px !important;
 }
 .pagination #pageList {
-  background-color: #ffffff;
+  background-color: #303031;
   border: 1px solid #7f7f80;
   position: absolute;
   bottom: 17px;
@@ -1287,7 +1269,7 @@ input::-ms-clear {
   cursor: pointer;
 }
 .pagination #pageList li:hover {
-  background-color: #3e88b9;
+  background-color: #66b5d4;
   color: white;
   text-decoration: none;
 }
@@ -1310,8 +1292,11 @@ input::-ms-clear {
   display: inline-block;
   padding: 0 5px;
 }
+.pagination .pageList .itemsNumber::hover {
+  border-bottom: 1px solid #66b5d4;
+}
 .pagination .pageList a.selectedItemsNumber {
-  border-bottom: 1px solid blue;
+  border-bottom: 1px solid #66b5d4;
 }
 .pagination .pageList button {
   background-color: white;
@@ -1331,7 +1316,7 @@ input::-ms-clear {
   border-left: none;
 }
 .pagination .pageList ul {
-  background-color: #ffffff;
+  background-color: #303031;
   border: 1px solid #7f7f80;
   position: absolute;
   bottom: 17px;
@@ -1347,7 +1332,7 @@ input::-ms-clear {
   text-align: center;
 }
 .pagination .pageList ul li a:hover {
-  background-color: #3e88b9;
+  background-color: #66b5d4;
   color: white;
   text-decoration: none;
 }
@@ -1426,7 +1411,7 @@ input::-ms-clear {
 }
 .workflow-list li:hover:not(.quickEdit),
 .workflow-sub-list li:hover:not(.quickEdit) {
-  background-color: #ffffff;
+  background-color: #565658;
 }
 .workflow-list li:hover:not(.quickEdit) a,
 .workflow-sub-list li:hover:not(.quickEdit) a {
@@ -1524,7 +1509,7 @@ input::-ms-clear {
   line-height: 20px;
   height: 20px;
   cursor: pointer;
-  color: #3e88b9;
+  color: #66b5d4;
 }
 .input-file input {
   position: absolute;
@@ -1541,7 +1526,7 @@ select:not([type="checkbox"]) {
   padding: 2px 4px;
   border: 1px solid #7f7f80;
   background-color: inherit;
-  color: #393939;
+  color: #cdcdcd;
 }
 input:not([type="checkbox"]):focus,
 textarea:not([type="checkbox"]):focus,
@@ -1550,7 +1535,7 @@ select:not([type="checkbox"]):focus {
   -moz-box-shadow: 0 0 5px rgba(82, 168, 236, 0.5);
   -webkit-box-shadow: 0 0 5px rgba(82, 168, 236, 0.5);
   outline: none;
-  border: 1px solid #3e88b9 !important;
+  border: 1px solid #66b5d4 !important;
 }
 .current-selected {
   font-size: 12px;
@@ -1560,7 +1545,7 @@ select:not([type="checkbox"]):focus {
 .newSelectList {
   position: absolute !important;
   border: solid 1px #7f7f80;
-  background-color: #ffffff;
+  background-color: #303031;
   padding: 3px 0;
   z-index: 100;
   box-shadow: 0 1px 3px rgba(150, 150, 150, 0.7);
@@ -1573,7 +1558,7 @@ select:not([type="checkbox"]):focus {
   cursor: pointer;
   font-size: 12px;
   text-align: left;
-  color: #c1c1c1;
+  color: #cdcdcd;
 }
 .newSelectList li.testing,
 .newSelectList li.analysis {
@@ -1596,7 +1581,7 @@ select:not([type="checkbox"]):focus {
   background-color: #BEF624 !important;
 }
 .newSelectList li:hover {
-  background-color: #ffffff !important;
+  background-color: #3d3d3e !important;
   border: 0 !important;
   color: #FF5A00 !important;
 }
@@ -1653,13 +1638,13 @@ select:not([type="checkbox"]):focus {
   text-decoration: none;
 }
 .btn-list .selected {
-  color: #3e88b9;
+  color: #66b5d4;
 }
 .btn-list .selected a {
   color: white;
 }
 a {
-  color: #393939;
+  color: #cdcdcd;
   text-decoration: none;
 }
 a:hover {
@@ -1669,7 +1654,7 @@ a:focus {
   outline: 0;
 }
 h3 {
-  color: #4d5a75;
+  color: #66b5d4;
   font-size: 18px;
   overflow: hidden;
   white-space: nowrap;
@@ -1777,7 +1762,7 @@ dl dd a.formLink {
   width: 860px;
   max-width: 860px;
   margin: 0 auto;
-  background: #ffffff;
+  background: #303031;
   min-height: 130px;
   display: block;
   position: relative;
@@ -1805,7 +1790,7 @@ dl dd a.formLink {
   padding: 4px 10px;
 }
 .form .compactList li.inner:hover p {
-  color: #393939;
+  color: #cdcdcd;
 }
 .form .compactList li p {
   line-height: 20px !important;
@@ -1833,7 +1818,7 @@ dl dd a.formLink {
   border-top: 1px solid grey;
 }
 .form .formTitle h3 {
-  color: #393939 !important;
+  color: #cdcdcd !important;
   margin: 0;
   font-family: Title;
   font-size: 18px;
@@ -1847,12 +1832,12 @@ dl dd a.formLink {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  color: #393939;
+  color: #cdcdcd;
 }
 .form h3 {
   margin-bottom: 10px;
   display: block;
-  color: #393939;
+  color: #cdcdcd;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -1872,7 +1857,7 @@ dl dd a.formLink {
   display: block;
 }
 .form .mainInfo h3 {
-  color: #393939;
+  color: #cdcdcd;
   font-size: 24px;
   line-height: 30px;
   min-height: 24px;
@@ -2088,7 +2073,7 @@ dl dd a.formLink {
 .form #cancelSpan a,
 .form #saveSpan a,
 .form #editSpan a {
-  color: #3e88b9;
+  color: #cdcdcd;
 }
 .form label {
   display: block;
@@ -2096,7 +2081,7 @@ dl dd a.formLink {
   width: 90%;
   height: 30px;
   line-height: 26px;
-  color: #393939;
+  color: #cdcdcd;
 }
 .form input {
   margin: 2px 2px 2px 0;
@@ -2342,7 +2327,7 @@ dl dd a.formLink {
   width: 98%;
   max-width: 98%;
   margin: 0 auto;
-  background: #ffffff;
+  background: #303031;
   min-height: 130px;
   display: block;
   position: relative;
@@ -2371,7 +2356,7 @@ dl dd a.formLink {
   padding: 4px 10px;
 }
 .formLeftColumn .form .compactList li.inner:hover p {
-  color: #393939;
+  color: #cdcdcd;
 }
 .formLeftColumn .form .compactList li p {
   line-height: 20px !important;
@@ -2399,7 +2384,7 @@ dl dd a.formLink {
   border-top: 1px solid grey;
 }
 .formLeftColumn .form .formTitle h3 {
-  color: #393939 !important;
+  color: #cdcdcd !important;
   margin: 0;
   font-family: Title;
   font-size: 18px;
@@ -2413,12 +2398,12 @@ dl dd a.formLink {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  color: #393939;
+  color: #cdcdcd;
 }
 .formLeftColumn .form h3 {
   margin-bottom: 10px;
   display: block;
-  color: #393939;
+  color: #cdcdcd;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -2438,7 +2423,7 @@ dl dd a.formLink {
   display: block;
 }
 .formLeftColumn .form .mainInfo h3 {
-  color: #393939;
+  color: #cdcdcd;
   font-size: 24px;
   line-height: 30px;
   min-height: 24px;
@@ -2654,7 +2639,7 @@ dl dd a.formLink {
 .formLeftColumn .form #cancelSpan a,
 .formLeftColumn .form #saveSpan a,
 .formLeftColumn .form #editSpan a {
-  color: #3e88b9;
+  color: #cdcdcd;
 }
 .formLeftColumn .form label {
   display: block;
@@ -2662,7 +2647,7 @@ dl dd a.formLink {
   width: 90%;
   height: 30px;
   line-height: 26px;
-  color: #393939;
+  color: #cdcdcd;
 }
 .formLeftColumn .form input {
   margin: 2px 2px 2px 0;
@@ -2679,7 +2664,7 @@ dl dd a.formLink {
 }
 .formLeftColumn .edited-block p,
 .formLeftColumn .edited-block span {
-  color: #393939;
+  color: #cdcdcd;
 }
 #details-dialog {
   display: none;
@@ -2693,7 +2678,7 @@ dl dd a.formLink {
   width: 98%;
   max-width: 98%;
   margin: 0 auto;
-  background: #ffffff;
+  background: #303031;
   min-height: 130px;
   display: block;
   position: relative;
@@ -2722,7 +2707,7 @@ dl dd a.formLink {
   padding: 4px 10px;
 }
 .formRightColumn .form .compactList li.inner:hover p {
-  color: #393939;
+  color: #cdcdcd;
 }
 .formRightColumn .form .compactList li p {
   line-height: 20px !important;
@@ -2750,7 +2735,7 @@ dl dd a.formLink {
   border-top: 1px solid grey;
 }
 .formRightColumn .form .formTitle h3 {
-  color: #393939 !important;
+  color: #cdcdcd !important;
   margin: 0;
   font-family: Title;
   font-size: 18px;
@@ -2764,12 +2749,12 @@ dl dd a.formLink {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  color: #393939;
+  color: #cdcdcd;
 }
 .formRightColumn .form h3 {
   margin-bottom: 10px;
   display: block;
-  color: #393939;
+  color: #cdcdcd;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -2789,7 +2774,7 @@ dl dd a.formLink {
   display: block;
 }
 .formRightColumn .form .mainInfo h3 {
-  color: #393939;
+  color: #cdcdcd;
   font-size: 24px;
   line-height: 30px;
   min-height: 24px;
@@ -3005,7 +2990,7 @@ dl dd a.formLink {
 .formRightColumn .form #cancelSpan a,
 .formRightColumn .form #saveSpan a,
 .formRightColumn .form #editSpan a {
-  color: #3e88b9;
+  color: #cdcdcd;
 }
 .formRightColumn .form label {
   display: block;
@@ -3013,7 +2998,7 @@ dl dd a.formLink {
   width: 90%;
   height: 30px;
   line-height: 26px;
-  color: #393939;
+  color: #cdcdcd;
 }
 .formRightColumn .form input {
   margin: 2px 2px 2px 0;
@@ -3050,7 +3035,7 @@ dl dd a.formLink {
 }
 .noteWrapper > label {
   font-size: 16px;
-  color: #393939;
+  color: #cdcdcd;
 }
 .noteWrapper .addNote {
   margin-top: 6px;
@@ -3119,13 +3104,13 @@ dl dd a.formLink {
   background-color: inherit !important;
   font-size: 11px;
   font-family: Tahoma, Arial, Helvetica, sans-serif;
-  color: #393939 !important;
+  color: #cdcdcd !important;
   border: 1px solid #7f7f80 !important;
   padding: 5px 15px;
 }
 .noteWrapper .addNote.active .buttons input:hover {
-  border: 1px solid #3e88b9 !important;
-  color: #393939 !important;
+  border: 1px solid #66b5d4 !important;
+  color: #cdcdcd !important;
 }
 .noteWrapper .addNote.active .buttons input {
   width: auto;
@@ -3143,11 +3128,11 @@ dl dd a.formLink {
 }
 .noteWrapper .addNote.active .buttons #cancelNote:hover {
   text-decoration: none;
-  border: 1px solid #3e88b9;
+  border: 1px solid #66b5d4;
 }
 .noteWrapper .addNote.active label {
   display: block;
-  color: #393939;
+  color: #cdcdcd;
 }
 .noteWrapper .addNote.active textarea {
   height: 60px;
@@ -3214,7 +3199,7 @@ dl dd a.formLink {
   height: 100%;
 }
 #wrapper {
-  background-color: #ffffff;
+  background-color: #303031;
   width: 100%;
   height: 100%;
   min-width: 100%;
@@ -3237,13 +3222,13 @@ dl dd a.formLink {
 }
 #startLetter .letter {
   padding: 5px 10px;
-  color: #c1c1c1;
+  color: #d5d5d5;
 }
 #startLetter .letter.current {
-  color: #3e88b9;
+  color: #66b5d4;
 }
 #startLetter .letter.empty {
-  color: #dbdbdb;
+  color: #808080;
   cursor: default;
 }
 #startLetter .letter.empty:hover {
@@ -3311,7 +3296,7 @@ dl dd a.formLink {
 .person-info span,
 .customer-info span {
   padding: 0 !important;
-  color: #3e88b9;
+  color: #cdcdcd;
 }
 .settings-info {
   clear: both;
@@ -3367,7 +3352,7 @@ dl dd a.formLink {
   line-height: 20px;
 }
 .customer-info dt {
-  color: #393939;
+  color: #cdcdcd;
 }
 .project-edit-info {
   clear: both;
@@ -3592,7 +3577,7 @@ dl dd a.formLink {
   position: absolute;
   top: 3px;
   right: 3px;
-  color: #3e88b9;
+  color: #66b5d4;
   line-height: 11px;
   width: 12px;
   height: 12px;
@@ -3630,7 +3615,7 @@ dl dd a.formLink {
   height: 24px;
   width: 24px;
   font-family: Icons;
-  color: #393939;
+  color: #4d5a75;
   font-weight: 900;
   font-size: 14px;
   line-height: 30px;
@@ -3670,7 +3655,7 @@ dl dd a.formLink {
 }
 .btn {
   border: 1px solid #7f7f80;
-  color: #ffffff;
+  color: #303031;
   margin: 0;
   padding: 2px 6px;
   line-height: 13px;
@@ -3686,7 +3671,7 @@ dl dd a.formLink {
 }
 button {
   border: 1px solid #7f7f80;
-  color: #ffffff;
+  color: #303031;
   margin: 0;
   padding: 2px 6px;
   line-height: 13px;
@@ -3703,7 +3688,7 @@ button:hover {
 button.red,
 a.red {
   border: 1px solid #7f7f80;
-  color: #ffffff;
+  color: #303031;
   margin: 0;
   padding: 2px 6px;
   line-height: 13px;
@@ -3716,7 +3701,7 @@ a.red {
   -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(155, 155, 155, 0.4) inset;
   -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(155, 155, 155, 0.4) inset;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(155, 155, 155, 0.4) inset;
-  color: #393939;
+  color: #4d5a75;
   line-height: 20px;
 }
 button.red:hover,
@@ -3726,7 +3711,7 @@ a.red:hover {
 }
 button.red:hover,
 a.red:hover {
-  background-color: #3e88b9;
+  background-color: #66b5d4;
   color: #fff;
 }
 #birthdaysList {
@@ -3758,11 +3743,11 @@ a.red:hover {
   font-weight: 300;
   font-size: 30px;
   line-height: 38px;
-  color: #555555;
+  color: #4d5a75;
 }
 .birthday-item .info {
   color: #FFF;
-  background: #555555;
+  background: #4d5a75;
   margin-left: 160px;
   margin-right: 40px;
   position: relative;
@@ -3781,7 +3766,7 @@ a.red:hover {
   width: 0;
   position: absolute;
   pointer-events: none;
-  border-right-color: #555555;
+  border-right-color: #4d5a75;
   border-width: 10px;
   top: 19px;
 }
@@ -3924,14 +3909,14 @@ a.red:hover {
   position: relative;
   z-index: 999;
   border: 1px solid #7f7f80;
-  background-color: #ffffff;
+  background-color: #303031;
 }
 #loginPanel .dropdown-button #loginSelect li {
   height: 20px;
   line-height: 20px;
 }
 #loginPanel .dropdown-button #loginSelect li a {
-  color: #393939;
+  color: #cdcdcd;
 }
 #loginPanel .dropdown-button img {
   float: left;
@@ -3943,13 +3928,13 @@ a.red:hover {
 #loginPanel .dropdown-button span {
   display: block;
   line-height: 30px;
-  color: #393939;
+  color: #cdcdcd;
 }
 #loginPanel .dropdown-button span:hover {
   color: #fff;
 }
 #loginPanel .dropdown-button:hover {
-  background: #3e88b9;
+  background: #66b5d4;
   color: #fff;
 }
 .ui-widget-overlay {
@@ -4098,7 +4083,7 @@ a.red:hover {
   content: '0';
   font-family: Icons;
   font-size: 40px;
-  color: #4d5a75;
+  color: #66b5d4;
 }
 #sourceUsers,
 #targetUsers,
@@ -4231,7 +4216,7 @@ a.red:hover {
   content: '2';
   font-size: 20px;
   line-height: 24px;
-  color: #4d5a75;
+  color: #66b5d4;
   position: absolute;
   left: 2px;
   top: 2px;
@@ -4251,7 +4236,7 @@ a.red:hover {
   display: none;
   width: 16px;
   height: 25px;
-  color: #4d5a75;
+  color: #66b5d4;
   font-size: 16px;
   background: no-repeat 0 50%;
   float: right;
@@ -4264,7 +4249,7 @@ a.red:hover {
   display: none;
   width: 13px;
   height: 25px;
-  color: #4d5a75;
+  color: #66b5d4;
   font-size: 16px;
   background: no-repeat 0 50%;
   float: right;
@@ -4302,7 +4287,7 @@ a.red:hover {
   font-size: 30px;
   line-height: 30px;
   padding-top: 15px;
-  color: #393939;
+  color: #cdcdcd;
 }
 table#workflows {
   width: 40%;
@@ -4373,7 +4358,7 @@ table#workflows tr td.edit-status {
   right: auto;
   bottom: auto;
   width: 100%;
-  background: #ffffff;
+  background: #303031;
   height: 30px;
   padding: 0;
   margin: 0;
@@ -4381,7 +4366,7 @@ table#workflows tr td.edit-status {
 }
 #mainmenu-holder nav {
   float: left;
-  background: #ffffff;
+  background: #303031;
 }
 #mainmenu-holder nav ul {
   padding: 0;
@@ -4393,7 +4378,7 @@ table#workflows tr td.edit-status {
   height: 30px;
   width: 120px;
   text-align: center;
-  color: #393939;
+  color: #cdcdcd;
   line-height: 30px;
   overflow: hidden;
   float: left;
@@ -4402,7 +4387,7 @@ table#workflows tr td.edit-status {
 }
 #mainmenu-holder nav ul li a {
   letter-spacing: 1.5px;
-  color: #393939;
+  color: #cdcdcd;
   font-size: 0.75rem;
   text-decoration: none;
   display: block;
@@ -4423,7 +4408,7 @@ table#workflows tr td.edit-status {
   display: block;
 }
 #mainmenu-holder nav ul li.selected {
-  background-color: #3e88b9;
+  background-color: #66b5d4;
   height: 30px;
   border: 0;
   -webkit-transition: all ease .5s;
@@ -4451,26 +4436,26 @@ table#workflows tr td.edit-status {
 #submenu-holder nav ul li {
   list-style: none;
   font-size: 14px;
-  color: #393939;
+  color: #cdcdcd;
   line-height: 30px;
   float: left;
   display: block;
   width: 120px;
   height: 30px;
   text-align: center;
-  background: #ffffff;
+  background: #303031;
 }
 #submenu-holder nav ul li.hover {
   height: 30px;
   line-height: 30px;
 }
 #submenu-holder nav ul li.hover a {
-  color: #393939;
+  color: #cdcdcd;
   text-decoration: underline;
 }
 #submenu-holder nav ul li a {
   font-family: 'Lato', Helvetica, Arial, sans-serif;
-  color: #393939;
+  color: #cdcdcd;
   font-size: 12px;
   line-height: 30px;
   display: block;
@@ -4498,7 +4483,7 @@ table#workflows tr td.edit-status {
 #top-bar h3 {
   margin: 6px 0 0 0;
   padding: 0 10px;
-  color: #393939 !important;
+  color: #cdcdcd !important;
   font-family: Title;
   font-weight: normal;
   float: left;
@@ -4517,7 +4502,7 @@ table#workflows tr td.edit-status {
 #top-bar-bonus h3 {
   margin: 6px 0 0 0;
   padding: 0 10px;
-  color: #393939 !important;
+  color: #cdcdcd !important;
   font-family: Title;
   font-weight: normal;
   float: left;
@@ -4561,12 +4546,12 @@ table#workflows tr td.edit-status {
   margin-right: 3px;
   cursor: pointer;
   vertical-align: baseline;
-  color: #393939;
+  color: #cdcdcd;
   line-height: 18px;
 }
 .createBtnHolder a:hover,
 #createBtnHolder a:hover {
-  color: #6c6c6c;
+  color: #ffffff;
 }
 .createBtnHolder .fa,
 #createBtnHolder .fa {
@@ -4804,13 +4789,13 @@ ul.dialog-tabs li a {
   text-align: center;
   line-height: 35px;
   text-decoration: none;
-  color: #393939;
+  color: #cdcdcd;
 }
 ul.dialog-tabs li a.active {
   height: 35px;
   line-height: 34px;
   border-bottom: none;
-  background-color: #3e88b9;
+  background-color: #66b5d4;
   color: #ffffff;
 }
 ul.dialog-tabs li.right {
@@ -4863,13 +4848,13 @@ ul.dialog-tabs li.right button {
 }
 .thumbnailwithavatar .info p {
   line-height: 15px;
-  color: #393939;
+  color: #cdcdcd;
 }
 .thumbnailwithavatar .info p a {
-  color: #393939;
+  color: #cdcdcd;
 }
 .thumbnailwithavatar h4 {
-  color: #3e88b9;
+  color: #66b5d4;
   font-size: 13px;
   line-height: 18px;
   font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
@@ -4887,7 +4872,7 @@ ul.dialog-tabs li.right button {
   cursor: pointer;
 }
 .thumbnailwithavatar .title {
-  color: #3e88b9;
+  color: #66b5d4;
   font-size: 13px;
   line-height: 18px;
   font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
@@ -4980,15 +4965,15 @@ ul.dialog-tabs li.right button {
 }
 .thumbnailwithavatar .email,
 .thumbnailwithavatar .company {
-  color: #5184a6;
+  color: #75afc5;
 }
 .list {
-  color: #393939 !important;
+  color: #cdcdcd !important;
   font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
   width: 100%;
 }
 .list .anotherColor {
-  background-color: #3e88b9;
+  background-color: #66b5d4;
 }
 .list tfoot tr {
   border-bottom: 1px solid #7f7f80;
@@ -5094,7 +5079,7 @@ ul.dialog-tabs li.right button {
   text-align: right;
   border-right: 1px solid #7f7f80;
   border-bottom: 1px solid #7f7f80;
-  color: #393939;
+  color: #cdcdcd;
   line-height: 20px;
 }
 .list tbody tr td.red-border {
@@ -5120,10 +5105,10 @@ ul.dialog-tabs li.right button {
   width: 100%;
 }
 .list tbody tr td a {
-  color: #393939;
+  color: #cdcdcd;
 }
 .list tbody tr td a.stageSelect {
-  color: #393939;
+  color: #cdcdcd;
 }
 .list tbody tr td a.done {
   color: #00c60b !important;
@@ -5148,10 +5133,10 @@ ul.dialog-tabs li.right button {
   line-height: 20px;
 }
 .list tr:nth-child(odd) {
-  background-color: #dbdbdb;
+  background-color: #3d3d3e;
 }
 .list tr:hover {
-  background-color: #cccccc;
+  background-color: #565658;
 }
 .thumbnail {
   float: left;
@@ -5159,7 +5144,7 @@ ul.dialog-tabs li.right button {
   margin-left: 4px;
   position: relative;
   display: block;
-  background: #ffffff !important;
+  background: #303031 !important;
   border: 1px solid #7f7f80;
   -webkit-transition: -webkit-transform, -webkit-box-shadow, border 200ms linear;
   width: 280px;
@@ -5174,7 +5159,7 @@ ul.dialog-tabs li.right button {
   position: absolute;
 }
 .thumbnail .dropDown a:hover {
-  color: #3e88b9;
+  color: #66b5d4;
 }
 .thumbnail .viewswitch {
   position: absolute;
@@ -5196,7 +5181,7 @@ ul.dialog-tabs li.right button {
   margin-left: 3px;
 }
 .thumbnail .viewswitch a:hover {
-  border-bottom: 1px solid #4d5a75;
+  border-bottom: 1px solid #66b5d4;
 }
 .thumbnail .inner {
   padding: 5px;
@@ -5214,7 +5199,7 @@ ul.dialog-tabs li.right button {
   text-align: right;
 }
 .thumbnail .bottom .half-block .left label {
-  color: #c1c1c1;
+  color: #cdcdcd;
   line-height: 16px;
 }
 .thumbnail span {
@@ -5258,9 +5243,9 @@ ul.dialog-tabs li.right button {
 }
 .thumbnail:hover {
   border: 1px solid #7f7f80;
-  box-shadow: 0 0 4px #3e88b9;
-  -moz-box-shadow: 0 0 4px #3e88b9;
-  -webkit-box-shadow: 0 0 4px #3e88b9;
+  box-shadow: 0 0 4px #66b5d4;
+  -moz-box-shadow: 0 0 4px #66b5d4;
+  -webkit-box-shadow: 0 0 4px #66b5d4;
 }
 .thumbnail .avatar {
   display: block;
@@ -5311,7 +5296,7 @@ ul.dialog-tabs li.right button {
   width: 180px;
 }
 .thumbnail .project-text span {
-  color: #393939;
+  color: #cdcdcd;
 }
 .thumbnail .project-text span.bold {
   display: block;
@@ -5325,7 +5310,7 @@ ul.dialog-tabs li.right button {
   text-align: center;
 }
 #showMoreDiv #showMore {
-  color: #393939;
+  color: #cdcdcd;
   margin-top: 20px;
   margin-bottom: 5px;
 }
@@ -5344,7 +5329,7 @@ ul.dialog-tabs li.right button {
 }
 .ui-datepicker {
   padding: .2em .2em 0;
-  background-color: #ffffff;
+  background-color: #303031;
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-prev,
 .ui-datepicker .ui-datepicker-header .ui-datepicker-next {
@@ -5389,19 +5374,19 @@ ul.dialog-tabs li.right button {
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-title select {
   width: 49%;
-  color: #c1c1c1;
-  background-color: #ffffff;
+  color: #cdcdcd;
+  background-color: #303031;
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-title select option {
-  background-color: #ffffff;
+  background-color: #565658;
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-title select option:hover {
-  background-color: #ffffff;
+  background-color: #565658;
 }
 .ui-datepicker table.ui-datepicker-calendar tr th {
   padding: .7em .3em;
   text-align: center;
-  color: #393939;
+  color: #cdcdcd;
 }
 .ui-datepicker table.ui-datepicker-calendar tr td {
   width: 15px;
@@ -5409,7 +5394,7 @@ ul.dialog-tabs li.right button {
   padding: 1px;
 }
 .ui-datepicker table.ui-datepicker-calendar tr td a {
-  color: #c1c1c1;
+  color: #cdcdcd;
 }
 .ui-datepicker table.ui-datepicker-calendar tr td a,
 .ui-datepicker table.ui-datepicker-calendar tr td span {
@@ -5421,19 +5406,19 @@ ul.dialog-tabs li.right button {
 .ui-datepicker table.ui-datepicker-calendar tr td a:hover,
 .ui-datepicker table.ui-datepicker-calendar tr td span:hover {
   text-decoration: none;
-  background-color: #ffffff;
+  background-color: #565658;
 }
 .ui-datepicker table.ui-datepicker-calendar tr td a.ui-state-active,
 .ui-datepicker table.ui-datepicker-calendar tr td span.ui-state-active {
-  background-color: #ffffff;
+  background-color: #565658;
 }
 .ui-datepicker table.ui-datepicker-calendar tr td.ui-state-disabled {
   opacity: .35;
 }
 .ui-dialog {
   border: 1px solid #7f7f80;
-  background: #ffffff;
-  color: #393939;
+  background: #303031;
+  color: #cdcdcd;
   z-index: 1000;
   margin: 0 auto;
   -moz-border-radius: 0px;
@@ -5441,7 +5426,7 @@ ul.dialog-tabs li.right button {
   border-radius: 0px;
 }
 .ui-dialog .ui-widget-content a {
-  color: #3e88b9;
+  color: #66b5d4;
 }
 .ui-dialog .avatar {
   display: block;
@@ -5579,7 +5564,7 @@ ul.dialog-tabs li.right button {
 }
 .ui-dialog .inner {
   padding: 5px;
-  background: #ffffff;
+  background: #303031;
 }
 .ui-dialog .form-holder {
   position: relative;
@@ -5807,8 +5792,8 @@ ul.dialog-tabs li.right button {
 }
 .ui-dialog .ui-dialog-buttonpane {
   border: 1px solid #7f7f80;
-  background: #ffffff;
-  color: #393939;
+  background: #303031;
+  color: #cdcdcd;
   text-align: left;
   border-width: 1px 0 0;
   background-image: none;
@@ -5832,11 +5817,11 @@ ul.dialog-tabs li.right button {
 }
 .ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button {
   background-image: none;
-  color: #3e88b9;
+  color: #66b5d4;
   border: 1px solid #7f7f80;
   margin: .5em .4em .5em 0;
   cursor: pointer;
-  background-color: #ffffff;
+  background-color: #303031;
   font-size: 1.2em;
   display: inline-block;
   position: relative;
@@ -5850,12 +5835,12 @@ ul.dialog-tabs li.right button {
 .ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button span {
   display: block;
   line-height: normal;
-  background: #ffffff;
+  background: #303031;
   padding: .4em 1em;
-  color: #3e88b9;
+  color: #66b5d4;
 }
 .ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button span:hover {
-  background: #ececec !important;
+  background: #1d1d1e !important;
 }
 .ui-dialog .ui-helper-clearfix:before,
 .ui-dialog .ui-helper-clearfix:after {
@@ -5912,13 +5897,13 @@ ul.dialog-tabs li.right button {
   background-color: inherit !important;
   font-size: 11px;
   font-family: Tahoma, Arial, Helvetica, sans-serif;
-  color: #393939 !important;
+  color: #cdcdcd !important;
   border: 1px solid #7f7f80 !important;
   padding: 5px 15px;
 }
 .form-holder form .buttons input:hover {
-  border: 1px solid #3e88b9 !important;
-  color: #393939 !important;
+  border: 1px solid #66b5d4 !important;
+  color: #cdcdcd !important;
 }
 .form-holder form label {
   font-weight: normal;
@@ -6003,14 +5988,14 @@ ul.dialog-tabs li.right button {
   font-family: Arial, Helvetica, sans-serif;
   font-size: 12px;
   padding: 2px;
-  color: #393939;
+  color: #cdcdcd;
 }
 .form-holder form input:not([type=checkbox]):focus {
-  box-shadow: 0 0 5px #3e88b9;
-  -moz-box-shadow: 0 0 5px #3e88b9;
-  -webkit-box-shadow: 0 0 5px #3e88b9;
+  box-shadow: 0 0 5px #66b5d4;
+  -moz-box-shadow: 0 0 5px #66b5d4;
+  -webkit-box-shadow: 0 0 5px #66b5d4;
   outline: medium none;
-  border: 1px solid #3e88b9 !important;
+  border: 1px solid #66b5d4 !important;
 }
 .form-holder form .mainInfo {
   width: auto;
@@ -6029,7 +6014,7 @@ ul.dialog-tabs li.right button {
   line-height: 17px;
   float: left;
   max-width: 95%;
-  color: #393939;
+  color: #cdcdcd;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -6041,7 +6026,7 @@ ul.dialog-tabs li.right button {
 #timeRecivingDataFromServer {
   clear: both;
   text-align: center;
-  color: #393939;
+  color: #cdcdcd;
   padding-bottom: 5px;
 }
 .tabs-items {
@@ -6074,13 +6059,13 @@ ul.dialog-tabs li a {
   text-align: center;
   line-height: 35px;
   text-decoration: none;
-  color: #393939;
+  color: #cdcdcd;
 }
 ul.dialog-tabs li a.active {
   height: 35px;
   line-height: 34px;
   border-bottom: none;
-  background-color: #3e88b9;
+  background-color: #66b5d4;
   color: #ffffff;
 }
 ul.dialog-tabs li.right {
@@ -6107,7 +6092,7 @@ ul.dialog-tabs .withEndContract .arrow {
   float: right;
   width: 80px;
   border: 1px solid #7f7f80;
-  color: #ffffff;
+  color: #303031;
   margin: 0;
   padding: 2px 6px;
   line-height: 13px;
@@ -6198,13 +6183,13 @@ ul.chart-tabs li a {
   text-align: center;
   line-height: 35px;
   text-decoration: none;
-  color: #393939;
+  color: #cdcdcd;
 }
 ul.chart-tabs li a.active {
   height: 35px;
   line-height: 34px;
   border-bottom: none;
-  background-color: #3e88b9;
+  background-color: #66b5d4;
   color: #ffffff;
 }
 ul.chart-tabs li.right {
@@ -6234,7 +6219,7 @@ ul.chart-tabs .withEndContract .arrow {
   float: right;
   width: 80px;
   border: 1px solid #7f7f80;
-  color: #ffffff;
+  color: #303031;
   margin: 0;
   padding: 2px 6px;
   line-height: 13px;
@@ -6354,7 +6339,7 @@ ul.chart-tabs .withEndContract .arrow {
   font: 18px sans-serif;
 }
 .y2.label {
-  fill: #3e88b9;
+  fill: #66b5d4;
   font: 18px sans-serif;
 }
 .y2 .tick line {
@@ -6384,7 +6369,7 @@ ul.chart-tabs .withEndContract .arrow {
   margin-left: 5px;
   float: left;
   padding: 5px 10px;
-  color: #393939;
+  color: #4d5a75;
   background-color: #f4f4f4;
   border: 1px solid #7f7f80;
   cursor: pointer;
@@ -6397,7 +6382,7 @@ ul.chart-tabs .withEndContract .arrow {
 .choseDateRange .item.active,
 .choseDateItem .item.active,
 .choseDateRangeSource .item.active {
-  background-color: #3e88b9;
+  background-color: #66b5d4;
   color: white;
 }
 .legend-box {
@@ -6406,7 +6391,7 @@ ul.chart-tabs .withEndContract .arrow {
   height: 32px;
   padding: 3px 0 0;
   margin: -39px auto 0;
-  color: #393939;
+  color: #cdcdcd;
 }
 .legend-box.small {
   width: 255px;
@@ -6447,11 +6432,11 @@ ul.chart-tabs .withEndContract .arrow {
 h3.dashboard {
   text-align: center;
   line-height: 50px;
-  color: #3e88b9;
+  color: #66b5d4;
 }
 .leadChart text,
 .chart text {
-  fill: #393939;
+  fill: #cdcdcd;
 }
 #modulesAccessTable tr th {
   text-align: center;
@@ -6472,7 +6457,7 @@ h3.dashboard {
 #projectPM h2 {
   text-align: center;
   font-size: 18px;
-  color: #3e88b9;
+  color: #66b5d4;
   line-height: 40px;
 }
 #projectPM table {
@@ -6483,7 +6468,7 @@ h3.dashboard {
   padding-left: 3px;
   line-height: 25px;
   height: 25px;
-  color: #c1c1c1;
+  color: #cdcdcd;
 }
 #projectPM table tr th.center {
   text-align: center;
@@ -6501,10 +6486,10 @@ h3.dashboard {
   background-color: green;
 }
 #projectPM table tbody tr td {
-  color: #393939;
+  color: #cdcdcd;
 }
 #projectPM table tbody tr td:first-child {
-  color: #c1c1c1;
+  color: #cdcdcd;
 }
 #projectPM table tbody tr td.procent {
   position: relative;
@@ -6539,11 +6524,11 @@ h3.dashboard {
 }
 #health a.health1,
 .health-wrapper a.health1 {
-  background-color: #3e88b9;
+  background-color: #66b5d4;
 }
 #health a.health2,
 .health-wrapper a.health2 {
-  background-color: #ffa500;
+  background-color: #ffea00;
 }
 #health a.health3,
 .health-wrapper a.health3 {
@@ -6625,10 +6610,10 @@ h3.dashboard {
   margin-top: 8px;
 }
 .avatarInfoContainer.employee .half-block dt {
-  color: #3e88b9;
+  color: #66b5d4;
 }
 .avatarInfoContainer.employee .half-block dd {
-  color: #393939;
+  color: #cdcdcd;
 }
 .stageSelect.pending,
 span.pending {
@@ -6636,7 +6621,7 @@ span.pending {
 }
 .stageSelect.inprogress,
 span.inprogress {
-  color: #3e88b9;
+  color: #66b5d4;
 }
 .stageSelect.closed,
 span.closed,
@@ -7513,7 +7498,7 @@ span.ui-spinner .ui-spinner-up {
 }
 span.ui-spinner .ui-spinner-up:hover {
   text-decoration: none;
-  color: #71bbec;
+  color: #99e8ff;
 }
 span.ui-spinner .ui-spinner-down {
   position: absolute;
@@ -7526,10 +7511,10 @@ span.ui-spinner .ui-spinner-down {
 }
 span.ui-spinner .ui-spinner-down:hover {
   text-decoration: none;
-  color: #71bbec;
+  color: #99e8ff;
 }
 .blue {
-  color: #3e88b9;
+  color: #66b5d4;
 }
 .floatAvatar {
   margin-left: 160px;
@@ -7643,7 +7628,7 @@ input::-webkit-inner-spin-button {
   display: none;
 }
 .h2 {
-  color: #3e88b9;
+  color: #66b5d4;
   font-size: 1.3em;
   padding: 5px 0;
 }
@@ -7655,6 +7640,7 @@ textarea#editInput {
 }
 .openAll {
   cursor: pointer;
+  color: #cdcdcd;
 }
 .openAll .icon {
   float: left;
@@ -7668,10 +7654,10 @@ textarea#editInput {
   min-width: 100%;
   font-size: 11px;
   border-bottom: 1px solid #7f7f80;
-  background-color: #ffffff;
+  background-color: #303031;
 }
 .grid tr {
-  color: #c1c1c1;
+  color: #cdcdcd;
   /* tr.head-row {
       td {
         span {
@@ -7686,7 +7672,7 @@ textarea#editInput {
   height: 25px;
   line-height: 25px;
   display: block;
-  color: #393939;
+  color: #cdcdcd;
 }
 .grid tr td {
   border-top: 1px solid #7f7f80;
@@ -7736,7 +7722,7 @@ textarea#editInput {
 }
 .grid tr td.activeHead,
 .grid tr th.activeHead {
-  border: 1px solid #3e88b9;
+  border: 1px solid #66b5d4;
   border-bottom: none;
   display: table-cell;
 }
@@ -7746,7 +7732,7 @@ textarea#editInput {
 .grid tr td.dashboardWeek {
   width: 107px;
   min-width: 107px;
-  background-color: #ffffff;
+  background-color: #303031;
 }
 .grid tr td.dashboardWeek input {
   background-color: #bdd7ee;
@@ -7773,14 +7759,14 @@ textarea#editInput {
   background: pink;
 }
 .grid tr td.dashboardWeek.red {
-  background-color: #e55253;
+  background-color: #f13f3f;
   color: white;
   border-bottom: 1px solid #7f7f80;
   border-left: 1px solid #7f7f80;
 }
 .grid tr td.dashboardWeek.active {
-  border-left: 1px solid #3e88b9 !important;
-  border-right: 1px solid #3e88b9 !important;
+  border-left: 1px solid #66b5d4 !important;
+  border-right: 1px solid #66b5d4 !important;
   display: table-cell;
 }
 .grid tr td.dashboardWeek.inactive span.view {
@@ -7835,7 +7821,7 @@ textarea#editInput {
   float: left;
   padding: 0;
   padding-right: 3px;
-  color: #393939;
+  color: #cdcdcd;
   text-align: center;
 }
 .grid tr td.withVacation span span.vacation.size40 {
@@ -7903,23 +7889,23 @@ textarea#editInput {
 }
 .grid tr.group {
   /*color: black;*/
-  color: #393939;
+  color: #cdcdcd;
   cursor: pointer;
 }
 .grid tr.group td {
-  background-color: #ffffff !important;
+  background-color: #333334 !important;
 }
 .grid tr.group span {
   text-align: left;
 }
 .grid tr:nth-child(2n+1) td {
-  background-color: #dbdbdb;
+  background-color: #3d3d3e;
 }
 .grid.attendance {
   border-bottom: 1px solid #7f7f80;
 }
 .grid.attendance .V {
-  background-color: #e55253;
+  background-color: #f13f3f;
   color: #ffffff;
 }
 .grid.attendance .P {
@@ -7927,11 +7913,11 @@ textarea#editInput {
   color: #ffffff;
 }
 .grid.attendance .S {
-  background-color: #3e88b9;
+  background-color: #66b5d4;
   color: #ffffff;
 }
 .grid.attendance .E {
-  background-color: #1ebbea;
+  background-color: #66b5d4;
   color: #ffffff;
 }
 .grid.attendance .borderRight {
@@ -7953,7 +7939,7 @@ textarea#editInput {
   border-bottom: none;
 }
 .grid.attendance tr:nth-child(even) {
-  background-color: #dbdbdb;
+  background-color: #3d3d3e;
 }
 .grid.attendance tr td {
   border-left: 1px solid #7f7f80;
@@ -7975,11 +7961,11 @@ textarea#editInput {
   color: #ffffff;
 }
 .grid.attendance .sick {
-  background-color: #3e88b9;
+  background-color: #66b5d4;
   color: #ffffff;
 }
 .grid.attendance .education {
-  background-color: #1ebbea;
+  background-color: #66b5d4;
   color: #ffffff;
 }
 .grid.attendance .borderRight {
@@ -7996,17 +7982,17 @@ textarea#editInput {
   padding: 5px;
 }
 .grid-conatiner .attendanceTop div span {
-  color: #393939;
+  color: #cdcdcd;
 }
 .grid-conatiner .attendanceTop div #currentEmployee,
 .grid-conatiner .attendanceTop div #currentStatus,
 .grid-conatiner .attendanceTop div #currentTime {
-  color: #393939;
+  color: #cdcdcd;
 }
 .grid-conatiner .attendanceTop div #currentEmployee option,
 .grid-conatiner .attendanceTop div #currentStatus option,
 .grid-conatiner .attendanceTop div #currentTime option {
-  background-color: #ffffff;
+  background-color: #303031;
 }
 .grid-conatiner .attendanceTop div.pull-left {
   margin-right: 10px;
@@ -8042,7 +8028,7 @@ textarea#editInput {
   text-align: center;
   font-size: 16px;
   margin-bottom: 10px;
-  color: #393939;
+  color: #cdcdcd;
 }
 .grid-conatiner .statisticsAtten table tr td .item .countDays {
   font-size: 52px;
@@ -8063,15 +8049,15 @@ textarea#editInput {
   background-color: #f9a203;
 }
 .grid-conatiner .statisticsAtten table tr td .item .countDays.sick {
-  background-color: #3e88b9;
+  background-color: #66b5d4;
 }
 .grid-conatiner .statisticsAtten table tr td .item .countDays.education {
-  background-color: #1ebbea;
+  background-color: #66b5d4;
 }
 .grid-conatiner .statisticsAtten table tr td .item .lastTime {
   text-align: center;
   margin-top: 10px;
-  color: #393939;
+  color: #cdcdcd;
 }
 .grid-conatiner .statisticsAtten table tr td .item .percent {
   text-align: center;
@@ -8207,7 +8193,7 @@ textarea#editInput {
   border-bottom: 2px solid #a2a2a3;
 }
 .grid-conatiner.revenue .divTable#tableUnpaidBySales .th {
-  border-bottom: 2px solid #e55253;
+  border-bottom: 2px solid #f13f3f;
 }
 .grid-conatiner.revenue .divTable#tableCancelledBySales .th {
   border-bottom: 2px solid #3d4bfd;
@@ -8251,16 +8237,16 @@ textarea#editInput {
 }
 .grid-conatiner.revenue .divRow.totalByDep,
 .grid-conatiner.revenue .divRow.totalHoursByDep {
-  background-color: #3e88b9;
+  background-color: #66b5d4;
 }
 .grid-conatiner.revenue .divRow.totalPaid {
   background-color: #a2a2a3;
 }
 .grid-conatiner.revenue .divRow.totalUnpaid {
-  background-color: #e55253;
+  background-color: #f13f3f;
 }
 .grid-conatiner.revenue .divRow.totalCancelled {
-  background-color: #1ebbea;
+  background-color: #66b5d4;
 }
 .grid-conatiner.revenue .divRow.totalProject {
   background-color: #5a9ad4;
@@ -8358,7 +8344,7 @@ textarea#editInput {
   width: 7.5%;
 }
 .grid-conatiner.revenue .th-green {
-  border-bottom: 2px solid #3e88b9;
+  border-bottom: 2px solid #66b5d4;
 }
 .hrTop tr td {
   vertical-align: top;
@@ -8412,7 +8398,7 @@ textarea#editInput {
   padding: 2px 24px;
   font-size: 14px;
   line-height: 1.42857143;
-  color: #c1c1c1;
+  color: #cdcdcd;
   background: inherit;
   border: 1px solid #7f7f80;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
@@ -8428,7 +8414,7 @@ textarea#editInput {
   left: 5px;
 }
 .search-field span:before {
-  color: #c1c1c1;
+  color: #d5d5d5;
 }
 .search-field .search-content {
   position: absolute;
@@ -8524,7 +8510,7 @@ textarea#editInput {
 .search-options {
   height: 30px;
   position: absolute;
-  width: 75%;
+  width: 91%;
   top: calc(100% - 1px);
   right: 0;
   z-index: 500;
@@ -8568,7 +8554,7 @@ textarea#editInput {
   position: absolute;
   z-index: 10;
   width: calc(100% - 82px);
-  background-color: #ffffff;
+  background-color: #303031;
   border: 1px solid #7f7f80;
   right: 0;
   top: calc(100% - 3px);
@@ -8578,7 +8564,7 @@ textarea#editInput {
   width: calc(100% - 30px);
   margin: 10px 5px 5px 5px;
   color: white;
-  background-color: #4d5a75;
+  background-color: #66b5d4;
   padding: 10px;
   border-radius: 5px;
 }
@@ -8586,13 +8572,13 @@ textarea#editInput {
   cursor: pointer;
   font-size: 12px;
   padding: 5px 10px;
-  color: #393939;
+  color: #cdcdcd;
 }
 .drop-down-filter #filtersContent .filterGroup {
   overflow: hidden;
   text-align: center;
   border: 1px solid #7f7f80;
-  background-color: #ffffff;
+  background-color: #303031;
   margin: 5px;
 }
 .drop-down-filter #filtersContent .filterGroup li.miniStylePagination {
@@ -8613,17 +8599,17 @@ textarea#editInput {
   content: '\2713';
 }
 .drop-down-filter #filtersContent .filterGroup li:not(.checkedValue):hover:before {
-  color: #ffffff;
+  color: #3d3d3e;
 }
 .drop-down-filter #filtersContent .filterGroup li:not(.checkedValue):before,
 .drop-down-filter #filtersContent .filterGroup li.checkedValue:before,
 .drop-down-filter #filtersContent .filterGroup li.checkedValue:hover:before {
-  color: #ffffff;
+  color: #303031;
 }
 .drop-down-filter #filtersContent .filterGroup li:hover,
 .drop-down-filter #filtersContent .filterGroup li.checkedValue {
-  background-color: #ffffff;
-  color: #c1c1c1;
+  background-color: #3d3d3e;
+  color: #cdcdcd;
 }
 .drop-down-filter #filtersContent .filterGroup .filterValues {
   text-align: left;
@@ -8633,29 +8619,29 @@ textarea#editInput {
   content: ' ';
 }
 .drop-down-filter #filtersContent .filterGroup:not(.activeGroup) .groupName.checkedGroup {
-  color: #393939;
-  background-color: #ffffff;
+  color: #cdcdcd;
+  background-color: #565658;
 }
 .drop-down-filter #filtersContent .filterGroup:not(.activeGroup) .groupName.checkedGroup span:before {
   text-align: center;
   height: 10px;
   width: 10px;
   border-radius: 50%;
-  background-color: #555555;
+  background-color: #4d5a75;
 }
 .drop-down-filter #filtersContent .filterGroup.activeGroup .groupName {
   border-bottom: 1px solid #7f7f80;
 }
 .drop-down-filter #filtersContent .filterGroup.activeGroup .groupName,
 .drop-down-filter #filtersContent .filterGroup .groupName:hover {
-  color: #c1c1c1;
-  background-color: #ffffff;
+  color: #cdcdcd;
+  background-color: #3d3d3e;
 }
 .drop-down-filter #filtersContent .filterGroup .groupName {
   cursor: pointer;
   font-size: 13px;
   padding: 10px;
-  color: #393939;
+  color: #cdcdcd;
 }
 .drop-down-filter #filtersContent .filterGroup .groupName:after {
   content: '\2335';
@@ -8688,9 +8674,9 @@ textarea#editInput {
   margin-right: 90px;
 }
 #searchContainer .btn {
-  background: #ffffff;
+  background: #303031;
   padding: 6px;
-  color: #393939;
+  color: #cdcdcd;
 }
 #searchContainer .filter-check-list {
   margin-top: -1px;
@@ -8716,7 +8702,7 @@ textarea#editInput {
   width: 98%;
 }
 .vacation-list .V {
-  background-color: #e55253;
+  background-color: #f13f3f;
   color: #ffffff;
 }
 .vacation-list .P {
@@ -8724,11 +8710,11 @@ textarea#editInput {
   color: #ffffff;
 }
 .vacation-list .S {
-  background-color: #3e88b9;
+  background-color: #66b5d4;
   color: #ffffff;
 }
 .vacation-list .E {
-  background-color: #1ebbea;
+  background-color: #66b5d4;
   color: #ffffff;
 }
 .vacation-list td,
@@ -8747,7 +8733,7 @@ textarea#editInput {
   outline-offset: 0;
   display: none;
   cursor: pointer;
-  border: 1px solid #3e88b9;
+  border: 1px solid #66b5d4;
   position: absolute;
   left: 0;
   right: 0;
@@ -8789,7 +8775,7 @@ textarea#editInput {
 .vacation-list tfoot td {
   border: 1px solid #7f7f80;
   text-align: center;
-  color: #393939;
+  color: #cdcdcd;
 }
 .vacation-list tbody td.notForm,
 .vacation-list tfoot td.notForm {
@@ -8801,12 +8787,12 @@ textarea#editInput {
   display: block;
 }
 .vacation-list tfoot tr td {
-  color: #393939;
+  color: #cdcdcd;
 }
 .vacation-list tbody .employee,
 .vacation-list tbody .department,
 .vacation-list tbody .totalDays {
-  color: #c1c1c1;
+  color: #cdcdcd;
 }
 .vacation-list tbody .employee {
   text-align: right !important;
@@ -8820,7 +8806,7 @@ textarea#editInput {
 }
 .vacation-list #caption th,
 .vacation-list .subHeaderHolder th {
-  color: #393939;
+  color: #cdcdcd;
 }
 .vacation-list .newSelectList,
 .salary-list .newSelectList,
@@ -8830,7 +8816,7 @@ textarea#editInput {
 .vacation-list tbody tr:not(.subRow):hover td:not(.selectedType),
 .salary-list tbody tr:not(.subRow):hover td:not(.selectedType),
 .subSalary-list tbody tr:not(.subRow):hover td:not(.selectedType) {
-  color: #393939;
+  color: #ffffff;
 }
 .vacation-list tbody tr td > div,
 .salary-list tbody tr td > div,
@@ -8892,7 +8878,7 @@ textarea#editInput {
   border-bottom-left-radius: 5px;
   border-top-left-radius: 5px;
   border-right: none;
-  color: #393939;
+  color: #cdcdcd;
 }
 #favoritesContent #saveFilterButton {
   border: 1px solid #7f7f80;
@@ -8901,7 +8887,7 @@ textarea#editInput {
   border-radius: 0 5px 5px 0;
   line-height: 16px;
   padding-top: 4px;
-  background-color: #ffffff;
+  background-color: #303031;
   color: #a9a9a9;
 }
 #favoritesContent .removeSavedFilter {
@@ -8909,7 +8895,7 @@ textarea#editInput {
   border: 1px solid #7f7f80;
   height: 21px;
   background-color: transparent;
-  color: #393939;
+  color: #cdcdcd;
 }
 #favoritesContent .line {
   height: 1px;
@@ -8928,17 +8914,17 @@ textarea#editInput {
 }
 #favoritesContent .filters:hover {
   color: white;
-  background-color: #3e88b9;
+  background-color: #66b5d4;
 }
 #favoritesContent .checkedValue {
-  color: #393939;
-  background-color: #3e88b9;
+  color: #cdcdcd;
+  background-color: #66b5d4;
 }
 #favoritesContent .useByDefault {
   margin-top: 10px;
 }
 #favoritesContent .useByDefault span {
-  color: #393939;
+  color: #cdcdcd;
   margin-left: 10px;
 }
 .forFilterIcons {
