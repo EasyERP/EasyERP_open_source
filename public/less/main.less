@@ -47,12 +47,11 @@
     /*height: 100%;*/
     width: 15%;
     padding-top: 0px;
-    padding-bottom: 0px;
+    padding-bottom: 0px
     margin-top: 0px;
     margin-left: 0px;
     left: 100%;
     opacity: 0;
-
   }
 }
 
@@ -1124,7 +1123,7 @@ input::-ms-clear {
       border: @thin-border transparent;
       margin-left: 3px;
       &:hover {
-        border-bottom: @thin-border @blue;
+        border-bottom: @thin-border @tilte-color;
       }
     }
   }
@@ -2307,11 +2306,14 @@ input::-ms-clear {
       text-decoration: none;
       display: inline-block;
       padding: 0 5px;
+      &::hover {
+        border-bottom: 1px solid @border-color-selected;
+      }
 
     }
 
     a.selectedItemsNumber {
-      border-bottom: 1px solid blue;
+      border-bottom: 1px solid @border-color-selected;
     }
 
     button {
@@ -2765,7 +2767,7 @@ a {
 }
 
 h3 {
-  color: @blue;
+  color: @tilte-color;
   font-size: 18px;
   .text-overflow;
 }
@@ -3397,13 +3399,13 @@ button.red, a.red {
       font-weight: 300;
       font-size: 30px;
       line-height: 38px;
-      color: @birthdayColor;
+      color: @fontColor-2;
     }
   }
 
   .info {
     color: #FFF;
-    background: @birthdayColor;
+    background: @fontColor-2;
     margin-left: 160px;
     margin-right: 40px;
     position: relative;
@@ -3423,7 +3425,7 @@ button.red, a.red {
       width: 0;
       position: absolute;
       pointer-events: none;
-      border-right-color: @birthdayColor;
+      border-right-color: @fontColor-2;
       border-width: 10px;
       top: 19px;
     }
@@ -3539,7 +3541,7 @@ button.red, a.red {
         line-height: 20px;
 
         a {
-          color: @grey;
+          color: @login-text;
         }
       }
     }
@@ -3558,7 +3560,7 @@ button.red, a.red {
     span {
       display: block;
       line-height: 30px;
-      color: @grey;
+      color: @login-text;
         &:hover {
           color: #fff;
         }
@@ -3683,7 +3685,7 @@ button.red, a.red {
       content: '0';
       font-family: @icon-font;
       font-size: 40px;
-      color: @blue;
+      color: @tilte-color;
     }
   }
 }
@@ -3827,7 +3829,7 @@ button.red, a.red {
             content: '2';
             font-size: 20px;
             line-height: 24px;
-            color: @blue;
+            color: @tilte-color;
             .position(absolute, 2px, 2px);
           }
         }
@@ -3849,7 +3851,7 @@ button.red, a.red {
       display: none;
       width: 16px;
       height: @linh;
-      color: @blue;
+      color: @tilte-color;
       font-size: 16px;
       background: no-repeat 0 50%;
       float: right;
@@ -3864,7 +3866,7 @@ button.red, a.red {
       display: none;
       width: 13px;
       height: @linh;
-      color: @blue;
+      color: @tilte-color;
       font-size: 16px;
       background: no-repeat 0 50%;
       float: right;
@@ -4027,37 +4029,49 @@ table#workflows {
 
 .createBtnHolder, #createBtnHolder {
   float: left;
-  margin-top: 4px;
-  margin-left: 10px;
+  margin-top: 6px;
+  margin-left: 5px;
   /*.add {
         font-size: 22px !important;
         font-weight: 900;
         line-height: 22px;
     }*/
   a {
+    float: left;
     display: block;
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
     overflow: hidden;
-    margin-right: 2px;
+    margin-right: 3px;
     cursor: pointer;
     vertical-align: baseline;
     color: @creatBtn-color;
+    line-height: 18px;
 
     &:hover {
       color: @creatBtn-color + #333;
     }
   }
+  .fa {
+    font-size: 16px;
+    text-decoration: none;
+    text-align: center;
+    &:before {
+      //vertical-align: baseline;
+      line-height: 18px;
+    }
+  }
   ul {
     overflow: hidden;
-    padding: 0 10px;
+    padding: 0 0 0 10px;
+    float: left;
     li {
       float: left;
       margin-right: 10px;
       border: 1px solid @border-color-main;
       a {
         display: inline-block;
-        line-height: 20px;
+        line-height: 18px;
         width: 100%;
         padding: 0 5px;
         margin: 0;
@@ -5122,7 +5136,7 @@ textarea#editInput {
 
 .openAll {
   cursor: pointer;
-
+  color: @mainText-color;
   .icon {
     float: left;
     display: inline-block;
@@ -6179,14 +6193,14 @@ textarea#editInput {
 .search-options {
   height: 30px;
   position: absolute;
-  width: 70%;
+  width: 91%;
   top: ~"calc(100% - 1px)";
   right: 0;
   z-index: 500;
 
   .filter-dialog-tabs {
     box-sizing: border-box;
-    border: 1px solid #c0c0c0;
+    border: 1px solid @border-color-main;
     border-bottom: 0;
     position: relative;
     float: left;
@@ -6197,7 +6211,7 @@ textarea#editInput {
       border-radius: 0px;
       border: none;
       &:nth-child(2) {
-        border-left: 1px solid #c0c0c0;
+        border-left: 1px solid @border-color-main;
       }
     }
   }
@@ -6236,7 +6250,7 @@ textarea#editInput {
     width: ~"calc(100% - 30px)";
     margin: 10px 5px 5px 5px;
     color: white;
-    background-color: @blue;
+    background-color: @tilte-color;
     padding: 10px;
     border-radius: 5px;
   }
@@ -6304,7 +6318,7 @@ textarea#editInput {
             height: 10px;
             width: 10px;
             border-radius: 50%;
-            background-color: @birthdayColor;
+            background-color: @fontColor-2;
           }
         };
       }
@@ -6421,19 +6435,18 @@ textarea#editInput {
     cursor: pointer;
 
     input, input:focus {
-      position: absolute;
-      width: 95%;
-      height: 100%;
-      top: 0;
-      left: 0;
+      width: 50%;
       text-align: center;
-      padding: 0;
-      border: none;
       outline: none;
       outline-offset: 0;
       display: none;
       cursor: pointer;
       border: 1px solid @border-color-selected;
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 5px;
+      margin: 0 auto;
     }
 
     input:focus {
@@ -6446,7 +6459,6 @@ textarea#editInput {
   }
   thead {
     th {
-      //
       border: 1px solid @border-color-main;
       &#legandCaption {
         text-align: left;
@@ -6470,23 +6482,24 @@ textarea#editInput {
     }
   }
 
-  tfoot {
-    td {
-      //
-    }
-  }
-
   tbody, tfoot {
     td {
       border: 1px solid @border-color-main;
       text-align: center;
+      color: @mainText-color;
 
-      &.employee, &.department {
-        text-align: right;
-      }
+
       &.totalDays {
         //
       }
+      &.notForm {
+        padding-left: 10px;
+        line-height: 10px;
+        input {
+          display: block;
+        }
+      }
+      &.employee{}
     }
   }
 
@@ -6501,6 +6514,10 @@ textarea#editInput {
     .employee, .department, .totalDays {
       color: @name-text-color;
     }
+    .employee {
+        text-align: right !important;
+    }
+
   }
 
   #caption, .borders, thead, tbody, tfoot {
@@ -6518,11 +6535,30 @@ textarea#editInput {
     color: #000;
   }
   tbody {
-    tr:not(.subRow):hover {
-      td:not(.selectedType) {
-        //background-color: #333333;
-        color: #ffffff;
+    tr {
+      &:not(.subRow):hover {
+        td {
+          &:not(.selectedType) {
+            color: @overiewText-color;
+          }
+        }
       }
+      td {
+        &>div {
+          float: right;
+          a {
+            font-size: 12px;
+            line-height: 15px;
+          }
+        }
+        &:nth-child(2) {
+          text-align: left;
+          font-size: 12px;
+          line-height: 20px;
+          border: none;
+        }
+      }
+
     }
   }
 }
@@ -6573,18 +6609,19 @@ textarea#editInput {
     width: 83%;
     border-bottom-left-radius: 5px;
     border-top-left-radius: 5px;
+    border-right: none;
     color: @filter-text-color;
   }
   #saveFilterButton {
     border: 1px solid @border-color-main;
-    border-left: 0;
-    margin-left: -7px;
+    //border-left: 0;
+    margin-left: -3px;
     box-sizing: border-box;
     border-radius: 0 5px 5px 0;
-    height: 28px;
+    line-height: 16px;
+    padding-top: 4px;
     background-color: @bg-main;
     color: @kanab-text-color;
-    border-left: 1px solid #7f7f80;
   }
   .removeSavedFilter {
     float: right;
@@ -6613,9 +6650,17 @@ textarea#editInput {
       }
 
   }
-  .checkedValue {
-    color: white;
+   .checkedValue {
+    color: @mainText-color;
     background-color: @tilte-color;
+  }
+
+  .useByDefault {
+    margin-top: 10px;
+    span {
+      color: @mainText-color;
+      margin-left: 10px;
+    }
   }
 }
 
@@ -6625,6 +6670,13 @@ textarea#editInput {
   display: inline-block;
   padding-right: 17px;
   margin-right: 3px;
+  border: 1px solid @border-color-main;
+  border-radius: 3px;
+  line-height: 18px;
+  .removeValues {
+    top: 2px;
+    line-height: 12px;
+  }
 }
 
 .forInfoWrap {

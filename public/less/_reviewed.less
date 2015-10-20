@@ -36,7 +36,7 @@
 @title-font: Title;
 @tilte-color: #36A9E1;
 @metroicon-font: "Metrize-Icons";
-@blue: #4d5a75;
+@tilte-color: #4d5a75;
 @defaultBorderColor: #ababab;
 @lightmagenta: #7c7bad;
 @lightgrey: #c8c8d3;
@@ -46,7 +46,7 @@
 @thin-border: 1px solid;
 @taskBorderColor: #4d5a75;
 @tabColor: #BDC3C7;
-@birthdayColor: #555;
+@fontColor-2: #555;
 .i(@name) {
   background-image: url("@{imagesfolder}/@{name}");
 }
@@ -1259,7 +1259,7 @@ input::-ms-clear {
       border: @thin-border transparent;
       margin-left: 3px;
       &:hover {
-        border-bottom: @thin-border @blue;
+        border-bottom: @thin-border @tilte-color;
       }
     }
   }
@@ -2829,7 +2829,7 @@ input, textarea, select {
 }
 
 a {
-  color: @blue;
+  color: @tilte-color;
   text-decoration: none;
 
   &:hover {
@@ -2842,7 +2842,7 @@ a {
 }
 
 h3 {
-  color: @blue;
+  color: @tilte-color;
   font-size: 18px;
   .text-overflow;
 }
@@ -3292,7 +3292,7 @@ dl {
     height: 24px;
     width: 24px;
     font-family: @icon-font;
-    color: @blue;
+    color: @tilte-color;
     font-weight: 900;
     font-size: 14px;
     line-height: 30px;
@@ -3412,13 +3412,13 @@ button.red, a.red {
       font-weight: 300;
       font-size: 30px;
       line-height: 38px;
-      color: @birthdayColor;
+      color: @fontColor-2;
     }
   }
 
   .info {
     color: #FFF;
-    background: @birthdayColor;
+    background: @fontColor-2;
     margin-left: 160px;
     margin-right: 40px;
     position: relative;
@@ -3438,7 +3438,7 @@ button.red, a.red {
       width: 0;
       position: absolute;
       pointer-events: none;
-      border-right-color: @birthdayColor;
+      border-right-color: @fontColor-2;
       border-width: 10px;
       top: 19px;
     }
@@ -3690,7 +3690,7 @@ button.red, a.red {
       content: '0';
       font-family: @icon-font;
       font-size: 40px;
-      color: @blue;
+      color: @tilte-color;
     }
   }
 }
@@ -3838,7 +3838,7 @@ button.red, a.red {
             content: '2';
             font-size: 20px;
             line-height: 24px;
-            color: @blue;
+            color: @tilte-color;
             .position(absolute, 2px, 2px);
           }
         }
@@ -3862,7 +3862,7 @@ button.red, a.red {
       display: none;
       width: 16px;
       height: @linh;
-      color: @blue;
+      color: @tilte-color;
       font-size: 16px;
       background-position: 0 50%;
       background-repeat: no-repeat;
@@ -3878,7 +3878,7 @@ button.red, a.red {
       display: none;
       width: 13px;
       height: @linh;
-      color: @blue;
+      color: @tilte-color;
       font-size: 16px;
       background-position: 0 50%;
       background-repeat: no-repeat;
@@ -4041,8 +4041,8 @@ table#workflows {
     vertical-align: baseline;
 
     &:hover {
-      //border-bottom: @thin-border @blue;
-      color: @blue + #333;
+      //border-bottom: @thin-border @tilte-color;
+      color: @tilte-color + #333;
     }
   }
 }

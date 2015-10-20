@@ -30,11 +30,11 @@
                                     <dt><label>Supplier</label></dt>
                                     <dd>
                                         <%if(model.supplier){%>
-                                            <a id="supplierDd" data-id="<%=model.supplier.id%>" href="#easyErp/Companies/form/<%=model.supplier.id%>"><%=model.supplier.fullName%></a>
+                                            <a id="supplierDd" data-id="<%=model.supplier._id%>" href="#easyErp/Companies/form/<%=model.supplier._id%>"><%=model.supplier.name%></a>
                                         <%}%>
                                     </dd>
-                                    <dt><label>Supplier Reference</label></dt>
-                                    <dd><span><%=model.supplierReference%></span></dd>
+                                    <!--<dt><label>Supplier Reference</label></dt>-->
+                                    <!--<dd><span><%=model.supplierReference%></span></dd>-->
                                 </dl>
                             </div>
                             <div class="half-block left">

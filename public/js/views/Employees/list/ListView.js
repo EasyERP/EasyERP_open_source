@@ -7,7 +7,7 @@ define([
         'views/Filter/FilterView',
 
         'collections/Employees/filterCollection',
-        'common',
+        'common'
 
     ],
 

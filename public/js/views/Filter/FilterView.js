@@ -36,6 +36,7 @@ define([
 
             initialize: function (options) {
                 this.parentContentType = options.contentType;
+                this.viewType = options.viewType;
                 this.constantsObject = CONSTANTS.FILTERS[this.parentContentType];
 
                 App.filter = {};
@@ -70,15 +71,17 @@ define([
                         length = App.savedFilters[self.parentContentType].length;
                         savedFilters = App.savedFilters[self.parentContentType];
                         for (var i = length - 1; i >= 0; i--) {
-                            if (savedFilters[i]['_id'] === targetId) {
-                                keys = Object.keys(savedFilters[i]['filter']);
-                                App.filter = savedFilters[i]['filter'][keys[0]];
+                            if (savedFilters[i]['_id']['_id'] === targetId) {
+                                keys = Object.keys(savedFilters[i]['_id']['filter']);
+                                App.filter = savedFilters[i]['_id']['filter'][keys[0]];
                             }
                         }
 
+                        self.selectedFilter(targetId);
+
                         self.trigger('filter', App.filter);
                         self.renderFilterContent();
-                        self.showFilterIcons(App.filter);
+                        self.showFilterName(keys[0]);
                     } else {
                         console.log('can\'t get savedFilters');
                     }
@@ -121,6 +124,8 @@ define([
                 var filterObj = {};
                 var mid = 39;
                 var filterName = this.$el.find('#forFilterName').val();
+                var byDefault = this.$el.find('.defaultFilter').prop('checked') ? this.parentContentType : "";
+                var viewType = this.viewType ? this.viewType : "";
                 var bool = true;
                 var self = this;
                 var filters;
@@ -159,6 +164,8 @@ define([
                     filterObj['filter'][filterName] = {};
                     filterObj['filter'][filterName] = App.filter;
                     filterObj['key'] = key;
+                    filterObj['useByDefault'] = byDefault;
+                    filterObj['viewType'] = viewType;
 
                     currentUser.changed = filterObj;
 
@@ -175,16 +182,21 @@ define([
                                 updatedInfo = model.get('success');
                                 filters = updatedInfo['savedFilters'];
                                 length = filters.length;
-                                id = filters[length - 1];
+                                id = filters[length - 1]['_id'];
                                 App.savedFilters[self.parentContentType].push(
                                     {
-                                        _id        : id,
-                                        contentView: key,
-                                        filter     : filterForSave
+                                        _id: {
+                                            _id        : id,
+                                            contentView: key,
+                                            filter     : filterForSave
+                                        },
+                                        byDefault: byDefault,
+                                        viewType: viewType
                                     }
                                 );
                                 favouritesContent.append('<li class="filters"  id ="' + id + '">' + filterName + '</li><button class="removeSavedFilter" id="' + id + '">' + 'x' + '</button>');
-
+                                self.$el.find('.defaultFilter').attr('checked', false);
+                                self.selectedFilter(id);
                             },
                             error   : function (model, xhr) {
                                 console.error(xhr);
@@ -205,6 +217,7 @@ define([
                 var i = 0;
 
                 filterObj['deleteId'] = filterID;
+                filterObj['byDefault'] = this.parentContentType;
 
                 currentUser.changed = filterObj;
 
@@ -230,7 +243,7 @@ define([
                 $.find('#' + filterID)[0].remove();
 
                 for (var i = savedFilters.length - 1; i >= 0; i--) {
-                    if (savedFilters[i]['_id'] === filterID) {
+                    if (savedFilters[i]['_id']['_id'] === filterID) {
                         App.savedFilters[this.parentContentType].splice(i, 1);
                     }
                 }
@@ -314,6 +327,17 @@ define([
                 });
             },
 
+            showFilterName: function(filterName){
+                var filterIc = this.$el.find('.filter-icons');
+                var filterValues = this.$el.find('.search-field .oe_searchview_input');
+                filterValues.empty();
+
+                filterIc.addClass('active');
+                filterValues.append('<div class="forFilterIcons"><span class="fa fa-star funnelIcon"></span><span class="filterValues">' + filterName + '</span><span class="removeValues">x</span></div>');
+
+
+            },
+
             removeFilter: function (e) {
                 var target = $(e.target);
                 var groupName = target.prev().text();
@@ -322,7 +346,12 @@ define([
                 var valuesArray;
                 var collectionElement;
 
-                valuesArray = App.filter[filterView]['value'];
+                if (filterView){
+                    valuesArray = App.filter[filterView]['value'];
+                } else {
+                    App.filter = {};
+                    this.removeSelectedFilter();
+                }
 
                 if (valuesArray) {
                     if (this.currentCollection[filterView].length !== 0) {
@@ -335,7 +364,9 @@ define([
 
                     this.renderGroup(groupName);
                 } else {
-                    delete App.filter['letter'];
+                    if (filterView) {
+                        delete App.filter['letter'];
+                    }
                 }
 
                 $(e.target).closest('div').remove();
@@ -385,8 +416,6 @@ define([
                     });
                 }
                 ;
-
-                this.showFilterIcons(App.filter);
             },
 
             renderGroup: function (key, filterView, groupStatus) {
@@ -428,20 +457,81 @@ define([
             },
 
             render: function () {
-                var savedContentView;
 
                 this.$el.html(this.template({filterCollection: this.constantsObject}));
 
+
                 this.renderFilterContent();
-
-                savedContentView = new savedFiltersView({
-                    contentType: this.parentContentType,
-                    filter     : App.filter
-                });
-
-                this.$el.find('#favoritesContent').append(savedContentView);
+                this.showFilterIcons(App.filter);
+                this.renderSavedFilters();
 
                 return this;
+            },
+
+            renderSavedFilters: function () {
+                var contentType = this.parentContentType;
+                var self = this;
+                var keys;
+                var filterId;
+                var filterByDefault;
+                var viewType;
+
+                this.$el.find('#favoritesContent').append(_.template(savedFilterTemplate));
+
+               var content = this.$el.find('#favoritesContent');
+
+                if (App.savedFilters[contentType]) {
+                    this.savedFilters = App.savedFilters[contentType];
+
+                    for (var j = this.savedFilters.length - 1; j >= 0; j--) {
+                        if (this.savedFilters[j]) {
+                            if (this.savedFilters[j].byDefault === contentType){
+                                keys = Object.keys(this.savedFilters[j]['_id']['filter']);
+
+                                filter = this.savedFilters[j]['_id']['filter'][keys[0]];
+
+                                App.filter = filter;
+
+                                if (this.savedFilters[j].viewType){
+                                    viewType = this.savedFilters[j].viewType;
+                                }
+
+                                self.trigger('filter', App.filter, viewType);
+                                self.renderFilterContent();
+                                self.showFilterName(keys[0]);
+                                filterId = this.savedFilters[j]['_id']['_id'];
+                            }
+
+                            filterId = this.savedFilters[j]['_id']['_id'];
+
+                            keys = Object.keys(this.savedFilters[j]['_id']['filter']);
+                            for (var i = keys.length - 1; i >= 0; i--) {
+                                content.append('<li class="filters"  id ="' + filterId + '">' + keys[i] + '</li><button class="removeSavedFilter" id="' + filterId + '">' + 'x' + '</button>');
+                            }
+                        }
+                    }
+                }
+
+                this.$el.find('#favoritesContent').append(content);
+                self.selectedFilter(filterId);
+            },
+
+            selectedFilter: function(filterId){
+                var filterName = this.$el.find('#' + filterId);
+                var filterNames = this.$el.find('.filters');
+
+                if (filterId){
+
+                    filterNames.removeClass('checkedValue');
+
+                    filterName.addClass('checkedValue');
+                }
+            },
+
+            removeSelectedFilter: function () {
+                var filterNames = this.$el.find('.filters');
+
+                filterNames.removeClass('checkedValue');
             },
 
             parseFilter: function () {

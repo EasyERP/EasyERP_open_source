@@ -7,6 +7,7 @@ var Filters = function (models) {
     var TaskSchema = mongoose.Schemas['Tasks'];
     var wTrackInvoiceSchema = mongoose.Schemas['wTrackInvoice'];
     var customerPaymentsSchema = mongoose.Schemas['Payment'];
+    var QuotationSchema = mongoose.Schemas['Quotation'];
     var productSchema = mongoose.Schemas['Products'];
     var _ = require('../node_modules/underscore');
     var async = require('async');
@@ -22,6 +23,7 @@ var Filters = function (models) {
         var wTrackInvoice = models.get(lastDB, 'wTrackInvoice', wTrackInvoiceSchema);
         var customerPayments = models.get(lastDB, 'Payment', customerPaymentsSchema);
         var Product = models.get(lastDB, 'Products', productSchema);
+        var Quotation = models.get(lastDB, 'Quotation', QuotationSchema);
 
         async.parallel({
                 wTrack          : getWtrackFiltersValues,
@@ -34,7 +36,12 @@ var Filters = function (models) {
                 salesInvoice    : getSalesInvoiceFiltersValues,
                 customerPayments: getCustomerPaymentsFiltersValues,
                 supplierPayments: getSupplierPaymentsFiltersValues,
-                Product         : getProductsFiltersValues
+                Product         : getProductsFiltersValues,
+                salesProduct    : getProductsFiltersValues,
+               // Quotation       : getQuotationFiltersValues,
+                salesQuotation       : getSalesQuotation,
+                salesOrder      : getSalesOrders
+               // Order      : getOrdersFiltersValues
             },
             function (err, result) {
                 if (err) {
@@ -115,6 +122,7 @@ var Filters = function (models) {
                         }
                     ]
                 }
+                ;
 
                 callback(null, result);
             });
@@ -389,7 +397,6 @@ var Filters = function (models) {
             });
         };
 
-
         function getSalesInvoiceFiltersValues(callback) {
             wTrackInvoice.aggregate([
                 {
@@ -602,6 +609,197 @@ var Filters = function (models) {
                 callback(null, result);
             });
         };
+
+
+        function getQuotationFiltersValues(callback) {
+            Quotation.aggregate([
+                {
+                    $match: {
+                        forSales: false,
+                        isOrder: false
+                    }
+                },
+                {
+                    $group: {
+                        _id           : null,
+                        'supplier': {
+                            $addToSet: {
+                                _id : '$supplier._id',
+                                name: '$supplier.name'
+                            }
+                        },
+                        'workflow'  : {
+                            $addToSet: {
+                                _id : '$workflow._id',
+                                name: '$workflow.name'
+                            }
+                        }
+                    }
+                }
+            ], function (err, result) {
+
+                if (err) {
+                    callback(err);
+                }
+
+                if (result && result.length > 0) {
+                    result = result[0];
+                    callback(null, result);
+                }
+
+
+            });
+        };
+
+        function getSalesQuotation(callback){
+            Quotation.aggregate([
+                {
+                    $match: {
+                        forSales: true,
+                        isOrder: false
+                    }
+                },
+                {
+                    $group: {
+                        _id         : null,
+                        'projectName'  : {
+                            $addToSet: {
+                                _id : '$project._id',
+                                name: '$project.projectName'
+                            }
+                        },
+                        'supplier': {
+                            $addToSet: {
+                                _id : '$supplier._id',
+                                name: '$supplier.name'
+                            }
+                        },
+                        'projectmanager'      : {
+                            $addToSet: {
+                                _id : '$project.projectmanager._id',
+                                name: '$project.projectmanager.name'
+                            }
+                        },
+                        'workflow'  : {
+                            $addToSet: {
+                                _id : '$workflow._id',
+                                name: '$workflow.name'
+                            }
+                        }
+                    }
+                }
+            ], function (err, result) {
+                if (err) {
+                    callback(err);
+                }
+
+                if (result && result.length){
+                    result = result[0];
+                    callback(null, result);
+                }
+
+            });
+        }
+
+        function getSalesOrders(callback){
+            Quotation.aggregate([
+                {
+                    $match: {
+                        forSales: true,
+                        isOrder: true
+                    }
+                },
+                {
+                    $group: {
+                        _id         : null,
+                        'projectName'  : {
+                            $addToSet: {
+                                _id : '$project._id',
+                                name: '$project.projectName'
+                            }
+                        },
+                        'supplier': {
+                            $addToSet: {
+                                _id : '$supplier._id',
+                                name: '$supplier.name'
+                            }
+                        },
+                        'projectmanager'      : {
+                            $addToSet: {
+                                _id : '$project.projectmanager._id',
+                                name: '$project.projectmanager.name'
+                            }
+                        },
+                        'workflow'  : {
+                            $addToSet: {
+                                _id : '$workflow._id',
+                                name: '$workflow.name'
+                            }
+                        }
+                    }
+                }
+            ], function (err, result) {
+                if (err) {
+                    callback(err);
+                }
+
+                if (result && result.length){
+                    result = result[0];
+                    callback(null, result);
+                }
+
+            });
+        }
+
+        function getOrdersFiltersValues(callback){
+            Quotation.aggregate([
+                {
+                    $match: {
+                        forSales: false,
+                        isOrder: true
+                    }
+                },
+                {
+                    $group: {
+                        _id         : null,
+                        'projectName'  : {
+                            $addToSet: {
+                                _id : '$project._id',
+                                name: '$project.projectName'
+                            }
+                        },
+                        'supplier': {
+                            $addToSet: {
+                                _id : '$supplier._id',
+                                name: '$supplier.name'
+                            }
+                        },
+                        'projectmanager'      : {
+                            $addToSet: {
+                                _id : '$project.projectmanager._id',
+                                name: '$project.projectmanager.name'
+                            }
+                        },
+                        'workflow'  : {
+                            $addToSet: {
+                                _id : '$workflow._id',
+                                name: '$workflow.name'
+                            }
+                        }
+                    }
+                }
+            ], function (err, result) {
+                if (err) {
+                    callback(err);
+                }
+
+                if (result && result.length){
+                    result = result[0];
+                    callback(null, result);
+                }
+
+            });
+        }
 
     };
 

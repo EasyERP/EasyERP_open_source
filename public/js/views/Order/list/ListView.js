@@ -16,24 +16,28 @@ define([
     function (listViewBase, listTemplate, stagesTamplate, createView, listItemView, listTotalView, editView, quotationModel, contentCollection, filterView, common, dataService) {
         var OrdersListView = listViewBase.extend({
             createView              : createView,
-
+            filterView              : filterView,
             listTemplate            : listTemplate,
             listItemView            : listItemView,
             contentCollection       : contentCollection,
             totalCollectionLengthUrl: '/order/totalCollectionLength',
-            contentType             : 'Order',//needs in view.prototype.changeLocationHash
+            contentType             : 'Order',
 
             events: {
                 "click .stageSelect"                : "showNewSelect",
                 "click .list tbody td:not(.notForm)": "goToEditDialog",
-                "click .newSelectList li"           : "chooseOption",
-            }
-            ,
+                "click .newSelectList li"           : "chooseOption"
+            },
 
             initialize: function (options) {
                 this.startTime = options.startTime;
                 this.collection = options.collection;
-                this.filter = options.filter;
+                this.filter = options.filter ? options.filter : {};
+                this.filter.forSales = {
+                    key: 'forSales',
+                    value: ['false']
+                };
+                this.forSales = false;
                 this.sort = options.sort;
                 this.defaultItemsNumber = this.collection.namberToShow || 100;
                 this.newCollection = options.newCollection;
@@ -54,14 +58,17 @@ define([
                 var id = targetElement.attr("id");
                 var model = this.collection.get(id);
 
-                model.save({workflow: target$.attr("id")}, {
+                model.save({ workflow: {
+                    _id: target$.attr("id"),
+                    name:target$.text()
+                }}, {
                     headers : {
                         mid: 55
                     },
                     patch   : true,
                     validate: false,
                     success : function () {
-                        self.showFilteredPage();
+                        self.showFilteredPage(self.filter, self);
                     }
                 });
 
@@ -89,7 +96,6 @@ define([
             render: function () {
                 var self;
                 var currentEl;
-                var FilterView;
                 $('.ui-dialog ').remove();
 
                 self = this;
@@ -105,10 +111,8 @@ define([
                 currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 6}).render());
 
                 this.renderCheckboxes();
-
                 this.renderPagination(currentEl, this);
-                //    this.renderAlphabeticalFilter(this);
-            //    this.renderFilter(self);
+                this.renderFilter(self);
 
                 currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
@@ -120,8 +124,7 @@ define([
                     self.stages = stages;
 
                 });
-            }
-            ,
+            },
 
             goToEditDialog: function (e) {
                 e.preventDefault();

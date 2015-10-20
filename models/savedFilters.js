@@ -4,16 +4,17 @@
 module.exports = (function () {
     var mongoose = require('mongoose');
     var savedFiltersSchema = mongoose.Schema({
+        ID         : Number,
         contentView: String,
-        filter: JSON
+        filter     : JSON
 
-}, {collection: 'savedFilters'});
+    }, {collection: 'savedFilters'});
 
-mongoose.model('savedFilters', savedFiltersSchema);
+    mongoose.model('savedFilters', savedFiltersSchema);
 
-if (!mongoose.Schemas) {
-    mongoose.Schemas = {};
-}
+    if (!mongoose.Schemas) {
+        mongoose.Schemas = {};
+    }
 
-mongoose.Schemas['savedFilters'] = savedFiltersSchema;
+    mongoose.Schemas['savedFilters'] = savedFiltersSchema;
 })();

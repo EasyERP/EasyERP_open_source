@@ -7,14 +7,15 @@ define([
         "common",
         "populate",
         'constants',
-        'views/Assignees/AssigneesView'
+        'views/Assignees/AssigneesView',
+        'dataService'
     ],
-    function (CreateTemplate, PersonsCollection, DepartmentsCollection, ProductItemView, QuotationModel, common, populate, CONSTANTS, AssigneesView) {
+    function (CreateTemplate, PersonsCollection, DepartmentsCollection, ProductItemView, QuotationModel, common, populate, CONSTANTS, AssigneesView, dataService) {
 
         var CreateView = Backbone.View.extend({
-            el: "#content-holder",
+            el         : "#content-holder",
             contentType: "Quotation",
-            template: _.template(CreateTemplate),
+            template   : _.template(CreateTemplate),
 
             initialize: function (options) {
                 if (options) {
@@ -23,16 +24,17 @@ define([
                 _.bindAll(this, "saveItem", "render");
                 this.model = new QuotationModel();
                 this.responseObj = {};
+                this.forSales = false;
                 this.render();
             },
 
             events: {
-                'keydown': 'keydownHandler',
-                'click .dialog-tabs a': 'changeTab',
-                "click .current-selected": "showNewSelect",
-                "click": "hideNewSelect",
-                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-                "click .newSelectList li.miniStylePagination": "notHide",
+                'keydown'                                                         : 'keydownHandler',
+                'click .dialog-tabs a'                                            : 'changeTab',
+                "click .current-selected"                                         : "showNewSelect",
+                "click"                                                           : "hideNewSelect",
+                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
+                "click .newSelectList li.miniStylePagination"                     : "notHide",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect"
             },
@@ -42,19 +44,38 @@ define([
                 return false;
 
             },
-            notHide: function () {
+            notHide      : function () {
                 return false;
             },
             hideNewSelect: function () {
                 $(".newSelectList").hide();
             },
-            chooseOption: function (e) {
+            chooseOption : function (e) {
+                var target = $(e.target);
+                var id = target.attr("id");
+                var type = target.attr('data-level');
+
+                var element = _.find(this.responseObj['#project'], function (el) {
+                    return el._id === id;
+                });
+
+                if (type === 'emptyProject'){
+                    this.projectManager = element.projectmanager;
+
+                    this.$el.find('#supplierDd').text(element.customer.name);
+                    this.$el.find('#supplierDd').attr('data-id', element.customer._id);
+                }
+
                 $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
+
+                this.hideNewSelect();
+
+                return false;
             },
-            nextSelect: function (e) {
+            nextSelect   : function (e) {
                 this.showNewSelect(e, false, true);
             },
-            prevSelect: function (e) {
+            prevSelect   : function (e) {
                 this.showNewSelect(e, true, false);
             },
 
@@ -105,14 +126,22 @@ define([
 
                 var forSales = (this.forSales) ? true : false;
 
-                var supplier = thisEl.find('#supplierDd').data('id');
-                var destination = $.trim(thisEl.find('#destination').data('id'));
-                var deliverTo = $.trim(thisEl.find('#deliveryDd').data('id'));
-                var incoterm = $.trim(thisEl.find('#incoterm').data('id'));
-                var invoiceControl = $.trim(thisEl.find('#invoicingControl').data('id'));
-                var paymentTerm = $.trim(thisEl.find('#paymentTerm').data('id'));
-                var fiscalPosition = $.trim(thisEl.find('#fiscalPosition').data('id'));
-                var supplierReference = thisEl.find('#supplierReference').val();
+                var supplier = {};
+                supplier._id = thisEl.find('#supplierDd').attr('data-id');
+                supplier.name = thisEl.find('#supplierDd').text();
+
+                var project = {};
+                project._id = thisEl.find('#projectDd').attr('data-id');
+                project.projectName = thisEl.find('#projectDd').text();
+                project.projectmanager = this.projectManager;
+
+                var destination = $.trim(thisEl.find('#destination').attr('data-id'));
+                var deliverTo = $.trim(thisEl.find('#deliveryDd').attr('data-id'));
+                var incoterm = $.trim(thisEl.find('#incoterm').attr('data-id'));
+                var invoiceControl = $.trim(thisEl.find('#invoicingControl').attr('data-id'));
+                var paymentTerm = $.trim(thisEl.find('#paymentTerm').attr('data-id'));
+                var fiscalPosition = $.trim(thisEl.find('#fiscalPosition').attr('data-id'));
+
                 var orderDate = thisEl.find('#orderDate').val();
                 var expectedDate = thisEl.find('#expectedDate').val() || thisEl.find('#minScheduleDate').text();
 
@@ -151,13 +180,13 @@ define([
                             subTotal = targetEl.find('.subtotal').text();
 
                             products.push({
-                                product: productId,
-                                unitPrice: price,
-                                quantity: quantity,
+                                product      : productId,
+                                unitPrice    : price,
+                                quantity     : quantity,
                                 scheduledDate: scheduledDate,
-                                taxes: taxes,
-                                description: description,
-                                subTotal: subTotal
+                                taxes        : taxes,
+                                description  : description,
+                                subTotal     : subTotal
                             });
                         }
                     }
@@ -165,45 +194,43 @@ define([
 
 
                 data = {
-                    forSales: forSales,
-                    supplier: supplier,
-                    supplierReference: supplierReference,
-                    deliverTo: deliverTo,
-                    products: products,
-                    orderDate: orderDate,
-                    expectedDate: expectedDate,
-                    destination: destination,
-                    incoterm: incoterm,
+                    forSales      : forSales,
+                    supplier      : supplier,
+                    project       : project,
+                    deliverTo     : deliverTo,
+                    products      : products,
+                    orderDate     : orderDate,
+                    expectedDate  : expectedDate,
+                    destination   : destination,
+                    incoterm      : incoterm,
                     invoiceControl: invoiceControl,
-                    paymentTerm: paymentTerm,
+                    paymentTerm   : paymentTerm,
                     fiscalPosition: fiscalPosition,
-                    paymentInfo: {
-                        total: total,
+                    populate      : true,
+                    paymentInfo   : {
+                        total  : total,
                         unTaxed: unTaxed,
-                        taxes: totalTaxes
+                        taxes  : totalTaxes
                     },
-                    groups: {
+                    groups        : {
                         owner: $("#allUsersSelect").data("id"),
                         users: usersId,
                         group: groupsId
                     },
-                    whoCanRW: whoCanRW,
-                    workflow: this.defaultWorkflow
+                    whoCanRW      : whoCanRW,
+                    workflow      : this.defaultWorkflow
                 };
 
-                if (supplier) {
+                if (supplier._id && selectedLength) {
                     this.model.save(data, {
                         headers: {
                             mid: mid
                         },
-                        wait: true,
-                        success: function () {
-                            var redirectUrl = self.forSales ? "easyErp/salesQuotation" : "easyErp/Quotation";
-
-                            self.hideDialog();
-                            Backbone.history.navigate(redirectUrl, {trigger: true});
+                        wait   : true,
+                        success: function (model) {
+                            self.redirectAfterSave(self, model);
                         },
-                        error: function (model, xhr) {
+                        error  : function (model, xhr) {
                             self.errorNotification(xhr);
                         }
                     });
@@ -213,6 +240,13 @@ define([
                 }
             },
 
+            redirectAfterSave: function (content, model) {
+                var redirectUrl = content.forSales ? "easyErp/salesQuotation" : "easyErp/Quotation";
+
+                content.hideDialog();
+                Backbone.history.navigate(redirectUrl, {trigger: true});
+            },
+
             hideDialog: function () {
                 $(".edit-dialog").remove();
                 $(".add-group-dialog").remove();
@@ -220,29 +254,43 @@ define([
                 $(".crop-images-dialog").remove();
             },
 
-            render: function () {
-                var formString = this.template({visible: this.visible});
-                var self = this;
+            createProductView: function () {
                 var productItemContainer;
+
+                productItemContainer = this.$el.find('#productItemsHolder');
+                if ((App.currentDb === 'weTrack') && this.forSales) {
+                    productItemContainer.append(
+                        new ProductItemView({canBeSold: true, service: 'Service'}).render().el
+                    );
+                } else {
+                    productItemContainer.append(
+                        new ProductItemView({canBeSold: this.forSales}).render().el
+                    );
+                }
+            },
+
+            render: function () {
+                var formString = this.template({visible: this.visible, forSales: this.forSales});
+                var self = this;
 
                 this.$el = $(formString).dialog({
                     closeOnEscape: false,
-                    autoOpen: true,
-                    resizable: true,
-                    dialogClass: "edit-dialog",
-                    title: "Create Quotation",
-                    width: "900px",
-                    buttons: [
+                    autoOpen     : true,
+                    resizable    : true,
+                    dialogClass  : "edit-dialog",
+                    title        : "Create Quotation",
+                    width        : "900px",
+                    buttons      : [
                         {
-                            id: "create-person-dialog",
-                            text: "Create",
+                            id   : "create-person-dialog",
+                            text : "Create",
                             click: function () {
                                 self.saveItem();
                             }
                         },
 
                         {
-                            text: "Cancel",
+                            text : "Cancel",
                             click: function () {
                                 self.hideDialog();
                             }
@@ -257,32 +305,48 @@ define([
                     }).render().el
                 );
 
-                productItemContainer = this.$el.find('#productItemsHolder');
-                productItemContainer.append(
-                    new ProductItemView({canBeSold: this.forSales}).render().el
-                );
+                this.createProductView();
 
                 populate.get("#destination", "/destination", {}, 'name', this, true, true);
                 populate.get("#incoterm", "/incoterm", {}, 'name', this, true, true);
                 populate.get("#invoicingControl", "/invoicingControl", {}, 'name', this, true, true);
                 populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, true, true);
                 populate.get("#deliveryDd", "/deliverTo", {}, 'name', this, true);
-                populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
+
+                if ((App.currentDb === 'weTrack') && this.forSales){
+                    this.$el.find('#supplierDd').removeClass('current-selected');
+                    populate.get("#projectDd", "/getProjectsForDd", {}, "projectName", this, false, false);
+                    //populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
+                } else {
+                    populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
+                }
+
+                dataService.getData("/project/getForWtrack", null, function (projects) {
+                    projects = _.map(projects.data, function (project) {
+                        project.name = project.projectName;
+
+                        return project
+                    });
+
+                    self.responseObj['#project'] = projects;
+                });
 
                 populate.fetchWorkflow({
-                    wId: 'Purchase Order',
-                    source: 'purchase',
+                    wId         : 'Purchase Order',
+                    source      : 'purchase',
                     targetSource: 'quotation'
                 }, function (response) {
                     if (!response.error) {
-                        self.defaultWorkflow = response._id;
+                        self.defaultWorkflow = {};
+                        self.defaultWorkflow._id = response._id;
+                        self.defaultWorkflow.name = response.name;
                     }
                 });
 
                 this.$el.find('#orderDate').datepicker({
-                    dateFormat: "d M, yy",
+                    dateFormat : "d M, yy",
                     changeMonth: true,
-                    changeYear: true
+                    changeYear : true
                 }).datepicker('setDate', new Date());
 
                 /*this.$el.find('#bidValidUntill').datepicker({
@@ -292,9 +356,9 @@ define([
                  });*/
 
                 this.$el.find('#expectedDate').datepicker({
-                    dateFormat: "d M, yy",
+                    dateFormat : "d M, yy",
                     changeMonth: true,
-                    changeYear: true
+                    changeYear : true
                 });
 
                 this.delegateEvents(this.events);

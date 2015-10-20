@@ -1,5 +1,5 @@
 ﻿define([
-    'text!templates/Salary/subSalary/list/ListTemplate.html',
+    'text!templates/Payroll/subSalary/list/ListTemplate.html',
         'helpers'
 ],
 
