@@ -3,35 +3,282 @@
  */
 define([
     'text!templates/Projects/projectInfo/wTrackTemplate.html',
-    'views/wTrack/list/ListView'
+    'views/wTrack/list/ListView',
+    'models/wTrackModel',
+    'collections/wTrack/editCollection',
+    'collections/wTrack/filterCollection',
+    'dataService',
+    'populate'
 
-], function (wTrackTemplate, listView) {
+], function (wTrackTemplate, listView, currentModel, EditCollection, wTrackCollection, dataService, populate) {
     var wTrackView = listView.extend({
 
         el: '#weTracks',
+        totalCollectionLengthUrl: '/wTrack/totalCollectionLength',
 
         initialize: function (options) {
-            this.models = options.model;
+            this.collection = options.model;
+            this.defaultItemsNumber = 50;
+            this.filter = options.filter ? options.filter : {};
+
+            this.collection.unbind();
+
+            this.collection.bind('showmore', this.rerenderContent);
+
+            this.startNumber = options.startNumber;
 
             this.render();
+
+            this.getTotalLength(null, this.defaultItemsNumber, this.filter);
         },
 
         template: _.template(wTrackTemplate),
 
         events: {
+            "mouseover .currentPageList"  : "showPagesPopup",
+            "click .itemsNumber"          : "switchPageCounter",
+            "click .showPage"             : "showPage",
+            "change #currentShowPage"     : "showPage",
+            "click #previousPage"         : "previousPage",
+            "click #nextPage"             : "nextPage",
+            "click #firstShowPage"        : "firstPage",
+            "click #lastShowPage"         : "lastPage",
+            //"click .stageSelect"                                              : "showNewSelect",
+            //"click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
+            //"click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
             "click .checkbox": "checked",
-            "change .listCB": "setAllTotalVals"
+            "change .listCB": "setAllTotalVals",
+            "click #top-bar-copyBtn": "copyRow",
+            "click #savewTrack": "saveItem",
+            "click #deletewTrack": "deleteItems"
         },
 
+        rerenderContent: function () {
+            var self = this;
+
+            var wTracks = self.collection.toJSON();
+
+                $('#listContent').html(self.template({
+                    wTracks: wTracks,
+                    startNumber: parseInt($('#grid-start'))
+                }));
+
+
+        },
+
+        showPage: function (event) {
+
+            event.preventDefault();
+            this.showP(event, {filter: this.filter, newCollection: this.newCollection, sort: this.sort}, true);
+        },
+
+        previousPage: function (event) {
+
+            event.preventDefault();
+            $("#top-bar-deleteBtn").hide();
+            $('#check_all').prop('checked', false);
+            this.prevP({
+                sort         : this.sort,
+                filter       : this.filter,
+                newCollection: this.newCollection
+            });
+            dataService.getData(this.totalCollectionLengthUrl, {
+                filter       : this.filter,
+                contentType  : this.contentType,
+                newCollection: this.newCollection
+            }, function (response, context) {
+                context.listLength = response.count || 0;
+            }, this);
+        },
+
+        nextPage: function (event) {
+
+            event.preventDefault();
+
+            $("#top-bar-deleteBtn").hide();
+            $('#check_all').prop('checked', false);
+
+            this.nextP({
+                sort         : this.sort,
+                filter       : this.filter,
+                newCollection: this.newCollection
+            }, true);
+            dataService.getData(this.totalCollectionLengthUrl, {
+                filter       : this.filter,
+                newCollection: this.newCollection
+            }, function (response, context) {
+                context.listLength = response.count || 0;
+            }, this);
+        },
+
+        firstPage: function (event) {
+
+            event.preventDefault();
+            $("#top-bar-deleteBtn").hide();
+            $('#check_all').prop('checked', false);
+            this.firstP({
+                sort         : this.sort,
+                filter       : this.filter,
+                newCollection: this.newCollection
+            }, true);
+            dataService.getData(this.totalCollectionLengthUrl, {
+                sort  : this.sort,
+                filter: this.filter
+            }, function (response, context) {
+                context.listLength = response.count || 0;
+            }, this);
+        },
+
+        lastPage: function (event) {
+
+            event.preventDefault();
+            $("#top-bar-deleteBtn").hide();
+            $('#check_all').prop('checked', false);
+            this.lastP({
+                sort         : this.sort,
+                filter       : this.filter,
+                newCollection: this.newCollection
+            }, true);
+            dataService.getData(this.totalCollectionLengthUrl, {
+                sort  : this.sort,
+                filter: this.filter
+            }, function (response, context) {
+                context.listLength = response.count || 0;
+            }, this);
+        },
+
+        showNewSelect: function (e, prev, next) {
+            populate.showSelect(e, prev, next, this);
+
+            return false;
+        },
+
+        nextSelect: function (e) {
+            this.showNewSelect(e, false, true);
+        },
+
+        prevSelect: function (e) {
+            this.showNewSelect(e, true, false);
+        },
+
+        showPagesPopup: function (e) {
+            $(e.target).closest("button").next("ul").toggle();
+            return false;
+        },
+
+        bindingEventsToEditedCollection: function (context) {
+            if (context.editCollection) {
+                context.editCollection.unbind();
+            }
+            context.editCollection = new EditCollection(context.collection.toJSON());
+            context.editCollection.on('saved', context.savedNewModel, context);
+            context.editCollection.on('updated', context.updatedOptions, context);
+        },
+
+        savedNewModel: function (modelObject) {
+            var savedRow = this.$listTable.find('#false');
+            var modelId;
+            var checkbox = savedRow.find('input[type=checkbox]');
+
+            modelObject = modelObject.success;
+
+            if (modelObject) {
+                modelId = modelObject._id;
+                savedRow.attr("data-id", modelId);
+                checkbox.val(modelId);
+                savedRow.removeAttr('id');
+            }
+
+            this.hideSaveCancelBtns();
+            // this.resetCollection(modelObject);
+        },
+
+        deleteItems: function (e) {
+            e.preventDefault();
+
+            var that = this;
+            var mid = 39;
+            var model;
+            var table = $("#listTable");
+            this.collectionLength = this.collection.length;
+
+            var answer = confirm("Realy DELETE items ?!");
+            var value;
+
+            if (answer === true) {
+                $.each($("#listTable input:checked"), function (index, checkbox) {
+                    value = checkbox.value;
+
+                    model = that.collection.get(value);
+                    model.destroy({
+                        headers: {
+                            mid: mid
+                        },
+                        wait: true,
+                        success: function (model) {
+                            var id = model.get('_id');
+
+                            table.find('[data-id="' + id + '"]').remove();
+
+                            that.hideSaveCancelBtns();
+
+                            that.copyEl.hide();
+                            that.genInvoiceEl.hide();
+
+                        },
+                        error: function (model, res) {
+                            if (res.status === 403 && index === 0) {
+                                alert("You do not have permission to perform this action");
+                            }
+                        }
+                    });
+                });
+            }
+        },
+
+        hideSaveCancelBtns: function () {
+            var saveBtnEl = $('#savewTrack');
+            var cancelBtnEl = $('#deletewTrack');
+
+            this.changed = false;
+
+            saveBtnEl.hide();
+            cancelBtnEl.hide();
+
+            return false;
+        },
+
+        saveItem: function (e) {
+            e.preventDefault();
+
+            var model;
+
+            var errors = this.$el.find('.errorContent');
+
+            for (var id in this.changedModels) {
+                model = this.editCollection.get(id) ? this.editCollection.get(id) : this.collection.get(id);
+                model.changed = this.changedModels[id];
+
+            }
+
+            if (errors.length) {
+                return
+            }
+            this.editCollection.save();
+            this.changedModels = {};
+            this.editCollection.remove(id);
+        },
+
+
         checked: function (e) {
-            if (this.models.length > 0) {
+            if (this.collection.length > 0) {
                 var checkLength = $("input.checkbox:checked").length;
 
                 if ($("input.checkbox:checked").length > 0) {
                     // $("#top-bar-deleteBtn").show();
                     $('#check_all').prop('checked', false);
 
-                    if (checkLength == this.models.length) {
+                    if (checkLength == this.collection.length) {
                         $('#check_all').prop('checked', true);
                     }
                 }
@@ -81,16 +328,118 @@ define([
             }
         },
 
+        showSaveCancelBtns: function () {
+            var saveBtnEl = $('#savewTrack');
+            var cancelBtnEl = $('#deletewTrack');
+
+            saveBtnEl.show();
+            cancelBtnEl.show();
+
+            return false;
+        },
+
+        hideGenerateCopy: function () {
+            $('#top-bar-generateBtn').hide();
+            $('#top-bar-copyBtn').hide();
+        },
+
+        copyRow: function (e) {
+            this.hideGenerateCopy();
+
+            this.changed = true;
+            this.createdCopied = true;
+            var checkedRows = this.$el.find('input.listCB:checked:not(#check_all)');
+            var length = checkedRows.length;
+
+            for (var i = length - 1; i >= 0; i--) {
+                var selectedWtrack = checkedRows[i];
+                var self = this;
+                var target = $(selectedWtrack);
+                var id = target.val();
+                var row = target.closest('tr');
+                var model = self.collection.get(id) ? self.collection.get(id) : self.editCollection.get(id);
+                var _model;
+                var tdsArr;
+                var cid;
+                var hours = model.get('worked');
+                var rate = model.get('rate');
+                var revenue = parseInt(hours) * parseFloat(rate);
+
+                $(selectedWtrack).attr('checked', false);
+
+                model.set({"isPaid": false});
+                model.set({"amount": 0});
+                model.set({"cost": 0});
+                model.set({"revenue": revenue});
+                model = model.toJSON();
+                delete model._id;
+                _model = new currentModel(model);
+
+                this.showSaveCancelBtns();
+                this.editCollection.add(_model);
+
+                cid = _model.cid;
+
+                if (!this.changedModels[cid]) {
+                    this.changedModels[cid] = model;
+                }
+
+                this.$el.find('#listTable').prepend('<tr id="false" data-id="' + cid + '">' + row.html() + '</tr>');
+                row = this.$el.find('#false');
+
+                tdsArr = row.find('td');
+                $(tdsArr[0]).find('input').val(cid);
+                $(tdsArr[20]).find('span').text('Unpaid');
+                $(tdsArr[20]).find('span').addClass('unDone');
+                $(tdsArr[24]).text(0);
+                $(tdsArr[22]).text(0);
+                $(tdsArr[21]).text(revenue.toFixed(2));
+                $(tdsArr[1]).text(cid);
+            }
+        },
+
+        checked: function (e) {
+            var checkLength;
+
+            if (this.collection.length > 0) {
+                checkLength = $("input.listCB:checked").length;
+
+                this.checkProjectId(e, checkLength);
+
+                if (checkLength > 0) {
+                    $("#deletewTrack").show();
+                    $('#check_all').prop('checked', false);
+                    if (checkLength === this.collection.length) {
+                        $('#check_all').prop('checked', true);
+                    }
+                } else {
+                    $("#deletewTrack").hide();
+                    $('#check_all').prop('checked', false);
+                }
+            }
+        },
+
+
         render: function () {
             var self = this;
-            var wTracks = this.models.toJSON();
+            var wTracks = this.collection.toJSON();
             var allInputs;
             var checkedInputs;
+
 
             self.$el.html(this.template({
                 wTracks: wTracks,
                 startNumber: 0
             }));
+
+            this.genInvoiceEl = self.$el.find('#top-bar-generateBtn');
+            this.copyEl = self.$el.find('#top-bar-copyBtn');
+            self.genInvoiceEl.hide();
+            self.copyEl.hide();
+
+            $('#savewTrack').hide();
+            $('#deletewTrack').hide();
+
 
             this.renderPagination(self.$el, this);
 
@@ -104,15 +453,63 @@ define([
                 if (wTracks.length > 0) {
                     checkLength = checkedInputs.length;
 
-                    if (checkLength === wTracks.length) {
-                        $('#check_all').prop('checked', true);
+                    if (checkLength > 0) {
+                        $("#top-bar-deleteBtn").show();
+
+                        if (checkLength === self.collection.length) {
+                            checkedInputs.each(function (index, element) {
+                                self.checkProjectId(element, checkLength);
+                            });
+
+                            $('#check_all').prop('checked', true);
+                        }
                     } else {
+                        $("#top-bar-deleteBtn").hide();
+
                         $('#check_all').prop('checked', false);
                     }
                 }
 
                 self.setAllTotalVals();
+
             });
+
+            dataService.getData("/project/getForWtrack", null, function (projects) {
+                projects = _.map(projects.data, function (project) {
+                    project.name = project.projectName;
+
+                    return project
+                });
+
+                self.responseObj['#project'] = projects;
+            });
+
+            dataService.getData("/employee/getForDD", null, function (employees) {
+                employees = _.map(employees.data, function (employee) {
+                    employee.name = employee.name.first + ' ' + employee.name.last;
+
+                    return employee
+                });
+
+                self.responseObj['#employee'] = employees;
+            });
+
+            dataService.getData("/department/getForDD", null, function (departments) {
+                departments = _.map(departments.data, function (department) {
+                    department.name = department.departmentName;
+
+                    return department
+                });
+
+                self.responseObj['#department'] = departments;
+            });
+
+
+            setTimeout(function () {
+                self.bindingEventsToEditedCollection(self);
+                self.$listTable = $('#listTable');
+            }, 10);
+
 
             return this;
         }

@@ -1,6 +1,12 @@
 <div id="searchContainer"></div>
-<div>
-    <table class="list task-list">
+<div id="createBtnHolder">
+    <a href="javascript;" class="icon save left" title="Save" id="savewTrack">c</a>
+    <a href="javascript;" class="icon remove left" title="Remove" id="deletewTrack">x</a>
+    <!--<button id="top-bar-generateBtn" class="red disabled">Generate Invoice</button>-->
+    <button id="top-bar-copyBtn" class="red disabled">Copy</button>
+</div>
+<div id="listContent">
+    <table class="list task-list" id="listTable">
         <thead>
         <tr>
             <th><input type="checkbox" id="check_all" /></th>
@@ -119,10 +125,10 @@
             <td data-type="input" class="editable autoCalc" data-content="6"><%=wTrack['6'] ? wTrack['6'] : '0'%></td>
             <td data-type="input" class="editable autoCalc" data-content="7"><%=wTrack['7'] ? wTrack['7'] : '0'%></td>
             <td><span class="<%=wTrack.isPaid ? 'done' : 'unDone'%>"><%=wTrack.isPaid ? 'Paid' : 'Unpaid'%></span></td>
-            <td data-content="revenue" class="money"><%=(wTrack.revenue / 100).toFixed(2)%></td>
-            <td data-content="cost" class="money"><%=(wTrack.cost / 100).toFixed(2)%></td>
-            <td data-content="profit" class="money"><%=((wTrack.revenue - wTrack.cost) / 100).toFixed(2)%></td>
-            <td data-content="amount" class="money"><%=(wTrack.amount / 100).toFixed(2)%></td>
+            <td data-content="revenue" class="money"><%=(wTrack.revenue)%></td>
+            <td data-content="cost" class="money"><%=(wTrack.cost)%></td>
+            <td data-content="profit" class="money"><%=((wTrack.revenue - wTrack.cost).toFixed(2))%></td>
+            <td data-content="amount" class="money"><%=(wTrack.amount)%></td>
         </tr>
         <% }) %>
     </table>

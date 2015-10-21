@@ -544,8 +544,11 @@ define([
 
                 this.wCollection = new wTrackCollection({
                     viewType: 'list',
-                    filter  : filter
+                    filter  : filter,
+                    count: 50
                 });
+
+                var collectionLength = this.wCollection.length;
 
                 var callback = _.once(cb);
 
@@ -553,7 +556,9 @@ define([
                 function createView() {
                     callback();
                     new wTrackView({
-                        model: self.wCollection
+                        model: self.wCollection,
+                        filter: filter,
+                        startNumber: collectionLength + self.wCollection.length
                     }).render();
                 };
 

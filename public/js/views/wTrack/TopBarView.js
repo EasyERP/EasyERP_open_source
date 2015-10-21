@@ -19,7 +19,7 @@ define([
                 "click #top-bar-generateBtn"    : "generateInvoice",
                 "click #top-bar-copyBtn"        : "copyRow",
                 "click #top-bar-exportToCsvBtn" : "exportToCsv",
-                "click #top-bar-exportToXlsxBtn": "exportToXlsx",
+                "click #top-bar-exportToXlsxBtn": "exportToXlsx"
             },
 
             generateInvoice: function (e) {
