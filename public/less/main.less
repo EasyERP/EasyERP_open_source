@@ -6670,9 +6670,19 @@ textarea#editInput {
 
 //----------------------------------------------
 
-#searchInputContainer {
-  width: 100%;
+#searchGlobalContainer {
+  display: block;
+  border: 1px solid @border-color-main;
 }
+
+#searchFilterContainer {
+  float: left;
+  width: auto;
+  padding: 2px 0 2px 26px;
+  height: 20px;
+  overflow: hidden;
+}
+
 * html .ui-autocomplete { width:1px; }
 .ui-autocomplete {
   position: absolute;
@@ -6701,7 +6711,6 @@ textarea#editInput {
     }
   }
   .ui-autocomplete-category {
-    //font-weight: bold;
     margin: .5em 0 .2em;
     padding: 0;
     line-height: 1.5;
@@ -6709,13 +6718,18 @@ textarea#editInput {
     width: 100%;
   }
 }
+
 .ui-autocomplete-input {
-  display: block;
+  &:empty:not(:focus):before{
+    content:attr(data-text)
+  }
   height: 20px;
   overflow: hidden;
-  padding: 2px 31px 2px 26px;
-  border: 1px solid @border-color-main;
+
+  padding: 2px 31px 2px 0;
+  display: block;
 }
+
 .ui-helper-hidden-accessible {
   border: 0;
   height: 1px;
@@ -6730,9 +6744,7 @@ textarea#editInput {
 
 .ui-widget-content {
   border: 1px solid @border-color-main;
-  border-top: none;
   background-color: @bg-main;
   color: @mainText-color;
   max-height: 210px;
-  overflow: auto;
 }

@@ -1,6 +1,7 @@
 define([
         'text!templates/Filter/FilterTemplate.html',
         'text!templates/Filter/filterFavourites.html',
+        'text!templates/Filter/searchGroupLiTemplate.html',
         'views/Filter/FilterValuesView',
         'views/Filter/savedFiltersView',
         'collections/Filter/filterCollection',
@@ -10,14 +11,15 @@ define([
         'models/UsersModel',
         'dataService'
     ],
-    function (ContentFilterTemplate, savedFilterTemplate, valuesView, savedFiltersView, filterValuesCollection, Custom, Common, CONSTANTS, usersModel, dataService) {
+    function (ContentFilterTemplate, savedFilterTemplate, searchGroupLiTemplate, valuesView, savedFiltersView, filterValuesCollection, Custom, Common, CONSTANTS, usersModel, dataService) {
         var FilterView;
         FilterView = Backbone.View.extend({
-            el          : '#searchContainer',
-            contentType : "Filter",
-            savedFilters: {},
-            filterIcons : {},
-            template    : _.template(ContentFilterTemplate),
+            el                 : '#searchContainer',
+            contentType        : "Filter",
+            savedFilters       : {},
+            filterIcons        : {},
+            template           : _.template(ContentFilterTemplate),
+            searchGroupTemplate: _.template(searchGroupLiTemplate),
 
             events: {
                 "mouseover .search-content"     : 'showSearchContent',
@@ -305,7 +307,7 @@ define([
 
             showFilterIcons: function (filter) {
                 var filterIc = this.$el.find('.filter-icons');
-                var filterValues = this.$el.find('.search-field #searchInputContainer');
+                var filterValues = this.$el.find('.search-field #searchFilterContainer');
                 var filter = Object.keys(filter);
                 var self = this;
                 var groupName;
@@ -418,12 +420,13 @@ define([
 
                 mapData = _.map(this.filterObject[filterView], function (dataItem) {
                     return {
-                        category: key,
-                        categoryView: filterView,
+                        category       : key,
+                        categoryView   : filterView,
                         categoryBackend: filterBackend,
-                        label: dataItem.name,
-                        value: dataItem.name,
-                        data: dataItem._id};
+                        label          : dataItem.name,
+                        value          : dataItem.name,
+                        data           : dataItem._id
+                    };
                 })
 
                 this.searchRessult = this.searchRessult.concat(mapData);
@@ -452,8 +455,8 @@ define([
             },
 
             toggleSearchResultGroup: function (e) {
-                var target = $(e.target);
-                var name = target.attr('data-content');
+                var target = $(e.target).closest('li');
+                var name = target.attr('data-view');
                 var container = target.closest('.ui-autocomplete');
                 var elements = container.find('.' + name);
 
@@ -462,14 +465,14 @@ define([
             },
 
             clickSearchResult: function (e) {
-                var currentElement = $(e.target);
+                var currentElement = $(e.target).closest("li");
+
                 var container = currentElement.closest('.ui-autocomplete');
-                var groupSearchResultElement = currentElement.hasClass('searchGroupResult') ? currentElement : currentElement.closest('.searchGroupResult');
-                var filterObjectName = groupSearchResultElement.attr('data-view');
-                var groupType = groupSearchResultElement.attr('data-back');
+                var checkOnGroup = currentElement.hasClass('ui-autocomplete-category');
+
+                var filterObjectName = currentElement.attr('data-view');
+                var groupType = currentElement.attr('data-back');
                 var elements = container.find('.' + filterObjectName);
-
-
 
                 if (!App.filter[filterObjectName]) {
                     App.filter[filterObjectName] = {
@@ -478,9 +481,13 @@ define([
                     };
                 }
 
-                $.each(elements, function (index, element) {
-                    App.filter[filterObjectName]['value'].push($(element).attr('data-content'));
-                });
+                if (checkOnGroup) {
+                    $.each(elements, function (index, element) {
+                        App.filter[filterObjectName]['value'].push($(element).attr('data-content'));
+                    });
+                } else {
+                    App.filter[filterObjectName]['value'].push(currentElement.attr('data-content'));
+                }
 
                 this.setDbOnce();
                 this.showFilterIcons(App.filter);
@@ -507,12 +514,20 @@ define([
                         var that = this;
                         var currentCategory = "";
 
+                        that._renderItemData = function (ul, item) {
+                            return $("<li>")
+                                .data("item.autocomplete", item)
+                                .append(item.label)
+                                .appendTo(ul);
+                        };
+
                         $.each(items, function (index, item) {
                             var li;
-                            var categoryLi = $('<li class="ui-autocomplete-category" >' +
-                                '<span class="searchGroupDropDown" data-content="' + item.categoryView + '">C</span>' +
-                                '<span class="searchGroupResult" data-back="' + item.categoryBackend + '" data-view="' + item.categoryView + '">Search <em>' + item.category + '</em> for: <strong>' + that.element.text() + '</strong></span>' +
-                                '</li>');
+                            var categoryLi;
+
+                            item.text = that.element.text();
+
+                            categoryLi = $(self.searchGroupTemplate({item: item}));
 
                             if (item.category != currentCategory) {
                                 ul.append(categoryLi);
@@ -526,7 +541,12 @@ define([
                             }
                             li = that._renderItemData(ul, item);
                             if (item.category) {
+                                li.click(function (e) {
+                                    self.clickSearchResult(e);
+                                });
                                 li.toggle();
+                                li.attr('data-back', item.categoryBackend);
+                                li.attr('data-view', item.categoryView);
                                 li.attr("class", item.categoryView);
                                 li.attr("data-content", item.data);
                             }
@@ -537,16 +557,16 @@ define([
                 searchInput = currentEl.find("#searchInput");
 
                 searchInput.catcomplete({
-                    source: this.searchRessult,
-                    appendTo: searchInput.closest('div'),
+                    source  : this.searchRessult,
+                    appendTo: searchInput.closest('#searchGlobalContainer'),
                     /*focus : function (event, ui) {
-                        $(this).closest("#mainSearch").text(ui.item.label);
-                        return false;
-                    },*/
-                    select: function (event, ui) {
-                        $(this).closest("#mainSearch").text(ui.item.label);
-                        return false;
-                    }
+                     $(this).closest("#mainSearch").text(ui.item.label);
+                     return false;
+                     },*/
+                    /*select: function (event, ui) {
+                     self.clickSearchResult(ui);
+                     return false;
+                     }*/
                 });
 
                 return this;

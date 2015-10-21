@@ -8941,8 +8941,16 @@ textarea#editInput {
 .forInfoWrap {
   overflow: hidden;
 }
-#searchInputContainer {
-  width: 100%;
+#searchGlobalContainer {
+  display: block;
+  border: 1px solid #7f7f80;
+}
+#searchFilterContainer {
+  float: left;
+  width: auto;
+  padding: 2px 0 2px 26px;
+  height: 20px;
+  overflow: hidden;
 }
 * html .ui-autocomplete {
   width: 1px;
@@ -8980,11 +8988,13 @@ textarea#editInput {
   width: 100%;
 }
 .ui-autocomplete-input {
-  display: block;
   height: 20px;
   overflow: hidden;
-  padding: 2px 31px 2px 26px;
-  border: 1px solid #7f7f80;
+  padding: 2px 31px 2px 0;
+  display: block;
+}
+.ui-autocomplete-input:empty:not(:focus):before {
+  content: attr(data-text);
 }
 .ui-helper-hidden-accessible {
   border: 0;
@@ -8999,9 +9009,7 @@ textarea#editInput {
 }
 .ui-widget-content {
   border: 1px solid #7f7f80;
-  border-top: none;
   background-color: #ffffff;
   color: #393939;
   max-height: 210px;
-  overflow: auto;
 }
