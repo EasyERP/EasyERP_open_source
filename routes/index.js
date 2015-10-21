@@ -4,6 +4,7 @@ require('pmx').init();
 module.exports = function (app, mainDb) {
     'use strict';
 
+    var newrelic = require('newrelic');
     var events = require('events');
     var event = new events.EventEmitter();
     var logWriter = require('../helpers/logWriter');
@@ -48,6 +49,7 @@ module.exports = function (app, mainDb) {
     var productCategoriesRouter = require('./productCategories')(models, event);
     var customersRouter = require('./customers')(models, event);
     var capacityRouter = require('./capacity')(models);
+    var importFileRouter = require('./importFile')(models);
 
     var requestHandler = require("../requestHandler.js")(app, event, mainDb);
 
@@ -70,13 +72,14 @@ module.exports = function (app, mainDb) {
     app.use('/payment', paymentRouter);
     app.use('/period', periodRouter);
     app.use('/paymentMethod', paymentMethodRouter);
-    //app.use('/importData', importDataRouter);
+    app.use('/importData', importDataRouter);
+    app.use('/importFile', importFileRouter);
     app.use('/wTrack', wTrackRouter);
     app.use('/project', projectRouter);
     app.use('/employee', employeeRouter);
     app.use('/department', departmentRouter);
     app.use('/revenue', revenueRouter);
-    app.use('/salary', salaryRouter);
+    app.use('/payroll', salaryRouter);
     app.use('/opportunity', opportunityRouter);
     app.use('/task', taskRouter);
     app.use('/jobPosition', jobPositionRouter);
@@ -231,7 +234,7 @@ module.exports = function (app, mainDb) {
                         shortPas = "\/uploads\/" + req.headers.id + "\/" + item.name;
                     }
                 }
-                fs.writeFile(path, data, function (err) {
+                fs.writeFile(path, data, function (err) {k
                     if (!err) {
                         var file = {};
                         file._id = mongoose.Types.ObjectId();
@@ -1406,6 +1409,9 @@ module.exports = function (app, mainDb) {
             res.status(status).send({error: err.message + '\n' + err.stack});
         }
     };
+
+
+    requestHandler.initScheduler();
 
     app.use(notFound);
     app.use(errorHandler);

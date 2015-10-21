@@ -2,13 +2,15 @@ define([
         "text!templates/Quotation/EditTemplate.html",
         'views/Assignees/AssigneesView',
         'views/Product/InvoiceOrder/ProductItems',
+        'views/Projects/projectInfo/orderView',
+        'collections/Quotation/filterCollection',
         "common",
         "custom",
         "dataService",
         "populate",
         'constants'
     ],
-    function (EditTemplate, AssigneesView, ProductItemView, common, Custom, dataService, populate, CONSTANTS) {
+    function (EditTemplate, AssigneesView, ProductItemView, ordersView, quotationCollection, common, Custom, dataService, populate, CONSTANTS) {
 
         var EditView = Backbone.View.extend({
             contentType: "Quotation",
@@ -27,6 +29,7 @@ define([
                 this.currentModel.urlRoot = "/quotation";
                 this.responseObj = {};
                 this.forSales = false;
+
                 this.render(options);
             },
 
@@ -136,7 +139,45 @@ define([
                             success: function () {
                                 var redirectUrl = self.forSales ? "easyErp/salesOrder" : "easyErp/Order";
 
-                                Backbone.history.navigate(redirectUrl, {trigger: true});
+                                if (self.redirect){
+                                    //var url = window.location.hash;
+                                    //
+                                    //Backbone.history.fragment = '';
+                                    //Backbone.history.navigate(url, {trigger: true});
+                                    var filter = {
+                                        'projectName': {
+                                            key  : 'project._id',
+                                            value: [self.pId]
+                                        },
+                                        'isOrder': {
+                                            key  : 'isOrder',
+                                            value: ['true']
+                                        }
+                                    };
+
+                                    self.ordersCollection = new quotationCollection({
+                                        count      : 50,
+                                        viewType   : 'list',
+                                        contentType: 'salesOrder',
+                                        filter     : filter
+                                    });
+
+                                    function createView() {
+
+                                        new ordersView({
+                                            collection: self.ordersCollection,
+                                            projectId : self.pId,
+                                            customerId: self.customerId,
+                                            projectManager: self.projectManager
+                                        }).render({activeTab: true});
+                                    };
+
+                                    self.ordersCollection.bind('reset', createView);
+
+                                } else {
+                                    Backbone.history.navigate(redirectUrl, {trigger: true});
+                                }
+
                             }
                         });
                     } else {
@@ -157,7 +198,8 @@ define([
                     status: 'Cancelled',
                     order: 1
                 }, function (workflow) {
-                    var redirectUrl = self.forSales ? "easyErp/salesQuotation" : "easyErp/Quotation";
+                    //var redirectUrl = self.forSales ? "easyErp/salesQuotation" : "easyErp/Quotation";
+                    var redirectUrl = window.location.hash;
 
                     if (workflow && workflow.error) {
                         return alert(workflow.error.statusText);
@@ -174,6 +216,8 @@ define([
                         },
                         patch: true,
                         success: function () {
+                            $(".edit-dialog").remove();
+                            Backbone.history.fragment = '';
                             Backbone.history.navigate(redirectUrl, {trigger: true});
                         }
                     });
@@ -188,7 +232,8 @@ define([
                 populate.fetchWorkflow({
                     wId: 'Sales Order'
                 }, function (workflow) {
-                    var redirectUrl = self.forSales ? "easyErp/salesQuotation" : "easyErp/Quotation";
+                   // var redirectUrl = self.forSales ? "easyErp/salesQuotation" : "easyErp/Quotation";
+                    var redirectUrl = window.location.hash;
 
                     if (workflow && workflow.error) {
                         return alert(workflow.error.statusText);
@@ -205,6 +250,8 @@ define([
                         },
                         patch: true,
                         success: function () {
+                            $(".edit-dialog").remove();
+                            Backbone.history.fragment = '';
                             Backbone.history.navigate(redirectUrl, {trigger: true});
                         }
                     });
@@ -325,15 +372,19 @@ define([
                     workflow: workflow
                 };
 
-                if (supplier) {
+                if (supplier._id) {
                     this.model.save(data, {
                         headers: {
                             mid: mid
                         },
                         wait: true,
                         success: function () {
+                            var url = window.location.hash;
+
                             self.hideDialog();
-                            Backbone.history.navigate("easyErp/Quotation", {trigger: true});
+
+                            Backbone.history.fragment = '';
+                            Backbone.history.navigate(url, {trigger: true});
                         },
                         error: function (model, xhr) {
                             self.errorNotification(xhr);
@@ -427,12 +478,13 @@ define([
                 populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, false, true);
                 populate.get("#deliveryDd", "/deliverTo", {}, 'name', this, false, true);
 
-                if ((App.currentDb !== 'weTrack') && this.forSales){
-                    populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
-                } else {
+                if ((App.currentDb === 'weTrack') && this.forSales){
                     populate.get("#supplierDd", "/Customer", {}, "fullName", this, false, false);
 
                     populate.get("#projectDd", "/getProjectsForDd", {}, "projectName", this, false, false);
+
+                } else {
+                    populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
                 }
 
                 this.$el.find('#orderDate').datepicker({

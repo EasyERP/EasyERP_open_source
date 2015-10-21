@@ -301,6 +301,9 @@ define([
 			var projectName = td.attr('data-project');
 			var dateByWeek = td.attr('data-date');
 			var employee = tr.attr('data-employee');
+			var table = this.$el.find('#dashboardBody');
+			var allRows = table.find('[data-employee="'+ employee +'"]');
+			var tds = allRows.find('[data-date="'+ dateByWeek +'"]:not([data-project="'+ projectName + '"])');
 
 			var queryData = {
 				projectName: projectName,
@@ -315,6 +318,7 @@ define([
 				if (!response.error) {
 					return new VacationDashEdit({
 						tr: tr,
+						tds: tds,
 						dateByWeek: dateByWeek,
 						projectName   : projectName,
 						customer      : response.customer,

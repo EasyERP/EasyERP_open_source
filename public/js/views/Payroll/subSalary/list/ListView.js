@@ -1,10 +1,10 @@
 define([
-        'text!templates/Salary/subSalary/list/ListHeader.html',
-        'text!templates/Salary/subSalary/list/cancelEdit.html',
-        'views/Salary/subSalary/CreateView',
-        'views/Salary/subSalary/list/ListItemView',
-        'text!templates/Salary/subSalary/list/ListTotal.html',
-        'collections/Salary/editCollection',
+        'text!templates/Payroll/subSalary/list/ListHeader.html',
+        'text!templates/Payroll/subSalary/list/cancelEdit.html',
+        'views/Payroll/subSalary/CreateView',
+        'views/Payroll/subSalary/list/ListItemView',
+        'text!templates/Payroll/subSalary/list/ListTotal.html',
+        'collections/Payroll/editCollection',
         'collections/Employees/employee',
         'models/SalaryModel',
         'populate',
@@ -231,10 +231,10 @@ define([
                     tdForUpdate.text(this.checkMoneyTd(tdForUpdate, value));
 
                     diffOnCashRealValue = diffOnCash.attr('data-value');
-                    diffOnCashRealValue = diffOnCashRealValue ? diffOnCashRealValue : diffOnCash.attr('data-cash');
+                    diffOnCashRealValue = diffOnCashRealValue ? diffOnCashRealValue : diffOnCash.text();
 
                     diffOnCardRealValue = diffOnCard.attr('data-value');
-                    diffOnCardRealValue = diffOnCardRealValue ? diffOnCardRealValue : diffOnCard.attr('data-cash');
+                    diffOnCardRealValue = diffOnCardRealValue ? diffOnCardRealValue : diffOnCard.text();
 
                     totalValue = parseInt(diffOnCashRealValue) + parseInt(diffOnCardRealValue);
                     diffTotal.text(this.checkMoneyTd(diffTotal, totalValue));
@@ -350,7 +350,7 @@ define([
                 this.editCollection.on('saved', this.savedNewModel, this);
                 this.editCollection.on('updated', this.updatedOptions, this);
 
-                dataService.getData('/salary/recalculateSalaryCash', {}, function (response, context) {
+                dataService.getData('/payroll/recalculateSalaryCash', {}, function (response, context) {
                     context.listLength = response.count || 0;
                 }, this);
             },
@@ -453,7 +453,7 @@ define([
                 this.bodyContainer = $(this.bodyContainerId);
                 this.getTotal();
 
-                dataService.getData('/salary/recalculateSalaryCash', {}, function (response, context) {
+                dataService.getData('/payroll/recalculateSalaryCash', {}, function (response, context) {
                     context.listLength = response.count || 0;
                 }, this);
             },

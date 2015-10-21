@@ -51,7 +51,6 @@
         <% })%>
 
         </tbody>
-        <%if (count) {%>
 
         <tfoot>
         <tr>
@@ -71,6 +70,7 @@
             <td>&nbsp</td>
             <td>&nbsp</td>
         </tr>
+        <% if (count) {%>
         <tr>
             <td>Total:</td>
             <td><%='&nbsp'%></td>
@@ -84,8 +84,7 @@
             </td>
         </tr>
         </tfoot>
-
-        <% } %>
+<% } %>
     </table>
 </div>
 

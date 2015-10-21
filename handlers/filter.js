@@ -615,7 +615,8 @@ var Filters = function (models) {
             Quotation.aggregate([
                 {
                     $match: {
-                        forSales: false
+                        forSales: false,
+                        isOrder: false
                     }
                 },
                 {
@@ -644,6 +645,8 @@ var Filters = function (models) {
                 if (result && result.length > 0) {
                     result = result[0];
                     callback(null, result);
+                } else {
+                    callback(null, []);
                 }
 
 
@@ -654,7 +657,8 @@ var Filters = function (models) {
             Quotation.aggregate([
                 {
                     $match: {
-                        forSales: true
+                        forSales: true,
+                        isOrder: false
                     }
                 },
                 {
@@ -694,6 +698,8 @@ var Filters = function (models) {
                 if (result && result.length){
                     result = result[0];
                     callback(null, result);
+                } else {
+                    callback(null, []);
                 }
 
             });
@@ -744,6 +750,8 @@ var Filters = function (models) {
                 if (result && result.length){
                     result = result[0];
                     callback(null, result);
+                } else {
+                    callback(null, []);
                 }
 
             });
@@ -794,6 +802,8 @@ var Filters = function (models) {
                 if (result && result.length){
                     result = result[0];
                     callback(null, result);
+                } else {
+                    callback(null, []);
                 }
 
             });

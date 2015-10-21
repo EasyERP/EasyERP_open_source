@@ -9,6 +9,7 @@ module.exports = function (mainDb, dbsNames) {
     'use strict';
     //mongoose is delegated because it encapsulated main connection
 
+    var newrelic = require('newrelic');
     var http = require('http');
     var path = require('path');
     var express = require('express');
@@ -32,7 +33,9 @@ module.exports = function (mainDb, dbsNames) {
     var allowCrossDomain = function (req, res, next) {
         var browser = req.headers['user-agent'];
 
-        if (/Trident/.test(browser)) {
+       /* console.log(browser);*/
+
+        if (/Trident|Edge/.test(browser)) {
             res.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
         }
 
@@ -63,6 +66,7 @@ module.exports = function (mainDb, dbsNames) {
     app.use(cookieParser("CRMkey"));
     app.use(express.static(path.join(__dirname, 'public')));
 
+
     app.use(session({
         name             : 'crm',
         key              : "CRMkey",
@@ -80,6 +84,8 @@ module.exports = function (mainDb, dbsNames) {
     app.set('io', io);
 
     require('./routes/index')(app, mainDb);
+
+    app.locals.newrelic = newrelic;
 
     return httpServer;
 };

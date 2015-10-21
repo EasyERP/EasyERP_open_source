@@ -15,6 +15,7 @@ define([
         'views/Projects/projectInfo/invoiceView',
         'views/Projects/projectInfo/quotationView',
         'views/Projects/projectInfo/wTracks/generateWTrack',
+        'views/Projects/projectInfo/orderView',
         'collections/wTrack/filterCollection',
         'collections/Quotation/filterCollection',
         'text!templates/Notes/AddAttachments.html',
@@ -26,7 +27,7 @@ define([
         'helpers'
     ],
 
-    function (ProjectsFormTemplate, DetailsTemplate, ProformRevenueTemplate, EditView, noteView, attachView, AssigneesView, BonusView, wTrackView, PaymentView, InvoiceView, QuotationView, GenerateWTrack, wTrackCollection, quotationCollection, addAttachTemplate, common, populate, custom, dataService, async, helpers) {
+    function (ProjectsFormTemplate, DetailsTemplate, ProformRevenueTemplate, EditView, noteView, attachView, AssigneesView, BonusView, wTrackView, PaymentView, InvoiceView, QuotationView, GenerateWTrack, oredrView, wTrackCollection, quotationCollection, addAttachTemplate, common, populate, custom, dataService, async, helpers) {
         var FormEmployeesView = Backbone.View.extend({
             el            : '#content-holder',
             contentType   : 'Projects',
@@ -359,12 +360,15 @@ define([
 
                 thisEl.find('#createBonus').hide();
                 _.bindAll(this, 'getQuotations');
+                _.bindAll(this, 'getOrders');
                 _.bindAll(this, 'getWTrack');
                 _.bindAll(this, 'renderProformRevenue');
 
-                paralellTasks = [this.getInvoice, this.getWTrack, this.getQuotations];
+
+                paralellTasks = [this.getInvoice, this.getWTrack, this.getQuotations, this.getOrders];
 
                 async.parallel(paralellTasks, function (err, result) {
+                    self.renderProformRevenue();
                     //self.getDataForDetails(result);
                 });
 
@@ -524,8 +528,11 @@ define([
                     filter  : filter
                 });
 
+                var callback = _.once(cb);
+
 
                 function createView() {
+                    callback();
                     new wTrackView({
                         model: self.wCollection
                     }).render();
@@ -612,15 +619,35 @@ define([
                         value: [this.id]
                     }
                 };
+                var filterOrder = {
+                    'projectName': {
+                        key  : 'project._id',
+                        value: [this.id]
+                    },
+                    'isOrder': {
+                        key  : 'isOrder',
+                        value: ['true']
+                    }
+                };
+
+                this.ordersCollection = new quotationCollection({
+                    count      : 50,
+                    viewType   : 'list',
+                    contentType: 'salesOrder',
+                    filter     : filterOrder
+                });
+
 
                 this.qCollection = new quotationCollection({
                     count      : 50,
                     viewType   : 'list',
-                    contentType: 'Quotation',
+                    contentType: 'salesQuotation',
                     filter     : filter
                 });
 
                 function createView() {
+
+                    cb();
                     new QuotationView({
                         collection: self.qCollection,
                         projectId : self.id,
@@ -628,20 +655,68 @@ define([
                         projectManager: self.formModel.toJSON().projectmanager
                     }).render();
 
-                    self.renderProformRevenue();
-                };
 
+                   // self.renderProformRevenue();
+                };
                 this.qCollection.bind('reset', createView);
                 this.qCollection.bind('add', self.renderProformRevenue);
             },
+
+            getOrders: function (cb) {
+                var self = this;
+
+                var filter = {
+                    'projectName': {
+                        key  : 'project._id',
+                        value: [this.id]
+                    },
+                    'isOrder': {
+                        key  : 'isOrder',
+                        value: ['true']
+                    }
+                };
+
+                this.ordersCollection = new quotationCollection({
+                    count      : 50,
+                    viewType   : 'list',
+                    contentType: 'salesOrder',
+                    filter     : filter
+                });
+
+                function createView() {
+                    cb();
+                    new oredrView({
+                        collection: self.ordersCollection,
+                        projectId : self.id,
+                        customerId: self.formModel.toJSON().customer._id,
+                        projectManager: self.formModel.toJSON().projectmanager
+                    }).render();
+
+                };
+
+                function showMoreContent(newModels) {
+                    self.ordersCollection.reset(newModels.toJSON());
+                };
+
+                this.ordersCollection.bind('reset', createView);
+                this.ordersCollection.bind('add', self.renderProformRevenue);
+                this.ordersCollection.bind('showmore', showMoreContent);
+            },
+
 
             renderProformRevenue: function () {
                 var self = this;
                 var proformContainer = this.$el.find('#proformRevenueContainer');
 
                 var qCollectionJSON = this.qCollection.toJSON();
+                var ordersCollectionJSON = this.ordersCollection.toJSON();
 
                 var sum = 0;
+                var orderSum = 0;
+
+                ordersCollectionJSON.forEach(function(element) {
+                    orderSum += element.paymentInfo.total;
+                });
 
                 qCollectionJSON.forEach(function(element) {
                     sum += element.paymentInfo.total;
@@ -653,8 +728,8 @@ define([
                 };
 
                 this.proformValues.orders = {
-                    count: 0,
-                    sum  : 0
+                    count: ordersCollectionJSON.length,
+                    sum  : orderSum
                 };
 
                 proformContainer.html(this.proformRevenue({

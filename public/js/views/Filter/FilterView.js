@@ -83,7 +83,7 @@ define([
 
                         self.trigger('filter', App.filter);
                         self.renderFilterContent();
-                        self.showFilterIcons(App.filter);
+                        self.showFilterName(keys[0]);
                     } else {
                         console.log('can\'t get savedFilters');
                     }
@@ -328,6 +328,17 @@ define([
                 });
             },
 
+            showFilterName: function(filterName){
+                var filterIc = this.$el.find('.filter-icons');
+                var filterValues = this.$el.find('.search-field .oe_searchview_input');
+                filterValues.empty();
+
+                filterIc.addClass('active');
+                filterValues.append('<div class="forFilterIcons"><span class="fa fa-star funnelIcon"></span><span class="filterValues">' + filterName + '</span><span class="removeValues">x</span></div>');
+
+
+            },
+
             removeFilter: function (e) {
                 var target = $(e.target);
                 var groupName = target.prev().text();
@@ -336,7 +347,12 @@ define([
                 var valuesArray;
                 var collectionElement;
 
-                valuesArray = App.filter[filterView]['value'];
+                if (filterView){
+                    valuesArray = App.filter[filterView]['value'];
+                } else {
+                    App.filter = {};
+                    this.removeSelectedFilter();
+                }
 
                 if (valuesArray) {
                     if (this.currentCollection[filterView].length !== 0) {
@@ -349,7 +365,9 @@ define([
 
                     this.renderGroup(groupName);
                 } else {
-                    delete App.filter['letter'];
+                    if (filterView) {
+                        delete App.filter['letter'];
+                    }
                 }
 
                 $(e.target).closest('div').remove();
@@ -501,8 +519,9 @@ define([
 
                 currentEl.html(this.template({filterCollection: this.constantsObject}));
 
-                this.renderFilterContent();
 
+                this.renderFilterContent();
+                this.showFilterIcons(App.filter);
                 this.renderSavedFilters();
 
                 $.widget("custom.catcomplete", $.ui.autocomplete, {
@@ -602,7 +621,7 @@ define([
 
                                 self.trigger('filter', App.filter, viewType);
                                 self.renderFilterContent();
-                                self.showFilterIcons(App.filter);
+                                self.showFilterName(keys[0]);
                                 filterId = this.savedFilters[j]['_id']['_id'];
 
                                 if (typeof (filterId) === 'object') {
@@ -621,7 +640,7 @@ define([
                 }
 
                 this.$el.find('#favoritesContent').append(content);
-                self.selectedFilter(filterByDefault);
+                self.selectedFilter(filterId);
             },
 
             selectedFilter: function (filterId) {
@@ -634,6 +653,12 @@ define([
 
                     filterName.addClass('checkedValue');
                 }
+            },
+
+            removeSelectedFilter: function () {
+                var filterNames = this.$el.find('.filters');
+
+                filterNames.removeClass('checkedValue');
             },
 
             parseFilter: function () {

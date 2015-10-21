@@ -1,5 +1,5 @@
 define([
-        "text!templates/Salary/subSalary/CreateTemplate.html",
+        "text!templates/Payroll/subSalary/CreateTemplate.html",
     ],
     function (CreateTemplate) {
 

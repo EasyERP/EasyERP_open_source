@@ -104,7 +104,7 @@ define([
                     status: 'Cancelled',
                     order: 1
                 }, function (workflow) {
-                    var redirectUrl = self.forSales ? "easyErp/salesOrder" : "easyErp/Order";
+                    var redirectUrl = window.location.hash;//self.forSales ? "easyErp/salesOrder" : "easyErp/Order";
 
                     if (workflow && workflow.error) {
                         return alert(workflow.error.statusText);
@@ -121,6 +121,8 @@ define([
                         },
                         patch: true,
                         success: function () {
+                            $(".edit-dialog").remove();
+                            Backbone.history.fragment = '';
                             Backbone.history.navigate(redirectUrl, {trigger: true});
                         }
                     });

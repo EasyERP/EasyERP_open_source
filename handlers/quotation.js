@@ -18,7 +18,13 @@ var Quotation = function (models) {
 
         var body = mapObject(req.body);
         var isPopulate = req.body.populate;
+
         var quotation = new Quotation(body);
+
+        if (req.session.uId) {
+            quotation.createdBy.user = req.session.uId;
+            quotation.editedBy.user = req.session.uId;
+        }
 
         quotation.save(function (err, _quotation) {
             if (err) {
@@ -133,8 +139,13 @@ var Quotation = function (models) {
 
         if (isOrder) {
             filter.isOrder = {
-                    key: 'isOrder',
-                    value: ['true']
+                key: 'isOrder',
+                value: ['true']
+            }
+        } else {
+            filter.isOrder = {
+                key: 'isOrder',
+                value: ['false']
             }
         }
 
@@ -219,7 +230,6 @@ var Quotation = function (models) {
             queryObject.$and.push({_id: {$in: quotationsIds}});
             //queryObject.$and.push({isOrder: isOrder});
 
-            caseFilter(queryObject, data);
 
             query = Quotation.count(queryObject);
             query.count(waterfallCallback);
@@ -235,6 +245,7 @@ var Quotation = function (models) {
             res.status(200).send({count: result});
         });
     };
+
 
     function ConvertType(array, type) {
         if (type === 'integer') {
@@ -285,8 +296,8 @@ var Quotation = function (models) {
                     filtrElement[key] = {$in: condition.objectID()};
                     resArray.push(filtrElement);
                     break;
-                case 'projectManager':
-                    filtrElement[key] = {$in: condition.objectID()};
+                case 'projectmanager':
+                    filtrElement[key] = {$in: condition};
                     resArray.push(filtrElement);
                     break;
                 case 'forSales':
@@ -329,6 +340,11 @@ var Quotation = function (models) {
                 key: 'isOrder',
                 value: ['true']
             }
+        } else {
+            filter.isOrder = {
+                key: 'isOrder',
+                value: ['false']
+            }
         }
 
         if (filter && typeof filter === 'object') {
@@ -338,12 +354,6 @@ var Quotation = function (models) {
                 queryObject['$and'] = caseFilter(filter);
             }
         }
-
-        /*if (query && query.filter && query.filter.forSales) {
-         queryObject['forSales'] = true;
-         } else {
-         queryObject['forSales'] = false;
-         }*/
 
         if (query.sort) {
             sort = query.sort;
@@ -414,17 +424,16 @@ var Quotation = function (models) {
         };
 
         contentSearcher = function (quotationsIds, waterfallCallback) {
-            var data = req.query;
             var query;
-            var queryObject = {};
+            var newQueryObj = {};
 
-            queryObject.$and = [];
-
-            queryObject.$and.push({_id: {$in: quotationsIds}});
-            //queryObject.$and.push({isOrder: isOrder});
+            newQueryObj.$and = [];
+            //
+            newQueryObj.$and.push({_id: {$in: quotationsIds}});
+            //newQueryObj.$and.push({isOrder: isOrder});
 
             query = Quotation
-                .find(queryObject)
+                .find(newQueryObj)
                 .limit(count)
                 .skip(skip)
                 .sort(sort);
