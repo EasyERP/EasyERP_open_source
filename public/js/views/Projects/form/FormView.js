@@ -267,8 +267,8 @@ define([
 
             keydownHandler: function (e) {
                 switch (e.which) {
-                    case 27:
-                        this.hideDialog();
+                    case 13:
+                        this.showSaveButton();
                         break;
                     default:
                         break;
