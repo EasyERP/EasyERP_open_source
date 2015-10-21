@@ -45,7 +45,8 @@ define([
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
                 "click .current-selected:not(.disabled)"                          : "showNewSelect",
-                "click #createItem"                                               : "createDialog"
+                "click #createItem"                                               : "createDialog",
+                "change input:not(.checkbox)": "showSaveButton"
             },
 
             initialize: function (options) {
@@ -204,6 +205,8 @@ define([
                         },
                         success: function (model) {
                            // self.disableEdit();
+                            self.hideSaveButton();
+
                             var url = window.location.hash;
                             Backbone.history.fragment = "";
                             setTimeout(function () {
@@ -221,6 +224,8 @@ define([
             chooseOption: function (e) {
                 $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
                 $(".newSelectList").hide();
+
+                this.showSaveButton();
             },
 
             hideNewSelect: function () {
@@ -293,6 +298,14 @@ define([
                 return false;
             },
 
+            showSaveButton: function(){
+                $("#top-bar-saveBtn").show();
+            },
+
+            hideSaveButton: function(){
+                $("#top-bar-saveBtn").hide();
+            },
+
             render: function () {
                 var formModel = this.formModel.toJSON();
                 var assignees;
@@ -306,9 +319,8 @@ define([
                 var bonusView;
                 var container;
 
-                $("#top-bar-saveBtn").show();
-                $("#createQuotation").show();
-                $("#createBonus").show();
+
+
 
                 thisEl.html(templ({model: formModel}));
 
@@ -376,7 +388,10 @@ define([
                     //self.getDataForDetails(result);
                 });
 
-                //this.delegateEvents(this.events);
+                $("#top-bar-deleteBtn").hide();
+                $("#createQuotation").show();
+                $("#createBonus").show();
+
                 return this;
             },
 
@@ -646,6 +661,7 @@ define([
                 };
                 this.qCollection.bind('reset', createView);
                 this.qCollection.bind('add', self.renderProformRevenue);
+                this.qCollection.bind('remove', self.renderProformRevenue);
             },
 
             getOrders: function (cb) {

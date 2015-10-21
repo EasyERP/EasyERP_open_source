@@ -41,8 +41,8 @@
     <tfoot>
     <tr>
         <td>Total:</td>
-        <td><%=currencySplitter((proformValues.orders.count + proformValues.quotations.count).toString())%></td>
-        <td><%=currencySplitter((proformValues.quotations.sum + proformValues.orders.sum).toFixed(2))%></td>
+        <td id="totalCount" data-value="proformValues.orders.count + proformValues.quotations.count"><%=currencySplitter((proformValues.orders.count + proformValues.quotations.count).toString())%></td>
+        <td id="totalSum"  data-value="proformValues.quotations.sum + proformValues.orders.sum"><%=currencySplitter((proformValues.quotations.sum + proformValues.orders.sum).toFixed(2))%></td>
     </tr>
 
     </tfoot>

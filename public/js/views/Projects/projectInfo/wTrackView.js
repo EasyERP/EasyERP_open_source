@@ -3,7 +3,7 @@
  */
 define([
     'text!templates/Projects/projectInfo/wTrackTemplate.html',
-    'views/listViewBase'
+    'views/wTrack/list/ListView'
 
 ], function (wTrackTemplate, listView) {
     var wTrackView = listView.extend({
@@ -91,6 +91,8 @@ define([
                 wTracks: wTracks,
                 startNumber: 0
             }));
+
+            this.renderPagination(self.$el, this);
 
             $('#check_all').click(function () {
                 var checkLength;

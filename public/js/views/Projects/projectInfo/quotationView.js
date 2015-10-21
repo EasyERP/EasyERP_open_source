@@ -67,14 +67,16 @@ define([
 
             var id = $(e.target).closest("tr").attr("data-id");
             var model = new currentModel({validate: false});
+            var modelQuot = this.collection.get(id);
 
             model.urlRoot = '/quotation/form/' + id;
             model.fetch({
                 success: function (model) {
                     new editView({model: model, redirect: true, pId: self.projectID, customerId: self.customerId});
 
-                    self.renderProformRevenue(id);
+
                     self.collection.remove(id);
+                    self.renderProformRevenue(modelQuot);
                     self.render();
                 },
                 error  : function () {
@@ -83,27 +85,27 @@ define([
             });
         },
 
-        renderProformRevenue: function (id) {
+        renderProformRevenue: function (modelQuot) {
             var proformContainer = $('#proformRevenueContainer');
-            var model = this.collection.get(id);
-            var modelJSON = model.toJSON();
+            var modelJSON = modelQuot.toJSON();
 
-            var quotSum = proformContainer.find('#quotSum');
             var orderSum = proformContainer.find('#orderSum');
             var orderCount = proformContainer.find('#orderCount');
-            var quotCount = proformContainer.find('#quotCount');
-            var quot = parseFloat(quotSum.attr('data-value'));
             var order = parseFloat(orderSum.attr('data-value'));
-            var newQuot = quot - modelJSON.paymentInfo.total;
+            var totalSum = proformContainer.find('#totalSum');
+            var totalCount = proformContainer.find('#totalCount');
+            var total = parseFloat(orderSum.attr('data-value'));
+            var newTotal = total + modelJSON.paymentInfo.total;
             var newOrder = order + modelJSON.paymentInfo.total;
 
-            quotSum.attr('data-value', newQuot);
-            quotSum.text(helpers.currencySplitter(newQuot.toFixed(2)));
             orderSum.attr('data-value', newOrder);
             orderSum.text(helpers.currencySplitter(newOrder.toFixed(2)));
 
+            totalSum.attr('data-value', newTotal);
+            totalSum.text(helpers.currencySplitter(newTotal.toFixed(2)));
+
             orderCount.text(parseFloat(orderCount.text()) + 1);
-            quotCount.text(parseFloat(quotCount.text()) - 1);
+            totalCount.text(parseFloat(totalCount.text()) + 1);
         },
 
         removeItems: function (event) {
@@ -199,7 +201,7 @@ define([
                 dateToLocal: common.utcDateToLocaleDate
             }));
 
-            this.$el.find('.icon').hide();
+            this.$el.find('#removeQuotation').hide();
 
             $('#check_all_quotations').click(function () {
                 $(':checkbox').prop('checked', this.checked);
