@@ -5220,20 +5220,23 @@ textarea#editInput {
 
         &.dgreen {
           background: @overWork;
-          color: white;
+          color: @overiewText-color;
         }
         &.green {
           background: @normalWork;
-          color: white;
+          color: @overiewText-color;
         }
         &.brown {
           background: #5cb85c;
+          color: @overiewText-color;
         }
         &.yellow {
           background: @littleWork;
+          color: @overiewText-color;
         }
         &.pink {
           background: @oneWorkDay;
+          color: @overiewText-color;
         }
         &.red {
           background-color: @free;
@@ -5248,8 +5251,8 @@ textarea#editInput {
         }
         &.inactive {
           span.view {
-            background-color: silver;
-            color: silver;
+            background-color: @inactivate;
+            color: @inactivate;
             span {
               display: none;
             }
@@ -5325,7 +5328,7 @@ textarea#editInput {
             padding: 0;
             padding-right: 3px;
             background-color: @vacation;
-            color: @mainText-color;
+            color: @overiewText-color;
             text-align: center;
             &.size40 {
               width: 50%;
@@ -5508,6 +5511,9 @@ textarea#editInput {
       //      background-color: #ccc;
     }
   }
+  &.dashBoardMargin {
+    margin-bottom: 150px;
+  }
 }
 
 .grid-conatiner {
@@ -5624,6 +5630,14 @@ textarea#editInput {
           }
         }
       }
+    }
+
+    &.stick {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background-color: @bg-main;
+      padding-top: 10px;
     }
   }
   table {

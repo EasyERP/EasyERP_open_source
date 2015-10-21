@@ -7871,21 +7871,24 @@ textarea#editInput {
   padding: 2px;
 }
 .grid tr td.dashboardWeek.dgreen {
-  background: #6b6b6b;
-  color: white;
+  background: #2d5d30;
+  color: #ffffff;
 }
 .grid tr td.dashboardWeek.green {
-  background: #46904b;
-  color: white;
+  background: #3e7f42;
+  color: #ffffff;
 }
 .grid tr td.dashboardWeek.brown {
   background: #5cb85c;
+  color: #ffffff;
 }
 .grid tr td.dashboardWeek.yellow {
   background: #f9a203;
+  color: #ffffff;
 }
 .grid tr td.dashboardWeek.pink {
-  background: #e565d3;
+  background: #cc5457;
+  color: #ffffff;
 }
 .grid tr td.dashboardWeek.red {
   background-color: #a22a2d;
@@ -7899,8 +7902,8 @@ textarea#editInput {
   display: table-cell;
 }
 .grid tr td.dashboardWeek.inactive span.view {
-  background-color: silver;
-  color: silver;
+  background-color: #515151;
+  color: #515151;
 }
 .grid tr td.dashboardWeek.inactive span.view span {
   display: none;
@@ -7951,7 +7954,7 @@ textarea#editInput {
   padding: 0;
   padding-right: 3px;
   background-color: #3c86e0;
-  color: #cdcdcd;
+  color: #ffffff;
   text-align: center;
 }
 .grid tr td.withVacation span span.vacation.size40 {
@@ -8104,6 +8107,9 @@ textarea#editInput {
 .grid.attendance .weekend {
   color: #ccc;
 }
+.grid.dashBoardMargin {
+  margin-bottom: 150px;
+}
 .grid-conatiner .attendanceTop {
   margin-bottom: 10px;
 }
@@ -8189,16 +8195,16 @@ textarea#editInput {
   background-color: #a22a2d;
 }
 .grid-conatiner .statisticsAtten table tr td .item .countDays.almostFree {
-  background-color: #e565d3;
+  background-color: #cc5457;
 }
 .grid-conatiner .statisticsAtten table tr td .item .countDays.partiallyBusy {
   background-color: #f9a203;
 }
 .grid-conatiner .statisticsAtten table tr td .item .countDays.fullyBusy {
-  background-color: #46904b;
+  background-color: #3e7f42;
 }
 .grid-conatiner .statisticsAtten table tr td .item .countDays.overWorked {
-  background-color: #6b6b6b;
+  background-color: #2d5d30;
 }
 .grid-conatiner .statisticsAtten table tr td .item .lastTime {
   text-align: center;
@@ -8208,6 +8214,13 @@ textarea#editInput {
 .grid-conatiner .statisticsAtten table tr td .item .percent {
   text-align: center;
   color: #eb759e;
+}
+.grid-conatiner .statisticsAtten.stick {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background-color: #303031;
+  padding-top: 10px;
 }
 .grid-conatiner table .grid {
   border-color: #7f7f80;
