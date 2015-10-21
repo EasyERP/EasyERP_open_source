@@ -3,6 +3,7 @@
  */
 define([
     'text!templates/Projects/projectInfo/wTrackTemplate.html',
+    'text!templates/Projects/projectInfo/wTracks/wTrackHeader.html',
     'views/wTrack/list/ListView',
     'models/wTrackModel',
     'collections/wTrack/editCollection',
@@ -10,26 +11,54 @@ define([
     'dataService',
     'populate'
 
-], function (wTrackTemplate, listView, currentModel, EditCollection, wTrackCollection, dataService, populate) {
+], function (wTrackTemplate, wTrackTopBar, listView, currentModel, EditCollection, wTrackCollection, dataService, populate) {
     var wTrackView = listView.extend({
 
         el: '#weTracks',
         totalCollectionLengthUrl: '/wTrack/totalCollectionLength',
+        templateHeader: _.template(wTrackTopBar),
 
         initialize: function (options) {
             this.collection = options.model;
             this.defaultItemsNumber = 50;
             this.filter = options.filter ? options.filter : {};
 
-            this.collection.unbind();
-
-            this.collection.bind('showmore', this.rerenderContent);
+            //this.collection.unbind();
+            //
+            //this.collection.bind('showmore', this.rerenderContent);
 
             this.startNumber = options.startNumber;
 
-            this.render();
+            if(this.startNumber < 50){
+                this.getTotalLength(null, this.defaultItemsNumber, this.filter);
+            }
 
-            this.getTotalLength(null, this.defaultItemsNumber, this.filter);
+            this.render();
+        },
+
+        getTotalLength: function (currentNumber, itemsNumber, filter) {
+            dataService.getData(this.totalCollectionLengthUrl, {
+                currentNumber: currentNumber,
+                filter       : filter,
+                contentType  : this.contentType,
+                newCollection: this.newCollection
+            }, function (response, context) {
+
+                var page = context.page || 1;
+                var length = context.listLength = response.count || 0;
+
+                if (itemsNumber === 'all') {
+                    itemsNumber = response.count;
+                }
+
+                if (itemsNumber * (page - 1) > length) {
+                    context.page = page = Math.ceil(length / itemsNumber);
+                   // context.fetchSortCollection(context.sort);
+                   // context.changeLocationHash(page, context.defaultItemsNumber, filter);
+                }
+
+                context.pageElementRender(response.count, itemsNumber, page);//prototype in main.js
+            }, this);
         },
 
         template: _.template(wTrackTemplate),
@@ -81,7 +110,7 @@ define([
                 sort         : this.sort,
                 filter       : this.filter,
                 newCollection: this.newCollection
-            });
+            }, true);
             dataService.getData(this.totalCollectionLengthUrl, {
                 filter       : this.filter,
                 contentType  : this.contentType,
@@ -422,15 +451,20 @@ define([
 
         render: function () {
             var self = this;
+            var currentEl = this.$el;
             var wTracks = this.collection.toJSON();
             var allInputs;
             var checkedInputs;
 
+            currentEl.html('');
+            currentEl.prepend(this.templateHeader);
 
-            self.$el.html(this.template({
-                wTracks: wTracks,
-                startNumber: 0
-            }));
+                currentEl.find('#listTable').html(this.template({
+                    wTracks: wTracks,
+                    startNumber: self.startNumber - 1
+                }));
+
+               // this.renderPagination(self.$el, this);
 
             this.genInvoiceEl = self.$el.find('#top-bar-generateBtn');
             this.copyEl = self.$el.find('#top-bar-copyBtn');
@@ -440,8 +474,6 @@ define([
             $('#savewTrack').hide();
             $('#deletewTrack').hide();
 
-
-            this.renderPagination(self.$el, this);
 
             $('#check_all').click(function () {
                 var checkLength;

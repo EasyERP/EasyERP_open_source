@@ -555,10 +555,13 @@ define([
 
                 function createView() {
                     callback();
+
+                    var startNumber = $('#grid-start').text() ? parseInt($('#grid-start').text()) : 1;
+
                     new wTrackView({
                         model: self.wCollection,
                         filter: filter,
-                        startNumber: collectionLength + self.wCollection.length
+                        startNumber: startNumber
                     }).render();
                 };
 
