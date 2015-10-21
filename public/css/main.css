@@ -8188,6 +8188,18 @@ textarea#editInput {
 .grid-conatiner .statisticsAtten table tr td .item .countDays.free {
   background-color: #a22a2d;
 }
+.grid-conatiner .statisticsAtten table tr td .item .countDays.almostFree {
+  background-color: #e565d3;
+}
+.grid-conatiner .statisticsAtten table tr td .item .countDays.partiallyBusy {
+  background-color: #f9a203;
+}
+.grid-conatiner .statisticsAtten table tr td .item .countDays.fullyBusy {
+  background-color: #46904b;
+}
+.grid-conatiner .statisticsAtten table tr td .item .countDays.overWorked {
+  background-color: #6b6b6b;
+}
 .grid-conatiner .statisticsAtten table tr td .item .lastTime {
   text-align: center;
   margin-top: 10px;
