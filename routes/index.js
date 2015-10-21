@@ -4,6 +4,7 @@ require('pmx').init();
 module.exports = function (app, mainDb) {
     'use strict';
 
+    var newrelic = require('newrelic');
     var events = require('events');
     var event = new events.EventEmitter();
     var logWriter = require('../helpers/logWriter');
@@ -233,7 +234,7 @@ module.exports = function (app, mainDb) {
                         shortPas = "\/uploads\/" + req.headers.id + "\/" + item.name;
                     }
                 }
-                fs.writeFile(path, data, function (err) {
+                fs.writeFile(path, data, function (err) {k
                     if (!err) {
                         var file = {};
                         file._id = mongoose.Types.ObjectId();
