@@ -233,7 +233,7 @@ require(['app'], function (app) {
 
     };
 
-    Backbone.View.prototype.prevP = function (dataObject) {
+    Backbone.View.prototype.prevP = function (dataObject, disableChangeHash) {
         this.startTime = new Date();
         var itemsNumber = this.defaultItemsNumber;
         var currentShowPage = $("#currentShowPage");
@@ -287,11 +287,15 @@ require(['app'], function (app) {
         if (dataObject) {
             _.extend(serchObject, dataObject);
         }
+
+        if (!disableChangeHash) {
+            this.changeLocationHash(page, itemsNumber);
+        }
+
         this.collection.showMore(serchObject);
-        this.changeLocationHash(page, itemsNumber);
     };
 
-    Backbone.View.prototype.nextP = function (dataObject) {
+    Backbone.View.prototype.nextP = function (dataObject, disableChangeHash) {
         this.startTime = new Date();
         var itemsNumber = this.defaultItemsNumber;
         var page = parseInt($("#currentShowPage").val()) + 1;
@@ -346,11 +350,15 @@ require(['app'], function (app) {
         if (dataObject) {
             _.extend(serchObject, dataObject);
         }
+
+        if (!disableChangeHash) {
+            this.changeLocationHash(page, itemsNumber);
+        }
+
         this.collection.showMore(serchObject);
-        this.changeLocationHash(page, itemsNumber);
     };
 
-    Backbone.View.prototype.firstP = function (dataObject) {
+    Backbone.View.prototype.firstP = function (dataObject, disableChangeHash) {
         this.startTime = new Date();
         var itemsNumber = this.defaultItemsNumber;
         var currentShowPage = $("#currentShowPage");
@@ -391,11 +399,16 @@ require(['app'], function (app) {
         if (dataObject) {
             _.extend(serchObject, dataObject);
         }
+
+
+        if (!disableChangeHash) {
+            this.changeLocationHash(page, itemsNumber);
+        }
+
         this.collection.showMore(serchObject);
-        this.changeLocationHash(page, itemsNumber);
     };
 
-    Backbone.View.prototype.lastP = function (dataObject) {
+    Backbone.View.prototype.lastP = function (dataObject, disableChangeHash) {
         this.startTime = new Date();
         var itemsNumber = this.defaultItemsNumber;
         var page = $("#lastPage").text();
@@ -434,11 +447,15 @@ require(['app'], function (app) {
         if (dataObject) {
             _.extend(serchObject, dataObject);
         }
+
+        if (!disableChangeHash){
+            this.changeLocationHash(page, itemsNumber);
+        }
+
         this.collection.showMore(serchObject);
-        this.changeLocationHash(page, itemsNumber);
     };
 
-    Backbone.View.prototype.showP = function (event, dataObject) {
+    Backbone.View.prototype.showP = function (event, dataObject, disableChangeHash) {
         this.startTime = new Date();
         if (this.listLength == 0) {
             $("#currentShowPage").val(0);
@@ -523,8 +540,14 @@ require(['app'], function (app) {
             if (dataObject) {
                 _.extend(serchObject, dataObject);
             }
+
+            if(! disableChangeHash){
+                this.collection.unbind();
+                this.changeLocationHash(page, itemsNumber);
+            }
+
             this.collection.showMore(serchObject);
-            this.changeLocationHash(page, itemsNumber);
+
         }
     };
 
