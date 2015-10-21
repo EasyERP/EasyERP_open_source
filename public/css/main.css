@@ -8395,12 +8395,12 @@ textarea#editInput {
   display: block;
   width: 100%;
   height: 26px;
-  padding: 2px 24px;
+  padding: 0;
   font-size: 14px;
   line-height: 1.42857143;
   color: #cdcdcd;
   background: inherit;
-  border: 1px solid #7f7f80;
+  border: none;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   -webkit-transition: border-color ease-in-out 0.15s, -webkit-box-shadow ease-in-out 0.15s;
@@ -8410,17 +8410,20 @@ textarea#editInput {
 .search-field .search {
   cursor: pointer;
   position: absolute;
-  top: 6px;
+  top: 3px;
   left: 5px;
+  height: 18px;
 }
 .search-field span:before {
   color: #d5d5d5;
+  line-height: 1;
 }
 .search-field .search-content {
   position: absolute;
-  top: 6px;
+  top: 4px;
   right: 5px;
   cursor: pointer;
+  height: 18px;
 }
 .caret {
   display: inline-block;
@@ -8943,4 +8946,76 @@ textarea#editInput {
 }
 .forInfoWrap {
   overflow: hidden;
+}
+#searchGlobalContainer {
+  display: block;
+  border: 1px solid #7f7f80;
+}
+#searchFilterContainer {
+  float: left;
+  width: auto;
+  padding: 2px 0 2px 26px;
+  height: 20px;
+  overflow: hidden;
+}
+* html .ui-autocomplete {
+  width: 1px;
+}
+.ui-autocomplete {
+  position: absolute;
+  cursor: default;
+}
+.ui-menu {
+  list-style: none;
+  padding: 3px 3px 3px 5px;
+  margin: 0;
+  display: block;
+  float: left;
+}
+.ui-menu .ui-menu-item {
+  float: left;
+  margin: 0;
+  padding: 0;
+  zoom: 1;
+  clear: left;
+  width: 100%;
+  line-height: 18px;
+}
+.ui-menu .ui-menu-item a {
+  text-decoration: none;
+  display: block;
+  padding: .2em .4em;
+}
+.ui-menu .ui-autocomplete-category {
+  margin: .5em 0 .2em;
+  padding: 0;
+  line-height: 1.5;
+  float: left;
+  width: 100%;
+}
+.ui-autocomplete-input {
+  height: 20px;
+  overflow: hidden;
+  padding: 2px 31px 2px 0;
+  display: block;
+}
+.ui-autocomplete-input:empty:not(:focus):before {
+  content: attr(data-text);
+}
+.ui-helper-hidden-accessible {
+  border: 0;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  width: 1px;
+  position: absolute !important;
+  clip: rect(1px 1px 1px 1px);
+  clip: rect(1px, 1px, 1px, 1px);
+}
+.ui-widget-content {
+  border: 1px solid #7f7f80;
+  background-color: #303031;
+  color: #cdcdcd;
+  max-height: 210px;
 }
