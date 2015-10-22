@@ -19,9 +19,9 @@
                     <dd><input type="text" name="login" id="login" value="<%=(model) ? model.login : ''%>" required
                                maxlength="32"/></dd>
                     <dt><label for="changePassword">Password</label></dt>
-                    <dd><input type="button" class="changePassword" value="Change Password"></dd>
+                    <dd><button class="changePassword"><span>Change Password</span></button>
                     <dt><label for="timezone">Timezone</label></dt>
-                    <dd><%=timezone%></dd>
+                    <dd><span><%=timezone%></span></dd>
                     <dt><label for="language">Language</label></dt>
                     <dd>
                         <a id="language" data-id="English" class="current-selected" href="javascript:;">English</a>
@@ -33,9 +33,9 @@
                     <dd><input type="text" name="email" id="email" value="<%=(model) ? model.email : ''%>" required
                                maxlength="48"/></dd>
                     <dt><label for="profilesName">Profile</label></dt>
-                    <dd><%=(model) ? model.profile.profileName : ''%></dd>
+                    <dd><span><%=(model) ? model.profile.profileName : ''%></span></dd>
                     <dt><label for="status">Status</label></dt>
-                    <dd><%=(model && model.profile.profileName == "baned") ? "baned" : 'active'%></dd>
+                    <dd><span><%=(model && model.profile.profileName == "baned") ? "baned" : 'active'%></span></dd>
                     <dt><label for="link"> <%if (model && model.login && model.login === 'saasAdmin'){%>
                         <a href="http://saasAdmin.live.easyerp.com/#easyErp/Clients/list">Clients List</a>
                         <%}%></label></dt>
@@ -43,8 +43,8 @@
             </div>
             <div class="clearfix"></div>
             <div class="buttons" style="width: 100%;">
-                <input type="button" id="saveBtn" class="btn" value="Save"/>
-                <input type="button" id="resetBtn" class="btn" value="Reset"/>
+                <button id="saveBtn" class="btn"><span>Save</span></button>
+                <button id="saveBtn" class="btn"><span>Reset</span></button>
             </div>
         </form>
 

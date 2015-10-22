@@ -1,28 +1,28 @@
+/**
+ * Created by liliya on 20.10.15.
+ */
 define([
-    'text!templates/Projects/projectInfo/quotations/quotationTemplate.html',
-    'text!templates/Projects/projectInfo/quotations/ListTemplate.html',
+    'text!templates/Projects/projectInfo/orders/ListTemplate.html',
+    'text!templates/Projects/projectInfo/orders/ListHeader.html',
     'text!templates/stages.html',
     'views/salesQuotation/EditView',
-    'views/salesQuotation/list/ListView',
-    'views/Projects/projectInfo/quotations/CreateView',
+    'views/salesOrder/list/ListView',
     'models/QuotationModel',
-    'common',
-    'helpers',
-    'dataService'
+    'dataService',
+    'common'
 
-], function (quotationTopBar, ListTemplate, stagesTemplate, editView, listView, quotationCreateView, currentModel, common, helpers, dataService) {
-    var quotationView = listView.extend({
+], function (ListTemplate, lisHeader, stagesTemplate, editView, listView, orderModel, dataService, common) {
+    var orderView = listView.extend({
 
-        el            : '#quotations',
-        templateHeader: _.template(quotationTopBar),
-        templateList  : _.template(ListTemplate),
+        el: '#orders',
+        templateList: _.template(ListTemplate),
+        templateHeader: _.template(lisHeader),
 
         events: {
-            "click .checkbox"       : "checked",
-            "click #createQuotation": "createQuotation",
-            "click #removeQuotation": "removeItems",
+            "click .checkbox": "checked",
+            "click #removeOrder": "removeItems",
             "click  .list tbody td:not(.notForm)": "goToEditDialog",
-            "click .stageSelect"                 : "showNewSelect"
+            "click .stageSelect": "showNewSelect"
         },
 
         initialize: function (options) {
@@ -33,7 +33,6 @@ define([
         },
 
         chooseOption: function (e) {
-            var self = this;
             var target$ = $(e.target);
             var targetElement = target$.closest("tr");
             var parentTd = target$.closest("td");
@@ -60,54 +59,6 @@ define([
             return false;
         },
 
-
-        goToEditDialog: function (e) {
-            e.preventDefault();
-            var self = this;
-
-            var id = $(e.target).closest("tr").attr("data-id");
-            var model = new currentModel({validate: false});
-            var modelQuot = this.collection.get(id);
-
-            model.urlRoot = '/quotation/form/' + id;
-            model.fetch({
-                success: function (model) {
-                    new editView({model: model, redirect: true, pId: self.projectID, customerId: self.customerId});
-
-
-                    self.collection.remove(id);
-                    self.renderProformRevenue(modelQuot);
-                    self.render();
-                },
-                error  : function () {
-                    alert('Please refresh browser');
-                }
-            });
-        },
-
-        renderProformRevenue: function (modelQuot) {
-            var proformContainer = $('#proformRevenueContainer');
-            var modelJSON = modelQuot.toJSON();
-
-            var orderSum = proformContainer.find('#orderSum');
-            var orderCount = proformContainer.find('#orderCount');
-            var order = parseFloat(orderSum.attr('data-value'));
-            var totalSum = proformContainer.find('#totalSum');
-            var totalCount = proformContainer.find('#totalCount');
-            var total = parseFloat(orderSum.attr('data-value'));
-            var newTotal = total + modelJSON.paymentInfo.total;
-            var newOrder = order + modelJSON.paymentInfo.total;
-
-            orderSum.attr('data-value', newOrder);
-            orderSum.text(helpers.currencySplitter(newOrder.toFixed(2)));
-
-            totalSum.attr('data-value', newTotal);
-            totalSum.text(helpers.currencySplitter(newTotal.toFixed(2)));
-
-            orderCount.text(parseFloat(orderCount.text()) + 1);
-            totalCount.text(parseFloat(totalCount.text()) + 1);
-        },
-
         removeItems: function (event) {
             event.preventDefault();
 
@@ -119,9 +70,9 @@ define([
             var localCounter = 0;
             var listTableCheckedInput;
             var count;
-            var table = $("#quotationTable")
+            var table = $("#ordersTable");
 
-            listTableCheckedInput = table.find("input:not('#check_all_quotations'):checked");
+            listTableCheckedInput = table.find("input:not('#check_all_orders'):checked");
             count = listTableCheckedInput.length;
             this.collectionLength = this.collection.length;
 
@@ -163,66 +114,78 @@ define([
                 var checkLength = $("input.checkbox:checked").length;
 
                 if ($("input.checkbox:checked").length > 0) {
-                    $("#removeQuotation").show();
-                    $('#check_all_quotations').prop('checked', false);
+                    $("#removeOrder").show();
+                    $('#check_all_orders').prop('checked', false);
 
                     if (checkLength == this.collection.length) {
-                        $('#check_all_quotations').prop('checked', true);
+                        $('#check_all_orders').prop('checked', true);
                     }
                 }
                 else {
-                    $("#removeQuotation").hide();
-                    $('#check_all_quotations').prop('checked', false);
+                    $("#removeOrder").hide();
+                    $('#check_all_orders').prop('checked', false);
                 }
             }
         },
 
-        createQuotation: function (e) {
-            e.preventDefault();
-            new quotationCreateView({
-                projectId: this.projectID,
-                customerId: this.customerId,
-                collection: this.collection,
-                projectManager: this.projectManager
-            });
+        hideDialog: function () {
+            $(".edit-dialog").remove();
         },
 
-
-        render: function () {
+        render: function (options) {
             var currentEl = this.$el;
             var self  = this;
+            var tabs;
+            var dialogHolder;
+            var n;
+            var target;
+
+            if (options && options.activeTab){
+                self.hideDialog();
+
+                tabs = $(".chart-tabs");
+                target =  tabs.find('#ordersTab');
+
+                target.closest(".chart-tabs").find("a.active").removeClass("active");
+                target.addClass("active");
+                n = target.parents(".chart-tabs").find("li").index(target.parent());
+                dialogHolder = $(".dialog-tabs-items");
+                dialogHolder.find(".dialog-tabs-item.active").removeClass("active");
+                dialogHolder.find(".dialog-tabs-item").eq(n).addClass("active");
+            }
 
             currentEl.html('');
             currentEl.prepend(this.templateHeader);
 
-            currentEl.find('#listTableQuotation').html(this.templateList({
-                quotations : this.collection.toJSON(),
+            currentEl.find('#listTableOrder').html(this.templateList({
+                orderCollection : this.collection.toJSON(),
                 startNumber: 0,
                 dateToLocal: common.utcDateToLocaleDate
             }));
 
-            this.$el.find('#removeQuotation').hide();
+            this.$el.find('.icon').hide();
 
-            $('#check_all_quotations').click(function () {
+            $('#check_all_orders').click(function () {
                 $(':checkbox').prop('checked', this.checked);
                 if ($("input.checkbox:checked").length > 0) {
-                    $("#removeQuotation").show();
+                    $("#removeOrder").show();
                 } else {
-                    $("#removeQuotation").hide();
+                    $("#removeOrder").hide();
                 }
             });
 
             dataService.getData("/workflow/fetch", {
-                wId         : 'Purchase Order',
-                source      : 'purchase',
-                targetSource: 'quotation'
+                wId: 'Sales Order',
+                source: 'purchase',
+                targetSource: 'order'
             }, function (stages) {
                 self.stages = stages;
             });
+
+
+
         }
-
-
     });
 
-    return quotationView;
+    return orderView;
 });

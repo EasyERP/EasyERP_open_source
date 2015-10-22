@@ -15,6 +15,7 @@ define([
         'views/Projects/projectInfo/invoiceView',
         'views/Projects/projectInfo/quotationView',
         'views/Projects/projectInfo/wTracks/generateWTrack',
+        'views/Projects/projectInfo/orderView',
         'collections/wTrack/filterCollection',
         'collections/Quotation/filterCollection',
         'text!templates/Notes/AddAttachments.html',
@@ -26,7 +27,7 @@ define([
         'helpers'
     ],
 
-    function (ProjectsFormTemplate, DetailsTemplate, ProformRevenueTemplate, EditView, noteView, attachView, AssigneesView, BonusView, wTrackView, PaymentView, InvoiceView, QuotationView, GenerateWTrack, wTrackCollection, quotationCollection, addAttachTemplate, common, populate, custom, dataService, async, helpers) {
+    function (ProjectsFormTemplate, DetailsTemplate, ProformRevenueTemplate, EditView, noteView, attachView, AssigneesView, BonusView, wTrackView, PaymentView, InvoiceView, QuotationView, GenerateWTrack, oredrView, wTrackCollection, quotationCollection, addAttachTemplate, common, populate, custom, dataService, async, helpers) {
         var FormEmployeesView = Backbone.View.extend({
             el            : '#content-holder',
             contentType   : 'Projects',
@@ -44,7 +45,8 @@ define([
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
                 "click .current-selected:not(.disabled)"                          : "showNewSelect",
-                "click #createItem"                                               : "createDialog"
+                "click #createItem"                                               : "createDialog",
+                "change input:not(.checkbox)": "showSaveButton"
             },
 
             initialize: function (options) {
@@ -202,7 +204,9 @@ define([
                             mid: mid
                         },
                         success: function (model) {
-                            self.disableEdit();
+                           // self.disableEdit();
+                            self.hideSaveButton();
+
                             var url = window.location.hash;
                             Backbone.history.fragment = "";
                             setTimeout(function () {
@@ -220,6 +224,8 @@ define([
             chooseOption: function (e) {
                 $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
                 $(".newSelectList").hide();
+
+                this.showSaveButton();
             },
 
             hideNewSelect: function () {
@@ -261,8 +267,8 @@ define([
 
             keydownHandler: function (e) {
                 switch (e.which) {
-                    case 27:
-                        this.hideDialog();
+                    case 13:
+                        this.showSaveButton();
                         break;
                     default:
                         break;
@@ -292,6 +298,14 @@ define([
                 return false;
             },
 
+            showSaveButton: function(){
+                $("#top-bar-saveBtn").show();
+            },
+
+            hideSaveButton: function(){
+                $("#top-bar-saveBtn").hide();
+            },
+
             render: function () {
                 var formModel = this.formModel.toJSON();
                 var assignees;
@@ -304,6 +318,9 @@ define([
                 var notDiv;
                 var bonusView;
                 var container;
+
+
+
 
                 thisEl.html(templ({model: formModel}));
 
@@ -359,16 +376,22 @@ define([
 
                 thisEl.find('#createBonus').hide();
                 _.bindAll(this, 'getQuotations');
+                _.bindAll(this, 'getOrders');
                 _.bindAll(this, 'getWTrack');
                 _.bindAll(this, 'renderProformRevenue');
 
-                paralellTasks = [this.getInvoice, this.getWTrack, this.getQuotations];
+
+                paralellTasks = [this.getInvoice, this.getWTrack, this.getQuotations, this.getOrders];
 
                 async.parallel(paralellTasks, function (err, result) {
+                    self.renderProformRevenue();
                     //self.getDataForDetails(result);
                 });
 
-                //this.delegateEvents(this.events);
+                $("#top-bar-deleteBtn").hide();
+                $("#createQuotation").show();
+                $("#createBonus").show();
+
                 return this;
             },
 
@@ -521,13 +544,24 @@ define([
 
                 this.wCollection = new wTrackCollection({
                     viewType: 'list',
-                    filter  : filter
+                    filter  : filter,
+                    count: 50
                 });
+
+                var collectionLength = this.wCollection.length;
+
+                var callback = _.once(cb);
 
 
                 function createView() {
+                    callback();
+
+                    var startNumber = $('#grid-start').text() ? parseInt($('#grid-start').text()) : 1;
+
                     new wTrackView({
-                        model: self.wCollection
+                        model: self.wCollection,
+                        filter: filter,
+                        startNumber: startNumber
                     }).render();
                 };
 
@@ -616,11 +650,13 @@ define([
                 this.qCollection = new quotationCollection({
                     count      : 50,
                     viewType   : 'list',
-                    contentType: 'Quotation',
+                    contentType: 'salesQuotation',
                     filter     : filter
                 });
 
                 function createView() {
+
+                    cb();
                     new QuotationView({
                         collection: self.qCollection,
                         projectId : self.id,
@@ -628,20 +664,69 @@ define([
                         projectManager: self.formModel.toJSON().projectmanager
                     }).render();
 
-                    self.renderProformRevenue();
-                };
 
+                   // self.renderProformRevenue();
+                };
                 this.qCollection.bind('reset', createView);
                 this.qCollection.bind('add', self.renderProformRevenue);
+                this.qCollection.bind('remove', self.renderProformRevenue);
             },
+
+            getOrders: function (cb) {
+                var self = this;
+
+                var filter = {
+                    'projectName': {
+                        key  : 'project._id',
+                        value: [this.id]
+                    },
+                    'isOrder': {
+                        key  : 'isOrder',
+                        value: ['true']
+                    }
+                };
+
+                this.ordersCollection = new quotationCollection({
+                    count      : 50,
+                    viewType   : 'list',
+                    contentType: 'salesOrder',
+                    filter     : filter
+                });
+
+                function createView() {
+                    cb();
+                    new oredrView({
+                        collection: self.ordersCollection,
+                        projectId : self.id,
+                        customerId: self.formModel.toJSON().customer._id,
+                        projectManager: self.formModel.toJSON().projectmanager
+                    }).render();
+
+                };
+
+                function showMoreContent(newModels) {
+                    self.ordersCollection.reset(newModels.toJSON());
+                };
+
+                this.ordersCollection.bind('reset', createView);
+                this.ordersCollection.bind('add', self.renderProformRevenue);
+                this.ordersCollection.bind('showmore', showMoreContent);
+            },
+
 
             renderProformRevenue: function () {
                 var self = this;
                 var proformContainer = this.$el.find('#proformRevenueContainer');
 
                 var qCollectionJSON = this.qCollection.toJSON();
+                var ordersCollectionJSON = this.ordersCollection.toJSON();
 
                 var sum = 0;
+                var orderSum = 0;
+
+                ordersCollectionJSON.forEach(function(element) {
+                    orderSum += element.paymentInfo.total;
+                });
 
                 qCollectionJSON.forEach(function(element) {
                     sum += element.paymentInfo.total;
@@ -653,8 +738,8 @@ define([
                 };
 
                 this.proformValues.orders = {
-                    count: 0,
-                    sum  : 0
+                    count: ordersCollectionJSON.length,
+                    sum  : orderSum
                 };
 
                 proformContainer.html(this.proformRevenue({
@@ -719,7 +804,7 @@ define([
                         mid: mid
                     },
                     success: function () {
-                        self.disableEdit();
+                       // self.disableEdit();
                         Backbone.history.navigate("#easyErp/Projects/thumbnails", {trigger: true});
                     }
                 });

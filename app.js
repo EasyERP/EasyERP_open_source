@@ -9,6 +9,7 @@ module.exports = function (mainDb, dbsNames) {
     'use strict';
     //mongoose is delegated because it encapsulated main connection
 
+    //var newrelic = require('newrelic');
     var http = require('http');
     var path = require('path');
     var express = require('express');
@@ -83,6 +84,8 @@ module.exports = function (mainDb, dbsNames) {
     app.set('io', io);
 
     require('./routes/index')(app, mainDb);
+
+   // app.locals.newrelic = newrelic;
 
     return httpServer;
 };
