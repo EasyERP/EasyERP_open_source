@@ -20,8 +20,7 @@ define([
 
         events: {
             "click .checkbox": "checked",
-            "click #createQuotation": "createQuotation",
-            "click #removeQuotation": "removeItems",
+            "click #removeOrder": "removeItems",
             "click  .list tbody td:not(.notForm)": "goToEditDialog",
             "click .stageSelect": "showNewSelect"
         },
@@ -31,6 +30,33 @@ define([
             this.projectID = options.projectId;
             this.customerId = options.customerId;
             this.projectManager = options.projectManager;
+        },
+
+        chooseOption: function (e) {
+            var target$ = $(e.target);
+            var targetElement = target$.closest("tr");
+            var parentTd = target$.closest("td");
+            var a = parentTd.find("a");
+            var id = targetElement.attr("data-id");
+            var model = this.collection.get(id);
+
+            model.save({
+                workflow: {
+                    _id: target$.attr("id"),
+                    name:target$.text()
+                }}, {
+                headers : {
+                    mid: 55
+                },
+                patch   : true,
+                validate: false,
+                success : function () {
+                    a.text(target$.text())
+                }
+            });
+
+            this.hideNewSelect();
+            return false;
         },
 
         removeItems: function (event) {
@@ -44,7 +70,7 @@ define([
             var localCounter = 0;
             var listTableCheckedInput;
             var count;
-            var table = $("#oredTable")
+            var table = $("#ordersTable");
 
             listTableCheckedInput = table.find("input:not('#check_all_orders'):checked");
             count = listTableCheckedInput.length;
@@ -149,9 +175,9 @@ define([
             });
 
             dataService.getData("/workflow/fetch", {
-                wId         : 'Purchase Order',
-                source      : 'purchase',
-                targetSource: 'quotation'
+                wId: 'Sales Order',
+                source: 'purchase',
+                targetSource: 'order'
             }, function (stages) {
                 self.stages = stages;
             });

@@ -67,6 +67,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 /*== Revenu ======================================*/
 /*== Notifikation ===============================*/
 /*== Btn Color=====================================*/
+/*VocationDashBoard =============================*/
 .salary-list tbody#listTable .subRow:hover {
   background-color: transparent;
 }
@@ -228,7 +229,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 }
 .list2 tbody tr td:first-of-type {
   padding-left: 7px;
-  line-height: 10px;
+  line-height: 20px;
 }
 .list2 tbody tr td:first-of-type input {
   cursor: pointer;
@@ -394,7 +395,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 }
 .list2 tbody tr td:first-of-type {
   padding-left: 7px;
-  line-height: 10px;
+  line-height: 20px;
 }
 .list2 tbody tr td:first-of-type input {
   cursor: pointer;
@@ -465,6 +466,147 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   height: 5px;
   position: absolute;
   right: 13px;
+}
+.vacation-list {
+  font-family: inherit;
+  text-shadow: none;
+  margin: 30px 1%;
+  width: 98%;
+}
+.vacation-list .V {
+  background-color: #f13f3f;
+  color: #ffffff;
+}
+.vacation-list .P {
+  background-color: #fda401;
+  color: #ffffff;
+}
+.vacation-list .S {
+  background-color: #66b5d4;
+  color: #ffffff;
+}
+.vacation-list .E {
+  background-color: #66b5d4;
+  color: #ffffff;
+}
+.vacation-list td,
+.vacation-list th {
+  position: relative;
+  cursor: pointer;
+}
+.vacation-list td input,
+.vacation-list th input,
+.vacation-list td input:focus,
+.vacation-list th input:focus {
+  width: 50%;
+  text-align: center;
+  outline: none;
+  outline-offset: 0;
+  display: none;
+  cursor: pointer;
+  border: 1px solid #66b5d4;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 5px;
+  margin: 0 auto;
+}
+.vacation-list td input:focus,
+.vacation-list th input:focus {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none;
+  -moz-box-shadow: none;
+  -webkit-box-shadow: none;
+}
+.vacation-list thead th {
+  border: 1px solid #7f7f80;
+}
+.vacation-list thead th#legandCaption {
+  text-align: left;
+}
+.vacation-list thead th.month .newSelectList {
+  width: 100px;
+  margin-left: auto;
+  margin-right: auto;
+  left: calc(50% - 50px);
+}
+.vacation-list thead th.sortDn:after {
+  content: "\00a0\25BE";
+}
+.vacation-list thead th.sortUp:after {
+  content: "\00a0\25B4";
+}
+.vacation-list thead th #monthSelect,
+.vacation-list thead th #yearSelect {
+  font-size: 30px;
+  line-height: 50px;
+}
+.vacation-list tbody td,
+.vacation-list tfoot td {
+  border: 1px solid #7f7f80;
+  text-align: center;
+  color: #cdcdcd;
+}
+.vacation-list tbody td.notForm,
+.vacation-list tfoot td.notForm {
+  padding-left: 10px;
+  line-height: 10px;
+}
+.vacation-list tbody td.notForm input,
+.vacation-list tfoot td.notForm input {
+  display: block;
+}
+.vacation-list tfoot tr td {
+  color: #cdcdcd;
+}
+.vacation-list tbody .employee,
+.vacation-list tbody .department,
+.vacation-list tbody .totalDays {
+  color: #cdcdcd;
+}
+.vacation-list tbody .employee {
+  text-align: right !important;
+}
+.vacation-list #caption,
+.vacation-list .borders,
+.vacation-list thead,
+.vacation-list tbody,
+.vacation-list tfoot {
+  border: 1px solid #7f7f80;
+}
+.vacation-list #caption th,
+.vacation-list .subHeaderHolder th {
+  color: #cdcdcd;
+  line-height: 20px;
+}
+.vacation-list .newSelectList,
+.salary-list .newSelectList,
+.subSalary-list .newSelectList {
+  color: #000;
+}
+.vacation-list tbody tr:not(.subRow):hover td:not(.selectedType),
+.salary-list tbody tr:not(.subRow):hover td:not(.selectedType),
+.subSalary-list tbody tr:not(.subRow):hover td:not(.selectedType) {
+  color: #ffffff;
+}
+.vacation-list tbody tr td > div,
+.salary-list tbody tr td > div,
+.subSalary-list tbody tr td > div {
+  float: right;
+}
+.vacation-list tbody tr td > div a,
+.salary-list tbody tr td > div a,
+.subSalary-list tbody tr td > div a {
+  font-size: 12px;
+  line-height: 20px;
+}
+.vacation-list tbody tr td:nth-child(2),
+.salary-list tbody tr td:nth-child(2),
+.subSalary-list tbody tr td:nth-child(2) {
+  text-align: left;
+  font-size: 12px;
+  line-height: 20px;
 }
 /*------------------------Constants-----------------------------*/
 .notification {
@@ -1292,11 +1434,13 @@ input::-ms-clear {
   display: inline-block;
   padding: 0 5px;
 }
-.pagination .pageList .itemsNumber::hover {
-  border-bottom: 1px solid #66b5d4;
+.pagination .pageList .itemsNumber:hover {
+  padding-bottom: 4px;
+  border-bottom: 1px solid #7f7f80;
 }
 .pagination .pageList a.selectedItemsNumber {
-  border-bottom: 1px solid #66b5d4;
+  border-bottom: 1px solid #7f7f80;
+  padding-bottom: 4px;
 }
 .pagination .pageList button {
   background-color: white;
@@ -3577,7 +3721,7 @@ dl dd a.formLink {
   position: absolute;
   top: 3px;
   right: 3px;
-  color: #66b5d4;
+  color: #cdcdcd;
   line-height: 11px;
   width: 12px;
   height: 12px;
@@ -3655,48 +3799,58 @@ dl dd a.formLink {
 }
 .btn {
   border: 1px solid #7f7f80;
-  color: #303031;
   margin: 0;
-  padding: 2px 6px;
-  line-height: 13px;
+  padding: .4em 1em;
+  line-height: normal;
   font-size: 13px;
   text-align: center;
   text-decoration: none;
   -webkit-font-smoothing: antialiased;
   outline: none;
+  background: #303031;
+}
+.btn span {
+  padding: 0px !important;
+  color: #66b5d4;
 }
 .btn:hover {
   cursor: pointer;
   background-position: 0;
+  background: #1d1d1e !important;
 }
 button {
   border: 1px solid #7f7f80;
-  color: #303031;
   margin: 0;
-  padding: 2px 6px;
-  line-height: 13px;
+  padding: .4em 1em;
+  line-height: normal;
   font-size: 13px;
   text-align: center;
   text-decoration: none;
   -webkit-font-smoothing: antialiased;
   outline: none;
+  background: #303031;
+}
+button span {
+  padding: 0px !important;
+  color: #66b5d4;
 }
 button:hover {
   cursor: pointer;
   background-position: 0;
+  background: #1d1d1e !important;
 }
 button.red,
 a.red {
   border: 1px solid #7f7f80;
-  color: #303031;
   margin: 0;
-  padding: 2px 6px;
-  line-height: 13px;
+  padding: .4em 1em;
+  line-height: normal;
   font-size: 13px;
   text-align: center;
   text-decoration: none;
   -webkit-font-smoothing: antialiased;
   outline: none;
+  background: #303031;
   background-color: #f4f4f4;
   -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(155, 155, 155, 0.4) inset;
   -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(155, 155, 155, 0.4) inset;
@@ -3704,10 +3858,16 @@ a.red {
   color: #4d5a75;
   line-height: 20px;
 }
+button.red span,
+a.red span {
+  padding: 0px !important;
+  color: #66b5d4;
+}
 button.red:hover,
 a.red:hover {
   cursor: pointer;
   background-position: 0;
+  background: #1d1d1e !important;
 }
 button.red:hover,
 a.red:hover {
@@ -4103,19 +4263,19 @@ a.red:hover {
   line-height: 20px;
   padding-left: 10px;
   border-bottom: 1px solid #7f7f80;
-  color: #555;
+  color: #cdcdcd;
 }
 #sourceUsers li:hover,
 #targetUsers li:hover,
 #sourceGroups li:hover,
 #targetGroups li:hover {
-  background-color: #EEE;
+  background-color: #565658;
 }
 #targetUsers {
   height: 168px;
 }
 .userPagination {
-  background-color: #DDD;
+  background-color: #303031;
   margin-left: 150px;
   margin-right: 5px;
   margin-top: -5px;
@@ -4123,10 +4283,12 @@ a.red:hover {
   line-height: 15px;
   font-size: 11px;
   height: 18px;
+  border: 1px solid #7f7f80;
+  border-top: none;
 }
 .userPagination a {
   margin: 0 3px;
-  color: #1466C6 !important;
+  color: #cdcdcd !important;
   font-size: 11px;
 }
 .userPagination span {
@@ -4184,10 +4346,16 @@ a.red:hover {
   display: block;
   padding-left: 5px;
   line-height: 25px;
-  border: 1px solid #CCC;
-  background: #F5F5F5;
+  border: 1px solid #7f7f80;
+  background: #303031;
   margin: 2px 0;
   height: 25px;
+}
+#groupList .content .text {
+  color: #cdcdcd;
+}
+#groupList .content:hover {
+  background-color: #565658;
 }
 #groupList .content:hover > .text .edit,
 #groupList .content:hover > .text .trash {
@@ -4228,9 +4396,6 @@ a.red:hover {
   cursor: pointer;
   padding-left: 17px;
   background: no-repeat 0 50%;
-}
-#groupList li .text:hover {
-  background-color: #eee;
 }
 #groupList li .edit {
   display: none;
@@ -4773,8 +4938,6 @@ table#workflows tr td.edit-status {
 ul.dialog-tabs {
   height: 35px;
   border-bottom: 1px solid #7f7f80;
-  margin: 0 -20px 0 -20px;
-  padding: 0 20px;
 }
 ul.dialog-tabs li {
   float: left;
@@ -5124,7 +5287,7 @@ ul.dialog-tabs li.right button {
 }
 .list tbody tr td:first-of-type {
   padding-left: 7px;
-  line-height: 10px;
+  line-height: 20px;
 }
 .list tbody tr td:first-of-type input {
   cursor: pointer;
@@ -5816,31 +5979,8 @@ ul.dialog-tabs li.right button {
   text-align: center;
 }
 .ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button {
-  background-image: none;
-  color: #66b5d4;
-  border: 1px solid #7f7f80;
   margin: .5em .4em .5em 0;
-  cursor: pointer;
-  background-color: #303031;
-  font-size: 1.2em;
-  display: inline-block;
-  position: relative;
-  padding: 0;
   line-height: normal;
-  vertical-align: middle;
-  text-align: center;
-  overflow: visible;
-  border-radius: 0;
-}
-.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button span {
-  display: block;
-  line-height: normal;
-  background: #303031;
-  padding: .4em 1em;
-  color: #66b5d4;
-}
-.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button span:hover {
-  background: #1d1d1e !important;
 }
 .ui-dialog .ui-helper-clearfix:before,
 .ui-dialog .ui-helper-clearfix:after {
@@ -5978,16 +6118,13 @@ ul.dialog-tabs li.right button {
   margin-top: 0;
 }
 .form-holder form input:not([type=checkbox]) {
-  -moz-border-radius: 0px;
-  -webkit-border-radius: 0px;
-  border-radius: 0px;
   border: 1px solid #7f7f80;
   max-width: 280px;
-  height: 18px;
+  line-height: 20px;
   background-color: transparent;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 12px;
-  padding: 2px;
+  padding: 0 4px;
   color: #cdcdcd;
 }
 .form-holder form input:not([type=checkbox]):focus {
@@ -6043,8 +6180,6 @@ ul.dialog-tabs li.right button {
 ul.dialog-tabs {
   height: 35px;
   border-bottom: 1px solid #7f7f80;
-  margin: 0 -20px 0 -20px;
-  padding: 0 20px;
 }
 ul.dialog-tabs li {
   float: left;
@@ -6092,15 +6227,15 @@ ul.dialog-tabs .withEndContract .arrow {
   float: right;
   width: 80px;
   border: 1px solid #7f7f80;
-  color: #303031;
   margin: 0;
-  padding: 2px 6px;
-  line-height: 13px;
+  padding: .4em 1em;
+  line-height: normal;
   font-size: 13px;
   text-align: center;
   text-decoration: none;
   -webkit-font-smoothing: antialiased;
   outline: none;
+  background: #303031;
   height: 15px;
   border-radius: 0;
   background-color: #8f1311;
@@ -6116,10 +6251,16 @@ ul.dialog-tabs .withEndContract .arrow {
   color: white;
   line-height: 15px;
 }
+ul.dialog-tabs .withEndContract .endContractReasonList span,
+ul.dialog-tabs .withEndContract .arrow span {
+  padding: 0px !important;
+  color: #66b5d4;
+}
 ul.dialog-tabs .withEndContract .endContractReasonList:hover,
 ul.dialog-tabs .withEndContract .arrow:hover {
   cursor: pointer;
   background-position: 0;
+  background: #1d1d1e !important;
 }
 ul.dialog-tabs .withEndContract .endContractReasonList:hover,
 ul.dialog-tabs .withEndContract .arrow:hover {
@@ -6167,8 +6308,6 @@ ul.dialog-tabs .withEndContract .arrow {
 ul.chart-tabs {
   height: 35px;
   border-bottom: 1px solid #7f7f80;
-  margin: 10px -20px 0 0;
-  padding: 0 20px;
 }
 ul.chart-tabs li {
   float: left;
@@ -6219,15 +6358,15 @@ ul.chart-tabs .withEndContract .arrow {
   float: right;
   width: 80px;
   border: 1px solid #7f7f80;
-  color: #303031;
   margin: 0;
-  padding: 2px 6px;
-  line-height: 13px;
+  padding: .4em 1em;
+  line-height: normal;
   font-size: 13px;
   text-align: center;
   text-decoration: none;
   -webkit-font-smoothing: antialiased;
   outline: none;
+  background: #303031;
   height: 15px;
   border-radius: 0;
   background-color: #8f1311;
@@ -6242,10 +6381,16 @@ ul.chart-tabs .withEndContract .arrow {
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(155, 155, 155, 0.4) inset;
   color: white;
 }
+ul.chart-tabs .withEndContract .endContractReasonList span,
+ul.chart-tabs .withEndContract .arrow span {
+  padding: 0px !important;
+  color: #66b5d4;
+}
 ul.chart-tabs .withEndContract .endContractReasonList:hover,
 ul.chart-tabs .withEndContract .arrow:hover {
   cursor: pointer;
   background-position: 0;
+  background: #1d1d1e !important;
 }
 ul.chart-tabs .withEndContract .endContractReasonList:hover,
 ul.chart-tabs .withEndContract .arrow:hover {
@@ -6466,17 +6611,15 @@ h3.dashboard {
 #projectPM table tr th {
   text-align: right;
   padding-left: 3px;
-  line-height: 25px;
-  height: 25px;
+  line-height: 20px;
   color: #cdcdcd;
 }
 #projectPM table tr th.center {
   text-align: center;
 }
 #projectPM table tr td {
-  height: 25px;
   padding-left: 3px;
-  line-height: 25px;
+  line-height: 20px;
 }
 #projectPM table tr td .green {
   width: 10px;
@@ -7551,21 +7694,10 @@ input::-webkit-inner-spin-button {
 		margin-top: -140px !important;
 	}
 }*/
-#createUserForm #resetBtn,
-#createUserForm #saveBtn,
-.changePassword {
-  color: #36A9E1 !important;
-  line-height: normal;
-  width: auto !important;
-  height: auto !important;
-  padding: .4em 1em !important;
-  background: white !important;
-  border: 1px solid #E2E9EF !important;
-}
-#createUserForm #resetBtn:hover,
-#createUserForm #saveBtn:hover,
-.changePassword:hover {
-  background: #ECECEC !important;
+#createUserForm #resetBtn span,
+#createUserForm #saveBtn span,
+.changePassword span {
+  color: #66b5d4 !important;
 }
 #banned {
   height: 80px;
@@ -7726,9 +7858,6 @@ textarea#editInput {
   border-bottom: none;
   display: table-cell;
 }
-.grid tr:hover td {
-  color: #ffffff;
-}
 .grid tr td.dashboardWeek {
   width: 107px;
   min-width: 107px;
@@ -7742,24 +7871,27 @@ textarea#editInput {
   padding: 2px;
 }
 .grid tr td.dashboardWeek.dgreen {
-  background: #004600;
-  color: white;
+  background: #2d5d30;
+  color: #ffffff;
 }
 .grid tr td.dashboardWeek.green {
-  background: green;
-  color: white;
+  background: #3e7f42;
+  color: #ffffff;
 }
 .grid tr td.dashboardWeek.brown {
   background: #5cb85c;
+  color: #ffffff;
 }
 .grid tr td.dashboardWeek.yellow {
-  background: yellow;
+  background: #f9a203;
+  color: #ffffff;
 }
 .grid tr td.dashboardWeek.pink {
-  background: pink;
+  background: #cc5457;
+  color: #ffffff;
 }
 .grid tr td.dashboardWeek.red {
-  background-color: #f13f3f;
+  background-color: #a22a2d;
   color: white;
   border-bottom: 1px solid #7f7f80;
   border-left: 1px solid #7f7f80;
@@ -7770,8 +7902,8 @@ textarea#editInput {
   display: table-cell;
 }
 .grid tr td.dashboardWeek.inactive span.view {
-  background-color: silver;
-  color: silver;
+  background-color: #515151;
+  color: #515151;
 }
 .grid tr td.dashboardWeek.inactive span.view span {
   display: none;
@@ -7821,7 +7953,8 @@ textarea#editInput {
   float: left;
   padding: 0;
   padding-right: 3px;
-  color: #cdcdcd;
+  background-color: #3c86e0;
+  color: #ffffff;
   text-align: center;
 }
 .grid tr td.withVacation span span.vacation.size40 {
@@ -7974,6 +8107,9 @@ textarea#editInput {
 .grid.attendance .weekend {
   color: #ccc;
 }
+.grid.dashBoardMargin {
+  margin-bottom: 150px;
+}
 .grid-conatiner .attendanceTop {
   margin-bottom: 10px;
 }
@@ -8037,6 +8173,7 @@ textarea#editInput {
   padding: 20px;
   text-align: center;
   margin: 0 auto;
+  /*for vacationDashboard*/
 }
 .grid-conatiner .statisticsAtten table tr td .item .countDays.leave,
 .grid-conatiner .statisticsAtten table tr td .item .countDays.working {
@@ -8054,6 +8191,21 @@ textarea#editInput {
 .grid-conatiner .statisticsAtten table tr td .item .countDays.education {
   background-color: #66b5d4;
 }
+.grid-conatiner .statisticsAtten table tr td .item .countDays.free {
+  background-color: #a22a2d;
+}
+.grid-conatiner .statisticsAtten table tr td .item .countDays.almostFree {
+  background-color: #cc5457;
+}
+.grid-conatiner .statisticsAtten table tr td .item .countDays.partiallyBusy {
+  background-color: #f9a203;
+}
+.grid-conatiner .statisticsAtten table tr td .item .countDays.fullyBusy {
+  background-color: #3e7f42;
+}
+.grid-conatiner .statisticsAtten table tr td .item .countDays.overWorked {
+  background-color: #2d5d30;
+}
 .grid-conatiner .statisticsAtten table tr td .item .lastTime {
   text-align: center;
   margin-top: 10px;
@@ -8062,6 +8214,13 @@ textarea#editInput {
 .grid-conatiner .statisticsAtten table tr td .item .percent {
   text-align: center;
   color: #eb759e;
+}
+.grid-conatiner .statisticsAtten.stick {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background-color: #303031;
+  padding-top: 10px;
 }
 .grid-conatiner table .grid {
   border-color: #7f7f80;
@@ -8513,7 +8672,7 @@ textarea#editInput {
 .search-options {
   height: 30px;
   position: absolute;
-  width: 91%;
+  width: 60%;
   top: calc(100% - 1px);
   right: 0;
   z-index: 500;
@@ -8535,6 +8694,13 @@ textarea#editInput {
 .search-options .filter-dialog-tabs li:nth-child(2) {
   border-left: 1px solid #7f7f80;
 }
+.search-options .filter-dialog-tabs li.filterTabs {
+  text-align: center;
+  line-height: 25px;
+  font-size: 13px;
+  color: #cdcdcd;
+  cursor: pointer;
+}
 .search-options .filter-check-list {
   right: auto;
   left: 0;
@@ -8553,10 +8719,10 @@ textarea#editInput {
 .drop-down-filter {
   box-sizing: content-box;
   font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
-  padding: 5px 40px;
+  padding: 5px 25px;
   position: absolute;
   z-index: 10;
-  width: calc(100% - 82px);
+  width: calc(100% - 52px);
   background-color: #303031;
   border: 1px solid #7f7f80;
   right: 0;
@@ -8583,6 +8749,9 @@ textarea#editInput {
   border: 1px solid #7f7f80;
   background-color: #303031;
   margin: 5px;
+}
+.drop-down-filter #filtersContent .filterGroup .ulContent input {
+  margin-top: 5px;
 }
 .drop-down-filter #filtersContent .filterGroup li.miniStylePagination {
   list-style: none;
@@ -8678,7 +8847,7 @@ textarea#editInput {
 }
 #searchContainer .btn {
   background: #303031;
-  padding: 6px;
+  padding: 6px 1%;
   color: #cdcdcd;
 }
 #searchContainer .filter-check-list {
@@ -8697,148 +8866,6 @@ textarea#editInput {
 }
 .removeFilter {
   float: right;
-}
-.vacation-list {
-  font-family: inherit;
-  text-shadow: none;
-  margin: 30px 1%;
-  width: 98%;
-}
-.vacation-list .V {
-  background-color: #f13f3f;
-  color: #ffffff;
-}
-.vacation-list .P {
-  background-color: #fda401;
-  color: #ffffff;
-}
-.vacation-list .S {
-  background-color: #66b5d4;
-  color: #ffffff;
-}
-.vacation-list .E {
-  background-color: #66b5d4;
-  color: #ffffff;
-}
-.vacation-list td,
-.vacation-list th {
-  position: relative;
-  cursor: pointer;
-}
-.vacation-list td input,
-.vacation-list th input,
-.vacation-list td input:focus,
-.vacation-list th input:focus {
-  width: 50%;
-  text-align: center;
-  outline: none;
-  outline-offset: 0;
-  display: none;
-  cursor: pointer;
-  border: 1px solid #66b5d4;
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 5px;
-  margin: 0 auto;
-}
-.vacation-list td input:focus,
-.vacation-list th input:focus {
-  border: none !important;
-  outline: none !important;
-  box-shadow: none;
-  -moz-box-shadow: none;
-  -webkit-box-shadow: none;
-}
-.vacation-list thead th {
-  border: 1px solid #7f7f80;
-}
-.vacation-list thead th#legandCaption {
-  text-align: left;
-}
-.vacation-list thead th.month .newSelectList {
-  width: 100px;
-  margin-left: auto;
-  margin-right: auto;
-  left: calc(50% - 50px);
-}
-.vacation-list thead th.sortDn:after {
-  content: "\00a0\25BE";
-}
-.vacation-list thead th.sortUp:after {
-  content: "\00a0\25B4";
-}
-.vacation-list thead th #monthSelect,
-.vacation-list thead th #yearSelect {
-  font-size: 30px;
-  line-height: 50px;
-}
-.vacation-list tbody td,
-.vacation-list tfoot td {
-  border: 1px solid #7f7f80;
-  text-align: center;
-  color: #cdcdcd;
-}
-.vacation-list tbody td.notForm,
-.vacation-list tfoot td.notForm {
-  padding-left: 10px;
-  line-height: 10px;
-}
-.vacation-list tbody td.notForm input,
-.vacation-list tfoot td.notForm input {
-  display: block;
-}
-.vacation-list tfoot tr td {
-  color: #cdcdcd;
-}
-.vacation-list tbody .employee,
-.vacation-list tbody .department,
-.vacation-list tbody .totalDays {
-  color: #cdcdcd;
-}
-.vacation-list tbody .employee {
-  text-align: right !important;
-}
-.vacation-list #caption,
-.vacation-list .borders,
-.vacation-list thead,
-.vacation-list tbody,
-.vacation-list tfoot {
-  border: 1px solid #7f7f80;
-}
-.vacation-list #caption th,
-.vacation-list .subHeaderHolder th {
-  color: #cdcdcd;
-  line-height: 20px;
-}
-.vacation-list .newSelectList,
-.salary-list .newSelectList,
-.subSalary-list .newSelectList {
-  color: #000;
-}
-.vacation-list tbody tr:not(.subRow):hover td:not(.selectedType),
-.salary-list tbody tr:not(.subRow):hover td:not(.selectedType),
-.subSalary-list tbody tr:not(.subRow):hover td:not(.selectedType) {
-  color: #ffffff;
-}
-.vacation-list tbody tr td > div,
-.salary-list tbody tr td > div,
-.subSalary-list tbody tr td > div {
-  float: right;
-}
-.vacation-list tbody tr td > div a,
-.salary-list tbody tr td > div a,
-.subSalary-list tbody tr td > div a {
-  font-size: 12px;
-  line-height: 20px;
-}
-.vacation-list tbody tr td:nth-child(2),
-.salary-list tbody tr td:nth-child(2),
-.subSalary-list tbody tr td:nth-child(2) {
-  text-align: left;
-  font-size: 12px;
-  line-height: 20px;
-  border: none;
 }
 .filtersActive {
   float: right;
@@ -8877,7 +8904,7 @@ textarea#editInput {
 }
 #favoritesContent #forFilterName {
   height: 22px;
-  width: 83%;
+  width: 80%;
   border-bottom-left-radius: 5px;
   border-top-left-radius: 5px;
   border-right: none;
@@ -8892,6 +8919,7 @@ textarea#editInput {
   padding-top: 4px;
   background-color: #303031;
   color: #a9a9a9;
+  width: 14%;
 }
 #favoritesContent .removeSavedFilter {
   float: right;

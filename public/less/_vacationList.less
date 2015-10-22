@@ -1,0 +1,154 @@
+.vacation-list {
+  font-family: inherit;
+  text-shadow: none;
+  margin: 30px 1%;
+  width: 98%;
+  .V {
+    background-color: @unpaid-wtrack;
+    color: #ffffff;
+  }
+  .P {
+    background-color: #fda401;
+    color: #ffffff;
+  }
+  .S {
+    background-color: @tilte-color;
+    color: #ffffff;
+  }
+  .E {
+    background-color: @forInfo-caption-color;
+    color: #ffffff;
+  }
+  td, th {
+    //padding: 5px;
+    position: relative;
+    cursor: pointer;
+
+    input, input:focus {
+      width: 50%;
+      text-align: center;
+      outline: none;
+      outline-offset: 0;
+      display: none;
+      cursor: pointer;
+      border: 1px solid @border-color-selected;
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 5px;
+      margin: 0 auto;
+    }
+
+    input:focus {
+      border: none !important;
+      outline: none !important;
+      box-shadow: none;
+      -moz-box-shadow: none;
+      -webkit-box-shadow: none;
+    }
+  }
+  thead {
+    th {
+      border: 1px solid @border-color-main;
+      &#legandCaption {
+        text-align: left;
+      }
+      &.month .newSelectList {
+        width: 100px;
+        margin-left: auto;
+        margin-right: auto;
+        left: ~"calc(50% - 50px)";
+      }
+      &.sortDn:after {
+        content: "\00a0\25BE";
+      }
+      &.sortUp:after {
+        content: "\00a0\25B4";
+      }
+      #monthSelect, #yearSelect {
+        font-size: 30px;
+        line-height: 50px;
+      }
+    }
+  }
+
+  tbody, tfoot {
+    td {
+      border: 1px solid @border-color-main;
+      text-align: center;
+      color: @mainText-color;
+
+
+      &.totalDays {
+        //
+      }
+      &.notForm {
+        padding-left: 10px;
+        line-height: 10px;
+        input {
+          display: block;
+        }
+      }
+      &.employee{}
+    }
+  }
+
+  tfoot {
+    tr {
+      td {
+        color: @mainText-color;
+      }
+    }
+  }
+  tbody {
+    .employee, .department, .totalDays {
+      color: @name-text-color;
+    }
+    .employee {
+      text-align: right !important;
+    }
+
+  }
+
+  #caption, .borders, thead, tbody, tfoot {
+    border: 1px solid @border-color-main;
+  }
+  #caption, .subHeaderHolder {
+    th {
+      color: @mainText-color;
+      line-height: 20px;
+    }
+  }
+}
+
+.vacation-list, .salary-list, .subSalary-list {
+  .newSelectList {
+    color: #000;
+  }
+  tbody {
+    tr {
+      &:not(.subRow):hover {
+        td {
+          &:not(.selectedType) {
+            color: @overiewText-color;
+          }
+        }
+      }
+      td {
+        &>div {
+          float: right;
+          a {
+            font-size: 12px;
+            line-height: 20px;
+          }
+        }
+        &:nth-child(2) {
+          text-align: left;
+          font-size: 12px;
+          line-height: 20px;
+        }
+      }
+
+    }
+  }
+}

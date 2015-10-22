@@ -79,8 +79,7 @@
             <td><%=currencySplitter(budgetTotal.costSum.toFixed())%></td>
             <td><%=currencySplitter(budgetTotal.revenueSum.toFixed())%></td>
             <td><%=currencySplitter(budgetTotal.profitSum.toFixed())%></td>
-            <td><%=currencySplitter((budgetTotal.rateSum.byDev +
-                budgetTotal.rateSum.byQA).toFixed(2))%>
+            <td><%=currencySplitter((budgetTotal.revenueSum / budgetTotal.hoursSum).toFixed(2))%>
             </td>
         </tr>
         </tfoot>
