@@ -436,7 +436,9 @@ define([
 
                 this.filterObject = App.filtersValues[this.parentContentType];
 
-                mapData = _.map(this.filterObject[filterView], function (dataItem) {
+                this.currentCollection[filterView] = new filterValuesCollection(this.filterObject[filterView]);
+
+                mapData = _.map(this.currentCollection[filterView].toJSON(), function (dataItem) {
                     return {
                         category       : key,
                         categoryView   : filterView,
@@ -448,8 +450,6 @@ define([
                 })
 
                 this.searchRessult = this.searchRessult.concat(mapData);
-
-                this.currentCollection[filterView] = new filterValuesCollection(this.filterObject[filterView]);
 
                 if (App.filter[filterView]) {
                     this.setStatus(filterView);
@@ -475,7 +475,7 @@ define([
             toggleSearchResultGroup: function (e) {
                 var target = $(e.target).closest('li');
                 var name = target.attr('data-view');
-                var elements = target.find('#' + name);
+                var elements = target.find('#' + name + 'Ul');
 
                 elements.toggle();
 
@@ -558,7 +558,7 @@ define([
                                 });
                                 currentCategory = item.category;
                             }
-                            li = that._renderItemData(ul.find('#' + item.categoryView), item);
+                            li = that._renderItemData(ul.find('#' + item.categoryView + 'Ul'), item);
                             if (item.category) {
                                 li.click(function (e) {
                                     self.clickSearchResult(e);
