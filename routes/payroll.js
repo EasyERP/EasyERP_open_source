@@ -1,9 +1,9 @@
 var express = require('express');
 var router = express.Router();
-var PayRollHandler = require('../handlers/payRoll');
+var PayRollHandler = require('../handlers/payroll');
 
-module.exports = function (event, models) {
-    var handler = new PayRollHandler(event, models);
+module.exports = function (models) {
+    var handler = new PayRollHandler(models);
 
     router.get('/:viewType', handler.getForView);
     router.get('/form/:id', handler.getById);

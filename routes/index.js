@@ -49,7 +49,7 @@ module.exports = function (app, mainDb) {
     var productCategoriesRouter = require('./productCategories')(models, event);
     var customersRouter = require('./customers')(models, event);
     var capacityRouter = require('./capacity')(models);
-    var payRollRouter = require('./payRoll')(models);
+    var payRollRouter = require('./payroll')(models);
     var importFileRouter = require('./importFile')(models);
 
     var requestHandler = require("../requestHandler.js")(app, event, mainDb);

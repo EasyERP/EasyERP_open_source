@@ -29,7 +29,7 @@ module.exports = (function () {
 
     payRollSchema.set('toJSON', {virtuals: true});
 
-    mongoose.model('Salary', payRollSchema);
+    mongoose.model('PayRoll', payRollSchema);
 
     if (!mongoose.Schemas) {
         mongoose.Schemas = {};

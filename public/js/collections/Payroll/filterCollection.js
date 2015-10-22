@@ -1,5 +1,5 @@
 define([
-        'models/PayRoll',
+        'models/PayRollModel',
         'common'
     ],
     function (PayRollModel, common) {

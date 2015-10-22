@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 var moment = require('../public/js/libs/moment/moment');
-var PayRoll = function (event, models) {
+var PayRoll = function (models) {
     var access = require("../Modules/additions/access.js")(models);
     var PayRollSchema = mongoose.Schemas['PayRoll'];
     var DepartmentSchema = mongoose.Schemas['Department'];

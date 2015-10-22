@@ -466,6 +466,10 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   position: absolute;
   right: 13px;
 }
+.payRoll-list tr th,
+.payRoll-list tr td {
+  border: 1px solid white;
+}
 /*------------------------Constants-----------------------------*/
 .notification {
   z-index: 20000;
