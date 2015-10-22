@@ -476,7 +476,7 @@ define([
                 var target = $(e.target).closest('li');
                 var name = target.attr('data-view');
                 var container = target.closest('.ui-autocomplete');
-                var elements = container.find('.' + name);
+                var elements = container.find('#' + name);
 
                 elements.toggle();
 
@@ -534,6 +534,7 @@ define([
                         var currentCategory = "";
 
                         that._renderItemData = function (ul, item) {
+                            ul.hide();
                             return $("<li>")
                                 .data("item.autocomplete", item)
                                 .append(item.label)
@@ -558,12 +559,11 @@ define([
                                 });
                                 currentCategory = item.category;
                             }
-                            li = that._renderItemData(ul, item);
+                            li = that._renderItemData(ul.find('#' + item.categoryView), item);
                             if (item.category) {
                                 li.click(function (e) {
                                     self.clickSearchResult(e);
                                 });
-                                li.toggle();
                                 li.attr('data-back', item.categoryBackend);
                                 li.attr('data-view', item.categoryView);
                                 li.attr("class", item.categoryView);
