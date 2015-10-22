@@ -24,24 +24,19 @@ module.exports = (function () {
         subTotal     : Number,
         unitPrice    : Number,
         product      : {type: ObjectId, ref: 'Product', default: null},
-        description  : {type: String, default: ''}
+        description  : {type: String, default: ''},
+        jobs: {type: ObjectId, ref: "jobs", default: null}
     };
 
     var quotationSchema = new Schema({
         forSales      : {type: Boolean, default: true},
         isOrder       : {type: Boolean, default: false},
-        //supplier      : {type: ObjectId, ref: 'Customers', default: null},
-        //project       : {type: ObjectId, ref: 'Project', default: null},
         supplier      : {
             _id: {type: ObjectId, ref: 'Customers', default: null},
             name: {type: String, default: ''}
         },
         project       : {
             _id: {type: ObjectId, ref: 'Project', default: null},
-            //projectnamager: {
-            //    _id: {type: String, default: ''},
-            //    name: {type: String, default: ''}
-            //},
             projectmanager: {},
             projectName: {type: String, default: ''}
         },
@@ -55,9 +50,7 @@ module.exports = (function () {
         invoiceRecived: {type: Boolean, default: false},
         paymentTerm   : {type: ObjectId, ref: 'PaymentTerm', default: null},
         paymentInfo   : payments,
-        /* fiscalPosition: {type: ObjectId, ref: 'FiscalPosition', default: null},*/
         products      : [products],
-       // workflow      : {type: ObjectId, ref: 'workflows', default: null},
         workflow      : {
             _id: {type: ObjectId, ref: 'workflows', default: null},
             name: {type: String, default: ''}

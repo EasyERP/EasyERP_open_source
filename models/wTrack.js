@@ -86,6 +86,10 @@ module.exports = (function () {
         createdBy: {
             user: {type: ObjectId, ref: 'Users', default: null},
             date: {type: Date, default: Date.now}
+        },
+        jobs: {
+            _id: {type: ObjectId, ref: 'jobs', default: null},
+            name: {type: String, default: ''}
         }
     }, {collection: 'wTrack'});
 
