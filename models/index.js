@@ -52,4 +52,5 @@ module.exports = (function () {
     require('./savedFilters.js');
     require('./hoursCash.js');
     require('./capacity.js');
+    require('./jobs.js');
 })();

@@ -69,7 +69,6 @@ module.exports = (function () {
         }],
         budget: {
             _id: false,
-            projectTeam: Array,
             bonus: Array,
             budget: Array,
             projectValues: JSON,
