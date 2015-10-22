@@ -70,6 +70,7 @@ module.exports = (function () {
         budget: {
             _id: false,
             bonus: Array,
+            projectTeam: Array,
             budget: Array,
             projectValues: JSON,
             budgetTotal: JSON}

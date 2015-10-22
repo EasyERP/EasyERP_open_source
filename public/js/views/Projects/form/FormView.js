@@ -46,6 +46,7 @@ define([
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
                 "click .current-selected:not(.disabled)"                          : "showNewSelect",
                 "click #createItem"                                               : "createDialog",
+                "click #createJOb"                                               : "createJob",
                 "change input:not(.checkbox)": "showSaveButton"
             },
 
@@ -57,10 +58,24 @@ define([
                 this.proformValues = {};
             },
 
-            createDialog: function () {
+            createDialog: function (e) {
+                var jobs = {};
+
+                jobs._id = $(e.target).attr('data-id');
+                jobs.name = $(e.target).attr('data-name');
+
                 new GenerateWTrack({
                     model           : this.formModel,
-                    wTrackCollection: this.wCollection
+                    wTrackCollection: this.wCollection,
+                    jobs: jobs
+                });
+            },
+
+            createJob: function () {
+                new GenerateWTrack({
+                    model           : this.formModel,
+                    wTrackCollection: this.wCollection,
+                    createJob: true
                 });
             },
 

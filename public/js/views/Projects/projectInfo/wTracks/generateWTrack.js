@@ -49,6 +49,10 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                     this.resultArray = [];
 
+                    this.jobs = options.jobs ? options.jobs: null;
+
+                    this.createJob = options.createJob;
+
                     this.render();
                 },
 
@@ -285,6 +289,11 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     var tabs;
                     var activeTab;
                     var dialogHolder;
+                    var jobName;
+
+                    if (self.createJob) {
+                        jobName = this.$el.find('#jobName').val();
+                    }
 
                     var filter = {
                         'projectName': {
@@ -292,6 +301,8 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                             value: [this.modelJSON._id]
                         }
                     };
+
+                    //ToDo create Job
 
                     this.stopDefaultEvents(e);
 
@@ -304,6 +315,15 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                         url: '/wTrack/generateWTrack',
                         contentType: "application/json",
                         data: data,
+
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader("createJob", self.createJob);
+
+                            if (self.createJob){
+                                xhr.setRequestHeader("jobname", jobName);
+                            }
+                        },
+
                         success: function () {
 
                             //$('#weTracks').html('');
@@ -461,9 +481,12 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                 render: function () {
                     var thisEl = this.$el;
+                    var self = this;
                     var project = this.model.toJSON();
                     var dialog = this.template({
-                        project: project
+                        project: project,
+                        jobs:  self.jobs,
+                        createJob: self.createJob
                     });
                     var self = this;
 

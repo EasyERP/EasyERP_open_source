@@ -817,6 +817,10 @@ var wTrack = function (event, models) {
         var savedwTrack = [];
         var globalTotal = 0;
 
+        var createJob = req.headers.createjob;
+
+        //TODo createJob
+
         async.each(data, function (options, call) {
             generate(options, call);
 
