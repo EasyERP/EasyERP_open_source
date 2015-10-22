@@ -13,7 +13,7 @@ module.exports = (function () {
         project: {type: ObjectId, ref: 'Project', default: null},
         budget: {
             _id: false,
-            projectTeam: Array
+            projectTeam: {type: Array, default: []}
         }
 
     }, { collection: 'jobs' });
