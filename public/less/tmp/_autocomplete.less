@@ -1,0 +1,82 @@
+//----------------------------------------------
+
+#searchGlobalContainer {
+  display: block;
+  position: relative;
+  border: 1px solid @border-color-main;
+  padding: 0 0 0 26px;
+}
+
+#searchFilterContainer {
+  //float: left;
+  //width: auto;
+  //height: 20px;
+  //overflow: hidden;
+}
+
+* html .ui-autocomplete { width:1px; }
+.ui-autocomplete {
+  position: absolute;
+  cursor: default;
+}
+.ui-menu {
+  width: 100% !important;
+  list-style:none;
+  padding: 3px;
+  margin: 0;
+  display:block;
+  float: left;
+
+  .ui-menu-item {
+    float: left;
+    margin:0;
+    padding: 0;
+    zoom: 1;
+    clear: left;
+    width: 100%;
+    line-height: 18px;
+
+    a {
+      text-decoration:none;
+      display:block;
+      padding:.2em .4em;
+    }
+  }
+  .ui-autocomplete-category {
+    margin: .5em 0 .2em;
+    padding: 0;
+    line-height: 1.5;
+    float: left;
+    width: 100%;
+  }
+}
+
+.ui-autocomplete-input {
+  &:empty:not(:focus):before{
+    content:attr(data-text)
+  }
+  height: 20px;
+  overflow: hidden;
+
+  padding: 2px 31px 2px 0;
+  display: block;
+}
+
+.ui-helper-hidden-accessible {
+  border: 0;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  width: 1px;
+  position: absolute !important;
+  clip: rect(1px 1px 1px 1px);
+  clip: rect(1px,1px,1px,1px);
+}
+
+.ui-widget-content {
+  border: 1px solid @border-color-main;
+  background-color: @bg-main;
+  color: @mainText-color;
+  max-height: 210px;
+}
