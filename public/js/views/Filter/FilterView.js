@@ -24,7 +24,7 @@ define([
             events: {
                 "mouseover .search-content"     : 'showSearchContent',
                 "click .search-content"         : 'showSearchContent',
-                "click .filter-dialog-tabs .btn": 'showFilterContent',
+                "click .filter-dialog-tabs .filterTabs": 'showFilterContent',
                 'click #applyFilter'            : 'applyFilter',
                 'click .condition li'           : 'conditionClick',
                 'click .groupName'              : 'showHideValues',
