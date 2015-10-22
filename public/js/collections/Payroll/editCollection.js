@@ -1,6 +1,3 @@
-/**
- * Created by soundstorm on 19.06.15.
- */
 define([
         './filterCollection'
     ],

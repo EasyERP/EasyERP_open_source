@@ -1,13 +1,10 @@
-/**
- * Created by soundstorm on 15.06.15.
- */
 define([
-        'models/SalaryModel',
+        'models/PayRoll',
         'common'
     ],
-    function (SalaryModel, common) {
-        var SalaryCollection = Backbone.Collection.extend({
-            model       : SalaryModel,
+    function (PayRollModel, common) {
+        var PayRollCollection = Backbone.Collection.extend({
+            model       : PayRollModel,
             url         : "/payroll/",
             page        : null,
             namberToShow: null,
@@ -17,10 +14,12 @@ define([
             showMore: function (options) {
                 var that = this;
                 var filterObject = options || {};
+
                 filterObject['page'] = (options && options.page) ? options.page : this.page;
                 filterObject['count'] = (options && options.count) ? options.count : this.namberToShow;
                 filterObject['viewType'] = (options && options.viewType) ? options.viewType : this.viewType;
                 filterObject['contentType'] = (options && options.contentType) ? options.contentType : this.contentType;
+
                 this.fetch({
                     data   : filterObject,
                     waite  : true,
@@ -65,5 +64,5 @@ define([
                 return response.second;
             }
         });
-        return SalaryCollection;
+        return PayRollCollection;
     });

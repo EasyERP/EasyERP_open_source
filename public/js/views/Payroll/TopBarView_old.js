@@ -3,7 +3,7 @@ define([
         'custom',
         'common',
         'constants'
-    ],
+],
     function (ContentTopBarTemplate, Custom, Common, CONSTANTS) {
         var TopBarView = Backbone.View.extend({
             el: '#top-bar',

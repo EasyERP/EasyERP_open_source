@@ -49,6 +49,7 @@ module.exports = function (app, mainDb) {
     var productCategoriesRouter = require('./productCategories')(models, event);
     var customersRouter = require('./customers')(models, event);
     var capacityRouter = require('./capacity')(models);
+    var payRollRouter = require('./payRoll')(models);
     var importFileRouter = require('./importFile')(models);
 
     var requestHandler = require("../requestHandler.js")(app, event, mainDb);
@@ -79,7 +80,7 @@ module.exports = function (app, mainDb) {
     app.use('/employee', employeeRouter);
     app.use('/department', departmentRouter);
     app.use('/revenue', revenueRouter);
-    app.use('/payroll', salaryRouter);
+    //app.use('/payroll', salaryRouter);
     app.use('/opportunity', opportunityRouter);
     app.use('/task', taskRouter);
     app.use('/jobPosition', jobPositionRouter);
@@ -91,6 +92,7 @@ module.exports = function (app, mainDb) {
     app.use('/category', productCategoriesRouter);
     app.use('/customers', customersRouter);
     app.use('/capacity', capacityRouter);
+    app.use('/payroll', payRollRouter);
     app.get('/getDBS', function (req, res) {
         res.send(200, {dbsNames: dbsNames});
     });
