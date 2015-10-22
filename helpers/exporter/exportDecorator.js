@@ -34,10 +34,9 @@ var addExportToCsvFunctionToHandler = function (handler, getModel, map, fileName
         var body = req.body;
 
         var propertiesToDisplay = body.properties;
-        var itemIdsToDisplay = body.items;
         var type = body.type;
 
-        var project = createProjection(map, {properties: propertiesToDisplay});
+        var project = createProjection(map.aliases, {properties: propertiesToDisplay});
         var nameOfFile = fileName ? fileName : type ? type : 'data';
         var formatters = map.formatters;
         var writeCsv = function (array) {
@@ -109,16 +108,11 @@ var addExportToXlsxFunctionToHandler = function (handler, getModel, map, fileNam
         var type = req.query.type;
         var headersArray = [];
         var project = createProjection(map.aliases, {filter: filter, putHeadersTo: headersArray});
+        var formatters = map.formatters;
         var nameOfFile = fileName ? fileName : type ? type : 'data';
 
-        Model.aggregate({$match: type ? {type: type} : {}}, {$project: project}, function (err, response) {
-
-            if (err) {
-                return next(err);
-            }
-            //todo map objectId to string
-
-            arrayToXlsx.writeFile(nameOfFile + '.xlsx', response, {
+        var writeXlsx = function (array) {
+            arrayToXlsx.writeFile(nameOfFile + '.xlsx', array, {
                 sheetName : "data",
                 headers   : headersArray,
                 attributes: headersArray
@@ -137,6 +131,38 @@ var addExportToXlsxFunctionToHandler = function (handler, getModel, map, fileNam
                     }
                 });
             })
+
+        };
+
+
+        Model.aggregate({$match: type ? {type: type} : {}}, {$project: project}, function (err, response) {
+
+            if (err) {
+                return next(err);
+            }
+            if (formatters) {
+                async.each(response, function (item, callback) {
+
+                    var keys = Object.keys(formatters);
+
+                    for (var i = keys.length - 1; i >= 0; i--) {
+                        var key = keys[i];
+                        item[key] = formatters[key](item[key]);
+                    }
+
+                    callback();
+
+                }, function (err) {
+                    if (err) {
+                        return next(err);
+                    }
+                    writeXlsx(response);
+                });
+            } else {
+                writeXlsx(response);
+            }
+
+
 
         });
     }
