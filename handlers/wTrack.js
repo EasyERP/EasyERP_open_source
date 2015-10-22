@@ -17,9 +17,10 @@ var wTrack = function (event, models) {
     var mapObject = require('../helpers/bodyMaper');
     var moment = require('../public/js/libs/moment/moment');
 
-    var exportHandlingHelper = require('../helpers/exporter/exportHandlingHelper');
-    var exportMap = require('../helpers/csvMap').wTrack.aliases;
-    exportHandlingHelper.addExportFunctionsToHandler(this, function (req) {
+    var exportDecorator = require('../helpers/exporter/exportDecorator');
+    var exportMap = require('../helpers/csvMap').wTrack;
+
+    exportDecorator.addExportFunctionsToHandler(this, function (req) {
         return models.get(req.session.lastDb, 'wTrack', wTrackSchema)
     }, exportMap, "wTrack");
 
@@ -766,18 +767,18 @@ var wTrack = function (event, models) {
 
                 monthHours.aggregate([{
                     $match: {
-                        year: {$in: uYear},
+                        year : {$in: uYear},
                         month: {$in: uMonth}
                     }
                 }, {
                     $project: {
-                        date: {$add: [{$multiply: ["$year", 100]}, "$month"]},
+                        date : {$add: [{$multiply: ["$year", 100]}, "$month"]},
                         hours: '$hours'
 
                     }
                 }, {
                     $group: {
-                        _id: '$date',
+                        _id  : '$date',
                         value: {$addToSet: '$hours'}
                     }
                 }], function (err, months) {
@@ -824,8 +825,8 @@ var wTrack = function (event, models) {
 
                 var options = {
                     startDate: opt.startDate,
-                    endDate: opt.endDate,
-                    hours: opt.hours
+                    endDate  : opt.endDate,
+                    hours    : opt.hours
                 };
 
                 async.parallel([calculateWeeks, getWorkflowStatus], function (err, result) {
@@ -856,7 +857,6 @@ var wTrack = function (event, models) {
                         var dateByMonth = year * 100 + month;
                         var parallelTasks = [getHolidays, getVacations];
 
-
                         async.parallel(parallelTasks, function (err, result) {
                             var holidays = result[0].holidays;
                             var vacations = result[1].vacations;
@@ -866,7 +866,6 @@ var wTrack = function (event, models) {
                             var year = element.year;
                             var month = element.month;
                             var week = element.week;
-
 
                             function calcCost(callB) {
                                 var cost;
@@ -883,10 +882,10 @@ var wTrack = function (event, models) {
                                         .find(
                                         {
                                             'employee._id': objectId(employee._id),
-                                            month: m,
-                                            year: y
+                                            month         : m,
+                                            year          : y
                                         }, {
-                                            baseSalary: 1,
+                                            baseSalary    : 1,
                                             'employee._id': 1
                                         })
                                         .lean();
@@ -966,7 +965,6 @@ var wTrack = function (event, models) {
                                 renderedTotal += totalHours;
                                 var diff = opt.hours - renderedTotal;
 
-
                                 if ((diff > 0) && (diff < 8)) {
                                     var index;
 
@@ -993,35 +991,34 @@ var wTrack = function (event, models) {
 
                                 globalTotal += totalHours;
 
-
                                 wTrackObj = {
-                                    dateByWeek: dateByWeek,
+                                    dateByWeek : dateByWeek,
                                     dateByMonth: dateByMonth,
-                                    project: project,
-                                    employee: employee,
-                                    department: department,
-                                    year: year,
-                                    month: month,
-                                    week: week,
-                                    worked: totalHours,
-                                    revenue: parseFloat(revenue),
-                                    cost: cost,
-                                    rate: parseFloat((parseFloat(revenue) / parseFloat(totalHours)).toFixed(2)),
-                                    1: trackWeek['1'],
-                                    2: trackWeek['2'],
-                                    3: trackWeek['3'],
-                                    4: trackWeek['4'],
-                                    5: trackWeek['5'],
-                                    6: trackWeek['6'],
-                                    7: trackWeek['7'],
+                                    project    : project,
+                                    employee   : employee,
+                                    department : department,
+                                    year       : year,
+                                    month      : month,
+                                    week       : week,
+                                    worked     : totalHours,
+                                    revenue    : parseFloat(revenue),
+                                    cost       : cost,
+                                    rate       : parseFloat((parseFloat(revenue) / parseFloat(totalHours)).toFixed(2)),
+                                    1          : trackWeek['1'],
+                                    2          : trackWeek['2'],
+                                    3          : trackWeek['3'],
+                                    4          : trackWeek['4'],
+                                    5          : trackWeek['5'],
+                                    6          : trackWeek['6'],
+                                    7          : trackWeek['7'],
                                     "createdBy": {
                                         "date": new Date(),
                                         "user": currentUser
                                     },
-                                    "editedBy": {
+                                    "editedBy" : {
                                         "user": currentUser
                                     },
-                                    "groups": {
+                                    "groups"   : {
                                         "group": [],
                                         "users": [],
                                         "owner": currentUser
@@ -1040,7 +1037,7 @@ var wTrack = function (event, models) {
                                     });
                                 }
 
-                                if (opt.hours && (globalTotal < opt.hours) &&(savedwTrack.length === dateArray.length) && ((totalHolidays + totalVacations) * 8 > 0)) {
+                                if (opt.hours && (globalTotal < opt.hours) && (savedwTrack.length === dateArray.length) && ((totalHolidays + totalVacations) * 8 > 0)) {
                                     generateAddWeeks(opt.hours - globalTotal, dateArray[dateArray.length - 1], savedwTrack);
                                 }
 
@@ -1053,8 +1050,8 @@ var wTrack = function (event, models) {
                                     savedwTrack.forEach(function (element) {
                                         if ((lastWeek.year * 100 + lastWeek.week) === element.dateByWeek) {
                                             lastwTrack = element;
-                                            if (lastwTrack[1] === 0){
-                                                for (var i = 7; i >= 1; i--){
+                                            if (lastwTrack[1] === 0) {
+                                                for (var i = 7; i >= 1; i--) {
                                                     lastwTrack[i] = opt[i];
                                                 }
                                             }
@@ -1062,7 +1059,7 @@ var wTrack = function (event, models) {
 
                                     });
 
-                                    if (lastwTrack){
+                                    if (lastwTrack) {
                                         var hours = 0;
                                         var newObj = _.clone(lastwTrack);
 
@@ -1101,10 +1098,10 @@ var wTrack = function (event, models) {
                                         }
                                         lastwTrack = newObj;
                                         var diff = addHours - total;
-                                        if (diff > 0){
+                                        if (diff > 0) {
                                             var h = total / (Math.round(weekCount) - 1);
 
-                                            if (diff <= h){
+                                            if (diff <= h) {
                                                 var newWeek = lastwTrack.week + 1;
                                                 var newYear = newObj.year;
                                                 if (newWeek > moment([newObj.year, newObj.month]).isoWeeksInYear()) {
@@ -1124,7 +1121,7 @@ var wTrack = function (event, models) {
                                                 var hoursInWeek = 0;
 
                                                 while (hoursInWeek < diff) {
-                                                    if (i <= 7){
+                                                    if (i <= 7) {
                                                         newObj[i] = lastwTrack[i];
                                                         hoursInWeek += lastwTrack[i];
                                                     }
@@ -1135,12 +1132,12 @@ var wTrack = function (event, models) {
 
                                                 newObj[i - 2] = diff - hoursInWeek;
 
-                                                for (var j = i; j <= 7; j++){
+                                                for (var j = i; j <= 7; j++) {
                                                     newObj[j] = 0;
                                                 }
 
                                                 hoursInWeek = 0;
-                                                for (var j = 7; j >= 1; j--){
+                                                for (var j = 7; j >= 1; j--) {
                                                     hoursInWeek += newObj[j];
                                                 }
 
@@ -1171,7 +1168,6 @@ var wTrack = function (event, models) {
                                                     newObj.dateByWeek = dateByWeek;
                                                     newObj.dateByMonth = dateByMonth;
 
-
                                                     wTrack = new WTrack(newObj);
 
                                                     wTrack.save(function (err, wTrack) {
@@ -1183,7 +1179,6 @@ var wTrack = function (event, models) {
                                             }
                                         }
                                     }
-
 
                                 }
 
@@ -1206,7 +1201,6 @@ var wTrack = function (event, models) {
 
                 });
 
-
                 function getHolidays(callback) {
                     var Holiday = models.get(req.session.lastDb, 'Holiday', HolidaySchema);
                     var newResult = {};
@@ -1225,7 +1219,6 @@ var wTrack = function (event, models) {
                             var key = year * 100 + week;
                             var dayOfWeek = moment(date).day();
 
-
                             if (!newResult[key]) {
                                 newResult[key] = {};
                             }
@@ -1242,8 +1235,8 @@ var wTrack = function (event, models) {
                     var newResult = {};
                     var total = 0;
                     var query = Vacation.find({
-                        month: {$in: uniqMonths},
-                        year: {$in: uniqYears},
+                        month         : {$in: uniqMonths},
+                        year          : {$in: uniqYears},
                         "employee._id": employee._id
                     }, {month: 1, year: 1, vacArray: 1}).lean();
 
@@ -1260,7 +1253,6 @@ var wTrack = function (event, models) {
                                 var weekKey;
                                 var dayNumber;
                                 var dateValue;
-
 
                                 for (var day = vacArr.length - 1; day >= 0; day--) {
                                     if (vacArr[day]) {
