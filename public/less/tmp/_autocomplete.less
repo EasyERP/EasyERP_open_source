@@ -1,30 +1,27 @@
 //----------------------------------------------
-
+* html .ui-autocomplete { width:1px; }
 #searchGlobalContainer {
   display: block;
-  //position: relative;
+  position: relative;
   border: 1px solid @border-color-main;
-  padding: 0 0 0 26px;
+  padding: 2px 0px 2px 26px;
 }
-
 #searchFilterContainer {
-  //float: left;
-  //width: auto;
-  //height: 20px;
-  //overflow: hidden;
+  float: left;
+  width: auto;
+  height: 20px;
+  overflow: hidden;
 }
-
-* html .ui-autocomplete { width:1px; }
 .ui-autocomplete {
   position: absolute;
   cursor: default;
-  left: 0 !important;
+  left: -1px !important;
+  width: 100% !important;
 }
 .ui-menu {
-  width: auto !important;
   list-style:none;
-  padding: 3px;
   margin: 0;
+  padding: 0;
   display:block;
   float: left;
 
@@ -44,21 +41,47 @@
     }
   }
   .ui-autocomplete-category {
-    position: relative;
-    margin: .5em 0 .5em;
-    padding: 0 0 0 20px;
+    margin: .3em 0 0;
+    padding: 0;
     line-height: 1.5;
     float: left;
     width: 100%;
+    &:last-child {
+      padding-bottom: .3em;
+    }
     .searchGroupDropDown {
-      position: absolute;
+      float: left;
       width: 14px;
       height: 14px;
-      padding: 3px;
+      padding: 3px 0px 3px 6px;
       line-height: 1;
       cursor: pointer;
       top: 0;
       left: 0;
+      &:before {
+        content: '\f0d7';
+        font-family: 'FontAwesome';
+      }
+    }
+    .searchGroupResult {
+      display: block;
+      line-height: 20px;
+      width: 100%;
+    }
+    .ui-widget-content {
+      float: left;
+      margin: .3em 0 0;
+      padding: .3em 0;
+      display: block;
+      width: 100%;
+      border: none;
+      border-top: 1px solid @border-color-main;
+      border-bottom: 1px solid @border-color-main;
+      overflow: auto;
+      max-height: 143px;
+      li {
+        padding-left: 25px;
+      }
     }
   }
 }
@@ -69,8 +92,6 @@
   }
   height: 20px;
   overflow: hidden;
-
-  padding: 2px 31px 2px 0;
   display: block;
 }
 
@@ -90,5 +111,4 @@
   border: 1px solid @border-color-main;
   background-color: @bg-main;
   color: @mainText-color;
-  max-height: 210px;
 }

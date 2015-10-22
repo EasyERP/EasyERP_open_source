@@ -8551,6 +8551,7 @@ textarea#editInput {
 }
 .search-field {
   box-sizing: border-box;
+  position: relative;
   display: block;
   width: 100%;
   height: 26px;
@@ -8975,28 +8976,31 @@ textarea#editInput {
 .forInfoWrap {
   overflow: hidden;
 }
+* html .ui-autocomplete {
+  width: 1px;
+}
 #searchGlobalContainer {
   display: block;
+  position: relative;
   border: 1px solid #7f7f80;
+  padding: 2px 0px 2px 26px;
 }
 #searchFilterContainer {
   float: left;
   width: auto;
-  padding: 2px 0 2px 26px;
   height: 20px;
   overflow: hidden;
-}
-* html .ui-autocomplete {
-  width: 1px;
 }
 .ui-autocomplete {
   position: absolute;
   cursor: default;
+  left: -1px !important;
+  width: 100% !important;
 }
 .ui-menu {
   list-style: none;
-  padding: 3px 3px 3px 5px;
   margin: 0;
+  padding: 0;
   display: block;
   float: left;
 }
@@ -9015,16 +9019,52 @@ textarea#editInput {
   padding: .2em .4em;
 }
 .ui-menu .ui-autocomplete-category {
-  margin: .5em 0 .2em;
+  margin: .3em 0 0;
   padding: 0;
   line-height: 1.5;
   float: left;
   width: 100%;
 }
+.ui-menu .ui-autocomplete-category:last-child {
+  padding-bottom: .3em;
+}
+.ui-menu .ui-autocomplete-category .searchGroupDropDown {
+  float: left;
+  width: 14px;
+  height: 14px;
+  padding: 3px 0px 3px 6px;
+  line-height: 1;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+}
+.ui-menu .ui-autocomplete-category .searchGroupDropDown:before {
+  content: '\f0d7';
+  font-family: 'FontAwesome';
+}
+.ui-menu .ui-autocomplete-category .searchGroupResult {
+  display: block;
+  line-height: 20px;
+  width: 100%;
+}
+.ui-menu .ui-autocomplete-category .ui-widget-content {
+  float: left;
+  margin: .3em 0 0;
+  padding: .3em 0;
+  display: block;
+  width: 100%;
+  border: none;
+  border-top: 1px solid #7f7f80;
+  border-bottom: 1px solid #7f7f80;
+  overflow: auto;
+  max-height: 143px;
+}
+.ui-menu .ui-autocomplete-category .ui-widget-content li {
+  padding-left: 25px;
+}
 .ui-autocomplete-input {
   height: 20px;
   overflow: hidden;
-  padding: 2px 31px 2px 0;
   display: block;
 }
 .ui-autocomplete-input:empty:not(:focus):before {
@@ -9045,5 +9085,4 @@ textarea#editInput {
   border: 1px solid #7f7f80;
   background-color: #303031;
   color: #cdcdcd;
-  max-height: 210px;
 }
