@@ -475,8 +475,7 @@ define([
             toggleSearchResultGroup: function (e) {
                 var target = $(e.target).closest('li');
                 var name = target.attr('data-view');
-                var container = target.closest('.ui-autocomplete');
-                var elements = container.find('#' + name);
+                var elements = target.find('#' + name);
 
                 elements.toggle();
 
