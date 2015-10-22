@@ -1,19 +1,27 @@
 /*Just for test*/
 require('pmx').init();
 
+process.env.NODE_ENV = process.env.NODE_ENV || 'development';
+require('./config/' + process.env.NODE_ENV);
+
 var mongoose = require('mongoose');
-var mainAppConfig = require('./config/main').mainApp;
 var dbsObject = {};
 var dbsNames = {};
-var mainDb = mongoose.createConnection('localhost', 'mainDB');
-var sessionParser = require('./helpers/sessionParser');
+var connectOptions = {
+    db: { native_parser: true },
+    server: { poolSize: 5 },
+    //replset: { rs_name: 'myReplicaSetName' },
+    user: process.env.DB_USER,
+    pass: process.env.DB_PASS,
+    w: 1,
+    j: true
+    //mongos: true
+};
+var mainDb = mongoose.createConnection(process.env.MAIN_DB_HOST, process.env.MAIN_DB_NAME, process.env.DB_PORT, connectOptions);
+
 var app;
 
 //var open = require('open');
-
-
-require('./config/' + mainAppConfig.NODE_ENV);
-process.env.NODE_ENV = mainAppConfig.NODE_ENV;
 mainDb.on('error', console.error.bind(console, 'connection error:'));
 mainDb.once('open', function callback() {
     'use strict';
@@ -30,7 +38,8 @@ mainDb.once('open', function callback() {
         url: { type: String, default: 'localhost' },
         DBname: { type: String, default: '' },
         pass: { type: String, default: '' },
-        user: { type: String, default: '' }
+        user: { type: String, default: '' },
+        port: Number
     }, { collection: 'easyErpDBS' });
 
     var main = mainDb.model('easyErpDBS', mainDBSchema);
@@ -42,7 +51,17 @@ mainDb.once('open', function callback() {
                     DBname: '',
                     url: ''
                 };
-                var dbObject = mongoose.createConnection(_db.url, _db.DBname);
+                var opts = {
+                    db: { native_parser: true },
+                    server: { poolSize: 5 },
+                    //replset: { rs_name: 'myReplicaSetName' },
+                    user: _db.user,
+                    pass: _db.pass,
+                    w: 1,
+                    j: true
+                    //mongos: true
+                };
+                var dbObject = mongoose.createConnection(_db.url, _db.DBname, _db.port, opts);
                 dbObject.on('error', console.error.bind(console, 'connection error:'));
                 dbObject.once('open', function callback() {
                     console.log("Connection to " + _db.DBname + " is success" + index);

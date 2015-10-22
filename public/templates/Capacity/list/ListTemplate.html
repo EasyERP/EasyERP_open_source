@@ -1,7 +1,7 @@
 <% collection.forEach(function(capacity, index){ %>
 <tr data-id="<%=capacity._id%>" class="<%=subClass%>" data-name="<%=depName%>">
-    <td class="notForm"><input style="display: block;" class="checkbox" type="checkbox" id="<%=capacity._id%>" <%=status ? 'checked' : ''%> /></td>
-    <td colspan="2" class="editable employee" data-content="employee" data-type="employeeSelect">
+    <td class="notForm"><input class="checkbox" type="checkbox" id="<%=capacity._id%>" <%=status ? 'checked' : ''%> /></td>
+    <td colspan="2" class="employee" data-content="employee" data-type="employeeSelect">
         <%=capacity.employee ? capacity.employee.name : ''%>
     </td>
     <% for (var i=0; i<=capacity.capacityArray.length - 1; i++) {

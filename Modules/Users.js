@@ -359,6 +359,7 @@ var Users = function (mainDb, models) {
                 var key = data.key;
                 var deleteId = data.deleteId;
                 var byDefault = data.byDefault;
+                var viewType = data.viewType;
                 var id;
                 var savedFilters = models.get(req.session.lastDb, 'savedFilters', savedFiltersSchema);
                 var filterModel = new savedFilters();
@@ -375,7 +376,7 @@ var Users = function (mainDb, models) {
                         }
                         if (result) {
                             id = result.get('_id');
-                            query = {$pull: {'savedFilters': {_id: deleteId, byDefault: byDefault}}};
+                            query = {$pull: {'savedFilters': {_id: deleteId, byDefault: byDefault, viewType: viewType}}};
 
                             updateThisUser(_id, query);
                         }
@@ -389,6 +390,7 @@ var Users = function (mainDb, models) {
                     filterModel.filter = data.filter;
 
                    var byDefault = data.useByDefault;
+                    var viewType = data.viewType;
                     var newSavedFilters = [];
 
                     filterModel.save(function (err, result) {
@@ -413,8 +415,9 @@ var Users = function (mainDb, models) {
                                     });
 
                                     savedFilters.push({
-                                        _id : id,
-                                        byDefault: byDefault
+                                        _id: id,
+                                        byDefault: byDefault,
+                                        viewType: viewType
                                     });
 
                                     query = {$set: {'savedFilters': savedFilters}};
@@ -424,7 +427,8 @@ var Users = function (mainDb, models) {
                             } else {
                                 newSavedFilters ={
                                     _id : id,
-                                    byDefault: byDefault
+                                    byDefault: byDefault,
+                                    viewType: viewType
                                 };
 
                                 query = {$push: {'savedFilters': newSavedFilters}};

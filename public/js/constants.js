@@ -259,6 +259,62 @@ define([], function () {
                 view   : 'canBePurchased',
                 backend: 'canBePurchased'
             }
+        },
+        Quotation       : {
+            'Supplier' : {
+                view   : 'supplier',
+                backend: 'supplier._id'
+            },
+            'Status'   : {
+                view   : 'workflow',
+                backend: 'workflow._id'
+            }
+        },
+        salesQuotation: {
+            'Project': {
+                view   : 'projectName',
+                backend: 'project._id'
+            },
+            'Customer' : {
+                view   : 'supplier',
+                backend: 'supplier._id'
+            },
+            'Sales Manager'   : {
+                view   : 'projectmanager',
+                backend: 'project.projectmanager._id'
+            },
+            'Status'   : {
+                view   : 'workflow',
+                backend: 'workflow._id'
+            }
+        },
+        salesOrder: {
+            'Project': {
+                view   : 'projectName',
+                backend: 'project._id'
+            },
+            'Customer' : {
+                view   : 'supplier',
+                backend: 'supplier._id'
+            },
+            'Sales Manager'   : {
+                view   : 'projectmanager',
+                backend: 'project.projectmanager._id'
+            },
+            'Status'   : {
+                view   : 'workflow',
+                backend: 'workflow._id'
+            }
+        },
+        Order: {
+            'Supplier' : {
+                view   : 'supplier',
+                backend: 'supplier._id'
+            },
+            'Status'   : {
+                view   : 'workflow',
+                backend: 'workflow._id'
+            }
         }
     };
 
@@ -292,7 +348,7 @@ define([], function () {
         SALESINVOICE      : 'salesInvoice',
         SALESPRODUCT      : 'salesProduct',
         WTRACK            : 'wTrack',
-        SALARY            : 'Salary',
+        PAYROLL            : 'Payroll',
         REVENUE           : 'Revenue',
         MONTHHOURS        : 'monthHours',
         BONUSTYPE         : 'bonusType',
@@ -306,7 +362,7 @@ define([], function () {
 
         RESPONSES: {
             BAD_RESPONSE            : 'Please try again',
-            CREATE_QUOTATION        : 'Please check at most one supplier or create one',
+            CREATE_QUOTATION        : 'Supplier and project fields can not be empty!',
             CONFIRM_ORDER           : 'Please add at most one product to quotation',
             DOUBLE_EMPLOYEE_VACATION: 'Current Employee already has vacation line'
         },

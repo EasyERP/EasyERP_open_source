@@ -1,12 +1,12 @@
 <% weeksArr.forEach(function(weekObject){ %>
 <div class="divCell">
     <span>
-        <%= byWeekData[weekObject.week] ? currencySplitter(byWeekData[weekObject.week][0].sold.toString()) : '&nbsp'%>
+        <%= byWeekData[weekObject.week] ? currencySplitter(byWeekData[weekObject.week][0].sold.toFixed()) : '&nbsp'%>
     </span>
 </div>
 <% }) %>
 <div class="divCell">
     <span>
-        <%= total ? currencySplitter(total.toString()) : '&nbsp'%>
+        <%= total ? currencySplitter(total.toFixed()) : '&nbsp'%>
     </span>
 </div>

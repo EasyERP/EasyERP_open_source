@@ -3,9 +3,10 @@ var fs = require('fs');
 var arrayToXlsx = require('../exporter/arrayToXlsx');
 var async = require('async');
 
+
 var createProjection = function (map, options) {
     var project = {};
-    var filter = options.filter;
+    var properties = options.properties;
     var arrayToAdd = options.putHeadersTo;
     var addHeaders = !!arrayToAdd;
     var value;
@@ -15,7 +16,7 @@ var createProjection = function (map, options) {
         if (addHeaders) {
             arrayToAdd.push(value);
         }
-        //todo remove some properties from map according to filter
+        //todo remove some properties from map according to {properties}
         project[value] = '$' + key;
     }
     return project;
@@ -30,9 +31,13 @@ var createProjection = function (map, options) {
 var addExportToCsvFunctionToHandler = function (handler, getModel, map, fileName) {
     handler['exportToCsv'] = function (req, res, next) {
         var Model = getModel(req);
-        var filter = req.body;
-        var type = req.query.type;
-        var project = createProjection(map.aliases, {filter: filter});
+        var body = req.body;
+
+        var propertiesToDisplay = body.properties;
+        var itemIdsToDisplay = body.items;
+        var type = body.type;
+
+        var project = createProjection(map, {properties: propertiesToDisplay});
         var nameOfFile = fileName ? fileName : type ? type : 'data';
         var formatters = map.formatters;
         var writeCsv = function (array) {

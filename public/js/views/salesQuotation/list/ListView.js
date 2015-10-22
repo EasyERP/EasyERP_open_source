@@ -1,6 +1,7 @@
 define([
         'views/listViewBase',
         'text!templates/salesQuotation/list/ListHeader.html',
+        'text!templates/salesQuotation/wTrack/ListHeader.html',
         'text!templates/stages.html',
         'views/salesQuotation/CreateView',
         'views/salesQuotation/list/ListItemView',
@@ -14,7 +15,7 @@ define([
         'constants'
     ],
 
-    function (listViewBase, listTemplate, stagesTemplate, createView, listItemView, listTotalView, editView, currentModel, contentCollection, filterView, common, dataService, CONSTANTS) {
+    function (listViewBase, listTemplate, listForWTrack, stagesTemplate, createView, listItemView, listTotalView, editView, currentModel, contentCollection, filterView, common, dataService, CONSTANTS) {
         var QuotationListView = listViewBase.extend({
             createView              : createView,
             listTemplate            : listTemplate,
@@ -23,13 +24,18 @@ define([
             contentType             : CONSTANTS.SALESQUOTATION, //needs in view.prototype.changeLocationHash
             viewType                : 'list',//needs in view.prototype.changeLocationHash
             totalCollectionLengthUrl: '/quotation/totalCollectionLength',
+            filterView              : filterView,
 
             initialize: function (options) {
                 this.startTime = options.startTime;
                 this.collection = options.collection;
 
                 this.filter = options.filter ? options.filter : {};
-                this.filter.forSales = true;
+                //this.filter.forSales = true;
+                this.filter.forSales = {
+                        key: 'forSales',
+                        value: ['true']
+                    };
 
                 this.sort = options.sort;
                 this.defaultItemsNumber = this.collection.namberToShow || 100;
@@ -50,6 +56,34 @@ define([
                 "click .newSelectList li"            : "chooseOption"
             },
 
+            showFilteredPage: function (filter, context) {
+                var itemsNumber = $("#itemsNumber").text();
+
+                var alphaBet = this.$el.find('#startLetter');
+                var selectedLetter = $(alphaBet).find('.current').length ? $(alphaBet).find('.current')[0].text : '';
+
+                $("#top-bar-deleteBtn").hide();
+                $('#check_all').prop('checked', false);
+
+                if (selectedLetter === "All") {
+                    selectedLetter = '';
+                }
+
+                context.startTime = new Date();
+                context.newCollection = false;
+
+                this.filter = Object.keys(filter).length === 0 ? {} : filter;
+
+                this.filter.forSales = {
+                    key: 'forSales',
+                    value: ['true']
+                };
+
+                context.changeLocationHash(1, itemsNumber, filter);
+                context.collection.showMore({count: itemsNumber, page: 1, filter: filter});
+                context.getTotalLength(null, itemsNumber, filter);
+            },
+
             chooseOption: function (e) {
                 var self = this;
                 var target$ = $(e.target);
@@ -57,14 +91,18 @@ define([
                 var id = targetElement.attr("id");
                 var model = this.collection.get(id);
 
-                model.save({workflow: target$.attr("id")}, {
+                model.save({workflow: {
+                    _id: target$.attr("id"),
+                    name:target$.text()
+                }}, {
                     headers : {
                         mid: 55
                     },
                     patch   : true,
                     validate: false,
+                    waite: true,
                     success : function () {
-                        self.showFilteredPage();
+                        self.showFilteredPage({}, self);
                     }
                 });
 
@@ -90,23 +128,40 @@ define([
                 var self;
                 var currentEl;
                 var FilterView = filterView;
+                var templ;
+
                 $('.ui-dialog ').remove();
 
                 self = this;
                 currentEl = this.$el;
 
                 currentEl.html('');
-                currentEl.append(_.template(listTemplate));
-                currentEl.append(new listItemView({
-                    collection : this.collection,
-                    page       : this.page,
-                    itemsNumber: this.collection.namberToShow
-                }).render());//added two parameters page and items number
 
-                currentEl.append(new listTotalView({element: currentEl.find("#listTable"), cellSpan: 6}).render());
+                if (App.currentDb === 'weTrack'){
+                    templ = _.template(listForWTrack);
+                    currentEl.append(templ);
+                    currentEl.append(new listItemView({
+                        collection : this.collection,
+                        page       : this.page,
+                        itemsNumber: this.collection.namberToShow
+                    }).render());//added two parameters page and items number
+
+                    currentEl.append(new listTotalView({element: currentEl.find("#listTable"), cellSpan: 6}).render());
+                } else {
+                    currentEl.append(_.template(listTemplate));
+                    currentEl.append(new listItemView({
+                        collection : this.collection,
+                        page       : this.page,
+                        itemsNumber: this.collection.namberToShow
+                    }).render());//added two parameters page and items number
+
+                    currentEl.append(new listTotalView({element: currentEl.find("#listTable"), cellSpan: 6}).render());
+                }
+
 
                 this.renderCheckboxes();
                 this.renderPagination(currentEl, this);
+                this.renderFilter(self);
 
                 currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
@@ -116,22 +171,8 @@ define([
                     targetSource: 'quotation'
                 }, function (stages) {
                     self.stages = stages;
-
-                    dataService.getData('/quotation/getFilterValues', null, function (values) {
-                        FilterView = new filterView({collection: stages, customCollection: values});
-                        // Filter custom event listen ------begin
-                        FilterView.bind('filter', function () {
-                            //showList = $('.drop-down-filter input:checkbox:checked').map(function() {return this.value;}).get();
-                            self.showFilteredPage()
-                        });
-                        FilterView.bind('defaultFilter', function () {
-                            var showList = _.pluck(self.stages, '_id');
-                            self.showFilteredPage(showList);
-                        });
-                        // Filter custom event listen ------end
-                    })
-
                 });
+
                 return this
             },
 

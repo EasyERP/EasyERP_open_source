@@ -8,7 +8,19 @@ define(['Validation', 'common'], function (Validation, common) {
 
         },
         defaults: {
-            supplier: null,
+            supplier: {
+                _id: null,
+                name: ''
+            },
+            project       : {
+                _id: null,
+                projectnamager: {},
+                projectName: ''
+            },
+            workflow      : {
+                _id: null,
+                name: ''
+            },
             supplierReference: '',
             /*deliverTo: null,*/
             orderDate: new Date(),

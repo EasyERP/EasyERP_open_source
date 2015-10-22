@@ -1,6 +1,7 @@
 define([
         'text!templates/Filter/FilterTemplate.html',
         'text!templates/Filter/filterFavourites.html',
+        'text!templates/Filter/searchGroupLiTemplate.html',
         'views/Filter/FilterValuesView',
         'views/Filter/savedFiltersView',
         'collections/Filter/filterCollection',
@@ -10,20 +11,20 @@ define([
         'models/UsersModel',
         'dataService'
     ],
-    function (ContentFilterTemplate, savedFilterTemplate, valuesView, savedFiltersView, filterValuesCollection, Custom, Common, CONSTANTS, usersModel, dataService) {
+    function (ContentFilterTemplate, savedFilterTemplate, searchGroupLiTemplate, valuesView, savedFiltersView, filterValuesCollection, Custom, Common, CONSTANTS, usersModel, dataService) {
         var FilterView;
         FilterView = Backbone.View.extend({
-            el          : '#searchContainer',
-            contentType : "Filter",
-            savedFilters: {},
-            filterIcons : {},
-            template    : _.template(ContentFilterTemplate),
+            el                 : '#searchContainer',
+            contentType        : "Filter",
+            savedFilters       : {},
+            filterIcons        : {},
+            template           : _.template(ContentFilterTemplate),
+            searchGroupTemplate: _.template(searchGroupLiTemplate),
 
             events: {
                 "mouseover .search-content"     : 'showSearchContent',
-                "click .oe_searchview_input"    : 'showSearchContent',
                 "click .search-content"         : 'showSearchContent',
-                "click .filter-dialog-tabs .btn": 'showFilterContent',
+                "click .filter-dialog-tabs .filterTabs": 'showFilterContent',
                 'click #applyFilter'            : 'applyFilter',
                 'click .condition li'           : 'conditionClick',
                 'click .groupName'              : 'showHideValues',
@@ -36,11 +37,13 @@ define([
 
             initialize: function (options) {
                 this.parentContentType = options.contentType;
+                this.viewType = options.viewType;
                 this.constantsObject = CONSTANTS.FILTERS[this.parentContentType];
 
                 App.filter = {};
 
                 this.currentCollection = {};
+                this.searchRessult = [];
 
                 if (App.savedFilters[this.parentContentType]) {
                     this.savedFilters = App.savedFilters[this.parentContentType];
@@ -80,7 +83,7 @@ define([
 
                         self.trigger('filter', App.filter);
                         self.renderFilterContent();
-                        self.showFilterIcons(App.filter);
+                        self.showFilterName(keys[0]);
                     } else {
                         console.log('can\'t get savedFilters');
                     }
@@ -124,6 +127,7 @@ define([
                 var mid = 39;
                 var filterName = this.$el.find('#forFilterName').val();
                 var byDefault = this.$el.find('.defaultFilter').prop('checked') ? this.parentContentType : "";
+                var viewType = this.viewType ? this.viewType : "";
                 var bool = true;
                 var self = this;
                 var filters;
@@ -163,6 +167,7 @@ define([
                     filterObj['filter'][filterName] = App.filter;
                     filterObj['key'] = key;
                     filterObj['useByDefault'] = byDefault;
+                    filterObj['viewType'] = viewType;
 
                     currentUser.changed = filterObj;
 
@@ -182,12 +187,13 @@ define([
                                 id = filters[length - 1]['_id'];
                                 App.savedFilters[self.parentContentType].push(
                                     {
-                                        _id: {
+                                        _id      : {
                                             _id        : id,
                                             contentView: key,
                                             filter     : filterForSave
                                         },
-                                        byDefault: byDefault
+                                        byDefault: byDefault,
+                                        viewType : viewType
                                     }
                                 );
                                 favouritesContent.append('<li class="filters"  id ="' + id + '">' + filterName + '</li><button class="removeSavedFilter" id="' + id + '">' + 'x' + '</button>');
@@ -250,7 +256,7 @@ define([
                 var currentValue = currentElement.attr('data-value');
                 var filterGroupElement = currentElement.closest('.filterGroup');
                 var groupType = filterGroupElement.attr('data-value');
-                var groupNameElement = filterGroupElement.find('.groupName')
+                var groupNameElement = filterGroupElement.find('.groupName');
                 var constantsName = $.trim(groupNameElement.text());
                 var filterObjectName = this.constantsObject[constantsName].view;
                 var currentCollection = this.currentCollection[filterObjectName];
@@ -292,7 +298,6 @@ define([
                             groupNameElement.removeClass('checkedGroup');
                         }
                     }
-                    ;
                 }
 
                 //this.trigger('filter', App.filter);
@@ -302,7 +307,7 @@ define([
 
             showFilterIcons: function (filter) {
                 var filterIc = this.$el.find('.filter-icons');
-                var filterValues = this.$el.find('.search-field .oe_searchview_input');
+                var filterValues = this.$el.find('.search-field #searchFilterContainer');
                 var filter = Object.keys(filter);
                 var self = this;
                 var groupName;
@@ -323,6 +328,17 @@ define([
                 });
             },
 
+            showFilterName: function(filterName){
+                var filterIc = this.$el.find('.filter-icons');
+                var filterValues = this.$el.find('.search-field .oe_searchview_input');
+                filterValues.empty();
+
+                filterIc.addClass('active');
+                filterValues.append('<div class="forFilterIcons"><span class="fa fa-star funnelIcon"></span><span class="filterValues">' + filterName + '</span><span class="removeValues">x</span></div>');
+
+
+            },
+
             removeFilter: function (e) {
                 var target = $(e.target);
                 var groupName = target.prev().text();
@@ -331,7 +347,12 @@ define([
                 var valuesArray;
                 var collectionElement;
 
-                valuesArray = App.filter[filterView]['value'];
+                if (filterView){
+                    valuesArray = App.filter[filterView]['value'];
+                } else {
+                    App.filter = {};
+                    this.removeSelectedFilter();
+                }
 
                 if (valuesArray) {
                     if (this.currentCollection[filterView].length !== 0) {
@@ -344,7 +365,9 @@ define([
 
                     this.renderGroup(groupName);
                 } else {
-                    delete App.filter['letter'];
+                    if (filterView) {
+                        delete App.filter['letter'];
+                    }
                 }
 
                 $(e.target).closest('div').remove();
@@ -390,20 +413,20 @@ define([
                         if (!self.$el.find('#' + filterView).length) {
                             filtersGroupContainer.append(containerString);
                         }
-                        self.renderGroup(key, filterView, groupStatus);
+                        self.renderGroup(key, filterView, filterBackend, groupStatus);
                     });
                 }
-                ;
 
                 this.showFilterIcons(App.filter);
             },
 
-            renderGroup: function (key, filterView, groupStatus) {
+            renderGroup: function (key, filterView, filterBackend, groupStatus) {
                 var itemView;
                 var idString = '#' + filterView + 'FullContainer';
                 var container = this.$el.find(idString);
                 var status;
                 var self = this;
+                var mapData;
 
                 if (!App.filtersValues || !App.filtersValues[self.parentContentType]) {
                     return setTimeout(function () {
@@ -414,6 +437,19 @@ define([
                 this.filterObject = App.filtersValues[this.parentContentType];
 
                 this.currentCollection[filterView] = new filterValuesCollection(this.filterObject[filterView]);
+
+                mapData = _.map(this.currentCollection[filterView].toJSON(), function (dataItem) {
+                    return {
+                        category       : key,
+                        categoryView   : filterView,
+                        categoryBackend: filterBackend,
+                        label          : dataItem.name,
+                        value          : dataItem.name,
+                        data           : dataItem._id
+                    };
+                })
+
+                this.searchRessult = this.searchRessult.concat(mapData);
 
                 if (App.filter[filterView]) {
                     this.setStatus(filterView);
@@ -436,15 +472,120 @@ define([
                 container.html(itemView.render());
             },
 
-            render: function () {
-                var savedContentView;
+            toggleSearchResultGroup: function (e) {
+                var target = $(e.target).closest('li');
+                var name = target.attr('data-view');
+                var elements = target.find('#' + name + 'Ul');
 
-                this.$el.html(this.template({filterCollection: this.constantsObject}));
+                elements.toggle();
+
+            },
+
+            clickSearchResult: function (e) {
+                var currentElement = $(e.target).closest("li");
+
+                var container = currentElement.closest('.ui-autocomplete');
+                var checkOnGroup = currentElement.hasClass('ui-autocomplete-category');
+
+                var filterObjectName = currentElement.attr('data-view');
+                var groupType = currentElement.attr('data-back');
+                var elements = container.find('.' + filterObjectName);
+
+                if (!App.filter[filterObjectName]) {
+                    App.filter[filterObjectName] = {
+                        key  : groupType,
+                        value: []
+                    };
+                }
+
+                if (checkOnGroup) {
+                    $.each(elements, function (index, element) {
+                        App.filter[filterObjectName]['value'].push($(element).attr('data-content'));
+                    });
+                } else {
+                    App.filter[filterObjectName]['value'].push(currentElement.attr('data-content'));
+                }
+
+                this.setDbOnce();
+                this.showFilterIcons(App.filter);
+
+            },
+
+            render: function () {
+                var self = this;
+                var currentEl = this.$el;
+                var searchInput;
+
+                currentEl.html(this.template({filterCollection: this.constantsObject}));
+
 
                 this.renderFilterContent();
-
-
+                this.showFilterIcons(App.filter);
                 this.renderSavedFilters();
+
+                $.widget("custom.catcomplete", $.ui.autocomplete, {
+                    _create    : function () {
+                        this._super();
+                        this.widget().menu("option", "items", "> :not(.ui-autocomplete-category)");
+                    },
+                    _renderMenu: function (ul, items) {
+                        var that = this;
+                        var currentCategory = "";
+
+                        that._renderItemData = function (ul, item) {
+                            ul.hide();
+                            return $("<li>")
+                                .data("item.autocomplete", item)
+                                .append(item.label)
+                                .appendTo(ul);
+                        };
+
+                        $.each(items, function (index, item) {
+                            var li;
+                            var categoryLi;
+
+                            item.text = that.element.text();
+
+                            categoryLi = $(self.searchGroupTemplate({item: item}));
+
+                            if (item.category != currentCategory) {
+                                ul.append(categoryLi);
+                                categoryLi.find('.searchGroupDropDown').click(function (e) {
+                                    self.toggleSearchResultGroup(e);
+                                });
+                                categoryLi.find('.searchGroupResult').click(function (e) {
+                                    self.clickSearchResult(e);
+                                });
+                                currentCategory = item.category;
+                            }
+                            li = that._renderItemData(ul.find('#' + item.categoryView + 'Ul'), item);
+                            if (item.category) {
+                                li.click(function (e) {
+                                    self.clickSearchResult(e);
+                                });
+                                li.attr('data-back', item.categoryBackend);
+                                li.attr('data-view', item.categoryView);
+                                li.attr("class", item.categoryView);
+                                li.attr("data-content", item.data);
+                            }
+                        });
+                    }
+                });
+
+                searchInput = currentEl.find("#searchInput");
+
+                searchInput.catcomplete({
+                    source  : this.searchRessult,
+                    appendTo: searchInput.closest('#searchGlobalContainer'),
+                    /*focus : function (event, ui) {
+                     $(this).closest("#mainSearch").text(ui.item.label);
+                     return false;
+                     },*/
+                    /*select: function (event, ui) {
+                     self.clickSearchResult(ui);
+                     return false;
+                     }*/
+                });
 
                 return this;
             },
@@ -455,29 +596,34 @@ define([
                 var keys;
                 var filterId;
                 var filterByDefault;
+                var viewType;
 
                 this.$el.find('#favoritesContent').append(_.template(savedFilterTemplate));
 
-               var content = this.$el.find('#favoritesContent');
+                var content = this.$el.find('#favoritesContent');
 
                 if (App.savedFilters[contentType]) {
                     this.savedFilters = App.savedFilters[contentType];
 
                     for (var j = this.savedFilters.length - 1; j >= 0; j--) {
                         if (this.savedFilters[j]) {
-                            if (this.savedFilters[j].byDefault === contentType){
+                            if (this.savedFilters[j].byDefault === contentType) {
                                 keys = Object.keys(this.savedFilters[j]['_id']['filter']);
 
                                 filter = this.savedFilters[j]['_id']['filter'][keys[0]];
 
                                 App.filter = filter;
 
-                                self.trigger('filter', App.filter);
+                                if (this.savedFilters[j].viewType) {
+                                    viewType = this.savedFilters[j].viewType;
+                                }
+
+                                self.trigger('filter', App.filter, viewType);
                                 self.renderFilterContent();
-                                self.showFilterIcons(App.filter);
+                                self.showFilterName(keys[0]);
                                 filterId = this.savedFilters[j]['_id']['_id'];
 
-                                if (typeof (filterId) === 'object'){
+                                if (typeof (filterId) === 'object') {
                                     filterByDefault = filterId._id;
                                 }
                             }
@@ -493,19 +639,25 @@ define([
                 }
 
                 this.$el.find('#favoritesContent').append(content);
-                self.selectedFilter(filterByDefault);
+                self.selectedFilter(filterId);
             },
 
-            selectedFilter: function(filterId){
+            selectedFilter: function (filterId) {
                 var filterName = this.$el.find('#' + filterId);
                 var filterNames = this.$el.find('.filters');
 
-                if (filterId){
+                if (filterId) {
 
                     filterNames.removeClass('checkedValue');
 
                     filterName.addClass('checkedValue');
                 }
+            },
+
+            removeSelectedFilter: function () {
+                var filterNames = this.$el.find('.filters');
+
+                filterNames.removeClass('checkedValue');
             },
 
             parseFilter: function () {
@@ -529,10 +681,6 @@ define([
                     collectionElement.set({status: true});
                 }
             },
-
-            //applyFilter: function () {
-            //    this.trigger('filter', App.filter);
-            //},
 
             showSearchContent: function () {
                 var el = this.$el.find('.search-content');

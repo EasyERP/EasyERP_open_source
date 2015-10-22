@@ -51,7 +51,6 @@
         <% })%>
 
         </tbody>
-        <%if (count) {%>
 
         <tfoot>
         <tr>
@@ -71,6 +70,7 @@
             <td>&nbsp</td>
             <td>&nbsp</td>
         </tr>
+        <% if (count) {%>
         <tr>
             <td>Total:</td>
             <td><%='&nbsp'%></td>
@@ -79,13 +79,11 @@
             <td><%=currencySplitter(budgetTotal.costSum.toFixed())%></td>
             <td><%=currencySplitter(budgetTotal.revenueSum.toFixed())%></td>
             <td><%=currencySplitter(budgetTotal.profitSum.toFixed())%></td>
-            <td><%=currencySplitter((budgetTotal.rateSum.byDev +
-                budgetTotal.rateSum.byQA).toFixed(2))%>
+            <td><%=currencySplitter((budgetTotal.revenueSum / budgetTotal.hoursSum).toFixed(2))%>
             </td>
         </tr>
         </tfoot>
-
-        <% } %>
+<% } %>
     </table>
 </div>
 
@@ -149,6 +147,8 @@
             <% } %>
             </tbody>
         </table>
+    </div>
+    <div id="proformRevenueContainer">
     </div>
 </div>
 

@@ -3,6 +3,7 @@
 @import "_darckColor";
 //@import "_whiteColor";
 @import "_list";
+@import "_vacationList";
 
 /*------------------------Constants-----------------------------*/
 @imagesfolder: '../images';
@@ -52,7 +53,6 @@
     margin-left: 0px;
     left: 100%;
     opacity: 0;
-
   }
 }
 
@@ -1124,7 +1124,7 @@ input::-ms-clear {
       border: @thin-border transparent;
       margin-left: 3px;
       &:hover {
-        border-bottom: @thin-border @blue;
+        border-bottom: @thin-border @tilte-color;
       }
     }
   }
@@ -1998,33 +1998,8 @@ input::-ms-clear {
       text-align: center;
 
       button {
-        background-image: none;
-        color: @tilte-color;
-        border: @thin-border @border-color-main;
         margin: .5em .4em .5em 0;
-        cursor: pointer;
-        background-color: @bg-butt-color;
-        font-size: 1.2em;
-        display: inline-block;
-        position: relative;
-        padding: 0;
         line-height: normal;
-        vertical-align: middle;
-        text-align: center;
-        overflow: visible;
-        border-radius: 0;
-
-        span {
-          display: block;
-          line-height: normal;
-          background: @bg-butt-color;
-          padding: .4em 1em;
-          color: @tilte-color;
-
-          &:hover {
-            background: @bg-butt-color - #131313 !important;
-          }
-        }
       }
     }
   }
@@ -2133,14 +2108,13 @@ input::-ms-clear {
     margin-top: 0;
   }
   input:not([type=checkbox]) {
-    .border-radius(0px);
     border: @thin-border @list-border-color;
     max-width: 280px;
-    height: 18px;
+    line-height: 20px;
     background-color: transparent;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 12px;
-    padding: 2px;
+    padding: 0 4px;
     color: @mainText-color;
 
     &:focus {
@@ -2307,11 +2281,16 @@ input::-ms-clear {
       text-decoration: none;
       display: inline-block;
       padding: 0 5px;
+      &:hover {
+        padding-bottom: 4px;
+        border-bottom: 1px solid @border-color-main ;
+      }
 
     }
 
     a.selectedItemsNumber {
-      border-bottom: 1px solid blue;
+      border-bottom: 1px solid @border-color-main;
+      padding-bottom: 4px;
     }
 
     button {
@@ -2373,8 +2352,8 @@ input::-ms-clear {
 .tabs(@marginTop: 0, @marginLeft: -20px) {
   height: 35px;
   border-bottom: @thin-border @border-color-main;
-  margin: @marginTop -20px 0 @marginLeft;
-  padding: 0 20px;
+ //margin: @marginTop -20px 0 @marginLeft;
+  //padding: 0 20px;
 
   li {
     float: left;
@@ -2765,7 +2744,7 @@ a {
 }
 
 h3 {
-  color: @blue;
+  color: @tilte-color;
   font-size: 18px;
   .text-overflow;
 }
@@ -3234,7 +3213,7 @@ dl {
   position: absolute;
   top: 3px;
   right: 3px;
-  color: @mainText-color-selected;
+  color: @mainText-color;
   line-height: 11px;
   width: 12px;
   height: 12px;
@@ -3323,25 +3302,24 @@ dl {
 
 .btn {
   border: @thin-border @border-color-main;
-  color: @bg-main-menu;
+
   margin: 0;
-  padding: 2px 6px;
-  line-height: 13px;
+  padding: .4em 1em;
+  line-height: normal;
   font-size: 13px;
   text-align: center;
   text-decoration: none;
-  //.gradient(#d7d7d7);
-  //.border-radius(3px);
- // -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(255, 255, 255, 0.8) inset;
- // -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(255, 255, 255, 0.8) inset;
- // box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(255, 255, 255, 0.8) inset;
- // text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
   -webkit-font-smoothing: antialiased;
   outline: none;
+  background: @bg-main;
+  span {
+    padding: 0px !important;
+    color: @tilte-color;
+  }
   &:hover {
-    //.gradient(#d2d2d2);
     cursor: pointer;
     background-position: 0;
+    background: @bg-butt-color - #131313 !important;
   }
 }
 
@@ -3397,13 +3375,13 @@ button.red, a.red {
       font-weight: 300;
       font-size: 30px;
       line-height: 38px;
-      color: @birthdayColor;
+      color: @fontColor-2;
     }
   }
 
   .info {
     color: #FFF;
-    background: @birthdayColor;
+    background: @fontColor-2;
     margin-left: 160px;
     margin-right: 40px;
     position: relative;
@@ -3423,7 +3401,7 @@ button.red, a.red {
       width: 0;
       position: absolute;
       pointer-events: none;
-      border-right-color: @birthdayColor;
+      border-right-color: @fontColor-2;
       border-width: 10px;
       top: 19px;
     }
@@ -3539,7 +3517,7 @@ button.red, a.red {
         line-height: 20px;
 
         a {
-          color: @grey;
+          color: @login-text;
         }
       }
     }
@@ -3558,7 +3536,7 @@ button.red, a.red {
     span {
       display: block;
       line-height: 30px;
-      color: @grey;
+      color: @login-text;
         &:hover {
           color: #fff;
         }
@@ -3683,7 +3661,7 @@ button.red, a.red {
       content: '0';
       font-family: @icon-font;
       font-size: 40px;
-      color: @blue;
+      color: @tilte-color;
     }
   }
 }
@@ -3701,10 +3679,10 @@ button.red, a.red {
     line-height: 20px;
     padding-left: 10px;
     border-bottom: @thin-border @border-color-main;
-    color: #555;
+    color: @mainText-color;
 
     &:hover {
-      background-color: #EEE;
+      background-color: @bg-hover-drop-down-color-active;
     }
   }
 }
@@ -3714,7 +3692,7 @@ button.red, a.red {
 }
 
 .userPagination {
-  background-color: #DDD;
+  background-color: @bg-main;
   margin-left: 150px;
   margin-right: 5px;
   margin-top: -5px;
@@ -3722,10 +3700,11 @@ button.red, a.red {
   line-height: 15px;
   font-size: 11px;
   height: 18px;
-
+  border: 1px solid @border-color-main;
+  border-top: none;
   a {
     margin: 0 3px;
-    color: #1466C6 !important;
+    color: @mainText-color !important;
     font-size: 11px;
   }
 
@@ -3787,11 +3766,16 @@ button.red, a.red {
     display: block;
     padding-left: 5px;
     line-height: @linh;
-    border: 1px solid #CCC;
-    background: #F5F5F5;
+    border: 1px solid @border-color-main;
+    background: @bg-main;
     margin: 2px 0;
     height: 25px;
+
+    .text {
+      color: @mainText-color;
+    }
     &:hover {
+      background-color: @bg-hover-drop-down-color-active;
       > .text {
         .edit, .trash {
           display: block;
@@ -3827,7 +3811,7 @@ button.red, a.red {
             content: '2';
             font-size: 20px;
             line-height: 24px;
-            color: @blue;
+            color: @tilte-color;
             .position(absolute, 2px, 2px);
           }
         }
@@ -3839,17 +3823,13 @@ button.red, a.red {
       cursor: pointer;
       padding-left: 17px;
       background: no-repeat 0 50%;
-
-      &:hover {
-        background-color: #eee;
-      }
     }
 
     .edit {
       display: none;
       width: 16px;
       height: @linh;
-      color: @blue;
+      color: @tilte-color;
       font-size: 16px;
       background: no-repeat 0 50%;
       float: right;
@@ -3864,7 +3844,7 @@ button.red, a.red {
       display: none;
       width: 13px;
       height: @linh;
-      color: @blue;
+      color: @tilte-color;
       font-size: 16px;
       background: no-repeat 0 50%;
       float: right;
@@ -4027,37 +4007,49 @@ table#workflows {
 
 .createBtnHolder, #createBtnHolder {
   float: left;
-  margin-top: 4px;
-  margin-left: 10px;
+  margin-top: 6px;
+  margin-left: 5px;
   /*.add {
         font-size: 22px !important;
         font-weight: 900;
         line-height: 22px;
     }*/
   a {
+    float: left;
     display: block;
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
     overflow: hidden;
-    margin-right: 2px;
+    margin-right: 3px;
     cursor: pointer;
     vertical-align: baseline;
     color: @creatBtn-color;
+    line-height: 18px;
 
     &:hover {
       color: @creatBtn-color + #333;
     }
   }
+  .fa {
+    font-size: 16px;
+    text-decoration: none;
+    text-align: center;
+    &:before {
+      //vertical-align: baseline;
+      line-height: 18px;
+    }
+  }
   ul {
     overflow: hidden;
-    padding: 0 10px;
+    padding: 0 0 0 10px;
+    float: left;
     li {
       float: left;
       margin-right: 10px;
       border: 1px solid @border-color-main;
       a {
         display: inline-block;
-        line-height: 20px;
+        line-height: 18px;
         width: 100%;
         padding: 0 5px;
         margin: 0;
@@ -4504,21 +4496,16 @@ h3.dashboard {
     tr {
       th {
         text-align: right;
-        //
         padding-left: 3px;
-        line-height: 25px;
-        //border-bottom: 2px solid @border-color-main;
-        height: 25px;
+        line-height: 20px;
         color: @th-text-color;
         &.center {
           text-align: center;
         }
       }
       td {
-        height: 25px;
         padding-left: 3px;
-        line-height: 25px;
-        //border-bottom: 2px solid @border-color-main;
+        line-height: 20px;
         @width: 10px;
 
         .green {
@@ -5021,17 +5008,20 @@ input::-webkit-inner-spin-button {
 }*/
 
 #createUserForm #resetBtn, #createUserForm #saveBtn, .changePassword {
-  color: #36A9E1 !important;
-  line-height: normal;
-  width: auto !important;
-  height: auto !important;
-  padding: .4em 1em !important;
-  background: white !important;
-  border: 1px solid #E2E9EF !important;
+
+  //line-height: normal;
+  //width: auto !important;
+  //height: auto !important;
+  //padding: .4em 1em !important;
+  //background: white !important;
+  //border: 1px solid #E2E9EF !important;
+  span {
+    color: @tilte-color !important;
+  }
 }
 
 #createUserForm #resetBtn:hover, #createUserForm #saveBtn:hover, .changePassword:hover {
-  background: #ECECEC !important;
+  //background: #ECECEC !important;
 }
 
 #banned {
@@ -5122,7 +5112,7 @@ textarea#editInput {
 
 .openAll {
   cursor: pointer;
-
+  color: @mainText-color;
   .icon {
     float: left;
     display: inline-block;
@@ -5210,7 +5200,7 @@ textarea#editInput {
 
     &:hover td {
       //background: @dashBoard-bg-menu-hoverColor !important;
-      color: #ffffff;
+      //color: #ffffff;
     }
 
     td {
@@ -5229,24 +5219,27 @@ textarea#editInput {
         }
 
         &.dgreen {
-          background: #004600;
-          color: white;
+          background: @overWork;
+          color: @overiewText-color;
         }
         &.green {
-          background: green;
-          color: white;
+          background: @normalWork;
+          color: @overiewText-color;
         }
         &.brown {
           background: #5cb85c;
+          color: @overiewText-color;
         }
         &.yellow {
-          background: yellow;
+          background: @littleWork;
+          color: @overiewText-color;
         }
         &.pink {
-          background: pink;
+          background: @oneWorkDay;
+          color: @overiewText-color;
         }
         &.red {
-          background-color: @unpaid-wtrack;
+          background-color: @free;
           color: white;
           border-bottom: 1px solid @border-color-main;
           border-left: 1px solid @border-color-main;
@@ -5258,8 +5251,8 @@ textarea#editInput {
         }
         &.inactive {
           span.view {
-            background-color: silver;
-            color: silver;
+            background-color: @inactivate;
+            color: @inactivate;
             span {
               display: none;
             }
@@ -5334,8 +5327,8 @@ textarea#editInput {
             float: left;
             padding: 0;
             padding-right: 3px;
-            //background-color: #5a9ad4;
-            color: @mainText-color;
+            background-color: @vacation;
+            color: @overiewText-color;
             text-align: center;
             &.size40 {
               width: 50%;
@@ -5518,6 +5511,9 @@ textarea#editInput {
       //      background-color: #ccc;
     }
   }
+  &.dashBoardMargin {
+    margin-bottom: 150px;
+  }
 }
 
 .grid-conatiner {
@@ -5604,6 +5600,23 @@ textarea#editInput {
               &.education {
                 background-color: @forInfo-caption-color;
               }
+
+              /*for vacationDashboard*/
+              &.free {
+                background-color:@free ;
+              }
+              &.almostFree {
+                background-color: @oneWorkDay;
+              }
+              &.partiallyBusy {
+                background-color: @littleWork;
+              }
+              &.fullyBusy {
+                background-color: @normalWork;
+              }
+              &.overWorked {
+                background-color: @overWork;
+              }
             }
             .lastTime {
               text-align: center;
@@ -5617,6 +5630,14 @@ textarea#editInput {
           }
         }
       }
+    }
+
+    &.stick {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background-color: @bg-main;
+      padding-top: 10px;
     }
   }
   table {
@@ -6046,15 +6067,16 @@ textarea#editInput {
 
 .search-field {
   box-sizing: border-box;
+  position: relative;
   display: block;
   width: 100%;
   height: 26px;
-  padding: 2px 24px;
+  padding: 0;
   font-size: 14px;
   line-height: 1.42857143;
   color: @grey;
   background: inherit;
-  border: 1px solid @border-color-main;
+  border: none;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
   -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
@@ -6066,19 +6088,23 @@ textarea#editInput {
   .search {
     cursor: pointer;
     position: absolute;
-    top: 6px;
+    top: 3px;
     left: 5px;
+    height: 18px;
+
   }
   span {
     &:before {
       color: @filter-icon-color;
+      line-height: 1;
     }
   }
   .search-content {
     position: absolute;
-    top: 6px;
+    top: 4px;
     right: 5px;
     cursor: pointer;
+    height: 18px;
   }
 }
 
@@ -6179,14 +6205,14 @@ textarea#editInput {
 .search-options {
   height: 30px;
   position: absolute;
-  width: 70%;
+  width: 60%;
   top: ~"calc(100% - 1px)";
   right: 0;
   z-index: 500;
 
   .filter-dialog-tabs {
     box-sizing: border-box;
-    border: 1px solid #c0c0c0;
+    border: 1px solid @border-color-main;
     border-bottom: 0;
     position: relative;
     float: left;
@@ -6197,7 +6223,14 @@ textarea#editInput {
       border-radius: 0px;
       border: none;
       &:nth-child(2) {
-        border-left: 1px solid #c0c0c0;
+        border-left: 1px solid @border-color-main;
+      }
+      &.filterTabs {
+        text-align: center;
+        line-height: 25px;
+        font-size: 13px;
+        color: @mainText-color;
+        cursor: pointer;
       }
     }
   }
@@ -6222,10 +6255,10 @@ textarea#editInput {
 .drop-down-filter {
   box-sizing: content-box;
   font-family: @lucida-font;
-  padding: 5px 40px;
+  padding: 5px 25px;
   position: absolute;
   z-index: 10;
-  width: ~"calc(100% - 82px)";
+  width: ~"calc(100% - 52px)";
   background-color: @bg-drop-down-color;
   border: 1px solid @filter-border-color;
   right: 0;
@@ -6236,7 +6269,7 @@ textarea#editInput {
     width: ~"calc(100% - 30px)";
     margin: 10px 5px 5px 5px;
     color: white;
-    background-color: @blue;
+    background-color: @tilte-color;
     padding: 10px;
     border-radius: 5px;
   }
@@ -6252,8 +6285,12 @@ textarea#editInput {
       text-align: center;
       border: 1px solid @border-color-main;
       background-color: @bg-main;
-
       margin: 5px;
+      .ulContent {
+        input {
+          margin-top: 5px;
+        }
+      }
       li {
         &.miniStylePagination {
           list-style: none;
@@ -6304,7 +6341,7 @@ textarea#editInput {
             height: 10px;
             width: 10px;
             border-radius: 50%;
-            background-color: @birthdayColor;
+            background-color: @fontColor-2;
           }
         };
       }
@@ -6369,7 +6406,7 @@ textarea#editInput {
 
   .btn {
     background: @bg-main;
-    padding: 6px;
+    padding: 6px 1%;
     color: @mainText-color;
   }
 
@@ -6392,139 +6429,6 @@ textarea#editInput {
 
 .removeFilter {
   float: right;
-}
-
-.vacation-list {
-  font-family: inherit;
-  text-shadow: none;
-  margin: 30px 1%;
-  width: 98%;
-  .V {
-    background-color: @unpaid-wtrack;
-    color: #ffffff;
-  }
-  .P {
-    background-color: #fda401;
-    color: #ffffff;
-  }
-  .S {
-    background-color: @tilte-color;
-    color: #ffffff;
-  }
-  .E {
-    background-color: @forInfo-caption-color;
-    color: #ffffff;
-  }
-  td, th {
-    padding: 5px;
-    position: relative;
-    cursor: pointer;
-
-    input, input:focus {
-      position: absolute;
-      width: 95%;
-      height: 100%;
-      top: 0;
-      left: 0;
-      text-align: center;
-      padding: 0;
-      border: none;
-      outline: none;
-      outline-offset: 0;
-      display: none;
-      cursor: pointer;
-      border: 1px solid @border-color-selected;
-    }
-
-    input:focus {
-      border: none !important;
-      outline: none !important;
-      box-shadow: none;
-      -moz-box-shadow: none;
-      -webkit-box-shadow: none;
-    }
-  }
-  thead {
-    th {
-      //
-      border: 1px solid @border-color-main;
-      &#legandCaption {
-        text-align: left;
-      }
-      &.month .newSelectList {
-        width: 100px;
-        margin-left: auto;
-        margin-right: auto;
-        left: ~"calc(50% - 50px)";
-      }
-      &.sortDn:after {
-        content: "\00a0\25BE";
-      }
-      &.sortUp:after {
-        content: "\00a0\25B4";
-      }
-      #monthSelect, #yearSelect {
-        font-size: 30px;
-        line-height: 50px;
-      }
-    }
-  }
-
-  tfoot {
-    td {
-      //
-    }
-  }
-
-  tbody, tfoot {
-    td {
-      border: 1px solid @border-color-main;
-      text-align: center;
-
-      &.employee, &.department {
-        text-align: right;
-      }
-      &.totalDays {
-        //
-      }
-    }
-  }
-
-  tfoot {
-    tr {
-      td {
-        color: @mainText-color;
-      }
-    }
-  }
-  tbody {
-    .employee, .department, .totalDays {
-      color: @name-text-color;
-    }
-  }
-
-  #caption, .borders, thead, tbody, tfoot {
-    border: 1px solid @border-color-main;
-  }
-  #caption, .subHeaderHolder {
-    th {
-      color: @mainText-color;
-    }
-  }
-}
-
-.vacation-list, .salary-list, .subSalary-list {
-  .newSelectList {
-    color: #000;
-  }
-  tbody {
-    tr:not(.subRow):hover {
-      td:not(.selectedType) {
-        //background-color: #333333;
-        color: #ffffff;
-      }
-    }
-  }
 }
 
 .filtersActive {
@@ -6570,21 +6474,22 @@ textarea#editInput {
   padding-top: 5px;
   #forFilterName {
     height: 22px;
-    width: 83%;
+    width: 80%;
     border-bottom-left-radius: 5px;
     border-top-left-radius: 5px;
+    border-right: none;
     color: @filter-text-color;
   }
   #saveFilterButton {
     border: 1px solid @border-color-main;
-    border-left: 0;
-    margin-left: -7px;
+    margin-left: -3px;
     box-sizing: border-box;
     border-radius: 0 5px 5px 0;
-    height: 28px;
+    line-height: 16px;
+    padding-top: 4px;
     background-color: @bg-main;
     color: @kanab-text-color;
-    border-left: 1px solid #7f7f80;
+    width: 14%;
   }
   .removeSavedFilter {
     float: right;
@@ -6633,8 +6538,18 @@ textarea#editInput {
   display: inline-block;
   padding-right: 17px;
   margin-right: 3px;
+  border: 1px solid @border-color-main;
+  border-radius: 3px;
+  line-height: 18px;
+  .removeValues {
+    top: 2px;
+    line-height: 12px;
+  }
 }
 
 .forInfoWrap {
   overflow: hidden;
 }
+
+//------ Import files ------
+@import "tmp/_autocomplete";

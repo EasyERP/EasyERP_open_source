@@ -1,101 +1,4 @@
-<div id="searchContainer"></div>
-<div>
-    <table class="list task-list">
-        <thead>
-        <tr>
-            <th><input type="checkbox" id="check_all" /></th>
-            <th>N</th>
-            <th >
-                Assigned
-            </th>
-            <th>
-                Project
-            </th>
-            <th >
-                Project Status
-            </th>
-            <th >
-                Customer
-            </th>
-            <th >
-                Employee
-            </th>
-            <th >
-                Department
-            </th>
-            <th >
-                Year
-            </th>
-            <th >
-                Month
-            </th>
-            <th >
-                Week
-            </th>
-            <th >
-                Rate
-            </th>
-            <th >
-                Hours
-            </th>
-            <th >
-                Mo
-            </th>
-            <th >
-                Tu
-            </th>
-            <th >
-                We
-            </th>
-            <th>
-                Th
-            </th>
-            <th >
-                Fr
-            </th>
-            <th >
-                Sa
-            </th>
-            <th >
-                Su
-            </th>
-            <th >
-                Status
-            </th>
-            <th >
-                Revenue
-            </th>
-            <th >
-                Cost
-            </th>
-            <th>
-                Profit
-            </th>
-            <th >
-                Amount
-            </th>
-        </tr>
-        </thead>
-        <tbody id="listTable"></tbody>
-        <tfoot id="listFooter">
-        <tr>
-            <td colspan="12"></td>
-            <td><span id="hours">0</span></td>
-            <td><span id="monHours">0</span></td>
-            <td><span id="tueHours">0</span></td>
-            <td><span id="wedHours">0</span></td>
-            <td><span id="thuHours">0</span></td>
-            <td><span id="friHours">0</span></td>
-            <td><span id="satHours">0</span></td>
-            <td><span id="sunHours">0</span></td>
-            <td></td>
-            <td><span id="revenue" class="money">0</span></td>
-            <td><span id="cost" class="money">0</span></td>
-            <td><span id="profit" class="money">0</span></td>
-            <td><span id="amount" class="money">0</span></td>
-            <td></td>
-        </tr>
-        </tfoot>
+
         <% wTracks.forEach(function(wTrack, index){ %>
         <tr data-id="<%=wTrack._id%>">
             <td class = "notForm"><input type="checkbox" value="<%=wTrack._id%>" class="checkbox listCB" /></td>
@@ -119,11 +22,9 @@
             <td data-type="input" class="editable autoCalc" data-content="6"><%=wTrack['6'] ? wTrack['6'] : '0'%></td>
             <td data-type="input" class="editable autoCalc" data-content="7"><%=wTrack['7'] ? wTrack['7'] : '0'%></td>
             <td><span class="<%=wTrack.isPaid ? 'done' : 'unDone'%>"><%=wTrack.isPaid ? 'Paid' : 'Unpaid'%></span></td>
-            <td data-content="revenue" class="money"><%=(wTrack.revenue / 100).toFixed(2)%></td>
-            <td data-content="cost" class="money"><%=(wTrack.cost / 100).toFixed(2)%></td>
-            <td data-content="profit" class="money"><%=((wTrack.revenue - wTrack.cost) / 100).toFixed(2)%></td>
-            <td data-content="amount" class="money"><%=(wTrack.amount / 100).toFixed(2)%></td>
+            <td data-content="revenue" class="money"><%=(wTrack.revenue)%></td>
+            <td data-content="cost" class="money"><%=(wTrack.cost)%></td>
+            <td data-content="profit" class="money"><%=((wTrack.revenue - wTrack.cost).toFixed(2))%></td>
+            <td data-content="amount" class="money"><%=(wTrack.amount)%></td>
         </tr>
         <% }) %>
-    </table>
-</div>

@@ -51,6 +51,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 /*== Lights =========================*/
 /*== Borders=========================*/
 /*==Main menu==========================*/
+/*== login panel ====================*/
 /*==Sub MENU, Top-bar =========================*/
 /*== Filters ======================*/
 /*== Customer ======================*/
@@ -66,6 +67,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 /*== Revenu ======================================*/
 /*== Notifikation ===============================*/
 /*== Btn Color=====================================*/
+/*VocationDashBoard =============================*/
 .salary-list tbody#listTable .subRow:hover {
   background-color: transparent;
 }
@@ -227,7 +229,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 }
 .list2 tbody tr td:first-of-type {
   padding-left: 7px;
-  line-height: 10px;
+  line-height: 20px;
 }
 .list2 tbody tr td:first-of-type input {
   cursor: pointer;
@@ -393,7 +395,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 }
 .list2 tbody tr td:first-of-type {
   padding-left: 7px;
-  line-height: 10px;
+  line-height: 20px;
 }
 .list2 tbody tr td:first-of-type input {
   cursor: pointer;
@@ -464,6 +466,147 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   height: 5px;
   position: absolute;
   right: 13px;
+}
+.vacation-list {
+  font-family: inherit;
+  text-shadow: none;
+  margin: 30px 1%;
+  width: 98%;
+}
+.vacation-list .V {
+  background-color: #f13f3f;
+  color: #ffffff;
+}
+.vacation-list .P {
+  background-color: #fda401;
+  color: #ffffff;
+}
+.vacation-list .S {
+  background-color: #66b5d4;
+  color: #ffffff;
+}
+.vacation-list .E {
+  background-color: #66b5d4;
+  color: #ffffff;
+}
+.vacation-list td,
+.vacation-list th {
+  position: relative;
+  cursor: pointer;
+}
+.vacation-list td input,
+.vacation-list th input,
+.vacation-list td input:focus,
+.vacation-list th input:focus {
+  width: 50%;
+  text-align: center;
+  outline: none;
+  outline-offset: 0;
+  display: none;
+  cursor: pointer;
+  border: 1px solid #66b5d4;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 5px;
+  margin: 0 auto;
+}
+.vacation-list td input:focus,
+.vacation-list th input:focus {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none;
+  -moz-box-shadow: none;
+  -webkit-box-shadow: none;
+}
+.vacation-list thead th {
+  border: 1px solid #7f7f80;
+}
+.vacation-list thead th#legandCaption {
+  text-align: left;
+}
+.vacation-list thead th.month .newSelectList {
+  width: 100px;
+  margin-left: auto;
+  margin-right: auto;
+  left: calc(50% - 50px);
+}
+.vacation-list thead th.sortDn:after {
+  content: "\00a0\25BE";
+}
+.vacation-list thead th.sortUp:after {
+  content: "\00a0\25B4";
+}
+.vacation-list thead th #monthSelect,
+.vacation-list thead th #yearSelect {
+  font-size: 30px;
+  line-height: 50px;
+}
+.vacation-list tbody td,
+.vacation-list tfoot td {
+  border: 1px solid #7f7f80;
+  text-align: center;
+  color: #cdcdcd;
+}
+.vacation-list tbody td.notForm,
+.vacation-list tfoot td.notForm {
+  padding-left: 10px;
+  line-height: 10px;
+}
+.vacation-list tbody td.notForm input,
+.vacation-list tfoot td.notForm input {
+  display: block;
+}
+.vacation-list tfoot tr td {
+  color: #cdcdcd;
+}
+.vacation-list tbody .employee,
+.vacation-list tbody .department,
+.vacation-list tbody .totalDays {
+  color: #cdcdcd;
+}
+.vacation-list tbody .employee {
+  text-align: right !important;
+}
+.vacation-list #caption,
+.vacation-list .borders,
+.vacation-list thead,
+.vacation-list tbody,
+.vacation-list tfoot {
+  border: 1px solid #7f7f80;
+}
+.vacation-list #caption th,
+.vacation-list .subHeaderHolder th {
+  color: #cdcdcd;
+  line-height: 20px;
+}
+.vacation-list .newSelectList,
+.salary-list .newSelectList,
+.subSalary-list .newSelectList {
+  color: #000;
+}
+.vacation-list tbody tr:not(.subRow):hover td:not(.selectedType),
+.salary-list tbody tr:not(.subRow):hover td:not(.selectedType),
+.subSalary-list tbody tr:not(.subRow):hover td:not(.selectedType) {
+  color: #ffffff;
+}
+.vacation-list tbody tr td > div,
+.salary-list tbody tr td > div,
+.subSalary-list tbody tr td > div {
+  float: right;
+}
+.vacation-list tbody tr td > div a,
+.salary-list tbody tr td > div a,
+.subSalary-list tbody tr td > div a {
+  font-size: 12px;
+  line-height: 20px;
+}
+.vacation-list tbody tr td:nth-child(2),
+.salary-list tbody tr td:nth-child(2),
+.subSalary-list tbody tr td:nth-child(2) {
+  text-align: left;
+  font-size: 12px;
+  line-height: 20px;
 }
 /*------------------------Constants-----------------------------*/
 .notification {
@@ -1251,7 +1394,7 @@ input::-ms-clear {
   font-size: 12px !important;
 }
 .pagination #pageList {
-  background-color: #242b30;
+  background-color: #303031;
   border: 1px solid #7f7f80;
   position: absolute;
   bottom: 17px;
@@ -1291,8 +1434,13 @@ input::-ms-clear {
   display: inline-block;
   padding: 0 5px;
 }
+.pagination .pageList .itemsNumber:hover {
+  padding-bottom: 4px;
+  border-bottom: 1px solid #7f7f80;
+}
 .pagination .pageList a.selectedItemsNumber {
-  border-bottom: 1px solid blue;
+  border-bottom: 1px solid #7f7f80;
+  padding-bottom: 4px;
 }
 .pagination .pageList button {
   background-color: white;
@@ -1312,7 +1460,7 @@ input::-ms-clear {
   border-left: none;
 }
 .pagination .pageList ul {
-  background-color: #242b30;
+  background-color: #303031;
   border: 1px solid #7f7f80;
   position: absolute;
   bottom: 17px;
@@ -1650,7 +1798,7 @@ a:focus {
   outline: 0;
 }
 h3 {
-  color: #4d5a75;
+  color: #66b5d4;
   font-size: 18px;
   overflow: hidden;
   white-space: nowrap;
@@ -3573,7 +3721,7 @@ dl dd a.formLink {
   position: absolute;
   top: 3px;
   right: 3px;
-  color: #66b5d4;
+  color: #cdcdcd;
   line-height: 11px;
   width: 12px;
   height: 12px;
@@ -3651,48 +3799,58 @@ dl dd a.formLink {
 }
 .btn {
   border: 1px solid #7f7f80;
-  color: #242b30;
   margin: 0;
-  padding: 2px 6px;
-  line-height: 13px;
+  padding: .4em 1em;
+  line-height: normal;
   font-size: 13px;
   text-align: center;
   text-decoration: none;
   -webkit-font-smoothing: antialiased;
   outline: none;
+  background: #303031;
+}
+.btn span {
+  padding: 0px !important;
+  color: #66b5d4;
 }
 .btn:hover {
   cursor: pointer;
   background-position: 0;
+  background: #1d1d1e !important;
 }
 button {
   border: 1px solid #7f7f80;
-  color: #242b30;
   margin: 0;
-  padding: 2px 6px;
-  line-height: 13px;
+  padding: .4em 1em;
+  line-height: normal;
   font-size: 13px;
   text-align: center;
   text-decoration: none;
   -webkit-font-smoothing: antialiased;
   outline: none;
+  background: #303031;
+}
+button span {
+  padding: 0px !important;
+  color: #66b5d4;
 }
 button:hover {
   cursor: pointer;
   background-position: 0;
+  background: #1d1d1e !important;
 }
 button.red,
 a.red {
   border: 1px solid #7f7f80;
-  color: #242b30;
   margin: 0;
-  padding: 2px 6px;
-  line-height: 13px;
+  padding: .4em 1em;
+  line-height: normal;
   font-size: 13px;
   text-align: center;
   text-decoration: none;
   -webkit-font-smoothing: antialiased;
   outline: none;
+  background: #303031;
   background-color: #f4f4f4;
   -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(155, 155, 155, 0.4) inset;
   -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(155, 155, 155, 0.4) inset;
@@ -3700,10 +3858,16 @@ a.red {
   color: #4d5a75;
   line-height: 20px;
 }
+button.red span,
+a.red span {
+  padding: 0px !important;
+  color: #66b5d4;
+}
 button.red:hover,
 a.red:hover {
   cursor: pointer;
   background-position: 0;
+  background: #1d1d1e !important;
 }
 button.red:hover,
 a.red:hover {
@@ -3739,11 +3903,11 @@ a.red:hover {
   font-weight: 300;
   font-size: 30px;
   line-height: 38px;
-  color: #555555;
+  color: #4d5a75;
 }
 .birthday-item .info {
   color: #FFF;
-  background: #555555;
+  background: #4d5a75;
   margin-left: 160px;
   margin-right: 40px;
   position: relative;
@@ -3762,7 +3926,7 @@ a.red:hover {
   width: 0;
   position: absolute;
   pointer-events: none;
-  border-right-color: #555555;
+  border-right-color: #4d5a75;
   border-width: 10px;
   top: 19px;
 }
@@ -4079,7 +4243,7 @@ a.red:hover {
   content: '0';
   font-family: Icons;
   font-size: 40px;
-  color: #4d5a75;
+  color: #66b5d4;
 }
 #sourceUsers,
 #targetUsers,
@@ -4099,19 +4263,19 @@ a.red:hover {
   line-height: 20px;
   padding-left: 10px;
   border-bottom: 1px solid #7f7f80;
-  color: #555;
+  color: #cdcdcd;
 }
 #sourceUsers li:hover,
 #targetUsers li:hover,
 #sourceGroups li:hover,
 #targetGroups li:hover {
-  background-color: #EEE;
+  background-color: #565658;
 }
 #targetUsers {
   height: 168px;
 }
 .userPagination {
-  background-color: #DDD;
+  background-color: #303031;
   margin-left: 150px;
   margin-right: 5px;
   margin-top: -5px;
@@ -4119,10 +4283,12 @@ a.red:hover {
   line-height: 15px;
   font-size: 11px;
   height: 18px;
+  border: 1px solid #7f7f80;
+  border-top: none;
 }
 .userPagination a {
   margin: 0 3px;
-  color: #1466C6 !important;
+  color: #cdcdcd !important;
   font-size: 11px;
 }
 .userPagination span {
@@ -4180,10 +4346,16 @@ a.red:hover {
   display: block;
   padding-left: 5px;
   line-height: 25px;
-  border: 1px solid #CCC;
-  background: #F5F5F5;
+  border: 1px solid #7f7f80;
+  background: #303031;
   margin: 2px 0;
   height: 25px;
+}
+#groupList .content .text {
+  color: #cdcdcd;
+}
+#groupList .content:hover {
+  background-color: #565658;
 }
 #groupList .content:hover > .text .edit,
 #groupList .content:hover > .text .trash {
@@ -4212,7 +4384,7 @@ a.red:hover {
   content: '2';
   font-size: 20px;
   line-height: 24px;
-  color: #4d5a75;
+  color: #66b5d4;
   position: absolute;
   left: 2px;
   top: 2px;
@@ -4225,14 +4397,11 @@ a.red:hover {
   padding-left: 17px;
   background: no-repeat 0 50%;
 }
-#groupList li .text:hover {
-  background-color: #eee;
-}
 #groupList li .edit {
   display: none;
   width: 16px;
   height: 25px;
-  color: #4d5a75;
+  color: #66b5d4;
   font-size: 16px;
   background: no-repeat 0 50%;
   float: right;
@@ -4245,7 +4414,7 @@ a.red:hover {
   display: none;
   width: 13px;
   height: 25px;
-  color: #4d5a75;
+  color: #66b5d4;
   font-size: 16px;
   background: no-repeat 0 50%;
   float: right;
@@ -4354,7 +4523,7 @@ table#workflows tr td.edit-status {
   right: auto;
   bottom: auto;
   width: 100%;
-  background: #242b30;
+  background: #303031;
   height: 30px;
   padding: 0;
   margin: 0;
@@ -4362,7 +4531,7 @@ table#workflows tr td.edit-status {
 }
 #mainmenu-holder nav {
   float: left;
-  background: #242b30;
+  background: #303031;
 }
 #mainmenu-holder nav ul {
   padding: 0;
@@ -4524,8 +4693,8 @@ table#workflows tr td.edit-status {
 .createBtnHolder,
 #createBtnHolder {
   float: left;
-  margin-top: 4px;
-  margin-left: 10px;
+  margin-top: 6px;
+  margin-left: 5px;
   /*.add {
         font-size: 22px !important;
         font-weight: 900;
@@ -4534,23 +4703,36 @@ table#workflows tr td.edit-status {
 }
 .createBtnHolder a,
 #createBtnHolder a {
+  float: left;
   display: block;
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   overflow: hidden;
-  margin-right: 2px;
+  margin-right: 3px;
   cursor: pointer;
   vertical-align: baseline;
   color: #cdcdcd;
+  line-height: 18px;
 }
 .createBtnHolder a:hover,
 #createBtnHolder a:hover {
   color: #ffffff;
 }
+.createBtnHolder .fa,
+#createBtnHolder .fa {
+  font-size: 16px;
+  text-decoration: none;
+  text-align: center;
+}
+.createBtnHolder .fa:before,
+#createBtnHolder .fa:before {
+  line-height: 18px;
+}
 .createBtnHolder ul,
 #createBtnHolder ul {
   overflow: hidden;
-  padding: 0 10px;
+  padding: 0 0 0 10px;
+  float: left;
 }
 .createBtnHolder ul li,
 #createBtnHolder ul li {
@@ -4561,7 +4743,7 @@ table#workflows tr td.edit-status {
 .createBtnHolder ul li a,
 #createBtnHolder ul li a {
   display: inline-block;
-  line-height: 20px;
+  line-height: 18px;
   width: 100%;
   padding: 0 5px;
   margin: 0;
@@ -4756,8 +4938,6 @@ table#workflows tr td.edit-status {
 ul.dialog-tabs {
   height: 35px;
   border-bottom: 1px solid #7f7f80;
-  margin: 0 -20px 0 -20px;
-  padding: 0 20px;
 }
 ul.dialog-tabs li {
   float: left;
@@ -5107,7 +5287,7 @@ ul.dialog-tabs li.right button {
 }
 .list tbody tr td:first-of-type {
   padding-left: 7px;
-  line-height: 10px;
+  line-height: 20px;
 }
 .list tbody tr td:first-of-type input {
   cursor: pointer;
@@ -5127,7 +5307,7 @@ ul.dialog-tabs li.right button {
   margin-left: 4px;
   position: relative;
   display: block;
-  background: #242b30 !important;
+  background: #303031 !important;
   border: 1px solid #7f7f80;
   -webkit-transition: -webkit-transform, -webkit-box-shadow, border 200ms linear;
   width: 280px;
@@ -5164,7 +5344,7 @@ ul.dialog-tabs li.right button {
   margin-left: 3px;
 }
 .thumbnail .viewswitch a:hover {
-  border-bottom: 1px solid #4d5a75;
+  border-bottom: 1px solid #66b5d4;
 }
 .thumbnail .inner {
   padding: 5px;
@@ -5400,7 +5580,7 @@ ul.dialog-tabs li.right button {
 }
 .ui-dialog {
   border: 1px solid #7f7f80;
-  background: #242b30;
+  background: #303031;
   color: #cdcdcd;
   z-index: 1000;
   margin: 0 auto;
@@ -5547,7 +5727,7 @@ ul.dialog-tabs li.right button {
 }
 .ui-dialog .inner {
   padding: 5px;
-  background: #242b30;
+  background: #303031;
 }
 .ui-dialog .form-holder {
   position: relative;
@@ -5775,7 +5955,7 @@ ul.dialog-tabs li.right button {
 }
 .ui-dialog .ui-dialog-buttonpane {
   border: 1px solid #7f7f80;
-  background: #242b30;
+  background: #303031;
   color: #cdcdcd;
   text-align: left;
   border-width: 1px 0 0;
@@ -5799,31 +5979,8 @@ ul.dialog-tabs li.right button {
   text-align: center;
 }
 .ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button {
-  background-image: none;
-  color: #66b5d4;
-  border: 1px solid #7f7f80;
   margin: .5em .4em .5em 0;
-  cursor: pointer;
-  background-color: #303031;
-  font-size: 1.2em;
-  display: inline-block;
-  position: relative;
-  padding: 0;
   line-height: normal;
-  vertical-align: middle;
-  text-align: center;
-  overflow: visible;
-  border-radius: 0;
-}
-.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button span {
-  display: block;
-  line-height: normal;
-  background: #303031;
-  padding: .4em 1em;
-  color: #66b5d4;
-}
-.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button span:hover {
-  background: #1d1d1e !important;
 }
 .ui-dialog .ui-helper-clearfix:before,
 .ui-dialog .ui-helper-clearfix:after {
@@ -5961,16 +6118,13 @@ ul.dialog-tabs li.right button {
   margin-top: 0;
 }
 .form-holder form input:not([type=checkbox]) {
-  -moz-border-radius: 0px;
-  -webkit-border-radius: 0px;
-  border-radius: 0px;
   border: 1px solid #7f7f80;
   max-width: 280px;
-  height: 18px;
+  line-height: 20px;
   background-color: transparent;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 12px;
-  padding: 2px;
+  padding: 0 4px;
   color: #cdcdcd;
 }
 .form-holder form input:not([type=checkbox]):focus {
@@ -6026,8 +6180,6 @@ ul.dialog-tabs li.right button {
 ul.dialog-tabs {
   height: 35px;
   border-bottom: 1px solid #7f7f80;
-  margin: 0 -20px 0 -20px;
-  padding: 0 20px;
 }
 ul.dialog-tabs li {
   float: left;
@@ -6075,15 +6227,15 @@ ul.dialog-tabs .withEndContract .arrow {
   float: right;
   width: 80px;
   border: 1px solid #7f7f80;
-  color: #242b30;
   margin: 0;
-  padding: 2px 6px;
-  line-height: 13px;
+  padding: .4em 1em;
+  line-height: normal;
   font-size: 13px;
   text-align: center;
   text-decoration: none;
   -webkit-font-smoothing: antialiased;
   outline: none;
+  background: #303031;
   height: 15px;
   border-radius: 0;
   background-color: #8f1311;
@@ -6099,10 +6251,16 @@ ul.dialog-tabs .withEndContract .arrow {
   color: white;
   line-height: 15px;
 }
+ul.dialog-tabs .withEndContract .endContractReasonList span,
+ul.dialog-tabs .withEndContract .arrow span {
+  padding: 0px !important;
+  color: #66b5d4;
+}
 ul.dialog-tabs .withEndContract .endContractReasonList:hover,
 ul.dialog-tabs .withEndContract .arrow:hover {
   cursor: pointer;
   background-position: 0;
+  background: #1d1d1e !important;
 }
 ul.dialog-tabs .withEndContract .endContractReasonList:hover,
 ul.dialog-tabs .withEndContract .arrow:hover {
@@ -6150,8 +6308,6 @@ ul.dialog-tabs .withEndContract .arrow {
 ul.chart-tabs {
   height: 35px;
   border-bottom: 1px solid #7f7f80;
-  margin: 10px -20px 0 0;
-  padding: 0 20px;
 }
 ul.chart-tabs li {
   float: left;
@@ -6202,15 +6358,15 @@ ul.chart-tabs .withEndContract .arrow {
   float: right;
   width: 80px;
   border: 1px solid #7f7f80;
-  color: #242b30;
   margin: 0;
-  padding: 2px 6px;
-  line-height: 13px;
+  padding: .4em 1em;
+  line-height: normal;
   font-size: 13px;
   text-align: center;
   text-decoration: none;
   -webkit-font-smoothing: antialiased;
   outline: none;
+  background: #303031;
   height: 15px;
   border-radius: 0;
   background-color: #8f1311;
@@ -6225,10 +6381,16 @@ ul.chart-tabs .withEndContract .arrow {
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(155, 155, 155, 0.4) inset;
   color: white;
 }
+ul.chart-tabs .withEndContract .endContractReasonList span,
+ul.chart-tabs .withEndContract .arrow span {
+  padding: 0px !important;
+  color: #66b5d4;
+}
 ul.chart-tabs .withEndContract .endContractReasonList:hover,
 ul.chart-tabs .withEndContract .arrow:hover {
   cursor: pointer;
   background-position: 0;
+  background: #1d1d1e !important;
 }
 ul.chart-tabs .withEndContract .endContractReasonList:hover,
 ul.chart-tabs .withEndContract .arrow:hover {
@@ -6449,17 +6611,15 @@ h3.dashboard {
 #projectPM table tr th {
   text-align: right;
   padding-left: 3px;
-  line-height: 25px;
-  height: 25px;
+  line-height: 20px;
   color: #cdcdcd;
 }
 #projectPM table tr th.center {
   text-align: center;
 }
 #projectPM table tr td {
-  height: 25px;
   padding-left: 3px;
-  line-height: 25px;
+  line-height: 20px;
 }
 #projectPM table tr td .green {
   width: 10px;
@@ -7534,21 +7694,10 @@ input::-webkit-inner-spin-button {
 		margin-top: -140px !important;
 	}
 }*/
-#createUserForm #resetBtn,
-#createUserForm #saveBtn,
-.changePassword {
-  color: #36A9E1 !important;
-  line-height: normal;
-  width: auto !important;
-  height: auto !important;
-  padding: .4em 1em !important;
-  background: white !important;
-  border: 1px solid #E2E9EF !important;
-}
-#createUserForm #resetBtn:hover,
-#createUserForm #saveBtn:hover,
-.changePassword:hover {
-  background: #ECECEC !important;
+#createUserForm #resetBtn span,
+#createUserForm #saveBtn span,
+.changePassword span {
+  color: #66b5d4 !important;
 }
 #banned {
   height: 80px;
@@ -7623,6 +7772,7 @@ textarea#editInput {
 }
 .openAll {
   cursor: pointer;
+  color: #cdcdcd;
 }
 .openAll .icon {
   float: left;
@@ -7708,9 +7858,6 @@ textarea#editInput {
   border-bottom: none;
   display: table-cell;
 }
-.grid tr:hover td {
-  color: #ffffff;
-}
 .grid tr td.dashboardWeek {
   width: 107px;
   min-width: 107px;
@@ -7724,24 +7871,27 @@ textarea#editInput {
   padding: 2px;
 }
 .grid tr td.dashboardWeek.dgreen {
-  background: #004600;
-  color: white;
+  background: #2d5d30;
+  color: #ffffff;
 }
 .grid tr td.dashboardWeek.green {
-  background: green;
-  color: white;
+  background: #3e7f42;
+  color: #ffffff;
 }
 .grid tr td.dashboardWeek.brown {
   background: #5cb85c;
+  color: #ffffff;
 }
 .grid tr td.dashboardWeek.yellow {
-  background: yellow;
+  background: #f9a203;
+  color: #ffffff;
 }
 .grid tr td.dashboardWeek.pink {
-  background: pink;
+  background: #cc5457;
+  color: #ffffff;
 }
 .grid tr td.dashboardWeek.red {
-  background-color: #f13f3f;
+  background-color: #a22a2d;
   color: white;
   border-bottom: 1px solid #7f7f80;
   border-left: 1px solid #7f7f80;
@@ -7752,8 +7902,8 @@ textarea#editInput {
   display: table-cell;
 }
 .grid tr td.dashboardWeek.inactive span.view {
-  background-color: silver;
-  color: silver;
+  background-color: #515151;
+  color: #515151;
 }
 .grid tr td.dashboardWeek.inactive span.view span {
   display: none;
@@ -7803,7 +7953,8 @@ textarea#editInput {
   float: left;
   padding: 0;
   padding-right: 3px;
-  color: #cdcdcd;
+  background-color: #3c86e0;
+  color: #ffffff;
   text-align: center;
 }
 .grid tr td.withVacation span span.vacation.size40 {
@@ -7956,6 +8107,9 @@ textarea#editInput {
 .grid.attendance .weekend {
   color: #ccc;
 }
+.grid.dashBoardMargin {
+  margin-bottom: 150px;
+}
 .grid-conatiner .attendanceTop {
   margin-bottom: 10px;
 }
@@ -8019,6 +8173,7 @@ textarea#editInput {
   padding: 20px;
   text-align: center;
   margin: 0 auto;
+  /*for vacationDashboard*/
 }
 .grid-conatiner .statisticsAtten table tr td .item .countDays.leave,
 .grid-conatiner .statisticsAtten table tr td .item .countDays.working {
@@ -8036,6 +8191,21 @@ textarea#editInput {
 .grid-conatiner .statisticsAtten table tr td .item .countDays.education {
   background-color: #66b5d4;
 }
+.grid-conatiner .statisticsAtten table tr td .item .countDays.free {
+  background-color: #a22a2d;
+}
+.grid-conatiner .statisticsAtten table tr td .item .countDays.almostFree {
+  background-color: #cc5457;
+}
+.grid-conatiner .statisticsAtten table tr td .item .countDays.partiallyBusy {
+  background-color: #f9a203;
+}
+.grid-conatiner .statisticsAtten table tr td .item .countDays.fullyBusy {
+  background-color: #3e7f42;
+}
+.grid-conatiner .statisticsAtten table tr td .item .countDays.overWorked {
+  background-color: #2d5d30;
+}
 .grid-conatiner .statisticsAtten table tr td .item .lastTime {
   text-align: center;
   margin-top: 10px;
@@ -8044,6 +8214,13 @@ textarea#editInput {
 .grid-conatiner .statisticsAtten table tr td .item .percent {
   text-align: center;
   color: #eb759e;
+}
+.grid-conatiner .statisticsAtten.stick {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background-color: #303031;
+  padding-top: 10px;
 }
 .grid-conatiner table .grid {
   border-color: #7f7f80;
@@ -8374,15 +8551,16 @@ textarea#editInput {
 }
 .search-field {
   box-sizing: border-box;
+  position: relative;
   display: block;
   width: 100%;
   height: 26px;
-  padding: 2px 24px;
+  padding: 0;
   font-size: 14px;
   line-height: 1.42857143;
   color: #cdcdcd;
   background: inherit;
-  border: 1px solid #7f7f80;
+  border: none;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   -webkit-transition: border-color ease-in-out 0.15s, -webkit-box-shadow ease-in-out 0.15s;
@@ -8392,17 +8570,20 @@ textarea#editInput {
 .search-field .search {
   cursor: pointer;
   position: absolute;
-  top: 6px;
+  top: 3px;
   left: 5px;
+  height: 18px;
 }
 .search-field span:before {
   color: #d5d5d5;
+  line-height: 1;
 }
 .search-field .search-content {
   position: absolute;
-  top: 6px;
+  top: 4px;
   right: 5px;
   cursor: pointer;
+  height: 18px;
 }
 .caret {
   display: inline-block;
@@ -8492,14 +8673,14 @@ textarea#editInput {
 .search-options {
   height: 30px;
   position: absolute;
-  width: 70%;
+  width: 60%;
   top: calc(100% - 1px);
   right: 0;
   z-index: 500;
 }
 .search-options .filter-dialog-tabs {
   box-sizing: border-box;
-  border: 1px solid #c0c0c0;
+  border: 1px solid #7f7f80;
   border-bottom: 0;
   position: relative;
   float: left;
@@ -8512,7 +8693,14 @@ textarea#editInput {
   border: none;
 }
 .search-options .filter-dialog-tabs li:nth-child(2) {
-  border-left: 1px solid #c0c0c0;
+  border-left: 1px solid #7f7f80;
+}
+.search-options .filter-dialog-tabs li.filterTabs {
+  text-align: center;
+  line-height: 25px;
+  font-size: 13px;
+  color: #cdcdcd;
+  cursor: pointer;
 }
 .search-options .filter-check-list {
   right: auto;
@@ -8532,10 +8720,10 @@ textarea#editInput {
 .drop-down-filter {
   box-sizing: content-box;
   font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
-  padding: 5px 40px;
+  padding: 5px 25px;
   position: absolute;
   z-index: 10;
-  width: calc(100% - 82px);
+  width: calc(100% - 52px);
   background-color: #303031;
   border: 1px solid #7f7f80;
   right: 0;
@@ -8546,7 +8734,7 @@ textarea#editInput {
   width: calc(100% - 30px);
   margin: 10px 5px 5px 5px;
   color: white;
-  background-color: #4d5a75;
+  background-color: #66b5d4;
   padding: 10px;
   border-radius: 5px;
 }
@@ -8562,6 +8750,9 @@ textarea#editInput {
   border: 1px solid #7f7f80;
   background-color: #303031;
   margin: 5px;
+}
+.drop-down-filter #filtersContent .filterGroup .ulContent input {
+  margin-top: 5px;
 }
 .drop-down-filter #filtersContent .filterGroup li.miniStylePagination {
   list-style: none;
@@ -8609,7 +8800,7 @@ textarea#editInput {
   height: 10px;
   width: 10px;
   border-radius: 50%;
-  background-color: #555555;
+  background-color: #4d5a75;
 }
 .drop-down-filter #filtersContent .filterGroup.activeGroup .groupName {
   border-bottom: 1px solid #7f7f80;
@@ -8657,7 +8848,7 @@ textarea#editInput {
 }
 #searchContainer .btn {
   background: #303031;
-  padding: 6px;
+  padding: 6px 1%;
   color: #cdcdcd;
 }
 #searchContainer .filter-check-list {
@@ -8676,123 +8867,6 @@ textarea#editInput {
 }
 .removeFilter {
   float: right;
-}
-.vacation-list {
-  font-family: inherit;
-  text-shadow: none;
-  margin: 30px 1%;
-  width: 98%;
-}
-.vacation-list .V {
-  background-color: #f13f3f;
-  color: #ffffff;
-}
-.vacation-list .P {
-  background-color: #fda401;
-  color: #ffffff;
-}
-.vacation-list .S {
-  background-color: #66b5d4;
-  color: #ffffff;
-}
-.vacation-list .E {
-  background-color: #66b5d4;
-  color: #ffffff;
-}
-.vacation-list td,
-.vacation-list th {
-  padding: 5px;
-  position: relative;
-  cursor: pointer;
-}
-.vacation-list td input,
-.vacation-list th input,
-.vacation-list td input:focus,
-.vacation-list th input:focus {
-  position: absolute;
-  width: 95%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  text-align: center;
-  padding: 0;
-  border: none;
-  outline: none;
-  outline-offset: 0;
-  display: none;
-  cursor: pointer;
-  border: 1px solid #66b5d4;
-}
-.vacation-list td input:focus,
-.vacation-list th input:focus {
-  border: none !important;
-  outline: none !important;
-  box-shadow: none;
-  -moz-box-shadow: none;
-  -webkit-box-shadow: none;
-}
-.vacation-list thead th {
-  border: 1px solid #7f7f80;
-}
-.vacation-list thead th#legandCaption {
-  text-align: left;
-}
-.vacation-list thead th.month .newSelectList {
-  width: 100px;
-  margin-left: auto;
-  margin-right: auto;
-  left: calc(50% - 50px);
-}
-.vacation-list thead th.sortDn:after {
-  content: "\00a0\25BE";
-}
-.vacation-list thead th.sortUp:after {
-  content: "\00a0\25B4";
-}
-.vacation-list thead th #monthSelect,
-.vacation-list thead th #yearSelect {
-  font-size: 30px;
-  line-height: 50px;
-}
-.vacation-list tbody td,
-.vacation-list tfoot td {
-  border: 1px solid #7f7f80;
-  text-align: center;
-}
-.vacation-list tbody td.employee,
-.vacation-list tfoot td.employee,
-.vacation-list tbody td.department,
-.vacation-list tfoot td.department {
-  text-align: right;
-}
-.vacation-list tfoot tr td {
-  color: #cdcdcd;
-}
-.vacation-list tbody .employee,
-.vacation-list tbody .department,
-.vacation-list tbody .totalDays {
-  color: #cdcdcd;
-}
-.vacation-list #caption,
-.vacation-list .borders,
-.vacation-list thead,
-.vacation-list tbody,
-.vacation-list tfoot {
-  border: 1px solid #7f7f80;
-}
-.vacation-list #caption th,
-.vacation-list .subHeaderHolder th {
-  color: #cdcdcd;
-}
-.vacation-list .newSelectList,
-.salary-list .newSelectList,
-.subSalary-list .newSelectList {
-  color: #000;
-}
-.vacation-list tbody tr:not(.subRow):hover td:not(.selectedType),
-.salary-list tbody tr:not(.subRow):hover td:not(.selectedType),
-.subSalary-list tbody tr:not(.subRow):hover td:not(.selectedType) {
-  color: #ffffff;
 }
 .filtersActive {
   float: right;
@@ -8831,21 +8905,22 @@ textarea#editInput {
 }
 #favoritesContent #forFilterName {
   height: 22px;
-  width: 83%;
+  width: 80%;
   border-bottom-left-radius: 5px;
   border-top-left-radius: 5px;
+  border-right: none;
   color: #cdcdcd;
 }
 #favoritesContent #saveFilterButton {
   border: 1px solid #7f7f80;
-  border-left: 0;
-  margin-left: -7px;
+  margin-left: -3px;
   box-sizing: border-box;
   border-radius: 0 5px 5px 0;
-  height: 28px;
+  line-height: 16px;
+  padding-top: 4px;
   background-color: #303031;
   color: #a9a9a9;
-  border-left: 1px solid #7f7f80;
+  width: 14%;
 }
 #favoritesContent .removeSavedFilter {
   float: right;
@@ -8890,7 +8965,124 @@ textarea#editInput {
   display: inline-block;
   padding-right: 17px;
   margin-right: 3px;
+  border: 1px solid #7f7f80;
+  border-radius: 3px;
+  line-height: 18px;
+}
+.forFilterIcons .removeValues {
+  top: 2px;
+  line-height: 12px;
 }
 .forInfoWrap {
   overflow: hidden;
+}
+* html .ui-autocomplete {
+  width: 1px;
+}
+#searchGlobalContainer {
+  display: block;
+  position: relative;
+  border: 1px solid #7f7f80;
+  padding: 2px 0px 2px 26px;
+}
+#searchFilterContainer {
+  float: left;
+  width: auto;
+  height: 20px;
+  overflow: hidden;
+}
+.ui-autocomplete {
+  position: absolute;
+  cursor: default;
+  left: -1px !important;
+  width: 100% !important;
+}
+.ui-menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: block;
+  float: left;
+}
+.ui-menu .ui-menu-item {
+  float: left;
+  margin: 0;
+  padding: 0;
+  zoom: 1;
+  clear: left;
+  width: 100%;
+  line-height: 18px;
+}
+.ui-menu .ui-menu-item a {
+  text-decoration: none;
+  display: block;
+  padding: .2em .4em;
+}
+.ui-menu .ui-autocomplete-category {
+  margin: .3em 0 0;
+  padding: 0;
+  line-height: 1.5;
+  float: left;
+  width: 100%;
+}
+.ui-menu .ui-autocomplete-category:last-child {
+  padding-bottom: .3em;
+}
+.ui-menu .ui-autocomplete-category .searchGroupDropDown {
+  float: left;
+  width: 14px;
+  height: 14px;
+  padding: 3px 0px 3px 6px;
+  line-height: 1;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+}
+.ui-menu .ui-autocomplete-category .searchGroupDropDown:before {
+  content: '\f0d7';
+  font-family: 'FontAwesome';
+}
+.ui-menu .ui-autocomplete-category .searchGroupResult {
+  display: block;
+  line-height: 20px;
+  width: 100%;
+}
+.ui-menu .ui-autocomplete-category .ui-widget-content {
+  float: left;
+  margin: .3em 0 0;
+  padding: .3em 0;
+  display: block;
+  width: 100%;
+  border: none;
+  border-top: 1px solid #7f7f80;
+  border-bottom: 1px solid #7f7f80;
+  overflow: auto;
+  max-height: 143px;
+}
+.ui-menu .ui-autocomplete-category .ui-widget-content li {
+  padding-left: 25px;
+}
+.ui-autocomplete-input {
+  height: 20px;
+  overflow: hidden;
+  display: block;
+}
+.ui-autocomplete-input:empty:not(:focus):before {
+  content: attr(data-text);
+}
+.ui-helper-hidden-accessible {
+  border: 0;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  width: 1px;
+  position: absolute !important;
+  clip: rect(1px 1px 1px 1px);
+  clip: rect(1px, 1px, 1px, 1px);
+}
+.ui-widget-content {
+  border: 1px solid #7f7f80;
+  background-color: #303031;
+  color: #cdcdcd;
 }

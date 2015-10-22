@@ -107,6 +107,15 @@
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
             },
 
+            hideItemsNumber: function (e) {
+                var el = e.target;
+
+                this.$el.find(".allNumberPerPage, .newSelectList").hide();
+                if (!el.closest('.search-view')) {
+                    $('.search-content').removeClass('fa-caret-up');
+                };
+            },
+
             render: function () {
                 var self = this;
                 var currentEl = this.$el;

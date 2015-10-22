@@ -2,13 +2,15 @@ define([
         "text!templates/Quotation/EditTemplate.html",
         'views/Assignees/AssigneesView',
         'views/Product/InvoiceOrder/ProductItems',
+        'views/Projects/projectInfo/orderView',
+        'collections/Quotation/filterCollection',
         "common",
         "custom",
         "dataService",
         "populate",
         'constants'
     ],
-    function (EditTemplate, AssigneesView, ProductItemView, common, Custom, dataService, populate, CONSTANTS) {
+    function (EditTemplate, AssigneesView, ProductItemView, ordersView, quotationCollection, common, Custom, dataService, populate, CONSTANTS) {
 
         var EditView = Backbone.View.extend({
             contentType: "Quotation",
@@ -26,6 +28,8 @@ define([
                 this.currentModel = (options.model) ? options.model : options.collection.getElement();
                 this.currentModel.urlRoot = "/quotation";
                 this.responseObj = {};
+                this.forSales = false;
+
                 this.render(options);
             },
 
@@ -123,7 +127,10 @@ define([
                     if (products && products.length) {
                         self.currentModel.save({
                             isOrder: true,
-                            workflow: workflow._id
+                            workflow: {
+                                _id: workflow._id,
+                                name: workflow.name
+                            }
                         }, {
                             headers: {
                                 mid: 57
@@ -132,7 +139,45 @@ define([
                             success: function () {
                                 var redirectUrl = self.forSales ? "easyErp/salesOrder" : "easyErp/Order";
 
-                                Backbone.history.navigate(redirectUrl, {trigger: true});
+                                if (self.redirect){
+                                    //var url = window.location.hash;
+                                    //
+                                    //Backbone.history.fragment = '';
+                                    //Backbone.history.navigate(url, {trigger: true});
+                                    var filter = {
+                                        'projectName': {
+                                            key  : 'project._id',
+                                            value: [self.pId]
+                                        },
+                                        'isOrder': {
+                                            key  : 'isOrder',
+                                            value: ['true']
+                                        }
+                                    };
+
+                                    self.ordersCollection = new quotationCollection({
+                                        count      : 50,
+                                        viewType   : 'list',
+                                        contentType: 'salesOrder',
+                                        filter     : filter
+                                    });
+
+                                    function createView() {
+
+                                        new ordersView({
+                                            collection: self.ordersCollection,
+                                            projectId : self.pId,
+                                            customerId: self.customerId,
+                                            projectManager: self.projectManager
+                                        }).render({activeTab: true});
+                                    };
+
+                                    self.ordersCollection.bind('reset', createView);
+
+                                } else {
+                                    Backbone.history.navigate(redirectUrl, {trigger: true});
+                                }
+
                             }
                         });
                     } else {
@@ -153,20 +198,26 @@ define([
                     status: 'Cancelled',
                     order: 1
                 }, function (workflow) {
-                    var redirectUrl = self.forSales ? "easyErp/salesQuotation" : "easyErp/Quotation";
+                    //var redirectUrl = self.forSales ? "easyErp/salesQuotation" : "easyErp/Quotation";
+                    var redirectUrl = window.location.hash;
 
                     if (workflow && workflow.error) {
                         return alert(workflow.error.statusText);
                     }
 
                     self.currentModel.save({
-                        workflow: workflow._id
+                        workflow: {
+                            _id: workflow._id,
+                            name: workflow.name
+                        }
                     }, {
                         headers: {
                             mid: 57
                         },
                         patch: true,
                         success: function () {
+                            $(".edit-dialog").remove();
+                            Backbone.history.fragment = '';
                             Backbone.history.navigate(redirectUrl, {trigger: true});
                         }
                     });
@@ -179,22 +230,28 @@ define([
                 var self = this;
 
                 populate.fetchWorkflow({
-                    wId: 'Quotation'
+                    wId: 'Sales Order'
                 }, function (workflow) {
-                    var redirectUrl = self.forSales ? "easyErp/salesQuotation" : "easyErp/Quotation";
+                   // var redirectUrl = self.forSales ? "easyErp/salesQuotation" : "easyErp/Quotation";
+                    var redirectUrl = window.location.hash;
 
                     if (workflow && workflow.error) {
                         return alert(workflow.error.statusText);
                     }
 
                     self.currentModel.save({
-                        workflow: workflow._id
+                        workflow: {
+                            _id: workflow._id,
+                            name: workflow.name
+                        }
                     }, {
                         headers: {
                             mid: 57
                         },
                         patch: true,
                         success: function () {
+                            $(".edit-dialog").remove();
+                            Backbone.history.fragment = '';
                             Backbone.history.navigate(redirectUrl, {trigger: true});
                         }
                     });
@@ -215,7 +272,15 @@ define([
                 var quantity;
                 var price;
 
-                var supplier = thisEl.find('#supplierDd').data('id');
+                var supplier = {};
+                supplier._id = thisEl.find('#supplierDd').attr('data-id');
+                supplier.name = thisEl.find('#supplierDd').text();
+
+                var project = {};
+                project._id = thisEl.find('#projectDd').attr('data-id');
+                project.projectName = thisEl.find('#projectDd').text();
+                project.projectmanager = this.projectManager;
+
                 var destination = $.trim(thisEl.find('#destination').data('id'));
                 var deliverTo = $.trim(thisEl.find('#deliveryDd').data('id'));
                 var incoterm = $.trim(thisEl.find('#incoterm').data('id'));
@@ -236,8 +301,10 @@ define([
                 var usersId = [];
                 var groupsId = [];
 
-                var workflow = this.currentModel.get('workflow');
-                workflow = workflow ? workflow._id : null;
+                var wF = this.currentModel.get('workflow');
+                var workflow = {};
+                workflow._id =  wF._id;
+                workflow.name =  wF.name;
 
                 $(".groupsAndUser tr").each(function () {
                     if ($(this).data("type") == "targetUsers") {
@@ -283,6 +350,7 @@ define([
                     supplierReference: supplierReference,
                     deliverTo: deliverTo,
                     products: products,
+                    project       : project,
                     orderDate: orderDate,
                     expectedDate: expectedDate,
                     destination: destination,
@@ -304,15 +372,19 @@ define([
                     workflow: workflow
                 };
 
-                if (supplier) {
+                if (supplier._id) {
                     this.model.save(data, {
                         headers: {
                             mid: mid
                         },
                         wait: true,
                         success: function () {
+                            var url = window.location.hash;
+
                             self.hideDialog();
-                            Backbone.history.navigate("easyErp/Quotation", {trigger: true});
+
+                            Backbone.history.fragment = '';
+                            Backbone.history.navigate(url, {trigger: true});
                         },
                         error: function (model, xhr) {
                             self.errorNotification(xhr);
@@ -405,7 +477,15 @@ define([
                 populate.get("#invoicingControl", "/invoicingControl", {}, 'name', this, false, true);
                 populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, false, true);
                 populate.get("#deliveryDd", "/deliverTo", {}, 'name', this, false, true);
-                populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
+
+                if ((App.currentDb === 'weTrack') && this.forSales){
+                    populate.get("#supplierDd", "/Customer", {}, "fullName", this, false, false);
+
+                    populate.get("#projectDd", "/getProjectsForDd", {}, "projectName", this, false, false);
+
+                } else {
+                    populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
+                }
 
                 this.$el.find('#orderDate').datepicker({
                     dateFormat: "d M, yy",

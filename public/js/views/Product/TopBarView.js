@@ -1,10 +1,12 @@
 define([
         'text!templates/Product/TopBarTemplate.html',
+        'text!templates/Notes/importTemplate.html',
+        'views/Notes/AttachView',
         'custom',
         'common',
         'constants'
     ],
-    function (ContentTopBarTemplate, Custom, Common, CONSTANTS) {
+    function (ContentTopBarTemplate, importTemplate, attachView, Custom, Common, CONSTANTS) {
         var TopBarView = Backbone.View.extend({
             el         : '#top-bar',
             contentType: CONSTANTS.PRODUCT,
@@ -20,6 +22,8 @@ define([
                 "click #top-bar-createBtn"      : "createEvent",
                 "click #top-bar-exportToCsvBtn" : "exportToCsv",
                 "click #top-bar-exportToXlsxBtn": "exportToXlsx",
+                "click #top-bar-importBtn"      : "importEvent",
+                "change .inputAttach"           : "importFiles"
             },
 
             changeContentViewType: function (e) {
@@ -70,6 +74,23 @@ define([
                 event.preventDefault();
                 this.trigger('createEvent');
             },
+
+            importEvent: function (event) {
+                var template = _.template(importTemplate);
+                this.$el.find('#forImport').html(template);
+                event.preventDefault();
+                this.$el.find('#inputAttach').click();
+                this.trigger('importEvent');
+            },
+
+            importFiles: function (e) {
+                var importFile = new attachView({});
+
+                this.import = true;
+
+                importFile.sendToServer(e, null, this);
+            },
+
             deleteEvent: function (event) {
                 event.preventDefault();
                 var answer = confirm("Realy DELETE items ?!");
