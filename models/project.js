@@ -70,10 +70,11 @@ module.exports = (function () {
         budget: {
             _id: false,
             bonus: Array,
-            projectTeam: Array,
-            budget: Array,
+            //projectTeam: Array,
+           // budget: Array,
             projectValues: JSON,
-            budgetTotal: JSON}
+           // budgetTotal: JSON
+           }
     }, { collection: 'Project' });
 
     mongoose.model('Project', projectSchema);

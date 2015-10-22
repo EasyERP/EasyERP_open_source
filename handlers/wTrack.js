@@ -217,6 +217,9 @@ var wTrack = function (event, models) {
                     filtrElement[key] = {$in: condition};
                     resArray.push(filtrElement);
                     break;
+                case 'jobs':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
             }
         };
 

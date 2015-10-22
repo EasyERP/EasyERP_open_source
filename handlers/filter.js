@@ -56,6 +56,12 @@ var Filters = function (models) {
                 {
                     $group: {
                         _id             : null,
+                        'jobs': {
+                            $addToSet: {
+                                _id : '$jobs._id',
+                                name: '$jobs.name'
+                            }
+                        },
                         'projectManager': {
                             $addToSet: {
                                 _id : '$project.projectmanager._id',

@@ -297,7 +297,7 @@ var Quotation = function (models) {
                     resArray.push(filtrElement);
                     break;
                 case 'projectmanager':
-                    filtrElement[key] = {$in: condition};
+                    filtrElement[key] = {$in: condition.objectID()};
                     resArray.push(filtrElement);
                     break;
                 case 'forSales':

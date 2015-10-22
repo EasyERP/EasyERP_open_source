@@ -37,7 +37,10 @@ module.exports = (function () {
         },
         project       : {
             _id: {type: ObjectId, ref: 'Project', default: null},
-            projectmanager: {},
+            projectmanager: {
+                _id: {type: ObjectId, ref: 'Employees', default: null},
+                name: {type: String, default: ''}
+            },
             projectName: {type: String, default: ''}
         },
         deliverTo     : {type: ObjectId, ref: 'DeliverTo', default: null},

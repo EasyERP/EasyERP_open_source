@@ -132,31 +132,31 @@ var waterfallTasks = [getInvoices, createJobs];
 async.waterfall(waterfallTasks, function(err, result){
   console.log('success');
 
-    Job.aggregate([
-        {
-          $group: {
-              _id: "$project",
-              jobIds: {$addToSet: '$_id'}
-          }
-        }
-    ], function(err, result){
-        if (err) {
-            return console.log(err);
-        }
-
-        result.forEach(function(res){
-
-            var projectId = res._id;
-            var jobIds = res.jobIds;
-
-            Project.findByIdAndUpdate(objectId(projectId), {$set : {"budget.projectTeam": jobIds}}, function(err, result){
-                if (err){
-                    console.log(err);
-                }
-            });
-
-        })
-    })
+    //Job.aggregate([
+    //    {
+    //      $group: {
+    //          _id: "$project",
+    //          jobIds: {$addToSet: '$_id'}
+    //      }
+    //    }
+    //], function(err, result){
+    //    if (err) {
+    //        return console.log(err);
+    //    }
+    //
+    //    result.forEach(function(res){
+    //
+    //        var projectId = res._id;
+    //        var jobIds = res.jobIds;
+    //
+    //        Project.findByIdAndUpdate(objectId(projectId), {$set : {"budget.projectTeam": jobIds}}, function(err, result){
+    //            if (err){
+    //                console.log(err);
+    //            }
+    //        });
+    //
+    //    })
+    //})
 
 });
 
@@ -177,20 +177,20 @@ function createJobs(invoiceArr, pcb){
     var invoices = invoiceArr;
     var invoiceCount = invoices.length;
 
-    for (var i = invoiceCount - 1; i >= 0; i--){
+    invoiceArr.forEach(function(invoice){
         var wTracks = [];
-        var invoiceProducts = invoices[i].products;
-        var projectId = invoices[i].project._id;
-        var projectName = invoices[i].project.name;
-        var supplier = invoices[i].supplier;
-        var orderDate = invoices[i].invoiceDate;
-        var projectmanager = invoices[i].salesPerson;
-        var paymentInfo = invoices[i].paymentInfo;
-        var jobName = invoices[i].project.name.concat(invoices[i].name);
+        var invoiceProducts = invoice.products;
+        var projectId = invoice.project._id;
+        var projectName = invoice.project.name;
+        var supplier = invoice.supplier;
+        var orderDate = invoice.invoiceDate;
+        var projectmanager = invoice.salesPerson;
+        var paymentInfo = invoice.paymentInfo;
+        var jobName = invoice.project.name.concat(invoice.name);
         var paymentInfo = {
-            total: paymentInfo.total,
-            unTaxed: paymentInfo.unTaxed,
-            taxes: paymentInfo.taxes
+            total: paymentInfo.total / 100,
+            unTaxed: paymentInfo.unTaxed / 100,
+            taxes: paymentInfo.taxes / 100
         };
         var data = {};
         var quotationData = {};
@@ -209,33 +209,6 @@ function createJobs(invoiceArr, pcb){
             wTracks: wTracks,
             project: projectId
         };
-
-        quotationData = {
-            forSales: true,
-            isOrder: true,
-            supplier: supplier,
-            project: {
-                _id: projectId,
-                projectName: projectName,
-                projectmanager: projectmanager
-            },
-            orderDate: orderDate,
-            name: "SO-" + projectName,
-            invoiceReceived: true,
-            paymentInfo: paymentInfo,
-            products: [{
-                scheduledDate: orderDate,
-                taxes: 150,
-                subTotal: 1150,
-                unitPrice: 1000,
-                product: objectId("56279c84a0b1c7ba27fe132c")
-            }],
-            workflow: {
-                _id: objectId( "55647b962e4aa3804a765ec6"),
-                name: "Done"
-            }
-        };
-
 
        var newJob = new Job(data);
 
@@ -260,6 +233,33 @@ function createJobs(invoiceArr, pcb){
                 });
             });
 
+            quotationData = {
+                forSales: true,
+                isOrder: true,
+                supplier: supplier,
+                project: {
+                    _id: projectId,
+                    projectName: projectName,
+                    projectmanager: projectmanager
+                },
+                orderDate: orderDate,
+                name: "SO-" + projectName,
+                invoiceReceived: true,
+                paymentInfo: paymentInfo,
+                products: [{
+                    scheduledDate: orderDate,
+                    taxes: 150,
+                    subTotal: 1150,
+                    unitPrice: 1000,
+                    product: objectId("56279c84a0b1c7ba27fe132c")
+                }],
+                workflow: {
+                    _id: objectId( "55647b962e4aa3804a765ec6"),
+                    name: "Done"
+                }
+            };
+
+
             quotationData.products[0].jobs = jobId;
 
             var newQuotation = new Quotation(quotationData);
@@ -276,6 +276,6 @@ function createJobs(invoiceArr, pcb){
 
 
 
-    }
+    });
 
 }
