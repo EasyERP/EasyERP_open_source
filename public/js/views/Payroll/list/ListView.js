@@ -774,44 +774,35 @@ define([
                 currentEl.html('');
                 currentEl.append(headerTemplate);
 
-                currentEl.find('#payRoll-listTable').append(rowTemplate({collection: this.collection.toJSON()}));
+                currentEl.find('#payRoll-listTable').append(this.rowTemplate({
+                    collection      : this.collection.toJSON(),
+                    currencySplitter: helpers.currencySplitter
+                }));
                 currentEl.find('#payRoll-listTotal').append(totalTemplate);
-                /*currentEl.append(new listItemView({
-                 el   : this.bodyContainerId,
-                 model: this.model
-                 }).render());//added two parameters page and items number
 
-                 var temp = _.template(subSalaryTotalTemplate, {
-                 model           : modelJSON,
-                 currencySplitter: helpers.currencySplitter
-                 });
-                 currentEl.find('#subSalary-listTotal' + this.model.id).append(temp);
-                 this.filterEmployeesForDD(this);
+                this.filterEmployeesForDD(this);
 
-                 this.hideSaveCancelBtns();
-                 $('#top-bar-deleteBtn' + this.id).hide();
+                this.hideSaveCancelBtns();
+                $('#top-bar-deleteBtn' + this.id).hide();
 
-                 $('#check_all' + this.model.id).click(function () {
-                 $(self.bodyContainerId).find('.checkbox').prop('checked', this.checked);
-                 if ($(self.bodyContainerId).find("input.checkbox:checked").length > 0) {
-                 $("#top-bar-deleteBtn" + self.model.id).show();
-                 } else {
-                 $("#top-bar-deleteBtn" + self.model.id).hide();
-                 }
-                 });
 
-                 setTimeout(function () {
-                 self.editCollection = new salaryEditableCollection(self.employeesArary);
 
-                 self.editCollection.on('saved', self.savedNewModel, self);
-                 self.editCollection.on('updated', self.updatedOptions, self);
+                $('#check_all').click(function () {
+                    currentEl.find('#payRoll-Table .checkbox').prop('checked', this.checked);
+                    if ($(self.bodyContainerId).find("input.checkbox:checked").length > 0) {
+                        $("#top-bar-deleteBtn").show();
+                    } else {
+                        $("#top-bar-deleteBtn").hide();
+                    }
+                });
 
-                 self.bodyContainer = $(self.bodyContainerId);
-                 }, 10);*/
-                /*
+                setTimeout(function () {
+                    self.editCollection = new editCollection(self.collection);
 
-                 $('#top-bar-saveBtn' + self.id).click(this.saveItem);
-                 $('#top-bar-deleteBtn' + self.id).click(this.deleteItems);*/
+                    //self.editCollection.on('saved', self.savedNewModel, self);
+                    //self.editCollection.on('updated', self.updatedOptions, self);
+                }, 10);
+
                 return this;
             }
         });

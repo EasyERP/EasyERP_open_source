@@ -470,6 +470,15 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 .payRoll-list tr td {
   border: 1px solid white;
 }
+.payRoll-list #payRoll-Table {
+  padding: 0px;
+}
+.payRoll-list .scrollit {
+  box-sizing: border-box;
+  height: calc(100vh - 200px);
+  overflow: scroll;
+  overflow-x: hidden;
+}
 /*------------------------Constants-----------------------------*/
 .notification {
   z-index: 20000;
