@@ -146,8 +146,8 @@ async.waterfall(waterfallTasks, function(err, result){
 
         result.forEach(function(res){
 
-            var projectId = res.toJSON()._id;
-            var jobIds = res.toJSON().jobIds;
+            var projectId = res._id;
+            var jobIds = res.jobIds;
 
             Project.findByIdAndUpdate(objectId(projectId), {$set : {"budget.projectTeam": jobIds}}, function(err, result){
                 if (err){
