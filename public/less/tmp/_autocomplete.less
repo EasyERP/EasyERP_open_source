@@ -2,7 +2,7 @@
 
 #searchGlobalContainer {
   display: block;
-  position: relative;
+  //position: relative;
   border: 1px solid @border-color-main;
   padding: 0 0 0 26px;
 }
@@ -18,9 +18,10 @@
 .ui-autocomplete {
   position: absolute;
   cursor: default;
+  left: 0 !important;
 }
 .ui-menu {
-  width: 100% !important;
+  width: auto !important;
   list-style:none;
   padding: 3px;
   margin: 0;
@@ -43,11 +44,22 @@
     }
   }
   .ui-autocomplete-category {
-    margin: .5em 0 .2em;
-    padding: 0;
+    position: relative;
+    margin: .5em 0 .5em;
+    padding: 0 0 0 20px;
     line-height: 1.5;
     float: left;
     width: 100%;
+    .searchGroupDropDown {
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      padding: 3px;
+      line-height: 1;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+    }
   }
 }
 
