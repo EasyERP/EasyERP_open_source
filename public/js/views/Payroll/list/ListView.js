@@ -1,5 +1,6 @@
 define([
         'text!templates/Payroll/list/ListHeader.html',
+        'text!templates/Payroll/list/ListTemplate.html',
         'text!templates/Payroll/subSalary/list/cancelEdit.html',
         'views/Payroll/subSalary/CreateView',
         'views/Payroll/subSalary/list/ListItemView',
@@ -14,7 +15,7 @@ define([
         'helpers'
     ],
 
-    function (headerTemplate, cancelEditTemplate, createView, listItemView, totalTemplate, editCollection, employeesCollection, currentModel, populate, dataService, async, moment, helpers) {
+    function (headerTemplate, rowTemplate, cancelEditTemplate, createView, listItemView, totalTemplate, editCollection, employeesCollection, currentModel, populate, dataService, async, moment, helpers) {
         var payRollListView = Backbone.View.extend({
             el            : '#content-holder',
             viewType      : 'list',//needs in view.prototype.changeLocationHash
@@ -22,6 +23,7 @@ define([
             whatToSet     : {},
             headerTemplate: _.template(headerTemplate),
             totalTemplate : _.template(totalTemplate),
+            rowTemplate   : _.template(rowTemplate),
 
             events: {
                 "click td:not(.editable, .notForm)"                               : "tdDisable",
@@ -37,7 +39,7 @@ define([
             },
 
             initialize: function (options) {
-                this.collection = options.collections;
+                this.collection = options.collection;
                 /*this.id = this.model.id ? this.model.id : this.model.cid;
 
                  this.bodyContainerId = '#subSalary-listTable' + this.id;
@@ -772,6 +774,7 @@ define([
                 currentEl.html('');
                 currentEl.append(headerTemplate);
 
+                currentEl.find('#payRoll-listTable').append(rowTemplate({collection: this.collection.toJSON()}));
                 currentEl.find('#payRoll-listTotal').append(totalTemplate);
                 /*currentEl.append(new listItemView({
                  el   : this.bodyContainerId,
