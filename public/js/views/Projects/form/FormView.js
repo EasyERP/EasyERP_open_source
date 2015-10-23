@@ -5,6 +5,7 @@ define([
         'text!templates/Projects/form/FormTemplate.html',
         'text!templates/Projects/projectInfo/DetailsTemplate.html',
         'text!templates/Projects/projectInfo/proformRevenue.html',
+        'text!templates/Projects/projectInfo/jobsWTracksTemplate.html',
         'views/Projects/EditView',
         'views/Notes/NoteView',
         'views/Notes/AttachView',
@@ -27,7 +28,7 @@ define([
         'helpers'
     ],
 
-    function (ProjectsFormTemplate, DetailsTemplate, ProformRevenueTemplate, EditView, noteView, attachView, AssigneesView, BonusView, wTrackView, PaymentView, InvoiceView, QuotationView, GenerateWTrack, oredrView, wTrackCollection, quotationCollection, addAttachTemplate, common, populate, custom, dataService, async, helpers) {
+    function (ProjectsFormTemplate, DetailsTemplate, ProformRevenueTemplate, jobsWTracksTemplate, EditView, noteView, attachView, AssigneesView, BonusView, wTrackView, PaymentView, InvoiceView, QuotationView, GenerateWTrack, oredrView, wTrackCollection, quotationCollection, addAttachTemplate, common, populate, custom, dataService, async, helpers) {
         var FormEmployeesView = Backbone.View.extend({
             el            : '#content-holder',
             contentType   : 'Projects',
@@ -47,7 +48,40 @@ define([
                 "click .current-selected:not(.disabled)"                          : "showNewSelect",
                 "click #createItem"                                               : "createDialog",
                 "click #createJOb"                                               : "createJob",
-                "change input:not(.checkbox)": "showSaveButton"
+                "change input:not(.checkbox)": "showSaveButton",
+                "click #jobsItem"            : "renderJobWTracks"
+            },
+
+            renderJobWTracks: function(e){
+                var target = e.target;
+                var jobId = $(target).parents("tr").attr("data-id");
+                var jobContainer = $(target).parents("tr");
+                var template = _.template(jobsWTracksTemplate);
+                var formModel = this.formModel.toJSON();
+                var jobsItems = formModel.budget.projectTeam;
+                var icon = $(jobContainer).find('.icon');
+                var subId = "subRow-row" + jobId;
+                var subRowCheck = $('#' + subId);
+
+                var job = _.find(jobsItems, function(element){
+                    return element._id === jobId;
+                });
+
+                if (icon.html() === '-') {
+                    icon.html('5');
+                    $(subRowCheck).hide();
+                } else {
+                    icon.html('-');
+                    $('<tr id=' + subId + ' class="subRow">' +
+                        '<td colspan="1"></td>' +
+                        '<td colspan="10" id="subRow-holder' + jobId + '"></td>' +
+                        '</tr>').insertAfter(jobContainer);
+                    $('#subRow-holder' + jobId).append(template({
+                        jobItem: job,
+                        currencySplitter: helpers.currencySplitter
+                    }));
+                }
+
             },
 
             initialize: function (options) {

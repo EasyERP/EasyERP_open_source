@@ -27,6 +27,7 @@
             </td>
         </tr>
         <tr>
+            <th>Expand</th>
             <th>N</th>
             <th>Job</th>
             <th>Status</th>
@@ -42,12 +43,19 @@
 
         <tbody id="projectTeam">
         <%var count = 0;%>
+        <%var totalEmp = 0;%>
+        <%var totalHours = 0;%>
+        <%var totalCost = 0;%>
+        <%var totalRevenue = 0;%>
+        <%var totalProfit = 0;%>
+        <%var totalRate = 0;%>
         <% jobs.forEach(function(element,i){ %>
         <%if (element.budget) {%>
         <%var budgetTotal = element.budget.budgetTotal%>
 
-        <tr data-id="<%=element._id%>">
+        <tr data-id="<%=element._id%>" id="jobsItem">
 
+            <td class="icon">+</td>
             <td><%= i + 1 %></td>
             <td><%=element.name%></td>
             <td><a data-id="<%=element.workflow._id%>" id="workflow" class="current-selected"><%=element.workflow.name%></a></td>
@@ -61,12 +69,34 @@
 
         </tr>
         <% count++ %>
+        <% totalEmp += element.budget.projectTeam.length %>
+        <% totalHours += budgetTotal.hoursSum %>
+        <% totalCost += budgetTotal.costSum %>
+        <% totalRevenue += budgetTotal.revenueSum%>
+        <% totalProfit += budgetTotal.profitSum%>
+        <% totalRate += budgetTotal.revenueSum / budgetTotal.hoursSum %>
         <% } %>
         <% })%>
 
         </tbody>
-
         <tfoot>
+
+        <tr id="total">
+            <td>&nbsp</td>
+            <td>Total</td>
+            <td>&nbsp</td>
+            <td>&nbsp</td>
+            <td>&nbsp</td>
+            <td><%=currencySplitter(totalEmp.toFixed(2))%></td>
+            <td><%= currencySplitter(totalHours.toFixed(2))%></td>
+            <td><%= currencySplitter(totalCost.toFixed(2))%></td>
+            <td><%= currencySplitter(totalRevenue.toFixed(2))%></td>
+            <td><%= currencySplitter(totalProfit.toFixed(2))%></td>
+            <td><%= currencySplitter(totalRate.toFixed(2))%></td>
+        </tr>
+
+        </tfoot>
+
 
 
     </table>
