@@ -7,7 +7,10 @@ module.exports = (function () {
 
     var jobsSchema = mongoose.Schema({
         name: { type: String, default: '' },
-        workflow: { type: ObjectId, ref: 'workflows', default: null },
+        workflow: {
+            _id: { type: ObjectId, ref: 'workflows', default: null },
+            name: String
+        },
         type: {type: String, enum: ['Quotation', "Order", "Invoice", "Empty"], default: 'Empty'},
         wTracks : [{type: ObjectId, ref: 'wTrack', default: null}],
         project: {type: ObjectId, ref: 'Project', default: null},

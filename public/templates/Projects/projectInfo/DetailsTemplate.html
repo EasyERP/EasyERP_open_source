@@ -1,6 +1,7 @@
 <div class="half-block left">
     <table class="list tableProjects">
-        <colgroup span="8">
+        <colgroup span="9">
+            <col span="1">
             <col span="1">
             <col span="1">
             <col span="1">
@@ -26,9 +27,10 @@
             </td>
         </tr>
         <tr>
-            <th>Resource</th>
-            <th>Department</th>
-            <th>Job Position</th>
+            <th>Job</th>
+            <th>Status</th>
+            <th>Type</th>
+            <th>Count</th>
             <th>Hours</th>
             <th>Cost</th>
             <th>Revenue</th>
@@ -39,20 +41,21 @@
 
         <tbody id="projectTeam">
         <%var count = 0;%>
-        <% projectTeam.forEach(function(element,i){ %>
+        <% jobs.forEach(function(element,i){ %>
         <%if (element.budget) {%>
+        <%var budgetTotal = element.budget.budgetTotal%>
 
-        <%var element = element.budget.projectTeam%>
         <tr>
 
-            <td><%=element.name.first + ' ' + element.name.last%></td>
-            <td><%=element.department.name%></td>
-            <td><%=element.jobPosition.name%></td>
-            <td><%=currencySplitter(budget[i].hours.toFixed())%></td>
-            <td><%=currencySplitter(budget[i].cost.toFixed())%></td>
-            <td><%=currencySplitter(budget[i].revenue.toFixed())%></td>
-            <td><%=currencySplitter(budget[i].profit.toFixed())%></td>
-            <td><%=currencySplitter((budget[i].revenue / budget[i].hours).toFixed(2))%></td>
+            <td><%=element.name%></td>
+            <td><%=element.workflow.name%></td>
+            <td><%=element.type%></td>
+            <td><%=element.budget.projectTeam.length%></td>
+            <td><%= budgetTotal ? currencySplitter(budgetTotal.hoursSum.toFixed()) : 0%></td>
+            <td><%= budgetTotal ? currencySplitter(budgetTotal.costSum.toFixed()) : 0%></td>
+            <td><%= budgetTotal ? currencySplitter(budgetTotal.revenueSum.toFixed()) : 0%></td>
+            <td><%= budgetTotal ? currencySplitter(budgetTotal.profitSum.toFixed()) : 0%></td>
+            <td><%= budgetTotal ? currencySplitter((budgetTotal.revenueSum / budgetTotal.hoursSum).toFixed(2)) : 0%></td>
 
         </tr>
         <% count++ %>
@@ -62,37 +65,8 @@
         </tbody>
 
         <tfoot>
-        <tr>
-            <td>
-                <a href="javascript:;"
-                   title="Create Item"
-                   id="createItem">
-                    Add team member
-                </a>
-            </td>
 
-            <td>&nbsp</td>
-            <td>&nbsp</td>
-            <td>&nbsp</td>
-            <td>&nbsp</td>
-            <td>&nbsp</td>
-            <td>&nbsp</td>
-            <td>&nbsp</td>
-        </tr>
-        <% if (count) {%>
-        <tr>
-            <td>Total:</td>
-            <td><%='&nbsp'%></td>
-            <td><%=count%></td>
-            <td><%=currencySplitter(budgetTotal.hoursSum.toFixed())%></td>
-            <td><%=currencySplitter(budgetTotal.costSum.toFixed())%></td>
-            <td><%=currencySplitter(budgetTotal.revenueSum.toFixed())%></td>
-            <td><%=currencySplitter(budgetTotal.profitSum.toFixed())%></td>
-            <td><%=currencySplitter((budgetTotal.revenueSum / budgetTotal.hoursSum).toFixed(2))%>
-            </td>
-        </tr>
-        </tfoot>
-<% } %>
+
     </table>
 </div>
 

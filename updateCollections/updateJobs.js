@@ -35,7 +35,7 @@ dbObject.once('open', function callback() {
             return next(err);
         }
 
-        async.eachLimit(result, 200, function (job) {
+        async.eachLimit(result, 500, function (job) {
             var jobID = job._id;
 
             paralellTasks = [getwTrackAndMonthHours];
@@ -119,7 +119,7 @@ dbObject.once('open', function callback() {
 
                                 if (wTrack.department._id.toString() === '55b92ace21e4b7c40f000011') {
                                     projectTeam[empId].byQA = {};
-                                    projectTeam[empId].byQA.revenue = parseFloat(wTrack.revenue);
+                                    projectTeam[empId].byQA.revenue = parseFloat(wTrack.revenue )/ 100;
                                     projectTeam[empId].byQA.hours = parseFloat(wTrack.worked);
                                 }
 
@@ -188,7 +188,7 @@ dbObject.once('open', function callback() {
                         budget = {
                               projectTeam: response,
                              budget: sortBudget,
-                             projectValues: projectValues,
+                             //projectValues: projectValues,
                              budgetTotal: budgetTotal
                         };
 
@@ -198,7 +198,7 @@ dbObject.once('open', function callback() {
                                 return next(err);
                             }
 
-                            //console.log(count++);
+                            console.log(count++);
                         })
                     });
                 }
