@@ -31,6 +31,23 @@ this.getData = function (req, res, next) {
 
     };
 
+    this.update = function(req, res, next){
+        var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema );
+
+        var data = req.query;
+        var id= query._id;
+
+        delete _id;
+
+        JobsModel.findByIdAndUpdate( id, data, function(err, result){
+            if (err){
+                return next(err);
+            }
+
+            res.status(200).send(result)
+        })
+    }
+
 };
 
 module.exports = Jobs;

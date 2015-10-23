@@ -237,8 +237,24 @@ define([
             },
 
             chooseOption: function (e) {
-                $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
+
                 $(".newSelectList").hide();
+
+                if ($(e.target).parents("dd").find(".current-selected").length){
+                    $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
+                } else {
+                    $(e.target).parents("td").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
+
+                    var id = $(e.target).parents("td").closest('tr').attr('data-id');
+
+                    dataService.postData("/jobs/update", {_id: id, workflow: {_id: $(e.target).attr("id"), name: $(e.target).text()}},  function(err, result){
+                        if (err){
+                            alert("Update Job error")
+                        }
+
+                        alert('success');
+                    });
+                }
 
                 this.showSaveButton();
             },
@@ -385,6 +401,7 @@ define([
                 populate.get2name("#projectManagerDD", "/getPersonsForDd", {}, this);
                 populate.get2name("#customerDd", "/Customer", {}, this, false, false);
                 populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/WorkflowsForDd", {id: "Projects"}, "name", this);
+                populate.getWorkflow("#workflow", "#workflowNames", "/WorkflowsForDd", {id: "Jobs"}, "name", this);
 
 
                 notDiv = this.$el.find('#divForNote');
@@ -439,6 +456,7 @@ define([
                 $("#createBonus").show();
 
                 return this;
+
             },
 
             getDataForDetails: function (result) {
