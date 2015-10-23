@@ -4,7 +4,7 @@
 var mongoose = require('mongoose');
 var async = require('async');
 
-var Jobs = function (event, models) {
+var Jobs = function (models) {
     var JobsSchema = mongoose.Schemas['jobs'];
     var access = require("../Modules/additions/access.js")(models);
     var objectId = mongoose.Types.ObjectId;
@@ -34,12 +34,14 @@ this.getData = function (req, res, next) {
     this.update = function(req, res, next){
         var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema );
 
-        var data = req.query;
-        var id= query._id;
+        var data = req.body;
+        var id = data._id;
 
-        delete _id;
+        var query = {workflow: {_id: data.workflow._id, name: data.workflow.name}}
 
-        JobsModel.findByIdAndUpdate( id, data, function(err, result){
+        delete data._id;
+
+        JobsModel.findByIdAndUpdate( id, query, function(err, result){
             if (err){
                 return next(err);
             }

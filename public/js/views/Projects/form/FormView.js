@@ -247,7 +247,9 @@ define([
 
                     var id = $(e.target).parents("td").closest('tr').attr('data-id');
 
-                    dataService.postData("/jobs/update", {_id: id, workflow: {_id: $(e.target).attr("id"), name: $(e.target).text()}},  function(err, result){
+                    var data ={_id: id, workflow._id: $(e.target).attr("id"), workflow.name: $(e.target).text()};
+
+                    dataService.postData("/jobs/update", data,  function(err, result){
                         if (err){
                             alert("Update Job error")
                         }

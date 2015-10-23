@@ -46,9 +46,9 @@
         <%if (element.budget) {%>
         <%var budgetTotal = element.budget.budgetTotal%>
 
-        <tr>
+        <tr data-id="<%=element._id%>">
 
-            <td data-id="<%=element._id%>"><%= i + 1 %></td>
+            <td><%= i + 1 %></td>
             <td><%=element.name%></td>
             <td><a data-id="<%=element.workflow._id%>" id="workflow" class="current-selected"><%=element.workflow.name%></a></td>
             <td><%=element.type%></td>
