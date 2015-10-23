@@ -1,4 +1,7 @@
 /**
+ * Created by liliya on 23.10.15.
+ */
+/**
  * Created by liliya on 29.09.15.
  */
 var mongoose = require('mongoose');
@@ -22,81 +25,30 @@ dbObject.once('open', function callback() {
     var paralellTasks;
     var count = 0;
 
-    var query = Project.find({}, {_id: 1, bonus: 1}).lean();
+    var query = Job.find().lean();
 
     query
-        .populate('bonus.employeeId', '_id name')
-        .populate('bonus.bonusId', '_id name value isPercent');
+        .populate('wTracks');
 
     query.exec(function (err, result) {
         if (err) {
             return next(err);
         }
 
-        async.eachLimit(result, 200, function (project) {
-            var pID = project._id;
+        async.eachLimit(result, 200, function (job) {
+            var jobID = job._id;
 
             paralellTasks = [getwTrackAndMonthHours];
 
             function getwTrackAndMonthHours(cb) {
-                var WTrack = dbObject.model('wTrack', wTrackSchema);
-                var monthHours = dbObject.model('MonthHours', MonthHoursSchema);
-
-                var query = WTrack.find({'project._id': project._id}).lean();
-                var months = [];
-                var years = [];
-                var uMonth;
-                var uYear;
-
-                query.exec(function (err, result) {
-                    if (err) {
-                        return cb(err);
-                    }
-
-                    result.forEach(function (res) {
-                        months.push(res.month);
-                        years.push(res.year);
-                    });
-
-                    uMonth = _.uniq(months);
-                    uYear = _.uniq(years);
-
-                    monthHours.aggregate([{
-                        $match: {
-                            year: {$in: uYear},
-                            month: {$in: uMonth}
-                        }
-                    }, {
-                        $project: {
-                            date: {$add: [{$multiply: ["$year", 100]}, "$month"]},
-                            hours: '$hours'
-
-                        }
-                    }, {
-                        $group: {
-                            _id: '$date',
-                            value: {$addToSet: '$hours'}
-                        }
-                    }], function (err, months) {
-                        if (err) {
-                            return cb(err);
-                        }
-
-                        cb(null, {wTrack: result, monthHours: months});
-                    });
-
-
-                });
+                cb();
             };
 
             async.parallel(paralellTasks, function (err, result) {
                 var projectTeam = {};
-                var bonus = [];
                 var projectValues = {};
                 var budgetTotal = {};
-                var wTRack = result[0] ? result[0]['wTrack'] : [];
-                var monthHours = result[0] ? result[0]['monthHours'] : [];
-                var bonuses = project.bonus;
+                var wTRack = job.wTracks;
                 var empKeys;
                 var keys;
                 var hoursByMonth = {};
@@ -223,27 +175,6 @@ dbObject.once('open', function callback() {
                             return next(err);
                         }
 
-                        bonuses.forEach(function (element) {
-                            var objToSave = {};
-
-                            objToSave.bonus = 0;
-                            objToSave.resource = element.employeeId.name.first + ' ' + element.employeeId.name.last;
-                            objToSave.percentage = element.bonusId.name;
-
-                            if (element.bonusId.isPercent) {
-                                objToSave.bonus = (budgetTotal.revenueSum / 100) * element.bonusId.value * 100;
-                                bonus.push(objToSave);
-                            } else {
-                                monthHours.forEach(function (month) {
-                                    objToSave.bonus += (hoursByMonth[month._id] / month.value[0]) * element.bonusId.value;
-                                });
-
-                                objToSave.bonus = objToSave.bonus * 100;
-                                bonus.push(objToSave);
-                            }
-
-                        });
-
                         keysForPT = Object.keys(projectTeam);
 
                         response.forEach(function (employee) {
@@ -255,21 +186,20 @@ dbObject.once('open', function callback() {
                         });
 
                         budget = {
-                            //  projectTeam: response,
-                            bonus: bonus
-                            // budget: sortBudget,
-                            // projectValues: projectValues,
-                            // budgetTotal: budgetTotal
+                              projectTeam: response,
+                             budget: sortBudget,
+                             projectValues: projectValues,
+                             budgetTotal: budgetTotal
                         };
 
 
-                        //Project.update({_id: pID}, {$set: {budget: budget}}, function (err, result) {
-                        //    if (err) {
-                        //        return next(err);
-                        //    }
-                        //
-                        //    //console.log(count++);
-                        //})
+                        Job.update({_id: jobID}, {$set: {budget: budget}}, function (err, result) {
+                            if (err) {
+                                return next(err);
+                            }
+
+                            //console.log(count++);
+                        })
                     });
                 }
             });
@@ -278,30 +208,5 @@ dbObject.once('open', function callback() {
         console.log('success');
     });
 
-    Job.aggregate([
-        {
-            $group: {
-                _id: "$project",
-                jobIds: {$addToSet: '$_id'}
-            }
-        }
-    ], function(err, result){
-        if (err) {
-            return console.log(err);
-        }
 
-        result.forEach(function(res){
-
-            var projectId = res._id;
-            var jobIds = res.jobIds;
-
-            Project.findByIdAndUpdate(projectId, {$set : {"budget.projectTeam": jobIds}}, function(err, result){
-                if (err){
-                    console.log(err);
-                }
-                console.log('ok');
-            });
-
-        })
-    })
 });

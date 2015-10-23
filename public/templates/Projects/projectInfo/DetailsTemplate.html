@@ -40,7 +40,9 @@
         <tbody id="projectTeam">
         <%var count = 0;%>
         <% projectTeam.forEach(function(element,i){ %>
-        <%if (element) {%>
+        <%if (element.budget) {%>
+
+        <%var element = element.budget.projectTeam%>
         <tr>
 
             <td><%=element.name.first + ' ' + element.name.last%></td>

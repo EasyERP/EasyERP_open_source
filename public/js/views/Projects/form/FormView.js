@@ -379,11 +379,11 @@ define([
                 container = this.$el.find('#forInfo');
 
                 container.html(template({
-                        projectTeam     : formModel.budget.projectTeam,
+                        projectTeam     : formModel.budget.projectTeam ? formModel.budget.projectTeam : [],
                         bonus           : formModel.budget.bonus,
-                        budget          : formModel.budget.budget,
-                        projectValues   : formModel.budget.projectValues,
-                        budgetTotal     : formModel.budget.budgetTotal,
+                        budget          : formModel.budget.projectTeam ? formModel.budget.projectTeam : {},
+                        projectValues   : formModel.budget.projectTeam ? formModel.budget.projectTeam : [],
+                        budgetTotal     : formModel.budget.projectTeam ? formModel.budget.projectTeam : {},
                         currencySplitter: helpers.currencySplitter,
                         contentType     : this.contentType
                     })

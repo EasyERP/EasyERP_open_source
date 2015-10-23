@@ -70,9 +70,9 @@ module.exports = (function () {
         budget: {
             _id: false,
             bonus: Array,
-            //projectTeam: Array,
+            projectTeam: [{ type: ObjectId, ref: "jobs", default: null }],
            // budget: Array,
-            projectValues: JSON,
+           // projectValues: JSON,
            // budgetTotal: JSON
            }
     }, { collection: 'Project' });
