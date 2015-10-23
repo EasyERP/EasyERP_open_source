@@ -247,14 +247,13 @@ define([
 
                     var id = $(e.target).parents("td").closest('tr').attr('data-id');
 
-                    var data ={_id: id, workflow._id: $(e.target).attr("id"), workflow.name: $(e.target).text()};
+                    var data ={_id: id, workflowId: $(e.target).attr("id"), workflowName: $(e.target).text()};
 
                     dataService.postData("/jobs/update", data,  function(err, result){
                         if (err){
-                            alert("Update Job error")
+                          return console.log(err);
                         }
 
-                        alert('success');
                     });
                 }
 

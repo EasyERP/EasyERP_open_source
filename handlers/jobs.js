@@ -37,7 +37,7 @@ this.getData = function (req, res, next) {
         var data = req.body;
         var id = data._id;
 
-        var query = {workflow: {_id: data.workflow._id, name: data.workflow.name}}
+        var query = {workflow: {_id: data.workflowId, name: data.workflowName}};
 
         delete data._id;
 
