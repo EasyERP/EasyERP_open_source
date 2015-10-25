@@ -270,6 +270,7 @@ var requestHandler = function (app, event, mainDb) {
             var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
             var Employee = models.get(req.session.lastDb, 'Employees', employeeSchema);
             var wTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+            var Job = models.get(req.session.lastDb, 'jobs', jobsSchema);
             var paralellTasks;
 
             var query = Project.find({_id: pId}, {_id: 1, bonus: 1}).lean();
@@ -507,9 +508,24 @@ var requestHandler = function (app, event, mainDb) {
 
                 console.log('success');
 
-                if (jobId){
-                    event.emit('updateJobBudget', {req: options.req, jobId: jobId});
-                }
+                    wTrack.aggregate([
+                        {
+                            $group: {
+                                _id: "$jobs._id",
+                                ids: {$addToSet: '$_id'}
+                            }
+                        }
+                    ], function(err, result) {
+                        if (err) {
+                            return console.log(err);
+                        }
+                        result.forEach(function(el){
+                            Job.findByIdAndUpdate(el._id, {$set: {wTRacks: el.ids}}, function(err){
+
+                                event.emit('updateJobBudget', {req: options.req, jobId: jobId});
+                            })
+                        });
+                    });
 
             });
 
@@ -528,11 +544,6 @@ var requestHandler = function (app, event, mainDb) {
         var count = 0;
 
         wTrack.aggregate([
-            {
-                $match: {
-                    "jobs._id": jobId
-                }
-            },
             {
                 $group: {
                     _id: "$jobs._id",
@@ -581,6 +592,8 @@ var requestHandler = function (app, event, mainDb) {
                     wTRack.forEach(function (wTrack) {
                         var key;
                         var employee = wTrack.employee;
+
+                        pId = wTrack.project ? wTrack.project._id : null;
 
                         if (!( employee._id in employees)) {
                             employees[employee._id] = employee.name;
@@ -707,12 +720,46 @@ var requestHandler = function (app, event, mainDb) {
                                 }
 
                                 console.log(count++);
+
+                                Job.aggregate([
+                                    {
+                                        $match: {
+                                            "project": pId
+                                        }
+                                    },
+                                    {
+                                        $group: {
+                                            _id: "$project",
+                                            jobIds: {$addToSet: '$_id'}
+                                        }
+                                    }
+                                ], function(err, result){
+                                    if (err) {
+                                        return console.log(err);
+                                    }
+
+                                    result.forEach(function(res){
+
+                                        var projectId = res._id;
+                                        var jobIds = res.jobIds;
+
+                                        Project.findByIdAndUpdate(projectId, {$set : {"budget.projectTeam": jobIds}}, function(err, result){
+                                            if (err){
+                                                console.log(err);
+                                            }
+                                            console.log('ok');
+                                        });
+
+                                    })
+                                })
                             })
                         });
                     }
                 });
 
             });
+
+
         })
     });
 

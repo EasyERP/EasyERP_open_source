@@ -826,7 +826,7 @@ var wTrack = function (event, models) {
 
         var createJob = req.headers.createjob;
         var jobName = req.headers.jobname;
-        var project = req.headers.projct;
+        var project = req.headers.project;
 
         async.waterfall([createJobFunc, generateFunc], function(err, result){
 
