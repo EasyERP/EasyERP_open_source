@@ -14,6 +14,7 @@ define([
                 this.customerId = options.customerId;
                 this.pId = options.pId;
                 this.redirect = options.redirect;
+                this.collection = options.collection;
 
                 this.render();
             }

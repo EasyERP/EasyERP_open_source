@@ -444,6 +444,7 @@ var Quotation = function (models) {
             query.populate('invoiceControl');
             query.populate('paymentTerm');
             query.populate('products.product', '_id, name');
+            query.populate('products.jobs', '_id, name');
             //query.populate('workflow', '-sequence');
             //query.populate('project', 'projectName projectmanager customer');
 
@@ -546,6 +547,7 @@ var Quotation = function (models) {
             query.populate('invoiceControl');
             query.populate('paymentTerm');
             query.populate('products.product', '_id, name');
+            query.populate('products.jobs', '_id, name');
             query.populate('groups.users');
             query.populate('groups.group');
             query.populate('groups.owner', '_id login');

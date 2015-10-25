@@ -174,6 +174,8 @@ define([
 
                                     self.ordersCollection.bind('reset', createView);
 
+                                    self.collection.remove(self.currentModel.get('_id'));
+
                                 } else {
                                     Backbone.history.navigate(redirectUrl, {trigger: true});
                                 }

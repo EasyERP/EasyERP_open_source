@@ -68,16 +68,21 @@ define([
             var id = $(e.target).closest("tr").attr("data-id");
             var model = new currentModel({validate: false});
             var modelQuot = this.collection.get(id);
+            self.collection.bind('remove', renderProformRevenue);
+
+            function renderProformRevenue(){
+                self.renderProformRevenue(modelQuot);
+                self.render();
+            }
 
             model.urlRoot = '/quotation/form/' + id;
             model.fetch({
                 success: function (model) {
-                    new editView({model: model, redirect: true, pId: self.projectID, customerId: self.customerId});
+                    new editView({model: model, redirect: true, pId: self.projectID, customerId: self.customerId, collection: self.collection});
 
 
-                    self.collection.remove(id);
-                    self.renderProformRevenue(modelQuot);
-                    self.render();
+                    //self.collection.remove(id);
+
                 },
                 error  : function () {
                     alert('Please refresh browser');

@@ -112,7 +112,7 @@ define([
                             taxes = targetEl.find('.taxes').text();
                             description = targetEl.find('[data-name="productDescr"]').text();
                             subTotal = targetEl.find('.subtotal').text();
-                            jobs = targetEl.find('#jobs').text();
+                            jobs = targetEl.find('#jobs').attr('data-id');
 
                             products.push({
                                 product      : productId,
