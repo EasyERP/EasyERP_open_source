@@ -35,7 +35,7 @@ dbObject.once('open', function callback() {
             return next(err);
         }
 
-        async.eachLimit(result, 500, function (job) {
+        async.each(result, function (job) {
             var jobID = job._id;
 
             paralellTasks = [getwTrackAndMonthHours];

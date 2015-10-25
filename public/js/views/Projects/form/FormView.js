@@ -47,7 +47,7 @@ define([
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
                 "click .current-selected:not(.disabled)"                          : "showNewSelect",
                 "click #createItem"                                               : "createDialog",
-                "click #createJOb"                                               : "createJob",
+                "click #createJob"                                               : "createJob",
                 "change input:not(.checkbox)": "showSaveButton",
                 "click #jobsItem"            : "renderJobWTracks"
             },
@@ -96,7 +96,7 @@ define([
                 var jobs = {};
 
                 jobs._id = $(e.target).attr('data-id');
-                jobs.name = $(e.target).attr('data-name');
+                jobs.name = $(e.target).attr('data-value');
 
                 new GenerateWTrack({
                     model           : this.formModel,
