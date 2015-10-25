@@ -248,6 +248,7 @@ define([
             var trEl = target.parents("tr");
             var parrents = trEl.find('td');
             var _id;
+            var model;
 
             var product = $('.productsDd');
 
@@ -258,11 +259,22 @@ define([
                 var currentJob = _.find(self.responseObj['#jobs'], function(job){
                     return job._id === jobId
                 })
+
+                parrent.find("#jobs").text(target.text()).attr("data-id", jobId);
+
+                model = this.products.get(_id);
+
             } else {
                 _id = target.attr("id");
+
+                model = this.products.get(_id);
+
+                trEl.attr('data-id', model.id);
+
+                parrent.find(".current-selected").text(target.text()).attr("data-id", _id);
             }
 
-            var model = this.products.get(_id);
+
             var selectedProduct = model.toJSON();
 
             if(currentJob){
@@ -277,10 +289,10 @@ define([
             var subtotal;
 
 
-            trEl.attr('data-id', model.id);
+
             //trEl.find('.datepicker').removeClass('notVisible');
 
-            parrent.find(".current-selected").text(target.text()).attr("data-id", _id);
+
 
             //$(parrents[1]).attr('class', 'editable').find('span').text(selectedProduct.info.description || '');
             $(parrents[2]).find('.datepicker').datepicker({
