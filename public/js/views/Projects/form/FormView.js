@@ -49,7 +49,68 @@ define([
                 "click #createItem"                                               : "createDialog",
                 "click #createJob"                                               : "createJob",
                 "change input:not(.checkbox)": "showSaveButton",
-                "click #jobsItem"            : "renderJobWTracks"
+                "click #jobsItem td:not(.editable, .selects)"            : "renderJobWTracks",
+                "click td.editable"                                                              : "editRow",
+                "click #saveName": "saveNewJobName"
+
+            },
+
+            editRow: function (e, prev, next) {
+                var el = $(e.target);
+                var tr = $(e.target).closest('tr');
+                var tempContainer;
+                var width;
+                var editedElement;
+                var editedCol;
+                var editedElementValue;
+                var insertedInput;
+
+                if (el.prop('tagName') !== 'INPUT') {
+                    editedElement = $("#projectTeam").find('.editing');
+
+                    if (editedElement.length) {
+                        editedCol = editedElement.closest('td');
+                        editedElementValue = editedElement.val();
+
+                        editedCol.text(editedElementValue);
+                        editedElement.remove();
+                    }
+                }
+
+                tempContainer = el.text();
+                width = el.width() - 6;
+                el.html('<input class="editing" type="text" value="' + tempContainer + '" style="width:' + width + 'px">' + "<a href='javascript;' class='icon save left' title='Save' id='saveName'>c</a>");
+
+                insertedInput = el.find('input');
+                insertedInput.focus();
+                insertedInput[0].setSelectionRange(0, insertedInput.val().length);
+
+                return false;
+            },
+
+            saveNewJobName: function(e){
+                var self = this;
+                var id = $(e.target).parents("td").closest('tr').attr('data-id');
+
+                var data ={_id: id, name: $(e.target).prev('input').val()};
+
+                dataService.postData("/jobs/update", data,  function(err, result){
+                    if (err){
+                        return console.log(err);
+                    }
+
+                    $('#saveName').hide();
+
+                    var filter = {
+                        'projectName': {
+                            key  : 'project._id',
+                            value: [self.id]
+                        }
+                    };
+
+                    self.wCollection.showMore({count: 50, page: 1, filter: filter});
+
+                });
             },
 
             renderJobWTracks: function(e){

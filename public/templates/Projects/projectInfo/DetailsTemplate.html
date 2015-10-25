@@ -55,8 +55,8 @@
         <tr data-id="<%=element._id%>" id="jobsItem">
 
             <td class="icon">+</td>
-            <td><%=element.name%></td>
-            <td><a data-id="<%=element.workflow._id%>" id="workflow" class="current-selected"><%=element.workflow.name%></a></td>
+            <td class="editable"><%=element.name%></td>
+            <td class="selects"><a data-id="<%=element.workflow._id%>" id="workflow" class="current-selected"><%=element.workflow.name%></a></td>
             <td><%=element.type%></td>
             <td><%=element.budget.projectTeam.length%></td>
             <td><%= budgetTotal ? currencySplitter(budgetTotal.hoursSum.toFixed()) : 0%></td>
