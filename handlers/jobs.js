@@ -33,17 +33,14 @@ this.getData = function (req, res, next) {
     };
 
     this.getForDD = function(req, res, next){
-        var pId = req.body.projectId;
+        var pId = req.query.projectId;
         var query = models.get(req.session.lastDb, 'jobs', JobsSchema );
 
-        query.select('_id name ');
-        query.where({'type': "Empty", 'project': objectId(pId)});
-        query.sort({'name': 1});
-        query.exec(function (err, jobs) {
+        query.find({type: "Empty", project: objectId(pId)}, {name: 1, _id: 1, "budget.budgetTotal.revenueSum": 1}, function (err, jobs) {
             if (err) {
               return  next(err);
             }
-                res.status(200).send({data: jobs});
+                res.status(200).send(jobs);
 
         });
     },

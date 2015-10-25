@@ -31,7 +31,15 @@ define([
         },
 
         showSelect: function(e, prev, next){
-          populate.showSelect(e, prev, next, this);
+            var self = this;
+
+            dataService.getData("/jobs/getForDD", {"projectId": $("#projectDd").attr("data-id")}, function (jobs) {
+
+                self.responseObj['#jobs'] = jobs;
+
+                populate.showSelect(e, prev, next, self);
+            });
+
         },
 
         initialize: function (options) {
@@ -88,13 +96,7 @@ define([
             this.responseObj[id] = this.responseObj[id].concat(_.map(products, function (item) {
                 return {_id: item._id, name: item.name, level: item.projectShortDesc || ""};
             }));
-            
-           if(self.projectId){
-              dataService.getData("/jobs/getForDD", {"projectId": self.projectId}, function (jobs) {
 
-              self.responseObj['#jobs'] = jobs;
-              });
-           }
 
             //$(id).text(this.responseObj[id][0].name).attr("data-id", this.responseObj[id][0]._id);
 
@@ -240,13 +242,34 @@ define([
         },
 
         chooseOption: function (e) {
+            var self = this;
             var target = $(e.target);
             var parrent = target.parents("td");
             var trEl = target.parents("tr");
             var parrents = trEl.find('td');
-            var _id = target.attr("id");
+            var _id;
+
+            var product = $('.productsDd');
+
+            if (parrent.hasClass('jobs')){
+                _id = product.attr("data-id");
+                var jobId = target.attr("id");
+
+                var currentJob = _.find(self.responseObj['#jobs'], function(job){
+                    return job._id === jobId
+                })
+            } else {
+                _id = target.attr("id");
+            }
+
             var model = this.products.get(_id);
             var selectedProduct = model.toJSON();
+
+            if(currentJob){
+                selectedProduct.info.salePrice = currentJob.budget.budgetTotal.revenueSum;
+
+                this.taxesRate = 0;
+            }
             var taxes;
             var datePicker;
             var spanDatePicker;
