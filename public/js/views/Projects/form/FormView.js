@@ -120,7 +120,7 @@ define([
                 var template = _.template(jobsWTracksTemplate);
                 var formModel = this.formModel.toJSON();
                 var jobsItems = formModel.budget.projectTeam;
-                var icon = $(jobContainer).find('.icon');
+                var icon = $(jobContainer).find('.icon.plus');
                 var subId = "subRow-row" + jobId;
                 var subRowCheck = $('#' + subId);
 

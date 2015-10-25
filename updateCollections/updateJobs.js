@@ -186,7 +186,7 @@ dbObject.once('open', function callback() {
                         });
 
                         budget = {
-                              projectTeam: response,
+                             projectTeam: response,
                              budget: sortBudget,
                              //projectValues: projectValues,
                              budgetTotal: budgetTotal
