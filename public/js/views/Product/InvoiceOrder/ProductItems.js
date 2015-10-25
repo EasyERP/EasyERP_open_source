@@ -9,8 +9,9 @@ define([
     'text!templates/Product/InvoiceOrder/TotalAmount.html',
     'collections/Product/products',
     'populate',
-    'helpers'
-], function (productItemTemplate, ProductInputContent, ProductItemsEditList, ItemsEditList, totalAmount, productCollection, populate, helpers) {
+    'helpers',
+    'dataService'
+], function (productItemTemplate, ProductInputContent, ProductItemsEditList, ItemsEditList, totalAmount, productCollection, populate, helpers, dataService) {
     var ProductItemTemplate = Backbone.View.extend({
         el: '#productItemsHolder',
 
@@ -20,12 +21,17 @@ define([
             "click .newSelectList li.miniStylePagination": "notHide",
             "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
             "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-            "click .current-selected": "showProductsSelect",
+            "click .current-selected.productsDd": "showProductsSelect",
+            "click #jobs": "showSelect",
             "mouseenter .editable:not(.quickEdit), .editable .no-long:not(.quickEdit)": "quickEdit",
             "mouseleave .editable": "removeEdit",
             "click #cancelSpan": "cancelClick",
             "click #saveSpan": "saveClick",
             "click #editSpan": "editClick"
+        },
+
+        showSelect: function(e, prev, next){
+          populate.showSelect(e, prev, next, this);
         },
 
         initialize: function (options) {
@@ -75,12 +81,20 @@ define([
 
         filterProductsForDD: function () {
             var id = '.productsDd';
+            var self = this;
             var products = this.products.toJSON();
 
             this.responseObj[id] = [];
             this.responseObj[id] = this.responseObj[id].concat(_.map(products, function (item) {
                 return {_id: item._id, name: item.name, level: item.projectShortDesc || ""};
             }));
+            
+           if(self.projectId){
+              dataService.getData("/jobs/getForDD", {"projectId": self.projectId}, function (jobs) {
+
+              self.responseObj['#jobs'] = jobs;
+              });
+           }
 
             //$(id).text(this.responseObj[id][0].name).attr("data-id", this.responseObj[id][0]._id);
 
@@ -245,7 +259,7 @@ define([
 
             parrent.find(".current-selected").text(target.text()).attr("data-id", _id);
 
-            $(parrents[1]).attr('class', 'editable').find('span').text(selectedProduct.info.description || '');
+            //$(parrents[1]).attr('class', 'editable').find('span').text(selectedProduct.info.description || '');
             $(parrents[2]).find('.datepicker').datepicker({
                 dateFormat: "d M, yy",
                 changeMonth: true,

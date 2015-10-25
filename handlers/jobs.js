@@ -32,6 +32,22 @@ this.getData = function (req, res, next) {
 
     };
 
+    this.getForDD = function(req, res, next){
+        var pId = req.body.projectId;
+        var query = models.get(req.session.lastDb, 'jobs', JobsSchema );
+
+        query.select('_id name ');
+        query.where({'type': "Empty", 'project': objectId(pId)});
+        query.sort({'name': 1});
+        query.exec(function (err, jobs) {
+            if (err) {
+              return  next(err);
+            }
+                res.status(200).send({data: jobs});
+
+        });
+    },
+
     this.update = function(req, res, next){
         var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema );
         var wTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema );

@@ -9,6 +9,7 @@ module.exports = function (models) {
     var handler = new jobsHandler(models);
 
     router.get('/', handler.getData);
+    router.get('/getForDD', handler.getForDD);
     router.post('/update', handler.update);
 
     return router;
