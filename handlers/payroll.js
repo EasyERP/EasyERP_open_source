@@ -11,6 +11,61 @@ var PayRoll = function (models) {
     var objectId = mongoose.Types.ObjectId;
     var mid = 66;
 
+    function ConvertType(array, type) {
+        if (type === 'integer') {
+            for (var i = array.length - 1; i >= 0; i--) {
+                array[i] = parseInt(array[i]);
+            }
+        } else if (type === 'boolean') {
+            for (var i = array.length - 1; i >= 0; i--) {
+                if (array[i] === 'true') {
+                    array[i] = true;
+                } else if (array[i] === 'false') {
+                    array[i] = false;
+                } else {
+                    array[i] = null;
+                }
+            }
+        }
+    };
+
+    function caseFilter(filter) {
+        var condition;
+        var resArray = [];
+        var filtrElement = {};
+        var key;
+
+        for (var filterName in filter) {
+            condition = filter[filterName]['value'];
+            key = filter[filterName]['key'];
+
+            switch (filterName) {
+                case 'employee':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'year':
+                    ConvertType(condition, 'integer');
+                    filtrElement[key] = {$in: condition};
+                    resArray.push(filtrElement);
+                    break;
+                case 'month':
+                    ConvertType(condition, 'integer');
+                    filtrElement[key] = {$in: condition};
+                    resArray.push(filtrElement);
+                    break;
+                case 'dataKey':
+                    ConvertType(condition, 'integer');
+                    filtrElement[key] = {$in: condition};
+                    resArray.push(filtrElement);
+                    break;
+            }
+        }
+        ;
+
+        return resArray;
+    };
+
     this.create = function (req, res, next) {
         var PayRoll = models.get(req.session.lastDb, 'PayRoll', PayRollSchema);
         var body = req.body;
@@ -25,7 +80,7 @@ var PayRoll = function (models) {
                     return next(error);
                 }
 
-                data.createdBy = {
+                body.createdBy = {
                     user: req.session.uId,
                     date: new Date().toISOString()
                 };
@@ -195,29 +250,108 @@ var PayRoll = function (models) {
 
                 var PayRoll = models.get(req.session.lastDb, 'PayRoll', PayRollSchema);
                 var query = req.query;
+                var filter = query.filter;
                 var queryObject = {};
+                var dataKeyQuery = PayRoll.findOne({$query: {}, $orderby: {dataKey: -1}});
+                var waterfallTasks = [checkFilter, getResult, calcTotal];
 
-                if (query) {
-                    if (query.employee) {
-                        queryObject['employee._id'] = objectId(query.employee);
+                function checkFilter(callback) {
+                    if (filter && filter.dataKey) {
+                        return callback(null, filter);
                     }
-                    if (query.year) {
-                        queryObject.year = query.year;
-                    }
-                    if (query.month) {
-                        queryObject.month = query.month;
-                    }
+
+                    dataKeyQuery.exec(function (err, model) {
+                        if (err) {
+                            return callback(err);
+                        }
+
+                        filter = {};
+
+                        filter.dataKey = {
+                            key  : 'dataKey',
+                            value: [model.toJSON().dataKey]
+                        }
+
+                        return callback(null, filter);
+                    })
                 }
 
-                query = PayRoll.find(queryObject);
+                function getResult(filter, callback) {
+                    if (filter && typeof filter === 'object') {
+                        if (filter.condition && filter.condition === 'or') {
+                            queryObject['$or'] = caseFilter(filter);
+                        } else {
+                            queryObject['$and'] = caseFilter(filter);
+                        }
+                    }
 
-                query.exec(function (err, result) {
+                    query = PayRoll.find(queryObject);
+
+                    query.exec(function (err, result) {
+                        if (err) {
+                            return callback(err);
+                        }
+
+                        callback(null, result);
+                    });
+                };
+
+                function calcTotal(result, callback) {
+
+                    function sum(numbers) {
+                        return _.reduce(numbers, function (result, current) {
+                            return result + parseFloat(current ? current : 0);
+                        }, 0);
+                    }
+
+                    var total = _.chain(result)
+                        .groupBy(function (model) {
+                            return model.get('dataKey');
+                        })
+                        .map(function (value, key) {
+                            return {
+                                calc: {
+                                    onCash: sum(_.pluck(value, "calc.onCash")),
+                                    onCard: sum(_.pluck(value, "calc.onCard")),
+                                    salary: sum(_.pluck(value, "baseSalary")),
+                                },
+                                paid: {
+                                    onCash: sum(_.pluck(value, "paid.onCash")),
+                                    onCard: sum(_.pluck(value, "paid.onCard")),
+                                },
+                                diff: {
+                                    onCash: sum(_.pluck(value, "diff.onCash")),
+                                    onCard: sum(_.pluck(value, "diff.onCard")),
+                                    total : sum(_.pluck(value, "diff.total")),
+                                }
+                            }
+                        })
+                        .value()[0];
+
+                    callback(null, {total: total, collection: result});
+                }
+
+                async.waterfall(waterfallTasks, function (err, result) {
                     if (err) {
                         return next(err);
                     }
 
                     res.status(200).send(result);
                 });
+
+
+                /*if (query) {
+                 if (query.employee) {
+                 queryObject['employee._id'] = objectId(query.employee);
+                 }
+                 if (query.year) {
+                 queryObject.year = query.year;
+                 }
+                 if (query.month) {
+                 queryObject.month = query.month;
+                 }
+                 }*/
+
             });
 
         } else {

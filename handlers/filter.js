@@ -9,6 +9,7 @@ var Filters = function (models) {
     var customerPaymentsSchema = mongoose.Schemas['Payment'];
     var QuotationSchema = mongoose.Schemas['Quotation'];
     var productSchema = mongoose.Schemas['Products'];
+    var PayRollSchema = mongoose.Schemas['PayRoll'];
     var _ = require('../node_modules/underscore');
     var async = require('async');
 
@@ -24,6 +25,7 @@ var Filters = function (models) {
         var customerPayments = models.get(lastDB, 'Payment', customerPaymentsSchema);
         var Product = models.get(lastDB, 'Products', productSchema);
         var Quotation = models.get(lastDB, 'Quotation', QuotationSchema);
+        var PayRoll = models.get(lastDB, 'PayRoll', PayRollSchema);
 
         async.parallel({
                 wTrack          : getWtrackFiltersValues,
@@ -39,9 +41,10 @@ var Filters = function (models) {
                 Product         : getProductsFiltersValues,
                 salesProduct    : getProductsFiltersValues,
                 Quotation       : getQuotationFiltersValues,
-                salesQuotation       : getSalesQuotation,
+                salesQuotation  : getSalesQuotation,
                 salesOrder      : getSalesOrders,
-                Order      : getOrdersFiltersValues
+                Order           : getOrdersFiltersValues,
+                Payroll         : getPayRollFiltersValues,
             },
             function (err, result) {
                 if (err) {
@@ -610,25 +613,24 @@ var Filters = function (models) {
             });
         };
 
-
         function getQuotationFiltersValues(callback) {
             Quotation.aggregate([
                 {
                     $match: {
                         forSales: false,
-                        isOrder: false
+                        isOrder : false
                     }
                 },
                 {
                     $group: {
-                        _id           : null,
+                        _id       : null,
                         'supplier': {
                             $addToSet: {
                                 _id : '$supplier._id',
                                 name: '$supplier.name'
                             }
                         },
-                        'workflow'  : {
+                        'workflow': {
                             $addToSet: {
                                 _id : '$workflow._id',
                                 name: '$workflow.name'
@@ -653,36 +655,36 @@ var Filters = function (models) {
             });
         };
 
-        function getSalesQuotation(callback){
+        function getSalesQuotation(callback) {
             Quotation.aggregate([
                 {
                     $match: {
                         forSales: true,
-                        isOrder: false
+                        isOrder : false
                     }
                 },
                 {
                     $group: {
-                        _id         : null,
-                        'projectName'  : {
+                        _id             : null,
+                        'projectName'   : {
                             $addToSet: {
                                 _id : '$project._id',
                                 name: '$project.projectName'
                             }
                         },
-                        'supplier': {
+                        'supplier'      : {
                             $addToSet: {
                                 _id : '$supplier._id',
                                 name: '$supplier.name'
                             }
                         },
-                        'projectmanager'      : {
+                        'projectmanager': {
                             $addToSet: {
                                 _id : '$project.projectmanager._id',
                                 name: '$project.projectmanager.name'
                             }
                         },
-                        'workflow'  : {
+                        'workflow'      : {
                             $addToSet: {
                                 _id : '$workflow._id',
                                 name: '$workflow.name'
@@ -695,7 +697,7 @@ var Filters = function (models) {
                     callback(err);
                 }
 
-                if (result && result.length){
+                if (result && result.length) {
                     result = result[0];
                     callback(null, result);
                 } else {
@@ -705,36 +707,36 @@ var Filters = function (models) {
             });
         }
 
-        function getSalesOrders(callback){
+        function getSalesOrders(callback) {
             Quotation.aggregate([
                 {
                     $match: {
                         forSales: true,
-                        isOrder: true
+                        isOrder : true
                     }
                 },
                 {
                     $group: {
-                        _id         : null,
-                        'projectName'  : {
+                        _id             : null,
+                        'projectName'   : {
                             $addToSet: {
                                 _id : '$project._id',
                                 name: '$project.projectName'
                             }
                         },
-                        'supplier': {
+                        'supplier'      : {
                             $addToSet: {
                                 _id : '$supplier._id',
                                 name: '$supplier.name'
                             }
                         },
-                        'projectmanager'      : {
+                        'projectmanager': {
                             $addToSet: {
                                 _id : '$project.projectmanager._id',
                                 name: '$project.projectmanager.name'
                             }
                         },
-                        'workflow'  : {
+                        'workflow'      : {
                             $addToSet: {
                                 _id : '$workflow._id',
                                 name: '$workflow.name'
@@ -747,7 +749,7 @@ var Filters = function (models) {
                     callback(err);
                 }
 
-                if (result && result.length){
+                if (result && result.length) {
                     result = result[0];
                     callback(null, result);
                 } else {
@@ -757,36 +759,36 @@ var Filters = function (models) {
             });
         }
 
-        function getOrdersFiltersValues(callback){
+        function getOrdersFiltersValues(callback) {
             Quotation.aggregate([
                 {
                     $match: {
                         forSales: false,
-                        isOrder: true
+                        isOrder : true
                     }
                 },
                 {
                     $group: {
-                        _id         : null,
-                        'projectName'  : {
+                        _id             : null,
+                        'projectName'   : {
                             $addToSet: {
                                 _id : '$project._id',
                                 name: '$project.projectName'
                             }
                         },
-                        'supplier': {
+                        'supplier'      : {
                             $addToSet: {
                                 _id : '$supplier._id',
                                 name: '$supplier.name'
                             }
                         },
-                        'projectmanager'      : {
+                        'projectmanager': {
                             $addToSet: {
                                 _id : '$project.projectmanager._id',
                                 name: '$project.projectmanager.name'
                             }
                         },
-                        'workflow'  : {
+                        'workflow'      : {
                             $addToSet: {
                                 _id : '$workflow._id',
                                 name: '$workflow.name'
@@ -799,7 +801,7 @@ var Filters = function (models) {
                     callback(err);
                 }
 
-                if (result && result.length){
+                if (result && result.length) {
                     result = result[0];
                     callback(null, result);
                 } else {
@@ -809,8 +811,63 @@ var Filters = function (models) {
             });
         }
 
-    };
+        function getPayRollFiltersValues(callback) {
+            PayRoll.aggregate([
+                {
+                    $group: {
+                        _id       : null,
+                        'year'    : {
+                            $addToSet: {
+                                _id : '$year',
+                                name: '$year'
+                            }
+                        },
+                        'month'   : {
+                            $addToSet: {
+                                _id : '$month',
+                                name: '$month'
+                            }
+                        },
+                        'employee': {
+                            $addToSet: '$employee'
+                        },
+                        'dataKey' : {
+                            $addToSet: {
+                                _id : '$dataKey',
+                                name: '$dataKey'
+                            }
+                        },
+                    }
+                }
+            ], function (err, result) {
+                if (err) {
+                    callback(err);
+                }
 
+                if (!result || result.length === 0) {
+                    return callback(null, []);
+                }
+
+                result = result[0];
+
+                if (!result.dataKey) {
+                    return callback(null, result);
+                }
+
+                result.dataKey = _.map(result.dataKey, function (element) {
+                    element.name = element.name.toString();
+
+                    return {
+                        _id : element._id,
+                        name: element.name.substring(4, 6) + '/' + element.name.substring(0, 4)
+                    }
+                })
+
+                callback(null, result);
+
+            });
+        }
+    };
 };
 
 module.exports = Filters;

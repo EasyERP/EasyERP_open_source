@@ -13,13 +13,24 @@ define([
 
             showMore: function (options) {
                 var that = this;
-                var filterObject = options || {};
+                var filterObject = {};
+                var month = options.month;
+                var year = options.year;
+                var dataKey;
+
+                if (month && year) {
+                    dataKey = year * 100 + month;
+
+                    filterObject.filter = {
+                        'dataKey': {
+                            key: 'dataKey',
+                            value: [dataKey]
+                        }
+                    };
+                }
 
                 //filterObject['page'] = (options && options.page) ? options.page : this.page;
                 //filterObject['count'] = (options && options.count) ? options.count : this.namberToShow;
-
-                filterObject['month'] = (options && options.month) ? options.month.toString() : this.month.toString();
-                filterObject['year'] = (options && options.year) ? options.year : this.year;
 
                 this.fetch({
                     data   : filterObject,

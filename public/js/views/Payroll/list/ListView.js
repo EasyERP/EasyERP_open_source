@@ -1,11 +1,13 @@
 define([
+        'views/listViewBase',
+        'views/Filter/FilterView',
         'text!templates/Payroll/list/ListHeader.html',
         'text!templates/Payroll/list/ListTemplate.html',
-        'text!templates/Payroll/subSalary/list/cancelEdit.html',
-        'views/Payroll/subSalary/CreateView',
-        'views/Payroll/subSalary/list/ListItemView',
+        'text!templates/Payroll/list/cancelEdit.html',
+        'views/Payroll/CreateView',
         'text!templates/Payroll/list/ListTotal.html',
         'collections/Payroll/editCollection',
+        'collections/Payroll/oneMonthCollection',
         'collections/Employees/employee',
         'models/PayRollModel',
         'populate',
@@ -15,177 +17,117 @@ define([
         'helpers'
     ],
 
-    function (headerTemplate, rowTemplate, cancelEditTemplate, createView, listItemView, totalTemplate, editCollection, employeesCollection, currentModel, populate, dataService, async, moment, helpers) {
-        var payRollListView = Backbone.View.extend({
+    function (listViewBase, filterView, headerTemplate, rowTemplate, cancelEditTemplate, createView, totalTemplate, editCollection, monthCollection, employeesCollection, currentModel, populate, dataService, async, moment, helpers) {
+        var payRollListView = listViewBase.extend({
             el            : '#content-holder',
+            contentType   : 'Payroll',
             viewType      : 'list',//needs in view.prototype.changeLocationHash
             responseObj   : {},
             whatToSet     : {},
             headerTemplate: _.template(headerTemplate),
             totalTemplate : _.template(totalTemplate),
             rowTemplate   : _.template(rowTemplate),
+            cancelTemplate: _.template(cancelEditTemplate),
+            changedModels : {},
 
             events: {
-                "click td:not(.editable, .notForm)"                               : "tdDisable",
-                "click .checkbox"                                                 : "checked",
-                "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                "click td.editable"                                               : "editRow",
-                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
-                "change .autoCalc"                                                : "autoCalc",
-                "change .editable"                                                : "setEditable",
-                "click .oe_sortable_sub"                                          : "goSort",
-                "keydown input.editing "                                          : "keyDown"
+                "click .checkbox"        : "checked",
+                "click td.editable"      : "editRow",
+                "click .newSelectList li": "chooseOption",
+                "change .autoCalc"       : "autoCalc",
+                "change .editable"       : "setEditable",
+                /*"click .oe_sortable_sub"                           : "goSort",*/
+                "keydown input.editing " : "keyDown"
             },
 
             initialize: function (options) {
-                this.collection = options.collection;
-                /*this.id = this.model.id ? this.model.id : this.model.cid;
+                var collectionsObjects = options.collection.toJSON()[0];
 
-                 this.bodyContainerId = '#subSalary-listTable' + this.id;
-
-                 this.deleteButton = '#top-bar-createBtn' + this.id;
-                 this.events['click ' + this.deleteButton] = 'createItem';
-                 this.delegateEvents();
-
-                 this.deleteButton = '#top-bar-deleteBtn' + this.id;
-                 this.events['click ' + this.deleteButton] = 'deleteItems';
-                 this.delegateEvents();
-
-                 this.deleteButton = '#top-bar-saveBtn' + this.id;
-                 this.events['click ' + this.deleteButton] = 'saveItem';
-                 this.delegateEvents();
-
-                 this.employeesArary = this.model.toJSON().employeesArray;
-
-                 this.employeesStartCollection = new salaryEditableCollection(this.employeesArary);*/
+                this.collection = new monthCollection(collectionsObjects.collection);
+                this.total = collectionsObjects.total;
+                this.startTime = options.startTime;
 
                 this.render();
-                this.contentCollection = editCollection;
+
+                this.bodyContainer = this.$el.find('#payRoll-listTable');
             },
 
             keyDown: function (e) {
                 if (e.which === 13) {
-                    var editedElement = this.bodyContainer.find('.editing');
-                    var editedCol;
-                    var editedElementValue;
-                    var editEmployeeModel;
-                    var editedElementRowId = editedElement.closest('tr').data('id');
-                    var editedElementContent;
-                    var calc;
-                    var paid;
-
-                    if (editedElement.length) {
-                        editedCol = editedElement.closest('td');
-                        editedElementContent = editedCol.data('content');
-                        editedElementValue = editedElement.val();
-
-                        editEmployeeModel = this.editCollection.get(editedElementRowId);
-                        calc = _.clone(editEmployeeModel.get('calc'));
-                        paid = _.clone(editEmployeeModel.get('paid'));
-
-                        if (editedCol.hasClass('calc')) {
-                            if (editedCol.data('content') === 'salary') {
-                                this.whatToSet['baseSalary'] = editedElementValue;
-                            }
-                            calc[editedElementContent] = editedElementValue;
-                            this.whatToSet['calc'] = calc;
-
-                        } else if (editedCol.hasClass('paid')) {
-                            paid[editedElementContent] = editedElementValue;
-                            this.whatToSet['paid'] = paid;
-                        } else {
-                            this.whatToSet[editedElementContent] = editedElementValue;
-                        }
-
-                        editEmployeeModel.set(this.whatToSet);
-
-                        editedCol.text(editedElementValue);
-                        editedElement.remove();
-                    }
+                    this.setChangedValueToModel();
                 }
             },
 
-            goSort: function (e) {
-                e.preventDefault();
-                var target$ = $(e.target);
-                var currentParrentSortClass = target$.attr('class');
-                var sortClass = currentParrentSortClass.split(' ')[1];
-                var sortField = target$.attr('data-sort');
-                var sortConst = 1;
+            /*goSort: function (e) {
+             e.preventDefault();
+             var target$ = $(e.target);
+             var currentParrentSortClass = target$.attr('class');
+             var sortClass = currentParrentSortClass.split(' ')[1];
+             var sortField = target$.attr('data-sort');
+             var sortConst = 1;
 
-                if (!sortClass) {
-                    target$.addClass('sortDn');
-                    sortClass = "sortDn";
-                }
-                switch (sortClass) {
-                    case "sortDn":
-                    {
-                        target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
-                        target$.removeClass('sortDn').addClass('sortUp');
-                        sortConst = 1;
-                    }
-                        break;
-                    case "sortUp":
-                    {
-                        target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
-                        target$.removeClass('sortUp').addClass('sortDn');
-                        sortConst = -1;
-                    }
-                        break;
-                }
+             if (!sortClass) {
+             target$.addClass('sortDn');
+             sortClass = "sortDn";
+             }
+             switch (sortClass) {
+             case "sortDn":
+             {
+             target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
+             target$.removeClass('sortDn').addClass('sortUp');
+             sortConst = 1;
+             }
+             break;
+             case "sortUp":
+             {
+             target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
+             target$.removeClass('sortUp').addClass('sortDn');
+             sortConst = -1;
+             }
+             break;
+             }
 
-                this.sortByOrder({orderField: sortField, order: sortConst});
+             this.sortByOrder({orderField: sortField, order: sortConst});
 
-                this.renderTable();
-            },
+             this.renderTable();
+             },*/
 
-            sortByOrder: function (options) {
-                var collection;
-                var order = options.order || 1;
-                var orderField = options.orderField || 'employee.name';
+            /*sortByOrder: function (options) {
+             var collection;
+             var order = options.order || 1;
+             var orderField = options.orderField || 'employee.name';
 
-                collection = this.model.get('employeesArray');
-                collection = _.sortBy(collection, function (model) {
-                    var orderField1;
-                    var orderField2;
-                    var fullField = orderField.split(".");
+             collection = this.model.get('employeesArray');
+             collection = _.sortBy(collection, function (model) {
+             var orderField1;
+             var orderField2;
+             var fullField = orderField.split(".");
 
-                    orderField1 = fullField[0];
-                    orderField2 = fullField[1];
+             orderField1 = fullField[0];
+             orderField2 = fullField[1];
 
-                    if (orderField2) {
-                        return model[orderField1][orderField2];
-                    } else {
-                        return model[orderField1];
-                    }
-                });
+             if (orderField2) {
+             return model[orderField1][orderField2];
+             } else {
+             return model[orderField1];
+             }
+             });
 
-                if (order < 0) {
-                    collection.reverse();
-                }
+             if (order < 0) {
+             collection.reverse();
+             }
 
-                this.model.set('employeesArray', collection);
-            },
-
-            renderTable: function () {
-                var itemView;
-
-                this.$el.find(this.bodyContainerId).html('');
-                itemView = new listItemView({
-                    el   : this.bodyContainerId,
-                    model: this.model
-                });
-                $(this.bodyContainerId).append(itemView.render());
-            },
+             this.model.set('employeesArray', collection);
+             },*/
 
             autoCalc: function (e) {
                 var el = $(e.target);
                 var td = $(el.closest('td'));
                 var tr = el.closest('tr');
                 var input = tr.find('input.editing');
-                var salaryId = tr.data('id');
-                var editEmployeeModel = this.editCollection.get(salaryId);
+                var editedElementRowId = tr.attr('data-id');
+                var editModel = this.editCollection.get(editedElementRowId);
+                var changedAttr;
 
                 var diffOnCash = tr.find('.diff[data-content="onCash"]');
                 var diffOnCard = tr.find('.diff[data-content="onCard"]');
@@ -198,12 +140,24 @@ define([
                 var paid;
                 var calc;
                 var diffObj;
+                var parentKey;
 
                 var diffOnCardRealValue;
                 var diffOnCashRealValue;
 
                 var paidTD;
                 var calcTD;
+
+                var newValue;
+                var subValues = 0;
+
+                if (!this.changedModels[editedElementRowId]) {
+                    if (!editModel.id) {
+                        this.changedModels[editedElementRowId] = editModel.attributes;
+                    } else {
+                        this.changedModels[editedElementRowId] = {};
+                    }
+                }
 
                 if ($(td).hasClass('cash')) {
                     calcKey = 'onCash';
@@ -218,38 +172,66 @@ define([
                 }
 
                 if (tdForUpdate) {
-
                     paid = paidTD.attr('data-cash');
                     calc = calcTD.attr('data-cash');
 
-                    paid = paidTD.text() ? parseInt(paid) : input.val();
-                    calc = calcTD.text() ? parseInt(calc) : input.val();
+                    paid = paid ? parseInt(paid) : 0;
+                    calc = calc ? parseInt(calc) : 0;
+                    newValue = parseInt(input.val());
 
-                    value = paid - calc;
+                    if (paidTD.text()) {
+                        paid = paid;
+                    } else {
+                        subValues = newValue - paid;
+                        paid = newValue;
+                        parentKey = 'paid';
+                    }
 
-                    paidTD.attr('data-cash', paid);
-                    calcTD.attr('data-cash', calc);
+                    if (calcTD.text()) {
+                        calc = calc;
+                    } else {
+                        subValues = newValue - calc;
+                        calc = newValue;
+                        parentKey = 'calc';
+                    }
 
-                    tdForUpdate.text(this.checkMoneyTd(tdForUpdate, value));
+                    /*paid = paidTD.text() ? parseInt(paid) : input.val();
+                     calc = calcTD.text() ? parseInt(calc) : input.val();*/
 
-                    diffOnCashRealValue = diffOnCash.attr('data-value');
-                    diffOnCashRealValue = diffOnCashRealValue ? diffOnCashRealValue : diffOnCash.text();
+                    if (subValues !== 0) {
 
-                    diffOnCardRealValue = diffOnCard.attr('data-value');
-                    diffOnCardRealValue = diffOnCardRealValue ? diffOnCardRealValue : diffOnCard.text();
+                        value = paid - calc;
 
-                    totalValue = parseInt(diffOnCashRealValue) + parseInt(diffOnCardRealValue);
-                    diffTotal.text(this.checkMoneyTd(diffTotal, totalValue));
+                        paidTD.attr('data-cash', paid);
+                        calcTD.attr('data-cash', calc);
 
-                    diffObj = _.clone(editEmployeeModel.get('diff'));
-                    diffObj['total'] = totalValue;
-                    diffObj[calcKey] = value;
+                        tdForUpdate.text(this.checkMoneyTd(tdForUpdate, value));
 
-                    this.whatToSet['diff'] = diffObj;
+                        diffOnCashRealValue = diffOnCash.attr('data-value');
+                        diffOnCashRealValue = diffOnCashRealValue ? diffOnCashRealValue : diffOnCash.text();
+
+                        diffOnCardRealValue = diffOnCard.attr('data-value');
+                        diffOnCardRealValue = diffOnCardRealValue ? diffOnCardRealValue : diffOnCard.text();
+
+                        totalValue = parseInt(diffOnCashRealValue) + parseInt(diffOnCardRealValue);
+                        diffTotal.text(this.checkMoneyTd(diffTotal, totalValue));
+
+                        changedAttr = this.changedModels[editedElementRowId];
+
+                        if (changedAttr.diff) {
+                            diffObj = _.clone(changedAttr.diff);
+                        } else {
+                            diffObj = _.clone(editModel.get('diff'));
+                        }
+
+                        diffObj['total'] = totalValue;
+                        diffObj[calcKey] = value;
+
+                        changedAttr['diff'] = diffObj;
+
+                        this.getTotal(subValues, parentKey + '_' + calcKey);
+                    }
                 }
-
-
-                this.getTotal(td);
             },
 
             checkMoneyTd: function (td, value) {
@@ -272,103 +254,106 @@ define([
                 return value;
             },
 
-            getTotal: function (td) {
-                var self = this;
-                var className;
+            getTotal: function (diff, calcKey) {
+                var totalElement;
+                var prefVal;
 
-                if (td && td.hasClass('calc')) {
-                    className = 'calc';
-                } else if (td && td.hasClass('paid')) {
-                    className = 'paid';
-                }
-                ;
+                /*if (td && td.hasClass('calc')) {
+                 className = 'calc';
+                 } else if (td && td.hasClass('paid')) {
+                 className = 'paid';
+                 }
+                 ;
 
-                function setTotal(name, className) {
-                    var tdVal;
-                    var addVal = 0;
-                    var calcVal = 0;
-                    var input;
-                    var inputValue;
+                 function setTotal(name, className) {
+                 var tdVal;
+                 var addVal = 0;
+                 var calcVal = 0;
+                 var input;
+                 var inputValue;
 
-                    var diffNameVal = 0;
-                    var diffTotalVal = 0;
+                 var diffNameVal = 0;
+                 var diffTotalVal = 0;
 
-                    var diffOnCash;
-                    var diffOnCard;
+                 var diffOnCash;
+                 var diffOnCard;
 
-                    var diffByNameElement;
+                 var diffByNameElement;
 
-                    self.bodyContainer.find('.' + className + '[data-content="' + name + '"]').each(function () {
-                        input = $(this).find('input.editing');
-                        inputValue = input.val();
-                        tdVal = inputValue ? inputValue : $(this).attr('data-value');
-                        tdVal = tdVal ? tdVal : $(this).attr('data-cash');
+                 self.bodyContainer.find('.' + className + '[data-content="' + name + '"]').each(function () {
+                 input = $(this).find('input.editing');
+                 inputValue = input.val();
+                 tdVal = inputValue ? inputValue : $(this).attr('data-value');
+                 tdVal = tdVal ? tdVal : $(this).attr('data-cash');
 
-                        if (tdVal.length === 0) {
-                            tdVal = '0';
-                        }
+                 if (tdVal.length === 0) {
+                 tdVal = '0';
+                 }
 
-                        addVal = tdVal ? parseInt(tdVal) : parseInt(input.val());
-                        calcVal += addVal;
-                    });
+                 addVal = tdVal ? parseInt(tdVal) : parseInt(input.val());
+                 calcVal += addVal;
+                 });
 
-                    $('#subSalary-listTotal' + self.id).find('.total_' + className + '_' + name).text(calcVal);
-                    $('#subSalary-listTotal' + self.id).find('.total_' + className + '_' + name).attr('data-cash', calcVal);
-                    $('tr[data-id="' + self.id + '"]').find('.total_' + className + '_' + name).text(calcVal);
+                 $('#subSalary-listTotal' + self.id).find('.total_' + className + '_' + name).text(calcVal);
+                 $('#subSalary-listTotal' + self.id).find('.total_' + className + '_' + name).attr('data-cash', calcVal);
+                 $('tr[data-id="' + self.id + '"]').find('.total_' + className + '_' + name).text(calcVal);
 
-                    if (name === 'onCard' || name === 'onCash') {
-                        diffByNameElement = $('#subSalary-listTotal' + self.id).find('.total_diff_' + name);
+                 if (name === 'onCard' || name === 'onCash') {
+                 diffByNameElement = $('#subSalary-listTotal' + self.id).find('.total_diff_' + name);
 
-                        diffNameVal = parseFloat($('#subSalary-listTotal' + self.id).find('.total_calc_' + name).attr('data-cash')) - parseFloat($('#subSalary-listTotal' + self.id).find('.total_paid_' + name).attr('data-cash'));
+                 diffNameVal = parseFloat($('#subSalary-listTotal' + self.id).find('.total_calc_' + name).attr('data-cash')) - parseFloat($('#subSalary-listTotal' + self.id).find('.total_paid_' + name).attr('data-cash'));
 
-                        diffByNameElement.text(self.checkMoneyTd(diffByNameElement, diffNameVal));
-                        $('tr[data-id="' + self.id + '"]').find('.total_diff_' + name).text(diffNameVal);
+                 diffByNameElement.text(self.checkMoneyTd(diffByNameElement, diffNameVal));
+                 $('tr[data-id="' + self.id + '"]').find('.total_diff_' + name).text(diffNameVal);
 
-                        diffOnCash = parseFloat($('#subSalary-listTotal' + self.id).find('.total_diff_onCash').text());
-                        diffOnCard = parseFloat($('#subSalary-listTotal' + self.id).find('.total_diff_onCard').text());
+                 diffOnCash = parseFloat($('#subSalary-listTotal' + self.id).find('.total_diff_onCash').text());
+                 diffOnCard = parseFloat($('#subSalary-listTotal' + self.id).find('.total_diff_onCard').text());
 
-                        diffTotalVal = parseInt(diffOnCash) + parseInt(diffOnCard);
-                        $('#subSalary-listTotal' + self.id).find('.total_diff').text(diffTotalVal);
-                    }
-                };
+                 diffTotalVal = parseInt(diffOnCash) + parseInt(diffOnCard);
+                 $('#subSalary-listTotal' + self.id).find('.total_diff').text(diffTotalVal);
+                 }
+                 };*/
 
-                if (td) {
-                    setTotal(td.attr('data-content'), className);
-                } else {
-                    setTotal('onCash', 'calc');
-                    setTotal('onCash', 'paid');
+                totalElement = this.$el.find('.total_' + calcKey);
 
-                    setTotal('onCard', 'calc');
-                    setTotal('onCard', 'paid');
+                prefVal = parseInt(totalElement.attr('data-cash'));
 
-                    setTotal('salary', 'calc');
-                }
+                totalElement.text(prefVal + diff);
+                totalElement.attr('data-cash', prefVal + diff);
+
+                /*if (td) {
+                 setTotal(td.attr('data-content'), className);
+                 } else {
+                 setTotal('onCash', 'calc');
+                 setTotal('onCash', 'paid');
+
+                 setTotal('onCard', 'calc');
+                 setTotal('onCard', 'paid');
+
+                 setTotal('salary', 'calc');
+                 }*/
             },
 
-            saveItem: function (e) {
-                e.preventDefault();
+            saveItem: function () {
+                var model;
 
-                this.editCollection.save();
                 this.editCollection.on('saved', this.savedNewModel, this);
                 this.editCollection.on('updated', this.updatedOptions, this);
 
-                dataService.getData('/payroll/recalculateSalaryCash', {}, function (response, context) {
-                    context.listLength = response.count || 0;
-                }, this);
+                for (var id in this.changedModels) {
+                    model = this.editCollection.get(id);
+                    model.changed = this.changedModels[id];
+                }
+                this.editCollection.save();
             },
 
-            createItem: function (e) {
-                e.preventDefault();
-
-                var month = this.model.get('month');
-                var year = this.model.get('year');
-
-                var momentYear = moment().year(year).format('YY');
-                var momentMonth = moment().month(month - 1).format('MMM');
-
+            createItem: function () {
+                var month = this.collection.first().get('month');
+                var year = this.collection.first().get('year');
+                var dataKey = parseInt(year) * 100 + parseInt(month);
 
                 var startData = {
-                    dataKey   : momentMonth + "/" + momentYear,
+                    dataKey   : dataKey,
                     baseSalary: 0,
                     month     : month,
                     year      : year,
@@ -394,14 +379,14 @@ define([
 
                 var model = new currentModel(startData);
 
-
                 startData.cid = model.cid;
 
                 if (!this.isNewRow()) {
                     this.showSaveCancelBtns();
                     this.editCollection.add(model);
+                    this.changed = true;
 
-                    new createView({model: startData, el: "#subSalary-listTable" + this.id});
+                    new createView({model: startData});
                 }
             },
 
@@ -429,27 +414,36 @@ define([
                 this.resetCollection(modelObject);
             },
 
-            resetCollection                : function (model) {
+            resetCollection: function (model) {
                 if (model && model._id) {
                     model = new currentModel(model);
+
                     this.editCollection.add(model);
                 } else {
-                    this.model.set({"employeesArray": this.editCollection.toJSON()}, {remove: false});
+                    for (var id in this.changedModels) {
+                        model = this.editCollection.get(id);
+                        model.set(this.changedModels[id]);
+                    }
+
+                    this.collection.set(this.editCollection.models, {remove: false});
                 }
 
                 this.bindingEventsToEditedCollection(this);
             },
-            bindingEventsToEditedCollection: function (context) {
-                if (context.editCollection) {
+
+            bindingEventsToEditedCollection: function (context, collection) {
+                if (!context.editCollection) {
+                    context.editCollection = new editCollection(collection);
+                } else {
                     context.editCollection.unbind();
+                    context.editCollection.add(collection);
                 }
-                context.editCollection = new salaryEditableCollection(context.employeesStartCollection.toJSON());
+
                 context.editCollection.on('saved', context.savedNewModel, context);
                 context.editCollection.on('updated', context.updatedOptions, context);
             },
 
-
-            deleterender: function () {
+            deleteRender: function () {
                 this.resetCollection();
                 this.render();
                 this.bodyContainer = $(this.bodyContainerId);
@@ -460,52 +454,22 @@ define([
                 }, this);
             },
 
-            deleteItems: function (e) {
-                e.preventDefault();
-                var that = this,
-                    mid = 39,
-                    model;
-                var count = $(this.bodyContainerId + " input:checked").length;
-                this.collectionLength = this.editCollection.length;
+            deleteItems: function () {
+                var that = this;
+
+                this.collectionLength = this.collection.length;
 
                 if (!this.changed) {
                     var answer = confirm("Realy DELETE items ?!");
                     var value;
-                    var localCounter = 0;
+                    var tr;
 
                     if (answer === true) {
-                        $.each($(this.bodyContainerId + " input:checked"), function (index, checkbox) {
-                            value = checkbox.value;
-
-                            if (value.length < 24) {
-                                that.editCollection.remove(value);
-                                that.editCollection.on('remove', function () {
-                                    localCounter++;
-                                    if (localCounter === count) {
-                                        that.deleterender();
-                                    }
-                                }, that);
-                            } else {
-
-                                model = that.editCollection.get(value);
-                                model.destroy({
-                                    headers: {
-                                        mid: mid
-                                    },
-                                    wait   : true,
-                                    success: function () {
-                                        localCounter++;
-                                        if (localCounter === count) {
-                                            that.deleterender();
-                                        }
-                                    },
-                                    error  : function (model, res) {
-                                        if (res.status === 403 && index === 0) {
-                                            alert("You do not have permission to perform this action");
-                                        }
-                                    }
-                                });
-                            }
+                        $.each(that.$el.find("input:checked"), function (index, checkbox) {
+                            checkbox = $(checkbox);
+                            value = checkbox.attr('id');
+                            tr = checkbox.closest('tr');
+                            that.deleteItem(tr, value);
                         });
                     }
                 } else {
@@ -513,44 +477,92 @@ define([
                 }
             },
 
+            deleteItem: function (tr, id) {
+                var self = this;
+                var model;
+                var mid = 39;
+
+                if (id.length < 24) {
+                    this.editCollection.remove(id);
+                    delete this.changedModels[id];
+                    self.deleteItemsRender(tr, id);
+                } else {
+                    model = this.editCollection.get(id);
+                    //model = new currentModel(model);
+                    model.destroy({
+                        headers: {
+                            mid: mid
+                        },
+                        wait   : true,
+                        success: function () {
+                            delete self.changedModels[id];
+                            self.deleteItemsRender(tr, id);
+                        },
+                        error  : function (model, res) {
+                            if (res.status === 403 && index === 0) {
+                                alert("You do not have permission to perform this action");
+                            }
+                        }
+                    });
+                }
+            },
+
+            deleteItemsRender: function (tr, id) {
+                tr.remove();
+
+                this.editCollection.remove(id);
+                this.hideSaveCancelBtns();
+            },
+
             cancelChanges: function () {
+                this.isEditRows();
+
                 var self = this;
                 var edited = this.edited;
-                var collection = this.employeesStartCollection;
+                var collection = this.capacityObject;
+                var listTotalEl;
 
                 async.each(edited, function (el, cb) {
                     var tr = $(el).closest('tr');
                     var rowNumber = tr.find('[data-content="number"]').text();
-                    var id = tr.data('id');
-                    var template = _.template(cancelEdit);
+                    var id = tr.attr('data-id');
                     var model;
 
                     if (!id) {
                         return cb('Empty id');
+                    } else if (id.length < 24) {
+                        tr.remove();
+                        model = self.changedModels;
+
+                        if (model) {
+                            delete model[id];
+                        }
+
+                        return cb();
                     }
 
-                    model = collection.get(id);
+            collection.get(id);
                     model = model.toJSON();
                     model.dataKey = self.model.attributes.dataKey;
                     model.index = rowNumber;
-                    tr.replaceWith(template({employee: model}));
+                    tr.replaceWith(this.cancelTemplate(model));
                     cb();
                 }, function (err) {
                     if (!err) {
-                        self.editCollection = new salaryEditableCollection(self.employeesArary);
+                        self.bindingEventsToEditedCollection(self);
                         self.hideSaveCancelBtns();
                     }
                 });
+
+                listTotalEl = this.$el.find('#listTotal');
+
+                //listTotalEl.html('');
+                //listTotalEl.append(_.template(listTotal, {array: this.getTotal(this.collection.toJSON())}));
             },
 
             updatedOptions: function () {
                 this.hideSaveCancelBtns();
                 this.resetCollection();
-            },
-
-            tdDisable: function (e) {
-                e.preventDefault();
-                return false;
             },
 
             isEditRows: function () {
@@ -584,9 +596,9 @@ define([
             },
 
             showSaveCancelBtns: function () {
-                var createBtnEl = $('#top-bar-createBtn' + this.id);
-                var saveBtnEl = $('#top-bar-saveBtn' + this.id);
-                var cancelBtnEl = $('#top-bar-deleteBtn' + this.id);
+                var createBtnEl = $('#top-bar-createBtn');
+                var saveBtnEl = $('#top-bar-saveBtn');
+                var cancelBtnEl = $('#top-bar-deleteBtn');
 
                 if (!this.changed) {
                     createBtnEl.hide();
@@ -598,9 +610,9 @@ define([
             },
 
             hideSaveCancelBtns: function () {
-                var createBtnEl = $('#top-bar-createBtn' + this.id);
-                var saveBtnEl = $('#top-bar-saveBtn' + this.id);
-                var cancelBtnEl = $('#top-bar-deleteBtn' + this.id);
+                var createBtnEl = $('#top-bar-createBtn');
+                var saveBtnEl = $('#top-bar-saveBtn');
+                var cancelBtnEl = $('#top-bar-deleteBtn');
 
                 this.changed = false;
 
@@ -616,83 +628,129 @@ define([
                     var checkLength = $("input.checkbox:checked").length;
 
                     if ($("input.checkbox:checked").length > 0) {
-                        $('#top-bar-deleteBtn' + this.id).show();
+                        $('#top-bar-deleteBtn').show();
                         if (checkLength == this.editCollection.length) {
-                            $('#check_all' + this.id).prop('checked', true);
+                            $('#check_all').prop('checked', true);
                         }
                         else {
-                            $('#check_all' + this.id).prop('checked', false);
+                            $('#check_all').prop('checked', false);
                         }
                     } else {
-                        $('#top-bar-deleteBtn' + this.id).hide();
+                        $('#top-bar-deleteBtn').hide();
                     }
+                }
+            },
+
+            setChangedValueToModel: function () {
+                var editedElement = this.$el.find('.editing');
+                var editedCol;
+                var editedElementRow;
+                var editedElementRowId;
+                var editedElementContent;
+                var editedElementValue;
+                var editModel;
+                var editedElementOldValue;
+                var changedAttr;
+
+                var calc;
+                var paid;
+
+                var differenceBettwenValues;
+
+                if (editedElement.length) {
+                    editedCol = editedElement.closest('td');
+                    editedElementRow = editedElement.closest('tr');
+                    editedElementRowId = editedElementRow.attr('data-id');
+                    editedElementContent = editedCol.data('content');
+                    editedElementOldValue = parseInt(editedElement.attr('data-cash'));
+                    editedElementValue = parseInt(editedElement.val());
+
+                    editedElementValue = isFinite(editedElementValue) ? editedElementValue : 0;
+                    editedElementOldValue = isFinite(editedElementOldValue) ? editedElementOldValue : 0;
+
+                    differenceBettwenValues = editedElementValue - editedElementOldValue;
+
+                    if (differenceBettwenValues !== 0) {
+
+                        editModel = this.editCollection.get(editedElementRowId);
+
+                        if (!this.changedModels[editedElementRowId]) {
+                            if (!editModel.id) {
+                                this.changedModels[editedElementRowId] = editModel.attributes;
+                            } else {
+                                this.changedModels[editedElementRowId] = {};
+                            }
+                        }
+
+                        calc = _.clone(editModel.get('calc'));
+                        paid = _.clone(editModel.get('paid'));
+
+                        changedAttr = this.changedModels[editedElementRowId];
+                        editedCol.text(editedElementValue);
+
+                        if (changedAttr) {
+                            if (editedCol.hasClass('calc')) {
+                                if (editedCol.attr('data-content') === 'salary') {
+                                    changedAttr['baseSalary'] = editedElementValue;
+                                } else {
+                                    if (!changedAttr.calc) {
+                                        changedAttr.calc = calc;
+                                    }
+
+                                    calc[editedElementContent] = editedElementValue;
+                                    changedAttr['calc'] = calc;
+                                }
+                            } else if (editedCol.hasClass('paid')) {
+                                if (!changedAttr.paid) {
+                                    changedAttr.paid = paid;
+                                }
+
+                                paid[editedElementContent] = editedElementValue;
+                                changedAttr['paid'] = paid;
+                            }
+                        }
+                    }
+
+                    editedCol.text(editedElementValue);
+                    editedElement.remove();
                 }
             },
 
             editRow: function (e, prev, next) {
                 $(".newSelectList").hide();
 
-                var el = $(e.target);
-                var tr = $(e.target).closest('tr');
-                var salaryId = tr.data('id');
-                var colType = el.data('type');
-                var isSelect = colType !== 'input' && el.prop("tagName") !== 'INPUT';
+                var target = $(e.target);
+                var isInput = target.prop("tagName") === 'INPUT';
+                var dataContent = target.attr('data-content');
+                var tr = target.closest('tr');
+                var payRollId = tr.attr('data-id');
                 var tempContainer;
-                var width;
-                var editEmployeeModel;
-                var editedElement;
-                var editedCol;
-                var editedElementRowId;
-                var editedElementValue;
-                var editedElementContent;
+                var insertedInput;
 
-                var calc;
-                var paid;
+                var inputHtml;
 
-                if (salaryId && el.prop('tagName') !== 'INPUT') {
-                    if (this.salaryId) {
-                        editedElement = this.bodyContainer.find('.editing');
-
-                        if (editedElement.length) {
-                            editedCol = editedElement.closest('td');
-                            editedElementRowId = editedElement.closest('tr').data('id');
-                            editedElementContent = editedCol.data('content');
-                            editedElementValue = editedElement.val();
-
-                            editEmployeeModel = this.editCollection.get(editedElementRowId);
-                            calc = _.clone(editEmployeeModel.get('calc'));
-                            paid = _.clone(editEmployeeModel.get('paid'));
-
-                            if (editedCol.hasClass('calc')) {
-                                if (editedCol.data('content') === 'salary') {
-                                    this.whatToSet['baseSalary'] = editedElementValue;
-                                }// else {
-                                calc[editedElementContent] = editedElementValue;
-                                this.whatToSet['calc'] = calc;
-                                //}
-                            } else if (editedCol.hasClass('paid')) {
-                                paid[editedElementContent] = editedElementValue;
-                                this.whatToSet['paid'] = paid;
-                            } else {
-                                this.whatToSet[editedElementContent] = editedElementValue;
-                            }
-
-                            editEmployeeModel.set(this.whatToSet);
-
-                            editedCol.text(editedElementValue);
-                            editedElement.remove();
-                        }
+                if (payRollId && !isInput) {
+                    if (this.payRollId) {
+                        this.setChangedValueToModel();
                     }
-                    this.salaryId = salaryId;
+                    this.payRollId = payRollId;
+                    this.setChangedValueToModel();
                 }
 
-
-                if (isSelect) {
+                if (dataContent === 'employee') {
                     populate.showSelect(e, prev, next, this);
-                } else {
-                    tempContainer = el.text();
-                    width = el.width() - 6;
-                    el.html('<input class="editing" type="text" value="' + tempContainer + '"  maxLength="4" style="width:' + width + 'px">');
+                } else if (!isInput) {
+                    tempContainer = target.text();
+                    inputHtml = '<input class="editing" type="text" data-value="' +
+                        tempContainer + '" value="' + tempContainer +
+                        '"  maxLength="4" style="display: block;" \>';
+
+                    target.html(inputHtml);
+
+                    target.attr('data-cash', tempContainer);
+
+                    insertedInput = target.find('input');
+                    insertedInput.focus();
                 }
 
                 return false;
@@ -717,38 +775,58 @@ define([
                 return false;
             },
 
-            notHide: function () {
-                return false;
-            },
-
             hideNewSelect: function () {
                 $(".newSelectList").hide();
             },
 
             chooseOption: function (e) {
                 e.preventDefault();
+
+                var self = this;
                 var target = $(e.target);
-                var targetElement = target.closest("td");
+                var closestTD = target.closest("td");
+                var targetElement = closestTD.length ? closestTD : target.closest("th").find('a');
                 var tr = target.closest("tr");
-                var modelId = tr.data('id');
+                var modelId = tr.attr('data-id');
                 var id = target.attr("id");
-                var attr = targetElement.attr("id") || targetElement.data("content");
+                var attr = targetElement.attr("id") || targetElement.attr("data-content");
                 var elementType = '#' + attr;
                 var element = _.find(this.responseObj[elementType], function (el) {
                     return el._id === id;
                 });
 
-                var editSalaryModel = this.editCollection.get(modelId);
+                var editModel;
+                var employee;
+                var changedAttr;
+
+                if (modelId) {
+                    editModel = this.editCollection.get(modelId);
+
+                    if (!this.changedModels[modelId]) {
+                        if (!editModel.id) {
+                            this.changedModels[modelId] = editModel.attributes;
+                        } else {
+                            this.changedModels[modelId] = {};
+                        }
+                    }
+
+                    changedAttr = this.changedModels[modelId];
+                }
 
                 if (elementType === '#employee') {
                     tr.find('[data-content="employee"]').text(element.name);
 
-                    editSalaryModel.set({
-                        employee: {
-                            _id : element._id,
-                            name: target.text()
-                        }
-                    });
+                    employee = _.clone(editModel.get('employee'));
+
+                    employee._id = element._id;
+                    employee.name = target.text();
+
+                    changedAttr.employee = employee;
+
+                    this.hideNewSelect();
+                    this.setEditable(targetElement);
+
+                    return false;
                 }
 
                 targetElement.text(target.text());
@@ -767,28 +845,57 @@ define([
                 this.showNewSelect(e, true, false);
             },
 
+            renderFilter: function (self, baseFilter) {
+                self.filters = new filterView({
+                    contentType: self.contentType
+                });
+
+                self.filters.bind('filter', function (filter) {
+                    if (baseFilter) {
+                        filter[baseFilter.name] = baseFilter.value;
+                    }
+                    self.showFilteredPage(filter, self)
+                });
+
+                self.filters.renderFilterContent();
+
+            },
+
             render: function () {
                 var self = this;
                 var currentEl = this.$el;
 
+                /*Add header*/
+
                 currentEl.html('');
                 currentEl.append(headerTemplate);
+
+                /*Render table template*/
 
                 currentEl.find('#payRoll-listTable').append(this.rowTemplate({
                     collection      : this.collection.toJSON(),
                     currencySplitter: helpers.currencySplitter
                 }));
-                currentEl.find('#payRoll-listTotal').append(totalTemplate);
+
+                /*Add total*/
+
+                currentEl.find('#payRoll-listTotal').append(this.totalTemplate({
+                    model           : this.total,
+                    currencySplitter: helpers.currencySplitter
+                }));
+
+                /*Get data for employee select*/
 
                 this.filterEmployeesForDD(this);
 
                 this.hideSaveCancelBtns();
-                $('#top-bar-deleteBtn' + this.id).hide();
 
+                $('#top-bar-deleteBtn').hide();
 
+                /*Checkbox all click*/
 
                 $('#check_all').click(function () {
-                    currentEl.find('#payRoll-Table .checkbox').prop('checked', this.checked);
+                    currentEl.find('.checkbox').prop('checked', this.checked);
                     if ($(self.bodyContainerId).find("input.checkbox:checked").length > 0) {
                         $("#top-bar-deleteBtn").show();
                     } else {
@@ -796,11 +903,15 @@ define([
                     }
                 });
 
-                setTimeout(function () {
-                    self.editCollection = new editCollection(self.collection);
+                /*render filters for Employee & DataKey*/
 
-                    //self.editCollection.on('saved', self.savedNewModel, self);
-                    //self.editCollection.on('updated', self.updatedOptions, self);
+                this.renderFilter(self);
+
+                setTimeout(function () {
+                    self.editCollection = new editCollection(self.collection.toJSON());
+
+                    self.editCollection.on('saved', self.savedNewModel, self);
+                    self.editCollection.on('updated', self.updatedOptions, self);
                 }, 10);
 
                 return this;
