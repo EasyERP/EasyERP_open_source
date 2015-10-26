@@ -73,7 +73,7 @@ html {
   height: 100%;
 }
 
-h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, cite, code, del, dfn, em, img, q, s, samp, small, strike, strong, sub, sup, tt, var, dd, dl, dt, li, ol, ul, fieldset, form, label, legend, button, table, caption, tbody, tfoot, thead, tr, th, td {
+h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, cite, code, del, dfn, img, q, s, samp, small, strike, sub, sup, tt, var, dd, dl, dt, ol, ul, fieldset, form, label, legend, button, table, caption, tbody, tfoot, thead, tr, th, td {
   margin: 0;
   padding: 0;
   border: 0;
@@ -6203,7 +6203,8 @@ textarea#editInput {
 }
 
 .search-options {
-  height: 30px;
+  height: 31px;
+  background-color: @bg-main;
   position: absolute;
   width: 60%;
   top: ~"calc(100% - 1px)";
@@ -6227,7 +6228,7 @@ textarea#editInput {
       }
       &.filterTabs {
         text-align: center;
-        line-height: 25px;
+        line-height: 27px;
         font-size: 13px;
         color: @mainText-color;
         cursor: pointer;

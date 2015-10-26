@@ -674,14 +674,12 @@ cite,
 code,
 del,
 dfn,
-em,
 img,
 q,
 s,
 samp,
 small,
 strike,
-strong,
 sub,
 sup,
 tt,
@@ -689,7 +687,6 @@ var,
 dd,
 dl,
 dt,
-li,
 ol,
 ul,
 fieldset,
@@ -8671,7 +8668,8 @@ textarea#editInput {
   left: -10px;
 }
 .search-options {
-  height: 30px;
+  height: 31px;
+  background-color: #303031;
   position: absolute;
   width: 60%;
   top: calc(100% - 1px);
@@ -8697,7 +8695,7 @@ textarea#editInput {
 }
 .search-options .filter-dialog-tabs li.filterTabs {
   text-align: center;
-  line-height: 25px;
+  line-height: 27px;
   font-size: 13px;
   color: #cdcdcd;
   cursor: pointer;
