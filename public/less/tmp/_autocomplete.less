@@ -1,0 +1,109 @@
+//----------------------------------------------
+* html .ui-autocomplete { width:1px; }
+#searchGlobalContainer {
+  display: block;
+  position: relative;
+  border: 1px solid @border-color-main;
+  padding: 2px 0px 2px 26px;
+}
+#searchFilterContainer {
+  float: left;
+  width: auto;
+  height: 20px;
+  overflow: hidden;
+}
+.ui-autocomplete {
+  position: absolute;
+  cursor: default;
+  left: -1px !important;
+  width: 100% !important;
+}
+.ui-menu {
+  list-style:none;
+  margin: 0;
+  padding: 0;
+  display:block;
+  float: left;
+  .ui-menu-item {
+    float: left;
+    margin:0;
+    padding: 0;
+    zoom: 1;
+    clear: left;
+    width: 100%;
+    line-height: 18px;
+    a {
+      text-decoration:none;
+      display:block;
+      padding:.2em .4em;
+    }
+  }
+  .ui-autocomplete-category {
+    margin: .3em 0 0;
+    padding: 0;
+    line-height: 1.5;
+    float: left;
+    width: 100%;
+    &:last-child {
+      padding-bottom: .3em;
+    }
+    .searchGroupDropDown {
+      float: left;
+      width: 14px;
+      height: 14px;
+      padding: 3px 0px 3px 6px;
+      line-height: 1;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      &:before {
+        content: '\f0d7';
+        font-family: 'FontAwesome';
+      }
+    }
+    .searchGroupResult {
+      display: block;
+      line-height: 20px;
+      width: 100%;
+    }
+    .ui-widget-content {
+      float: left;
+      margin: .3em 0 0;
+      padding: .3em 0;
+      display: block;
+      width: 100%;
+      border: none;
+      border-top: 1px solid @border-color-main;
+      border-bottom: 1px solid @border-color-main;
+      overflow: auto;
+      max-height: 143px;
+      li {
+        padding-left: 25px;
+      }
+    }
+  }
+}
+.ui-autocomplete-input {
+  &:empty:not(:focus):before{
+    content:attr(data-text)
+  }
+  height: 20px;
+  overflow: hidden;
+  display: block;
+}
+.ui-helper-hidden-accessible {
+  border: 0;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  width: 1px;
+  position: absolute !important;
+  clip: rect(1px 1px 1px 1px);
+  clip: rect(1px,1px,1px,1px);
+}
+.ui-widget-content {
+  border: 1px solid @border-color-main;
+  background-color: @bg-main;
+  color: @mainText-color;
+}

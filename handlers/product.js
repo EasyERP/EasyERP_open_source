@@ -12,9 +12,10 @@ var Products = function (models) {
 
     var fs = require("fs");
 
-    var exportHandlingHelper = require('../helpers/exporter/exportHandlingHelper');
-    var exportMap = require('../helpers/csvMap').Products.aliases;
-    exportHandlingHelper.addExportFunctionsToHandler(this, function (req) {
+    var exportDecorator = require('../helpers/exporter/exportDecorator');
+    var exportMap = require('../helpers/csvMap').Products;
+
+    exportDecorator.addExportFunctionsToHandler(this, function (req) {
         return models.get(req.session.lastDb, 'Product', ProductSchema)
     }, exportMap, 'Products');
 

@@ -17,9 +17,10 @@ var wTrack = function (event, models) {
     var mapObject = require('../helpers/bodyMaper');
     var moment = require('../public/js/libs/moment/moment');
 
-    var exportHandlingHelper = require('../helpers/exporter/exportHandlingHelper');
-    var exportMap = require('../helpers/csvMap').wTrack.aliases;
-    exportHandlingHelper.addExportFunctionsToHandler(this, function (req) {
+    var exportDecorator = require('../helpers/exporter/exportDecorator');
+    var exportMap = require('../helpers/csvMap').wTrack;
+
+    exportDecorator.addExportFunctionsToHandler(this, function (req) {
         return models.get(req.session.lastDb, 'wTrack', wTrackSchema)
     }, exportMap, "wTrack");
 
@@ -37,6 +38,7 @@ var wTrack = function (event, models) {
                         return next(err);
                     }
 
+                    event.emit('recalculateKeys', {req: req, wTrack: wTrack});
                     event.emit('dropHoursCashes', req);
                     event.emit('recollectVacationDash');
                     event.emit('updateProjectDetails', {req: req, _id: wTrack.project._id});
@@ -86,10 +88,11 @@ var wTrack = function (event, models) {
                         data.revenue *= 100;
                     }
 
-                    WTrack.findByIdAndUpdate(id, {$set: data}, function (err, response) {
+                    WTrack.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, response) {
                         if (err) {
                             return next(err);
                         }
+
 
                         res.status(200).send({success: 'updated'});
                     });
@@ -112,11 +115,12 @@ var wTrack = function (event, models) {
             access.getEditWritAccess(req, req.session.uId, 75, function (access) {
                 if (access) {
                     async.each(body, function (data, cb) {
-                        var id = data._id
+                        var id = data._id;
 
                         if (data && data.revenue) {
                             data.revenue *= 100;
                         }
+
 
                         data.editedBy = {
                             user: uId,
@@ -127,6 +131,7 @@ var wTrack = function (event, models) {
                             if (err) {
                                 return cb(err);
                             }
+                            event.emit('recalculateKeys', {req: req, wTrack: wTrack});
                             event.emit('updateProjectDetails', {req: req, _id: wTrack.project._id});
                             event.emit('recollectProjectInfo');
                             cb(null, wTrack);
@@ -784,18 +789,18 @@ var wTrack = function (event, models) {
 
                 monthHours.aggregate([{
                     $match: {
-                        year: {$in: uYear},
+                        year : {$in: uYear},
                         month: {$in: uMonth}
                     }
                 }, {
                     $project: {
-                        date: {$add: [{$multiply: ["$year", 100]}, "$month"]},
+                        date : {$add: [{$multiply: ["$year", 100]}, "$month"]},
                         hours: '$hours'
 
                     }
                 }, {
                     $group: {
-                        _id: '$date',
+                        _id  : '$date',
                         value: {$addToSet: '$hours'}
                     }
                 }], function (err, months) {
@@ -901,10 +906,10 @@ var wTrack = function (event, models) {
                                         .find(
                                         {
                                             'employee._id': objectId(employee._id),
-                                            month: m,
-                                            year: y
+                                            month         : m,
+                                            year          : y
                                         }, {
-                                            baseSalary: 1,
+                                            baseSalary    : 1,
                                             'employee._id': 1
                                         })
                                         .lean();
@@ -1013,35 +1018,34 @@ var wTrack = function (event, models) {
 
                                 globalTotal += totalHours;
 
-
                                 wTrackObj = {
-                                    dateByWeek: dateByWeek,
+                                    dateByWeek : dateByWeek,
                                     dateByMonth: dateByMonth,
-                                    project: project,
-                                    employee: employee,
-                                    department: department,
-                                    year: year,
-                                    month: month,
-                                    week: week,
-                                    worked: totalHours,
-                                    revenue: parseFloat(revenue),
-                                    cost: cost,
-                                    rate: parseFloat((parseFloat(revenue) / parseFloat(totalHours)).toFixed(2)),
-                                    1: trackWeek['1'],
-                                    2: trackWeek['2'],
-                                    3: trackWeek['3'],
-                                    4: trackWeek['4'],
-                                    5: trackWeek['5'],
-                                    6: trackWeek['6'],
-                                    7: trackWeek['7'],
+                                    project    : project,
+                                    employee   : employee,
+                                    department : department,
+                                    year       : year,
+                                    month      : month,
+                                    week       : week,
+                                    worked     : totalHours,
+                                    revenue    : parseFloat(revenue),
+                                    cost       : cost,
+                                    rate       : parseFloat((parseFloat(revenue) / parseFloat(totalHours)).toFixed(2)),
+                                    1          : trackWeek['1'],
+                                    2          : trackWeek['2'],
+                                    3          : trackWeek['3'],
+                                    4          : trackWeek['4'],
+                                    5          : trackWeek['5'],
+                                    6          : trackWeek['6'],
+                                    7          : trackWeek['7'],
                                     "createdBy": {
                                         "date": new Date(),
                                         "user": currentUser
                                     },
-                                    "editedBy": {
+                                    "editedBy" : {
                                         "user": currentUser
                                     },
-                                    "groups": {
+                                    "groups"   : {
                                         "group": [],
                                         "users": [],
                                         "owner": currentUser
@@ -1208,6 +1212,8 @@ var wTrack = function (event, models) {
                                             }
                                         }
                                     }
+
+
                                 }
 
                             });
@@ -1260,8 +1266,8 @@ var wTrack = function (event, models) {
                     var newResult = {};
                     var total = 0;
                     var query = Vacation.find({
-                        month: {$in: uniqMonths},
-                        year: {$in: uniqYears},
+                        month         : {$in: uniqMonths},
+                        year          : {$in: uniqYears},
                         "employee._id": employee._id
                     }, {month: 1, year: 1, vacArray: 1}).lean();
 
