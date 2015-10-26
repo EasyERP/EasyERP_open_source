@@ -131,7 +131,7 @@ var wTrack = function (event, models) {
                             if (err) {
                                 return cb(err);
                             }
-                            event.emit('recalculateKeys', {req: req, wTRack: response});
+                            event.emit('recalculateKeys', {req: req, wTRack: wTrack});
                             event.emit('updateProjectDetails', {req: req, _id: wTrack.project._id});
                             event.emit('recollectProjectInfo');
                             cb(null, wTrack);
