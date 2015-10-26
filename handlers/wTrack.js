@@ -38,6 +38,7 @@ var wTrack = function (event, models) {
                         return next(err);
                     }
 
+                    event.emit('recalculateKeys', {req: req, wTRack: response});
                     event.emit('dropHoursCashes', req);
                     event.emit('recollectVacationDash');
                     event.emit('updateProjectDetails', {req: req, _id: wTrack.project._id});
@@ -87,10 +88,11 @@ var wTrack = function (event, models) {
                         data.revenue *= 100;
                     }
 
-                    WTrack.findByIdAndUpdate(id, {$set: data}, function (err, response) {
+                    WTrack.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, response) {
                         if (err) {
                             return next(err);
                         }
+
 
                         res.status(200).send({success: 'updated'});
                     });
@@ -113,11 +115,12 @@ var wTrack = function (event, models) {
             access.getEditWritAccess(req, req.session.uId, 75, function (access) {
                 if (access) {
                     async.each(body, function (data, cb) {
-                        var id = data._id
+                        var id = data._id;
 
                         if (data && data.revenue) {
                             data.revenue *= 100;
                         }
+
 
                         data.editedBy = {
                             user: uId,
@@ -128,6 +131,7 @@ var wTrack = function (event, models) {
                             if (err) {
                                 return cb(err);
                             }
+                            event.emit('recalculateKeys', {req: req, wTRack: response});
                             event.emit('updateProjectDetails', {req: req, _id: wTrack.project._id});
                             event.emit('recollectProjectInfo');
                             cb(null, wTrack);
