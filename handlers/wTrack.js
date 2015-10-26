@@ -38,7 +38,7 @@ var wTrack = function (event, models) {
                         return next(err);
                     }
 
-                    event.emit('recalculateKeys', {req: req, wTRack: response});
+                    event.emit('recalculateKeys', {req: req, wTrack: wTrack});
                     event.emit('dropHoursCashes', req);
                     event.emit('recollectVacationDash');
                     event.emit('updateProjectDetails', {req: req, _id: wTrack.project._id});
@@ -131,7 +131,7 @@ var wTrack = function (event, models) {
                             if (err) {
                                 return cb(err);
                             }
-                            event.emit('recalculateKeys', {req: req, wTRack: wTrack});
+                            event.emit('recalculateKeys', {req: req, wTrack: wTrack});
                             event.emit('updateProjectDetails', {req: req, _id: wTrack.project._id});
                             event.emit('recollectProjectInfo');
                             cb(null, wTrack);

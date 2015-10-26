@@ -139,7 +139,7 @@ var requestHandler = function (app, event, mainDb) {
                             return console.log(err);
                         }
 
-                        console.log(count);
+                       // console.log(count);
                     });
                 });
 
