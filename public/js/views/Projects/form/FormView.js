@@ -45,7 +45,8 @@ define([
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
                 "click .current-selected:not(.disabled)"                          : "showNewSelect",
-                "click #createItem"                                               : "createDialog"
+                "click #createItem"                                               : "createDialog",
+                "change input:not(.checkbox)": "showSaveButton"
             },
 
             initialize: function (options) {
@@ -203,7 +204,9 @@ define([
                             mid: mid
                         },
                         success: function (model) {
-                            self.disableEdit();
+                           // self.disableEdit();
+                            self.hideSaveButton();
+
                             var url = window.location.hash;
                             Backbone.history.fragment = "";
                             setTimeout(function () {
@@ -221,6 +224,8 @@ define([
             chooseOption: function (e) {
                 $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
                 $(".newSelectList").hide();
+
+                this.showSaveButton();
             },
 
             hideNewSelect: function () {
@@ -262,8 +267,8 @@ define([
 
             keydownHandler: function (e) {
                 switch (e.which) {
-                    case 27:
-                        this.hideDialog();
+                    case 13:
+                        this.showSaveButton();
                         break;
                     default:
                         break;
@@ -293,6 +298,14 @@ define([
                 return false;
             },
 
+            showSaveButton: function(){
+                $("#top-bar-saveBtn").show();
+            },
+
+            hideSaveButton: function(){
+                $("#top-bar-saveBtn").hide();
+            },
+
             render: function () {
                 var formModel = this.formModel.toJSON();
                 var assignees;
@@ -305,6 +318,9 @@ define([
                 var notDiv;
                 var bonusView;
                 var container;
+
+
+
 
                 thisEl.html(templ({model: formModel}));
 
@@ -372,7 +388,10 @@ define([
                     //self.getDataForDetails(result);
                 });
 
-                //this.delegateEvents(this.events);
+                $("#top-bar-deleteBtn").hide();
+                $("#createQuotation").show();
+                $("#createBonus").show();
+
                 return this;
             },
 
@@ -525,16 +544,24 @@ define([
 
                 this.wCollection = new wTrackCollection({
                     viewType: 'list',
-                    filter  : filter
+                    filter  : filter,
+                    count: 50
                 });
+
+                var collectionLength = this.wCollection.length;
 
                 var callback = _.once(cb);
 
 
                 function createView() {
                     callback();
+
+                    var startNumber = $('#grid-start').text() ? parseInt($('#grid-start').text()) : 1;
+
                     new wTrackView({
-                        model: self.wCollection
+                        model: self.wCollection,
+                        filter: filter,
+                        startNumber: startNumber
                     }).render();
                 };
 
@@ -619,24 +646,6 @@ define([
                         value: [this.id]
                     }
                 };
-                var filterOrder = {
-                    'projectName': {
-                        key  : 'project._id',
-                        value: [this.id]
-                    },
-                    'isOrder': {
-                        key  : 'isOrder',
-                        value: ['true']
-                    }
-                };
-
-                this.ordersCollection = new quotationCollection({
-                    count      : 50,
-                    viewType   : 'list',
-                    contentType: 'salesOrder',
-                    filter     : filterOrder
-                });
-
 
                 this.qCollection = new quotationCollection({
                     count      : 50,
@@ -660,6 +669,7 @@ define([
                 };
                 this.qCollection.bind('reset', createView);
                 this.qCollection.bind('add', self.renderProformRevenue);
+                this.qCollection.bind('remove', self.renderProformRevenue);
             },
 
             getOrders: function (cb) {
@@ -794,7 +804,7 @@ define([
                         mid: mid
                     },
                     success: function () {
-                        self.disableEdit();
+                       // self.disableEdit();
                         Backbone.history.navigate("#easyErp/Projects/thumbnails", {trigger: true});
                     }
                 });
