@@ -508,7 +508,11 @@ var requestHandler = function (app, event, mainDb) {
 
                 console.log('success');
 
-                    wTrack.aggregate([
+                    wTrack.aggregate([{
+                        $match: {
+                            "project._id": pId
+                        }
+                    },
                         {
                             $group: {
                                 _id: "$jobs._id",
@@ -520,11 +524,14 @@ var requestHandler = function (app, event, mainDb) {
                             return console.log(err);
                         }
                         result.forEach(function(el){
-                            Job.findByIdAndUpdate(el._id, {$set: {wTRacks: el.ids}}, function(err){
+                            Job.findByIdAndUpdate(el._id, {$set: {wTracks: el.ids}}, function(err){
 
-                                event.emit('updateJobBudget', {req: options.req, jobId: jobId});
+
                             })
+
                         });
+
+                        event.emit('updateJobBudget', {req: options.req, pId :  pId});
                     });
 
             });
@@ -533,17 +540,20 @@ var requestHandler = function (app, event, mainDb) {
     });
 
     event.on('updateJobBudget', function(options){
-        var jobId = options.jobId;
         var req = options.req;
-        var pId;
+        var pId = options.pId;
         var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
         var Employee = models.get(req.session.lastDb, 'Employees', employeeSchema);
-        var wTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+        var wTrackModel = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
         var Job = models.get(req.session.lastDb, 'jobs', jobsSchema);
         var paralellTasks;
         var count = 0;
 
-        wTrack.aggregate([
+        wTrackModel.aggregate([{
+            $match: {
+                "project._id": pId
+            }
+        },
             {
                 $group: {
                     _id: "$jobs._id",
@@ -580,6 +590,7 @@ var requestHandler = function (app, event, mainDb) {
                     var maxDate = 0;
                     var nextDate;
                     var nextMaxDate;
+                    var newWTracks = [];
 
                     budgetTotal.profitSum = 0;
                     budgetTotal.costSum = 0;
@@ -590,178 +601,189 @@ var requestHandler = function (app, event, mainDb) {
                     budgetTotal.hoursByQA = 0;
 
                     wTRack.forEach(function (wTrack) {
-                        var key;
-                        var employee = wTrack.employee;
 
-                        pId = wTrack.project ? wTrack.project._id : null;
+                        wTrackModel.find({_id: wTrack}, function(err, wT ) {
+                            var key;
+                            var employee = wT[0].employee;
+                            newWTracks.push(wT);
 
-                        if (!( employee._id in employees)) {
-                            employees[employee._id] = employee.name;
-                        }
 
-                        key = wTrack.year * 100 + wTrack.month;
+                            pId = wT[0].project ? wT[0].project._id : null;
 
-                        if (hoursByMonth[key]) {
-                            hoursByMonth[key] += parseFloat(wTrack.worked);
-                        } else {
-                            hoursByMonth[key] = parseFloat(wTrack.worked);
-                        }
-                    });
-
-                    empKeys = Object.keys(employees);
-
-                    empKeys.forEach(function (empId) {
-                        wTRack.forEach(function (wTrack) {
-                            var emp = (wTrack.employee._id).toString();
-
-                            nextDate = wTrack.dateByWeek;
-                            nextMaxDate = wTrack.dateByWeek;
-
-                            if (nextDate <= minDate) {
-                                minDate = nextDate;
+                            if (!( employee._id in employees)) {
+                                employees[employee._id] = employee.name;
                             }
 
-                            if (nextMaxDate > maxDate) {
-                                maxDate = nextMaxDate;
-                            }
+                            key = wT[0].year * 100 + wT[0].month;
 
-                            if (empId === emp) {
-                                if (projectTeam[empId]) {
-                                    if (wTrack.department._id.toString() === '55b92ace21e4b7c40f000011') {
-                                        projectTeam[empId].byQA.revenue += parseFloat(wTrack.revenue);
-                                        projectTeam[empId].byQA.hours += parseFloat(wTrack.worked);
-                                    }
-                                    projectTeam[empId].profit += parseFloat(((wTrack.revenue - wTrack.cost) / 100).toFixed(2));
-                                    projectTeam[empId].cost += parseFloat((wTrack.cost / 100).toFixed(2));
-                                    projectTeam[empId].rate += parseFloat(wTrack.rate);
-                                    projectTeam[empId].hours += parseFloat(wTrack.worked);
-                                    projectTeam[empId].revenue += parseFloat((wTrack.revenue / 100).toFixed(2));
-                                } else {
-                                    projectTeam[empId] = {};
-
-                                    if (wTrack.department._id.toString() === '55b92ace21e4b7c40f000011') {
-                                        projectTeam[empId].byQA = {};
-                                        projectTeam[empId].byQA.revenue = parseFloat(wTrack.revenue )/ 100;
-                                        projectTeam[empId].byQA.hours = parseFloat(wTrack.worked);
-                                    }
-
-                                    projectTeam[empId].profit = parseFloat(((wTrack.revenue - wTrack.cost) / 100).toFixed(2));
-                                    projectTeam[empId].cost = parseFloat((wTrack.cost / 100).toFixed(2));
-                                    projectTeam[empId].rate = parseFloat(wTrack.rate);
-                                    projectTeam[empId].hours = parseFloat(wTrack.worked);
-                                    projectTeam[empId].revenue = parseFloat((wTrack.revenue / 100).toFixed(2));
-                                }
-                            }
-                        });
-
-                        budgetTotal.maxDate = maxDate;
-                        budgetTotal.minDate = minDate;
-                    });
+                            if (hoursByMonth[key]) {
+                                hoursByMonth[key] += parseFloat(wT[0].worked);
+                            } else {
+                                hoursByMonth[key] = parseFloat(wT[0].worked);
 
 
-                    keys = Object.keys(projectTeam);
-                    if (keys.length > 0) {
+                                empKeys = Object.keys(employees);
 
-                        keys.forEach(function (key) {
-                            budgetTotal.profitSum += parseFloat(projectTeam[key].profit);
-                            budgetTotal.costSum += parseFloat(projectTeam[key].cost);
-                            budgetTotal.hoursSum += parseFloat(projectTeam[key].hours);
-                            budgetTotal.revenueSum += parseFloat(projectTeam[key].revenue);
-                            budgetTotal.revenueByQA += parseFloat(projectTeam[key].byQA ? projectTeam[key].byQA.revenue / 100 : 0);
-                            budgetTotal.hoursByQA += parseFloat(projectTeam[key].byQA ? projectTeam[key].byQA.hours : 0);
-                        });
-                        budgetTotal.rateSum = {};
-                        var value = budgetTotal.revenueByQA / budgetTotal.hoursByQA;
-                        budgetTotal.rateSum.byQA = value ? value : 0;
-                        budgetTotal.rateSum.byDev = ((parseFloat(budgetTotal.revenueSum) - budgetTotal.revenueByQA)) / (budgetTotal.hoursSum - parseInt(budgetTotal.hoursByQA));
+                                empKeys.forEach(function (empId) {
+                                    newWTracks.forEach(function (wTrack) {
+                                        var emp = (wTrack.employee._id).toString();
 
-                        projectValues.revenue = budgetTotal.revenueSum;
-                        projectValues.profit = budgetTotal.profitSum;
-                        projectValues.markUp = ((budgetTotal.profitSum / budgetTotal.costSum) * 100);
-                        if (!isFinite(projectValues.markUp)) {
-                            projectValues.markUp = 0;
-                        }
-                        projectValues.radio = ((budgetTotal.profitSum / budgetTotal.revenueSum) * 100);
-                        if (!isFinite(projectValues.radio)) {
-                            projectValues.radio = 0;
-                        }
+                                        nextDate = wTrack.dateByWeek;
+                                        nextMaxDate = wTrack.dateByWeek;
 
-                        var empQuery = Employee.find({_id: {$in: keys}}, {
-                            'name': 1,
-                            'jobPosition.name': 1,
-                            'department.name': 1
-                        }).lean();
-                        empQuery.exec(function (err, response) {
-
-                            if (err) {
-                                return next(err);
-                            }
-
-                            keysForPT = Object.keys(projectTeam);
-
-                            response.forEach(function (employee) {
-                                keysForPT.forEach(function (id) {
-                                    if ((employee._id).toString() === id) {
-                                        sortBudget.push(projectTeam[id]);
-                                    }
-                                })
-                            });
-
-                            budget = {
-                                projectTeam: response,
-                                budget: sortBudget,
-                                budgetTotal: budgetTotal
-                            };
-
-
-                            Job.update({_id: jobID}, {$set: {budget: budget, wTracks: job.ids}}, function (err, result) {
-                                if (err) {
-                                    return next(err);
-                                }
-
-                                console.log(count++);
-
-                                Job.aggregate([
-                                    {
-                                        $match: {
-                                            "project": pId
+                                        if (nextDate <= minDate) {
+                                            minDate = nextDate;
                                         }
-                                    },
-                                    {
-                                        $group: {
-                                            _id: "$project",
-                                            jobIds: {$addToSet: '$_id'}
+
+                                        if (nextMaxDate > maxDate) {
+                                            maxDate = nextMaxDate;
                                         }
-                                    }
-                                ], function(err, result){
-                                    if (err) {
-                                        return console.log(err);
-                                    }
 
-                                    result.forEach(function(res){
+                                        if (empId === emp) {
+                                            if (projectTeam[empId]) {
+                                                if (wTrack.department._id.toString() === '55b92ace21e4b7c40f000011') {
+                                                    projectTeam[empId].byQA.revenue += parseFloat(wTrack.revenue);
+                                                    projectTeam[empId].byQA.hours += parseFloat(wTrack.worked);
+                                                }
+                                                projectTeam[empId].profit += parseFloat(((wTrack.revenue - wTrack.cost) / 100).toFixed(2));
+                                                projectTeam[empId].cost += parseFloat((wTrack.cost / 100).toFixed(2));
+                                                projectTeam[empId].rate += parseFloat(wTrack.rate);
+                                                projectTeam[empId].hours += parseFloat(wTrack.worked);
+                                                projectTeam[empId].revenue += parseFloat((wTrack.revenue / 100).toFixed(2));
+                                            } else {
+                                                projectTeam[empId] = {};
 
-                                        var projectId = res._id;
-                                        var jobIds = res.jobIds;
+                                                if (wTrack.department._id.toString() === '55b92ace21e4b7c40f000011') {
+                                                    projectTeam[empId].byQA = {};
+                                                    projectTeam[empId].byQA.revenue = parseFloat(wTrack.revenue) / 100;
+                                                    projectTeam[empId].byQA.hours = parseFloat(wTrack.worked);
+                                                }
 
-                                        Project.findByIdAndUpdate(projectId, {$set : {"budget.projectTeam": jobIds}}, function(err, result){
-                                            if (err){
-                                                console.log(err);
+                                                projectTeam[empId].profit = parseFloat(((wTrack.revenue - wTrack.cost) / 100).toFixed(2));
+                                                projectTeam[empId].cost = parseFloat((wTrack.cost / 100).toFixed(2));
+                                                projectTeam[empId].rate = parseFloat(wTrack.rate);
+                                                projectTeam[empId].hours = parseFloat(wTrack.worked);
+                                                projectTeam[empId].revenue = parseFloat((wTrack.revenue / 100).toFixed(2));
                                             }
-                                            console.log('ok');
+                                        }
+                                    });
+
+                                    budgetTotal.maxDate = maxDate;
+                                    budgetTotal.minDate = minDate;
+                                });
+
+
+                                keys = Object.keys(projectTeam);
+                                if (keys.length > 0) {
+
+                                    keys.forEach(function (key) {
+                                        budgetTotal.profitSum += parseFloat(projectTeam[key].profit);
+                                        budgetTotal.costSum += parseFloat(projectTeam[key].cost);
+                                        budgetTotal.hoursSum += parseFloat(projectTeam[key].hours);
+                                        budgetTotal.revenueSum += parseFloat(projectTeam[key].revenue);
+                                        budgetTotal.revenueByQA += parseFloat(projectTeam[key].byQA ? projectTeam[key].byQA.revenue / 100 : 0);
+                                        budgetTotal.hoursByQA += parseFloat(projectTeam[key].byQA ? projectTeam[key].byQA.hours : 0);
+                                    });
+                                    budgetTotal.rateSum = {};
+                                    var value = budgetTotal.revenueByQA / budgetTotal.hoursByQA;
+                                    budgetTotal.rateSum.byQA = value ? value : 0;
+                                    budgetTotal.rateSum.byDev = ((parseFloat(budgetTotal.revenueSum) - budgetTotal.revenueByQA)) / (budgetTotal.hoursSum - parseInt(budgetTotal.hoursByQA));
+
+                                    projectValues.revenue = budgetTotal.revenueSum;
+                                    projectValues.profit = budgetTotal.profitSum;
+                                    projectValues.markUp = ((budgetTotal.profitSum / budgetTotal.costSum) * 100);
+                                    if (!isFinite(projectValues.markUp)) {
+                                        projectValues.markUp = 0;
+                                    }
+                                    projectValues.radio = ((budgetTotal.profitSum / budgetTotal.revenueSum) * 100);
+                                    if (!isFinite(projectValues.radio)) {
+                                        projectValues.radio = 0;
+                                    }
+
+                                    var empQuery = Employee.find({_id: {$in: keys}}, {
+                                        'name': 1,
+                                        'jobPosition.name': 1,
+                                        'department.name': 1
+                                    }).lean();
+                                    empQuery.exec(function (err, response) {
+
+                                        if (err) {
+                                            return next(err);
+                                        }
+
+                                        keysForPT = Object.keys(projectTeam);
+
+                                        response.forEach(function (employee) {
+                                            keysForPT.forEach(function (id) {
+                                                if ((employee._id).toString() === id) {
+                                                    sortBudget.push(projectTeam[id]);
+                                                }
+                                            })
                                         });
 
-                                    })
-                                })
-                            })
+                                        budget = {
+                                            projectTeam: response,
+                                            budget: sortBudget,
+                                            budgetTotal: budgetTotal
+                                        };
+
+
+                                        Job.update({_id: jobID}, {
+                                            $set: {
+                                                budget: budget,
+                                                wTracks: job.ids
+                                            }
+                                        }, function (err, result) {
+                                            if (err) {
+                                                return next(err);
+                                            }
+
+                                            console.log(count++);
+
+                                            Job.aggregate([
+                                                {
+                                                    $match: {
+                                                        "project": pId
+                                                    }
+                                                },
+                                                {
+                                                    $group: {
+                                                        _id: "$project",
+                                                        jobIds: {$addToSet: '$_id'}
+                                                    }
+                                                }
+                                            ], function (err, result) {
+                                                if (err) {
+                                                    return console.log(err);
+                                                }
+
+                                                result.forEach(function (res) {
+
+                                                    var projectId = res._id;
+                                                    var jobIds = res.jobIds;
+
+                                                    Project.findByIdAndUpdate(projectId, {$push: {"budget.projectTeam": jobIds}}, function (err, result) {
+                                                        if (err) {
+                                                            console.log(err);
+                                                        }
+                                                        console.log('ok');
+                                                    });
+
+                                                })
+                                            })
+
+                                        })
+                                    });
+                                }
+                            }
+                            ;
                         });
-                    }
+                    });
+                });
+            });
                 });
 
             });
-
-
-        })
-    });
 
 
     //if name was updated, need update related wTrack, or other models
