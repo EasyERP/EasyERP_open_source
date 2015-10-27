@@ -14,7 +14,7 @@ var Opportunity = function (models) {
     var EMAIL_REGEXP = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
     this.addNewLeadFromSite = function (req, res, next) {
-        var db = 'weTrack';
+        var db = 'production';
         var Opportunitie = models.get(db, 'Opportunitie', opportunitiesSchema);
 
         var body = req.body;
