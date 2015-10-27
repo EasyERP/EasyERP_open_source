@@ -1,3 +1,4 @@
+@import "reset.css";
 @font-face {
   font-family: 'Segoe UI';
   src: url("../font/segoeui.woff") format('woff');
@@ -6687,6 +6688,7 @@ h3.dashboard {
   width: 25px;
   position: absolute;
   background-color: white;
+  z-index: 1;
 }
 #health ul.with-div,
 .health-wrapper ul.with-div {
@@ -8914,18 +8916,19 @@ textarea#editInput {
   margin-left: -3px;
   box-sizing: border-box;
   border-radius: 0 5px 5px 0;
-  line-height: 16px;
-  padding-top: 4px;
+  line-height: 14px;
+  padding-top: 5px;
   background-color: #303031;
   color: #a9a9a9;
   width: 14%;
+  height: 28px;
 }
 #favoritesContent .removeSavedFilter {
   float: right;
   border: 1px solid #7f7f80;
-  height: 21px;
   background-color: transparent;
   color: #cdcdcd;
+  line-height: 15px;
 }
 #favoritesContent .line {
   height: 1px;
@@ -8938,17 +8941,21 @@ textarea#editInput {
 }
 #favoritesContent .filters {
   float: left;
-  width: 80%;
-  padding-left: 6px;
+  width: 70%;
   font-size: 12px;
+  line-height: 28px;
+  height: 28px;
+  padding: 0 15px;
+  margin-bottom: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 #favoritesContent .filters:hover {
   color: white;
-  background-color: #66b5d4;
+  background-color: #3d3d3e;
 }
 #favoritesContent .checkedValue {
-  color: #cdcdcd;
-  background-color: #66b5d4;
+  background-color: #3d3d3e;
 }
 #favoritesContent .useByDefault {
   margin-top: 10px;
