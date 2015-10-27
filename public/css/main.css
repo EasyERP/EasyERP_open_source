@@ -9084,3 +9084,132 @@ textarea#editInput {
   background-color: #303031;
   color: #cdcdcd;
 }
+table.payRoll-list {
+  width: 100%;
+  min-width: 100%;
+  border-spacing: 0;
+  border-collapse: collapse;
+  min-height: .01%;
+  overflow-x: auto;
+}
+table.payRoll-list th,
+table.payRoll-list td {
+  box-sizing: border-box;
+  border: 1px solid white;
+  width: 1%;
+  vertical-align: middle;
+}
+table.payRoll-list thead {
+  box-sizing: border-box;
+  display: block;
+}
+table.payRoll-list tbody {
+  box-sizing: border-box;
+  display: block;
+  height: calc(100vh - 173px);
+  overflow: auto;
+}
+table.payRoll-list tfoot {
+  box-sizing: border-box;
+  display: block;
+}
+#searchContainer.payRoll {
+  margin: 0 0 10px;
+}
+#searchContainer.payRoll #filtersContent .filterGroup {
+  box-sizing: border-box;
+  overflow: visible;
+  text-align: center;
+  padding: 0;
+  margin: 0 1%;
+  width: 48%;
+  float: left;
+  position: relative;
+}
+#searchContainer.payRoll #filtersContent .filterGroup .groupName {
+  padding: 5px;
+  border: 1px solid #7f7f80;
+  background-color: #303031;
+}
+#searchContainer.payRoll #filtersContent .filterGroup .ulContent {
+  box-sizing: border-box;
+  width: 100%;
+  position: absolute;
+  top: 30px;
+  border: 1px solid #7f7f80;
+  background-color: #303031;
+  z-index: 1;
+}
+#searchContainer.payRoll #filtersContent .filterGroup .ulContent input {
+  margin-top: 5px;
+}
+#searchContainer.payRoll #filtersContent .filterGroup li {
+  cursor: pointer;
+  font-size: 12px;
+  padding: 5px 10px;
+  color: #cdcdcd;
+}
+#searchContainer.payRoll #filtersContent .filterGroup li.miniStylePagination {
+  list-style: none;
+  border-top: 1px solid #7f7f80;
+}
+#searchContainer.payRoll #filtersContent .filterGroup li.miniStylePagination .prev.disabled,
+#searchContainer.payRoll #filtersContent .filterGroup li.miniStylePagination .next.disabled {
+  display: none;
+}
+#searchContainer.payRoll #filtersContent .filterGroup li.miniStylePagination .prev {
+  float: left;
+}
+#searchContainer.payRoll #filtersContent .filterGroup li.miniStylePagination .next {
+  float: right;
+}
+#searchContainer.payRoll #filtersContent .filterGroup li:not(.miniStylePagination):before {
+  content: '\2713';
+}
+#searchContainer.payRoll #filtersContent .filterGroup li:not(.checkedValue):hover:before {
+  color: #3d3d3e;
+}
+#searchContainer.payRoll #filtersContent .filterGroup li:not(.checkedValue):before,
+#searchContainer.payRoll #filtersContent .filterGroup li.checkedValue:before,
+#searchContainer.payRoll #filtersContent .filterGroup li.checkedValue:hover:before {
+  color: #303031;
+}
+#searchContainer.payRoll #filtersContent .filterGroup li:hover,
+#searchContainer.payRoll #filtersContent .filterGroup li.checkedValue {
+  background-color: #3d3d3e;
+  color: #cdcdcd;
+}
+#searchContainer.payRoll #filtersContent .filterGroup .filterValues {
+  text-align: left;
+  width: 100%;
+}
+#searchContainer.payRoll #filtersContent .filterGroup.activeGroup .groupName:after {
+  content: ' ';
+}
+#searchContainer.payRoll #filtersContent .filterGroup:not(.activeGroup) .groupName.checkedGroup {
+  color: #cdcdcd;
+  background-color: #565658;
+}
+#searchContainer.payRoll #filtersContent .filterGroup:not(.activeGroup) .groupName.checkedGroup span:before {
+  text-align: center;
+  height: 10px;
+  width: 10px;
+  border-radius: 50%;
+  background-color: #4d5a75;
+}
+#searchContainer.payRoll #filtersContent .filterGroup.activeGroup .groupName {
+  border-bottom: 1px solid #7f7f80;
+}
+#searchContainer.payRoll #filtersContent .filterGroup.activeGroup .groupName,
+#searchContainer.payRoll #filtersContent .filterGroup .groupName:hover {
+  color: #cdcdcd;
+  background-color: #3d3d3e;
+}
+#searchContainer.payRoll #filtersContent .filterGroup .groupName {
+  cursor: pointer;
+  font-size: 13px;
+  color: #cdcdcd;
+}
+#searchContainer.payRoll #filtersContent .filterGroup .groupName:after {
+  content: '\2335';
+}
