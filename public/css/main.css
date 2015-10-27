@@ -7619,8 +7619,10 @@ span.projectClosed {
 }
 span.ui-spinner {
   position: relative;
-  width: 95%;
   padding: 0;
+  display: block;
+  width: 45px;
+  overflow: hidden;
 }
 span.ui-spinner span {
   display: block;
@@ -8244,12 +8246,33 @@ textarea#editInput {
   line-height: 24px;
   width: 140px;
 }
+.grid-conatiner.revenue .chartContainer .legend div {
+  zoom: 1;
+  clear: both;
+}
+.grid-conatiner.revenue .chartContainer .legend div:before {
+  content: "\0020";
+  display: block;
+  height: 0;
+  overflow: hidden;
+}
+.grid-conatiner.revenue .chartContainer .legend div:after {
+  content: "\0020";
+  display: block;
+  height: 0;
+  overflow: hidden;
+  clear: both;
+}
 .grid-conatiner.revenue .chartContainer .legend label {
   display: inline-block;
   width: 50px;
+  line-height: 25px;
+  float: left;
 }
 .grid-conatiner.revenue .chartContainer .legend input {
-  width: 50px;
+  width: 57px;
+  float: left;
+  border: none;
 }
 .grid-conatiner.revenue .chartContainer .legendHours {
   float: left;

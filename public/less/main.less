@@ -4926,8 +4926,12 @@ h3.dashboard {
 
 span.ui-spinner {
   position: relative;
-  width: 95%;
+  //width: 95%;
   padding: 0;
+
+  display: block;
+  width: 45px;
+  overflow: hidden;
   span {
     display: block;
     width: 8px;
@@ -5727,12 +5731,19 @@ textarea#editInput {
       float: left;
       line-height: 24px;
       width: 140px;
+      div {
+        .clearfix;
+      }
       label {
         display: inline-block;
         width: 50px;
+        line-height: 25px;
+        float: left;
       }
       input {
-        width: 50px;
+        width: 57px;
+        float: left;
+        border: none;
       }
     }
 
