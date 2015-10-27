@@ -201,6 +201,21 @@ dbObject.once('open', function callback() {
                             console.log(count++);
                         })
                     });
+                } else {
+                    budget = {
+                        projectTeam: [],
+                        budget: [],
+                        budgetTotal: budgetTotal
+                    };
+
+
+                    Job.update({_id: jobID}, {$set: {budget: budget}}, function (err, result) {
+                        if (err) {
+                            return next(err);
+                        }
+
+                        console.log(count++);
+                    })
                 }
             });
 

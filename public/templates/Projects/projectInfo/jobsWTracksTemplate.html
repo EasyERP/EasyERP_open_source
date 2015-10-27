@@ -30,7 +30,7 @@
             <td><%=currencySplitter(budget[i].cost.toFixed())%></td>
             <td><%=currencySplitter(budget[i].revenue.toFixed())%></td>
             <td><%=currencySplitter(budget[i].profit.toFixed())%></td>
-            <td><%=currencySplitter((budget[i].revenue / budget[i].hours).toFixed(2))%></td>
+            <td><%=(budget[i].revenue / budget[i].hours) ? currencySplitter((budget[i].revenue / budget[i].hours).toFixed(2)) : 0 %></td>
         </tr>
         <% count++ %>
         <% })%>

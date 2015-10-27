@@ -821,12 +821,16 @@ var wTrack = function (event, models) {
         var addHours = 0;
         var savedwTrack = [];
         var globalTotal = 0;
-        var job;
+        var job = null;
         var jobId;
 
         var createJob = req.headers.createjob;
         var jobName = req.headers.jobname;
         var project = req.headers.project;
+
+        if(!createJob){
+            jobId = req.headers.jobid;
+        }
 
         async.waterfall([createJobFunc, generateFunc], function(err, result){
 
@@ -844,8 +848,8 @@ var wTrack = function (event, models) {
 
         function createJobFunc(waterfallCB){
             var jobForwTrack = {
-                _id: null,
-                name: ''
+                _id: jobId,
+                name: jobName
             };
 
             if (createJob){

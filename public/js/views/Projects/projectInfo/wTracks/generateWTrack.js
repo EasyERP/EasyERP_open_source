@@ -319,6 +319,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                         beforeSend: function (xhr) {
                             xhr.setRequestHeader("createJob", self.createJob);
                             xhr.setRequestHeader("project", self.modelJSON._id);
+                            xhr.setRequestHeader("jobid", self.modelJSON._id);
 
                             if (self.createJob){
                                 xhr.setRequestHeader("jobname", jobName);
