@@ -75,7 +75,8 @@ module.exports = (function () {
                     return next(err);
                 }
 
-                payment.name += '_' + rate.value.seq;
+                //payment.name += '_' + rate.value.seq;
+                payment.name += '_' + rate.seq;
 
                 next()
             });
