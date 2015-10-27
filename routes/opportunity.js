@@ -7,5 +7,6 @@ module.exports = function (models) {
 
     router.get('/getFilterValues', handler.getFilterValues);
     router.get('/:viewType', handler.getByViewType);
+    router.post('addLeadTM', handler.addNewLeadFromSite);
     return router;
 };

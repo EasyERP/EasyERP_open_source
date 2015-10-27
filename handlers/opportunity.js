@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 var Opportunity = function (models) {
 
     var access = require("../Modules/additions/access.js")(models);
+    var validator = require("validator");
     var _ = require('../node_modules/underscore');
     var mongoose = require('mongoose');
     var logWriter = require('../helpers/logWriter.js');
@@ -9,6 +10,30 @@ var Opportunity = function (models) {
     var DepartmentSchema = mongoose.Schemas['Department'];
     var objectId = mongoose.Types.ObjectId;
     var async = require('async');
+
+    var EMAIL_REGEXP = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+    this.addNewLeadFromSite = function (req, res, next) {
+        var Opportunitie = models.get(req.session.lastDb, 'Opportunitie', opportunitiesSchema);
+
+        var body = req.body;
+        var name = body.name ? validator.escape(body.name) : '';
+        var email = body.email ? validator.escape(body.email) : '';
+        var message = body.message ? validator.escape(body.message) : '';
+        var campaign = body.campaign ? validator.escape(body.campaign) : '';
+        var source = body.source ? validator.escape(body.source) : '';
+        var isEmailValid = EMAIL_REGEXP.test(email);
+        var saveObject;
+
+        if (isEmailValid) {
+            saveObject = {
+                email: email,
+                name: name,
+                internalNotes: message,
+            }
+            Opportunitie
+        }
+    };
 
     function ConvertType(array, type) {
         if (type === 'integer') {
@@ -29,7 +54,7 @@ var Opportunity = function (models) {
                     content.push({'name': {$in: condition}});
                     break;
                 case 'workflow':
-                    content.push({ 'workflow': {$in: condition.objectID()}});
+                    content.push({'workflow': {$in: condition.objectID()}});
                     break;
                 case 'Creation date':
                     content.push({
@@ -403,16 +428,16 @@ var Opportunity = function (models) {
         opportunity.aggregate([
             {
                 $group: {
-                    _id: null,
-                    Name: {
+                    _id               : null,
+                    Name              : {
                         $addToSet: '$name'
                     },
-                    'Creation date': {
+                    'Creation date'   : {
                         $addToSet: '$creationDate'
                     },
-                   /* 'Next action': {
-                        $addToSet: '$nextAction.desc'
-                    },*/
+                    /* 'Next action': {
+                     $addToSet: '$nextAction.desc'
+                     },*/
                     'Expected revenue': {
                         $addToSet: '$expectedRevenue.value'
                     }
@@ -423,16 +448,22 @@ var Opportunity = function (models) {
                 return next(err);
             }
 
-            _.map(result[0], function(value, key) {
+            _.map(result[0], function (value, key) {
                 switch (key) {
                     case 'Name':
-                        result[0][key] = _.sortBy(value, function (num) { return num});
+                        result[0][key] = _.sortBy(value, function (num) {
+                            return num
+                        });
                         break;
                     case  'Expected revenue':
-                        result[0][key] = _.sortBy(value, function (num) { return num});
+                        result[0][key] = _.sortBy(value, function (num) {
+                            return num
+                        });
                         break;
                     case  'Next action':
-                        result[0][key] = _.sortBy(value, function (num) { return num});
+                        result[0][key] = _.sortBy(value, function (num) {
+                            return num
+                        });
                         break;
 
                 }
@@ -568,9 +599,9 @@ var Opportunity = function (models) {
                 }
 
                 res.status(200).send({
-                    data: result,
+                    data      : result,
                     workflowId: data.workflowId,
-                    fold: (req.session.kanbanSettings.opportunities.foldWorkflows && req.session.kanbanSettings.opportunities.foldWorkflows.indexOf(data.workflowId.toString()) !== -1)
+                    fold      : (req.session.kanbanSettings.opportunities.foldWorkflows && req.session.kanbanSettings.opportunities.foldWorkflows.indexOf(data.workflowId.toString()) !== -1)
                 });
             });
         });
