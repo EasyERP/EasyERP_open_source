@@ -960,23 +960,6 @@ var wTrack = function (event, models) {
                                 var week = element.week;
 
 
-                                function getBaseSalary(cb) {
-                                    var Salary = models.get(req.session.lastDb, 'Salary', SalarySchema);
-                                    var query = Salary
-                                        .find(
-                                        {
-                                            'employee._id': objectId(employee._id),
-                                            month         : m,
-                                            year          : y
-                                        }, {
-                                            baseSalary    : 1,
-                                            'employee._id': 1
-                                        })
-                                        .lean();
-                                    query.exec(function (err, salary) {
-                                        if (err) {
-                                            return cb(err);
-                                        }
                                 function calcCost(callB) {
                                     var cost;
                                     var m = element.month;
@@ -1138,38 +1121,6 @@ var wTrack = function (event, models) {
                                             "owner": currentUser
                                         },
                                         jobs: jobObj
-                                wTrackObj = {
-                                    dateByWeek : dateByWeek,
-                                    dateByMonth: dateByMonth,
-                                    project    : project,
-                                    employee   : employee,
-                                    department : department,
-                                    year       : year,
-                                    month      : month,
-                                    week       : week,
-                                    worked     : totalHours,
-                                    revenue    : parseFloat(revenue),
-                                    cost       : cost,
-                                    rate       : parseFloat((parseFloat(revenue) / parseFloat(totalHours)).toFixed(2)),
-                                    1          : trackWeek['1'],
-                                    2          : trackWeek['2'],
-                                    3          : trackWeek['3'],
-                                    4          : trackWeek['4'],
-                                    5          : trackWeek['5'],
-                                    6          : trackWeek['6'],
-                                    7          : trackWeek['7'],
-                                    "createdBy": {
-                                        "date": new Date(),
-                                        "user": currentUser
-                                    },
-                                    "editedBy" : {
-                                        "user": currentUser
-                                    },
-                                    "groups"   : {
-                                        "group": [],
-                                        "users": [],
-                                        "owner": currentUser
-                                    }
 
                                     };
 
@@ -1334,9 +1285,6 @@ var wTrack = function (event, models) {
                                         }
                                     }
 
-
-                                }
-
                                 });
 
                             });
@@ -1389,15 +1337,10 @@ var wTrack = function (event, models) {
                             "employee._id": employee._id
                         }, {month: 1, year: 1, vacArray: 1}).lean();
 
-                function getVacations(callback) {
-                    var Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
-                    var newResult = {};
-                    var total = 0;
-                    var query = Vacation.find({
-                        month         : {$in: uniqMonths},
-                        year          : {$in: uniqYears},
-                        "employee._id": employee._id
-                    }, {month: 1, year: 1, vacArray: 1}).lean();
+                        query.exec(function (err, result) {
+                            if (err) {
+                                callback(err);
+                            }
 
                             if (result) {
                                 result.forEach(function (element) {
@@ -1822,6 +1765,7 @@ var wTrack = function (event, models) {
 
 
     };
+
 
     this.getForDashVacation = function (req, res, next) {
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
