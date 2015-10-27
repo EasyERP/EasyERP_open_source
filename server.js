@@ -62,7 +62,7 @@ mainDb.once('open', function callback() {
                     j: true
                     //mongos: true
                 };
-                var dbObject = mongoose.createConnection(_db.url, _db.DBname, _db.port, opts);
+                var dbObject = mongoose.createConnection(_db.url, _db.DBname, _db.port/*, opts*/);
                 dbObject.on('error', console.error.bind(console, 'connection error:'));
                 dbObject.once('open', function callback() {
                     console.log("Connection to " + _db.DBname + " is success" + index);
