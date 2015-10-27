@@ -34,6 +34,11 @@ define([
                     dataService.getData('/currentDb', null, function (response) {
                         if (response && !response.error) {
                             App.currentDb = response;
+                            if ((response === "weTrack") || (response === "production") || (response === "development")){
+                                App.weTrack = true;
+                            } else {
+                                App.weTrack = false;
+                            }
                         } else {
                             console.log('can\'t fetch current db');
                         }
