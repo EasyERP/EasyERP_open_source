@@ -684,7 +684,7 @@ define([
                 var self = this;
                 var currentEl = this.$el;
 
-                if (App.currentDb === 'weTrack') {
+                if (App.weTrack) {
                     currentEl.html('');
                     currentEl.append(_.template(ListHeaderForWTrack));
                     currentEl.append(new listItemView({

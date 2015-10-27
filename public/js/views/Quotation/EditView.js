@@ -438,7 +438,7 @@ define([
                 populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, false, true);
                 populate.get("#deliveryDd", "/deliverTo", {}, 'name', this, false, true);
 
-                if ((App.currentDb === 'weTrack') && this.forSales){
+                if (App.weTrack && this.forSales){
                     populate.get("#supplierDd", "/Customer", {}, "fullName", this, false, false);
 
                     populate.get("#projectDd", "/getProjectsForDd", {}, "projectName", this, false, false);

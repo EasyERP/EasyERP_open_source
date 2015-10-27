@@ -16,7 +16,7 @@ define([
                 this.startNumber = (options.page - 1 ) * options.itemsNumber;//Counting the start index of list items
             },
             render: function() {
-                if (App.currentDb === 'weTrack') {
+                if (App.weTrack) {
                     this.$el.append(_.template(ListTemplateForWTrack, {
                         paymentCollection: this.collection.toJSON(),
                         startNumber: this.startNumber,

@@ -19,8 +19,16 @@ var Invoice = function (models) {
     var moment = require('../public/js/libs/moment/moment');
     var _ = require('../node_modules/underscore');
 
+     function checkDb(db){
+        if ((db === "weTrack") || (db === "production") || (db === "development")){
+            return true;
+        }
+
+        return false;
+    };
+
     this.create = function (req, res, next) {
-        var isWtrack = req.session.lastDb === 'weTrack';
+        var isWtrack = checkDb(req.session.lastDb);
         var body = req.body;
         var Invoice;
         var invoice;
@@ -400,7 +408,7 @@ var Invoice = function (models) {
     };
 
     this.getInvoiceById = function (req, res, next) {
-        var isWtrack = req.session.lastDb === 'weTrack';
+        var isWtrack = checkDb(req.session.lastDb);
         var moduleId = 56;
         var data = {};
 

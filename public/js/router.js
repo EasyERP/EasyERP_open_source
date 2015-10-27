@@ -542,6 +542,16 @@ define([
             }
         },
 
+        checkDatabase: function(db){
+            if ((db === "weTrack") || (db === "production") || (db === "development")){
+                App.weTrack = true;
+            } else {
+                App.weTrack = false;
+            }
+
+            App.currentDb = db;
+        },
+
         buildCollectionRoute: function (contentType) {
             if (!contentType) {
                 throw new Error("Error building collection route. ContentType is undefined");
@@ -561,7 +571,7 @@ define([
                     if (!App || !App.currentDb) {
                         dataService.getData('/currentDb', null, function (response) {
                             if (response && !response.error) {
-                                App.currentDb = response;
+                               self.checkDatabase(response);
                             } else {
                                 console.log('can\'t fetch current db');
                             }
@@ -689,7 +699,7 @@ define([
                     if (!App || !App.currentDb) {
                         dataService.getData('/currentDb', null, function (response) {
                             if (response && !response.error) {
-                                App.currentDb = response;
+                                self.checkDatabase(response);
                             } else {
                                 console.log('can\'t fetch current db');
                             }
@@ -829,7 +839,7 @@ define([
                     if (!App || !App.currentDb) {
                         dataService.getData('/currentDb', null, function (response) {
                             if (response && !response.error) {
-                                App.currentDb = response;
+                                self.checkDatabase(response);
                             } else {
                                 console.log('can\'t fetch current db');
                             }

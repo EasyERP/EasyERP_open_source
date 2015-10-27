@@ -29,7 +29,8 @@ define([
                 this.render();
 
                 if(!this.forSales) {
-                    this.forSales = App.currentDb === constants.WTRACK_DB_NAME;
+                   // this.forSales = App.currentDb === constants.WTRACK_DB_NAME;
+                    this.forSales = App.weTrack;
                 }
             },
 
