@@ -90,6 +90,68 @@ var requestHandler = function (app, event, mainDb) {
 
     });
 
+    event.on('recalculateKeys', function(options){
+        var req = options.req;
+
+        var wTrack = models.get(req.session.lastDb, "wTrack", wTrackSchema);
+
+
+
+        if (options.wTrack){
+            var wTrackModel = options.wTrack.toJSON();
+            var month = wTrackModel.month;
+            var week =  wTrackModel.week;
+            var year =  wTrackModel.year;
+            var _id =  wTrackModel._id;
+
+            var dateByWeek = year * 100 + week;
+            var dateByMonth = year * 100 + month;
+
+            var query = {dateByWeek: dateByWeek, dateByMonth: dateByMonth}
+
+            wTrack.findByIdAndUpdate(_id, query, function(err, result){
+                if (err){
+                    return console.log(err);
+                }
+
+                console.log('wTrack updated');
+            });
+        } else {
+            wTrack.find({}, {_id: 1, month: 1, week: 1, year: 1}, function(err, result){
+                if (err){
+                    return console.log(err);
+                }
+
+                result.forEach(function(wTrackEl, count){
+
+                    var wTrackModel = wTrackEl.toJSON();
+                    var month = wTrackModel.month;
+                    var week =  wTrackModel.week;
+                    var year =  wTrackModel.year;
+                    var _id =  wTrackModel._id;
+
+                    var dateByWeek = year * 100 + week;
+                    var dateByMonth = year * 100 + month;
+
+                    var query = {dateByWeek: dateByWeek, dateByMonth: dateByMonth}
+
+                    wTrack.findByIdAndUpdate(_id, query, function(err, result){
+                        if (err){
+                            return console.log(err);
+                        }
+
+                       // console.log(count);
+                    });
+                });
+
+            });
+        }
+
+
+
+
+    });
+
     event.on('updateCost', function (params) {
         var update = _.debounce(updateWTrack, 500);
 

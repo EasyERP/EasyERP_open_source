@@ -4,7 +4,7 @@ require('pmx').init();
 module.exports = function (app, mainDb) {
     'use strict';
 
-    //var newrelic = require('newrelic');
+    var newrelic = require('newrelic');
     var events = require('events');
     var event = new events.EventEmitter();
     var logWriter = require('../helpers/logWriter');

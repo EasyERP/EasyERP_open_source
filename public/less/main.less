@@ -73,7 +73,7 @@ html {
   height: 100%;
 }
 
-h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, cite, code, del, dfn, em, img, q, s, samp, small, strike, strong, sub, sup, tt, var, dd, dl, dt, li, ol, ul, fieldset, form, label, legend, button, table, caption, tbody, tfoot, thead, tr, th, td {
+h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, cite, code, del, dfn, img, q, s, samp, small, strike, sub, sup, tt, var, dd, dl, dt, ol, ul, fieldset, form, label, legend, button, table, caption, tbody, tfoot, thead, tr, th, td {
   margin: 0;
   padding: 0;
   border: 0;
@@ -6067,15 +6067,16 @@ textarea#editInput {
 
 .search-field {
   box-sizing: border-box;
+  position: relative;
   display: block;
   width: 100%;
   height: 26px;
-  padding: 2px 24px;
+  padding: 0;
   font-size: 14px;
   line-height: 1.42857143;
   color: @grey;
   background: inherit;
-  border: 1px solid @border-color-main;
+  border: none;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
   -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
@@ -6087,19 +6088,23 @@ textarea#editInput {
   .search {
     cursor: pointer;
     position: absolute;
-    top: 6px;
+    top: 3px;
     left: 5px;
+    height: 18px;
+
   }
   span {
     &:before {
       color: @filter-icon-color;
+      line-height: 1;
     }
   }
   .search-content {
     position: absolute;
-    top: 6px;
+    top: 4px;
     right: 5px;
     cursor: pointer;
+    height: 18px;
   }
 }
 
@@ -6198,7 +6203,8 @@ textarea#editInput {
 }
 
 .search-options {
-  height: 30px;
+  height: 31px;
+  background-color: @bg-main;
   position: absolute;
   width: 60%;
   top: ~"calc(100% - 1px)";
@@ -6222,7 +6228,7 @@ textarea#editInput {
       }
       &.filterTabs {
         text-align: center;
-        line-height: 25px;
+        line-height: 27px;
         font-size: 13px;
         color: @mainText-color;
         cursor: pointer;
@@ -6545,3 +6551,6 @@ textarea#editInput {
 .forInfoWrap {
   overflow: hidden;
 }
+
+//------ Import files ------
+@import "tmp/_autocomplete";

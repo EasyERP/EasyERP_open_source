@@ -674,14 +674,12 @@ cite,
 code,
 del,
 dfn,
-em,
 img,
 q,
 s,
 samp,
 small,
 strike,
-strong,
 sub,
 sup,
 tt,
@@ -689,7 +687,6 @@ var,
 dd,
 dl,
 dt,
-li,
 ol,
 ul,
 fieldset,
@@ -8551,15 +8548,16 @@ textarea#editInput {
 }
 .search-field {
   box-sizing: border-box;
+  position: relative;
   display: block;
   width: 100%;
   height: 26px;
-  padding: 2px 24px;
+  padding: 0;
   font-size: 14px;
   line-height: 1.42857143;
   color: #cdcdcd;
   background: inherit;
-  border: 1px solid #7f7f80;
+  border: none;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   -webkit-transition: border-color ease-in-out 0.15s, -webkit-box-shadow ease-in-out 0.15s;
@@ -8569,17 +8567,20 @@ textarea#editInput {
 .search-field .search {
   cursor: pointer;
   position: absolute;
-  top: 6px;
+  top: 3px;
   left: 5px;
+  height: 18px;
 }
 .search-field span:before {
   color: #d5d5d5;
+  line-height: 1;
 }
 .search-field .search-content {
   position: absolute;
-  top: 6px;
+  top: 4px;
   right: 5px;
   cursor: pointer;
+  height: 18px;
 }
 .caret {
   display: inline-block;
@@ -8667,7 +8668,8 @@ textarea#editInput {
   left: -10px;
 }
 .search-options {
-  height: 30px;
+  height: 31px;
+  background-color: #303031;
   position: absolute;
   width: 60%;
   top: calc(100% - 1px);
@@ -8693,7 +8695,7 @@ textarea#editInput {
 }
 .search-options .filter-dialog-tabs li.filterTabs {
   text-align: center;
-  line-height: 25px;
+  line-height: 27px;
   font-size: 13px;
   color: #cdcdcd;
   cursor: pointer;
@@ -8971,4 +8973,114 @@ textarea#editInput {
 }
 .forInfoWrap {
   overflow: hidden;
+}
+* html .ui-autocomplete {
+  width: 1px;
+}
+#searchGlobalContainer {
+  display: block;
+  position: relative;
+  border: 1px solid #7f7f80;
+  padding: 2px 0px 2px 26px;
+}
+#searchFilterContainer {
+  float: left;
+  width: auto;
+  height: 20px;
+  overflow: hidden;
+}
+.ui-autocomplete {
+  position: absolute;
+  cursor: default;
+  left: -1px !important;
+  width: 100% !important;
+}
+.ui-menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: block;
+  float: left;
+}
+.ui-menu .ui-menu-item {
+  float: left;
+  margin: 0;
+  padding: 0;
+  zoom: 1;
+  clear: left;
+  width: 100%;
+  line-height: 18px;
+}
+.ui-menu .ui-menu-item a {
+  text-decoration: none;
+  display: block;
+  padding: .2em .4em;
+}
+.ui-menu .ui-autocomplete-category {
+  margin: .3em 0 0;
+  padding: 0;
+  line-height: 1.5;
+  float: left;
+  width: 100%;
+}
+.ui-menu .ui-autocomplete-category:last-child {
+  padding-bottom: .3em;
+}
+.ui-menu .ui-autocomplete-category .searchGroupDropDown {
+  float: left;
+  width: 14px;
+  height: 14px;
+  padding: 3px 0px 3px 6px;
+  line-height: 1;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+}
+.ui-menu .ui-autocomplete-category .searchGroupDropDown:before {
+  content: '\f0d7';
+  font-family: 'FontAwesome';
+}
+.ui-menu .ui-autocomplete-category .searchGroupResult {
+  display: block;
+  line-height: 20px;
+  width: 100%;
+}
+.ui-menu .ui-autocomplete-category .ui-widget-content {
+  float: left;
+  margin: .3em 0 0;
+  padding: .3em 0;
+  display: block;
+  width: 100%;
+  border: none;
+  border-top: 1px solid #7f7f80;
+  border-bottom: 1px solid #7f7f80;
+  overflow: auto;
+  max-height: 143px;
+}
+.ui-menu .ui-autocomplete-category .ui-widget-content li {
+  padding-left: 25px;
+}
+.ui-autocomplete-input {
+  height: 20px;
+  overflow: hidden;
+  display: block;
+}
+.ui-autocomplete-input:empty:not(:focus):before {
+  content: attr(data-text);
+}
+.ui-helper-hidden-accessible {
+  border: 0;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  width: 1px;
+  position: absolute !important;
+  clip: rect(1px 1px 1px 1px);
+  clip: rect(1px, 1px, 1px, 1px);
+}
+.ui-widget-content {
+  border: 1px solid #7f7f80;
+  background-color: #303031;
+  color: #cdcdcd;
 }

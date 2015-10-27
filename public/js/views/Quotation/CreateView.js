@@ -261,7 +261,7 @@ define([
                 var productItemContainer;
 
                 productItemContainer = this.$el.find('#productItemsHolder');
-                if ((App.currentDb === 'weTrack') && this.forSales) {
+                if (App.weTrack && this.forSales) {
                     productItemContainer.append(
                         new ProductItemView({canBeSold: true, service: 'Service'}).render().el
                     );
@@ -316,7 +316,7 @@ define([
                 populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, true, true);
                 populate.get("#deliveryDd", "/deliverTo", {}, 'name', this, true);
 
-                if ((App.currentDb === 'weTrack') && this.forSales){
+                if (App.weTrack && this.forSales){
                     this.$el.find('#supplierDd').removeClass('current-selected');
                     populate.get("#projectDd", "/getProjectsForDd", {}, "projectName", this, false, false);
                     //populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
