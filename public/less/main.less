@@ -1,3 +1,4 @@
+@import "reset.css";
 @import "_font";
 @import "_colors";
 @import "_darckColor";
@@ -4590,6 +4591,7 @@ h3.dashboard {
     width: 25px;
     position: absolute;
     background-color: white;
+    z-index: 1;
     &.with-div {
       margin-left: 3px;
     }
@@ -6295,7 +6297,6 @@ textarea#editInput {
       li {
         &.miniStylePagination {
           list-style: none;
-          //background-color: @lightgrey;
           border-top: 1px solid @border-color-main;
           .prev.disabled,
           .next.disabled {
@@ -6486,18 +6487,19 @@ textarea#editInput {
     margin-left: -3px;
     box-sizing: border-box;
     border-radius: 0 5px 5px 0;
-    line-height: 16px;
-    padding-top: 4px;
+    line-height: 14px;
+    padding-top: 5px;
     background-color: @bg-main;
     color: @kanab-text-color;
     width: 14%;
+    height: 28px;
   }
   .removeSavedFilter {
     float: right;
     border: 1px solid @border-color-main;
-    height: 21px;
     background-color: transparent;
     color: @mainText-color;
+    line-height: 15px;
   }
   .line {
     height: 1px;
@@ -6510,18 +6512,19 @@ textarea#editInput {
   }
   .filters {
     float: left;
-    width: 80%;
-    padding-left: 6px;
+    width: 70%;
     font-size: 12px;
+    line-height: 28px;
+    padding: 0 15px;
+    margin-bottom: 2px;
       &:hover {
         color: white;
-        background-color: @tilte-color;
+        background-color: @bg-hover-drop-down-color;
       }
 
   }
    .checkedValue {
-    color: @mainText-color;
-    background-color: @tilte-color;
+    background-color: @bg-hover-drop-down-color;
   }
 
   .useByDefault {
