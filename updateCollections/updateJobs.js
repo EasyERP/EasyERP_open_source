@@ -14,7 +14,7 @@ var _ = require('../node_modules/underscore');
 var async = require('async');
 var JobsSchema = mongoose.Schemas['jobs'];
 
-var dbObject = mongoose.createConnection('localhost', 'weTrack');
+var dbObject = mongoose.createConnection('localhost', 'development');
 dbObject.on('error', console.error.bind(console, 'connection error:'));
 dbObject.once('open', function callback() {
     console.log("Connection to weTrack is success");
