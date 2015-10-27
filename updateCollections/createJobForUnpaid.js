@@ -113,7 +113,7 @@ mongoose.Schemas['wTrackOld'] = wTrackSchema;
 var WTrackSchema = mongoose.Schemas['wTrack'];
 var WTrackSchemaOld = mongoose.Schemas['wTrackOld'];
 
-var dbObject = mongoose.createConnection('localhost', 'development');
+var dbObject = mongoose.createConnection('localhost', 'production');
 dbObject.on('error', console.error.bind(console, 'connection error:'));
 dbObject.once('open', function callback() {
     console.log("Connection to weTrack is success");

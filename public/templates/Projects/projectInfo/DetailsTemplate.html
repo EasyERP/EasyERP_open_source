@@ -63,7 +63,7 @@
             <td><%= budgetTotal ? currencySplitter(budgetTotal.costSum.toFixed()) : 0%></td>
             <td><%= budgetTotal ? currencySplitter(budgetTotal.revenueSum.toFixed()) : 0%></td>
             <td><%= budgetTotal ? currencySplitter(budgetTotal.profitSum.toFixed()) : 0%></td>
-            <td><%= budgetTotal ? currencySplitter((budgetTotal.revenueSum / budgetTotal.hoursSum).toFixed(2)) : 0%></td>
+            <td><%= budgetTotal ? isNaN((budgetTotal.revenueSum / budgetTotal.hoursSum)) ? 0 : currencySplitter((budgetTotal.revenueSum / budgetTotal.hoursSum).toFixed(2)) : 0%></td>
 
         </tr>
         <% count++ %>
@@ -71,7 +71,7 @@
         <% totalCost += budgetTotal.costSum %>
         <% totalRevenue += budgetTotal.revenueSum%>
         <% totalProfit += budgetTotal.profitSum%>
-        <% totalRate += budgetTotal.revenueSum / budgetTotal.hoursSum %>
+        <% totalRate += isNaN((budgetTotal.revenueSum / budgetTotal.hoursSum)) ? 0 : (budgetTotal.revenueSum / budgetTotal.hoursSum) %>
         <% } %>
         <% })%>
 
