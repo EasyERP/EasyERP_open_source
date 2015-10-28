@@ -123,6 +123,9 @@ var wTrack = function (event, models) {
                             data.revenue *= 100;
                         }
 
+                        if (data && data.cost) {
+                            data.cost *= 100;
+                        }
 
                         data.editedBy = {
                             user: uId,

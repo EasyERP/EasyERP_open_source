@@ -56,6 +56,8 @@ define([
                 this.visible = options.balanceVisible;
             };
 
+            this.forSales = options.service;
+
             products = new productCollection(options);
             products.bind('reset', function () {
                 this.products = products;
@@ -70,18 +72,21 @@ define([
             e.preventDefault();
             e.stopPropagation();
 
+            var self = this;
             var target = $(e.target);
             var parrent = target.closest('tbody');
             var parrentRow = parrent.find('.productItem').last();
             var rowId = parrentRow.attr("data-id");
             var trEll = parrent.find('tr.productItem');
 
+            var templ = _.template(ProductInputContent);
+
 
             if (rowId === undefined || rowId !== 'false') {
                 if (!trEll.length) {
-                    return parrent.prepend(_.template(ProductInputContent));
+                    return parrent.prepend(templ({forSales: self.forSales}));
                 }
-                $(trEll[trEll.length - 1]).after(_.template(ProductInputContent));
+                $(trEll[trEll.length - 1]).after(templ({forSales: self.forSales}));
             }
 
             return false;
@@ -272,6 +277,8 @@ define([
                 trEl.attr('data-id', model.id);
 
                 parrent.find(".current-selected").text(target.text()).attr("data-id", _id);
+
+
             }
 
 
@@ -281,6 +288,8 @@ define([
                 selectedProduct.info.salePrice = currentJob.budget.budgetTotal.revenueSum;
 
                 this.taxesRate = 0;
+            } else {
+                $(parrents[1]).attr('class', 'editable').find('span').text(selectedProduct.info.description || '');
             }
             var taxes;
             var datePicker;
@@ -403,15 +412,16 @@ define([
             var totalAmountContainer;
             var thisEl = this.$el;
             var products;
+            var self = this;
 
             if (options && options.model) {
                 products = options.model.products;
 
-                thisEl.html(_.template(ProductItemsEditList, {model: options.model}));
+                thisEl.html(_.template(ProductItemsEditList, {model: options.model, forSales: self.forSales}));
 
                 if (products) {
                     productsContainer = thisEl.find('#productList');
-                    productsContainer.append(_.template(ItemsEditList, {products: products, editable: this.editable}));
+                    productsContainer.append(_.template(ItemsEditList, {products: products, editable: this.editable, forSales: self.forSales}));
                     totalAmountContainer = thisEl.find('#totalAmountContainer');
                     totalAmountContainer.append(_.template(totalAmount, {
                         model: options.model,
@@ -419,7 +429,7 @@ define([
                     }));
                 }
             } else {
-                this.$el.html(this.template());
+                this.$el.html(this.template({forSales: self.forSales}));
                 totalAmountContainer = thisEl.find('#totalAmountContainer');
                 totalAmountContainer.append(_.template(totalAmount, {model: null, balanceVisible: this.visible}));
             }

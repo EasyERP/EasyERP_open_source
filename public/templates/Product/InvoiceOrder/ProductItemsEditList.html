@@ -4,9 +4,15 @@
         <th class="width20" data-sort="Product">
             Product
         </th>
-        <th class="width25" data-sort="jobs">
-            Job
-        </th>
+        <% if (forSales) {%>
+           <th class="width25" data-sort="jobs">
+               Job
+           </th>
+        <% } else %>
+           <th class="width20" data-sort="description">
+               Description
+           </th>
+        <% } %>
         <th class="width25" data-sort="scheduledDate">
             Scheduled Date
         </th>
