@@ -431,29 +431,37 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   text-align: right;
 }
 #forInfo .tableProjects thead th.forCaption {
-  text-align: left;
   margin-top: 15px;
-  background-color: #66b5d4;
   font-size: 12px;
   line-height: 28px;
   padding: 0 0  0 10px;
   color: #ffffff;
   position: relative;
-  border-right: 1px solid #66b5d4;
+}
+#forInfo .tableProjects thead th.forCaption:last-child {
+  padding: 0 10px 0 0;
+}
+#forInfo .tableProjects thead th.forCaption:first-child {
+  text-align: left;
+  padding: 0 0 0 10px;
 }
 #forInfo .tableProjects thead th.forCaption a {
-  text-align: right;
   color: #ffffff;
-  position: absolute;
-  right: 10px;
-  top: 0;
-  display: block;
 }
 #forInfo .tableProjects tbody td {
   text-align: right;
 }
 #forInfo .tableProjects tbody td:first-child {
   border-left: 1px solid #7f7f80;
+}
+#forInfo .tableProjects tbody td.remove {
+  min-width: 10px;
+  border-right: none;
+  border-left: 1px solid #7f7f80;
+}
+#forInfo .tableProjects tbody td.expand {
+  text-align: center;
+  font-size: 14px;
 }
 #forInfo .tableProjects tr .procent {
   position: relative;
@@ -466,6 +474,24 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   height: 5px;
   position: absolute;
   right: 13px;
+}
+#forInfo .tableProjects .subRow > td {
+  padding-right: 0;
+}
+#forInfo .tableProjects .subRow td:first-child {
+  border-left: none;
+}
+#forInfo .tableProjects .subRow td:last-child {
+  border-right: none;
+}
+#forInfo .tableProjects .tableProject {
+  padding: 5px 0px 5px 20px;
+}
+#forInfo .tableProjects .tableProject .list {
+  border-top: none;
+}
+#forInfo .tableProjects .tableProject .list tbody tr {
+  border-top: none;
 }
 .vacation-list {
   font-family: inherit;
@@ -1922,6 +1948,7 @@ dl dd a.formLink {
 }
 .form #forInfo {
   overflow: hidden;
+  padding-left: 1px;
 }
 .form .compactList li {
   border-bottom: 1px solid #7f7f80;
@@ -2488,6 +2515,7 @@ dl dd a.formLink {
 }
 .formLeftColumn .form #forInfo {
   overflow: hidden;
+  padding-left: 1px;
 }
 .formLeftColumn .form .compactList li {
   border-bottom: 1px solid #7f7f80;
@@ -2839,6 +2867,7 @@ dl dd a.formLink {
 }
 .formRightColumn .form #forInfo {
   overflow: hidden;
+  padding-left: 1px;
 }
 .formRightColumn .form .compactList li {
   border-bottom: 1px solid #7f7f80;
@@ -9083,4 +9112,15 @@ textarea#editInput {
   border: 1px solid #7f7f80;
   background-color: #303031;
   color: #cdcdcd;
+}
+.btnAdd {
+  border: 1px solid transparent;
+  background: #3494b9;
+  padding: 0px 6px;
+  color: #f4f4f4;
+  line-height: 19px;
+}
+.btnAdd:hover {
+  text-decoration: none;
+  background: #297492;
 }

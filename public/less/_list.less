@@ -246,24 +246,32 @@
         text-align: right;
 
         &.forCaption {
-          text-align: left;
+          //text-align: left;
           margin-top: 15px;
-          background-color: @forInfo-caption-color;
+          //background-color: @forInfo-caption-color;
           font-size: 12px;
           line-height: 28px;
           padding: 0 0  0 10px;
           //width: 41%;
           color: @overiewText-color;
           position: relative;
-          border-right: 1px solid @forInfo-caption-color;
+          //border-right: 1px solid /@forInfo-caption-color;
+
+          &:last-child {
+            padding: 0 10px 0 0;
+          }
+          &:first-child {
+            text-align: left;
+            padding: 0 0 0 10px;
+          }
 
           a {
-            text-align: right;
+          //  text-align: right;
             color: @overiewText-color;
-            position: absolute;
-            right: 10px;
-            top: 0;
-            display: block;
+          //  position: absolute;
+          //  right: 10px;
+          //  top: 0;
+          //  display: block;
           }
         }
       }
@@ -275,22 +283,55 @@
           border-left: 1px solid @list-border-color;
         }
       }
+      td.remove {
+        min-width: 10px;
+        border-right: none;
+        border-left: 1px solid @border-color-main;
+      }
+      td.expand {
+        text-align: center;
+        font-size: 14px;
+      }
     }
-      tr {
-        .procent {
-          position: relative;
-          padding-right: 20px;
-          &::before {
-            content: '%';
-            display: block;
-            width: 5px;
-            height: 5px;
-            position: absolute;
-            right: 13px;
+    tr {
+      .procent {
+        position: relative;
+        padding-right: 20px;
+        &::before {
+          content: '%';
+          display: block;
+          width: 5px;
+          height: 5px;
+          position: absolute;
+          right: 13px;
 
+        }
+      }
+    }
+    .subRow {
+      &> td {
+        padding-right: 0;
+      }
+      td {
+        &:first-child {
+          border-left: none;
+        }
+        &:last-child {
+          border-right: none;
+        }
+      }
+    }
+    .tableProject {
+      padding: 5px 0px 5px 20px;
+
+      .list {
+        border-top: none;
+        tbody {
+          tr {
+            border-top: none;
           }
         }
       }
-
+    }
   }
 }
