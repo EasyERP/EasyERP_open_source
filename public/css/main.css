@@ -475,23 +475,29 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   position: absolute;
   right: 13px;
 }
+#forInfo .tableProjects .subRow {
+  background: none;
+}
+#forInfo .tableProjects .subRow:hover {
+  background: none;
+}
 #forInfo .tableProjects .subRow > td {
   padding-right: 0;
 }
 #forInfo .tableProjects .subRow td:first-child {
-  border-left: none;
+  border-left: 1px solid transparent !important;
 }
 #forInfo .tableProjects .subRow td:last-child {
-  border-right: none;
+  border-right: 1px solid transparent !important;
 }
 #forInfo .tableProjects .tableProject {
   padding: 5px 0px 5px 20px;
 }
 #forInfo .tableProjects .tableProject .list {
-  border-top: none;
+  border-top: 1px solid transparent;
 }
 #forInfo .tableProjects .tableProject .list tbody tr {
-  border-top: none;
+  border-top: 1px solid transparent;
 }
 .vacation-list {
   font-family: inherit;
@@ -2254,6 +2260,9 @@ dl dd a.formLink {
 .form input {
   margin: 2px 2px 2px 0;
 }
+.form input.editing {
+  margin-right: 8px;
+}
 .form textarea {
   width: 99%;
   min-height: 160px;
@@ -2821,6 +2830,9 @@ dl dd a.formLink {
 .formLeftColumn .form input {
   margin: 2px 2px 2px 0;
 }
+.formLeftColumn .form input.editing {
+  margin-right: 8px;
+}
 .formLeftColumn .form textarea {
   width: 99%;
   min-height: 160px;
@@ -3172,6 +3184,9 @@ dl dd a.formLink {
 }
 .formRightColumn .form input {
   margin: 2px 2px 2px 0;
+}
+.formRightColumn .form input.editing {
+  margin-right: 8px;
 }
 .formRightColumn .form textarea {
   width: 99%;
@@ -7757,9 +7772,27 @@ input::-webkit-inner-spin-button {
 }
 .topInputHolder .thirdPartBlock .person-info {
   overflow: hidden;
+  padding: 3px 0;
 }
 .topInputHolder .thirdPartBlock .person-info dd {
   line-height: 1;
+}
+.topInputHolder .thirdPartBlock .person-info dd input:not([type=checkbox]) {
+  border: 1px solid #7f7f80;
+  max-width: 280px;
+  line-height: 20px;
+  background-color: transparent;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  padding: 0 4px;
+  color: #cdcdcd;
+}
+.topInputHolder .thirdPartBlock .person-info dd input:not([type=checkbox]):focus {
+  box-shadow: 0 0 5px #66b5d4;
+  -moz-box-shadow: 0 0 5px #66b5d4;
+  -webkit-box-shadow: 0 0 5px #66b5d4;
+  outline: medium none;
+  border: 1px solid #66b5d4 !important;
 }
 .topInputHolder .thirdPartBlock .person-info .miniAvatar {
   float: left;

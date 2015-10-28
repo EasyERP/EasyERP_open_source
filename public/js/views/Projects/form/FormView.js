@@ -81,8 +81,8 @@ define([
                 }
 
                 tempContainer = el.text();
-                width = el.width() - 6;
-                el.html('<input class="editing" type="text" value="' + tempContainer + '" style="width:' + width + 'px">' + "<a href='javascript;' class='icon save left' title='Save' id='saveName'>c</a>");
+                width = el.width() - 31;
+                el.html('<input class="editing" type="text" value="' + tempContainer + '" style="width:' + width + 'px">' + "<a href='javascript;' class='fa fa-check' title='Save' id='saveName'></a>");
 
                 insertedInput = el.find('input');
                 insertedInput.focus();
