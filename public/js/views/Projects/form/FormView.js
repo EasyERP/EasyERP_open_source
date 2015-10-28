@@ -211,7 +211,7 @@ define([
                 var template = _.template(jobsWTracksTemplate);
                 var formModel = this.formModel.toJSON();
                 var jobsItems = formModel.budget.projectTeam;
-                var icon = $(jobContainer).find('.icon.plus');
+                var icon = $(jobContainer).find('.expand');
                 var subId = "subRow-row" + jobId;
                 var subRowCheck = $('#' + subId);
                 var name =  $(target).parents("tr").find("#jobsName").text();
@@ -221,7 +221,7 @@ define([
                 });
 
                 if (icon.html() === '-') {
-                    icon.html('5');
+                    icon.html('+');
                     $(subRowCheck).hide();
                 } else {
                     icon.html('-');
