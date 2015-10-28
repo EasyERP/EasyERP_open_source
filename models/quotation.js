@@ -94,7 +94,8 @@ module.exports = (function () {
                 $inc: {seq: 1}
             },
             {
-                new: true
+                returnOriginal: false,
+                upsert: true
             },
             function (err, rate) {
                 if (err) {

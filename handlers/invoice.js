@@ -807,14 +807,12 @@ var Invoice = function (models) {
                 name: 'invoice',
                 project: project
             },
-
             {
                 $inc: {seq: 1}
             },
             {
-                new: true,
+                returnOriginal: false,
                 upsert: true
-
             },
             function (err, rate) {
                 var resultName;
