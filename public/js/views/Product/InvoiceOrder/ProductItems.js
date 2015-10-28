@@ -288,7 +288,9 @@ define([
                 selectedProduct.info.salePrice = currentJob.budget.budgetTotal.revenueSum;
 
                 this.taxesRate = 0;
-            } else {
+            }
+
+            if (! this.forSales){
                 $(parrents[1]).attr('class', 'editable').find('span').text(selectedProduct.info.description || '');
             }
             var taxes;

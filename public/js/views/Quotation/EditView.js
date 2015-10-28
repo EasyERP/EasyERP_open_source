@@ -443,6 +443,7 @@ define([
                     model: this.currentModel.toJSON(),
                     visible: this.visible
                 });
+                var service = this.forSales;
                 var notDiv;
                 var model;
                 var productItemContainer;
@@ -510,7 +511,7 @@ define([
                 productItemContainer = this.$el.find('#productItemsHolder');
 
                 productItemContainer.append(
-                    new ProductItemView({editable: true}).render({model: model}).el
+                    new ProductItemView({editable: true, service: service}).render({model: model}).el
                 );
 
 
