@@ -1198,7 +1198,7 @@ var Project = function (models, event) {
             } else {
                 res.send(200, project);
 
-                if (dbName === CONSTANTS.WTRACK_DB_NAME) {
+                if ((dbName === CONSTANTS.WTRACK_DB_NAME) || (dbName === "production") || (dbName === "development")) {
                     wTrackSchema = mongoose.Schemas['wTrack'];
                     wTrackModel = models.get(dbName, 'wTrack', wTrackSchema);
 

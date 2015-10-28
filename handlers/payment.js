@@ -390,7 +390,7 @@ var Payment = function (models) {
             var totalToPay = (invoice.paymentInfo) ? invoice.paymentInfo.balance : 0;
             var paid = payment.paidAmount;
             var isNotFullPaid;
-            var wId = (DbName === MAINCONSTANTS.WTRACK_DB_NAME) ? 'Sales Invoice' : 'Purchase Invoice';
+            var wId = ((DbName === MAINCONSTANTS.WTRACK_DB_NAME) || (DbName === "production") || (DbName === "development")) ? 'Sales Invoice' : 'Purchase Invoice';
             var request = {
                 query: {
                     wId: wId,
@@ -515,7 +515,7 @@ var Payment = function (models) {
 
         waterfallTasks = [fetchInvoice, savePayment, invoiceUpdater];
 
-        if (DbName === MAINCONSTANTS.WTRACK_DB_NAME) {
+        if ((DbName === MAINCONSTANTS.WTRACK_DB_NAME) || (DbName === "production") || (DbName === "development")) {
             waterfallTasks.push(updateWtrack);
         }
 
