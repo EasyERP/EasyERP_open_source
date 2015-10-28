@@ -1,6 +1,8 @@
 <div class="half-block left">
     <table class="list tableProjects">
-        <colgroup span="9">
+        <colgroup span="11">
+            <col span="1">
+            <col span="1">
             <col span="1">
             <col span="1">
             <col span="1">
@@ -18,13 +20,14 @@
                 class="forCaption">
                 Team & Resources
             </th>
-            <td>
+            <th class="forCaption"
+                colspan="5">
                 <a href="javascript:;"
                    title="Create Job"
-                   id="createJob">
+                   id="createJob" class="btn-add">
                     Add Job
                 </a>
-            </td>
+            </th>
         </tr>
         <tr>
             <th></th>
@@ -56,7 +59,7 @@
         <tr data-id="<%=element._id%>" id="jobsItem">
 
             <td class = "remove"><a class="fa fa-trash hidden" id="<%=element._id%>"></a></td>
-            <td class="icon plus">+</td>
+            <td class="plus">+</td>
             <td class="editable" id="jobsName"><%=element.name%></td>
             <td class="selects"><a data-id="<%=element.workflow._id%>" id="workflow" class="current-selected"><%=element.workflow.name%></a></td>
             <td><%=element.type%></td>

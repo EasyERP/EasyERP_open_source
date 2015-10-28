@@ -431,23 +431,22 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   text-align: right;
 }
 #forInfo .tableProjects thead th.forCaption {
-  text-align: left;
   margin-top: 15px;
-  background-color: #66b5d4;
   font-size: 12px;
   line-height: 28px;
   padding: 0 0  0 10px;
   color: #ffffff;
   position: relative;
-  border-right: 1px solid #66b5d4;
+}
+#forInfo .tableProjects thead th.forCaption:last-child {
+  padding: 0 10px 0 0;
+}
+#forInfo .tableProjects thead th.forCaption:first-child {
+  text-align: left;
+  padding: 0 0 0 10px;
 }
 #forInfo .tableProjects thead th.forCaption a {
-  text-align: right;
   color: #ffffff;
-  position: absolute;
-  right: 10px;
-  top: 0;
-  display: block;
 }
 #forInfo .tableProjects tbody td {
   text-align: right;
