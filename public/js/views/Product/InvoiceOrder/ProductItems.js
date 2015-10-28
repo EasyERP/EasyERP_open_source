@@ -277,6 +277,8 @@ define([
                 trEl.attr('data-id', model.id);
 
                 parrent.find(".current-selected").text(target.text()).attr("data-id", _id);
+
+
             }
 
 
@@ -286,6 +288,8 @@ define([
                 selectedProduct.info.salePrice = currentJob.budget.budgetTotal.revenueSum;
 
                 this.taxesRate = 0;
+            } else {
+                $(parrents[1]).attr('class', 'editable').find('span').text(selectedProduct.info.description || '');
             }
             var taxes;
             var datePicker;
