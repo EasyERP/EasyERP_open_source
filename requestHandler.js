@@ -572,7 +572,7 @@ var requestHandler = function (app, event, mainDb) {
 
                     wTrack.aggregate([{
                         $match: {
-                            "project._id": pId
+                            "project._id": ObjectId(pId)
                         }
                     },
                         {
@@ -793,7 +793,11 @@ var requestHandler = function (app, event, mainDb) {
                 }
                 cb();
             }, function(){
-                Job.aggregate([
+                Job.aggregate([{
+                    $match: {
+                        project: ObjectId(pId)
+                    }
+                },
                     {
                         $group: {
                             _id: "$project",

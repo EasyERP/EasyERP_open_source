@@ -10,6 +10,7 @@ var wTrack = function (event, models) {
     var VacationSchema = mongoose.Schemas['Vacation'];
     var WorkflowSchema = mongoose.Schemas['workflow'];
     var jobsSchema = mongoose.Schemas['jobs'];
+    var ProjectSchema = mongoose.Schemas['Ptoject'];
     /*var CustomerSchema = mongoose.Schemas['Customer'];
      var EmployeeSchema = mongoose.Schemas['Employee'];
      var WorkflowSchema = mongoose.Schemas['workflow'];*/
@@ -822,20 +823,22 @@ var wTrack = function (event, models) {
     this.generateWTrack = function (req, res, next) {
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
         var Job = models.get(req.session.lastDb, 'jobs', jobsSchema);
+        var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
         var data = req.body;
         var addHours = 0;
         var savedwTrack = [];
         var globalTotal = 0;
-        var job = null;
-        var jobId;
+        var job = {};
 
-        var createJob = req.headers.createjob;
+        var  jobId = req.headers.jobid;
+
+        if (jobId.length > 24){
+            jobId = objectId(jobId);
+        }
+
+        var createJob = (req.headers.createjob === 'true') ? true : false;
         var jobName = req.headers.jobname;
         var project = req.headers.project;
-
-        if(!createJob){
-            jobId = req.headers.jobid;
-        }
 
         async.waterfall([createJobFunc, generateFunc], function(err, result){
 
@@ -880,13 +883,17 @@ var wTrack = function (event, models) {
                     var jobName = job.get('name');
 
                     jobForwTrack = {
-                        _id: objectId(jobId),
+                        _id: jobId,
                         name: jobName
                     };
 
+                    Project.findByIdAndUpdate(objectId(project), {$push: {"budget.projectTeam": jobId}});
+
                     waterfallCB(null, jobForwTrack);
                 });
-            };
+            } else {
+                waterfallCB(null, jobForwTrack);
+            }
 
         }
 

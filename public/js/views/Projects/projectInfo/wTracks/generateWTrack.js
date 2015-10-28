@@ -289,11 +289,8 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     var tabs;
                     var activeTab;
                     var dialogHolder;
-                    var jobName;
-
-                    if (self.createJob) {
-                        jobName = this.$el.find('#jobName').val();
-                    }
+                    var jobId = self.jobs ? self.jobs._id : null;
+                    var jobName = self.jobs ? self.jobs.name : null;
 
                     var filter = {
                         'projectName': {
@@ -301,8 +298,6 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                             value: [this.modelJSON._id]
                         }
                     };
-
-                    //ToDo create Job
 
                     this.stopDefaultEvents(e);
 
@@ -319,11 +314,8 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                         beforeSend: function (xhr) {
                             xhr.setRequestHeader("createJob", self.createJob);
                             xhr.setRequestHeader("project", self.modelJSON._id);
-                            xhr.setRequestHeader("jobid", self.modelJSON._id);
-
-                            if (self.createJob){
-                                xhr.setRequestHeader("jobname", jobName);
-                            }
+                            xhr.setRequestHeader("jobid", jobId);
+                            xhr.setRequestHeader("jobname", jobName);
                         },
 
                         success: function () {
