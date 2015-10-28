@@ -87,11 +87,11 @@
             <td>&nbsp</td>
             <td>&nbsp</td>
             <td>&nbsp</td>
-            <td><%= currencySplitter(totalHours.toFixed(2))%></td>
-            <td><%= currencySplitter(totalCost.toFixed(2))%></td>
-            <td><%= currencySplitter(totalRevenue.toFixed(2))%></td>
-            <td><%= currencySplitter(totalProfit.toFixed(2))%></td>
-            <td><%= currencySplitter(totalRate.toFixed(2))%></td>
+            <td id="totalHours" data-value="<%=totalHours%>"><%= currencySplitter(totalHours.toFixed())%></td>
+            <td id="totalCost" data-value="<%=totalCost%>"><%= currencySplitter(totalCost.toFixed())%></td>
+            <td id="totalRevenue" data-value="<%=totalRevenue%>"><%= currencySplitter(totalRevenue.toFixed())%></td>
+            <td id="totalProfit" data-value="<%=totalProfit%>"><%= currencySplitter(totalProfit.toFixed())%></td>
+            <td id="totalRate"><%= currencySplitter(totalRate.toFixed(2))%></td>
         </tr>
 
         </tfoot>

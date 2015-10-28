@@ -118,6 +118,45 @@ define([
                 });
             },
 
+            recalcTotal: function(id){
+                var formModel = this.formModel.toJSON();
+                var jobsItems = formModel.budget.projectTeam;
+                var rate;
+
+                var job = _.find(jobsItems, function(element){
+                    return element._id === id;
+                });
+
+                var budgetTotal = job.budget.budgetTotal;
+
+                var totalHours = this.$el.find('#totalHours');
+                var totalCost = this.$el.find('#totalCost');
+                var totalRevenue = this.$el.find('#totalRevenue');
+                var totalProfit = this.$el.find('#totalProfit');
+                var totalRate = this.$el.find('#totalRate');
+
+                var newHours = totalHours.attr('data-value') - budgetTotal.hoursSum;
+                var newCost = totalCost.attr('data-value') - budgetTotal.costSum;
+                var newRevenue = totalRevenue.attr('data-value') - budgetTotal.revenueSum;
+                var newProfit = totalProfit.attr('data-value') - budgetTotal.profitSum;
+
+                totalHours.text(helpers.currencySplitter(newHours.toFixed()));
+                totalCost.text(helpers.currencySplitter(newCost.toFixed()));
+                totalRevenue.text(helpers.currencySplitter(newRevenue.toFixed()));
+                totalProfit.text(helpers.currencySplitter(newProfit.toFixed()));
+
+                rate = isNaN((totalRevenue.attr('data-value') / totalHours.attr('data-value'))) ? 0 : (totalRevenue.attr('data-value') / totalHours.attr('data-value'));
+
+                totalRate.text(helpers.currencySplitter(rate.toFixed(2)));
+
+                totalHours.attr('data-value', newHours);
+                totalCost.attr('data-value', newCost);
+                totalRevenue.attr('data-value', newRevenue);
+                totalProfit.attr('data-value', newProfit);
+                totalRate.attr('data-value', rate);
+
+            },
+
             removeJobAndWTracks: function(e){
                 var self = this;
                 var id = $(e.target).attr('id');
@@ -131,6 +170,10 @@ define([
                     }
 
                     tr.remove();
+
+                    self.renderJobWTracks(e);
+
+                    self.recalcTotal(id);
 
 
                     var filter = {
