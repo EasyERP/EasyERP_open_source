@@ -45,7 +45,7 @@ define([
 				var top = $(document).scrollTop() + (win.height() - dialog.height() - 200) / 2;
 				var left = (win.width() - dialog.width()) / 2;
 				dialog.css({
-					position: "absolute",
+					position: "fixed",
 					top     : top,
 					left    : left
 				});
