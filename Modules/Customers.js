@@ -915,7 +915,7 @@ var Customers = function (event, models) {
 
             var fullName;
 
-            if (dbName === CONSTANTS.WTRACK_DB_NAME) {
+            if ((dbName === CONSTANTS.WTRACK_DB_NAME) || (dbName === "production") || (dbName === "development")) {
 
                 InvoiceSchema = mongoose.Schemas['wTrackInvoice'];
                 Invoice = models.get(dbName, 'wTrackInvoice', InvoiceSchema);
