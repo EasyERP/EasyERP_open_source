@@ -183,8 +183,7 @@ define([
                 } else {
                     icon.html('-');
                     $('<tr id=' + subId + ' class="subRow">' +
-                        '<td colspan="1"></td>' +
-                        '<td colspan="10" id="subRow-holder' + jobId + '"></td>' +
+                        '<td colspan="11" id="subRow-holder' + jobId + '"></td>' +
                         '</tr>').insertAfter(jobContainer);
                     $('#subRow-holder' + jobId).append(template({
                         jobItem: job,

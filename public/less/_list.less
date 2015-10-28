@@ -283,22 +283,55 @@
           border-left: 1px solid @list-border-color;
         }
       }
+      td.remove {
+        min-width: 10px;
+        border-right: none;
+        border-left: 1px solid @border-color-main;
+      }
+      td.expand {
+        text-align: center;
+        font-size: 14px;
+      }
     }
-      tr {
-        .procent {
-          position: relative;
-          padding-right: 20px;
-          &::before {
-            content: '%';
-            display: block;
-            width: 5px;
-            height: 5px;
-            position: absolute;
-            right: 13px;
+    tr {
+      .procent {
+        position: relative;
+        padding-right: 20px;
+        &::before {
+          content: '%';
+          display: block;
+          width: 5px;
+          height: 5px;
+          position: absolute;
+          right: 13px;
 
+        }
+      }
+    }
+    .subRow {
+      &> td {
+        padding-right: 0;
+      }
+      td {
+        &:first-child {
+          border-left: none;
+        }
+        &:last-child {
+          border-right: none;
+        }
+      }
+    }
+    .tableProject {
+      padding: 5px 0px 5px 20px;
+
+      .list {
+        border-top: none;
+        tbody {
+          tr {
+            border-top: none;
           }
         }
       }
-
+    }
   }
 }

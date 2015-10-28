@@ -24,7 +24,7 @@
                 colspan="5">
                 <a href="javascript:;"
                    title="Create Job"
-                   id="createJob" class="btn-add">
+                   id="createJob" class="btnAdd">
                     Add Job
                 </a>
             </th>
@@ -58,8 +58,8 @@
 
         <tr data-id="<%=element._id%>" id="jobsItem">
 
-            <td class = "remove"><a class="fa fa-trash hidden" id="<%=element._id%>"></a></td>
-            <td class="plus">+</td>
+            <td class="remove"><a class="fa fa-trash hidden" id="<%=element._id%>"></a></td>
+            <td class="expand">+</td>
             <td class="editable" id="jobsName"><%=element.name%></td>
             <td class="selects"><a data-id="<%=element.workflow._id%>" id="workflow" class="current-selected"><%=element.workflow.name%></a></td>
             <td><%=element.type%></td>
