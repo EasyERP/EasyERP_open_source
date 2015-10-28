@@ -884,14 +884,16 @@ input::-ms-clear {
   border-right: 10px solid white;
 }
 .kanban .column {
-  border-left: 10px solid #fff;
+  border-left: 10px solid #565658;
   vertical-align: text-top;
   min-height: 100%;
   width: auto;
   min-width: 160px;
   height: auto;
   vertical-align: top;
-  background: url("../images/form_sheetbg.png");
+  background: linear-gradient(45deg, rgba(0, 0, 0, 0) 45%, rgba(255, 255, 255, 0.1) 50%, rgba(0, 0, 0, 0) 52%), linear-gradient(-45deg, rgba(0, 0, 0, 0) 48%, rgba(255, 255, 255, 0.1) 50%, rgba(0, 0, 0, 0) 52%);
+  background-size: 1em 1em;
+  background-color: #303030;
 }
 .kanban .column .item {
   word-wrap: break-word;
