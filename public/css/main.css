@@ -3808,7 +3808,7 @@ dl dd a.formLink {
   background: #303031;
 }
 .btn span {
-  padding: 0px !important;
+  padding: 0 !important;
   color: #66b5d4;
 }
 .btn:hover {
@@ -3829,7 +3829,7 @@ button {
   background: #303031;
 }
 button span {
-  padding: 0px !important;
+  padding: 0 !important;
   color: #66b5d4;
 }
 button:hover {
@@ -3858,7 +3858,7 @@ a.red {
 }
 button.red span,
 a.red span {
-  padding: 0px !important;
+  padding: 0 !important;
   color: #66b5d4;
 }
 button.red:hover,
@@ -6251,7 +6251,7 @@ ul.dialog-tabs .withEndContract .arrow {
 }
 ul.dialog-tabs .withEndContract .endContractReasonList span,
 ul.dialog-tabs .withEndContract .arrow span {
-  padding: 0px !important;
+  padding: 0 !important;
   color: #66b5d4;
 }
 ul.dialog-tabs .withEndContract .endContractReasonList:hover,
@@ -6381,7 +6381,7 @@ ul.chart-tabs .withEndContract .arrow {
 }
 ul.chart-tabs .withEndContract .endContractReasonList span,
 ul.chart-tabs .withEndContract .arrow span {
-  padding: 0px !important;
+  padding: 0 !important;
   color: #66b5d4;
 }
 ul.chart-tabs .withEndContract .endContractReasonList:hover,
