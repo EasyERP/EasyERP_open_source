@@ -9113,6 +9113,104 @@ table.payRoll-list tfoot {
   box-sizing: border-box;
   display: block;
 }
+.table {
+  width: 100%;
+  max-width: 100%;
+}
+.table .tableRow {
+  display: table-row;
+  width: 100%;
+}
+.table .tableCell {
+  padding: 2px 4px;
+  vertical-align: middle;
+  border-left: 1px solid #cdcdcd;
+  border-right: 1px solid #cdcdcd;
+  border-bottom: 1px solid #cdcdcd;
+  line-height: 1.42857143;
+  white-space: nowrap;
+  display: table-cell;
+}
+.table .tableHead {
+  display: table;
+}
+.table .tableHead .tableCell {
+  border-top: 1px solid #cdcdcd;
+  font-weight: bold;
+  vertical-align: bottom;
+}
+.table .tableBody {
+  display: table;
+}
+.table .tableBody .tableRow:nth-of-type(odd) {
+  background-color: #f3f3f3;
+}
+.table .tableFooter {
+  display: table;
+}
+.table .tableFooter .tableCell {
+  font-weight: bold;
+  vertical-align: bottom;
+  border-top: 1px solid #cdcdcd;
+}
+.tablePayRoll {
+  height: calc(100vh - 145px);
+}
+.tablePayRoll .tableBody {
+  width: 100%;
+}
+.tablePayRoll .tableCell {
+  width: 7%;
+}
+.tablePayRoll .tableCell:nth-child(3) {
+  width: 20%;
+}
+.tablePayRoll .tableCell:nth-child(12) {
+  width: 10%;
+}
+.tableFixed {
+  position: relative;
+  margin: 55px 0 27px;
+}
+.tableFixed .tableHead {
+  background-color: #ffffff;
+  width: calc(100% - 12px);
+  position: absolute;
+  height: 55px;
+  top: -56px;
+  left: 0;
+  display: block;
+}
+.tableFixed .tableHead .tableRow {
+  background-color: #ffffff;
+  width: 100%;
+  display: table;
+}
+.tableFixed .tableBody {
+  height: 100%;
+  width: 100%;
+  display: block;
+  overflow-y: scroll;
+  overflow-x: visible;
+}
+.tableFixed .tableBody .tableRow {
+  width: 100%;
+  display: table;
+}
+.tableFixed .tableFooter {
+  background-color: #ffffff;
+  position: absolute;
+  height: 27px;
+  bottom: -27px;
+  left: 0;
+  width: calc(100% - 12px);
+  display: block;
+}
+.tableFixed .tableFooter .tableRow {
+  background-color: #ffffff;
+  width: 100%;
+  display: table;
+}
 #searchContainer.payRoll {
   margin: 0 0 10px;
 }
