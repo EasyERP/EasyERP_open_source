@@ -290,7 +290,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     var activeTab;
                     var dialogHolder;
                     var jobId = self.jobs ? self.jobs._id : null;
-                    var jobName = self.jobs ? self.jobs.name : null;
+                    var jobName = self.jobs ? self.jobs.name : $("#jobName").val();
 
                     var filter = {
                         'projectName': {

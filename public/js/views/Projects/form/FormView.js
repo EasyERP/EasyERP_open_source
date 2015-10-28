@@ -49,7 +49,10 @@ define([
                 "click #createItem"                                               : "createDialog",
                 "click #createJob"                                               : "createJob",
                 "change input:not(.checkbox)": "showSaveButton",
-                "click #jobsItem td:not(.editable, .selects)"            : "renderJobWTracks",
+                "click #jobsItem td:not(.editable, .selects, .remove)"            : "renderJobWTracks",
+                "mouseover #jobsItem"            : "showRemoveButton",
+                "mouseleave #jobsItem"            : "hideRemoveButton",
+                "click .fa.fa-trash"            : "removeJobAndWTracks",
                 "click td.editable"                                                              : "editRow",
                 "click #saveName": "saveNewJobName"
 
@@ -91,8 +94,9 @@ define([
             saveNewJobName: function(e){
                 var self = this;
                 var id = $(e.target).parents("td").closest('tr').attr('data-id');
+                var name = $(e.target).prev('input').val();
 
-                var data ={_id: id, name: $(e.target).prev('input').val()};
+                var data ={_id: id, name: name};
 
                 dataService.postData("/jobs/update", data,  function(err, result){
                     if (err){
@@ -100,6 +104,7 @@ define([
                     }
 
                     $('#saveName').hide();
+
 
                     var filter = {
                         'projectName': {
@@ -113,6 +118,49 @@ define([
                 });
             },
 
+            removeJobAndWTracks: function(e){
+                var self = this;
+                var id = $(e.target).attr('id');
+                var tr = $(e.target).closest('tr');
+
+                var data ={_id: id};
+
+                dataService.postData("/jobs/remove", data,  function(err, result){
+                    if (err){
+                        return console.log(err);
+                    }
+
+                    tr.remove();
+
+
+                    var filter = {
+                        'projectName': {
+                            key  : 'project._id',
+                            value: [self.id]
+                        }
+                    };
+
+                    self.wCollection.showMore({count: 50, page: 1, filter: filter});
+
+                });
+            },
+
+            hideRemoveButton: function(e){
+                var target = e.target;
+                var tr = $(target).parents("tr");
+                var removeItem = tr.find(".fa.fa-trash");
+
+                removeItem.addClass('hidden');
+            },
+
+            showRemoveButton: function(e){
+                var target = e.target;
+                var tr = $(target).parents("tr");
+                var removeItem = tr.find(".fa.fa-trash");
+
+                removeItem.removeClass('hidden');
+            },
+
             renderJobWTracks: function(e){
                 var target = e.target;
                 var jobId = $(target).parents("tr").attr("data-id");
@@ -123,6 +171,7 @@ define([
                 var icon = $(jobContainer).find('.icon.plus');
                 var subId = "subRow-row" + jobId;
                 var subRowCheck = $('#' + subId);
+                var name =  $(target).parents("tr").find("#jobsName").text();
 
                 var job = _.find(jobsItems, function(element){
                     return element._id === jobId;
@@ -141,7 +190,9 @@ define([
                         jobItem: job,
                         currencySplitter: helpers.currencySplitter
                     }));
+
                 }
+                $('#createItem').attr('data-value', name);
 
             },
 

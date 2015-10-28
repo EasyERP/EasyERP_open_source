@@ -2454,7 +2454,7 @@ dl dd a.formLink {
   line-height: 27px !important;
 }
 .hidden {
-  display: none;
+  display: none !important;
 }
 .formLeftColumn {
   width: 60%;

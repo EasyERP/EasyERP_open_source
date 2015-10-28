@@ -4,7 +4,7 @@
 var mongoose = require('mongoose');
 var async = require('async');
 
-var Jobs = function (models) {
+var Jobs = function (models, event) {
     var JobsSchema = mongoose.Schemas['jobs'];
     var wTrackSchema = mongoose.Schemas['wTrack'];
     var access = require("../Modules/additions/access.js")(models);
@@ -44,6 +44,44 @@ this.getData = function (req, res, next) {
 
         });
     },
+
+        this.remove = function(req, res, next){
+            var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema );
+            var wTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema );
+
+            var data = req.body;
+            var id = data._id;
+
+            JobsModel.findByIdAndRemove(id, function(err, result){
+                if (err){
+                    return next(err);
+                }
+
+                var jobId = result.get('_id');
+                var projectId = result.get('project');
+
+                    wTrack.find({"jobs._id": jobId}, function(err, result){
+                        if (err){
+                            return next(err);
+                        }
+
+                        async.each(result, function(wTrackEl, cb){
+                            var _id = wTrackEl.get('_id');
+
+                            wTrack.findByIdAndRemove(_id, function(err, r){
+                                cb();
+                            });
+                        }, function(){
+                            console.log('wTracks removed');
+                            event.emit('updateProjectDetails', {req: req, _id: projectId});
+                        });
+
+
+                    });
+
+                res.status(200).send(result)
+            })
+        },
 
     this.update = function(req, res, next){
         var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema );
