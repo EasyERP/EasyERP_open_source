@@ -127,7 +127,7 @@ var Jobs = function (models, event) {
                     res.status(200).send(result)
                 })
             } else if (data.products && data.products.length) {
-                var products = data.products;
+                var products = JSON.parse(data.products);
                 var type = data.type;
 
                 products.forEach(function(product){

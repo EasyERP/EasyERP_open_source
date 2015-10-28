@@ -100,7 +100,7 @@ var Workflow = function (models, event) {
             var ProjectSchema;
             var ProjectModel;
 
-            if (dbName === CONSTANTS.WTRACK_DB_NAME) {
+            if ((dbName === CONSTANTS.WTRACK_DB_NAME) || (dbName === 'production') || ((dbName === 'development'))) {
                 ProjectSchema = mongoose.Schemas['Project'];
                 ProjectModel = models.get(dbName, 'Project', ProjectSchema);
 

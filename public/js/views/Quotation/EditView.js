@@ -145,7 +145,7 @@ define([
                                     //Backbone.history.fragment = '';
                                     //Backbone.history.navigate(url, {trigger: true});
 
-                                    var data ={products: products, type: "Order"};
+                                    var data ={products: JSON.stringify(products), type: "Order"};
 
                                     dataService.postData("/jobs/update", data,  function(err, result){
                                         if (err){
