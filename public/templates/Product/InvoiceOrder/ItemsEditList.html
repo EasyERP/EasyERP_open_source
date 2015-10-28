@@ -7,12 +7,17 @@
         <a href="#easyErp/Product/form/<%=product.product._id%>"><%=product.product.name%></a>
         <%}%>
     </td>
-    <td data-name="jobs" data-content="jobs">
-        <a class="current-selected" id="jobs" href="javascript:;"><%=product.jobs.name%></a>
-        <!--<span class="textarea">-->
-            <!--<%=product.description%>-->
-        <!--</span>-->
-    </td>
+    <% if (forSales) {%>
+       <td data-name="jobs" data-content="jobs">
+           <a class="current-selected" id="jobs" href="javascript:;"><%=product.jobs.name%></a>
+       </td>
+    <% } else {%>
+       <td data-name="productDescr">
+          <span>
+            <%=product.description%>
+          </span>
+       </td>
+    <% } %>
     <td data-name="scheduledDate" class="editable">
         <span class="datepicker">
             <%=product.scheduledDate%>
