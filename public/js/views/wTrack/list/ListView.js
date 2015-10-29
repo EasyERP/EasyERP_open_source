@@ -127,7 +127,7 @@ define([
             },
 
             hideGenerateCopy: function () {
-                $('#top-bar-generateBtn').hide();
+                //$('#top-bar-generateBtn').hide();
                 $('#top-bar-copyBtn').hide();
             },
 
@@ -333,7 +333,7 @@ define([
             },
 
             editRow: function (e, prev, next) {
-                $(".newSelectList").hide();
+                $(".newSelectList").remove();
 
                 var el = $(e.target);
                 var tr = $(e.target).closest('tr');
@@ -805,7 +805,7 @@ define([
                     self.$listTable = $('#listTable');
                 }, 10);
 
-                this.genInvoiceEl = $('#top-bar-generateBtn');
+                //this.genInvoiceEl = $('#top-bar-generateBtn');
                 this.copyEl = $('#top-bar-copyBtn');
 
                 return this;
@@ -908,7 +908,7 @@ define([
 
                 if (!checkLength || !model || model.get('isPaid')) {
                     this.selectedProjectId = [];
-                    this.genInvoiceEl.hide();
+                    //this.genInvoiceEl.hide();
 
                     return false;
                 }
@@ -921,11 +921,11 @@ define([
 
                 this.selectedProjectId = _.uniq(this.selectedProjectId);
 
-                if (this.selectedProjectId.length !== 1) {
-                    this.genInvoiceEl.hide();
-                } else {
-                    this.genInvoiceEl.show();
-                }
+                //if (this.selectedProjectId.length !== 1) {
+                //    this.genInvoiceEl.hide();
+                //} else {
+                //    this.genInvoiceEl.show();
+                //}
             },
 
             getAutoCalcField: function (idTotal, dataRow, money) {
