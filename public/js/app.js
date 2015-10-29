@@ -42,12 +42,10 @@ define([
 			create   : function (event, ui) {
 				var win = $(window);
 				var dialog = $(event.target).parent(".ui-dialog");
-				var top = $(document).scrollTop() + (win.height() - dialog.height() - 200) / 2;
-				var left = (win.width() - dialog.width()) / 2;
+				//var top = $(document).scrollTop() + (win.height() - dialog.height() - 200) / 2;
+				//var left = (win.width() - dialog.width()) / 2;
 				dialog.css({
-					position: "fixed",
-					top     : top,
-					left    : left
+					position: "fixed"
 				});
 			}
 		});

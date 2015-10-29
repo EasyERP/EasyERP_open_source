@@ -5235,6 +5235,8 @@ ul.dialog-tabs li.right button {
   color: #cdcdcd;
   z-index: 1000;
   margin: 0 auto;
+  left: 50%;
+  top: 50%;
   -moz-border-radius: 0px;
   -webkit-border-radius: 0px;
   border-radius: 0px;
