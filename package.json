@@ -40,6 +40,7 @@
     "socket.io-redis": "^0.1.4",
     "swig": "1.4.2",
     "underscore": "1.8.3",
+    "validator": "^4.2.1",
     "xlsx": "^0.8.0",
     "xml2js": "0.4.0"
   },

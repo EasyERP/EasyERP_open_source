@@ -514,7 +514,7 @@ var JobPosition = function (event, models) {
         var EmployeeSchema;
         var EmployeeModel;
 
-        if ((dbName === CONSTANTS.WTRACK_DB_NAME) || (dbName === 'production') || ((dbName === 'development'))) {
+        if ((dbName === CONSTANTS.WTRACK_DB_NAME) || (dbName === "production") || (dbName === "development")) {
             EmployeeSchema = mongoose.Schemas['Employee'];
             EmployeeModel = models.get(dbName, 'Employee', EmployeeSchema);
 
