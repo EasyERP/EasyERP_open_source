@@ -309,15 +309,19 @@
       }
     }
     .subRow {
+      background: none;
+      &:hover {
+        background: none;
+      }
       &> td {
         padding-right: 0;
       }
       td {
         &:first-child {
-          border-left: none;
+          border-left: 1px solid transparent !important;
         }
         &:last-child {
-          border-right: none;
+          border-right: 1px solid transparent !important;
         }
       }
     }
@@ -325,10 +329,10 @@
       padding: 5px 0px 5px 20px;
 
       .list {
-        border-top: none;
+        border-top: 1px solid transparent;
         tbody {
           tr {
-            border-top: none;
+            border-top: 1px solid transparent;
           }
         }
       }

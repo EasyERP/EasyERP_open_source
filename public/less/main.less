@@ -691,6 +691,9 @@ input::-ms-clear {
 
   input {
     margin: 2px 2px 2px 0;
+    &.editing {
+      margin-right: 8px;
+    }
   }
 
   textarea {
@@ -5063,9 +5066,27 @@ input::-webkit-inner-spin-button {
 
     .person-info {
       overflow: hidden;
+      padding: 3px 0;
 
       dd {
         line-height: 1;
+
+        input:not([type=checkbox]) {
+          border: @thin-border @list-border-color;
+          max-width: 280px;
+          line-height: 20px;
+          background-color: transparent;
+          font-family: Arial, Helvetica, sans-serif;
+          font-size: 12px;
+          padding: 0 4px;
+          color: @mainText-color;
+
+          &:focus {
+            .box-shadow(0, 0, 5px, @border-color-selected);
+            outline: medium none;
+            border: @thin-border @border-color-selected !important;
+          }
+        }
       }
 
       .miniAvatar {
