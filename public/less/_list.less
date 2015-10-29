@@ -152,6 +152,7 @@
 
         a {
           color: @mainText-color;
+          display: inline-block;
         }
 
         a.stageSelect {
@@ -209,29 +210,6 @@
   }
 }
 
-.list2 {
-  .list;
-  table-layout: fixed;
-
-  thead th:first-of-type {
-    width: 15%;
-  }
-
-  .datepicker {
-    width: 90%
-  }
-
-  .datepicker.notVisible {
-    display: none;
-  }
-
-}
-
-.ui-dialog {
-  .list2 thead th, .list2 tbody tr td, .list2 tfoot tr td {
-    text-align: left;
-  }
-}
 
 .margin(@t: 5px, @r: 5px, @b: 5px, @l: 5px) {
   margin: @arguments;
