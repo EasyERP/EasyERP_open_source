@@ -1,3 +1,4 @@
+@import "reset.css";
 @font-face {
   font-family: 'Segoe UI';
   src: url("../font/segoeui.woff") format('woff');
@@ -3807,7 +3808,7 @@ dl dd a.formLink {
   background: #303031;
 }
 .btn span {
-  padding: 0px !important;
+  padding: 0 !important;
   color: #66b5d4;
 }
 .btn:hover {
@@ -3828,7 +3829,7 @@ button {
   background: #303031;
 }
 button span {
-  padding: 0px !important;
+  padding: 0 !important;
   color: #66b5d4;
 }
 button:hover {
@@ -3857,7 +3858,7 @@ a.red {
 }
 button.red span,
 a.red span {
-  padding: 0px !important;
+  padding: 0 !important;
   color: #66b5d4;
 }
 button.red:hover,
@@ -6250,7 +6251,7 @@ ul.dialog-tabs .withEndContract .arrow {
 }
 ul.dialog-tabs .withEndContract .endContractReasonList span,
 ul.dialog-tabs .withEndContract .arrow span {
-  padding: 0px !important;
+  padding: 0 !important;
   color: #66b5d4;
 }
 ul.dialog-tabs .withEndContract .endContractReasonList:hover,
@@ -6380,7 +6381,7 @@ ul.chart-tabs .withEndContract .arrow {
 }
 ul.chart-tabs .withEndContract .endContractReasonList span,
 ul.chart-tabs .withEndContract .arrow span {
-  padding: 0px !important;
+  padding: 0 !important;
   color: #66b5d4;
 }
 ul.chart-tabs .withEndContract .endContractReasonList:hover,
@@ -6664,7 +6665,7 @@ h3.dashboard {
 }
 #health a.health1,
 .health-wrapper a.health1 {
-  background-color: #66b5d4;
+  background-color: #008000;
 }
 #health a.health2,
 .health-wrapper a.health2 {
@@ -6687,6 +6688,7 @@ h3.dashboard {
   width: 25px;
   position: absolute;
   background-color: white;
+  z-index: 1;
 }
 #health ul.with-div,
 .health-wrapper ul.with-div {
@@ -7617,8 +7619,10 @@ span.projectClosed {
 }
 span.ui-spinner {
   position: relative;
-  width: 95%;
   padding: 0;
+  display: block;
+  width: 45px;
+  overflow: hidden;
 }
 span.ui-spinner span {
   display: block;
@@ -8242,12 +8246,33 @@ textarea#editInput {
   line-height: 24px;
   width: 140px;
 }
+.grid-conatiner.revenue .chartContainer .legend div {
+  zoom: 1;
+  clear: both;
+}
+.grid-conatiner.revenue .chartContainer .legend div:before {
+  content: "\0020";
+  display: block;
+  height: 0;
+  overflow: hidden;
+}
+.grid-conatiner.revenue .chartContainer .legend div:after {
+  content: "\0020";
+  display: block;
+  height: 0;
+  overflow: hidden;
+  clear: both;
+}
 .grid-conatiner.revenue .chartContainer .legend label {
   display: inline-block;
   width: 50px;
+  line-height: 25px;
+  float: left;
 }
 .grid-conatiner.revenue .chartContainer .legend input {
-  width: 50px;
+  width: 57px;
+  float: left;
+  border: none;
 }
 .grid-conatiner.revenue .chartContainer .legendHours {
   float: left;
@@ -8914,18 +8939,19 @@ textarea#editInput {
   margin-left: -3px;
   box-sizing: border-box;
   border-radius: 0 5px 5px 0;
-  line-height: 16px;
-  padding-top: 4px;
+  line-height: 14px;
+  padding-top: 5px;
   background-color: #303031;
   color: #a9a9a9;
   width: 14%;
+  height: 28px;
 }
 #favoritesContent .removeSavedFilter {
   float: right;
   border: 1px solid #7f7f80;
-  height: 21px;
   background-color: transparent;
   color: #cdcdcd;
+  line-height: 15px;
 }
 #favoritesContent .line {
   height: 1px;
@@ -8938,17 +8964,21 @@ textarea#editInput {
 }
 #favoritesContent .filters {
   float: left;
-  width: 80%;
-  padding-left: 6px;
+  width: 70%;
   font-size: 12px;
+  line-height: 28px;
+  height: 28px;
+  padding: 0 15px;
+  margin-bottom: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 #favoritesContent .filters:hover {
   color: white;
-  background-color: #66b5d4;
+  background-color: #3d3d3e;
 }
 #favoritesContent .checkedValue {
-  color: #cdcdcd;
-  background-color: #66b5d4;
+  background-color: #3d3d3e;
 }
 #favoritesContent .useByDefault {
   margin-top: 10px;
