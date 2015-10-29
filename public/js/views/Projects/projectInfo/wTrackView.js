@@ -4,25 +4,27 @@
 define([
     'text!templates/Projects/projectInfo/wTrackTemplate.html',
     'text!templates/Projects/projectInfo/wTracks/wTrackHeader.html',
+    'text!templates/Pagination/PaginationTemplate.html',
     'views/wTrack/list/ListView',
+    'views/wTrack/list/ListItemView',
     'models/wTrackModel',
     'collections/wTrack/editCollection',
     'collections/wTrack/filterCollection',
     'dataService',
     'populate'
 
-], function (wTrackTemplate, wTrackTopBar, listView, currentModel, EditCollection, wTrackCollection, dataService, populate) {
+], function (wTrackTemplate, wTrackTopBar, paginationTemplate, listView, listItemView, currentModel, EditCollection, wTrackCollection, dataService, populate) {
     var wTrackView = listView.extend({
 
         el: '#weTracks',
         totalCollectionLengthUrl: '/wTrack/totalCollectionLength',
         templateHeader: _.template(wTrackTopBar),
+        listItemView: listItemView,
 
         initialize: function (options) {
             this.collection = options.model;
             this.defaultItemsNumber = 50;
             this.filter = options.filter ? options.filter : {};
-
 
             this.startNumber = options.startNumber;
 
@@ -32,6 +34,37 @@ define([
 
             this.render();
         },
+
+        showMoreContent: function (newModels) {
+            var holder = this.$el;
+            var itemView;
+
+            holder.find("#listTable").empty();
+
+            itemView = new this.listItemView({
+                collection : newModels,
+                page       : holder.find("#currentShowPage").val(),
+                itemsNumber: this.defaultItemsNumber
+            });
+
+            holder.append(itemView.render());
+
+            itemView.undelegateEvents();
+
+            var pagenation = holder.find('.pagination');
+            if (newModels.length !== 0) {
+                pagenation.show();
+            } else {
+                pagenation.hide();
+            }
+            $("#top-bar-deleteBtn").hide();
+            $('#check_all').prop('checked', false);
+
+
+            this.collection.unbind('reset');
+            this.collection.unbind('showmore');
+        },
+
 
         goSort: function (e) {
             var target$;
@@ -78,6 +111,8 @@ define([
         },
 
         getTotalLength: function (currentNumber, itemsNumber, filter) {
+            var self = this;
+
             dataService.getData(this.totalCollectionLengthUrl, {
                 currentNumber: currentNumber,
                 filter       : filter,
@@ -94,11 +129,11 @@ define([
 
                 if (itemsNumber * (page - 1) > length) {
                     context.page = page = Math.ceil(length / itemsNumber);
-                   // context.fetchSortCollection(context.sort);
+                    context.fetchSortCollection(context.sort);
                    // context.changeLocationHash(page, context.defaultItemsNumber, filter);
                 }
 
-                context.pageElementRender(response.count, itemsNumber, page);//prototype in main.js
+                context.pageElementRenderProject(response.count, itemsNumber, page, self);//prototype in main.js
             }, this);
         },
 
@@ -136,22 +171,44 @@ define([
 
         },
 
+        renderPagination: function (currentEl, self) {
+            currentEl.append(_.template(paginationTemplate));
+
+            var pagenation = self.$el.find('.pagination');
+
+            if (self.collection.length === 0) {
+                pagenation.hide();
+            } else {
+                pagenation.show();
+            }
+
+            $(document).on("click", function (e) {
+                self.hidePagesPopup(e);
+            });
+        },
+
         showPage: function (event) {
 
+            this.collection.unbind('reset');
+            this.collection.unbind('showmore');
+
             event.preventDefault();
-            this.showP(event, {filter: this.filter, newCollection: this.newCollection, sort: this.sort}, true);
+            this.showPProject(event, {filter: this.filter, newCollection: this.newCollection, sort: this.sort}, true, this);
         },
 
         previousPage: function (event) {
 
+            this.collection.unbind('reset');
+            this.collection.unbind('showmore');
+
             event.preventDefault();
             $("#top-bar-deleteBtn").hide();
             $('#check_all').prop('checked', false);
-            this.prevP({
+            this.prevPProject({
                 sort         : this.sort,
                 filter       : this.filter,
                 newCollection: this.newCollection
-            }, true);
+            }, true, this);
             dataService.getData(this.totalCollectionLengthUrl, {
                 filter       : this.filter,
                 contentType  : this.contentType,
@@ -163,16 +220,19 @@ define([
 
         nextPage: function (event) {
 
+            this.collection.unbind('reset');
+            this.collection.unbind('showmore');
+
             event.preventDefault();
 
             $("#top-bar-deleteBtn").hide();
             $('#check_all').prop('checked', false);
 
-            this.nextP({
+            this.nextPProject({
                 sort         : this.sort,
                 filter       : this.filter,
                 newCollection: this.newCollection
-            }, true);
+            }, true, this);
             dataService.getData(this.totalCollectionLengthUrl, {
                 filter       : this.filter,
                 newCollection: this.newCollection
@@ -183,14 +243,17 @@ define([
 
         firstPage: function (event) {
 
+            this.collection.unbind('reset');
+            this.collection.unbind('showmore');
+
             event.preventDefault();
             $("#top-bar-deleteBtn").hide();
             $('#check_all').prop('checked', false);
-            this.firstP({
+            this.firstPProject({
                 sort         : this.sort,
                 filter       : this.filter,
                 newCollection: this.newCollection
-            }, true);
+            }, true, this);
             dataService.getData(this.totalCollectionLengthUrl, {
                 sort  : this.sort,
                 filter: this.filter
@@ -204,11 +267,11 @@ define([
             event.preventDefault();
             $("#top-bar-deleteBtn").hide();
             $('#check_all').prop('checked', false);
-            this.lastP({
+            this.lastPProject({
                 sort         : this.sort,
                 filter       : this.filter,
                 newCollection: this.newCollection
-            }, true);
+            }, true, this);
             dataService.getData(this.totalCollectionLengthUrl, {
                 sort  : this.sort,
                 filter: this.filter
@@ -497,15 +560,19 @@ define([
             var allInputs;
             var checkedInputs;
 
-            currentEl.html('');
-            currentEl.prepend(this.templateHeader);
+            if(this.startNumber < 50) {
+                currentEl.html('');
+                currentEl.prepend(this.templateHeader);
+            }
 
-                currentEl.find('#listTable').html(this.template({
-                    wTracks: wTracks,
-                    startNumber: self.startNumber - 1
-                }));
+            currentEl.find('#listTable').html(this.template({
+                wTracks: wTracks,
+                startNumber: self.startNumber - 1
+            }));
 
-               // this.renderPagination(self.$el, this);
+            if(this.startNumber < 50) {
+                this.renderPagination(self.$el, self);
+            }
 
             this.genInvoiceEl = self.$el.find('#top-bar-generateBtn');
             this.copyEl = self.$el.find('#top-bar-copyBtn');

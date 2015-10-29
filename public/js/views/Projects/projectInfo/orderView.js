@@ -5,6 +5,7 @@ define([
     'text!templates/Projects/projectInfo/orders/ListTemplate.html',
     'text!templates/Projects/projectInfo/orders/ListHeader.html',
     'text!templates/stages.html',
+    'text!templates/Pagination/PaginationTemplate.html',
     'views/salesQuotation/EditView',
     'views/salesOrder/list/ListView',
     'collections/Quotation/filterCollection',
@@ -12,7 +13,7 @@ define([
     'dataService',
     'common'
 
-], function (ListTemplate, lisHeader, stagesTemplate, editView, listView, quotationCollection, orderModel, dataService, common) {
+], function (ListTemplate, lisHeader, stagesTemplate, paginationTemplate, editView, listView, quotationCollection, orderModel, dataService, common) {
     var orderView = listView.extend({
 
         el: '#orders',
@@ -25,7 +26,15 @@ define([
             "click .checkbox": "checked",
             "click #removeOrder": "removeItems",
             "click  .list tbody td:not(.notForm)": "goToEditDialog",
-            "click .stageSelect": "showNewSelect"
+            "click .stageSelect": "showNewSelect",
+            "mouseover .currentPageList"  : "showPagesPopup",
+            "click .itemsNumber"          : "switchPageCounter",
+            "click .showPage"             : "showPage",
+            "change #currentShowPage"     : "showPage",
+            "click #previousPage"         : "previousPage",
+            "click #nextPage"             : "nextPage",
+            "click #firstShowPage"        : "firstPage",
+            "click #lastShowPage"         : "lastPage"
         },
 
         initialize: function (options) {
@@ -36,6 +45,95 @@ define([
             this.filter = options.filter ? options.filter : {};
             this.defaultItemsNumber = 50;
             this.page = options.page ? options.page : 1;
+            this.startNumber = options.startNumber ? options.startNumber : 1;
+
+            if(this.startNumber < 50){
+                this.getTotalLength(null, this.defaultItemsNumber, this.filter);
+            }
+
+            this.render(options);
+        },
+
+
+        showPage: function (event) {
+
+            event.preventDefault();
+            this.showP(event, {filter: this.filter, newCollection: this.newCollection, sort: this.sort}, true);
+        },
+
+        previousPage: function (event) {
+
+            event.preventDefault();
+            $("#top-bar-deleteBtn").hide();
+            $('#check_all').prop('checked', false);
+            this.prevP({
+                sort         : this.sort,
+                filter       : this.filter,
+                newCollection: this.newCollection
+            }, true);
+            dataService.getData(this.totalCollectionLengthUrl, {
+                filter       : this.filter,
+                contentType  : this.contentType,
+                newCollection: this.newCollection
+            }, function (response, context) {
+                context.listLength = response.count || 0;
+            }, this);
+        },
+
+        nextPage: function (event) {
+
+            event.preventDefault();
+
+            $("#top-bar-deleteBtn").hide();
+            $('#check_all').prop('checked', false);
+
+            this.nextP({
+                sort         : this.sort,
+                filter       : this.filter,
+                newCollection: this.newCollection
+            }, true);
+            dataService.getData(this.totalCollectionLengthUrl, {
+                filter       : this.filter,
+                newCollection: this.newCollection
+            }, function (response, context) {
+                context.listLength = response.count || 0;
+            }, this);
+        },
+
+        firstPage: function (event) {
+
+            event.preventDefault();
+            $("#top-bar-deleteBtn").hide();
+            $('#check_all').prop('checked', false);
+            this.firstP({
+                sort         : this.sort,
+                filter       : this.filter,
+                newCollection: this.newCollection
+            }, true);
+            dataService.getData(this.totalCollectionLengthUrl, {
+                sort  : this.sort,
+                filter: this.filter
+            }, function (response, context) {
+                context.listLength = response.count || 0;
+            }, this);
+        },
+
+        lastPage: function (event) {
+
+            event.preventDefault();
+            $("#top-bar-deleteBtn").hide();
+            $('#check_all').prop('checked', false);
+            this.lastP({
+                sort         : this.sort,
+                filter       : this.filter,
+                newCollection: this.newCollection
+            }, true);
+            dataService.getData(this.totalCollectionLengthUrl, {
+                sort  : this.sort,
+                filter: this.filter
+            }, function (response, context) {
+                context.listLength = response.count || 0;
+            }, this);
         },
 
         chooseOption: function (e) {
@@ -138,6 +236,8 @@ define([
         },
 
         getTotalLength: function (currentNumber, itemsNumber, filter) {
+            var self = this;
+
             dataService.getData(this.totalCollectionLengthUrl, {
                 currentNumber: currentNumber,
                 filter       : filter,
@@ -158,8 +258,24 @@ define([
                     // context.changeLocationHash(page, context.defaultItemsNumber, filter);
                 }
 
-                context.pageElementRender(response.count, itemsNumber, page);//prototype in main.js
+                context.pageElementRenderProject(response.count, itemsNumber, page, self);//prototype in main.js
             }, this);
+        },
+
+        renderPagination: function (currentEl, self) {
+            currentEl.append(_.template(paginationTemplate));
+
+            var pagenation = self.$el.find('.pagination');
+
+            if (self.collection.length === 0) {
+                pagenation.hide();
+            } else {
+                pagenation.show();
+            }
+
+            $(document).on("click", function (e) {
+                self.hidePagesPopup(e);
+            });
         },
 
         removeItems: function (event) {
@@ -265,6 +381,8 @@ define([
                 startNumber: 0,
                 dateToLocal: common.utcDateToLocaleDate
             }));
+
+            this.renderPagination(currentEl, this);
 
             this.$el.find('.icon').hide();
 
