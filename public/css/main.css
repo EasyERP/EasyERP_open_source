@@ -422,6 +422,8 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 .ui-dialog .list2 tbody tr td,
 .ui-dialog .list2 tfoot tr td {
   text-align: left;
+  line-height: 1;
+  height: 20px;
 }
 #forInfo .tableProjects {
   width: 99%;
@@ -4718,12 +4720,15 @@ table#workflows tr td.edit-status {
   border-bottom: 0;
 }
 .startDate,
-.endDate {
+.endDate,
+.endDateDP {
+  box-sizing: border-box;
   position: relative;
-  width: 150px;
+  width: 100%;
 }
 .startDate input,
-.endDate input {
+.endDate input,
+.endDateDP input {
   display: none;
   position: absolute;
   top: 5px;
@@ -5965,15 +5970,16 @@ ul.dialog-tabs li.right button {
   -moz-border-radius: 0;
   -webkit-border-radius: 0;
   border-radius: 0;
-  border: 1px solid #E2E9EF;
-  border-top: 1px solid #CBD3E2;
-  max-width: 280px;
   height: 18px;
-  background-color: white;
+  border: 1px solid #7f7f80;
+  max-width: 280px;
+  vertical-align: middle;
+  line-height: 20px;
+  background-color: transparent;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 12px;
-  padding: 2px;
-  color: #262626;
+  padding: 0 4px;
+  color: #cdcdcd;
 }
 .ui-dialog input#summary {
   width: 100%;
@@ -7768,13 +7774,23 @@ input::-webkit-inner-spin-button {
   border-bottom: 1px solid #dddddd;
 }
 .topInputHolder .thirdPartBlock {
-  width: 33.33%;
+  width: 30%;
+  padding: 0 1.665% 0 1.665%;
 }
 .topInputHolder .thirdPartBlock .person-info {
+  display: table;
+  width: 100%;
   overflow: hidden;
   padding: 3px 0;
 }
+.topInputHolder .thirdPartBlock .person-info dt {
+  display: table-cell;
+  vertical-align: middle;
+  line-height: 1;
+}
 .topInputHolder .thirdPartBlock .person-info dd {
+  display: table-cell;
+  vertical-align: middle;
   line-height: 1;
 }
 .topInputHolder .thirdPartBlock .person-info dd input:not([type=checkbox]) {
@@ -7795,15 +7811,18 @@ input::-webkit-inner-spin-button {
   border: 1px solid #66b5d4 !important;
 }
 .topInputHolder .thirdPartBlock .person-info .miniAvatar {
-  float: left;
+  display: table-cell;
+  vertical-align: middle;
   width: 20%;
 }
 .topInputHolder .thirdPartBlock .person-info .miniAvatar .avatar {
   width: 50px;
   height: 50px;
+  margin: 0;
 }
 .topInputHolder .thirdPartBlock .person-info .miniAvatarInfo {
-  float: left;
+  display: table-cell;
+  vertical-align: middle;
   width: 80%;
 }
 .list2 .width20 {

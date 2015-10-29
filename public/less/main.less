@@ -1941,15 +1941,17 @@ input::-ms-clear {
     -moz-border-radius: 0;
     -webkit-border-radius: 0;
     border-radius: 0;
-    border: 1px solid #E2E9EF;
-    border-top: 1px solid #CBD3E2;
     max-width: 280px;
     height: 18px;
-    background-color: white;
+    border: @thin-border @list-border-color;
+    max-width: 280px;
+    vertical-align: middle;
+    line-height: 20px;
+    background-color: transparent;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 12px;
-    padding: 2px;
-    color: #262626;
+    padding: 0 4px;
+    color: @mainText-color;
 
     &#summary {
       width: 100%;
@@ -3995,9 +3997,11 @@ table#workflows {
   .top-bar;
 }
 
-.startDate, .endDate {
+.startDate, .endDate, .endDateDP {
+  box-sizing: border-box;
   position: relative;
-  width: 150px;
+  //width: 150px;
+  width: 100%;
 
   input {
     display: none;
@@ -5057,13 +5061,22 @@ input::-webkit-inner-spin-button {
   border-bottom: @thin-border #DDD;
 
   .thirdPartBlock {
-    width: 33.33%;
+    width: 30%;
+    padding: 0 1.665% 0 1.665%;
 
     .person-info {
+      display: table;
+      width: 100%;
       overflow: hidden;
       padding: 3px 0;
-
+      dt {
+        display: table-cell;
+        vertical-align: middle;
+        line-height: 1;
+      }
       dd {
+        display: table-cell;
+        vertical-align: middle;
         line-height: 1;
 
         input:not([type=checkbox]) {
@@ -5085,16 +5098,21 @@ input::-webkit-inner-spin-button {
       }
 
       .miniAvatar {
-        float: left;
+        display: table-cell;
+        vertical-align: middle;
+        //float: left;
         width: 20%;
         .avatar{
           width: 50px;
           height: 50px;
+          margin: 0;
         }
       }
 
       .miniAvatarInfo {
-        float: left;
+        display: table-cell;
+        vertical-align: middle;
+        //float: left;
         width: 80%;
 
       }
