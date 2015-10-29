@@ -49,11 +49,11 @@ define([
                 "click #createItem"                                               : "createDialog",
                 "click #createJob"                                               : "createJob",
                 "change input:not(.checkbox)": "showSaveButton",
-                "click #jobsItem td:not(.editable, .selects, .remove)"            : "renderJobWTracks",
+                "click #jobsItem td:not(.selects, .remove)"            : "renderJobWTracks",
                 "mouseover #jobsItem"            : "showRemoveButton",
                 "mouseleave #jobsItem"            : "hideRemoveButton",
                 "click .fa.fa-trash"            : "removeJobAndWTracks",
-                "click td.editable"                                                              : "editRow",
+                "dblclick td.editable"                                                              : "editRow",
                 "click #saveName": "saveNewJobName"
 
             },
@@ -914,7 +914,8 @@ define([
                         collection: self.qCollection,
                         projectId : self.id,
                         customerId: self.formModel.toJSON().customer._id,
-                        projectManager: self.formModel.toJSON().projectmanager
+                        projectManager: self.formModel.toJSON().projectmanager,
+                        filter: filter
                     }).render();
 
 
@@ -952,7 +953,8 @@ define([
                         collection: self.ordersCollection,
                         projectId : self.id,
                         customerId: self.formModel.toJSON().customer._id,
-                        projectManager: self.formModel.toJSON().projectmanager
+                        projectManager: self.formModel.toJSON().projectmanager,
+                        filter: filter
                     }).render();
 
                 };

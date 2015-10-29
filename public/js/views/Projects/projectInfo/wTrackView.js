@@ -23,9 +23,6 @@ define([
             this.defaultItemsNumber = 50;
             this.filter = options.filter ? options.filter : {};
 
-            //this.collection.unbind();
-            //
-            //this.collection.bind('showmore', this.rerenderContent);
 
             this.startNumber = options.startNumber;
 

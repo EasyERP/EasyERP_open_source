@@ -7,14 +7,17 @@ define([
     'text!templates/stages.html',
     'views/salesQuotation/EditView',
     'views/salesOrder/list/ListView',
+    'collections/Quotation/filterCollection',
     'models/QuotationModel',
     'dataService',
     'common'
 
-], function (ListTemplate, lisHeader, stagesTemplate, editView, listView, orderModel, dataService, common) {
+], function (ListTemplate, lisHeader, stagesTemplate, editView, listView, quotationCollection, orderModel, dataService, common) {
     var orderView = listView.extend({
 
         el: '#orders',
+        totalCollectionLengthUrl: '/quotation/totalCollectionLength',
+        contentCollection: quotationCollection,
         templateList: _.template(ListTemplate),
         templateHeader: _.template(lisHeader),
 
@@ -30,6 +33,9 @@ define([
             this.projectID = options.projectId;
             this.customerId = options.customerId;
             this.projectManager = options.projectManager;
+            this.filter = options.filter ? options.filter : {};
+            this.defaultItemsNumber = 50;
+            this.page = options.page ? options.page : 1;
         },
 
         chooseOption: function (e) {
@@ -57,6 +63,103 @@ define([
 
             this.hideNewSelect();
             return false;
+        },
+
+        renderContent: function () {
+            var currentEl = this.$el;
+            var tBody = currentEl.find('#orderTable');
+            var itemView;
+            var pagenation;
+
+            tBody.empty();
+            $("#top-bar-deleteBtn").hide();
+            $('#check_all').prop('checked', false);
+
+            if (this.collection.length > 0) {
+                itemView = new this.listItemView({
+                    collection : this.collection,
+                    page       : this.page,
+                    itemsNumber: this.collection.namberToShow
+                });
+                tBody.append(itemView.render({thisEl: tBody}));
+            }
+
+            pagenation = this.$el.find('.pagination');
+            if (this.collection.length === 0) {
+                pagenation.hide();
+            } else {
+                pagenation.show();
+            }
+        },
+
+
+        goSort: function (e) {
+            var target$;
+            var currentParrentSortClass;
+            var sortClass;
+            var sortConst;
+            var sortBy;
+            var sortObject;
+
+            this.collection.unbind('reset');
+            this.collection.unbind('showmore');
+
+            target$ = $(e.target);
+            currentParrentSortClass = target$.attr('class');
+            sortClass = currentParrentSortClass.split(' ')[1];
+            sortConst = 1;
+            sortBy = target$.data('sort');
+            sortObject = {};
+
+            if (!sortClass) {
+                target$.addClass('sortDn');
+                sortClass = "sortDn";
+            }
+            switch (sortClass) {
+                case "sortDn":
+                {
+                    target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
+                    target$.removeClass('sortDn').addClass('sortUp');
+                    sortConst = 1;
+                }
+                    break;
+                case "sortUp":
+                {
+                    target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
+                    target$.removeClass('sortUp').addClass('sortDn');
+                    sortConst = -1;
+                }
+                    break;
+            }
+            sortObject[sortBy] = sortConst;
+
+            this.fetchSortCollection(sortObject);
+            this.getTotalLength(null, this.defaultItemsNumber, this.filter);
+        },
+
+        getTotalLength: function (currentNumber, itemsNumber, filter) {
+            dataService.getData(this.totalCollectionLengthUrl, {
+                currentNumber: currentNumber,
+                filter       : filter,
+                contentType  : this.contentType,
+                newCollection: this.newCollection
+            }, function (response, context) {
+
+                var page = context.page || 1;
+                var length = context.listLength = response.count || 0;
+
+                if (itemsNumber === 'all') {
+                    itemsNumber = response.count;
+                }
+
+                if (itemsNumber * (page - 1) > length) {
+                    context.page = page = Math.ceil(length / itemsNumber);
+                    // context.fetchSortCollection(context.sort);
+                    // context.changeLocationHash(page, context.defaultItemsNumber, filter);
+                }
+
+                context.pageElementRender(response.count, itemsNumber, page);//prototype in main.js
+            }, this);
         },
 
         removeItems: function (event) {
@@ -157,7 +260,7 @@ define([
             currentEl.html('');
             currentEl.prepend(this.templateHeader);
 
-            currentEl.find('#listTableOrder').html(this.templateList({
+            currentEl.find('#orderTable').html(this.templateList({
                 orderCollection : this.collection.toJSON(),
                 startNumber: 0,
                 dateToLocal: common.utcDateToLocaleDate

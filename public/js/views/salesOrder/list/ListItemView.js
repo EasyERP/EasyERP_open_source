@@ -11,11 +11,13 @@
                 this.collection = options.collection;
                 this.startNumber = (options.page - 1 ) * options.itemsNumber;
             },
-            render: function() {
+            render: function(options) {
+                var el = (options && options.thisEl) ? options.thisEl : this.$el;
+
                 if (App.weTrack){
-                    this.$el.append(_.template(listForWTrack, { orderCollection: this.collection.toJSON(), startNumber: this.startNumber }));
+                    el.append(_.template(listForWTrack, { orderCollection: this.collection.toJSON(), startNumber: this.startNumber }));
                 } else {
-                    this.$el.append(_.template(listTemplate, { orderCollection: this.collection.toJSON(), startNumber: this.startNumber }));
+                    el.append(_.template(listTemplate, { orderCollection: this.collection.toJSON(), startNumber: this.startNumber }));
                 }
             }
         });

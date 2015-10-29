@@ -52,7 +52,7 @@
                 this.fetch({
                     data: options,
                     reset: true,
-                    success: function () {
+                    success: function (collection) {
                         that.page++;
                     },
                     error: function (models, xhr) {
