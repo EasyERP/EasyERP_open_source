@@ -202,7 +202,7 @@ define([
             this.collection.unbind('showmore');
 
             event.preventDefault();
-            $("#top-bar-deleteBtn").hide();
+
             $('#check_all').prop('checked', false);
             this.prevPProject({
                 sort         : this.sort,
@@ -225,7 +225,7 @@ define([
 
             event.preventDefault();
 
-            $("#top-bar-deleteBtn").hide();
+
             $('#check_all').prop('checked', false);
 
             this.nextPProject({
@@ -247,7 +247,7 @@ define([
             this.collection.unbind('showmore');
 
             event.preventDefault();
-            $("#top-bar-deleteBtn").hide();
+
             $('#check_all').prop('checked', false);
             this.firstPProject({
                 sort         : this.sort,
@@ -265,7 +265,7 @@ define([
         lastPage: function (event) {
 
             event.preventDefault();
-            $("#top-bar-deleteBtn").hide();
+
             $('#check_all').prop('checked', false);
             this.lastPProject({
                 sort         : this.sort,
@@ -594,17 +594,17 @@ define([
                     checkLength = checkedInputs.length;
 
                     if (checkLength > 0) {
-                        $("#top-bar-deleteBtn").show();
+                        $("#deletewTrack").show();
 
                         if (checkLength === self.collection.length) {
-                            checkedInputs.each(function (index, element) {
-                                self.checkProjectId(element, checkLength);
-                            });
+                            //checkedInputs.each(function (index, element) {
+                            //    self.checkProjectId(element, checkLength);
+                            //});
 
                             $('#check_all').prop('checked', true);
                         }
                     } else {
-                        $("#top-bar-deleteBtn").hide();
+                        $("#deletewTrack").hide();
 
                         $('#check_all').prop('checked', false);
                     }
