@@ -329,7 +329,7 @@ var Department = function (event, models) {
                                 } else {
                                     res.send(200, {success: 'Department updated success'});
 
-                                    if (dbName === CONSTANTS.WTRACK_DB_NAME) {
+                                    if ((dbName === CONSTANTS.WTRACK_DB_NAME) || (dbName === "production") || (dbName === "development")) {
                                         EmployeeSchema = mongoose.Schemas['Employee'];
                                         EmployeeModel = models.get(dbName, 'Employee', EmployeeSchema);
 
@@ -354,7 +354,7 @@ var Department = function (event, models) {
                             } else {
                                 res.send(200, {success: 'Department updated success'});
 
-                                if (dbName === CONSTANTS.WTRACK_DB_NAME) {
+                                if ((dbName === CONSTANTS.WTRACK_DB_NAME) || (dbName === "production") || (dbName === "development")) {
                                     EmployeeSchema = mongoose.Schemas['Employee'];
                                     EmployeeModel = models.get(dbName, 'Employee', EmployeeSchema);
 
