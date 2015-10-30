@@ -125,7 +125,6 @@ define([
                     var contentview;
 
                     custom.setCurrentVT('list');
-
                     contentview = new contentView({startTime: startTime});
 
                     self.changeView(contentview, true);
