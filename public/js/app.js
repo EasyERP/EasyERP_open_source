@@ -32,7 +32,6 @@ define([
 				return this.indexOf(str) == 0;
 			};
 		}
-
 		$.extend($.ui.dialog.prototype.options, {
 			modal    : true,
 			resizable: false,
@@ -42,12 +41,10 @@ define([
 			create   : function (event, ui) {
 				var win = $(window);
 				var dialog = $(event.target).parent(".ui-dialog");
-				var top = $(document).scrollTop() + (win.height() - dialog.height() - 200) / 2;
-				var left = (win.width() - dialog.width()) / 2;
+				//var top = $(document).scrollTop() + (win.height() - dialog.height() - 200) / 2;
+				//var left = (win.width() - dialog.width()) / 2;
 				dialog.css({
-					position: "absolute",
-					top     : top,
-					left    : left
+					position: "fixed"
 				});
 			}
 		});
