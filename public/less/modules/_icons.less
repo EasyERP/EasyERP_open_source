@@ -1,0 +1,40 @@
+.btn-list {
+  height: 24px;
+  border: @thin-border @border-color-main;
+  border-right: 0;
+  border-bottom: 0;
+  float: left;
+  margin: 5px 12px 2px 5px;
+
+  li {
+    border-right: @thin-border @border-color-main;
+    border-bottom: @thin-border @border-color-main;
+    padding: 3px;
+    margin: 0;
+    display: block;
+    float: left;
+    height: 18px;
+    width: 18px;
+
+    a {
+      display: block;
+      line-height: 20px;
+      font-size: 18px !important;
+      text-align: center;
+      &.fa {
+        line-height: 18px;
+        font-size: 16px !important;
+      }
+      &:hover {
+        text-decoration: none;
+      }
+    }
+  }
+
+  .selected {
+    color: @selected-filters-color;
+    a {
+      color: white;
+    }
+  }
+}
