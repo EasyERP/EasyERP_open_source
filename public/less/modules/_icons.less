@@ -1,0 +1,33 @@
+.btn-list {
+  height: 24px;
+  border: @thin-border @border-color-main;
+  border-right: 0;
+  border-bottom: 0;
+  float: left;
+  margin: 5px 12px 2px 5px;
+
+  li {
+    border-right: @thin-border @border-color-main;
+    border-bottom: @thin-border @border-color-main;
+    .noPaddingMargin;
+    display: block;
+    .left;
+    height: 24px;
+    width: 24px;
+
+    a {
+      &:hover {
+        text-decoration: none;
+      }
+    }
+  }
+
+  .selected {
+    // border-bottom: 2px solid @border-color-selected;
+    color: @selected-filters-color;
+    a {
+      color: white;
+      //text-shadow: 0 1px 2px black;
+    }
+  }
+}
