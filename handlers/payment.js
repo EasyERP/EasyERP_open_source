@@ -427,7 +427,8 @@ var Payment = function (models) {
                 invoice.paymentInfo.balance = (totalToPay - paid) / 100;
                 invoice.paymentInfo.unTaxed += paid / 100;
                 invoice.payments.push(payment._id);
-                invoice.save(function (err, invoice) {
+
+                Invoice.findByIdAndUpdate(invoiceId, invoice, function (err, invoice) {
                     if (err) {
                         return waterfallCallback(err);
                     }
