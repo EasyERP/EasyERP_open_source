@@ -313,6 +313,17 @@ th {
   background-color: #303031;
   color: #cdcdcd;
 }
+.btnAdd {
+  border: 1px solid transparent;
+  background: #3494b9;
+  padding: 0px 6px;
+  color: #f4f4f4;
+  line-height: 19px;
+}
+.btnAdd:hover {
+  text-decoration: none;
+  background: #297492;
+}
 .btn-list {
   height: 24px;
   border: 1px solid #7f7f80;
