@@ -63,6 +63,9 @@ html, body {
   margin: 0;
   padding: 0;
 }
+body {
+  background-color: @bg-main;
+}
 
 html {
   font-size: 100%;
@@ -390,7 +393,6 @@ input::-ms-clear {
   &.employee {
     width: 100%;
     max-width: 100%;
-    padding-right: 40px;
 
   }
 
@@ -2161,194 +2163,6 @@ input::-ms-clear {
   }
 }
 
-.pagination {
-  width: 100%;
-  float: right;
-  margin-top: 5px;
-  margin-bottom: 5px;
-
-  div {
-    float: left;
-  }
-
-  .countOnPage {
-    float: left;
-    color: @mainText-color;
-    margin-left: 5px;
-
-    .page-list {
-
-    }
-  }
-
-  .nextPrev {
-    float: right;
-    margin-right: 5px;
-    color: @mainText-color;
-  }
-
-  #previousPage, #nextPage, .currentPageList, #firstShowPage, #lastShowPage {
-    background-color: white;
-    background-image: none;
-    line-height: 15px;
-    width: 20px;
-    height: 18px;
-    display: block;
-    text-align: center;
-    padding: 0;
-    border-radius: 0;
-    //
-    background-position: 50% 50%;
-    background-repeat: no-repeat;
-    float: left;
-  }
-  #firstShowPage, #lastShowPage {
-    width: 30px;
-    height: 18px;
-    display: block;
-    font-size: 12px;
-  }
-  #previousPage {
-    margin: 0 3px;
-    font-size: 12px;
-  }
-
-  #nextPage {
-    margin: 0 3px;
-    font-size: 12px;
-  }
-
-  .allPage {
-    position: relative;
-  }
-  button {
-
-    color: rgba(0, 0, 0, 0.75);
-    &:hover {
-      background-color: #F7F8F9;
-      color: rgba(0, 0, 0, 0.9);
-      border: 1px solid rgba(0, 0, 0, 0.9);
-    }
-    &[disabled] {
-      color: rgba(0, 0, 0, 0.3);
-      border: @thin-border rgba(0, 0, 0, 0.3);
-      cursor: default;
-    }
-  }
-  #currentShowPage {
-    border: @thin-border @border-color-main;
-    border-right: none;
-    background-color: #fff;
-    width: 21px;
-    height: 12px;
-    margin-left: 5px;
-    font-size: 12px !important;
-  }
-
-  #pageList {
-    background-color: @bg-main-menu;
-    border: @thin-border @border-color-main;
-    position: absolute;
-    bottom: 17px;
-    left: -7px;
-    display: none;
-
-    li {
-      display: block;
-      width: 25px;
-      height: 20px;
-      line-height: 20px;
-      text-align: center;
-      font-size: 12px;
-      cursor: pointer;
-
-      &:hover {
-        background-color: @bg-main-menu-selected;
-        color: white;
-        text-decoration: none;
-      }
-    }
-
-  }
-
-  .currentPageList {
-    margin-right: 5px;
-    font-size: 12px;
-    .caret {
-      display: block;
-      height: 15px;
-      background-image: url("@{imagesfolder}/arrow-up.png");
-      background-position: 50% 50%;
-      background-repeat: no-repeat;
-    }
-  }
-
-  .pageList {
-    position: relative;
-
-    .itemsNumber {
-      text-decoration: none;
-      display: inline-block;
-      padding: 0 5px;
-      &:hover {
-        padding-bottom: 4px;
-        border-bottom: 1px solid @border-color-main ;
-      }
-
-    }
-
-    a.selectedItemsNumber {
-      border-bottom: 1px solid @border-color-main;
-      padding-bottom: 4px;
-    }
-
-    button {
-      background-color: white;
-      background-image: none;
-      border-radius: 0;
-      width: 27px;
-      margin: 0 0 0 5px;
-      line-height: 10px;
-      font-size: 12px;
-      padding: 3px 2px;
-      &:hover {
-        background-color: #F7F8F9;
-      }
-    }
-
-    .currentPageList {
-      margin-left: 0;
-      border-left: none;
-    }
-
-    ul {
-      background-color: @bg-main-menu;
-      border: @thin-border @border-color-main;
-      position: absolute;
-      bottom: 17px;
-      left: 0px;
-      display: none;
-      font-size: 12px;
-
-      li {
-        a {
-          display: block;
-          width: 25px;
-          height: 20px;
-          line-height: 20px;
-          text-align: center;
-
-          &:hover {
-            background-color: @bg-main-menu-selected;
-            color: white;
-            text-decoration: none;
-          }
-        }
-      }
-    }
-  }
-}
-
 .addUserDialog, .addGroupDialog {
   display: none;
 
@@ -3059,7 +2873,6 @@ dl {
 }
 
 #wrapper {
-  background-color: @bg-main;
   .fullsize;
   min-width: 100%;
   height: 100hv;
@@ -4136,10 +3949,12 @@ ul.dialog-tabs {
 }
 
 .form-holder {
-  padding: 20px 20px;
-  &.employee {
-    padding: 20px 40px 20px 20px;
-  }
+  padding: 20px;
+  box-sizing: border-box;
+  width: 100%;
+  //&.employee {
+  //  padding: 20px 40px 20px 20px;
+  //}
   form {
     .notdialogform;
     &#addAttachments {
@@ -5082,12 +4897,12 @@ input::-webkit-inner-spin-button {
       dd {
         vertical-align: middle;
         display: table-cell;
-        line-height: 20px;
+        line-height: 25px;
       }
       dt {
         vertical-align: middle;
         display: table-cell;
-        line-height: 20px;
+        line-height: 25px;
       }
 
       .miniAvatar {

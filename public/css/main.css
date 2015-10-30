@@ -361,6 +361,186 @@ th {
 .btn-list .selected a {
   color: white;
 }
+.pagination {
+  width: 100%;
+  margin: 5px 0;
+  float: right;
+}
+.pagination > div {
+  float: left;
+  color: #cdcdcd;
+  padding: 0 5px;
+  box-sizing: border-box;
+}
+.pagination .countOnPage {
+  text-align: left;
+}
+.pagination .countOnPage > div {
+  float: left;
+}
+.pagination .countOnPage span {
+  padding: 1px 3px;
+}
+.pagination .countOnPage .page-list {
+  padding: 1px 3px;
+}
+.pagination .countOnPage .page-list a {
+  display: block;
+  float: left;
+}
+.pagination .pageList {
+  position: relative;
+}
+.pagination .pageList .itemsNumber {
+  text-decoration: none;
+  display: inline-block;
+  padding: 0 5px;
+}
+.pagination .pageList .itemsNumber:hover {
+  padding-bottom: 4px;
+  border-bottom: 1px solid #7f7f80;
+}
+.pagination .pageList a.selectedItemsNumber {
+  border-bottom: 1px solid #7f7f80;
+  padding-bottom: 4px;
+}
+.pagination .pageList button {
+  background-color: white;
+  background-image: none;
+  border-radius: 0;
+  width: 27px;
+  margin: 0 0 0 5px;
+  line-height: 10px;
+  font-size: 12px;
+  padding: 3px 2px;
+}
+.pagination .pageList button:hover {
+  background-color: #F7F8F9;
+}
+.pagination .nextPrev {
+  float: right;
+  text-align: right;
+}
+.pagination .nextPrev div,
+.pagination .nextPrev button {
+  float: left;
+  line-height: 24px;
+}
+.pagination .nextPrev span {
+  padding: 0 3px;
+}
+.pagination .nextPrev button.fa {
+  border: 1px solid #7f7f80;
+  background: transparent;
+  color: #cdcdcd;
+  line-height: 15px;
+  font-size: 15px;
+  width: 24px;
+  height: 24px;
+  display: block;
+  text-align: center;
+  padding: 2px;
+  border-radius: 0;
+}
+.pagination .nextPrev button.fa:hover {
+  background: transparent !important;
+  color: #ffffff;
+  border-color: #ffffff;
+}
+.pagination .nextPrev button.fa[disabled] {
+  color: #747474;
+  border-color: #747474;
+  cursor: default;
+  background: transparent !important;
+}
+.pagination .nextPrev button.fa[disabled]:hover {
+  color: #747474;
+  border-color: #747474;
+  cursor: default;
+  background: transparent !important;
+}
+.pagination .nextPrev #firstShowPage,
+.pagination .nextPrev #lastShowPage {
+  width: 30px;
+  display: block;
+}
+.pagination .nextPrev #previousPage {
+  margin: 0 3px;
+}
+.pagination .nextPrev #nextPage {
+  margin: 0 3px;
+}
+.pagination .nextPrev .currentPageList {
+  margin: 0 5px;
+}
+.pagination .nextPrev .allPage {
+  position: relative;
+}
+.pagination .nextPrev ul {
+  background-color: #303031;
+  border: 1px solid #7f7f80;
+  position: absolute;
+  bottom: 23px;
+  left: 5px;
+  display: none;
+  font-size: 12px;
+}
+.pagination .nextPrev ul li a {
+  display: block;
+  width: 22px;
+  height: 20px;
+  line-height: 20px;
+  text-align: center;
+}
+.pagination .nextPrev ul li a:hover {
+  background-color: #66b5d4;
+  color: white;
+  text-decoration: none;
+}
+.pagination .nextPrev #pageList {
+  background-color: #303031;
+  border: 1px solid #7f7f80;
+  position: absolute;
+  bottom: 23px;
+  left: 5px;
+  display: none;
+}
+.pagination .nextPrev #pageList li {
+  display: block;
+  width: 22px;
+  height: 20px;
+  line-height: 20px;
+  text-align: center;
+  font-size: 12px;
+  cursor: pointer;
+}
+.pagination .nextPrev #pageList li:hover {
+  background-color: #66b5d4;
+  color: white;
+  text-decoration: none;
+}
+.pagination #currentShowPage {
+  border: 1px solid #7f7f80;
+  margin: 0 2px 0 5px;
+  width: 30px;
+  height: 22px;
+  float: left;
+  font-size: 12px !important;
+  text-align: center;
+  max-width: 30px;
+  line-height: 20px;
+  background-color: transparent;
+  font-family: Arial, Helvetica, sans-serif;
+  padding: 0 2px;
+  color: #cdcdcd;
+}
+.pagination #currentShowPage:focus {
+  box-shadow: 0 0 5px #66b5d4;
+  -moz-box-shadow: 0 0 5px #66b5d4;
+  -webkit-box-shadow: 0 0 5px #66b5d4;
+  outline: medium none;
+  border: 1px solid #66b5d4 !important;
+}
 .alert {
   padding: 15px 15px 15px 35px;
   position: relative;
@@ -857,6 +1037,13 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 #forInfo .tableProjects .tableProject .list tbody tr {
   border-top: 1px solid transparent;
 }
+.tableResponsive {
+  min-height: .01%;
+  overflow-x: auto;
+  width: 100%;
+  overflow-y: hidden;
+  -ms-overflow-style: -ms-autohiding-scrollbar;
+}
 .vacation-list {
   font-family: inherit;
   text-shadow: none;
@@ -1039,6 +1226,9 @@ html,
 body {
   margin: 0;
   padding: 0;
+}
+body {
+  background-color: #303031;
 }
 html {
   font-size: 100%;
@@ -1703,170 +1893,6 @@ input::-ms-clear {
   border: 1px solid #66b5d4 !important;
   color: #cdcdcd !important;
 }
-.pagination {
-  width: 100%;
-  float: right;
-  margin-top: 5px;
-  margin-bottom: 5px;
-}
-.pagination div {
-  float: left;
-}
-.pagination .countOnPage {
-  float: left;
-  color: #cdcdcd;
-  margin-left: 5px;
-}
-.pagination .nextPrev {
-  float: right;
-  margin-right: 5px;
-  color: #cdcdcd;
-}
-.pagination #previousPage,
-.pagination #nextPage,
-.pagination .currentPageList,
-.pagination #firstShowPage,
-.pagination #lastShowPage {
-  background-color: white;
-  background-image: none;
-  line-height: 15px;
-  width: 20px;
-  height: 18px;
-  display: block;
-  text-align: center;
-  padding: 0;
-  border-radius: 0;
-  background-position: 50% 50%;
-  background-repeat: no-repeat;
-  float: left;
-}
-.pagination #firstShowPage,
-.pagination #lastShowPage {
-  width: 30px;
-  height: 18px;
-  display: block;
-  font-size: 12px;
-}
-.pagination #previousPage {
-  margin: 0 3px;
-  font-size: 12px;
-}
-.pagination #nextPage {
-  margin: 0 3px;
-  font-size: 12px;
-}
-.pagination .allPage {
-  position: relative;
-}
-.pagination button {
-  color: rgba(0, 0, 0, 0.75);
-}
-.pagination button:hover {
-  background-color: #F7F8F9;
-  color: rgba(0, 0, 0, 0.9);
-  border: 1px solid rgba(0, 0, 0, 0.9);
-}
-.pagination button[disabled] {
-  color: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(0, 0, 0, 0.3);
-  cursor: default;
-}
-.pagination #currentShowPage {
-  border: 1px solid #7f7f80;
-  border-right: none;
-  background-color: #fff;
-  width: 21px;
-  height: 12px;
-  margin-left: 5px;
-  font-size: 12px !important;
-}
-.pagination #pageList {
-  background-color: #303031;
-  border: 1px solid #7f7f80;
-  position: absolute;
-  bottom: 17px;
-  left: -7px;
-  display: none;
-}
-.pagination #pageList li {
-  display: block;
-  width: 25px;
-  height: 20px;
-  line-height: 20px;
-  text-align: center;
-  font-size: 12px;
-  cursor: pointer;
-}
-.pagination #pageList li:hover {
-  background-color: #66b5d4;
-  color: white;
-  text-decoration: none;
-}
-.pagination .currentPageList {
-  margin-right: 5px;
-  font-size: 12px;
-}
-.pagination .currentPageList .caret {
-  display: block;
-  height: 15px;
-  background-image: url("../images/arrow-up.png");
-  background-position: 50% 50%;
-  background-repeat: no-repeat;
-}
-.pagination .pageList {
-  position: relative;
-}
-.pagination .pageList .itemsNumber {
-  text-decoration: none;
-  display: inline-block;
-  padding: 0 5px;
-}
-.pagination .pageList .itemsNumber:hover {
-  padding-bottom: 4px;
-  border-bottom: 1px solid #7f7f80;
-}
-.pagination .pageList a.selectedItemsNumber {
-  border-bottom: 1px solid #7f7f80;
-  padding-bottom: 4px;
-}
-.pagination .pageList button {
-  background-color: white;
-  background-image: none;
-  border-radius: 0;
-  width: 27px;
-  margin: 0 0 0 5px;
-  line-height: 10px;
-  font-size: 12px;
-  padding: 3px 2px;
-}
-.pagination .pageList button:hover {
-  background-color: #F7F8F9;
-}
-.pagination .pageList .currentPageList {
-  margin-left: 0;
-  border-left: none;
-}
-.pagination .pageList ul {
-  background-color: #303031;
-  border: 1px solid #7f7f80;
-  position: absolute;
-  bottom: 17px;
-  left: 0px;
-  display: none;
-  font-size: 12px;
-}
-.pagination .pageList ul li a {
-  display: block;
-  width: 25px;
-  height: 20px;
-  line-height: 20px;
-  text-align: center;
-}
-.pagination .pageList ul li a:hover {
-  background-color: #66b5d4;
-  color: white;
-  text-decoration: none;
-}
 .addUserDialog,
 .addGroupDialog {
   display: none;
@@ -2281,7 +2307,6 @@ dl dd a.formLink {
 .form.employee {
   width: 100%;
   max-width: 100%;
-  padding-right: 40px;
 }
 .form #forInfo {
   overflow: hidden;
@@ -2847,7 +2872,6 @@ dl dd a.formLink {
 .formLeftColumn .form.employee {
   width: 100%;
   max-width: 100%;
-  padding-right: 40px;
 }
 .formLeftColumn .form #forInfo {
   overflow: hidden;
@@ -3198,7 +3222,6 @@ dl dd a.formLink {
 .formRightColumn .form.employee {
   width: 100%;
   max-width: 100%;
-  padding-right: 40px;
 }
 .formRightColumn .form #forInfo {
   overflow: hidden;
@@ -3703,7 +3726,6 @@ dl dd a.formLink {
   height: 100%;
 }
 #wrapper {
-  background-color: #303031;
   width: 100%;
   height: 100%;
   min-width: 100%;
@@ -6389,10 +6411,9 @@ ul.dialog-tabs li.right button {
   margin-bottom: 15px;
 }
 .form-holder {
-  padding: 20px 20px;
-}
-.form-holder.employee {
-  padding: 20px 40px 20px 20px;
+  padding: 20px;
+  box-sizing: border-box;
+  width: 100%;
 }
 .form-holder form {
   border: none;
@@ -8129,12 +8150,12 @@ input::-webkit-inner-spin-button {
 .topInputHolder .thirdPartBlock .person-info dd {
   vertical-align: middle;
   display: table-cell;
-  line-height: 20px;
+  line-height: 25px;
 }
 .topInputHolder .thirdPartBlock .person-info dt {
   vertical-align: middle;
   display: table-cell;
-  line-height: 20px;
+  line-height: 25px;
 }
 .topInputHolder .thirdPartBlock .person-info .miniAvatar {
   width: 20%;
