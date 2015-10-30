@@ -36,7 +36,9 @@ var Jobs = function (models, event) {
         var pId = req.query.projectId;
         var query = models.get(req.session.lastDb, 'jobs', JobsSchema);
 
-        query.find({type: "Empty", project: objectId(pId)}, {
+        //TODO type
+
+        query.find({/*type: "Empty",*/ project: objectId(pId)}, {
             name: 1,
             _id: 1,
             "budget.budgetTotal.revenueSum": 1

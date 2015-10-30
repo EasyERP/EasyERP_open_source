@@ -383,5 +383,6 @@ define([], function () {
             'Design',
             'PM'
         ],
+        PRODUCRSERVICE: "5540d528dacb551c24000003"
     }
 });

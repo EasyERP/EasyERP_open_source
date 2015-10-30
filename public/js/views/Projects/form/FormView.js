@@ -30,30 +30,30 @@ define([
 
     function (ProjectsFormTemplate, DetailsTemplate, ProformRevenueTemplate, jobsWTracksTemplate, EditView, noteView, attachView, AssigneesView, BonusView, wTrackView, PaymentView, InvoiceView, QuotationView, GenerateWTrack, oredrView, wTrackCollection, quotationCollection, addAttachTemplate, common, populate, custom, dataService, async, helpers) {
         var FormEmployeesView = Backbone.View.extend({
-            el            : '#content-holder',
-            contentType   : 'Projects',
+            el: '#content-holder',
+            contentType: 'Projects',
             proformRevenue: _.template(ProformRevenueTemplate),
 
             events: {
-                'click .chart-tabs'                                               : 'changeTab',
-                "click .deleteAttach"                                             : "deleteAttach",
-                'click'                                                           : 'hideSelect',
-                'keydown'                                                         : 'keydownHandler',
-                "click #health a:not(.disabled)"                                  : "showHealthDd",
-                "click #health ul li div:not(.disabled)"                          : "chooseHealthDd",
+                'click .chart-tabs': 'changeTab',
+                "click .deleteAttach": "deleteAttach",
+                'click': 'hideSelect',
+                'keydown': 'keydownHandler',
+                "click #health a:not(.disabled)": "showHealthDd",
+                "click #health ul li div:not(.disabled)": "chooseHealthDd",
                 "click .newSelectList li:not(.miniStylePagination):not(.disabled)": "chooseOption",
-                "click .newSelectList li.miniStylePagination"                     : "notHide",
+                "click .newSelectList li.miniStylePagination": "notHide",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                "click .current-selected:not(.disabled)"                          : "showNewSelect",
-                "click #createItem"                                               : "createDialog",
-                "click #createJob"                                               : "createJob",
+                "click .current-selected:not(.disabled)": "showNewSelect",
+                "click #createItem": "createDialog",
+                "click #createJob": "createJob",
                 "change input:not(.checkbox)": "showSaveButton",
-                "click #jobsItem td:not(.selects, .remove)"            : "renderJobWTracks",
-                "mouseover #jobsItem"            : "showRemoveButton",
-                "mouseleave #jobsItem"            : "hideRemoveButton",
-                "click .fa.fa-trash"            : "removeJobAndWTracks",
-                "dblclick td.editable"                                                              : "editRow",
+                "click #jobsItem td:not(.selects, .remove)": "renderJobWTracks",
+                "mouseover #jobsItem": "showRemoveButton",
+                "mouseleave #jobsItem": "hideRemoveButton",
+                "click .fa.fa-trash": "removeJobAndWTracks",
+                "dblclick td.editable": "editRow",
                 "click #saveName": "saveNewJobName"
 
             },
@@ -81,8 +81,8 @@ define([
                 }
 
                 tempContainer = el.text();
-                width = el.width() - 31;
-                el.html('<input class="editing" type="text" value="' + tempContainer + '" style="width:' + width + 'px">' + "<a href='javascript;' class='fa fa-check' title='Save' id='saveName'></a>");
+               // width = el.width() - 31;
+                el.html('<input class="editing" type="text" value="' + tempContainer + '">' + "<a href='javascript;' class='fa fa-check' title='Save' id='saveName'></a>");
 
                 insertedInput = el.find('input');
                 insertedInput.focus();
@@ -91,24 +91,30 @@ define([
                 return false;
             },
 
-            saveNewJobName: function(e){
+            saveNewJobName: function (e) {
+                e.preventDefault();
+
                 var self = this;
                 var id = $(e.target).parents("td").closest('tr').attr('data-id');
                 var name = $(e.target).prev('input').val();
 
-                var data ={_id: id, name: name};
+                var data = {_id: id, name: name};
 
-                dataService.postData("/jobs/update", data,  function(err, result){
-                    if (err){
+                dataService.postData("/jobs/update", data, function (err, result) {
+                    if (err) {
                         return console.log(err);
                     }
 
                     $('#saveName').hide();
 
+                    $(e.target).parents("td").text(name);
+
+                    $(e.target).prev('input').remove();
+
 
                     var filter = {
                         'projectName': {
-                            key  : 'project._id',
+                            key: 'project._id',
                             value: [self.id]
                         }
                     };
@@ -118,12 +124,12 @@ define([
                 });
             },
 
-            recalcTotal: function(id){
+            recalcTotal: function (id) {
                 var formModel = this.formModel.toJSON();
                 var jobsItems = formModel.budget.projectTeam;
                 var rate;
 
-                var job = _.find(jobsItems, function(element){
+                var job = _.find(jobsItems, function (element) {
                     return element._id === id;
                 });
 
@@ -157,12 +163,12 @@ define([
 
             },
 
-            removeJobAndWTracks: function(e){
+            removeJobAndWTracks: function (e) {
                 var self = this;
                 var id = $(e.target).attr('id');
                 var tr = $(e.target).closest('tr');
 
-                var data ={_id: id};
+                var data = {_id: id};
 
                 var answer = confirm("Really delete Job ?!");
 
@@ -186,13 +192,14 @@ define([
                             }
                         };
 
+                        self.wCollection.bind('showmore', self.showMoreContent);
                         self.wCollection.showMore({count: 50, page: 1, filter: filter});
 
                     });
                 }
             },
 
-            hideRemoveButton: function(e){
+            hideRemoveButton: function (e) {
                 var target = e.target;
                 var tr = $(target).parents("tr");
                 var removeItem = tr.find(".fa.fa-trash");
@@ -200,7 +207,7 @@ define([
                 removeItem.addClass('hidden');
             },
 
-            showRemoveButton: function(e){
+            showRemoveButton: function (e) {
                 var target = e.target;
                 var tr = $(target).parents("tr");
                 var removeItem = tr.find(".fa.fa-trash");
@@ -208,7 +215,7 @@ define([
                 removeItem.removeClass('hidden');
             },
 
-            renderJobWTracks: function(e){
+            renderJobWTracks: function (e) {
                 var target = e.target;
                 var jobId = $(target).parents("tr").attr("data-id");
                 var jobContainer = $(target).parents("tr");
@@ -218,9 +225,9 @@ define([
                 var icon = $(jobContainer).find('.expand');
                 var subId = "subRow-row" + jobId;
                 var subRowCheck = $('#' + subId);
-                var name =  $(target).parents("tr").find("#jobsName").text();
+                var name = $(target).parents("tr").find("#jobsName").text();
 
-                var job = _.find(jobsItems, function(element){
+                var job = _.find(jobsItems, function (element) {
                     return element._id === jobId;
                 });
 
@@ -257,7 +264,7 @@ define([
                 jobs.name = $(e.target).attr('data-value');
 
                 new GenerateWTrack({
-                    model           : this.formModel,
+                    model: this.formModel,
                     wTrackCollection: this.wCollection,
                     jobs: jobs
                 });
@@ -265,7 +272,7 @@ define([
 
             createJob: function () {
                 new GenerateWTrack({
-                    model           : this.formModel,
+                    model: this.formModel,
                     wTrackCollection: this.wCollection,
                     createJob: true
                 });
@@ -331,7 +338,7 @@ define([
 
                 $userNodes.each(function (key, val) {
                     users.push({
-                        id  : val.value,
+                        id: val.value,
                         name: val.innerHTML
                     });
                 });
@@ -357,9 +364,9 @@ define([
 
                     bonus.push({
                         employeeId: employeeId,
-                        bonusId   : bonusId,
-                        startDate : startD,
-                        endDate   : endD
+                        bonusId: bonusId,
+                        startDate: startD,
+                        endDate: endD
                     });
                 });
 
@@ -381,28 +388,28 @@ define([
                 var _targetEndDate = $.trim(thisEl.find("#EndDateTarget").val());
                 var description = $.trim(thisEl.find("#description").val());
                 var data = {
-                    projectName     : projectName,
+                    projectName: projectName,
                     projectShortDesc: projectShortDesc,
-                    customer        : customer ? customer : null,
-                    projectmanager  : projectmanager ? projectmanager : null,
-                    workflow        : workflow ? workflow : null,
-                    projecttype     : projecttype ? projecttype : "",
-                    description     : description,
-                    teams           : {
+                    customer: customer ? customer : null,
+                    projectmanager: projectmanager ? projectmanager : null,
+                    workflow: workflow ? workflow : null,
+                    projecttype: projecttype ? projecttype : "",
+                    description: description,
+                    teams: {
                         users: users
                     },
-                    groups          : {
+                    groups: {
                         owner: $("#allUsersSelect").data("id"),
                         users: usersId,
                         group: groupsId
                     },
-                    whoCanRW        : whoCanRW,
-                    health          : health,
-                    StartDate       : startDate,
-                    EndDate         : endDate,
-                    TargetEndDate   : _targetEndDate,
-                    bonus           : bonus,
-                    budget          : budget
+                    whoCanRW: whoCanRW,
+                    health: health,
+                    StartDate: startDate,
+                    EndDate: endDate,
+                    TargetEndDate: _targetEndDate,
+                    bonus: bonus,
+                    budget: budget
                 };
 
                 if (validation) {
@@ -411,7 +418,7 @@ define([
                             mid: mid
                         },
                         success: function (model) {
-                           // self.disableEdit();
+                            // self.disableEdit();
                             self.hideSaveButton();
 
                             var url = window.location.hash;
@@ -420,7 +427,7 @@ define([
                                 Backbone.history.navigate(url, {trigger: true});
                             }, 500);
                         },
-                        error  : function (model, xhr) {
+                        error: function (model, xhr) {
                             self.errorNotification(xhr);
                         }
 
@@ -432,18 +439,18 @@ define([
 
                 $(".newSelectList").hide();
 
-                if ($(e.target).parents("dd").find(".current-selected").length){
+                if ($(e.target).parents("dd").find(".current-selected").length) {
                     $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
                 } else {
                     $(e.target).parents("td").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
 
                     var id = $(e.target).parents("td").closest('tr').attr('data-id');
 
-                    var data ={_id: id, workflowId: $(e.target).attr("id"), workflowName: $(e.target).text()};
+                    var data = {_id: id, workflowId: $(e.target).attr("id"), workflowName: $(e.target).text()};
 
-                    dataService.postData("/jobs/update", data,  function(err, result){
-                        if (err){
-                          return console.log(err);
+                    dataService.postData("/jobs/update", data, function (err, result) {
+                        if (err) {
+                            return console.log(err);
                         }
 
                     });
@@ -522,15 +529,15 @@ define([
                 return false;
             },
 
-            showSaveButton: function(){
+            showSaveButton: function () {
                 $("#top-bar-saveBtn").show();
             },
 
-            hideSaveButton: function(){
+            hideSaveButton: function () {
                 $("#top-bar-saveBtn").hide();
             },
 
-            renderProjectInfo: function(){
+            renderProjectInfo: function () {
                 var self = this;
                 var template = _.template(DetailsTemplate);
                 var formModel = this.formModel.toJSON();
@@ -544,7 +551,7 @@ define([
                     cost: 0
                 };
 
-                projectTeam.forEach(function(projectTeam){
+                projectTeam.forEach(function (projectTeam) {
                     var budgetTotal = projectTeam.budget.budgetTotal;
 
                     self.projectValues.revenue += budgetTotal ? budgetTotal.revenueSum : 0;
@@ -553,7 +560,7 @@ define([
 
                 });
 
-                this.projectValues.markUp = ((this.projectValues.profit /this.projectValues.cost) * 100);
+                this.projectValues.markUp = ((this.projectValues.profit / this.projectValues.cost) * 100);
                 if (!isFinite(this.projectValues.markUp)) {
                     self.projectValues.markUp = 0;
                 }
@@ -565,10 +572,10 @@ define([
 
                 container.html(template({
                         jobs: jobs,
-                        bonus           : formModel.budget.bonus,
-                        projectValues   : self.projectValues,
+                        bonus: formModel.budget.bonus,
+                        projectValues: self.projectValues,
                         currencySplitter: helpers.currencySplitter,
-                        contentType     : self.contentType
+                        contentType: self.contentType
                     })
                 );
             },
@@ -584,8 +591,6 @@ define([
                 var notDiv;
                 var bonusView;
                 var container;
-
-
 
 
                 thisEl.html(templ({model: formModel}));
@@ -605,7 +610,7 @@ define([
                 notDiv.append(
                     new attachView({
                         model: this.formModel,
-                        url  : "/uploadProjectsFiles"
+                        url: "/uploadProjectsFiles"
                     }).render().el
                 );
 
@@ -628,7 +633,7 @@ define([
                     self.saveItem();
                 });
 
-               this.renderProjectInfo();
+                this.renderProjectInfo();
 
                 thisEl.find('#createBonus').hide();
                 _.bindAll(this, 'getQuotations');
@@ -775,11 +780,11 @@ define([
                                 })
                             });
                             container.html(template({
-                                    projectTeam     : response,
-                                    bonus           : bonus,
-                                    budget          : sortBudget,
-                                    projectValues   : projectValues,
-                                    budgetTotal     : budgetTotal,
+                                    projectTeam: response,
+                                    bonus: bonus,
+                                    budget: sortBudget,
+                                    projectValues: projectValues,
+                                    budgetTotal: budgetTotal,
                                     currencySplitter: helpers.currencySplitter
                                 })
                             );
@@ -794,14 +799,14 @@ define([
 
                 var filter = {
                     'projectName': {
-                        key  : 'project._id',
+                        key: 'project._id',
                         value: [this.id]
                     }
                 };
 
                 this.wCollection = new wTrackCollection({
                     viewType: 'list',
-                    filter  : filter,
+                    filter: filter,
                     count: 50
                 });
 
@@ -835,18 +840,18 @@ define([
                 var _id = window.location.hash.split('form/')[1];
                 var filter = {
                     'project': {
-                        key  : 'project._id',
+                        key: 'project._id',
                         value: [_id]
                     }
                 };
 
                 dataService.getData('/Invoice/list',
                     {
-                        count      : 100,
-                        page       : 1,
-                        forSales   : true,
+                        count: 100,
+                        page: 1,
+                        forSales: true,
                         contentType: 'salesInvoice',
-                        filter     : filter
+                        filter: filter
                     }, function (response) {
                         var payments = [];
                         var res;
@@ -874,16 +879,16 @@ define([
                                         model: result
                                     });
 
-
                                     res = result;
                                 }, this);
 
-
-                            new InvoiceView({
-                                model: response
-                            });
-
                         }
+
+
+                        new InvoiceView({
+                            model: response
+                        });
+
                         if (res) {
                             cb(null, {payment: res, invoice: response});
                         } else {
@@ -899,16 +904,16 @@ define([
 
                 var filter = {
                     'projectName': {
-                        key  : 'project._id',
+                        key: 'project._id',
                         value: [this.id]
                     }
                 };
 
                 this.qCollection = new quotationCollection({
-                    count      : 50,
-                    viewType   : 'list',
+                    count: 50,
+                    viewType: 'list',
                     contentType: 'salesQuotation',
-                    filter     : filter
+                    filter: filter
                 });
 
                 function createView() {
@@ -916,14 +921,14 @@ define([
                     cb();
                     new QuotationView({
                         collection: self.qCollection,
-                        projectId : self.id,
+                        projectId: self.id,
                         customerId: self.formModel.toJSON().customer._id,
                         projectManager: self.formModel.toJSON().projectmanager,
                         filter: filter
                     }).render();
 
 
-                   // self.renderProformRevenue();
+                    // self.renderProformRevenue();
                 };
                 this.qCollection.bind('reset', createView);
                 this.qCollection.bind('add', self.renderProformRevenue);
@@ -935,27 +940,27 @@ define([
 
                 var filter = {
                     'projectName': {
-                        key  : 'project._id',
+                        key: 'project._id',
                         value: [this.id]
                     },
                     'isOrder': {
-                        key  : 'isOrder',
+                        key: 'isOrder',
                         value: ['true']
                     }
                 };
 
                 this.ordersCollection = new quotationCollection({
-                    count      : 50,
-                    viewType   : 'list',
+                    count: 50,
+                    viewType: 'list',
                     contentType: 'salesOrder',
-                    filter     : filter
+                    filter: filter
                 });
 
                 function createView() {
                     cb();
                     new oredrView({
                         collection: self.ordersCollection,
-                        projectId : self.id,
+                        projectId: self.id,
                         customerId: self.formModel.toJSON().customer._id,
                         projectManager: self.formModel.toJSON().projectmanager,
                         filter: filter
@@ -983,26 +988,26 @@ define([
                 var sum = 0;
                 var orderSum = 0;
 
-                ordersCollectionJSON.forEach(function(element) {
+                ordersCollectionJSON.forEach(function (element) {
                     orderSum += element.paymentInfo.total;
                 });
 
-                qCollectionJSON.forEach(function(element) {
+                qCollectionJSON.forEach(function (element) {
                     sum += element.paymentInfo.total;
                 });
 
                 this.proformValues.quotations = {
                     count: qCollectionJSON.length,
-                    sum  : sum
+                    sum: sum
                 };
 
                 this.proformValues.orders = {
                     count: ordersCollectionJSON.length,
-                    sum  : orderSum
+                    sum: orderSum
                 };
 
                 proformContainer.html(this.proformRevenue({
-                        proformValues   : self.proformValues,
+                        proformValues: self.proformValues,
                         currencySplitter: helpers.currencySplitter
                     })
                 );
@@ -1020,30 +1025,30 @@ define([
                 textArea.attr('readonly', false);
 
                 $('#StartDate').datepicker({
-                    dateFormat : "d M, yy",
+                    dateFormat: "d M, yy",
                     changeMonth: true,
-                    changeYear : true,
-                    onSelect   : function () {
+                    changeYear: true,
+                    onSelect: function () {
                         var endDate = $('#StartDate').datepicker('getDate');
                         endDate.setDate(endDate.getDate());
                         $('#EndDateTarget').datepicker('option', 'minDate', endDate);
                     }
                 });
                 $('#EndDate').datepicker({
-                    dateFormat : "d M, yy",
+                    dateFormat: "d M, yy",
                     changeMonth: true,
-                    changeYear : true,
-                    onSelect   : function () {
+                    changeYear: true,
+                    onSelect: function () {
                         var endDate = $('#StartDate').datepicker('getDate');
                         endDate.setDate(endDate.getDate());
                         $('#EndDateTarget').datepicker('option', 'minDate', endDate);
                     }
                 });
                 $('#EndDateTarget').datepicker({
-                    dateFormat : "d M, yy",
+                    dateFormat: "d M, yy",
                     changeMonth: true,
-                    changeYear : true,
-                    minDate    : (self.formModel.StartDate) ? self.formModel.StartDate : 0
+                    changeYear: true,
+                    minDate: (self.formModel.StartDate) ? self.formModel.StartDate : 0
                 });
                 $('#StartDate').datepicker("option", "disabled", false);
                 $('#EndDate').datepicker("option", "disabled", false);
@@ -1063,7 +1068,7 @@ define([
                         mid: mid
                     },
                     success: function () {
-                       // self.disableEdit();
+                        // self.disableEdit();
                         Backbone.history.navigate("#easyErp/Projects/thumbnails", {trigger: true});
                     }
                 });

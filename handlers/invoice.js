@@ -13,6 +13,7 @@ var Invoice = function (models) {
     var CustomerSchema = mongoose.Schemas['Customer'];
     var PaymentSchema = mongoose.Schemas['Payment'];
     var wTrackSchema = mongoose.Schemas['wTrack'];
+    var JobsSchema = mongoose.Schemas['jobs'];
     var objectId = mongoose.Types.ObjectId;
     var async = require('async');
     var workflowHandler = new WorkflowHandler(models);
@@ -588,12 +589,14 @@ var Invoice = function (models) {
         var db = req.session.lastDb;
         var moduleId = 56;
         var paymentIds = [];
+        var jobs  = [];
         var wTrackIds  = [];
         var invoiceDeleted;
         var Payment = models.get(db, "Payment", PaymentSchema);
         var wTrack = models.get(db, "wTrack", wTrackSchema);
+        var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
 
-        if (db === 'weTrack'){
+        if ((db === 'weTrack') || (db === 'production') || (db === 'development')){
             moduleId = 64
         }
 
@@ -609,7 +612,7 @@ var Invoice = function (models) {
                         invoiceDeleted = result.toJSON();
 
                         async.each(invoiceDeleted.products, function (product) {
-                            wTrackIds.push(product.product);
+                            jobs.push(product.jobs);
                         });
                         async.each(invoiceDeleted.payments, function (payment) {
                             paymentIds.push(payment);
@@ -626,28 +629,64 @@ var Invoice = function (models) {
                             });
                         };
 
-                        function wTrackUpdate (){
+                        function jobsUpdateAndWTracks (){
                             var setData = {};
 
-                            async.each(wTrackIds, function (id) {
+                            async.each(jobs, function (id) {
                                 setData.editedBy = {
                                     user: req.session.uId,
                                     date: new Date().toISOString()
                                 };
 
-                                setData.isPaid = false;
-                                setData.amount = 0;
+                                setData.type = "Order";
 
-                                wTrack.findByIdAndUpdate(id, setData, function (err, result) {
+                                JobsModel.findByIdAndUpdate(id, setData, function (err, result) {
                                     if (err) {
                                         return console.log(err);
                                     }
-                                  //  console.log('success');
+
+                                    async.each(result.wTracks, function (id) {
+                                        setData.editedBy = {
+                                            user: req.session.uId,
+                                            date: new Date().toISOString()
+                                        };
+
+                                        setData.isPaid = false;
+                                        setData.amount = 0;
+
+                                        wTrack.findByIdAndUpdate(id, setData, function (err, result) {
+                                            if (err) {
+                                                return console.log(err);
+                                            }
+                                            //  console.log('success');
+                                        });
+                                    });
                                 });
                             });
                         };
 
-                        async.parallel([paymentsRemove, wTrackUpdate], function (err, result) {
+                        //function wTrackUpdate (){
+                        //    var setData = {};
+                        //
+                        //    async.each(wTrackIds, function (id) {
+                        //        setData.editedBy = {
+                        //            user: req.session.uId,
+                        //            date: new Date().toISOString()
+                        //        };
+                        //
+                        //        setData.isPaid = false;
+                        //        setData.amount = 0;
+                        //
+                        //        wTrack.findByIdAndUpdate(id, setData, function (err, result) {
+                        //            if (err) {
+                        //                return console.log(err);
+                        //            }
+                        //          //  console.log('success');
+                        //        });
+                        //    });
+                        //};
+
+                        async.parallel([paymentsRemove, jobsUpdateAndWTracks], function (err, result) {
                             if (err){
                                 next(err)
                             }

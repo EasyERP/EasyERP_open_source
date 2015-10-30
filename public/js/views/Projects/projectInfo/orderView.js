@@ -382,12 +382,12 @@ define([
                 dateToLocal: common.utcDateToLocaleDate
             }));
 
-            this.renderPagination(currentEl, this);
+            //this.renderPagination(currentEl, this);
 
-            this.$el.find('.icon').hide();
+            this.$el.find('.fa.fa-times').hide();
 
             $('#check_all_orders').click(function () {
-                $(':checkbox').prop('checked', this.checked);
+                this.$el.find(':checkbox').prop('checked', this.checked);
                 if ($("input.checkbox:checked").length > 0) {
                     $("#removeOrder").show();
                 } else {
