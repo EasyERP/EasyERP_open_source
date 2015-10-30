@@ -89,7 +89,7 @@ module.exports = (function () {
 
     invoiceSchema.set('toJSON', {getters: true});
 
-    mongoose.model('wTrackInvoice', invoiceSchema);
+    mongoose.model('wTrackInvoiceOld', invoiceSchema);
 
     if(!mongoose.Schemas) {
         mongoose.Schemas = {};

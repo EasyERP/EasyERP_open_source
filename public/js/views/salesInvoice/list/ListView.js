@@ -175,9 +175,9 @@ define([
                         currentDb: App.currentDb
                     },
                     success: function (model) {
-                        var isWtrack = App.weTrack;
+                       // var isWtrack = App.weTrack;
 
-                        new editView({model: model, isWtrack: isWtrack});
+                        new editView({model: model});
                     },
                     error  : function () {
                         alert('Please refresh browser');

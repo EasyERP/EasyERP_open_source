@@ -461,21 +461,29 @@ define([
                 invoiceItemContainer = this.$el.find('#invoiceItemsHolder');
 
                 //if currentDb = 'weTrack' render wTrackRows instead of ProductItems
-                if (!this.isWtrack) {
-                    invoiceItemContainer.append(
-                        new InvoiceItemView({balanceVisible: true}).render({model: model}).el
-                    );
-                } else {
-                    wTracksDom = new wTrackRows({stopRender: true}).render({
-                        wTracks: wTracks,
-                        project: project,
-                        assigned: assigned,
-                        customer: customer,
-                        total: total
-                    }).el;
+                //if (!this.isWtrack) {
+                //    invoiceItemContainer.append(
+                //        new InvoiceItemView({balanceVisible: true, forSales: self.forSales}).render({model: model}).el
+                //    );
+                //} else {
+                //    //wTracksDom = new wTrackRows({stopRender: true}).render({
+                //    //    wTracks: wTracks,
+                //    //    project: project,
+                //    //    assigned: assigned,
+                //    //    customer: customer,
+                //    //    total: total
+                //    //}).el;
+                //    //
+                //    //invoiceItemContainer.append(wTracksDom);
+                //    invoiceItemContainer.append(
+                //        new InvoiceItemView({balanceVisible: true}).render({model: model}).el
+                //    );
+                //}
 
-                    invoiceItemContainer.append(wTracksDom);
-                }
+                invoiceItemContainer.append(
+                    new InvoiceItemView({balanceVisible: true, forSales: self.forSales}).render({model: model}).el
+                );
+
                 if (model.groups)
                     if (model.groups.users.length > 0 || model.groups.group.length) {
                         $(".groupsAndUser").show();

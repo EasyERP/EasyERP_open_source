@@ -22,6 +22,8 @@ define([
                 _.bindAll(this, "render", "saveItem");
                 _.bindAll(this, "render", "deleteItem");
 
+                this.forSales = true;
+
                 this.currentModel = (options.model) ? options.model : options.collection.getElement();
                 this.currentModel.urlRoot = "/order";
                 this.responseObj = {};

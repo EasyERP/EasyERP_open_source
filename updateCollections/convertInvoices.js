@@ -7,17 +7,18 @@ var Invoice = mongoose.Schemas['wTrackInvoice'];
 var InvoiceOld = mongoose.Schemas['wTrackInvoiceOld'];
 var wTrackSchema = mongoose.Schemas['wTrack'];
 var _ = require('../node_modules/underscore');
+var CONSTANTS = require('../constants/mainConstants');
 var async = require('async');
 var JobsSchema = mongoose.Schemas['jobs'];
-var objectId = mongoose.Schema.Types.ObjectId;
+var objectId = mongoose.Types.ObjectId;
 
 var dbObject = mongoose.createConnection('localhost', 'production');
 dbObject.on('error', console.error.bind(console, 'connection error:'));
 dbObject.once('open', function callback() {
     console.log("Connection to weTrack is success");
 
-    var Invoice = dbObject.model('Invoice', Invoice);
-    var InvoiceOld = dbObject.model('Invoice', InvoiceOld);
+    var Invoice = dbObject.model('wTrackInvoice', Invoice);
+    var InvoiceOld = dbObject.model('wTrackInvoiceOld', InvoiceOld);
     var Job = dbObject.model("jobs", JobsSchema);
 
     var query = InvoiceOld.find({invoiceType: "wTrack", forSales: true}).lean();
@@ -29,18 +30,20 @@ dbObject.once('open', function callback() {
           return   console.log(err);
         }
 
-        async.each(result, function(element, index, cb){
+        async.each(result, function(element, cb){
             var products = element.products;
             var producItem = products[0];
 
             var prod = producItem.product;
 
-            var productService;
+            var productService = CONSTANTS.PRODUCRSERVICE;
 
-            var jobId = prod.job._id;
+            var jobId = prod ? prod.jobs._id : null;
             var unitPrice = element.paymentInfo.unTaxed;
             var taxes = element.paymentInfo.taxes;
             var balance = unitPrice - element.paymentInfo.balance;
+
+            console.log(productService);
 
             var newProduct = {
                 unitPrice: unitPrice,
@@ -50,11 +53,11 @@ dbObject.once('open', function callback() {
                 taxes: taxes
             };
 
-            Invoice.findByIdAndUpdate(element._id, {$set: {products: [newProduct]}}, function(err, result){
+            Invoice.update({_id: element._id}, {$set: {products: [newProduct]}}, function(err, result){
                 if (err){
                     return   console.log(err);
                 }
-                console.log(index);
+                console.log('ok');
                 cb();
             });
         })

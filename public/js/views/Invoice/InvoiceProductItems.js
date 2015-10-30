@@ -39,6 +39,8 @@ define([
                 this.visible = options.balanceVisible;
             };
 
+            this.forSales = options.forSales;
+
             products = new productCollection(options);
             products.bind('reset', function () {
                 this.products = products;
@@ -281,6 +283,7 @@ define([
         },
 
         render: function (options) {
+            var self = this;
             var productsContainer;
             var totalAmountContainer;
             var thisEl = this.$el;
@@ -289,7 +292,7 @@ define([
             if(options && options.model){
                 products = options.model.products;
 
-                thisEl.html(_.template(productItemTemplate, {model: options.model}));
+                thisEl.html(_.template(productItemTemplate, {model: options.model, forSales : self.forSales}));
 
                 if(products) {
                     productsContainer = thisEl.find('#productList');
@@ -300,6 +303,7 @@ define([
                 }
             } else {
                 this.$el.html(this.template({
+                    forSales : self.forSales
                     /*collection: this.collection,
                      options: options*/
                 }));

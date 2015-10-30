@@ -31,6 +31,7 @@ var Payment = function (models) {
     var PaymentSchema = mongoose.Schemas['Payment'];
     var wTrackPaymentSchema = mongoose.Schemas['wTrackPayment'];
     var InvoiceSchema = mongoose.Schemas['Invoice'];
+    var wTrackInvoiceSchema = mongoose.Schemas['wTrackInvoice'];
     var DepartmentSchema = mongoose.Schemas['Department'];
     var wTrackSchema = mongoose.Schemas['wTrack'];
 
@@ -344,7 +345,7 @@ var Payment = function (models) {
 
     this.create = function (req, res, next) {
         var body = req.body;
-        var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
+        var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
         var workflowHandler = new WorkflowHandler(models);
         var invoiceId = body.invoice._id;
         var DbName = req.session.lastDb;

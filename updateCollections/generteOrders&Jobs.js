@@ -10,6 +10,9 @@ var InvoiceSchema = mongoose.Schemas['Invoice'];
 var JobsSchema = mongoose.Schemas['jobs'];
 var ProjectSchema = mongoose.Schemas['Project'];
 var objectId = mongoose.Types.ObjectId;
+var CONSTANTS = require('../constants/mainConstants');
+
+var productService = CONSTANTS.PRODUCRSERVICE;
 
 var wTrackSchema = mongoose.Schema({
     ID: Number,
@@ -252,7 +255,7 @@ function createJobs(invoiceArr, pcb){
                     taxes: 150,
                     subTotal: 1150,
                     unitPrice: 1000,
-                    product: objectId("56279c84a0b1c7ba27fe132c")
+                    product: objectId(productService)
                 }],
                 workflow: {
                     _id: objectId( "55647b962e4aa3804a765ec6"),

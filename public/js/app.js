@@ -47,7 +47,7 @@ define([
 				dialog.css({
 					position: "absolute",
 					top     : top,
-					left    : left
+					left    : "50px"
 				});
 			}
 		});

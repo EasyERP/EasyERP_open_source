@@ -58,6 +58,7 @@ var Invoice = function (models) {
         var id = req.body.orderId;
         var forSales = req.body.forSales;
         var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
+        var wTrackInvoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
         var Order = models.get(req.session.lastDb, 'Quotation', OrderSchema);
         var Company = models.get(req.session.lastDb, 'Customer', CustomerSchema);
 
@@ -65,14 +66,25 @@ var Invoice = function (models) {
         var waterFallTasks;
 
         function fetchFirstWorkflow(callback) {
-            var request = {
-                query: {
-                    wId: 'Purchase Invoice',
-                    source: 'purchase',
-                    targetSource: 'invoice'
-                },
-                session: req.session
-            };
+            if (forSales === "true") {
+                var request = {
+                    query: {
+                        wId: 'Sales Invoice',
+                        source: 'purchase',
+                        targetSource: 'invoice'
+                    },
+                    session: req.session
+                };
+            } else {
+                var request = {
+                    query: {
+                        wId: 'Purchase Invoice',
+                        source: 'purchase',
+                        targetSource: 'invoice'
+                    },
+                    session: req.session
+                };
+            }
 
             workflowHandler.getFirstForConvert(request, callback);
         }
@@ -81,7 +93,8 @@ var Invoice = function (models) {
             var query = Order.findById(id).lean();
 
             query//.populate('supplier', 'name')
-                .populate('products.product', 'name');
+                .populate('products.product')
+                .populate('products.jobs');
 
             query.exec(callback)
         };
@@ -109,7 +122,13 @@ var Invoice = function (models) {
             }
 
             delete order._id;
-            invoice = new Invoice(order);
+
+            if (forSales === "true"){
+                invoice = new wTrackInvoice(order);
+            } else {
+                invoice = new Invoice(order);
+            }
+
 
             if (req.session.uId) {
                 invoice.createdBy.user = req.session.uId;
@@ -130,23 +149,32 @@ var Invoice = function (models) {
             //    invoice.supplier.name = supplier.name.first + ' ' + supplier.name.last;
             //}
 
-            var query = Company.findById(invoice.supplier._id).lean();
-
-            query.populate('salesPurchases.salesPerson', 'name');
-
-            query.exec(function(err, result){
-                if (err){
-                    callback(err)
-                }
-
-                if (result && result.salesPurchases.salesPerson){
-                    invoice.salesPerson = {};
-                    invoice.salesPerson._id = result.salesPurchases.salesPerson._id;
-                    invoice.salesPerson.name = result.salesPurchases.salesPerson.name.first + ' ' + result.salesPurchases.salesPerson.name.last;
-                }
+            if (forSales === "true") {
+                invoice.salesPerson = {};
+                invoice.salesPerson._id = order.project.projectmanager._id;
+                invoice.salesPerson.name = order.project.projectmanager.name;
 
                 invoice.save(callback);
-            })
+            } else {
+                var query = Company.findById(invoice.supplier._id).lean();
+
+                query.populate('salesPurchases.salesPerson', 'name');
+
+                query.exec(function (err, result) {
+                    if (err) {
+                        callback(err)
+                    }
+
+                    if (result && result.salesPurchases.salesPerson) {
+                        invoice.salesPerson = {};
+                        invoice.salesPerson._id = result.salesPurchases.salesPerson._id;
+                        invoice.salesPerson.name = result.salesPurchases.salesPerson.name.first + ' ' + result.salesPurchases.salesPerson.name.last;
+                    }
+
+                    invoice.save(callback);
+                })
+
+            }
 
         };
 
@@ -382,7 +410,8 @@ var Invoice = function (models) {
                             populate('editedBy.user').
                             populate('groups.users').
                             populate('groups.group').
-                            populate('groups.owner', '_id login');/*.
+                            populate('groups.owner', '_id login').
+                            populate('products.jobs');/*.
                             //populate('project', '_id projectName').
                             populate('workflow._id', '-sequence');*/
 
@@ -523,6 +552,7 @@ var Invoice = function (models) {
                         var query = Invoice.findOne(optionsObject);
 
                         query.populate('products.product')
+                            .populate('products.jobs')
                             .populate('payments', '_id name date paymentRef paidAmount')
                             .populate('department', '_id departmentName')
                             .populate('paymentTerms', '_id name')

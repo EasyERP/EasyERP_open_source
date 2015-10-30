@@ -6,14 +6,14 @@ define([
     'text!templates/Projects/projectInfo/orders/ListHeader.html',
     'text!templates/stages.html',
     'text!templates/Pagination/PaginationTemplate.html',
-    'views/salesQuotation/EditView',
+    //'views/salesQuotation/EditView',
     'views/salesOrder/list/ListView',
     'collections/Quotation/filterCollection',
     'models/QuotationModel',
     'dataService',
     'common'
 
-], function (ListTemplate, lisHeader, stagesTemplate, paginationTemplate, editView, listView, quotationCollection, orderModel, dataService, common) {
+], function (ListTemplate, lisHeader, stagesTemplate, paginationTemplate, /*editView, */listView, quotationCollection, orderModel, dataService, common) {
     var orderView = listView.extend({
 
         el: '#orders',

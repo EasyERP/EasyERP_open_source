@@ -164,28 +164,32 @@ define([
 
                 var data ={_id: id};
 
-                dataService.postData("/jobs/remove", data,  function(err, result){
-                    if (err){
-                        return console.log(err);
-                    }
+                var answer = confirm("Really delete Job ?!");
 
-                    tr.remove();
-
-                    self.renderJobWTracks(e);
-
-                    self.recalcTotal(id);
-
-
-                    var filter = {
-                        'projectName': {
-                            key  : 'project._id',
-                            value: [self.id]
+                if (answer === true) {
+                    dataService.postData("/jobs/remove", data, function (err, result) {
+                        if (err) {
+                            return console.log(err);
                         }
-                    };
 
-                    self.wCollection.showMore({count: 50, page: 1, filter: filter});
+                        tr.remove();
 
-                });
+                        self.renderJobWTracks(e);
+
+                        self.recalcTotal(id);
+
+
+                        var filter = {
+                            'projectName': {
+                                key: 'project._id',
+                                value: [self.id]
+                            }
+                        };
+
+                        self.wCollection.showMore({count: 50, page: 1, filter: filter});
+
+                    });
+                }
             },
 
             hideRemoveButton: function(e){
