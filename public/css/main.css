@@ -356,6 +356,28 @@ th {
 .alertSuccess:before {
   content: '\f05d';
 }
+.btn {
+  border: 1px solid #7f7f80;
+  margin: 0;
+  padding: .4em 1em;
+  line-height: normal;
+  font-size: 13px;
+  text-align: center;
+  text-decoration: none;
+  -webkit-font-smoothing: antialiased;
+  outline: none;
+  background: #303031;
+}
+.btn span,
+.btn a {
+  padding: 0 !important;
+  color: #66b5d4;
+}
+.btn:hover {
+  cursor: pointer;
+  background-position: 0;
+  background: #1d1d1e;
+}
 /************* Main Colors *************/
 /* errors, negativeMoney */
 /* .cash */
@@ -889,6 +911,7 @@ input::-ms-clear {
   background-color: #303031;
   color: #a9a9a9;
   cursor: move;
+  transition: box-shadow 1s ease;
   transition: border-color 1s ease;
   -moz-border-radius: 0px;
   -webkit-border-radius: 0px;
@@ -1359,11 +1382,9 @@ input::-ms-clear {
 }
 .pagination button:hover {
   background-color: #F7F8F9;
-  color: rgba(0, 0, 0, 0.9);
   border: 1px solid rgba(0, 0, 0, 0.9);
 }
 .pagination button[disabled] {
-  color: rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(0, 0, 0, 0.3);
   cursor: default;
 }
@@ -3753,7 +3774,7 @@ dl dd a.formLink {
 .formHeader > button {
   margin: 5px 1px 4px 1px !important;
 }
-.btn {
+button {
   border: 1px solid #7f7f80;
   margin: 0;
   padding: .4em 1em;
@@ -3765,14 +3786,15 @@ dl dd a.formLink {
   outline: none;
   background: #303031;
 }
-.btn span {
+button span,
+button a {
   padding: 0 !important;
   color: #66b5d4;
 }
-.btn:hover {
+button:hover {
   cursor: pointer;
   background-position: 0;
-  background: #1d1d1e !important;
+  background: #1d1d1e;
 }
 button.red,
 a.red {
@@ -3794,7 +3816,9 @@ a.red {
   line-height: 20px;
 }
 button.red span,
-a.red span {
+a.red span,
+button.red a,
+a.red a {
   padding: 0 !important;
   color: #66b5d4;
 }
@@ -3802,7 +3826,7 @@ button.red:hover,
 a.red:hover {
   cursor: pointer;
   background-position: 0;
-  background: #1d1d1e !important;
+  background: #1d1d1e;
 }
 button.red:hover,
 a.red:hover {
@@ -5520,6 +5544,8 @@ ul.dialog-tabs li.right button {
   color: #cdcdcd;
   z-index: 1000;
   margin: 0 auto;
+  left: 50%;
+  top: 50%;
   -moz-border-radius: 0px;
   -webkit-border-radius: 0px;
   border-radius: 0px;
@@ -6188,7 +6214,9 @@ ul.dialog-tabs .withEndContract .arrow {
   line-height: 15px;
 }
 ul.dialog-tabs .withEndContract .endContractReasonList span,
-ul.dialog-tabs .withEndContract .arrow span {
+ul.dialog-tabs .withEndContract .arrow span,
+ul.dialog-tabs .withEndContract .endContractReasonList a,
+ul.dialog-tabs .withEndContract .arrow a {
   padding: 0 !important;
   color: #66b5d4;
 }
@@ -6196,7 +6224,7 @@ ul.dialog-tabs .withEndContract .endContractReasonList:hover,
 ul.dialog-tabs .withEndContract .arrow:hover {
   cursor: pointer;
   background-position: 0;
-  background: #1d1d1e !important;
+  background: #1d1d1e;
 }
 ul.dialog-tabs .withEndContract .endContractReasonList:hover,
 ul.dialog-tabs .withEndContract .arrow:hover {
@@ -6318,7 +6346,9 @@ ul.chart-tabs .withEndContract .arrow {
   color: white;
 }
 ul.chart-tabs .withEndContract .endContractReasonList span,
-ul.chart-tabs .withEndContract .arrow span {
+ul.chart-tabs .withEndContract .arrow span,
+ul.chart-tabs .withEndContract .endContractReasonList a,
+ul.chart-tabs .withEndContract .arrow a {
   padding: 0 !important;
   color: #66b5d4;
 }
@@ -6326,7 +6356,7 @@ ul.chart-tabs .withEndContract .endContractReasonList:hover,
 ul.chart-tabs .withEndContract .arrow:hover {
   cursor: pointer;
   background-position: 0;
-  background: #1d1d1e !important;
+  background: #1d1d1e;
 }
 ul.chart-tabs .withEndContract .endContractReasonList:hover,
 ul.chart-tabs .withEndContract .arrow:hover {
@@ -6729,6 +6759,10 @@ span.projectClosed {
   padding: 0 5px;
   line-height: 16px;
   background-color: inherit;
+}
+.stageSelect.unDone,
+span.unDone {
+  color: #fd0001;
 }
 .form-holder form .task-info {
   clear: both;
@@ -7686,12 +7720,6 @@ input::-webkit-inner-spin-button {
   float: left;
   width: 80%;
 }
-.list2 .width20 {
-  width: 15%;
-}
-.list2 .width25 {
-  width: 25%;
-}
 .form .productEdit {
   padding: 0;
 }
@@ -8216,14 +8244,34 @@ textarea#editInput {
   float: left;
   line-height: 24px;
   width: 140px;
-  padding: 0 10px;
+}
+.grid-conatiner.revenue .chartContainer .legendHours div {
+  zoom: 1;
+  clear: both;
+}
+.grid-conatiner.revenue .chartContainer .legendHours div:before {
+  content: "\0020";
+  display: block;
+  height: 0;
+  overflow: hidden;
+}
+.grid-conatiner.revenue .chartContainer .legendHours div:after {
+  content: "\0020";
+  display: block;
+  height: 0;
+  overflow: hidden;
+  clear: both;
 }
 .grid-conatiner.revenue .chartContainer .legendHours label {
   display: inline-block;
   width: 50px;
+  line-height: 25px;
+  float: left;
 }
 .grid-conatiner.revenue .chartContainer .legendHours input {
-  width: 50px;
+  width: 57px;
+  float: left;
+  border: none;
 }
 .grid-conatiner.revenue .chartContainer .line1 {
   fill: none;

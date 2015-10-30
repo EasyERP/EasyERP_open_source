@@ -3,7 +3,7 @@ define([
 	'router',
 	'communication',
 	'custom',
-	'socket.io'
+	'socket.io',
 ], function (Router, Communication, Custom, io) {
 	var initialize = function () {
 		var appRouter = new Router();
@@ -100,6 +100,7 @@ define([
 				target.val(day + ' ' + mon + ', ' + year);
 			}
 		});
+
 	};
 
 	return {

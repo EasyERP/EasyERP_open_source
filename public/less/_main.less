@@ -1224,6 +1224,16 @@ input::-ms-clear {
   }
 }
 
+.cell-bg {
+  background: linear-gradient(45deg,fade(@border-color-main, 0) 48%
+  ,fade(@border-color-main, 20%) 50%,fade(@border-color-main, 0) 52%)
+  ,linear-gradient(-45deg,fade(@border-color-main, 0) 48%
+          ,fade(@border-color-main, 20%) 50%
+          ,fade(@border-color-main, 0) 52%);
+  background-size: 16px 16px;
+  background-color: darken(@bg-main, 2%);
+}
+
 .kanban {
   .noPaddingMargin;
   min-width: 100%;
@@ -1255,19 +1265,20 @@ input::-ms-clear {
 
   tr {
     &:last-child {
-      border-right: 10px solid white;
+      border-right: 10px solid @defaultBgHover-color;
     }
   }
 
   .column {
-    border-left: 10px solid #fff;
-    vertical-align: text-top;
+    border-left: 10px solid @defaultBgHover-color;
+    //vertical-align: text-top;
     min-height: 100%;
     width: auto;
     min-width: 160px;
     height: auto;
     vertical-align: top;
-    background: url("@{imagesfolder}/form_sheetbg.png");
+    .cell-bg;
+    //background: url("@{imagesfolder}/form_sheetbg.png");
 
     .item {
       word-wrap: break-word;
@@ -2218,11 +2229,11 @@ input::-ms-clear {
     color: rgba(0, 0, 0, 0.75);
     &:hover {
       background-color: #F7F8F9;
-      color: rgba(0, 0, 0, 0.9);
+      //color: rgba(0, 0, 0, 0.9);
       border: 1px solid rgba(0, 0, 0, 0.9);
     }
     &[disabled] {
-      color: rgba(0, 0, 0, 0.3);
+      //color: rgba(0, 0, 0, 0.3);
       border: @thin-border rgba(0, 0, 0, 0.3);
       cursor: default;
     }
@@ -3301,27 +3312,7 @@ dl {
   }
 }
 
-.btn {
-  border: @thin-border @border-color-main;
-  margin: 0;
-  padding: .4em 1em;
-  line-height: normal;
-  font-size: 13px;
-  text-align: center;
-  text-decoration: none;
-  -webkit-font-smoothing: antialiased;
-  outline: none;
-  background: @bg-main;
-  span, a {
-    padding: 0 !important;
-    color: @tilte-color;
-  }
-  &:hover {
-    cursor: pointer;
-    background-position: 0;
-    background: @bg-butt-color - #131313 !important;
-  }
-}
+
 
 button {
   .btn;
