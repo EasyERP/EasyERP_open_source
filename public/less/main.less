@@ -1226,6 +1226,16 @@ input::-ms-clear {
   }
 }
 
+.cell-bg {
+  background: linear-gradient(45deg,fade(@border-color-main, 0) 48%
+  ,fade(@border-color-main, 20%) 50%,fade(@border-color-main, 0) 52%)
+  ,linear-gradient(-45deg,fade(@border-color-main, 0) 48%
+  ,fade(@border-color-main, 20%) 50%
+  ,fade(@border-color-main, 0) 52%);
+  background-size: 16px 16px;
+  background-color: darken(@bg-main, 2%);
+}
+
 .kanban {
   .noPaddingMargin;
   min-width: 100%;
@@ -1257,19 +1267,19 @@ input::-ms-clear {
 
   tr {
     &:last-child {
-      border-right: 10px solid white;
+      border-right: 10px solid @defaultBgHover-color;
     }
   }
 
   .column {
-    border-left: 10px solid #fff;
-    vertical-align: text-top;
+    border-left: 10px solid @defaultBgHover-color;
     min-height: 100%;
     width: auto;
     min-width: 160px;
     height: auto;
     vertical-align: top;
-    background: url("@{imagesfolder}/form_sheetbg.png");
+    //background: url("@{imagesfolder}/form_sheetbg.png");
+    .cell-bg;
 
     .item {
       word-wrap: break-word;
@@ -1281,7 +1291,6 @@ input::-ms-clear {
       background-color: @bg-main;
       color: @kanab-text-color;
       cursor: move;
-      transition: box-shadow 1s ease;
       transition: border-color 1s ease;
       .border-radius(0px);
 
