@@ -32,7 +32,6 @@ define([
 				return this.indexOf(str) == 0;
 			};
 		}
-
 		$.extend($.ui.dialog.prototype.options, {
 			modal    : true,
 			resizable: false,
