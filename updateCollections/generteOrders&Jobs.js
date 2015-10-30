@@ -206,8 +206,8 @@ function createJobs(invoiceArr, pcb){
         data = {
             name: jobName,
             workflow: {
-                _id: objectId("56289f0713a9b6747c1c78af"),
-                name: "In Progress"
+                _id: objectId("56337c675d49d8d6537832ea"),
+                name: "Finished"
             },
             type: "Invoice",
             wTracks: wTracks,

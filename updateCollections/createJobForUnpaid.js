@@ -194,7 +194,7 @@ function createJobs(wTrackArray, pcb){
         data = {
             name: jobName,
             workflow: {
-                _id: objectId("56289f0713a9b6747c1c78af"),
+                _id: objectId("56337c705d49d8d6537832eb"),
                 name: "In Progress"
             },
             type: "Empty",
