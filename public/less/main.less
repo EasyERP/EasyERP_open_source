@@ -1804,6 +1804,8 @@ input::-ms-clear {
   color: @color;
   z-index: 1000;
   margin: 0 auto;
+  left: 50%;
+  top: 50%;
   .border-radius(0px);
 
   .ui-widget-content {
@@ -3315,7 +3317,6 @@ dl {
 
 .btn {
   border: @thin-border @border-color-main;
-
   margin: 0;
   padding: .4em 1em;
   line-height: normal;
@@ -3325,8 +3326,8 @@ dl {
   -webkit-font-smoothing: antialiased;
   outline: none;
   background: @bg-main;
-  span {
-    padding: 0px !important;
+  span, a {
+    padding: 0 !important;
     color: @tilte-color;
   }
   &:hover {
@@ -4688,7 +4689,6 @@ h3.dashboard {
   }
   &.closed, &.done, &.unDone {
     display: block;
-    //background-color: @tilte-color;
     color: @notifikation-notify-color;
     text-align: center;
     .border-radius(4px);
@@ -4700,7 +4700,7 @@ h3.dashboard {
     background-color: inherit;
   }
   &.unDone {
-    //background-color: @yellow-lights-color;
+    color: @unpaid-wtrack;
   }
 
 }
@@ -5098,13 +5098,6 @@ input::-webkit-inner-spin-button {
   }
 }
 
-.list2 .width20 {
-  width: 15%;
-}
-
-.list2 .width25 {
-  width: 25%;
-}
 
 .form .productEdit {
   padding: 0;
@@ -5763,13 +5756,19 @@ textarea#editInput {
       float: left;
       line-height: 24px;
       width: 140px;
-      padding: 0 10px;
+      div {
+        .clearfix;
+      }
       label {
         display: inline-block;
         width: 50px;
+        line-height: 25px;
+        float: left;
       }
       input {
-        width: 50px;
+        width: 57px;
+        float: left;
+        border: none;
       }
     }
 

@@ -72,358 +72,6 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 .salary-list tbody#listTable .subRow:hover {
   background-color: transparent;
 }
-.list2 {
-  color: #cdcdcd !important;
-  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
-  width: 100%;
-  table-layout: fixed;
-}
-.list2 .anotherColor {
-  background-color: #66b5d4;
-}
-.list2 tfoot tr {
-  border-bottom: 1px solid #7f7f80;
-  background: inherit !important;
-  vertical-align: middle;
-}
-.list2 tfoot td {
-  padding: 3px 6px;
-  line-height: 18px;
-  font-size: 12px;
-  text-align: right;
-}
-.list2 tfoot td span {
-  padding-right: 0;
-}
-.list2 thead tr {
-  border-top: 0;
-  background: inherit !important;
-  vertical-align: top;
-}
-.list2 thead .subSalaryHead {
-  border-top: none;
-}
-.list2 thead th {
-  padding: 3px 8px;
-  line-height: 18px;
-  font-size: 12px;
-  text-align: right;
-}
-.list2 thead th:nth-child(1),
-.list2 thead th:nth-child(2) {
-  text-align: center;
-}
-.list2 thead th input[type="checkbox"] {
-  margin-top: 2.5px;
-}
-.list2 thead th.oe_sortable,
-.list2 thead th.oe_sortable_sub {
-  cursor: pointer;
-}
-.list2 thead th.oe_sortable .arrow,
-.list2 thead th.oe_sortable_sub .arrow {
-  display: none;
-  padding: 0 0 0 5px;
-  margin: 0;
-  text-align: center;
-  width: 5px;
-  height: 5px;
-  font-weight: 100 !important;
-  cursor: pointer;
-  font-family: Icons;
-  text-decoration: none;
-  line-height: 23px;
-  background: none;
-}
-.list2 thead th.oe_sortable.sortUp .up,
-.list2 thead th.oe_sortable_sub.sortUp .up {
-  display: inline-block;
-}
-.list2 thead th.oe_sortable.sortDn .down,
-.list2 thead th.oe_sortable_sub.sortDn .down {
-  display: inline-block;
-}
-.list2 thead th.forCaption {
-  background-color: #1ebbea;
-  width: 50%;
-  text-align: right;
-}
-.list2 thead th:first-of-type {
-  width: 12px;
-}
-.list2 thead th:first-of-type input {
-  cursor: pointer;
-}
-.list2 tbody tr {
-  border-top: 1px solid #7f7f80;
-}
-.list2 tbody tr.greenAlarm {
-  border: 2px solid #90ee90;
-}
-.list2 tbody tr.canceledListItem {
-  color: grey;
-}
-.list2 tbody tr.canceledListItem .newSelectList {
-  color: #000;
-}
-.list2 tbody tr:last-child {
-  border-bottom: 1px solid #7f7f80;
-}
-.list2 tbody tr.stage-cancelled,
-.list2 tbody tr.stage-refused,
-.list2 tbody tr.stage-contractend,
-.list2 tbody tr.stage-lost {
-  text-decoration: line-through;
-}
-.list2 tbody tr td {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  cursor: pointer;
-  padding: 0 8px;
-  font-size: 12px;
-  text-align: right;
-  border-right: 1px solid #7f7f80;
-  border-bottom: 1px solid #7f7f80;
-  color: #cdcdcd;
-  line-height: 20px;
-}
-.list2 tbody tr td.red-border {
-  color: red;
-}
-.list2 tbody tr td:nth-child(1),
-.list2 tbody tr td:nth-child(2) {
-  text-align: center;
-}
-.list2 tbody tr td.withSelect {
-  position: relative;
-}
-.list2 tbody tr td[data-content="workflow"] {
-  position: relative;
-  padding: 0 15px;
-  overflow: visible;
-}
-.list2 tbody tr td[data-content="workflow"] .newSelectList {
-  top: 5px;
-  right: 15px;
-}
-.list2 tbody tr td progress {
-  width: 100%;
-}
-.list2 tbody tr td a {
-  color: #cdcdcd;
-}
-.list2 tbody tr td a.stageSelect {
-  color: #cdcdcd;
-}
-.list2 tbody tr td a.done {
-  color: #00c60b !important;
-}
-.list2 tbody tr td progress {
-  background-color: #f5f5f5;
-}
-.list2 tbody tr td progress::-webkit-progress-bar {
-  background-color: #f5f5f5;
-}
-.list2 tbody tr td progress::-webkit-progress-value {
-  background-color: #57B5E3;
-}
-.list2 tbody tr td:first-of-type {
-  padding-left: 7px;
-  line-height: 20px;
-}
-.list2 tbody tr td:first-of-type input {
-  cursor: pointer;
-}
-.list2 tbody tr .icon {
-  line-height: 20px;
-}
-.list2 tr:nth-child(odd) {
-  background-color: #3d3d3e;
-}
-.list2 tr:hover {
-  background-color: #565658;
-}
-.list2 .anotherColor {
-  background-color: #66b5d4;
-}
-.list2 tfoot tr {
-  border-bottom: 1px solid #7f7f80;
-  background: inherit !important;
-  vertical-align: middle;
-}
-.list2 tfoot td {
-  padding: 3px 6px;
-  line-height: 18px;
-  font-size: 12px;
-  text-align: right;
-}
-.list2 tfoot td span {
-  padding-right: 0;
-}
-.list2 thead tr {
-  border-top: 0;
-  background: inherit !important;
-  vertical-align: top;
-}
-.list2 thead .subSalaryHead {
-  border-top: none;
-}
-.list2 thead th {
-  padding: 3px 8px;
-  line-height: 18px;
-  font-size: 12px;
-  text-align: right;
-}
-.list2 thead th:nth-child(1),
-.list2 thead th:nth-child(2) {
-  text-align: center;
-}
-.list2 thead th input[type="checkbox"] {
-  margin-top: 2.5px;
-}
-.list2 thead th.oe_sortable,
-.list2 thead th.oe_sortable_sub {
-  cursor: pointer;
-}
-.list2 thead th.oe_sortable .arrow,
-.list2 thead th.oe_sortable_sub .arrow {
-  display: none;
-  padding: 0 0 0 5px;
-  margin: 0;
-  text-align: center;
-  width: 5px;
-  height: 5px;
-  font-weight: 100 !important;
-  cursor: pointer;
-  font-family: Icons;
-  text-decoration: none;
-  line-height: 23px;
-  background: none;
-}
-.list2 thead th.oe_sortable.sortUp .up,
-.list2 thead th.oe_sortable_sub.sortUp .up {
-  display: inline-block;
-}
-.list2 thead th.oe_sortable.sortDn .down,
-.list2 thead th.oe_sortable_sub.sortDn .down {
-  display: inline-block;
-}
-.list2 thead th.forCaption {
-  background-color: #1ebbea;
-  width: 50%;
-  text-align: right;
-}
-.list2 thead th:first-of-type {
-  width: 12px;
-}
-.list2 thead th:first-of-type input {
-  cursor: pointer;
-}
-.list2 tbody tr {
-  border-top: 1px solid #7f7f80;
-}
-.list2 tbody tr.greenAlarm {
-  border: 2px solid #90ee90;
-}
-.list2 tbody tr.canceledListItem {
-  color: grey;
-}
-.list2 tbody tr.canceledListItem .newSelectList {
-  color: #000;
-}
-.list2 tbody tr:last-child {
-  border-bottom: 1px solid #7f7f80;
-}
-.list2 tbody tr.stage-cancelled,
-.list2 tbody tr.stage-refused,
-.list2 tbody tr.stage-contractend,
-.list2 tbody tr.stage-lost {
-  text-decoration: line-through;
-}
-.list2 tbody tr td {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  cursor: pointer;
-  padding: 0 8px;
-  font-size: 12px;
-  text-align: right;
-  border-right: 1px solid #7f7f80;
-  border-bottom: 1px solid #7f7f80;
-  color: #cdcdcd;
-  line-height: 20px;
-}
-.list2 tbody tr td.red-border {
-  color: red;
-}
-.list2 tbody tr td:nth-child(1),
-.list2 tbody tr td:nth-child(2) {
-  text-align: center;
-}
-.list2 tbody tr td.withSelect {
-  position: relative;
-}
-.list2 tbody tr td[data-content="workflow"] {
-  position: relative;
-  padding: 0 15px;
-  overflow: visible;
-}
-.list2 tbody tr td[data-content="workflow"] .newSelectList {
-  top: 5px;
-  right: 15px;
-}
-.list2 tbody tr td progress {
-  width: 100%;
-}
-.list2 tbody tr td a {
-  color: #cdcdcd;
-}
-.list2 tbody tr td a.stageSelect {
-  color: #cdcdcd;
-}
-.list2 tbody tr td a.done {
-  color: #00c60b !important;
-}
-.list2 tbody tr td progress {
-  background-color: #f5f5f5;
-}
-.list2 tbody tr td progress::-webkit-progress-bar {
-  background-color: #f5f5f5;
-}
-.list2 tbody tr td progress::-webkit-progress-value {
-  background-color: #57B5E3;
-}
-.list2 tbody tr td:first-of-type {
-  padding-left: 7px;
-  line-height: 20px;
-}
-.list2 tbody tr td:first-of-type input {
-  cursor: pointer;
-}
-.list2 tbody tr .icon {
-  line-height: 20px;
-}
-.list2 tr:nth-child(odd) {
-  background-color: #3d3d3e;
-}
-.list2 tr:hover {
-  background-color: #565658;
-}
-.list2 thead th:first-of-type {
-  width: 15%;
-}
-.list2 .datepicker {
-  width: 90%;
-}
-.list2 .datepicker.notVisible {
-  display: none;
-}
-.ui-dialog .list2 thead th,
-.ui-dialog .list2 tbody tr td,
-.ui-dialog .list2 tfoot tr td {
-  text-align: left;
-}
 #forInfo .tableProjects {
   width: 99%;
   margin-bottom: 10px;
@@ -475,7 +123,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   width: 98%;
 }
 .vacation-list .V {
-  background-color: #f13f3f;
+  background-color: #fd0001;
   color: #ffffff;
 }
 .vacation-list .P {
@@ -3818,8 +3466,9 @@ dl dd a.formLink {
   outline: none;
   background: #303031;
 }
-.btn span {
-  padding: 0px !important;
+.btn span,
+.btn a {
+  padding: 0 !important;
   color: #66b5d4;
 }
 .btn:hover {
@@ -3839,8 +3488,9 @@ button {
   outline: none;
   background: #303031;
 }
-button span {
-  padding: 0px !important;
+button span,
+button a {
+  padding: 0 !important;
   color: #66b5d4;
 }
 button:hover {
@@ -3867,8 +3517,10 @@ a.red {
   line-height: 20px;
 }
 button.red span,
-a.red span {
-  padding: 0px !important;
+a.red span,
+button.red a,
+a.red a {
+  padding: 0 !important;
   color: #66b5d4;
 }
 button.red:hover,
@@ -5277,6 +4929,7 @@ ul.dialog-tabs li.right button {
 }
 .list tbody tr td a {
   color: #cdcdcd;
+  display: inline-block;
 }
 .list tbody tr td a.stageSelect {
   color: #cdcdcd;
@@ -5592,6 +5245,8 @@ ul.dialog-tabs li.right button {
   color: #cdcdcd;
   z-index: 1000;
   margin: 0 auto;
+  left: 50%;
+  top: 50%;
   -moz-border-radius: 0px;
   -webkit-border-radius: 0px;
   border-radius: 0px;
@@ -6260,8 +5915,10 @@ ul.dialog-tabs .withEndContract .arrow {
   line-height: 15px;
 }
 ul.dialog-tabs .withEndContract .endContractReasonList span,
-ul.dialog-tabs .withEndContract .arrow span {
-  padding: 0px !important;
+ul.dialog-tabs .withEndContract .arrow span,
+ul.dialog-tabs .withEndContract .endContractReasonList a,
+ul.dialog-tabs .withEndContract .arrow a {
+  padding: 0 !important;
   color: #66b5d4;
 }
 ul.dialog-tabs .withEndContract .endContractReasonList:hover,
@@ -6390,8 +6047,10 @@ ul.chart-tabs .withEndContract .arrow {
   color: white;
 }
 ul.chart-tabs .withEndContract .endContractReasonList span,
-ul.chart-tabs .withEndContract .arrow span {
-  padding: 0px !important;
+ul.chart-tabs .withEndContract .arrow span,
+ul.chart-tabs .withEndContract .endContractReasonList a,
+ul.chart-tabs .withEndContract .arrow a {
+  padding: 0 !important;
   color: #66b5d4;
 }
 ul.chart-tabs .withEndContract .endContractReasonList:hover,
@@ -6801,6 +6460,10 @@ span.projectClosed {
   padding: 0 5px;
   line-height: 16px;
   background-color: inherit;
+}
+.stageSelect.unDone,
+span.unDone {
+  color: #fd0001;
 }
 .form-holder form .task-info {
   clear: both;
@@ -7758,12 +7421,6 @@ input::-webkit-inner-spin-button {
   float: left;
   width: 80%;
 }
-.list2 .width20 {
-  width: 15%;
-}
-.list2 .width25 {
-  width: 25%;
-}
 .form .productEdit {
   padding: 0;
 }
@@ -8049,7 +7706,7 @@ textarea#editInput {
   border-bottom: 1px solid #7f7f80;
 }
 .grid.attendance .V {
-  background-color: #f13f3f;
+  background-color: #fd0001;
   color: #ffffff;
 }
 .grid.attendance .P {
@@ -8288,14 +7945,34 @@ textarea#editInput {
   float: left;
   line-height: 24px;
   width: 140px;
-  padding: 0 10px;
+}
+.grid-conatiner.revenue .chartContainer .legendHours div {
+  zoom: 1;
+  clear: both;
+}
+.grid-conatiner.revenue .chartContainer .legendHours div:before {
+  content: "\0020";
+  display: block;
+  height: 0;
+  overflow: hidden;
+}
+.grid-conatiner.revenue .chartContainer .legendHours div:after {
+  content: "\0020";
+  display: block;
+  height: 0;
+  overflow: hidden;
+  clear: both;
 }
 .grid-conatiner.revenue .chartContainer .legendHours label {
   display: inline-block;
   width: 50px;
+  line-height: 25px;
+  float: left;
 }
 .grid-conatiner.revenue .chartContainer .legendHours input {
-  width: 50px;
+  width: 57px;
+  float: left;
+  border: none;
 }
 .grid-conatiner.revenue .chartContainer .line1 {
   fill: none;
@@ -8384,7 +8061,7 @@ textarea#editInput {
   border-bottom: 2px solid #a2a2a3;
 }
 .grid-conatiner.revenue .divTable#tableUnpaidBySales .th {
-  border-bottom: 2px solid #f13f3f;
+  border-bottom: 2px solid #fd0001;
 }
 .grid-conatiner.revenue .divTable#tableCancelledBySales .th {
   border-bottom: 2px solid #3d4bfd;
@@ -8434,7 +8111,7 @@ textarea#editInput {
   background-color: #a2a2a3;
 }
 .grid-conatiner.revenue .divRow.totalUnpaid {
-  background-color: #f13f3f;
+  background-color: #fd0001;
 }
 .grid-conatiner.revenue .divRow.totalCancelled {
   background-color: #66b5d4;
