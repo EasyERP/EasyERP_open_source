@@ -665,26 +665,26 @@ var Invoice = function (models) {
                             });
                         };
 
-                        function wTrackUpdate (){
-                            var setData = {};
-
-                            async.each(wTrackIds, function (id) {
-                                setData.editedBy = {
-                                    user: req.session.uId,
-                                    date: new Date().toISOString()
-                                };
-
-                                setData.isPaid = false;
-                                setData.amount = 0;
-
-                                wTrack.findByIdAndUpdate(id, setData, function (err, result) {
-                                    if (err) {
-                                        return console.log(err);
-                                    }
-                                  //  console.log('success');
-                                });
-                            });
-                        };
+                        //function wTrackUpdate (){
+                        //    var setData = {};
+                        //
+                        //    async.each(wTrackIds, function (id) {
+                        //        setData.editedBy = {
+                        //            user: req.session.uId,
+                        //            date: new Date().toISOString()
+                        //        };
+                        //
+                        //        setData.isPaid = false;
+                        //        setData.amount = 0;
+                        //
+                        //        wTrack.findByIdAndUpdate(id, setData, function (err, result) {
+                        //            if (err) {
+                        //                return console.log(err);
+                        //            }
+                        //          //  console.log('success');
+                        //        });
+                        //    });
+                        //};
 
                         async.parallel([paymentsRemove, jobsUpdateAndWTracks], function (err, result) {
                             if (err){
