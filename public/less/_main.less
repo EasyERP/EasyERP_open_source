@@ -1942,11 +1942,19 @@ input::-ms-clear {
     border-top: 1px solid #CBD3E2;
     max-width: 280px;
     height: 18px;
-    background-color: white;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 12px;
-    padding: 2px;
-    color: #262626;
+    border: @thin-border @list-border-color;
+    line-height: 20px;
+    background-color: transparent;
+    padding: 0 2px;
+    color: @mainText-color;
+
+      &:focus {
+        .box-shadow(0, 0, 5px, @border-color-selected);
+        outline: medium none;
+        border: @thin-border @border-color-selected !important;
+      }
 
     &#summary {
       width: 100%;
@@ -3583,7 +3591,7 @@ button.red, a.red {
 
     &.not-active {
       color: silver;
-      background-color: none;
+      background: none;
       cursor: default;
 
       &:hover {
@@ -3993,7 +4001,9 @@ table#workflows {
 
 .startDate, .endDate {
   position: relative;
-  width: 150px;
+  //width: 150px;
+  width: 100%;
+  box-sizing: border-box;
 
   input {
     display: none;
@@ -5060,23 +5070,38 @@ input::-webkit-inner-spin-button {
     width: 33.33%;
 
     .person-info {
+      display: table;
+      width: 100%;
       overflow: hidden;
 
+      &> div {
+        vertical-align: middle;
+        display: table-cell;
+      }
+
       dd {
-        line-height: 1;
+        vertical-align: middle;
+        display: table-cell;
+        line-height: 20px;
+      }
+      dt {
+        vertical-align: middle;
+        display: table-cell;
+        line-height: 20px;
       }
 
       .miniAvatar {
-        float: left;
+        //float: left;
         width: 20%;
         .avatar{
           width: 50px;
           height: 50px;
+          margin: 0;
         }
       }
 
       .miniAvatarInfo {
-        float: left;
+        //float: left;
         width: 80%;
 
       }
@@ -6565,3 +6590,22 @@ textarea#editInput {
 .forInfoWrap {
   overflow: hidden;
 }
+
+//.list2 {
+//  input:not([type='text']) {
+//    border: @thin-border @list-border-color;
+//    max-width: 280px;
+//    line-height: 20px;
+//    background-color: transparent;
+//    font-family: Arial, Helvetica, sans-serif;
+//    font-size: 12px;
+//    padding: 0 4px;
+//    color: @mainText-color;
+//
+//    &:focus {
+//      .box-shadow(0, 0, 5px, @border-color-selected);
+//      outline: medium none;
+//      border: @thin-border @border-color-selected !important;
+//    }
+//  }
+//}

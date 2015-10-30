@@ -4495,7 +4495,7 @@ a.red:hover {
 .miniPagination > div.not-active,
 .miniPaginationPersons > div.not-active {
   color: silver;
-  background-color: none;
+  background: none;
   cursor: default;
 }
 .miniPagination > div.not-active:hover,
@@ -5043,7 +5043,8 @@ table#workflows tr td.edit-status {
 .startDate,
 .endDate {
   position: relative;
-  width: 150px;
+  width: 100%;
+  box-sizing: border-box;
 }
 .startDate input,
 .endDate input {
@@ -6295,11 +6296,20 @@ ul.dialog-tabs li.right button {
   border-top: 1px solid #CBD3E2;
   max-width: 280px;
   height: 18px;
-  background-color: white;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 12px;
-  padding: 2px;
-  color: #262626;
+  border: 1px solid #7f7f80;
+  line-height: 20px;
+  background-color: transparent;
+  padding: 0 2px;
+  color: #cdcdcd;
+}
+.ui-dialog input:focus {
+  box-shadow: 0 0 5px #66b5d4;
+  -moz-box-shadow: 0 0 5px #66b5d4;
+  -webkit-box-shadow: 0 0 5px #66b5d4;
+  outline: medium none;
+  border: 1px solid #66b5d4 !important;
 }
 .ui-dialog input#summary {
   width: 100%;
@@ -8108,21 +8118,33 @@ input::-webkit-inner-spin-button {
   width: 33.33%;
 }
 .topInputHolder .thirdPartBlock .person-info {
+  display: table;
+  width: 100%;
   overflow: hidden;
 }
+.topInputHolder .thirdPartBlock .person-info > div {
+  vertical-align: middle;
+  display: table-cell;
+}
 .topInputHolder .thirdPartBlock .person-info dd {
-  line-height: 1;
+  vertical-align: middle;
+  display: table-cell;
+  line-height: 20px;
+}
+.topInputHolder .thirdPartBlock .person-info dt {
+  vertical-align: middle;
+  display: table-cell;
+  line-height: 20px;
 }
 .topInputHolder .thirdPartBlock .person-info .miniAvatar {
-  float: left;
   width: 20%;
 }
 .topInputHolder .thirdPartBlock .person-info .miniAvatar .avatar {
   width: 50px;
   height: 50px;
+  margin: 0;
 }
 .topInputHolder .thirdPartBlock .person-info .miniAvatarInfo {
-  float: left;
   width: 80%;
 }
 .form .productEdit {
