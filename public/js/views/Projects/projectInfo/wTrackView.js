@@ -61,8 +61,8 @@ define([
             $('#check_all').prop('checked', false);
 
 
-            this.collection.unbind('reset');
-            this.collection.unbind('showmore');
+            //this.collection.unbind('reset');
+            //this.collection.unbind('showmore');
         },
 
 
@@ -586,7 +586,7 @@ define([
             $('#check_all').click(function () {
                 var checkLength;
 
-                allInputs = $('.listCB');
+                allInputs = self.$el.find('.listCB');
                 allInputs.prop('checked', this.checked);
                 checkedInputs = $("input.listCB:checked");
 

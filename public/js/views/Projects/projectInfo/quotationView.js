@@ -311,7 +311,7 @@ define([
             this.$el.find('#removeQuotation').hide();
 
             $('#check_all_quotations').click(function () {
-                $(':checkbox').prop('checked', this.checked);
+                this.$el.find(':checkbox').prop('checked', this.checked);
                 if ($("input.checkbox:checked").length > 0) {
                     $("#removeQuotation").show();
                 } else {
