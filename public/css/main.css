@@ -324,12 +324,22 @@ th {
 .btn-list li {
   border-right: 1px solid #7f7f80;
   border-bottom: 1px solid #7f7f80;
-  padding: 0;
+  padding: 3px;
   margin: 0;
   display: block;
   float: left;
-  height: 24px;
-  width: 24px;
+  height: 18px;
+  width: 18px;
+}
+.btn-list li a {
+  display: block;
+  line-height: 20px;
+  font-size: 18px !important;
+  text-align: center;
+}
+.btn-list li a.fa {
+  line-height: 18px;
+  font-size: 16px !important;
 }
 .btn-list li a:hover {
   text-decoration: none;

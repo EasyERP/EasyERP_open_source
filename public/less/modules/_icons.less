@@ -9,13 +9,22 @@
   li {
     border-right: @thin-border @border-color-main;
     border-bottom: @thin-border @border-color-main;
-    .noPaddingMargin;
+    padding: 3px;
+    margin: 0;
     display: block;
-    .left;
-    height: 24px;
-    width: 24px;
+    float: left;
+    height: 18px;
+    width: 18px;
 
     a {
+      display: block;
+      line-height: 20px;
+      font-size: 18px !important;
+      text-align: center;
+      &.fa {
+        line-height: 18px;
+        font-size: 16px !important;
+      }
       &:hover {
         text-decoration: none;
       }
@@ -23,11 +32,9 @@
   }
 
   .selected {
-    // border-bottom: 2px solid @border-color-selected;
     color: @selected-filters-color;
     a {
       color: white;
-      //text-shadow: 0 1px 2px black;
     }
   }
 }
