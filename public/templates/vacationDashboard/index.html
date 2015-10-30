@@ -1,5 +1,23 @@
 <div id="top-bar">
     <h3>Dashboard Vacation</h3>
+    <ul class="dateFilter">
+        <li>
+            <span class="dateRange">10/30/15 - 10/30/15</span>
+            <i class="fa fa-caret-down"></i>
+        </li>
+        <li>
+            <ul class="frameDetail">
+                <li class="customTime">
+                    <span>
+                        From <br>
+                        <input readonly type="text" id="startDate"><br>
+                        To <br>
+                        <input readonly type="text" id="endDate">
+                    </span>
+                </li>
+            </ul>
+        </li>
+    </ul>
 </div>
 <span class="openAll"><a class="icon">5</a> Expand all</span>
 <div class="grid-conatiner">
@@ -24,7 +42,8 @@
         </thead>
         <tbody id="dashboardBody">
         <% dashboardData.forEach(function(department){ %>
-        <tr data-id="<%= department.department ? department.department._id: '' %>" class="head-row group" data-content="department">
+        <tr data-id="<%= department.department ? department.department._id: '' %>" class="head-row group"
+            data-content="department">
             <td class="checkDashboard">
                 <span>&nbsp</span>
             </td>
@@ -36,7 +55,8 @@
 
         </tr>
         <% department.employees.forEach(function(employee, index){ %>
-        <tr class="<%= department.department ? department.department._id: '' %>" data-id="<%= employee.get('_id')%>" data-content="employee">
+        <tr class="<%= department.department ? department.department._id: '' %>" data-id="<%= employee.get('_id')%>"
+            data-content="employee">
             <td class="checkDashboard">
                             <span>
                                 <%=index + 1%>
@@ -68,18 +88,20 @@
             <%})%>
         </tr>
         <% for(var i = employee.get('maxProjects'); i > 0; i-- ){%>
-        <tr class="projectsFor<%= department.department ? department.department._id: '' %> employeeProjects <%= employee.get('_id')%>" data-content="project" data-employee="<%=employee.get('_id')%>">
+        <tr class="projectsFor<%= department.department ? department.department._id: '' %> employeeProjects <%= employee.get('_id')%>"
+            data-content="project" data-employee="<%=employee.get('_id')%>">
             <td>&nbsp;</td>
             <td>&nbsp;</td>
             <td>&nbsp;</td>
             <%employee.get('weekData').forEach(function(week){%>
             <% if(week.projectRoot) {%>
-                <td data-date="<%=week.dateByWeek%>" data-project="<%=week.projectRoot[i-1] ? week.projectRoot[i-1].project : ''%>" class="wTrackInfo">
-                    <span class="projectHours"><%=week.projectRoot[i-1] ? week.projectRoot[i-1].hours : ''%></span>
-                    <span class="projectItem"><%=week.projectRoot[i-1] ? week.projectRoot[i-1].project: ''%></span>
-                </td>
+            <td data-date="<%=week.dateByWeek%>"
+                data-project="<%=week.projectRoot[i-1] ? week.projectRoot[i-1].project : ''%>" class="wTrackInfo">
+                <span class="projectHours"><%=week.projectRoot[i-1] ? week.projectRoot[i-1].hours : ''%></span>
+                <span class="projectItem"><%=week.projectRoot[i-1] ? week.projectRoot[i-1].project: ''%></span>
+            </td>
             <% } else { %>
-            <td >
+            <td>
                 &nbsp
             </td>
             <% } %>
