@@ -879,16 +879,16 @@ define([
                                         model: result
                                     });
 
-
                                     res = result;
                                 }, this);
 
-
-                            new InvoiceView({
-                                model: response
-                            });
-
                         }
+
+
+                        new InvoiceView({
+                            model: response
+                        });
+
                         if (res) {
                             cb(null, {payment: res, invoice: response});
                         } else {
