@@ -2958,7 +2958,6 @@ dl {
     max-width: 190px !important;
   }
 }
-
 .half-block {
   width: 50%;
   &.withPaddingRightProject {
@@ -2997,7 +2996,17 @@ dl {
   }
 
 }
-
+#forInfo {
+  .half-block {
+    &.left {
+      width: 65%;
+      margin-right: 1%;
+    }
+    &.right {
+      width: 34%;
+    }
+  }
+}
 .funnelIcon {
   display: inline-block;
   height: 100%;
@@ -3811,12 +3820,19 @@ table#workflows {
 #top-bar-bonus {
   .top-bar;
 }
+.noPadding {
+  padding: 0 !important;
+}
 
 .startDate, .endDate {
   position: relative;
   //width: 150px;
   width: 100%;
   box-sizing: border-box;
+  height: 26px !important;
+  line-height: 26px;
+  padding: 2px 6px !important;
+  border: transparent !important;
 
   input {
     display: none;

@@ -637,7 +637,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   border-top: none;
 }
 .list2 thead th {
-  padding: 3px 8px;
+  padding: 2px 6px;
   line-height: 18px;
   font-size: 12px;
   text-align: right;
@@ -713,7 +713,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   white-space: nowrap;
   text-overflow: ellipsis;
   cursor: pointer;
-  padding: 0 8px;
+  padding: 0 6px;
   font-size: 12px;
   text-align: right;
   border-right: 1px solid #7f7f80;
@@ -804,7 +804,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   border-top: none;
 }
 .list2 thead th {
-  padding: 3px 8px;
+  padding: 2px 6px;
   line-height: 18px;
   font-size: 12px;
   text-align: right;
@@ -880,7 +880,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   white-space: nowrap;
   text-overflow: ellipsis;
   cursor: pointer;
-  padding: 0 8px;
+  padding: 0 6px;
   font-size: 12px;
   text-align: right;
   border-right: 1px solid #7f7f80;
@@ -4070,6 +4070,13 @@ dl dd a.formLink {
 .half-block.taskNote #noteArea {
   width: 100%;
 }
+#forInfo .half-block.left {
+  width: 65%;
+  margin-right: 1%;
+}
+#forInfo .half-block.right {
+  width: 34%;
+}
 .funnelIcon {
   display: inline-block;
   height: 100%;
@@ -5062,11 +5069,18 @@ table#workflows tr td.edit-status {
 #top-bar-bonus.banned {
   border-bottom: 0;
 }
+.noPadding {
+  padding: 0 !important;
+}
 .startDate,
 .endDate {
   position: relative;
   width: 100%;
   box-sizing: border-box;
+  height: 26px !important;
+  line-height: 26px;
+  padding: 2px 6px !important;
+  border: transparent !important;
 }
 .startDate input,
 .endDate input {
@@ -5548,7 +5562,7 @@ ul.dialog-tabs li.right button {
   border-top: none;
 }
 .list thead th {
-  padding: 3px 8px;
+  padding: 2px 6px;
   line-height: 18px;
   font-size: 12px;
   text-align: right;
@@ -5624,7 +5638,7 @@ ul.dialog-tabs li.right button {
   white-space: nowrap;
   text-overflow: ellipsis;
   cursor: pointer;
-  padding: 0 8px;
+  padding: 0 6px;
   font-size: 12px;
   text-align: right;
   border-right: 1px solid #7f7f80;
