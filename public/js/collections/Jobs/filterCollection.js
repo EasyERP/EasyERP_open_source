@@ -21,7 +21,7 @@ define(['models/jobsModel'
             this.fetch({
                 data: options,
                 reset: true,
-                success: function () {
+                success: function (models) {
                     that.page ++;
                 },
                 error: function(err, xhr){

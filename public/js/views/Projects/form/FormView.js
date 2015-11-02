@@ -558,7 +558,6 @@ define([
                     count: 50
                 });
 
-                this.jobsCollection.unbind();
                 this.jobsCollection.bind('reset', self.renderJobs);
                 this.jobsCollection.bind('add', self.renderJobs);
                 this.jobsCollection.bind('remove', self.renderJobs);
@@ -600,7 +599,7 @@ define([
 
 
                 container.html(template({
-                        jobs: jobs,
+                        jobs: projectTeam,
                         bonus: formModel.budget.bonus,
                         projectValues: self.projectValues,
                         currencySplitter: helpers.currencySplitter,
@@ -667,6 +666,8 @@ define([
                 _.bindAll(this, 'getOrders');
                 _.bindAll(this, 'getWTrack');
                 _.bindAll(this, 'renderProformRevenue');
+                _.bindAll(this, 'renderProjectInfo');
+                _.bindAll(this, 'renderJobs');
 
 
                 paralellTasks = [this.renderProjectInfo, this.getInvoice, this.getWTrack, this.getQuotations, this.getOrders];
