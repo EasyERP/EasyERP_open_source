@@ -9,6 +9,8 @@ define([
     function (valuesTemplate, filterCollection, CONSTANTS) {
         var filterValuesView = Backbone.View.extend({
             initialize: function (options) {
+                var sortOptions = options.sortOptions ? options.sortOptions : {};
+
                 _.bindAll(this, "renderContent");
                 this.contentType = options.parentContentType;
                 this.status = options.status;
@@ -24,7 +26,7 @@ define([
 
                 this.$el = $(options.element);
 
-                this.filteredCollection = new filterCollection(this.collection.toJSON());
+                this.filteredCollection = new filterCollection(this.collection.toJSON(), sortOptions);
                 this.filteredCollection.on('reset', this.renderContent);
 
                 this.collectionLength = this.filteredCollection.length;
@@ -133,20 +135,6 @@ define([
                     prevPage.removeClass('disabled');
                     nextPage.removeClass('disabled');
                 }
-
-
-                /*if (this.currentPage === 1 && this.allPages === 1) {
-                    prevPage.addClass('disabled');
-                    nextPage.addClass('disabled');
-                } else if (this.currentPage === 1 && !prevPage.hasClass('disabled')) {
-                    prevPage.addClass('disabled');
-                } else if (this.currentPage === this.allPages && !nextPage.hasClass('disabled')) {
-                    nextPage.addClass('disabled');
-                } else if (this.currentPage !== 1) {
-                    prevPage.removeClass('disabled');
-                } else if (this.currentPage !== this.allPages) {
-                    nextPage.removeClass('disabled');
-                }*/
             },
 
             render: function () {

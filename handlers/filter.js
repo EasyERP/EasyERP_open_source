@@ -861,7 +861,7 @@ var Filters = function (models) {
                         _id : element._id,
                         name: element.name.substring(4, 6) + '/' + element.name.substring(0, 4)
                     }
-                })
+                });
 
                 callback(null, result);
 

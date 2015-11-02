@@ -41,9 +41,16 @@ define([
             },
 
             initialize: function (options) {
-                var collectionsObjects = options.collection.toJSON()[0];
+                var collectionsObjects;
+                var location = window.location.hash;
 
-                this.collection = new monthCollection(collectionsObjects.collection);
+                this.collection = options.collection;
+                collectionsObjects = this.collection.toJSON()[0];
+                this.collectionOnMonth = new monthCollection(collectionsObjects.collection);
+
+                Backbone.history.fragment = '';
+                Backbone.history.navigate(location + '/filter=' + encodeURI(JSON.stringify(this.collection.filter)));
+
                 this.total = collectionsObjects.total;
                 this.startTime = options.startTime;
 
@@ -258,80 +265,12 @@ define([
                 var totalElement;
                 var prefVal;
 
-                /*if (td && td.hasClass('calc')) {
-                 className = 'calc';
-                 } else if (td && td.hasClass('paid')) {
-                 className = 'paid';
-                 }
-                 ;
-
-                 function setTotal(name, className) {
-                 var tdVal;
-                 var addVal = 0;
-                 var calcVal = 0;
-                 var input;
-                 var inputValue;
-
-                 var diffNameVal = 0;
-                 var diffTotalVal = 0;
-
-                 var diffOnCash;
-                 var diffOnCard;
-
-                 var diffByNameElement;
-
-                 self.bodyContainer.find('.' + className + '[data-content="' + name + '"]').each(function () {
-                 input = $(this).find('input.editing');
-                 inputValue = input.val();
-                 tdVal = inputValue ? inputValue : $(this).attr('data-value');
-                 tdVal = tdVal ? tdVal : $(this).attr('data-cash');
-
-                 if (tdVal.length === 0) {
-                 tdVal = '0';
-                 }
-
-                 addVal = tdVal ? parseInt(tdVal) : parseInt(input.val());
-                 calcVal += addVal;
-                 });
-
-                 $('#subSalary-listTotal' + self.id).find('.total_' + className + '_' + name).text(calcVal);
-                 $('#subSalary-listTotal' + self.id).find('.total_' + className + '_' + name).attr('data-cash', calcVal);
-                 $('tr[data-id="' + self.id + '"]').find('.total_' + className + '_' + name).text(calcVal);
-
-                 if (name === 'onCard' || name === 'onCash') {
-                 diffByNameElement = $('#subSalary-listTotal' + self.id).find('.total_diff_' + name);
-
-                 diffNameVal = parseFloat($('#subSalary-listTotal' + self.id).find('.total_calc_' + name).attr('data-cash')) - parseFloat($('#subSalary-listTotal' + self.id).find('.total_paid_' + name).attr('data-cash'));
-
-                 diffByNameElement.text(self.checkMoneyTd(diffByNameElement, diffNameVal));
-                 $('tr[data-id="' + self.id + '"]').find('.total_diff_' + name).text(diffNameVal);
-
-                 diffOnCash = parseFloat($('#subSalary-listTotal' + self.id).find('.total_diff_onCash').text());
-                 diffOnCard = parseFloat($('#subSalary-listTotal' + self.id).find('.total_diff_onCard').text());
-
-                 diffTotalVal = parseInt(diffOnCash) + parseInt(diffOnCard);
-                 $('#subSalary-listTotal' + self.id).find('.total_diff').text(diffTotalVal);
-                 }
-                 };*/
-
                 totalElement = this.$el.find('.total_' + calcKey);
 
                 prefVal = parseInt(totalElement.attr('data-cash'));
 
                 totalElement.text(prefVal + diff);
                 totalElement.attr('data-cash', prefVal + diff);
-
-                /*if (td) {
-                 setTotal(td.attr('data-content'), className);
-                 } else {
-                 setTotal('onCash', 'calc');
-                 setTotal('onCash', 'paid');
-
-                 setTotal('onCard', 'calc');
-                 setTotal('onCard', 'paid');
-
-                 setTotal('salary', 'calc');
-                 }*/
             },
 
             saveItem: function () {
@@ -348,8 +287,8 @@ define([
             },
 
             createItem: function () {
-                var month = this.collection.first().get('month');
-                var year = this.collection.first().get('year');
+                var month = this.collectionOnMonth.first().get('month');
+                var year = this.collectionOnMonth.first().get('year');
                 var dataKey = parseInt(year) * 100 + parseInt(month);
 
                 var startData = {
@@ -425,7 +364,7 @@ define([
                         model.set(this.changedModels[id]);
                     }
 
-                    this.collection.set(this.editCollection.models, {remove: false});
+                    this.collectionOnMonth.set(this.editCollection.models, {remove: false});
                 }
 
                 this.bindingEventsToEditedCollection(this);
@@ -457,7 +396,7 @@ define([
             deleteItems: function () {
                 var that = this;
 
-                this.collectionLength = this.collection.length;
+                this.collectionLength = this.collectionOnMonth.length;
 
                 if (!this.changed) {
                     var answer = confirm("Realy DELETE items ?!");
@@ -541,7 +480,7 @@ define([
                         return cb();
                     }
 
-            collection.get(id);
+                    collection.get(id);
                     model = model.toJSON();
                     model.dataKey = self.model.attributes.dataKey;
                     model.index = rowNumber;
@@ -557,7 +496,7 @@ define([
                 listTotalEl = this.$el.find('#listTotal');
 
                 //listTotalEl.html('');
-                //listTotalEl.append(_.template(listTotal, {array: this.getTotal(this.collection.toJSON())}));
+                //listTotalEl.append(_.template(listTotal, {array: this.getTotal(this.collectionOnMonth.toJSON())}));
             },
 
             updatedOptions: function () {
@@ -845,20 +784,52 @@ define([
                 this.showNewSelect(e, true, false);
             },
 
-            renderFilter: function (self, baseFilter) {
+            renderFilter: function (self) {
                 self.filters = new filterView({
                     contentType: self.contentType
                 });
 
                 self.filters.bind('filter', function (filter) {
-                    if (baseFilter) {
-                        filter[baseFilter.name] = baseFilter.value;
-                    }
                     self.showFilteredPage(filter, self)
                 });
 
-                self.filters.renderFilterContent();
+                self.filters.render({
+                    dataKey: {
+                        sort: {
+                            key: '_id',
+                            order: -1
+                        }
+                    }
+                });
+            },
 
+            showMoreContent: function (newCollection) {
+                var collectionsObjects;
+
+                var holder = this.$el;
+                var currentEl = holder.find("#payRoll-TableBody");
+
+                this.collection = newCollection;
+                collectionsObjects = this.collection.toJSON()[0];
+                this.collectionOnMonth = new monthCollection(collectionsObjects.collection);
+                this.total = collectionsObjects.total;
+
+                currentEl.empty();
+
+                currentEl.append(this.rowTemplate({
+                    collection      : this.collectionOnMonth.toJSON(),
+                    currencySplitter: helpers.currencySplitter
+                }));
+
+                $("#top-bar-deleteBtn").hide();
+                $('#check_all').prop('checked', false);
+
+                if (this.filterView) {
+                    this.filterView.renderFilterContent();
+                }
+
+                holder.find('#timeRecivingDataFromServer').remove();
+                holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             },
 
             render: function () {
@@ -872,8 +843,8 @@ define([
 
                 /*Render table template*/
 
-                currentEl.find('#payRoll-listTable').append(this.rowTemplate({
-                    collection      : this.collection.toJSON(),
+                currentEl.find('#payRoll-TableBody').append(this.rowTemplate({
+                    collection      : this.collectionOnMonth.toJSON(),
                     currencySplitter: helpers.currencySplitter
                 }));
 

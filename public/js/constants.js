@@ -329,7 +329,7 @@ define([], function () {
                 view   : 'year',
                 backend: 'year'
             },*/
-            'dataKey'    : {
+            'Data Key'    : {
                 view   : 'dataKey',
                 backend: 'dataKey'
             },

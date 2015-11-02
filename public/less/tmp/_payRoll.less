@@ -6,31 +6,28 @@ table.payRoll-list {
   min-height: .01%;
   overflow-x: auto;
 
+  #payRoll-Table {
+    padding: 0;
+    .scrollit {
+      display: block;
+      height: ~"calc(100vh - 200px)";
+      //overflow-y: hidden;
+      overflow-x: hidden;
+    }
+  }
+
   th, td {
     box-sizing: border-box;
     border: 1px solid white;
     width: 1%;
     vertical-align: middle;
   }
-  thead {
-    box-sizing: border-box;
-    display: block;
-  }
-  tbody {
-    box-sizing: border-box;
-    display: block;
-    height: ~"calc(100vh - 173px)";
-    overflow: auto;
-  }
-  tfoot {
-    box-sizing: border-box;
-    display: block;
-  }
 }
+
 #searchContainer {
   &.payRoll {
     margin: 0 0 10px;
-    #filtersContent {
+    /*#filtersContent {
       .filterGroup {
         box-sizing: border-box;
         overflow: visible;
@@ -104,7 +101,7 @@ table.payRoll-list {
           }
         }
         &:not(.activeGroup) .groupName {
-          &.checkedGroup{
+          &.checkedGroup {
             color: @mainText-color;
             background-color: @bg-hover-drop-down-color-active;
             span:before {
@@ -114,7 +111,8 @@ table.payRoll-list {
               border-radius: 50%;
               background-color: @fontColor-2;
             }
-          };
+          }
+        ;
         }
         &.activeGroup {
           .groupName {
@@ -138,7 +136,7 @@ table.payRoll-list {
           }
         }
       }
-    }
+    }*/
   }
 }
 
@@ -196,9 +194,9 @@ table.payRoll-list {
 //  }
 //}
 //.tableResponsive {
-  //width: 100%;
-  //min-height: 0.01%;
-  //overflow-x: auto;
+//width: 100%;
+//min-height: 0.01%;
+//overflow-x: auto;
 //}
 //.tableFixed {
 //  position: relative;

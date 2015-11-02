@@ -13,27 +13,12 @@ define([
 
             showMore: function (options) {
                 var that = this;
-                var filterObject = {};
-                var month = options.month;
-                var year = options.year;
-                var dataKey;
-
-                if (month && year) {
-                    dataKey = year * 100 + month;
-
-                    filterObject.filter = {
-                        'dataKey': {
-                            key: 'dataKey',
-                            value: [dataKey]
-                        }
-                    };
-                }
 
                 //filterObject['page'] = (options && options.page) ? options.page : this.page;
                 //filterObject['count'] = (options && options.count) ? options.count : this.namberToShow;
 
                 this.fetch({
-                    data   : filterObject,
+                    data   : options,
                     waite  : true,
                     success: function (models) {
                         that.trigger('showmore', models);
@@ -45,27 +30,32 @@ define([
             },
 
             initialize: function (options) {
-                this.sortOrder = 1;
+                var filterObject;
+
                 this.startTime = new Date();
-                this.month = (this.startTime.getMonth() + 1).toString();
-                this.year = 2014;//(this.startTime.getFullYear()).toString();
                 this.viewType = options.viewType;
                 this.contentType = options.contentType;
+                filterObject = App.filtersValues[this.contentType];
+
+                this.dataKey = _.max(filterObject.dataKey, function (dataKey) {
+                    return dataKey._id;
+                })
+
+                this.dataKey.status = true;
+
+                this.filter = {
+                    'dataKey': {
+                        key  : 'dataKey',
+                        value: [this.dataKey._id]
+                    }
+                };
+
+                if (!options.filter) {
+                    options.filter = this.filter;
+                }
 
                 if (options && options.viewType) {
                     this.url += options.viewType;
-                }
-
-                if (options && options.year) {
-                    options.year = options.year
-                } else {
-                    options.year = this.year;
-                }
-
-                if (options && options.month) {
-                    options.month = options.month
-                } else {
-                    options.month = this.month;
                 }
 
                 this.fetch({
