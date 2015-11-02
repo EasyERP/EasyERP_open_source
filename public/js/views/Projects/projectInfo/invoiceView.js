@@ -69,13 +69,38 @@ define([
             }
         },
 
+        hideDialog: function () {
+            $(".edit-dialog").remove();
+            $(".ui-dialog").remove();
+            $(".add-group-dialog").remove();
+            $(".add-user-dialog").remove();
+            $(".crop-images-dialog").remove();
+        },
 
-
-        render: function () {
+        render: function (options) {
             var currentEl = this.$el;
             var template = _.template(invoiceTemplate);
+            var self = this;
+            var tabs;
+            var dialogHolder;
+            var n;
+            var target;
 
             currentEl.html('');
+
+            if (options && options.activeTab){
+                self.hideDialog();
+
+                tabs = $(".chart-tabs");
+                target =  tabs.find('#invoiceTab');
+
+                target.closest(".chart-tabs").find("a.active").removeClass("active");
+                target.addClass("active");
+                n = target.parents(".chart-tabs").find("li").index(target.parent());
+                dialogHolder = $(".dialog-tabs-items");
+                dialogHolder.find(".dialog-tabs-item.active").removeClass("active");
+                dialogHolder.find(".dialog-tabs-item").eq(n).addClass("active");
+            }
 
             currentEl.append(template({
                 collection: this.collection.toJSON(),

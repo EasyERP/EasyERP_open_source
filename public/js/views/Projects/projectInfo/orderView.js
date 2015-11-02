@@ -6,14 +6,14 @@ define([
     'text!templates/Projects/projectInfo/orders/ListHeader.html',
     'text!templates/stages.html',
     'text!templates/Pagination/PaginationTemplate.html',
-    //'views/salesQuotation/EditView',
+    'views/salesOrder/EditView',
     'views/salesOrder/list/ListView',
     'collections/Quotation/filterCollection',
     'models/QuotationModel',
     'dataService',
     'common'
 
-], function (ListTemplate, lisHeader, stagesTemplate, paginationTemplate, /*editView, */listView, quotationCollection, orderModel, dataService, common) {
+], function (ListTemplate, lisHeader, stagesTemplate, paginationTemplate, editView, listView, quotationCollection, orderModel, dataService, common) {
     var orderView = listView.extend({
 
         el: '#orders',
@@ -52,6 +52,24 @@ define([
             }
 
             this.render(options);
+        },
+
+        goToEditDialog: function (e) {
+            e.preventDefault();
+
+            var id = $(e.target).closest('tr').data("id");
+            var model = new orderModel({ validate: false });
+
+            model.urlRoot = '/Order/form/' + id;
+            model.fetch({
+                data: {contentType: this.contentType},
+                success: function (model) {
+                    new editView({ model: model , redirect: true});
+                },
+                error: function () {
+                    alert('Please refresh browser');
+                }
+            });
         },
 
 

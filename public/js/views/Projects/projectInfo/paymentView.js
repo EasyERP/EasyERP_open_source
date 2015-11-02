@@ -47,6 +47,13 @@ define([
             }
         },
 
+        hideDialog: function () {
+            $(".edit-dialog").remove();
+            $(".ui-dialog").remove();
+            $(".add-group-dialog").remove();
+            $(".add-user-dialog").remove();
+            $(".crop-images-dialog").remove();
+        },
 
         render: function (options) {
             var currentEl = this.$el;

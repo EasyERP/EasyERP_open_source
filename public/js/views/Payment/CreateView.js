@@ -8,13 +8,13 @@ define([
         'collections/salesInvoice/filterCollection',
         'collections/customerPayments/filterCollection',
         'views/Projects/projectInfo/paymentView',
-        'views/Projects/projectInfo/invoiceView',
+        "views/Projects/projectInfo/invoiceView",
         "models/PaymentModel",
         "common",
         "populate",
         'constants'
     ],
-    function (CreateTemplate, PersonCollection, DepartmentCollection, invoiceCollection, paymentCollection, PaymentView, InvoiceView, PaymentModel, common, populate, constants) {
+    function (CreateTemplate, PersonCollection, DepartmentCollection, invoiceCollection, paymentCollection, PaymentView, invoiceView, PaymentModel, common, populate, constants) {
         var CreateView = Backbone.View.extend({
             el: "#paymentHolder",
             contentType: "Payment",
@@ -160,7 +160,7 @@ define([
                         success: function () {
                             var redirectUrl = self.forSales ? "easyErp/customerPayments" : "easyErp/supplierPayments";
 
-                            //self.hideDialog();
+                            self.hideDialog();
 
                             if (self.redirect){
                                 var _id = window.location.hash.split('form/')[1];
@@ -183,9 +183,9 @@ define([
                                 function createView() {
                                     var payments = [];
 
-                                    new InvoiceView({
-                                        model: self.collection
-                                    }).render();
+                                    //new invoiceView({
+                                    //    model: self.collection
+                                    //}).render();
 
                                     self.collection.toJSON().forEach(function (element) {
                                         element.payments.forEach(function (payment) {

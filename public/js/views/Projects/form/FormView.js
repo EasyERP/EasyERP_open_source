@@ -21,6 +21,7 @@ define([
         'collections/Quotation/filterCollection',
         'collections/salesInvoice/filterCollection',
         'collections/customerPayments/filterCollection',
+        'collections/Jobs/filterCollection',
         'text!templates/Notes/AddAttachments.html',
         "common",
         'populate',
@@ -30,7 +31,7 @@ define([
         'helpers'
     ],
 
-    function (ProjectsFormTemplate, DetailsTemplate, ProformRevenueTemplate, jobsWTracksTemplate, EditView, noteView, attachView, AssigneesView, BonusView, wTrackView, PaymentView, InvoiceView, QuotationView, GenerateWTrack, oredrView, wTrackCollection, quotationCollection, invoiceCollection, paymentCollection, addAttachTemplate, common, populate, custom, dataService, async, helpers) {
+    function (ProjectsFormTemplate, DetailsTemplate, ProformRevenueTemplate, jobsWTracksTemplate, EditView, noteView, attachView, AssigneesView, BonusView, wTrackView, PaymentView, InvoiceView, QuotationView, GenerateWTrack, oredrView, wTrackCollection, quotationCollection, invoiceCollection, paymentCollection, jobsCollection, addAttachTemplate, common, populate, custom, dataService, async, helpers) {
         var FormEmployeesView = Backbone.View.extend({
             el: '#content-holder',
             contentType: 'Projects',
@@ -540,13 +541,38 @@ define([
                 $("#top-bar-saveBtn").hide();
             },
 
-            renderProjectInfo: function () {
+            renderProjectInfo: function (cb) {
                 var self = this;
+                var _id = window.location.hash.split('form/')[1];
+
+                var filter = {
+                    "project": {
+                        key: "project",
+                        value: [_id]
+                    }
+                };
+
+                this.jobsCollection = new jobsCollection({
+                    viewType: 'list',
+                    filter: filter,
+                    count: 50
+                });
+
+                this.jobsCollection.unbind();
+                this.jobsCollection.bind('reset', self.renderJobs);
+                this.jobsCollection.bind('add', self.renderJobs);
+                this.jobsCollection.bind('remove', self.renderJobs);
+
+                cb();
+            },
+
+            renderJobs: function(){
                 var template = _.template(DetailsTemplate);
-                var formModel = this.formModel.toJSON();
-                var projectTeam = formModel.budget.projectTeam;
                 var container = this.$el.find('#forInfo');
-                var jobs = projectTeam;
+                var formModel = this.formModel.toJSON();
+                var self = this;
+
+                var projectTeam = this.jobsCollection.toJSON();
 
                 this.projectValues = {
                     revenue: 0,
@@ -636,8 +662,6 @@ define([
                     self.saveItem();
                 });
 
-                this.renderProjectInfo();
-
                 thisEl.find('#createBonus').hide();
                 _.bindAll(this, 'getQuotations');
                 _.bindAll(this, 'getOrders');
@@ -645,7 +669,7 @@ define([
                 _.bindAll(this, 'renderProformRevenue');
 
 
-                paralellTasks = [this.getInvoice, this.getWTrack, this.getQuotations, this.getOrders];
+                paralellTasks = [this.renderProjectInfo, this.getInvoice, this.getWTrack, this.getQuotations, this.getOrders];
 
                 async.parallel(paralellTasks, function (err, result) {
                     self.renderProformRevenue();
