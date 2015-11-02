@@ -484,6 +484,12 @@ var Filters = function (models) {
                                 _id : '$workflow',
                                 name: {'$ifNull': ['$workflow', 'None']}
                             }
+                        },
+                        'name'     : {
+                            $addToSet: {
+                                _id : '$_id',
+                                name: {'$ifNull': ['$name', 'None']}
+                            }
                         }
                     }
                 }

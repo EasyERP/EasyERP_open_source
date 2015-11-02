@@ -4,10 +4,6 @@
 define([], function () {
     var filters = {
         wTrack          : {
-            'Job'    : {
-                view   : 'jobs',
-                backend: 'jobs._id'
-            },
             'Assigned'    : {
                 view   : 'projectManager',
                 backend: 'project.projectmanager._id'
@@ -192,6 +188,10 @@ define([], function () {
             'Payment Way': {
                 view   : 'paymentMethod',
                 backend: 'paymentMethod._id'
+            },
+            'Name'     : {
+                view   : 'name',
+                backend: '_id'
             },
             'Status'     : {
                 view   : 'workflow',
@@ -383,6 +383,5 @@ define([], function () {
             'Design',
             'PM'
         ],
-        PRODUCRSERVICE: "5540d528dacb551c24000003"
     }
 });

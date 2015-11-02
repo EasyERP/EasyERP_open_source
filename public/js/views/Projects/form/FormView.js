@@ -19,6 +19,8 @@ define([
         'views/Projects/projectInfo/orderView',
         'collections/wTrack/filterCollection',
         'collections/Quotation/filterCollection',
+        'collections/salesInvoice/filterCollection',
+        'collections/customerPayments/filterCollection',
         'text!templates/Notes/AddAttachments.html',
         "common",
         'populate',
@@ -28,7 +30,7 @@ define([
         'helpers'
     ],
 
-    function (ProjectsFormTemplate, DetailsTemplate, ProformRevenueTemplate, jobsWTracksTemplate, EditView, noteView, attachView, AssigneesView, BonusView, wTrackView, PaymentView, InvoiceView, QuotationView, GenerateWTrack, oredrView, wTrackCollection, quotationCollection, addAttachTemplate, common, populate, custom, dataService, async, helpers) {
+    function (ProjectsFormTemplate, DetailsTemplate, ProformRevenueTemplate, jobsWTracksTemplate, EditView, noteView, attachView, AssigneesView, BonusView, wTrackView, PaymentView, InvoiceView, QuotationView, GenerateWTrack, oredrView, wTrackCollection, quotationCollection, invoiceCollection, paymentCollection, addAttachTemplate, common, populate, custom, dataService, async, helpers) {
         var FormEmployeesView = Backbone.View.extend({
             el: '#content-holder',
             contentType: 'Projects',
@@ -868,6 +870,7 @@ define([
             },
 
             getInvoice: function (cb) {
+                var self = this;
                 var _id = window.location.hash.split('form/')[1];
                 var filter = {
                     'project': {
@@ -876,56 +879,110 @@ define([
                     }
                 };
 
-                dataService.getData('/Invoice/list',
-                    {
-                        count: 100,
-                        page: 1,
-                        forSales: true,
-                        contentType: 'salesInvoice',
-                        filter: filter
-                    }, function (response) {
-                        var payments = [];
-                        var res;
-                        if (response.error) {
-                            return cb(response.error);
-                        }
-                        response.forEach(function (element) {
-                            element.payments.forEach(function (payment) {
-                                payments.push(payment);
+                //dataService.getData('/Invoice/list',
+                //    {
+                //        count: 100,
+                //        page: 1,
+                //        forSales: true,
+                //        contentType: 'salesInvoice',
+                //        filter: filter
+                //    }, function (response) {
+                //        var payments = [];
+                //        var res;
+                //        if (response.error) {
+                //            return cb(response.error);
+                //        }
+                //        response.forEach(function (element) {
+                //            element.payments.forEach(function (payment) {
+                //                payments.push(payment);
+                //            });
+                //        });
+                //
+                //
+                //        if (payments.length > 0) {
+                //            dataService.getData('/payment/getForProject',
+                //                {
+                //                    data: payments
+                //                }, function (result) {
+                //
+                //                    if (result.error) {
+                //                        return cb(result.error);
+                //                    }
+                //
+                //                    self.pCollection = result;
+                //
+                //                    new PaymentView({
+                //                        model: result
+                //                    });
+                //
+                //                    res = result;
+                //                }, this);
+                //
+                //        }
+                //
+                //        self.iCollection = response;
+                //
+                //
+                //        new InvoiceView({
+                //            model: response
+                //        });
+                //
+                //        if (res) {
+                //            cb(null, {payment: res, invoice: response});
+                //        } else {
+                //            cb(null, {payment: [], invoice: response});
+                //        }
+
+                self.iCollection = new invoiceCollection({
+                    count: 50,
+                    viewType: 'list',
+                    contentType: 'salesInvoice',
+                    filter: filter
+                });
+
+                        function createView() {
+                            var payments = [];
+
+                            cb();
+
+                            new InvoiceView({
+                                model: self.iCollection
+                            }).render();
+
+                            self.iCollection.toJSON().forEach(function (element) {
+                                element.payments.forEach(function (payment) {
+                                    payments.push(payment);
+                                });
                             });
-                        });
+
+                            var filterPayment = {
+                                'name': {
+                                    key: '_id',
+                                    value: payments
+                                }
+                            };
+
+                            self.pCollection = new paymentCollection({
+                                count: 50,
+                                viewType: 'list',
+                                contentType: 'customerPayments',
+                                filter: filterPayment
+                            });
 
 
-                        if (payments.length > 0) {
-                            dataService.getData('/payment/getForProject',
-                                {
-                                    data: payments
-                                }, function (result) {
+                            self.pCollection.unbind();
+                            self.pCollection.bind('reset', createPayment);
 
-                                    if (result.error) {
-                                        return cb(result.error);
-                                    }
+                            function createPayment(){
+                                new PaymentView({
+                                    model: self.pCollection
+                                });
+                            }
 
-                                    new PaymentView({
-                                        model: result
-                                    });
+                        };
 
-                                    res = result;
-                                }, this);
-
-                        }
-
-
-                        new InvoiceView({
-                            model: response
-                        });
-
-                        if (res) {
-                            cb(null, {payment: res, invoice: response});
-                        } else {
-                            cb(null, {payment: [], invoice: response});
-                        }
-                    }, this);
+                        self.iCollection.unbind();
+                        self.iCollection.bind('reset', createView);
 
             },
 

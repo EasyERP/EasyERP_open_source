@@ -30,6 +30,9 @@ define([
                 this.currentModel.urlRoot = "/Invoice";
                 this.responseObj = {};
 
+                this.redirect = options.redirect;
+                this.collection = options.collection;
+
                 if (!App || !App.currentDb) {
                     dataService.getData('/currentDb', null, function (response) {
                         if (response && !response.error) {
@@ -73,7 +76,7 @@ define([
             newPayment: function (e) {
                 e.preventDefault();
 
-                var paymentView = new PaymentCreateView({model: this.currentModel});
+                var paymentView = new PaymentCreateView({model: this.currentModel, redirect: this.redirect, collection: this.collection});
 
             },
 

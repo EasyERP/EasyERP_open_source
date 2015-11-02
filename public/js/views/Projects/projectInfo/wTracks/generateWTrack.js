@@ -202,12 +202,14 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     var value;
                     var insertedInput;
 
+                    var isNotData = $(isInput).hasClass('noPadding') ? true: false;
+
                     if (wTrackId && !isInput) {
                         this.wTrackId = wTrackId;
                         this.setChangedValueToModel();
                     }
 
-                    if (!isInput) {
+                    if (!isNotData) {
                         tempContainer = el.text();
                         width = el.width() - 6;
                         el.html('<input class="editing" type="text" value="' + tempContainer + '"  maxLength="4" style="width:' + width + 'px">');

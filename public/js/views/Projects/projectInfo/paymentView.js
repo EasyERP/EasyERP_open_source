@@ -3,12 +3,13 @@
  */
 
 define([
+    'views/customerPayments/list/ListView',
     'text!templates/Projects/projectInfo/paymentTemplate.html',
     'helpers',
     'common'
 
-], function (paymentTemplate, helpers, common) {
-    var paymentView = Backbone.View.extend({
+], function (ListView, paymentTemplate, helpers, common) {
+    var paymentView = ListView.extend({
 
         el: '#payments',
 
@@ -47,27 +48,40 @@ define([
         },
 
 
-        render: function () {
+        render: function (options) {
             var currentEl = this.$el;
+            var self = this;
+            var tabs;
+            var dialogHolder;
+            var n;
+            var target;
+            var template = _.template(paymentTemplate);
 
             currentEl.html('');
-            var template = _.template(paymentTemplate);
+
+            if (options && options.activeTab){
+                self.hideDialog();
+
+                tabs = $(".chart-tabs");
+                target =  tabs.find('#paymentsTab');
+
+                target.closest(".chart-tabs").find("a.active").removeClass("active");
+                target.addClass("active");
+                n = target.parents(".chart-tabs").find("li").index(target.parent());
+                dialogHolder = $(".dialog-tabs-items");
+                dialogHolder.find(".dialog-tabs-item.active").removeClass("active");
+                dialogHolder.find(".dialog-tabs-item").eq(n).addClass("active");
+            }
+
+
             currentEl.append(template({
-                paymentCollection: this.collection,
+                paymentCollection: this.collection.toJSON(),
                 startNumber: 0,
                 utcDateToLocaleDate: common.utcDateToLocaleDate,
                 currencySplitter: helpers.currencySplitter
             }));
 
-            currentEl.find('#check_all').click(function () {
-                currentEl.find(':checkbox').prop('checked', this.checked);
-                //if (currentEl.find("input.checkbox:checked").length > 0) {
-                //    currentEl.find("#top-bar-deleteBtn").show();
-                //} else {
-                //    currentEl.find("#top-bar-deleteBtn").hide();
-                //}
-            });
-
+            return this;
         }
     });
 
