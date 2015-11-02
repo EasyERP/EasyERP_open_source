@@ -81,7 +81,7 @@ define([
                 }
 
                 tempContainer = el.text();
-               // width = el.width() - 31;
+                // width = el.width() - 31;
                 el.html('<input class="editing" type="text" value="' + tempContainer + '">' + "<a href='javascript;' class='fa fa-check' title='Save' id='saveName'></a>");
 
                 insertedInput = el.find('input');
@@ -192,7 +192,8 @@ define([
                             }
                         };
 
-                        self.wCollection.bind('showmore', self.showMoreContent);
+                        //self.wCollection.unbind();
+                        //self.wCollection.bind('showmore', self.showMoreContent);
                         self.wCollection.showMore({count: 50, page: 1, filter: filter});
 
                     });
@@ -810,8 +811,6 @@ define([
                     count: 50
                 });
 
-                var collectionLength = this.wCollection.length;
-
                 var callback = _.once(cb);
 
 
@@ -831,9 +830,41 @@ define([
                     self.wCollection.reset(newModels.toJSON());
                 };
 
-                this.wCollection.unbind();
+                //this.wCollection.unbind();
                 this.wCollection.bind('reset', createView);
                 this.wCollection.bind('showmore', showMoreContent);
+            },
+
+            showMoreContent: function (newModels) {
+                var self = this;
+
+                var startNumber = $('#grid-start').text() ? (parseInt($('#grid-start').text()) < 1 ) ? 1 : parseInt($('#grid-start').text()) : 1;
+
+                var filter = {
+                    'projectName': {
+                        key: 'project._id',
+                        value: [this.id]
+                    }
+                };
+
+                new wTrackView({
+                    model: self.wCollection,
+                    filter: filter,
+                    startNumber: startNumber
+                }).render();
+
+                this.wCollection.bind('reset', createView);
+            },
+
+            createView: function () {
+
+                var startNumber = $('#grid-start').text() ? (parseInt($('#grid-start').text()) < 1 ) ? 1 : parseInt($('#grid-start').text()) : 1;
+
+                new wTrackView({
+                    model: self.wCollection,
+                    filter: filter,
+                    startNumber: startNumber
+                }).render();
             },
 
             getInvoice: function (cb) {

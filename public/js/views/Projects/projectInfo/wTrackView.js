@@ -411,7 +411,7 @@ define([
                     // $("#top-bar-deleteBtn").show();
                     $('#check_all').prop('checked', false);
 
-                    if (checkLength == this.collection.length) {
+                    if (checkLength >= this.collection.length) {
                         $('#check_all').prop('checked', true);
                     }
                 }
@@ -531,26 +531,26 @@ define([
             }
         },
 
-        checked: function (e) {
-            var checkLength;
-
-            if (this.collection.length > 0) {
-                checkLength = $("input.listCB:checked").length;
-
-                this.checkProjectId(e, checkLength);
-
-                if (checkLength > 0) {
-                    $("#deletewTrack").show();
-                    $('#check_all').prop('checked', false);
-                    if (checkLength === this.collection.length) {
-                        $('#check_all').prop('checked', true);
-                    }
-                } else {
-                    $("#deletewTrack").hide();
-                    $('#check_all').prop('checked', false);
-                }
-            }
-        },
+        //checked: function (e) {
+        //    var checkLength;
+        //
+        //    if (this.collection.length > 0) {
+        //        checkLength = $("input.listCB:checked").length;
+        //
+        //        this.checkProjectId(e, checkLength);
+        //
+        //        if (checkLength > 0) {
+        //            $("#deletewTrack").show();
+        //            $('#check_all').prop('checked', false);
+        //            if (checkLength === this.collection.length) {
+        //                $('#check_all').prop('checked', true);
+        //            }
+        //        } else {
+        //            $("#deletewTrack").hide();
+        //            $('#check_all').prop('checked', false);
+        //        }
+        //    }
+        //},
 
 
         render: function () {

@@ -336,7 +336,7 @@ define([
                     $("#removeOrder").show();
                     $('#check_all_orders').prop('checked', false);
 
-                    if (checkLength == this.collection.length) {
+                    if (checkLength >= this.collection.length) {
                         $('#check_all_orders').prop('checked', true);
                     }
                 }
@@ -387,7 +387,7 @@ define([
             this.$el.find('.fa.fa-times').hide();
 
             $('#check_all_orders').click(function () {
-                this.$el.find(':checkbox').prop('checked', this.checked);
+                self.$el.find(':checkbox').prop('checked', this.checked);
                 if ($("input.checkbox:checked").length > 0) {
                     $("#removeOrder").show();
                 } else {

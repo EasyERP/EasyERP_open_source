@@ -325,6 +325,8 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                             self.wTrackCollection.showMore({count: 50, page: 1, filter: filter});
 
+
+
                             tabs = $(".chart-tabs");
                             activeTab = tabs.find('.active');
 
