@@ -16,15 +16,14 @@ define([
 
         contentType: CONSTANTS.DASHBOARD_VACATION,
 
-        template: _.template(mainTemplate),
+        template : _.template(mainTemplate),
         expandAll: false,
 
         events: {
-            "click .openAll": "openAll",
+            "click .openAll"     : "openAll",
             "click .employeesRow": "openEmployee",
-            "click .group": "openDepartment",
-            "click .wTrackInfo": "getWtrackInfo",
-            "click #updateDate": "changeDateRange"
+            "click .group"       : "openDepartment",
+            "click .wTrackInfo"  : "getWtrackInfo"
         },
 
         initialize: function (options) {
@@ -36,6 +35,7 @@ define([
             var socket = App.socket;
 
             this.startTime = options.startTime;
+            this.filter = options.filter;
 
             year = moment().isoWeekYear();
             week = moment().isoWeek();
@@ -253,11 +253,11 @@ define([
             var self = this;
 
             async.parallel({
-                free: function (callback) {
+                free         : function (callback) {
                     var free = count('.red.active');
                     callback(null, free);
                 },
-                almostFree: function (callback) {
+                almostFree   : function (callback) {
                     var almostFree = count('.pink.active');
                     callback(null, almostFree);
                 },
@@ -265,11 +265,11 @@ define([
                     var partiallyBusy = count('.yellow.active');
                     callback(null, partiallyBusy);
                 },
-                fullyBusy: function (callback) {
+                fullyBusy    : function (callback) {
                     var busy = count('.green.active');
                     callback(null, busy);
                 },
-                overworked: function (callback) {
+                overworked   : function (callback) {
                     var overworked = count('.dgreen.active');
                     callback(null, overworked);
                 }
@@ -295,8 +295,8 @@ define([
 
             var queryData = {
                 projectName: projectName,
-                dateByWeek: dateByWeek,
-                employee: employee
+                dateByWeek : dateByWeek,
+                employee   : employee
             };
 
             dataService.getData('/wTrack/dash', queryData, function (response) {
@@ -305,35 +305,34 @@ define([
 
                 if (!response.error) {
                     return new VacationDashEdit({
-                        tr: tr,
-                        tds: tds,
-                        dateByWeek: dateByWeek,
-                        projectName: projectName,
-                        customer: response.customer,
+                        tr            : tr,
+                        tds           : tds,
+                        dateByWeek    : dateByWeek,
+                        projectName   : projectName,
+                        customer      : response.customer,
                         projectmanager: response.projectmanager,
-                        wTracks: response.wTracks
+                        wTracks       : response.wTracks
                     });
                 }
             });
         },
 
-        bindDataPickers: function (currentEl) {
-            currentEl.find('#startDate').datepicker({
-                dateFormat: "d M, yy",
+        bindDataPickers: function () {
+            this.$startDate = $('#startDate').datepicker({
+                dateFormat : "d M, yy",
                 changeMonth: true,
-                changeYear: true
+                changeYear : true
             });
-            currentEl.find('#endDate').datepicker({
-                dateFormat: "d M, yy",
+            this.$endDate = $('#endDate').datepicker({
+                dateFormat : "d M, yy",
                 changeMonth: true,
-                changeYear: true
+                changeYear : true
             });
         },
 
         changeDateRange: function (e) {
-            var thisEl = this.$el;
-            var startDateStr = thisEl.find('#startDate').val();
-            var endDateStr = thisEl.find('#endDate').val();
+            var startDateStr = this.$startDate.val();
+            var endDateStr = this.$endDate.val();
             var weeksArr = [];
 
             var dashCollection = this.dashCollection;
@@ -346,6 +345,7 @@ define([
             var year;
             var week;
             var _dateStr;
+            var filter;
 
             this.startTime = new Date();
 
@@ -371,26 +371,29 @@ define([
                 week = _dateStr.substr(-2);
                 weeksArr.push({
                     lastDate: this.getDate(week),
-                    week: week,
-                    year: _dateStr.substr(0, 4)
+                    week    : week,
+                    year    : _dateStr.substr(0, 4)
                 });
             }
 
             custom.cashToApp('weeksArr', weeksArr);
 
+            filter = this.filter || {};
+
+            filter.startDate = startDate;
+            filter.endDate = endDate;
+
             if (dashCollection) {
                 dashCollection.unbind();
                 dashCollection = this.dashCollection = this.fetchData({
-                    startDate: startDate,
-                    endDate: endDate,
-                    filter: {
-                        departments: ['55b92ace21e4b7c40f000016']
-                    }
+                    filter: filter
                 });
                 dashCollection.on('reset sort', this.render, this);
             } else {
                 this.render();
             }
+
+            this.filter = filter;
         },
 
         defaultDataGenerator: function () {
@@ -404,15 +407,15 @@ define([
                         week = startWeek + i - 53;
                         weeksArr.push({
                             lastDate: this.getDate(week),
-                            week: week,
-                            year: this.year + 1
+                            week    : week,
+                            year    : this.year + 1
                         });
                     } else {
                         week = startWeek + i;
                         weeksArr.push({
                             lastDate: this.getDate(week),
-                            week: week,
-                            year: this.year
+                            week    : week,
+                            year    : this.year
                         });
                     }
                 }
@@ -423,29 +426,59 @@ define([
             return weeksArr;
         },
 
+        showFilteredPage: function (filter) {
+            var dashCollection = this.dashCollection;
+            var thisFilter = this.filter;
+
+            this.$el.find('.thumbnail').remove();
+            this.startTime = new Date();
+            this.newCollection = true;
+
+            if (this.filter) {
+                filter.startDate = thisFilter.startDate;
+                filter.endDate = thisFilter.endDate;
+            }
+
+            this.filter = filter;
+
+            if (Object.keys(filter).length === 0) {
+                this.filter = {};
+            }
+
+            dashCollection.unbind();
+            dashCollection = this.dashCollection = this.fetchData({
+                filter: this.filter
+            });
+            dashCollection.on('reset sort', this.render, this);
+        },
+
         render: function (options) {
             var currentEl = this.$el;
             var defaultData = options ? !options.defaultData : true;
+            var dashboardData = this.dashCollection.toJSON();
+            var filter = this.filter;
             var weeksArr;
             var self = this;
-            var dashboardData = this.dashCollection.toJSON();
             var statictics;
+            var url = '#easyErp/DashboardVacation';
 
             $('title').text(this.contentType);
             this.dashCollection.unbind();
 
             if (defaultData) {
                 weeksArr = this.defaultDataGenerator();
+            } else {
+                weeksArr = custom.retriveFromCash('weeksArr');
             }
 
             currentEl.html(self.template({
-                weeks: weeksArr,
-                dashboardData: dashboardData,
+                weeks         : weeksArr,
+                dashboardData : dashboardData,
                 leadComparator: self.leadComparator,
-                getCellClass: self.getCellClass,
-                getCellSize: self.getCellSize,
-                getHeadClass: self.getHeadClass,
-                self: self
+                getCellClass  : self.getCellClass,
+                getCellSize   : self.getCellSize,
+                getHeadClass  : self.getHeadClass,
+                self          : self
             }));
 
             statictics = new StatisticsView({});
@@ -455,15 +488,25 @@ define([
 
             this.bindDataPickers(currentEl);
 
-            this.filterView = new filterView({contentType: 'DashVacation'});
-            this.filterView.bind('filter', function (filter) {
-                self.showFilteredPage(filter)
-            });
-            this.filterView.bind('defaultFilter', function () {
-                self.showFilteredPage({});
-            });
+            if (!this.filterView) {
+                this.filterView = new filterView({contentType: 'DashVacation'});
+                this.filterView.bind('filter', function (filter) {
+                    self.showFilteredPage(filter)
+                });
+                this.filterView.bind('defaultFilter', function () {
+                    self.showFilteredPage({});
+                });
 
-            this.filterView.render();
+                this.filterView.render();
+            } else {
+                if (filter) {
+                    url += '/filter=' + encodeURIComponent(JSON.stringify(filter));
+
+                    Backbone.history.navigate(url);
+                }
+
+                this.filterView.renderFilterContent();
+            }
 
             return this;
         }

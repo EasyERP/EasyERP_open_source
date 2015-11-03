@@ -8,7 +8,12 @@ define([
             template: _.template(ContentTopBarTemplate),
 
             events: {
+                "click #updateDate": "changeDateRange"
+            },
 
+            changeDateRange: function(e){
+                "use strict";
+                this.trigger('changeDateRange');
             },
 
             initialize: function (options) {
