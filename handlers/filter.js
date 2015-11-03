@@ -357,32 +357,37 @@ var Filters = function (models) {
         };
 
         function getDashVacationFiltersValues(callback) {
-            Project.aggregate([
+            var matchObjectForDash;
+
+            Employee.aggregate([
+                {
+                    $match: matchObjectForDash
+                },
                 {
                     $group: {
-                        _id             : null,
-                        'name'          : {
+                        _id          : null,
+                        'name'       : {
                             $addToSet: {
                                 _id : '$_id',
-                                name: '$projectName'
+                                name: {$concat: ['$name.first', ' ', '$name.last']}
                             }
                         },
-                        'customer'      : {
+                        'department' : {
                             $addToSet: {
-                                _id : '$customer._id',
-                                name: {'$ifNull': ['$customer.name', 'None']}
+                                _id : '$department._id',
+                                name: {'$ifNull': ['$department.name', 'None']}
                             }
                         },
-                        'workflow'      : {
+                        'jobPosition': {
                             $addToSet: {
-                                _id : '$workflow._id',
-                                name: {'$ifNull': ['$workflow.name', 'None']}
+                                _id : '$jobPosition._id',
+                                name: {'$ifNull': ['$jobPosition.name', 'None']}
                             }
                         },
-                        'projectmanager': {
+                        'manager'    : {
                             $addToSet: {
-                                _id : '$projectmanager._id',
-                                name: {'$ifNull': ['$projectmanager.name', 'None']}
+                                _id : '$manager._id',
+                                name: {'$ifNull': ['$manager.name', 'None']}
                             }
                         }
                     }
@@ -392,12 +397,9 @@ var Filters = function (models) {
                     callback(err);
                 }
 
-                if (result) {
-                    result = result[0];
+                result = result[0];
 
-                    callback(null, result);
-                }
-
+                callback(null, result);
             });
         };
 

@@ -114,6 +114,7 @@ define([
             function renderDash() {
                 var startTime = new Date();
                 var contentViewUrl = "views/vacationDashboard/index";
+                var topBarViewUrl = "views/vacationDashboard/TopBarView";
 
                 if (self.mainView === null) {
                     self.main("DashBoardVacation");
@@ -121,13 +122,16 @@ define([
                     self.mainView.updateMenu("DashBoardVacation");
                 }
 
-                require([contentViewUrl], function (contentView) {
+                require([contentViewUrl, topBarViewUrl], function (contentView, TopBarView) {
                     var contentview;
+                    var topbarView;
 
                     custom.setCurrentVT('list');
                     contentview = new contentView({startTime: startTime});
+                    topbarView = new TopBarView();
 
-                    self.changeView(contentview, true);
+                    self.changeView(contentview);
+                    self.changeTopBarView(topbarView);
                 });
             }
         },
