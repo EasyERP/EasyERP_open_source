@@ -821,7 +821,7 @@ textarea {
   color: #ff0000;
 }
 .negativeMoney {
-  color: #ff0000;
+  color: #ff0000 !important;
 }
 .negativeMoney:before {
   content: "-$";
