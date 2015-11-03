@@ -40,6 +40,8 @@ define([
             },
 
             showNewSelect: function (e, prev, next) {
+                e.preventDefault();
+
                 populate.showSelect(e, prev, next, this);
                 return false;
 
@@ -351,12 +353,6 @@ define([
                     changeMonth: true,
                     changeYear : true
                 }).datepicker('setDate', new Date());
-
-                /*this.$el.find('#bidValidUntill').datepicker({
-                 dateFormat: "d M, yy",
-                 changeMonth: true,
-                 changeYear: true
-                 });*/
 
                 this.$el.find('#expectedDate').datepicker({
                     dateFormat : "d M, yy",
