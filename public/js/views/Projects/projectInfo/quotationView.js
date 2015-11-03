@@ -272,7 +272,7 @@ define([
                     $("#removeQuotation").show();
                     $('#check_all_quotations').prop('checked', false);
 
-                    if (checkLength >= this.collection.length) {
+                    if (checkLength > this.collection.length) {
                         $('#check_all_quotations').prop('checked', true);
                     }
                 }

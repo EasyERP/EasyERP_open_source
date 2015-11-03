@@ -354,7 +354,7 @@ define([
                     $("#removeOrder").show();
                     $('#check_all_orders').prop('checked', false);
 
-                    if (checkLength >= this.collection.length) {
+                    if (checkLength > this.collection.length) {
                         $('#check_all_orders').prop('checked', true);
                     }
                 }
