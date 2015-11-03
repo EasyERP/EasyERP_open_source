@@ -266,19 +266,21 @@ define([
         },
 
         checked: function (e) {
-                var checkLength = $("input.checkbox:checked").length;
+            var el = this.$el;
 
-                if ($("input.checkbox:checked").length > 0) {
-                    $("#removeQuotation").show();
-                    $('#check_all_quotations').prop('checked', false);
+                var checkLength = el.find("input.checkbox:checked").length;
 
-                    if (checkLength > this.collection.length) {
-                        $('#check_all_quotations').prop('checked', true);
+                if (el.find("input.checkbox:checked").length > 0) {
+                    el.find("#removeQuotation").show();
+                    el.find('#check_all_quotations').prop('checked', false);
+
+                    if (checkLength === this.collection.length) {
+                        el.find('#check_all_quotations').prop('checked', true);
                     }
                 }
                 else {
-                    $("#removeQuotation").hide();
-                    $('#check_all_quotations').prop('checked', false);
+                    el.find("#removeQuotation").hide();
+                    el.find('#check_all_quotations').prop('checked', false);
                 }
         },
 

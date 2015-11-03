@@ -51,7 +51,7 @@ define([
                 "click .current-selected:not(.disabled)": "showNewSelect",
                 "click #createItem": "createDialog",
                 "click #createJob": "createJob",
-                "change input:not(.checkbox)": "showSaveButton",
+                "change input:not(.checkbox, .check_all)": "showSaveButton",
                 "click #jobsItem td:not(.selects, .remove)": "renderJobWTracks",
                 "mouseover #jobsItem": "showRemoveButton",
                 "mouseleave #jobsItem": "hideRemoveButton",

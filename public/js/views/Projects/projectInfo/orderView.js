@@ -347,20 +347,22 @@ define([
         },
 
         checked: function (e) {
+            var el = this.$el;
+
             if (this.collection.length > 0) {
-                var checkLength = $("input.checkbox:checked").length;
+                var checkLength = el.find("input.checkbox:checked").length;
 
-                if ($("input.checkbox:checked").length > 0) {
-                    $("#removeOrder").show();
-                    $('#check_all_orders').prop('checked', false);
+                if (el.find("input.checkbox:checked").length > 0) {
+                    el.find("#removeOrder").show();
+                    el.find('#check_all_orders').prop('checked', false);
 
-                    if (checkLength > this.collection.length) {
-                        $('#check_all_orders').prop('checked', true);
+                    if (checkLength === this.collection.length) {
+                        el.find('#check_all_orders').prop('checked', true);
                     }
                 }
                 else {
-                    $("#removeOrder").hide();
-                    $('#check_all_orders').prop('checked', false);
+                    el.find("#removeOrder").hide();
+                    el.find('#check_all_orders').prop('checked', false);
                 }
             }
         },
