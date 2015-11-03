@@ -9090,6 +9090,9 @@ table.payRoll-list {
   border-spacing: 0;
   border-collapse: collapse;
 }
+table.payRoll-list tfoot {
+  margin-right: 17px;
+}
 table.payRoll-list tbody tr:hover {
   background: none;
 }
@@ -9104,7 +9107,6 @@ table.payRoll-list #payRoll-Table .scrollit {
 table.payRoll-list th,
 table.payRoll-list td {
   border: 1px solid white;
-  width: 1%;
   vertical-align: middle;
 }
 table.payRoll-list #payRoll-TableBody td:nth-child(1) {
