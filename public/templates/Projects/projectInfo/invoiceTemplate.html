@@ -39,9 +39,9 @@
     <td><%=utcDateToLocaleDate(invoice.paymentDate)%></td>
     <td><%=(invoice.salesPerson) ? invoice.salesPerson.name : ''%></td>
     <td><%=utcDateToLocaleDate(invoice.dueDate)%></td>
-    <td class="money"><%=(invoice.paymentInfo.balance/100).toFixed(2)%></td>
-    <td class="unTaxed money"><%=(invoice.paymentInfo) ? (invoice.paymentInfo.unTaxed/100).toFixed(2) : '0.00'%></td>
-    <td class="total money"><%=(invoice.paymentInfo) ? (invoice.paymentInfo.total/100).toFixed(2) : '0.00'%></td>
+    <td class="money"><%=invoice.paymentInfo.balance%></td>
+    <td class="unTaxed money"><%=(invoice.paymentInfo) ? invoice.paymentInfo.unTaxed : '0.00'%></td>
+    <td class="total money"><%=(invoice.paymentInfo) ? invoice.paymentInfo.total : '0.00'%></td>
     <td id='<%=invoice._id%>'>
         <%if(invoice.workflow){%>
         <%if(invoice.workflow.status !== 'Done'){%>
@@ -64,9 +64,9 @@
         <tfoot id="listTotal">
         <tr>
             <td colspan="6"></td>
-            <td><span id="balance" class="money"><%=currencySplitter((balance / 100).toFixed(2))%></span></td>
-            <td><span id="paid" class="money"><%=currencySplitter((paid / 100).toFixed(2))%></span></td>
-            <td><span id="total" class="money"><%=currencySplitter((total / 100).toFixed(2))%></span></td>
+            <td><span id="balance" class="money"><%=currencySplitter((balance).toFixed(2))%></span></td>
+            <td><span id="paid" class="money"><%=currencySplitter((paid).toFixed(2))%></span></td>
+            <td><span id="total" class="money"><%=currencySplitter((total).toFixed(2))%></span></td>
             <td></td>
         </tr>
         </tfoot>

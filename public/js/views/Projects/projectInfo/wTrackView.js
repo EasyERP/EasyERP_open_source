@@ -404,20 +404,22 @@ define([
 
 
         checked: function (e) {
+            var el = this.$el;
+
             if (this.collection.length > 0) {
-                var checkLength = $("input.checkbox:checked").length;
+                var checkLength = el.find("input.checkbox:checked").length;
 
-                if ($("input.checkbox:checked").length > 0) {
+                if (el.find("input.checkbox:checked").length > 0) {
                     // $("#top-bar-deleteBtn").show();
-                    $('#check_all').prop('checked', false);
+                    el.find('#check_all').prop('checked', false);
 
-                    if (checkLength >= this.collection.length) {
-                        $('#check_all').prop('checked', true);
+                    if (checkLength === this.collection.length) {
+                        el.find('#check_all').prop('checked', true);
                     }
                 }
                 else {
                     // $("#top-bar-deleteBtn").hide();
-                    $('#check_all').prop('checked', false);
+                    el.find('#check_all').prop('checked', false);
                 }
             }
         },

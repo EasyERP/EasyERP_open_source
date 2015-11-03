@@ -280,7 +280,7 @@ var Payment = function (models) {
         var key;
 
         for (var filterName in filter){
-            condition = filter[filterName]['value'];
+            condition = filter[filterName]['value'] ? filter[filterName]['value'] : [];
             key = filter[filterName]['key'];
 
             switch (filterName) {
@@ -395,7 +395,14 @@ var Payment = function (models) {
             var totalToPay = (invoice.paymentInfo) ? invoice.paymentInfo.balance : 0;
             var paid = payment.paidAmount;
             var isNotFullPaid;
-            var wId = ((DbName === MAINCONSTANTS.WTRACK_DB_NAME) || (DbName === "production") || (DbName === "development")) ? 'Sales Invoice' : 'Purchase Invoice';
+            var wId;
+
+            if (invoice.invoiceType === 'wTrack'){
+                wId = 'Sales Invoice';
+            } else {
+                wId = 'Purchase Invoice';
+            }
+          //  var wId = ((DbName === MAINCONSTANTS.WTRACK_DB_NAME) || (DbName === "production") || (DbName === "development")) ? 'Sales Invoice' : 'Purchase Invoice';
             var request = {
                 query: {
                     wId: wId,
@@ -429,7 +436,8 @@ var Payment = function (models) {
                     status: workflow.status
                 };
                 invoice.paymentInfo.balance = (totalToPay - paid) / 100;
-                invoice.paymentInfo.unTaxed += paid / 100;
+                invoice.paymentInfo.unTaxed += paid / 100;// commented by Liliya forRoman
+               // invoice.paymentInfo.unTaxed = paid * (1 + invoice.paymentInfo.taxes);
                 invoice.payments.push(payment._id);
 
                 Invoice.findByIdAndUpdate(invoiceId, invoice, function (err, invoice) {

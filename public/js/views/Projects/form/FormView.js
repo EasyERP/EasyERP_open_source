@@ -51,7 +51,7 @@ define([
                 "click .current-selected:not(.disabled)": "showNewSelect",
                 "click #createItem": "createDialog",
                 "click #createJob": "createJob",
-                "change input:not(.checkbox)": "showSaveButton",
+                "change input:not(.checkbox, .check_all)": "showSaveButton",
                 "click #jobsItem td:not(.selects, .remove)": "renderJobWTracks",
                 "mouseover #jobsItem": "showRemoveButton",
                 "mouseleave #jobsItem": "hideRemoveButton",
@@ -129,7 +129,7 @@ define([
 
             recalcTotal: function (id) {
                 var formModel = this.formModel.toJSON();
-                var jobsItems = formModel.budget.projectTeam;
+                var jobsItems = this.jobsCollection.toJSON();
                 var rate;
 
                 var job = _.find(jobsItems, function (element) {
@@ -225,7 +225,8 @@ define([
                 var jobContainer = $(target).parents("tr");
                 var template = _.template(jobsWTracksTemplate);
                 var formModel = this.formModel.toJSON();
-                var jobsItems = formModel.budget.projectTeam;
+                //var jobsItems = formModel.budget.projectTeam;
+                var jobsItems = this.jobsCollection.toJSON();
                 var icon = $(jobContainer).find('.expand');
                 var subId = "subRow-row" + jobId;
                 var subRowCheck = $('#' + subId);
@@ -573,6 +574,8 @@ define([
 
                 var projectTeam = this.jobsCollection.toJSON();
 
+                App.currectCollection = this.jobsCollection;
+
                 this.projectValues = {
                     revenue: 0,
                     profit: 0,
@@ -680,6 +683,33 @@ define([
                 $("#top-bar-deleteBtn").hide();
                 $("#createQuotation").show();
                 $("#createBonus").show();
+
+                $('#StartDate').datepicker({
+                    dateFormat: "d M, yy",
+                    changeMonth: true,
+                    changeYear: true,
+                    onSelect: function () {
+                        var endDate = $('#StartDate').datepicker('getDate');
+                        endDate.setDate(endDate.getDate());
+                        $('#EndDateTarget').datepicker('option', 'minDate', endDate);
+                    }
+                });
+                $('#EndDate').datepicker({
+                    dateFormat: "d M, yy",
+                    changeMonth: true,
+                    changeYear: true,
+                    onSelect: function () {
+                        var endDate = $('#StartDate').datepicker('getDate');
+                        endDate.setDate(endDate.getDate());
+                        $('#EndDateTarget').datepicker('option', 'minDate', endDate);
+                    }
+                });
+                $('#EndDateTarget').datepicker({
+                    dateFormat: "d M, yy",
+                    changeMonth: true,
+                    changeYear: true,
+                    minDate: (self.formModel.StartDate) ? self.formModel.StartDate : 0
+                });
 
                 return this;
 
@@ -903,60 +933,6 @@ define([
                         value: [_id]
                     }
                 };
-
-                //dataService.getData('/Invoice/list',
-                //    {
-                //        count: 100,
-                //        page: 1,
-                //        forSales: true,
-                //        contentType: 'salesInvoice',
-                //        filter: filter
-                //    }, function (response) {
-                //        var payments = [];
-                //        var res;
-                //        if (response.error) {
-                //            return cb(response.error);
-                //        }
-                //        response.forEach(function (element) {
-                //            element.payments.forEach(function (payment) {
-                //                payments.push(payment);
-                //            });
-                //        });
-                //
-                //
-                //        if (payments.length > 0) {
-                //            dataService.getData('/payment/getForProject',
-                //                {
-                //                    data: payments
-                //                }, function (result) {
-                //
-                //                    if (result.error) {
-                //                        return cb(result.error);
-                //                    }
-                //
-                //                    self.pCollection = result;
-                //
-                //                    new PaymentView({
-                //                        model: result
-                //                    });
-                //
-                //                    res = result;
-                //                }, this);
-                //
-                //        }
-                //
-                //        self.iCollection = response;
-                //
-                //
-                //        new InvoiceView({
-                //            model: response
-                //        });
-                //
-                //        if (res) {
-                //            cb(null, {payment: res, invoice: response});
-                //        } else {
-                //            cb(null, {payment: [], invoice: response});
-                //        }
 
                 self.iCollection = new invoiceCollection({
                     count: 50,

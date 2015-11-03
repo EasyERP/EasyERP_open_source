@@ -618,7 +618,7 @@ var wTrack = function (event, models) {
     this.remove = function (req, res, next) {
         var id = req.params.id;
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
-        access.getDeleteAccess(req, req.session.uId, 72, function (access) {
+        access.getDeleteAccess(req, req.session.uId, 75, function (access) {
             if (access) {
                 WTrack.findByIdAndRemove(id, function (err, wTrack) {
                     if (err) {
@@ -1526,6 +1526,10 @@ var wTrack = function (event, models) {
                                     var day2 = moment(startDate).day();
 
                                     day = moment(d).day();
+
+                                    if (day === 0){
+                                        day = 5;
+                                    }
 
                                     dayOfWeek = moment(newDate).day();
 

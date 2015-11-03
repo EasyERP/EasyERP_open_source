@@ -22,7 +22,7 @@ define([
             "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
             "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
             "click .current-selected.productsDd": "showProductsSelect",
-            "click #jobs": "showSelect",
+            "click .jobs.current-selected": "showSelect",
             "mouseenter .editable:not(.quickEdit), .editable .no-long:not(.quickEdit)": "quickEdit",
             "mouseleave .editable": "removeEdit",
             "click #cancelSpan": "cancelClick",
@@ -263,7 +263,7 @@ define([
 
                 var currentJob = _.find(self.responseObj['#jobs'], function(job){
                     return job._id === jobId
-                })
+                });
 
                 parrent.find("#jobs").text(target.text()).attr("data-id", jobId);
 

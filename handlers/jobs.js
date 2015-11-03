@@ -35,15 +35,16 @@ var Jobs = function (models, event) {
         var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
         var queryObject = {};
 
-        var query = req.query;
+        var data = req.query;
+        var query;
 
-        var filter = query.filter ? query.filter : {};
+        var filter = data ? data.filter : {};
 
 
-        if (query.project) {
+        if (data ? data.project : null) {
             filter['project'] = {};
             filter['project']['key'] = 'project';
-            filter['project']['value'] = objectId(query.project);
+            filter['project']['value'] = objectId(data.project);
         }
 
 
@@ -55,8 +56,12 @@ var Jobs = function (models, event) {
             }
         }
 
+        query = JobsModel.find(queryObject);
 
-        JobsModel.find(queryObject).exec(function (err, result) {
+        query
+            .populate('project');
+
+        query.exec(function (err, result) {
             if (err) {
                 return next(err);
             }

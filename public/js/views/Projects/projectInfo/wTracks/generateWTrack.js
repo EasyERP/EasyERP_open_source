@@ -1,12 +1,13 @@
 define(["text!templates/Projects/projectInfo/wTracks/generate.html",
         "text!templates/Projects/projectInfo/wTracks/wTrackPerEmployee.html",
         'views/Projects/projectInfo/wTracks/wTrackPerEmployee',
+        'collections/Jobs/filterCollection',
         'populate',
         'dataService',
         'moment',
         'common'
     ],
-    function (generateTemplate, wTrackPerEmployeeTemplate, wTrackPerEmployee, populate, dataService, moment, common) {
+    function (generateTemplate, wTrackPerEmployeeTemplate, wTrackPerEmployee, JobsCollection, populate, dataService, moment, common) {
         "use strict";
         var CreateView = Backbone.View.extend({
                 template: _.template(generateTemplate),
@@ -50,6 +51,8 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     this.resultArray = [];
 
                     this.jobs = options.jobs ? options.jobs: null;
+
+                    this.jobsCollection = options.jobsCollection;
 
                     this.createJob = options.createJob;
 
@@ -284,8 +287,6 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                 generateItems: function (e) {
                     var errors = this.$el.find('.errorContent');
-                    var url;
-                    //var filter;
                     var self = this;
                     var data = JSON.stringify(this.resultArray);
                     var tabs;
@@ -293,6 +294,8 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     var dialogHolder;
                     var jobId = self.jobs ? self.jobs._id : null;
                     var jobName = self.jobs ? self.jobs.name : $("#jobName").val();
+                    var _id = window.location.hash.split('form/')[1];
+                    var nameRegExp = /^[\w\.@]{3,100}$/;
 
                     var filter = {
                         'projectName': {
@@ -307,63 +310,43 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                         return
                     }
 
-                    $.ajax({
-                        type: 'Post',
-                        url: '/wTrack/generateWTrack',
-                        contentType: "application/json",
-                        data: data,
+                    if (nameRegExp.test(jobName)){
+                        $.ajax({
+                            type: 'Post',
+                            url: '/wTrack/generateWTrack',
+                            contentType: "application/json",
+                            data: data,
 
-                        beforeSend: function (xhr) {
-                            xhr.setRequestHeader("createJob", self.createJob);
-                            xhr.setRequestHeader("project", self.modelJSON._id);
-                            xhr.setRequestHeader("jobid", jobId);
-                            xhr.setRequestHeader("jobname", jobName);
-                        },
+                            beforeSend: function (xhr) {
+                                xhr.setRequestHeader("createJob", self.createJob);
+                                xhr.setRequestHeader("project", self.modelJSON._id);
+                                xhr.setRequestHeader("jobid", jobId);
+                                xhr.setRequestHeader("jobname", jobName);
+                            },
 
-                        success: function () {
+                            success: function () {
+                                self.hideDialog();
 
-                            //$('#weTracks').html('');
-                            self.hideDialog();
+                                self.wTrackCollection.showMore({count: 50, page: 1, filter: filter});
 
-                            self.wTrackCollection.showMore({count: 50, page: 1, filter: filter});
+                                tabs = $(".chart-tabs");
+                                activeTab = tabs.find('.active');
 
+                                activeTab.removeClass('active');
+                                tabs.find('#wTrackTab').addClass("active");
 
+                                dialogHolder = $(".dialog-tabs-items");
+                                dialogHolder.find(".dialog-tabs-item.active").removeClass("active");
+                                dialogHolder.find('#weTracks').closest('.dialog-tabs-item').addClass("active");
+                            },
+                            error: function () {
+                                alert('error');
+                            }
+                        });
+                    } else {
+                        alert("Please, enter Job name!");
+                    }
 
-                            tabs = $(".chart-tabs");
-                            activeTab = tabs.find('.active');
-
-                            activeTab.removeClass('active');
-                            tabs.find('#wTrackTab').addClass("active");
-
-
-                            dialogHolder = $(".dialog-tabs-items");
-                            dialogHolder.find(".dialog-tabs-item.active").removeClass("active");
-                            dialogHolder.find('#weTracks').closest('.dialog-tabs-item').addClass("active");
-
-
-                            /*TODO change if needed*/
-                           /* dataService.getData('/filter/getFiltersValues', null, function (response) {
-                                if (response && !response.error) {
-                                    App.filtersValues = response;
-
-                                    filter = {
-                                        'projectName': {
-                                            key: 'project._id',
-                                            value: [self.modelJSON['_id']]
-                                        }
-                                    };
-                                    url = '#easyErp/wTrack/list';
-                                    url += '/filter=' + encodeURIComponent(JSON.stringify(filter));
-                                    window.location.hash = url;
-
-                                    return false;
-                                }
-                            });*/
-                        },
-                        error: function () {
-                            alert('error');
-                        }
-                    });
                 },
 
                 hideDialog: function () {

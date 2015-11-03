@@ -8,13 +8,13 @@ define([
         'collections/salesInvoice/filterCollection',
         'collections/customerPayments/filterCollection',
         'views/Projects/projectInfo/paymentView',
-        "views/Projects/projectInfo/invoiceView",
+        //"views/Projects/projectInfo/invoiceView",
         "models/PaymentModel",
         "common",
         "populate",
         'constants'
     ],
-    function (CreateTemplate, PersonCollection, DepartmentCollection, invoiceCollection, paymentCollection, PaymentView, invoiceView, PaymentModel, common, populate, constants) {
+    function (CreateTemplate, PersonCollection, DepartmentCollection, invoiceCollection, paymentCollection, PaymentView, /*invoiceView, */PaymentModel, common, populate, constants) {
         var CreateView = Backbone.View.extend({
             el: "#paymentHolder",
             contentType: "Payment",

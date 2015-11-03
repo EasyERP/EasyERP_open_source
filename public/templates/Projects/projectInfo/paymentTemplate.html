@@ -36,8 +36,8 @@
                 <%=utcDateToLocaleDate(payment.date)%>
             </td>
             <td><%=(payment.paymentMethod) ? payment.paymentMethod.name : ''%></td>
-            <td class="total money <%= payment.paidAmount != payment.invoiced ? 'red' :''%>"><%=((parseFloat(payment.paidAmount) + parseFloat(payment.differenceAmount))/100).toFixed(2)%></td>
-            <td class="totalPaidAmount money <%= payment.paidAmount != payment.invoiced ? 'red' :''%>"><%=(payment.paidAmount/100).toFixed(2)%></td>
+            <td class="total money <%= payment.paidAmount != payment.invoiced ? 'red' :''%>"><%=(parseFloat(payment.paidAmount) + parseFloat(payment.differenceAmount)).toFixed(2)%></td>
+            <td class="totalPaidAmount money <%= payment.paidAmount != payment.invoiced ? 'red' :''%>"><%=payment.paidAmount%></td>
             <td data-content="workflow" class="editable"><a href="javascript:;" class="currentSelected <%= payment.workflow === 'Paid' ? 'done' : 'new'%>"><%=payment.workflow%></a></td>
             <%total += parseFloat(payment.paidAmount) + parseFloat(payment.differenceAmount)%>
             <%totalPaidAmount += parseFloat(payment.paidAmount)%>
@@ -47,8 +47,8 @@
         <tfoot id="listTotal">
              <tr>
                  <td colspan="6"></td>
-                 <td><span id="total" class="money"><%=currencySplitter((total / 100).toFixed(2))%></span></td>
-                 <td><span id="totalPaidAmount" class="money"><%=currencySplitter((totalPaidAmount / 100).toFixed(2))%></span></td>
+                 <td><span id="total" class="money"><%=currencySplitter(total.toFixed(2))%></span></td>
+                 <td><span id="totalPaidAmount" class="money"><%=currencySplitter(totalPaidAmount.toFixed(2))%></span></td>
                  <td></td>
              </tr>
         </tfoot>

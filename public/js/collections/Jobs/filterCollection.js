@@ -16,13 +16,17 @@ define(['models/jobsModel'
             this.startTime = new Date();
             var that = this;
 
-            this.filter = options.filter;
+            this.filter = options ? options.filter : {};
 
             this.fetch({
                 data: options,
                 reset: true,
-                success: function (models) {
+                success: function (newCollection) {
                     that.page ++;
+
+                    if (App.currectCollection){
+                        App.currectCollection.reset(newCollection.models);
+                    }
                 },
                 error: function(err, xhr){
                     console.log(xhr);
