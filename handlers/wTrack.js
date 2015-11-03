@@ -1527,6 +1527,10 @@ var wTrack = function (event, models) {
 
                                     day = moment(d).day();
 
+                                    if (day === 0){
+                                        day = 5;
+                                    }
+
                                     dayOfWeek = moment(newDate).day();
 
                                     var endOfMonth = moment(newDate).endOf('month').date();
