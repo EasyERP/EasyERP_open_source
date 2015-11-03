@@ -357,17 +357,21 @@ input::-ms-clear {
     .left;
     width: 100%-@with-dt;
     .text-overflow;
-
     &:nth-child(2) {
       margin-top: 0;
     }
 
     input:not([type='checkbox']) {
-      width: 95%;
+      width: 94%;
     }
 
     a.formLink {
       line-height: @line-height;
+    }
+    span {
+      &.ui-spinner{
+        width: 100%;
+      }
     }
   }
 }
@@ -1785,7 +1789,7 @@ input::-ms-clear {
   .border-radius(0px);
 
   .ui-widget-content {
-    //border: none;
+    border: none;
     a {
       color: @tilte-color;
     }
@@ -4665,7 +4669,7 @@ h3.dashboard {
   .task-info {
     .dl-auto(200px, 40%);
     input {
-      width: 150px !important;
+      width: 150px;
     }
   }
   .task-summary-info {

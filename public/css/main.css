@@ -395,7 +395,7 @@ th {
   display: block;
   overflow: hidden;
 }
-.ui-spinner input[type='number'] {
+.ui-spinner .ui-spinner-input {
   float: left;
   border: none ;
 }
@@ -423,7 +423,7 @@ th {
   position: absolute;
   padding: 0;
   right: 5px;
-  top: 11px;
+  top: 10px;
   cursor: pointer;
   font-size: 8px;
   line-height: 8px;
@@ -1884,10 +1884,13 @@ dl dd:nth-child(2) {
   margin-top: 0;
 }
 dl dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 94%;
 }
 dl dd a.formLink {
   line-height: 0;
+}
+dl dd span.ui-spinner {
+  width: 100%;
 }
 .clear {
   content: "\0020";
@@ -2316,10 +2319,13 @@ dl dd a.formLink {
   margin-top: 0;
 }
 .form .job-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 94%;
 }
 .form .job-info dd a.formLink {
   line-height: 30px;
+}
+.form .job-info dd span.ui-spinner {
+  width: 100%;
 }
 .form .opp-info {
   clear: both;
@@ -2366,10 +2372,13 @@ dl dd a.formLink {
   margin-top: 0;
 }
 .form .opp-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 94%;
 }
 .form .opp-info dd a.formLink {
   line-height: 30px;
+}
+.form .opp-info dd span.ui-spinner {
+  width: 100%;
 }
 .form .opp-info input {
   width: 80% !important;
@@ -2419,10 +2428,13 @@ dl dd a.formLink {
   margin-top: 0;
 }
 .form .internal-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 94%;
 }
 .form .internal-info dd a.formLink {
   line-height: 30px;
+}
+.form .internal-info dd span.ui-spinner {
+  width: 100%;
 }
 .form .internal-info textarea {
   width: 94%;
@@ -2473,10 +2485,13 @@ dl dd a.formLink {
   margin-top: 0;
 }
 .form .assignees-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 94%;
 }
 .form .assignees-info dd a.formLink {
   line-height: 0;
+}
+.form .assignees-info dd span.ui-spinner {
+  width: 100%;
 }
 .form .assignees-info input {
   max-width: 180px !important;
@@ -3462,11 +3477,15 @@ dl dd a.formLink {
 }
 .person-info dd input:not([type='checkbox']),
 .customer-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 94%;
 }
 .person-info dd a.formLink,
 .customer-info dd a.formLink {
   line-height: 0;
+}
+.person-info dd span.ui-spinner,
+.customer-info dd span.ui-spinner {
+  width: 100%;
 }
 .person-info span,
 .customer-info span {
@@ -3518,10 +3537,13 @@ dl dd a.formLink {
   margin-top: 0;
 }
 .settings-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 94%;
 }
 .settings-info dd a.formLink {
   line-height: 0;
+}
+.settings-info dd span.ui-spinner {
+  width: 100%;
 }
 .settings-info label {
   line-height: 20px;
@@ -3574,10 +3596,13 @@ dl dd a.formLink {
   margin-top: 0;
 }
 .project-edit-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 94%;
 }
 .project-edit-info dd a.formLink {
   line-height: 0;
+}
+.project-edit-info dd span.ui-spinner {
+  width: 100%;
 }
 .quotation-info {
   clear: both;
@@ -3624,10 +3649,13 @@ dl dd a.formLink {
   margin-top: 0;
 }
 .quotation-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 94%;
 }
 .quotation-info dd a.formLink {
   line-height: 0;
+}
+.quotation-info dd span.ui-spinner {
+  width: 100%;
 }
 .quotation-info dd {
   margin-top: 1em;
@@ -3677,10 +3705,13 @@ dl dd a.formLink {
   margin-top: 0;
 }
 .edit-employee-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 94%;
 }
 .edit-employee-info dd a.formLink {
   line-height: 0;
+}
+.edit-employee-info dd span.ui-spinner {
+  width: 100%;
 }
 .edit-employee-info input {
   max-width: 180px !important;
@@ -5602,6 +5633,9 @@ ul.dialog-tabs li.right button {
   -webkit-border-radius: 0px;
   border-radius: 0px;
 }
+.ui-dialog .ui-widget-content {
+  border: none;
+}
 .ui-dialog .ui-widget-content a {
   color: #66b5d4;
 }
@@ -5797,10 +5831,13 @@ ul.dialog-tabs li.right button {
   margin-top: 0;
 }
 .ui-dialog .app-empty-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 94%;
 }
 .ui-dialog .app-empty-info dd a.formLink {
   line-height: 0;
+}
+.ui-dialog .app-empty-info dd span.ui-spinner {
+  width: 100%;
 }
 .ui-dialog .app-empty-info dd {
   display: none;
@@ -5858,10 +5895,13 @@ ul.dialog-tabs li.right button {
   margin-top: 0;
 }
 .ui-dialog .person-info-h3 dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 94%;
 }
 .ui-dialog .person-info-h3 dd a.formLink {
   line-height: 0;
+}
+.ui-dialog .person-info-h3 dd span.ui-spinner {
+  width: 100%;
 }
 .ui-dialog .person-info-h3 dt,
 .ui-dialog .person-info-h3 dd {
@@ -5926,10 +5966,13 @@ ul.dialog-tabs li.right button {
   margin-top: 0;
 }
 .ui-dialog .summary-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 94%;
 }
 .ui-dialog .summary-info dd a.formLink {
   line-height: 0;
+}
+.ui-dialog .summary-info dd span.ui-spinner {
+  width: 100%;
 }
 .ui-dialog .summary-info #summary {
   width: 89% !important;
@@ -6109,10 +6152,13 @@ ul.dialog-tabs li.right button {
   margin-top: 0;
 }
 .form-holder form dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 94%;
 }
 .form-holder form dd a.formLink {
   line-height: 16px;
+}
+.form-holder form dd span.ui-spinner {
+  width: 100%;
 }
 .form-holder form select {
   font-family: Arial, Helvetica, sans-serif;
@@ -6861,13 +6907,16 @@ span.unDone {
   margin-top: 0;
 }
 .form-holder form .task-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 94%;
 }
 .form-holder form .task-info dd a.formLink {
   line-height: 0;
 }
+.form-holder form .task-info dd span.ui-spinner {
+  width: 100%;
+}
 .form-holder form .task-info input {
-  width: 150px !important;
+  width: 150px;
 }
 .form-holder form .task-summary-info {
   clear: both;
@@ -6914,10 +6963,13 @@ span.unDone {
   margin-top: 0;
 }
 .form-holder form .task-summary-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 94%;
 }
 .form-holder form .task-summary-info dd a.formLink {
   line-height: 0;
+}
+.form-holder form .task-summary-info dd span.ui-spinner {
+  width: 100%;
 }
 .form-holder form .task-summary-info input {
   width: 95% !important;
@@ -6967,10 +7019,13 @@ span.unDone {
   margin-top: 0;
 }
 .form-holder form .profile-create dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 94%;
 }
 .form-holder form .profile-create dd a.formLink {
   line-height: 0;
+}
+.form-holder form .profile-create dd span.ui-spinner {
+  width: 100%;
 }
 .form-holder form .profile-create input {
   width: 276px;
@@ -7023,10 +7078,13 @@ span.unDone {
   margin-top: 0;
 }
 .form-holder form .project-edit-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 94%;
 }
 .form-holder form .project-edit-info dd a.formLink {
   line-height: 0;
+}
+.form-holder form .project-edit-info dd span.ui-spinner {
+  width: 100%;
 }
 .form-holder form .project-edit-info input {
   width: 220px;
@@ -7079,10 +7137,13 @@ span.unDone {
   margin-top: 0;
 }
 .form-holder form .job-create-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 94%;
 }
 .form-holder form .job-create-info dd a.formLink {
   line-height: 0;
+}
+.form-holder form .job-create-info dd span.ui-spinner {
+  width: 100%;
 }
 .form-holder form .job-create-info input {
   width: 205px !important;
@@ -7135,10 +7196,13 @@ span.unDone {
   margin-top: 0;
 }
 .form-holder form .create-employee-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 94%;
 }
 .form-holder form .create-employee-info dd a.formLink {
   line-height: 0;
+}
+.form-holder form .create-employee-info dd span.ui-spinner {
+  width: 100%;
 }
 .form-holder form .create-employee-info input {
   max-width: 117px !important;
@@ -7191,10 +7255,13 @@ span.unDone {
   margin-top: 0;
 }
 .form-holder form .subject-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 94%;
 }
 .form-holder form .subject-info dd a.formLink {
   line-height: 0;
+}
+.form-holder form .subject-info dd span.ui-spinner {
+  width: 100%;
 }
 .form-holder form .subject-info input {
   max-width: inherit !important;
@@ -7251,10 +7318,13 @@ span.unDone {
   margin-top: 0;
 }
 .form-holder form .opprtunitie-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 94%;
 }
 .form-holder form .opprtunitie-info dd a.formLink {
   line-height: 0;
+}
+.form-holder form .opprtunitie-info dd span.ui-spinner {
+  width: 100%;
 }
 .form-holder form .opprtunitie-info input {
   max-width: 231px !important;
@@ -7311,10 +7381,13 @@ span.unDone {
   margin-top: 0;
 }
 .form-holder form .opprtunitie-lead-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 94%;
 }
 .form-holder form .opprtunitie-lead-info dd a.formLink {
   line-height: 0;
+}
+.form-holder form .opprtunitie-lead-info dd span.ui-spinner {
+  width: 100%;
 }
 .form-holder form .opprtunitie-lead-info input {
   max-width: 231px !important;
@@ -7433,10 +7506,13 @@ span.unDone {
   margin-top: 0;
 }
 .form .job-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 94%;
 }
 .form .job-info dd a.formLink {
   line-height: 30px;
+}
+.form .job-info dd span.ui-spinner {
+  width: 100%;
 }
 .form .opp-info {
   clear: both;
@@ -7483,10 +7559,13 @@ span.unDone {
   margin-top: 0;
 }
 .form .opp-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 94%;
 }
 .form .opp-info dd a.formLink {
   line-height: 30px;
+}
+.form .opp-info dd span.ui-spinner {
+  width: 100%;
 }
 .form .opp-info input {
   width: 80% !important;
@@ -7536,10 +7615,13 @@ span.unDone {
   margin-top: 0;
 }
 .form .internal-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 94%;
 }
 .form .internal-info dd a.formLink {
   line-height: 30px;
+}
+.form .internal-info dd span.ui-spinner {
+  width: 100%;
 }
 .form .internal-info textarea {
   width: 94%;
@@ -7590,10 +7672,13 @@ span.unDone {
   margin-top: 0;
 }
 .form .assignees-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 94%;
 }
 .form .assignees-info dd a.formLink {
   line-height: 0;
+}
+.form .assignees-info dd span.ui-spinner {
+  width: 100%;
 }
 .form .assignees-info input {
   max-width: 180px !important;
