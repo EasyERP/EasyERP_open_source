@@ -236,7 +236,7 @@ module.exports = function (app, mainDb) {
                         shortPas = "\/uploads\/" + req.headers.id + "\/" + item.name;
                     }
                 }
-                fs.writeFile(path, data, function (err) {k
+                fs.writeFile(path, data, function (err) {
                     if (!err) {
                         var file = {};
                         file._id = mongoose.Types.ObjectId();

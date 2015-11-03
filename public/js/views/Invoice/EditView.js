@@ -68,7 +68,7 @@ define([
                 "click .details": "showDetailsBox",
                 "click .newPayment": "newPayment",
                 "click .cancelInvoice": "cancelInvoice",
-                "click .refund": "refund",
+               // "click .refund": "refund",
                 "click .setDraft": "setDraft"
 
             },
@@ -83,11 +83,19 @@ define([
             cancelInvoice: function (e) {
                 e.preventDefault();
 
+                var wId;
+
                 var self = this;
                 var redirectUrl = self.forSales ? "easyErp/salesInvoice" : "easyErp/Invoice";
 
+                if (self.forSales){
+                    wId = 'Sales Invoice';
+                } else {
+                    wId = 'Purchase Invoice';
+                }
+
                 populate.fetchWorkflow({
-                    wId: 'Purchase Invoice',
+                    wId: wId,
                     source: 'purchase',
                     targetSource: 'invoice',
                     status: 'Cancelled',
@@ -119,9 +127,18 @@ define([
                 e.preventDefault();
 
                 var self = this;
+                var wId;
+
+                if (self.forSales){
+                    wId = 'Sales Invoice';
+                } else {
+                    wId = 'Purchase Invoice';
+                }
+
+                var redirectUrl = self.forSales ? "easyErp/salesInvoice" : "easyErp/Invoice";
 
                 populate.fetchWorkflow({
-                    wId: 'Purchase Invoice'
+                    wId: wId
                 }, function (workflow) {
                     if (workflow && workflow.error) {
                         return alert(workflow.error.statusText);
@@ -139,7 +156,7 @@ define([
                         },
                         patch: true,
                         success: function () {
-                            Backbone.history.navigate("easyErp/Invoice", {trigger: true});
+                            Backbone.history.navigate(redirectUrl, {trigger: true});
                         }
                     });
                 });

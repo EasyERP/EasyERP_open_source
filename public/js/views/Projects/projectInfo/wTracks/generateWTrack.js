@@ -295,6 +295,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     var jobId = self.jobs ? self.jobs._id : null;
                     var jobName = self.jobs ? self.jobs.name : $("#jobName").val();
                     var _id = window.location.hash.split('form/')[1];
+                    var nameRegExp = /^[\w\.@]{3,100}$/;
 
                     var filter = {
                         'projectName': {
@@ -309,7 +310,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                         return
                     }
 
-                    if (jobName.length > 0){
+                    if (nameRegExp.test(jobName)){
                         $.ajax({
                             type: 'Post',
                             url: '/wTrack/generateWTrack',

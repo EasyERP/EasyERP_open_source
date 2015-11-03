@@ -129,7 +129,7 @@ define([
 
             recalcTotal: function (id) {
                 var formModel = this.formModel.toJSON();
-                var jobsItems = formModel.budget.projectTeam;
+                var jobsItems = this.jobsCollection.toJSON();
                 var rate;
 
                 var job = _.find(jobsItems, function (element) {
@@ -933,60 +933,6 @@ define([
                         value: [_id]
                     }
                 };
-
-                //dataService.getData('/Invoice/list',
-                //    {
-                //        count: 100,
-                //        page: 1,
-                //        forSales: true,
-                //        contentType: 'salesInvoice',
-                //        filter: filter
-                //    }, function (response) {
-                //        var payments = [];
-                //        var res;
-                //        if (response.error) {
-                //            return cb(response.error);
-                //        }
-                //        response.forEach(function (element) {
-                //            element.payments.forEach(function (payment) {
-                //                payments.push(payment);
-                //            });
-                //        });
-                //
-                //
-                //        if (payments.length > 0) {
-                //            dataService.getData('/payment/getForProject',
-                //                {
-                //                    data: payments
-                //                }, function (result) {
-                //
-                //                    if (result.error) {
-                //                        return cb(result.error);
-                //                    }
-                //
-                //                    self.pCollection = result;
-                //
-                //                    new PaymentView({
-                //                        model: result
-                //                    });
-                //
-                //                    res = result;
-                //                }, this);
-                //
-                //        }
-                //
-                //        self.iCollection = response;
-                //
-                //
-                //        new InvoiceView({
-                //            model: response
-                //        });
-                //
-                //        if (res) {
-                //            cb(null, {payment: res, invoice: response});
-                //        } else {
-                //            cb(null, {payment: [], invoice: response});
-                //        }
 
                 self.iCollection = new invoiceCollection({
                     count: 50,
