@@ -1,12 +1,13 @@
 define(["text!templates/Projects/projectInfo/wTracks/generate.html",
         "text!templates/Projects/projectInfo/wTracks/wTrackPerEmployee.html",
         'views/Projects/projectInfo/wTracks/wTrackPerEmployee',
+        'collections/Jobs/filterCollection',
         'populate',
         'dataService',
         'moment',
         'common'
     ],
-    function (generateTemplate, wTrackPerEmployeeTemplate, wTrackPerEmployee, populate, dataService, moment, common) {
+    function (generateTemplate, wTrackPerEmployeeTemplate, wTrackPerEmployee, JobsCollection, populate, dataService, moment, common) {
         "use strict";
         var CreateView = Backbone.View.extend({
                 template: _.template(generateTemplate),
@@ -50,6 +51,8 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     this.resultArray = [];
 
                     this.jobs = options.jobs ? options.jobs: null;
+
+                    this.jobsCollection = options.jobsCollection;
 
                     this.createJob = options.createJob;
 
@@ -289,10 +292,19 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     var self = this;
                     var data = JSON.stringify(this.resultArray);
                     var tabs;
+                    var jobCollect;
                     var activeTab;
                     var dialogHolder;
                     var jobId = self.jobs ? self.jobs._id : null;
                     var jobName = self.jobs ? self.jobs.name : $("#jobName").val();
+                    var _id = window.location.hash.split('form/')[1];
+
+                    var filterJobs = {
+                        "project": {
+                            key: "project",
+                            value: [_id]
+                        }
+                    };
 
                     var filter = {
                         'projectName': {
@@ -326,8 +338,6 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                             self.hideDialog();
 
                             self.wTrackCollection.showMore({count: 50, page: 1, filter: filter});
-
-
 
                             tabs = $(".chart-tabs");
                             activeTab = tabs.find('.active');
@@ -364,6 +374,8 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                             alert('error');
                         }
                     });
+
+
                 },
 
                 hideDialog: function () {

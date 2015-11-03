@@ -225,7 +225,8 @@ define([
                 var jobContainer = $(target).parents("tr");
                 var template = _.template(jobsWTracksTemplate);
                 var formModel = this.formModel.toJSON();
-                var jobsItems = formModel.budget.projectTeam;
+                //var jobsItems = formModel.budget.projectTeam;
+                var jobsItems = this.jobsCollection.toJSON();
                 var icon = $(jobContainer).find('.expand');
                 var subId = "subRow-row" + jobId;
                 var subRowCheck = $('#' + subId);
@@ -572,6 +573,8 @@ define([
                 var self = this;
 
                 var projectTeam = this.jobsCollection.toJSON();
+
+                App.currectCollection = this.jobsCollection;
 
                 this.projectValues = {
                     revenue: 0,

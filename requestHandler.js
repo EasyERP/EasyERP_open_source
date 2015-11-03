@@ -808,19 +808,22 @@ var requestHandler = function (app, event, mainDb) {
                     if (err) {
                         return console.log(err);
                     }
+                    var projectId;
 
-                    result.forEach(function(res){
+                    async.each(result, function(res, cb){
 
-                        var projectId = res._id;
+                        projectId = res._id;
                         var jobIds = res.jobIds;
 
                         Project.findByIdAndUpdate(projectId, {$set : {"budget.projectTeam": jobIds}}, function(err, result){
                             if (err){
                                 console.log(err);
                             }
-                            console.log('ok');
+                            cb();
                         });
 
+                    }, function(){
+                        event.emit('fetchJobsCollection', {project: projectId});
                     })
                 })
             });
@@ -917,6 +920,10 @@ var requestHandler = function (app, event, mainDb) {
 
     event.on('recollectProjectInfo', function () {
         io.emit('recollectProjectInfo');
+    });
+
+    event.on('fetchJobsCollection', function (options) {
+        io.emit('fetchJobsCollection', options);
     });
 
 
