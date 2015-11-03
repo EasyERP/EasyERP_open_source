@@ -684,6 +684,33 @@ define([
                 $("#createQuotation").show();
                 $("#createBonus").show();
 
+                $('#StartDate').datepicker({
+                    dateFormat: "d M, yy",
+                    changeMonth: true,
+                    changeYear: true,
+                    onSelect: function () {
+                        var endDate = $('#StartDate').datepicker('getDate');
+                        endDate.setDate(endDate.getDate());
+                        $('#EndDateTarget').datepicker('option', 'minDate', endDate);
+                    }
+                });
+                $('#EndDate').datepicker({
+                    dateFormat: "d M, yy",
+                    changeMonth: true,
+                    changeYear: true,
+                    onSelect: function () {
+                        var endDate = $('#StartDate').datepicker('getDate');
+                        endDate.setDate(endDate.getDate());
+                        $('#EndDateTarget').datepicker('option', 'minDate', endDate);
+                    }
+                });
+                $('#EndDateTarget').datepicker({
+                    dateFormat: "d M, yy",
+                    changeMonth: true,
+                    changeYear: true,
+                    minDate: (self.formModel.StartDate) ? self.formModel.StartDate : 0
+                });
+
                 return this;
 
             },
