@@ -16,4 +16,27 @@
   &.banned {
     border-bottom: 0
   }
+
+  .dateFilter {
+    float: left;
+    li {
+      font-size: 12px;
+      text-align: center;
+      line-height: 30px;
+      color: @mainText-color;
+      .frameDetail {
+        label {
+          width: 10px;
+        }
+        input {
+          width: 85%;
+        }
+      }
+    }
+    .customTime {
+      label+input[type='text'] {
+        margin-bottom: 5px;
+      }
+    }
+  }
 }
