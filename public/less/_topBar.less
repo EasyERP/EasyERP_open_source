@@ -1,0 +1,19 @@
+.top-bar(@defaultHeight: 30px, @defaultBackground: @bg-main, @defaultBorderColor: @border-color-main, @defaultH3Color: @creatBtn-color, @defaultMargin: 6px 0 0 0, @defaultPadding: 0 10px) {
+  display: block;
+  height: @defaultHeight;
+  clear: both;
+  margin: 5px 1% 0;
+
+  h3 {
+    margin: @defaultMargin;
+    padding: @defaultPadding;
+    color: @defaultH3Color !important;
+    font-family: @title-font;
+    font-weight: normal;
+    float: left;
+    overflow: visible;
+  }
+  &.banned {
+    border-bottom: 0
+  }
+}
