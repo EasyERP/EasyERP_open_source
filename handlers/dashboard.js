@@ -31,43 +31,79 @@ var wTrack = function (models) {
 
             var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
             var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+            var query = req.query;
+            var filter = query ? query.filter : null;
+            var currentWeek = moment().isoWeek();
+            var currentStartWeek = currentWeek - 6;
+            var currentYear = moment().weekYear();
+            var departmentsArray = [objectId(CONSTANTS.HR_DEPARTMENT_ID),
+                objectId(CONSTANTS.BUSINESS_DEPARTMENT_ID),
+                objectId(CONSTANTS.MARKETING_DEPARTMENT_ID)];
+            var departmentQuery = {
+                $nin: departmentsArray
+            };
+
             var weeksArr;
             var week;
             var startDate;
             var endDate;
-
-            var currentWeek = moment().isoWeek();
-            var currentStartWeek = currentWeek - 6;
-            var currentYear = moment().weekYear();
-
+            var _dateStr;
             var i;
 
-            weeksArr = [];
-            startDate = currentYear * 100 + currentStartWeek;
+            if (filter) {
+                if (filter.departments) {
+                    departmentQuery = {
+                        $in: filter.departments.objectID()
+                    }
+                }
+            }
 
-            for (i = 0; i <= 13; i++) {
-                if (currentStartWeek + i > 53) {
-                    week = currentStartWeek + i - 53;
+            weeksArr = [];
+
+            if (query && query.startDate && query.endDate) {
+                startDate = parseInt(query.startDate);
+                endDate = parseInt(query.endDate);
+
+                for (i = startDate; i <= endDate; i++) {
+                    _dateStr = i.toString();
+                    week = _dateStr.substr(-2);
                     weeksArr.push({
-                        dateByWeek: (currentYear + 1) * 100 + week,
+                        dateByWeek: i,
                         week: week,
-                        year: currentYear + 1
-                    });
-                } else {
-                    week = currentStartWeek + i;
-                    weeksArr.push({
-                        dateByWeek: currentYear * 100 + week,
-                        week: week,
-                        year: currentYear
+                        year: _dateStr.substr(0, 4)
                     });
                 }
+            } else {
+                currentWeek = moment().isoWeek();
+                currentStartWeek = currentWeek - 6;
+                currentYear = moment().weekYear();
+
+                startDate = currentYear * 100 + currentStartWeek;
+
+                for (i = 0; i <= 13; i++) {
+                    if (currentStartWeek + i > 53) {
+                        week = currentStartWeek + i - 53;
+                        weeksArr.push({
+                            dateByWeek: (currentYear + 1) * 100 + week,
+                            week: week,
+                            year: currentYear + 1
+                        });
+                    } else {
+                        week = currentStartWeek + i;
+                        weeksArr.push({
+                            dateByWeek: currentYear * 100 + week,
+                            week: week,
+                            year: currentYear
+                        });
+                    }
+                }
+
+                endDate = weeksArr[weeksArr.length - 1].dateByWeek;
             }
 
             weeksArr = _.sortBy(weeksArr, function (monthObject) {
                 return monthObject.dateByWeek;
             });
-
-            endDate = weeksArr[weeksArr.length - 1].dateByWeek;
 
             function resultMapper(err, result) {
                 var Department = models.get(req.session.lastDb, 'Department', DepartmentSchema);
@@ -92,12 +128,12 @@ var wTrack = function (models) {
 
                 function departmentMapper(department, departmentCb) {
                     var dashDepartment = _.find(dashBoardResult, function (deps) {
-                        if(deps.department == null){
+                        if (deps.department == null) {
                             console.log('==================== deps =======================');
                             console.log(deps);
                             console.log('===========================================');
                         }
-                        if(department.department === null){
+                        if (department.department === null) {
                             console.log('===================== department ======================');
                             console.log(department);
                             console.log('===========================================');
@@ -186,7 +222,7 @@ var wTrack = function (models) {
 
                         constForView.forEach(function (dep) {
                             employeesByDep.forEach(function (department, index) {
-                                if (employeesByDep[index].department){
+                                if (employeesByDep[index].department) {
                                     if (dep === employeesByDep[index].department.departmentName) {
                                         sortDepartments.push(employeesByDep[index]);
                                     }
@@ -199,9 +235,9 @@ var wTrack = function (models) {
 
                         VacationCache = models.get(req.session.lastDb, 'vacationCache', vacationCacheSchema);
 
-                        VacationCache.findByIdAndUpdate(1, {data: sortDepartments}, {upsert: true}, function(err, res){
+                        VacationCache.findByIdAndUpdate(1, {data: sortDepartments}, {upsert: true}, function (err, res) {
                             "use strict";
-                            if(err){
+                            if (err) {
                                 console.error(err);
                             }
                         });
@@ -319,7 +355,7 @@ var wTrack = function (models) {
                                         } /*{firedCount: {$gt: 0}}*/]
                                     }
                                 ],
-                                'department._id': {$nin: [objectId(CONSTANTS.HR_DEPARTMENT_ID), objectId(CONSTANTS.BUSINESS_DEPARTMENT_ID), objectId(CONSTANTS.MARKETING_DEPARTMENT_ID)]}
+                                'department._id': departmentQuery
                             }
                         }, {
                             $group: {
@@ -372,7 +408,7 @@ var wTrack = function (models) {
                                                 $and: [{isEmployee: false}, {firedCount: {$gt: 0}}, {_id: {$in: _employeesIds}}]
                                             }
                                         ],
-                                        'department._id': {$nin: [objectId(CONSTANTS.HR_DEPARTMENT_ID), objectId(CONSTANTS.BUSINESS_DEPARTMENT_ID), objectId(CONSTANTS.MARKETING_DEPARTMENT_ID)]}
+                                        'department._id': departmentQuery
                                     }
                                 }], function (err, employees) {
                                 if (err) {
@@ -425,7 +461,7 @@ var wTrack = function (models) {
                             $match: {
                                 'employee._id': {$in: employeesArray},
                                 dateByWeek: {$gte: startDate, $lte: endDate},
-                                'department._id': {$nin: [objectId(CONSTANTS.HR_DEPARTMENT_ID), objectId(CONSTANTS.BUSINESS_DEPARTMENT_ID), objectId(CONSTANTS.MARKETING_DEPARTMENT_ID)]}
+                                'department._id': departmentQuery
                             }
                         }, {
                             $group: {
@@ -521,9 +557,9 @@ var wTrack = function (models) {
         this.getFromCache = function (req, res, next) {
             var VacationCache = models.get(req.session.lastDb, 'vacationCache', vacationCacheSchema);
 
-            VacationCache.findById(1, function(err, response){
+            VacationCache.findById(1, function (err, response) {
                 "use strict";
-                if(err){
+                if (err) {
                     return next(err);
                 }
 
@@ -560,22 +596,6 @@ var wTrack = function (models) {
 
                 hiredArr = result[0];
                 firedArr = result[1];
-
-                /* for (var i = 0; i < 12; i++) {
-                 month = startMonth + i;
-                 if (month > 12) {
-                 year = startYear + 1;
-                 month -= 12;
-                 } else {
-                 year = startYear;
-                 }
-                 arrOfDates.push({
-                 month: month,
-                 year: year,
-                 dateByMonth: year * 100 + month
-                 });
-                 }*/
-
                 finalResult = [{
                     _id: 'hired',
                     data: hiredArr
@@ -651,9 +671,9 @@ var wTrack = function (models) {
                         Department.populate(employees, {
                             path: 'hiredEmployees.department._id',
                             select: '_id departmentName'
-                        }, function(err, deps){
-                            if(err){
-                                return  parallelCb(err);
+                        }, function (err, deps) {
+                            if (err) {
+                                return parallelCb(err);
                             }
 
                             parallelCb(null, employees);
@@ -728,9 +748,9 @@ var wTrack = function (models) {
                             options: {
                                 lean: true
                             }
-                        }, function(err, deps){
-                            if(err){
-                                return  parallelCb(err);
+                        }, function (err, deps) {
+                            if (err) {
+                                return parallelCb(err);
                             }
 
                             parallelCb(null, employees);

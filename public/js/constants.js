@@ -55,6 +55,16 @@ define([], function () {
                 backend: 'services'
             }
         },
+        DashVacation         : {
+            'Full Name'   : {
+                view   : 'name',
+                backend: '_id'
+            },
+            'Department'  : {
+                view   : 'department',
+                backend: 'department._id'
+            }
+        },
         Companies       : {
             'Name'    : {
                 view   : 'name',
