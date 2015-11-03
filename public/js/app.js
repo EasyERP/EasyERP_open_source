@@ -3,7 +3,7 @@ define([
 	'router',
 	'communication',
 	'custom',
-	'socket.io'
+	'socket.io',
 ], function (Router, Communication, Custom, io) {
 	var initialize = function () {
 		var appRouter = new Router();
@@ -41,10 +41,12 @@ define([
 			create   : function (event, ui) {
 				var win = $(window);
 				var dialog = $(event.target).parent(".ui-dialog");
-				//var top = $(document).scrollTop() + (win.height() - dialog.height() - 200) / 2;
-				//var left = (win.width() - dialog.width()) / 2;
+				var top = $(document).scrollTop() + (win.height() - dialog.height() - 200) / 2;
+				var left = (win.width() - dialog.width()) / 2;
 				dialog.css({
-					position: "fixed"
+					position: "fixed",
+					top     :  top,
+					left    :  left
 				});
 			}
 		});
@@ -97,6 +99,7 @@ define([
 				target.val(day + ' ' + mon + ', ' + year);
 			}
 		});
+
 	};
 
 	return {
