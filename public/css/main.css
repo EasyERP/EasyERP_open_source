@@ -9089,134 +9089,68 @@ table.payRoll-list {
   min-width: 100%;
   border-spacing: 0;
   border-collapse: collapse;
-  min-height: .01%;
-  overflow-x: auto;
+}
+table.payRoll-list tbody tr:hover {
+  background: none;
 }
 table.payRoll-list #payRoll-Table {
   padding: 0;
 }
 table.payRoll-list #payRoll-Table .scrollit {
   display: block;
-  height: calc(100vh - 200px);
+  height: calc(100vh - 209px);
   overflow-x: hidden;
 }
 table.payRoll-list th,
 table.payRoll-list td {
-  box-sizing: border-box;
   border: 1px solid white;
   width: 1%;
   vertical-align: middle;
 }
+table.payRoll-list #payRoll-TableBody td:nth-child(1) {
+  width: 2%;
+}
+table.payRoll-list #payRoll-TableBody td:nth-child(2) {
+  width: 2%;
+}
+table.payRoll-list #payRoll-TableBody td:nth-child(3) {
+  width: 27%;
+}
+table.payRoll-list #payRoll-TableBody td:nth-child(4) {
+  width: 7%;
+}
+table.payRoll-list #payRoll-TableBody td:nth-child(5) {
+  width: 7%;
+}
+table.payRoll-list #payRoll-TableBody td:nth-child(6) {
+  width: 7%;
+}
+table.payRoll-list #payRoll-TableBody td:nth-child(7) {
+  width: 7%;
+}
+table.payRoll-list #payRoll-TableBody td:nth-child(8) {
+  width: 7%;
+}
+table.payRoll-list #payRoll-TableBody td:nth-child(9) {
+  width: 7%;
+}
+table.payRoll-list #payRoll-TableBody td:nth-child(10) {
+  width: 7%;
+}
+table.payRoll-list #payRoll-TableBody td:nth-child(11) {
+  width: 7%;
+}
+table.payRoll-list #payRoll-TableBody td:nth-child(12) {
+  width: 13%;
+}
+.borders col {
+  border: 1px solid;
+}
 #searchContainer.payRoll {
   margin: 0 0 10px;
-  /*#filtersContent {
-      .filterGroup {
-        box-sizing: border-box;
-        overflow: visible;
-        text-align: center;
-        padding: 0;
-        margin: 0 1%;
-        width: 48%;
-        float: left;
-        position: relative;
-
-        .groupName {
-          padding: 5px;
-          border: 1px solid @border-color-main;
-          background-color: @bg-main;
-        }
-        .ulContent {
-          box-sizing: border-box;
-          width: 100%;
-          position: absolute;
-          top: 30px;
-          border: 1px solid @border-color-main;
-          background-color: @bg-main;
-          z-index: 1;
-          input {
-            margin-top: 5px;
-          }
-        }
-        li {
-          cursor: pointer;
-          font-size: 12px;
-          padding: 5px 10px;
-          color: @filter-text-color;
-          &.miniStylePagination {
-            list-style: none;
-            //background-color: @lightgrey;
-            border-top: 1px solid @border-color-main;
-            .prev.disabled,
-            .next.disabled {
-              display: none;
-            }
-            .prev {
-              float: left;
-            }
-            .next {
-              float: right;
-            }
-          }
-          &:not(.miniStylePagination):before {
-            content: '\2713';
-          }
-          &:not(.checkedValue):hover:before {
-            color: @bg-hover-drop-down-color;
-          }
-          &:not(.checkedValue):before,
-          &.checkedValue:before,
-          &.checkedValue:hover:before {
-            color: @bg-main;
-          }
-          &:hover, &.checkedValue {
-            background-color: @bg-hover-drop-down-color;
-            color: @grey;
-          }
-        }
-        .filterValues {
-          text-align: left;
-          width: 100%;
-        }
-        &.activeGroup .groupName {
-          &:after {
-            content: ' ';
-          }
-        }
-        &:not(.activeGroup) .groupName {
-          &.checkedGroup {
-            color: @mainText-color;
-            background-color: @bg-hover-drop-down-color-active;
-            span:before {
-              text-align: center;
-              height: 10px;
-              width: 10px;
-              border-radius: 50%;
-              background-color: @fontColor-2;
-            }
-          }
-        ;
-        }
-        &.activeGroup {
-          .groupName {
-            border-bottom: 1px solid @border-color-main;
-          }
-
-        }
-        &.activeGroup .groupName,
-        & .groupName:hover {
-          color: @grey;
-          background-color: @bg-hover-drop-down-color;
-        }
-        .groupName {
-          cursor: pointer;
-          //font-weight: bolder;
-          font-size: 13px;
-          //padding: 10px;
-          color: @mainText-color;
-          &:after {
-            content: '\2335';
-          }
-        }
-      }
-    }*/
+}
+@media (min-width: 1320px) {
+  table.payRoll-list #payRoll-Table .scrollit {
+    height: calc(100vh - 179px);
+  }
 }
