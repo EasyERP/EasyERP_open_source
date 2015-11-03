@@ -266,14 +266,13 @@ define([
         },
 
         checked: function (e) {
-            if (this.collection.length > 0) {
                 var checkLength = $("input.checkbox:checked").length;
 
                 if ($("input.checkbox:checked").length > 0) {
                     $("#removeQuotation").show();
                     $('#check_all_quotations').prop('checked', false);
 
-                    if (checkLength == this.collection.length) {
+                    if (checkLength >= this.collection.length) {
                         $('#check_all_quotations').prop('checked', true);
                     }
                 }
@@ -281,7 +280,6 @@ define([
                     $("#removeQuotation").hide();
                     $('#check_all_quotations').prop('checked', false);
                 }
-            }
         },
 
         createQuotation: function (e) {
@@ -311,7 +309,7 @@ define([
             this.$el.find('#removeQuotation').hide();
 
             $('#check_all_quotations').click(function () {
-                this.$el.find(':checkbox').prop('checked', this.checked);
+                self.$el.find(':checkbox').prop('checked', this.checked);
                 if ($("input.checkbox:checked").length > 0) {
                     $("#removeQuotation").show();
                 } else {

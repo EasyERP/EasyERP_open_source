@@ -202,6 +202,8 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     var value;
                     var insertedInput;
 
+                    //var isNotData = $(isInput).hasClass('noPadding') ? true: false;
+
                     if (wTrackId && !isInput) {
                         this.wTrackId = wTrackId;
                         this.setChangedValueToModel();
@@ -324,6 +326,8 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                             self.hideDialog();
 
                             self.wTrackCollection.showMore({count: 50, page: 1, filter: filter});
+
+
 
                             tabs = $(".chart-tabs");
                             activeTab = tabs.find('.active');

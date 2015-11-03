@@ -5,12 +5,16 @@ define([
         "text!templates/Payment/CreateTemplate.html",
         "collections/Persons/PersonsCollection",
         "collections/Departments/DepartmentsCollection",
+        'collections/salesInvoice/filterCollection',
+        'collections/customerPayments/filterCollection',
+        'views/Projects/projectInfo/paymentView',
+        "views/Projects/projectInfo/invoiceView",
         "models/PaymentModel",
         "common",
         "populate",
         'constants'
     ],
-    function (CreateTemplate, PersonCollection, DepartmentCollection, PaymentModel, common, populate, constants) {
+    function (CreateTemplate, PersonCollection, DepartmentCollection, invoiceCollection, paymentCollection, PaymentView, invoiceView, PaymentModel, common, populate, constants) {
         var CreateView = Backbone.View.extend({
             el: "#paymentHolder",
             contentType: "Payment",
@@ -25,6 +29,9 @@ define([
                 this.responseObj = {};
                 this.model = new PaymentModel();
                 this.differenceAmount = 0;
+
+                this.redirect = options.redirect;
+                this.collection = options.collection;
 
                 this.render();
 
@@ -154,7 +161,69 @@ define([
                             var redirectUrl = self.forSales ? "easyErp/customerPayments" : "easyErp/supplierPayments";
 
                             self.hideDialog();
-                            Backbone.history.navigate(redirectUrl, {trigger: true});
+
+                            if (self.redirect){
+                                var _id = window.location.hash.split('form/')[1];
+
+                                var filter = {
+                                    'project': {
+                                        key: 'project._id',
+                                        value: [_id]
+                                    }
+                                };
+
+
+                                self.collection = new invoiceCollection({
+                                    count      : 50,
+                                    viewType   : 'list',
+                                    contentType: 'salesInvoice',
+                                    filter     : filter
+                                });
+
+                                function createView() {
+                                    var payments = [];
+
+                                    //new invoiceView({
+                                    //    model: self.collection
+                                    //}).render();
+
+                                    self.collection.toJSON().forEach(function (element) {
+                                        element.payments.forEach(function (payment) {
+                                            payments.push(payment);
+                                        });
+                                    });
+
+                                    var filterPayment = {
+                                        'name': {
+                                            key: '_id',
+                                            value: payments
+                                        }
+                                    };
+
+                                    self.pCollection = new paymentCollection({
+                                        count: 50,
+                                        viewType: 'list',
+                                        contentType: 'customerPayments',
+                                        filter: filterPayment
+                                    });
+
+
+                                    self.pCollection.unbind();
+                                    self.pCollection.bind('reset', createPayment);
+
+                                    function createPayment(){
+                                        new PaymentView({
+                                            model: self.pCollection
+                                        }).render({activeTab: true});
+                                    }
+
+                                };
+
+                                self.collection.unbind();
+                                self.collection.bind('reset', createView);
+                            } else {
+                                Backbone.history.navigate(redirectUrl, {trigger: true});
+                            }
                         },
                         error: function (model, xhr) {
                             self.errorNotification(xhr);

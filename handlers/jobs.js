@@ -10,19 +10,53 @@ var Jobs = function (models, event) {
     var access = require("../Modules/additions/access.js")(models);
     var objectId = mongoose.Types.ObjectId;
 
+    function caseFilter(filter) {
+        var condition;
+        var resArray = [];
+        var filtrElement = {};
+        var key;
+
+        for (var filterName in filter) {
+            condition = filter[filterName]['value'];
+            key = filter[filterName]['key'];
+
+            switch (filterName) {
+                case 'project':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+            }
+
+            return resArray;
+        }
+    }
 
     this.getData = function (req, res, next) {
         var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
-        var queryObj = {};
+        var queryObject = {};
 
         var query = req.query;
 
+        var filter = query.filter ? query.filter : {};
+
 
         if (query.project) {
-            queryObj.project = objectId(query.project);
+            filter['project'] = {};
+            filter['project']['key'] = 'project';
+            filter['project']['value'] = objectId(query.project);
         }
 
-        JobsModel.find(query).exec(function (err, result) {
+
+        if (filter && typeof filter === 'object') {
+            if (filter.condition === 'or') {
+                queryObject['$or'] = caseFilter(filter);
+            } else {
+                queryObject['$and'] = caseFilter(filter);
+            }
+        }
+
+
+        JobsModel.find(queryObject).exec(function (err, result) {
             if (err) {
                 return next(err);
             }
@@ -30,9 +64,9 @@ var Jobs = function (models, event) {
             res.status(200).send(result)
         })
 
-    };
+    },
 
-    this.getForDD = function (req, res, next) {
+        this.getForDD = function (req, res, next) {
         var pId = req.query.projectId;
         var query = models.get(req.session.lastDb, 'jobs', JobsSchema);
 
@@ -132,7 +166,7 @@ var Jobs = function (models, event) {
                 var products = JSON.parse(data.products);
                 var type = data.type;
 
-                products.forEach(function(product){
+                products.forEach(function (product) {
 
                     JobsModel.findByIdAndUpdate(product.jobs, {type: type}, {new: true}, function (err, result) {
                         if (err) {

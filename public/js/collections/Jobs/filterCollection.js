@@ -1,7 +1,7 @@
 /**
  * Created by liliya on 22.10.15.
  */
-define(['models/JobsModel'
+define(['models/jobsModel'
 ], function (JobsModel) {
     var JobsCollection = Backbone.Collection.extend({
 
@@ -15,22 +15,13 @@ define(['models/JobsModel'
         initialize: function (options) {
             this.startTime = new Date();
             var that = this;
-            this.namberToShow = options.count;
 
-            if (options && options.viewType) {
-                this.viewType = options.viewType;
-                this.url += options.viewType;
-            }
-
-            this.contentType = options.contentType;
-            this.count = options.count;
-            this.page = options.page || 1;
             this.filter = options.filter;
 
             this.fetch({
                 data: options,
                 reset: true,
-                success: function () {
+                success: function (models) {
                     that.page ++;
                 },
                 error: function(err, xhr){

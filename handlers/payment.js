@@ -288,6 +288,10 @@ var Payment = function (models) {
                     filtrElement[key] = {$in: condition.objectID()};
                     resArray.push(filtrElement);
                     break;
+                case 'name':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
                 case 'supplier':
                     filtrElement[key] = {$in: condition.objectID()};
                     resArray.push(filtrElement);
