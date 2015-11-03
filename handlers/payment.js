@@ -436,8 +436,8 @@ var Payment = function (models) {
                     status: workflow.status
                 };
                 invoice.paymentInfo.balance = (totalToPay - paid) / 100;
-               // invoice.paymentInfo.unTaxed += paid / 100;
-                invoice.paymentInfo.unTaxed += paid;
+                invoice.paymentInfo.unTaxed += paid / 100;// commented by Liliya forRoman
+               // invoice.paymentInfo.unTaxed = paid * (1 + invoice.paymentInfo.taxes);
                 invoice.payments.push(payment._id);
 
                 Invoice.findByIdAndUpdate(invoiceId, invoice, function (err, invoice) {
