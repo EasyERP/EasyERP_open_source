@@ -1,0 +1,21 @@
+.btn {
+  border: @thin-border @border-color-main;
+  margin: 0;
+  padding: .4em 1em;
+  line-height: normal;
+  font-size: 13px;
+  text-align: center;
+  text-decoration: none;
+  -webkit-font-smoothing: antialiased;
+  outline: none;
+  background: @bg-main;
+  span, a {
+    padding: 0 !important;
+    color: @tilte-color;
+  }
+  &:hover {
+    cursor: pointer;
+    background-position: 0;
+    background: @bg-butt-color - #131313;
+  }
+}
