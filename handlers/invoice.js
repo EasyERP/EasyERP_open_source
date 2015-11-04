@@ -734,7 +734,7 @@ var Invoice = function (models, event) {
         var db = req.session.lastDb;
         var moduleId = 56;
 
-        if  ((db === 'weTrack') || (db === 'production') || (db === 'development')){
+        if ((db === 'weTrack') || (db === 'production') || (db === 'development')){
             moduleId = 64
         }
 
