@@ -51,18 +51,18 @@ var wTrack = function (models) {
             var i;
 
             if (filter) {
-                if (filter.departments) {
+                if (filter.department && filter.department.value) {
                     departmentQuery = {
-                        $in: filter.departments.objectID()
+                        $in: filter.department.value.objectID()
                     }
                 }
             }
 
             weeksArr = [];
 
-            if (query && query.startDate && query.endDate) {
-                startDate = parseInt(query.startDate);
-                endDate = parseInt(query.endDate);
+            if (filter && filter.startDate && filter.endDate) {
+                startDate = parseInt(filter.startDate);
+                endDate = parseInt(filter.endDate);
 
                 for (i = startDate; i <= endDate; i++) {
                     _dateStr = i.toString();

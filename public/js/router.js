@@ -30,7 +30,7 @@ define([
             "easyErp/myProfile": "goToUserPages",
             "easyErp/Workflows": "goToWorkflows",
             "easyErp/Dashboard": "goToDashboard",
-            "easyErp/DashBoardVacation": "dashBoardVacation",
+            "easyErp/DashBoardVacation(/filter=:filter)": "dashBoardVacation",
             "easyErp/HrDashboard": "hrDashboard",
             "easyErp/projectDashboard": "goToProjectDashboard",
             "easyErp/:contentType": "getList",
@@ -95,8 +95,12 @@ define([
             ;
         },
 
-        dashBoardVacation: function () {
+        dashBoardVacation: function (filter) {
             var self = this;
+
+            if (filter) {
+                filter = JSON.parse(filter);
+            }
 
             if (!this.isAuth) {
                 this.checkLogin(function (success) {
@@ -127,8 +131,12 @@ define([
                     var topbarView;
 
                     custom.setCurrentVT('list');
-                    contentview = new contentView({startTime: startTime});
+                    contentview = new contentView({
+                        startTime: startTime,
+                        filter: filter
+                    });
                     topbarView = new TopBarView();
+                    topbarView.bind('changeDateRange', contentview.changeDateRange, contentview);
 
                     self.changeView(contentview);
                     self.changeTopBarView(topbarView);

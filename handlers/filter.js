@@ -11,10 +11,13 @@ var Filters = function (models) {
     var productSchema = mongoose.Schemas['Products'];
     var _ = require('../node_modules/underscore');
     var async = require('async');
+    var moment = require('../public/js/libs/moment/moment');
 
     this.getFiltersValues = function (req, res, next) {
         var lastDB = req.session.lastDb;
+        var query = req.query;
 
+        var startFilter;
         var WTrack = models.get(lastDB, 'wTrack', wTrackSchema);
         var Customer = models.get(lastDB, 'Customers', CustomerSchema);
         var Employee = models.get(lastDB, 'Employee', EmployeeSchema);
@@ -24,16 +27,62 @@ var Filters = function (models) {
         var customerPayments = models.get(lastDB, 'Payment', customerPaymentsSchema);
         var Product = models.get(lastDB, 'Products', productSchema);
         var Quotation = models.get(lastDB, 'Quotation', QuotationSchema);
+        var startDate;
+        var endDate;
+        var dateRangeObject;
+
+        function dateRange() {
+            "use strict";
+            var weeksArr = [];
+            var startWeek = moment().isoWeek() - 6;
+            var year = moment().isoWeekYear();
+            var week;
+
+            for (var i = 0; i <= 13; i++) {
+                if (startWeek + i > 53) {
+                    week = startWeek + i - 53;
+                    weeksArr.push((year + 1) * 100 + week);
+                } else {
+                    week = startWeek + i;
+                    weeksArr.push(year * 100 + week);
+                }
+            }
+
+            weeksArr.sort();
+
+            return {
+                startDate: weeksArr[0],
+                endDate  : weeksArr[weeksArr.length - 1]
+            };
+        };
+
+        if (query) {
+            startFilter = query.filter;
+
+            if (startFilter) {
+                startDate = startFilter.startDate;
+                endDate = startFilter.startDate;
+            }
+        }
+
+        if (!startDate || !endDate) {
+            dateRangeObject = dateRange();
+
+            startDate = dateRangeObject.startDate;
+            endDate = dateRangeObject.endDate;
+        }
+
+        console.log(startDate, endDate);
 
         async.parallel({
                 wTrack          : getWtrackFiltersValues,
-                Persons         : getPersonFiltersValues,
-                Companies       : getCompaniesFiltersValues,
-                Employees       : getEmployeeFiltersValues,
-                Applications    : getApplicationFiltersValues,
-                Projects        : getProjectFiltersValues,
-                Tasks           : getTasksFiltersValues,
-                salesInvoice    : getSalesInvoiceFiltersValues,
+                Persons: getPersonFiltersValues,
+                Companies: getCompaniesFiltersValues,
+                Employees: getEmployeeFiltersValues,
+                Applications: getApplicationFiltersValues,
+                Projects    : getProjectFiltersValues,
+                Tasks       : getTasksFiltersValues,
+                salesInvoice: getSalesInvoiceFiltersValues,
                 customerPayments: getCustomerPaymentsFiltersValues,
                 supplierPayments: getSupplierPaymentsFiltersValues,
                 Product         : getProductsFiltersValues,
@@ -106,7 +155,7 @@ var Filters = function (models) {
                 }
             ], function (err, result) {
                 if (err) {
-                    callback(err);
+                    return callback(err);
                 }
 
                 result = result[0];
@@ -153,7 +202,7 @@ var Filters = function (models) {
                 }
             ], function (err, result) {
                 if (err) {
-                    callback(err);
+                    return callback(err);
                 }
 
                 result = result[0];
@@ -199,7 +248,7 @@ var Filters = function (models) {
                 }
             ], function (err, result) {
                 if (err) {
-                    callback(err);
+                    return callback(err);
                 }
 
                 result = result[0];
@@ -257,7 +306,7 @@ var Filters = function (models) {
                 }
             ], function (err, result) {
                 if (err) {
-                    callback(err);
+                    return callback(err);
                 }
 
                 result = result[0];
@@ -302,7 +351,7 @@ var Filters = function (models) {
                 }
             ], function (err, result) {
                 if (err) {
-                    callback(err);
+                    return callback(err);
                 }
 
                 result = result[0];
@@ -344,7 +393,7 @@ var Filters = function (models) {
                 }
             ], function (err, result) {
                 if (err) {
-                    callback(err);
+                    return callback(err);
                 }
 
                 if (result) {
@@ -357,7 +406,21 @@ var Filters = function (models) {
         };
 
         function getDashVacationFiltersValues(callback) {
-            var matchObjectForDash;
+            var matchObjectForDash = {
+                /*isEmployee: true,*/
+                $or: [
+                    {
+                        isEmployee: true
+                    }, {
+                        $and: [{isEmployee: false}, {
+                            lastFire: {
+                                $ne: null,
+                                $gte: startDate
+                            }
+                        } /*{firedCount: {$gt: 0}}*/]
+                    }
+                ]
+            };
 
             Employee.aggregate([
                 {
@@ -377,24 +440,12 @@ var Filters = function (models) {
                                 _id : '$department._id',
                                 name: {'$ifNull': ['$department.name', 'None']}
                             }
-                        },
-                        'jobPosition': {
-                            $addToSet: {
-                                _id : '$jobPosition._id',
-                                name: {'$ifNull': ['$jobPosition.name', 'None']}
-                            }
-                        },
-                        'manager'    : {
-                            $addToSet: {
-                                _id : '$manager._id',
-                                name: {'$ifNull': ['$manager.name', 'None']}
-                            }
                         }
                     }
                 }
             ], function (err, result) {
                 if (err) {
-                    callback(err);
+                    return callback(err);
                 }
 
                 result = result[0];

@@ -15,24 +15,24 @@ define([
         var FilterView;
         FilterView = Backbone.View.extend({
             el                 : '#searchContainer',
-            contentType        : "Filter",
-            savedFilters       : {},
-            filterIcons        : {},
-            template           : _.template(ContentFilterTemplate),
+            contentType: "Filter",
+            savedFilters: {},
+            filterIcons : {},
+            template    : _.template(ContentFilterTemplate),
             searchGroupTemplate: _.template(searchGroupLiTemplate),
 
             events: {
-                "mouseover .search-content"     : 'showSearchContent',
-                "click .search-content"         : 'showSearchContent',
+                "mouseover .search-content"            : 'showSearchContent',
+                "click .search-content"    : 'showSearchContent',
                 "click .filter-dialog-tabs .filterTabs": 'showFilterContent',
-                'click #applyFilter'            : 'applyFilter',
-                'click .condition li'           : 'conditionClick',
-                'click .groupName'              : 'showHideValues',
-                "click .filterValues li"        : "selectValue",
-                "click .filters"                : "useFilter",
-                "click #saveFilterButton"       : "saveFilter",
-                "click .removeSavedFilter"      : "removeFilterFromDB",
-                "click .removeValues"           : "removeFilter"
+                'click #applyFilter'                   : 'applyFilter',
+                'click .condition li'                  : 'conditionClick',
+                'click .groupName'                     : 'showHideValues',
+                "click .filterValues li"               : "selectValue",
+                "click .filters"                       : "useFilter",
+                "click #saveFilterButton"              : "saveFilter",
+                "click .removeSavedFilter"             : "removeFilterFromDB",
+                "click .removeValues"                  : "removeFilter"
             },
 
             initialize: function (options) {
@@ -177,8 +177,8 @@ define([
                             headers : {
                                 mid: mid
                             },
-                            wait    : true,
-                            patch   : true,
+                            wait   : true,
+                            patch  : true,
                             validate: false,
                             success : function (model) {
                                 updatedInfo = model.get('success');
@@ -229,8 +229,8 @@ define([
                         headers : {
                             mid: mid
                         },
-                        wait    : true,
-                        patch   : true,
+                        wait   : true,
+                        patch  : true,
                         validate: false,
                         success : function (model) {
                         },
@@ -328,7 +328,7 @@ define([
                 });
             },
 
-            showFilterName: function(filterName){
+            showFilterName: function (filterName) {
                 var filterIc = this.$el.find('.filter-icons');
                 var filterValues = this.$el.find('.search-field .oe_searchview_input');
                 filterValues.empty();
@@ -347,7 +347,7 @@ define([
                 var valuesArray;
                 var collectionElement;
 
-                if (filterView){
+                if (filterView) {
                     valuesArray = App.filter[filterView]['value'];
                 } else {
                     App.filter = {};
@@ -441,7 +441,7 @@ define([
                 mapData = _.map(this.currentCollection[filterView].toJSON(), function (dataItem) {
                     return {
                         category       : key,
-                        categoryView   : filterView,
+                        categoryView: filterView,
                         categoryBackend: filterBackend,
                         label          : dataItem.name,
                         value          : dataItem.name,
