@@ -28,7 +28,8 @@ mainDb.once('open', function callback() {
     'use strict';
 
     var port = parseInt(process.env.PORT) || 8089;
-    var instance = process.env.NODE_APP_INSTANCE || 0;
+    var instance = parseInt(process.env.NODE_APP_INSTANCE) || 0;
+
     port +=instance;
     mainDb.dbsObject = dbsObject;
 
