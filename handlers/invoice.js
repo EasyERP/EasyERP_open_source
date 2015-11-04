@@ -1,5 +1,3 @@
-
-
 var mongoose = require('mongoose');
 var WorkflowHandler = require('./workflow');
 var RESPONSES = require('../constants/responses');
@@ -19,12 +17,10 @@ var Invoice = function (models) {
     var moment = require('../public/js/libs/moment/moment');
     var _ = require('../node_modules/underscore');
 
-     function checkDb(db){
-        if ((db === "weTrack") || (db === "production") || (db === "development")){
-            return true;
-        }
+    function checkDb(db) {
+        var validDbs = ["weTrack", "production", "development"];
 
-        return false;
+        return validDbs.indexOf(db) !== -1;
     };
 
     this.create = function (req, res, next) {
@@ -33,7 +29,7 @@ var Invoice = function (models) {
         var Invoice;
         var invoice;
 
-        if(isWtrack){
+        if (isWtrack) {
             Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
         } else {
             Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
@@ -66,9 +62,9 @@ var Invoice = function (models) {
 
         function fetchFirstWorkflow(callback) {
             var request = {
-                query: {
-                    wId: 'Purchase Invoice',
-                    source: 'purchase',
+                query  : {
+                    wId         : 'Purchase Invoice',
+                    source      : 'purchase',
                     targetSource: 'invoice'
                 },
                 session: req.session
@@ -134,12 +130,12 @@ var Invoice = function (models) {
 
             query.populate('salesPurchases.salesPerson', 'name');
 
-            query.exec(function(err, result){
-                if (err){
+            query.exec(function (err, result) {
+                if (err) {
                     callback(err)
                 }
 
-                if (result && result.salesPurchases.salesPerson){
+                if (result && result.salesPurchases.salesPerson) {
                     invoice.salesPerson = {};
                     invoice.salesPerson._id = result.salesPurchases.salesPerson._id;
                     invoice.salesPerson.name = result.salesPurchases.salesPerson.name.first + ' ' + result.salesPurchases.salesPerson.name.last;
@@ -225,7 +221,7 @@ var Invoice = function (models) {
         var filtrElement = {};
         var key;
 
-        for (var filterName in filter){
+        for (var filterName in filter) {
             condition = filter[filterName]['value'];
             key = filter[filterName]['key'];
 
@@ -252,7 +248,8 @@ var Invoice = function (models) {
                     resArray.push(filtrElement);
                     break;
             }
-        };
+        }
+        ;
 
         return resArray;
     };
@@ -262,7 +259,7 @@ var Invoice = function (models) {
         var moduleId = 56;
         var forSales = req.query.forSales;
 
-        if ((db === 'weTrack') || (db === 'production') || (db === 'development')){
+        if ((db === 'weTrack') || (db === 'production') || (db === 'development')) {
             moduleId = 64
         }
 
@@ -365,7 +362,7 @@ var Invoice = function (models) {
                             }
                         }
 
-                        if (forSales){
+                        if (forSales) {
                             optionsObject['$and'].push({forSales: true});
                         } else {
                             optionsObject['$and'].push({forSales: false});
@@ -375,16 +372,17 @@ var Invoice = function (models) {
                         var query = Invoice.find(optionsObject).limit(count).skip(skip).sort(sort);
 
                         query
-                            //.populate('supplier', 'name _id').
-                            //populate('salesPerson', 'name _id').
+                        //.populate('supplier', 'name _id').
+                        //populate('salesPerson', 'name _id').
                             .populate('department', '_id departmentName').
-                            populate('createdBy.user').
-                            populate('editedBy.user').
-                            populate('groups.users').
-                            populate('groups.group').
-                            populate('groups.owner', '_id login');/*.
-                            //populate('project', '_id projectName').
-                            populate('workflow._id', '-sequence');*/
+                        populate('createdBy.user').
+                        populate('editedBy.user').
+                        populate('groups.users').
+                        populate('groups.group').
+                        populate('groups.owner', '_id login');
+                        /*.
+                                                    //populate('project', '_id projectName').
+                                                    populate('workflow._id', '-sequence');*/
 
                         query.lean().exec(waterfallCallback);
                     };
@@ -419,7 +417,7 @@ var Invoice = function (models) {
         var id = data.id;
         var forSales;
 
-        if (isWtrack){
+        if (isWtrack) {
             moduleId = 64
         }
 
@@ -440,8 +438,8 @@ var Invoice = function (models) {
                     var contentSearcher;
                     var waterfallTasks;
 
-                    if(isWtrack){
-                        if (forSales){
+                    if (isWtrack) {
+                        if (forSales) {
                             Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
                         } else {
                             Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
@@ -516,7 +514,7 @@ var Invoice = function (models) {
 
 
                         optionsObject = {
-                            _id: id,
+                            _id     : id,
                             forSales: forSales
                         };
 
@@ -558,12 +556,12 @@ var Invoice = function (models) {
         var db = req.session.lastDb;
         var moduleId = 56;
         var paymentIds = [];
-        var wTrackIds  = [];
+        var wTrackIds = [];
         var invoiceDeleted;
         var Payment = models.get(db, "Payment", PaymentSchema);
         var wTrack = models.get(db, "wTrack", wTrackSchema);
 
-        if ((db === 'weTrack') || (db === 'production') || (db === 'development')){
+        if ((db === 'weTrack') || (db === 'production') || (db === 'development')) {
             moduleId = 64
         }
 
@@ -573,7 +571,7 @@ var Invoice = function (models) {
 
                     models.get(db, "Invoice", InvoiceSchema).findByIdAndRemove(id, function (err, result) {
                         if (err) {
-                           return next(err);
+                            return next(err);
                         }
 
                         invoiceDeleted = result.toJSON();
@@ -585,18 +583,18 @@ var Invoice = function (models) {
                             paymentIds.push(payment);
                         });
 
-                        function paymentsRemove (){
+                        function paymentsRemove() {
                             async.each(paymentIds, function (id) {
                                 Payment.findByIdAndRemove(id, function (err, result) {
                                     if (err) {
                                         return console.log(err);
                                     }
-                                   // console.log('success');
+                                    // console.log('success');
                                 });
                             });
                         };
 
-                        function wTrackUpdate (){
+                        function wTrackUpdate() {
                             var setData = {};
 
                             async.each(wTrackIds, function (id) {
@@ -612,17 +610,17 @@ var Invoice = function (models) {
                                     if (err) {
                                         return console.log(err);
                                     }
-                                  //  console.log('success');
+                                    //  console.log('success');
                                 });
                             });
                         };
 
                         async.parallel([paymentsRemove, wTrackUpdate], function (err, result) {
-                            if (err){
+                            if (err) {
                                 next(err)
                             }
 
-                           // console.log('success');
+                            // console.log('success');
 
                         });
 
@@ -644,7 +642,7 @@ var Invoice = function (models) {
         var db = req.session.lastDb;
         var moduleId = 56;
 
-        if ((db === 'weTrack') || (db === 'production') || (db === 'development')){
+        if ((db === 'weTrack') || (db === 'production') || (db === 'development')) {
             moduleId = 64
         }
 
@@ -803,8 +801,8 @@ var Invoice = function (models) {
         var date = moment().format('DD/MM/YYYY');
 
         db.collection('settings').findOneAndUpdate({
-                dbName: currentDbName,
-                name: 'invoice',
+                dbName : currentDbName,
+                name  : 'invoice',
                 project: project
             },
             {
@@ -812,7 +810,7 @@ var Invoice = function (models) {
             },
             {
                 returnOriginal: false,
-                upsert: true
+                upsert        : true
             },
             function (err, rate) {
                 var resultName;
@@ -822,7 +820,7 @@ var Invoice = function (models) {
                 }
 
                 resultName = rate.value.seq + '-' + date;
-                res.status(200).send(resultName) ;
+                res.status(200).send(resultName);
             });
     };
 
@@ -837,8 +835,8 @@ var Invoice = function (models) {
                 Invoice
                     .aggregate([
                         {
-                            $group:{
-                                _id: null,
+                            $group: {
+                                _id       : null,
                                 'Due date': {
                                     $addToSet: '$dueDate'
                                 }/*,
@@ -876,14 +874,15 @@ var Invoice = function (models) {
 
         ], function (err, result) {
             if (err) {
-               return next(err)
+                return next(err)
             }
 
-            _.map(result[0], function(value, key) {
+            _.map(result[0], function (value, key) {
                 switch (key) {
                     case 'salesPerson':
                         result[0][key] = _.sortBy(value, 'name');
-                        break;;
+                        break;
+                        ;
 
                 }
             });
