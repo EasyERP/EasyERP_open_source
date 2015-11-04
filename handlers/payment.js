@@ -23,7 +23,7 @@ function returnModuleId(req) {
     return moduleId;
 }
 
-var Payment = function (models) {
+var Payment = function (models, event) {
     var access = require("../Modules/additions/access.js")(models);
 
     var EmployeeSchema = mongoose.Schemas['Employee'];
@@ -357,6 +357,8 @@ var Payment = function (models) {
         var DbName = req.session.lastDb;
         var mid = body.mid;
         var data = body;
+        var project;
+        var type = "Payment";
 
         delete  data.mid;
 
@@ -398,6 +400,7 @@ var Payment = function (models) {
             var paid = payment.paidAmount;
             var isNotFullPaid;
             var wId;
+            var products = invoice.products;
 
             if (invoice.invoiceType === 'wTrack'){
                 wId = 'Sales Invoice';
@@ -454,10 +457,9 @@ var Payment = function (models) {
                                 return next(err);
                             }
 
-                            cb();
-
                             project = result.get('project');
 
+                            cb();
                         });
 
                     }, function(){

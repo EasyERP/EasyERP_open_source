@@ -169,10 +169,9 @@ var Invoice = function (models, event) {
                             return next(err);
                         }
 
-                        cb();
-
                         project = result.get('project');
 
+                        cb();
                     });
 
                 }, function(){
