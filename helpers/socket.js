@@ -31,8 +31,8 @@ module.exports = function ( server ) {
     );
 
     io.set('transports', [
-       /* 'websocket',
-        'polling',*/
+        'websocket',
+        'polling',
         'xhr-polling'
     ]);
 
