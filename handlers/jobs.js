@@ -75,9 +75,7 @@ var Jobs = function (models, event) {
         var pId = req.query.projectId;
         var query = models.get(req.session.lastDb, 'jobs', JobsSchema);
 
-        //TODO type
-
-        query.find({/*type: "Empty",*/ project: objectId(pId)}, {
+        query.find({type: "Empty", project: objectId(pId)}, {
             name: 1,
             _id: 1,
             "budget.budgetTotal.revenueSum": 1
@@ -170,19 +168,28 @@ var Jobs = function (models, event) {
             } else if (data.products && data.products.length) {
                 var products = JSON.parse(data.products);
                 var type = data.type;
+                var project;
 
-                products.forEach(function (product) {
+                async.each(products, function (product, cb) {
 
                     JobsModel.findByIdAndUpdate(product.jobs, {type: type}, {new: true}, function (err, result) {
                         if (err) {
                             return next(err);
                         }
 
+                        project = result.get('project');
+
+                        cb();
+
                     });
 
+                }, function(){
+                    event.emit('fetchJobsCollection', {project: project});
                 });
 
             }
+
+
         }
 
 
