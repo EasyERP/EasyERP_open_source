@@ -39,14 +39,12 @@ module.exports = function (server) {
     pub.select(parseInt(process.env.SOCKET_DB));
     sub.select(parseInt(process.env.SOCKET_DB));
 
-    /* io.adapter(
-         adapter({
-             pubClient: pub,
-             subClient: sub
-         })
-     );*/
-
-    io.adapter(adapter({host: process.env.SOCKET_DB_HOST, port: parseInt(process.env.SOCKET_DB_PORT)}));
+    io.adapter(adapter({
+        host: process.env.SOCKET_DB_HOST,
+        port: parseInt(process.env.SOCKET_DB_PORT),
+        pubClient: pub,
+        subClient: sub
+    }));
 
     pub.on('error', onError);
     sub.on('error', onError);
