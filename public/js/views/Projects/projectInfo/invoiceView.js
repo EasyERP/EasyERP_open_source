@@ -6,8 +6,8 @@ define([
     'views/salesInvoice/list/ListView',
     'text!templates/Projects/projectInfo/invoiceTemplate.html',
     'views/salesInvoice/EditView',
-    'views/customerPayments/list/ListItemView',
-    'collections/customerPayments/filterCollection',
+    'views/salesInvoice/list/ListItemView',
+    'collections/salesInvoice/filterCollection',
     'models/InvoiceModel',
     'common',
     'helpers'

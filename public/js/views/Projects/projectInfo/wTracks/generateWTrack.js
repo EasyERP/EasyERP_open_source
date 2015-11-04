@@ -287,7 +287,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                 generateItems: function (e) {
                     this.setChangedValueToModel();
-                    
+
                     var errors = this.$el.find('.errorContent');
                     var self = this;
                     var data = JSON.stringify(this.resultArray);
