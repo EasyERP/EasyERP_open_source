@@ -62,7 +62,15 @@
             <td class="expand">+</td>
             <td class="editableJobs" id="jobsName"><%=element.name%></td>
             <td class="selects"><a data-id="<%=element.workflow._id%>" id="workflow" class="current-selected"><%=element.workflow.name%></a></td>
-            <td><%=element.type%></td>
+            <td class="selects"><a data-id="<%=element.type%>" id="type" class="current-selected"><%=element.type%></a>
+                <ul class="newSelectList" style="display: none;">
+                    <li>Order</li>
+                    <li>Quotation</li>
+                    <li>Invoice</li>
+                    <li>Payment</li>
+                    <li>Empty</li>
+                </ul>
+            </td>
             <td><%=element.budget.projectTeam.length%></td>
             <td><%= budgetTotal ? currencySplitter(budgetTotal.hoursSum.toFixed()) : 0%></td>
             <td><%= budgetTotal ? currencySplitter(budgetTotal.costSum.toFixed()) : 0%></td>

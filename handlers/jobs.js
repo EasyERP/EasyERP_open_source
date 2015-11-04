@@ -141,6 +141,8 @@ var Jobs = function (models, event) {
                 } else if (data.name) {
                     query = {name: data.name};
                     updatewTracks = true;
+                } else if (data.type){
+                    query = {type: data.type};
                 }
 
                 delete data._id;
