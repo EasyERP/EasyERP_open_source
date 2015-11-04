@@ -600,25 +600,23 @@ input::-ms-clear {
 
   h2 {
     font-family: @lucida-font;
-    color: #4c4c4c;
+    color: @mainText-color;
     .bold;
     font-size: 24px !important;
-    //text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
     margin-bottom: 12px;
   }
 
   h2:first-of-type {
     font-size: 26px;
     .bold;
-    color: #4c4c4c;
+    color: @mainText-color;
     margin: 0 0 8px;
   }
 
   p {
     font-family: @lucida-font;
-    color: #4c4c4c;
+    color: @mainText-color;
     font-size: 13px;
-    //text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
     line-height: 30px;
     min-height: 30px;
 
@@ -4381,7 +4379,6 @@ h3.dashboard {
     width: @width;
     height: @width;
     border-radius: @width;
-    margin-left: 6px;
     border: @thin-border silver;
     margin: 0 auto;
     &.health1 {
@@ -4407,7 +4404,7 @@ h3.dashboard {
     background-color: white;
     z-index: 1;
     &.with-div {
-      margin-left: 3px;
+      margin-left: 17px;
     }
 
     li {
@@ -4540,6 +4537,9 @@ h3.dashboard {
     select {
       width: 232px;
     }
+    #health {
+      width: 25px;
+    }
 
   }
   .job-create-info {
@@ -4620,19 +4620,22 @@ h3.dashboard {
     height: 30px;
     line-height: 30px;
     margin: 2px 0;
-    border: 1px solid #CCC;
-    background: #F5F5F5;
-
+    border: 1px solid @border-color-main;
+    background: @bg-main;
     cursor: pointer;
+    span {
+      color: @mainText-color;
+    }
     div.name {
       .text-overflow;
+
     }
     .edit-status {
       display: none;
     }
 
     &:hover {
-      background: #FFF;
+      background: @defaultBgHover-color;
       width: 403px;
       display: block;
       .edit-status {

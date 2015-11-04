@@ -2614,18 +2614,18 @@ dl dd span.ui-spinner {
 }
 .form h2 {
   font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
-  color: #4c4c4c;
+  color: #cdcdcd;
   font-size: 24px !important;
   margin-bottom: 12px;
 }
 .form h2:first-of-type {
   font-size: 26px;
-  color: #4c4c4c;
+  color: #cdcdcd;
   margin: 0 0 8px;
 }
 .form p {
   font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
-  color: #4c4c4c;
+  color: #cdcdcd;
   font-size: 13px;
   line-height: 30px;
   min-height: 30px;
@@ -3191,18 +3191,18 @@ dl dd span.ui-spinner {
 }
 .formLeftColumn .form h2 {
   font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
-  color: #4c4c4c;
+  color: #cdcdcd;
   font-size: 24px !important;
   margin-bottom: 12px;
 }
 .formLeftColumn .form h2:first-of-type {
   font-size: 26px;
-  color: #4c4c4c;
+  color: #cdcdcd;
   margin: 0 0 8px;
 }
 .formLeftColumn .form p {
   font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
-  color: #4c4c4c;
+  color: #cdcdcd;
   font-size: 13px;
   line-height: 30px;
   min-height: 30px;
@@ -3541,18 +3541,18 @@ dl dd span.ui-spinner {
 }
 .formRightColumn .form h2 {
   font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
-  color: #4c4c4c;
+  color: #cdcdcd;
   font-size: 24px !important;
   margin-bottom: 12px;
 }
 .formRightColumn .form h2:first-of-type {
   font-size: 26px;
-  color: #4c4c4c;
+  color: #cdcdcd;
   margin: 0 0 8px;
 }
 .formRightColumn .form p {
   font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
-  color: #4c4c4c;
+  color: #cdcdcd;
   font-size: 13px;
   line-height: 30px;
   min-height: 30px;
@@ -7171,7 +7171,6 @@ h3.dashboard {
   width: 10px;
   height: 10px;
   border-radius: 10px;
-  margin-left: 6px;
   border: 1px solid #c0c0c0;
   margin: 0 auto;
 }
@@ -7204,7 +7203,7 @@ h3.dashboard {
 }
 #health ul.with-div,
 .health-wrapper ul.with-div {
-  margin-left: 3px;
+  margin-left: 17px;
 }
 #health ul li div,
 .health-wrapper ul li div {
@@ -7538,6 +7537,9 @@ span.unDone {
 .form-holder form .project-edit-info select {
   width: 232px;
 }
+.form-holder form .project-edit-info #health {
+  width: 25px;
+}
 .form-holder form .job-create-info {
   clear: both;
   font-size: 14px;
@@ -7861,9 +7863,12 @@ span.unDone {
   height: 30px;
   line-height: 30px;
   margin: 2px 0;
-  border: 1px solid #CCC;
-  background: #F5F5F5;
+  border: 1px solid #7f7f80;
+  background: #303031;
   cursor: pointer;
+}
+#workflows .row span {
+  color: #cdcdcd;
 }
 #workflows .row div.name {
   overflow: hidden;
@@ -7874,7 +7879,7 @@ span.unDone {
   display: none;
 }
 #workflows .row:hover {
-  background: #FFF;
+  background: #565658;
   width: 403px;
   display: block;
 }
