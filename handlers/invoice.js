@@ -262,7 +262,7 @@ var Invoice = function (models) {
         var moduleId = 56;
         var forSales = req.query.forSales;
 
-        if (db === 'weTrack'){
+        if ((db === 'weTrack') || (db === 'production') || (db === 'development')){
             moduleId = 64
         }
 
@@ -563,7 +563,7 @@ var Invoice = function (models) {
         var Payment = models.get(db, "Payment", PaymentSchema);
         var wTrack = models.get(db, "wTrack", wTrackSchema);
 
-        if (db === 'weTrack'){
+        if ((db === 'weTrack') || (db === 'production') || (db === 'development')){
             moduleId = 64
         }
 
@@ -644,7 +644,7 @@ var Invoice = function (models) {
         var db = req.session.lastDb;
         var moduleId = 56;
 
-        if (db === 'weTrack'){
+        if ((db === 'weTrack') || (db === 'production') || (db === 'development')){
             moduleId = 64
         }
 
