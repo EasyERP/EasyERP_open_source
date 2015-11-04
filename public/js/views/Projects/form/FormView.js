@@ -57,8 +57,15 @@ define([
                 "mouseleave #jobsItem": "hideRemoveButton",
                 "click .fa.fa-trash": "removeJobAndWTracks",
                 "dblclick td.editable": "editRow",
-                "click #saveName": "saveNewJobName"
+                "click #saveName": "saveNewJobName",
+                "keydown input.editing ": "keyDown"
 
+            },
+
+            keyDown: function (e) {
+                if (e.which === 13) {
+                   this.saveNewJobName(e);
+                }
             },
 
             editRow: function (e, prev, next) {
@@ -99,7 +106,7 @@ define([
 
                 var self = this;
                 var id = $(e.target).parents("td").closest('tr').attr('data-id');
-                var name = $(e.target).prev('input').val();
+                var name = $(e.target).prev('input').val() ? $(e.target).prev('input').val() : $(e.target).val();
 
                 var data = {_id: id, name: name};
 
