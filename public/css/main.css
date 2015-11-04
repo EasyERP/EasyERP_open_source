@@ -313,17 +313,6 @@ th {
   background-color: #303031;
   color: #cdcdcd;
 }
-.btnAdd {
-  border: 1px solid transparent;
-  background: #3494b9;
-  padding: 0px 6px;
-  color: #f4f4f4;
-  line-height: 19px;
-}
-.btnAdd:hover {
-  text-decoration: none;
-  background: #297492;
-}
 .btn-list {
   height: 24px;
   border: 1px solid #7f7f80;
@@ -361,186 +350,6 @@ th {
 .btn-list .selected a {
   color: white;
 }
-.pagination {
-  width: 100%;
-  margin: 5px 0;
-  float: right;
-}
-.pagination > div {
-  float: left;
-  color: #cdcdcd;
-  padding: 0 5px;
-  box-sizing: border-box;
-}
-.pagination .countOnPage {
-  text-align: left;
-}
-.pagination .countOnPage > div {
-  float: left;
-}
-.pagination .countOnPage span {
-  padding: 1px 3px;
-}
-.pagination .countOnPage .page-list {
-  padding: 1px 3px;
-}
-.pagination .countOnPage .page-list a {
-  display: block;
-  float: left;
-}
-.pagination .pageList {
-  position: relative;
-}
-.pagination .pageList .itemsNumber {
-  text-decoration: none;
-  display: inline-block;
-  padding: 0 5px;
-}
-.pagination .pageList .itemsNumber:hover {
-  padding-bottom: 4px;
-  border-bottom: 1px solid #7f7f80;
-}
-.pagination .pageList a.selectedItemsNumber {
-  border-bottom: 1px solid #7f7f80;
-  padding-bottom: 4px;
-}
-.pagination .pageList button {
-  background-color: white;
-  background-image: none;
-  border-radius: 0;
-  width: 27px;
-  margin: 0 0 0 5px;
-  line-height: 10px;
-  font-size: 12px;
-  padding: 3px 2px;
-}
-.pagination .pageList button:hover {
-  background-color: #F7F8F9;
-}
-.pagination .nextPrev {
-  float: right;
-  text-align: right;
-}
-.pagination .nextPrev div,
-.pagination .nextPrev button {
-  float: left;
-  line-height: 24px;
-}
-.pagination .nextPrev span {
-  padding: 0 3px;
-}
-.pagination .nextPrev button.fa {
-  border: 1px solid #7f7f80;
-  background: transparent;
-  color: #cdcdcd;
-  line-height: 15px;
-  font-size: 15px;
-  width: 24px;
-  height: 24px;
-  display: block;
-  text-align: center;
-  padding: 2px;
-  border-radius: 0;
-}
-.pagination .nextPrev button.fa:hover {
-  background: transparent !important;
-  color: #ffffff;
-  border-color: #ffffff;
-}
-.pagination .nextPrev button.fa[disabled] {
-  color: #747474;
-  border-color: #747474;
-  cursor: default;
-  background: transparent !important;
-}
-.pagination .nextPrev button.fa[disabled]:hover {
-  color: #747474;
-  border-color: #747474;
-  cursor: default;
-  background: transparent !important;
-}
-.pagination .nextPrev #firstShowPage,
-.pagination .nextPrev #lastShowPage {
-  width: 30px;
-  display: block;
-}
-.pagination .nextPrev #previousPage {
-  margin: 0 3px;
-}
-.pagination .nextPrev #nextPage {
-  margin: 0 3px;
-}
-.pagination .nextPrev .currentPageList {
-  margin: 0 5px;
-}
-.pagination .nextPrev .allPage {
-  position: relative;
-}
-.pagination .nextPrev ul {
-  background-color: #303031;
-  border: 1px solid #7f7f80;
-  position: absolute;
-  bottom: 23px;
-  left: 5px;
-  display: none;
-  font-size: 12px;
-}
-.pagination .nextPrev ul li a {
-  display: block;
-  width: 22px;
-  height: 20px;
-  line-height: 20px;
-  text-align: center;
-}
-.pagination .nextPrev ul li a:hover {
-  background-color: #66b5d4;
-  color: white;
-  text-decoration: none;
-}
-.pagination .nextPrev #pageList {
-  background-color: #303031;
-  border: 1px solid #7f7f80;
-  position: absolute;
-  bottom: 23px;
-  left: 5px;
-  display: none;
-}
-.pagination .nextPrev #pageList li {
-  display: block;
-  width: 22px;
-  height: 20px;
-  line-height: 20px;
-  text-align: center;
-  font-size: 12px;
-  cursor: pointer;
-}
-.pagination .nextPrev #pageList li:hover {
-  background-color: #66b5d4;
-  color: white;
-  text-decoration: none;
-}
-.pagination #currentShowPage {
-  border: 1px solid #7f7f80;
-  margin: 0 2px 0 5px;
-  width: 30px;
-  height: 22px;
-  float: left;
-  font-size: 12px !important;
-  text-align: center;
-  max-width: 30px;
-  line-height: 20px;
-  background-color: transparent;
-  font-family: Arial, Helvetica, sans-serif;
-  padding: 0 2px;
-  color: #cdcdcd;
-}
-.pagination #currentShowPage:focus {
-  box-shadow: 0 0 5px #66b5d4;
-  -moz-box-shadow: 0 0 5px #66b5d4;
-  -webkit-box-shadow: 0 0 5px #66b5d4;
-  outline: medium none;
-  border: 1px solid #66b5d4 !important;
-}
 .alert {
   padding: 15px 15px 15px 35px;
   position: relative;
@@ -557,6 +366,73 @@ th {
 .alertSuccess:before {
   content: '\f05d';
 }
+.btn {
+  border: 1px solid #7f7f80;
+  margin: 0;
+  padding: .4em 1em;
+  line-height: normal;
+  font-size: 13px;
+  text-align: center;
+  text-decoration: none;
+  -webkit-font-smoothing: antialiased;
+  outline: none;
+  background: #303031;
+}
+.btn span,
+.btn a {
+  padding: 0 !important;
+  color: #66b5d4;
+}
+.btn:hover {
+  cursor: pointer;
+  background-position: 0;
+  background: #1d1d1e;
+}
+/*== Begin Input type number =============*/
+.ui-spinner {
+  position: relative;
+  padding: 0;
+  display: block;
+  overflow: hidden;
+}
+.ui-spinner .ui-spinner-input {
+  float: left;
+  border: none ;
+}
+.ui-spinner span {
+  display: block;
+  width: 8px;
+  height: 8px;
+  text-align: center;
+  padding: 0;
+}
+.ui-spinner .ui-spinner-up {
+  position: absolute;
+  right: 5px;
+  top: 2px;
+  padding: 0;
+  cursor: pointer;
+  font-size: 8px;
+  line-height: 8px;
+}
+.ui-spinner .ui-spinner-up:hover {
+  text-decoration: none;
+  color: #99e8ff;
+}
+.ui-spinner .ui-spinner-down {
+  position: absolute;
+  padding: 0;
+  right: 5px;
+  top: 10px;
+  cursor: pointer;
+  font-size: 8px;
+  line-height: 8px;
+}
+.ui-spinner .ui-spinner-down:hover {
+  text-decoration: none;
+  color: #99e8ff;
+}
+/*== End Input type number =============*/
 /************* Main Colors *************/
 /* errors, negativeMoney */
 /* .cash */
@@ -605,362 +481,6 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 .salary-list tbody#listTable .subRow:hover {
   background-color: transparent;
 }
-.list2 {
-  color: #cdcdcd !important;
-  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
-  width: 100%;
-  table-layout: fixed;
-}
-.list2 .anotherColor {
-  background-color: #66b5d4;
-}
-.list2 tfoot tr {
-  border-bottom: 1px solid #7f7f80;
-  background: inherit !important;
-  vertical-align: middle;
-}
-.list2 tfoot td {
-  padding: 3px 6px;
-  line-height: 18px;
-  font-size: 12px;
-  text-align: right;
-}
-.list2 tfoot td span {
-  padding-right: 0;
-}
-.list2 thead tr {
-  border-top: 0;
-  background: inherit !important;
-  vertical-align: top;
-}
-.list2 thead .subSalaryHead {
-  border-top: none;
-}
-.list2 thead th {
-  padding: 2px 6px;
-  line-height: 18px;
-  font-size: 12px;
-  text-align: right;
-}
-.list2 thead th:nth-child(1),
-.list2 thead th:nth-child(2) {
-  text-align: center;
-}
-.list2 thead th input[type="checkbox"] {
-  margin-top: 2.5px;
-}
-.list2 thead th.oe_sortable,
-.list2 thead th.oe_sortable_sub {
-  cursor: pointer;
-}
-.list2 thead th.oe_sortable .arrow,
-.list2 thead th.oe_sortable_sub .arrow {
-  display: none;
-  padding: 0 0 0 5px;
-  margin: 0;
-  text-align: center;
-  width: 5px;
-  height: 5px;
-  font-weight: 100 !important;
-  cursor: pointer;
-  font-family: Icons;
-  text-decoration: none;
-  line-height: 23px;
-  background: none;
-}
-.list2 thead th.oe_sortable.sortUp .up,
-.list2 thead th.oe_sortable_sub.sortUp .up {
-  display: inline-block;
-}
-.list2 thead th.oe_sortable.sortDn .down,
-.list2 thead th.oe_sortable_sub.sortDn .down {
-  display: inline-block;
-}
-.list2 thead th.forCaption {
-  background-color: #1ebbea;
-  width: 50%;
-  text-align: right;
-}
-.list2 thead th:first-of-type {
-  width: 12px;
-}
-.list2 thead th:first-of-type input {
-  cursor: pointer;
-}
-.list2 tbody tr {
-  border-top: 1px solid #7f7f80;
-}
-.list2 tbody tr.greenAlarm {
-  border: 2px solid #90ee90;
-}
-.list2 tbody tr.canceledListItem {
-  color: grey;
-}
-.list2 tbody tr.canceledListItem .newSelectList {
-  color: #000;
-}
-.list2 tbody tr:last-child {
-  border-bottom: 1px solid #7f7f80;
-}
-.list2 tbody tr.stage-cancelled,
-.list2 tbody tr.stage-refused,
-.list2 tbody tr.stage-contractend,
-.list2 tbody tr.stage-lost {
-  text-decoration: line-through;
-}
-.list2 tbody tr td {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  cursor: pointer;
-  padding: 0 6px;
-  font-size: 12px;
-  text-align: right;
-  border-right: 1px solid #7f7f80;
-  border-bottom: 1px solid #7f7f80;
-  color: #cdcdcd;
-  line-height: 20px;
-}
-.list2 tbody tr td.red-border {
-  color: red;
-}
-.list2 tbody tr td:nth-child(1),
-.list2 tbody tr td:nth-child(2) {
-  text-align: center;
-}
-.list2 tbody tr td.withSelect {
-  position: relative;
-}
-.list2 tbody tr td[data-content="workflow"] {
-  position: relative;
-  padding: 0 15px;
-  overflow: visible;
-}
-.list2 tbody tr td[data-content="workflow"] .newSelectList {
-  top: 5px;
-  right: 15px;
-}
-.list2 tbody tr td progress {
-  width: 100%;
-}
-.list2 tbody tr td a {
-  color: #cdcdcd;
-  display: inline-block;
-}
-.list2 tbody tr td a.stageSelect {
-  color: #cdcdcd;
-}
-.list2 tbody tr td a.done {
-  color: #00c60b !important;
-}
-.list2 tbody tr td progress {
-  background-color: #f5f5f5;
-}
-.list2 tbody tr td progress::-webkit-progress-bar {
-  background-color: #f5f5f5;
-}
-.list2 tbody tr td progress::-webkit-progress-value {
-  background-color: #57B5E3;
-}
-.list2 tbody tr td:first-of-type {
-  padding-left: 7px;
-  line-height: 20px;
-}
-.list2 tbody tr td:first-of-type input {
-  cursor: pointer;
-}
-.list2 tbody tr .icon {
-  line-height: 20px;
-}
-.list2 tr:nth-child(odd) {
-  background-color: #3d3d3e;
-}
-.list2 tr:hover {
-  background-color: #565658;
-}
-.list2 .anotherColor {
-  background-color: #66b5d4;
-}
-.list2 tfoot tr {
-  border-bottom: 1px solid #7f7f80;
-  background: inherit !important;
-  vertical-align: middle;
-}
-.list2 tfoot td {
-  padding: 3px 6px;
-  line-height: 18px;
-  font-size: 12px;
-  text-align: right;
-}
-.list2 tfoot td span {
-  padding-right: 0;
-}
-.list2 thead tr {
-  border-top: 0;
-  background: inherit !important;
-  vertical-align: top;
-}
-.list2 thead .subSalaryHead {
-  border-top: none;
-}
-.list2 thead th {
-  padding: 2px 6px;
-  line-height: 18px;
-  font-size: 12px;
-  text-align: right;
-}
-.list2 thead th:nth-child(1),
-.list2 thead th:nth-child(2) {
-  text-align: center;
-}
-.list2 thead th input[type="checkbox"] {
-  margin-top: 2.5px;
-}
-.list2 thead th.oe_sortable,
-.list2 thead th.oe_sortable_sub {
-  cursor: pointer;
-}
-.list2 thead th.oe_sortable .arrow,
-.list2 thead th.oe_sortable_sub .arrow {
-  display: none;
-  padding: 0 0 0 5px;
-  margin: 0;
-  text-align: center;
-  width: 5px;
-  height: 5px;
-  font-weight: 100 !important;
-  cursor: pointer;
-  font-family: Icons;
-  text-decoration: none;
-  line-height: 23px;
-  background: none;
-}
-.list2 thead th.oe_sortable.sortUp .up,
-.list2 thead th.oe_sortable_sub.sortUp .up {
-  display: inline-block;
-}
-.list2 thead th.oe_sortable.sortDn .down,
-.list2 thead th.oe_sortable_sub.sortDn .down {
-  display: inline-block;
-}
-.list2 thead th.forCaption {
-  background-color: #1ebbea;
-  width: 50%;
-  text-align: right;
-}
-.list2 thead th:first-of-type {
-  width: 12px;
-}
-.list2 thead th:first-of-type input {
-  cursor: pointer;
-}
-.list2 tbody tr {
-  border-top: 1px solid #7f7f80;
-}
-.list2 tbody tr.greenAlarm {
-  border: 2px solid #90ee90;
-}
-.list2 tbody tr.canceledListItem {
-  color: grey;
-}
-.list2 tbody tr.canceledListItem .newSelectList {
-  color: #000;
-}
-.list2 tbody tr:last-child {
-  border-bottom: 1px solid #7f7f80;
-}
-.list2 tbody tr.stage-cancelled,
-.list2 tbody tr.stage-refused,
-.list2 tbody tr.stage-contractend,
-.list2 tbody tr.stage-lost {
-  text-decoration: line-through;
-}
-.list2 tbody tr td {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  cursor: pointer;
-  padding: 0 6px;
-  font-size: 12px;
-  text-align: right;
-  border-right: 1px solid #7f7f80;
-  border-bottom: 1px solid #7f7f80;
-  color: #cdcdcd;
-  line-height: 20px;
-}
-.list2 tbody tr td.red-border {
-  color: red;
-}
-.list2 tbody tr td:nth-child(1),
-.list2 tbody tr td:nth-child(2) {
-  text-align: center;
-}
-.list2 tbody tr td.withSelect {
-  position: relative;
-}
-.list2 tbody tr td[data-content="workflow"] {
-  position: relative;
-  padding: 0 15px;
-  overflow: visible;
-}
-.list2 tbody tr td[data-content="workflow"] .newSelectList {
-  top: 5px;
-  right: 15px;
-}
-.list2 tbody tr td progress {
-  width: 100%;
-}
-.list2 tbody tr td a {
-  color: #cdcdcd;
-  display: inline-block;
-}
-.list2 tbody tr td a.stageSelect {
-  color: #cdcdcd;
-}
-.list2 tbody tr td a.done {
-  color: #00c60b !important;
-}
-.list2 tbody tr td progress {
-  background-color: #f5f5f5;
-}
-.list2 tbody tr td progress::-webkit-progress-bar {
-  background-color: #f5f5f5;
-}
-.list2 tbody tr td progress::-webkit-progress-value {
-  background-color: #57B5E3;
-}
-.list2 tbody tr td:first-of-type {
-  padding-left: 7px;
-  line-height: 20px;
-}
-.list2 tbody tr td:first-of-type input {
-  cursor: pointer;
-}
-.list2 tbody tr .icon {
-  line-height: 20px;
-}
-.list2 tr:nth-child(odd) {
-  background-color: #3d3d3e;
-}
-.list2 tr:hover {
-  background-color: #565658;
-}
-.list2 thead th:first-of-type {
-  width: 15%;
-}
-.list2 .datepicker {
-  width: 90%;
-}
-.list2 .datepicker.notVisible {
-  display: none;
-}
-.ui-dialog .list2 thead th,
-.ui-dialog .list2 tbody tr td,
-.ui-dialog .list2 tfoot tr td {
-  text-align: left;
-  line-height: 1;
-  height: 20px;
-}
 #forInfo .tableProjects {
   width: 99%;
   margin-bottom: 10px;
@@ -969,37 +489,29 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   text-align: right;
 }
 #forInfo .tableProjects thead th.forCaption {
+  text-align: left;
   margin-top: 15px;
+  background-color: #66b5d4;
   font-size: 12px;
   line-height: 28px;
   padding: 0 0  0 10px;
   color: #ffffff;
   position: relative;
-}
-#forInfo .tableProjects thead th.forCaption:last-child {
-  padding: 0 10px 0 0;
-}
-#forInfo .tableProjects thead th.forCaption:first-child {
-  text-align: left;
-  padding: 0 0 0 10px;
+  border-right: 1px solid #66b5d4;
 }
 #forInfo .tableProjects thead th.forCaption a {
+  text-align: right;
   color: #ffffff;
+  position: absolute;
+  right: 10px;
+  top: 0;
+  display: block;
 }
 #forInfo .tableProjects tbody td {
   text-align: right;
 }
 #forInfo .tableProjects tbody td:first-child {
   border-left: 1px solid #7f7f80;
-}
-#forInfo .tableProjects tbody td.remove {
-  min-width: 10px;
-  border-right: none;
-  border-left: 1px solid #7f7f80;
-}
-#forInfo .tableProjects tbody td.expand {
-  text-align: center;
-  font-size: 14px;
 }
 #forInfo .tableProjects tr .procent {
   position: relative;
@@ -1012,37 +524,6 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   height: 5px;
   position: absolute;
   right: 13px;
-}
-#forInfo .tableProjects .subRow {
-  background: none;
-}
-#forInfo .tableProjects .subRow:hover {
-  background: none;
-}
-#forInfo .tableProjects .subRow > td {
-  padding-right: 0;
-}
-#forInfo .tableProjects .subRow td:first-child {
-  border-left: 1px solid transparent !important;
-}
-#forInfo .tableProjects .subRow td:last-child {
-  border-right: 1px solid transparent !important;
-}
-#forInfo .tableProjects .tableProject {
-  padding: 5px 0px 5px 20px;
-}
-#forInfo .tableProjects .tableProject .list {
-  border-top: 1px solid transparent;
-}
-#forInfo .tableProjects .tableProject .list tbody tr {
-  border-top: 1px solid transparent;
-}
-.tableResponsive {
-  min-height: .01%;
-  overflow-x: auto;
-  width: 100%;
-  overflow-y: hidden;
-  -ms-overflow-style: -ms-autohiding-scrollbar;
 }
 .vacation-list {
   font-family: inherit;
@@ -1134,6 +615,10 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 .vacation-list tfoot td.notForm input {
   display: block;
 }
+.vacation-list tfoot tr {
+  line-height: 20px;
+  height: 20px;
+}
 .vacation-list tfoot tr td {
   color: #cdcdcd;
 }
@@ -1213,7 +698,6 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 }
 .notification .animate {
   position: absolute;
-  /*height: 100%;*/
   width: 15%;
   padding-top: 0px;
   padding-bottom: 0px;
@@ -1226,9 +710,6 @@ html,
 body {
   margin: 0;
   padding: 0;
-}
-body {
-  background-color: #303031;
 }
 html {
   font-size: 100%;
@@ -1435,6 +916,11 @@ input::-ms-clear {
   color: #4c4c4c;
   font-size: 13px;
 }
+.cell-bg {
+  background: linear-gradient(45deg, rgba(127, 127, 128, 0) 48%, rgba(127, 127, 128, 0.2) 50%, rgba(127, 127, 128, 0) 52%), linear-gradient(-45deg, rgba(127, 127, 128, 0) 48%, rgba(127, 127, 128, 0.2) 50%, rgba(127, 127, 128, 0) 52%);
+  background-size: 16px 16px;
+  background-color: #2b2b2c;
+}
 .kanban {
   padding: 0;
   margin: 0;
@@ -1460,17 +946,18 @@ input::-ms-clear {
   clear: left;
 }
 .kanban tr:last-child {
-  border-right: 10px solid white;
+  border-right: 10px solid #565658;
 }
 .kanban .column {
-  border-left: 10px solid #fff;
-  vertical-align: text-top;
+  border-left: 10px solid #565658;
   min-height: 100%;
   width: auto;
   min-width: 160px;
   height: auto;
   vertical-align: top;
-  background: url("../images/form_sheetbg.png");
+  background: linear-gradient(45deg, rgba(127, 127, 128, 0) 48%, rgba(127, 127, 128, 0.2) 50%, rgba(127, 127, 128, 0) 52%), linear-gradient(-45deg, rgba(127, 127, 128, 0) 48%, rgba(127, 127, 128, 0.2) 50%, rgba(127, 127, 128, 0) 52%);
+  background-size: 16px 16px;
+  background-color: #2b2b2c;
 }
 .kanban .column .item {
   word-wrap: break-word;
@@ -1893,6 +1380,168 @@ input::-ms-clear {
   border: 1px solid #66b5d4 !important;
   color: #cdcdcd !important;
 }
+.pagination {
+  width: 100%;
+  float: right;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+.pagination div {
+  float: left;
+}
+.pagination .countOnPage {
+  float: left;
+  color: #cdcdcd;
+  margin-left: 5px;
+}
+.pagination .nextPrev {
+  float: right;
+  margin-right: 5px;
+  color: #cdcdcd;
+}
+.pagination #previousPage,
+.pagination #nextPage,
+.pagination .currentPageList,
+.pagination #firstShowPage,
+.pagination #lastShowPage {
+  background-color: white;
+  background-image: none;
+  line-height: 15px;
+  width: 20px;
+  height: 18px;
+  display: block;
+  text-align: center;
+  padding: 0;
+  border-radius: 0;
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+  float: left;
+}
+.pagination #firstShowPage,
+.pagination #lastShowPage {
+  width: 30px;
+  height: 18px;
+  display: block;
+  font-size: 12px;
+}
+.pagination #previousPage {
+  margin: 0 3px;
+  font-size: 12px;
+}
+.pagination #nextPage {
+  margin: 0 3px;
+  font-size: 12px;
+}
+.pagination .allPage {
+  position: relative;
+}
+.pagination button {
+  color: rgba(0, 0, 0, 0.75);
+}
+.pagination button:hover {
+  background-color: #F7F8F9;
+  border: 1px solid rgba(0, 0, 0, 0.9);
+}
+.pagination button[disabled] {
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  cursor: default;
+}
+.pagination #currentShowPage {
+  border: 1px solid #7f7f80;
+  border-right: none;
+  background-color: #fff;
+  width: 21px;
+  height: 12px;
+  margin-left: 5px;
+  font-size: 12px !important;
+}
+.pagination #pageList {
+  background-color: #303031;
+  border: 1px solid #7f7f80;
+  position: absolute;
+  bottom: 17px;
+  left: -7px;
+  display: none;
+}
+.pagination #pageList li {
+  display: block;
+  width: 25px;
+  height: 20px;
+  line-height: 20px;
+  text-align: center;
+  font-size: 12px;
+  cursor: pointer;
+}
+.pagination #pageList li:hover {
+  background-color: #66b5d4;
+  color: white;
+  text-decoration: none;
+}
+.pagination .currentPageList {
+  margin-right: 5px;
+  font-size: 12px;
+}
+.pagination .currentPageList .caret {
+  display: block;
+  height: 15px;
+  background-image: url("../images/arrow-up.png");
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+}
+.pagination .pageList {
+  position: relative;
+}
+.pagination .pageList .itemsNumber {
+  text-decoration: none;
+  display: inline-block;
+  padding: 0 5px;
+}
+.pagination .pageList .itemsNumber:hover {
+  padding-bottom: 4px;
+  border-bottom: 1px solid #7f7f80;
+}
+.pagination .pageList a.selectedItemsNumber {
+  border-bottom: 1px solid #7f7f80;
+  padding-bottom: 4px;
+}
+.pagination .pageList button {
+  background-color: white;
+  background-image: none;
+  border-radius: 0;
+  width: 27px;
+  margin: 0 0 0 5px;
+  line-height: 10px;
+  font-size: 12px;
+  padding: 3px 2px;
+}
+.pagination .pageList button:hover {
+  background-color: #F7F8F9;
+}
+.pagination .pageList .currentPageList {
+  margin-left: 0;
+  border-left: none;
+}
+.pagination .pageList ul {
+  background-color: #303031;
+  border: 1px solid #7f7f80;
+  position: absolute;
+  bottom: 17px;
+  left: 0px;
+  display: none;
+  font-size: 12px;
+}
+.pagination .pageList ul li a {
+  display: block;
+  width: 25px;
+  height: 20px;
+  line-height: 20px;
+  text-align: center;
+}
+.pagination .pageList ul li a:hover {
+  background-color: #66b5d4;
+  color: white;
+  text-decoration: none;
+}
 .addUserDialog,
 .addGroupDialog {
   display: none;
@@ -1947,8 +1596,6 @@ input::-ms-clear {
 #profileTableWrapper table {
   width: 95%;
   margin: auto;
-  border-left: 1px solid #CACACA;
-  border-right: 1px solid #CACACA;
 }
 .workflow-list,
 .workflow-sub-list {
@@ -1972,7 +1619,7 @@ input::-ms-clear {
 }
 .workflow-list li:hover:not(.quickEdit) a,
 .workflow-sub-list li:hover:not(.quickEdit) a {
-  text-decoration: underline;
+  text-decoration: none;
 }
 .workflow-list li .editProfileContainer,
 .workflow-sub-list li .editProfileContainer {
@@ -1986,7 +1633,7 @@ input::-ms-clear {
 }
 .workflow-list li.active,
 .workflow-sub-list li.active {
-  border: 1px solid #dddddd;
+  border: 1px solid #7f7f80;
   border-right: none;
   display: list-item;
 }
@@ -1996,7 +1643,7 @@ input::-ms-clear {
 }
 .workflow-list li.active:hover,
 .workflow-sub-list li.active:hover {
-  background-color: white;
+  background-color: #565658;
 }
 .workflow-list li.active a,
 .workflow-sub-list li.active a {
@@ -2047,9 +1694,7 @@ input::-ms-clear {
   display: table-row;
 }
 #modulesAccessTable tr.parent {
-  background-color: #36A9E1;
-  color: white;
-  border: 2px solid #1E8FC6;
+  color: #cdcdcd;
 }
 *:focus {
   outline: 0 !important;
@@ -2239,10 +1884,13 @@ dl dd:nth-child(2) {
   margin-top: 0;
 }
 dl dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 94%;
 }
 dl dd a.formLink {
   line-height: 0;
+}
+dl dd span.ui-spinner {
+  width: 100%;
 }
 .clear {
   content: "\0020";
@@ -2307,6 +1955,7 @@ dl dd a.formLink {
 .form.employee {
   width: 100%;
   max-width: 100%;
+  padding-right: 40px;
 }
 .form #forInfo {
   overflow: hidden;
@@ -2670,10 +2319,13 @@ dl dd a.formLink {
   margin-top: 0;
 }
 .form .job-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 94%;
 }
 .form .job-info dd a.formLink {
   line-height: 30px;
+}
+.form .job-info dd span.ui-spinner {
+  width: 100%;
 }
 .form .opp-info {
   clear: both;
@@ -2720,10 +2372,13 @@ dl dd a.formLink {
   margin-top: 0;
 }
 .form .opp-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 94%;
 }
 .form .opp-info dd a.formLink {
   line-height: 30px;
+}
+.form .opp-info dd span.ui-spinner {
+  width: 100%;
 }
 .form .opp-info input {
   width: 80% !important;
@@ -2773,10 +2428,13 @@ dl dd a.formLink {
   margin-top: 0;
 }
 .form .internal-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 94%;
 }
 .form .internal-info dd a.formLink {
   line-height: 30px;
+}
+.form .internal-info dd span.ui-spinner {
+  width: 100%;
 }
 .form .internal-info textarea {
   width: 94%;
@@ -2827,10 +2485,13 @@ dl dd a.formLink {
   margin-top: 0;
 }
 .form .assignees-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 94%;
 }
 .form .assignees-info dd a.formLink {
   line-height: 0;
+}
+.form .assignees-info dd span.ui-spinner {
+  width: 100%;
 }
 .form .assignees-info input {
   max-width: 180px !important;
@@ -2842,7 +2503,7 @@ dl dd a.formLink {
   line-height: 27px !important;
 }
 .hidden {
-  display: none !important;
+  display: none;
 }
 .formLeftColumn {
   width: 60%;
@@ -2872,6 +2533,7 @@ dl dd a.formLink {
 .formLeftColumn .form.employee {
   width: 100%;
   max-width: 100%;
+  padding-right: 40px;
 }
 .formLeftColumn .form #forInfo {
   overflow: hidden;
@@ -3222,6 +2884,7 @@ dl dd a.formLink {
 .formRightColumn .form.employee {
   width: 100%;
   max-width: 100%;
+  padding-right: 40px;
 }
 .formRightColumn .form #forInfo {
   overflow: hidden;
@@ -3726,6 +3389,7 @@ dl dd a.formLink {
   height: 100%;
 }
 #wrapper {
+  background-color: #303031;
   width: 100%;
   height: 100%;
   min-width: 100%;
@@ -3813,11 +3477,15 @@ dl dd a.formLink {
 }
 .person-info dd input:not([type='checkbox']),
 .customer-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 94%;
 }
 .person-info dd a.formLink,
 .customer-info dd a.formLink {
   line-height: 0;
+}
+.person-info dd span.ui-spinner,
+.customer-info dd span.ui-spinner {
+  width: 100%;
 }
 .person-info span,
 .customer-info span {
@@ -3869,10 +3537,13 @@ dl dd a.formLink {
   margin-top: 0;
 }
 .settings-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 94%;
 }
 .settings-info dd a.formLink {
   line-height: 0;
+}
+.settings-info dd span.ui-spinner {
+  width: 100%;
 }
 .settings-info label {
   line-height: 20px;
@@ -3925,10 +3596,13 @@ dl dd a.formLink {
   margin-top: 0;
 }
 .project-edit-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 94%;
 }
 .project-edit-info dd a.formLink {
   line-height: 0;
+}
+.project-edit-info dd span.ui-spinner {
+  width: 100%;
 }
 .quotation-info {
   clear: both;
@@ -3975,10 +3649,13 @@ dl dd a.formLink {
   margin-top: 0;
 }
 .quotation-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 94%;
 }
 .quotation-info dd a.formLink {
   line-height: 0;
+}
+.quotation-info dd span.ui-spinner {
+  width: 100%;
 }
 .quotation-info dd {
   margin-top: 1em;
@@ -4028,10 +3705,13 @@ dl dd a.formLink {
   margin-top: 0;
 }
 .edit-employee-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 94%;
 }
 .edit-employee-info dd a.formLink {
   line-height: 0;
+}
+.edit-employee-info dd span.ui-spinner {
+  width: 100%;
 }
 .edit-employee-info input {
   max-width: 180px !important;
@@ -4069,13 +3749,6 @@ dl dd a.formLink {
 }
 .half-block.taskNote #noteArea {
   width: 100%;
-}
-#forInfo .half-block.left {
-  width: 65%;
-  margin-right: 1%;
-}
-#forInfo .half-block.right {
-  width: 34%;
 }
 .funnelIcon {
   display: inline-block;
@@ -4186,28 +3859,6 @@ dl dd a.formLink {
 .formHeader > button {
   margin: 5px 1px 4px 1px !important;
 }
-.btn {
-  border: 1px solid #7f7f80;
-  margin: 0;
-  padding: .4em 1em;
-  line-height: normal;
-  font-size: 13px;
-  text-align: center;
-  text-decoration: none;
-  -webkit-font-smoothing: antialiased;
-  outline: none;
-  background: #303031;
-}
-.btn span,
-.btn a {
-  padding: 0 !important;
-  color: #66b5d4;
-}
-.btn:hover {
-  cursor: pointer;
-  background-position: 0;
-  background: #1d1d1e !important;
-}
 button {
   border: 1px solid #7f7f80;
   margin: 0;
@@ -4228,7 +3879,7 @@ button a {
 button:hover {
   cursor: pointer;
   background-position: 0;
-  background: #1d1d1e !important;
+  background: #1d1d1e;
 }
 button.red,
 a.red {
@@ -4260,7 +3911,7 @@ button.red:hover,
 a.red:hover {
   cursor: pointer;
   background-position: 0;
-  background: #1d1d1e !important;
+  background: #1d1d1e;
 }
 button.red:hover,
 a.red:hover {
@@ -4524,7 +4175,7 @@ a.red:hover {
 .miniPagination > div.not-active,
 .miniPaginationPersons > div.not-active {
   color: silver;
-  background: none;
+  background-color: none;
   cursor: default;
 }
 .miniPagination > div.not-active:hover,
@@ -5033,10 +4684,9 @@ table#workflows tr td.edit-status {
 /*----------------------------- Top Bar --------------------------------*/
 #top-bar {
   display: block;
-  width: 100%;
   height: 30px;
   clear: both;
-  margin-top: 5px;
+  margin: 5px 1% 0;
 }
 #top-bar h3 {
   margin: 6px 0 0 0;
@@ -5052,10 +4702,9 @@ table#workflows tr td.edit-status {
 }
 #top-bar-bonus {
   display: block;
-  width: 100%;
   height: 30px;
   clear: both;
-  margin-top: 5px;
+  margin: 5px 1% 0;
 }
 #top-bar-bonus h3 {
   margin: 6px 0 0 0;
@@ -5069,18 +4718,10 @@ table#workflows tr td.edit-status {
 #top-bar-bonus.banned {
   border-bottom: 0;
 }
-.noPadding {
-  padding: 0 !important;
-}
 .startDate,
 .endDate {
   position: relative;
-  width: 100%;
-  box-sizing: border-box;
-  height: 26px !important;
-  line-height: 26px;
-  padding: 2px 6px !important;
-  border: transparent !important;
+  width: 150px;
 }
 .startDate input,
 .endDate input {
@@ -5562,7 +5203,7 @@ ul.dialog-tabs li.right button {
   border-top: none;
 }
 .list thead th {
-  padding: 2px 6px;
+  padding: 3px 8px;
   line-height: 18px;
   font-size: 12px;
   text-align: right;
@@ -5638,7 +5279,7 @@ ul.dialog-tabs li.right button {
   white-space: nowrap;
   text-overflow: ellipsis;
   cursor: pointer;
-  padding: 0 6px;
+  padding: 0 8px;
   font-size: 12px;
   text-align: right;
   border-right: 1px solid #7f7f80;
@@ -5884,6 +5525,7 @@ ul.dialog-tabs li.right button {
 }
 #modulesAccessTable td.mname {
   text-align: left;
+  border-left: 1px solid #7f7f80;
 }
 #ui-datepicker-div {
   border-radius: 0 !important;
@@ -5981,7 +5623,6 @@ ul.dialog-tabs li.right button {
   opacity: .35;
 }
 .ui-dialog {
-  border: 1px solid #7f7f80;
   background: #303031;
   color: #cdcdcd;
   z-index: 1000;
@@ -5991,6 +5632,9 @@ ul.dialog-tabs li.right button {
   -moz-border-radius: 0px;
   -webkit-border-radius: 0px;
   border-radius: 0px;
+}
+.ui-dialog .ui-widget-content {
+  border: none;
 }
 .ui-dialog .ui-widget-content a {
   color: #66b5d4;
@@ -6187,10 +5831,13 @@ ul.dialog-tabs li.right button {
   margin-top: 0;
 }
 .ui-dialog .app-empty-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 94%;
 }
 .ui-dialog .app-empty-info dd a.formLink {
   line-height: 0;
+}
+.ui-dialog .app-empty-info dd span.ui-spinner {
+  width: 100%;
 }
 .ui-dialog .app-empty-info dd {
   display: none;
@@ -6248,10 +5895,13 @@ ul.dialog-tabs li.right button {
   margin-top: 0;
 }
 .ui-dialog .person-info-h3 dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 94%;
 }
 .ui-dialog .person-info-h3 dd a.formLink {
   line-height: 0;
+}
+.ui-dialog .person-info-h3 dd span.ui-spinner {
+  width: 100%;
 }
 .ui-dialog .person-info-h3 dt,
 .ui-dialog .person-info-h3 dd {
@@ -6316,10 +5966,13 @@ ul.dialog-tabs li.right button {
   margin-top: 0;
 }
 .ui-dialog .summary-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 94%;
 }
 .ui-dialog .summary-info dd a.formLink {
   line-height: 0;
+}
+.ui-dialog .summary-info dd span.ui-spinner {
+  width: 100%;
 }
 .ui-dialog .summary-info #summary {
   width: 89% !important;
@@ -6332,20 +5985,11 @@ ul.dialog-tabs li.right button {
   border-top: 1px solid #CBD3E2;
   max-width: 280px;
   height: 18px;
+  background-color: white;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 12px;
-  border: 1px solid #7f7f80;
-  line-height: 20px;
-  background-color: transparent;
-  padding: 0 2px;
-  color: #cdcdcd;
-}
-.ui-dialog input:focus {
-  box-shadow: 0 0 5px #66b5d4;
-  -moz-box-shadow: 0 0 5px #66b5d4;
-  -webkit-box-shadow: 0 0 5px #66b5d4;
-  outline: medium none;
-  border: 1px solid #66b5d4 !important;
+  padding: 2px;
+  color: #262626;
 }
 .ui-dialog input#summary {
   width: 100%;
@@ -6425,9 +6069,10 @@ ul.dialog-tabs li.right button {
   margin-bottom: 15px;
 }
 .form-holder {
-  padding: 20px;
-  box-sizing: border-box;
-  width: 100%;
+  padding: 20px 20px;
+}
+.form-holder.employee {
+  padding: 20px 40px 20px 20px;
 }
 .form-holder form {
   border: none;
@@ -6507,10 +6152,13 @@ ul.dialog-tabs li.right button {
   margin-top: 0;
 }
 .form-holder form dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 94%;
 }
 .form-holder form dd a.formLink {
   line-height: 16px;
+}
+.form-holder form dd span.ui-spinner {
+  width: 100%;
 }
 .form-holder form select {
   font-family: Arial, Helvetica, sans-serif;
@@ -6674,7 +6322,7 @@ ul.dialog-tabs .withEndContract .endContractReasonList:hover,
 ul.dialog-tabs .withEndContract .arrow:hover {
   cursor: pointer;
   background-position: 0;
-  background: #1d1d1e !important;
+  background: #1d1d1e;
 }
 ul.dialog-tabs .withEndContract .endContractReasonList:hover,
 ul.dialog-tabs .withEndContract .arrow:hover {
@@ -6806,7 +6454,7 @@ ul.chart-tabs .withEndContract .endContractReasonList:hover,
 ul.chart-tabs .withEndContract .arrow:hover {
   cursor: pointer;
   background-position: 0;
-  background: #1d1d1e !important;
+  background: #1d1d1e;
 }
 ul.chart-tabs .withEndContract .endContractReasonList:hover,
 ul.chart-tabs .withEndContract .arrow:hover {
@@ -7073,13 +6721,13 @@ h3.dashboard {
 }
 #health a,
 .health-wrapper a {
-  margin-top: 5px;
   display: block;
   width: 10px;
   height: 10px;
   border-radius: 10px;
   margin-left: 6px;
   border: 1px solid #c0c0c0;
+  margin: 0 auto;
 }
 #health a.health1,
 .health-wrapper a.health1 {
@@ -7096,7 +6744,7 @@ h3.dashboard {
 #health .health-container,
 .health-wrapper .health-container {
   padding: 3px;
-  width: 25px;
+  width: 90%;
 }
 #health ul,
 .health-wrapper ul {
@@ -7259,13 +6907,16 @@ span.unDone {
   margin-top: 0;
 }
 .form-holder form .task-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 94%;
 }
 .form-holder form .task-info dd a.formLink {
   line-height: 0;
 }
+.form-holder form .task-info dd span.ui-spinner {
+  width: 100%;
+}
 .form-holder form .task-info input {
-  width: 150px !important;
+  width: 150px;
 }
 .form-holder form .task-summary-info {
   clear: both;
@@ -7312,10 +6963,13 @@ span.unDone {
   margin-top: 0;
 }
 .form-holder form .task-summary-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 94%;
 }
 .form-holder form .task-summary-info dd a.formLink {
   line-height: 0;
+}
+.form-holder form .task-summary-info dd span.ui-spinner {
+  width: 100%;
 }
 .form-holder form .task-summary-info input {
   width: 95% !important;
@@ -7365,10 +7019,13 @@ span.unDone {
   margin-top: 0;
 }
 .form-holder form .profile-create dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 94%;
 }
 .form-holder form .profile-create dd a.formLink {
   line-height: 0;
+}
+.form-holder form .profile-create dd span.ui-spinner {
+  width: 100%;
 }
 .form-holder form .profile-create input {
   width: 276px;
@@ -7421,10 +7078,13 @@ span.unDone {
   margin-top: 0;
 }
 .form-holder form .project-edit-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 94%;
 }
 .form-holder form .project-edit-info dd a.formLink {
   line-height: 0;
+}
+.form-holder form .project-edit-info dd span.ui-spinner {
+  width: 100%;
 }
 .form-holder form .project-edit-info input {
   width: 220px;
@@ -7477,10 +7137,13 @@ span.unDone {
   margin-top: 0;
 }
 .form-holder form .job-create-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 94%;
 }
 .form-holder form .job-create-info dd a.formLink {
   line-height: 0;
+}
+.form-holder form .job-create-info dd span.ui-spinner {
+  width: 100%;
 }
 .form-holder form .job-create-info input {
   width: 205px !important;
@@ -7533,10 +7196,13 @@ span.unDone {
   margin-top: 0;
 }
 .form-holder form .create-employee-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 94%;
 }
 .form-holder form .create-employee-info dd a.formLink {
   line-height: 0;
+}
+.form-holder form .create-employee-info dd span.ui-spinner {
+  width: 100%;
 }
 .form-holder form .create-employee-info input {
   max-width: 117px !important;
@@ -7589,10 +7255,13 @@ span.unDone {
   margin-top: 0;
 }
 .form-holder form .subject-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 94%;
 }
 .form-holder form .subject-info dd a.formLink {
   line-height: 0;
+}
+.form-holder form .subject-info dd span.ui-spinner {
+  width: 100%;
 }
 .form-holder form .subject-info input {
   max-width: inherit !important;
@@ -7649,10 +7318,13 @@ span.unDone {
   margin-top: 0;
 }
 .form-holder form .opprtunitie-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 94%;
 }
 .form-holder form .opprtunitie-info dd a.formLink {
   line-height: 0;
+}
+.form-holder form .opprtunitie-info dd span.ui-spinner {
+  width: 100%;
 }
 .form-holder form .opprtunitie-info input {
   max-width: 231px !important;
@@ -7709,10 +7381,13 @@ span.unDone {
   margin-top: 0;
 }
 .form-holder form .opprtunitie-lead-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 94%;
 }
 .form-holder form .opprtunitie-lead-info dd a.formLink {
   line-height: 0;
+}
+.form-holder form .opprtunitie-lead-info dd span.ui-spinner {
+  width: 100%;
 }
 .form-holder form .opprtunitie-lead-info input {
   max-width: 231px !important;
@@ -7831,10 +7506,13 @@ span.unDone {
   margin-top: 0;
 }
 .form .job-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 94%;
 }
 .form .job-info dd a.formLink {
   line-height: 30px;
+}
+.form .job-info dd span.ui-spinner {
+  width: 100%;
 }
 .form .opp-info {
   clear: both;
@@ -7881,10 +7559,13 @@ span.unDone {
   margin-top: 0;
 }
 .form .opp-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 94%;
 }
 .form .opp-info dd a.formLink {
   line-height: 30px;
+}
+.form .opp-info dd span.ui-spinner {
+  width: 100%;
 }
 .form .opp-info input {
   width: 80% !important;
@@ -7934,10 +7615,13 @@ span.unDone {
   margin-top: 0;
 }
 .form .internal-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 94%;
 }
 .form .internal-info dd a.formLink {
   line-height: 30px;
+}
+.form .internal-info dd span.ui-spinner {
+  width: 100%;
 }
 .form .internal-info textarea {
   width: 94%;
@@ -7988,10 +7672,13 @@ span.unDone {
   margin-top: 0;
 }
 .form .assignees-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 94%;
 }
 .form .assignees-info dd a.formLink {
   line-height: 0;
+}
+.form .assignees-info dd span.ui-spinner {
+  width: 100%;
 }
 .form .assignees-info input {
   max-width: 180px !important;
@@ -8038,46 +7725,6 @@ span.unDone {
 }
 .newSelectList .miniStylePagination span {
   padding: 0;
-}
-span.ui-spinner {
-  position: relative;
-  padding: 0;
-  display: block;
-  width: 45px;
-  overflow: hidden;
-}
-span.ui-spinner span {
-  display: block;
-  width: 8px;
-  height: 8px;
-  text-align: center;
-  padding: 0;
-}
-span.ui-spinner .ui-spinner-up {
-  position: absolute;
-  right: 5px;
-  top: 2px;
-  padding: 0;
-  cursor: pointer;
-  font-size: 8px;
-  line-height: 8px;
-}
-span.ui-spinner .ui-spinner-up:hover {
-  text-decoration: none;
-  color: #99e8ff;
-}
-span.ui-spinner .ui-spinner-down {
-  position: absolute;
-  padding: 0;
-  right: 5px;
-  top: 11px;
-  cursor: pointer;
-  font-size: 8px;
-  line-height: 8px;
-}
-span.ui-spinner .ui-spinner-down:hover {
-  text-decoration: none;
-  color: #99e8ff;
 }
 .blue {
   color: #66b5d4;
@@ -8153,33 +7800,21 @@ input::-webkit-inner-spin-button {
   width: 33.33%;
 }
 .topInputHolder .thirdPartBlock .person-info {
-  display: table;
-  width: 100%;
   overflow: hidden;
 }
-.topInputHolder .thirdPartBlock .person-info > div {
-  vertical-align: middle;
-  display: table-cell;
-}
 .topInputHolder .thirdPartBlock .person-info dd {
-  vertical-align: middle;
-  display: table-cell;
-  line-height: 25px;
-}
-.topInputHolder .thirdPartBlock .person-info dt {
-  vertical-align: middle;
-  display: table-cell;
-  line-height: 25px;
+  line-height: 1;
 }
 .topInputHolder .thirdPartBlock .person-info .miniAvatar {
+  float: left;
   width: 20%;
 }
 .topInputHolder .thirdPartBlock .person-info .miniAvatar .avatar {
   width: 50px;
   height: 50px;
-  margin: 0;
 }
 .topInputHolder .thirdPartBlock .person-info .miniAvatarInfo {
+  float: left;
   width: 80%;
 }
 .form .productEdit {
@@ -8669,54 +8304,25 @@ textarea#editInput {
   box-sizing: border-box;
   float: left;
 }
-.grid-conatiner.revenue .chartContainer .legend {
-  float: left;
-  line-height: 24px;
-  width: 140px;
-}
-.grid-conatiner.revenue .chartContainer .legend div {
-  zoom: 1;
-  clear: both;
-}
-.grid-conatiner.revenue .chartContainer .legend div:before {
-  content: "\0020";
-  display: block;
-  height: 0;
-  overflow: hidden;
-}
-.grid-conatiner.revenue .chartContainer .legend div:after {
-  content: "\0020";
-  display: block;
-  height: 0;
-  overflow: hidden;
-  clear: both;
-}
-.grid-conatiner.revenue .chartContainer .legend label {
-  display: inline-block;
-  width: 50px;
-  line-height: 25px;
-  float: left;
-}
-.grid-conatiner.revenue .chartContainer .legend input {
-  width: 57px;
-  float: left;
-  border: none;
-}
+.grid-conatiner.revenue .chartContainer .legend,
 .grid-conatiner.revenue .chartContainer .legendHours {
   float: left;
   line-height: 24px;
   width: 140px;
 }
+.grid-conatiner.revenue .chartContainer .legend div,
 .grid-conatiner.revenue .chartContainer .legendHours div {
   zoom: 1;
   clear: both;
 }
+.grid-conatiner.revenue .chartContainer .legend div:before,
 .grid-conatiner.revenue .chartContainer .legendHours div:before {
   content: "\0020";
   display: block;
   height: 0;
   overflow: hidden;
 }
+.grid-conatiner.revenue .chartContainer .legend div:after,
 .grid-conatiner.revenue .chartContainer .legendHours div:after {
   content: "\0020";
   display: block;
@@ -8724,16 +8330,20 @@ textarea#editInput {
   overflow: hidden;
   clear: both;
 }
+.grid-conatiner.revenue .chartContainer .legend label,
 .grid-conatiner.revenue .chartContainer .legendHours label {
   display: inline-block;
   width: 50px;
   line-height: 25px;
   float: left;
 }
-.grid-conatiner.revenue .chartContainer .legendHours input {
+.grid-conatiner.revenue .chartContainer .legend span.ui-spinner,
+.grid-conatiner.revenue .chartContainer .legendHours span.ui-spinner {
+  width: 45px;
+}
+.grid-conatiner.revenue .chartContainer .legend span.ui-spinner input,
+.grid-conatiner.revenue .chartContainer .legendHours span.ui-spinner input {
   width: 57px;
-  float: left;
-  border: none;
 }
 .grid-conatiner.revenue .chartContainer .line1 {
   fill: none;
@@ -9160,7 +8770,7 @@ textarea#editInput {
 }
 .search-options .filter-dialog-tabs li {
   width: 100%;
-  border-radius: 0px;
+  border-radius: 0;
   border: none;
 }
 .search-options .filter-dialog-tabs li:nth-child(2) {
@@ -9222,6 +8832,9 @@ textarea#editInput {
   background-color: #303031;
   margin: 5px;
 }
+.drop-down-filter #filtersContent .filterGroup:hover {
+  border-color: #a5a5a6;
+}
 .drop-down-filter #filtersContent .filterGroup .ulContent input {
   margin-top: 5px;
 }
@@ -9259,9 +8872,6 @@ textarea#editInput {
   text-align: left;
   width: 100%;
 }
-.drop-down-filter #filtersContent .filterGroup.activeGroup .groupName:after {
-  content: ' ';
-}
 .drop-down-filter #filtersContent .filterGroup:not(.activeGroup) .groupName.checkedGroup {
   color: #cdcdcd;
   background-color: #565658;
@@ -9276,6 +8886,10 @@ textarea#editInput {
 .drop-down-filter #filtersContent .filterGroup.activeGroup .groupName {
   border-bottom: 1px solid #7f7f80;
 }
+.drop-down-filter #filtersContent .filterGroup.activeGroup .groupName:after {
+  transform: rotate(-45deg);
+  top: 18px;
+}
 .drop-down-filter #filtersContent .filterGroup.activeGroup .groupName,
 .drop-down-filter #filtersContent .filterGroup .groupName:hover {
   color: #cdcdcd;
@@ -9286,9 +8900,20 @@ textarea#editInput {
   font-size: 13px;
   padding: 10px;
   color: #cdcdcd;
+  position: relative;
 }
 .drop-down-filter #filtersContent .filterGroup .groupName:after {
-  content: '\2335';
+  content: '';
+  border-style: solid;
+  border-width: 1px 1px 0 0;
+  border-color: #cdcdcd;
+  display: block;
+  height: 5px;
+  right: 110px;
+  top: 15px;
+  position: absolute;
+  width: 5px;
+  transform: rotate(135deg);
 }
 .filter-icons {
   display: none;

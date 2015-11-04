@@ -1,0 +1,46 @@
+/*== Begin Input type number =============*/
+.ui-spinner {
+  position: relative;
+  padding: 0;
+  display: block;
+  overflow: hidden;
+  .ui-spinner-input {
+    float: left;
+    border: none ;
+  }
+  span {
+    display: block;
+    width: 8px;
+    height: 8px;
+    text-align: center;
+    padding: 0;
+  }
+  .ui-spinner-up {
+    position: absolute;
+    right: 5px;
+    top: 2px;
+    padding: 0;
+    cursor: pointer;
+    font-size: 8px;
+    line-height: 8px;
+    &:hover {
+      text-decoration: none;
+      color: @mainText-color-selected + #333;
+    }
+  }
+  .ui-spinner-down {
+    position: absolute;
+    padding: 0;
+    right: 5px;
+    top: 10px;
+    cursor: pointer;
+    font-size: 8px;
+    line-height: 8px;
+    &:hover {
+      text-decoration: none;
+      color: @mainText-color-selected + #333;
+    }
+  }
+}
+
+/*== End Input type number =============*/

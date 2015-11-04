@@ -1,6 +1,7 @@
 @import "_colors";
 @import "_darckColor";
 //@import "_whiteColor";
+@import "_topBar";
 @import "_list";
 @import "_vacationList";
 
@@ -44,7 +45,6 @@
 
   .animate {
     position: absolute;
-    /*height: 100%;*/
     width: 15%;
     padding-top: 0px;
     padding-bottom: 0px;
@@ -360,17 +360,21 @@ input::-ms-clear {
     .left;
     width: 100%-@with-dt;
     .text-overflow;
-
     &:nth-child(2) {
       margin-top: 0;
     }
 
     input:not([type='checkbox']) {
-      width: 95%;
+      width: 94%;
     }
 
     a.formLink {
       line-height: @line-height;
+    }
+    span {
+      &.ui-spinner{
+        width: 100%;
+      }
     }
   }
 }
@@ -801,28 +805,7 @@ input::-ms-clear {
   }
 }
 
-.top-bar(@defaultHeight: 30px, @defaultBackground: @bg-main, @defaultBorderColor: @border-color-main, @defaultH3Color: @creatBtn-color, @defaultMargin: 6px 0 0 0, @defaultPadding: 0 10px) {
-  display: block;
-  width: 100%;
-  height: @defaultHeight;
-  //border-bottom: @thin-border @defaultBorderColor;
- // background: @defaultBackground;
-  clear: both;
-  margin-top: 5px;
 
-  h3 {
-    margin: @defaultMargin;
-    padding: @defaultPadding;
-    color: @defaultH3Color !important;
-    font-family: @title-font;
-    font-weight: normal;
-    float: left;
-    overflow: visible;
-  }
-  &.banned {
-    border-bottom: 0
-  }
-}
 
 .submenu(@defaultColor: @bg-submenu ,@activeColor: #FFF, @height: 30px, @bg: @submenu-text-color) {
   display: block;
@@ -1226,6 +1209,16 @@ input::-ms-clear {
   }
 }
 
+.cell-bg {
+  background: linear-gradient(45deg,fade(@border-color-main, 0) 48%
+  ,fade(@border-color-main, 20%) 50%,fade(@border-color-main, 0) 52%)
+  ,linear-gradient(-45deg,fade(@border-color-main, 0) 48%
+          ,fade(@border-color-main, 20%) 50%
+          ,fade(@border-color-main, 0) 52%);
+  background-size: 16px 16px;
+  background-color: darken(@bg-main, 2%);
+}
+
 .kanban {
   .noPaddingMargin;
   min-width: 100%;
@@ -1257,19 +1250,20 @@ input::-ms-clear {
 
   tr {
     &:last-child {
-      border-right: 10px solid white;
+      border-right: 10px solid @defaultBgHover-color;
     }
   }
 
   .column {
-    border-left: 10px solid #fff;
-    vertical-align: text-top;
+    border-left: 10px solid @defaultBgHover-color;
+    //vertical-align: text-top;
     min-height: 100%;
     width: auto;
     min-width: 160px;
     height: auto;
     vertical-align: top;
-    background: url("@{imagesfolder}/form_sheetbg.png");
+    .cell-bg;
+    //background: url("@{imagesfolder}/form_sheetbg.png");
 
     .item {
       word-wrap: break-word;
@@ -1787,7 +1781,7 @@ input::-ms-clear {
 }
 
 .dialog(@background: @bg-main-menu, @color: @mainText-color, @borderColor: @border-color-main) {
-  border: @thin-border @borderColor;
+ // border: @thin-border @borderColor;
   background: @background;
   color: @color;
   z-index: 1000;
@@ -1797,6 +1791,7 @@ input::-ms-clear {
   .border-radius(0px);
 
   .ui-widget-content {
+    border: none;
     a {
       color: @tilte-color;
     }
@@ -2269,8 +2264,6 @@ input::-ms-clear {
 #profileTableWrapper table {
   width: 95%;
   margin: auto;
-  border-left: 1px solid #CACACA;
-  border-right: 1px solid #CACACA;
 }
 
 .workflow-list,
@@ -2290,7 +2283,7 @@ input::-ms-clear {
       background-color: lighten(@bg-main, 15%);;
 
       a {
-        text-decoration: underline;
+        text-decoration: none;
       }
 
     }
@@ -2303,7 +2296,7 @@ input::-ms-clear {
       }
     }
     &.active {
-      border: @thin-border #ddd;
+      border: @thin-border @border-color-main;
       border-right: none;
       display: list-item;
 
@@ -2312,7 +2305,7 @@ input::-ms-clear {
       }
 
       &:hover {
-        background-color: white;
+        background-color: @defaultBgHover-color;
       }
 
       a {
@@ -2376,9 +2369,9 @@ input::-ms-clear {
     }
 
     &.parent {
-      background-color: #36A9E1;
-      color: white;
-      border: 2px solid #1E8FC6;
+      //background-color: #36A9E1;
+      color: @mainText-color;
+      //border: 2px solid #1E8FC6;
 
       td {
       }
@@ -3131,27 +3124,7 @@ dl {
   }
 }
 
-.btn {
-  border: @thin-border @border-color-main;
-  margin: 0;
-  padding: .4em 1em;
-  line-height: normal;
-  font-size: 13px;
-  text-align: center;
-  text-decoration: none;
-  -webkit-font-smoothing: antialiased;
-  outline: none;
-  background: @bg-main;
-  span, a {
-    padding: 0 !important;
-    color: @tilte-color;
-  }
-  &:hover {
-    cursor: pointer;
-    background-position: 0;
-    background: @bg-butt-color - #131313 !important;
-  }
-}
+
 
 button {
   .btn;
@@ -3944,6 +3917,7 @@ ul.dialog-tabs {
 
     &.mname {
       text-align: left;
+      border-left: 1px solid @border-color-main;
     }
   }
 }
@@ -4403,13 +4377,13 @@ h3.dashboard {
 #health, .health-wrapper {
   @width: 10px;
   a {
-    margin-top: 5px;
     display: block;
     width: @width;
     height: @width;
     border-radius: @width;
     margin-left: 6px;
     border: @thin-border silver;
+    margin: 0 auto;
     &.health1 {
       background-color: @green-lights-color;
     }
@@ -4422,7 +4396,7 @@ h3.dashboard {
   }
   .health-container {
     padding: 3px;
-    width: 25px;
+    width: 90%;
   }
   ul {
     display: none;
@@ -4536,7 +4510,7 @@ h3.dashboard {
   .task-info {
     .dl-auto(200px, 40%);
     input {
-      width: 150px !important;
+      width: 150px;
     }
   }
   .task-summary-info {
@@ -4763,48 +4737,7 @@ h3.dashboard {
   }
 }
 
-span.ui-spinner {
-  position: relative;
-  //width: 95%;
-  padding: 0;
 
-  display: block;
-  width: 45px;
-  overflow: hidden;
-  span {
-    display: block;
-    width: 8px;
-    height: 8px;
-    text-align: center;
-    padding: 0;
-  }
-  .ui-spinner-up {
-    position: absolute;
-    right: 5px;
-    top: 2px;
-    padding: 0;
-    cursor: pointer;
-    font-size: 8px;
-    line-height: 8px;
-    &:hover {
-      text-decoration: none;
-      color: @mainText-color-selected + #333;
-    }
-  }
-  .ui-spinner-down {
-    position: absolute;
-    padding: 0;
-    right: 5px;
-    top: 11px;
-    cursor: pointer;
-    font-size: 8px;
-    line-height: 8px;
-    &:hover {
-      text-decoration: none;
-      color: @mainText-color-selected + #333;
-    }
-  }
-}
 
 .blue {
   color: @mainText-color-selected;
@@ -5574,7 +5507,7 @@ textarea#editInput {
       box-sizing: border-box;
       float: left;
     }
-    .legend {
+    .legend, .legendHours {
       float: left;
       line-height: 24px;
       width: 140px;
@@ -5587,33 +5520,15 @@ textarea#editInput {
         line-height: 25px;
         float: left;
       }
-      input {
-        width: 57px;
-        float: left;
-        border: none;
+      span {
+        &.ui-spinner {
+          width: 45px;
+          input {
+            width: 57px;
+          }
+        }
       }
     }
-
-    .legendHours {
-      float: left;
-      line-height: 24px;
-      width: 140px;
-      div {
-        .clearfix;
-      }
-      label {
-        display: inline-block;
-        width: 50px;
-        line-height: 25px;
-        float: left;
-      }
-      input {
-        width: 57px;
-        float: left;
-        border: none;
-      }
-    }
-
     .line1 {
       fill: none;
       stroke: black;
@@ -6087,7 +6002,7 @@ textarea#editInput {
     width: 100%;
     li {
       width: 100%;
-      border-radius: 0px;
+      border-radius: 0;
       border: none;
       &:nth-child(2) {
         border-left: 1px solid @border-color-main;
@@ -6131,7 +6046,6 @@ textarea#editInput {
   right: 0;
   top: ~"calc(100% - 3px)";
   #applyFilter {
-
     text-align: center;
     width: ~"calc(100% - 30px)";
     margin: 10px 5px 5px 5px;
@@ -6153,6 +6067,9 @@ textarea#editInput {
       border: 1px solid @border-color-main;
       background-color: @bg-main;
       margin: 5px;
+      &:hover {
+        border-color: @filter-border-hover;
+      }
       .ulContent {
         input {
           margin-top: 5px;
@@ -6193,11 +6110,6 @@ textarea#editInput {
         text-align: left;
         width: 100%;
       }
-      &.activeGroup .groupName {
-        &:after {
-          content: ' ';
-        }
-      }
       &:not(.activeGroup) .groupName {
         &.checkedGroup{
           color: @mainText-color;
@@ -6214,6 +6126,10 @@ textarea#editInput {
       &.activeGroup {
         .groupName {
           border-bottom: 1px solid @border-color-main;
+          &:after {
+            transform: rotate(-45deg);
+            top: 18px;
+          }
         }
 
       }
@@ -6224,12 +6140,23 @@ textarea#editInput {
       }
       .groupName {
         cursor: pointer;
-        //font-weight: bolder;
         font-size: 13px;
         padding: 10px;
         color: @mainText-color;
+        position: relative;
         &:after {
-          content: '\2335';
+          //content: '\2335';
+          content: '';
+          border-style: solid;
+          border-width: 1px 1px 0 0;
+          border-color: #cdcdcd;
+          display: block;
+          height: 5px;
+          right: 110px;
+          top: 15px;
+          position: absolute;
+          width: 5px;
+          transform: rotate(135deg);
         }
       }
     }
@@ -6422,6 +6349,7 @@ textarea#editInput {
   overflow: hidden;
 }
 
+//------ Import files ------
 //.list2 {
 //  input:not([type='text']) {
 //    border: @thin-border @list-border-color;
