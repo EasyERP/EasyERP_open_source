@@ -1,21 +1,29 @@
 <h3>Dashboard Vacation</h3>
-<ul class="dateFilter">
-    <li>
-        <span id="startTime">10/30/15</span> - <span id="endTime">10/30/15</span>
-        <i class="fa fa-caret-down"></i>
-    </li>
-    <li>
-        <ul class="frameDetail">
-            <li class="customTime">
+
+
+<div class="vocationFilter">
+    <ul class="dateFilter">
+        <li>
+            <span id="startTime">10/30/15</span> - <span id="endTime">10/30/15</span>
+            <i class="fa fa-caret-down"></i>
+        </li>
+        <li>
+            <ul class="frameDetail">
+                <li class="customTime">
                     <span>
-                        <label>From <input readonly type="text" id="startDate"> </label>
-                        <label>To <input readonly type="text" id="endDate"></label>
+                        <label for="startDate">From </label><input readonly type="text" id="startDate"><br/>
+                        <label for="endDate">To </label><input readonly type="text" id="endDate">
                     </span>
-            </li>
-            <li class="buttons">
-                <button id="updateDate">Update</button>
-                <a id="cancelBtn">Cancel</a>
-            </li>
-        </ul>
-    </li>
-</ul>
+                </li>
+                <li class="buttons">
+                    <button id="updateDate" class="btn">
+                        <span>Update</span>
+                    </button>
+                    <button id="cancelBtn" class="btn">
+                        <span>Cancel</span>
+                    </button>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</div>
