@@ -6,17 +6,22 @@ define([
     'views/salesInvoice/list/ListView',
     'text!templates/Projects/projectInfo/invoiceTemplate.html',
     'views/salesInvoice/EditView',
+    'views/customerPayments/list/ListItemView',
+    'collections/customerPayments/filterCollection',
     'models/InvoiceModel',
     'common',
     'helpers'
 
-], function (ListView, invoiceTemplate, editView, invoiceModel, common, helpers) {
+], function (ListView, invoiceTemplate, editView, listItemView, invoiceCollection, invoiceModel, common, helpers) {
     var invoiceView = ListView.extend({
 
         el: '#invoices',
+        listItemView            : listItemView,
+        contentCollection: invoiceCollection,
 
         initialize: function (options) {
             this.collection = options.model;
+            this.filter = options.filter ? options.filter : {};
 
             this.render();
         },
@@ -51,20 +56,94 @@ define([
             });
         },
 
+        renderContent: function () {
+            var currentEl = this.$el;
+            var tBody = currentEl.find("#listTable");
+            var itemView;
+            var pagenation;
+
+            tBody.empty();
+            $("#top-bar-deleteBtn").hide();
+            $('#check_all').prop('checked', false);
+
+            if (this.collection.length > 0) {
+                itemView = new this.listItemView({
+                    collection : this.collection,
+                    page       : this.page,
+                    itemsNumber: this.collection.namberToShow
+                });
+                tBody.append(itemView.render({thisEl: tBody}));
+            }
+
+            pagenation = this.$el.find('.pagination');
+            if (this.collection.length === 0) {
+                pagenation.hide();
+            } else {
+                pagenation.show();
+            }
+        },
+
+
+        goSort: function (e) {
+            var target$;
+            var currentParrentSortClass;
+            var sortClass;
+            var sortConst;
+            var sortBy;
+            var sortObject;
+
+            this.collection.unbind('reset');
+            this.collection.unbind('showmore');
+
+            target$ = $(e.target);
+            currentParrentSortClass = target$.attr('class');
+            sortClass = currentParrentSortClass.split(' ')[1];
+            sortConst = 1;
+            sortBy = target$.data('sort');
+            sortObject = {};
+
+            if (!sortClass) {
+                target$.addClass('sortDn');
+                sortClass = "sortDn";
+            }
+            switch (sortClass) {
+                case "sortDn":
+                {
+                    target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
+                    target$.removeClass('sortDn').addClass('sortUp');
+                    sortConst = 1;
+                }
+                    break;
+                case "sortUp":
+                {
+                    target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
+                    target$.removeClass('sortUp').addClass('sortDn');
+                    sortConst = -1;
+                }
+                    break;
+            }
+            sortObject[sortBy] = sortConst;
+
+            this.fetchSortCollection(sortObject);
+            this.getTotalLength(null, this.defaultItemsNumber, this.filter);
+        },
+
         checked: function (e) {
-            if (this.models.length > 0) {
-                var checkLength = $("input.checkbox:checked").length;
+            if (this.collection.length > 0) {
+                var el = this.$el;
+                var checkLength = el.find("input.checkbox:checked").length;
+                var checkAll$=el.find('#check_all_payments');
 
-                if ($("input.checkbox:checked").length > 0) {
-                    $("#top-bar-deleteBtn").show();
-                    $('#check_all').prop('checked', false);
+                if (checkLength > 0) {
+                    checkAll$.prop('checked', false);
 
-                    if (checkLength == this.models.length) {
-                        $('#check_all').prop('checked', true);
+                    if (checkLength == this.collection.length) {
+
+                        checkAll$.prop('checked', true);
                     }
-                } else {
-                    $("#top-bar-deleteBtn").hide();
-                    $('#check_all').prop('checked', false);
+                }
+                else {
+                    checkAll$.prop('checked', false);
                 }
             }
         },
@@ -108,6 +187,15 @@ define([
                 utcDateToLocaleDate: common.utcDateToLocaleDate,
                 currencySplitter: helpers.currencySplitter
             }));
+
+            $('#check_all_invoice').click(function () {
+                self.$el.find(':checkbox').prop('checked', this.checked);
+                if (self.$el.find("input.checkbox:checked").length > 0) {
+                    self.$el.find("#removeOrder").show();
+                } else {
+                    self.$el.find("#removeOrder").hide();
+                }
+            });
 
             return this;
         }

@@ -4,7 +4,7 @@ var mongoose = require('mongoose');
 var WorkflowHandler = require('./workflow');
 var RESPONSES = require('../constants/responses');
 
-var Invoice = function (models) {
+var Invoice = function (models, event) {
     var access = require("../Modules/additions/access.js")(models);
     var InvoiceSchema = mongoose.Schemas['Invoice'];
     var wTrackInvoiceSchema = mongoose.Schemas['wTrackInvoice'];
@@ -58,6 +58,7 @@ var Invoice = function (models) {
     this.receive = function (req, res, next) {
         var id = req.body.orderId;
         var forSales = req.body.forSales;
+        var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
         var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
         var wTrackInvoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
         var Order = models.get(req.session.lastDb, 'Quotation', OrderSchema);
@@ -111,6 +112,8 @@ var Invoice = function (models) {
             var invoice;
             var supplier;
             var company;
+            var project;
+            var type = "Invoice";
 
             if (parallelResponse && parallelResponse.length) {
                 order = parallelResponse[0];
@@ -158,6 +161,23 @@ var Invoice = function (models) {
                 invoice.salesPerson.name = order.project.projectmanager.name;
 
                 invoice.save(callback);
+
+                async.each(order.products, function (product, cb) {
+
+                    JobsModel.findByIdAndUpdate(product.jobs, {type: type}, {new: true}, function (err, result) {
+                        if (err) {
+                            return next(err);
+                        }
+
+                        cb();
+
+                        project = result.get('project');
+
+                    });
+
+                }, function(){
+                    event.emit('fetchJobsCollection', {project: project});
+                });
             } else {
                 var query = Company.findById(invoice.supplier._id).lean();
 

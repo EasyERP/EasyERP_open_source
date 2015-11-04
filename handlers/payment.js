@@ -31,6 +31,7 @@ var Payment = function (models) {
     var PaymentSchema = mongoose.Schemas['Payment'];
     var wTrackPaymentSchema = mongoose.Schemas['wTrackPayment'];
     var InvoiceSchema = mongoose.Schemas['Invoice'];
+    var JobsSchema = mongoose.Schemas['jobs'];
     var wTrackInvoiceSchema = mongoose.Schemas['wTrackInvoice'];
     var DepartmentSchema = mongoose.Schemas['Department'];
     var wTrackSchema = mongoose.Schemas['wTrack'];
@@ -350,6 +351,7 @@ var Payment = function (models) {
     this.create = function (req, res, next) {
         var body = req.body;
         var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
+        var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
         var workflowHandler = new WorkflowHandler(models);
         var invoiceId = body.invoice._id;
         var DbName = req.session.lastDb;
@@ -444,6 +446,23 @@ var Payment = function (models) {
                     if (err) {
                         return waterfallCallback(err);
                     }
+
+                    async.each(products, function (product, cb) {
+
+                        JobsModel.findByIdAndUpdate(product.jobs, {type: type}, {new: true}, function (err, result) {
+                            if (err) {
+                                return next(err);
+                            }
+
+                            cb();
+
+                            project = result.get('project');
+
+                        });
+
+                    }, function(){
+                        event.emit('fetchJobsCollection', {project: project});
+                    });
 
                     waterfallCallback(null, invoice, payment);
                 });

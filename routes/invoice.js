@@ -4,8 +4,8 @@ var express = require('express');
 var router = express.Router();
 var InvoiceHandler = require('../handlers/invoice');
 
-module.exports = function (models) {
-    var handler = new InvoiceHandler(models);
+module.exports = function (models, event) {
+    var handler = new InvoiceHandler(models, event);
 
     router.get('/', handler.getAll);
 

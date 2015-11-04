@@ -92,7 +92,7 @@ define([
 
                 tempContainer = el.text();
                 // width = el.width() - 31;
-                el.html('<input class="editing" type="text" value="' + tempContainer + '">' + "<a href='javascript;' class='fa fa-check' title='Save' id='saveName'></a>");
+                el.html('<input class="editing" type="text" maxlength="32" value="' + tempContainer + '">' + "<a href='javascript;' class='fa fa-check' title='Save' id='saveName'></a>");
 
                 insertedInput = el.find('input');
                 insertedInput.focus();
@@ -104,34 +104,38 @@ define([
             saveNewJobName: function (e) {
                 e.preventDefault();
 
+                var nameRegExp = /^[\w\.@]{3,100}$/;
                 var self = this;
                 var id = $(e.target).parents("td").closest('tr').attr('data-id');
                 var name = $(e.target).prev('input').val() ? $(e.target).prev('input').val() : $(e.target).val();
 
                 var data = {_id: id, name: name};
-
-                dataService.postData("/jobs/update", data, function (err, result) {
-                    if (err) {
-                        return console.log(err);
-                    }
-
-                    $('#saveName').hide();
-
-                    $(e.target).parents("td").text(name);
-
-                    $(e.target).prev('input').remove();
-
-
-                    var filter = {
-                        'projectName': {
-                            key: 'project._id',
-                            value: [self.id]
+                if (nameRegExp.test(name)) {
+                    dataService.postData("/jobs/update", data, function (err, result) {
+                        if (err) {
+                            return console.log(err);
                         }
-                    };
 
-                    self.wCollection.showMore({count: 50, page: 1, filter: filter});
+                        $('#saveName').hide();
 
-                });
+                        $(e.target).parents("td").text(name);
+
+                        $(e.target).prev('input').remove();
+
+
+                        var filter = {
+                            'projectName': {
+                                key: 'project._id',
+                                value: [self.id]
+                            }
+                        };
+
+                        self.wCollection.showMore({count: 50, page: 1, filter: filter});
+
+                    });
+                } else {
+                    alert("Please, enter Job name!");
+                }
             },
 
             recalcTotal: function (id) {
@@ -954,7 +958,8 @@ define([
                             cb();
 
                             new InvoiceView({
-                                model: self.iCollection
+                                model: self.iCollection,
+                                filter: filter
                             }).render();
 
                             self.iCollection.toJSON().forEach(function (element) {
@@ -983,7 +988,8 @@ define([
 
                             function createPayment(){
                                 new PaymentView({
-                                    model: self.pCollection
+                                    model: self.pCollection,
+                                    filter: filterPayment
                                 });
                             }
 
