@@ -31,7 +31,7 @@ define([
             events: {
                 'keydown'                                                         : 'keydownHandler',
                 'click .dialog-tabs a'                                            : 'changeTab',
-                "click .current-selected"                                         : "showNewSelect",
+                "click #projectDd"                                         : "showNewSelect",
                 "click"                                                           : "hideNewSelect",
                 "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
                 "click .newSelectList li.miniStylePagination"                     : "notHide",

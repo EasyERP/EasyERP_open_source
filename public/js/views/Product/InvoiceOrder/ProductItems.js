@@ -22,7 +22,7 @@ define([
             "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
             "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
             "click .current-selected.productsDd": "showProductsSelect",
-            "click .jobs.current-selected": "showSelect",
+            "click .current-selected.jobs": "showSelect",
             "mouseenter .editable:not(.quickEdit), .editable .no-long:not(.quickEdit)": "quickEdit",
             "mouseleave .editable": "removeEdit",
             "click #cancelSpan": "cancelClick",
@@ -32,6 +32,8 @@ define([
 
         showSelect: function(e, prev, next){
             var self = this;
+
+            e.preventDefault();
 
             dataService.getData("/jobs/getForDD", {"projectId": $("#projectDd").attr("data-id")}, function (jobs) {
 
