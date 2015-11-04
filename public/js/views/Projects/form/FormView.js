@@ -56,7 +56,7 @@ define([
                 "mouseover #jobsItem": "showRemoveButton",
                 "mouseleave #jobsItem": "hideRemoveButton",
                 "click .fa.fa-trash": "removeJobAndWTracks",
-                "dblclick td.editable": "editRow",
+                "dblclick td.editableJobs": "editRow",
                 "click #saveName": "saveNewJobName",
                 "keydown input.editing ": "keyDown"
 
