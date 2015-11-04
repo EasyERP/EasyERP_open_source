@@ -144,6 +144,8 @@ var Invoice = function (models) {
             invoice.workflow.status = workflow.status;
             invoice.paymentInfo.balance = order.paymentInfo.total;
 
+            invoice.project.name = order.project.projectName;
+
             supplier = order['supplier'];
 
             //if (supplier) {
