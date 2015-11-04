@@ -313,6 +313,17 @@ th {
   background-color: #303031;
   color: #cdcdcd;
 }
+.btnAdd {
+  border: 1px solid transparent;
+  background: #3494b9;
+  padding: 0px 6px;
+  color: #f4f4f4;
+  line-height: 19px;
+}
+.btnAdd:hover {
+  text-decoration: none;
+  background: #297492;
+}
 .btn-list {
   height: 24px;
   border: 1px solid #7f7f80;
@@ -349,6 +360,186 @@ th {
 }
 .btn-list .selected a {
   color: white;
+}
+.pagination {
+  width: 100%;
+  margin: 5px 0;
+  float: right;
+}
+.pagination > div {
+  float: left;
+  color: #cdcdcd;
+  padding: 0 5px;
+  box-sizing: border-box;
+}
+.pagination .countOnPage {
+  text-align: left;
+}
+.pagination .countOnPage > div {
+  float: left;
+}
+.pagination .countOnPage span {
+  padding: 1px 3px;
+}
+.pagination .countOnPage .page-list {
+  padding: 1px 3px;
+}
+.pagination .countOnPage .page-list a {
+  display: block;
+  float: left;
+}
+.pagination .pageList {
+  position: relative;
+}
+.pagination .pageList .itemsNumber {
+  text-decoration: none;
+  display: inline-block;
+  padding: 0 5px;
+}
+.pagination .pageList .itemsNumber:hover {
+  padding-bottom: 4px;
+  border-bottom: 1px solid #7f7f80;
+}
+.pagination .pageList a.selectedItemsNumber {
+  border-bottom: 1px solid #7f7f80;
+  padding-bottom: 4px;
+}
+.pagination .pageList button {
+  background-color: white;
+  background-image: none;
+  border-radius: 0;
+  width: 27px;
+  margin: 0 0 0 5px;
+  line-height: 10px;
+  font-size: 12px;
+  padding: 3px 2px;
+}
+.pagination .pageList button:hover {
+  background-color: #F7F8F9;
+}
+.pagination .nextPrev {
+  float: right;
+  text-align: right;
+}
+.pagination .nextPrev div,
+.pagination .nextPrev button {
+  float: left;
+  line-height: 24px;
+}
+.pagination .nextPrev span {
+  padding: 0 3px;
+}
+.pagination .nextPrev button.fa {
+  border: 1px solid #7f7f80;
+  background: transparent;
+  color: #cdcdcd;
+  line-height: 15px;
+  font-size: 15px;
+  width: 24px;
+  height: 24px;
+  display: block;
+  text-align: center;
+  padding: 2px;
+  border-radius: 0;
+}
+.pagination .nextPrev button.fa:hover {
+  background: transparent !important;
+  color: #ffffff;
+  border-color: #ffffff;
+}
+.pagination .nextPrev button.fa[disabled] {
+  color: #747474;
+  border-color: #747474;
+  cursor: default;
+  background: transparent !important;
+}
+.pagination .nextPrev button.fa[disabled]:hover {
+  color: #747474;
+  border-color: #747474;
+  cursor: default;
+  background: transparent !important;
+}
+.pagination .nextPrev #firstShowPage,
+.pagination .nextPrev #lastShowPage {
+  width: 30px;
+  display: block;
+}
+.pagination .nextPrev #previousPage {
+  margin: 0 3px;
+}
+.pagination .nextPrev #nextPage {
+  margin: 0 3px;
+}
+.pagination .nextPrev .currentPageList {
+  margin: 0 5px;
+}
+.pagination .nextPrev .allPage {
+  position: relative;
+}
+.pagination .nextPrev ul {
+  background-color: #303031;
+  border: 1px solid #7f7f80;
+  position: absolute;
+  bottom: 23px;
+  left: 5px;
+  display: none;
+  font-size: 12px;
+}
+.pagination .nextPrev ul li a {
+  display: block;
+  width: 22px;
+  height: 20px;
+  line-height: 20px;
+  text-align: center;
+}
+.pagination .nextPrev ul li a:hover {
+  background-color: #66b5d4;
+  color: white;
+  text-decoration: none;
+}
+.pagination .nextPrev #pageList {
+  background-color: #303031;
+  border: 1px solid #7f7f80;
+  position: absolute;
+  bottom: 23px;
+  left: 5px;
+  display: none;
+}
+.pagination .nextPrev #pageList li {
+  display: block;
+  width: 22px;
+  height: 20px;
+  line-height: 20px;
+  text-align: center;
+  font-size: 12px;
+  cursor: pointer;
+}
+.pagination .nextPrev #pageList li:hover {
+  background-color: #66b5d4;
+  color: white;
+  text-decoration: none;
+}
+.pagination #currentShowPage {
+  border: 1px solid #7f7f80;
+  margin: 0 2px 0 5px;
+  width: 30px;
+  height: 22px;
+  float: left;
+  font-size: 12px !important;
+  text-align: center;
+  max-width: 30px;
+  line-height: 20px;
+  background-color: transparent;
+  font-family: Arial, Helvetica, sans-serif;
+  padding: 0 2px;
+  color: #cdcdcd;
+}
+.pagination #currentShowPage:focus {
+  box-shadow: 0 0 5px #66b5d4;
+  -moz-box-shadow: 0 0 5px #66b5d4;
+  -webkit-box-shadow: 0 0 5px #66b5d4;
+  outline: medium none;
+  border: 1px solid #66b5d4 !important;
 }
 .alert {
   padding: 15px 15px 15px 35px;
@@ -481,6 +672,362 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 .salary-list tbody#listTable .subRow:hover {
   background-color: transparent;
 }
+.list2 {
+  color: #cdcdcd !important;
+  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
+  width: 100%;
+  table-layout: fixed;
+}
+.list2 .anotherColor {
+  background-color: #66b5d4;
+}
+.list2 tfoot tr {
+  border-bottom: 1px solid #7f7f80;
+  background: inherit !important;
+  vertical-align: middle;
+}
+.list2 tfoot td {
+  padding: 3px 6px;
+  line-height: 18px;
+  font-size: 12px;
+  text-align: right;
+}
+.list2 tfoot td span {
+  padding-right: 0;
+}
+.list2 thead tr {
+  border-top: 0;
+  background: inherit !important;
+  vertical-align: top;
+}
+.list2 thead .subSalaryHead {
+  border-top: none;
+}
+.list2 thead th {
+  padding: 2px 6px;
+  line-height: 18px;
+  font-size: 12px;
+  text-align: right;
+}
+.list2 thead th:nth-child(1),
+.list2 thead th:nth-child(2) {
+  text-align: center;
+}
+.list2 thead th input[type="checkbox"] {
+  margin-top: 2.5px;
+}
+.list2 thead th.oe_sortable,
+.list2 thead th.oe_sortable_sub {
+  cursor: pointer;
+}
+.list2 thead th.oe_sortable .arrow,
+.list2 thead th.oe_sortable_sub .arrow {
+  display: none;
+  padding: 0 0 0 5px;
+  margin: 0;
+  text-align: center;
+  width: 5px;
+  height: 5px;
+  font-weight: 100 !important;
+  cursor: pointer;
+  font-family: Icons;
+  text-decoration: none;
+  line-height: 23px;
+  background: none;
+}
+.list2 thead th.oe_sortable.sortUp .up,
+.list2 thead th.oe_sortable_sub.sortUp .up {
+  display: inline-block;
+}
+.list2 thead th.oe_sortable.sortDn .down,
+.list2 thead th.oe_sortable_sub.sortDn .down {
+  display: inline-block;
+}
+.list2 thead th.forCaption {
+  background-color: #1ebbea;
+  width: 50%;
+  text-align: right;
+}
+.list2 thead th:first-of-type {
+  width: 12px;
+}
+.list2 thead th:first-of-type input {
+  cursor: pointer;
+}
+.list2 tbody tr {
+  border-top: 1px solid #7f7f80;
+}
+.list2 tbody tr.greenAlarm {
+  border: 2px solid #90ee90;
+}
+.list2 tbody tr.canceledListItem {
+  color: grey;
+}
+.list2 tbody tr.canceledListItem .newSelectList {
+  color: #000;
+}
+.list2 tbody tr:last-child {
+  border-bottom: 1px solid #7f7f80;
+}
+.list2 tbody tr.stage-cancelled,
+.list2 tbody tr.stage-refused,
+.list2 tbody tr.stage-contractend,
+.list2 tbody tr.stage-lost {
+  text-decoration: line-through;
+}
+.list2 tbody tr td {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  padding: 0 6px;
+  font-size: 12px;
+  text-align: right;
+  border-right: 1px solid #7f7f80;
+  border-bottom: 1px solid #7f7f80;
+  color: #cdcdcd;
+  line-height: 20px;
+}
+.list2 tbody tr td.red-border {
+  color: red;
+}
+.list2 tbody tr td:nth-child(1),
+.list2 tbody tr td:nth-child(2) {
+  text-align: center;
+}
+.list2 tbody tr td.withSelect {
+  position: relative;
+}
+.list2 tbody tr td[data-content="workflow"] {
+  position: relative;
+  padding: 0 15px;
+  overflow: visible;
+}
+.list2 tbody tr td[data-content="workflow"] .newSelectList {
+  top: 5px;
+  right: 15px;
+}
+.list2 tbody tr td progress {
+  width: 100%;
+}
+.list2 tbody tr td a {
+  color: #cdcdcd;
+  display: inline-block;
+}
+.list2 tbody tr td a.stageSelect {
+  color: #cdcdcd;
+}
+.list2 tbody tr td a.done {
+  color: #00c60b !important;
+}
+.list2 tbody tr td progress {
+  background-color: #f5f5f5;
+}
+.list2 tbody tr td progress::-webkit-progress-bar {
+  background-color: #f5f5f5;
+}
+.list2 tbody tr td progress::-webkit-progress-value {
+  background-color: #57B5E3;
+}
+.list2 tbody tr td:first-of-type {
+  padding-left: 7px;
+  line-height: 20px;
+}
+.list2 tbody tr td:first-of-type input {
+  cursor: pointer;
+}
+.list2 tbody tr .icon {
+  line-height: 20px;
+}
+.list2 tr:nth-child(odd) {
+  background-color: #3d3d3e;
+}
+.list2 tr:hover {
+  background-color: #565658;
+}
+.list2 .anotherColor {
+  background-color: #66b5d4;
+}
+.list2 tfoot tr {
+  border-bottom: 1px solid #7f7f80;
+  background: inherit !important;
+  vertical-align: middle;
+}
+.list2 tfoot td {
+  padding: 3px 6px;
+  line-height: 18px;
+  font-size: 12px;
+  text-align: right;
+}
+.list2 tfoot td span {
+  padding-right: 0;
+}
+.list2 thead tr {
+  border-top: 0;
+  background: inherit !important;
+  vertical-align: top;
+}
+.list2 thead .subSalaryHead {
+  border-top: none;
+}
+.list2 thead th {
+  padding: 2px 6px;
+  line-height: 18px;
+  font-size: 12px;
+  text-align: right;
+}
+.list2 thead th:nth-child(1),
+.list2 thead th:nth-child(2) {
+  text-align: center;
+}
+.list2 thead th input[type="checkbox"] {
+  margin-top: 2.5px;
+}
+.list2 thead th.oe_sortable,
+.list2 thead th.oe_sortable_sub {
+  cursor: pointer;
+}
+.list2 thead th.oe_sortable .arrow,
+.list2 thead th.oe_sortable_sub .arrow {
+  display: none;
+  padding: 0 0 0 5px;
+  margin: 0;
+  text-align: center;
+  width: 5px;
+  height: 5px;
+  font-weight: 100 !important;
+  cursor: pointer;
+  font-family: Icons;
+  text-decoration: none;
+  line-height: 23px;
+  background: none;
+}
+.list2 thead th.oe_sortable.sortUp .up,
+.list2 thead th.oe_sortable_sub.sortUp .up {
+  display: inline-block;
+}
+.list2 thead th.oe_sortable.sortDn .down,
+.list2 thead th.oe_sortable_sub.sortDn .down {
+  display: inline-block;
+}
+.list2 thead th.forCaption {
+  background-color: #1ebbea;
+  width: 50%;
+  text-align: right;
+}
+.list2 thead th:first-of-type {
+  width: 12px;
+}
+.list2 thead th:first-of-type input {
+  cursor: pointer;
+}
+.list2 tbody tr {
+  border-top: 1px solid #7f7f80;
+}
+.list2 tbody tr.greenAlarm {
+  border: 2px solid #90ee90;
+}
+.list2 tbody tr.canceledListItem {
+  color: grey;
+}
+.list2 tbody tr.canceledListItem .newSelectList {
+  color: #000;
+}
+.list2 tbody tr:last-child {
+  border-bottom: 1px solid #7f7f80;
+}
+.list2 tbody tr.stage-cancelled,
+.list2 tbody tr.stage-refused,
+.list2 tbody tr.stage-contractend,
+.list2 tbody tr.stage-lost {
+  text-decoration: line-through;
+}
+.list2 tbody tr td {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  padding: 0 6px;
+  font-size: 12px;
+  text-align: right;
+  border-right: 1px solid #7f7f80;
+  border-bottom: 1px solid #7f7f80;
+  color: #cdcdcd;
+  line-height: 20px;
+}
+.list2 tbody tr td.red-border {
+  color: red;
+}
+.list2 tbody tr td:nth-child(1),
+.list2 tbody tr td:nth-child(2) {
+  text-align: center;
+}
+.list2 tbody tr td.withSelect {
+  position: relative;
+}
+.list2 tbody tr td[data-content="workflow"] {
+  position: relative;
+  padding: 0 15px;
+  overflow: visible;
+}
+.list2 tbody tr td[data-content="workflow"] .newSelectList {
+  top: 5px;
+  right: 15px;
+}
+.list2 tbody tr td progress {
+  width: 100%;
+}
+.list2 tbody tr td a {
+  color: #cdcdcd;
+  display: inline-block;
+}
+.list2 tbody tr td a.stageSelect {
+  color: #cdcdcd;
+}
+.list2 tbody tr td a.done {
+  color: #00c60b !important;
+}
+.list2 tbody tr td progress {
+  background-color: #f5f5f5;
+}
+.list2 tbody tr td progress::-webkit-progress-bar {
+  background-color: #f5f5f5;
+}
+.list2 tbody tr td progress::-webkit-progress-value {
+  background-color: #57B5E3;
+}
+.list2 tbody tr td:first-of-type {
+  padding-left: 7px;
+  line-height: 20px;
+}
+.list2 tbody tr td:first-of-type input {
+  cursor: pointer;
+}
+.list2 tbody tr .icon {
+  line-height: 20px;
+}
+.list2 tr:nth-child(odd) {
+  background-color: #3d3d3e;
+}
+.list2 tr:hover {
+  background-color: #565658;
+}
+.list2 thead th:first-of-type {
+  width: 15%;
+}
+.list2 .datepicker {
+  width: 90%;
+}
+.list2 .datepicker.notVisible {
+  display: none;
+}
+.ui-dialog .list2 thead th,
+.ui-dialog .list2 tbody tr td,
+.ui-dialog .list2 tfoot tr td {
+  text-align: left;
+  line-height: 1;
+  height: 20px;
+}
 #forInfo .tableProjects {
   width: 99%;
   margin-bottom: 10px;
@@ -489,29 +1036,37 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   text-align: right;
 }
 #forInfo .tableProjects thead th.forCaption {
-  text-align: left;
   margin-top: 15px;
-  background-color: #66b5d4;
   font-size: 12px;
   line-height: 28px;
   padding: 0 0  0 10px;
   color: #ffffff;
   position: relative;
-  border-right: 1px solid #66b5d4;
+}
+#forInfo .tableProjects thead th.forCaption:last-child {
+  padding: 0 10px 0 0;
+}
+#forInfo .tableProjects thead th.forCaption:first-child {
+  text-align: left;
+  padding: 0 0 0 10px;
 }
 #forInfo .tableProjects thead th.forCaption a {
-  text-align: right;
   color: #ffffff;
-  position: absolute;
-  right: 10px;
-  top: 0;
-  display: block;
 }
 #forInfo .tableProjects tbody td {
   text-align: right;
 }
 #forInfo .tableProjects tbody td:first-child {
   border-left: 1px solid #7f7f80;
+}
+#forInfo .tableProjects tbody td.remove {
+  min-width: 10px;
+  border-right: none;
+  border-left: 1px solid #7f7f80;
+}
+#forInfo .tableProjects tbody td.expand {
+  text-align: center;
+  font-size: 14px;
 }
 #forInfo .tableProjects tr .procent {
   position: relative;
@@ -524,6 +1079,37 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   height: 5px;
   position: absolute;
   right: 13px;
+}
+#forInfo .tableProjects .subRow {
+  background: none;
+}
+#forInfo .tableProjects .subRow:hover {
+  background: none;
+}
+#forInfo .tableProjects .subRow > td {
+  padding-right: 0;
+}
+#forInfo .tableProjects .subRow td:first-child {
+  border-left: 1px solid transparent !important;
+}
+#forInfo .tableProjects .subRow td:last-child {
+  border-right: 1px solid transparent !important;
+}
+#forInfo .tableProjects .tableProject {
+  padding: 5px 0px 5px 20px;
+}
+#forInfo .tableProjects .tableProject .list {
+  border-top: 1px solid transparent;
+}
+#forInfo .tableProjects .tableProject .list tbody tr {
+  border-top: 1px solid transparent;
+}
+.tableResponsive {
+  min-height: .01%;
+  overflow-x: auto;
+  width: 100%;
+  overflow-y: hidden;
+  -ms-overflow-style: -ms-autohiding-scrollbar;
 }
 .vacation-list {
   font-family: inherit;
@@ -710,6 +1296,9 @@ html,
 body {
   margin: 0;
   padding: 0;
+}
+body {
+  background-color: #303031;
 }
 html {
   font-size: 100%;
@@ -1380,168 +1969,6 @@ input::-ms-clear {
   border: 1px solid #66b5d4 !important;
   color: #cdcdcd !important;
 }
-.pagination {
-  width: 100%;
-  float: right;
-  margin-top: 5px;
-  margin-bottom: 5px;
-}
-.pagination div {
-  float: left;
-}
-.pagination .countOnPage {
-  float: left;
-  color: #cdcdcd;
-  margin-left: 5px;
-}
-.pagination .nextPrev {
-  float: right;
-  margin-right: 5px;
-  color: #cdcdcd;
-}
-.pagination #previousPage,
-.pagination #nextPage,
-.pagination .currentPageList,
-.pagination #firstShowPage,
-.pagination #lastShowPage {
-  background-color: white;
-  background-image: none;
-  line-height: 15px;
-  width: 20px;
-  height: 18px;
-  display: block;
-  text-align: center;
-  padding: 0;
-  border-radius: 0;
-  background-position: 50% 50%;
-  background-repeat: no-repeat;
-  float: left;
-}
-.pagination #firstShowPage,
-.pagination #lastShowPage {
-  width: 30px;
-  height: 18px;
-  display: block;
-  font-size: 12px;
-}
-.pagination #previousPage {
-  margin: 0 3px;
-  font-size: 12px;
-}
-.pagination #nextPage {
-  margin: 0 3px;
-  font-size: 12px;
-}
-.pagination .allPage {
-  position: relative;
-}
-.pagination button {
-  color: rgba(0, 0, 0, 0.75);
-}
-.pagination button:hover {
-  background-color: #F7F8F9;
-  border: 1px solid rgba(0, 0, 0, 0.9);
-}
-.pagination button[disabled] {
-  border: 1px solid rgba(0, 0, 0, 0.3);
-  cursor: default;
-}
-.pagination #currentShowPage {
-  border: 1px solid #7f7f80;
-  border-right: none;
-  background-color: #fff;
-  width: 21px;
-  height: 12px;
-  margin-left: 5px;
-  font-size: 12px !important;
-}
-.pagination #pageList {
-  background-color: #303031;
-  border: 1px solid #7f7f80;
-  position: absolute;
-  bottom: 17px;
-  left: -7px;
-  display: none;
-}
-.pagination #pageList li {
-  display: block;
-  width: 25px;
-  height: 20px;
-  line-height: 20px;
-  text-align: center;
-  font-size: 12px;
-  cursor: pointer;
-}
-.pagination #pageList li:hover {
-  background-color: #66b5d4;
-  color: white;
-  text-decoration: none;
-}
-.pagination .currentPageList {
-  margin-right: 5px;
-  font-size: 12px;
-}
-.pagination .currentPageList .caret {
-  display: block;
-  height: 15px;
-  background-image: url("../images/arrow-up.png");
-  background-position: 50% 50%;
-  background-repeat: no-repeat;
-}
-.pagination .pageList {
-  position: relative;
-}
-.pagination .pageList .itemsNumber {
-  text-decoration: none;
-  display: inline-block;
-  padding: 0 5px;
-}
-.pagination .pageList .itemsNumber:hover {
-  padding-bottom: 4px;
-  border-bottom: 1px solid #7f7f80;
-}
-.pagination .pageList a.selectedItemsNumber {
-  border-bottom: 1px solid #7f7f80;
-  padding-bottom: 4px;
-}
-.pagination .pageList button {
-  background-color: white;
-  background-image: none;
-  border-radius: 0;
-  width: 27px;
-  margin: 0 0 0 5px;
-  line-height: 10px;
-  font-size: 12px;
-  padding: 3px 2px;
-}
-.pagination .pageList button:hover {
-  background-color: #F7F8F9;
-}
-.pagination .pageList .currentPageList {
-  margin-left: 0;
-  border-left: none;
-}
-.pagination .pageList ul {
-  background-color: #303031;
-  border: 1px solid #7f7f80;
-  position: absolute;
-  bottom: 17px;
-  left: 0px;
-  display: none;
-  font-size: 12px;
-}
-.pagination .pageList ul li a {
-  display: block;
-  width: 25px;
-  height: 20px;
-  line-height: 20px;
-  text-align: center;
-}
-.pagination .pageList ul li a:hover {
-  background-color: #66b5d4;
-  color: white;
-  text-decoration: none;
-}
 .addUserDialog,
 .addGroupDialog {
   display: none;
@@ -1955,7 +2382,6 @@ dl dd span.ui-spinner {
 .form.employee {
   width: 100%;
   max-width: 100%;
-  padding-right: 40px;
 }
 .form #forInfo {
   overflow: hidden;
@@ -2503,7 +2929,7 @@ dl dd span.ui-spinner {
   line-height: 27px !important;
 }
 .hidden {
-  display: none;
+  display: none !important;
 }
 .formLeftColumn {
   width: 60%;
@@ -2533,7 +2959,6 @@ dl dd span.ui-spinner {
 .formLeftColumn .form.employee {
   width: 100%;
   max-width: 100%;
-  padding-right: 40px;
 }
 .formLeftColumn .form #forInfo {
   overflow: hidden;
@@ -2884,7 +3309,6 @@ dl dd span.ui-spinner {
 .formRightColumn .form.employee {
   width: 100%;
   max-width: 100%;
-  padding-right: 40px;
 }
 .formRightColumn .form #forInfo {
   overflow: hidden;
@@ -3389,7 +3813,6 @@ dl dd span.ui-spinner {
   height: 100%;
 }
 #wrapper {
-  background-color: #303031;
   width: 100%;
   height: 100%;
   min-width: 100%;
@@ -3749,6 +4172,13 @@ dl dd span.ui-spinner {
 }
 .half-block.taskNote #noteArea {
   width: 100%;
+}
+#forInfo .half-block.left {
+  width: 65%;
+  margin-right: 1%;
+}
+#forInfo .half-block.right {
+  width: 34%;
 }
 .funnelIcon {
   display: inline-block;
@@ -4175,7 +4605,7 @@ a.red:hover {
 .miniPagination > div.not-active,
 .miniPaginationPersons > div.not-active {
   color: silver;
-  background-color: none;
+  background: none;
   cursor: default;
 }
 .miniPagination > div.not-active:hover,
@@ -4718,10 +5148,18 @@ table#workflows tr td.edit-status {
 #top-bar-bonus.banned {
   border-bottom: 0;
 }
+.noPadding {
+  padding: 0 !important;
+}
 .startDate,
 .endDate {
   position: relative;
-  width: 150px;
+  width: 100%;
+  box-sizing: border-box;
+  height: 26px !important;
+  line-height: 26px;
+  padding: 2px 6px !important;
+  border: transparent !important;
 }
 .startDate input,
 .endDate input {
@@ -5203,7 +5641,7 @@ ul.dialog-tabs li.right button {
   border-top: none;
 }
 .list thead th {
-  padding: 3px 8px;
+  padding: 2px 6px;
   line-height: 18px;
   font-size: 12px;
   text-align: right;
@@ -5279,7 +5717,7 @@ ul.dialog-tabs li.right button {
   white-space: nowrap;
   text-overflow: ellipsis;
   cursor: pointer;
-  padding: 0 8px;
+  padding: 0 6px;
   font-size: 12px;
   text-align: right;
   border-right: 1px solid #7f7f80;
@@ -5985,11 +6423,20 @@ ul.dialog-tabs li.right button {
   border-top: 1px solid #CBD3E2;
   max-width: 280px;
   height: 18px;
-  background-color: white;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 12px;
-  padding: 2px;
-  color: #262626;
+  border: 1px solid #7f7f80;
+  line-height: 20px;
+  background-color: transparent;
+  padding: 0 2px;
+  color: #cdcdcd;
+}
+.ui-dialog input:focus {
+  box-shadow: 0 0 5px #66b5d4;
+  -moz-box-shadow: 0 0 5px #66b5d4;
+  -webkit-box-shadow: 0 0 5px #66b5d4;
+  outline: medium none;
+  border: 1px solid #66b5d4 !important;
 }
 .ui-dialog input#summary {
   width: 100%;
@@ -6069,10 +6516,9 @@ ul.dialog-tabs li.right button {
   margin-bottom: 15px;
 }
 .form-holder {
-  padding: 20px 20px;
-}
-.form-holder.employee {
-  padding: 20px 40px 20px 20px;
+  padding: 20px;
+  box-sizing: border-box;
+  width: 100%;
 }
 .form-holder form {
   border: none;
@@ -7800,21 +8246,33 @@ input::-webkit-inner-spin-button {
   width: 33.33%;
 }
 .topInputHolder .thirdPartBlock .person-info {
+  display: table;
+  width: 100%;
   overflow: hidden;
 }
+.topInputHolder .thirdPartBlock .person-info > div {
+  vertical-align: middle;
+  display: table-cell;
+}
 .topInputHolder .thirdPartBlock .person-info dd {
-  line-height: 1;
+  vertical-align: middle;
+  display: table-cell;
+  line-height: 25px;
+}
+.topInputHolder .thirdPartBlock .person-info dt {
+  vertical-align: middle;
+  display: table-cell;
+  line-height: 25px;
 }
 .topInputHolder .thirdPartBlock .person-info .miniAvatar {
-  float: left;
   width: 20%;
 }
 .topInputHolder .thirdPartBlock .person-info .miniAvatar .avatar {
   width: 50px;
   height: 50px;
+  margin: 0;
 }
 .topInputHolder .thirdPartBlock .person-info .miniAvatarInfo {
-  float: left;
   width: 80%;
 }
 .form .productEdit {
