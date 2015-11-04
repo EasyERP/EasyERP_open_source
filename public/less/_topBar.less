@@ -29,11 +29,16 @@
       z-index: 10;
       border: 1px solid @border-color-main;
       background-color: @bg-main;
+      padding: 0 5px;
       li {
         font-size: 12px;
         text-align: center;
-        line-height: 30px;
         color: @mainText-color;
+
+        #startTime, #endTime {
+          line-height: 30px;
+        }
+
         .frameDetail {
           label {
             display: inline-block;
@@ -52,8 +57,8 @@
         }
       }
       .buttons {
-        margin-top: 15px;
-        padding: 0 9%;
+        margin: 15px 0;
+        padding: 0 15%;
       }
     }
   }
