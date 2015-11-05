@@ -100,7 +100,7 @@ define([
                 currentEl = this.$el;
                 currentEl.html('');
 
-                currentEl.append(_.template(listTemplate, {currentDb: App.currentDb}));
+                currentEl.append(_.template(listTemplate, {currentDb: App.weTrack}));
                 itemView = new listItemView({
                     collection : self.collection,
                     page       : self.page,

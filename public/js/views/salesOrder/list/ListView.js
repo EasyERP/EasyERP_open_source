@@ -132,7 +132,7 @@ define([
                 currentEl = this.$el;
 
                 currentEl.html('');
-                if (App.currentDb === 'weTrack') {
+                if (App.weTrack) {
                     currentEl.append(_.template(listForWTrack));
                     currentEl.append(new listItemView({
                         collection: this.collection,

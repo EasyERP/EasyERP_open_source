@@ -58,6 +58,12 @@ define([
 
             App.currentDb = currentDb;
 
+            if ((currentDb === "weTrack") || (currentDb === "production") || (currentDb === "development")){
+                App.weTrack = true;
+            } else {
+                App.weTrack = false;
+            }
+
             $("#loginForm").removeClass("notRegister");
             $("#loginForm").removeClass("notRegister");
 

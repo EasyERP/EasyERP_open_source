@@ -37,9 +37,15 @@ var Payment = function (models) {
     var objectId = mongoose.Types.ObjectId;
     var waterfallTasks;
 
+    function checkDb(db){
+        var validDbs = ["weTrack", "production", "development"];
+
+        return validDbs.indexOf(db) !== -1;
+    }
+
     this.getAll = function (req, res, next) {
         //this temporary unused
-        var isWtrack = req.session.lastDb === 'weTrack';
+        var isWtrack = checkDb(req.session.lastDb);
         var Payment;
 
         if (isWtrack) {
@@ -71,7 +77,7 @@ var Payment = function (models) {
     };
 
     function getPaymentFilter(req, res, next, forSale, bonus) {
-        var isWtrack = req.session.lastDb === 'weTrack';
+        var isWtrack = checkDb(req.session.lastDb);
         var Payment;
         var data = req.query;
         var filter = data.filter;
@@ -235,7 +241,7 @@ var Payment = function (models) {
         var body = req.body;
 
         var moduleId = returnModuleId(req);
-        var isWtrack = req.session.lastDb === 'weTrack';
+        var isWtrack = checkDb(req.session.lastDb);
 
         var Payment;
 
@@ -347,7 +353,7 @@ var Payment = function (models) {
 
         var moduleId = returnModuleId(req);
 
-        var isWtrack = req.session.lastDb === 'weTrack';
+        var isWtrack = checkDb(req.session.lastDb);
         var Payment;
 
         if (isWtrack) {
@@ -382,7 +388,7 @@ var Payment = function (models) {
             var totalToPay = (invoice.paymentInfo) ? invoice.paymentInfo.balance : 0;
             var paid = payment.paidAmount;
             var isNotFullPaid;
-            var wId = (DbName === MAINCONSTANTS.WTRACK_DB_NAME) ? 'Sales Invoice' : 'Purchase Invoice';
+            var wId = ((DbName === MAINCONSTANTS.WTRACK_DB_NAME) || (DbName === "production") || (DbName === "development")) ? 'Sales Invoice' : 'Purchase Invoice';
             var request = {
                 query: {
                     wId: wId,
@@ -507,7 +513,7 @@ var Payment = function (models) {
 
         waterfallTasks = [fetchInvoice, savePayment, invoiceUpdater];
 
-        if (DbName === MAINCONSTANTS.WTRACK_DB_NAME) {
+        if ((DbName === MAINCONSTANTS.WTRACK_DB_NAME) || (DbName === "production") || (DbName === "development")) {
             waterfallTasks.push(updateWtrack);
         }
 
@@ -539,7 +545,7 @@ var Payment = function (models) {
         var contentSearcher;
         var waterfallTasks;
 
-        var isWtrack = req.session.lastDb === 'weTrack';
+        var isWtrack = checkDb(req.session.lastDb);
         var Payment;
 
         if (isWtrack) {
@@ -690,7 +696,7 @@ var Payment = function (models) {
 
     this.remove = function (req, res, next) {
         var id = req.params.id;
-        var isWtrack = req.session.lastDb === 'weTrack';
+        var isWtrack = checkDb(req.session.lastDb);
         var Payment;
 
         var moduleId = req.headers.mId || returnModuleId(req);
