@@ -32,6 +32,7 @@ define([
                 'keydown'                                                         : 'keydownHandler',
                 'click .dialog-tabs a'                                            : 'changeTab',
                 "click #projectDd"                                         : "showNewSelect",
+                "click .current-selected a:not(#projectDd)"                                         : "showNewSelect",
                 "click"                                                           : "hideNewSelect",
                 "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
                 "click .newSelectList li.miniStylePagination"                     : "notHide",

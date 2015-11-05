@@ -177,12 +177,12 @@ define([
 
                     tdsArr = row.find('td');
                     $(tdsArr[0]).find('input').val(cid);
-                    $(tdsArr[20]).find('span').text('Unpaid');
-                    $(tdsArr[20]).find('span').addClass('unDone');
-                    $(tdsArr[24]).text(0);
-                    $(tdsArr[22]).text(0);
-                    $(tdsArr[21]).text(revenue.toFixed(2));
-                    $(tdsArr[1]).text(cid);
+                    $(tdsArr[21]).find('span').text('Unpaid');
+                    $(tdsArr[21]).find('span').addClass('unDone');
+                    $(tdsArr[25]).text(0);
+                    $(tdsArr[23]).text(0);
+                    $(tdsArr[22]).text(revenue.toFixed(2));
+                    $(tdsArr[1]).text(cid);EasyErp
                 }
             },
 
@@ -425,7 +425,7 @@ define([
                 costElement = $(e.target).closest('tr').find('[data-content="cost"]');
 
                 if (wTrackId.length < 24) {
-                    employeeId = this.changedModels[wTrackId].employee._id;
+                    employeeId = this.changedModels[wTrackId].employee ? this.changedModels[wTrackId].employee._id : $(e.target).attr("data-id");
 
                     month = (tr.find('[data-content="month"]').text()) ? tr.find('[data-content="month"]').text() : tr.find('.editing').val();
                     year = (tr.find('[data-content="year"]').text()) ? tr.find('[data-content="year"]').text() : tr.find('.editing').val();
@@ -604,6 +604,8 @@ define([
                     changedAttr.employee = employee;
                     changedAttr.department = department;
 
+                    targetElement.attr("data-id", employee._id);
+
                     this.calculateCost(e, wTrackId);
 
                     tr.find('[data-content="department"]').removeClass('errorContent');
@@ -679,12 +681,20 @@ define([
                 var savedRow = this.$listTable.find('#false');
                 var modelId;
                 var checkbox = savedRow.find('input[type=checkbox]');
+                var cId;
+                var value;
 
                 modelObject = modelObject.success;
 
                 if (modelObject) {
                     modelId = modelObject._id;
                     savedRow.attr("data-id", modelId);
+                    cId = checkbox.val();
+                    value =  this.changedModels[cId];
+
+                    delete this.changedModels[cId];
+
+                    this.changedModels[modelId] = value;
                     checkbox.val(modelId);
                     savedRow.removeAttr('id');
                 }
