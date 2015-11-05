@@ -49,12 +49,6 @@ module.exports = function (server) {
     pub.on('error', onError);
     sub.on('error', onError);
 
-    /*io.use(function(socket, next) {
-        var handshake = socket.request;
-
-        next();
-    });*/
-
     require('./ioHandler')(io);
 
     return io;
