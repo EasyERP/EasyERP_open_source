@@ -5158,8 +5158,9 @@ table#workflows tr td.edit-status {
   box-sizing: border-box;
   height: 26px !important;
   line-height: 26px;
-  padding: 2px 6px !important;
+  padding: 2px 4px !important;
   border: transparent !important;
+  text-align: center;
 }
 .startDate input,
 .endDate input {
