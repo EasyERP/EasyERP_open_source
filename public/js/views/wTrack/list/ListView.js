@@ -337,7 +337,7 @@ define([
 
                 var el = $(e.target);
                 var tr = $(e.target).closest('tr');
-                var wTrackId = tr.data('id');
+                var wTrackId = tr.attr('data-id');
                 var colType = el.data('type');
                 var content = el.data('content');
                 var isSelect = colType !== 'input' && el.prop("tagName") !== 'INPUT';
@@ -530,7 +530,7 @@ define([
                 var employee;
                 var department;
                 var changedAttr;
-                var wTrackId = tr.data('id');
+                var wTrackId = tr.attr('data-id');
                 var week;
                 var year;
                 var jobs = {};
@@ -681,20 +681,12 @@ define([
                 var savedRow = this.$listTable.find('#false');
                 var modelId;
                 var checkbox = savedRow.find('input[type=checkbox]');
-                var cId;
-                var value;
 
                 modelObject = modelObject.success;
 
                 if (modelObject) {
                     modelId = modelObject._id;
                     savedRow.attr("data-id", modelId);
-                    cId = checkbox.val();
-                    value =  this.changedModels[cId];
-
-                    delete this.changedModels[cId];
-
-                    this.changedModels[modelId] = value;
                     checkbox.val(modelId);
                     savedRow.removeAttr('id');
                 }
@@ -910,7 +902,7 @@ define([
                 var wTrackId = tr.attr('data-id');
                 var model = this.collection.get(wTrackId);
                 var projectContainer = tr.find('td[data-content="project"]');
-                var projectId = projectContainer.data('id');
+                var projectId = projectContainer.attr('data-id');
 
                 if (checkLength >= 1) {
                     this.copyEl.show();
@@ -1107,7 +1099,7 @@ define([
                 async.each(edited, function (el, cb) {
                     var tr = $(el).closest('tr');
                     var rowNumber = tr.find('[data-content="number"]').text();
-                    var id = tr.data('id');
+                    var id = tr.attr('data-id');
                     var template = _.template(cancelEdit);
                     var model;
 
@@ -1139,7 +1131,7 @@ define([
 
                 if (this.createdCopied) {
                     copiedCreated = this.$el.find('#false');
-                    dataId = copiedCreated.data('id');
+                    dataId = copiedCreated.attr('data-id');
                     this.editCollection.remove(dataId);
                     delete this.changedModels[dataId];
                     copiedCreated.remove();
