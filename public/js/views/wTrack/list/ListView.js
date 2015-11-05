@@ -182,7 +182,7 @@ define([
                     $(tdsArr[25]).text(0);
                     $(tdsArr[23]).text(0);
                     $(tdsArr[22]).text(revenue.toFixed(2));
-                    $(tdsArr[1]).text(cid);EasyErp
+                    $(tdsArr[1]).text(cid);
                 }
             },
 
@@ -199,7 +199,7 @@ define([
                 var tr = $(e.target).closest('tr');
                 var input = tr.find('input.editing');
                 var days = tr.find('.autoCalc');
-                var wTrackId = tr.data('id');
+                var wTrackId = tr.attr('data-id');
                 var worked = 0;
                 var value;
                 var calcEl;
@@ -291,7 +291,7 @@ define([
 
                 if (/*wTrackId !== this.wTrackId &&*/ editedElement.length) {
                     editedCol = editedElement.closest('td');
-                    editedElementRowId = editedElement.closest('tr').data('id');
+                    editedElementRowId = editedElement.closest('tr').attr('data-id');
                     editedElementContent = editedCol.data('content');
                     editedElementValue = editedElement.val();
 
