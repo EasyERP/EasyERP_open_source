@@ -21,11 +21,9 @@ var Invoice = function (models, event) {
     var _ = require('../node_modules/underscore');
 
      function checkDb(db){
-        if ((db === "weTrack") || (db === "production") || (db === "development")){
-            return true;
-        }
+         var validDbs = ["weTrack", "production", "development"];
 
-        return false;
+         return validDbs.indexOf(db) !== -1;
     };
 
     this.create = function (req, res, next) {
@@ -312,7 +310,7 @@ var Invoice = function (models, event) {
         var moduleId = 56;
         var forSales = req.query.forSales;
 
-        if (db === 'weTrack'){
+        if (checkDb(db)){
             moduleId = 64
         }
 
@@ -617,7 +615,7 @@ var Invoice = function (models, event) {
         var wTrack = models.get(db, "wTrack", wTrackSchema);
         var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
 
-        if ((db === 'weTrack') || (db === 'production') || (db === 'development')){
+        if (checkDb(db)){
             moduleId = 64
         }
 
@@ -734,7 +732,7 @@ var Invoice = function (models, event) {
         var db = req.session.lastDb;
         var moduleId = 56;
 
-        if (db === 'weTrack'){
+        if (checkDb(db)){
             moduleId = 64
         }
 

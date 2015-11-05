@@ -40,11 +40,9 @@ var Payment = function (models, event) {
     var waterfallTasks;
 
     function checkDb(db){
-        if ((db === "weTrack") || (db === "production") || (db === "development")){
-            return true;
-        }
+        var validDbs = ["weTrack", "production", "development"];
 
-        return false;
+        return validDbs.indexOf(db) !== -1;
     }
 
     this.getAll = function (req, res, next) {

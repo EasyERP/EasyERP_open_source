@@ -452,6 +452,8 @@ define([
             },
 
             chooseOption: function (e) {
+                var data;
+                var attrId = $(e.target).parents("td").find(".current-selected").attr('id');
 
                 $(".newSelectList").hide();
 
@@ -462,7 +464,13 @@ define([
 
                     var id = $(e.target).parents("td").closest('tr').attr('data-id');
 
-                    var data = {_id: id, workflowId: $(e.target).attr("id"), workflowName: $(e.target).text()};
+                    if (attrId === 'workflow'){
+                        data = {_id: id, workflowId: $(e.target).attr("id"), workflowName: $(e.target).text()};
+                    } else if (attrId === 'type') {
+                        data = {_id: id, type: $(e.target).text()};
+                    }
+
+
 
                     dataService.postData("/jobs/update", data, function (err, result) {
                         if (err) {
