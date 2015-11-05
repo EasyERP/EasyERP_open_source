@@ -471,7 +471,6 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                         jobs:  self.jobs,
                         createJob: self.createJob
                     });
-                    var self = this;
 
                     this.$el = $(dialog).dialog({
                         dialogClass: "edit-dialog",

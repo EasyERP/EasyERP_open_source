@@ -17,7 +17,7 @@ function returnModuleId(req) {
      if(isWtrack){
      moduleId = 61;
      } else {*/
-    moduleId = !!body.forSales ? 61 : 60
+    moduleId = !!body.forSales ? 61 : 60;
     /*    }*/
 
     return moduleId;
@@ -40,11 +40,9 @@ var Payment = function (models, event) {
     var waterfallTasks;
 
     function checkDb(db){
-        if ((db === "weTrack") || (db === "production") || (db === "development")){
-            return true;
-        }
+        var validDbs = ["weTrack", "production", "development"];
 
-        return false;
+        return validDbs.indexOf(db) !== -1;
     }
 
     this.getAll = function (req, res, next) {
