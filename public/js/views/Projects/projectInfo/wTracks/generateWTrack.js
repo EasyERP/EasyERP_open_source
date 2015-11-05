@@ -286,7 +286,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                 },
 
                 generateItems: function (e) {
-                    this.setChangedValueToModel();
+                    this.setChangedValueToModel(); // add for setChanges by Hours
 
                     var errors = this.$el.find('.errorContent');
                     var self = this;
