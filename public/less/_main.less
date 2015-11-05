@@ -326,7 +326,7 @@ input::-ms-clear {
 .dl-auto(@max-width: 120px, @with-dt: 35%, @line-height: 0, @height: 16px, @margin-top: 0) {
   clear: both;
   font-size: 14px;
-
+  overflow: hidden;
   dt {
     padding: 1px;
     margin: -1px;
@@ -365,7 +365,7 @@ input::-ms-clear {
     }
 
     input:not([type='checkbox']) {
-      width: 94%;
+      width: 93%;
     }
 
     a.formLink {
@@ -373,7 +373,7 @@ input::-ms-clear {
     }
     span {
       &.ui-spinner{
-        width: 100%;
+        width: 96%;
       }
     }
   }
@@ -384,7 +384,7 @@ input::-ms-clear {
   max-width: @width;
   margin: 0 auto;
   background: @background;
-  min-height: 130px;
+  min-height: 150px;
   display: block;
   position: relative;
   border: @border solid @border-color;
@@ -587,6 +587,7 @@ input::-ms-clear {
       textarea {
         width: 95%;
         resize: none;
+        padding-top: 10px;
       }
     }
   }
@@ -2066,7 +2067,7 @@ input::-ms-clear {
   }
 }
 
-.notdialogform(@width: 95%) {
+.notdialogform(@width: 96%) {
   border: none;
   margin: 0 auto;
   width: auto;
@@ -4005,8 +4006,6 @@ ul.dialog-tabs {
     }
     .arrow {
       border-left: 1px solid #ABABAB;
-      height: 24px;
-      width: 24px;
       font-family: Icons;
       color: white;
       font-weight: 500;
@@ -4014,7 +4013,7 @@ ul.dialog-tabs {
       line-height: 20px;
       width: 8px;
       margin-left: -2px;
-      height: 15px;
+      height: 17px;
       display: block;
     }
   }
@@ -4398,10 +4397,10 @@ h3.dashboard {
   ul {
     display: none;
     margin-top: 5px;
-    border: @thin-border silver;
+    border: @thin-border @border-color-main;
     width: 25px;
     position: absolute;
-    background-color: white;
+    background-color: @bg-main;
     z-index: 1;
     &.with-div {
       margin-left: 17px;
@@ -4414,7 +4413,7 @@ h3.dashboard {
         border-radius: @width;
         margin: 6px;
         cursor: pointer;
-        border: @thin-border silver;
+        border: @thin-border @border-color-main;
         &.health1 {
           background-color: green;
         }
@@ -4545,7 +4544,7 @@ h3.dashboard {
   .job-create-info {
     .dl-auto(200px, 42%);
     input {
-      width: 205px !important;
+      width: 218px !important;
     }
     select {
       width: 212px;
@@ -4674,7 +4673,7 @@ h3.dashboard {
 .form {
   .job-info {
     .dl-auto(300px, 30%, 30px);
-
+    color: @mainText-color;
   }
   .opp-info {
     .dl-auto(300px, 40%, 30px);
@@ -6060,8 +6059,9 @@ textarea#editInput {
   li {
     cursor: pointer;
     font-size: 12px;
-    padding: 5px 10px;
+    padding: 5px 15px;
     color: @filter-text-color;
+    position: relative;
   }
   #filtersContent {
     .filterGroup {
@@ -6093,20 +6093,25 @@ textarea#editInput {
             float: right;
           }
         }
-        &:not(.miniStylePagination):before {
-          content: '\2713';
-        }
         &:not(.checkedValue):hover:before {
           color: @bg-hover-drop-down-color;
         }
-        &:not(.checkedValue):before,
-        &.checkedValue:before,
-        &.checkedValue:hover:before {
-          color: @bg-main;
+        //&:not(.checkedValue):before,
+        //&.checkedValue:before,
+        //&.checkedValue:hover:before {
+        //  color: @bg-main;
+        //}
+        &.checkedValue {
+          &:before {
+            content: '\2713';
+            color: @mainText-color;
+            position: absolute;
+            top: 4px;
+            left: 4px;
+          }
         }
         &:hover, &.checkedValue {
           background-color: @bg-hover-drop-down-color;
-          color: @grey;
         }
       }
       .filterValues {
