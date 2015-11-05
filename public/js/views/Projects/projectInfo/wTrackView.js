@@ -422,6 +422,8 @@ define([
                     el.find('#check_all').prop('checked', false);
                 }
             }
+
+            this.setAllTotalVals();
         },
 
         setAllTotalVals: function () {

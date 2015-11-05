@@ -652,6 +652,8 @@ define([
                         $('#check_all').prop('checked', false);
                     }
                 }
+
+                this.setAllTotalVals();
             },
 
             saveItem: function () {
@@ -756,7 +758,7 @@ define([
                             }
                         } else {
                             $("#top-bar-deleteBtn").hide();
-                            self.genInvoiceEl.hide();
+                           // self.genInvoiceEl.hide();
                             $('#check_all').prop('checked', false);
                         }
                     }
@@ -976,12 +978,16 @@ define([
                     newCollection: this.newCollection
                 }, function (response, context) {
                     context.listLength = response.count || 0;
+                    context.getTotalLength(null, context.defaultItemsNumber, context.filter);
+                    context.fetchSortCollection({});
+
                 }, this);
-                this.deleteRender(deleteCounter, deletePage, {
-                    filter: this.filter,
-                    newCollection: this.newCollection,
-                    parrentContentId: this.parrentContentId
-                });
+                //this.deleteRender(deleteCounter, deletePage, {
+                //    filter: this.filter,
+                //    newCollection: this.newCollection,
+                //    parrentContentId: this.parrentContentId
+                //});
+
 
                 holder = this.$el;
 
