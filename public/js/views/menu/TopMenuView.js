@@ -42,16 +42,16 @@ define([
             },
             updateTopMenu: function (currentRoot) {
                 this.currentRoot = currentRoot;
-                this.selectedModule = (this.currentRoot[0]).get('mname');
+                this.selectedModule = (this.currentRoot && this.currentRoot[0]) ? (this.currentRoot[0]).get('mname') : null;
                 this.$el.find(".selected").removeClass("selected");
                 this.$el.find("#" + this.selectedModule).parent().addClass("selected");
             },
             render: function () {
                 if (this.selectedModule === null)
                     if (this.currentRoot) {
-                        this.selectedModule = this.currentRoot[0] ? (this.currentRoot[0]).get('mname') : null;
+                        this.selectedModule = (this.currentRoot && this.currentRoot[0]) ? (this.currentRoot[0]).get('mname') : null;
                     } else {
-                        this.selectedModule = this.currentRoot[0] ? (this.collection[0]).get('mname') : null;
+                        this.selectedModule = (this.currentRoot && this.currentRoot[0]) ? (this.collection[0]).get('mname') : null;
                     }
                 var self = this;
                 this.$el.empty();

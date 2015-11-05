@@ -78,7 +78,7 @@ define([
 			updateLeftMenu:function(currentChildren, currentRoot){
                 this.currentChildren = currentChildren;
                 this.currentSection = currentRoot[0] ? currentRoot[0].get('mname') : null;
-				this.selectedId = this.currentChildren[0].get("_id");
+				this.selectedId = (this.currentChildren && this.currentChildren[0]) ? this.currentChildren[0].get("_id") : null;
 				this.render(null, this.selectedId);
 			},
             hoverItem: function (e) {
