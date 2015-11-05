@@ -31,7 +31,7 @@ define([
             events: {
                 'keydown'                                                         : 'keydownHandler',
                 'click .dialog-tabs a'                                            : 'changeTab',
-                "click .current-selected"                                         : "showNewSelect",
+                "click #projectDd"                                         : "showNewSelect",
                 "click"                                                           : "hideNewSelect",
                 "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
                 "click .newSelectList li.miniStylePagination"                     : "notHide",
@@ -40,6 +40,8 @@ define([
             },
 
             showNewSelect: function (e, prev, next) {
+                e.preventDefault();
+
                 populate.showSelect(e, prev, next, this);
                 return false;
 
@@ -151,6 +153,7 @@ define([
                 var description;
                 var unTaxed = $.trim(thisEl.find('#totalUntaxes').text());
                 var subTotal;
+                var jobs;
 
                 var usersId = [];
                 var groupsId = [];
@@ -178,6 +181,7 @@ define([
                             taxes = targetEl.find('.taxes').text();
                             description = targetEl.find('[data-name="productDescr"]').text();
                             subTotal = targetEl.find('.subtotal').text();
+                            jobs = targetEl.find('#jobs').attr('data-id');
 
                             products.push({
                                 product      : productId,
@@ -186,7 +190,8 @@ define([
                                 scheduledDate: scheduledDate,
                                 taxes        : taxes,
                                 description  : description,
-                                subTotal     : subTotal
+                                subTotal     : subTotal,
+                                jobs: jobs
                             });
                         }
                     }
@@ -348,12 +353,6 @@ define([
                     changeMonth: true,
                     changeYear : true
                 }).datepicker('setDate', new Date());
-
-                /*this.$el.find('#bidValidUntill').datepicker({
-                 dateFormat: "d M, yy",
-                 changeMonth: true,
-                 changeYear: true
-                 });*/
 
                 this.$el.find('#expectedDate').datepicker({
                     dateFormat : "d M, yy",

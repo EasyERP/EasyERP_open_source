@@ -1040,7 +1040,7 @@ var Employee = function (event, models) {
 
         var fullName;
 
-        if ((dbName === CONSTANTS.WTRACK_DB_NAME) || (dbName === "production") || (dbName === "development")) {
+        if ((dbName === CONSTANTS.WTRACK_DB_NAME) || (dbName === 'production') || ((dbName === 'development'))) {
             EmployeeSchema = mongoose.Schemas['Employee'];
             EmployeeModel = models.get(dbName, 'Employee', EmployeeSchema);
 

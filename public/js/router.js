@@ -915,7 +915,7 @@ define([
                         viewType: 'thumbnails',
                         //page: 1,
                         count: count,
-                        filter: savedFilter,
+                        filter: filter,
                         contentType: contentType,
                         newCollection: newCollection
                     })
@@ -928,7 +928,7 @@ define([
                         var contentview = new contentView({
                             collection: collection,
                             startTime: startTime,
-                            filter: savedFilter,
+                            filter: filter,
                             newCollection: newCollection
                         });
                         var topbarView = new topBarView({actionType: "Content", collection: collection});

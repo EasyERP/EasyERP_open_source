@@ -9,9 +9,10 @@ define([
         "common",
         "populate",
         'constants',
-        'views/Assignees/AssigneesView'
+        'views/Assignees/AssigneesView',
+        'dataService'
     ],
-    function (createView, CreateTemplate, newRow, PersonsCollection, DepartmentsCollection, ProductItemView, QuotationModel, common, populate, CONSTANTS, AssigneesView) {
+    function (createView, CreateTemplate, newRow, PersonsCollection, DepartmentsCollection, ProductItemView, QuotationModel, common, populate, CONSTANTS, AssigneesView, dataService) {
 
         var CreateView = createView.extend({
 
@@ -84,6 +85,7 @@ define([
                 var description;
                 var unTaxed = $.trim(thisEl.find('#totalUntaxes').text());
                 var subTotal;
+                var jobs;
 
                 var usersId = [];
                 var groupsId = [];
@@ -111,6 +113,7 @@ define([
                             taxes = targetEl.find('.taxes').text();
                             description = targetEl.find('[data-name="productDescr"]').text();
                             subTotal = targetEl.find('.subtotal').text();
+                            jobs = targetEl.find('#jobs').attr('data-id');
 
                             products.push({
                                 product      : productId,
@@ -119,7 +122,8 @@ define([
                                 scheduledDate: scheduledDate,
                                 taxes        : taxes,
                                 description  : description,
-                                subTotal     : subTotal
+                                subTotal     : subTotal,
+                                jobs: jobs
                             });
                         }
                     }
@@ -200,6 +204,17 @@ define([
                 var lastNumber = number.length ? $(number[numberLength-1]).html() : 0;
 
                 var currentNumber = parseInt(lastNumber) + 1;
+
+                var products = model.get('products');
+
+                var data ={products: JSON.stringify(products), type: "Quotation"};
+
+                dataService.postData("/jobs/update", data,  function(err, result){
+                    if (err){
+                        return console.log(err);
+                    }
+
+                });
 
                 content.hideDialog();
 

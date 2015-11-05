@@ -5,12 +5,15 @@
     <!--<button id="top-bar-generateBtn" class="red disabled">Generate Invoice</button>-->
     <button id="top-bar-copyBtn" class="red disabled">Copy</button>
 </div>
-<div>
+<div class="tableResponsive">
     <table class="list task-list">
         <thead>
         <tr>
-            <th><input type="checkbox" id="check_all" /></th>
+            <th><input type="checkbox" id="check_all" class="check_all"/></th>
             <th>N</th>
+            <th class="oe_sortable" data-sort="jobs.name">
+                Job Name<span class="arrow down">7</span><span class="arrow up">v</span>
+            </th>
             <th class="oe_sortable" data-sort="project.projectmanager.name">
                 Assigned<span class="arrow down">7</span><span class="arrow up">v</span>
             </th>
@@ -85,7 +88,7 @@
         <tbody id="listTable"></tbody>
         <tfoot id="listFooter">
         <tr>
-            <td colspan="12"></td>
+            <td colspan="13"></td>
             <td><span id="hours">0</span></td>
             <td><span id="monHours">0</span></td>
             <td><span id="tueHours">0</span></td>

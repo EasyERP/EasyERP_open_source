@@ -9,14 +9,16 @@ var MonthHoursSchema = mongoose.Schemas['MonthHours'];
 var EmployeeSchema = mongoose.Schemas['Employee'];
 var _ = require('../node_modules/underscore');
 var async = require('async');
+var JobsSchema = mongoose.Schemas['jobs'];
 
-var dbObject = mongoose.createConnection('localhost', 'weTrack');
+var dbObject = mongoose.createConnection('localhost', 'development');
 dbObject.on('error', console.error.bind(console, 'connection error:'));
 dbObject.once('open', function callback() {
     console.log("Connection to weTrack is success");
 
     var Project = dbObject.model('Project', ProjectSchema);
     var Employee = dbObject.model('Employees', EmployeeSchema);
+    var Job = dbObject.model("jobs", JobsSchema);
     var paralellTasks;
     var count = 0;
 
@@ -102,7 +104,7 @@ dbObject.once('open', function callback() {
                 var keysForPT;
                 var sortBudget = [];
                 var budget = {};
-                var minDate = 1/0;
+                var minDate = 1 / 0;
                 var maxDate = 0;
                 var nextDate;
                 var nextMaxDate;
@@ -141,17 +143,17 @@ dbObject.once('open', function callback() {
                         nextDate = wTrack.dateByWeek;
                         nextMaxDate = wTrack.dateByWeek;
 
-                        if (nextDate <= minDate){
+                        if (nextDate <= minDate) {
                             minDate = nextDate;
                         }
 
-                        if (nextMaxDate > maxDate){
+                        if (nextMaxDate > maxDate) {
                             maxDate = nextMaxDate;
                         }
 
                         if (empId === emp) {
                             if (projectTeam[empId]) {
-                                if (wTrack.department._id.toString() === '55b92ace21e4b7c40f000011'){
+                                if (wTrack.department._id.toString() === '55b92ace21e4b7c40f000011') {
                                     projectTeam[empId].byQA.revenue += parseFloat(wTrack.revenue);
                                     projectTeam[empId].byQA.hours += parseFloat(wTrack.worked);
                                 }
@@ -163,7 +165,7 @@ dbObject.once('open', function callback() {
                             } else {
                                 projectTeam[empId] = {};
 
-                                if (wTrack.department._id.toString() === '55b92ace21e4b7c40f000011'){
+                                if (wTrack.department._id.toString() === '55b92ace21e4b7c40f000011') {
                                     projectTeam[empId].byQA = {};
                                     projectTeam[empId].byQA.revenue = parseFloat(wTrack.revenue);
                                     projectTeam[empId].byQA.hours = parseFloat(wTrack.worked);
@@ -196,17 +198,17 @@ dbObject.once('open', function callback() {
                     });
                     budgetTotal.rateSum = {};
                     var value = budgetTotal.revenueByQA / budgetTotal.hoursByQA;
-                    budgetTotal.rateSum.byQA = value? value : 0;
-                    budgetTotal.rateSum.byDev = ((parseFloat(budgetTotal.revenueSum) - budgetTotal.revenueByQA)) / (budgetTotal.hoursSum - parseInt(budgetTotal.hoursByQA)) ;
+                    budgetTotal.rateSum.byQA = value ? value : 0;
+                    budgetTotal.rateSum.byDev = ((parseFloat(budgetTotal.revenueSum) - budgetTotal.revenueByQA)) / (budgetTotal.hoursSum - parseInt(budgetTotal.hoursByQA));
 
                     projectValues.revenue = budgetTotal.revenueSum;
                     projectValues.profit = budgetTotal.profitSum;
                     projectValues.markUp = ((budgetTotal.profitSum / budgetTotal.costSum) * 100);
-                   if (!isFinite(projectValues.markUp)){
-                       projectValues.markUp = 0;
-                   }
+                    if (!isFinite(projectValues.markUp)) {
+                        projectValues.markUp = 0;
+                    }
                     projectValues.radio = ((budgetTotal.profitSum / budgetTotal.revenueSum) * 100);
-                    if (!isFinite(projectValues.radio)){
+                    if (!isFinite(projectValues.radio)) {
                         projectValues.radio = 0;
                     }
 
@@ -253,11 +255,7 @@ dbObject.once('open', function callback() {
                         });
 
                         budget = {
-                            projectTeam: response,
-                            bonus: bonus,
-                            budget: sortBudget,
-                            projectValues: projectValues,
-                            budgetTotal: budgetTotal
+                            bonus: bonus
                         };
 
 
@@ -275,4 +273,5 @@ dbObject.once('open', function callback() {
         });
         console.log('success');
     });
+
 });

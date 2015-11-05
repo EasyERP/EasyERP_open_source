@@ -1,29 +1,28 @@
 
 <div>
     <table class="list task-list">
-        <col width="2%">
-        <col width="10%">
-        <col width="10%">
-        <col width="10%">
-        <col width="10%">
-        <col width="10%">
-        <col width="10%">
-        <col width="10%">
-        <col width="10%">
-        <col width="10%">
-
         <thead>
         <tr>
+            <th><input type="checkbox" id="check_all_invoice" class="check_all"/></th>
             <th>N</th>
-            <th>Customer</th>
-            <th>Invoice Date</th>
-            <th>Payment Date</th>
-            <th>Assigned</th>
-            <th>Due Date</th>
-            <th>Balance</th>
-            <th>Paid</th>
-            <th>Total</th>
-            <th>Status</th>
+            <th class="oe_sortable" data-sort="supplier.name">Customer<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="invoiceDate">Invoice Date<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="supplierInvoiceNumber">Payment Date<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="salesPerson.name">Sales Person><span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="dueDate">Due Date<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="paymentInfo.balance">Balance<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="paymentInfo.unTaxed">Paid<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="paymentInfo.total">Total<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="workflow.name">Status<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
         </tr>
         </thead>
         <tbody id="listTable">
@@ -31,29 +30,32 @@
         <%var balance = 0;%>
         <%var paid = 0;%>
         <%var total = 0;%>
-<% collection.forEach(function(invoice, index){ %>
-<tr data-id="<%=invoice._id%>">
-    <td><%=startNumber + index + 1%></td>
-    <td><%=(invoice.supplier && invoice.supplier.name) ? invoice.supplier.name : ''%></td>
-    <td><%=utcDateToLocaleDate(invoice.invoiceDate)%></td>
-    <td><%=utcDateToLocaleDate(invoice.paymentDate)%></td>
-    <td><%=(invoice.salesPerson) ? invoice.salesPerson.name : ''%></td>
-    <td><%=utcDateToLocaleDate(invoice.dueDate)%></td>
-    <td class="money"><%=(invoice.paymentInfo.balance/100).toFixed(2)%></td>
-    <td class="unTaxed money"><%=(invoice.paymentInfo) ? (invoice.paymentInfo.unTaxed/100).toFixed(2) : '0.00'%></td>
-    <td class="total money"><%=(invoice.paymentInfo) ? (invoice.paymentInfo.total/100).toFixed(2) : '0.00'%></td>
-    <td id='<%=invoice._id%>'>
-        <%if(invoice.workflow){%>
-        <%if(invoice.workflow.status !== 'Done'){%>
-        <a href="javascript:;" class="stageSelect <%=invoice.workflow.status.toLowerCase().replace(' ', '')%>"><%=invoice.workflow.name%></a>
-        <% } else {%>
-        <span class="done"><%=invoice.workflow.name%></span>
-        <%}%>
-        <% } else {%>
-        <span> </span>
-        <%}%>
-    </td>
-
+        <% collection.forEach(function(invoice, index){ %>
+        <tr data-id="<%=invoice._id%>">
+            <%if (invoice.workflow && invoice.workflow.status === 'Cancelled') { %>
+            class="canceledListItem"
+            <%}%>
+            <td class = "notForm"><input type="checkbox" value="<%=invoice._id%>" class="checkbox" /></td>
+            <td><%=startNumber + index + 1%></td>
+            <td><%=(invoice.supplier && invoice.supplier.name) ? invoice.supplier.name : ''%></td>
+            <td><%=invoice.invoiceDate%></td>
+            <td><%=invoice.paymentDate%></td>
+            <td><%=(invoice.salesPerson) ? invoice.salesPerson.name : ''%></td>
+            <td><%=invoice.dueDate%></td>
+            <td class="money"><%=currencySplitter(invoice.paymentInfo.balance)%></td>
+            <td class="unTaxed money"><%=(invoice.paymentInfo) ? currencySplitter(invoice.paymentInfo.unTaxed) : '0.00'%></td>
+            <td class="total money"><%=(invoice.paymentInfo) ? currencySplitter(invoice.paymentInfo.total) : '0.00'%></td>
+            <td id='<%=invoice._id%>'>
+                <%if(invoice.workflow){%>
+                <%if(invoice.workflow.status !== 'Done'){%>
+                <a href="javascript:;" class="stageSelect <%=invoice.workflow.status.toLowerCase().replace(' ', '')%>"><%=invoice.workflow.name%></a>
+                <% } else {%>
+                <span class="done"><%=invoice.workflow.name%></span>
+                <%}%>
+                <% } else {%>
+                <span> </span>
+                <%}%>
+            </td>
     <%balance += parseFloat(invoice.paymentInfo.balance)%>
     <%paid += parseFloat(invoice.paymentInfo.unTaxed)%>
     <%total += parseFloat(invoice.paymentInfo.total)%>
@@ -63,10 +65,10 @@
         </tbody>
         <tfoot id="listTotal">
         <tr>
-            <td colspan="6"></td>
-            <td><span id="balance" class="money"><%=currencySplitter((balance / 100).toFixed(2))%></span></td>
-            <td><span id="paid" class="money"><%=currencySplitter((paid / 100).toFixed(2))%></span></td>
-            <td><span id="total" class="money"><%=currencySplitter((total / 100).toFixed(2))%></span></td>
+            <td colspan="7"></td>
+            <td><span id="balance" class="money"><%=currencySplitter((balance).toFixed(2))%></span></td>
+            <td><span id="paid" class="money"><%=currencySplitter((paid).toFixed(2))%></span></td>
+            <td><span id="total" class="money"><%=currencySplitter((total).toFixed(2))%></span></td>
             <td></td>
         </tr>
         </tfoot>

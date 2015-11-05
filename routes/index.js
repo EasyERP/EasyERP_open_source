@@ -18,7 +18,7 @@ module.exports = function (app, mainDb) {
     var models = require("../models.js")(dbsObject);
     var productRouter = require('./product')(models);
     var orderRouter = require('./order')(models);
-    var invoiceRouter = require('./invoice')(models);
+    var invoiceRouter = require('./invoice')(models, event);
     var supplierRouter = require('./supplier')(models);
     var quotationRouter = require('./quotation')(models);
     var destinationRouter = require('./destination')(models);
@@ -27,7 +27,7 @@ module.exports = function (app, mainDb) {
     var paymentTermRouter = require('./paymentTerm')(models);
     var deliverToTermRouter = require('./deliverTo')(models);
     var workflowRouter = require('./workflow')(models);
-    var paymentRouter = require('./payment')(models);
+    var paymentRouter = require('./payment')(models, event);
     var paymentMethodRouter = require('./paymentMethod')(models);
     var periodRouter = require('./period')(models);
     var importDataRouter = require('./importData')(models);
@@ -50,6 +50,7 @@ module.exports = function (app, mainDb) {
     var customersRouter = require('./customers')(models, event);
     var capacityRouter = require('./capacity')(models);
     var importFileRouter = require('./importFile')(models);
+    var jobsRouter = require('./jobs')(models, event);
 
     var requestHandler = require("../requestHandler.js")(app, event, mainDb);
 
@@ -91,6 +92,7 @@ module.exports = function (app, mainDb) {
     app.use('/category', productCategoriesRouter);
     app.use('/customers', customersRouter);
     app.use('/capacity', capacityRouter);
+    app.use('/jobs', jobsRouter);
     app.get('/getDBS', function (req, res) {
         res.send(200, {dbsNames: dbsNames});
     });
@@ -234,7 +236,7 @@ module.exports = function (app, mainDb) {
                         shortPas = "\/uploads\/" + req.headers.id + "\/" + item.name;
                     }
                 }
-                fs.writeFile(path, data, function (err) {k
+                fs.writeFile(path, data, function (err) {
                     if (!err) {
                         var file = {};
                         file._id = mongoose.Types.ObjectId();

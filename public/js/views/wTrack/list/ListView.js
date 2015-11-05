@@ -21,24 +21,24 @@ define([
 
     function (listViewBase, listTemplate, cancelEdit, forWeek, createView, listItemView, editView, wTrackCreateView, currentModel, contentCollection, EditCollection, filterView, common, dataService, populate, async, custom, moment) {
         var wTrackListView = listViewBase.extend({
-            createView              : createView,
-            listTemplate            : listTemplate,
-            listItemView            : listItemView,
-            contentCollection       : contentCollection,
-            filterView              : filterView,
-            contentType             : 'wTrack',
-            viewType                : 'list',
-            responseObj             : {},
-            wTrackId                : null, //need for edit rows in listView
+            createView: createView,
+            listTemplate: listTemplate,
+            listItemView: listItemView,
+            contentCollection: contentCollection,
+            filterView: filterView,
+            contentType: 'wTrack',
+            viewType: 'list',
+            responseObj: {},
+            wTrackId: null, //need for edit rows in listView
             totalCollectionLengthUrl: '/wTrack/totalCollectionLength',
-            $listTable              : null, //cashedJqueryEllemnt
-            editCollection          : null,
-            selectedProjectId       : [],
-            genInvoiceEl            : null,
-            copyEl                  : null,
-            changedModels           : {},
-            exportToCsvUrl          : '/wTrack/exportToCsv',
-            exportToXlsxUrl         : '/wTrack/exportToXlsx',
+            $listTable: null, //cashedJqueryEllemnt
+            editCollection: null,
+            selectedProjectId: [],
+            genInvoiceEl: null,
+            copyEl: null,
+            changedModels: {},
+            exportToCsvUrl: '/wTrack/exportToCsv',
+            exportToXlsxUrl: '/wTrack/exportToXlsx',
 
             initialize: function (options) {
                 this.startTime = options.startTime;
@@ -59,15 +59,15 @@ define([
             },
 
             events: {
-                "click .stageSelect"                                              : "showNewSelect",
+                "click .stageSelect": "showNewSelect",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                "click td.editable"                                               : "editRow",
-                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
-                "change .autoCalc"                                                : "autoCalc",
-                "change .editable "                                               : "setEditable",
-                "keydown input.editing "                                          : "keyDown",
-                "change .listCB"                                                  : "setAllTotalVals"
+                "click td.editable": "editRow",
+                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
+                "change .autoCalc": "autoCalc",
+                "change .editable ": "setEditable",
+                "keydown input.editing ": "keyDown",
+                "change .listCB": "setAllTotalVals"
             },
 
             keyDown: function (e) {
@@ -116,18 +116,18 @@ define([
                 }, function (err) {
                     if (!err) {
                         new wTrackCreateView({
-                            wTracks : wTracks,
-                            project : project,
+                            wTracks: wTracks,
+                            project: project,
                             assigned: assigned,
                             customer: customer,
-                            total   : total
+                            total: total
                         });
                     }
                 });
             },
 
             hideGenerateCopy: function () {
-                $('#top-bar-generateBtn').hide();
+                //$('#top-bar-generateBtn').hide();
                 $('#top-bar-copyBtn').hide();
             },
 
@@ -333,7 +333,7 @@ define([
             },
 
             editRow: function (e, prev, next) {
-                $(".newSelectList").hide();
+                $(".newSelectList").remove();
 
                 var el = $(e.target);
                 var tr = $(e.target).closest('tr');
@@ -485,8 +485,8 @@ define([
                     dataService.getData('/payroll/getByMonth',
                         {
                             month: month,
-                            year : year,
-                            _id  : employeeId
+                            year: year,
+                            _id: employeeId
                         }, function (response, context) {
 
                             if (response.error) {
@@ -516,6 +516,7 @@ define([
             },
 
             chooseOption: function (e) {
+                var self = this;
                 var target = $(e.target);
                 var targetElement = target.parents("td");
                 var tr = target.parents("tr");
@@ -532,6 +533,8 @@ define([
                 var wTrackId = tr.data('id');
                 var week;
                 var year;
+                var jobs = {};
+
 
                 var element = _.find(this.responseObj[elementType], function (el) {
                     return el._id === id;
@@ -571,6 +574,20 @@ define([
                     project.projectmanager._id = element.projectmanager._id;
 
                     changedAttr.project = project;
+
+                    dataService.getData("/jobs/getForDD", {"projectId": project._id}, function (jobs) {
+
+                        self.responseObj['#jobs'] = jobs;
+
+                        tr.find('[data-content="jobs"]').addClass('editable');
+                    });
+
+                } else if (elementType === '#jobs') {
+
+                    jobs._id = element._id;
+                    jobs.name = element.name;
+
+                    changedAttr.jobs = jobs;
 
                 } else if (elementType === '#employee') {
                     tr.find('[data-content="department"]').text(element.department.name);
@@ -635,6 +652,8 @@ define([
                         $('#check_all').prop('checked', false);
                     }
                 }
+
+                this.setAllTotalVals();
             },
 
             saveItem: function () {
@@ -708,8 +727,8 @@ define([
                 currentEl.html('');
                 currentEl.append(_.template(listTemplate));
                 currentEl.append(new listItemView({
-                    collection : this.collection,
-                    page       : this.page,
+                    collection: this.collection,
+                    page: this.page,
                     itemsNumber: this.collection.namberToShow
                 }).render());//added two parameters page and items number
 
@@ -739,7 +758,7 @@ define([
                             }
                         } else {
                             $("#top-bar-deleteBtn").hide();
-                            self.genInvoiceEl.hide();
+                           // self.genInvoiceEl.hide();
                             $('#check_all').prop('checked', false);
                         }
                     }
@@ -788,7 +807,7 @@ define([
                     self.$listTable = $('#listTable');
                 }, 10);
 
-                this.genInvoiceEl = $('#top-bar-generateBtn');
+                //this.genInvoiceEl = $('#top-bar-generateBtn');
                 this.copyEl = $('#top-bar-copyBtn');
 
                 return this;
@@ -823,10 +842,10 @@ define([
                 var week = now.getWeek();
                 var rate = 3;
                 var startData = {
-                    year : year,
+                    year: year,
                     month: month,
-                    week : week,
-                    rate : rate
+                    week: week,
+                    rate: rate
                 };
 
                 var model = new currentModel(startData);
@@ -891,7 +910,7 @@ define([
 
                 if (!checkLength || !model || model.get('isPaid')) {
                     this.selectedProjectId = [];
-                    this.genInvoiceEl.hide();
+                    //this.genInvoiceEl.hide();
 
                     return false;
                 }
@@ -904,11 +923,11 @@ define([
 
                 this.selectedProjectId = _.uniq(this.selectedProjectId);
 
-                if (this.selectedProjectId.length !== 1) {
-                    this.genInvoiceEl.hide();
-                } else {
-                    this.genInvoiceEl.show();
-                }
+                //if (this.selectedProjectId.length !== 1) {
+                //    this.genInvoiceEl.hide();
+                //} else {
+                //    this.genInvoiceEl.show();
+                //}
             },
 
             getAutoCalcField: function (idTotal, dataRow, money) {
@@ -955,24 +974,28 @@ define([
                 var holder;
 
                 dataService.getData(this.collectionLengthUrl, {
-                    filter       : this.filter,
+                    filter: this.filter,
                     newCollection: this.newCollection
                 }, function (response, context) {
                     context.listLength = response.count || 0;
+                    context.getTotalLength(null, context.defaultItemsNumber, context.filter);
+                    context.fetchSortCollection({});
+
                 }, this);
-                this.deleteRender(deleteCounter, deletePage, {
-                    filter          : this.filter,
-                    newCollection   : this.newCollection,
-                    parrentContentId: this.parrentContentId
-                });
+                //this.deleteRender(deleteCounter, deletePage, {
+                //    filter: this.filter,
+                //    newCollection: this.newCollection,
+                //    parrentContentId: this.parrentContentId
+                //});
+
 
                 holder = this.$el;
 
                 if (deleteCounter !== this.collectionLength) {
                     var created = holder.find('#timeRecivingDataFromServer');
                     created.before(new listItemView({
-                        collection : this.collection,
-                        page       : holder.find("#currentShowPage").val(),
+                        collection: this.collection,
+                        page: holder.find("#currentShowPage").val(),
                         itemsNumber: holder.find("span#itemsNumber").text()
                     }).render());//added two parameters page and items number
                 }
@@ -1032,7 +1055,7 @@ define([
                                     headers: {
                                         mid: mid
                                     },
-                                    wait   : true,
+                                    wait: true,
                                     success: function () {
                                         that.listLength--;
                                         localCounter++;
@@ -1041,7 +1064,7 @@ define([
                                             that.triggerDeleteItemsRender(localCounter);
                                         }
                                     },
-                                    error  : function (model, res) {
+                                    error: function (model, res) {
                                         if (res.status === 403 && index === 0) {
                                             alert("You do not have permission to perform this action");
                                         }

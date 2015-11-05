@@ -9,6 +9,16 @@
                         <span id="project"><%= project.projectName %></span>
                     </dd>
                 </dl>
+                <dl class="person-info">
+                    <dt><label for="jobName">Job Name</label></dt>
+                    <dd>
+                        <% if (jobs && jobs._id) {%>
+                          <input id="jobName" value="<%=jobs.name%>"  readonly/>
+                        <% } else {%>
+                          <input id="jobName"/>
+                        <% } %>
+                    </dd>
+                </dl>
             </div>
             <div class="thirdPartBlock left">
                 <dl class="person-info">

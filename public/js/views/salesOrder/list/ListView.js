@@ -8,7 +8,7 @@ define([
         'views/supplierPayments/list/ListTotalView',
         'views/salesOrder/EditView',
         'models/QuotationModel',
-        'collections/salesOrder/filterCollection',
+        'collections/salesQuotation/filterCollection',
         'views/Filter/FilterView',
         'common',
         'dataService'

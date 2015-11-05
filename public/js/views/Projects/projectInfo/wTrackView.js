@@ -4,28 +4,27 @@
 define([
     'text!templates/Projects/projectInfo/wTrackTemplate.html',
     'text!templates/Projects/projectInfo/wTracks/wTrackHeader.html',
+    'text!templates/Pagination/PaginationTemplate.html',
     'views/wTrack/list/ListView',
+    'views/wTrack/list/ListItemView',
     'models/wTrackModel',
     'collections/wTrack/editCollection',
     'collections/wTrack/filterCollection',
     'dataService',
     'populate'
 
-], function (wTrackTemplate, wTrackTopBar, listView, currentModel, EditCollection, wTrackCollection, dataService, populate) {
+], function (wTrackTemplate, wTrackTopBar, paginationTemplate, listView, listItemView, currentModel, EditCollection, wTrackCollection, dataService, populate) {
     var wTrackView = listView.extend({
 
         el: '#weTracks',
         totalCollectionLengthUrl: '/wTrack/totalCollectionLength',
         templateHeader: _.template(wTrackTopBar),
+        listItemView: listItemView,
 
         initialize: function (options) {
             this.collection = options.model;
             this.defaultItemsNumber = 50;
             this.filter = options.filter ? options.filter : {};
-
-            //this.collection.unbind();
-            //
-            //this.collection.bind('showmore', this.rerenderContent);
 
             this.startNumber = options.startNumber;
 
@@ -36,7 +35,84 @@ define([
             this.render();
         },
 
+        showMoreContent: function (newModels) {
+            var holder = this.$el;
+            var itemView;
+
+            holder.find("#listTable").empty();
+
+            itemView = new this.listItemView({
+                collection : newModels,
+                page       : holder.find("#currentShowPage").val(),
+                itemsNumber: this.defaultItemsNumber
+            });
+
+            holder.append(itemView.render());
+
+            itemView.undelegateEvents();
+
+            var pagenation = holder.find('.pagination');
+            if (newModels.length !== 0) {
+                pagenation.show();
+            } else {
+                pagenation.hide();
+            }
+            $("#top-bar-deleteBtn").hide();
+            $('#check_all').prop('checked', false);
+
+
+            //this.collection.unbind('reset');
+            //this.collection.unbind('showmore');
+        },
+
+
+        goSort: function (e) {
+            var target$;
+            var currentParrentSortClass;
+            var sortClass;
+            var sortConst;
+            var sortBy;
+            var sortObject;
+
+            this.collection.unbind('reset');
+            this.collection.unbind('showmore');
+
+            target$ = $(e.target);
+            currentParrentSortClass = target$.attr('class');
+            sortClass = currentParrentSortClass.split(' ')[1];
+            sortConst = 1;
+            sortBy = target$.data('sort');
+            sortObject = {};
+
+            if (!sortClass) {
+                target$.addClass('sortDn');
+                sortClass = "sortDn";
+            }
+            switch (sortClass) {
+                case "sortDn":
+                {
+                    target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
+                    target$.removeClass('sortDn').addClass('sortUp');
+                    sortConst = 1;
+                }
+                    break;
+                case "sortUp":
+                {
+                    target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
+                    target$.removeClass('sortUp').addClass('sortDn');
+                    sortConst = -1;
+                }
+                    break;
+            }
+            sortObject[sortBy] = sortConst;
+
+            this.fetchSortCollection(sortObject);
+            this.getTotalLength(null, this.defaultItemsNumber, this.filter);
+        },
+
         getTotalLength: function (currentNumber, itemsNumber, filter) {
+            var self = this;
+
             dataService.getData(this.totalCollectionLengthUrl, {
                 currentNumber: currentNumber,
                 filter       : filter,
@@ -53,11 +129,11 @@ define([
 
                 if (itemsNumber * (page - 1) > length) {
                     context.page = page = Math.ceil(length / itemsNumber);
-                   // context.fetchSortCollection(context.sort);
+                    context.fetchSortCollection(context.sort);
                    // context.changeLocationHash(page, context.defaultItemsNumber, filter);
                 }
 
-                context.pageElementRender(response.count, itemsNumber, page);//prototype in main.js
+                context.pageElementRenderProject(response.count, itemsNumber, page, self);//prototype in main.js
             }, this);
         },
 
@@ -95,22 +171,44 @@ define([
 
         },
 
+        renderPagination: function (currentEl, self) {
+            currentEl.append(_.template(paginationTemplate));
+
+            var pagenation = self.$el.find('.pagination');
+
+            if (self.collection.length === 0) {
+                pagenation.hide();
+            } else {
+                pagenation.show();
+            }
+
+            $(document).on("click", function (e) {
+                self.hidePagesPopup(e);
+            });
+        },
+
         showPage: function (event) {
 
+            this.collection.unbind('reset');
+            this.collection.unbind('showmore');
+
             event.preventDefault();
-            this.showP(event, {filter: this.filter, newCollection: this.newCollection, sort: this.sort}, true);
+            this.showPProject(event, {filter: this.filter, newCollection: this.newCollection, sort: this.sort}, true, this);
         },
 
         previousPage: function (event) {
 
+            this.collection.unbind('reset');
+            this.collection.unbind('showmore');
+
             event.preventDefault();
-            $("#top-bar-deleteBtn").hide();
+
             $('#check_all').prop('checked', false);
-            this.prevP({
+            this.prevPProject({
                 sort         : this.sort,
                 filter       : this.filter,
                 newCollection: this.newCollection
-            }, true);
+            }, true, this);
             dataService.getData(this.totalCollectionLengthUrl, {
                 filter       : this.filter,
                 contentType  : this.contentType,
@@ -122,16 +220,19 @@ define([
 
         nextPage: function (event) {
 
+            this.collection.unbind('reset');
+            this.collection.unbind('showmore');
+
             event.preventDefault();
 
-            $("#top-bar-deleteBtn").hide();
+
             $('#check_all').prop('checked', false);
 
-            this.nextP({
+            this.nextPProject({
                 sort         : this.sort,
                 filter       : this.filter,
                 newCollection: this.newCollection
-            }, true);
+            }, true, this);
             dataService.getData(this.totalCollectionLengthUrl, {
                 filter       : this.filter,
                 newCollection: this.newCollection
@@ -142,14 +243,17 @@ define([
 
         firstPage: function (event) {
 
+            this.collection.unbind('reset');
+            this.collection.unbind('showmore');
+
             event.preventDefault();
-            $("#top-bar-deleteBtn").hide();
+
             $('#check_all').prop('checked', false);
-            this.firstP({
+            this.firstPProject({
                 sort         : this.sort,
                 filter       : this.filter,
                 newCollection: this.newCollection
-            }, true);
+            }, true, this);
             dataService.getData(this.totalCollectionLengthUrl, {
                 sort  : this.sort,
                 filter: this.filter
@@ -161,13 +265,13 @@ define([
         lastPage: function (event) {
 
             event.preventDefault();
-            $("#top-bar-deleteBtn").hide();
+
             $('#check_all').prop('checked', false);
-            this.lastP({
+            this.lastPProject({
                 sort         : this.sort,
                 filter       : this.filter,
                 newCollection: this.newCollection
-            }, true);
+            }, true, this);
             dataService.getData(this.totalCollectionLengthUrl, {
                 sort  : this.sort,
                 filter: this.filter
@@ -300,22 +404,26 @@ define([
 
 
         checked: function (e) {
+            var el = this.$el;
+
             if (this.collection.length > 0) {
-                var checkLength = $("input.checkbox:checked").length;
+                var checkLength = el.find("input.checkbox:checked").length;
 
-                if ($("input.checkbox:checked").length > 0) {
+                if (el.find("input.checkbox:checked").length > 0) {
                     // $("#top-bar-deleteBtn").show();
-                    $('#check_all').prop('checked', false);
+                    el.find('#check_all').prop('checked', false);
 
-                    if (checkLength == this.collection.length) {
-                        $('#check_all').prop('checked', true);
+                    if (checkLength === this.collection.length) {
+                        el.find('#check_all').prop('checked', true);
                     }
                 }
                 else {
                     // $("#top-bar-deleteBtn").hide();
-                    $('#check_all').prop('checked', false);
+                    el.find('#check_all').prop('checked', false);
                 }
             }
+
+            this.setAllTotalVals();
         },
 
         setAllTotalVals: function () {
@@ -427,26 +535,26 @@ define([
             }
         },
 
-        checked: function (e) {
-            var checkLength;
-
-            if (this.collection.length > 0) {
-                checkLength = $("input.listCB:checked").length;
-
-                this.checkProjectId(e, checkLength);
-
-                if (checkLength > 0) {
-                    $("#deletewTrack").show();
-                    $('#check_all').prop('checked', false);
-                    if (checkLength === this.collection.length) {
-                        $('#check_all').prop('checked', true);
-                    }
-                } else {
-                    $("#deletewTrack").hide();
-                    $('#check_all').prop('checked', false);
-                }
-            }
-        },
+        //checked: function (e) {
+        //    var checkLength;
+        //
+        //    if (this.collection.length > 0) {
+        //        checkLength = $("input.listCB:checked").length;
+        //
+        //        this.checkProjectId(e, checkLength);
+        //
+        //        if (checkLength > 0) {
+        //            $("#deletewTrack").show();
+        //            $('#check_all').prop('checked', false);
+        //            if (checkLength === this.collection.length) {
+        //                $('#check_all').prop('checked', true);
+        //            }
+        //        } else {
+        //            $("#deletewTrack").hide();
+        //            $('#check_all').prop('checked', false);
+        //        }
+        //    }
+        //},
 
 
         render: function () {
@@ -456,15 +564,19 @@ define([
             var allInputs;
             var checkedInputs;
 
-            currentEl.html('');
-            currentEl.prepend(this.templateHeader);
+            if(this.startNumber < 50) {
+                currentEl.html('');
+                currentEl.prepend(this.templateHeader);
+            }
 
-                currentEl.find('#listTable').html(this.template({
-                    wTracks: wTracks,
-                    startNumber: self.startNumber - 1
-                }));
+            currentEl.find('#listTable').html(this.template({
+                wTracks: wTracks,
+                startNumber: self.startNumber - 1
+            }));
 
-               // this.renderPagination(self.$el, this);
+            if(this.startNumber < 50) {
+                this.renderPagination(self.$el, self);
+            }
 
             this.genInvoiceEl = self.$el.find('#top-bar-generateBtn');
             this.copyEl = self.$el.find('#top-bar-copyBtn');
@@ -478,7 +590,7 @@ define([
             $('#check_all').click(function () {
                 var checkLength;
 
-                allInputs = $('.listCB');
+                allInputs = self.$el.find('.listCB');
                 allInputs.prop('checked', this.checked);
                 checkedInputs = $("input.listCB:checked");
 
@@ -486,17 +598,17 @@ define([
                     checkLength = checkedInputs.length;
 
                     if (checkLength > 0) {
-                        $("#top-bar-deleteBtn").show();
+                        $("#deletewTrack").show();
 
                         if (checkLength === self.collection.length) {
-                            checkedInputs.each(function (index, element) {
-                                self.checkProjectId(element, checkLength);
-                            });
+                            //checkedInputs.each(function (index, element) {
+                            //    self.checkProjectId(element, checkLength);
+                            //});
 
                             $('#check_all').prop('checked', true);
                         }
                     } else {
-                        $("#top-bar-deleteBtn").hide();
+                        $("#deletewTrack").hide();
 
                         $('#check_all').prop('checked', false);
                     }

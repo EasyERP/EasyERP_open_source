@@ -1,5 +1,5 @@
 /**
- * Created by ANDREY on 29.04.2015.
+ * Created by liliya on 29.10.15.
  */
 
 module.exports = (function () {
@@ -19,8 +19,9 @@ module.exports = (function () {
         _id: false,
         quantity: {type: Number, default: 1},
         unitPrice: Number,
-        product: {type: ObjectId, ref: 'wTrack', default: null},
-        description: {type: String, default: ''},
+        product      : {type: ObjectId, ref: 'Product', default: null},
+        description  : {type: String, default: ''},
+        jobs: {type: ObjectId, ref: "jobs", default: null},
         taxes: {type: Number, default: 0},
         subTotal: Number
     };

@@ -25,6 +25,7 @@ define([
             modelId                 : null,
             $listTable              : null,
             editCollection          : null,
+            contentCollection: paymentCollection,
             totalCollectionLengthUrl: '/payment/customers/totalCollectionLength',
             changedModels           : {},
             responseObj             : {},

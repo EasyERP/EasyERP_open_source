@@ -144,6 +144,15 @@ define([
                                     //
                                     //Backbone.history.fragment = '';
                                     //Backbone.history.navigate(url, {trigger: true});
+
+                                    var data ={products: JSON.stringify(products), type: "Order"};
+
+                                    dataService.postData("/jobs/update", data,  function(err, result){
+                                        if (err){
+                                            return console.log(err);
+                                        }
+
+                                    });
                                     var filter = {
                                         'projectName': {
                                             key  : 'project._id',
@@ -173,6 +182,8 @@ define([
                                     };
 
                                     self.ordersCollection.bind('reset', createView);
+
+                                    self.collection.remove(self.currentModel.get('_id'));
 
                                 } else {
                                     Backbone.history.navigate(redirectUrl, {trigger: true});
@@ -432,6 +443,7 @@ define([
                     model: this.currentModel.toJSON(),
                     visible: this.visible
                 });
+                var service = this.forSales;
                 var notDiv;
                 var model;
                 var productItemContainer;
@@ -499,7 +511,7 @@ define([
                 productItemContainer = this.$el.find('#productItemsHolder');
 
                 productItemContainer.append(
-                    new ProductItemView({editable: true}).render({model: model}).el
+                    new ProductItemView({editable: true, service: service}).render({model: model}).el
                 );
 
 

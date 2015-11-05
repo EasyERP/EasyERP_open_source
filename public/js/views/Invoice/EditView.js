@@ -30,6 +30,9 @@ define([
                 this.currentModel.urlRoot = "/Invoice";
                 this.responseObj = {};
 
+                this.redirect = options.redirect;
+                this.collection = options.collection;
+
                 if (!App || !App.currentDb) {
                     dataService.getData('/currentDb', null, function (response) {
                         if (response && !response.error) {
@@ -65,7 +68,7 @@ define([
                 "click .details": "showDetailsBox",
                 "click .newPayment": "newPayment",
                 "click .cancelInvoice": "cancelInvoice",
-                "click .refund": "refund",
+               // "click .refund": "refund",
                 "click .setDraft": "setDraft"
 
             },
@@ -73,18 +76,26 @@ define([
             newPayment: function (e) {
                 e.preventDefault();
 
-                var paymentView = new PaymentCreateView({model: this.currentModel});
+                var paymentView = new PaymentCreateView({model: this.currentModel, redirect: this.redirect, collection: this.collection});
 
             },
 
             cancelInvoice: function (e) {
                 e.preventDefault();
 
+                var wId;
+
                 var self = this;
                 var redirectUrl = self.forSales ? "easyErp/salesInvoice" : "easyErp/Invoice";
 
+                if (self.forSales){
+                    wId = 'Sales Invoice';
+                } else {
+                    wId = 'Purchase Invoice';
+                }
+
                 populate.fetchWorkflow({
-                    wId: 'Purchase Invoice',
+                    wId: wId,
                     source: 'purchase',
                     targetSource: 'invoice',
                     status: 'Cancelled',
@@ -116,9 +127,18 @@ define([
                 e.preventDefault();
 
                 var self = this;
+                var wId;
+
+                if (self.forSales){
+                    wId = 'Sales Invoice';
+                } else {
+                    wId = 'Purchase Invoice';
+                }
+
+                var redirectUrl = self.forSales ? "easyErp/salesInvoice" : "easyErp/Invoice";
 
                 populate.fetchWorkflow({
-                    wId: 'Purchase Invoice'
+                    wId: wId
                 }, function (workflow) {
                     if (workflow && workflow.error) {
                         return alert(workflow.error.statusText);
@@ -136,7 +156,7 @@ define([
                         },
                         patch: true,
                         success: function () {
-                            Backbone.history.navigate("easyErp/Invoice", {trigger: true});
+                            Backbone.history.navigate(redirectUrl, {trigger: true});
                         }
                     });
                 });
@@ -461,21 +481,29 @@ define([
                 invoiceItemContainer = this.$el.find('#invoiceItemsHolder');
 
                 //if currentDb = 'weTrack' render wTrackRows instead of ProductItems
-                if (!this.isWtrack) {
-                    invoiceItemContainer.append(
-                        new InvoiceItemView({balanceVisible: true}).render({model: model}).el
-                    );
-                } else {
-                    wTracksDom = new wTrackRows({stopRender: true}).render({
-                        wTracks: wTracks,
-                        project: project,
-                        assigned: assigned,
-                        customer: customer,
-                        total: total
-                    }).el;
+                //if (!this.isWtrack) {
+                //    invoiceItemContainer.append(
+                //        new InvoiceItemView({balanceVisible: true, forSales: self.forSales}).render({model: model}).el
+                //    );
+                //} else {
+                //    //wTracksDom = new wTrackRows({stopRender: true}).render({
+                //    //    wTracks: wTracks,
+                //    //    project: project,
+                //    //    assigned: assigned,
+                //    //    customer: customer,
+                //    //    total: total
+                //    //}).el;
+                //    //
+                //    //invoiceItemContainer.append(wTracksDom);
+                //    invoiceItemContainer.append(
+                //        new InvoiceItemView({balanceVisible: true}).render({model: model}).el
+                //    );
+                //}
 
-                    invoiceItemContainer.append(wTracksDom);
-                }
+                invoiceItemContainer.append(
+                    new InvoiceItemView({balanceVisible: true, forSales: self.forSales}).render({model: model}).el
+                );
+
                 if (model.groups)
                     if (model.groups.users.length > 0 || model.groups.group.length) {
                         $(".groupsAndUser").show();
