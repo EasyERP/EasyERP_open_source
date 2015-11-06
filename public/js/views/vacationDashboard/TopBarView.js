@@ -2,24 +2,33 @@ define([
         'text!templates/vacationDashboard/TopBarTemplate.html'
     ],
     function (ContentTopBarTemplate) {
+        "use strict";
         var TopBarView = Backbone.View.extend({
-            el: '#top-bar',
+            el         : '#top-bar',
             contentType: 'DashboardVacation',
-            template: _.template(ContentTopBarTemplate),
+            template   : _.template(ContentTopBarTemplate),
 
             events: {
-                "click #updateDate": "changeDateRange"
+                "click #updateDate" : "changeDateRange",
+                "click .dateRange": "toggleDateRange"
             },
 
-            changeDateRange: function(e){
-                "use strict";
+            changeDateRange: function (e) {
                 this.trigger('changeDateRange');
+            },
+
+            toggleDateRange: function (e) {
+                var targetEl = $(e.target);
+                var ul = targetEl.closest('ul');
+
+                ul.find('.frameDetail').toggleClass('hidden');
             },
 
             initialize: function (options) {
                 if (options && options.collection) {
                     this.collection = options.collection;
                 }
+
                 this.render();
             },
 
