@@ -170,7 +170,12 @@ define([
                 parent.append('<textarea id="editInput" class="textarea"/>');
                 $('#editInput').val(this.text);
             } else {
-                parent.append('<input id="editInput"  maxlength="' + maxlength + '" type="text" />');
+                if (datePicker.length){
+                    parent.append('<input id="editInput"  maxlength="' + maxlength + '" type="text" readonly/>');
+                } else {
+                    parent.append('<input id="editInput"  maxlength="' + maxlength + '" type="text"/>');
+                }
+
                 $('#editInput').val(this.text);
             }
 
