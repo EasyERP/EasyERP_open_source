@@ -1,6 +1,7 @@
 @import "_colors";
 @import "_darckColor";
 //@import "_whiteColor";
+@import "generals/_index";
 @import "_topBar";
 @import "_list";
 @import "_vacationList";
@@ -326,7 +327,7 @@ input::-ms-clear {
 .dl-auto(@max-width: 120px, @with-dt: 35%, @line-height: 0, @height: 16px, @margin-top: 0) {
   clear: both;
   font-size: 14px;
-  overflow: hidden;
+//  overflow: hidden;
   dt {
     padding: 1px;
     margin: -1px;
@@ -2072,7 +2073,6 @@ input::-ms-clear {
   margin: 0 auto;
   width: auto;
   max-width: @width;
-
   #description {
     margin-top: 15px;
   }

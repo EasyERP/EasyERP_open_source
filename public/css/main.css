@@ -557,6 +557,73 @@ th {
 .alertSuccess:before {
   content: '\f05d';
 }
+.btn {
+  border: 1px solid #7f7f80;
+  margin: 0;
+  padding: .4em 1em;
+  line-height: normal;
+  font-size: 13px;
+  text-align: center;
+  text-decoration: none;
+  -webkit-font-smoothing: antialiased;
+  outline: none;
+  background: #303031;
+}
+.btn span,
+.btn a {
+  padding: 0 !important;
+  color: #66b5d4;
+}
+.btn:hover {
+  cursor: pointer;
+  background-position: 0;
+  background: #1d1d1e;
+}
+/*== Begin Input type number =============*/
+.ui-spinner {
+  position: relative;
+  padding: 0;
+  display: block;
+  overflow: hidden;
+}
+.ui-spinner .ui-spinner-input {
+  float: left;
+  border: none ;
+}
+.ui-spinner span {
+  display: block;
+  width: 8px;
+  height: 8px;
+  text-align: center;
+  padding: 0;
+}
+.ui-spinner .ui-spinner-up {
+  position: absolute;
+  right: 5px;
+  top: 2px;
+  padding: 0;
+  cursor: pointer;
+  font-size: 8px;
+  line-height: 8px;
+}
+.ui-spinner .ui-spinner-up:hover {
+  text-decoration: none;
+  color: #99e8ff;
+}
+.ui-spinner .ui-spinner-down {
+  position: absolute;
+  padding: 0;
+  right: 5px;
+  top: 10px;
+  cursor: pointer;
+  font-size: 8px;
+  line-height: 8px;
+}
+.ui-spinner .ui-spinner-down:hover {
+  text-decoration: none;
+  color: #99e8ff;
+}
+/*== End Input type number =============*/
 /************* Main Colors *************/
 /* errors, negativeMoney */
 /* .cash */
@@ -1134,6 +1201,10 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 .vacation-list tfoot td.notForm input {
   display: block;
 }
+.vacation-list tfoot tr {
+  line-height: 20px;
+  height: 20px;
+}
 .vacation-list tfoot tr td {
   color: #cdcdcd;
 }
@@ -1213,7 +1284,6 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 }
 .notification .animate {
   position: absolute;
-  /*height: 100%;*/
   width: 15%;
   padding-top: 0px;
   padding-bottom: 0px;
@@ -1435,6 +1505,11 @@ input::-ms-clear {
   color: #4c4c4c;
   font-size: 13px;
 }
+.cell-bg {
+  background: linear-gradient(45deg, rgba(127, 127, 128, 0) 48%, rgba(127, 127, 128, 0.2) 50%, rgba(127, 127, 128, 0) 52%), linear-gradient(-45deg, rgba(127, 127, 128, 0) 48%, rgba(127, 127, 128, 0.2) 50%, rgba(127, 127, 128, 0) 52%);
+  background-size: 16px 16px;
+  background-color: #2b2b2c;
+}
 .kanban {
   padding: 0;
   margin: 0;
@@ -1460,17 +1535,18 @@ input::-ms-clear {
   clear: left;
 }
 .kanban tr:last-child {
-  border-right: 10px solid white;
+  border-right: 10px solid #565658;
 }
 .kanban .column {
-  border-left: 10px solid #fff;
-  vertical-align: text-top;
+  border-left: 10px solid #565658;
   min-height: 100%;
   width: auto;
   min-width: 160px;
   height: auto;
   vertical-align: top;
-  background: url("../images/form_sheetbg.png");
+  background: linear-gradient(45deg, rgba(127, 127, 128, 0) 48%, rgba(127, 127, 128, 0.2) 50%, rgba(127, 127, 128, 0) 52%), linear-gradient(-45deg, rgba(127, 127, 128, 0) 48%, rgba(127, 127, 128, 0.2) 50%, rgba(127, 127, 128, 0) 52%);
+  background-size: 16px 16px;
+  background-color: #2b2b2c;
 }
 .kanban .column .item {
   word-wrap: break-word;
@@ -1947,8 +2023,6 @@ input::-ms-clear {
 #profileTableWrapper table {
   width: 95%;
   margin: auto;
-  border-left: 1px solid #CACACA;
-  border-right: 1px solid #CACACA;
 }
 .workflow-list,
 .workflow-sub-list {
@@ -1972,7 +2046,7 @@ input::-ms-clear {
 }
 .workflow-list li:hover:not(.quickEdit) a,
 .workflow-sub-list li:hover:not(.quickEdit) a {
-  text-decoration: underline;
+  text-decoration: none;
 }
 .workflow-list li .editProfileContainer,
 .workflow-sub-list li .editProfileContainer {
@@ -1986,7 +2060,7 @@ input::-ms-clear {
 }
 .workflow-list li.active,
 .workflow-sub-list li.active {
-  border: 1px solid #dddddd;
+  border: 1px solid #7f7f80;
   border-right: none;
   display: list-item;
 }
@@ -1996,7 +2070,7 @@ input::-ms-clear {
 }
 .workflow-list li.active:hover,
 .workflow-sub-list li.active:hover {
-  background-color: white;
+  background-color: #565658;
 }
 .workflow-list li.active a,
 .workflow-sub-list li.active a {
@@ -2047,9 +2121,7 @@ input::-ms-clear {
   display: table-row;
 }
 #modulesAccessTable tr.parent {
-  background-color: #36A9E1;
-  color: white;
-  border: 2px solid #1E8FC6;
+  color: #cdcdcd;
 }
 *:focus {
   outline: 0 !important;
@@ -2239,10 +2311,13 @@ dl dd:nth-child(2) {
   margin-top: 0;
 }
 dl dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 93%;
 }
 dl dd a.formLink {
   line-height: 0;
+}
+dl dd span.ui-spinner {
+  width: 96%;
 }
 .clear {
   content: "\0020";
@@ -2293,7 +2368,7 @@ dl dd a.formLink {
   max-width: 860px;
   margin: 0 auto;
   background: #303031;
-  min-height: 130px;
+  min-height: 150px;
   display: block;
   position: relative;
   border: 1px solid #7f7f80;
@@ -2532,6 +2607,7 @@ dl dd a.formLink {
 .form .inner .half-block textarea {
   width: 95%;
   resize: none;
+  padding-top: 10px;
 }
 .form > #tabList li {
   float: left;
@@ -2539,18 +2615,18 @@ dl dd a.formLink {
 }
 .form h2 {
   font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
-  color: #4c4c4c;
+  color: #cdcdcd;
   font-size: 24px !important;
   margin-bottom: 12px;
 }
 .form h2:first-of-type {
   font-size: 26px;
-  color: #4c4c4c;
+  color: #cdcdcd;
   margin: 0 0 8px;
 }
 .form p {
   font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
-  color: #4c4c4c;
+  color: #cdcdcd;
   font-size: 13px;
   line-height: 30px;
   min-height: 30px;
@@ -2628,6 +2704,7 @@ dl dd a.formLink {
 .form .job-info {
   clear: both;
   font-size: 14px;
+  color: #cdcdcd;
 }
 .form .job-info dt {
   padding: 1px;
@@ -2670,10 +2747,13 @@ dl dd a.formLink {
   margin-top: 0;
 }
 .form .job-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 93%;
 }
 .form .job-info dd a.formLink {
   line-height: 30px;
+}
+.form .job-info dd span.ui-spinner {
+  width: 96%;
 }
 .form .opp-info {
   clear: both;
@@ -2720,10 +2800,13 @@ dl dd a.formLink {
   margin-top: 0;
 }
 .form .opp-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 93%;
 }
 .form .opp-info dd a.formLink {
   line-height: 30px;
+}
+.form .opp-info dd span.ui-spinner {
+  width: 96%;
 }
 .form .opp-info input {
   width: 80% !important;
@@ -2773,10 +2856,13 @@ dl dd a.formLink {
   margin-top: 0;
 }
 .form .internal-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 93%;
 }
 .form .internal-info dd a.formLink {
   line-height: 30px;
+}
+.form .internal-info dd span.ui-spinner {
+  width: 96%;
 }
 .form .internal-info textarea {
   width: 94%;
@@ -2827,10 +2913,13 @@ dl dd a.formLink {
   margin-top: 0;
 }
 .form .assignees-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 93%;
 }
 .form .assignees-info dd a.formLink {
   line-height: 0;
+}
+.form .assignees-info dd span.ui-spinner {
+  width: 96%;
 }
 .form .assignees-info input {
   max-width: 180px !important;
@@ -2857,7 +2946,7 @@ dl dd a.formLink {
   max-width: 98%;
   margin: 0 auto;
   background: #303031;
-  min-height: 130px;
+  min-height: 150px;
   display: block;
   position: relative;
   border: 0 solid #7f7f80;
@@ -3097,6 +3186,7 @@ dl dd a.formLink {
 .formLeftColumn .form .inner .half-block textarea {
   width: 95%;
   resize: none;
+  padding-top: 10px;
 }
 .formLeftColumn .form > #tabList li {
   float: left;
@@ -3104,18 +3194,18 @@ dl dd a.formLink {
 }
 .formLeftColumn .form h2 {
   font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
-  color: #4c4c4c;
+  color: #cdcdcd;
   font-size: 24px !important;
   margin-bottom: 12px;
 }
 .formLeftColumn .form h2:first-of-type {
   font-size: 26px;
-  color: #4c4c4c;
+  color: #cdcdcd;
   margin: 0 0 8px;
 }
 .formLeftColumn .form p {
   font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
-  color: #4c4c4c;
+  color: #cdcdcd;
   font-size: 13px;
   line-height: 30px;
   min-height: 30px;
@@ -3207,7 +3297,7 @@ dl dd a.formLink {
   max-width: 98%;
   margin: 0 auto;
   background: #303031;
-  min-height: 130px;
+  min-height: 150px;
   display: block;
   position: relative;
   border: 0 solid #7f7f80;
@@ -3447,6 +3537,7 @@ dl dd a.formLink {
 .formRightColumn .form .inner .half-block textarea {
   width: 95%;
   resize: none;
+  padding-top: 10px;
 }
 .formRightColumn .form > #tabList li {
   float: left;
@@ -3454,18 +3545,18 @@ dl dd a.formLink {
 }
 .formRightColumn .form h2 {
   font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
-  color: #4c4c4c;
+  color: #cdcdcd;
   font-size: 24px !important;
   margin-bottom: 12px;
 }
 .formRightColumn .form h2:first-of-type {
   font-size: 26px;
-  color: #4c4c4c;
+  color: #cdcdcd;
   margin: 0 0 8px;
 }
 .formRightColumn .form p {
   font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
-  color: #4c4c4c;
+  color: #cdcdcd;
   font-size: 13px;
   line-height: 30px;
   min-height: 30px;
@@ -3813,11 +3904,15 @@ dl dd a.formLink {
 }
 .person-info dd input:not([type='checkbox']),
 .customer-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 93%;
 }
 .person-info dd a.formLink,
 .customer-info dd a.formLink {
   line-height: 0;
+}
+.person-info dd span.ui-spinner,
+.customer-info dd span.ui-spinner {
+  width: 96%;
 }
 .person-info span,
 .customer-info span {
@@ -3869,10 +3964,13 @@ dl dd a.formLink {
   margin-top: 0;
 }
 .settings-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 93%;
 }
 .settings-info dd a.formLink {
   line-height: 0;
+}
+.settings-info dd span.ui-spinner {
+  width: 96%;
 }
 .settings-info label {
   line-height: 20px;
@@ -3925,10 +4023,13 @@ dl dd a.formLink {
   margin-top: 0;
 }
 .project-edit-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 93%;
 }
 .project-edit-info dd a.formLink {
   line-height: 0;
+}
+.project-edit-info dd span.ui-spinner {
+  width: 96%;
 }
 .quotation-info {
   clear: both;
@@ -3975,10 +4076,13 @@ dl dd a.formLink {
   margin-top: 0;
 }
 .quotation-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 93%;
 }
 .quotation-info dd a.formLink {
   line-height: 0;
+}
+.quotation-info dd span.ui-spinner {
+  width: 96%;
 }
 .quotation-info dd {
   margin-top: 1em;
@@ -4028,10 +4132,13 @@ dl dd a.formLink {
   margin-top: 0;
 }
 .edit-employee-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 93%;
 }
 .edit-employee-info dd a.formLink {
   line-height: 0;
+}
+.edit-employee-info dd span.ui-spinner {
+  width: 96%;
 }
 .edit-employee-info input {
   max-width: 180px !important;
@@ -4186,28 +4293,6 @@ dl dd a.formLink {
 .formHeader > button {
   margin: 5px 1px 4px 1px !important;
 }
-.btn {
-  border: 1px solid #7f7f80;
-  margin: 0;
-  padding: .4em 1em;
-  line-height: normal;
-  font-size: 13px;
-  text-align: center;
-  text-decoration: none;
-  -webkit-font-smoothing: antialiased;
-  outline: none;
-  background: #303031;
-}
-.btn span,
-.btn a {
-  padding: 0 !important;
-  color: #66b5d4;
-}
-.btn:hover {
-  cursor: pointer;
-  background-position: 0;
-  background: #1d1d1e !important;
-}
 button {
   border: 1px solid #7f7f80;
   margin: 0;
@@ -4228,7 +4313,7 @@ button a {
 button:hover {
   cursor: pointer;
   background-position: 0;
-  background: #1d1d1e !important;
+  background: #1d1d1e;
 }
 button.red,
 a.red {
@@ -4260,7 +4345,7 @@ button.red:hover,
 a.red:hover {
   cursor: pointer;
   background-position: 0;
-  background: #1d1d1e !important;
+  background: #1d1d1e;
 }
 button.red:hover,
 a.red:hover {
@@ -5033,10 +5118,9 @@ table#workflows tr td.edit-status {
 /*----------------------------- Top Bar --------------------------------*/
 #top-bar {
   display: block;
-  width: 100%;
   height: 30px;
   clear: both;
-  margin-top: 5px;
+  margin: 5px 1% 0;
 }
 #top-bar h3 {
   margin: 6px 0 0 0;
@@ -5052,10 +5136,9 @@ table#workflows tr td.edit-status {
 }
 #top-bar-bonus {
   display: block;
-  width: 100%;
   height: 30px;
   clear: both;
-  margin-top: 5px;
+  margin: 5px 1% 0;
 }
 #top-bar-bonus h3 {
   margin: 6px 0 0 0;
@@ -5885,6 +5968,7 @@ ul.dialog-tabs li.right button {
 }
 #modulesAccessTable td.mname {
   text-align: left;
+  border-left: 1px solid #7f7f80;
 }
 #ui-datepicker-div {
   border-radius: 0 !important;
@@ -5982,7 +6066,6 @@ ul.dialog-tabs li.right button {
   opacity: .35;
 }
 .ui-dialog {
-  border: 1px solid #7f7f80;
   background: #303031;
   color: #cdcdcd;
   z-index: 1000;
@@ -5992,6 +6075,9 @@ ul.dialog-tabs li.right button {
   -moz-border-radius: 0px;
   -webkit-border-radius: 0px;
   border-radius: 0px;
+}
+.ui-dialog .ui-widget-content {
+  border: none;
 }
 .ui-dialog .ui-widget-content a {
   color: #66b5d4;
@@ -6188,10 +6274,13 @@ ul.dialog-tabs li.right button {
   margin-top: 0;
 }
 .ui-dialog .app-empty-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 93%;
 }
 .ui-dialog .app-empty-info dd a.formLink {
   line-height: 0;
+}
+.ui-dialog .app-empty-info dd span.ui-spinner {
+  width: 96%;
 }
 .ui-dialog .app-empty-info dd {
   display: none;
@@ -6249,10 +6338,13 @@ ul.dialog-tabs li.right button {
   margin-top: 0;
 }
 .ui-dialog .person-info-h3 dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 93%;
 }
 .ui-dialog .person-info-h3 dd a.formLink {
   line-height: 0;
+}
+.ui-dialog .person-info-h3 dd span.ui-spinner {
+  width: 96%;
 }
 .ui-dialog .person-info-h3 dt,
 .ui-dialog .person-info-h3 dd {
@@ -6317,10 +6409,13 @@ ul.dialog-tabs li.right button {
   margin-top: 0;
 }
 .ui-dialog .summary-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 93%;
 }
 .ui-dialog .summary-info dd a.formLink {
   line-height: 0;
+}
+.ui-dialog .summary-info dd span.ui-spinner {
+  width: 96%;
 }
 .ui-dialog .summary-info #summary {
   width: 89% !important;
@@ -6434,7 +6529,7 @@ ul.dialog-tabs li.right button {
   border: none;
   margin: 0 auto;
   width: auto;
-  max-width: 95%;
+  max-width: 96%;
   clear: both;
   font-size: 14px;
 }
@@ -6508,10 +6603,13 @@ ul.dialog-tabs li.right button {
   margin-top: 0;
 }
 .form-holder form dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 93%;
 }
 .form-holder form dd a.formLink {
   line-height: 16px;
+}
+.form-holder form dd span.ui-spinner {
+  width: 96%;
 }
 .form-holder form select {
   font-family: Arial, Helvetica, sans-serif;
@@ -6675,7 +6773,7 @@ ul.dialog-tabs .withEndContract .endContractReasonList:hover,
 ul.dialog-tabs .withEndContract .arrow:hover {
   cursor: pointer;
   background-position: 0;
-  background: #1d1d1e !important;
+  background: #1d1d1e;
 }
 ul.dialog-tabs .withEndContract .endContractReasonList:hover,
 ul.dialog-tabs .withEndContract .arrow:hover {
@@ -6689,8 +6787,6 @@ ul.dialog-tabs .withEndContract .arrow:hover {
 }
 ul.dialog-tabs .withEndContract .arrow {
   border-left: 1px solid #ABABAB;
-  height: 24px;
-  width: 24px;
   font-family: Icons;
   color: white;
   font-weight: 500;
@@ -6698,7 +6794,7 @@ ul.dialog-tabs .withEndContract .arrow {
   line-height: 20px;
   width: 8px;
   margin-left: -2px;
-  height: 15px;
+  height: 17px;
   display: block;
 }
 .dialog-tabs-items {
@@ -6807,7 +6903,7 @@ ul.chart-tabs .withEndContract .endContractReasonList:hover,
 ul.chart-tabs .withEndContract .arrow:hover {
   cursor: pointer;
   background-position: 0;
-  background: #1d1d1e !important;
+  background: #1d1d1e;
 }
 ul.chart-tabs .withEndContract .endContractReasonList:hover,
 ul.chart-tabs .withEndContract .arrow:hover {
@@ -7074,13 +7170,12 @@ h3.dashboard {
 }
 #health a,
 .health-wrapper a {
-  margin-top: 5px;
   display: block;
   width: 10px;
   height: 10px;
   border-radius: 10px;
-  margin-left: 6px;
   border: 1px solid #c0c0c0;
+  margin: 0 auto;
 }
 #health a.health1,
 .health-wrapper a.health1 {
@@ -7097,21 +7192,21 @@ h3.dashboard {
 #health .health-container,
 .health-wrapper .health-container {
   padding: 3px;
-  width: 25px;
+  width: 90%;
 }
 #health ul,
 .health-wrapper ul {
   display: none;
   margin-top: 5px;
-  border: 1px solid #c0c0c0;
+  border: 1px solid #7f7f80;
   width: 25px;
   position: absolute;
-  background-color: white;
+  background-color: #303031;
   z-index: 1;
 }
 #health ul.with-div,
 .health-wrapper ul.with-div {
-  margin-left: 3px;
+  margin-left: 17px;
 }
 #health ul li div,
 .health-wrapper ul li div {
@@ -7120,7 +7215,7 @@ h3.dashboard {
   border-radius: 10px;
   margin: 6px;
   cursor: pointer;
-  border: 1px solid #c0c0c0;
+  border: 1px solid #7f7f80;
 }
 #health ul li div.health1,
 .health-wrapper ul li div.health1 {
@@ -7260,13 +7355,16 @@ span.unDone {
   margin-top: 0;
 }
 .form-holder form .task-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 93%;
 }
 .form-holder form .task-info dd a.formLink {
   line-height: 0;
 }
+.form-holder form .task-info dd span.ui-spinner {
+  width: 96%;
+}
 .form-holder form .task-info input {
-  width: 150px !important;
+  width: 150px;
 }
 .form-holder form .task-summary-info {
   clear: both;
@@ -7313,10 +7411,13 @@ span.unDone {
   margin-top: 0;
 }
 .form-holder form .task-summary-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 93%;
 }
 .form-holder form .task-summary-info dd a.formLink {
   line-height: 0;
+}
+.form-holder form .task-summary-info dd span.ui-spinner {
+  width: 96%;
 }
 .form-holder form .task-summary-info input {
   width: 95% !important;
@@ -7366,10 +7467,13 @@ span.unDone {
   margin-top: 0;
 }
 .form-holder form .profile-create dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 93%;
 }
 .form-holder form .profile-create dd a.formLink {
   line-height: 0;
+}
+.form-holder form .profile-create dd span.ui-spinner {
+  width: 96%;
 }
 .form-holder form .profile-create input {
   width: 276px;
@@ -7422,16 +7526,22 @@ span.unDone {
   margin-top: 0;
 }
 .form-holder form .project-edit-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 93%;
 }
 .form-holder form .project-edit-info dd a.formLink {
   line-height: 0;
+}
+.form-holder form .project-edit-info dd span.ui-spinner {
+  width: 96%;
 }
 .form-holder form .project-edit-info input {
   width: 220px;
 }
 .form-holder form .project-edit-info select {
   width: 232px;
+}
+.form-holder form .project-edit-info #health {
+  width: 25px;
 }
 .form-holder form .job-create-info {
   clear: both;
@@ -7478,13 +7588,16 @@ span.unDone {
   margin-top: 0;
 }
 .form-holder form .job-create-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 93%;
 }
 .form-holder form .job-create-info dd a.formLink {
   line-height: 0;
 }
+.form-holder form .job-create-info dd span.ui-spinner {
+  width: 96%;
+}
 .form-holder form .job-create-info input {
-  width: 205px !important;
+  width: 218px !important;
 }
 .form-holder form .job-create-info select {
   width: 212px;
@@ -7534,10 +7647,13 @@ span.unDone {
   margin-top: 0;
 }
 .form-holder form .create-employee-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 93%;
 }
 .form-holder form .create-employee-info dd a.formLink {
   line-height: 0;
+}
+.form-holder form .create-employee-info dd span.ui-spinner {
+  width: 96%;
 }
 .form-holder form .create-employee-info input {
   max-width: 117px !important;
@@ -7590,10 +7706,13 @@ span.unDone {
   margin-top: 0;
 }
 .form-holder form .subject-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 93%;
 }
 .form-holder form .subject-info dd a.formLink {
   line-height: 0;
+}
+.form-holder form .subject-info dd span.ui-spinner {
+  width: 96%;
 }
 .form-holder form .subject-info input {
   max-width: inherit !important;
@@ -7650,10 +7769,13 @@ span.unDone {
   margin-top: 0;
 }
 .form-holder form .opprtunitie-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 93%;
 }
 .form-holder form .opprtunitie-info dd a.formLink {
   line-height: 0;
+}
+.form-holder form .opprtunitie-info dd span.ui-spinner {
+  width: 96%;
 }
 .form-holder form .opprtunitie-info input {
   max-width: 231px !important;
@@ -7710,10 +7832,13 @@ span.unDone {
   margin-top: 0;
 }
 .form-holder form .opprtunitie-lead-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 93%;
 }
 .form-holder form .opprtunitie-lead-info dd a.formLink {
   line-height: 0;
+}
+.form-holder form .opprtunitie-lead-info dd span.ui-spinner {
+  width: 96%;
 }
 .form-holder form .opprtunitie-lead-info input {
   max-width: 231px !important;
@@ -7741,9 +7866,12 @@ span.unDone {
   height: 30px;
   line-height: 30px;
   margin: 2px 0;
-  border: 1px solid #CCC;
-  background: #F5F5F5;
+  border: 1px solid #7f7f80;
+  background: #303031;
   cursor: pointer;
+}
+#workflows .row span {
+  color: #cdcdcd;
 }
 #workflows .row div.name {
   overflow: hidden;
@@ -7754,7 +7882,7 @@ span.unDone {
   display: none;
 }
 #workflows .row:hover {
-  background: #FFF;
+  background: #565658;
   width: 403px;
   display: block;
 }
@@ -7790,6 +7918,7 @@ span.unDone {
 .form .job-info {
   clear: both;
   font-size: 14px;
+  color: #cdcdcd;
 }
 .form .job-info dt {
   padding: 1px;
@@ -7832,10 +7961,13 @@ span.unDone {
   margin-top: 0;
 }
 .form .job-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 93%;
 }
 .form .job-info dd a.formLink {
   line-height: 30px;
+}
+.form .job-info dd span.ui-spinner {
+  width: 96%;
 }
 .form .opp-info {
   clear: both;
@@ -7882,10 +8014,13 @@ span.unDone {
   margin-top: 0;
 }
 .form .opp-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 93%;
 }
 .form .opp-info dd a.formLink {
   line-height: 30px;
+}
+.form .opp-info dd span.ui-spinner {
+  width: 96%;
 }
 .form .opp-info input {
   width: 80% !important;
@@ -7935,10 +8070,13 @@ span.unDone {
   margin-top: 0;
 }
 .form .internal-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 93%;
 }
 .form .internal-info dd a.formLink {
   line-height: 30px;
+}
+.form .internal-info dd span.ui-spinner {
+  width: 96%;
 }
 .form .internal-info textarea {
   width: 94%;
@@ -7989,10 +8127,13 @@ span.unDone {
   margin-top: 0;
 }
 .form .assignees-info dd input:not([type='checkbox']) {
-  width: 95%;
+  width: 93%;
 }
 .form .assignees-info dd a.formLink {
   line-height: 0;
+}
+.form .assignees-info dd span.ui-spinner {
+  width: 96%;
 }
 .form .assignees-info input {
   max-width: 180px !important;
@@ -8039,46 +8180,6 @@ span.unDone {
 }
 .newSelectList .miniStylePagination span {
   padding: 0;
-}
-span.ui-spinner {
-  position: relative;
-  padding: 0;
-  display: block;
-  width: 45px;
-  overflow: hidden;
-}
-span.ui-spinner span {
-  display: block;
-  width: 8px;
-  height: 8px;
-  text-align: center;
-  padding: 0;
-}
-span.ui-spinner .ui-spinner-up {
-  position: absolute;
-  right: 5px;
-  top: 2px;
-  padding: 0;
-  cursor: pointer;
-  font-size: 8px;
-  line-height: 8px;
-}
-span.ui-spinner .ui-spinner-up:hover {
-  text-decoration: none;
-  color: #99e8ff;
-}
-span.ui-spinner .ui-spinner-down {
-  position: absolute;
-  padding: 0;
-  right: 5px;
-  top: 11px;
-  cursor: pointer;
-  font-size: 8px;
-  line-height: 8px;
-}
-span.ui-spinner .ui-spinner-down:hover {
-  text-decoration: none;
-  color: #99e8ff;
 }
 .blue {
   color: #66b5d4;
@@ -8670,54 +8771,25 @@ textarea#editInput {
   box-sizing: border-box;
   float: left;
 }
-.grid-conatiner.revenue .chartContainer .legend {
-  float: left;
-  line-height: 24px;
-  width: 140px;
-}
-.grid-conatiner.revenue .chartContainer .legend div {
-  zoom: 1;
-  clear: both;
-}
-.grid-conatiner.revenue .chartContainer .legend div:before {
-  content: "\0020";
-  display: block;
-  height: 0;
-  overflow: hidden;
-}
-.grid-conatiner.revenue .chartContainer .legend div:after {
-  content: "\0020";
-  display: block;
-  height: 0;
-  overflow: hidden;
-  clear: both;
-}
-.grid-conatiner.revenue .chartContainer .legend label {
-  display: inline-block;
-  width: 50px;
-  line-height: 25px;
-  float: left;
-}
-.grid-conatiner.revenue .chartContainer .legend input {
-  width: 57px;
-  float: left;
-  border: none;
-}
+.grid-conatiner.revenue .chartContainer .legend,
 .grid-conatiner.revenue .chartContainer .legendHours {
   float: left;
   line-height: 24px;
   width: 140px;
 }
+.grid-conatiner.revenue .chartContainer .legend div,
 .grid-conatiner.revenue .chartContainer .legendHours div {
   zoom: 1;
   clear: both;
 }
+.grid-conatiner.revenue .chartContainer .legend div:before,
 .grid-conatiner.revenue .chartContainer .legendHours div:before {
   content: "\0020";
   display: block;
   height: 0;
   overflow: hidden;
 }
+.grid-conatiner.revenue .chartContainer .legend div:after,
 .grid-conatiner.revenue .chartContainer .legendHours div:after {
   content: "\0020";
   display: block;
@@ -8725,16 +8797,20 @@ textarea#editInput {
   overflow: hidden;
   clear: both;
 }
+.grid-conatiner.revenue .chartContainer .legend label,
 .grid-conatiner.revenue .chartContainer .legendHours label {
   display: inline-block;
   width: 50px;
   line-height: 25px;
   float: left;
 }
-.grid-conatiner.revenue .chartContainer .legendHours input {
+.grid-conatiner.revenue .chartContainer .legend span.ui-spinner,
+.grid-conatiner.revenue .chartContainer .legendHours span.ui-spinner {
+  width: 45px;
+}
+.grid-conatiner.revenue .chartContainer .legend span.ui-spinner input,
+.grid-conatiner.revenue .chartContainer .legendHours span.ui-spinner input {
   width: 57px;
-  float: left;
-  border: none;
 }
 .grid-conatiner.revenue .chartContainer .line1 {
   fill: none;
@@ -9161,7 +9237,7 @@ textarea#editInput {
 }
 .search-options .filter-dialog-tabs li {
   width: 100%;
-  border-radius: 0px;
+  border-radius: 0;
   border: none;
 }
 .search-options .filter-dialog-tabs li:nth-child(2) {
@@ -9213,8 +9289,9 @@ textarea#editInput {
 .drop-down-filter li {
   cursor: pointer;
   font-size: 12px;
-  padding: 5px 10px;
+  padding: 5px 15px;
   color: #cdcdcd;
+  position: relative;
 }
 .drop-down-filter #filtersContent .filterGroup {
   overflow: hidden;
@@ -9222,6 +9299,9 @@ textarea#editInput {
   border: 1px solid #7f7f80;
   background-color: #303031;
   margin: 5px;
+}
+.drop-down-filter #filtersContent .filterGroup:hover {
+  border-color: #a5a5a6;
 }
 .drop-down-filter #filtersContent .filterGroup .ulContent input {
   margin-top: 5px;
@@ -9240,28 +9320,23 @@ textarea#editInput {
 .drop-down-filter #filtersContent .filterGroup li.miniStylePagination .next {
   float: right;
 }
-.drop-down-filter #filtersContent .filterGroup li:not(.miniStylePagination):before {
-  content: '\2713';
-}
 .drop-down-filter #filtersContent .filterGroup li:not(.checkedValue):hover:before {
   color: #3d3d3e;
 }
-.drop-down-filter #filtersContent .filterGroup li:not(.checkedValue):before,
-.drop-down-filter #filtersContent .filterGroup li.checkedValue:before,
-.drop-down-filter #filtersContent .filterGroup li.checkedValue:hover:before {
-  color: #303031;
+.drop-down-filter #filtersContent .filterGroup li.checkedValue:before {
+  content: '\2713';
+  color: #cdcdcd;
+  position: absolute;
+  top: 4px;
+  left: 4px;
 }
 .drop-down-filter #filtersContent .filterGroup li:hover,
 .drop-down-filter #filtersContent .filterGroup li.checkedValue {
   background-color: #3d3d3e;
-  color: #cdcdcd;
 }
 .drop-down-filter #filtersContent .filterGroup .filterValues {
   text-align: left;
   width: 100%;
-}
-.drop-down-filter #filtersContent .filterGroup.activeGroup .groupName:after {
-  content: ' ';
 }
 .drop-down-filter #filtersContent .filterGroup:not(.activeGroup) .groupName.checkedGroup {
   color: #cdcdcd;
@@ -9277,6 +9352,10 @@ textarea#editInput {
 .drop-down-filter #filtersContent .filterGroup.activeGroup .groupName {
   border-bottom: 1px solid #7f7f80;
 }
+.drop-down-filter #filtersContent .filterGroup.activeGroup .groupName:after {
+  transform: rotate(-45deg);
+  top: 18px;
+}
 .drop-down-filter #filtersContent .filterGroup.activeGroup .groupName,
 .drop-down-filter #filtersContent .filterGroup .groupName:hover {
   color: #cdcdcd;
@@ -9287,9 +9366,20 @@ textarea#editInput {
   font-size: 13px;
   padding: 10px;
   color: #cdcdcd;
+  position: relative;
 }
 .drop-down-filter #filtersContent .filterGroup .groupName:after {
-  content: '\2335';
+  content: '';
+  border-style: solid;
+  border-width: 1px 1px 0 0;
+  border-color: #cdcdcd;
+  display: block;
+  height: 5px;
+  right: 110px;
+  top: 15px;
+  position: absolute;
+  width: 5px;
+  transform: rotate(135deg);
 }
 .filter-icons {
   display: none;
