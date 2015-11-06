@@ -184,6 +184,10 @@ define([
                             subTotal = targetEl.find('.subtotal').text();
                             jobs = targetEl.find('#jobs').attr('data-id');
 
+                            if(!jobs && this.forSales){
+                                return alert("Job field can't be empty. Please, choose or create one.");
+                            }
+
                             products.push({
                                 product      : productId,
                                 unitPrice    : price,
@@ -194,6 +198,8 @@ define([
                                 subTotal     : subTotal,
                                 jobs: jobs
                             });
+                        } else {
+                            return alert("Products can't be empty.");
                         }
                     }
                 }
@@ -242,7 +248,7 @@ define([
                     });
 
                 } else {
-                    alert(CONSTANTS.RESPONSES.CREATE_QUOTATION);
+                    return alert(CONSTANTS.RESPONSES.CREATE_QUOTATION);
                 }
             },
 
