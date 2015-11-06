@@ -30,7 +30,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                 keyDown: function (e) {
                     if (e.which === 13) {
-                        this.setChangedValueToModel();
+                        this.setChangedValueToModel(e);
                     }
                 },
 
@@ -88,6 +88,8 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                 addNewEmployeeRow: function (e) {
                     this.stopDefaultEvents(e);
+
+                    this.setChangedValueToModel();
 
                     var self = this;
 
@@ -209,7 +211,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                     if (wTrackId && !isInput) {
                         this.wTrackId = wTrackId;
-                        this.setChangedValueToModel();
+                        this.setChangedValueToModel(e);
                     }
 
                     if (!isInput) {
@@ -221,6 +223,8 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                         insertedInput.focus();
                         insertedInput[0].setSelectionRange(0, insertedInput.val().length);
                     }
+
+                    this.setChangedValueToModel(e);
 
                     return false;
                 },
@@ -259,7 +263,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                 },
 
                 setChangedValueToModel: function (elem) {
-                    var editedElement = elem || this.$listTable.find('.editing');
+                    var editedElement = elem ||this.$listTable.find('.editing');
                     var editedCol;
                     var editedElementRowId;
                     var editedElementContent;
@@ -286,6 +290,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                 },
 
                 generateItems: function (e) {
+
                     this.setChangedValueToModel(); // add for setChanges by Hours
 
                     var errors = this.$el.find('.errorContent');
@@ -443,6 +448,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                             endDateTD.attr('data-content', 'endDate');
                         } else if (target.attr('data-content') === 'byHours') {
                             endDateInput.removeClass('hidden');
+                            endDateInput.addClass('editing');
                             endDateDP.addClass('hidden');
                             endDateTD.attr('data-content', 'hours');
                         }
@@ -451,7 +457,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     targetElement.removeClass('errorContent');
 
                     selectorContainer.text(target.text());
-
+                    this.setChangedValueToModel(e);
                     this.hideNewSelect();
 
                     return false;
