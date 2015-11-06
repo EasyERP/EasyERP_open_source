@@ -296,7 +296,7 @@ define([
 
                 if(products) {
                     productsContainer = thisEl.find('#productList');
-                    productsContainer.prepend(_.template(ProductItemsEditList, {products: products}));
+                    productsContainer.prepend(_.template(ProductItemsEditList, {products: products, forSales: self.forSales}));
                     this.recalculateTaxes(this.$el.find('.listTable'));
                     totalAmountContainer = thisEl.find('#totalAmountContainer');
                     totalAmountContainer.append(_.template(totalAmount, {model: options.model, balanceVisible: this.visible}));
