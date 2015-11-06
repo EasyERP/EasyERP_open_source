@@ -38,7 +38,7 @@ define([
                 if (!options.collection) throw "No collection specified!";
                 this.collection = options.collection;
                 if (options.currentRoot){
-                    this.currentSection = options.currentRoot[0].get('mname');
+                    this.currentSection = options.currentRoot[0] ? options.currentRoot[0].get('mname') : null;
 				}
                 this.currentChildren = options.currentChildren;
                 if (this.currentChildren && this.currentChildren.length > 0) {
@@ -77,8 +77,8 @@ define([
             },
 			updateLeftMenu:function(currentChildren, currentRoot){
                 this.currentChildren = currentChildren;
-                this.currentSection = currentRoot[0].get('mname');
-				this.selectedId = this.currentChildren[0].get("_id");
+                this.currentSection = currentRoot[0] ? currentRoot[0].get('mname') : null;
+				this.selectedId = (this.currentChildren && this.currentChildren[0]) ? this.currentChildren[0].get("_id") : null;
 				this.render(null, this.selectedId);
 			},
             hoverItem: function (e) {
@@ -130,9 +130,10 @@ define([
 //                    $dom.find(':last').append(this.renderMenu(kids, onMouseOver));
                 }, this);
                 var clickEl = $dom.find('a')[0];
+                var children = (this.currentChildren && this.currentChildren[0]) ? this.currentChildren[0].get("_id") : null;
 
                 if (this.currentChildren) {
-                    clickEl = $dom.find('li#' + this.currentChildren[0].get("_id") + " a")[0];
+                    clickEl = $dom.find('li#' + children + " a")[0];
                 }
 
                 var _el = $('.selected > a').text();

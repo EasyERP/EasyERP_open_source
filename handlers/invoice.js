@@ -61,13 +61,13 @@ var Invoice = function (models, event) {
         var wTrackInvoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
         var Order = models.get(req.session.lastDb, 'Quotation', OrderSchema);
         var Company = models.get(req.session.lastDb, 'Customer', CustomerSchema);
-
+        var request;
         var parallelTasks;
         var waterFallTasks;
 
         function fetchFirstWorkflow(callback) {
             if (forSales === "true") {
-                var request = {
+                request = {
                     query: {
                         wId: 'Sales Invoice',
                         source: 'purchase',
@@ -76,7 +76,7 @@ var Invoice = function (models, event) {
                     session: req.session
                 };
             } else {
-                var request = {
+                request = {
                     query: {
                         wId: 'Purchase Invoice',
                         source: 'purchase',

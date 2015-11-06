@@ -149,8 +149,8 @@ define([
                     var _model;
                     var tdsArr;
                     var cid;
-                    var hours = model.get('worked');
-                    var rate = model.get('rate');
+                    var hours = (model.changed && model.changed.worked) ? model.changed.worked : model.get('worked');
+                    var rate = (model.changed && model.changed.rate) ? model.changed.rate : model.get('rate');
                     var revenue = parseInt(hours) * parseFloat(rate);
 
                     $(selectedWtrack).attr('checked', false);
@@ -177,11 +177,11 @@ define([
 
                     tdsArr = row.find('td');
                     $(tdsArr[0]).find('input').val(cid);
-                    $(tdsArr[20]).find('span').text('Unpaid');
-                    $(tdsArr[20]).find('span').addClass('unDone');
-                    $(tdsArr[24]).text(0);
-                    $(tdsArr[22]).text(0);
-                    $(tdsArr[21]).text(revenue.toFixed(2));
+                    $(tdsArr[21]).find('span').text('Unpaid');
+                    $(tdsArr[21]).find('span').addClass('unDone');
+                    $(tdsArr[25]).text(0);
+                    $(tdsArr[23]).text(0);
+                    $(tdsArr[22]).text(revenue.toFixed(2));
                     $(tdsArr[1]).text(cid);
                 }
             },
@@ -199,7 +199,7 @@ define([
                 var tr = $(e.target).closest('tr');
                 var input = tr.find('input.editing');
                 var days = tr.find('.autoCalc');
-                var wTrackId = tr.data('id');
+                var wTrackId = tr.attr('data-id');
                 var worked = 0;
                 var value;
                 var calcEl;
@@ -291,7 +291,7 @@ define([
 
                 if (/*wTrackId !== this.wTrackId &&*/ editedElement.length) {
                     editedCol = editedElement.closest('td');
-                    editedElementRowId = editedElement.closest('tr').data('id');
+                    editedElementRowId = editedElement.closest('tr').attr('data-id');
                     editedElementContent = editedCol.data('content');
                     editedElementValue = editedElement.val();
 
@@ -337,7 +337,7 @@ define([
 
                 var el = $(e.target);
                 var tr = $(e.target).closest('tr');
-                var wTrackId = tr.data('id');
+                var wTrackId = tr.attr('data-id');
                 var colType = el.data('type');
                 var content = el.data('content');
                 var isSelect = colType !== 'input' && el.prop("tagName") !== 'INPUT';
@@ -425,7 +425,7 @@ define([
                 costElement = $(e.target).closest('tr').find('[data-content="cost"]');
 
                 if (wTrackId.length < 24) {
-                    employeeId = this.changedModels[wTrackId].employee._id;
+                    employeeId = this.changedModels[wTrackId].employee ? this.changedModels[wTrackId].employee._id : $(e.target).attr("data-id");
 
                     month = (tr.find('[data-content="month"]').text()) ? tr.find('[data-content="month"]').text() : tr.find('.editing').val();
                     year = (tr.find('[data-content="year"]').text()) ? tr.find('[data-content="year"]').text() : tr.find('.editing').val();
@@ -530,7 +530,7 @@ define([
                 var employee;
                 var department;
                 var changedAttr;
-                var wTrackId = tr.data('id');
+                var wTrackId = tr.attr('data-id');
                 var week;
                 var year;
                 var jobs = {};
@@ -603,6 +603,8 @@ define([
 
                     changedAttr.employee = employee;
                     changedAttr.department = department;
+
+                    targetElement.attr("data-id", employee._id);
 
                     this.calculateCost(e, wTrackId);
 
@@ -900,7 +902,7 @@ define([
                 var wTrackId = tr.attr('data-id');
                 var model = this.collection.get(wTrackId);
                 var projectContainer = tr.find('td[data-content="project"]');
-                var projectId = projectContainer.data('id');
+                var projectId = projectContainer.attr('data-id');
 
                 if (checkLength >= 1) {
                     this.copyEl.show();
@@ -1097,7 +1099,7 @@ define([
                 async.each(edited, function (el, cb) {
                     var tr = $(el).closest('tr');
                     var rowNumber = tr.find('[data-content="number"]').text();
-                    var id = tr.data('id');
+                    var id = tr.attr('data-id');
                     var template = _.template(cancelEdit);
                     var model;
 
@@ -1129,7 +1131,7 @@ define([
 
                 if (this.createdCopied) {
                     copiedCreated = this.$el.find('#false');
-                    dataId = copiedCreated.data('id');
+                    dataId = copiedCreated.attr('data-id');
                     this.editCollection.remove(dataId);
                     delete this.changedModels[dataId];
                     copiedCreated.remove();

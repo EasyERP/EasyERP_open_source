@@ -31,7 +31,8 @@ define([
             events: {
                 'keydown'                                                         : 'keydownHandler',
                 'click .dialog-tabs a'                                            : 'changeTab',
-                "click #projectDd"                                         : "showNewSelect",
+                "click #projectDd"                                                : "showNewSelect",
+                "click a.current-selected:not(#projectDd, #jobs)"                       : "showNewSelect",
                 "click"                                                           : "hideNewSelect",
                 "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
                 "click .newSelectList li.miniStylePagination"                     : "notHide",
@@ -183,6 +184,10 @@ define([
                             subTotal = targetEl.find('.subtotal').text();
                             jobs = targetEl.find('#jobs').attr('data-id');
 
+                            if(!jobs && this.forSales){
+                                return alert("Job field can't be empty. Please, choose or create one.");
+                            }
+
                             products.push({
                                 product      : productId,
                                 unitPrice    : price,
@@ -193,6 +198,8 @@ define([
                                 subTotal     : subTotal,
                                 jobs: jobs
                             });
+                        } else {
+                            return alert("Products can't be empty.");
                         }
                     }
                 }
@@ -241,7 +248,7 @@ define([
                     });
 
                 } else {
-                    alert(CONSTANTS.RESPONSES.CREATE_QUOTATION);
+                    return alert(CONSTANTS.RESPONSES.CREATE_QUOTATION);
                 }
             },
 

@@ -115,6 +115,10 @@ define([
                             subTotal = targetEl.find('.subtotal').text();
                             jobs = targetEl.find('#jobs').attr('data-id');
 
+                            if(!jobs){
+                                return alert("Job field can't be empty. Please, choose or create one.");
+                            }
+
                             products.push({
                                 product      : productId,
                                 unitPrice    : price,
@@ -125,6 +129,8 @@ define([
                                 subTotal     : subTotal,
                                 jobs: jobs
                             });
+                        } else {
+                            return alert("Products can't be empty.");
                         }
                     }
                 }
@@ -158,7 +164,7 @@ define([
                     workflow      : this.defaultWorkflow
                 };
 
-                if (supplier) {
+                if (supplier._id && selectedLength) {
                     this.model.save(data, {
                         headers: {
                             mid: mid
@@ -173,7 +179,7 @@ define([
                     });
 
                 } else {
-                    alert(CONSTANTS.RESPONSES.CREATE_QUOTATION);
+                    return alert('Products can not be empty.');
                 }
             },
 

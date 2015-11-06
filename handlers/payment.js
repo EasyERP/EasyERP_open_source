@@ -17,7 +17,7 @@ function returnModuleId(req) {
      if(isWtrack){
      moduleId = 61;
      } else {*/
-    moduleId = !!body.forSales ? 61 : 60
+    moduleId = !!body.forSales ? 61 : 60;
     /*    }*/
 
     return moduleId;
