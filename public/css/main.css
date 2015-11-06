@@ -2269,7 +2269,6 @@ body {
 dl {
   clear: both;
   font-size: 14px;
-  overflow: hidden;
 }
 dl dt {
   padding: 1px;
@@ -2705,7 +2704,6 @@ dl dd span.ui-spinner {
 .form .job-info {
   clear: both;
   font-size: 14px;
-  overflow: hidden;
   color: #cdcdcd;
 }
 .form .job-info dt {
@@ -2760,7 +2758,6 @@ dl dd span.ui-spinner {
 .form .opp-info {
   clear: both;
   font-size: 14px;
-  overflow: hidden;
 }
 .form .opp-info dt {
   padding: 1px;
@@ -2817,7 +2814,6 @@ dl dd span.ui-spinner {
 .form .internal-info {
   clear: both;
   font-size: 14px;
-  overflow: hidden;
 }
 .form .internal-info dt {
   padding: 1px;
@@ -2875,7 +2871,6 @@ dl dd span.ui-spinner {
 .form .assignees-info {
   clear: both;
   font-size: 14px;
-  overflow: hidden;
 }
 .form .assignees-info dt {
   padding: 1px;
@@ -3860,7 +3855,6 @@ dl dd span.ui-spinner {
 .customer-info {
   clear: both;
   font-size: 14px;
-  overflow: hidden;
 }
 .person-info dt,
 .customer-info dt {
@@ -3928,7 +3922,6 @@ dl dd span.ui-spinner {
 .settings-info {
   clear: both;
   font-size: 14px;
-  overflow: hidden;
 }
 .settings-info dt {
   padding: 1px;
@@ -3988,7 +3981,6 @@ dl dd span.ui-spinner {
 .project-edit-info {
   clear: both;
   font-size: 14px;
-  overflow: hidden;
 }
 .project-edit-info dt {
   padding: 1px;
@@ -4042,7 +4034,6 @@ dl dd span.ui-spinner {
 .quotation-info {
   clear: both;
   font-size: 14px;
-  overflow: hidden;
 }
 .quotation-info dt {
   padding: 1px;
@@ -4099,7 +4090,6 @@ dl dd span.ui-spinner {
 .edit-employee-info {
   clear: both;
   font-size: 14px;
-  overflow: hidden;
 }
 .edit-employee-info dt {
   padding: 1px;
@@ -4668,6 +4658,7 @@ a.red:hover {
   white-space: normal;
   word-wrap: break-word;
   word-break: break-all;
+  color: #808080;
 }
 .attachContainer li .deleteAttach {
   float: right;
@@ -4699,12 +4690,13 @@ a.red:hover {
   line-height: 24px;
   font-size: 28px;
   font-weight: 200;
+  color: #808080;
 }
 .attachContainer li:before:hover {
   text-decoration: none;
 }
 .attachContainer li:hover {
-  background-color: #f1f1f1;
+  background-color: #3d3d3e;
 }
 .attachContainer li:hover .deleteAttach {
   float: right;
@@ -5172,8 +5164,9 @@ table#workflows tr td.edit-status {
   box-sizing: border-box;
   height: 26px !important;
   line-height: 26px;
-  padding: 2px 6px !important;
+  padding: 2px 4px !important;
   border: transparent !important;
+  text-align: center;
 }
 .startDate input,
 .endDate input {
@@ -6240,7 +6233,6 @@ ul.dialog-tabs li.right button {
 .ui-dialog .app-empty-info {
   clear: both;
   font-size: 14px;
-  overflow: hidden;
   margin-top: -3px;
 }
 .ui-dialog .app-empty-info dt {
@@ -6305,7 +6297,6 @@ ul.dialog-tabs li.right button {
   width: auto;
   clear: both;
   font-size: 14px;
-  overflow: hidden;
   clear: none;
 }
 .ui-dialog .person-info-h3 dt {
@@ -6377,7 +6368,6 @@ ul.dialog-tabs li.right button {
   width: 50%;
   clear: both;
   font-size: 14px;
-  overflow: hidden;
   height: 30px;
 }
 .ui-dialog .summary-info dt {
@@ -6544,7 +6534,6 @@ ul.dialog-tabs li.right button {
   max-width: 96%;
   clear: both;
   font-size: 14px;
-  overflow: hidden;
 }
 .form-holder form #description {
   margin-top: 15px;
@@ -7326,7 +7315,6 @@ span.unDone {
 .form-holder form .task-info {
   clear: both;
   font-size: 14px;
-  overflow: hidden;
 }
 .form-holder form .task-info dt {
   padding: 1px;
@@ -7383,7 +7371,6 @@ span.unDone {
 .form-holder form .task-summary-info {
   clear: both;
   font-size: 14px;
-  overflow: hidden;
 }
 .form-holder form .task-summary-info dt {
   padding: 1px;
@@ -7440,7 +7427,6 @@ span.unDone {
 .form-holder form .profile-create {
   clear: both;
   font-size: 14px;
-  overflow: hidden;
 }
 .form-holder form .profile-create dt {
   padding: 1px;
@@ -7500,7 +7486,6 @@ span.unDone {
 .form-holder form .project-edit-info {
   clear: both;
   font-size: 14px;
-  overflow: hidden;
 }
 .form-holder form .project-edit-info dt {
   padding: 1px;
@@ -7563,7 +7548,6 @@ span.unDone {
 .form-holder form .job-create-info {
   clear: both;
   font-size: 14px;
-  overflow: hidden;
 }
 .form-holder form .job-create-info dt {
   padding: 1px;
@@ -7620,59 +7604,8 @@ span.unDone {
 .form-holder form .job-create-info select {
   width: 212px;
 }
-.form-holder form .create-employee-info {
-  clear: both;
-  font-size: 14px;
-  overflow: hidden;
-}
 .form-holder form .create-employee-info dt {
-  padding: 1px;
-  margin: -1px;
-  width: 40%;
-  max-width: 200px;
-  float: left;
-  clear: both;
-  line-height: 0;
-  min-height: 16px;
-  margin-top: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.form-holder form .create-employee-info dt p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-.form-holder form .create-employee-info dt:first-child {
-  margin-top: 0;
-}
-.form-holder form .create-employee-info dd {
-  padding: 1px;
-  margin: -1px;
-  margin-top: 0;
-  line-height: 0;
-  min-height: 16px;
-  float: left;
-  width: 60%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.form-holder form .create-employee-info dd p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-.form-holder form .create-employee-info dd:nth-child(2) {
-  margin-top: 0;
-}
-.form-holder form .create-employee-info dd input:not([type='checkbox']) {
-  width: 93%;
-}
-.form-holder form .create-employee-info dd a.formLink {
-  line-height: 0;
-}
-.form-holder form .create-employee-info dd span.ui-spinner {
-  width: 96%;
+  margin-top: 10px;
 }
 .form-holder form .create-employee-info input {
   max-width: 117px !important;
@@ -7683,7 +7616,6 @@ span.unDone {
 .form-holder form .subject-info {
   clear: both;
   font-size: 14px;
-  overflow: hidden;
 }
 .form-holder form .subject-info dt {
   padding: 1px;
@@ -7747,7 +7679,6 @@ span.unDone {
 .form-holder form .opprtunitie-info {
   clear: both;
   font-size: 14px;
-  overflow: hidden;
 }
 .form-holder form .opprtunitie-info dt {
   padding: 1px;
@@ -7811,7 +7742,6 @@ span.unDone {
 .form-holder form .opprtunitie-lead-info {
   clear: both;
   font-size: 14px;
-  overflow: hidden;
 }
 .form-holder form .opprtunitie-lead-info dt {
   padding: 1px;
@@ -7940,7 +7870,6 @@ span.unDone {
 .form .job-info {
   clear: both;
   font-size: 14px;
-  overflow: hidden;
   color: #cdcdcd;
 }
 .form .job-info dt {
@@ -7995,7 +7924,6 @@ span.unDone {
 .form .opp-info {
   clear: both;
   font-size: 14px;
-  overflow: hidden;
 }
 .form .opp-info dt {
   padding: 1px;
@@ -8052,7 +7980,6 @@ span.unDone {
 .form .internal-info {
   clear: both;
   font-size: 14px;
-  overflow: hidden;
 }
 .form .internal-info dt {
   padding: 1px;
@@ -8110,7 +8037,6 @@ span.unDone {
 .form .assignees-info {
   clear: both;
   font-size: 14px;
-  overflow: hidden;
 }
 .form .assignees-info dt {
   padding: 1px;
