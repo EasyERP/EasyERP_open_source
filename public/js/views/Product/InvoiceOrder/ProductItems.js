@@ -173,7 +173,7 @@ define([
                 if (datePicker.length){
                     parent.append('<input id="editInput"  maxlength="' + maxlength + '" type="text" readonly/>');
                 } else {
-                    parent.append('<input id="editInput"  maxlength="' + maxlength + '" type="text"/>');
+                    parent.append('<input id="editInput"  maxlength="' + maxlength + '" type="number"/>');
                 }
 
                 $('#editInput').val(this.text);
