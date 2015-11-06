@@ -805,7 +805,7 @@ var Opportunities = function (models, event) {
                 data.info = {};
             }
             data.sequence = sequence;
-            models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).findByIdAndUpdate(_id, data, function (err, result) {
+            models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).findByIdAndUpdate(_id, data, {new: true}, function (err, result) {
 
                 if (err) {
                     console.log(err);
@@ -886,7 +886,7 @@ var Opportunities = function (models, event) {
 
             event.emit('updateSequence', models.get(req.session.lastDb, "Opportunities", opportunitiesSchema), "sequence", 0, 0, data.workflow, data.workflow, true, false, function (sequence) {
                 data.sequence = sequence;
-                models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).findByIdAndUpdate(_id, {$set: data}, function (err, result) {
+                models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
                     if (err) {
                         console.log(err);
                         logWriter.log("Opportunities.js update opportunitie.update " + err);
@@ -986,7 +986,7 @@ var Opportunities = function (models, event) {
                         if (data.workflow == data.workflowStart) {
                             data.sequence -= 1;
                         }
-                        models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).findByIdAndUpdate(_id, {$set: data}, function (err, result) {
+                        models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
                             if (!err) {
                                 res.send(200, {success: 'Opportunities updated', sequence: result.sequence});
                             } else {
@@ -1003,7 +1003,7 @@ var Opportunities = function (models, event) {
                     delete data.workflowStart;
                     data.info = {};
                     data.sequence = sequence;
-                    models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).findByIdAndUpdate(_id, {$set: data}, function (err, result) {
+                    models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
                         if (!err) {
                             res.send(200, {success: 'Opportunities updated'});
                         } else {

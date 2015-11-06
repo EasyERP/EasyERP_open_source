@@ -1143,7 +1143,8 @@ module.exports = function (models) {
 
                             var settings = {
                                 safe: true,
-                                upsert: true
+                                upsert: true,
+                                new: true
                             };
 
                             function projectUpdater(cb) {

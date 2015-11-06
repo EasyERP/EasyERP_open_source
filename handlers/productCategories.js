@@ -67,7 +67,7 @@ var Categories = function (models, event) {
                 result.forEach(function (item) {
                     n++;
 
-                    models.get(req.session.lastDb, 'Department', DepartmentSchema).findByIdAndUpdate(item._id, {nestingLevel: nestingLevel + 1}, function (err, res) {
+                    models.get(req.session.lastDb, 'Department', DepartmentSchema).findByIdAndUpdate(item._id, {nestingLevel: nestingLevel + 1}, {new: true}, function (err, res) {
                         if (result.length == n) {
                             updateNestingLevel(req, res._id, res.nestingLevel + 1, function () {
                                 callback();
@@ -155,7 +155,7 @@ var Categories = function (models, event) {
                     Model.findByIdAndUpdate(id, {$set: {fullName: fullName}}, cb);
                 }
             });*/
-        Model.findByIdAndUpdate(id, {$set: {fullName: fullName}}, cb);
+        Model.findByIdAndUpdate(id, {$set: {fullName: fullName}}, {new: true}, cb);
     };
 
     this.update = function (req, res, next) {
@@ -175,7 +175,7 @@ var Categories = function (models, event) {
         if (data.sequenceStart) {
             updateSequence(ProductCategory, "sequence", data.sequenceStart, data.sequence, data.parentCategoryStart, data.parentCategory, false, false, function (sequence) {
                 data.sequence = sequence;
-                ProductCategory.findByIdAndUpdate(_id, data, {new: true}, function (err, result) {
+                ProductCategory.findByIdAndUpdate(_id, data, {new: true}, {new: true}, function (err, result) {
                     if (err) {
                         next(err);
                     } else {

@@ -892,7 +892,9 @@ var wTrack = function (event, models) {
                         name: jobName
                     };
 
-                    Project.findByIdAndUpdate(objectId(project), {$push: {"budget.projectTeam": jobId}});
+                    Project.findByIdAndUpdate(objectId(project), {$push: {"budget.projectTeam": jobId}}, {new: true}, function(){
+
+                    });
 
                     waterfallCB(null, jobForwTrack);
                 });
