@@ -144,6 +144,15 @@ define([
                                     //
                                     //Backbone.history.fragment = '';
                                     //Backbone.history.navigate(url, {trigger: true});
+
+                                    var data ={products: JSON.stringify(products), type: "Order"};
+
+                                    dataService.postData("/jobs/update", data,  function(err, result){
+                                        if (err){
+                                            return console.log(err);
+                                        }
+
+                                    });
                                     var filter = {
                                         'projectName': {
                                             key  : 'project._id',
@@ -168,11 +177,14 @@ define([
                                             collection: self.ordersCollection,
                                             projectId : self.pId,
                                             customerId: self.customerId,
-                                            projectManager: self.projectManager
+                                            projectManager: self.projectManager,
+                                            filter: filter
                                         }).render({activeTab: true});
                                     };
 
                                     self.ordersCollection.bind('reset', createView);
+
+                                    self.collection.remove(self.currentModel.get('_id'));
 
                                 } else {
                                     Backbone.history.navigate(redirectUrl, {trigger: true});
@@ -432,6 +444,7 @@ define([
                     model: this.currentModel.toJSON(),
                     visible: this.visible
                 });
+                var service = this.forSales;
                 var notDiv;
                 var model;
                 var productItemContainer;
@@ -478,7 +491,7 @@ define([
                 populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, false, true);
                 populate.get("#deliveryDd", "/deliverTo", {}, 'name', this, false, true);
 
-                if ((App.currentDb === 'weTrack') && this.forSales){
+                if (App.weTrack && this.forSales){
                     populate.get("#supplierDd", "/Customer", {}, "fullName", this, false, false);
 
                     populate.get("#projectDd", "/getProjectsForDd", {}, "projectName", this, false, false);
@@ -499,7 +512,7 @@ define([
                 productItemContainer = this.$el.find('#productItemsHolder');
 
                 productItemContainer.append(
-                    new ProductItemView({editable: true}).render({model: model}).el
+                    new ProductItemView({editable: true, service: service}).render({model: model}).el
                 );
 
 

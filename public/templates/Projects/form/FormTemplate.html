@@ -5,8 +5,8 @@
             <li><a href="javascript:;" id="wTrackTab" class="">Timesheet</a></li>
             <li><a href="javascript:;" class="">Quotations</a></li>
             <li><a href="javascript:;" class="" id="ordersTab">Orders</a></li>
-            <li><a href="javascript:;" class="">Invoices</a></li>
-            <li><a href="javascript:;" class="">Payments</a></li>
+            <li><a href="javascript:;" class="" id="invoiceTab">Invoices</a></li>
+            <li><a href="javascript:;" class="" id="paymentsTab">Payments</a></li>
             <li><a href="javascript:;" class="">Comments</a></li>
             <li><a href="javascript:;" class="">Bonus</a></li>
             <li><a href="javascript:;">Assignees</a></li>
@@ -46,12 +46,12 @@
                             <a id="customerDd" data-id="<%=model.customer?model.customer._id:''%>" class="current-selected " href="javascript:;"><%=model.customer?(model.customer.name):'Select'%></a>
                         </dd>
                         <dt><label for="StartDate">Start Date </label></dt>
-                        <dd><input class="extrainfo blueback" type="text" name="StartDate" id="StartDate" value="<%=model.StartDate%>"  /></dd>
+                        <dd><input class="extrainfo blueback" type="text" name="StartDate" id="StartDate" value="<%=model.StartDate%>" readonly /></dd>
 
                         <dt><label for="EndDate">End Date </label></dt>
-                        <dd><input class="info blueback" type="text" name="EndDate" id="EndDate" value="<%=model.EndDate%>"  /></dd>
+                        <dd><input class="info blueback" type="text" name="EndDate" id="EndDate" value="<%=model.EndDate%>" readonly /></dd>
                         <dt><label for="EndDateTarget">Target End Date</label></dt>
-                        <dd><input class="info blueback" type="text" name="TargetEndtDate" id="EndDateTarget" value="<%=model.TargetEndDate%>"  /></dd>
+                        <dd><input class="info blueback" type="text" name="TargetEndtDate" id="EndDateTarget" value="<%=model.TargetEndDate%>" readonly /></dd>
 
                         <dt>
                             <label for="workflowsDd">Status</label>
@@ -97,12 +97,13 @@
             </div>
             <div class="clearfix"></div>
             <div class="dialog-tabs-item">
-                <div id="payments"></div>
+                <div id="invoices"></div>
             </div>
             <div class="clearfix"></div>
             <div class="dialog-tabs-item">
-                <div id="invoices"></div>
+                <div id="payments"></div>
             </div>
+
             <div class="clearfix"></div>
             <div class="dialog-tabs-item">
                 <div class="textarea-wrapper">

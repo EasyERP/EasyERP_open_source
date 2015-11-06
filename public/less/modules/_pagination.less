@@ -1,0 +1,181 @@
+.pagination {
+  width: 100%;
+  margin: 5px 0;
+  float: right;
+
+  &> div {
+    float: left;
+    color: @mainText-color;
+    padding: 0 5px;
+    box-sizing: border-box;
+  }
+
+  .countOnPage {
+    text-align: left;
+    &> div {
+      float: left;
+    }
+    span {
+      padding: 1px 3px;
+    }
+    .page-list {
+      padding: 1px 3px;
+      a {
+        display: block;
+        float: left;
+      }
+    }
+  }
+  .pageList {
+    position: relative;
+    .itemsNumber {
+      text-decoration: none;
+      display: inline-block;
+      padding: 0 5px;
+      &:hover {
+        padding-bottom: 4px;
+        border-bottom: 1px solid @border-color-main ;
+      }
+    }
+    a.selectedItemsNumber {
+      border-bottom: 1px solid @border-color-main;
+      padding-bottom: 4px;
+    }
+    button {
+      background-color: white;
+      background-image: none;
+      border-radius: 0;
+      width: 27px;
+      margin: 0 0 0 5px;
+      line-height: 10px;
+      font-size: 12px;
+      padding: 3px 2px;
+      &:hover {
+        background-color: #F7F8F9;
+      }
+    }
+  }
+  .nextPrev {
+    float: right;
+    text-align: right;
+    div, button {
+      float: left;
+      line-height: 24px;
+    }
+    span {
+      padding: 0 3px;
+    }
+    button.fa {
+      border: 1px solid @border-color-main;
+      background: transparent;
+      color: @mainText-color;
+      line-height: 15px;
+      font-size: 15px;
+      width: 24px;
+      height: 24px;
+      display: block;
+      text-align: center;
+      padding: 2px;
+      border-radius: 0;
+
+      &:hover {
+        background: transparent !important;
+        color: lighten(@mainText-color, 50%);
+        border-color: lighten(@mainText-color, 50%);
+      }
+      &[disabled] {
+        color: darken(@mainText-color, 35%);
+        border-color: darken(@mainText-color, 35%);
+        cursor: default;
+        background: transparent !important;
+        &:hover {
+          color: darken(@mainText-color, 35%);
+          border-color: darken(@mainText-color, 35%);
+          cursor: default;
+          background: transparent !important;
+        }
+      }
+    }
+    #firstShowPage, #lastShowPage {
+      width: 30px;
+      display: block;
+    }
+    #previousPage {
+      margin: 0 3px;
+    }
+    #nextPage {
+      margin: 0 3px;
+    }
+    .currentPageList {
+      margin: 0 5px;
+    }
+    .allPage {
+      position: relative;
+    }
+    ul {
+      background-color: @bg-main-menu;
+      border: @thin-border @border-color-main;
+      position: absolute;
+      bottom: 23px;
+      left: 5px;
+      display: none;
+      font-size: 12px;
+      li {
+        a {
+          display: block;
+          width: 22px;
+          height: 20px;
+          line-height: 20px;
+          text-align: center;
+          &:hover {
+            background-color: @bg-main-menu-selected;
+            color: white;
+            text-decoration: none;
+          }
+        }
+      }
+    }
+    #pageList {
+      background-color: @bg-main-menu;
+      border: @thin-border @border-color-main;
+      position: absolute;
+      bottom: 23px;
+      left: 5px;
+      display: none;
+      li {
+        display: block;
+        width: 22px;
+        height: 20px;
+        line-height: 20px;
+        text-align: center;
+        font-size: 12px;
+        cursor: pointer;
+        &:hover {
+          background-color: @bg-main-menu-selected;
+          color: white;
+          text-decoration: none;
+        }
+      }
+    }
+  }
+  #currentShowPage {
+    border: @thin-border @list-border-color;
+    margin: 0 2px 0 5px;
+    width: 30px;
+    height: 22px;
+    float: left;
+    font-size: 12px !important;
+    text-align: center;
+    max-width: 30px;
+    line-height: 20px;
+    background-color: transparent;
+    font-family: Arial, Helvetica, sans-serif;
+    padding: 0 2px;
+    color: @mainText-color;
+    &:focus {
+      .box-shadow(0, 0, 5px, @border-color-selected);
+      outline: medium none;
+      border: @thin-border @border-color-selected !important;
+    }
+  }
+}

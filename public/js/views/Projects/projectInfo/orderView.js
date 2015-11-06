@@ -5,16 +5,20 @@ define([
     'text!templates/Projects/projectInfo/orders/ListTemplate.html',
     'text!templates/Projects/projectInfo/orders/ListHeader.html',
     'text!templates/stages.html',
-    'views/salesQuotation/EditView',
+    'text!templates/Pagination/PaginationTemplate.html',
+    'views/salesOrder/EditView',
     'views/salesOrder/list/ListView',
+    'collections/Quotation/filterCollection',
     'models/QuotationModel',
     'dataService',
     'common'
 
-], function (ListTemplate, lisHeader, stagesTemplate, editView, listView, orderModel, dataService, common) {
+], function (ListTemplate, lisHeader, stagesTemplate, paginationTemplate, editView, listView, quotationCollection, orderModel, dataService, common) {
     var orderView = listView.extend({
 
         el: '#orders',
+        totalCollectionLengthUrl: '/quotation/totalCollectionLength',
+        contentCollection: quotationCollection,
         templateList: _.template(ListTemplate),
         templateHeader: _.template(lisHeader),
 
@@ -22,7 +26,15 @@ define([
             "click .checkbox": "checked",
             "click #removeOrder": "removeItems",
             "click  .list tbody td:not(.notForm)": "goToEditDialog",
-            "click .stageSelect": "showNewSelect"
+            "click .stageSelect": "showNewSelect",
+            "mouseover .currentPageList"  : "showPagesPopup",
+            "click .itemsNumber"          : "switchPageCounter",
+            "click .showPage"             : "showPage",
+            "change #currentShowPage"     : "showPage",
+            "click #previousPage"         : "previousPage",
+            "click #nextPage"             : "nextPage",
+            "click #firstShowPage"        : "firstPage",
+            "click #lastShowPage"         : "lastPage"
         },
 
         initialize: function (options) {
@@ -30,6 +42,116 @@ define([
             this.projectID = options.projectId;
             this.customerId = options.customerId;
             this.projectManager = options.projectManager;
+            this.filter = options.filter ? options.filter : {};
+            this.defaultItemsNumber = 50;
+            this.page = options.page ? options.page : 1;
+            this.startNumber = options.startNumber ? options.startNumber : 1;
+
+            if(this.startNumber < 50){
+                this.getTotalLength(null, this.defaultItemsNumber, this.filter);
+            }
+
+            this.render(options);
+        },
+
+        goToEditDialog: function (e) {
+            e.preventDefault();
+
+            var id = $(e.target).closest('tr').data("id");
+            var model = new orderModel({ validate: false });
+
+            model.urlRoot = '/Order/form/' + id;
+            model.fetch({
+                data: {contentType: this.contentType},
+                success: function (model) {
+                    new editView({ model: model , redirect: true});
+                },
+                error: function () {
+                    alert('Please refresh browser');
+                }
+            });
+        },
+
+
+        showPage: function (event) {
+
+            event.preventDefault();
+            this.showP(event, {filter: this.filter, newCollection: this.newCollection, sort: this.sort}, true);
+        },
+
+        previousPage: function (event) {
+
+            event.preventDefault();
+            $("#top-bar-deleteBtn").hide();
+            $('#check_all').prop('checked', false);
+            this.prevP({
+                sort         : this.sort,
+                filter       : this.filter,
+                newCollection: this.newCollection
+            }, true);
+            dataService.getData(this.totalCollectionLengthUrl, {
+                filter       : this.filter,
+                contentType  : this.contentType,
+                newCollection: this.newCollection
+            }, function (response, context) {
+                context.listLength = response.count || 0;
+            }, this);
+        },
+
+        nextPage: function (event) {
+
+            event.preventDefault();
+
+            $("#top-bar-deleteBtn").hide();
+            $('#check_all').prop('checked', false);
+
+            this.nextP({
+                sort         : this.sort,
+                filter       : this.filter,
+                newCollection: this.newCollection
+            }, true);
+            dataService.getData(this.totalCollectionLengthUrl, {
+                filter       : this.filter,
+                newCollection: this.newCollection
+            }, function (response, context) {
+                context.listLength = response.count || 0;
+            }, this);
+        },
+
+        firstPage: function (event) {
+
+            event.preventDefault();
+            $("#top-bar-deleteBtn").hide();
+            $('#check_all').prop('checked', false);
+            this.firstP({
+                sort         : this.sort,
+                filter       : this.filter,
+                newCollection: this.newCollection
+            }, true);
+            dataService.getData(this.totalCollectionLengthUrl, {
+                sort  : this.sort,
+                filter: this.filter
+            }, function (response, context) {
+                context.listLength = response.count || 0;
+            }, this);
+        },
+
+        lastPage: function (event) {
+
+            event.preventDefault();
+            $("#top-bar-deleteBtn").hide();
+            $('#check_all').prop('checked', false);
+            this.lastP({
+                sort         : this.sort,
+                filter       : this.filter,
+                newCollection: this.newCollection
+            }, true);
+            dataService.getData(this.totalCollectionLengthUrl, {
+                sort  : this.sort,
+                filter: this.filter
+            }, function (response, context) {
+                context.listLength = response.count || 0;
+            }, this);
         },
 
         chooseOption: function (e) {
@@ -57,6 +179,121 @@ define([
 
             this.hideNewSelect();
             return false;
+        },
+
+        renderContent: function () {
+            var currentEl = this.$el;
+            var tBody = currentEl.find('#orderTable');
+            var itemView;
+            var pagenation;
+
+            tBody.empty();
+            $("#top-bar-deleteBtn").hide();
+            $('#check_all').prop('checked', false);
+
+            if (this.collection.length > 0) {
+                itemView = new this.listItemView({
+                    collection : this.collection,
+                    page       : this.page,
+                    itemsNumber: this.collection.namberToShow
+                });
+                tBody.append(itemView.render({thisEl: tBody}));
+            }
+
+            pagenation = this.$el.find('.pagination');
+            if (this.collection.length === 0) {
+                pagenation.hide();
+            } else {
+                pagenation.show();
+            }
+        },
+
+
+        goSort: function (e) {
+            var target$;
+            var currentParrentSortClass;
+            var sortClass;
+            var sortConst;
+            var sortBy;
+            var sortObject;
+
+            this.collection.unbind('reset');
+            this.collection.unbind('showmore');
+
+            target$ = $(e.target);
+            currentParrentSortClass = target$.attr('class');
+            sortClass = currentParrentSortClass.split(' ')[1];
+            sortConst = 1;
+            sortBy = target$.data('sort');
+            sortObject = {};
+
+            if (!sortClass) {
+                target$.addClass('sortDn');
+                sortClass = "sortDn";
+            }
+            switch (sortClass) {
+                case "sortDn":
+                {
+                    target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
+                    target$.removeClass('sortDn').addClass('sortUp');
+                    sortConst = 1;
+                }
+                    break;
+                case "sortUp":
+                {
+                    target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
+                    target$.removeClass('sortUp').addClass('sortDn');
+                    sortConst = -1;
+                }
+                    break;
+            }
+            sortObject[sortBy] = sortConst;
+
+            this.fetchSortCollection(sortObject);
+            this.getTotalLength(null, this.defaultItemsNumber, this.filter);
+        },
+
+        getTotalLength: function (currentNumber, itemsNumber, filter) {
+            var self = this;
+
+            dataService.getData(this.totalCollectionLengthUrl, {
+                currentNumber: currentNumber,
+                filter       : filter,
+                contentType  : this.contentType,
+                newCollection: this.newCollection
+            }, function (response, context) {
+
+                var page = context.page || 1;
+                var length = context.listLength = response.count || 0;
+
+                if (itemsNumber === 'all') {
+                    itemsNumber = response.count;
+                }
+
+                if (itemsNumber * (page - 1) > length) {
+                    context.page = page = Math.ceil(length / itemsNumber);
+                    // context.fetchSortCollection(context.sort);
+                    // context.changeLocationHash(page, context.defaultItemsNumber, filter);
+                }
+
+                context.pageElementRenderProject(response.count, itemsNumber, page, self);//prototype in main.js
+            }, this);
+        },
+
+        renderPagination: function (currentEl, self) {
+            currentEl.append(_.template(paginationTemplate));
+
+            var pagenation = self.$el.find('.pagination');
+
+            if (self.collection.length === 0) {
+                pagenation.hide();
+            } else {
+                pagenation.show();
+            }
+
+            $(document).on("click", function (e) {
+                self.hidePagesPopup(e);
+            });
         },
 
         removeItems: function (event) {
@@ -110,20 +347,22 @@ define([
         },
 
         checked: function (e) {
+            var el = this.$el;
+
             if (this.collection.length > 0) {
-                var checkLength = $("input.checkbox:checked").length;
+                var checkLength = el.find("input.checkbox:checked").length;
 
-                if ($("input.checkbox:checked").length > 0) {
-                    $("#removeOrder").show();
-                    $('#check_all_orders').prop('checked', false);
+                if (el.find("input.checkbox:checked").length > 0) {
+                    el.find("#removeOrder").show();
+                    el.find('#check_all_orders').prop('checked', false);
 
-                    if (checkLength == this.collection.length) {
-                        $('#check_all_orders').prop('checked', true);
+                    if (checkLength === this.collection.length) {
+                        el.find('#check_all_orders').prop('checked', true);
                     }
                 }
                 else {
-                    $("#removeOrder").hide();
-                    $('#check_all_orders').prop('checked', false);
+                    el.find("#removeOrder").hide();
+                    el.find('#check_all_orders').prop('checked', false);
                 }
             }
         },
@@ -157,16 +396,18 @@ define([
             currentEl.html('');
             currentEl.prepend(this.templateHeader);
 
-            currentEl.find('#listTableOrder').html(this.templateList({
+            currentEl.find('#orderTable').html(this.templateList({
                 orderCollection : this.collection.toJSON(),
                 startNumber: 0,
                 dateToLocal: common.utcDateToLocaleDate
             }));
 
-            this.$el.find('.icon').hide();
+            //this.renderPagination(currentEl, this);
+
+            this.$el.find('.fa.fa-times').hide();
 
             $('#check_all_orders').click(function () {
-                $(':checkbox').prop('checked', this.checked);
+                self.$el.find(':checkbox').prop('checked', this.checked);
                 if ($("input.checkbox:checked").length > 0) {
                     $("#removeOrder").show();
                 } else {

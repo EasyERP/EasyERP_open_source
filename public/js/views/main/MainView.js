@@ -30,7 +30,7 @@ define([
             var currentChildren = null;
             if (this.contentType) {
                 currentChildren = this.collection.where({href: this.contentType});
-                var currentRootId = currentChildren[0].get("parrent");
+                var currentRootId = currentChildren[0] ?  currentChildren[0].get("parrent") : null;
                 currentRoot = this.collection.where({_id: currentRootId});
             }
             this.leftMenu = new LeftMenuView({
@@ -48,7 +48,7 @@ define([
         },
         updateMenu: function (contentType) {
             var currentChildren = this.collection.where({href: contentType});
-            var currentRootId = currentChildren[0].get("parrent");
+            var currentRootId = currentChildren[0] ?  currentChildren[0].get("parrent") : null;
             var currentRoot = this.collection.where({_id: currentRootId});
             this.leftMenu.updateLeftMenu(currentChildren, currentRoot);
             this.topMenu.updateTopMenu(currentRoot);

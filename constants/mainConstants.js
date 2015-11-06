@@ -12,5 +12,7 @@ module.exports = {
 
     WTRACK_DB_NAME: 'weTrack',
 
+    PRODUCRSERVICE: "5540d528dacb551c24000003",
+
     MOBILE_DEFAULT_COUNT_PER_LIST: 50
 };

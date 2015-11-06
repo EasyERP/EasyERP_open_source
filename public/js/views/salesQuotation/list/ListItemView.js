@@ -12,7 +12,7 @@ function (listTemplate, listForWTrack) {
             this.startNumber = (options.page - 1 ) * options.itemsNumber;
         },
         render: function() {
-            if (App.currentDb === 'weTrack'){
+            if (App.weTrack){
                 this.$el.append(_.template(listForWTrack, { quotations: this.collection.toJSON(), startNumber: this.startNumber }));
 
             } else {

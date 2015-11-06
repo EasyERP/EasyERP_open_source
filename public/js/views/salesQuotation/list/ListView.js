@@ -137,7 +137,7 @@ define([
 
                 currentEl.html('');
 
-                if (App.currentDb === 'weTrack'){
+                if (App.weTrack){
                     templ = _.template(listForWTrack);
                     currentEl.append(templ);
                     currentEl.append(new listItemView({

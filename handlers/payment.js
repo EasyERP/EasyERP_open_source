@@ -17,13 +17,13 @@ function returnModuleId(req) {
      if(isWtrack){
      moduleId = 61;
      } else {*/
-    moduleId = !!body.forSales ? 61 : 60
+    moduleId = !!body.forSales ? 61 : 60;
     /*    }*/
 
     return moduleId;
 }
 
-var Payment = function (models) {
+var Payment = function (models, event) {
     var access = require("../Modules/additions/access.js")(models);
 
     var EmployeeSchema = mongoose.Schemas['Employee'];
@@ -31,15 +31,23 @@ var Payment = function (models) {
     var PaymentSchema = mongoose.Schemas['Payment'];
     var wTrackPaymentSchema = mongoose.Schemas['wTrackPayment'];
     var InvoiceSchema = mongoose.Schemas['Invoice'];
+    var JobsSchema = mongoose.Schemas['jobs'];
+    var wTrackInvoiceSchema = mongoose.Schemas['wTrackInvoice'];
     var DepartmentSchema = mongoose.Schemas['Department'];
     var wTrackSchema = mongoose.Schemas['wTrack'];
 
     var objectId = mongoose.Types.ObjectId;
     var waterfallTasks;
 
+    function checkDb(db){
+        var validDbs = ["weTrack", "production", "development"];
+
+        return validDbs.indexOf(db) !== -1;
+    }
+
     this.getAll = function (req, res, next) {
         //this temporary unused
-        var isWtrack = req.session.lastDb === 'weTrack';
+        var isWtrack = checkDb(req.session.lastDb);
         var Payment;
 
         if (isWtrack) {
@@ -71,7 +79,7 @@ var Payment = function (models) {
     };
 
     function getPaymentFilter(req, res, next, forSale, bonus) {
-        var isWtrack = req.session.lastDb === 'weTrack';
+        var isWtrack = checkDb(req.session.lastDb);
         var Payment;
         var data = req.query;
         var filter = data.filter;
@@ -235,7 +243,7 @@ var Payment = function (models) {
         var body = req.body;
 
         var moduleId = returnModuleId(req);
-        var isWtrack = req.session.lastDb === 'weTrack';
+        var isWtrack = checkDb(req.session.lastDb);
 
         var Payment;
 
@@ -271,11 +279,15 @@ var Payment = function (models) {
         var key;
 
         for (var filterName in filter){
-            condition = filter[filterName]['value'];
+            condition = filter[filterName]['value'] ? filter[filterName]['value'] : [];
             key = filter[filterName]['key'];
 
             switch (filterName) {
                 case 'assigned':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'name':
                     filtrElement[key] = {$in: condition.objectID()};
                     resArray.push(filtrElement);
                     break;
@@ -336,18 +348,21 @@ var Payment = function (models) {
 
     this.create = function (req, res, next) {
         var body = req.body;
-        var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
+        var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
+        var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
         var workflowHandler = new WorkflowHandler(models);
         var invoiceId = body.invoice._id;
         var DbName = req.session.lastDb;
         var mid = body.mid;
         var data = body;
+        var project;
+        var type = "Payment";
 
         delete  data.mid;
 
         var moduleId = returnModuleId(req);
 
-        var isWtrack = req.session.lastDb === 'weTrack';
+        var isWtrack = checkDb(req.session.lastDb);
         var Payment;
 
         if (isWtrack) {
@@ -382,7 +397,15 @@ var Payment = function (models) {
             var totalToPay = (invoice.paymentInfo) ? invoice.paymentInfo.balance : 0;
             var paid = payment.paidAmount;
             var isNotFullPaid;
-            var wId = (DbName === MAINCONSTANTS.WTRACK_DB_NAME) ? 'Sales Invoice' : 'Purchase Invoice';
+            var wId;
+            var products = invoice.products;
+
+            if (invoice.invoiceType === 'wTrack'){
+                wId = 'Sales Invoice';
+            } else {
+                wId = 'Purchase Invoice';
+            }
+          //  var wId = ((DbName === MAINCONSTANTS.WTRACK_DB_NAME) || (DbName === "production") || (DbName === "development")) ? 'Sales Invoice' : 'Purchase Invoice';
             var request = {
                 query: {
                     wId: wId,
@@ -416,12 +439,30 @@ var Payment = function (models) {
                     status: workflow.status
                 };
                 invoice.paymentInfo.balance = (totalToPay - paid) / 100;
-                invoice.paymentInfo.unTaxed += paid / 100;
+               // invoice.paymentInfo.unTaxed += paid / 100;// commented by Liliya forRoman
+               // invoice.paymentInfo.unTaxed = paid * (1 + invoice.paymentInfo.taxes);
                 invoice.payments.push(payment._id);
-                invoice.save(function (err, invoice) {
+
+                Invoice.findByIdAndUpdate(invoiceId, invoice, function (err, invoice) {
                     if (err) {
                         return waterfallCallback(err);
                     }
+
+                    async.each(products, function (product, cb) {
+
+                        JobsModel.findByIdAndUpdate(product.jobs, {type: type}, {new: true}, function (err, result) {
+                            if (err) {
+                                return next(err);
+                            }
+
+                            project = result.get('project');
+
+                            cb();
+                        });
+
+                    }, function(){
+                        event.emit('fetchJobsCollection', {project: project});
+                    });
 
                     waterfallCallback(null, invoice, payment);
                 });
@@ -507,7 +548,7 @@ var Payment = function (models) {
 
         waterfallTasks = [fetchInvoice, savePayment, invoiceUpdater];
 
-        if (DbName === MAINCONSTANTS.WTRACK_DB_NAME) {
+        if ((DbName === MAINCONSTANTS.WTRACK_DB_NAME) || (DbName === "production") || (DbName === "development")) {
             waterfallTasks.push(updateWtrack);
         }
 
@@ -539,7 +580,7 @@ var Payment = function (models) {
         var contentSearcher;
         var waterfallTasks;
 
-        var isWtrack = req.session.lastDb === 'weTrack';
+        var isWtrack = checkDb(req.session.lastDb);
         var Payment;
 
         if (isWtrack) {
@@ -690,7 +731,7 @@ var Payment = function (models) {
 
     this.remove = function (req, res, next) {
         var id = req.params.id;
-        var isWtrack = req.session.lastDb === 'weTrack';
+        var isWtrack = checkDb(req.session.lastDb);
         var Payment;
 
         var moduleId = req.headers.mId || returnModuleId(req);

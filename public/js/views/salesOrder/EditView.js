@@ -2,12 +2,14 @@ define([
         "text!templates/salesOrder/EditTemplate.html",
         'views/Assignees/AssigneesView',
         'views/Product/InvoiceOrder/ProductItems',
+        "views/Projects/projectInfo/invoiceView",
+        'collections/salesInvoice/filterCollection',
         "common",
         "custom",
         "dataService",
         "populate"
     ],
-    function (EditTemplate, AssigneesView, ProductItemView, common, Custom, dataService, populate) {
+    function (EditTemplate, AssigneesView, ProductItemView, InvoiceView, invoiceCollection, common, Custom, dataService, populate) {
 
         var EditView = Backbone.View.extend({
             contentType: "Order",
@@ -21,6 +23,9 @@ define([
 
                 _.bindAll(this, "render", "saveItem");
                 _.bindAll(this, "render", "deleteItem");
+
+                this.forSales = true;
+                this.redirect = options.redirect;
 
                 this.currentModel = (options.model) ? options.model : options.collection.getElement();
                 this.currentModel.urlRoot = "/order";
@@ -132,22 +137,53 @@ define([
             receiveInvoice: function (e) {
                 e.preventDefault();
 
-                var self =this;
+                var self = this;
                 var url = '/invoice/receive';
                 var data = {
                     forSales: this.forSales,
                     orderId: this.currentModel.id
                 };
 
-                //dataService.postData(url, data, function (err, response) {
-                //    var redirectUrl = self.forSales ? "easyErp/salesInvoice" : "easyErp/Invoice";
-                //
-                //    if (err) {
-                //        alert('Can\'t receive invoice');
-                //    } else {
-                //        Backbone.history.navigate(redirectUrl, {trigger: true});
-                //    }
-                //});
+                dataService.postData(url, data, function (err, response) {
+                    var redirectUrl = self.forSales ? "easyErp/salesInvoice" : "easyErp/Invoice";
+
+                    if (err) {
+                        alert('Can\'t receive invoice');
+                    } else {
+
+                        if (self.redirect){
+                            var _id = window.location.hash.split('form/')[1];
+
+                            var filter = {
+                                'project': {
+                                    key: 'project._id',
+                                    value: [_id]
+                                }
+                            };
+
+
+                            self.collection = new invoiceCollection({
+                                count      : 50,
+                                viewType   : 'list',
+                                contentType: 'salesInvoice',
+                                filter     : filter
+                            });
+
+                            function createView() {
+
+                                new InvoiceView({
+                                    model: self.collection
+                                }).render({activeTab: true});
+
+                            };
+
+                            self.collection.unbind();
+                            self.collection.bind('reset', createView);
+                        } else {
+                            Backbone.history.navigate(redirectUrl, {trigger: true});
+                        }
+                    }
+                });
             },
 
             setDraft: function (e) {
@@ -319,6 +355,7 @@ define([
                     model: this.currentModel.toJSON(),
                     visible: this.visible
                 });
+                var service = true;
                 var notDiv;
                 var model;
                 var productItemContainer;
@@ -378,7 +415,7 @@ define([
                 productItemContainer = this.$el.find('#productItemsHolder');
 
                 productItemContainer.append(
-                    new ProductItemView({editable: false, balanceVissible: false}).render({model: model}).el
+                    new ProductItemView({editable: false, balanceVissible: false, service: service}).render({model: model}).el
                 );
 
 

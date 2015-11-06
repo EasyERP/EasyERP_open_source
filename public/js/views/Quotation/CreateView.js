@@ -31,7 +31,8 @@ define([
             events: {
                 'keydown'                                                         : 'keydownHandler',
                 'click .dialog-tabs a'                                            : 'changeTab',
-                "click .current-selected"                                         : "showNewSelect",
+                "click #projectDd"                                                : "showNewSelect",
+                "click a.current-selected:not(#projectDd, #jobs)"                       : "showNewSelect",
                 "click"                                                           : "hideNewSelect",
                 "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
                 "click .newSelectList li.miniStylePagination"                     : "notHide",
@@ -40,6 +41,8 @@ define([
             },
 
             showNewSelect: function (e, prev, next) {
+                e.preventDefault();
+
                 populate.showSelect(e, prev, next, this);
                 return false;
 
@@ -151,6 +154,7 @@ define([
                 var description;
                 var unTaxed = $.trim(thisEl.find('#totalUntaxes').text());
                 var subTotal;
+                var jobs;
 
                 var usersId = [];
                 var groupsId = [];
@@ -178,6 +182,11 @@ define([
                             taxes = targetEl.find('.taxes').text();
                             description = targetEl.find('[data-name="productDescr"]').text();
                             subTotal = targetEl.find('.subtotal').text();
+                            jobs = targetEl.find('#jobs').attr('data-id');
+
+                            if(!jobs && this.forSales){
+                                return alert("Job field can't be empty. Please, choose or create one.");
+                            }
 
                             products.push({
                                 product      : productId,
@@ -186,8 +195,11 @@ define([
                                 scheduledDate: scheduledDate,
                                 taxes        : taxes,
                                 description  : description,
-                                subTotal     : subTotal
+                                subTotal     : subTotal,
+                                jobs: jobs
                             });
+                        } else {
+                            return alert("Products can't be empty.");
                         }
                     }
                 }
@@ -236,7 +248,7 @@ define([
                     });
 
                 } else {
-                    alert(CONSTANTS.RESPONSES.CREATE_QUOTATION);
+                    return alert(CONSTANTS.RESPONSES.CREATE_QUOTATION);
                 }
             },
 
@@ -258,7 +270,7 @@ define([
                 var productItemContainer;
 
                 productItemContainer = this.$el.find('#productItemsHolder');
-                if ((App.currentDb === 'weTrack') && this.forSales) {
+                if (App.weTrack && this.forSales) {
                     productItemContainer.append(
                         new ProductItemView({canBeSold: true, service: 'Service'}).render().el
                     );
@@ -313,7 +325,7 @@ define([
                 populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, true, true);
                 populate.get("#deliveryDd", "/deliverTo", {}, 'name', this, true);
 
-                if ((App.currentDb === 'weTrack') && this.forSales){
+                if (App.weTrack && this.forSales){
                     this.$el.find('#supplierDd').removeClass('current-selected');
                     populate.get("#projectDd", "/getProjectsForDd", {}, "projectName", this, false, false);
                     //populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
@@ -348,12 +360,6 @@ define([
                     changeMonth: true,
                     changeYear : true
                 }).datepicker('setDate', new Date());
-
-                /*this.$el.find('#bidValidUntill').datepicker({
-                 dateFormat: "d M, yy",
-                 changeMonth: true,
-                 changeYear: true
-                 });*/
 
                 this.$el.find('#expectedDate').datepicker({
                     dateFormat : "d M, yy",

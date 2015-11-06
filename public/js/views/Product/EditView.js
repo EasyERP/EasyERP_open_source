@@ -6,9 +6,9 @@ define([
         "dataService",
         "populate",
         'views/Notes/AttachView',
-        "jqueryBarcode"
+        "constants"
     ],
-    function (EditTemplate, AssigneesView, common, Custom, dataService, populate, attachView) {
+    function (EditTemplate, AssigneesView, common, Custom, dataService, populate, attachView, CONSTANTS) {
 
         var EditView = Backbone.View.extend({
             contentType: "Product",
@@ -197,29 +197,37 @@ define([
             chooseOption : function (e) {
                 $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
             },
+
             deleteItem   : function (event) {
                 var mid = 58;
-                event.preventDefault();
+                var id = this.currentModel.get('_id');
                 var self = this;
                 var answer = confirm("Realy DELETE items ?!");
-                if (answer == true) {
-                    this.currentModel.destroy({
-                        headers: {
-                            mid: mid
-                        },
-                        success: function () {
-                            $('.edit-product-dialog').remove();
-                            Backbone.history.navigate("easyErp/" + self.contentType, {trigger: true});
-                        },
-                        error  : function (model, err) {
-                            if (err.status === 403) {
-                                alert("You do not have permission to perform this action");
-                            }
-                        }
-                    });
-                }
 
+                event.preventDefault();
+
+                if (CONSTANTS.PRODUCRSERVICE !== id.toString()){
+                    if (answer == true) {
+                        this.currentModel.destroy({
+                            headers: {
+                                mid: mid
+                            },
+                            success: function () {
+                                $('.edit-product-dialog').remove();
+                                Backbone.history.navigate("easyErp/" + self.contentType, {trigger: true});
+                            },
+                            error  : function (model, err) {
+                                if (err.status === 403) {
+                                    alert("You do not have permission to perform this action");
+                                }
+                            }
+                        });
+                    }
+                } else {
+                    alert("You do not have permission to delete this product");
+                }
             },
+
             render       : function () {
                 var self = this;
                 var formString = this.template({
