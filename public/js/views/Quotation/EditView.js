@@ -177,7 +177,8 @@ define([
                                             collection: self.ordersCollection,
                                             projectId : self.pId,
                                             customerId: self.customerId,
-                                            projectManager: self.projectManager
+                                            projectManager: self.projectManager,
+                                            filter: filter
                                         }).render({activeTab: true});
                                     };
 
