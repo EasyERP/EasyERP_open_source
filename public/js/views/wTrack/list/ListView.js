@@ -149,8 +149,8 @@ define([
                     var _model;
                     var tdsArr;
                     var cid;
-                    var hours = model.get('worked');
-                    var rate = model.get('rate');
+                    var hours = (model.changed && model.changed.worked) ? model.changed.worked : model.get('worked');
+                    var rate = (model.changed && model.changed.rate) ? model.changed.rate : model.get('rate');
                     var revenue = parseInt(hours) * parseFloat(rate);
 
                     $(selectedWtrack).attr('checked', false);
