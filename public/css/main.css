@@ -5123,6 +5123,7 @@ table#workflows tr td.edit-status {
   height: 30px;
   clear: both;
   margin: 5px 1% 0;
+  overflow: hidden;
 }
 #top-bar h3 {
   margin: 6px 0 0 0;
@@ -5136,13 +5137,14 @@ table#workflows tr td.edit-status {
 #top-bar.banned {
   border-bottom: 0;
 }
-#top-bar-bonus {
+.projectInfoTopBar {
   display: block;
   height: 30px;
   clear: both;
   margin: 5px 1% 0;
+  overflow: hidden;
 }
-#top-bar-bonus h3 {
+.projectInfoTopBar h3 {
   margin: 6px 0 0 0;
   padding: 0 10px;
   color: #cdcdcd !important;
@@ -5151,7 +5153,7 @@ table#workflows tr td.edit-status {
   float: left;
   overflow: visible;
 }
-#top-bar-bonus.banned {
+.projectInfoTopBar.banned {
   border-bottom: 0;
 }
 .noPadding {
