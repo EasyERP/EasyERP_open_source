@@ -368,8 +368,8 @@ var Filters = function (models) {
                         _id         : null,
                         'project'   : {
                             $addToSet: {
-                                _id : '$project._id',
-                                name: '$project.projectName'
+                                _id : '$project',
+                                name: '$project.name'
                             }
                         },
                         'assignedTo': {
@@ -398,6 +398,14 @@ var Filters = function (models) {
                 }
 
                 result = result[0];
+
+                //Project.populate(result, {"path": "project._id", select: "projectName _id"}, {lean: true}, function(err, projects){
+                //    if (err){
+                //        return callback(err);
+                //    }
+                //
+                //    callback(null, result);
+                //});
 
                 callback(null, result);
             });

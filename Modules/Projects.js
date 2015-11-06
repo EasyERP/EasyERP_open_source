@@ -51,7 +51,7 @@ var Project = function (models, event) {
                                     EndDate: EndDate,
                                     progress: progress
                                 }
-                            },
+                            }, {new: true},
                             function (updateError) {
                                 if (updateError) {
                                     console.log(updateError);
@@ -84,7 +84,7 @@ var Project = function (models, event) {
                                     {
                                         $set: updateCondition,
                                         $push: {task: tasks._id}
-                                    },
+                                    }, {new: true},
                                     function (err) {
                                         if (err) {
                                             console.log(err);
@@ -114,7 +114,7 @@ var Project = function (models, event) {
                     } else if (task) {
                         var oldProjectId = task.project;
                         models.get(request.session.lastDb, 'Project', projectSchema).findByIdAndUpdate(oldProjectId,
-                            {$pull: {task: task._id}},
+                            {$pull: {task: task._id}}, {new: true},
                             function (findError) {
                                 if (findError) {
                                     console.log(findError);
@@ -136,7 +136,7 @@ var Project = function (models, event) {
                                 }
                                 models.get(request.session.lastDb, 'Tasks', tasksSchema).findByIdAndUpdate(tasks, {
                                     $set: data
-                                }, function (err, res) {
+                                }, {new: true}, function (err, res) {
                                     if (err) {
                                         console.log(err);
                                         logWriter.log('updateContent in Projects module eventType="' + eventType + '" by ProjectId="' + projectId + '" error=' + findError);
@@ -1355,7 +1355,7 @@ var Project = function (models, event) {
         }
 
         function updateTask() {
-            models.get(req.session.lastDb, 'Tasks', tasksSchema).findByIdAndUpdate(_id, {$set: data}, function (err, result) {
+            models.get(req.session.lastDb, 'Tasks', tasksSchema).findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
                 if (!err) {
                     if (fileName) {
                         var os = require("os");
@@ -1867,7 +1867,7 @@ var Project = function (models, event) {
     };
 
     function addAtachments(req, id, data, res) {
-        models.get(req.session.lastDb, 'Tasks', tasksSchema).findByIdAndUpdate(id, data, function (err, result) {
+        models.get(req.session.lastDb, 'Tasks', tasksSchema).findByIdAndUpdate(id, data, {new: true}, function (err, result) {
             if (!err) {
                 res.send(200, {success: 'Tasks updated', attachments: result.attachments});
             } else {

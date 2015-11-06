@@ -59,7 +59,20 @@ define([
                 $(".newSelectList").hide();
             },
             chooseOption: function (e) {
+                var target = $(e.target);
+                var id = target.attr("id");
+                var type = target.attr('data-level');
+
+                var element = _.find(this.responseObj['#project'], function (el) {
+                    return el._id === id;
+                });
+
                 $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
+
+                if (type === 'emptyProject'){
+                    this.$el.find('#supplierDd').text(element.customer.name);
+                    this.$el.find('#supplierDd').attr('data-id', element.customer._id);
+                }
             },
             nextSelect: function (e) {
                 this.showNewSelect(e, false, true);
@@ -514,6 +527,17 @@ define([
                 productItemContainer.append(
                     new ProductItemView({editable: true, service: service}).render({model: model}).el
                 );
+
+                dataService.getData("/project/getForWtrack", null, function (projects) {
+                    projects = _.map(projects.data, function (project) {
+                        project.name = project.projectName;
+
+                        return project
+                    });
+
+                    self.responseObj['#project'] = projects;
+                });
+
 
 
                 if (model.groups)

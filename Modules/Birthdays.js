@@ -183,7 +183,7 @@
         data['date'] = new Date(now.getFullYear(), now.getMonth(), now.getDate());
         data['currentEmployees'] = currentEmployees,
 
-        models.get(req.session.lastDb, "birthdays", birthdaysSchema).findByIdAndUpdate({ _id: 1 }, data, { upsert: true }, function (error, birth) {
+        models.get(req.session.lastDb, "birthdays", birthdaysSchema).findByIdAndUpdate({ _id: 1 }, data, {new: true}, { upsert: true }, function (error, birth) {
             if (error) {
                 logWriter.log('Employees.create Incorrect Incoming Data');
                 console.log(error);

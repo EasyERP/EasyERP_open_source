@@ -4658,7 +4658,6 @@ a.red:hover {
   white-space: normal;
   word-wrap: break-word;
   word-break: break-all;
-  color: #808080;
 }
 .attachContainer li .deleteAttach {
   float: right;
@@ -4690,13 +4689,12 @@ a.red:hover {
   line-height: 24px;
   font-size: 28px;
   font-weight: 200;
-  color: #808080;
 }
 .attachContainer li:before:hover {
   text-decoration: none;
 }
 .attachContainer li:hover {
-  background-color: #3d3d3e;
+  background-color: #f1f1f1;
 }
 .attachContainer li:hover .deleteAttach {
   float: right;
@@ -7604,8 +7602,58 @@ span.unDone {
 .form-holder form .job-create-info select {
   width: 212px;
 }
+.form-holder form .create-employee-info {
+  clear: both;
+  font-size: 14px;
+}
 .form-holder form .create-employee-info dt {
-  margin-top: 10px;
+  padding: 1px;
+  margin: -1px;
+  width: 40%;
+  max-width: 200px;
+  float: left;
+  clear: both;
+  line-height: 0;
+  min-height: 16px;
+  margin-top: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.form-holder form .create-employee-info dt p {
+  word-wrap: break-word;
+  white-space: normal;
+}
+.form-holder form .create-employee-info dt:first-child {
+  margin-top: 0;
+}
+.form-holder form .create-employee-info dd {
+  padding: 1px;
+  margin: -1px;
+  margin-top: 0;
+  line-height: 0;
+  min-height: 16px;
+  float: left;
+  width: 60%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.form-holder form .create-employee-info dd p {
+  word-wrap: break-word;
+  white-space: normal;
+}
+.form-holder form .create-employee-info dd:nth-child(2) {
+  margin-top: 0;
+}
+.form-holder form .create-employee-info dd input:not([type='checkbox']) {
+  width: 93%;
+}
+.form-holder form .create-employee-info dd a.formLink {
+  line-height: 0;
+}
+.form-holder form .create-employee-info dd span.ui-spinner {
+  width: 96%;
 }
 .form-holder form .create-employee-info input {
   max-width: 117px !important;

@@ -109,7 +109,7 @@ var requestHandler = function (app, event, mainDb) {
 
             var query = {dateByWeek: dateByWeek, dateByMonth: dateByMonth}
 
-            wTrack.findByIdAndUpdate(_id, query, function(err, result){
+            wTrack.findByIdAndUpdate(_id, query, {new: true}, function(err, result){
                 if (err){
                     return console.log(err);
                 }
@@ -135,7 +135,7 @@ var requestHandler = function (app, event, mainDb) {
 
                     var query = {dateByWeek: dateByWeek, dateByMonth: dateByMonth}
 
-                    wTrack.findByIdAndUpdate(_id, query, function(err, result){
+                    wTrack.findByIdAndUpdate(_id, query, {new: true}, function(err, result){
                         if (err){
                             return console.log(err);
                         }
@@ -585,15 +585,15 @@ var requestHandler = function (app, event, mainDb) {
                         if (err) {
                             return console.log(err);
                         }
-                        result.forEach(function(el){
-                            Job.findByIdAndUpdate(el._id, {$set: {wTracks: el.ids}}, function(err){
+                        async.each(result, function(el, cb){
+                            Job.findByIdAndUpdate(el._id, {$set: {wTracks: el.ids}}, {new: true}, function(err){
 
-
+                                cb();
                             })
 
+                        }, function(){
+                            event.emit('updateJobBudget', {req: options.req, pId :  pId});
                         });
-
-                        event.emit('updateJobBudget', {req: options.req, pId :  pId});
                     });
 
             });
@@ -815,7 +815,7 @@ var requestHandler = function (app, event, mainDb) {
                         projectId = res._id;
                         var jobIds = res.jobIds;
 
-                        Project.findByIdAndUpdate(projectId, {$set : {"budget.projectTeam": jobIds}}, function(err, result){
+                        Project.findByIdAndUpdate(projectId, {$set : {"budget.projectTeam": jobIds}}, {new: true}, function(err, result){
                             if (err){
                                 console.log(err);
                             }
@@ -1327,7 +1327,7 @@ var requestHandler = function (app, event, mainDb) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getEditWritAccess(req, req.session.uId, 49, function (access) {
                 if (access) {
-                    models.get(req.session.lastDb, "Customers", customer.schema).findByIdAndUpdate(id, {$push: {attachments: {$each: file}}}, function (err, response) {
+                    models.get(req.session.lastDb, "Customers", customer.schema).findByIdAndUpdate(id, {$push: {attachments: {$each: file}}}, {new: true}, function (err, response) {
                         if (err) {
                             res.send(401);
                         } else {

@@ -199,7 +199,7 @@ var wTrack = function (models) {
 
                         VacationCache = models.get(req.session.lastDb, 'vacationCache', vacationCacheSchema);
 
-                        VacationCache.findByIdAndUpdate(1, {data: sortDepartments}, {upsert: true}, function(err, res){
+                        VacationCache.findByIdAndUpdate(1, {data: sortDepartments}, {new: true}, {upsert: true}, function(err, res){
                             "use strict";
                             if(err){
                                 console.error(err);

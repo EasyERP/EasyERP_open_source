@@ -226,7 +226,7 @@ var Invoice = function (models, event) {
 
                     var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
 
-                    Invoice.findByIdAndUpdate(id, {$set: data}, function (err, invoice) {
+                    Invoice.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, invoice) {
                         if (err) {
                             next(err);
                         } else {
@@ -659,7 +659,7 @@ var Invoice = function (models, event) {
 
                                 setData.type = "Order";
 
-                                JobsModel.findByIdAndUpdate(id, setData, function (err, result) {
+                                JobsModel.findByIdAndUpdate(id, setData, {new: true}, function (err, result) {
                                     if (err) {
                                         return console.log(err);
                                     }
@@ -673,7 +673,7 @@ var Invoice = function (models, event) {
                                         setData.isPaid = false;
                                         setData.amount = 0;
 
-                                        wTrack.findByIdAndUpdate(id, setData, function (err, result) {
+                                        wTrack.findByIdAndUpdate(id, setData, {new: true}, function (err, result) {
                                             if (err) {
                                                 return console.log(err);
                                             }
@@ -749,7 +749,7 @@ var Invoice = function (models, event) {
                     //    data.supplier = data.supplier._id;
                     //}
 
-                    Invoice.findByIdAndUpdate(_id, data.invoice, function (err, result) {
+                    Invoice.findByIdAndUpdate(_id, data.invoice, {new: true}, function (err, result) {
 
                         if (err) {
                             next(err);
