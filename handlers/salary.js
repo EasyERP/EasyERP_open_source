@@ -114,7 +114,7 @@ var Salary = function (event, models) {
                         };
                         delete data._id;
                         data.baseSalary = data.calc['salary'];
-                        Salary.findByIdAndUpdate(id, {$set: data}, function(err, result){
+                        Salary.findByIdAndUpdate(id, {$set: data}, {new: true}, function(err, result){
                             if(err){
                                 return cb(err);
                             }

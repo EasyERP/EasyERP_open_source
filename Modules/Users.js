@@ -185,7 +185,7 @@ var Users = function (mainDb, models) {
                                     req.session.kanbanSettings = _user.kanbanSettings;
                                     var lastAccess = new Date();
                                     req.session.lastAccess = lastAccess;
-                                    models.get(data.dbId, 'Users', userSchema).findByIdAndUpdate(_user._id, {$set: {lastAccess: lastAccess}}, function (err, result) {
+                                    models.get(data.dbId, 'Users', userSchema).findByIdAndUpdate(_user._id, {$set: {lastAccess: lastAccess}}, {new: true}, function (err, result) {
                                         if (err) {
                                             logWriter.log("User.js. login User.findByIdAndUpdate " + err);
                                         }

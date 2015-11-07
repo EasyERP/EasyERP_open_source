@@ -438,7 +438,7 @@ var Capacity = function (models) {
                     delete modelJSON._id;
                     delete modelJSON.vacation;
 
-                    Capacity.findByIdAndUpdate(capacityId, modelJSON, function (err, result) {
+                    Capacity.findByIdAndUpdate(capacityId, modelJSON, {new: true}, function (err, result) {
                         if (err) {
                             return eachCB(err);
                         }
@@ -468,7 +468,7 @@ var Capacity = function (models) {
                         date: new Date().toISOString()
                     };
 
-                    Capacity.findByIdAndUpdate(id, {$set: data}, function (err, response) {
+                    Capacity.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, response) {
                         if (err) {
                             return next(err);
                         }
@@ -503,7 +503,7 @@ var Capacity = function (models) {
                         };
                         delete data._id;
 
-                        Capacity.findByIdAndUpdate(id, {$set: data}, cb);
+                        Capacity.findByIdAndUpdate(id, {$set: data}, {new: true}, cb);
                     }, function (err) {
                         if (err) {
                             return next(err);

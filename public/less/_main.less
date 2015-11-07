@@ -327,7 +327,7 @@ input::-ms-clear {
 .dl-auto(@max-width: 120px, @with-dt: 35%, @line-height: 0, @height: 16px, @margin-top: 0) {
   clear: both;
   font-size: 14px;
-//  overflow: hidden;
+  //overflow: hidden; //������ ������ attache �  Project ->add
   dt {
     padding: 1px;
     margin: -1px;
@@ -563,7 +563,6 @@ input::-ms-clear {
       overflow: hidden;
       font-size: 15px;
       line-height: 18px;
-      //text-shadow: 1px 1px 1px #fff;
       text-align: center;
       display: block;
       .position;
@@ -3421,6 +3420,8 @@ button.red, a.red {
     white-space: normal;
     word-wrap: break-word;
     word-break: break-all;
+    color: @mainBlack-color;
+
     .deleteAttach {
       .right;
       display: none;
@@ -3435,10 +3436,11 @@ button.red, a.red {
       line-height: 24px;
       font-size: 28px;
       font-weight: 200;
+      color: @mainBlack-color;
     }
 
     &:hover {
-      background-color: #f1f1f1;
+      background-color: @bg-hover-drop-down-color;
 
       .deleteAttach {
         .right;
@@ -4553,7 +4555,10 @@ h3.dashboard {
   }
 
   .create-employee-info {
-    .dl-auto(200px, 40%);
+    //.dl-auto(200px, 40%);
+    dt {
+      margin-top: 10px;
+    }
     input {
       max-width: 117px !important;
     }

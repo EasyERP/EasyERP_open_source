@@ -151,7 +151,7 @@ var Products = function (models) {
     };
 
     function addAtach(req, res, next, _id, files) {//to be deleted
-        models.get(req.session.lastDb, "Product", ProductSchema).findByIdAndUpdate(_id, {$push: {attachments: {$each: files}}}, {upsert: true}, function (err, result) {
+        models.get(req.session.lastDb, "Product", ProductSchema).findByIdAndUpdate(_id, {$push: {attachments: {$each: files}}}, {new: true}, {upsert: true}, function (err, result) {
             if (err) {
                 next(err);
             } else {
