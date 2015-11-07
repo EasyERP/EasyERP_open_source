@@ -44,7 +44,7 @@ define([
             this.week = week;
             this.year = year;
 
-            startWeek = self.week - 6;
+            startWeek = self.week - 1;
 
             if (startWeek >= 0) {
                 this.startWeek = startWeek;
@@ -240,8 +240,8 @@ define([
             }
         },
 
-        getDate: function (num) {
-            return moment().day("Monday").week(num).format("DD.MM");
+        getDate: function (num, year) {
+            return moment().week(num).year(year).day("Monday").format("DD.MM");
         },
 
         calculateStatistics: function () {
@@ -300,9 +300,6 @@ define([
             };
 
             dataService.getData('/wTrack/dash', queryData, function (response) {
-                var year = dateByWeek.slice(0, 4);
-                var week = dateByWeek.slice(4, 6);
-
                 if (!response.error) {
                     return new VacationDashEdit({
                         tr            : tr,
@@ -317,17 +314,9 @@ define([
             });
         },
 
-        bindDataPickers: function () {
-            this.$startDate = $('#startDate').datepicker({
-                dateFormat : "d M, yy",
-                changeMonth: true,
-                changeYear : true
-            });
-            this.$endDate = $('#endDate').datepicker({
-                dateFormat : "d M, yy",
-                changeMonth: true,
-                changeYear : true
-            });
+        findDataPickers: function () {
+            this.$startDate = $('#startDate');
+            this.$endDate = $('#endDate');
         },
 
         changeDateRange: function (e) {
@@ -369,14 +358,15 @@ define([
             for (var i = startDate; i <= endDate; i++) {
                 _dateStr = i.toString();
                 week = _dateStr.substr(-2);
+                year = _dateStr.substr(0, 4);
                 weeksArr.push({
-                    lastDate: this.getDate(week),
+                    lastDate: this.getDate(week, year),
                     week    : week,
-                    year    : _dateStr.substr(0, 4)
+                    year    : year
                 });
             }
 
-            custom.cashToApp('weeksArr', weeksArr);
+            custom.cashToApp('vacationDashWeeksArr', weeksArr);
 
             filter = this.filter || {};
 
@@ -398,29 +388,32 @@ define([
 
         defaultDataGenerator: function () {
             var startWeek = this.startWeek;
-            var weeksArr = custom.retriveFromCash('weeksArr') || [];
+            var weeksArr = custom.retriveFromCash('vacationDashWeeksArr') || [];
             var week;
+            var year;
 
             if (!weeksArr || !weeksArr.length) {
-                for (var i = 0; i <= 13; i++) {
+                for (var i = 0; i <= 11; i++) {
                     if (startWeek + i > 53) {
                         week = startWeek + i - 53;
+                        year = this.year + 1;
                         weeksArr.push({
-                            lastDate: this.getDate(week),
+                            lastDate: this.getDate(week, year),
                             week    : week,
-                            year    : this.year + 1
+                            year    : year
                         });
                     } else {
                         week = startWeek + i;
+                        year = this.year;
                         weeksArr.push({
-                            lastDate: this.getDate(week),
+                            lastDate: this.getDate(week, year),
                             week    : week,
-                            year    : this.year
+                            year    : year
                         });
                     }
                 }
 
-                custom.cashToApp('weeksArr', weeksArr);
+                custom.cashToApp('vacationDashWeeksArr', weeksArr);
             }
 
             return weeksArr;
@@ -468,7 +461,7 @@ define([
             if (defaultData) {
                 weeksArr = this.defaultDataGenerator();
             } else {
-                weeksArr = custom.retriveFromCash('weeksArr');
+                weeksArr = custom.retriveFromCash('vacationDashWeeksArr');
             }
 
             currentEl.html(self.template({
@@ -486,7 +479,7 @@ define([
             currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             this.calculateStatistics();
 
-            this.bindDataPickers(currentEl);
+            this.findDataPickers();
 
             if (!this.filterView) {
                 this.filterView = new filterView({contentType: 'DashVacation'});

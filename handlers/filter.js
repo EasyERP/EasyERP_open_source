@@ -34,11 +34,11 @@ var Filters = function (models) {
         function dateRange() {
             "use strict";
             var weeksArr = [];
-            var startWeek = moment().isoWeek() - 6;
+            var startWeek = moment().isoWeek() - 1;
             var year = moment().isoWeekYear();
             var week;
 
-            for (var i = 0; i <= 13; i++) {
+            for (var i = 0; i <= 11; i++) {
                 if (startWeek + i > 53) {
                     week = startWeek + i - 53;
                     weeksArr.push((year + 1) * 100 + week);
