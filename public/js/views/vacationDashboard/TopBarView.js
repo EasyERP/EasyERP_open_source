@@ -7,7 +7,7 @@ define([
         "use strict";
         var TopBarView = Backbone.View.extend({
             el         : '#top-bar',
-            contentType: 'DashboardVacation',
+            contentType: 'DashBoardVacation',
             template   : _.template(ContentTopBarTemplate),
 
             events: {
