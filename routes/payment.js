@@ -3,8 +3,8 @@ var express = require('express');
 var router = express.Router();
 var PaymentHandler = require('../handlers/payment');
 
-module.exports = function (models) {
-    var handler = new PaymentHandler(models);
+module.exports = function (models, event) {
+    var handler = new PaymentHandler(models, event);
 
     //router.get('/', handler.getAll);
 

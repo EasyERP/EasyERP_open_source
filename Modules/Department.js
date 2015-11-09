@@ -213,7 +213,7 @@ var Department = function (event, models) {
                 result.forEach(function (item) {
                     n++;
 
-                    models.get(req.session.lastDb, 'Department', DepartmentSchema).findByIdAndUpdate(item._id, {nestingLevel: nestingLevel + 1}, function (err, res) {
+                    models.get(req.session.lastDb, 'Department', DepartmentSchema).findByIdAndUpdate(item._id, {nestingLevel: nestingLevel + 1}, {new: true}, function (err, res) {
                         if (result.length == n) {
                             updateNestingLevel(req, res._id, res.nestingLevel + 1, function () {
                                 callback();
@@ -329,7 +329,7 @@ var Department = function (event, models) {
                                 } else {
                                     res.send(200, {success: 'Department updated success'});
 
-                                    if (dbName === CONSTANTS.WTRACK_DB_NAME) {
+                                    if ((dbName === CONSTANTS.WTRACK_DB_NAME) || (dbName === "production") || (dbName === "development")) {
                                         EmployeeSchema = mongoose.Schemas['Employee'];
                                         EmployeeModel = models.get(dbName, 'Employee', EmployeeSchema);
 
@@ -354,7 +354,7 @@ var Department = function (event, models) {
                             } else {
                                 res.send(200, {success: 'Department updated success'});
 
-                                if (dbName === CONSTANTS.WTRACK_DB_NAME) {
+                                if ((dbName === CONSTANTS.WTRACK_DB_NAME) || (dbName === "production") || (dbName === "development")) {
                                     EmployeeSchema = mongoose.Schemas['Employee'];
                                     EmployeeModel = models.get(dbName, 'Employee', EmployeeSchema);
 

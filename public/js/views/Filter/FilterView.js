@@ -11,14 +11,14 @@ define([
         'models/UsersModel',
         'dataService'
     ],
-    function (ContentFilterTemplate, savedFilterTemplate, searchGroupLiTemplate, valuesView, savedFiltersView, filterValuesCollection, Custom, Common, CONSTANTS, usersModel, dataService) {
+    function (ContentFilterTemplate, savedFilterTemplate, searchGroupLiTemplate, valuesView, savedFiltersView, filterValuesCollection, custom, Common, CONSTANTS, usersModel, dataService) {
         var FilterView;
         FilterView = Backbone.View.extend({
             el                 : '#searchContainer',
-            contentType        : "Filter",
-            savedFilters       : {},
-            filterIcons        : {},
-            template           : _.template(ContentFilterTemplate),
+            contentType: "Filter",
+            savedFilters: {},
+            filterIcons : {},
+            template    : _.template(ContentFilterTemplate),
             searchGroupTemplate: _.template(searchGroupLiTemplate),
 
             events: {
@@ -177,8 +177,8 @@ define([
                             headers : {
                                 mid: mid
                             },
-                            wait    : true,
-                            patch   : true,
+                            wait   : true,
+                            patch  : true,
                             validate: false,
                             success : function (model) {
                                 updatedInfo = model.get('success');
@@ -229,8 +229,8 @@ define([
                         headers : {
                             mid: mid
                         },
-                        wait    : true,
-                        patch   : true,
+                        wait   : true,
+                        patch  : true,
                         validate: false,
                         success : function (model) {
                         },
@@ -319,7 +319,7 @@ define([
                         filterIc.addClass('active');
                         filterValues.append('<div class="forFilterIcons"><span class="fa fa-filter funnelIcon"></span><span data-value="' + key + '" class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
                     } else {
-                        if (key != 'forSales') {
+                        if ((key !== 'forSales') && (key !== 'startDate') && (key !== 'endDate')) {
                             groupName = 'Letter';
                             filterIc.addClass('active');
                             filterValues.append('<div class="forFilterIcons"><span class="fa fa-filter funnelIcon"></span><span data-value="' + 'letter' + '" class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
@@ -450,7 +450,7 @@ define([
                 mapData = _.map(this.currentCollection[filterView].toJSON(), function (dataItem) {
                     return {
                         category       : key,
-                        categoryView   : filterView,
+                        categoryView: filterView,
                         categoryBackend: filterBackend,
                         label          : dataItem.name,
                         value          : dataItem.name,
@@ -525,11 +525,13 @@ define([
                 var self = this;
                 var currentEl = this.$el;
                 var searchInput;
+                var filterName = this.parentContentType + '.filter';
+                var filters = custom.retriveFromCash(filterName) || App.filter;
 
                 currentEl.html(this.template({filterCollection: this.constantsObject}));
 
                 this.renderFilterContent(options);
-                this.showFilterIcons(App.filter);
+                this.showFilterIcons(filters);
                 this.renderSavedFilters();
 
                 $.widget("custom.catcomplete", $.ui.autocomplete, {

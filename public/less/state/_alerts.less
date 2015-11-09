@@ -1,0 +1,20 @@
+.alert {
+    padding: 15px 15px 15px 35px;
+    position: relative;
+    &:before {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        font-family: 'FontAwesome';
+    }
+}
+.alertDanger {
+    &:before {
+        content: '\f071';
+    }
+}
+.alertSuccess {
+    &:before {
+        content: '\f05d';
+    }
+}

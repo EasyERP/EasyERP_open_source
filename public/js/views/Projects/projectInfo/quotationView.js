@@ -5,15 +5,18 @@ define([
     'views/salesQuotation/EditView',
     'views/salesQuotation/list/ListView',
     'views/Projects/projectInfo/quotations/CreateView',
+    'collections/Quotation/filterCollection',
     'models/QuotationModel',
     'common',
     'helpers',
     'dataService'
 
-], function (quotationTopBar, ListTemplate, stagesTemplate, editView, listView, quotationCreateView, currentModel, common, helpers, dataService) {
+], function (quotationTopBar, ListTemplate, stagesTemplate, editView, listView, quotationCreateView, quotationCollection, currentModel, common, helpers, dataService) {
     var quotationView = listView.extend({
 
         el            : '#quotations',
+        totalCollectionLengthUrl: '/quotation/totalCollectionLength',
+        contentCollection: quotationCollection,
         templateHeader: _.template(quotationTopBar),
         templateList  : _.template(ListTemplate),
 
@@ -30,6 +33,9 @@ define([
             this.projectID = options.projectId;
             this.customerId = options.customerId;
             this.projectManager = options.projectManager;
+            this.filter = options.filter ? options.filter : {};
+            this.defaultItemsNumber = 50;
+            this.page = options.page ? options.page : 1;
         },
 
         chooseOption: function (e) {
@@ -60,6 +66,102 @@ define([
             return false;
         },
 
+        goSort: function (e) {
+            var target$;
+            var currentParrentSortClass;
+            var sortClass;
+            var sortConst;
+            var sortBy;
+            var sortObject;
+
+            this.collection.unbind('reset');
+            this.collection.unbind('showmore');
+
+            target$ = $(e.target);
+            currentParrentSortClass = target$.attr('class');
+            sortClass = currentParrentSortClass.split(' ')[1];
+            sortConst = 1;
+            sortBy = target$.data('sort');
+            sortObject = {};
+
+            if (!sortClass) {
+                target$.addClass('sortDn');
+                sortClass = "sortDn";
+            }
+            switch (sortClass) {
+                case "sortDn":
+                {
+                    target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
+                    target$.removeClass('sortDn').addClass('sortUp');
+                    sortConst = 1;
+                }
+                    break;
+                case "sortUp":
+                {
+                    target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
+                    target$.removeClass('sortUp').addClass('sortDn');
+                    sortConst = -1;
+                }
+                    break;
+            }
+            sortObject[sortBy] = sortConst;
+
+            this.fetchSortCollection(sortObject);
+            this.getTotalLength(null, this.defaultItemsNumber, this.filter);
+        },
+
+        renderContent: function () {
+            var currentEl = this.$el;
+            var tBody = currentEl.find('#listTableQuotation');
+            var itemView;
+            var pagenation;
+
+            tBody.empty();
+            $("#top-bar-deleteBtn").hide();
+            $('#check_all').prop('checked', false);
+
+            if (this.collection.length > 0) {
+                itemView = new this.listItemView({
+                    collection : this.collection,
+                    page       : this.page,
+                    itemsNumber: this.collection.namberToShow
+                });
+                tBody.append(itemView.render({thisEl: tBody}));
+            }
+
+            pagenation = this.$el.find('.pagination');
+            if (this.collection.length === 0) {
+                pagenation.hide();
+            } else {
+                pagenation.show();
+            }
+        },
+
+        getTotalLength: function (currentNumber, itemsNumber, filter) {
+            dataService.getData(this.totalCollectionLengthUrl, {
+                currentNumber: currentNumber,
+                filter       : filter,
+                contentType  : this.contentType,
+                newCollection: this.newCollection
+            }, function (response, context) {
+
+                var page = context.page || 1;
+                var length = context.listLength = response.count || 0;
+
+                if (itemsNumber === 'all') {
+                    itemsNumber = response.count;
+                }
+
+                if (itemsNumber * (page - 1) > length) {
+                    context.page = page = Math.ceil(length / itemsNumber);
+                    // context.fetchSortCollection(context.sort);
+                    // context.changeLocationHash(page, context.defaultItemsNumber, filter);
+                }
+
+                context.pageElementRender(response.count, itemsNumber, page);//prototype in main.js
+            }, this);
+        },
+
 
         goToEditDialog: function (e) {
             e.preventDefault();
@@ -68,16 +170,21 @@ define([
             var id = $(e.target).closest("tr").attr("data-id");
             var model = new currentModel({validate: false});
             var modelQuot = this.collection.get(id);
+            self.collection.bind('remove', renderProformRevenue);
+
+            function renderProformRevenue(){
+                self.renderProformRevenue(modelQuot);
+                self.render();
+            }
 
             model.urlRoot = '/quotation/form/' + id;
             model.fetch({
                 success: function (model) {
-                    new editView({model: model, redirect: true, pId: self.projectID, customerId: self.customerId});
+                    new editView({model: model, redirect: true, pId: self.projectID, customerId: self.customerId, collection: self.collection});
 
 
-                    self.collection.remove(id);
-                    self.renderProformRevenue(modelQuot);
-                    self.render();
+                    //self.collection.remove(id);
+
                 },
                 error  : function () {
                     alert('Please refresh browser');
@@ -159,22 +266,22 @@ define([
         },
 
         checked: function (e) {
-            if (this.collection.length > 0) {
-                var checkLength = $("input.checkbox:checked").length;
+            var el = this.$el;
 
-                if ($("input.checkbox:checked").length > 0) {
-                    $("#removeQuotation").show();
-                    $('#check_all_quotations').prop('checked', false);
+                var checkLength = el.find("input.checkbox:checked").length;
 
-                    if (checkLength == this.collection.length) {
-                        $('#check_all_quotations').prop('checked', true);
+                if (el.find("input.checkbox:checked").length > 0) {
+                    el.find("#removeQuotation").show();
+                    el.find('#check_all_quotations').prop('checked', false);
+
+                    if (checkLength === this.collection.length) {
+                        el.find('#check_all_quotations').prop('checked', true);
                     }
                 }
                 else {
-                    $("#removeQuotation").hide();
-                    $('#check_all_quotations').prop('checked', false);
+                    el.find("#removeQuotation").hide();
+                    el.find('#check_all_quotations').prop('checked', false);
                 }
-            }
         },
 
         createQuotation: function (e) {
@@ -203,7 +310,7 @@ define([
             this.$el.find('#removeQuotation').hide();
 
             $('#check_all_quotations').click(function () {
-                $(':checkbox').prop('checked', this.checked);
+                self.$el.find(':checkbox').prop('checked', this.checked);
                 if ($("input.checkbox:checked").length > 0) {
                     $("#removeQuotation").show();
                 } else {

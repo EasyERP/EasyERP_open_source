@@ -3,6 +3,7 @@
         <tr data-id="<%=wTrack._id%>">
             <td class = "notForm"><input type="checkbox" value="<%=wTrack._id%>" class="checkbox listCB" /></td>
             <td data-content="number"><%=startNumber + index + 1%></td>
+            <td data-content="jobs" data-id="<%=wTrack.jobs._id%>"><%=wTrack.jobs.name%></td>
             <td data-content="assigned"><%=wTrack.project && wTrack.project.projectmanager ? wTrack.project.projectmanager.name : ''%></td>
             <td class="editable" data-content="project" data-id="<%= wTrack.project._id%>"><%=wTrack.project ? wTrack.project.projectName : ''%></td>
             <td data-content="workflow" data-id="<%=wTrack.project && wTrack.project.workflow ? wTrack.project.workflow._id : ''%>"><%=wTrack.project && wTrack.project.workflow? wTrack.project.workflow.name : ''%></td>

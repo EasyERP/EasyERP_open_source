@@ -259,11 +259,11 @@ var Project = function (models) {
                             });
 
                             budget = {
-                                projectTeam: response,
+                               // projectTeam: response,
                                 bonus: bonus,
-                                budget: sortBudget,
-                                projectValues: projectValues,
-                                budgetTotal: budgetTotal
+                               // budget: sortBudget,
+                               // projectValues: projectValues,
+                                //budgetTotal: budgetTotal
                             };
 
 

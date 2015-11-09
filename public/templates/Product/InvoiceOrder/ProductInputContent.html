@@ -2,16 +2,22 @@
     <td data-name="productName">
         <a class="current-selected productsDd" href="javascript:;">select</a>
     </td>
-    <td data-name="productDescr">
-        <span class="textarea">
+    <% if (forSales) {%>
+       <td data-name="jobs" class="jobs">
+          <a class="current-selected jobs" id="jobs" href="javascript:;">Select</a>
+       </td>
+    <% } else { %>
+       <td data-name="productDescr" >
+          <!--<span class="textarea">-->
 
-        </span>
-    </td>
+          <!--</span>-->
+       </td>
+    <% } %>
     <td data-name="scheduledDate">
         <span class="datepicker">
 
         </span>
-        <input type="text" class="datepicker notVisible">
+        <input type="text" class="datepicker notVisible" readonly>
     </td>
     <td data-name="quantity">
         <span>

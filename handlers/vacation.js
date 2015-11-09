@@ -305,7 +305,7 @@ var Vacation = function (event, models) {
 
                     data.vacations = calculateWeeks(data.vacArray, data.month, data.year);
 
-                    Vacation.findByIdAndUpdate(id, {$set: data}, function (err, response) {
+                    Vacation.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, response) {
                         if (err) {
                             return next(err);
                         }
@@ -352,7 +352,7 @@ var Vacation = function (event, models) {
                             data.vacations = calculateWeeks(data.vacArray, data.month, data.year);
                         }
 
-                        Vacation.findByIdAndUpdate(id, {$set: data}, function(err, result) {
+                        Vacation.findByIdAndUpdate(id, {$set: data}, {new: true}, function(err, result) {
                             if (err) {
                                 return cb(err);
                             }

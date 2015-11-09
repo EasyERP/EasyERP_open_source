@@ -3,11 +3,17 @@
     <td data-name="productName">
         <a class="current-selected productsDd"  href="javascript:;"><%=product.product ? product.product.name : '- - -' %></a>
     </td>
-    <td data-name="productDescr">
+    <% if (forSales) {%>
+      <td data-name="jobs" class="jobs">
+        <a class="current-selected jobs" id="jobs" href="javascript:;"> <%=product.jobs ? product.jobs.name : ' --- '%></a>
+      </td>
+    <% } else { %>
+      <td data-name="productDescr">
         <span class="editable">
             <%=product.description ? product.description : ' '%>
         </span>
-    </td>
+      </td>
+    <% } %>
     <td data-name="quantity" class="editable">
         <span>
             <%=product.quantity%>

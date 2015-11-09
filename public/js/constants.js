@@ -55,6 +55,16 @@ define([], function () {
                 backend: 'services'
             }
         },
+        DashVacation         : {
+            'Employee'   : {
+                view   : 'name',
+                backend: 'employee'
+            },
+            'Department'  : {
+                view   : 'department',
+                backend: 'department._id'
+            }
+        },
         Companies       : {
             'Name'    : {
                 view   : 'name',
@@ -188,6 +198,10 @@ define([], function () {
             'Payment Way': {
                 view   : 'paymentMethod',
                 backend: 'paymentMethod._id'
+            },
+            'Name'     : {
+                view   : 'name',
+                backend: '_id'
             },
             'Status'     : {
                 view   : 'workflow',
@@ -373,7 +387,7 @@ define([], function () {
         HOLIDAY           : 'Holiday',
         VACATION          : 'Vacation',
         ATTENDANCE        : 'Attendance',
-        DASHBOARD_VACATION: 'DashboardVacation',
+        DASHBOARD_VACATION: 'DashBoardVacation',
         DASHBOARD_HR      : 'HrDashboard',
         HOURS             : 'Hours',
         CAPACITY          : 'Capacity',

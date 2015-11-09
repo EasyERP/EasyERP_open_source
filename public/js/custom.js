@@ -7,6 +7,17 @@ define([
 ], function (dateformat, common, CONTENT_TYPES, dataService, moment) {
     'use strict';
 
+    var Store = function() {
+        this.save = function(name, data) {
+            localStorage.setItem(name, JSON.stringify(data));
+        };
+        this.find = function(name) {
+            var store = localStorage.getItem(name);
+
+            return (store && JSON.parse(store)) || null;
+        }
+    };
+
     var runApplication = function (success) {
         if (!Backbone.history.fragment) {
             Backbone.history.start({silent: true});
@@ -229,15 +240,16 @@ define([
         chartControl.showDescProject(true, 'n,d');
     };
 
-    function cashToApp(key, data) {
+    function cacheToApp(key, data) {
         App.cashedData = App.cashedData || {};
         App.cashedData[key] = data;
+        App.storage.save(key, data);
     }
 
     function retriveFromCash(key) {
         App.cashedData = App.cashedData || {};
 
-        return App.cashedData[key];
+        return App.cashedData[key] || App.storage.find(key);
     }
 
     var savedFilters = function (contentType, uIFilter) {
@@ -311,8 +323,13 @@ define([
     };
 
     var getFiltersValues = function () {
+        var locationHash = window.location.hash;
+        var filter = locationHash.split('/filter=')[1];//For startDate & endDate in EmployeeFinder for filters in dashVac
+
+        filter = (filter) ? JSON.parse(decodeURIComponent(filter)) : null;
+
         if (!App || !App.filtersValues) {
-            dataService.getData('/filter/getFiltersValues', null, function (response) {
+            dataService.getData('/filter/getFiltersValues', filter, function (response) {
                 if (response && !response.error) {
                     App.filtersValues = response;
                 } else {
@@ -362,6 +379,8 @@ define([
         return result;
     };
 
+    App.storage = new Store();
+
     return {
         runApplication          : runApplication,
         changeContentViewType   : changeContentViewType,
@@ -371,7 +390,7 @@ define([
         setCurrentVT            : setCurrentVT,
         getCurrentCL            : getCurrentCL,
         setCurrentCL            : setCurrentCL,
-        cashToApp               : cashToApp,
+        cacheToApp               : cacheToApp,
         retriveFromCash         : retriveFromCash,
         savedFilters            : savedFilters,
         getFiltersForContentType: getFiltersForContentType,

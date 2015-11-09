@@ -69,11 +69,12 @@ module.exports = (function () {
         }],
         budget: {
             _id: false,
-            projectTeam: Array,
             bonus: Array,
-            budget: Array,
-            projectValues: JSON,
-            budgetTotal: JSON}
+            projectTeam: [{ type: ObjectId, ref: "jobs", default: null }],
+           // budget: Array,
+           // projectValues: JSON,
+           // budgetTotal: JSON
+           }
     }, { collection: 'Project' });
 
     mongoose.model('Project', projectSchema);

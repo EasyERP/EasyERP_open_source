@@ -198,7 +198,7 @@ define([
                 } else {
                     tempContainer = el.text();
                     width = el.width() - 6;
-                    el.html('<input class="editing" type="text" value="' + tempContainer + '"  style="width:' + width + 'px">');
+                    el.html('<input class="editing" type="number" value="' + tempContainer + '"  style="width:' + width + 'px">');
 
                     dataContent = $(el).attr('data-content');
                     editingEl = $(el).find('.editing');
@@ -684,7 +684,7 @@ define([
                 var self = this;
                 var currentEl = this.$el;
 
-                if (App.currentDb === 'weTrack') {
+                if (App.weTrack) {
                     currentEl.html('');
                     currentEl.append(_.template(ListHeaderForWTrack));
                     currentEl.append(new listItemView({

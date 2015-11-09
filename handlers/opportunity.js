@@ -9,6 +9,161 @@ var Opportunity = function (models) {
     var DepartmentSchema = mongoose.Schemas['Department'];
     var objectId = mongoose.Types.ObjectId;
     var async = require('async');
+    var validator = require('validator');
+
+    var EMAIL_REGEXP = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+    this.addNewLeadFromSite = function (req, res, next) {
+        var db = 'production';
+        var Opportunitie = models.get(db, 'Opportunitie', opportunitiesSchema);
+
+        var body = req.body;
+        var name = body.name ? validator.escape(body.name) : '';
+        var email = body.email ? validator.escape(body.email) : '';
+        var message = body.message ? validator.escape(body.message) : '';
+        var utm_medium = body.utm_medium ? validator.escape(body.utm_medium) : '';
+        var utm_source = body.utm_source ? validator.escape(body.utm_source) : '';
+        var utm_term = body.utm_term ? validator.escape(body.utm_term) : '';
+        var utm_campaign = body.utm_campaign ? validator.escape(body.utm_campaign) : '';
+        var isEmailValid = EMAIL_REGEXP.test(email);
+
+        var waterfallTasks = [getCampaignSource, createLead];
+
+        function getCampaignSource(callback) {
+            var sourceSchema = mongoose.Schemas['sources'];
+            var campaignSchema = mongoose.Schemas['campaign'];
+            var Source = models.get(db, 'sources', sourceSchema);
+            var Campaign = models.get(db, 'campaign', campaignSchema);
+            var parralelTasks = {};
+            var sourceModel;
+            var campaignModel;
+
+            if (utm_source) {
+                parralelTasks.source = function (parallelCB) {
+                    Source.findOne({_id: utm_source}, function (err, result) {
+                        if (err) {
+                            return parallelCB(err);
+                        }
+
+                        if (result) {
+                            return parallelCB(null, result);
+                        }
+
+                        sourceModel = new Source({_id: utm_source, name: utm_source});
+
+                        sourceModel.save(function (err, sourceResult) {
+                            if (err) {
+                                return parallelCB(err);
+                            }
+                            parallelCB(null, sourceResult);
+                        })
+                    })
+                }
+            }
+
+            if (utm_medium) {
+                parralelTasks.campaign = function (parallelCB) {
+                    var loverCampaign = utm_medium.toLowerCase();
+
+                    Campaign.findOne({_id: loverCampaign}, function (err, result) {
+                        if (err) {
+                            return parallelCB(err);
+                        }
+
+                        if (result) {
+                            return parallelCB(null, result);
+                        }
+
+                        campaignModel = new Campaign({_id: loverCampaign, name: utm_medium});
+
+                        campaignModel.save(function (err, campaignResult) {
+                            if (err) {
+                                return parallelCB(err);
+                            }
+                            parallelCB(null, campaignResult);
+                        })
+                    })
+                }
+            }
+
+            async.parallel(parralelTasks, function (err, result) {
+                if (err) {
+                    return callback(err);
+                }
+
+                callback(null, result);
+            })
+
+        };
+
+        function createLead(result, callback) {
+            var saveObject;
+            var campaign = '';
+            var source = '';
+            var leadModel;
+            var contactName = {
+                first: name,
+                last : ''
+            }
+
+            var messageString = 'message:' + message;
+            var utm_termString = '\nutm_term: ' + utm_term;
+            var utm_campaignString = '\nutm_campaign: ' + utm_campaign;
+
+            var internalNotes = '';
+
+            if (message) {
+                internalNotes += messageString;
+            }
+
+            if (utm_term) {
+                internalNotes += utm_termString;
+            }
+
+            if (utm_campaign) {
+                internalNotes += utm_campaignString;
+            }
+
+            if (result.campaign && result.campaign._id) {
+                campaign = result.campaign._id;
+            }
+            if (result.source && result.source._id) {
+                source = result.source._id;
+            }
+
+            saveObject = {
+                name          : name,
+                email         : email,
+                contactName   : contactName,
+                campaign      : campaign,
+                source        : source,
+                internalNotes : internalNotes,
+                isOpportunitie: false
+            }
+
+            leadModel = new Opportunitie(saveObject);
+
+            leadModel.save(function (err, result) {
+                if (err) {
+                    return callback(err);
+                }
+
+                callback(null, result);
+            });
+        };
+
+        if (isEmailValid) {
+            async.waterfall(waterfallTasks, function (err, result) {
+                if (err) {
+                    res.status(400).send();
+                }
+
+                res.status(200).send('Lead created');
+            })
+        } else {
+            res.status(400).send();
+        }
+    };
 
     function ConvertType(array, type) {
         if (type === 'integer') {

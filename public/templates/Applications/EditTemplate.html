@@ -137,7 +137,7 @@
                                     <dd><input type="text"
                                                id="LI"
                                                value="<%=model.social.LI%>"
-                                               placeholder="LingedIn"
+                                               placeholder="LinkedIn"
                                                maxlength="32"/>
                                     </dd>
                                     <dt>
@@ -214,7 +214,7 @@
                                            class="current-selected"
                                            href="javascript:;"><%=model.source?(model.source):'Select'%>
                                         </a>
-                                        <ul class="newSelectList hidden">
+                                        <ul class="newSelectList" style="display: none;">
                                             <li id="www.rabota.ua">www.rabota.ua</li>
                                             <li id="www.work.ua">www.work.ua</li>
                                             <li id="www.ain.net">www.ain.net</li>
@@ -407,7 +407,7 @@
                                            href="javascript:;">
                                             <%=model.gender?(model.gender):'Select'%>
                                         </a>
-                                        <ul class="newSelectList hidden">
+                                        <ul class="newSelectList">
                                             <li id="male">male</li>
                                             <li id="female">female</li>
                                         </ul>
@@ -428,7 +428,7 @@
                                            href="javascript:;">
                                             <%=model.marital?(model.marital):'Select'%>
                                         </a>
-                                        <ul class="newSelectList hidden">
+                                        <ul class="newSelectList">
                                             <li id="married">married</li>
                                             <li id="unmarried">unmarried</li>
                                         </ul>

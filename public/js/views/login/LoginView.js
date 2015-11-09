@@ -58,6 +58,12 @@ define([
 
             App.currentDb = currentDb;
 
+            if ((currentDb === "weTrack") || (currentDb === "production") || (currentDb === "development")){
+                App.weTrack = true;
+            } else {
+                App.weTrack = false;
+            }
+
             $("#loginForm").removeClass("notRegister");
             $("#loginForm").removeClass("notRegister");
 
@@ -67,11 +73,11 @@ define([
                 dbId: currentDb
             };
 
-            if (data.login.length < 3) {
-                err += "Login must be longer than 3 characters<br/>";
+            if (data.login.length < 4) {
+                err += "Login must be longer than 4 characters<br/>";
             }
-            if (data.pass.length < 3) {
-                err += "Password must be longer than 3 characters";
+            if (data.pass.length < 4) {
+                err += "Password must be longer than 4 characters";
             }
             if (err) {
                 $("#loginForm .error").html(err);

@@ -110,7 +110,11 @@ define([
                     dataService.getData('/currentDb', null, function (response) {
                         if (response && !response.error) {
                             App.currentDb = response;
-
+                            if ((response === "weTrack") || (response === "production") || (response === "development")){
+                                App.weTrack = true;
+                            } else {
+                                App.weTrack = false;
+                            }
                         }
 
                         currentEllistRenderer(self);
@@ -138,7 +142,7 @@ define([
                 currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
                 function currentEllistRenderer(self) {
-                    currentEl.append(_.template(listTemplate, {currentDb: App.currentDb}));
+                    currentEl.append(_.template(listTemplate, {currentDb: App.weTrack}));
                     var itemView = new listItemView({
                         collection : self.collection,
                         page       : self.page,
@@ -171,9 +175,9 @@ define([
                         currentDb: App.currentDb
                     },
                     success: function (model) {
-                        var isWtrack = App.currentDb === CONSTANTS.WTRACK_DB_NAME;
+                       // var isWtrack = App.weTrack;
 
-                        new editView({model: model, isWtrack: isWtrack});
+                        new editView({model: model});
                     },
                     error  : function () {
                         alert('Please refresh browser');

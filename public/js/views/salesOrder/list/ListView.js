@@ -8,7 +8,7 @@ define([
         'views/supplierPayments/list/ListTotalView',
         'views/salesOrder/EditView',
         'models/QuotationModel',
-        'collections/salesOrder/filterCollection',
+        'collections/salesQuotation/filterCollection',
         'views/Filter/FilterView',
         'common',
         'dataService'
@@ -132,7 +132,7 @@ define([
                 currentEl = this.$el;
 
                 currentEl.html('');
-                if (App.currentDb === 'weTrack') {
+                if (App.weTrack) {
                     currentEl.append(_.template(listForWTrack));
                     currentEl.append(new listItemView({
                         collection: this.collection,

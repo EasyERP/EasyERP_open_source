@@ -59,7 +59,20 @@ define([
                 $(".newSelectList").hide();
             },
             chooseOption: function (e) {
+                var target = $(e.target);
+                var id = target.attr("id");
+                var type = target.attr('data-level');
+
+                var element = _.find(this.responseObj['#project'], function (el) {
+                    return el._id === id;
+                });
+
                 $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
+
+                if (type === 'emptyProject'){
+                    this.$el.find('#supplierDd').text(element.customer.name);
+                    this.$el.find('#supplierDd').attr('data-id', element.customer._id);
+                }
             },
             nextSelect: function (e) {
                 this.showNewSelect(e, false, true);
@@ -144,6 +157,15 @@ define([
                                     //
                                     //Backbone.history.fragment = '';
                                     //Backbone.history.navigate(url, {trigger: true});
+
+                                    var data ={products: JSON.stringify(products), type: "Order"};
+
+                                    dataService.postData("/jobs/update", data,  function(err, result){
+                                        if (err){
+                                            return console.log(err);
+                                        }
+
+                                    });
                                     var filter = {
                                         'projectName': {
                                             key  : 'project._id',
@@ -168,11 +190,14 @@ define([
                                             collection: self.ordersCollection,
                                             projectId : self.pId,
                                             customerId: self.customerId,
-                                            projectManager: self.projectManager
+                                            projectManager: self.projectManager,
+                                            filter: filter
                                         }).render({activeTab: true});
                                     };
 
                                     self.ordersCollection.bind('reset', createView);
+
+                                    self.collection.remove(self.currentModel.get('_id'));
 
                                 } else {
                                     Backbone.history.navigate(redirectUrl, {trigger: true});
@@ -432,6 +457,7 @@ define([
                     model: this.currentModel.toJSON(),
                     visible: this.visible
                 });
+                var service = this.forSales;
                 var notDiv;
                 var model;
                 var productItemContainer;
@@ -478,7 +504,7 @@ define([
                 populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, false, true);
                 populate.get("#deliveryDd", "/deliverTo", {}, 'name', this, false, true);
 
-                if ((App.currentDb === 'weTrack') && this.forSales){
+                if (App.weTrack && this.forSales){
                     populate.get("#supplierDd", "/Customer", {}, "fullName", this, false, false);
 
                     populate.get("#projectDd", "/getProjectsForDd", {}, "projectName", this, false, false);
@@ -499,8 +525,19 @@ define([
                 productItemContainer = this.$el.find('#productItemsHolder');
 
                 productItemContainer.append(
-                    new ProductItemView({editable: true}).render({model: model}).el
+                    new ProductItemView({editable: true, service: service}).render({model: model}).el
                 );
+
+                dataService.getData("/project/getForWtrack", null, function (projects) {
+                    projects = _.map(projects.data, function (project) {
+                        project.name = project.projectName;
+
+                        return project
+                    });
+
+                    self.responseObj['#project'] = projects;
+                });
+
 
 
                 if (model.groups)

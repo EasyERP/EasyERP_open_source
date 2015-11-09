@@ -23,13 +23,13 @@
                   <dt><label for="dateBirth">Date of Birth </label></dt><dd><input type="text" name="dateBirth" id="dateBirth" readonly placeholder="Birthday"/></dd>
                   <dt><label for="mobile">Personal Mobile</label></dt><dd><input type="text" id="mobile" maxlength="20" placeholder="Mobile number"/></dd>
                   <dt><label for="personalEmail">Personal Email</label></dt><dd><input type="text" id="personalEmail" maxlength="48" placeholder="e.g.email@site.com"/></dd>
-                  <dt><label for="skype">Skype</label></dt><dd><input type="text" id="skype" maxlength="32" placeholder="Skype login"/></dd>
+                  <dt><label for="skype">Skype</label></dt><dd><input type="text" id="skype" maxlength="64" placeholder="Skype login"/></dd>
                   <dt><label for="LI">LinkedIn</label></dt>
-                  <dd><input type="text" id="LI" placeholder="LingedIn"
-                             maxlength="32"/></dd>
+                  <dd><input type="text" id="LI" placeholder="LinkedIn"
+                             maxlength="150"/></dd>
                   <dt><label for="LI">Facebook</label></dt>
                   <dd><input type="text" id="FB" placeholder="Facebook"
-                             maxlength="32"/></dd>
+                             maxlength="150"/></dd>
                   <dt><label for="relatedUsersDd">Related User</label></dt>
                   <dd>
                     <a id="relatedUsersDd" class="current-selected" href="javascript:;"></a>
@@ -57,7 +57,7 @@
                   <dt><label for="sourceDd">Source </label></dt>
                   <dd>
                     <a id="sourceDd" data-id="www.rabota.ua" class="current-selected" href="javascript:;">www.rabota.ua</a>
-                    <ul class="newSelectList hidden">
+                    <ul class="newSelectList" style="display: none;">
                       <li id="www.rabota.ua">www.rabota.ua</li>
                       <li id="www.work.ua">www.work.ua</li>
                       <li id="www.ain.net">www.ain.net</li>
@@ -129,7 +129,7 @@
                 <dt><label for="genderDd">Gender</label>
                 <dd>
                   <a id="genderDd" data-id="male" class="current-selected" href="javascript:;">male</a>
-                  <ul class="newSelectList hidden">
+                  <ul class="newSelectList">
                     <li id="male">male</li>
                     <li id="female">female</li>
                   </ul>
@@ -143,7 +143,7 @@
                 <dt><label for="maritalDd">Marital status</label>
                 <dd>
                   <a id="maritalDd" data-id="married" class="current-selected" href="javascript:;">married</a>
-                  <ul class="newSelectList hidden">
+                  <ul class="newSelectList">
                     <li id="married">married</li>
                     <li id="unmarried">unmarried</li>
                   </ul>
