@@ -5159,7 +5159,7 @@ table#workflows tr td.edit-status {
 }
 #top-bar .vocationFilter .dateFilter li #startTime,
 #top-bar .vocationFilter .dateFilter li #endTime {
-  line-height: 30px;
+  line-height: 28px;
 }
 #top-bar .vocationFilter .dateFilter li .frameDetail label {
   display: inline-block;
@@ -5176,6 +5176,10 @@ table#workflows tr td.edit-status {
 #top-bar .vocationFilter .dateFilter .buttons {
   margin: 15px 0;
   padding: 0 15%;
+}
+.dashBoardVocationSearch {
+  margin-top: 4px !important;
+  /*only for DashBoard vocation*/
 }
 .projectInfoTopBar {
   display: block;
@@ -5218,7 +5222,7 @@ table#workflows tr td.edit-status {
 }
 .projectInfoTopBar .vocationFilter .dateFilter li #startTime,
 .projectInfoTopBar .vocationFilter .dateFilter li #endTime {
-  line-height: 30px;
+  line-height: 28px;
 }
 .projectInfoTopBar .vocationFilter .dateFilter li .frameDetail label {
   display: inline-block;
