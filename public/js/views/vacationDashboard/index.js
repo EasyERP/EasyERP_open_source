@@ -56,7 +56,7 @@ define([
             dashCollection = this.dashCollection = custom.retriveFromCash('dashboardVacation');
 
             if (!dashCollection) {
-                dashCollection = this.dashCollection = this.fetchData();
+                dashCollection = this.dashCollection = this.fetchData(options);
                 dashCollection.on('reset sort', this.render, this);
             } else {
                 this.render();
@@ -453,7 +453,7 @@ define([
             var weeksArr;
             var self = this;
             var statictics;
-            var url = '#easyErp/DashboardVacation';
+            var url = '#easyErp/DashBoardVacation';
 
             $('title').text(this.contentType);
             this.dashCollection.unbind();
