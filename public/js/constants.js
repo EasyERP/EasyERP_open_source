@@ -391,6 +391,7 @@ define([], function () {
         DASHBOARD_HR      : 'HrDashboard',
         HOURS             : 'Hours',
         CAPACITY          : 'Capacity',
+        JOBSDASHBOARD          : 'jobsDashboard',
 
         RESPONSES: {
             BAD_RESPONSE            : 'Please try again',

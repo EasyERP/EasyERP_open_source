@@ -302,7 +302,8 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     var jobId = self.jobs ? self.jobs._id : null;
                     var jobName = self.jobs ? self.jobs.name : $("#jobName").val();
                     var _id = window.location.hash.split('form/')[1];
-                    var nameRegExp = /^[\w\.@]{3,100}$/;
+                    //var nameRegExp = /^[\w\.@]{3,100}$/;
+                    var nameRegExp = /^[a-zA-Z0-9\s][a-zA-Z0-9-,\s\.\/\s]+$/;
 
                     var filter = {
                         'projectName': {
