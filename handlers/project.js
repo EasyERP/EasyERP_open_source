@@ -303,15 +303,56 @@ var Project = function (models) {
         var Project = models.get(req.session.lastDb, "Project", ProjectSchema);
         var data = {};
         var sort = req.query.sort ? req.query.sort : {projectName: 1};
+        var collection;
 
-        var query = Project.find({}, {'projectName': 1, 'projectmanager': 1, '_id': 1, 'workflow': 1, 'budget': 1}).sort(sort);
+        var query = Project.find({}).sort(sort).lean();
+
+        query.populate('budget.projectTeam');
 
         query.exec(function (err, result) {
             if (err) {
                 return next(err);
             }
 
-            data['data'] = result;
+            collection = result;
+
+            collection.forEach(function(project){
+                var totalInPr = 0;
+                var totalNew = 0;
+                var totalFinished = 0;
+                var total = 0;
+                var totalObj = {};
+                var jobs = (project.budget && project.budget.projectTeam) ? project.budget.projectTeam : [];
+
+                project.total = {};
+
+                totalObj.totalInPr = 0;
+                totalObj.totalNew = 0;
+                totalObj.totalFinished = 0;
+                totalObj.total = 0;
+
+                jobs.forEach(function(job){
+                    if (job.workflow.name === "In Progress"){
+                        totalInPr += job.budget.budgetTotal.costSum;
+                    } else if (job.workflow.name === "New"){
+                        totalNew += job.budget.budgetTotal.costSum;
+                    } else if (job.workflow.name === "Finished"){
+                        totalFinished += job.budget.budgetTotal.costSum;
+                    }
+
+                    total += totalInPr + totalNew + totalFinished;
+                });
+
+                totalObj.totalInPr = totalInPr;
+                totalObj.totalNew = totalNew;
+                totalObj.totalFinished = totalFinished;
+                totalObj.total = total;
+
+                project.total = totalObj;
+            });
+
+            data['data'] = collection;
+
             res.status(200).send(data);
         })
     };
