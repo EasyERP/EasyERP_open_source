@@ -2,17 +2,18 @@
  * Created by lilya on 09/11/15.
  */
 define([
+        "text!templates/jobsDashboard/DashboardHeader.html",
         "text!templates/jobsDashboard/DashboardTemplate.html",
         'collections/Projects/projectInfoCollection',
         "custom",
         "dataService",
         "helpers"
     ],
-    function (DashboardTemplate, contentCollection, custom, dataService, helpers) {
+    function (DashboardHeader, DashboardTemplate, contentCollection, custom, dataService, helpers) {
         var ContentView = Backbone.View.extend({
             contentType: "Dashboard",
             actionType: "Content",
-            template: _.template(DashboardTemplate),
+            template: _.template(DashboardHeader),
             el: '#content-holder',
             initialize: function (options) {
                 this.startTime = options.startTime;
@@ -22,7 +23,7 @@ define([
 
             events: {
                 //"click .choseDateRange .item": "newRange",
-                //"click .oe_sortable": "goSort",
+                "click .oe_sortable": "goSort",
                 "click #project": "showJobs"
             },
 
@@ -84,7 +85,7 @@ define([
                 }
                 sortObject[sortBy] = sortConst;
 
-               // this.fetchSortCollection(sortObject);
+                this.fetchSortCollection(sortObject);
             },
 
             fetchSortCollection: function (sortObject) {
@@ -97,12 +98,12 @@ define([
             },
 
             renderJobs: function () {
-                var template = this.template;
+                var template = _.template(DashboardTemplate);
 
                 if (App.cashedData && App.cashedData.projectInfo) {
                     this.collection = custom.retriveFromCash('projectInfo');
 
-                    this.$el.html(template({
+                    this.$el.find('#jobsContent').html(template({
                         collection: this.collection.toJSON(),
                         startNumber: 0,
                         currencySplitter: helpers.currencySplitter
@@ -117,11 +118,11 @@ define([
             },
 
             renderContent: function () {
-                var template = this.template;
+                var template = _.template(DashboardTemplate);
 
                 custom.cacheToApp('projectInfo', this.collection);
 
-                this.$el.html(template({
+                this.$el.find('#jobsContent').html(template({
                     collection: this.collection.toJSON(),
                     startNumber: 0,
                     currencySplitter: helpers.currencySplitter
@@ -129,6 +130,8 @@ define([
             },
 
             render: function () {
+                this.$el.html(this.template());
+
                 this.renderJobs();
 
                 this.$el.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
