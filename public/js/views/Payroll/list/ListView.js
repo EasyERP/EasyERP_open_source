@@ -879,7 +879,7 @@ define([
                 this.renderFilter(self);
 
                 setTimeout(function () {
-                    self.editCollection = new editCollection(self.collection.toJSON());
+                    self.editCollection = new editCollection(self.collectionOnMonth.toJSON());
 
                     self.editCollection.on('saved', self.savedNewModel, self);
                     self.editCollection.on('updated', self.updatedOptions, self);
