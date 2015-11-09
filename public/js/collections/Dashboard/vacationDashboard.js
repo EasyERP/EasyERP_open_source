@@ -7,8 +7,9 @@
 
             url: 'dashboard/vacation',
 
-            initialize: function(){
+            initialize: function (options) {
                 this.fetch({
+                    data: options,
                     reset: true
                 });
             }

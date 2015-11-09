@@ -311,8 +311,13 @@ define([
     };
 
     var getFiltersValues = function () {
+        var locationHash = window.location.hash;
+        var filter = locationHash.split('/filter=')[1];//For startDate & endDate in EmployeeFinder for filters in dashVac
+
+        filter = (filter) ? JSON.parse(decodeURIComponent(filter)) : null;
+
         if (!App || !App.filtersValues) {
-            dataService.getData('/filter/getFiltersValues', null, function (response) {
+            dataService.getData('/filter/getFiltersValues', filter, function (response) {
                 if (response && !response.error) {
                     App.filtersValues = response;
                 } else {

@@ -11,10 +11,13 @@ var Filters = function (models) {
     var productSchema = mongoose.Schemas['Products'];
     var _ = require('../node_modules/underscore');
     var async = require('async');
+    var moment = require('../public/js/libs/moment/moment');
 
     this.getFiltersValues = function (req, res, next) {
         var lastDB = req.session.lastDb;
+        var query = req.query;
 
+        var startFilter;
         var WTrack = models.get(lastDB, 'wTrack', wTrackSchema);
         var Customer = models.get(lastDB, 'Customers', CustomerSchema);
         var Employee = models.get(lastDB, 'Employee', EmployeeSchema);
@@ -24,24 +27,71 @@ var Filters = function (models) {
         var customerPayments = models.get(lastDB, 'Payment', customerPaymentsSchema);
         var Product = models.get(lastDB, 'Products', productSchema);
         var Quotation = models.get(lastDB, 'Quotation', QuotationSchema);
+        var startDate;
+        var endDate;
+        var dateRangeObject;
+
+        function dateRange() {
+            "use strict";
+            var weeksArr = [];
+            var startWeek = moment().isoWeek() - 1;
+            var year = moment().isoWeekYear();
+            var week;
+
+            for (var i = 0; i <= 11; i++) {
+                if (startWeek + i > 53) {
+                    week = startWeek + i - 53;
+                    weeksArr.push((year + 1) * 100 + week);
+                } else {
+                    week = startWeek + i;
+                    weeksArr.push(year * 100 + week);
+                }
+            }
+
+            weeksArr.sort();
+
+            return {
+                startDate: weeksArr[0],
+                endDate  : weeksArr[weeksArr.length - 1]
+            };
+        };
+
+        if (query) {
+            startFilter = query.filter;
+
+            if (startFilter) {
+                startDate = startFilter.startDate;
+                endDate = startFilter.startDate;
+            }
+        }
+
+        if (!startDate || !endDate) {
+            dateRangeObject = dateRange();
+
+            startDate = dateRangeObject.startDate;
+            endDate = dateRangeObject.endDate;
+        }
+
+        console.log(startDate, endDate);
 
         async.parallel({
                 wTrack          : getWtrackFiltersValues,
-                Persons         : getPersonFiltersValues,
-                Companies       : getCompaniesFiltersValues,
-                Employees       : getEmployeeFiltersValues,
-                Applications    : getApplicationFiltersValues,
-                Projects        : getProjectFiltersValues,
-                Tasks           : getTasksFiltersValues,
-                salesInvoice    : getSalesInvoiceFiltersValues,
+                Persons: getPersonFiltersValues,
+                Companies: getCompaniesFiltersValues,
+                Employees: getEmployeeFiltersValues,
+                Applications: getApplicationFiltersValues,
+                Projects    : getProjectFiltersValues,
+                Tasks       : getTasksFiltersValues,
+                salesInvoice: getSalesInvoiceFiltersValues,
                 customerPayments: getCustomerPaymentsFiltersValues,
                 supplierPayments: getSupplierPaymentsFiltersValues,
                 Product         : getProductsFiltersValues,
                 salesProduct    : getProductsFiltersValues,
                 Quotation       : getQuotationFiltersValues,
-                salesQuotation       : getSalesQuotation,
+                salesQuotation  : getSalesQuotation,
                 salesOrder      : getSalesOrders,
-                Order      : getOrdersFiltersValues
+                Order           : getOrdersFiltersValues,
+                DashVacation    : getDashVacationFiltersValues
             },
             function (err, result) {
                 if (err) {
@@ -111,7 +161,7 @@ var Filters = function (models) {
                 }
             ], function (err, result) {
                 if (err) {
-                    callback(err);
+                    return callback(err);
                 }
 
                 result = result[0];
@@ -158,7 +208,7 @@ var Filters = function (models) {
                 }
             ], function (err, result) {
                 if (err) {
-                    callback(err);
+                    return callback(err);
                 }
 
                 result = result[0];
@@ -204,7 +254,7 @@ var Filters = function (models) {
                 }
             ], function (err, result) {
                 if (err) {
-                    callback(err);
+                    return callback(err);
                 }
 
                 result = result[0];
@@ -262,7 +312,7 @@ var Filters = function (models) {
                 }
             ], function (err, result) {
                 if (err) {
-                    callback(err);
+                    return callback(err);
                 }
 
                 result = result[0];
@@ -307,7 +357,7 @@ var Filters = function (models) {
                 }
             ], function (err, result) {
                 if (err) {
-                    callback(err);
+                    return callback(err);
                 }
 
                 result = result[0];
@@ -349,7 +399,7 @@ var Filters = function (models) {
                 }
             ], function (err, result) {
                 if (err) {
-                    callback(err);
+                    return callback(err);
                 }
 
                 if (result) {
@@ -361,6 +411,55 @@ var Filters = function (models) {
             });
         };
 
+        function getDashVacationFiltersValues(callback) {
+            var matchObjectForDash = {
+                /*isEmployee: true,*/
+                $or: [
+                    {
+                        isEmployee: true
+                    }, {
+                        $and: [{isEmployee: false}, {
+                            lastFire: {
+                                $ne: null,
+                                $gte: startDate
+                            }
+                        } /*{firedCount: {$gt: 0}}*/]
+                    }
+                ]
+            };
+
+            Employee.aggregate([
+                {
+                    $match: matchObjectForDash
+                },
+                {
+                    $group: {
+                        _id          : null,
+                        'name'       : {
+                            $addToSet: {
+                                _id : '$_id',
+                                name: {$concat: ['$name.first', ' ', '$name.last']}
+                            }
+                        },
+                        'department' : {
+                            $addToSet: {
+                                _id : '$department._id',
+                                name: {'$ifNull': ['$department.name', 'None']}
+                            }
+                        }
+                    }
+                }
+            ], function (err, result) {
+                if (err) {
+                    return callback(err);
+                }
+
+                result = result[0];
+
+                callback(null, result);
+            });
+        };
+
         function getTasksFiltersValues(callback) {
             Task.aggregate([
                 {
@@ -368,8 +467,8 @@ var Filters = function (models) {
                         _id         : null,
                         'project'   : {
                             $addToSet: {
-                                _id : '$project._id',
-                                name: '$project.projectName'
+                                _id : '$project',
+                                name: '$project.name'
                             }
                         },
                         'assignedTo': {
@@ -398,6 +497,14 @@ var Filters = function (models) {
                 }
 
                 result = result[0];
+
+                //Project.populate(result, {"path": "project._id", select: "projectName _id"}, {lean: true}, function(err, projects){
+                //    if (err){
+                //        return callback(err);
+                //    }
+                //
+                //    callback(null, result);
+                //});
 
                 callback(null, result);
             });
@@ -622,25 +729,24 @@ var Filters = function (models) {
             });
         };
 
-
         function getQuotationFiltersValues(callback) {
             Quotation.aggregate([
                 {
                     $match: {
                         forSales: false,
-                        isOrder: false
+                        isOrder : false
                     }
                 },
                 {
                     $group: {
-                        _id           : null,
+                        _id       : null,
                         'supplier': {
                             $addToSet: {
                                 _id : '$supplier._id',
                                 name: '$supplier.name'
                             }
                         },
-                        'workflow'  : {
+                        'workflow': {
                             $addToSet: {
                                 _id : '$workflow._id',
                                 name: '$workflow.name'
@@ -665,36 +771,36 @@ var Filters = function (models) {
             });
         };
 
-        function getSalesQuotation(callback){
+        function getSalesQuotation(callback) {
             Quotation.aggregate([
                 {
                     $match: {
                         forSales: true,
-                        isOrder: false
+                        isOrder : false
                     }
                 },
                 {
                     $group: {
-                        _id         : null,
-                        'projectName'  : {
+                        _id             : null,
+                        'projectName'   : {
                             $addToSet: {
                                 _id : '$project._id',
                                 name: '$project.projectName'
                             }
                         },
-                        'supplier': {
+                        'supplier'      : {
                             $addToSet: {
                                 _id : '$supplier._id',
                                 name: '$supplier.name'
                             }
                         },
-                        'projectmanager'      : {
+                        'projectmanager': {
                             $addToSet: {
                                 _id : '$project.projectmanager._id',
                                 name: '$project.projectmanager.name'
                             }
                         },
-                        'workflow'  : {
+                        'workflow'      : {
                             $addToSet: {
                                 _id : '$workflow._id',
                                 name: '$workflow.name'
@@ -707,7 +813,7 @@ var Filters = function (models) {
                     callback(err);
                 }
 
-                if (result && result.length){
+                if (result && result.length) {
                     result = result[0];
                     callback(null, result);
                 } else {
@@ -717,36 +823,36 @@ var Filters = function (models) {
             });
         }
 
-        function getSalesOrders(callback){
+        function getSalesOrders(callback) {
             Quotation.aggregate([
                 {
                     $match: {
                         forSales: true,
-                        isOrder: true
+                        isOrder : true
                     }
                 },
                 {
                     $group: {
-                        _id         : null,
-                        'projectName'  : {
+                        _id             : null,
+                        'projectName'   : {
                             $addToSet: {
                                 _id : '$project._id',
                                 name: '$project.projectName'
                             }
                         },
-                        'supplier': {
+                        'supplier'      : {
                             $addToSet: {
                                 _id : '$supplier._id',
                                 name: '$supplier.name'
                             }
                         },
-                        'projectmanager'      : {
+                        'projectmanager': {
                             $addToSet: {
                                 _id : '$project.projectmanager._id',
                                 name: '$project.projectmanager.name'
                             }
                         },
-                        'workflow'  : {
+                        'workflow'      : {
                             $addToSet: {
                                 _id : '$workflow._id',
                                 name: '$workflow.name'
@@ -759,7 +865,7 @@ var Filters = function (models) {
                     callback(err);
                 }
 
-                if (result && result.length){
+                if (result && result.length) {
                     result = result[0];
                     callback(null, result);
                 } else {
@@ -769,36 +875,36 @@ var Filters = function (models) {
             });
         }
 
-        function getOrdersFiltersValues(callback){
+        function getOrdersFiltersValues(callback) {
             Quotation.aggregate([
                 {
                     $match: {
                         forSales: false,
-                        isOrder: true
+                        isOrder : true
                     }
                 },
                 {
                     $group: {
-                        _id         : null,
-                        'projectName'  : {
+                        _id             : null,
+                        'projectName'   : {
                             $addToSet: {
                                 _id : '$project._id',
                                 name: '$project.projectName'
                             }
                         },
-                        'supplier': {
+                        'supplier'      : {
                             $addToSet: {
                                 _id : '$supplier._id',
                                 name: '$supplier.name'
                             }
                         },
-                        'projectmanager'      : {
+                        'projectmanager': {
                             $addToSet: {
                                 _id : '$project.projectmanager._id',
                                 name: '$project.projectmanager.name'
                             }
                         },
-                        'workflow'  : {
+                        'workflow'      : {
                             $addToSet: {
                                 _id : '$workflow._id',
                                 name: '$workflow.name'
@@ -811,7 +917,7 @@ var Filters = function (models) {
                     callback(err);
                 }
 
-                if (result && result.length){
+                if (result && result.length) {
                     result = result[0];
                     callback(null, result);
                 } else {

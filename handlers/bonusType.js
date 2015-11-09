@@ -37,7 +37,7 @@ var BonusType = function (models) {
                         var id = data._id;
 
                         delete data._id;
-                        bonusTypeModel.findByIdAndUpdate(id, {$set: data}, cb);
+                        bonusTypeModel.findByIdAndUpdate(id, {$set: data}, {new: true}, cb);
                     }, function (err) {
                         if (err) {
                             return next(err);

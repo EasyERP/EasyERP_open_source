@@ -16,4 +16,50 @@
   &.banned {
     border-bottom: 0
   }
+
+  .vocationFilter {
+    position: relative;
+    float: left;
+    margin-left: 15px;
+    .dateFilter {
+      width: 200px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 10;
+      border: 1px solid @border-color-main;
+      background-color: @bg-main;
+      padding: 0 5px;
+      li {
+        font-size: 12px;
+        text-align: center;
+        color: @mainText-color;
+
+        #startTime, #endTime {
+          line-height: 30px;
+        }
+
+        .frameDetail {
+          label {
+            display: inline-block;
+            min-width: 15%;
+            margin-right: 2%;
+            text-align: left;
+          }
+          input {
+            width: 75%;
+          }
+        }
+      }
+      .customTime {
+        label+input[type='text'] {
+          margin-bottom: 5px;
+        }
+      }
+      .buttons {
+        margin: 15px 0;
+        padding: 0 15%;
+      }
+    }
+  }
 }

@@ -30,7 +30,7 @@ define([
             "easyErp/myProfile": "goToUserPages",
             "easyErp/Workflows": "goToWorkflows",
             "easyErp/Dashboard": "goToDashboard",
-            "easyErp/DashBoardVacation": "dashBoardVacation",
+            "easyErp/DashBoardVacation(/filter=:filter)": "dashBoardVacation",
             "easyErp/HrDashboard": "hrDashboard",
             "easyErp/projectDashboard": "goToProjectDashboard",
             "easyErp/:contentType": "getList",
@@ -95,8 +95,12 @@ define([
             ;
         },
 
-        dashBoardVacation: function () {
+        dashBoardVacation: function (filter) {
             var self = this;
+
+            if (filter) {
+                filter = JSON.parse(filter);
+            }
 
             if (!this.isAuth) {
                 this.checkLogin(function (success) {
@@ -114,6 +118,7 @@ define([
             function renderDash() {
                 var startTime = new Date();
                 var contentViewUrl = "views/vacationDashboard/index";
+                var topBarViewUrl = "views/vacationDashboard/TopBarView";
 
                 if (self.mainView === null) {
                     self.main("DashBoardVacation");
@@ -121,14 +126,20 @@ define([
                     self.mainView.updateMenu("DashBoardVacation");
                 }
 
-                require([contentViewUrl], function (contentView) {
+                require([contentViewUrl, topBarViewUrl], function (contentView, TopBarView) {
                     var contentview;
+                    var topbarView;
 
                     custom.setCurrentVT('list');
+                    contentview = new contentView({
+                        startTime: startTime,
+                        filter: filter
+                    });
+                    topbarView = new TopBarView();
+                    topbarView.bind('changeDateRange', contentview.changeDateRange, contentview);
 
-                    contentview = new contentView({startTime: startTime});
-
-                    self.changeView(contentview, true);
+                    self.changeView(contentview);
+                    self.changeTopBarView(topbarView);
                 });
             }
         },

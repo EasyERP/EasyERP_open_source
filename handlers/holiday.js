@@ -82,7 +82,7 @@ var Holiday = function (models, event) {
                         user: req.session.uId,
                         date: new Date().toISOString()
                     };
-                    Holiday.findByIdAndUpdate(id, {$set: data}, function (err, response) {
+                    Holiday.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, response) {
                         if (err) {
                             return next(err);
                         }
@@ -116,7 +116,7 @@ var Holiday = function (models, event) {
                             date: new Date().toISOString()
                         };
                         delete data._id;
-                        Holiday.findByIdAndUpdate(id, {$set: data}, cb);
+                        Holiday.findByIdAndUpdate(id, {$set: data}, {new: true}, cb);
                     }, function (err) {
                         if (err) {
                             return next(err);

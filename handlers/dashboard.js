@@ -31,34 +31,105 @@ var wTrack = function (models) {
 
             var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
             var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+            var query = req.query;
+            var employeesArray = [];
+            var filter = query ? query.filter : null;
+            var currentWeek = moment().isoWeek();
+            var currentStartWeek = currentWeek - 1;
+            var currentYear = moment().weekYear();
+            var departmentsArray = [objectId(CONSTANTS.HR_DEPARTMENT_ID),
+                objectId(CONSTANTS.BUSINESS_DEPARTMENT_ID),
+                objectId(CONSTANTS.MARKETING_DEPARTMENT_ID)];
+            var departmentQuery = {
+                $nin: departmentsArray
+            };
+            var employeeQueryForEmployeeByDep;
+
             var weeksArr;
             var week;
             var startDate;
             var endDate;
-
-            var currentWeek = moment().isoWeek();
-            var currentStartWeek = currentWeek - 6;
-            var currentYear = moment().weekYear();
-
+            var _dateStr;
             var i;
 
-            weeksArr = [];
-            startDate = currentYear * 100 + currentStartWeek;
+            if (filter) {
+                if (filter.department && filter.department.value) {
+                    departmentQuery = {
+                        $in: filter.department.value.objectID()
+                    }
+                }
+            }
 
-            for (i = 0; i <= 13; i++) {
-                if (currentStartWeek + i > 53) {
-                    week = currentStartWeek + i - 53;
+            weeksArr = [];
+
+            if (filter && filter.startDate && filter.endDate) {
+                startDate = parseInt(filter.startDate);
+                endDate = parseInt(filter.endDate);
+
+                for (i = startDate; i <= endDate; i++) {
+                    _dateStr = i.toString();
+                    week = _dateStr.substr(-2);
                     weeksArr.push({
-                        dateByWeek: (currentYear + 1) * 100 + week,
-                        week: week,
-                        year: currentYear + 1
+                        dateByWeek: i,
+                        week      : week,
+                        year      : _dateStr.substr(0, 4)
                     });
-                } else {
-                    week = currentStartWeek + i;
-                    weeksArr.push({
-                        dateByWeek: currentYear * 100 + week,
-                        week: week,
-                        year: currentYear
+                }
+            } else {
+                currentWeek = moment().isoWeek();
+                currentStartWeek = currentWeek - 1;
+                currentYear = moment().weekYear();
+
+                startDate = currentYear * 100 + currentStartWeek;
+
+                for (i = 0; i <= 11; i++) {
+                    if (currentStartWeek + i > 53) {
+                        week = currentStartWeek + i - 53;
+                        weeksArr.push({
+                            dateByWeek: (currentYear + 1) * 100 + week,
+                            week      : week,
+                            year      : currentYear + 1
+                        });
+                    } else {
+                        week = currentStartWeek + i;
+                        weeksArr.push({
+                            dateByWeek: currentYear * 100 + week,
+                            week      : week,
+                            year      : currentYear
+                        });
+                    }
+                }
+
+                endDate = weeksArr[weeksArr.length - 1].dateByWeek;
+            }
+
+            employeeQueryForEmployeeByDep = {
+                $and: [{
+                    $or             : [
+                        {
+                            isEmployee: true
+                        }, {
+                            $and: [{
+                                isEmployee: false
+                            }, {
+                                lastFire: {
+                                    $ne : null,
+                                    $gte: startDate
+                                }
+                            }]
+                        }
+                    ],
+                    'department._id': departmentQuery
+                }]
+            };
+
+            if (filter && filter.name) {
+                employeesArray = filter.name.value;
+                employeesArray = employeesArray.objectID();
+
+                if (employeesArray.length) {
+                    employeeQueryForEmployeeByDep['$and'].unshift({
+                        _id: {$in: employeesArray}
                     });
                 }
             }
@@ -66,8 +137,6 @@ var wTrack = function (models) {
             weeksArr = _.sortBy(weeksArr, function (monthObject) {
                 return monthObject.dateByWeek;
             });
-
-            endDate = weeksArr[weeksArr.length - 1].dateByWeek;
 
             function resultMapper(err, result) {
                 var Department = models.get(req.session.lastDb, 'Department', DepartmentSchema);
@@ -92,12 +161,12 @@ var wTrack = function (models) {
 
                 function departmentMapper(department, departmentCb) {
                     var dashDepartment = _.find(dashBoardResult, function (deps) {
-                        if(deps.department == null){
-                            console.log('==================== deps =======================');
+                        if (deps.department == null) {
+                            console.log('==================== department =======================');
                             console.log(deps);
                             console.log('===========================================');
                         }
-                        if(department.department === null){
+                        if (department.department === null) {
                             console.log('===================== department ======================');
                             console.log(department);
                             console.log('===========================================');
@@ -179,14 +248,14 @@ var wTrack = function (models) {
 
                 function sendResponse() {
                     Department.populate(employeesByDep, {
-                        path: 'department',
+                        path  : 'department',
                         select: 'departmentName _id'
                     }, function () {
                         var sortDepartments = [];
 
                         constForView.forEach(function (dep) {
                             employeesByDep.forEach(function (department, index) {
-                                if (employeesByDep[index].department){
+                                if (employeesByDep[index].department) {
                                     if (dep === employeesByDep[index].department.departmentName) {
                                         sortDepartments.push(employeesByDep[index]);
                                     }
@@ -199,9 +268,9 @@ var wTrack = function (models) {
 
                         VacationCache = models.get(req.session.lastDb, 'vacationCache', vacationCacheSchema);
 
-                        VacationCache.findByIdAndUpdate(1, {data: sortDepartments}, {upsert: true}, function(err, res){
+                        VacationCache.findByIdAndUpdate(1, {data: sortDepartments}, {upsert: true, new: true}, function (err, res) {
                             "use strict";
-                            if(err){
+                            if (err) {
                                 console.error(err);
                             }
                         });
@@ -230,11 +299,11 @@ var wTrack = function (models) {
                 Holiday.aggregate([{
                     $project: {
                         dateByWeek: {$add: [{$multiply: [100, '$year']}, '$week']},
-                        day: {$dayOfWeek: '$date'},
-                        date: 1,
-                        comment: 1,
-                        ID: 1,
-                        _id: 0
+                        day       : {$dayOfWeek: '$date'},
+                        date      : 1,
+                        comment   : 1,
+                        ID        : 1,
+                        _id       : 0
                     }
                 }, {
                     $match: {
@@ -275,14 +344,14 @@ var wTrack = function (models) {
                     }
                 }, {
                     $group: {
-                        _id: {_id: '$employee._id', name: '$employee.name'},
+                        _id      : {_id: '$employee._id', name: '$employee.name'},
                         vacations: {$push: '$vacations'}
                     }
                 }, {
                     $project: {
-                        employee: '$_id._id',
+                        employee    : '$_id._id',
                         employeeName: '$_id.name',
-                        vacations: 1
+                        vacations   : 1
                     }
                 }], parallelCb);
             };
@@ -296,49 +365,34 @@ var wTrack = function (models) {
                             $project: {
                                 isEmployee: 1,
                                 department: 1,
-                                isLead: 1,
-                                fire: 1,
-                                hire: 1,
-                                name: 1,
+                                isLead    : 1,
+                                fire      : 1,
+                                hire      : 1,
+                                name      : 1,
                                 /*firedCount: {$size: '$fire'},*/
-                                lastFire: 1
+                                lastFire  : 1
                             }
                         },
                         {
-                            $match: {
-                                /*isEmployee: true,*/
-                                $or: [
-                                    {
-                                        isEmployee: true
-                                    }, {
-                                        $and: [{isEmployee: false}, {
-                                            lastFire: {
-                                                $ne: null,
-                                                $gte: startDate
-                                            }
-                                        } /*{firedCount: {$gt: 0}}*/]
-                                    }
-                                ],
-                                'department._id': {$nin: [objectId(CONSTANTS.HR_DEPARTMENT_ID), objectId(CONSTANTS.BUSINESS_DEPARTMENT_ID), objectId(CONSTANTS.MARKETING_DEPARTMENT_ID)]}
-                            }
+                            $match: employeeQueryForEmployeeByDep
                         }, {
                             $group: {
-                                _id: "$department._id",
+                                _id      : "$department._id",
                                 employees: {
                                     $push: {
                                         isLead: '$isLead',
-                                        fired: '$fire',
-                                        hired: '$hire',
-                                        name: {$concat: ['$name.first', ' ', '$name.last']},
-                                        _id: '$_id'
+                                        fired : '$fire',
+                                        hired : '$hire',
+                                        name  : {$concat: ['$name.first', ' ', '$name.last']},
+                                        _id   : '$_id'
                                     }
                                 }
                             }
                         }, {
                             $project: {
                                 department: '$_id',
-                                employees: 1,
-                                _id: 0
+                                employees : 1,
+                                _id       : 0
                             }
                         }], function (err, employees) {
                         if (err) {
@@ -351,6 +405,29 @@ var wTrack = function (models) {
 
             function dashComposer(parallelCb) {
                 function employeeFinder(waterfallCb) {
+                    var aggregateQuery = [{
+                        $group: {
+                            _id  : '$employee._id',
+                            hours: {$sum: '$worked'}
+                        }
+                    }, {
+                        $match: {
+                            hours: {$gt: 0}
+                        }
+                    }, {
+                        $project: {
+                            _id: 1
+                        }
+                    }];
+
+                    if (employeesArray && employeesArray.length) {
+                        aggregateQuery.unshift({
+                            $match: {
+                                'employee._id': {$in: employeesArray}
+                            }
+                        });
+                    }
+
                     function findEmployee(_employeesIds, inerWaterfallCb) {
                         Employee
                             .aggregate([
@@ -358,21 +435,21 @@ var wTrack = function (models) {
                                     $project: {
                                         isEmployee: 1,
                                         department: 1,
-                                        fire: 1,
+                                        fire      : 1,
                                         firedCount: {$size: '$fire'}
                                     }
                                 },
                                 {
                                     $match: {
                                         /*isEmployee: true,*/
-                                        $or: [
+                                        $or             : [
                                             {
                                                 isEmployee: true
                                             }, {
                                                 $and: [{isEmployee: false}, {firedCount: {$gt: 0}}, {_id: {$in: _employeesIds}}]
                                             }
                                         ],
-                                        'department._id': {$nin: [objectId(CONSTANTS.HR_DEPARTMENT_ID), objectId(CONSTANTS.BUSINESS_DEPARTMENT_ID), objectId(CONSTANTS.MARKETING_DEPARTMENT_ID)]}
+                                        'department._id': departmentQuery
                                     }
                                 }], function (err, employees) {
                                 if (err) {
@@ -387,20 +464,7 @@ var wTrack = function (models) {
                     };
 
                     function groupWtrackByEmployee(inerWaterfallCb) {
-                        WTrack.aggregate([{
-                            $group: {
-                                _id: '$employee._id',
-                                hours: {$sum: '$worked'}
-                            }
-                        }, {
-                            $match: {
-                                hours: {$gt: 0}
-                            }
-                        }, {
-                            $project: {
-                                _id: 1
-                            }
-                        }], function (err, employees) {
+                        WTrack.aggregate(aggregateQuery, function (err, employees) {
                             if (err) {
                                 return inerWaterfallCb(err);
                             }
@@ -423,78 +487,78 @@ var wTrack = function (models) {
                     WTrack.aggregate([
                         {
                             $match: {
-                                'employee._id': {$in: employeesArray},
-                                dateByWeek: {$gte: startDate, $lte: endDate},
-                                'department._id': {$nin: [objectId(CONSTANTS.HR_DEPARTMENT_ID), objectId(CONSTANTS.BUSINESS_DEPARTMENT_ID), objectId(CONSTANTS.MARKETING_DEPARTMENT_ID)]}
+                                'employee._id'  : {$in: employeesArray},
+                                dateByWeek    : {$gte: startDate, $lte: endDate},
+                                'department._id': departmentQuery
                             }
                         }, {
                             $group: {
-                                _id: {
+                                _id  : {
                                     department: '$department._id',
-                                    employee: '$employee._id',
+                                    employee  : '$employee._id',
                                     dateByWeek: '$dateByWeek',
-                                    project: '$project.projectName'
+                                    project   : '$project.projectName'
                                 },
                                 hours: {$sum: '$worked'}
                             }
                         }, {
                             $project: {
                                 department: '$_id.department',
-                                employee: '$_id.employee',
+                                employee  : '$_id.employee',
                                 dateByWeek: '$_id.dateByWeek',
-                                project: '$_id.project',
-                                hours: 1,
-                                _id: 0
+                                project   : '$_id.project',
+                                hours     : 1,
+                                _id       : 0
                             }
                         }, {
                             $group: {
-                                _id: {
+                                _id        : {
                                     department: '$department',
-                                    employee: '$employee',
+                                    employee  : '$employee',
                                     dateByWeek: '$dateByWeek'
                                 },
                                 projectRoot: {$push: '$$ROOT'},
-                                hours: {$sum: '$hours'}
+                                hours      : {$sum: '$hours'}
                             }
                         }, {
                             $project: {
-                                department: '$_id.department',
-                                employee: '$_id.employee',
+                                department : '$_id.department',
+                                employee  : '$_id.employee',
                                 dateByWeek: '$_id.dateByWeek',
                                 projectRoot: 1,
-                                projects: {$size: '$projectRoot'},
-                                hours: 1,
-                                _id: 0
+                                projects   : {$size: '$projectRoot'},
+                                hours      : 1,
+                                _id        : 0
                             }
                         }, {
                             $group: {
-                                _id: {
+                                _id        : {
                                     department: '$department',
-                                    employee: '$employee'
+                                    employee  : '$employee'
                                 },
                                 maxProjects: {$max: '$projects'},
-                                weekData: {$push: '$$ROOT'}
+                                weekData   : {$push: '$$ROOT'}
                             }
                         }, {
                             $project: {
-                                department: '$_id.department',
-                                employee: '$_id.employee',
-                                weekData: 1,
+                                department : '$_id.department',
+                                employee  : '$_id.employee',
+                                weekData  : 1,
                                 maxProjects: 1,
-                                _id: 0
+                                _id        : 0
                             }
                         }, {
                             $group: {
-                                _id: {
+                                _id : {
                                     department: '$department'
                                 },
                                 root: {$push: '$$ROOT'}
                             }
                         }, {
                             $project: {
-                                department: '$_id.department',
+                                department  : '$_id.department',
                                 employeeData: '$root',
-                                _id: 0
+                                _id         : 0
                             }
                         }], function (err, response) {
                         if (err) {
@@ -521,9 +585,9 @@ var wTrack = function (models) {
         this.getFromCache = function (req, res, next) {
             var VacationCache = models.get(req.session.lastDb, 'vacationCache', vacationCacheSchema);
 
-            VacationCache.findById(1, function(err, response){
+            VacationCache.findById(1, function (err, response) {
                 "use strict";
-                if(err){
+                if (err) {
                     return next(err);
                 }
 
@@ -560,27 +624,11 @@ var wTrack = function (models) {
 
                 hiredArr = result[0];
                 firedArr = result[1];
-
-                /* for (var i = 0; i < 12; i++) {
-                 month = startMonth + i;
-                 if (month > 12) {
-                 year = startYear + 1;
-                 month -= 12;
-                 } else {
-                 year = startYear;
-                 }
-                 arrOfDates.push({
-                 month: month,
-                 year: year,
-                 dateByMonth: year * 100 + month
-                 });
-                 }*/
-
                 finalResult = [{
-                    _id: 'hired',
+                    _id : 'hired',
                     data: hiredArr
                 }, {
-                    _id: 'fired',
+                    _id : 'fired',
                     data: firedArr
                 }];
 
@@ -599,9 +647,9 @@ var wTrack = function (models) {
                             $project: {
                                 isEmployee: 1,
                                 department: 1,
-                                isLead: 1,
-                                hire: 1,
-                                name: 1,
+                                isLead    : 1,
+                                hire      : 1,
+                                name      : 1,
                                 firedCount: {$size: '$fire'},
                             }
                         },
@@ -629,13 +677,13 @@ var wTrack = function (models) {
                             $project: {
                                 isEmployee: 1,
                                 department: 1,
-                                isLead: 1,
-                                hireDate: {$add: [{$multiply: [{$year: '$hire'}, 100]}, {$month: '$hire'}]},
-                                name: 1
+                                isLead    : 1,
+                                hireDate  : {$add: [{$multiply: [{$year: '$hire'}, 100]}, {$month: '$hire'}]},
+                                name      : 1
                             }
                         }, {
                             $group: {
-                                _id: '$hireDate',
+                                _id           : '$hireDate',
                                 hiredCount: {$sum: 1},
                                 hiredEmployees: {$addToSet: '$$ROOT'}
                             }
@@ -649,11 +697,11 @@ var wTrack = function (models) {
                         }
 
                         Department.populate(employees, {
-                            path: 'hiredEmployees.department._id',
+                            path  : 'hiredEmployees.department._id',
                             select: '_id departmentName'
-                        }, function(err, deps){
-                            if(err){
-                                return  parallelCb(err);
+                        }, function (err, deps) {
+                            if (err) {
+                                return parallelCb(err);
                             }
 
                             parallelCb(null, employees);
@@ -673,9 +721,9 @@ var wTrack = function (models) {
                             $project: {
                                 isEmployee: 1,
                                 department: 1,
-                                isLead: 1,
-                                fire: 1,
-                                name: 1,
+                                isLead    : 1,
+                                fire      : 1,
+                                name      : 1,
                                 firedCount: {$size: '$fire'},
                             }
                         },
@@ -703,13 +751,13 @@ var wTrack = function (models) {
                             $project: {
                                 isEmployee: 1,
                                 department: 1,
-                                isLead: 1,
-                                fireDate: {$add: [{$multiply: [{$year: '$fire'}, 100]}, {$month: '$fire'}]},
-                                name: 1
+                                isLead    : 1,
+                                fireDate  : {$add: [{$multiply: [{$year: '$fire'}, 100]}, {$month: '$fire'}]},
+                                name      : 1
                             }
                         }, {
                             $group: {
-                                _id: '$fireDate',
+                                _id           : '$fireDate',
                                 firedCount: {$sum: 1},
                                 firedEmployees: {$addToSet: '$$ROOT'}
                             }
@@ -723,14 +771,14 @@ var wTrack = function (models) {
                         }
 
                         Department.populate(employees, {
-                            path: 'firedEmployees.department._id',
+                            path   : 'firedEmployees.department._id',
                             select: '_id departmentName',
                             options: {
                                 lean: true
                             }
-                        }, function(err, deps){
-                            if(err){
-                                return  parallelCb(err);
+                        }, function (err, deps) {
+                            if (err) {
+                                return parallelCb(err);
                             }
 
                             parallelCb(null, employees);

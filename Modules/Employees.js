@@ -1124,7 +1124,7 @@ var Employee = function (event, models) {
                             query = {$set: updateObject};
                         }
 
-                        models.get(req.session.lastDb, 'Employees', employeeSchema).findByIdAndUpdate(_id, query, function (err, result) {
+                        models.get(req.session.lastDb, 'Employees', employeeSchema).findByIdAndUpdate(_id, query, {new: true}, function (err, result) {
                             if (!err) {
                                 res.send(200, {success: 'Employees updated', sequence: result.sequence});
 
@@ -1188,7 +1188,7 @@ var Employee = function (event, models) {
                 query = {$set: updateObject};
             }
 
-            models.get(req.session.lastDb, 'Employees', employeeSchema).findByIdAndUpdate(_id, query, function (err, result) {
+            models.get(req.session.lastDb, 'Employees', employeeSchema).findByIdAndUpdate(_id, query, {new: true}, function (err, result) {
                 if (!err) {
                     if (updateObject.dateBirth || updateObject.contractEnd || updateObject.hired) {
                         event.emit('recalculate', req);

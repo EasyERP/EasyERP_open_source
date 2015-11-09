@@ -443,7 +443,7 @@ var Payment = function (models, event) {
                // invoice.paymentInfo.unTaxed = paid * (1 + invoice.paymentInfo.taxes);
                 invoice.payments.push(payment._id);
 
-                Invoice.findByIdAndUpdate(invoiceId, invoice, function (err, invoice) {
+                Invoice.findByIdAndUpdate(invoiceId, invoice, {new: true}, function (err, invoice) {
                     if (err) {
                         return waterfallCallback(err);
                     }
@@ -712,7 +712,7 @@ var Payment = function (models, event) {
                         }
 
                         delete data._id;
-                        Payment.findByIdAndUpdate(id, {$set: data}, cb);
+                        Payment.findByIdAndUpdate(id, {$set: data}, {new: true}, cb);
                     }, function (err) {
                         if (err) {
                             return next(err);
