@@ -1488,14 +1488,14 @@ input::-ms-clear {
       .columnNameDiv {
         top: 0;
         left: 0;
-        background-color: white;
+        background-color: @bg-main;
         width: 40px;
         z-index: 100;
         .columnName {
           border-width: 0;
           text-align: center;
           height: 17px;
-          border-bottom: 2px solid silver;
+          border-bottom: 2px solid @defaultBgHover-color;
 
           .text {
             width: auto;
@@ -3792,6 +3792,7 @@ table#workflows {
 
 .projectInfoTopBar {
   .top-bar;
+  margin-left: 0;
 }
 .noPadding {
   padding: 0 !important;

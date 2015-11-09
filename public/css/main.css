@@ -339,8 +339,8 @@ th {
   margin: 0;
   display: block;
   float: left;
-  height: 18px;
-  width: 18px;
+  height: 17px;
+  width: 17px;
 }
 .btn-list li a {
   display: block;
@@ -1793,7 +1793,7 @@ input::-ms-clear {
 .kanban .column.fold .columnNameDiv {
   top: 0;
   left: 0;
-  background-color: white;
+  background-color: #303031;
   width: 40px;
   z-index: 100;
 }
@@ -1801,7 +1801,7 @@ input::-ms-clear {
   border-width: 0;
   text-align: center;
   height: 17px;
-  border-bottom: 2px solid silver;
+  border-bottom: 2px solid #565658;
 }
 .kanban .column.fold .columnNameDiv .columnName .text {
   width: auto;
@@ -5143,6 +5143,7 @@ table#workflows tr td.edit-status {
   clear: both;
   margin: 5px 1% 0;
   overflow: hidden;
+  margin-left: 0;
 }
 .projectInfoTopBar h3 {
   margin: 6px 0 0 0;
