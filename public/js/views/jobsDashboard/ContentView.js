@@ -130,6 +130,7 @@ define([
 
             render: function () {
                 this.renderJobs();
+
                 this.$el.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
                 return this;
