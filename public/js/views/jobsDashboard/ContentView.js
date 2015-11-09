@@ -30,7 +30,7 @@ define([
                 var target = e.target;
                 var projectId = $(target).parents("tr").attr("data-id");
                 var subId = "subRow" + projectId;
-                var subRowCheck = $('#' + subId);
+                var subRowCheck = $('.' + subId);
                 var jobContainer = $(target).parents("tr");
                 var icon = $(jobContainer).find('.expand');
 
