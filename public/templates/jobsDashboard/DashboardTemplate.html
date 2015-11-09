@@ -28,7 +28,7 @@
                     <td><%=currencySplitter(project.total.totalInPr.toFixed(2))%></td>
                     <td><%=currencySplitter(project.total.totalNew.toFixed(2))%></td>
                     <td><%=currencySplitter(project.total.totalFinished.toFixed(2))%></td>
-                    <td><%=currencySplitter(project.total.total.toFixed(2))%></td>
+                    <td><%=project.total.total ? currencySplitter(project.total.total.toFixed(2)) : &nbsp%></td>
 
                     <% totalInProgress += project.total.totalInPr%>
                     <% totalNew += project.total.totalNew%>
