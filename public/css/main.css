@@ -681,20 +681,6 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 .list2 .anotherColor {
   background-color: #66b5d4;
 }
-.list2 tfoot tr {
-  border-bottom: 1px solid #7f7f80;
-  background: inherit !important;
-  vertical-align: middle;
-}
-.list2 tfoot td {
-  padding: 3px 6px;
-  line-height: 18px;
-  font-size: 12px;
-  text-align: right;
-}
-.list2 tfoot td span {
-  padding-right: 0;
-}
 .list2 thead tr {
   border-top: 0;
   background: inherit !important;
@@ -839,8 +825,29 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 .list2 tbody tr .icon {
   line-height: 20px;
 }
-.list2 tr:nth-child(odd) {
+.list2 tbody tr.jobsDashboard {
   background-color: #3d3d3e;
+}
+.list2 tbody tr.jobsDashboard td:nth-child(2) {
+  text-align: right;
+  padding-right: 15px;
+}
+.list2 tbody tr.jobsDashboard:hover {
+  background-color: #565658;
+}
+.list2 tfoot tr {
+  border-bottom: 1px solid #7f7f80;
+  background: inherit !important;
+  vertical-align: middle;
+}
+.list2 tfoot td {
+  padding: 0 6px;
+  line-height: 20px;
+  font-size: 12px;
+  text-align: right;
+}
+.list2 tfoot td span {
+  padding-right: 0;
 }
 .list2 tr:hover {
   background-color: #565658;
@@ -848,20 +855,6 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 .list2 .anotherColor {
   background-color: #66b5d4;
 }
-.list2 tfoot tr {
-  border-bottom: 1px solid #7f7f80;
-  background: inherit !important;
-  vertical-align: middle;
-}
-.list2 tfoot td {
-  padding: 3px 6px;
-  line-height: 18px;
-  font-size: 12px;
-  text-align: right;
-}
-.list2 tfoot td span {
-  padding-right: 0;
-}
 .list2 thead tr {
   border-top: 0;
   background: inherit !important;
@@ -1006,8 +999,29 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 .list2 tbody tr .icon {
   line-height: 20px;
 }
-.list2 tr:nth-child(odd) {
+.list2 tbody tr.jobsDashboard {
   background-color: #3d3d3e;
+}
+.list2 tbody tr.jobsDashboard td:nth-child(2) {
+  text-align: right;
+  padding-right: 15px;
+}
+.list2 tbody tr.jobsDashboard:hover {
+  background-color: #565658;
+}
+.list2 tfoot tr {
+  border-bottom: 1px solid #7f7f80;
+  background: inherit !important;
+  vertical-align: middle;
+}
+.list2 tfoot td {
+  padding: 0 6px;
+  line-height: 20px;
+  font-size: 12px;
+  text-align: right;
+}
+.list2 tfoot td span {
+  padding-right: 0;
 }
 .list2 tr:hover {
   background-color: #565658;
@@ -2169,7 +2183,7 @@ select:not([type="checkbox"]):focus {
 .current-selected {
   font-size: 12px;
   text-decoration: none;
-  line-height: 26px !important;
+  line-height: 20px !important;
 }
 .newSelectList {
   position: absolute !important;
@@ -5706,20 +5720,6 @@ ul.dialog-tabs li.right button {
 .list .anotherColor {
   background-color: #66b5d4;
 }
-.list tfoot tr {
-  border-bottom: 1px solid #7f7f80;
-  background: inherit !important;
-  vertical-align: middle;
-}
-.list tfoot td {
-  padding: 3px 6px;
-  line-height: 18px;
-  font-size: 12px;
-  text-align: right;
-}
-.list tfoot td span {
-  padding-right: 0;
-}
 .list thead tr {
   border-top: 0;
   background: inherit !important;
@@ -5864,8 +5864,29 @@ ul.dialog-tabs li.right button {
 .list tbody tr .icon {
   line-height: 20px;
 }
-.list tr:nth-child(odd) {
+.list tbody tr.jobsDashboard {
   background-color: #3d3d3e;
+}
+.list tbody tr.jobsDashboard td:nth-child(2) {
+  text-align: right;
+  padding-right: 15px;
+}
+.list tbody tr.jobsDashboard:hover {
+  background-color: #565658;
+}
+.list tfoot tr {
+  border-bottom: 1px solid #7f7f80;
+  background: inherit !important;
+  vertical-align: middle;
+}
+.list tfoot td {
+  padding: 0 6px;
+  line-height: 20px;
+  font-size: 12px;
+  text-align: right;
+}
+.list tfoot td span {
+  padding-right: 0;
 }
 .list tr:hover {
   background-color: #565658;
