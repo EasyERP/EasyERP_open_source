@@ -29,10 +29,10 @@
                 <tr id="project" data-id="<%=project._id%>">
                     <td class="expand">+</td>
                     <td><a href='#easyErp/Projects/form/<%=project._id%>'><%=project.projectName%></a></td>
-                    <td><%=currencySplitter(project.total.totalInPr.toFixed(2))%></td>
-                    <td><%=currencySplitter(project.total.totalNew.toFixed(2))%></td>
-                    <td><%=currencySplitter(project.total.totalFinished.toFixed(2))%></td>
-                    <td><%=project.total.total ? currencySplitter(project.total.total.toFixed(2)) : &nbsp%></td>
+                    <td><%= project.total.totalInPr ? currencySplitter(project.total.totalInPr.toFixed(2)) : '&nbsp'%></td>
+                    <td><%= project.total.totalNew ? currencySplitter(project.total.totalNew.toFixed(2)) : '&nbsp'%></td>
+                    <td><%= project.total.totalFinished ? currencySplitter(project.total.totalFinished.toFixed(2)) : '&nbsp'%></td>
+                    <td><%= project.total.total ? currencySplitter(project.total.total.toFixed(2)) : '&nbsp'%></td>
 
                     <% totalInProgress += project.total.totalInPr%>
                     <% totalNew += project.total.totalNew%>
