@@ -323,6 +323,8 @@ var Project = function (models) {
                 var total = 0;
                 var totalObj = {};
                 var jobs = (project.budget && project.budget.projectTeam) ? project.budget.projectTeam : [];
+                var minDate;
+                var maxDate;
 
                 project.total = {};
 
@@ -330,6 +332,18 @@ var Project = function (models) {
                 totalObj.totalNew = 0;
                 totalObj.totalFinished = 0;
                 totalObj.total = 0;
+                totalObj.revenueSum = 0;
+                totalObj.costSum = 0;
+                totalObj.profitSum = 0;
+                totalObj.hoursSum = 0;
+                totalObj.markUp = 0;
+                totalObj.radio = 0;
+                totalObj.minDate = 0;
+                totalObj.maxDate = 0;
+                totalObj.rateSum = {
+                    byDev: 0,
+                    byQA : 0
+                };
 
                 jobs.forEach(function(job){
                     if (job.workflow.name === "In Progress"){
@@ -341,12 +355,36 @@ var Project = function (models) {
                     }
 
                    total += job.budget.budgetTotal.costSum;
+
+                    minDate = totalObj.minDate;
+                    maxDate = totalObj.maxDate;
+
+                    totalObj.revenueSum += job.budget.budgetTotal.revenueSum;
+                    totalObj.costSum += job.budget.budgetTotal.costSum;
+                    totalObj.profitSum += job.budget.budgetTotal.profitSum;
+                    totalObj.hoursSum += job.budget.budgetTotal.hoursSum;
+                    totalObj.minDate = (job.budget.budgetTotal.minDate <= minDate) ? job.budget.budgetTotal.minDate : minDate;
+                    totalObj.maxDate = (job.budget.budgetTotal.maxDate >= maxDate) ? job.budget.budgetTotal.maxDate : maxDate;
+                    totalObj.rateSum.byDev += job.budget.budgetTotal.rateSum.byDev;
+                    totalObj.rateSum.byQA += job.budget.budgetTotal.rateSum.byQA;
                 });
 
                 totalObj.totalInPr = totalInPr;
                 totalObj.totalNew = totalNew;
                 totalObj.totalFinished = totalFinished;
                 totalObj.total = total;
+
+                totalObj.markUp = ((totalObj.profitSum / totalObj.costSum) * 100);
+
+                if (!isFinite(totalObj.markUp)){
+                    totalObj.markUp = 0;
+                }
+
+                totalObj.radio = ((totalObj.profitSum / totalObj.revenueSum) * 100);
+
+                if (!isFinite(totalObj.radio)){
+                    totalObj.radio = 0;
+                }
 
                 project.total = totalObj;
             });

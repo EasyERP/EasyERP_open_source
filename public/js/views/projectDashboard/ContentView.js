@@ -196,8 +196,8 @@ define([
             render: function () {
                 this.$el.html(this.template());
                 this.renderProjectPM();
-                this.renderProjectStatus();
-                this.renderProjectEnd();
+                //this.renderProjectStatus();
+                //this.renderProjectEnd();
                 this.$el.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             }
         });
