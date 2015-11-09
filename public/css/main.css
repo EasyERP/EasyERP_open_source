@@ -5124,7 +5124,6 @@ table#workflows tr td.edit-status {
   height: 30px;
   clear: both;
   margin: 5px 1% 0;
-  overflow: hidden;
 }
 #top-bar h3 {
   margin: 6px 0 0 0;
@@ -5183,7 +5182,6 @@ table#workflows tr td.edit-status {
   height: 30px;
   clear: both;
   margin: 5px 1% 0;
-  overflow: hidden;
   margin-left: 0;
 }
 .projectInfoTopBar h3 {
