@@ -1,27 +1,35 @@
-/**
- * Created by soundstorm on 19.06.15.
- */
 define([
         './filterCollection'
     ],
     function (ParentCollection) {
         var EditableCollection = ParentCollection.extend({
 
-            initialize: function(){
-                this.on( "change", this.change, this);
+            initialize: function () {
+                this.on("change", this.change, this);
             },
 
-            save: function(){
+            save: function () {
                 var self = this;
-                var ModelsForCreate = Backbone.Collection.extend({
-                    url: this.url
-                });
-                var ModelsForUpdate = Backbone.Collection.extend({
-                    url: this.url
-                });
-                var modelsForUpdate;
-                var modelsForCreate;
+                var model;
+                var models = [];
+                var modelObject;
+                var newModel;
 
+                var syncObject = {
+                    trigger: this.trigger,
+                    url    : this.url,
+                    toJSON : function () {
+                        return models;
+                    }
+                };
+
+                var saveObject = {
+                    trigger: this.trigger,
+                    url    : this.url,
+                    toJSON : function () {
+                        return newModel;
+                    }
+                };
 
                 var options = {
                     success: function (model, resp, xhr) {
@@ -34,25 +42,23 @@ define([
                     }
                 };
 
-                modelsForCreate = this.filter(function(model) {
-                   return !model.id;
-                });
+                for (var i = this.models.length - 1; i >= 0; i--) {
+                    model = this.models[i];
 
-                modelsForUpdate = this.filter(function(model) {
-                    return model.hasChanged();
-                });
+                    if (model && model.id && model.hasChanged()) {
+                        modelObject = model.changed;
+                        modelObject._id = model.id;
+                        models.push(modelObject);
+                    } else if (model && !model.id) {
+                        newModel = model.changed;
+                        newModel._id = model.id;
+                        Backbone.sync("create", saveObject, options);
+                    }
+                }
 
-                modelsForCreate = new ModelsForCreate(modelsForCreate);
-                modelsForUpdate = new ModelsForUpdate(modelsForUpdate);
-
-                if(modelsForCreate.length) {
-                    modelsForCreate.sync("create", modelsForCreate, options);
-                };
-
-
-                if(modelsForUpdate.length) {
-                    Backbone.sync("patch", modelsForUpdate, updatedOptions);
-                };
+                if (models.length) {
+                    Backbone.sync("patch", syncObject, updatedOptions);
+                }
             }
         });
 

@@ -9,6 +9,7 @@ var Filters = function (models) {
     var customerPaymentsSchema = mongoose.Schemas['Payment'];
     var QuotationSchema = mongoose.Schemas['Quotation'];
     var productSchema = mongoose.Schemas['Products'];
+    var PayRollSchema = mongoose.Schemas['PayRoll'];
     var _ = require('../node_modules/underscore');
     var async = require('async');
     var moment = require('../public/js/libs/moment/moment');
@@ -27,6 +28,7 @@ var Filters = function (models) {
         var customerPayments = models.get(lastDB, 'Payment', customerPaymentsSchema);
         var Product = models.get(lastDB, 'Products', productSchema);
         var Quotation = models.get(lastDB, 'Quotation', QuotationSchema);
+        var PayRoll = models.get(lastDB, 'PayRoll', PayRollSchema);
         var startDate;
         var endDate;
         var dateRangeObject;
@@ -91,6 +93,7 @@ var Filters = function (models) {
                 salesQuotation  : getSalesQuotation,
                 salesOrder      : getSalesOrders,
                 Order           : getOrdersFiltersValues,
+                Payroll         : getPayRollFiltersValues,
                 DashVacation    : getDashVacationFiltersValues
             },
             function (err, result) {
@@ -927,8 +930,63 @@ var Filters = function (models) {
             });
         }
 
-    };
+        function getPayRollFiltersValues(callback) {
+            PayRoll.aggregate([
+                {
+                    $group: {
+                        _id       : null,
+                        'year'    : {
+                            $addToSet: {
+                                _id : '$year',
+                                name: '$year'
+                            }
+                        },
+                        'month'   : {
+                            $addToSet: {
+                                _id : '$month',
+                                name: '$month'
+                            }
+                        },
+                        'employee': {
+                            $addToSet: '$employee'
+                        },
+                        'dataKey' : {
+                            $addToSet: {
+                                _id : '$dataKey',
+                                name: '$dataKey'
+                            }
+                        },
+                    }
+                }
+            ], function (err, result) {
+                if (err) {
+                    callback(err);
+                }
 
+                if (!result || result.length === 0) {
+                    return callback(null, []);
+                }
+
+                result = result[0];
+
+                if (!result.dataKey) {
+                    return callback(null, result);
+                }
+
+                result.dataKey = _.map(result.dataKey, function (element) {
+                    element.name = element.name.toString();
+
+                    return {
+                        _id : element._id,
+                        name: element.name.substring(4, 6) + '/' + element.name.substring(0, 4)
+                    }
+                });
+
+                callback(null, result);
+
+            });
+        }
+    };
 };
 
 module.exports = Filters;

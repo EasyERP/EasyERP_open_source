@@ -1,35 +1,76 @@
-﻿<div id="searchContainer"></div>
-<div>
-    <table class="list salary-list">
-        <col width="2%">
-        <col width="2%">
-        <col width="5%">
-        <col width="5%">
-        <col width="10%">
-	    <col width="10%">
-	    <col width="10%">
-	    <col width="10%">
-	    <col width="10%">
-        <col width="10%">
-        <col width="10%">
-
+﻿<div>
+    <table class="list payRoll-list">
+        <colgroup class="borders" span="12">
+            <col span="1" width="2%">
+            <col span="1" width="2%">
+            <col span="1" width="27%">
+            <col span="1" width="7%">
+            <col span="1" width="7%">
+            <col span="1" width="7%">
+            <col span="1" width="7%">
+            <col span="1" width="7%">
+            <col span="1" width="7%">
+            <col span="1" width="7%">
+            <col span="1" width="7%">
+            <col span="1" width="13%">
+        </colgroup>
         <thead>
-            <tr>
-                <th><input type="checkbox" id="check_all" /></th>
-                <th></th>
-                <th class="oe_sortable" data-sort="month">Month<span class="arrow down">7</span><span class="arrow up">v</span></th>
-                <th class="oe_sortable" data-sort="year">Year<span class="arrow down">7</span><span class="arrow up">v</span></th>
-                <th class="oe_sortable" data-sort="calc.salary">CalcSalary<span class="arrow down">7</span><span class="arrow up">v</span></th>
-                <th class="oe_sortable" data-sort="calc.onCard">CalcOnCard<span class="arrow down">7</span><span class="arrow up">v</span></th>
-                <th class="oe_sortable" data-sort="paid.onCard">PaidOnCard<span class="arrow down">7</span><span class="arrow up">v</span></th>
-                <th class="oe_sortable" data-sort="diff.onCard">DiffOnCard<span class="arrow down">7</span><span class="arrow up">v</span></th>
-                <th class="oe_sortable" data-sort="calc.onCash">CalcOnCash<span class="arrow down">7</span><span class="arrow up">v</span></th>
-                <th class="oe_sortable" data-sort="paid.onCash">PaidOnCash<span class="arrow down">7</span><span class="arrow up">v</span></th>
-                <th class="oe_sortable" data-sort="diff.onCash">DiffOnCash<span class="arrow down">7</span><span class="arrow up">v</span></th>
-
-            </tr>
+        <tr>
+            <th rowspan="2"><span>#</span></th>
+            <th rowspan="2"><input type="checkbox" id="check_all"/></th>
+            <th rowspan="2" class="oe_sortable_sub" data-sort="employee.name">Complete Name<span
+                    class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <th rowspan="2">Month</th>
+            <th rowspan="2" class="oe_sortable_sub" data-sort="baseSalary">Base Sallary<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <th colspan="3">Cash</th>
+            <th colspan="3">Card</th>
+            <th rowspan="2">Total difference</th>
+        </tr>
+        <tr>
+            <th class="oe_sortable_sub" data-sort="calc.onCash">Calc<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <th class="oe_sortable_sub" data-sort="paid.onCash">Paid<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <th class="oe_sortable_sub" data-sort="diff.onCash">Diff<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <th class="oe_sortable_sub" data-sort="calc.onCard">Calc<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <th class="oe_sortable_sub" data-sort="paid.onCard">Paid<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <th class="oe_sortable_sub" data-sort="diff.onCard">Diff<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+        </tr>
         </thead>
-        <tbody id="listTable"></tbody>
-        <!--<tfoot id="listTotal"></tfoot>-->
+
+        <tbody>
+        <tr>
+            <td id="payRoll-Table" colspan="12">
+                <div class="scrollit">
+                    <table class="list" id="payRoll-listTable">
+                        <colgroup class="borders" span="12">
+                            <col span="1" width="2%">
+                            <col span="1" width="2%">
+                            <col span="1" width="27%">
+                            <col span="1" width="7%">
+                            <col span="1" width="7%">
+                            <col span="1" width="7%">
+                            <col span="1" width="7%">
+                            <col span="1" width="7%">
+                            <col span="1" width="7%">
+                            <col span="1" width="7%">
+                            <col span="1" width="7%">
+                            <col span="1" width="12.5%">
+                        </colgroup>
+                        <tbody id="payRoll-TableBody">
+
+                        </tbody>
+                    </table>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+        <tfoot id="payRoll-listTotal"></tfoot>
     </table>
 </div>

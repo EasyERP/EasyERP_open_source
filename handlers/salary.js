@@ -1,4 +1,3 @@
-
 var mongoose = require('mongoose');
 var moment = require('../public/js/libs/moment/moment');
 var Salary = function (event, models) {
@@ -14,7 +13,7 @@ var Salary = function (event, models) {
     var self = this;
     var objectId = mongoose.Types.ObjectId;
 
-    this.remove = function (req, res, next) {
+    /*Done*/this.remove = function (req, res, next) {
         var id = req.params.id;
         var data = req.headers;
         var Salary = models.get(req.session.lastDb, 'Salary', SalarySchema);
@@ -61,7 +60,7 @@ var Salary = function (event, models) {
         });
     };
 
-    this.putchModel = function (req, res, next) {
+    /*Done*/this.putchModel = function (req, res, next) {
         var id = req.params.id;
         var data = mapObject(req.body);
         var Salary = models.get(req.session.lastDb, 'Salary', SalarySchema);
@@ -96,7 +95,7 @@ var Salary = function (event, models) {
         }
     };
 
-    this.putchBulk = function (req, res, next) {
+    /*Done*/this.putchBulk = function (req, res, next) {
         var body = req.body;
         var uId;
         var Salary = models.get(req.session.lastDb, 'Salary', SalarySchema);
@@ -145,7 +144,7 @@ var Salary = function (event, models) {
         }
     };
 
-    this.create = function (req, res, next) {
+    /*Done*/this.create = function (req, res, next) {
         var Salary = models.get(req.session.lastDb, 'Salary', SalarySchema);
         var SalaryCash = models.get(req.session.lastDb, 'SalaryCash', SalaryCashSchema);
         var body = req.body;
@@ -334,7 +333,6 @@ var Salary = function (event, models) {
             getSalaryFilter(req, res, next);
         }
     };
-
 
     this.getById = function (req, res, next) {
         var id = req.params.id;

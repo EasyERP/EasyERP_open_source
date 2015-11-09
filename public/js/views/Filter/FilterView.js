@@ -23,7 +23,7 @@ define([
 
             events: {
                 "mouseover .search-content"            : 'showSearchContent',
-                "click .search-content"    : 'showSearchContent',
+                "click .search-content"                : 'showSearchContent',
                 "click .filter-dialog-tabs .filterTabs": 'showFilterContent',
                 'click #applyFilter'                   : 'applyFilter',
                 'click .condition li'                  : 'conditionClick',
@@ -40,7 +40,7 @@ define([
                 this.viewType = options.viewType;
                 this.constantsObject = CONSTANTS.FILTERS[this.parentContentType];
 
-                App.filter = {};
+                //App.filter = {};
 
                 this.currentCollection = {};
                 this.searchRessult = [];
@@ -383,7 +383,7 @@ define([
                 filterGroupContainer.toggleClass('activeGroup');
             },
 
-            renderFilterContent: function () {
+            renderFilterContent: function (options) {
                 var filtersGroupContainer;
                 var self = this;
                 var keys = Object.keys(this.constantsObject);
@@ -392,6 +392,7 @@ define([
                 var filterView;
                 var groupStatus;
                 var groupContainer;
+                var groupOptions;
 
                 filtersGroupContainer = this.$el.find('#filtersContent');
 
@@ -413,20 +414,23 @@ define([
                         if (!self.$el.find('#' + filterView).length) {
                             filtersGroupContainer.append(containerString);
                         }
-                        self.renderGroup(key, filterView, filterBackend, groupStatus);
+                        groupOptions = options && options[filterView] ? options[filterView] : null;
+
+                        self.renderGroup(key, filterView, filterBackend, groupStatus, groupOptions);
                     });
                 }
 
                 this.showFilterIcons(App.filter);
             },
 
-            renderGroup: function (key, filterView, filterBackend, groupStatus) {
+            renderGroup: function (key, filterView, filterBackend, groupStatus, groupOptions) {
                 var itemView;
                 var idString = '#' + filterView + 'FullContainer';
                 var container = this.$el.find(idString);
                 var status;
                 var self = this;
                 var mapData;
+                var sortOptions;
 
                 if (!App.filtersValues || !App.filtersValues[self.parentContentType]) {
                     return setTimeout(function () {
@@ -437,6 +441,11 @@ define([
                 this.filterObject = App.filtersValues[this.parentContentType];
 
                 this.currentCollection[filterView] = new filterValuesCollection(this.filterObject[filterView]);
+
+                if (groupOptions && groupOptions.sort) {
+                    sortOptions = groupOptions.sort;
+                    this.currentCollection[filterView].sortBy(sortOptions);
+                }
 
                 mapData = _.map(this.currentCollection[filterView].toJSON(), function (dataItem) {
                     return {
@@ -465,7 +474,8 @@ define([
                     status           : status,
                     groupName        : key,
                     groupViewName    : filterView,
-                    currentCollection: this.currentCollection[filterView]
+                    currentCollection: this.currentCollection[filterView],
+                    sortOptions          : sortOptions
                 });
 
                 container.html('');
@@ -511,7 +521,7 @@ define([
 
             },
 
-            render: function () {
+            render: function (options) {
                 var self = this;
                 var currentEl = this.$el;
                 var searchInput;
@@ -520,8 +530,7 @@ define([
 
                 currentEl.html(this.template({filterCollection: this.constantsObject}));
 
-
-                this.renderFilterContent();
+                this.renderFilterContent(options);
                 this.showFilterIcons(filters);
                 this.renderSavedFilters();
 
