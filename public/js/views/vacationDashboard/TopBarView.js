@@ -12,7 +12,15 @@ define([
 
             events: {
                 "click #updateDate": "changeDateRange",
-                "click .dateRange" : "toggleDateRange"
+                "click .dateRange" : "toggleDateRange",
+                "click #cancelBtn" : "cancel"
+            },
+
+            cancel: function(e){
+                var targetEl = $(e.target);
+                var ul = targetEl.closest('ul.frameDetail');
+
+                ul.addClass('hidden');
             },
 
             changeDateRange: function (e) {

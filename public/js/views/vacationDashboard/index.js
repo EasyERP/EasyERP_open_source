@@ -374,10 +374,10 @@ define([
             filter.endDate = endDate;
 
             if (dashCollection) {
-                dashCollection.unbind();
                 dashCollection = this.dashCollection = this.fetchData({
                     filter: filter
                 });
+                dashCollection.unbind();
                 dashCollection.on('reset sort', this.render, this);
             } else {
                 this.render();
