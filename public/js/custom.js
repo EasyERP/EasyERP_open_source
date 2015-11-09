@@ -107,6 +107,7 @@ define([
                     case CONTENT_TYPES.HOLIDAY:
                     case CONTENT_TYPES.VACATION:
                     case CONTENT_TYPES.CAPACITY:
+                    case CONTENT_TYPES.JOBSDASHBOARD:
                         App.currentViewType = 'list';
                         break;
                     case CONTENT_TYPES.APPLICATIONS:
@@ -151,6 +152,7 @@ define([
                     case CONTENT_TYPES.HOLIDAY:
                     case CONTENT_TYPES.VACATION:
                     case CONTENT_TYPES.CAPACITY:
+                    case CONTENT_TYPES.JOBSDASHBOARD:
                         App.currentViewType = 'list';
                         break;
                     case CONTENT_TYPES.APPLICATIONS:

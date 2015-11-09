@@ -1,0 +1,85 @@
+<div id="jobsContent">
+
+<div class="projectInProgress">
+        <div>
+            <table class="list task-list">
+                <colgroup>
+                    <col width="2%">
+                    <col width="40%">
+                </colgroup>
+                <% var totalInProgress = 0;%>
+                <% var totalNew = 0;%>
+                <% var totalFinished = 0;%>
+                <% var totalCost = 0;%>
+                <% var jobsCount = 0;%>
+                <% var projectCount = 0;%>
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th class="oe_sortable" data-sort="projectName">Project Name<span class="arrow down">7</span><span class="arrow up">v</span></th>
+                    <th class="oe_sortable" data-sort="budget">In Progress<span class="arrow down">7</span><span class="arrow up">v</span></th>
+                    <th class="oe_sortable" data-sort="budget">New<span class="arrow down">7</span><span class="arrow up">v</span></th>
+                    <th class="oe_sortable" data-sort="budget">Finished<span class="arrow down">7</span><span class="arrow up">v</span></th>
+                    <th class="oe_sortable" data-sort="budget">Total Cost<span class="arrow down">7</span><span class="arrow up">v</span></th>
+                </tr>
+                </thead>
+                <% collection.forEach(function(project, count){ %>
+                <% var projectTeam = (project.budget && project.budget.projectTeam) ? project.budget.projectTeam : [];%>
+
+                <tr id="project" data-id="<%=project._id%>">
+                    <td class="expand">+</td>
+                    <td><a href='#easyErp/Projects/form/<%=project._id%>'><%=project.projectName%></a></td>
+                    <td><%= project.total.totalInPr ? currencySplitter(project.total.totalInPr.toFixed(2)) : '&nbsp'%></td>
+                    <td><%= project.total.totalNew ? currencySplitter(project.total.totalNew.toFixed(2)) : '&nbsp'%></td>
+                    <td><%= project.total.totalFinished ? currencySplitter(project.total.totalFinished.toFixed(2)) : '&nbsp'%></td>
+                    <td><%= project.total.total ? currencySplitter(project.total.total.toFixed(2)) : '&nbsp'%></td>
+
+                    <% totalInProgress += project.total.totalInPr%>
+                    <% totalNew += project.total.totalNew%>
+                    <% totalFinished +=project.total.totalFinished %>
+                    <% totalCost += project.total.total%>
+                    <% projectCount ++%>
+                </tr>
+
+                    <%  projectTeam.forEach(function(job, index){ %>
+
+                     <tr  data-id="jobs" id="subRow<%=project._id%>" class="subRow<%=project._id%> jobsDashboard" style="display: none;">
+                         <td><%=index + 1%></td>
+                         <td><%= job.name %></td>
+                     <% if (job.workflow.name === "In Progress") { %>
+
+                         <td><%=currencySplitter( job.budget.budgetTotal.costSum.toFixed(2))%></td>
+                         <td>&nbsp</td>
+                         <td>&nbsp</td>
+                         <td>&nbsp</td>
+                     <% } else if (job.workflow.name === "New") { %>
+                         <td>&nbsp</td>
+                         <td><%= currencySplitter(job.budget.budgetTotal.costSum.toFixed(2))%></td>
+                         <td>&nbsp</td>
+                         <td>&nbsp</td>
+                     <% } else if (job.workflow.name === "Finished") {%>
+                         <td>&nbsp</td>
+                         <td>&nbsp</td>
+                         <td><%= currencySplitter(job.budget.budgetTotal.costSum.toFixed(2))%></td>
+                         <td>&nbsp</td>
+                     <% } %>
+
+                     </tr>
+                <% jobsCount ++ %>
+                    <%  }); %>
+                </tr>
+                <% }) %>
+
+                <tfoot>
+                  <td><%= jobsCount %></td>
+                  <td><%= projectCount %></td>
+                  <td><%= currencySplitter(totalInProgress.toFixed(2))%></td>
+                  <td><%= currencySplitter(totalNew.toFixed(2))%></td>
+                  <td><%= currencySplitter(totalFinished.toFixed(2))%></td>
+                  <td><%= currencySplitter(totalCost.toFixed(2))%></td>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+</div>
