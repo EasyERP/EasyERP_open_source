@@ -835,18 +835,18 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 .list2 tbody tr.jobsDashboard:hover {
   background-color: #565658;
 }
-.list2 yugf tfoot tr {
+.list2 tfoot tr {
   border-bottom: 1px solid #7f7f80;
   background: inherit !important;
   vertical-align: middle;
 }
-.list2 yugf tfoot td {
-  padding: 3px 6px;
-  line-height: 18px;
+.list2 tfoot td {
+  padding: 0 6px;
+  line-height: 20px;
   font-size: 12px;
   text-align: right;
 }
-.list2 yugf tfoot td span {
+.list2 tfoot td span {
   padding-right: 0;
 }
 .list2 tr:hover {
@@ -1009,18 +1009,18 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 .list2 tbody tr.jobsDashboard:hover {
   background-color: #565658;
 }
-.list2 yugf tfoot tr {
+.list2 tfoot tr {
   border-bottom: 1px solid #7f7f80;
   background: inherit !important;
   vertical-align: middle;
 }
-.list2 yugf tfoot td {
-  padding: 3px 6px;
-  line-height: 18px;
+.list2 tfoot td {
+  padding: 0 6px;
+  line-height: 20px;
   font-size: 12px;
   text-align: right;
 }
-.list2 yugf tfoot td span {
+.list2 tfoot td span {
   padding-right: 0;
 }
 .list2 tr:hover {
@@ -2183,7 +2183,7 @@ select:not([type="checkbox"]):focus {
 .current-selected {
   font-size: 12px;
   text-decoration: none;
-  line-height: 26px !important;
+  line-height: 20px !important;
 }
 .newSelectList {
   position: absolute !important;
@@ -5874,18 +5874,18 @@ ul.dialog-tabs li.right button {
 .list tbody tr.jobsDashboard:hover {
   background-color: #565658;
 }
-.list yugf tfoot tr {
+.list tfoot tr {
   border-bottom: 1px solid #7f7f80;
   background: inherit !important;
   vertical-align: middle;
 }
-.list yugf tfoot td {
-  padding: 3px 6px;
-  line-height: 18px;
+.list tfoot td {
+  padding: 0 6px;
+  line-height: 20px;
   font-size: 12px;
   text-align: right;
 }
-.list yugf tfoot td span {
+.list tfoot td span {
   padding-right: 0;
 }
 .list tr:hover {
