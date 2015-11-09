@@ -27,7 +27,7 @@
                 <% var projectTeam = (project.budget && project.budget.projectTeam) ? project.budget.projectTeam : [];%>
 
                 <tr id="project" data-id="<%=project._id%>">
-                    <td class="expand">+</td>
+                    <td class="expand"><%= projectTeam.length ? '+' : '&nbsp' %> </td>
                     <td><a href='#easyErp/Projects/form/<%=project._id%>'><%=project.projectName%></a></td>
                     <td><%= project.total.totalInPr ? currencySplitter(project.total.totalInPr.toFixed(2)) : '&nbsp'%></td>
                     <td><%= project.total.totalNew ? currencySplitter(project.total.totalNew.toFixed(2)) : '&nbsp'%></td>

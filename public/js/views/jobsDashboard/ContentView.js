@@ -110,7 +110,7 @@ define([
                 } else {
                     this.collection = new contentCollection({});
 
-                    custom.cashToApp('projectInfo', this.collection);
+                    custom.cacheToApp('projectInfo', this.collection);
                 }
 
                 this.collection.bind('reset', this.renderContent, this);
@@ -119,7 +119,7 @@ define([
             renderContent: function () {
                 var template = this.template;
 
-                custom.cashToApp('projectInfo', this.collection);
+                custom.cacheToApp('projectInfo', this.collection);
 
                 this.$el.html(template({
                     collection: this.collection.toJSON(),
