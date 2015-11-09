@@ -3,6 +3,10 @@
 <div class="projectInProgress">
         <div>
             <table class="list task-list">
+                <colgroup>
+                    <col width="2%">
+                    <col width="40%">
+                </colgroup>
                 <thead>
                 <tr>
                     <th>#</th>
@@ -26,7 +30,7 @@
 
                     <%  projectTeam.forEach(function(job){ %>
 
-                     <tr  data-id="jobs" id="subRow<%=project._id%>" class="subRow<%=project._id%>" style="display: none;">
+                     <tr  data-id="jobs" id="subRow<%=project._id%>" class="subRow<%=project._id%> jobsDashboard" style="display: none;">
                          <td>&nbsp</td>
                          <td><%= job.name %></td>
                      <% if (job.workflow.name === "In Progress") { %>

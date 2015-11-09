@@ -6,23 +6,6 @@
   .anotherColor {
     background-color: @forInfo-caption-color2;
   }
-  tfoot {
-    tr {
-      border-bottom: 1px solid @defaultBorderColor;
-      background: inherit !important;
-      vertical-align: middle;
-    }
-    td {
-      padding: 3px 6px;
-      line-height: 18px;
-      font-size: @font-size;
-      text-align: right;
-      span {
-        padding-right: 0;
-      }
-    }
-  }
-
   thead {
     tr {
       border-top: 0;
@@ -186,11 +169,40 @@
       .icon {
         line-height: 20px;
       }
+      &.jobsDashboard {
+        background-color: @defaultBgColorOdd;
+        td {
+          &:nth-child(2) {
+            text-align: right;
+            padding-right: 15px;
+          }
+        }
+        &:hover {
+          background-color: @defaultBgColorHover;
+        }
+      }
+    }
+  }
+
+  tfoot {
+    tr {
+      border-bottom: 1px solid @defaultBorderColor;
+      background: inherit !important;
+      vertical-align: middle;
+    }
+    td {
+      padding: 3px 6px;
+      line-height: 18px;
+      font-size: @font-size;
+      text-align: right;
+      span {
+        padding-right: 0;
+      }
     }
   }
 
   tr:nth-child(odd) {
-    background-color: @defaultBgColorOdd;
+    //background-color: @defaultBgColorOdd;
   }
 
   tr:hover {
