@@ -835,18 +835,18 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 .list2 tbody tr.jobsDashboard:hover {
   background-color: #565658;
 }
-.list2 tfoot tr {
+.list2 yugf tfoot tr {
   border-bottom: 1px solid #7f7f80;
   background: inherit !important;
   vertical-align: middle;
 }
-.list2 tfoot td {
+.list2 yugf tfoot td {
   padding: 3px 6px;
   line-height: 18px;
   font-size: 12px;
   text-align: right;
 }
-.list2 tfoot td span {
+.list2 yugf tfoot td span {
   padding-right: 0;
 }
 .list2 tr:hover {
@@ -1009,18 +1009,18 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 .list2 tbody tr.jobsDashboard:hover {
   background-color: #565658;
 }
-.list2 tfoot tr {
+.list2 yugf tfoot tr {
   border-bottom: 1px solid #7f7f80;
   background: inherit !important;
   vertical-align: middle;
 }
-.list2 tfoot td {
+.list2 yugf tfoot td {
   padding: 3px 6px;
   line-height: 18px;
   font-size: 12px;
   text-align: right;
 }
-.list2 tfoot td span {
+.list2 yugf tfoot td span {
   padding-right: 0;
 }
 .list2 tr:hover {
@@ -5874,18 +5874,18 @@ ul.dialog-tabs li.right button {
 .list tbody tr.jobsDashboard:hover {
   background-color: #565658;
 }
-.list tfoot tr {
+.list yugf tfoot tr {
   border-bottom: 1px solid #7f7f80;
   background: inherit !important;
   vertical-align: middle;
 }
-.list tfoot td {
+.list yugf tfoot td {
   padding: 3px 6px;
   line-height: 18px;
   font-size: 12px;
   text-align: right;
 }
-.list tfoot td span {
+.list yugf tfoot td span {
   padding-right: 0;
 }
 .list tr:hover {
