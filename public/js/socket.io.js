@@ -24,7 +24,7 @@ define([
 		}
 
 		projectCollection = new ProjectCollection();
-		custom.cashToApp('projectInfo', projectCollection);
+		custom.cacheToApp('projectInfo', projectCollection);
 
 		return projectCollection;
 	}
@@ -62,7 +62,7 @@ define([
 		}
 
 		dashCollection = new VacationDashboard();
-		custom.cashToApp('dashboardVacation', dashCollection);
+		custom.cacheToApp('dashboardVacation', dashCollection);
 
 		return dashCollection;
 	}

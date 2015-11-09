@@ -131,11 +131,12 @@ define([
                     var topbarView;
 
                     custom.setCurrentVT('list');
+
+                    topbarView = new TopBarView();
                     contentview = new contentView({
                         startTime: startTime,
                         filter: filter
                     });
-                    topbarView = new TopBarView();
                     topbarView.bind('changeDateRange', contentview.changeDateRange, contentview);
 
                     self.changeView(contentview);

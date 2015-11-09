@@ -29,7 +29,7 @@ define([
                 startTime.text(startDate);
                 endTime.text(endDate);
 
-                custom.cashToApp('vacationDashDateRange', {
+                custom.cacheToApp('vacationDashDateRange', {
                     startDate  : startDate,
                     endDate    : endDate
                 });
@@ -105,7 +105,7 @@ define([
 
                 this.bindDataPickers(startDate, endDate);
 
-                custom.cashToApp('vacationDashDateRange', {
+                custom.cacheToApp('vacationDashDateRange', {
                     startDate  : startDate,
                     endDate    : endDate
                 });

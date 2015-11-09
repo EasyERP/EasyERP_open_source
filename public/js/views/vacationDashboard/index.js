@@ -35,7 +35,7 @@ define([
             var socket = App.socket;
 
             this.startTime = options.startTime;
-            this.filter = options.filter;
+            this.filter = options.filter || custom.retriveFromCash('DashVacation.filter');
 
             year = moment().isoWeekYear();
             week = moment().isoWeek();
@@ -54,6 +54,7 @@ define([
             }
 
             dashCollection = this.dashCollection = custom.retriveFromCash('dashboardVacation');
+            custom.cacheToApp('DashVacation.filter', this.filter);
 
             if (!dashCollection) {
                 dashCollection = this.dashCollection = this.fetchData(options);
@@ -67,7 +68,6 @@ define([
             var dashCollection;
 
             dashCollection = new vacationDashboard(options);
-            custom.cashToApp('dashboardVacation', dashCollection);
 
             return dashCollection;
         },
@@ -144,9 +144,9 @@ define([
 
         isWorking: function (employee, week) {
             var date;
-            var firedArr = employee.get('fired');
+            var firedArr = employee.fired;
             var firedLength = firedArr.length;
-            var hiredArr = employee.get('hired');
+            var hiredArr = employee.hired;
             var year = week.dateByWeek.toString().slice(0, 4);
             var _week = week.dateByWeek.toString().slice(4);
 
@@ -366,9 +366,9 @@ define([
                 });
             }
 
-            custom.cashToApp('vacationDashWeeksArr', weeksArr);
+            custom.cacheToApp('vacationDashWeeksArr', weeksArr);
 
-            filter = this.filter || {};
+            filter = this.filter || custom.retriveFromCash('DashVacation.filter') || {};
 
             filter.startDate = startDate;
             filter.endDate = endDate;
@@ -384,6 +384,7 @@ define([
             }
 
             this.filter = filter;
+            custom.cacheToApp('DashVacation.filter', this.filter);
         },
 
         defaultDataGenerator: function () {
@@ -413,15 +414,15 @@ define([
                     }
                 }
 
-                custom.cashToApp('vacationDashWeeksArr', weeksArr);
+                custom.cacheToApp('vacationDashWeeksArr', weeksArr);
             }
 
             return weeksArr;
         },
 
         showFilteredPage: function (filter) {
-            var dashCollection = this.dashCollection;
-            var thisFilter = this.filter;
+            var dashCollection;
+            var thisFilter = this.filter || custom.retriveFromCash('DashVacation.filter');
 
             this.$el.find('.thumbnail').remove();
             this.startTime = new Date();
@@ -438,25 +439,33 @@ define([
                 this.filter = {};
             }
 
-            dashCollection.unbind();
+            custom.cacheToApp('DashVacation.filter', this.filter);
+
             dashCollection = this.dashCollection = this.fetchData({
                 filter: this.filter
             });
+            dashCollection.unbind();
             dashCollection.on('reset sort', this.render, this);
         },
 
         render: function (options) {
             var currentEl = this.$el;
             var defaultData = options ? !options.defaultData : true;
-            var dashboardData = this.dashCollection.toJSON();
-            var filter = this.filter;
+            var dashboardData = this.dashCollection;
+            var filter = this.filter || custom.retriveFromCash('DashVacation.filter');
             var weeksArr;
             var self = this;
             var statictics;
             var url = '#easyErp/DashBoardVacation';
 
+            if ('toJSON' in dashboardData) {
+                dashboardData.unbind();
+                dashboardData = dashboardData.toJSON();
+            }
+
             $('title').text(this.contentType);
-            this.dashCollection.unbind();
+
+            custom.cacheToApp('dashboardVacation', this.dashCollection);
 
             if (defaultData) {
                 weeksArr = this.defaultDataGenerator();
@@ -492,13 +501,13 @@ define([
 
                 this.filterView.render();
             } else {
-                if (filter) {
-                    url += '/filter=' + encodeURIComponent(JSON.stringify(filter));
-
-                    Backbone.history.navigate(url);
-                }
-
                 this.filterView.renderFilterContent();
+            }
+
+            if (filter) {
+                url += '/filter=' + encodeURIComponent(JSON.stringify(filter));
+
+                Backbone.history.navigate(url);
             }
 
             return this;

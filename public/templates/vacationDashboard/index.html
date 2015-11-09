@@ -34,7 +34,7 @@
 
         </tr>
         <% department.employees.forEach(function(employee, index){ %>
-        <tr class="<%= department.department ? department.department._id: '' %>" data-id="<%= employee.get('_id')%>"
+        <tr class="<%= department.department ? department.department._id: '' %>" data-id="<%= employee._id%>"
             data-content="employee">
             <td class="checkDashboard">
                             <span>
@@ -43,16 +43,16 @@
             </td>
             <td class="employee">
                             <span>
-                                <%= employee.get('name') || '&nbsp' %>
-                                <%if (employee.get('maxProjects')) {%>
+                                <%= employee.name || '&nbsp' %>
+                                <%if (employee.maxProjects) {%>
                                 <a class="icon employeesRow">5</a>
                                 <%}%>
                             </span>
             </td>
             <td class="dashboardWeek isLead">
-                <%= leadComparator(employee.get('isLead'))%>
+                <%= leadComparator(employee.isLead)%>
             </td>
-            <%employee.get('weekData').forEach(function(week){%>
+            <%employee.weekData.forEach(function(week){%>
             <td class="dashboardWeek <%= week.vacations ? 'withVacation' : ''%> <%=getCellClass(week, self, employee)%>">
                 <%if(week.holidays){%>
                 <span class="viewCount"><%=week.holidays || 0%>d</span>
@@ -66,13 +66,13 @@
             </td>
             <%})%>
         </tr>
-        <% for(var i = employee.get('maxProjects'); i > 0; i-- ){%>
-        <tr class="projectsFor<%= department.department ? department.department._id: '' %> employeeProjects <%= employee.get('_id')%>"
-            data-content="project" data-employee="<%=employee.get('_id')%>">
+        <% for(var i = employee.maxProjects; i > 0; i-- ){%>
+        <tr class="projectsFor<%= department.department ? department.department._id: '' %> employeeProjects <%= employee._id%>"
+            data-content="project" data-employee="<%=employee._id%>">
             <td>&nbsp;</td>
             <td>&nbsp;</td>
             <td>&nbsp;</td>
-            <%employee.get('weekData').forEach(function(week){%>
+            <%employee.weekData.forEach(function(week){%>
             <% if(week.projectRoot) {%>
             <td data-date="<%=week.dateByWeek%>"
                 data-project="<%=week.projectRoot[i-1] ? week.projectRoot[i-1].project : ''%>" class="wTrackInfo">

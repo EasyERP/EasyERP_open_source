@@ -11,7 +11,7 @@ define([
         'models/UsersModel',
         'dataService'
     ],
-    function (ContentFilterTemplate, savedFilterTemplate, searchGroupLiTemplate, valuesView, savedFiltersView, filterValuesCollection, Custom, Common, CONSTANTS, usersModel, dataService) {
+    function (ContentFilterTemplate, savedFilterTemplate, searchGroupLiTemplate, valuesView, savedFiltersView, filterValuesCollection, custom, Common, CONSTANTS, usersModel, dataService) {
         var FilterView;
         FilterView = Backbone.View.extend({
             el                 : '#searchContainer',
@@ -515,12 +515,14 @@ define([
                 var self = this;
                 var currentEl = this.$el;
                 var searchInput;
+                var filterName = this.parentContentType + '.filter';
+                var filters = custom.retriveFromCash(filterName) || App.filter;
 
                 currentEl.html(this.template({filterCollection: this.constantsObject}));
 
 
                 this.renderFilterContent();
-                this.showFilterIcons(App.filter);
+                this.showFilterIcons(filters);
                 this.renderSavedFilters();
 
                 $.widget("custom.catcomplete", $.ui.autocomplete, {

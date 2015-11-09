@@ -7,6 +7,17 @@ define([
 ], function (dateformat, common, CONTENT_TYPES, dataService, moment) {
     'use strict';
 
+    var Store = function() {
+        this.save = function(name, data) {
+            localStorage.setItem(name, JSON.stringify(data));
+        };
+        this.find = function(name) {
+            var store = localStorage.getItem(name);
+
+            return (store && JSON.parse(store)) || null;
+        }
+    };
+
     var runApplication = function (success) {
         if (!Backbone.history.fragment) {
             Backbone.history.start({silent: true});
@@ -229,15 +240,16 @@ define([
         chartControl.showDescProject(true, 'n,d');
     };
 
-    function cashToApp(key, data) {
+    function cacheToApp(key, data) {
         App.cashedData = App.cashedData || {};
         App.cashedData[key] = data;
+        App.storage.save(key, data);
     }
 
     function retriveFromCash(key) {
         App.cashedData = App.cashedData || {};
 
-        return App.cashedData[key];
+        return App.cashedData[key] || App.storage.find(key);
     }
 
     var savedFilters = function (contentType, uIFilter) {
@@ -367,6 +379,8 @@ define([
         return result;
     };
 
+    App.storage = new Store();
+
     return {
         runApplication          : runApplication,
         changeContentViewType   : changeContentViewType,
@@ -376,7 +390,7 @@ define([
         setCurrentVT            : setCurrentVT,
         getCurrentCL            : getCurrentCL,
         setCurrentCL            : setCurrentCL,
-        cashToApp               : cashToApp,
+        cacheToApp               : cacheToApp,
         retriveFromCash         : retriveFromCash,
         savedFilters            : savedFilters,
         getFiltersForContentType: getFiltersForContentType,
