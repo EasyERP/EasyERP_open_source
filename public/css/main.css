@@ -2265,6 +2265,7 @@ h3 {
 body {
   font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
   font-size: 12px;
+  height: 100%;
 }
 dl {
   clear: both;
@@ -5137,6 +5138,46 @@ table#workflows tr td.edit-status {
 #top-bar.banned {
   border-bottom: 0;
 }
+#top-bar .vocationFilter {
+  position: relative;
+  float: left;
+  margin-left: 15px;
+}
+#top-bar .vocationFilter .dateFilter {
+  width: 200px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  border: 1px solid #7f7f80;
+  background-color: #303031;
+  padding: 0 5px;
+}
+#top-bar .vocationFilter .dateFilter li {
+  font-size: 12px;
+  text-align: center;
+  color: #cdcdcd;
+}
+#top-bar .vocationFilter .dateFilter li #startTime,
+#top-bar .vocationFilter .dateFilter li #endTime {
+  line-height: 30px;
+}
+#top-bar .vocationFilter .dateFilter li .frameDetail label {
+  display: inline-block;
+  min-width: 15%;
+  margin-right: 2%;
+  text-align: left;
+}
+#top-bar .vocationFilter .dateFilter li .frameDetail input {
+  width: 75%;
+}
+#top-bar .vocationFilter .dateFilter .customTime label + input[type='text'] {
+  margin-bottom: 5px;
+}
+#top-bar .vocationFilter .dateFilter .buttons {
+  margin: 15px 0;
+  padding: 0 15%;
+}
 .projectInfoTopBar {
   display: block;
   height: 30px;
@@ -5156,6 +5197,46 @@ table#workflows tr td.edit-status {
 }
 .projectInfoTopBar.banned {
   border-bottom: 0;
+}
+.projectInfoTopBar .vocationFilter {
+  position: relative;
+  float: left;
+  margin-left: 15px;
+}
+.projectInfoTopBar .vocationFilter .dateFilter {
+  width: 200px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  border: 1px solid #7f7f80;
+  background-color: #303031;
+  padding: 0 5px;
+}
+.projectInfoTopBar .vocationFilter .dateFilter li {
+  font-size: 12px;
+  text-align: center;
+  color: #cdcdcd;
+}
+.projectInfoTopBar .vocationFilter .dateFilter li #startTime,
+.projectInfoTopBar .vocationFilter .dateFilter li #endTime {
+  line-height: 30px;
+}
+.projectInfoTopBar .vocationFilter .dateFilter li .frameDetail label {
+  display: inline-block;
+  min-width: 15%;
+  margin-right: 2%;
+  text-align: left;
+}
+.projectInfoTopBar .vocationFilter .dateFilter li .frameDetail input {
+  width: 75%;
+}
+.projectInfoTopBar .vocationFilter .dateFilter .customTime label + input[type='text'] {
+  margin-bottom: 5px;
+}
+.projectInfoTopBar .vocationFilter .dateFilter .buttons {
+  margin: 15px 0;
+  padding: 0 15%;
 }
 .noPadding {
   padding: 0 !important;
