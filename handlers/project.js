@@ -340,7 +340,7 @@ var Project = function (models) {
                         totalFinished += job.budget.budgetTotal.costSum;
                     }
 
-                   total += totalInPr + totalNew + totalFinished;
+                   total += job.budget.budgetTotal.costSum;
                 });
 
                 totalObj.totalInPr = totalInPr;
