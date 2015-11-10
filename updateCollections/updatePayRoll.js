@@ -70,7 +70,7 @@ query.exec(function (error, _res) {
         if (rayRoll) {
             objectToSave = {
                 type: {
-                    _id: "5641d8d62ddf27015008f047",
+                    _id: "564219842ddf27015008f04b",
                     name: "Salary Cash"
                 },
                 calc: rayRoll.calc.onCash,
@@ -81,7 +81,7 @@ query.exec(function (error, _res) {
             delete newPayRoll._id;
             delete newPayRoll.baseSalary;
             newPayRoll.type = {};
-            newPayRoll.type._id =  "5641d8de2ddf27015008f048";
+            newPayRoll.type._id =  "564219892ddf27015008f04c";
             newPayRoll.type.name = "Salary Card";
             newPayRoll.calc = rayRoll.calc.onCard;
             newPayRoll.paid = rayRoll.paid ? rayRoll.paid.onCard : 0;
