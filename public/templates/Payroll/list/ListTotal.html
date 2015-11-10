@@ -1,7 +1,6 @@
 <tr>
-    <td colspan="4">Total</td>
-    <td data-cash="<%=model.calc.salary%>" class="total_calc_salary money"><%=currencySplitter(model.calc.salary.toString())%></td>
-    <td data-cash="<%=model.calc.onCash%>" class="total_calc_onCash cash money"><%=currencySplitter(model.calc.onCash.toString())%></td>
+    <td colspan="5">Total</td>
+    <td data-cash="<%=model.calc.onCash%>" class="total_calc_salary money"><%=currencySplitter(model.calc.onCash.toString())%></td>
     <td data-cash="<%=model.paid.onCash%>" class="total_paid_onCash cash money"><%=currencySplitter(model.paid.onCash.toString())%></td>
 
     <td data-cash="<%=model.diff.onCash%>" class="total_diff_onCash
@@ -9,23 +8,6 @@
         negativeMoney"><%=currencySplitter((model.diff.onCash * (-1)).toString())%></td>
     <%} else {%>
         money"><%=currencySplitter(model.diff.onCash.toString())%></td>
-    <%}%>
-
-    <td data-cash="<%=model.calc.onCard%>" class="total_calc_onCard card money"><%=currencySplitter(model.calc.onCard.toString())%></td>
-    <td data-cash="<%=model.paid.onCard%>" class="total_paid_onCard card money"><%=currencySplitter(model.paid.onCard.toString())%></td>
-
-    <td data-cash="<%=model.diff.onCard%>" class="total_diff_onCard
-    <%if (model.diff.onCard < 0) {%>
-        negativeMoney"><%=currencySplitter((model.diff.onCard * (-1)).toString())%></td>
-    <%} else {%>
-    money"><%=currencySplitter(model.diff.onCard.toString())%></td>
-    <%}%>
-
-    <td data-cash="<%=model.diff.total%>" class="total_diff
-    <%if (model.diff.total < 0) {%>
-        negativeMoney"><%=currencySplitter((model.diff.total * (-1)).toString())%></td>
-    <%} else {%>
-        money"><%=currencySplitter(model.diff.total.toString())%></td>
     <%}%>
 </tr>
 

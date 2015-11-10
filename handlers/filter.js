@@ -956,6 +956,12 @@ var Filters = function (models) {
                                 name: '$dataKey'
                             }
                         },
+                        'type': {
+                            $addToSet: {
+                                _id : '$type._id',
+                                name: '$type.name'
+                            }
+                        }
                     }
                 }
             ], function (err, result) {

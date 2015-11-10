@@ -721,6 +721,7 @@ define([
                             newCollection: newCollection
                         });
 
+                        topbarView.bind('generateEvent', contentview.generate, contentview);
                         topbarView.bind('createEvent', contentview.createItem, contentview);
                         topbarView.bind('editEvent', contentview.editItem, contentview);
                         topbarView.bind('saveEvent', contentview.saveItem, contentview);

@@ -155,7 +155,7 @@ var Capacity = function (models) {
 
             var queryObject = {
                 hire: {
-                    $not: {$size: 0},
+                    $not: {$size: 0}
                 }
             }
 

@@ -51,6 +51,7 @@ module.exports = function (app, mainDb) {
     var capacityRouter = require('./capacity')(models);
     var payRollRouter = require('./payroll')(models);
     var importFileRouter = require('./importFile')(models);
+    var paymentTypeRouter = require('./paymentType')(models);
     var jobsRouter = require('./jobs')(models, event);
 
     var requestHandler = require("../requestHandler.js")(app, event, mainDb);
@@ -95,6 +96,7 @@ module.exports = function (app, mainDb) {
     app.use('/capacity', capacityRouter);
     app.use('/payroll', payRollRouter);
     app.use('/jobs', jobsRouter);
+    app.use('/paymentType', paymentTypeRouter);
     app.get('/getDBS', function (req, res) {
         res.send(200, {dbsNames: dbsNames});
     });

@@ -53,6 +53,7 @@ module.exports = (function () {
     require('./hoursCash.js');
     require('./capacity.js');
     require('./jobs.js');
-    require('./wTrackInvoiceOld.js'); //TODO remove this row
+   // require('./wTrackInvoiceOld.js'); //TODO remove this row
     require('./payRoll.js');
+    require('./paymentType.js');
 })();

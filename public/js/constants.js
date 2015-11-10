@@ -184,7 +184,7 @@ define([], function () {
             'Type'       : {
                 view   : 'type',
                 backend: 'type'
-            },
+            }
         },
         customerPayments: {
             'Assigned'   : {
@@ -334,6 +334,10 @@ define([], function () {
             'Employee': {
                 view   : 'employee',
                 backend: 'employee._id'
+            },
+            'Payment Type': {
+                view   : 'type',
+                backend: 'type._id'
             },/*
             'Month'   : {
                 view   : 'month',
@@ -346,7 +350,7 @@ define([], function () {
             'Data Key'    : {
                 view   : 'dataKey',
                 backend: 'dataKey'
-            },
+            }
         }
     };
 

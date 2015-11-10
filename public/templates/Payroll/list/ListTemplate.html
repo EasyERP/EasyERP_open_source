@@ -4,44 +4,22 @@
     <td class="notForm"><input id="<%=model._id%>" type="checkbox" value="<%=model._id%>" class="checkbox" /></td>
     <td class="editable" data-content="employee"><%=model.employee ? model.employee.name : ''%></td>
     <td><%=model.month + '/' + model.year%></td>
-    <td data-type="input" class="editable autoCalc calc money" data-content="salary" data-cash="<%=model.baseSalary%>"><%=currencySplitter(model.baseSalary.toString())%></td>
-    <td data-type="input" class="editable autoCalc cash calc money" data-content="onCash" data-cash="<%=model.calc.onCash%>"><%=currencySplitter(model.calc.onCash.toString())%></td>
+    <td class="editable" data-content="paymentType"><%=model.type.name%></td>
 
-    <td data-type="input" data-content="onCash" data-cash="<%=model.paid.onCash%>" class="editable autoCalc cash paid
-    <%if (model.paid.onCash) {%>
-        money"><%=currencySplitter(model.paid.onCash.toString())%></td>
+    <td data-type="input" class="editable autoCalc cash calc money" data-content="onCash" data-cash="<%=model.calc%>"><%=currencySplitter(model.calc.toString())%></td>
+
+    <td data-type="input" data-content="onCash" data-cash="<%=model.paid%>" class="editable autoCalc cash paid
+    <% if (model.paid) {%>
+        money"><%=currencySplitter(model.paid.toString())%></td>
     <%} else {%>
     "></td>
     <%}%>
 
-    <td data-content="onCash" data-cash="<%=model.diff.onCash%>" class="diff
-    <%if (model.diff.onCash < 0) {%>
-        negativeMoney"><%=currencySplitter((model.diff.onCash * (-1)).toString())%></td>
+    <td data-content="onCash" data-cash="<%=model.diff%>" class="diff
+    <% if (model.diff < 0) { %>
+        negativeMoney"><%=currencySplitter((model.diff * (-1)).toString())%></td>
     <%} else {%>
-    money"><%=currencySplitter(model.diff.onCash.toString())%></td>
-    <%}%>
-
-    <td data-type="input" class="editable autoCalc card calc money" data-content="onCard" data-cash="<%=model.calc.onCard%>"><%=currencySplitter(model.calc.onCard.toString())%></td>
-
-    <td data-content="onCard" data-cash="<%=model.paid.onCard%>" data-type="input" class="editable autoCalc card paid
-    <%if (model.paid.onCard) {%>
-        money"><%=currencySplitter(model.paid.onCard.toString())%></td>
-    <%} else {%>
-    "></td>
-    <%}%>
-
-    <td data-content="onCard" data-cash="<%=model.diff.onCard%>" class="diff
-    <%if (model.diff.onCard < 0) {%>
-        negativeMoney"><%=currencySplitter((model.diff.onCard * (-1)).toString())%></td>
-    <%} else {%>
-    money"><%=currencySplitter(model.diff.onCard.toString())%></td>
-    <%}%>
-
-    <td data-content="total" data-cash="<%=model.diff.total%>" class="diff
-    <%if (model.diff.total < 0) {%>
-        negativeMoney"><%=currencySplitter((model.diff.total * (-1)).toString())%></td>
-    <%} else {%>
-    money"><%=currencySplitter(model.diff.total.toString())%></td>
+    money"><%=currencySplitter(model.diff.toString())%></td>
     <%}%>
 </tr>
 <% }) %>

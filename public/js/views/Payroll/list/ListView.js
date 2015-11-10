@@ -1,6 +1,7 @@
 define([
         'views/listViewBase',
         'views/Filter/FilterView',
+        'views/Payroll/generate/GenerateView',
         'text!templates/Payroll/list/ListHeader.html',
         'text!templates/Payroll/list/ListTemplate.html',
         'text!templates/Payroll/list/cancelEdit.html',
@@ -17,7 +18,7 @@ define([
         'helpers'
     ],
 
-    function (listViewBase, filterView, headerTemplate, rowTemplate, cancelEditTemplate, createView, totalTemplate, editCollection, monthCollection, employeesCollection, currentModel, populate, dataService, async, moment, helpers) {
+    function (listViewBase, filterView, GenerateView, headerTemplate, rowTemplate, cancelEditTemplate, createView, totalTemplate, editCollection, monthCollection, employeesCollection, currentModel, populate, dataService, async, moment, helpers) {
         var payRollListView = listViewBase.extend({
             el            : '#content-holder',
             contentType   : 'Payroll',
@@ -36,8 +37,11 @@ define([
                 "click .newSelectList li": "chooseOption",
                 "change .autoCalc"       : "autoCalc",
                 "change .editable"       : "setEditable",
-                /*"click .oe_sortable_sub"                           : "goSort",*/
                 "keydown input.editing " : "keyDown"
+            },
+
+            generate: function(){
+                new GenerateView({});
             },
 
             initialize: function (options) {
@@ -64,68 +68,6 @@ define([
                     this.setChangedValueToModel();
                 }
             },
-
-            /*goSort: function (e) {
-             e.preventDefault();
-             var target$ = $(e.target);
-             var currentParrentSortClass = target$.attr('class');
-             var sortClass = currentParrentSortClass.split(' ')[1];
-             var sortField = target$.attr('data-sort');
-             var sortConst = 1;
-
-             if (!sortClass) {
-             target$.addClass('sortDn');
-             sortClass = "sortDn";
-             }
-             switch (sortClass) {
-             case "sortDn":
-             {
-             target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
-             target$.removeClass('sortDn').addClass('sortUp');
-             sortConst = 1;
-             }
-             break;
-             case "sortUp":
-             {
-             target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
-             target$.removeClass('sortUp').addClass('sortDn');
-             sortConst = -1;
-             }
-             break;
-             }
-
-             this.sortByOrder({orderField: sortField, order: sortConst});
-
-             this.renderTable();
-             },*/
-
-            /*sortByOrder: function (options) {
-             var collection;
-             var order = options.order || 1;
-             var orderField = options.orderField || 'employee.name';
-
-             collection = this.model.get('employeesArray');
-             collection = _.sortBy(collection, function (model) {
-             var orderField1;
-             var orderField2;
-             var fullField = orderField.split(".");
-
-             orderField1 = fullField[0];
-             orderField2 = fullField[1];
-
-             if (orderField2) {
-             return model[orderField1][orderField2];
-             } else {
-             return model[orderField1];
-             }
-             });
-
-             if (order < 0) {
-             collection.reverse();
-             }
-
-             this.model.set('employeesArray', collection);
-             },*/
 
             autoCalc: function (e) {
                 var el = $(e.target);
@@ -293,28 +235,17 @@ define([
 
                 var startData = {
                     dataKey   : dataKey,
-                    baseSalary: 0,
+                    type: "",
                     month     : month,
                     year      : year,
-                    diff      : {
-                        onCash: 0,
-                        onCard: 0,
-                        total : 0
-                    },
-                    paid      : {
-                        onCash: 0,
-                        onCard: 0
-                    },
-                    calc      : {
-                        onCash: 0,
-                        onCard: 0,
-                        salary: 0
-                    },
+                    diff      : 0,
+                    paid      : 0,
+                    calc      : 0,
                     employee  : {
                         name: '',
                         _id : null
                     }
-                }
+                };
 
                 var model = new currentModel(startData);
 
@@ -636,7 +567,7 @@ define([
                                         changedAttr.calc = calc;
                                     }
 
-                                    calc[editedElementContent] = editedElementValue;
+                                    calc = editedElementValue;
                                     changedAttr['calc'] = calc;
                                 }
                             } else if (editedCol.hasClass('paid')) {
@@ -644,8 +575,9 @@ define([
                                     changedAttr.paid = paid;
                                 }
 
-                                paid[editedElementContent] = editedElementValue;
+                                paid = editedElementValue;
                                 changedAttr['paid'] = paid;
+                                changedAttr['diff'] = paid - calc;
                             }
                         }
                     }
@@ -678,7 +610,9 @@ define([
 
                 if (dataContent === 'employee') {
                     populate.showSelect(e, prev, next, this);
-                } else if (!isInput) {
+                } else if (dataContent === 'paymentType') {
+                    populate.showSelect(e, prev, next, this);
+                }else if (!isInput) {
                     tempContainer = target.text();
                     inputHtml = '<input class="editing" type="text" data-value="' +
                         tempContainer + '" value="' + tempContainer +
@@ -690,6 +624,7 @@ define([
 
                     insertedInput = target.find('input');
                     insertedInput.focus();
+                    insertedInput[0].setSelectionRange(0, insertedInput.val().length);
                 }
 
                 return false;
@@ -704,6 +639,11 @@ define([
                     });
 
                     content.responseObj['#employee'] = employees;
+                });
+
+                dataService.getData("/paymentType/", null, function (paymentType) {
+
+                    content.responseObj['#paymentType'] = paymentType;
                 });
             },
 
@@ -761,6 +701,17 @@ define([
                     employee.name = target.text();
 
                     changedAttr.employee = employee;
+
+                    this.hideNewSelect();
+                    this.setEditable(targetElement);
+
+                    return false;
+                } else if (elementType === '#paymentType'){
+                    tr.find('[data-content="paymentType"]').text(element.name);
+
+                    changedAttr.type = {};
+                    changedAttr.type._id = element._id;
+                    changedAttr.type.name = element.name;
 
                     this.hideNewSelect();
                     this.setEditable(targetElement);

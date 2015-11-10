@@ -15,7 +15,8 @@ define([
                 "click #top-bar-deleteBtn": "deleteEvent",
                 "click #top-bar-saveBtn": "saveEvent",
                 "click #top-bar-editBtn": "editEvent",
-                "click #top-bar-createBtn": "createEvent"
+                "click #top-bar-createBtn": "createEvent",
+                "click #top-bar-generate": "generateEvent"
             },
 
             changeContentViewType: function (e) {
@@ -31,6 +32,11 @@ define([
             createEvent: function (event) {
                 event.preventDefault();
                 this.trigger('createEvent');
+            },
+
+            generateEvent: function (event) {
+                event.preventDefault();
+                this.trigger('generateEvent');
             },
 
             render: function () {
