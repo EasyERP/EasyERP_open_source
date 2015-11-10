@@ -4,12 +4,13 @@
 define([
         "text!templates/jobsDashboard/DashboardHeader.html",
         "text!templates/jobsDashboard/DashboardTemplate.html",
+        "text!templates/jobsDashboard/FooterDashboard.html",
         'collections/Projects/projectInfoCollection',
         "custom",
         "dataService",
         "helpers"
     ],
-    function (DashboardHeader, DashboardTemplate, contentCollection, custom, dataService, helpers) {
+    function (DashboardHeader, DashboardTemplate, FooterDashboard, contentCollection, custom, dataService, helpers) {
         var ContentView = Backbone.View.extend({
             contentType: "Dashboard",
             actionType: "Content",
@@ -99,6 +100,7 @@ define([
 
             renderJobs: function () {
                 var template = _.template(DashboardTemplate);
+                var footer = _.template(FooterDashboard);
 
                 if (App.cashedData && App.cashedData.projectInfo) {
                     this.collection = custom.retriveFromCash('projectInfo');
@@ -108,6 +110,11 @@ define([
                         startNumber: 0,
                         currencySplitter: helpers.currencySplitter
                     }));
+
+                    this.$el.find('#footer').html(footer({
+                        collection: this.collection.toJSON(),
+                        currencySplitter: helpers.currencySplitter,
+                    }))
                 } else {
                     this.collection = new contentCollection({});
 
@@ -119,6 +126,7 @@ define([
 
             renderContent: function () {
                 var template = _.template(DashboardTemplate);
+                var footer = _.template(FooterDashboard);
 
                 custom.cacheToApp('projectInfo', this.collection);
 
@@ -127,6 +135,12 @@ define([
                     startNumber: 0,
                     currencySplitter: helpers.currencySplitter
                 }));
+
+                this.$el.find('#footer').html(footer({
+                    collection: this.collection.toJSON(),
+                    currencySplitter: helpers.currencySplitter,
+                }))
+
             },
 
             render: function () {
