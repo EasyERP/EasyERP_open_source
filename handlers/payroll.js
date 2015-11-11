@@ -268,24 +268,26 @@ var PayRoll = function (models) {
                 var waterfallTasks = [checkFilter, getResult, calcTotal];
 
                 function checkFilter(callback) {
-                    if (filter && filter.dataKey) {
-                        return callback(null, filter);
-                    }
+                    //if (filter && filter.dataKey) {
+                    //    return callback(null, filter);
+                    //}
 
-                    dataKeyQuery.exec(function (err, model) {
-                        if (err) {
-                            return callback(err);
-                        }
+                    //dataKeyQuery.exec(function (err, model) {
+                    //    if (err) {
+                    //        return callback(err);
+                    //    }
+                    //
+                    //    filter = {};
+                    //
+                    //    filter.dataKey = {
+                    //        key  : 'dataKey',
+                    //        value: [model.toJSON().dataKey]
+                    //    }
+                    //
+                    //    return callback(null, filter);
+                    //})
 
-                        filter = {};
-
-                        filter.dataKey = {
-                            key  : 'dataKey',
-                            value: [model.toJSON().dataKey]
-                        }
-
-                        return callback(null, filter);
-                    })
+                    callback(null, filter)
                 }
 
                 function getResult(filter, callback) {
@@ -321,7 +323,9 @@ var PayRoll = function (models) {
                             return model.get('dataKey');
                         })
                         .map(function (value, key) {
-                            return {
+                            var obj = {};
+
+                            obj[key] = {
                                 calc: {
                                     onCash: sum(_.pluck(value, "calc"))
                                 },
@@ -331,11 +335,17 @@ var PayRoll = function (models) {
                                 diff: {
                                     onCash: sum(_.pluck(value, "diff"))
                                 }
-                            }
-                        })
-                        .value()[0];
+                            };
 
-                    callback(null, {total: total, collection: result});
+                            return obj;
+                        })
+                        .value();
+
+                    var newResult = _.groupBy(result, function (model) {
+                        return model.get('dataKey');
+                    });
+
+                    callback(null, {total: total, collection: newResult, allCollection: result});
                 }
 
                 async.waterfall(waterfallTasks, function (err, result) {

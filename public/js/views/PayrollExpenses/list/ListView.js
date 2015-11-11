@@ -3,7 +3,7 @@ define([
         'views/Filter/FilterView',
         'views/PayrollExpenses/generate/GenerateView',
         'text!templates/PayrollExpenses/list/ListHeader.html',
-        'text!templates/PayrollExpenses/list/ListTemplate.html',
+       // 'text!templates/PayrollExpenses/list/ListTemplate.html',
         'text!templates/PayrollExpenses/list/cancelEdit.html',
         'views/PayrollExpenses/CreateView',
         'text!templates/PayrollExpenses/list/ListTotal.html',
@@ -18,7 +18,7 @@ define([
         'helpers'
     ],
 
-    function (listViewBase, filterView, GenerateView, headerTemplate, rowTemplate, cancelEditTemplate, createView, totalTemplate, editCollection, monthCollection, employeesCollection, currentModel, populate, dataService, async, moment, helpers) {
+    function (listViewBase, filterView, GenerateView, headerTemplate, /*rowTemplate, */cancelEditTemplate, createView, totalTemplate, editCollection, monthCollection, employeesCollection, currentModel, populate, dataService, async, moment, helpers) {
         var payRollListView = listViewBase.extend({
             el            : '#content-holder',
             contentType   : 'PayrollExpenses',
@@ -27,7 +27,7 @@ define([
             whatToSet     : {},
             headerTemplate: _.template(headerTemplate),
             totalTemplate : _.template(totalTemplate),
-            rowTemplate   : _.template(rowTemplate),
+           // rowTemplate   : _.template(rowTemplate),
             cancelTemplate: _.template(cancelEditTemplate),
             changedModels : {},
 
@@ -37,12 +37,51 @@ define([
                 "click .newSelectList li": "chooseOption",
                 "change .autoCalc"       : "autoCalc",
                 "change .editable"       : "setEditable",
-                "keydown input.editing " : "keyDown"
+                "keydown input.editing " : "keyDown",
+                "click #mainRow": "showJobs",
+                "click #expandAll": "expandAll"
             },
 
             generate: function(){
                 new GenerateView({});
             },
+
+
+            expandAll: function(e){
+                var target = this.$el.find('#expandAll');
+                var subRowCheck = this.$el.find('.jobsDashboard');
+                var icon = this.$el.find('.expand');
+
+                if (icon.html() === '-') {
+                    $(target).text('Expand All');
+                    icon.html('+');
+                    $(subRowCheck).hide();
+                } else {
+                    $(target).text('Collapse All');
+                    icon.html('-');
+                    $(subRowCheck).show();
+                }
+            },
+
+            showJobs: function(e){
+                var target = e.target;
+                var dataKey = $(target).parents("tr").attr("data-id");
+                var subId = "subRow" + dataKey;
+                var subRowCheck = $('.' + subId);
+                var container = $(target).parents("tr")[0];
+                var icon = $(container).find('.expand');
+
+
+                if (icon.html() === '-') {
+                    icon.html('+');
+                    $(subRowCheck).hide();
+                } else {
+                    icon.html('-');
+                    $(subRowCheck).show();
+                }
+
+            },
+
 
             initialize: function (options) {
                 var collectionsObjects;
@@ -52,10 +91,13 @@ define([
                 collectionsObjects = this.collection.toJSON()[0];
                 this.collectionOnMonth = new monthCollection(collectionsObjects.collection);
 
-                Backbone.history.fragment = '';
-                Backbone.history.navigate(location + '/filter=' + encodeURI(JSON.stringify(this.collection.filter)));
+                //if (this.collection.filter){
+                //    Backbone.history.fragment = '';
+                //    Backbone.history.navigate(location + '/filter=' + encodeURI(JSON.stringify(this.collection.filter)));
+                //}
 
                 this.total = collectionsObjects.total;
+                this.allCollection = collectionsObjects.allCollection;
                 this.startTime = options.startTime;
 
                 this.render();
@@ -229,8 +271,9 @@ define([
             },
 
             createItem: function () {
-                var month = this.collectionOnMonth.first().get('month');
-                var year = this.collectionOnMonth.first().get('year');
+                var newDate =  moment(new Date());
+                var month =newDate.get('month');
+                var year = newDate.get('year');
                 var dataKey = parseInt(year) * 100 + parseInt(month);
 
                 var startData = {
@@ -533,12 +576,20 @@ define([
                     editedElementRowId = editedElementRow.attr('data-id');
                     editedElementContent = editedCol.data('content');
                     editedElementOldValue = parseInt(editedElement.attr('data-cash'));
-                    editedElementValue = parseInt(editedElement.val());
+                    if (editedElementContent === "dataKey"){
+                        var oldStr = editedElement.val();
+                        var newStr = oldStr.slice(0,2) + oldStr.slice(3,7);
+                        var month = parseInt(oldStr.slice(0,2));
+                        var year = parseInt(oldStr.slice(3,7));
+                        editedElementValue = parseInt(newStr) ? parseInt(newStr) : 0;
+                    } else {
+                        editedElementValue = parseInt(editedElement.val());
+                        editedElementValue = isFinite(editedElementValue) ? editedElementValue : 0;
 
-                    editedElementValue = isFinite(editedElementValue) ? editedElementValue : 0;
-                    editedElementOldValue = isFinite(editedElementOldValue) ? editedElementOldValue : 0;
+                        editedElementOldValue = isFinite(editedElementOldValue) ? editedElementOldValue : 0;
 
-                    differenceBettwenValues = editedElementValue - editedElementOldValue;
+                        differenceBettwenValues = editedElementValue - editedElementOldValue;
+                    }
 
                     if (differenceBettwenValues !== 0) {
 
@@ -556,7 +607,18 @@ define([
                         paid = _.clone(editModel.get('paid'));
 
                         changedAttr = this.changedModels[editedElementRowId];
-                        editedCol.text(editedElementValue);
+
+                        if (month || year){
+                            changedAttr.dataKey = year * 100 + month;
+                            changedAttr.month = month;
+                            changedAttr.year = year;
+                        }
+
+                        if (editedElementContent === "dataKey"){
+                            editedCol.text(oldStr);
+                        } else {
+                            editedCol.text(editedElementValue);
+                        }
 
                         if (changedAttr) {
                             if (editedCol.hasClass('calc')) {
@@ -581,8 +643,11 @@ define([
                             }
                         }
                     }
-
-                    editedCol.text(editedElementValue);
+                    if (editedElementContent === "dataKey"){
+                        editedCol.text(oldStr);
+                    } else {
+                        editedCol.text(editedElementValue);
+                    }
                     editedElement.remove();
                 }
             },
@@ -590,6 +655,7 @@ define([
             editRow: function (e, prev, next) {
                 $(".newSelectList").hide();
 
+                var self = this;
                 var target = $(e.target);
                 var isInput = target.prop("tagName") === 'INPUT';
                 var dataContent = target.attr('data-content');
@@ -612,11 +678,40 @@ define([
                     populate.showSelect(e, prev, next, this);
                 } else if (dataContent === 'paymentType') {
                     populate.showSelect(e, prev, next, this);
-                }else if (!isInput) {
+                } else if (dataContent === 'dataKey') {
+
+                    inputHtml = '<input type="text" class="datapicker editing" readonly />';
+
+                    target.html(inputHtml);
+
+                    $('.datapicker').datepicker({
+                        dateFormat: "mm/yy",
+                        changeMonth: true,
+                        changeYear: true,
+                        onSelect: function (text, datPicker) {
+                            var targetInput = $(this);
+                            var td = targetInput.closest('tr');
+                            var endDatePicker = td.find('.endDateDP');
+                            var endDate = moment(targetInput.datepicker('getDate'));
+                            var endContainer = $(endDatePicker);
+
+                            endDate.add(7, 'days');
+                            endDate = endDate.toDate();
+
+                            endContainer.datepicker('option', 'minDate', endDate);
+
+                            self.setChangedValueToModel(targetInput);
+
+                            return false;
+                        }
+                    }).removeClass('datapicker');
+
+
+                } else if (!isInput) {
                     tempContainer = target.text();
                     inputHtml = '<input class="editing" type="text" data-value="' +
                         tempContainer + '" value="' + tempContainer +
-                        '"  maxLength="4" style="display: block;" \>';
+                        '"  maxLength="4" style="display: block;" />';
 
                     target.html(inputHtml);
 
@@ -767,9 +862,16 @@ define([
 
                 currentEl.empty();
 
-                currentEl.append(this.rowTemplate({
+                //currentEl.append(this.rowTemplate({
+                //    collection      : this.collectionOnMonth.toJSON(),
+                //    currencySplitter: helpers.currencySplitter
+                //}));
+
+                currentEl.append(this.totalTemplate({
                     collection      : this.collectionOnMonth.toJSON(),
-                    currencySplitter: helpers.currencySplitter
+                    total           : this.total,
+                    currencySplitter: helpers.currencySplitter,
+                    weekSplitter: helpers.weekSplitter
                 }));
 
                 $("#top-bar-deleteBtn").hide();
@@ -794,16 +896,21 @@ define([
 
                 /*Render table template*/
 
-                currentEl.find('#payRoll-TableBody').append(this.rowTemplate({
-                    collection      : this.collectionOnMonth.toJSON(),
-                    currencySplitter: helpers.currencySplitter
-                }));
+                //currentEl.find('#payRoll-TableBody').append(this.rowTemplate({
+                //    collection      : this.collectionOnMonth.toJSON(),
+                //    month            : this.collectionOnMonth.toJSON()[0].month,
+                //    year            : this.collectionOnMonth.toJSON()[0].year,
+                //    total           : this.total,
+                //    currencySplitter: helpers.currencySplitter
+                //}));
 
                 /*Add total*/
 
-                currentEl.find('#payRoll-listTotal').append(this.totalTemplate({
-                    model           : this.total,
-                    currencySplitter: helpers.currencySplitter
+                currentEl.find('#payRoll-TableBody').append(this.totalTemplate({
+                    collection      : this.collectionOnMonth.toJSON(),
+                    total           : this.total,
+                    currencySplitter: helpers.currencySplitter,
+                    weekSplitter: helpers.weekSplitter
                 }));
 
                 /*Get data for employee select*/
@@ -830,7 +937,7 @@ define([
                 this.renderFilter(self);
 
                 setTimeout(function () {
-                    self.editCollection = new editCollection(self.collectionOnMonth.toJSON());
+                    self.editCollection = new editCollection(self.allCollection);
 
                     self.editCollection.on('saved', self.savedNewModel, self);
                     self.editCollection.on('updated', self.updatedOptions, self);
