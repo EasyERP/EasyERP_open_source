@@ -38,7 +38,7 @@ define([
                 "change .autoCalc"       : "autoCalc",
                 "change .editable"       : "setEditable",
                 "keydown input.editing " : "keyDown",
-                "click #mainRow": "showJobs",
+                "click #mainRow td:not(.notForm)": "showRows",
                 "click #expandAll": "expandAll"
             },
 
@@ -46,6 +46,51 @@ define([
                 new GenerateView({});
             },
 
+            copy: function(){
+                this.hideGenerateCopy();
+
+                var checkedRows = this.$el.find('input.checkbox:checked');
+                var selectedRow = checkedRows[0];
+                var self = this;
+                var target = $(selectedRow);
+                var id = target.val();
+                var row = target.closest('tr');
+                var model = self.editCollection.get(id);
+                var _model;
+                var tdsArr;
+                var cid;
+                var calc = (model.changed && model.changed.calc) ? model.changed.calc : model.get('calc');
+
+                $(selectedRow).attr('checked', false);
+
+                model.set({"paid": 0});
+                model.set({"diff": calc * (-1)});
+                model = model.toJSON();
+
+                delete model._id;
+                _model = new currentModel(model);
+
+                this.showSaveCancelBtns();
+                this.editCollection.add(_model);
+
+                cid = _model.cid;
+
+                if (!this.changedModels[cid]) {
+                    this.changedModels[cid] = model;
+                }
+
+                this.$el.find('#payRoll-listTable').prepend('<tr id="false" data-id="' + cid + '">' + row.html() + '</tr>');
+
+                row = this.$el.find('#false');
+
+                tdsArr = row.find('td');
+                $(tdsArr[0]).text(1);
+                $(tdsArr[3]).addClass('editable');
+            },
+
+            hideGenerateCopy: function () {
+                $('#top-bar-copy').hide();
+            },
 
             expandAll: function(e){
                 var target = this.$el.find('#expandAll');
@@ -63,10 +108,10 @@ define([
                 }
             },
 
-            showJobs: function(e){
+            showRows: function(e){
                 var target = e.target;
                 var dataKey = $(target).parents("tr").attr("data-id");
-                var subId = "subRow" + dataKey;
+                var subId = dataKey;
                 var subRowCheck = $('.' + subId);
                 var container = $(target).parents("tr")[0];
                 var icon = $(container).find('.expand');
@@ -115,6 +160,9 @@ define([
                 var el = $(e.target);
                 var td = $(el.closest('td'));
                 var tr = el.closest('tr');
+                var classTr = tr.attr('class');
+                var classArr = classTr.split(' ');
+                var parentTr = this.$el.find("[data-id=" + classArr[0] + "]");
                 var input = tr.find('input.editing');
                 var editedElementRowId = tr.attr('data-id');
                 var editModel = this.editCollection.get(editedElementRowId);
@@ -220,7 +268,7 @@ define([
 
                         changedAttr['diff'] = diffObj;
 
-                        this.getTotal(subValues, parentKey + '_' + calcKey);
+                        this.getTotal(subValues, parentKey + '_' + calcKey, parentTr);
                     }
                 }
             },
@@ -245,16 +293,34 @@ define([
                 return value;
             },
 
-            getTotal: function (diff, calcKey) {
+            getTotal: function (diff, calcKey, tr) {
                 var totalElement;
                 var prefVal;
+                var totalDiff;
+                var totalCalc;
+                var diffVal;
 
-                totalElement = this.$el.find('.total_' + calcKey);
+                var calc = parseInt(tr.find('.total_calc_salary').attr('data-cash'));
+               totalCalc = tr.find('.total_calc_salary');
+
+                totalElement = tr.find('.total_' + calcKey);
+
+                totalDiff = tr.find('.total_diff_onCash');
 
                 prefVal = parseInt(totalElement.attr('data-cash'));
 
                 totalElement.text(prefVal + diff);
                 totalElement.attr('data-cash', prefVal + diff);
+
+                if (calcKey === "calc_onCash"){
+                    totalCalc.text(calc + diff);
+                    totalCalc.attr('data-cash', calc + diff);
+                }
+
+                diffVal = (prefVal ? prefVal : 0) + diff - calc;
+
+                totalDiff.text(diffVal);
+                totalDiff.attr('data-cash', diffVal);
             },
 
             saveItem: function () {
@@ -526,27 +592,34 @@ define([
                 var createBtnEl = $('#top-bar-createBtn');
                 var saveBtnEl = $('#top-bar-saveBtn');
                 var cancelBtnEl = $('#top-bar-deleteBtn');
+                var copyBtnEl = $('#top-bar-copy');
 
                 this.changed = false;
 
                 saveBtnEl.hide();
                 cancelBtnEl.hide();
                 createBtnEl.show();
+                copyBtnEl.show();
 
                 return false;
             },
 
-            checked: function () {
+            checked: function (e) {
                 if (this.editCollection.length > 0) {
                     var checkLength = $("input.checkbox:checked").length;
+                    var target = e.target;
+                    var dataId = $(target).attr('data-id');
+
+                    var oneTypeInput = this.$el.find('[data-id=' + dataId +']').length - 1;
 
                     if ($("input.checkbox:checked").length > 0) {
                         $('#top-bar-deleteBtn').show();
-                        if (checkLength == this.editCollection.length) {
-                            $('#check_all').prop('checked', true);
+                        $('#top-bar-copy').show();
+                        if (checkLength == oneTypeInput) {
+                            this.$el.find('#' + dataId).prop('checked', true);
                         }
                         else {
-                            $('#check_all').prop('checked', false);
+                            $('.check_all').prop('checked', false);
                         }
                     } else {
                         $('#top-bar-deleteBtn').hide();
@@ -896,16 +969,6 @@ define([
 
                 /*Render table template*/
 
-                //currentEl.find('#payRoll-TableBody').append(this.rowTemplate({
-                //    collection      : this.collectionOnMonth.toJSON(),
-                //    month            : this.collectionOnMonth.toJSON()[0].month,
-                //    year            : this.collectionOnMonth.toJSON()[0].year,
-                //    total           : this.total,
-                //    currencySplitter: helpers.currencySplitter
-                //}));
-
-                /*Add total*/
-
                 currentEl.find('#payRoll-TableBody').append(this.totalTemplate({
                     collection      : this.collectionOnMonth.toJSON(),
                     total           : this.total,
@@ -923,16 +986,17 @@ define([
 
                 /*Checkbox all click*/
 
-                $('#check_all').click(function () {
-                    currentEl.find('.checkbox').prop('checked', this.checked);
+                $('.check_all').click(function (e) {
+                    var target = e.target;
+                    var classTr = $(target).attr('id');
+
+                    currentEl.find('[data-id=' + classTr + ']').prop('checked', this.checked);
                     if ($(self.bodyContainerId).find("input.checkbox:checked").length > 0) {
                         $("#top-bar-deleteBtn").show();
                     } else {
                         $("#top-bar-deleteBtn").hide();
                     }
                 });
-
-                /*render filters for Employee & DataKey*/
 
                 this.renderFilter(self);
 
