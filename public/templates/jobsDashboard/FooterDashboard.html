@@ -1,0 +1,28 @@
+
+<% var totalInProgress = 0;%>
+<% var totalNew = 0;%>
+<% var totalFinished = 0;%>
+<% var totalCost = 0;%>
+<% var jobsCount = 0;%>
+<% var projectCount = 0;%>
+<% collection.forEach(function(project, count){ %>
+<% var projectTeam = (project.budget && project.budget.projectTeam) ? project.budget.projectTeam : [];%>
+
+<% totalInProgress += project.total.totalInPr%>
+<% totalNew += project.total.totalNew%>
+<% totalFinished +=project.total.totalFinished %>
+<% totalCost += project.total.total%>
+<% projectCount ++%>
+
+<%  projectTeam.forEach(function(job, index){ %>
+<% jobsCount ++ %>
+<%  }); %>
+
+<% }) %>
+
+<td><%= jobsCount %></td>
+<td><%= projectCount %></td>
+<td><%= currencySplitter(totalInProgress.toFixed(2))%></td>
+<td><%= currencySplitter(totalNew.toFixed(2))%></td>
+<td><%= currencySplitter(totalFinished.toFixed(2))%></td>
+<td><%= currencySplitter(totalCost.toFixed(2))%></td>
