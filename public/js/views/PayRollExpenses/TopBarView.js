@@ -1,13 +1,13 @@
 define([
-        'text!templates/Payroll/TopBarTemplate.html',
+        'text!templates/PayRollExpenses/TopBarTemplate.html',
         'custom',
         'common',
         'constants'
-],
+    ],
     function (ContentTopBarTemplate, Custom, Common, CONSTANTS) {
         var TopBarView = Backbone.View.extend({
             el: '#top-bar',
-            contentType: CONSTANTS.PAYROLL,
+            contentType: CONSTANTS.PAYROLLEXPENSES,
             template: _.template(ContentTopBarTemplate),
 
             events: {
@@ -15,7 +15,8 @@ define([
                 "click #top-bar-deleteBtn": "deleteEvent",
                 "click #top-bar-saveBtn": "saveEvent",
                 "click #top-bar-editBtn": "editEvent",
-                "click #top-bar-createBtn": "createEvent"
+                "click #top-bar-createBtn": "createEvent",
+                "click #top-bar-generate": "generateEvent"
             },
 
             changeContentViewType: function (e) {
@@ -31,6 +32,11 @@ define([
             createEvent: function (event) {
                 event.preventDefault();
                 this.trigger('createEvent');
+            },
+
+            generateEvent: function (event) {
+                event.preventDefault();
+                this.trigger('generateEvent');
             },
 
             render: function () {
@@ -49,8 +55,7 @@ define([
 
             deleteEvent: function (event) {
                 event.preventDefault();
-                var answer = confirm("Realy DELETE items ?!");
-                if (answer == true) this.trigger('deleteEvent');
+                this.trigger('deleteEvent');
             },
 
             saveEvent: function (event) {

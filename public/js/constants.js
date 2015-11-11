@@ -330,7 +330,7 @@ define([], function () {
                 backend: 'workflow._id'
             }
         },
-        Payroll         : {
+        PayRollExpenses         : {
             'Employee': {
                 view   : 'employee',
                 backend: 'employee._id'
@@ -384,7 +384,7 @@ define([], function () {
         SALESINVOICE      : 'salesInvoice',
         SALESPRODUCT      : 'salesProduct',
         WTRACK            : 'wTrack',
-        PAYROLL           : 'Payroll',
+        PAYROLLEXPENSES   : 'PayRollExpenses',
         REVENUE           : 'Revenue',
         MONTHHOURS        : 'monthHours',
         BONUSTYPE         : 'bonusType',
@@ -395,7 +395,7 @@ define([], function () {
         DASHBOARD_HR      : 'HrDashboard',
         HOURS             : 'Hours',
         CAPACITY          : 'Capacity',
-        JOBSDASHBOARD          : 'jobsDashboard',
+        JOBSDASHBOARD     : 'jobsDashboard',
 
         RESPONSES: {
             BAD_RESPONSE            : 'Please try again',
@@ -415,6 +415,6 @@ define([], function () {
             'QA',
             'Design',
             'PM'
-        ],
+        ]
     }
 });

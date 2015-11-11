@@ -101,7 +101,7 @@ define([
                     case CONTENT_TYPES.SALESORDER:
                     case CONTENT_TYPES.SALESINVOICE:
                     case CONTENT_TYPES.WTRACK:
-                    case CONTENT_TYPES.PAYROLL:
+                    case CONTENT_TYPES.PAYROLLEXPENSES:
                     case CONTENT_TYPES.MONTHHOURS:
                     case CONTENT_TYPES.BONUSTYPE:
                     case CONTENT_TYPES.HOLIDAY:
@@ -146,7 +146,7 @@ define([
                     case CONTENT_TYPES.SALESORDER:
                     case CONTENT_TYPES.SALESINVOICE:
                     case CONTENT_TYPES.WTRACK:
-                    case CONTENT_TYPES.PAYROLL:
+                    case CONTENT_TYPES.PAYROLLEXPENSES:
                     case CONTENT_TYPES.MONTHHOURS:
                     case CONTENT_TYPES.BONUSTYPE:
                     case CONTENT_TYPES.HOLIDAY:
