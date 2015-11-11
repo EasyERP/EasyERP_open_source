@@ -35,24 +35,24 @@ define([
                 this.startTime = new Date();
                 this.viewType = options.viewType;
                 this.contentType = options.contentType;
-                filterObject = App.filtersValues[this.contentType];
-
-                this.dataKey = _.max(filterObject.dataKey, function (dataKey) {
-                    return dataKey._id;
-                })
-
-                this.dataKey.status = true;
-
-                this.filter = {
-                    'dataKey': {
-                        key  : 'dataKey',
-                        value: [this.dataKey._id]
-                    }
-                };
-
-                if (!options.filter) {
-                    options.filter = this.filter;
-                }
+                //filterObject = App.filtersValues[this.contentType];
+                //
+                //this.dataKey = _.max(filterObject.dataKey, function (dataKey) {
+                //    return dataKey._id;
+                //})
+                //
+                //this.dataKey.status = true;
+                //
+                //this.filter = {
+                //    'dataKey': {
+                //        key  : 'dataKey',
+                //        value: [this.dataKey._id]
+                //    }
+                //};
+                //
+                //if (!options.filter) {
+                //    options.filter = this.filter;
+                //}
 
                 if (options && options.viewType) {
                     this.url += options.viewType;

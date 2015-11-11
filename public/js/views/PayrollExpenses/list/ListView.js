@@ -3,7 +3,7 @@ define([
         'views/Filter/FilterView',
         'views/PayrollExpenses/generate/GenerateView',
         'text!templates/PayrollExpenses/list/ListHeader.html',
-        'text!templates/PayrollExpenses/list/ListTemplate.html',
+       // 'text!templates/PayrollExpenses/list/ListTemplate.html',
         'text!templates/PayrollExpenses/list/cancelEdit.html',
         'views/PayrollExpenses/CreateView',
         'text!templates/PayrollExpenses/list/ListTotal.html',
@@ -18,7 +18,7 @@ define([
         'helpers'
     ],
 
-    function (listViewBase, filterView, GenerateView, headerTemplate, rowTemplate, cancelEditTemplate, createView, totalTemplate, editCollection, monthCollection, employeesCollection, currentModel, populate, dataService, async, moment, helpers) {
+    function (listViewBase, filterView, GenerateView, headerTemplate, /*rowTemplate, */cancelEditTemplate, createView, totalTemplate, editCollection, monthCollection, employeesCollection, currentModel, populate, dataService, async, moment, helpers) {
         var payRollListView = listViewBase.extend({
             el            : '#content-holder',
             contentType   : 'PayrollExpenses',
@@ -27,7 +27,7 @@ define([
             whatToSet     : {},
             headerTemplate: _.template(headerTemplate),
             totalTemplate : _.template(totalTemplate),
-            rowTemplate   : _.template(rowTemplate),
+           // rowTemplate   : _.template(rowTemplate),
             cancelTemplate: _.template(cancelEditTemplate),
             changedModels : {},
 
@@ -37,12 +37,96 @@ define([
                 "click .newSelectList li": "chooseOption",
                 "change .autoCalc"       : "autoCalc",
                 "change .editable"       : "setEditable",
-                "keydown input.editing " : "keyDown"
+                "keydown input.editing " : "keyDown",
+                "click #mainRow td:not(.notForm)": "showRows",
+                "click #expandAll": "expandAll"
             },
 
             generate: function(){
                 new GenerateView({});
             },
+
+            copy: function(){
+                this.hideGenerateCopy();
+
+                var checkedRows = this.$el.find('input.checkbox:checked');
+                var selectedRow = checkedRows[0];
+                var self = this;
+                var target = $(selectedRow);
+                var id = target.val();
+                var row = target.closest('tr');
+                var model = self.editCollection.get(id);
+                var _model;
+                var tdsArr;
+                var cid;
+                var calc = (model.changed && model.changed.calc) ? model.changed.calc : model.get('calc');
+
+                $(selectedRow).attr('checked', false);
+
+                model.set({"paid": 0});
+                model.set({"diff": calc * (-1)});
+                model = model.toJSON();
+
+                delete model._id;
+                _model = new currentModel(model);
+
+                this.showSaveCancelBtns();
+                this.editCollection.add(_model);
+
+                cid = _model.cid;
+
+                if (!this.changedModels[cid]) {
+                    this.changedModels[cid] = model;
+                }
+
+                this.$el.find('#payRoll-listTable').prepend('<tr id="false" data-id="' + cid + '">' + row.html() + '</tr>');
+
+                row = this.$el.find('#false');
+
+                tdsArr = row.find('td');
+                $(tdsArr[0]).text(1);
+                $(tdsArr[3]).addClass('editable');
+            },
+
+            hideGenerateCopy: function () {
+                $('#top-bar-copy').hide();
+            },
+
+            expandAll: function(e){
+                var target = this.$el.find('#expandAll');
+                var subRowCheck = this.$el.find('.jobsDashboard');
+                var icon = this.$el.find('.expand');
+
+                if (icon.html() === '-') {
+                    $(target).text('Expand All');
+                    icon.html('+');
+                    $(subRowCheck).hide();
+                } else {
+                    $(target).text('Collapse All');
+                    icon.html('-');
+                    $(subRowCheck).show();
+                }
+            },
+
+            showRows: function(e){
+                var target = e.target;
+                var dataKey = $(target).parents("tr").attr("data-id");
+                var subId = dataKey;
+                var subRowCheck = $('.' + subId);
+                var container = $(target).parents("tr")[0];
+                var icon = $(container).find('.expand');
+
+
+                if (icon.html() === '-') {
+                    icon.html('+');
+                    $(subRowCheck).hide();
+                } else {
+                    icon.html('-');
+                    $(subRowCheck).show();
+                }
+
+            },
+
 
             initialize: function (options) {
                 var collectionsObjects;
@@ -52,10 +136,13 @@ define([
                 collectionsObjects = this.collection.toJSON()[0];
                 this.collectionOnMonth = new monthCollection(collectionsObjects.collection);
 
-                Backbone.history.fragment = '';
-                Backbone.history.navigate(location + '/filter=' + encodeURI(JSON.stringify(this.collection.filter)));
+                //if (this.collection.filter){
+                //    Backbone.history.fragment = '';
+                //    Backbone.history.navigate(location + '/filter=' + encodeURI(JSON.stringify(this.collection.filter)));
+                //}
 
                 this.total = collectionsObjects.total;
+                this.allCollection = collectionsObjects.allCollection;
                 this.startTime = options.startTime;
 
                 this.render();
@@ -73,6 +160,9 @@ define([
                 var el = $(e.target);
                 var td = $(el.closest('td'));
                 var tr = el.closest('tr');
+                var classTr = tr.attr('class');
+                var classArr = classTr.split(' ');
+                var parentTr = this.$el.find("[data-id=" + classArr[0] + "]");
                 var input = tr.find('input.editing');
                 var editedElementRowId = tr.attr('data-id');
                 var editModel = this.editCollection.get(editedElementRowId);
@@ -178,7 +268,7 @@ define([
 
                         changedAttr['diff'] = diffObj;
 
-                        this.getTotal(subValues, parentKey + '_' + calcKey);
+                        this.getTotal(subValues, parentKey + '_' + calcKey, parentTr);
                     }
                 }
             },
@@ -203,16 +293,34 @@ define([
                 return value;
             },
 
-            getTotal: function (diff, calcKey) {
+            getTotal: function (diff, calcKey, tr) {
                 var totalElement;
                 var prefVal;
+                var totalDiff;
+                var totalCalc;
+                var diffVal;
 
-                totalElement = this.$el.find('.total_' + calcKey);
+                var calc = parseInt(tr.find('.total_calc_salary').attr('data-cash'));
+               totalCalc = tr.find('.total_calc_salary');
+
+                totalElement = tr.find('.total_' + calcKey);
+
+                totalDiff = tr.find('.total_diff_onCash');
 
                 prefVal = parseInt(totalElement.attr('data-cash'));
 
                 totalElement.text(prefVal + diff);
                 totalElement.attr('data-cash', prefVal + diff);
+
+                if (calcKey === "calc_onCash"){
+                    totalCalc.text(calc + diff);
+                    totalCalc.attr('data-cash', calc + diff);
+                }
+
+                diffVal = (prefVal ? prefVal : 0) + diff - calc;
+
+                totalDiff.text(diffVal);
+                totalDiff.attr('data-cash', diffVal);
             },
 
             saveItem: function () {
@@ -229,8 +337,9 @@ define([
             },
 
             createItem: function () {
-                var month = this.collectionOnMonth.first().get('month');
-                var year = this.collectionOnMonth.first().get('year');
+                var newDate =  moment(new Date());
+                var month =newDate.get('month');
+                var year = newDate.get('year');
                 var dataKey = parseInt(year) * 100 + parseInt(month);
 
                 var startData = {
@@ -483,27 +592,34 @@ define([
                 var createBtnEl = $('#top-bar-createBtn');
                 var saveBtnEl = $('#top-bar-saveBtn');
                 var cancelBtnEl = $('#top-bar-deleteBtn');
+                var copyBtnEl = $('#top-bar-copy');
 
                 this.changed = false;
 
                 saveBtnEl.hide();
                 cancelBtnEl.hide();
                 createBtnEl.show();
+                copyBtnEl.show();
 
                 return false;
             },
 
-            checked: function () {
+            checked: function (e) {
                 if (this.editCollection.length > 0) {
                     var checkLength = $("input.checkbox:checked").length;
+                    var target = e.target;
+                    var dataId = $(target).attr('data-id');
+
+                    var oneTypeInput = this.$el.find('[data-id=' + dataId +']').length - 1;
 
                     if ($("input.checkbox:checked").length > 0) {
                         $('#top-bar-deleteBtn').show();
-                        if (checkLength == this.editCollection.length) {
-                            $('#check_all').prop('checked', true);
+                        $('#top-bar-copy').show();
+                        if (checkLength == oneTypeInput) {
+                            this.$el.find('#' + dataId).prop('checked', true);
                         }
                         else {
-                            $('#check_all').prop('checked', false);
+                            $('.check_all').prop('checked', false);
                         }
                     } else {
                         $('#top-bar-deleteBtn').hide();
@@ -533,12 +649,20 @@ define([
                     editedElementRowId = editedElementRow.attr('data-id');
                     editedElementContent = editedCol.data('content');
                     editedElementOldValue = parseInt(editedElement.attr('data-cash'));
-                    editedElementValue = parseInt(editedElement.val());
+                    if (editedElementContent === "dataKey"){
+                        var oldStr = editedElement.val();
+                        var newStr = oldStr.slice(0,2) + oldStr.slice(3,7);
+                        var month = parseInt(oldStr.slice(0,2));
+                        var year = parseInt(oldStr.slice(3,7));
+                        editedElementValue = parseInt(newStr) ? parseInt(newStr) : 0;
+                    } else {
+                        editedElementValue = parseInt(editedElement.val());
+                        editedElementValue = isFinite(editedElementValue) ? editedElementValue : 0;
 
-                    editedElementValue = isFinite(editedElementValue) ? editedElementValue : 0;
-                    editedElementOldValue = isFinite(editedElementOldValue) ? editedElementOldValue : 0;
+                        editedElementOldValue = isFinite(editedElementOldValue) ? editedElementOldValue : 0;
 
-                    differenceBettwenValues = editedElementValue - editedElementOldValue;
+                        differenceBettwenValues = editedElementValue - editedElementOldValue;
+                    }
 
                     if (differenceBettwenValues !== 0) {
 
@@ -556,7 +680,18 @@ define([
                         paid = _.clone(editModel.get('paid'));
 
                         changedAttr = this.changedModels[editedElementRowId];
-                        editedCol.text(editedElementValue);
+
+                        if (month || year){
+                            changedAttr.dataKey = year * 100 + month;
+                            changedAttr.month = month;
+                            changedAttr.year = year;
+                        }
+
+                        if (editedElementContent === "dataKey"){
+                            editedCol.text(oldStr);
+                        } else {
+                            editedCol.text(editedElementValue);
+                        }
 
                         if (changedAttr) {
                             if (editedCol.hasClass('calc')) {
@@ -581,8 +716,11 @@ define([
                             }
                         }
                     }
-
-                    editedCol.text(editedElementValue);
+                    if (editedElementContent === "dataKey"){
+                        editedCol.text(oldStr);
+                    } else {
+                        editedCol.text(editedElementValue);
+                    }
                     editedElement.remove();
                 }
             },
@@ -590,6 +728,7 @@ define([
             editRow: function (e, prev, next) {
                 $(".newSelectList").hide();
 
+                var self = this;
                 var target = $(e.target);
                 var isInput = target.prop("tagName") === 'INPUT';
                 var dataContent = target.attr('data-content');
@@ -612,11 +751,40 @@ define([
                     populate.showSelect(e, prev, next, this);
                 } else if (dataContent === 'paymentType') {
                     populate.showSelect(e, prev, next, this);
-                }else if (!isInput) {
+                } else if (dataContent === 'dataKey') {
+
+                    inputHtml = '<input type="text" class="datapicker editing" readonly />';
+
+                    target.html(inputHtml);
+
+                    $('.datapicker').datepicker({
+                        dateFormat: "mm/yy",
+                        changeMonth: true,
+                        changeYear: true,
+                        onSelect: function (text, datPicker) {
+                            var targetInput = $(this);
+                            var td = targetInput.closest('tr');
+                            var endDatePicker = td.find('.endDateDP');
+                            var endDate = moment(targetInput.datepicker('getDate'));
+                            var endContainer = $(endDatePicker);
+
+                            endDate.add(7, 'days');
+                            endDate = endDate.toDate();
+
+                            endContainer.datepicker('option', 'minDate', endDate);
+
+                            self.setChangedValueToModel(targetInput);
+
+                            return false;
+                        }
+                    }).removeClass('datapicker');
+
+
+                } else if (!isInput) {
                     tempContainer = target.text();
                     inputHtml = '<input class="editing" type="text" data-value="' +
                         tempContainer + '" value="' + tempContainer +
-                        '"  maxLength="4" style="display: block;" \>';
+                        '"  maxLength="4" style="display: block;" />';
 
                     target.html(inputHtml);
 
@@ -767,9 +935,16 @@ define([
 
                 currentEl.empty();
 
-                currentEl.append(this.rowTemplate({
+                //currentEl.append(this.rowTemplate({
+                //    collection      : this.collectionOnMonth.toJSON(),
+                //    currencySplitter: helpers.currencySplitter
+                //}));
+
+                currentEl.append(this.totalTemplate({
                     collection      : this.collectionOnMonth.toJSON(),
-                    currencySplitter: helpers.currencySplitter
+                    total           : this.total,
+                    currencySplitter: helpers.currencySplitter,
+                    weekSplitter: helpers.weekSplitter
                 }));
 
                 $("#top-bar-deleteBtn").hide();
@@ -794,16 +969,11 @@ define([
 
                 /*Render table template*/
 
-                currentEl.find('#payRoll-TableBody').append(this.rowTemplate({
+                currentEl.find('#payRoll-TableBody').append(this.totalTemplate({
                     collection      : this.collectionOnMonth.toJSON(),
-                    currencySplitter: helpers.currencySplitter
-                }));
-
-                /*Add total*/
-
-                currentEl.find('#payRoll-listTotal').append(this.totalTemplate({
-                    model           : this.total,
-                    currencySplitter: helpers.currencySplitter
+                    total           : this.total,
+                    currencySplitter: helpers.currencySplitter,
+                    weekSplitter: helpers.weekSplitter
                 }));
 
                 /*Get data for employee select*/
@@ -816,8 +986,11 @@ define([
 
                 /*Checkbox all click*/
 
-                $('#check_all').click(function () {
-                    currentEl.find('.checkbox').prop('checked', this.checked);
+                $('.check_all').click(function (e) {
+                    var target = e.target;
+                    var classTr = $(target).attr('id');
+
+                    currentEl.find('[data-id=' + classTr + ']').prop('checked', this.checked);
                     if ($(self.bodyContainerId).find("input.checkbox:checked").length > 0) {
                         $("#top-bar-deleteBtn").show();
                     } else {
@@ -825,12 +998,10 @@ define([
                     }
                 });
 
-                /*render filters for Employee & DataKey*/
-
                 this.renderFilter(self);
 
                 setTimeout(function () {
-                    self.editCollection = new editCollection(self.collectionOnMonth.toJSON());
+                    self.editCollection = new editCollection(self.allCollection);
 
                     self.editCollection.on('saved', self.savedNewModel, self);
                     self.editCollection.on('updated', self.updatedOptions, self);

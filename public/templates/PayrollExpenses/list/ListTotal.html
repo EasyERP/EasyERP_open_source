@@ -1,28 +1,58 @@
-<tr>
-    <td colspan="5">Total</td>
-    <td data-cash="<%=model.calc.onCash%>" class="total_calc_salary money"><%=currencySplitter(model.calc.onCash.toString())%></td>
-    <td data-cash="<%=model.paid.onCash%>" class="total_paid_onCash cash money"><%=currencySplitter(model.paid.onCash.toString())%></td>
 
-    <td data-cash="<%=model.diff.onCash%>" class="total_diff_onCash
-    <%if (model.diff.onCash < 0) {%>
-        negativeMoney"><%=currencySplitter((model.diff.onCash * (-1)).toString())%></td>
+<% total.forEach(function(el, count){ %>
+<% var key = Object.keys(el)[0];%>
+<% var totalObj = el[key]; %>
+<tr id="mainRow" data-id="<%=key%>">
+    <td class="expand">+</td>
+    <td class = "notForm"><input type="checkbox" id="<%=key%>" class="check_all" /></td>
+    <td >Employees</td>
+    <td><%=collection[0][key][0].month + "/" + collection[0][key][0].year%></td>
+    <td>Salary</td>
+    <td data-cash="<%=totalObj.calc.onCash%>" class="total_calc_salary money">
+        <%=currencySplitter(totalObj.calc.onCash.toString())%>
+    </td>
+    <td data-cash="<%=totalObj.paid.onCash%>" class="total_paid_onCash cash money">
+        <%=currencySplitter(totalObj.paid.onCash.toString())%>
+    </td>
+
+    <td data-cash="<%=totalObj.diff.onCash%>" class="total_diff_onCash
+<%if (totalObj.diff.onCash < 0) {%>
+negativeMoney"><%=currencySplitter((totalObj.diff.onCash * (-1)).toString())%>
+    </td>
     <%} else {%>
-        money"><%=currencySplitter(model.diff.onCash.toString())%></td>
+    money"><%=currencySplitter(totalObj.diff.onCash.toString())%></td>
     <%}%>
 </tr>
 
-<!--<tr>
-    <td colspan="4">Total</td>
-    <td class="total_calc_salary money"></td>
-    <td class="total_calc_onCash cash money"></td>
-    <td class="total_paid_onCash cash money"></td>
 
-    <td class="total_diff_onCash money"></td>
+<% var payroll = collection[0][key];%>
+<% payroll.forEach(function(model, index){ %>
+<tr data-id="<%=model._id%>" id="subRow" class="<%=key%> jobsDashboard" style="display: none;">
+    <td data-content="number"><%=index+1%></td>
+    <td class="notForm"><input id="<%=model._id%>" type="checkbox" value="<%=model._id%>" class="checkbox" data-id="<%=key%>"/></td>
+    <td class="editable" data-content="employee"><%=model.employee ? model.employee.name : ''%></td>
+    <td data-content="dataKey" ><%=model.month + '/' + model.year%></td>
+    <td class="editable" data-content="paymentType"><%=model.type.name%></td>
 
-    <td class="total_calc_onCard card money"></td>
-    <td class="total_paid_onCard card money"></td>
+    <td data-type="input" class="editable autoCalc cash calc money" data-content="onCash" data-cash="<%=model.calc%>">
+        <%=currencySplitter(model.calc.toString())%>
+    </td>
 
-    <td class="total_diff_onCard money"></td>
+    <td data-type="input" data-content="onCash" data-cash="<%=model.paid%>" class="autoCalc cash paid
+<% if (model.paid) {%>
+money"><%=currencySplitter(model.paid.toString())%>
+    </td>
+    <%} else {%>
+    "></td>
+    <%}%>
 
-    <td class="total_diff money"></td>
-</tr>-->
+    <td data-content="onCash" data-cash="<%=model.diff%>" class="diff
+<% if (model.diff < 0) { %>
+negativeMoney"><%=currencySplitter((model.diff * (-1)).toString())%>
+    </td>
+    <%} else {%>
+    money"><%=currencySplitter(model.diff.toString())%></td>
+    <%}%>
+</tr>
+<% }) %>
+<% }) %>
