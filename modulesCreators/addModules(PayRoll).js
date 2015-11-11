@@ -43,7 +43,7 @@ MongoClient.connect(url, function (err, db) {
         var module = {
             _id: parrent._id + 1,
             mname: 'PayRoll Payments',
-            href: 'PayRoll Payments',
+            href: 'PayRollPayments',
             sequence: parrent.sequence + 1,
             parrent: parrent._id,
             link: true,
@@ -72,7 +72,7 @@ MongoClient.connect(url, function (err, db) {
                 return callback(err);
             }
 
-            modules.update({_id: 66}, {$set: {mname: "PayRoll Expenses", href: "PayRoll Expenses"}}, {multi: true}, function(err){
+            modules.update({_id: 66}, {$set: {mname: "PayRoll Expenses", href: "PayRollExpenses"}}, {multi: true}, function(err){
                 "use strict";
                 if(err){
                     return callback(err);
