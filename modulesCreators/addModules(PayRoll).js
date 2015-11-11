@@ -1,8 +1,6 @@
 // JavaScript source code
 var MongoClient = require('mongodb').MongoClient;
-var url = 'mongodb://localhost:27017/CRM';
-//var url = 'mongodb://localhost:27017/EasyERP';
-//var url = 'mongodb://localhost:27017/testCrm';
+var url = 'mongodb://localhost:27017/production';
 var async = require('async');
 
 MongoClient.connect(url, function (err, db) {
@@ -20,10 +18,10 @@ MongoClient.connect(url, function (err, db) {
 
     function parrentModule(callback) {
         var module = {
-            _id: 59,
-            mname: 'Accounting',
-            href: 'Accounting',
-            sequence: 59,
+            _id: 78,
+            mname: 'PayRoll',
+            href: 'PayRoll',
+            sequence: 78,
             parrent: null,
             link: false,
             visible: true
@@ -43,19 +41,9 @@ MongoClient.connect(url, function (err, db) {
 
     function childModule(parrent, callback) {
         var module = {
-            _id: parrent._id + 2,
-            mname: 'Customer Payments',
-            href: 'Customer Payments',
-            sequence: parrent.sequence + 2,
-            parrent: parrent._id,
-            link: true,
-            visible: true
-        };
-
-        var module2 = {
             _id: parrent._id + 1,
-            mname: 'Supplier Payments',
-            href: 'Supplier Payments',
+            mname: 'PayRoll Payments',
+            href: 'PayRoll Payments',
             sequence: parrent.sequence + 1,
             parrent: parrent._id,
             link: true,
@@ -67,16 +55,35 @@ MongoClient.connect(url, function (err, db) {
         }, 1000);
 
         q.drain = function () {
-            callback(null, parrent, module, module2);
+            callback(null, parrent, module);
         };
 
-        q.push([module, module2], function () {
+        q.push([module], function () {
             console.log('finished process');
         });
     };
 
+    function modulesUpdater(parrent, module, callback) {
+        var _modules = [66, 68, 69, 76, 72];
 
-    function profileUpdater(parrent, child, child2, callback) {
+        modules.update({_id: {$in: _modules}}, {$set: {parrent: parrent._id}}, {multi: true}, function(err){
+            "use strict";
+            if(err){
+                return callback(err);
+            }
+
+            modules.update({_id: 66}, {$set: {mname: "PayRoll Expenses", href: "PayRoll Expenses"}}, {multi: true}, function(err){
+                "use strict";
+                if(err){
+                    return callback(err);
+                }
+
+                callback(null, parrent, module);
+            });
+        });
+    };
+
+    function profileUpdater(parrent, child, callback) {
         var i;
         var parrentInsert = {
             "module": parrent._id,
@@ -96,19 +103,10 @@ MongoClient.connect(url, function (err, db) {
             }
         };
 
-        var childInsert2 = {
-            "module": child2._id,
-            "access": {
-                "del": true,
-                "editWrite": true,
-                "read": true
-            }
-        };
-
         var q = async.queue(function (profile, callback) {
             if (profile) {
                 console.log('profile = ' + profile._id);
-                profiles.findOneAndUpdate({ _id: profile._id }, { $push: { profileAccess: { $each: [parrentInsert, childInsert, childInsert2] } } }, callback);
+                profiles.findOneAndUpdate({ _id: profile._id }, { $push: { profileAccess: { $each: [parrentInsert, childInsert] } } }, callback);
             }
         }, 1000);
 
@@ -132,7 +130,7 @@ MongoClient.connect(url, function (err, db) {
     };
 
 
-    async.waterfall([parrentModule, childModule, profileUpdater], function (err, res) {
+    async.waterfall([parrentModule, childModule, modulesUpdater, profileUpdater], function (err, res) {
         if (err) {
             db.close();
             return console.log(err);
@@ -140,5 +138,5 @@ MongoClient.connect(url, function (err, db) {
 
         console.log(res);
         db.close();
-    })
+    });
 });
