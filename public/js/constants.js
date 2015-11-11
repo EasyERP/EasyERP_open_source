@@ -330,7 +330,7 @@ define([], function () {
                 backend: 'workflow._id'
             }
         },
-        PayRollExpenses         : {
+        PayrollExpenses         : {
             'Employee': {
                 view   : 'employee',
                 backend: 'employee._id'
@@ -384,7 +384,7 @@ define([], function () {
         SALESINVOICE      : 'salesInvoice',
         SALESPRODUCT      : 'salesProduct',
         WTRACK            : 'wTrack',
-        PAYROLLEXPENSES   : 'PayRollExpenses',
+        PAYROLLEXPENSES   : 'PayrollExpenses',
         REVENUE           : 'Revenue',
         MONTHHOURS        : 'monthHours',
         BONUSTYPE         : 'bonusType',

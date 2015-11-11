@@ -1,5 +1,5 @@
 define([
-        'text!templates/PayRollExpenses/TopBarTemplate.html',
+        'text!templates/PayrollExpenses/TopBarTemplate.html',
         'custom',
         'common',
         'constants'

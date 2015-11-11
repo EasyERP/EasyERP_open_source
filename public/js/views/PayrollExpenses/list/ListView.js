@@ -1,14 +1,14 @@
 define([
         'views/listViewBase',
         'views/Filter/FilterView',
-        'views/PayRollExpenses/generate/GenerateView',
-        'text!templates/PayRollExpenses/list/ListHeader.html',
-        'text!templates/PayRollExpenses/list/ListTemplate.html',
-        'text!templates/PayRollExpenses/list/cancelEdit.html',
-        'views/PayRollExpenses/CreateView',
-        'text!templates/PayRollExpenses/list/ListTotal.html',
-        'collections/PayRollExpenses/editCollection',
-        'collections/PayRollExpenses/oneMonthCollection',
+        'views/PayrollExpenses/generate/GenerateView',
+        'text!templates/PayrollExpenses/list/ListHeader.html',
+        'text!templates/PayrollExpenses/list/ListTemplate.html',
+        'text!templates/PayrollExpenses/list/cancelEdit.html',
+        'views/PayrollExpenses/CreateView',
+        'text!templates/PayrollExpenses/list/ListTotal.html',
+        'collections/PayrollExpenses/editCollection',
+        'collections/PayrollExpenses/oneMonthCollection',
         'collections/Employees/employee',
         'models/PayRollModel',
         'populate',
@@ -21,7 +21,7 @@ define([
     function (listViewBase, filterView, GenerateView, headerTemplate, rowTemplate, cancelEditTemplate, createView, totalTemplate, editCollection, monthCollection, employeesCollection, currentModel, populate, dataService, async, moment, helpers) {
         var payRollListView = listViewBase.extend({
             el            : '#content-holder',
-            contentType   : 'PayRollExpenses',
+            contentType   : 'PayrollExpenses',
             viewType      : 'list',//needs in view.prototype.changeLocationHash
             responseObj   : {},
             whatToSet     : {},

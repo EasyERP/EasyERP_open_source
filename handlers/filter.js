@@ -93,7 +93,7 @@ var Filters = function (models) {
                 salesQuotation  : getSalesQuotation,
                 salesOrder      : getSalesOrders,
                 Order           : getOrdersFiltersValues,
-                PayRollExpenses : getPayRollFiltersValues,
+                PayrollExpenses : getPayRollFiltersValues,
                 DashVacation    : getDashVacationFiltersValues
             },
             function (err, result) {

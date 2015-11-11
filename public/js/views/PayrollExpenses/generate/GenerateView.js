@@ -2,7 +2,7 @@
  * Created by lilya on 10/11/15.
  */
 define([
-        "text!templates/PayRollExpenses/generate/generate.html",
+        "text!templates/PayrollExpenses/generate/generate.html",
         "moment",
         "populate"
     ],

@@ -1,5 +1,5 @@
 define([
-        "text!templates/PayRollExpenses/CreateTemplate.html",
+        "text!templates/PayrollExpenses/CreateTemplate.html",
     ],
     function (CreateTemplate) {
 
