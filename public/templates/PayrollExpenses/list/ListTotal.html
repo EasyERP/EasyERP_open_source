@@ -27,7 +27,7 @@ negativeMoney"><%=currencySplitter((totalObj.diff.onCash * (-1)).toString())%>
 
 <% var payroll = collection[0][key];%>
 <% payroll.forEach(function(model, index){ %>
-<tr data-id="<%=model._id%>" id="subRow" class="<%=key%> jobsDashboard" style="display: none;">
+<tr data-id="<%=model._id%>" class="<%=key%> jobsDashboard" style="display: none;">
     <td data-content="number"><%=index+1%></td>
     <td class="notForm"><input id="<%=model._id%>" type="checkbox" value="<%=model._id%>" class="checkbox" data-id="<%=key%>"/></td>
     <td class="editable" data-content="employee"><%=model.employee ? model.employee.name : ''%></td>
