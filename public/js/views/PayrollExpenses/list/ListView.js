@@ -40,8 +40,34 @@ define([
                 "keydown input.editing " : "keyDown",
                 "click #mainRow td:not(.notForm)": "showRows",
                 "click #expandAll": "expandAll",
-                "click": "removeNewSelect"
+                "click": "removeNewSelect",
+                "click .check_all": "checkAll"
+
             },
+
+
+            initialize: function (options) {
+                var collectionsObjects;
+                var location = window.location.hash;
+
+                this.collection = options.collection;
+                collectionsObjects = this.collection.toJSON()[0];
+                this.collectionOnMonth = new monthCollection(collectionsObjects.collection);
+
+                //if (this.collection.filter){
+                //    Backbone.history.fragment = '';
+                //    Backbone.history.navigate(location + '/filter=' + encodeURI(JSON.stringify(this.collection.filter)));
+                //}
+
+                this.total = collectionsObjects.total;
+                this.allCollection = collectionsObjects.allCollection;
+                this.startTime = options.startTime;
+
+                this.render();
+
+                this.bodyContainer = this.$el.find('#payRoll-listTable');
+            },
+
 
             removeNewSelect: function(){
                 $('.newSelectList').remove();
@@ -130,29 +156,6 @@ define([
                     $(subRowCheck).show();
                 }
 
-            },
-
-
-            initialize: function (options) {
-                var collectionsObjects;
-                var location = window.location.hash;
-
-                this.collection = options.collection;
-                collectionsObjects = this.collection.toJSON()[0];
-                this.collectionOnMonth = new monthCollection(collectionsObjects.collection);
-
-                //if (this.collection.filter){
-                //    Backbone.history.fragment = '';
-                //    Backbone.history.navigate(location + '/filter=' + encodeURI(JSON.stringify(this.collection.filter)));
-                //}
-
-                this.total = collectionsObjects.total;
-                this.allCollection = collectionsObjects.allCollection;
-                this.startTime = options.startTime;
-
-                this.render();
-
-                this.bodyContainer = this.$el.find('#payRoll-listTable');
             },
 
             keyDown: function (e) {
@@ -969,6 +972,19 @@ define([
 
                 holder.find('#timeRecivingDataFromServer').remove();
                 holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+            },
+
+            checkAll: function(e){
+                var target = e.target;
+                var classTr = $(target).attr('id');
+                var checked = $(target).checked;
+
+                this.$el.find('[data-id=' + classTr + ']').prop('checked', checked);
+                if (this.$el.find("input.checkbox:checked").length > 0) {
+                    $("#top-bar-deleteBtn").show();
+                } else {
+                    $("#top-bar-deleteBtn").hide();
+                }
             },
 
             render: function () {
