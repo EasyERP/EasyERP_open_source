@@ -629,7 +629,9 @@ var wTrack = function (event, models) {
 
                     event.emit('dropHoursCashes', req);
                     event.emit('recollectVacationDash');
-                    event.emit('updateProjectDetails', {req: req, _id: id});
+                    if (id){
+                        event.emit('updateProjectDetails', {req: req, _id: id});
+                    }
                     event.emit('recollectProjectInfo');
 
                     res.status(200).send({success: wTrack});
