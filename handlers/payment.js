@@ -455,13 +455,15 @@ var Payment = function (models, event) {
                                 return next(err);
                             }
 
-                            project = result.get('project');
+                            project = result ? result.get('project') : null;
 
                             cb();
                         });
 
                     }, function(){
-                        event.emit('fetchJobsCollection', {project: project});
+                        if (project){
+                            event.emit('fetchJobsCollection', {project: project});
+                        }
                     });
 
                     waterfallCallback(null, invoice, payment);
