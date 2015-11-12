@@ -54,11 +54,6 @@ define([
                 collectionsObjects = this.collection.toJSON()[0];
                 this.collectionOnMonth = new monthCollection(collectionsObjects.collection);
 
-                //if (this.collection.filter){
-                //    Backbone.history.fragment = '';
-                //    Backbone.history.navigate(location + '/filter=' + encodeURI(JSON.stringify(this.collection.filter)));
-                //}
-
                 this.total = collectionsObjects.total;
                 this.allCollection = collectionsObjects.allCollection;
                 this.startTime = options.startTime;
