@@ -762,7 +762,8 @@ define([
                     populate.showSelect(e, prev, next, this);
                 } else if (dataContent === 'dataKey') {
 
-                    inputHtml = '<input type="text" class="datapicker editing" readonly />';
+                    tempContainer = target.text();
+                    inputHtml = '<input type="text" class="datapicker editing" value="' + tempContainer + '" readonly />';
 
                     target.html(inputHtml);
 

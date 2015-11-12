@@ -68,10 +68,10 @@ define([
                         success: function () {
                             $('.edit-dialog').remove();
 
-                            url = "#easyErp/Payroll/list/p=1/c=100";
+                            url = window.location.hash;
 
                             Backbone.history.fragment = '';
-                            Backbone.history.navigate(url + '/filter=' + encodeURI(JSON.stringify(filter)), {trigger: true});
+                            Backbone.history.navigate(url, {trigger: true});
 
                         },
                         error: function () {

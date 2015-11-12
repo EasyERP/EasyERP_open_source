@@ -154,7 +154,7 @@ var PayRoll = function (models) {
                     date: new Date().toISOString()
                 };
 
-                if (data.type){
+                if (data.type) {
                     data.type._id = objectId(data.type._id);
                 }
 
@@ -199,7 +199,7 @@ var PayRoll = function (models) {
                     };
                     delete data._id;
 
-                    if (data.type){
+                    if (data.type) {
                         data.type._id = objectId(data.type._id);
                     }
 
@@ -379,7 +379,7 @@ var PayRoll = function (models) {
         }
     };
 
-    this.generate = function(req, res, next){
+    this.generate = function (req, res, next) {
         var db = req.session.lastDb;
         var EmployeeSchema = mongoose.Schemas['Employees'];
         var Employee = models.get(db, 'Employees', EmployeeSchema);
@@ -390,25 +390,25 @@ var PayRoll = function (models) {
         var dateKey = year * 100 + month;
         var waterfallTasks;
         var maxKey = 0;
+        var createdIds = [];
+        var difference;
+        var defObj;
+        var employees;
+        var ids = [];
 
-        waterfallTasks = [/*getEmployees,*/ savePayroll];
+        waterfallTasks = [getEmployees, savePayroll];
 
-        async.parallel(waterfallTasks, function (err, results) {
+        async.waterfall(waterfallTasks, function (err, results) {
             if (err) {
                 return next(err);
             }
 
             res.status(200).send("ok");
-        })
+        });
 
         function getEmployees(callback) {
-
-            var ids = [];
-
             var queryObject = {
-                hire: {
-                    $not: {$size: 0}
-                }
+                isEmployee: true
             };
 
             var query = Employee.find(queryObject).lean();
@@ -418,7 +418,9 @@ var PayRoll = function (models) {
                     return callback(err);
                 }
 
-                result.forEach(function(elem){
+                employees = result;
+
+                result.forEach(function (elem) {
                     ids.push(elem._id);
                 });
 
@@ -426,14 +428,14 @@ var PayRoll = function (models) {
             })
         }
 
-        function savePayroll(callback){
+        function savePayroll(ids, callback) {
 
             var newResult;
             var keys;
-          var query = Payroll.find({});
+            var query = Payroll.find({});
 
-            query.exec(function(err, result){
-                if (err){
+            query.exec(function (err, result) {
+                if (err) {
                     return next(err);
                 }
 
@@ -441,8 +443,8 @@ var PayRoll = function (models) {
 
                 keys = Object.keys(newResult);
 
-                keys.forEach(function(key){
-                    if (parseInt(key) >= maxKey){
+                keys.forEach(function (key) {
+                    if (parseInt(key) >= maxKey) {
                         maxKey = key;
                     }
                 });
@@ -451,12 +453,12 @@ var PayRoll = function (models) {
 
                 var neqQuery = Payroll.find({dataKey: parseKey}).lean();
 
-                neqQuery.exec(function(err, result){
-                    if (err){
+                neqQuery.exec(function (err, result) {
+                    if (err) {
                         return next(err);
                     }
 
-                    async.each(result, function(element, cb){
+                    async.each(result, function (element, cb) {
                         var dataToSave = _.clone(element);
 
                         delete dataToSave._id;
@@ -470,12 +472,43 @@ var PayRoll = function (models) {
 
                         var PRoll = new Payroll(dataToSave);
 
-                        PRoll.save(function(err, result){
-                            cb()
+                        if (dataToSave.type.name === "Salary Cash"){
+                            defObj = dataToSave;
+                        }
+
+                        PRoll.save(function (err, result) {
+                            createdIds.push(result._id);
+                            cb();
                         });
 
-                    }, function(){
-                        callback();
+                    }, function () {
+                        difference = _.difference(ids, createdIds);
+
+                        async.each(difference, function(id, callB){
+                            var empl = _.find(employees, function(el){
+                                return el._id === id;
+                            });
+
+                            defObj.dataKey = dateKey;
+                            defObj.month = month;
+                            defObj.year = year;
+                            defObj.paid = 0;
+                            defObj.diff = 0;
+                            defObj.calc = 0;
+
+                            defObj.employee = {};
+                            defObj.employee._id = empl._id;
+                            defObj.employee.name = empl.name.first + ' ' + empl.name.last;
+
+
+                            var PRoll = new Payroll(defObj);
+
+                            PRoll.save(function (err, result) {
+                                callB();
+                            });
+                        }, function(){
+                            callback();
+                        });
                     });
                 });
             });
