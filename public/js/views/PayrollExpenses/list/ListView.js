@@ -624,12 +624,13 @@ define([
                         $('#top-bar-deleteBtn').show();
                         if (checkLength === 1){
                             $('#top-bar-copy').show();
+                        } else {
+                            $('#top-bar-copy').hide();
                         }
                         if (checkLength == oneTypeInput) {
                             this.$el.find('#' + dataId).prop('checked', true);
                         } else {
                             this.$el.find('#' + dataId).prop('checked', false);
-                            $('#top-bar-copy').hide();
                         }
                     } else {
                         this.$el.find('#' + dataId).prop('checked', false);
