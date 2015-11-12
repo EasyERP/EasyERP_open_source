@@ -421,7 +421,7 @@ var PayRoll = function (models) {
                 employees = result;
 
                 result.forEach(function (elem) {
-                    ids.push(elem._id);
+                    ids.push(elem._id.toString());
                 });
 
                 callback(null, ids);
@@ -477,7 +477,7 @@ var PayRoll = function (models) {
                         }
 
                         PRoll.save(function (err, result) {
-                            createdIds.push(result._id);
+                            createdIds.push(result.employee._id.toString());
                             cb();
                         });
 
@@ -486,7 +486,7 @@ var PayRoll = function (models) {
 
                         async.each(difference, function(id, callB){
                             var empl = _.find(employees, function(el){
-                                return el._id === id;
+                                return el._id.toString() === id;
                             });
 
                             defObj.dataKey = dateKey;

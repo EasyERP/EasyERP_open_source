@@ -1004,7 +1004,7 @@ define([
                     var classTr = $(target).attr('id');
 
                     currentEl.find('[data-id=' + classTr + ']').prop('checked', this.checked);
-                    if ($(self.bodyContainerId).find("input.checkbox:checked").length > 0) {
+                    if (self.$el.find("input.checkbox:checked").length > 0) {
                         $("#top-bar-deleteBtn").show();
                     } else {
                         $("#top-bar-deleteBtn").hide();
