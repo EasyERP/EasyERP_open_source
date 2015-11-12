@@ -107,6 +107,7 @@ define([
             saveItem: function () {
 
                 var self = this;
+                var data;
                 //FixMe change mid value to proper number after inserting it into DB
                 var mid = 56;
                 var thisEl = this.$el;
@@ -132,8 +133,8 @@ define([
                         _id: invoiceModel._id,
                         name: invoiceModel.name ? invoiceModel.name: invoiceModel.sourceDocument,
                         assigned: {
-                            _id: invoiceModel.salesPerson._id,
-                            name: invoiceModel.salesPerson.name
+                            _id: invoiceModel.salesPerson ? invoiceModel.salesPerson._id : null,
+                            name: invoiceModel.salesPerson ? invoiceModel.salesPerson.name : ""
                         }
                     },
                     supplier: {
