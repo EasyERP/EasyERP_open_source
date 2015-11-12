@@ -141,13 +141,23 @@ define([
                     return (item.parent ? item.parent._id : null) === parentCategory;
                 });
 
-                this.currentModel.set({
-                    name: categoryName,
-                    parent: parentCategory,
-                    nestingLevel: ++nestingLevel,
-                    sequence: res.length,
-                    fullName: fullName
-                });
+                if (parentCategory === this.currentModel.get('_id')){
+                    this.currentModel.set({
+                        name: categoryName,
+                        parent: null,
+                        nestingLevel: 0,
+                        sequence: 0,
+                        fullName: fullName
+                    });
+                } else {
+                    this.currentModel.set({
+                        name: categoryName,
+                        parent: parentCategory,
+                        nestingLevel: ++nestingLevel,
+                        sequence: res.length,
+                        fullName: fullName
+                    });
+                }
 
                 this.currentModel.save({}, {
                     headers: {

@@ -146,19 +146,28 @@ var Categories = function (models, event) {
         }
     }
 
-    function updateFullName(id, Model, fullName, cb){
-       /* Model
+    function updateFullName(id, Model, cb){
+        var fullName;
+        var parrentFullName;
+
+        Model
             .findById(id)
-            .populate('parentCategory')
+            .populate('parent')
             .exec(function(err, category){
-                var parrentFullName = category.parentCategory.fullName;
-                var fullName = parrentFullName + ' / ' + category.name;
+                parrentFullName = category.parent ? category.parent.fullName: null;
+
+                if (parrentFullName){
+                    fullName = parrentFullName + ' / ' + category.name;
+                } else {
+                    fullName = category.name;
+                }
+
 
                 if(!err){
-                    Model.findByIdAndUpdate(id, {$set: {fullName: fullName}}, cb);
+                    Model.findByIdAndUpdate(id, {$set: {fullName: fullName}}, {new: true}, cb);
                 }
-            });*/
-        Model.findByIdAndUpdate(id, {$set: {fullName: fullName}}, {new: true}, cb);
+            });
+       // Model.findByIdAndUpdate(id, {$set: {fullName: fullName}}, {new: true}, cb);
     };
 
     this.update = function (req, res, next) {
@@ -195,6 +204,10 @@ var Categories = function (models, event) {
                                 res.send(200, {success: 'Category updated success'});
                             }
 
+                            updateFullName(_id, ProductCategory, function(){
+                               console.log("fullName was updated");
+                            });
+
                             event.emit('updateName', _id, Product, 'accounting.category._id', 'accounting.category.name', result.fullName);
                         });
                     }
@@ -208,19 +221,22 @@ var Categories = function (models, event) {
                     }
                     //console.log(result);
                 });
-                if (err) {
-                    next(err);
-                } else {
-                    if (data.isAllUpdate) {
-                        updateNestingLevel(req, _id, data.nestingLevel, function () {
-                            res.send(200, {success: 'Category updated success'});
-                        });
-                    } else {
-                        res.send(200, {success: 'Category updated success'});
-                    }
 
-                    event.emit('updateName', _id, Product, 'accounting.category._id', 'accounting.category.name', result.fullName);
+                updateFullName(_id, ProductCategory, function(){
+                    console.log("fullName was updated");
+                });
+
+                if (err) {
+                   return next(err);
                 }
+                if (data.isAllUpdate) {
+                    updateNestingLevel(req, _id, data.nestingLevel, function () {
+                        res.send(200, {success: 'Category updated success'});});
+                } else {
+                        res.send(200, {success: 'Category updated success'});
+                }
+
+                event.emit('updateName', _id, Product, 'accounting.category._id', 'accounting.category.name', result.fullName);
             });
         }
     };
