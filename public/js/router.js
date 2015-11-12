@@ -41,6 +41,8 @@ define([
 
 
         initialize: function () {
+            var self = this;
+
             this.on('all', function () {
                 $(".ui-dialog").remove();
                 $("#ui-datepicker-div").hide().remove();
@@ -74,8 +76,6 @@ define([
                 return false;
             });
 
-            var self = this;
-
             $(document).on("click", function () {
                 var currentContentType = self.contentType ? self.contentType.toUpperCase() : '';
                 var contentTypes = {QUOTATION: 'Quotation', ORDER: 'Order', INVOICE: 'Invoice'};
@@ -83,6 +83,7 @@ define([
                     $(".list2 tbody").find("[data-id='false']").remove();
                 }
             });
+
             if (!App || !App.currentUser) {
                 dataService.getData('/currentUser', null, function (response) {
                     if (response && !response.error) {
@@ -92,8 +93,7 @@ define([
                         console.log('can\'t fetch currentUser');
                     }
                 });
-            }
-            ;
+            };
         },
 
         dashBoardVacation: function (filter) {
@@ -188,6 +188,7 @@ define([
             if (App.requestedURL === null) {
                 App.requestedURL = Backbone.history.fragment;
             }
+
             Backbone.history.fragment = "";
             Backbone.history.navigate("login", {trigger: true});
         },
@@ -301,6 +302,7 @@ define([
 
         goToProfiles: function () {
             var self = this;
+
             this.checkLogin(function (success) {
                 if (success) {
                     goProfile(self);
@@ -1002,16 +1004,21 @@ define([
         },
 
         testContent: function (contentType) {
-            if (!CONTENT_TYPES[contentType.toUpperCase()])
+            if (!CONTENT_TYPES[contentType.toUpperCase()]) {
                 contentType = CONTENT_TYPES.PERSONS;
+            }
+
             return contentType;
         },
 
         getList: function (contentType) {
+            var viewType;
+
             this.contentType = contentType;
 
             contentType = this.testContent(contentType);
-            var viewType = custom.getCurrentVT({contentType: contentType});
+            viewType = custom.getCurrentVT({contentType: contentType});
+
             Backbone.history.navigate('#easyErp/' + contentType + '/' + viewType, {trigger: true, replace: true});
         },
 

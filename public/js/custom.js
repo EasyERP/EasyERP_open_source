@@ -108,6 +108,7 @@ define([
                     case CONTENT_TYPES.VACATION:
                     case CONTENT_TYPES.CAPACITY:
                     case CONTENT_TYPES.JOBSDASHBOARD:
+                    case CONTENT_TYPES.PAYROLLPAYMENTS:
                         App.currentViewType = 'list';
                         break;
                     case CONTENT_TYPES.APPLICATIONS:
@@ -153,6 +154,7 @@ define([
                     case CONTENT_TYPES.VACATION:
                     case CONTENT_TYPES.CAPACITY:
                     case CONTENT_TYPES.JOBSDASHBOARD:
+                    case CONTENT_TYPES.PAYROLLPAYMENTS:
                         App.currentViewType = 'list';
                         break;
                     case CONTENT_TYPES.APPLICATIONS:

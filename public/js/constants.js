@@ -55,12 +55,12 @@ define([], function () {
                 backend: 'services'
             }
         },
-        DashVacation         : {
-            'Employee'   : {
+        DashVacation    : {
+            'Employee'  : {
                 view   : 'name',
                 backend: 'employee'
             },
-            'Department'  : {
+            'Department': {
                 view   : 'department',
                 backend: 'department._id'
             }
@@ -199,7 +199,7 @@ define([], function () {
                 view   : 'paymentMethod',
                 backend: 'paymentMethod._id'
             },
-            'Name'     : {
+            'Name'       : {
                 view   : 'name',
                 backend: '_id'
             },
@@ -330,15 +330,15 @@ define([], function () {
                 backend: 'workflow._id'
             }
         },
-        PayrollExpenses         : {
-            'Employee': {
+        PayrollExpenses : {
+            'Employee'    : {
                 view   : 'employee',
                 backend: 'employee._id'
             },
             'Payment Type': {
                 view   : 'type',
                 backend: 'type._id'
-            },/*
+            }, /*
             'Month'   : {
                 view   : 'month',
                 backend: 'month'
@@ -396,6 +396,7 @@ define([], function () {
         HOURS             : 'Hours',
         CAPACITY          : 'Capacity',
         JOBSDASHBOARD     : 'jobsDashboard',
+        PAYROLLPAYMENTS   : 'PayrollPayments',
 
         RESPONSES: {
             BAD_RESPONSE            : 'Please try again',
