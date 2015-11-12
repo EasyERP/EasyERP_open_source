@@ -10,6 +10,7 @@ module.exports = function (models, event) {
     router.get('/', handler.getForDd);
     router.get('/:id', handler.getById);
     router.post('/', handler.create);
+    router.delete('/:id', handler.remove);
     router.put('/:id', handler.update);
 
     return router;

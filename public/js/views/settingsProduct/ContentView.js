@@ -87,10 +87,10 @@ define([
                 var self = this;
 
                 departments.forEach(function (elm, i) {
-                    if (!elm.parentCategory) {
+                    if (!elm.parent) {
                         self.$el.find("#groupList").append(self.createDepartmentListRow(elm, i + 1, "child"));
                     } else {
-                        var par = self.$el.find("[data-id='" + elm.parentCategory._id + "']").removeClass('child').addClass('parent');
+                        var par = self.$el.find("[data-id='" + elm.parent._id + "']").removeClass('child').addClass('parent');
                         if (par.find("ul").length === 0) {
                             par.append("<ul style='margin-left:20px'></ul>");
                         }
@@ -113,9 +113,9 @@ define([
                             nestingLevel = parseInt(ui.item.parents("li").attr("data-level")) + 1;
                         }
                         model.set({
-                            "parentCategoryStart": model.toJSON().parentCategory ? model.toJSON().parentCategory._id : null,
+                            "parentCategoryStart": model.toJSON().parent ? model.toJSON().parent._id : null,
                             "sequenceStart": parseInt(ui.item.attr("data-sequence")),
-                            "parentCategory": ui.item.parents("li").attr("data-id") ? ui.item.parents("li").attr("data-id") : null,
+                            "parent": ui.item.parents("li").attr("data-id") ? ui.item.parents("li").attr("data-id") : null,
                             "nestingLevel": nestingLevel,
                             sequence: sequence
                         });

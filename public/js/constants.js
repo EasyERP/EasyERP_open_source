@@ -397,6 +397,7 @@ define([], function () {
         CAPACITY          : 'Capacity',
         JOBSDASHBOARD     : 'jobsDashboard',
         PAYROLLPAYMENTS   : 'PayrollPayments',
+        PRODUCTSETTINGS   : "productSettings",
 
         RESPONSES: {
             BAD_RESPONSE            : 'Please try again',
